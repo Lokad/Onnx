@@ -1,0 +1,3 @@
+[submodule "ext/satsumagraph"]
+	path = ext/satsumagraph
+	url = https://github.com/allisterb/satsumagraph.git
