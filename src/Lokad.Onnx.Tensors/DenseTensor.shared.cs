@@ -14,7 +14,7 @@
 using System.Runtime.InteropServices;
 using System;
 
-namespace Lokad.Onnx.Tensors
+namespace Lokad.Onnx
 {
     /// <summary>
     /// Represents a multi-dimensional collection of objects of type T that can be accessed by indices.  

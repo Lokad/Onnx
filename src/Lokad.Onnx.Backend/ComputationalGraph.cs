@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 using Satsuma;
 
-using Lokad.Onnx.Tensors;
-  
 public class WeightedDirectedGraph: AbstractGraph
 {
 

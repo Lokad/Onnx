@@ -18,7 +18,7 @@ using System.Diagnostics;
 using System.Text;
 
 
-namespace Lokad.Onnx.Tensors
+namespace Lokad.Onnx
 {
     /// <summary>
     /// Supported Tensor DataType

@@ -14,7 +14,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Lokad.Onnx.Tensors
+namespace Lokad.Onnx
 {
     internal static class ArrayUtilities
     {
