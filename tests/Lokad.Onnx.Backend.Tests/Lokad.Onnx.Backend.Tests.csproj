@@ -21,4 +21,14 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Lokad.Onnx.Backend\Lokad.Onnx.Backend.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="models\mnist-8.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

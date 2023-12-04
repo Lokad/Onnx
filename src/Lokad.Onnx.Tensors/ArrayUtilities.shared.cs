@@ -14,7 +14,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Microsoft.ML.OnnxRuntime.Tensors
+namespace Lokad.Onnx.Tensors
 {
     internal static class ArrayUtilities
     {

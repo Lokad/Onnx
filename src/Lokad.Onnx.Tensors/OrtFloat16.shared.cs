@@ -9,7 +9,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.ML.OnnxRuntime
+namespace Lokad.Onnx
 {
     // Utilities class created to fill in the gaps
     // of functionality that is absent in BitConverter class in NETSTANDARD 2.0
