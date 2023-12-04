@@ -11,14 +11,14 @@ namespace Lokad.Onnx
         MatAdd
     }
     
-    public class Node
+    public struct Node
     {
         public long ID;
         public string Name;
         public string Description;
         public Satsuma.Node WeightedGraphNode;
         public OP_TYPE Op;
-        public List<string> Inputs;
-        public List<string> Outputs;
+        public string[] Inputs;
+        public string[] Outputs;
     }
 }

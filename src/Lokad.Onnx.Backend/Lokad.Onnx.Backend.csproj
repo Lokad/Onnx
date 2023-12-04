@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ext\satsumagraph\Satsuma.csproj" />
+    <ProjectReference Include="..\Lokad.Onnx.Base\Lokad.Onnx.Base.csproj" />
     <ProjectReference Include="..\Lokad.Onnx.Tensors\Lokad.Onnx.Tensors.csproj" />
   </ItemGroup>
 

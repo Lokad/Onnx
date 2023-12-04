@@ -1,0 +1,2 @@
+#!/bin/bash
+./src/Stratis.DevEx.Gui/bin/Gtk/Release/net6.0/Stratis.DevEx.Gui $*
