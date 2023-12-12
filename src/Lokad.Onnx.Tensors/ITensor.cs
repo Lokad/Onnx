@@ -20,8 +20,9 @@ namespace Lokad.Onnx
 
     public interface ITensor
     {
-        TensorTypeInfo ElementType { get; }
+        TensorElementType ElementType { get; }
         Type PrimitiveType {get; }
         ReadOnlySpan<int> Dimensions { get; }
+        ITensor Reshape_(ReadOnlySpan<int> dimensions);
     }
 }

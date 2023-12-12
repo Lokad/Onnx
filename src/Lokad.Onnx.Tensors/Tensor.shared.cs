@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 
@@ -1527,9 +1528,11 @@ namespace Lokad.Onnx
         }
 
         #region ITensor members
-        public TensorTypeInfo ElementType { get; } = GetTypeInfo(typeof(T));   
+        public TensorElementType ElementType { get; } = GetTypeInfo(typeof(T)).ElementType;   
 
         public Type PrimitiveType { get; } = typeof(T);
+
+        public ITensor Reshape_(ReadOnlySpan<int> dimensions) => (ITensor)this.Reshape(dimensions);
         #endregion
     }
 }

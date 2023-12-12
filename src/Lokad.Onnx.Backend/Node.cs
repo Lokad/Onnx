@@ -6,18 +6,44 @@ using System.Threading.Tasks;
 
 namespace Lokad.Onnx
 {
-    public enum OP_TYPE
+    public enum OpType
     {
+        Squeeze,
         MatAdd
     }
     
+    public enum OpStatus
+    {
+        Success,
+        Failure
+    }
+
+    public struct OpResult
+    {
+        public OpType Op;
+        OpStatus Status;
+        string? Message = null;
+        ITensor[] Inputs = { };
+        ITensor[] Outputs = { };
+
+        public OpResult(OpType op, OpStatus status)
+        {  
+           Op = op; 
+           Status = status; 
+        }  
+
+        public static OpResult NotSupported(OpType op) => 
+            new OpResult(op, OpStatus.Failure) { Message = $"The operation {op} is not supported." };
+        
+    }
+
     public struct Node
     {
         public long ID;
         public string Name;
         public string Description;
         public Satsuma.Node WeightedGraphNode;
-        public OP_TYPE Op;
+        public OpType Op;
         public string[] Inputs;
         public string[] Outputs;
     }
