@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{2014E9FF-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7620AA98-619B-4984-A038-D5731106FF04}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.Backend.Tests", "..\tests\Lokad.Onnx.Backend.Tests\Lokad.Onnx.Backend.Tests.csproj", "{11893B9C-97DB-418E-BDE6-4E4E2F2F96B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.Backend.Tests", "..\test\Lokad.Onnx.Backend.Tests\Lokad.Onnx.Backend.Tests.csproj", "{11893B9C-97DB-418E-BDE6-4E4E2F2F96B7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.Tensors", "Lokad.Onnx.Tensors\Lokad.Onnx.Tensors.csproj", "{CBD59431-025B-42E2-AA2B-B3EDDC4E8B1C}"
 EndProject

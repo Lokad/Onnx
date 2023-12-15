@@ -21,8 +21,8 @@ namespace Lokad.Onnx
     public struct OpResult
     {
         public OpType Op;
-        OpStatus Status;
-        string? Message = null;
+        public OpStatus Status;
+        public string? Message = null;
         ITensor[] Inputs = { };
         ITensor[] Outputs = { };
 
@@ -34,7 +34,13 @@ namespace Lokad.Onnx
 
         public static OpResult NotSupported(OpType op) => 
             new OpResult(op, OpStatus.Failure) { Message = $"The operation {op} is not supported." };
-        
+
+        public static OpResult NotSupported(OpType op, string pname, TensorElementType type) =>
+            new OpResult(op, OpStatus.Failure) { Message = $"The operation {op} is not supported for input paramer {pname} type {type}." };
+        public static OpResult WrongInputParameterType(OpType op, TensorElementType ptype, ITensor input) =>
+            new OpResult(op, OpStatus.Failure) { Message = $"The input parameter {input.Name} has type {ptype} not {input.ElementType}." };
+        public static OpResult Failure(OpType op, string message) =>
+           new OpResult(op, OpStatus.Failure) { Message = message };
     }
 
     public struct Node

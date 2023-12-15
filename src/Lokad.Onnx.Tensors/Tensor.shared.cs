@@ -1532,7 +1532,9 @@ namespace Lokad.Onnx
 
         public Type PrimitiveType { get; } = typeof(T);
 
-        public ITensor Reshape_(ReadOnlySpan<int> dimensions) => (ITensor)this.Reshape(dimensions);
+        public string Name { get; set; } = "";
+
+        public ITensor Reshape_(ReadOnlySpan<int> dimensions) => this.Reshape(dimensions);
         #endregion
     }
 }

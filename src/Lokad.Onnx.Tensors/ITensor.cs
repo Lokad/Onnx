@@ -23,6 +23,7 @@ namespace Lokad.Onnx
         TensorElementType ElementType { get; }
         Type PrimitiveType {get; }
         ReadOnlySpan<int> Dimensions { get; }
+        string Name { get; set;  }
         ITensor Reshape_(ReadOnlySpan<int> dimensions);
     }
 }
