@@ -9,20 +9,9 @@ namespace Lokad.Onnx.Backend
 {
     public class CPUExecutionProvider
     {
-        public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes=null)
-        {
-            long[] dims = (axes is not null) ? axes.ToArray() : input.Dimensions.ToArray().Cast <long>().ToArray();
-
-            for(int i = 0; i < dims.Length; i++) 
-            {
-                var d = TensorUtil.HandleNegativeAxis((int) dims[i], input.Dimensions.Length);
-            }
-            return new OpResult(OpType.Squeeze, OpStatus.Success);
-        }
-
         public static OpResult Squeeze(ITensor input, ITensor? axes = null)
         {
-            if (axes is not null) 
+            if (axes is not null)
             {
                 if (axes.Dimensions.Length != 1)
                 {
@@ -33,8 +22,8 @@ namespace Lokad.Onnx.Backend
                     return OpResult.WrongInputParameterType(OpType.Squeeze, TensorElementType.Int64, axes);
                 }
             }
-            
-            switch(input.ElementType)
+
+            switch (input.ElementType)
             {
                 case TensorElementType.Bool: return Squeeze((Tensor<bool>)input, axes);
                 case TensorElementType.Int8: return Squeeze((Tensor<byte>)input, axes);
@@ -52,6 +41,22 @@ namespace Lokad.Onnx.Backend
                 case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, axes);
                 default: return OpResult.NotSupported(OpType.Squeeze);
             }
+        }
+
+        public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes=null)
+        {
+            long[] dims = (axes is not null) ? axes.ToArray() : Enumerable.Range(0, input.Dimensions.Length - 1).Cast<long>().ToArray();
+            List<int> squeezedDims = new List<int>();
+            for(int i = 0; i < dims.Length; i++) 
+            {
+                var a = TensorUtil.HandleNegativeAxis((int) dims[i], input.Dimensions.Length);
+                if (input.Dimensions[a] == 1)
+                {
+                    squeezedDims.Add(a);
+                }
+
+            }
+            return OpResult.Success(OpType.Squeeze, input.Reshape_(squeezedDims.ToArray()));
         }
     }
 }

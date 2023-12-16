@@ -23,9 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{B8BA7D1B-B
 		..\THIRD-PARTY NOTICES = ..\THIRD-PARTY NOTICES
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lokad.Onnx.CLI", "Lokad.Onnx.CLI\Lokad.Onnx.CLI.csproj", "{321FFC7A-4773-41B2-BC88-ABA5FC93C48D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.CLI", "Lokad.Onnx.CLI\Lokad.Onnx.CLI.csproj", "{321FFC7A-4773-41B2-BC88-ABA5FC93C48D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lokad.Onnx.Base", "Lokad.Onnx.Base\Lokad.Onnx.Base.csproj", "{905C91C3-083A-4BBB-A6D3-C52A69143844}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.Base", "Lokad.Onnx.Base\Lokad.Onnx.Base.csproj", "{905C91C3-083A-4BBB-A6D3-C52A69143844}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLog", "..\ext\NLog\src\NLog\NLog.csproj", "{A0BFF0DB-ED9A-4639-AE86-8E709A1EFC66}"
 EndProject
@@ -33,6 +33,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{20A6
 	ProjectSection(SolutionItems) = preProject
 		..\build.cmd = ..\build.cmd
 		..\lonnx.cmd = ..\lonnx.cmd
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.Interop", "Lokad.Onnx.Interop\Lokad.Onnx.Interop.csproj", "{07FA371F-7765-4DC0-8B84-110672DA5483}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Python", "Python", "{0049778C-13D5-4142-8DEA-866F9CA1B68F}"
+	ProjectSection(SolutionItems) = preProject
+		..\test\interop\requirements.txt = ..\test\interop\requirements.txt
 	EndProjectSection
 EndProject
 Global
@@ -69,6 +76,10 @@ Global
 		{A0BFF0DB-ED9A-4639-AE86-8E709A1EFC66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0BFF0DB-ED9A-4639-AE86-8E709A1EFC66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0BFF0DB-ED9A-4639-AE86-8E709A1EFC66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07FA371F-7765-4DC0-8B84-110672DA5483}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07FA371F-7765-4DC0-8B84-110672DA5483}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07FA371F-7765-4DC0-8B84-110672DA5483}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07FA371F-7765-4DC0-8B84-110672DA5483}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +92,7 @@ Global
 		{321FFC7A-4773-41B2-BC88-ABA5FC93C48D} = {2014E9FF-F5EC-4203-BA92-D495E9013ABF}
 		{905C91C3-083A-4BBB-A6D3-C52A69143844} = {2014E9FF-F5EC-4203-BA92-D495E9013ABF}
 		{A0BFF0DB-ED9A-4639-AE86-8E709A1EFC66} = {A907284B-7B27-4E4A-9ADD-E5617FD44911}
+		{07FA371F-7765-4DC0-8B84-110672DA5483} = {2014E9FF-F5EC-4203-BA92-D495E9013ABF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B835BFE-A6A4-4235-A6F1-0B6F3F4BE6DF}

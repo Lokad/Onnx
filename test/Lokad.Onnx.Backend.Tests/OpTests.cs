@@ -13,7 +13,7 @@ namespace Lokad.Onnx.Backend.Tests
         {
 
             var d = new DenseTensor<int>(new[] { 1, 2, 2, 3, 4, 4, 5, 4 });
-            var sd = d.Dimensions.ToArray().Distinct();
+            var sd = d.Dimensions.ToArray().un;
             Assert.Equal( new[] { 1, 2, 3, 4, 5, 4 }, sd);
         }
     }

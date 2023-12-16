@@ -13,5 +13,11 @@ namespace Lokad.Onnx
             if (axis > tensorRank) throw new ArgumentException("T");
             return axis < 0 ? axis + tensorRank : axis; 
         }
+
+        public static long HandleNegativeAxis(long axis, int tensorRank)
+        {
+            if (axis > tensorRank) throw new ArgumentException("T");
+            return axis < 0 ? axis + tensorRank : axis;
+        }
     }
 }

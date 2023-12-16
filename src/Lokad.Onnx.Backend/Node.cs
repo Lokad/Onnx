@@ -23,13 +23,14 @@ namespace Lokad.Onnx
         public OpType Op;
         public OpStatus Status;
         public string? Message = null;
-        ITensor[] Inputs = { };
-        ITensor[] Outputs = { };
+        ITensor[] Inputs = {};
+        ITensor? Output = null;
 
         public OpResult(OpType op, OpStatus status)
         {  
            Op = op; 
            Status = status; 
+
         }  
 
         public static OpResult NotSupported(OpType op) => 
@@ -41,6 +42,9 @@ namespace Lokad.Onnx
             new OpResult(op, OpStatus.Failure) { Message = $"The input parameter {input.Name} has type {ptype} not {input.ElementType}." };
         public static OpResult Failure(OpType op, string message) =>
            new OpResult(op, OpStatus.Failure) { Message = message };
+
+        public static OpResult Success(OpType op, ITensor output, string? message = null) =>
+           new OpResult(op, OpStatus.Failure) { Output=output, Message = message };
     }
 
     public struct Node

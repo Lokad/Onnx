@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Onnx;
 namespace Lokad.Onnx.Backend
 {
     public class Model : Runtime

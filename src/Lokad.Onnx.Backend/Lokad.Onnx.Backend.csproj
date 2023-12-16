@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OnnxSharp" Version="0.2.1" />
+    <PackageReference Include="OnnxSharp" Version="0.2.1">
+      <Aliases>OnnxSharp</Aliases>
+    </PackageReference>
     <PackageReference Include="System.Numerics.Tensors" Version="8.0.0" />
   </ItemGroup>
 
