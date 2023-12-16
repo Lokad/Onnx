@@ -1,5 +1,6 @@
 ﻿namespace Lokad.Onnx.Interop;
 
+using System;
 using Python.Runtime;
 
 [PyExport(true)]
@@ -14,7 +15,7 @@ public class Device
         type = (DeviceType) Enum.Parse(typeof(DeviceType), options[0]);  
         if (options.Length > 1) 
         {
-            device_id = Int32.Parse(options[1]);
+            device_id = int.Parse(options[1]);
         }
     }
     public DeviceType type;

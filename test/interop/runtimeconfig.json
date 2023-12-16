@@ -1,0 +1,8 @@
+{
+    "tfm": "net6.0",
+    "configProperties": {
+        "System.GC.Concurrent": true,
+        "System.GC.Server": false,
+        "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false
+      }
+}
