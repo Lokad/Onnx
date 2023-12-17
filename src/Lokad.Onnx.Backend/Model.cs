@@ -18,8 +18,18 @@ namespace Lokad.Onnx.Backend
 
         public static ComputationalGraph? LoadFromFile(string onnxInputFilePath) 
         {
-            var mpp = Parse(onnxInputFilePath);
+            var mp = Parse(onnxInputFilePath);
+            if (mp is null)
+            {
+                Error("Could not parse {f} as ONNX model file.", onnxInputFilePath);
+                return null;
+            }
             var graph = new ComputationalGraph();
+            graph.MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value);
+            graph.Attributes["DocString"] = mp.DocString;
+            graph.Attributes["Domain"] = mp.Domain;
+            graph.Inputs = mp.Graph.Input.Select(vp => vp.ToTensor()).ToArray();
+            graph.Outputs = mp.Graph.Output.Select(vp => vp.ToTensor()).ToArray();
             return graph;
         }
     }
