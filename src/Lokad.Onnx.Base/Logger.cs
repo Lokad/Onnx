@@ -160,8 +160,27 @@ namespace Lokad.Onnx
                 config.AddRule(new LoggingRule("*", LogLevel.Error, logconsole));
                 config.AddRule(new LoggingRule("*", LogLevel.Fatal, logconsole));
                 config.AddRule(new LoggingRule("*", LogLevel.Debug, logconsole));
+
+                if (colorConsole)
+                {
+                    logconsole.RowHighlightingRules.Add(
+                        new NLog.Targets.ConsoleRowHighlightingRule
+                        (
+                            NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Info"),
+                            NLog.Targets.ConsoleOutputColor.Green,
+                            NLog.Targets.ConsoleOutputColor.Black
+                        )
+                    );
+                    logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                    {
+                        Regex = "INFO",
+                        CompileRegex = true,
+                        ForegroundColor = NLog.Targets.ConsoleOutputColor.DarkGreen
+                    });
+                }
             }
             
+
             /*
             var highlightRule = new NLog.Targets.ConsoleRowHighlightingRule();
             highlightRule.Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Info");

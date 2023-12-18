@@ -41,7 +41,7 @@ class Program : Runtime
     #region Entry point
     static void Main(string[] args)
     {
-        Initialize("Lokad.Onnx.CLI", "APP", true);
+        Initialize("Lokad.Onnx.CLI", "APP", true, true);
         if (args.Contains("--debug") || args.Contains("-d"))
         {
             DebugEnabled = true;

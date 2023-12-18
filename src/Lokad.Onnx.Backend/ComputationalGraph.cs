@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx;
+﻿namespace Lokad.Onnx.Backend;
 
 using System.Collections.Generic;
 using System.Linq;

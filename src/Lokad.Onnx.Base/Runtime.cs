@@ -6,8 +6,6 @@ namespace Lokad.Onnx
     using System.Reflection;
     using System.Threading;
 
-
-
     public abstract class Runtime
     {
         #region Constructors
@@ -87,7 +85,7 @@ namespace Lokad.Onnx
                     ToolName = toolname;
                     LogName = logname;
                     var fulllogfilename = LokadDevDir.CombinePath($"{ToolName}.{SessionId}.log");
-                    Logger = new FileLogger(fulllogfilename, false, LogName, logToConsole);
+                    Logger = new FileLogger(fulllogfilename, false, LogName, logToConsole, colorConsole);
                     Info("{0} initialized from entry assembly {1} with log file {2}...", ToolName, EntryAssembly?.GetName().FullName ?? "(none)", fulllogfilename); ;
                 }
                 RuntimeInitialized = true;

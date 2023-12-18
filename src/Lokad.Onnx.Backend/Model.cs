@@ -30,7 +30,7 @@ namespace Lokad.Onnx.Backend
             graph.Attributes["Domain"] = mp.Domain;
             graph.Inputs = mp.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
             graph.Outputs = mp.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
-            graph.Nodes = mp.Graph.Node.Select(n => n.ToNode()).ToList();
+            graph.Nodes = mp.Graph.Node.Select(n => n.ToNode(graph)).ToList();
             return graph;
         }
     }

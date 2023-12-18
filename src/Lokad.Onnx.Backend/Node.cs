@@ -1,12 +1,9 @@
-﻿using Lokad.Onnx.Backend;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Lokad.Onnx
+namespace Lokad.Onnx.Backend
 {
     public enum OpType
     {
@@ -61,7 +58,7 @@ namespace Lokad.Onnx
 
         public T? Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) ? (T)Attributes[name] : default(T);
         
-        public OpResult Run(ExecutionProvider provider) => provider switch
+        public OpResult Run(ExecutionProvider provider = ExecutionProvider.CPU) => provider switch
         {
             ExecutionProvider.CPU => RunCPU(),
             _ => throw new NotSupportedException(),
