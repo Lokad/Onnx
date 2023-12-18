@@ -1,12 +1,15 @@
-﻿using System;
+﻿namespace Lokad.Onnx.Backend;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Lokad.Onnx.Backend
-{
+
+    public enum ExecutionProvider
+    {
+        CPU
+    }
+    
     public class CPUExecutionProvider
     {
         public static OpResult Squeeze(ITensor input, ITensor? axes = null)
@@ -59,4 +62,4 @@ namespace Lokad.Onnx.Backend
             return OpResult.Success(OpType.Squeeze, input.Reshape_(squeezedDims.ToArray()));
         }
     }
-}
+

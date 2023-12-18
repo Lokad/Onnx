@@ -1,7 +1,7 @@
 ﻿namespace Lokad.Onnx;
 
 using System.Collections.Generic;
-
+using System.Linq;
 
 public class WeightedDirectedGraph: Satsuma.AbstractGraph
 {
@@ -28,6 +28,7 @@ public class ComputationalGraph
     public Dictionary<string, string> MetadataProps = new Dictionary<string, string>();
     #endregion
 
+    #region Methods
     public Node AddNode(string name)
     {
         Node node = new Node()
@@ -36,4 +37,9 @@ public class ComputationalGraph
         };
         return node;
     }
+
+    public ITensor[] GetInputs(string[] inputs) => inputs.Select(i => this.Inputs[i]).ToArray();
+
+    public ITensor[] GetOutputs(string[] outputs) => outputs.Select(i => this.Outputs[i]).ToArray();
+    #endregion
 }

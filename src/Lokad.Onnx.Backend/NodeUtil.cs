@@ -20,14 +20,14 @@ namespace Lokad.Onnx.Backend
                 default: throw new NotSupportedException($"Cannot convert attribute value of type {ap.Type}.");
             }
         }
-        public static Node ToNode(this NodeProto np)
+        public static Node ToNode(this NodeProto np, ComputationalGraph graph)
         {
             return new Node()
             {
                 Name = np.Name,
                 Attributes = np.Attribute.ToDictionary(k => k.Name, v => v.Value()),
-                Inputs = np.Input.ToArray(),
-                Outputs = np.Output.ToArray()
+                Inputs = graph.GetInputs(np.Input.ToArray()),
+                Outputs = graph.GetOutputs(np.Output.ToArray())
             };
         }
     }

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Lokad.Onnx.Backend;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,7 +56,21 @@ namespace Lokad.Onnx
         public Dictionary<string, object>? Attributes;
         public Satsuma.Node WeightedGraphNode;
         public OpType Op;
-        public string[] Inputs;
-        public string[] Outputs;
+        public ITensor[] Inputs;
+        public ITensor[] Outputs;
+
+        public T? Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) ? (T)Attributes[name] : default(T);
+        
+        public OpResult Run(ExecutionProvider provider) => provider switch
+        {
+            ExecutionProvider.CPU => RunCPU(),
+            _ => throw new NotSupportedException(),
+        };
+
+        public OpResult RunCPU() => Op switch
+        {
+            OpType.Squeeze => CPUExecutionProvider.Squeeze(Inputs[0], Attr<ITensor>("axes")),
+            _ => throw new NotSupportedException(),
+        };
     }
 }
