@@ -69,7 +69,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region Methods
-        public static void Initialize(string toolname, string logname, bool logToConsole = false, bool colorConsole=false)
+        public static void Initialize(string toolname, string logname, bool debug = false, bool logToConsole = false, bool colorConsole=false)
         {
             lock (__lock)
             {
@@ -85,8 +85,13 @@ namespace Lokad.Onnx
                     ToolName = toolname;
                     LogName = logname;
                     var fulllogfilename = LokadDevDir.CombinePath($"{ToolName}.{SessionId}.log");
-                    Logger = new FileLogger(fulllogfilename, false, LogName, logToConsole, colorConsole);
-                    Info("{0} initialized from entry assembly {1} with log file {2}...", ToolName, EntryAssembly?.GetName().FullName ?? "(none)", fulllogfilename); ;
+                    Logger = new FileLogger(fulllogfilename, debug, LogName, logToConsole, colorConsole);
+                    Info("{0} initialized from entry assembly {1} with log file {2}...", ToolName, EntryAssembly?.GetName().FullName ?? "(none)", fulllogfilename);
+                    if (debug)
+                    {
+                        DebugEnabled = true;
+                        Info("Debug mode enabled.");
+                    }
                 }
                 RuntimeInitialized = true;
             }

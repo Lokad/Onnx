@@ -41,13 +41,7 @@ class Program : Runtime
     #region Entry point
     static void Main(string[] args)
     {
-        Initialize("Lokad.Onnx.CLI", "APP", true, true);
-        if (args.Contains("--debug") || args.Contains("-d"))
-        {
-            DebugEnabled = true;
-            Logger.SetLogLevelDebug();
-            Info("Debug mode enabled.");
-        }
+        Initialize("Lokad.Onnx.CLI", "CLI", (args.Contains("--debug") || args.Contains("-d")), true, true);
         PrintLogo();
         var result = new Parser().ParseArguments<Options, InfoOptions>(args);
         result.WithNotParsed(errors =>
@@ -58,7 +52,7 @@ class Program : Runtime
                  if (errors.Any(e => e.Tag == ErrorType.VersionRequestedError))
                  {
                      help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
-                     help.Copyright = new CopyrightInfo("Allister Beharry", new int[] { 2021, 2022 });
+                     help.Copyright = new CopyrightInfo("Allister Beharry", new int[] { 2023 });
                      Info(help);
                      Exit(ExitResult.SUCCESS);
                  }
@@ -148,15 +142,14 @@ class Program : Runtime
             Con.Write(op + " ");
         }
         Con.WriteLine("");
-        Info("{d} total operations in model.", m.Graph.Node.Count);
+        Warn("{d} total operations in model.", m.Graph.Node.Count);
     }
     static void PrintLogo()
     {
-        Con.Write(new FigletText(font, "Lokad.Onnx").Color(Spectre.Console.Color.Magenta1));
+        Con.Write(new FigletText(font, "Lokad.Onnx").Color(Color.Magenta1));
         Con.Write(new Text($"v{AssemblyVersion.ToString(3)}\n"));
     }
 
-    
     public static void Exit(ExitResult result)
     {
         if (Cts != null && !Cts.Token.CanBeCanceled)
@@ -192,6 +185,7 @@ class Program : Runtime
         });
     }
     #endregion
+
     #region Event Handlers
     private static void Program_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
