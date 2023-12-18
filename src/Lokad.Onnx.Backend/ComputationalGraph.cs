@@ -12,7 +12,7 @@ public class WeightedDirectedGraph: Satsuma.AbstractGraph
         return new Satsuma.Node(_id);
     }
 }
-public class ComputationalGraph
+public class ComputationalGraph : Runtime
 {
     #region Fields
     public Dictionary<string, ITensor> Inputs = new Dictionary<string, ITensor>();
