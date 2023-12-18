@@ -3,7 +3,7 @@ using System.Xml.Schema;
 
 namespace Lokad.Onnx.Backend.Tests
 {
-    public class ParserTests
+    public class ParseTests
     {
         [Fact]
         public void Test1()

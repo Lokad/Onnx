@@ -127,7 +127,7 @@ namespace Lokad.Onnx
     #region NLog file logger
     public class FileLogger : Logger
     {
-        public FileLogger(string logFileName, bool debug = false, string logname = "DevEx", bool logToConsole = false) : base()
+        public FileLogger(string logFileName, bool debug = false, string logname = "Lokad.Onnx", bool logToConsole = false, bool colorConsole=false) : base()
         {
             this.logToConsole = logToConsole;
             var config = new LoggingConfiguration();
@@ -288,7 +288,7 @@ namespace Lokad.Onnx
     #region NLog console logger
     public class ConsoleLogger2 : Logger
     {
-        public ConsoleLogger2(bool debug = false, string logname = "BASE", bool logToConsole = false) : base()
+        public ConsoleLogger2(bool debug = false, string logname = "BASE", bool color=false) : base()
         {
             var config = new LoggingConfiguration();
           
@@ -307,6 +307,17 @@ namespace Lokad.Onnx
             config.AddRule(new LoggingRule("*", LogLevel.Fatal, logconsole));
             config.AddRule(new LoggingRule("*", LogLevel.Debug, logconsole));
             
+            if (color) 
+            {
+                logconsole.RowHighlightingRules.Add(
+                    new NLog.Targets.ConsoleRowHighlightingRule
+                    (
+                        NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Info"), 
+                        NLog.Targets.ConsoleOutputColor.Green, 
+                        NLog.Targets.ConsoleOutputColor.Black
+                    )
+                );
+            }
             /*
             var highlightRule = new NLog.Targets.ConsoleRowHighlightingRule();
             highlightRule.Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Info");

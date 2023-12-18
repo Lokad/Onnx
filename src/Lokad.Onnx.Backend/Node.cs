@@ -51,7 +51,7 @@ namespace Lokad.Onnx
     {
         public long ID;
         public string Name;
-        public string Description;
+        public Dictionary<string, object>? Attributes;
         public Satsuma.Node WeightedGraphNode;
         public OpType Op;
         public string[] Inputs;

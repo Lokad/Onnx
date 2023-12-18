@@ -71,7 +71,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region Methods
-        public static void Initialize(string toolname, string logname, bool logToConsole = false)
+        public static void Initialize(string toolname, string logname, bool logToConsole = false, bool colorConsole=false)
         {
             lock (__lock)
             {

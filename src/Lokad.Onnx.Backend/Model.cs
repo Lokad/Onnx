@@ -28,8 +28,9 @@ namespace Lokad.Onnx.Backend
             graph.MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value);
             graph.Attributes["DocString"] = mp.DocString;
             graph.Attributes["Domain"] = mp.Domain;
-            graph.Inputs = mp.Graph.Input.Select(vp => vp.ToTensor()).ToArray();
-            graph.Outputs = mp.Graph.Output.Select(vp => vp.ToTensor()).ToArray();
+            graph.Inputs = mp.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
+            graph.Outputs = mp.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
+            graph.Nodes = mp.Graph.Node.Select(n => n.ToNode()).ToList();
             return graph;
         }
     }

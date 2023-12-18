@@ -15,9 +15,9 @@ public class WeightedDirectedGraph: Satsuma.AbstractGraph
 public class ComputationalGraph
 {
     #region Fields
-    public ITensor[] Inputs = {};
+    public Dictionary<string, ITensor> Inputs = new Dictionary<string, ITensor>();
 
-    public ITensor[] Outputs = {};
+    public Dictionary<string, ITensor> Outputs = new Dictionary<string, ITensor>();
 
     public List<Node> Nodes { get; set; } = new List<Node>();
     
