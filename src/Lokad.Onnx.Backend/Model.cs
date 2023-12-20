@@ -44,7 +44,7 @@ namespace Lokad.Onnx.Backend
             }
             op2.Complete();
             graph.Outputs = mp.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
-            var op4 = Begin($"Converting {mp.Graph.Node.Count} model protobuf nodes to graph nodes");
+            var op4 = Begin($"Converting {mp.Graph.Node.Count} model node protos to graph nodes");
             graph.Nodes = mp.Graph.Node.Select(n => n.ToNode(graph)).ToList();
             op4.Complete();
             op.Complete();

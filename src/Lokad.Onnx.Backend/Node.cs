@@ -5,12 +5,6 @@ using System.Linq;
 
 namespace Lokad.Onnx.Backend
 {
-    public enum OpType
-    {
-        Squeeze,
-        MatAdd
-    }
-    
     public enum OpStatus
     {
         Success,
@@ -29,7 +23,6 @@ namespace Lokad.Onnx.Backend
         {  
            Op = op; 
            Status = status; 
-
         }  
 
         public static OpResult NotSupported(OpType op) => 
@@ -69,5 +62,6 @@ namespace Lokad.Onnx.Backend
             OpType.Squeeze => CPUExecutionProvider.Squeeze(graph.GetTensor(Inputs[0]), Attr<ITensor>("axes")),
             _ => throw new NotSupportedException(),
         };
+        
     }
 }

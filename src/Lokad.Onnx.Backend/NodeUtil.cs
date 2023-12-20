@@ -25,13 +25,14 @@ namespace Lokad.Onnx.Backend
 
         public static Node ToNode(this NodeProto np, ComputationalGraph graph)
         {
-            Runtime.Debug($"Converting nodeproto {np.Name} with inputs {np.Input} and outputs {np.Output} and attributes [{np.Attribute.Select(a => a.Name).JoinWithSpaces()}] to graph node.");
+            Runtime.Debug($"Converting model node proto {np.Name} with op type {np.OpType} and inputs {np.Input} and outputs {np.Output} and attributes [{np.Attribute.Select(a => a.Name).JoinWithSpaces()}] to graph node.");
             var node = new Node()
             {
                 Name = np.Name,
                 ID = np.Name.GetHashCode(),
                 WeightedGraphNode = new Satsuma.Node(np.Name.GetHashCode()),
                 Attributes = np.Attribute.ToDictionary(k => k.Name, v => v.Value()),
+                Op = (OpType) Enum.Parse(typeof(OpType), np.OpType),
                 Inputs = np.Input.ToArray(),
                 Outputs = np.Output.ToArray()
             };
