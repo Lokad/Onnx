@@ -111,13 +111,20 @@ class Program : Runtime
             .WithParsed<InfoOptions>(io =>
             {
                 ExitIfFileNotFound(io.File);
-                if (io.Ops)
-                {
-                    PrintModelOps(io.File);
-                }
+                PrintModelInfo(io.File);
+                //if (io.Ops)
+                //{
+                    //PrintModelOps(io.File);
+                //}
             });
     }
     #endregion
+
+    static void PrintModelInfo(string file)
+    {
+        ExitIfFileNotFound(file);
+        var graph = Model.LoadFromFile(file);
+    }
 
     static void PrintModelOps(string file)
     {

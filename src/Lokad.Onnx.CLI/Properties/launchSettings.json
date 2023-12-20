@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "WSL": {
-      "commandName": "WSL2",
-      "distributionName": ""
+    "Model Info": {
+      "commandName": "Project",
+      "commandLineArgs": "info \"C:\\Projects\\Lokad.Onnx\\test\\Lokad.Onnx.Backend.Tests\\models\\mnist-8.onnx\" --debug"
     }
   }
 }

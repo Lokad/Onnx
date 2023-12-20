@@ -38,8 +38,10 @@ public class ComputationalGraph : Runtime
         return node;
     }
 
-    public ITensor[] GetInputs(string[] inputs) => inputs.Select(i => this.Inputs[i]).ToArray();
+   
+    public ITensor GetTensor(string name) => this.Inputs.ContainsKey(name)? this.Inputs[name] : this.Outputs[name];
+    
+    public ITensor[] GetTensors(string[] names) => names.Select(n => this.GetTensor(n)).ToArray();
 
-    public ITensor[] GetOutputs(string[] outputs) => outputs.Select(i => this.Outputs[i]).ToArray();
     #endregion
 }

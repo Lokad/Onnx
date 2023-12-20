@@ -53,20 +53,20 @@ namespace Lokad.Onnx.Backend
         public Dictionary<string, object>? Attributes;
         public Satsuma.Node WeightedGraphNode;
         public OpType Op;
-        public ITensor[] Inputs;
-        public ITensor[] Outputs;
+        public string[] Inputs;
+        public string[] Outputs;
 
         public T? Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) ? (T)Attributes[name] : default(T);
         
-        public OpResult Run(ExecutionProvider provider = ExecutionProvider.CPU) => provider switch
+        public OpResult Run(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU) => provider switch
         {
-            ExecutionProvider.CPU => RunCPU(),
+            ExecutionProvider.CPU => RunCPU(graph),
             _ => throw new NotSupportedException(),
         };
 
-        public OpResult RunCPU() => Op switch
+        public OpResult RunCPU(ComputationalGraph graph) => Op switch
         {
-            OpType.Squeeze => CPUExecutionProvider.Squeeze(Inputs[0], Attr<ITensor>("axes")),
+            OpType.Squeeze => CPUExecutionProvider.Squeeze(graph.GetTensor(Inputs[0]), Attr<ITensor>("axes")),
             _ => throw new NotSupportedException(),
         };
     }

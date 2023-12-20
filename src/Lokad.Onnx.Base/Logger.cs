@@ -145,76 +145,9 @@ namespace Lokad.Onnx
                 config.Variables["logLevel"] = "Debug";
                 config.AddRule(new LoggingRule("*", LogLevel.Debug, logfile));
             }
-           
             if (logToConsole || (Runtime.EntryAssembly?.FullName.StartsWith("OmniSharp") ?? false))
             {
-                var logconsole = new NLog.Targets.ColoredConsoleTarget("logconsole")
-                {
-                    Layout = debug ? NLogDebugLayout : NLogLayout,
-                };
-                config.AddTarget(logconsole);
-                config.AddRule(new LoggingRule("*", LogLevel.Info, logconsole));
-                config.AddRule(new LoggingRule("*", LogLevel.Warn, logconsole));
-                config.AddRule(new LoggingRule("*", LogLevel.Error, logconsole));
-                config.AddRule(new LoggingRule("*", LogLevel.Fatal, logconsole));
-                if (debug)
-                {
-                    config.AddRule(new LoggingRule("*", LogLevel.Debug, logconsole));
-                }
-                if (colorConsole)
-                {
-                    logconsole.RowHighlightingRules.Add(new NLog.Targets.ConsoleRowHighlightingRule() { ForegroundColor = NLog.Targets.ConsoleOutputColor.Gray });
-                 
-                    logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-                    {
-                        Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Info"),
-                        Regex = "INFO",
-                        WholeWords = true,
-                        CompileRegex = true,
-                        ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                        BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkGreen
-                    });
-                    
-                    logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-                    {
-                        Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Warn"),
-                        Regex = "WARN",
-                        WholeWords = true,
-                        CompileRegex = true,
-                        ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                        BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkYellow
-                    });
-
-                    logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-                    {
-                        Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Error"),
-                        Regex = "ERROR",
-                        WholeWords = true,
-                        CompileRegex = true,
-                        ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                        BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkRed
-                    });
-
-                    logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-                    {
-                        Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Fatal"),
-                        Regex = "FATAL",
-                        WholeWords = true,
-                        CompileRegex = true,
-                        ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                        BackgroundColor = NLog.Targets.ConsoleOutputColor.Red
-                    });
-
-                    logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-                    {
-                        Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Debug"),
-                        Regex = "DEBUG",
-                        WholeWords = true,
-                        CompileRegex = true,
-                        ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                        BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkBlue
-                    });
-                }
+                ConsoleLogger2.ConfigureConsoleLogger(config, debug, colorConsole);
             }
             LogManager.Configuration = config;
             this.logFileName = logFileName;
@@ -338,40 +271,11 @@ namespace Lokad.Onnx
         public ConsoleLogger2(bool debug = false, string logname = "BASE", bool color=false) : base()
         {
             var config = new LoggingConfiguration();
-          
             if (debug)
             {
                 config.Variables["logLevel"] = "Debug";
             }
-            var logconsole = new NLog.Targets.ColoredConsoleTarget("logconsole")
-            {
-                Layout = debug ? NLogDebugLayout : NLogLayout
-            };
-            config.AddTarget(logconsole);
-            config.AddRule(new LoggingRule("*", LogLevel.Info, logconsole));
-            config.AddRule(new LoggingRule("*", LogLevel.Warn, logconsole));
-            config.AddRule(new LoggingRule("*", LogLevel.Error, logconsole));
-            config.AddRule(new LoggingRule("*", LogLevel.Fatal, logconsole));
-            config.AddRule(new LoggingRule("*", LogLevel.Debug, logconsole));
-            
-            if (color) 
-            {
-                logconsole.RowHighlightingRules.Add(
-                    new NLog.Targets.ConsoleRowHighlightingRule
-                    (
-                        NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Info"), 
-                        NLog.Targets.ConsoleOutputColor.Green, 
-                        NLog.Targets.ConsoleOutputColor.Black
-                    )
-                );
-            }
-            /*
-            var highlightRule = new NLog.Targets.ConsoleRowHighlightingRule();
-            highlightRule.Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Info");
-            highlightRule.ForegroundColor = NLog.Targets.ConsoleOutputColor.Green;
-            logconsole.RowHighlightingRules.Add(highlightRule);
-            */
-
+            ConfigureConsoleLogger(config, debug, color);
             LogManager.Configuration = config;
             this.logger = LogManager.GetLogger(logname);
         }
@@ -410,6 +314,90 @@ namespace Lokad.Onnx
         {
             var ev = LogEventInfo.Create(LogLevel.Info, "none", this.logger.Factory.DefaultCultureInfo, messageTemplate, args);
             return ev.FormattedMessage;
+        }
+
+        public static void ConfigureConsoleLogger(LoggingConfiguration config, bool debug, bool color)
+        {
+            var logconsole = new NLog.Targets.ColoredConsoleTarget("logconsole")
+            {
+                Layout = debug ? NLogDebugLayout : NLogLayout,
+            };
+            config.AddTarget(logconsole);
+            config.AddRule(new LoggingRule("*", LogLevel.Info, logconsole));
+            config.AddRule(new LoggingRule("*", LogLevel.Warn, logconsole));
+            config.AddRule(new LoggingRule("*", LogLevel.Error, logconsole));
+            config.AddRule(new LoggingRule("*", LogLevel.Fatal, logconsole));
+            if (debug)
+            {
+                config.AddRule(new LoggingRule("*", LogLevel.Debug, logconsole));
+            }
+            if (color)
+            {
+                logconsole.RowHighlightingRules.Add(new NLog.Targets.ConsoleRowHighlightingRule() { ForegroundColor = NLog.Targets.ConsoleOutputColor.Gray });
+
+                logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                {
+                    Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Info"),
+                    Regex = "INFO",
+                    WholeWords = true,
+                    CompileRegex = true,
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
+                    BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkGreen
+                });
+
+                logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                {
+                    Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Warn"),
+                    Regex = "WARN",
+                    WholeWords = true,
+                    CompileRegex = true,
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
+                    BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkYellow
+                });
+
+                logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                {
+                    Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Error"),
+                    Regex = "ERROR",
+                    WholeWords = true,
+                    CompileRegex = true,
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
+                    BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkRed
+                });
+
+                logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                {
+                    Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Fatal"),
+                    Regex = "FATAL",
+                    WholeWords = true,
+                    CompileRegex = true,
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
+                    BackgroundColor = NLog.Targets.ConsoleOutputColor.Red
+                });
+
+                logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                {
+                    Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Debug"),
+                    Regex = "DEBUG",
+                    WholeWords = true,
+                    CompileRegex = true,
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
+                    BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkBlue
+                });
+
+                logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                {
+                    Regex = "\\\"\\S+\\\"",                  
+                    CompileRegex = true,
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.Red
+                });
+                logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                {
+                    Regex = "\\{.+\\}",
+                    CompileRegex = true,
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.Magenta
+                });
+            }
         }
         #endregion
 

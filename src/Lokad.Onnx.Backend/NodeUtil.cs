@@ -17,18 +17,36 @@ namespace Lokad.Onnx.Backend
                 case AttributeProto.Types.AttributeType.Float: return ap.F;
                 case AttributeProto.Types.AttributeType.Floats: return ap.Floats.ToArray();
                 case AttributeProto.Types.AttributeType.Tensor: return ap.T.ToTensor();
+                case AttributeProto.Types.AttributeType.String: return ap.S;
+                case AttributeProto.Types.AttributeType.Strings: return ap.Strings.ToArray();
                 default: throw new NotSupportedException($"Cannot convert attribute value of type {ap.Type}.");
             }
         }
+
         public static Node ToNode(this NodeProto np, ComputationalGraph graph)
         {
-            return new Node()
+            Runtime.Debug($"Converting nodeproto {np.Name} with inputs {np.Input} and outputs {np.Output} and attributes [{np.Attribute.Select(a => a.Name).JoinWithSpaces()}] to graph node.");
+            var node = new Node()
             {
                 Name = np.Name,
+                ID = np.Name.GetHashCode(),
+                WeightedGraphNode = new Satsuma.Node(np.Name.GetHashCode()),
                 Attributes = np.Attribute.ToDictionary(k => k.Name, v => v.Value()),
-                Inputs = graph.GetInputs(np.Input.ToArray()),
-                Outputs = graph.GetOutputs(np.Output.ToArray())
+                Inputs = np.Input.ToArray(),
+                Outputs = np.Output.ToArray()
             };
+            graph.WeightedDirectedGraph.AddNode(node.Name);
+            foreach (var n in graph.Nodes)
+            {
+                foreach(var o in n.Outputs)
+                {
+                    if (node.Inputs.Contains(o))
+                    {
+                        graph.WeightedDirectedGraph.AddArc(n.WeightedGraphNode, node.WeightedGraphNode, Satsuma.Directedness.Directed);
+                    }
+                }
+            }
+            return node;   
         }
     }
 }
