@@ -9,7 +9,7 @@ namespace Lokad.Onnx.Backend.Tests
         public void CanLoadFrom()
         {
             var g = Model.LoadFromFile("models\\mnist-8.onnx");
-            Assert.Equal(1, g.Inputs.Length);
+            Assert.Equal(1, g.Inputs.Count);
         }
     }
 }

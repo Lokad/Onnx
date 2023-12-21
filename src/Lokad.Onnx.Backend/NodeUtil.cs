@@ -19,7 +19,7 @@ namespace Lokad.Onnx.Backend
                 case AttributeProto.Types.AttributeType.Tensor: return ap.T.ToTensor();
                 case AttributeProto.Types.AttributeType.String: return ap.S;
                 case AttributeProto.Types.AttributeType.Strings: return ap.Strings.ToArray();
-                default: throw new NotSupportedException($"Cannot convert attribute value of type {ap.Type}.");
+                default: throw new NotSupportedException($"Cannot convert attribute proto value of type {ap.Type}.");
             }
         }
 
@@ -44,6 +44,7 @@ namespace Lokad.Onnx.Backend
                     if (node.Inputs.Contains(o))
                     {
                         graph.WeightedDirectedGraph.AddArc(n.WeightedGraphNode, node.WeightedGraphNode, Satsuma.Directedness.Directed);
+                        Runtime.Debug("Node {dest} has predecessor {src}.", node.Name, n.Name);
                     }
                 }
             }

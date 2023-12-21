@@ -70,10 +70,13 @@ namespace Lokad.Onnx
 
         public static ITensor ToTensor(this ValueInfoProto vp)
         {
-           
+            if (vp.Type.ValueCase != TypeProto.ValueOneofCase.TensorType)
+            {
+                throw new ArgumentException($"The value info {vp.Name} is not a tensor type.");
+            }
+
             switch ((TensorElementType) vp.Type.TensorType.ElemType)
             {
-                
                 case TensorElementType.Bool: return new DenseTensor<bool>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
                 case TensorElementType.Int8: return new DenseTensor<sbyte>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
                 case TensorElementType.UInt8: return new DenseTensor<byte>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
@@ -89,7 +92,7 @@ namespace Lokad.Onnx
                 case TensorElementType.BFloat16: return new DenseTensor<BFloat16>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
                 case TensorElementType.Complex64: return new DenseTensor<Complex>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
                 case TensorElementType.String: return new DenseTensor<string>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                default: throw new ArgumentException($"Cannot convert tensor proto of element type {vp.Type.TensorType.ElemType}.");
+                default: throw new ArgumentException($"Cannot convert value info proto of element type {vp.Type.TensorType.ElemType}.");
             }
         }
         public static string TensorNameDesc(this ValueInfoProto vp) => $"{vp.Name}:{(TensorElementType) vp.Type.TensorType.ElemType}:{vp.Type.TensorType.Shape.Dim.Select(d => d.DimValue.ToString()).JoinWith("x")}";
