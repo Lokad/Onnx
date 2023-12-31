@@ -110,7 +110,7 @@ public class CPUExecutionProvider
                 return OpResult.Failure(OpType.Broadcast, $"Trying to broadcast incompatible shapes: {inA.Dimensions.ToArray()} and {inB.Dimensions.ToArray()}");
             }
         }
-        return OpResult.Success(OpType.Broadcast, new[] { inA.Reshape_(newShapeA), inB.Reshape_(newShapeB) });
+        return OpResult.Success(OpType.Broadcast, new[] { new DenseTensor<T>(newShapeA), new DenseTensor<T>(newShapeB) });
     }
 }
 

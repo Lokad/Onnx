@@ -41,7 +41,7 @@ namespace Lokad.Onnx.Backend
            new OpResult(op, OpStatus.Failure) { Message = message };
 
         public static OpResult Success(OpType op, ITensor[]? output = null, string? message = null) =>
-           new OpResult(op, OpStatus.Failure) { Output=output, Message = message };
+           new OpResult(op, OpStatus.Success) { Output=output, Message = message };
         #endregion
     }
 
