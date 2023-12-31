@@ -23,25 +23,14 @@ public class ComputationalGraph : Runtime
     
     public WeightedDirectedGraph WeightedDirectedGraph { get; } =  new WeightedDirectedGraph();
     
-    public Dictionary<string, object> Props = new Dictionary<string, object>();
+    public Dictionary<string, object> Metadata = new Dictionary<string, object>();
 
     public Dictionary<string, string> MetadataProps = new Dictionary<string, string>();
     #endregion
 
     #region Methods
-    public Node AddNode(string name)
-    {
-        Node node = new Node()
-        {
-            Name = name,
-        };
-        return node;
-    }
-
-   
     public ITensor GetTensor(string name) => Inputs.ContainsKey(name)? Inputs[name] : Outputs[name];
     
     public ITensor[] GetTensors(string[] names) => names.Select(n => GetTensor(n)).ToArray();
-
     #endregion
 }

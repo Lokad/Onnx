@@ -12,3 +12,5 @@ from Lokad.Onnx.Interop import Device
 b = Device("CPU")
 
 print (b.type)
+
+

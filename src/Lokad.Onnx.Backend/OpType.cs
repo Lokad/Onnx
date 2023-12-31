@@ -20,6 +20,7 @@ public enum OpType
     BitwiseNot,
     BitwiseOr,
     BitwiseXor,
+    Broadcast,
     Cast,
     Ceil,
     Col2Im,

@@ -29,10 +29,10 @@ namespace Lokad.Onnx.Backend
             var op = Begin("Creating computational graph from ONNX model file {file}", onnxInputFilePath);
             var graph = new ComputationalGraph();
             graph.MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value);
-            graph.Props["OpSet"] = mp.OpsetImport.Select(o => o.Domain + ":" + o.Version.ToString()).ToArray();
-            graph.Props["IrVersion"] = (OnnxSharp::Onnx.Version)mp.IrVersion;
-            graph.Props["DocString"] = mp.DocString;
-            graph.Props["Domain"] = mp.Domain;
+            graph.Metadata["OpSet"] = mp.OpsetImport.Select(o => o.Domain + ":" + o.Version.ToString()).ToArray();
+            graph.Metadata["IrVersion"] = (OnnxSharp::Onnx.Version) mp.IrVersion;
+            graph.Metadata["DocString"] = mp.DocString;
+            graph.Metadata["Domain"] = mp.Domain;
             var op2 = Begin($"Converting {mp.Graph.Input.Count} model input tensor protos: {{{mp.Graph.Input.Select(i => i.TensorNameDesc()).JoinWith(", ")}}} to graph tensors");
             graph.Inputs = mp.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
             foreach (var i in mp.Graph.Initializer)
@@ -40,6 +40,10 @@ namespace Lokad.Onnx.Backend
                 if (graph.Inputs.ContainsKey(i.Name))
                 {
                     graph.Inputs[i.Name] = i.ToTensor();
+                }
+                else
+                {
+                    Error("The tensor initializer {t} does not match any graph input.", i.Name);
                 }
             }
             op2.Complete();

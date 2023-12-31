@@ -111,11 +111,14 @@ class Program : Runtime
             .WithParsed<InfoOptions>(io =>
             {
                 ExitIfFileNotFound(io.File);
-                PrintModelInfo(io.File);
-                //if (io.Ops)
-                //{
-                    //PrintModelOps(io.File);
-                //}
+                if (io.Ops)
+                {
+                    PrintModelOps(io.File);
+                }
+                else
+                {
+                    PrintModelInfo(io.File);
+                }
             });
     }
     #endregion
@@ -134,6 +137,7 @@ class Program : Runtime
         {
             Error("Could not parse file {f} as ONNX model.", file);
             Exit(ExitResult.UNKNOWN_ERROR);
+            return;
         }
         List<string> ops = new List<string>();
         foreach(var node in m.Graph.Node)

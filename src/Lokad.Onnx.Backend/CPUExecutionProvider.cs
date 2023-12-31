@@ -1,5 +1,7 @@
 ﻿namespace Lokad.Onnx.Backend;
 
+extern alias OnnxSharp;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ public enum ExecutionProvider
 {
     CPU
 }
-    
+
 public class CPUExecutionProvider
 {
     public static OpResult Squeeze(ITensor input, ITensor? axes = null)
@@ -46,20 +48,69 @@ public class CPUExecutionProvider
         }
     }
 
-    public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes=null)
+    public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes = null)
     {
         long[] dims = (axes is not null) ? axes.ToArray() : Enumerable.Range(0, input.Dimensions.Length - 1).Cast<long>().ToArray();
         List<int> squeezedDims = new List<int>();
-        for(int i = 0; i < dims.Length; i++) 
+        for (int i = 0; i < dims.Length; i++)
         {
-            var a = TensorUtil.HandleNegativeAxis((int) dims[i], input.Dimensions.Length);
+            var a = TensorUtil.HandleNegativeAxis((int)dims[i], input.Dimensions.Length);
             if (input.Dimensions[a] == 1)
             {
                 squeezedDims.Add(a);
             }
 
         }
-        return OpResult.Success(OpType.Squeeze, input.Reshape_(squeezedDims.ToArray()));
+        return OpResult.Success(OpType.Squeeze, new[] { input.Reshape_(squeezedDims.ToArray()) });
+    }
+
+    public static OpResult Broadcast<T>(Tensor<T> inA, Tensor<T> inB)
+    {
+        var broadcastRank = Math.Max(inA.Rank, inB.Rank);
+        var newShapeA = new int[broadcastRank];
+        var newShapeB = new int[broadcastRank];
+        var broadcastDimsA = new List<int>();
+        var broadcastDimsB = new List<int>();
+
+        for (var i = 0; i < broadcastRank; i++)
+        {
+            var idxA = i - broadcastRank + inA.Rank;
+            var idxB = i - broadcastRank + inB.Rank;
+            if (i < broadcastRank - inA.Rank)
+            {
+                newShapeA[i] = inB.Dimensions[idxB];
+                newShapeB[i] = inB.Dimensions[idxB];
+                broadcastDimsA.Add(i);
+            }
+            else if (i < broadcastRank - inB.Rank)
+            {
+                newShapeA[i] = inA.Dimensions[idxA];
+                newShapeB[i] = inA.Dimensions[idxA];
+                broadcastDimsB.Add(i);
+            }
+            else if (inA.Dimensions[idxA] == inB.Dimensions[idxB])
+            {
+                newShapeA[i] = inA.Dimensions[idxA];
+                newShapeB[i] = inB.Dimensions[idxB];
+            }
+            else if (inA.Dimensions[idxA] == 1)
+            {
+                newShapeA[i] = inB.Dimensions[idxB];
+                newShapeB[i] = inB.Dimensions[idxB];
+                broadcastDimsA.Add(i);
+            }
+            else if (inB.Dimensions[idxB] == 1)
+            {
+                newShapeA[i] = inA.Dimensions[idxA];
+                newShapeB[i] = inA.Dimensions[idxA];
+                broadcastDimsB.Add(i);
+            }
+            else
+            {
+                return OpResult.Failure(OpType.Broadcast, $"Trying to broadcast incompatible shapes: {inA.Dimensions.ToArray()} and {inB.Dimensions.ToArray()}");
+            }
+        }
+        return OpResult.Success(OpType.Broadcast, new[] { inA.Reshape_(newShapeA), inB.Reshape_(newShapeB) });
     }
 }
 

@@ -13,18 +13,23 @@ namespace Lokad.Onnx.Backend
 
     public struct OpResult
     {
+        #region Fields
         public OpType Op;
         public OpStatus Status;
         public string? Message = null;
         ITensor[] Inputs = {};
-        ITensor? Output = null;
+        ITensor[]? Output = null;
+        #endregion
 
+        #region Constructors
         public OpResult(OpType op, OpStatus status)
         {  
            Op = op; 
            Status = status; 
-        }  
+        }
+        #endregion
 
+        #region Methods
         public static OpResult NotSupported(OpType op) => 
             new OpResult(op, OpStatus.Failure) { Message = $"The operation {op} is not supported." };
 
@@ -35,8 +40,9 @@ namespace Lokad.Onnx.Backend
         public static OpResult Failure(OpType op, string message) =>
            new OpResult(op, OpStatus.Failure) { Message = message };
 
-        public static OpResult Success(OpType op, ITensor output, string? message = null) =>
+        public static OpResult Success(OpType op, ITensor[]? output = null, string? message = null) =>
            new OpResult(op, OpStatus.Failure) { Output=output, Message = message };
+        #endregion
     }
 
     public struct Node
