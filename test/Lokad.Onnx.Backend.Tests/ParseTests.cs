@@ -6,7 +6,7 @@ namespace Lokad.Onnx.Backend.Tests
     public class ParseTests
     {
         [Fact]
-        public void Test1()
+        public void CanParseFile()
         {
             var m = Model.Parse("models\\mnist-8.onnx");
             Assert.NotNull(m);

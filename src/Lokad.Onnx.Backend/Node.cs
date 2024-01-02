@@ -17,8 +17,8 @@ namespace Lokad.Onnx.Backend
         public OpType Op;
         public OpStatus Status;
         public string? Message = null;
-        ITensor[] Inputs = {};
-        ITensor[]? Output = null;
+        public ITensor[] Inputs = {};
+        public ITensor[]? Outputs = null;
         #endregion
 
         #region Constructors
@@ -41,7 +41,7 @@ namespace Lokad.Onnx.Backend
            new OpResult(op, OpStatus.Failure) { Message = message };
 
         public static OpResult Success(OpType op, ITensor[]? output = null, string? message = null) =>
-           new OpResult(op, OpStatus.Success) { Output=output, Message = message };
+           new OpResult(op, OpStatus.Success) { Outputs=output, Message = message };
         #endregion
     }
 
