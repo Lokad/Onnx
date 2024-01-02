@@ -5,7 +5,7 @@ extern alias OnnxSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Runtime.InteropServices;
 
 public enum ExecutionProvider
 {
@@ -64,7 +64,7 @@ public class CPUExecutionProvider
         return OpResult.Success(OpType.Squeeze, new[] { input.Reshape_(squeezedDims.ToArray()) });
     }
 
-    public static OpResult Broadcast<T>(Tensor<T> inA, Tensor<T> inB)
+    public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB)
     {
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
         var newShapeA = new int[broadcastRank];
@@ -72,45 +72,49 @@ public class CPUExecutionProvider
         var broadcastDimsA = new List<int>();
         var broadcastDimsB = new List<int>();
 
+        var outA = inA.ToBroadcastedTensor();
+        var outB = inB.ToBroadcastedTensor();
         for (var i = 0; i < broadcastRank; i++)
         {
             var idxA = i - broadcastRank + inA.Rank;
             var idxB = i - broadcastRank + inB.Rank;
             if (i < broadcastRank - inA.Rank)
             {
-                newShapeA[i] = inB.Dimensions[idxB];
-                newShapeB[i] = inB.Dimensions[idxB];
-                broadcastDimsA.Add(i);
+                //newShapeA[i] = inB.Dimensions[idxB];
+                //newShapeB[i] = inB.Dimensions[idxB];
+                outA = outA.PadLeft();
+                outA = outA.BroadcastDim(i, inB.Dimensions[idxB]);
             }
             else if (i < broadcastRank - inB.Rank)
             {
-                newShapeA[i] = inA.Dimensions[idxA];
-                newShapeB[i] = inA.Dimensions[idxA];
-                broadcastDimsB.Add(i);
+                //newShapeA[i] = inA.Dimensions[idxA];
+                //newShapeB[i] = inA.Dimensions[idxA];
+                outB = outB.PadLeft();
+                outB.BroadcastDim(i, inA.Dimensions[idxA]);
             }
             else if (inA.Dimensions[idxA] == inB.Dimensions[idxB])
             {
-                newShapeA[i] = inA.Dimensions[idxA];
-                newShapeB[i] = inB.Dimensions[idxB];
+                //newShapeA[i] = inA.Dimensions[idxA];
+                //newShapeB[i] = inB.Dimensions[idxB];
             }
             else if (inA.Dimensions[idxA] == 1)
             {
-                newShapeA[i] = inB.Dimensions[idxB];
-                newShapeB[i] = inB.Dimensions[idxB];
-                broadcastDimsA.Add(i);
+                //newShapeA[i] = inB.Dimensions[idxB];
+                //newShapeB[i] = inB.Dimensions[idxB];
+                outA.BroadcastDim(i, inB.Dimensions[idxB]);
             }
             else if (inB.Dimensions[idxB] == 1)
             {
-                newShapeA[i] = inA.Dimensions[idxA];
-                newShapeB[i] = inA.Dimensions[idxA];
-                broadcastDimsB.Add(i);
+                //newShapeA[i] = inA.Dimensions[idxA];
+                //newShapeB[i] = inA.Dimensions[idxA];
+                outB.BroadcastDim(i, inB.Dimensions[idxA]);
             }
             else
             {
                 return OpResult.Failure(OpType.Broadcast, $"Trying to broadcast incompatible shapes: {inA.Dimensions.ToArray()} and {inB.Dimensions.ToArray()}");
             }
         }
-        return OpResult.Success(OpType.Broadcast, new[] { new DenseTensor<T>(newShapeA), new DenseTensor<T>(newShapeB) });
+        return OpResult.Success(OpType.Broadcast, new[] { inA, inB });
     }
 }
 

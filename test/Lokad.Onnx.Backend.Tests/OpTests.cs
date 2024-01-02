@@ -16,7 +16,6 @@
         {
             var a = new DenseTensor<int>(new[] { 256, 256, 3, });
             var b = new DenseTensor<int>(new[] { 3 });
-
             var r = CPUExecutionProvider.Broadcast(a, b);
             Assert.Equal(OpStatus.Success, r.Status);
         }

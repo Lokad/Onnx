@@ -13,6 +13,7 @@
 
 using System.Runtime.InteropServices;
 using System;
+using System.Linq;
 
 namespace Lokad.Onnx
 {
@@ -219,6 +220,34 @@ namespace Lokad.Onnx
             }
 
             return new DenseTensor<T>(Buffer, dimensions, IsReversedStride);
+        }
+
+        public BroadcastedTensor<T> ToBroadcastedTensor() => new BroadcastedTensor<T>(memory, dimensions, strides, IsReversedStride);
+
+        public static implicit operator BroadcastedTensor<T>(DenseTensor<T> t) => t.ToBroadcastedTensor();
+
+        public BroadcastedTensor<T> PadLeft() => new BroadcastedTensor<T>(Buffer, dimensions.Prepend(1).ToArray(), strides.Prepend(0).ToArray(), IsReversedStride);
+       
+        public BroadcastedTensor<T> BroadcastDim(int dim, int size)
+        {
+            if (dim >= Rank)
+            {
+                throw new ArgumentException($"The specified dimension {dim} exceeds the tensor rank.");
+            }
+            else if (dimensions[dim] != 1)
+            {
+                throw new ArgumentException($"Dimension {dim} must be of size 1 to broadcast.");
+            }
+            else
+            {
+                var dims = new int[Rank];
+                Array.Copy(dimensions, dims, Rank);
+                var bstrides = new int[Rank];
+                Array.Copy (strides, bstrides, Rank);
+                dims[dim] = size;
+                bstrides[dim] = 0;
+                return new BroadcastedTensor<T>(memory, dims, bstrides, IsReversedStride);
+            }
         }
     }
 }
