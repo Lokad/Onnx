@@ -92,7 +92,7 @@ public class CPUExecutionProvider
             }
             else if (inB.Dimensions[idxB] == 1)
             {
-                outB = outB.BroadcastDim(i, inB.Dimensions[idxA]);
+                outB = outB.BroadcastDim(i, inA.Dimensions[idxA]);
             }
             else
             {

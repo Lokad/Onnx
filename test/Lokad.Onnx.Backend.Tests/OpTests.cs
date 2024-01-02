@@ -29,6 +29,8 @@
             Assert.Equal(OpStatus.Success, r.Status);
             r = CPUExecutionProvider.Broadcast(a, new DenseTensor<int>(new[] { 1, 256, 3 }));
             Assert.Equal(OpStatus.Success, r.Status);
+            r = CPUExecutionProvider.Broadcast(a, new DenseTensor<int>(new[] { 256, 1 }));
+            Assert.Equal(OpStatus.Success, r.Status);
         }
     }
 }
