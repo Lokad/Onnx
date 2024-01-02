@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{91c2b1fc-37cf-46f8-9ac7-a5f920660d7c}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>interop.py</StartupFile>
+    <StartupFile>backend.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -22,7 +22,7 @@
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="interop.py" />
+    <Compile Include="backend.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|VisualStudio|lokadonnx" />
