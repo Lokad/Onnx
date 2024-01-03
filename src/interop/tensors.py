@@ -19,4 +19,6 @@ def make_tensor(dtype:np.dtype, *dims):
     return Tensors.MakeTensor[int](dimsa)
 
 def get_dims(t:ITensor) -> Array[int]:
-    return Tensors.GetDims(t) 
+    return Tensors.GetDims(t)
+
+def broadcast_dim( t:ITensor, dim:int, size:int): t.Broadcast(dim, size)

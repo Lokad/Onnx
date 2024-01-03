@@ -52,9 +52,9 @@ namespace Lokad.Onnx
         }
         #endregion
 
-        public BroadcastedTensor<T> PadLeft() => new BroadcastedTensor<T>(Buffer, dimensions.Prepend(1).ToArray(), strides.Prepend(0).ToArray(), IsReversedStride);
+        public override BroadcastedTensor<T> PadLeft() => new BroadcastedTensor<T>(Buffer, dimensions.Prepend(1).ToArray(), strides.Prepend(0).ToArray(), IsReversedStride);
 
-        public BroadcastedTensor<T> BroadcastDim(int dim, int size)
+        public override BroadcastedTensor<T> BroadcastDim(int dim, int size)
         {
             if (dim >= Rank)
             {

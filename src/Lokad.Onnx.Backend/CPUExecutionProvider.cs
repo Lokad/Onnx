@@ -61,7 +61,7 @@ public class CPUExecutionProvider
             }
 
         }
-        return OpResult.Success(OpType.Squeeze, new[] { input.Reshape_(squeezedDims.ToArray()) });
+        return OpResult.Success(OpType.Squeeze, new[] { input.Reshape(squeezedDims.ToArray()) });
     }
 
     public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB)

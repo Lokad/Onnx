@@ -922,6 +922,9 @@ namespace Lokad.Onnx
         public abstract void SetValue(int index, T value);
 
 
+        public abstract BroadcastedTensor<T> PadLeft();
+
+        public abstract BroadcastedTensor<T> BroadcastDim(int dim, int size);
         #region statics
         /// <summary>
         /// Performs a value comparison of the content and shape of two tensors.  Two tensors are equal if they have the same shape and same value at every set of indices.  If not equal a tensor is greater or less than another tensor based on the first non-equal element when enumerating in linear order.
@@ -1528,13 +1531,15 @@ namespace Lokad.Onnx
         }
 
         #region ITensor members
+        public string Name { get; set; } = "";
+
         public TensorElementType ElementType { get; } = GetTypeInfo(typeof(T)).ElementType;   
 
         public Type PrimitiveType { get; } = typeof(T);
 
-        public string Name { get; set; } = "";
+        public ITensor Reshape(int[] shape) => this.Reshape((ReadOnlySpan<int>)shape);
 
-        public ITensor Reshape_(ReadOnlySpan<int> dimensions) => this.Reshape(dimensions);
+        public ITensor Broadcast(int dim, int size) => this.BroadcastDim(dim, size);
         #endregion
     }
 }
