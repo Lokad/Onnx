@@ -5,8 +5,11 @@ import pytest
 
 from interop import tensors
 
-def test_tests():
-    t = tensors.make_tensor(np.int32)
-    #t = DenseTensor[int](3,6,9)
+def test_make_tensors():
+    t = tensors.make_tensor(np.int32, 4, 5, 6)
+    print(tensors.get_dims(t))
 
-test_tests()
+    d = tensors.get_dims(t)
+    assert d.Length == 3
+    assert d[0] == 4
+
