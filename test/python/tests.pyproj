@@ -5,7 +5,7 @@
     <ProjectGuid>a85c13c8-3263-4158-bacf-44baae8b240f</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>backend.py</StartupFile>
+    <StartupFile>test_backend.py</StartupFile>
     <SearchPath>..\..\src</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -22,7 +22,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="backend.py" />
+    <Compile Include="test_backend.py" />
+    <Compile Include="test_tensors.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|VisualStudio|lokadonnx" />

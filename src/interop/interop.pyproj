@@ -23,6 +23,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="backend.py" />
+    <Compile Include="tensors.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|VisualStudio|lokadonnx" />

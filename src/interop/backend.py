@@ -7,7 +7,7 @@ import clr
 load("coreclr")
 
 file_dir = os.path.dirname(os.path.realpath(__file__))
-clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Debug", "netstandard2.0", "Lokad.Onnx.Interop.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "netstandard2.0", "publish", "Lokad.Onnx.Interop.dll"))
 
 from Lokad.Onnx.Interop import Device
 
