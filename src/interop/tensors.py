@@ -14,11 +14,10 @@ from System import Array
 from Lokad.Onnx import ITensor
 from Lokad.Onnx.Interop import Tensors
 
-def make_tensor(dtype:np.dtype, *dims):
+def make_tensor(dt:np.dtype, *dims) -> ITensor:
     dimsa = Array[int](dims)
     return Tensors.MakeTensor[int](dimsa)
 
-def get_dims(t:ITensor) -> Array[int]:
-    return Tensors.GetDims(t)
+def get_dims(t:ITensor) -> Array[int]: return t.Dims
 
-def broadcast_dim( t:ITensor, dim:int, size:int): t.Broadcast(dim, size)
+def broadcast_dim( t:ITensor, dim:int, size:int) -> ITensor: return t.BroadcastDim(dim, size)

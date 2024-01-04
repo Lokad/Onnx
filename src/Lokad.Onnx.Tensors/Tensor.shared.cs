@@ -921,10 +921,11 @@ namespace Lokad.Onnx
         /// <param name="value">The new value to set at the specified position in this Tensor.</param>
         public abstract void SetValue(int index, T value);
 
-
         public abstract BroadcastedTensor<T> PadLeft();
 
         public abstract BroadcastedTensor<T> BroadcastDim(int dim, int size);
+
+        public abstract BroadcastedTensor<T> ToBroadcastedTensor();
         #region statics
         /// <summary>
         /// Performs a value comparison of the content and shape of two tensors.  Two tensors are equal if they have the same shape and same value at every set of indices.  If not equal a tensor is greater or less than another tensor based on the first non-equal element when enumerating in linear order.
@@ -1537,9 +1538,93 @@ namespace Lokad.Onnx
 
         public Type PrimitiveType { get; } = typeof(T);
 
-        public ITensor Reshape(int[] shape) => this.Reshape((ReadOnlySpan<int>)shape);
+        int[] ITensor.Dims => this.dimensions;
 
-        public ITensor Broadcast(int dim, int size) => this.BroadcastDim(dim, size);
+        ITensor ITensor.Reshape(int[] shape) => this.Reshape(shape);
+
+        ITensor ITensor.PadLeft() => this.PadLeft();
+
+        ITensor ITensor.BroadcastDim(int dim, int size) => this.BroadcastDim(dim, size);
+
+        ITensor ITensor.ToBroadcastedTensor() => this.ToBroadcastedTensor();
         #endregion
+
+        public static BroadcastedTensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
+        {
+            var broadcastRank = Math.Max(inA.Rank, inB.Rank);
+            var outA = inA.ToBroadcastedTensor();
+            var outB = inB.ToBroadcastedTensor();
+            for (var i = 0; i < broadcastRank; i++)
+            {
+                var idxA = i - broadcastRank + inA.Rank;
+                var idxB = i - broadcastRank + inB.Rank;
+                if (i < broadcastRank - inA.Rank)
+                {
+                    outA = outA.PadLeft();
+                    outA = outA.BroadcastDim(0, inB.Dimensions[idxB]);
+                }
+                else if (i < broadcastRank - inB.Rank)
+                {
+                    outB = outB.PadLeft();
+                    outB = outB.BroadcastDim(0, inA.Dimensions[idxA]);
+                }
+                else if (inA.Dimensions[idxA] == inB.Dimensions[idxB])
+                {
+                }
+                else if (inA.Dimensions[idxA] == 1)
+                {
+                    outA = outA.BroadcastDim(i, inB.Dimensions[idxB]);
+                }
+                else if (inB.Dimensions[idxB] == 1)
+                {
+                    outB = outB.BroadcastDim(i, inA.Dimensions[idxA]);
+                }
+                else
+                {
+                    return null;
+                    //return OpResult.Failure(OpType.Broadcast, $"Trying to broadcast incompatible shapes: {inA.Dimensions.ToArray()} and {inB.Dimensions.ToArray()}");
+                }
+            }
+            return new[] { outA, outB };
+        }
+
+        public static ITensor[] Broadcast(ITensor inA, ITensor inB)
+        {
+            var broadcastRank = Math.Max(inA.Rank, inB.Rank);
+            var outA = inA.ToBroadcastedTensor();
+            var outB = inB.ToBroadcastedTensor();
+            for (var i = 0; i < broadcastRank; i++)
+            {
+                var idxA = i - broadcastRank + inA.Rank;
+                var idxB = i - broadcastRank + inB.Rank;
+                if (i < broadcastRank - inA.Rank)
+                {
+                    outA = outA.PadLeft();
+                    outA = outA.BroadcastDim(0, inB.Dims[idxB]);
+                }
+                else if (i < broadcastRank - inB.Rank)
+                {
+                    outB = outB.PadLeft();
+                    outB = outB.BroadcastDim(0, inA.Dims[idxA]);
+                }
+                else if (inA.Dims[idxA] == inB.Dims[idxB])
+                {
+                }
+                else if (inA.Dims[idxA] == 1)
+                {
+                    outA = outA.BroadcastDim(i, inB.Dims[idxB]);
+                }
+                else if (inB.Dims[idxB] == 1)
+                {
+                    outB = outB.BroadcastDim(i, inA.Dims[idxA]);
+                }
+                else
+                {
+                    return null;
+                    //return OpResult.Failure(OpType.Broadcast, $"Trying to broadcast incompatible shapes: {inA.Dimensions.ToArray()} and {inB.Dimensions.ToArray()}");
+                }
+            }
+            return new[] { outA, outB };
+        }
     }
 }

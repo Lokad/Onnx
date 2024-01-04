@@ -52,6 +52,19 @@ namespace Lokad.Onnx
         }
         #endregion
 
+        public static BroadcastedTensor<T>[] PadSame(BroadcastedTensor<T> a, BroadcastedTensor<T> b)
+        {
+            if (a.Dimensions.Length < b.Dimensions.Length)
+            {
+                return PadSame(a.PadLeft(), b);
+            }
+            else if (b.Dimensions.Length < a.Dimensions.Length)
+            {
+                return PadSame(a, b.PadLeft());
+            }
+            else return new[] { a, b };
+        }
+
         public override BroadcastedTensor<T> PadLeft() => new BroadcastedTensor<T>(Buffer, dimensions.Prepend(1).ToArray(), strides.Prepend(0).ToArray(), IsReversedStride);
 
         public override BroadcastedTensor<T> BroadcastDim(int dim, int size)
@@ -72,18 +85,7 @@ namespace Lokad.Onnx
             }
         }
 
-        public static BroadcastedTensor<T>[] PadSame(BroadcastedTensor<T> a, BroadcastedTensor<T> b)
-        {
-            if (a.Dimensions.Length < b.Dimensions.Length)
-            {
-                return PadSame(a.PadLeft(), b);
-            }
-            else if (b.Dimensions.Length < a.Dimensions.Length)
-            {
-                return PadSame(a, b.PadLeft());
-            }
-            else return new[] { a, b };
-        }
+        public override BroadcastedTensor<T> ToBroadcastedTensor() => this;
         #endregion
 
         #region Fields

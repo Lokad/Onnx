@@ -16,10 +16,16 @@ namespace Lokad.Onnx
         
         Type PrimitiveType {get; }
         
-        ReadOnlySpan<int> Dimensions { get; }
+        int[] Dims { get; }
+
+        int Rank { get; }
 
         ITensor Reshape(int[] shape);
 
-        ITensor Broadcast(int dim, int size);
+        ITensor PadLeft();
+
+        ITensor BroadcastDim(int dim, int size);
+
+        ITensor ToBroadcastedTensor();
     }
 }

@@ -18,7 +18,7 @@ public class CPUExecutionProvider
     {
         if (axes is not null)
         {
-            if (axes.Dimensions.Length != 1)
+            if (axes.Dims.Length != 1)
             {
                 return OpResult.Failure(OpType.Squeeze, $"The axes tensor  {axes.Name} must have dimension 1.");
             }
