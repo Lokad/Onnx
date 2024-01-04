@@ -65,9 +65,8 @@ namespace Lokad.Onnx.Backend
 
         public OpResult RunCPU(ComputationalGraph graph) => Op switch
         {
-            OpType.Squeeze => CPUExecutionProvider.Squeeze(graph.GetTensor(Inputs[0]), Attr<ITensor>("axes")),
+            OpType.Squeeze => CPUExecutionProvider.Squeeze(graph.GetOpVersion(), graph.GetTensor(Inputs[0]), Attr<ITensor>("axes")),
             _ => throw new NotSupportedException(),
         };
-        
     }
 }

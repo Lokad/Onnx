@@ -28,8 +28,8 @@ namespace Lokad.Onnx.Backend
             }
             var op = Begin("Creating computational graph from ONNX model file {file}", onnxInputFilePath);
             var graph = new ComputationalGraph();
+            graph.Opset = mp.OpsetImport.Select(o => new Opset(o.Domain, Convert.ToInt32(o.Version))).ToArray();
             graph.MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value);
-            graph.Metadata["OpSet"] = mp.OpsetImport.Select(o => o.Domain + ":" + o.Version.ToString()).ToArray();
             graph.Metadata["IrVersion"] = (OnnxSharp::Onnx.Version) mp.IrVersion;
             graph.Metadata["DocString"] = mp.DocString;
             graph.Metadata["Domain"] = mp.Domain;

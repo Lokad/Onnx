@@ -142,9 +142,10 @@ class Program : Runtime
         List<string> ops = new List<string>();
         foreach(var node in m.Graph.Node)
         {
+            var op = Enum.Parse<OpType>(node.OpType);
             if (!ops.Contains(node.OpType))
             {
-                ops.Add(node.OpType);
+                ops.Add(node.OpType); 
             }
         }
         Info("Printing list of ONNX operations in model {f}...", file);

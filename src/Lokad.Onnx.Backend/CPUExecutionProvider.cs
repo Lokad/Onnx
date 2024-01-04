@@ -14,36 +14,45 @@ public enum ExecutionProvider
 
 public class CPUExecutionProvider
 {
-    public static OpResult Squeeze(ITensor input, ITensor? axes = null)
+    public static Dictionary<OpType, int[]> SupportedOps { get; } = new Dictionary<OpType, int[]>();
+    
+    public bool SupportsOp(OpType op, int version) => SupportedOps.ContainsKey(op) && SupportedOps[op].Any(v => v == version);
+    
+    public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
     {
+        Tensor<long>? _axes = null;
         if (axes is not null)
         {
             if (axes.Dims.Length != 1)
             {
                 return OpResult.Failure(OpType.Squeeze, $"The axes tensor  {axes.Name} must have dimension 1.");
             }
-            else if (axes.ElementType != TensorElementType.Int32)
+            else if (axes.ElementType != TensorElementType.Int64)
             {
                 return OpResult.WrongInputParameterType(OpType.Squeeze, TensorElementType.Int64, axes);
             }
+            else
+            {
+                _axes = (Tensor<long>)axes;
+            }
         }
-
+        
         switch (input.ElementType)
         {
-            case TensorElementType.Bool: return Squeeze((Tensor<bool>)input, axes);
-            case TensorElementType.Int8: return Squeeze((Tensor<byte>)input, axes);
-            case TensorElementType.UInt8: return Squeeze((Tensor<sbyte>)input, axes);
-            case TensorElementType.Int16: return Squeeze((Tensor<short>)input, axes);
-            case TensorElementType.UInt16: return Squeeze((Tensor<ushort>)input, axes);
-            case TensorElementType.Int32: return Squeeze((Tensor<int>)input, axes);
-            case TensorElementType.UInt32: return Squeeze((Tensor<uint>)input, axes);
-            case TensorElementType.Int64: return Squeeze((Tensor<long>)input, axes);
-            case TensorElementType.UInt64: return Squeeze((Tensor<ulong>)input, axes);
-            case TensorElementType.Float: return Squeeze((Tensor<float>)input, axes);
-            case TensorElementType.Double: return Squeeze((Tensor<double>)input, axes);
-            case TensorElementType.Float16: return Squeeze((Tensor<Float16>)input, axes);
-            case TensorElementType.BFloat16: return Squeeze((Tensor<BFloat16>)input, axes);
-            case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, axes);
+            case TensorElementType.Bool: return Squeeze((Tensor<bool>)input, _axes);
+            case TensorElementType.Int8: return Squeeze((Tensor<byte>)input, _axes);
+            case TensorElementType.UInt8: return Squeeze((Tensor<sbyte>)input, _axes);
+            case TensorElementType.Int16: return Squeeze((Tensor<short>)input, _axes);
+            case TensorElementType.UInt16: return Squeeze((Tensor<ushort>)input, _axes);
+            case TensorElementType.Int32: return Squeeze((Tensor<int>)input, _axes);
+            case TensorElementType.UInt32: return Squeeze((Tensor<uint>)input, _axes);
+            case TensorElementType.Int64: return Squeeze((Tensor<long>)input, _axes);
+            case TensorElementType.UInt64: return Squeeze((Tensor<ulong>)input, _axes);
+            case TensorElementType.Float: return Squeeze((Tensor<float>)input, _axes);
+            case TensorElementType.Double: return Squeeze((Tensor<double>)input, _axes);
+            case TensorElementType.Float16: return Squeeze((Tensor<Float16>)input, _axes);
+            case TensorElementType.BFloat16: return Squeeze((Tensor<BFloat16>)input, _axes);
+            case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, _axes);
             default: return OpResult.NotSupported(OpType.Squeeze);
         }
     }
