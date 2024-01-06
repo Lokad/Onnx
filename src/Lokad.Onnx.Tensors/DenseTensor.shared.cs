@@ -226,7 +226,13 @@ namespace Lokad.Onnx
 
         public static implicit operator BroadcastedTensor<T>(DenseTensor<T> t) => t.ToBroadcastedTensor();
 
-        public override BroadcastedTensor<T> PadLeft() => new BroadcastedTensor<T>(Buffer, dimensions.Prepend(1).ToArray(), strides.Prepend(0).ToArray(), IsReversedStride);
+        public override Tensor<T> InsertDim(int dim)
+        {
+            if (dim >= Rank) throw new IndexOutOfRangeException(nameof(dim));    
+            var dims = this.dimensions.ToList();
+            dims.Insert(dim, 1);
+            return this.Reshape(dims.ToArray());
+        }
 
         public override BroadcastedTensor<T> BroadcastDim(int dim, int size)
         {

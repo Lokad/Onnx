@@ -20,12 +20,18 @@ namespace Lokad.Onnx
 
         int Rank { get; }
 
+        ITensor Clone();
+
         ITensor Reshape(int[] shape);
 
+        ITensor InsertDim(int dim);
+        
         ITensor PadLeft();
 
         ITensor BroadcastDim(int dim, int size);
 
         ITensor ToBroadcastedTensor();
+
+        ITensor ToDenseTensor();
     }
 }

@@ -24,8 +24,8 @@ def test_broadcast_dim():
       assert set(d) == set(np.broadcast_shapes((4, 5, 6, 1), (4, 5, 6, 255)))
       #assert set(d) == set(np.broadcast_shapes((4, 5, 6, 1), (4, 5, 6, 254)))
       assert d[3] == 255
-      t = tensors.make_tensor(np.int32, 4, 5)
-      #ct = tensors.broadcast_dim()
+      t = tensors.make_tensor(np.int32, 4, 5, 1)
+      bct = tensors.broadcast_dim(t, )
     
       #assert d[3] == 255
 

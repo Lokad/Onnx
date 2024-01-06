@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -921,11 +922,16 @@ namespace Lokad.Onnx
         /// <param name="value">The new value to set at the specified position in this Tensor.</param>
         public abstract void SetValue(int index, T value);
 
-        public abstract BroadcastedTensor<T> PadLeft();
-
+        #region ITensor support
+        public abstract Tensor<T> InsertDim(int dim);
+        
         public abstract BroadcastedTensor<T> BroadcastDim(int dim, int size);
 
         public abstract BroadcastedTensor<T> ToBroadcastedTensor();
+
+        public BroadcastedTensor<T> PadLeft() => InsertDim(0).ToBroadcastedTensor();
+        #endregion
+
         #region statics
         /// <summary>
         /// Performs a value comparison of the content and shape of two tensors.  Two tensors are equal if they have the same shape and same value at every set of indices.  If not equal a tensor is greater or less than another tensor based on the first non-equal element when enumerating in linear order.
@@ -1540,15 +1546,20 @@ namespace Lokad.Onnx
 
         int[] ITensor.Dims => this.dimensions;
 
+        ITensor ITensor.Clone() => Clone();
+
         ITensor ITensor.Reshape(int[] shape) => this.Reshape(shape);
 
-        ITensor ITensor.PadLeft() => this.PadLeft();
+        ITensor ITensor.InsertDim(int dim) => this.InsertDim(dim);
+
+        ITensor ITensor.PadLeft() => this.InsertDim(0);
 
         ITensor ITensor.BroadcastDim(int dim, int size) => this.BroadcastDim(dim, size);
 
+        ITensor ITensor.ToDenseTensor() => this.ToDenseTensor();
+
         ITensor ITensor.ToBroadcastedTensor() => this.ToBroadcastedTensor();
         #endregion
-
         public static BroadcastedTensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
         {
             var broadcastRank = Math.Max(inA.Rank, inB.Rank);

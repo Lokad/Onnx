@@ -515,10 +515,12 @@ namespace Lokad.Onnx
             return sparseTensor;
         }
 
-        public override BroadcastedTensor<T> ToBroadcastedTensor() => this.ToDenseTensor().ToBroadcastedTensor();
-
-        public override BroadcastedTensor<T> PadLeft() => this.ToDenseTensor().PadLeft();
+        public override Tensor<T> InsertDim(int dim) => this.ToDenseTensor().InsertDim(dim);
 
         public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => this.ToDenseTensor().BroadcastDim(dim, size);
+
+        public override BroadcastedTensor<T> ToBroadcastedTensor() => this.ToDenseTensor().ToBroadcastedTensor();
+
+        
     }
 }
