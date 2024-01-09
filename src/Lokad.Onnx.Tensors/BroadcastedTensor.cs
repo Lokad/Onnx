@@ -36,16 +36,9 @@ namespace Lokad.Onnx
             memory.Span[idx] = value;
         }
 
-        public override Tensor<T> Clone()
-        {
-            // create copy
-            return new BroadcastedTensor<T>(new Memory<T>(Buffer.ToArray()), dimensions, broadcastedStrides, IsReversedStride);
-        }
-
-        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
-        {
-            throw new NotSupportedException();
-        }
+        public override Tensor<T> Clone() => new BroadcastedTensor<T>(new Memory<T>(Buffer.ToArray()), dimensions, broadcastedStrides, IsReversedStride);
+        
+        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions);  
 
         public override Tensor<T> Reshape(ReadOnlySpan<int> dims)
         {
@@ -53,20 +46,6 @@ namespace Lokad.Onnx
         }
         #endregion
 
-        public static BroadcastedTensor<T>[] PadSame(Tensor<T> a, Tensor<T> b)
-        {
-            if (a.Dimensions.Length < b.Dimensions.Length)
-            {
-                return PadSame(a.PadLeft(), b);
-            }
-            else if (b.Dimensions.Length < a.Dimensions.Length)
-            {
-                return PadSame(a, b.PadLeft());
-            }
-            else return new[] { a.ToBroadcastedTensor(), b.ToBroadcastedTensor() };
-        }
-
-        
         public override Tensor<T> InsertDim(int dim)
         {
             if (dim >= Rank) throw new IndexOutOfRangeException(nameof(dim));
@@ -96,6 +75,19 @@ namespace Lokad.Onnx
         }
 
         public override BroadcastedTensor<T> ToBroadcastedTensor() => this;
+
+        public static BroadcastedTensor<T>[] PadSame(Tensor<T> a, Tensor<T> b)
+        {
+            if (a.Dimensions.Length < b.Dimensions.Length)
+            {
+                return PadSame(a.PadLeft(), b);
+            }
+            else if (b.Dimensions.Length < a.Dimensions.Length)
+            {
+                return PadSame(a, b.PadLeft());
+            }
+            else return new[] { a.ToBroadcastedTensor(), b.ToBroadcastedTensor() };
+        }
         #endregion
 
         #region Fields

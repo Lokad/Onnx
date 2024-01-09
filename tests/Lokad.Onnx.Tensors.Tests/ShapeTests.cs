@@ -5,10 +5,9 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lokad.Onnx.Backend.Tests
+namespace Lokad.Onnx.Tensors.Tests
 {
-    [RequiresPreviewFeatures]
-    public class TensorTests
+    public class ShapeTests
     {
         [Fact]
         public void CanPadLeft()
@@ -20,7 +19,7 @@ namespace Lokad.Onnx.Backend.Tests
             b[2, 0] = 3;
             var pb = b.PadLeft();
             Assert.Equal(3, pb.Rank);
-            Assert.Equal(2, pb[1,0,1]);
+            Assert.Equal(2, pb[0,1,0]);
 
         }
 
