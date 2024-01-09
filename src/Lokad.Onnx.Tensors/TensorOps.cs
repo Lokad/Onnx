@@ -3,31 +3,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Runtime.Versioning;
-
-public interface IUnaryOperator<T> where T : struct
-{
-    static abstract T Invoke(T x);
-}
-
-public interface IBinaryOperator<T> where T : struct
-{
-    static abstract T Invoke(T x, T y);
-    //static abstract Vector<T> Invoke(Vector<T> x, Vector<T> y);
-}
-
-public interface ITernaryOperator<T> where T : struct
-{
-    static abstract T Invoke(T x, T y, T z);
-    //static abstract Vector<T> Invoke(Vector<T> x, Vector<T> y, Vector<T> z);
-}
-
-public readonly struct AddOperator<T> : IBinaryOperator<T>
-    where T : struct, IAdditionOperators<T, T, T>
-{
-    public static T Invoke(T x, T y) => x + y;
-}
 
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
 where T :  struct
@@ -71,7 +46,22 @@ where T :  struct
         return output;
     }
 
-    public Tensor<U> Add<U>(Tensor<U> x) where U : struct, IAdditionOperators<U, U, U> 
-        => x.Apply(AddOperator<U>.Invoke, x);
+    public static Tensor<U> Add<U>(Tensor<U> x, Tensor<U> y) where U : struct, IAdditionOperators<U, U, U> 
+        => x.Apply((l, r) => l + r, y);
+
+    public static Tensor<U> Subtract<U>(Tensor<U> x, Tensor<U> y) where U : struct, ISubtractionOperators<U, U, U>
+        => x.Apply((l, r) => l - r, y);
+
+    public static Tensor<U> Multiply<U>(Tensor<U> x, Tensor<U> y) where U : struct, IMultiplyOperators<U, U, U> 
+        => x.Apply((l, r) => l * r, y);
+
+    public static Tensor<U> Divide<U>(Tensor<U> x, Tensor<U> y) where U : struct, IDivisionOperators<U, U, U>
+        => x.Apply((l, r) => l / r, y);
+
+    public static Tensor<U> Negate<U>(Tensor<U> x) where U : struct, IUnaryNegationOperators<U, U>
+        => x.Apply(l => -l);
+
+    public static Tensor<U> Square<U>(Tensor<U> x) where U : struct, IMultiplyOperators<U, U, U>
+        => x.Apply(l => l * l);
 }
 

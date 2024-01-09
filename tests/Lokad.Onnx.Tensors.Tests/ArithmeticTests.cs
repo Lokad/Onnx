@@ -10,8 +10,9 @@ namespace Lokad.Onnx.Tensors.Tests
 
             a[0, 0, 1] = 1;
             b[0, 0, 1] = 1;
-            var c = a.Add(b);
+            var c = Tensor<int>.Add(a, b);
             Assert.Equal(2, c[0, 0, 1]);
+            Assert.Equal(0, c[0, 0, 0]);
         }
     }
 }
