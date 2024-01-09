@@ -3,13 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Lokad.Onnx.Backend
 {
-    [RequiresPreviewFeatures]
     public class Model : Runtime
     {
         public static ModelProto? Parse(string onnxInputFilePath)

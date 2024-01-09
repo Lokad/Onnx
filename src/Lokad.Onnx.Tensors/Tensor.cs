@@ -202,7 +202,6 @@ namespace Lokad.Onnx
     /// <summary>
     /// Various methods for creating and manipulating Tensor&lt;T&gt;
     /// </summary>
-    [RequiresPreviewFeatures]
     public static partial class Tensor
     {
         /// <summary>
@@ -330,7 +329,6 @@ namespace Lokad.Onnx
     /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
     [DebuggerDisplay("{GetArrayString(false)}")]
     // When we cross-compile for frameworks that expose ICloneable this must implement ICloneable as well.
-    [RequiresPreviewFeatures]
     public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
     where T :  struct
     {

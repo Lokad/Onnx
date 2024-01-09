@@ -3,9 +3,9 @@
 
 using System;
 using System.Runtime.Versioning;
+
 namespace Lokad.Onnx
 {
-    [RequiresPreviewFeatures]
     public static class ArrayTensorExtensions
     {
         /// <summary>

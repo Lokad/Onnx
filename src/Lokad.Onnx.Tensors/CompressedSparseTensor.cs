@@ -20,7 +20,6 @@ namespace Lokad.Onnx
     ///
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [RequiresPreviewFeatures]
     public class CompressedSparseTensor<T> : Tensor<T> where T :  struct
     {
         private Memory<T> values;

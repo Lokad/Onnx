@@ -5,7 +5,6 @@ using System.Runtime.Versioning;
 
 namespace Lokad.Onnx
 {
-    [RequiresPreviewFeatures]
     public class BroadcastedTensor<T> : Tensor<T> where T :  struct
     {
         #region Constructor

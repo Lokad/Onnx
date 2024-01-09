@@ -14,7 +14,7 @@ public class WeightedDirectedGraph: Satsuma.AbstractGraph
         return new Satsuma.Node(_id);
     }
 }
-[RequiresPreviewFeatures]
+
 public class ComputationalGraph : Runtime
 {
     #region Fields

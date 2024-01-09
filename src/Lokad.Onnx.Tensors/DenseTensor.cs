@@ -25,7 +25,6 @@ namespace Lokad.Onnx
     /// <typeparam name="T">
     /// Type contained within the Tensor. Typically a value type such as int, double, float, etc.
     /// </typeparam>
-    [RequiresPreviewFeatures]
     public class DenseTensor<T> : Tensor<T> where T :  struct
     {
         private readonly Memory<T> memory;

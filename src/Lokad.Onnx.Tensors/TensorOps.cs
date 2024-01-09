@@ -3,27 +3,30 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.Versioning;
 
-[RequiresPreviewFeatures]
 public interface IUnaryOperator<T> where T : struct
 {
     static abstract T Invoke(T x);
 }
 
-[RequiresPreviewFeatures]
 public interface IBinaryOperator<T> where T : struct
 {
     static abstract T Invoke(T x, T y);
-
     //static abstract Vector<T> Invoke(Vector<T> x, Vector<T> y);
 }
 
-[RequiresPreviewFeatures]
 public interface ITernaryOperator<T> where T : struct
 {
     static abstract T Invoke(T x, T y, T z);
     //static abstract Vector<T> Invoke(Vector<T> x, Vector<T> y, Vector<T> z);
+}
+
+public readonly struct AddOperator<T> : IBinaryOperator<T>
+    where T : struct, IAdditionOperators<T, T, T>
+{
+    public static T Invoke(T x, T y) => x + y;
 }
 
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor

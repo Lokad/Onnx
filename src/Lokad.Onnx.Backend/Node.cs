@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Versioning;
 
 namespace Lokad.Onnx.Backend
 {
@@ -46,7 +45,6 @@ namespace Lokad.Onnx.Backend
         #endregion
     }
 
-    [RequiresPreviewFeatures]
     public struct Node
     {
         public long ID;
