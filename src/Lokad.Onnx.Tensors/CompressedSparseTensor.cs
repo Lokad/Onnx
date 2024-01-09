@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Versioning;
 
 namespace Lokad.Onnx
 {
@@ -19,7 +20,8 @@ namespace Lokad.Onnx
     ///
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CompressedSparseTensor<T> : Tensor<T>
+    [RequiresPreviewFeatures]
+    public class CompressedSparseTensor<T> : Tensor<T> where T :  struct
     {
         private Memory<T> values;
         private readonly Memory<int> compressedCounts;

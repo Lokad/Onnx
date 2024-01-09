@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 
 namespace Lokad.Onnx
 {
@@ -10,7 +11,8 @@ namespace Lokad.Onnx
     /// Represents a multi-dimensional collection of objects of type T that can be accessed by indices.  Unlike other Tensor&lt;T&gt; implementations SparseTensor&lt;T&gt; does not expose its backing storage.  It is meant as an intermediate to be used to build other Tensors, such as CompressedSparseTensor.  Unlike CompressedSparseTensor where insertions are O(n), insertions to SparseTensor&lt;T&gt; are nominally O(1).
     /// </summary>
     /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
-    public class SparseTensor<T> : Tensor<T>
+    [RequiresPreviewFeatures]
+    public class SparseTensor<T> : Tensor<T> where T :  struct
     {
         private readonly Dictionary<int, T> values;
         /// <summary>

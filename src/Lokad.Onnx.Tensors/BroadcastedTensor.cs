@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Versioning;
 
 namespace Lokad.Onnx
 {
-    public class BroadcastedTensor<T> : Tensor<T>
+    [RequiresPreviewFeatures]
+    public class BroadcastedTensor<T> : Tensor<T> where T :  struct
     {
         #region Constructor
         public BroadcastedTensor(Memory<T> memory, ReadOnlySpan<int> dimensions, int[] broadcastedStrides, bool reverseStride = false) : 

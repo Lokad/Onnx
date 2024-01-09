@@ -5,13 +5,15 @@ extern alias OnnxSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
+
 
 public enum ExecutionProvider
 {
     CPU
 }
 
+[RequiresPreviewFeatures]
 public class CPUExecutionProvider
 {
     public static Dictionary<OpType, int[]> SupportedOps { get; } = new Dictionary<OpType, int[]>();
@@ -50,14 +52,14 @@ public class CPUExecutionProvider
             case TensorElementType.UInt64: return Squeeze((Tensor<ulong>)input, _axes);
             case TensorElementType.Float: return Squeeze((Tensor<float>)input, _axes);
             case TensorElementType.Double: return Squeeze((Tensor<double>)input, _axes);
-            case TensorElementType.Float16: return Squeeze((Tensor<Float16>)input, _axes);
+            case TensorElementType.Float16: return Squeeze((Tensor<Half>)input, _axes);
             case TensorElementType.BFloat16: return Squeeze((Tensor<BFloat16>)input, _axes);
             case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, _axes);
             default: return OpResult.NotSupported(OpType.Squeeze);
         }
     }
 
-    public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes = null)
+    public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes = null) where T: struct
     {
         long[] dims = (axes is not null) ? axes.ToArray() : Enumerable.Range(0, input.Dimensions.Length - 1).Cast<long>().ToArray();
         List<int> squeezedDims = new List<int>();
@@ -73,7 +75,7 @@ public class CPUExecutionProvider
         return OpResult.Success(OpType.Squeeze, new[] { input.Reshape(squeezedDims.ToArray()) });
     }
 
-    public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB)
+    public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB) where T: struct, INumber<T>
     {
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
         var outA = inA.ToBroadcastedTensor();

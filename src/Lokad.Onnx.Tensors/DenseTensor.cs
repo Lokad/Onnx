@@ -14,6 +14,7 @@
 using System.Runtime.InteropServices;
 using System;
 using System.Linq;
+using System.Runtime.Versioning;
 
 namespace Lokad.Onnx
 {
@@ -24,7 +25,8 @@ namespace Lokad.Onnx
     /// <typeparam name="T">
     /// Type contained within the Tensor. Typically a value type such as int, double, float, etc.
     /// </typeparam>
-    public class DenseTensor<T> : Tensor<T>
+    [RequiresPreviewFeatures]
+    public class DenseTensor<T> : Tensor<T> where T :  struct
     {
         private readonly Memory<T> memory;
 

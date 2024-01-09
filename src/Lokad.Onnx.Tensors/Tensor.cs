@@ -17,8 +17,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
+using System.Numerics;
 using System.Text;
-
 
 namespace Lokad.Onnx
 {
@@ -201,6 +202,7 @@ namespace Lokad.Onnx
     /// <summary>
     /// Various methods for creating and manipulating Tensor&lt;T&gt;
     /// </summary>
+    [RequiresPreviewFeatures]
     public static partial class Tensor
     {
         /// <summary>
@@ -209,7 +211,7 @@ namespace Lokad.Onnx
         /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
         /// <param name="size">Width and height of the identity tensor to create.</param>
         /// <returns>a <paramref name="size"/> by <paramref name="size"/> with 1s along the diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateIdentity<T>(int size)
+        public static Tensor<T> CreateIdentity<T>(int size) where T :  struct
         {
             return CreateIdentity(size, false, Tensor<T>.One);
         }
@@ -221,7 +223,7 @@ namespace Lokad.Onnx
         /// <param name="size">Width and height of the identity tensor to create.</param>
         /// <param name="columMajor">>False to indicate that the first dimension is most minor (closest) and the last dimension is most major (farthest): row-major.  True to indicate that the last dimension is most minor (closest together) and the first dimension is most major (farthest apart): column-major.</param>
         /// <returns>a <paramref name="size"/> by <paramref name="size"/> with 1s along the diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateIdentity<T>(int size, bool columMajor)
+        public static Tensor<T> CreateIdentity<T>(int size, bool columMajor) where T :  struct
         {
             return CreateIdentity(size, columMajor, Tensor<T>.One);
         }
@@ -234,7 +236,7 @@ namespace Lokad.Onnx
         /// <param name="columMajor">>False to indicate that the first dimension is most minor (closest) and the last dimension is most major (farthest): row-major.  True to indicate that the last dimension is most minor (closest together) and the first dimension is most major (farthest apart): column-major.</param>
         /// <param name="oneValue">Value of <typeparamref name="T"/> that is used along the diagonal.</param>
         /// <returns>a <paramref name="size"/> by <paramref name="size"/> with 1s along the diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateIdentity<T>(int size, bool columMajor, T oneValue)
+        public static Tensor<T> CreateIdentity<T>(int size, bool columMajor, T oneValue) where T :  struct
         {
             unsafe
             {
@@ -258,7 +260,7 @@ namespace Lokad.Onnx
         /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
         /// <param name="diagonal">Tensor representing the diagonal to build the new tensor from.</param>
         /// <returns>A new tensor of the same layout and order as <paramref name="diagonal"/> of one higher rank, with the values of <paramref name="diagonal"/> along the diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateFromDiagonal<T>(Tensor<T> diagonal)
+        public static Tensor<T> CreateFromDiagonal<T>(Tensor<T> diagonal) where T :  struct
         {
             return CreateFromDiagonal(diagonal, 0);
         }
@@ -274,7 +276,7 @@ namespace Lokad.Onnx
         /// less than zero for diagonals below, greater than zero from diagonals above.</param>
         /// <returns>A new tensor of the same layout and order as <paramref name="diagonal"/> of one higher rank, 
         /// with the values of <paramref name="diagonal"/> along the specified diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateFromDiagonal<T>(Tensor<T> diagonal, int offset)
+        public static Tensor<T> CreateFromDiagonal<T>(Tensor<T> diagonal, int offset) where T :  struct
         {
             if (diagonal.Rank < 1)
             {
@@ -328,7 +330,9 @@ namespace Lokad.Onnx
     /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
     [DebuggerDisplay("{GetArrayString(false)}")]
     // When we cross-compile for frameworks that expose ICloneable this must implement ICloneable as well.
+    [RequiresPreviewFeatures]
     public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
+    where T :  struct
     {
         internal static T Zero
         {
@@ -626,7 +630,7 @@ namespace Lokad.Onnx
         /// </summary>
         /// <typeparam name="TResult">Type contained within the new Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
         /// <returns>A new Tensor with the same layout and dimensions as this tensor with elements of <typeparamref name="TResult"/> type initialized to their default value.</returns>
-        public virtual Tensor<TResult> CloneEmpty<TResult>()
+        public virtual Tensor<TResult> CloneEmpty<TResult>() where TResult : struct
         {
             return CloneEmpty<TResult>(dimensions);
         }
@@ -637,7 +641,7 @@ namespace Lokad.Onnx
         /// <typeparam name="TResult">Type contained within the new Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new Tensor with the same layout as this tensor of specified <paramref name="dimensions"/> with elements of <typeparamref name="TResult"/> type initialized to their default value.</returns>
-        public abstract Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions);
+        public abstract Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) where TResult : struct;
 
         /// <summary>
         /// Gets the n-1 dimension diagonal from the n dimension tensor.
@@ -924,7 +928,7 @@ namespace Lokad.Onnx
 
         #region ITensor support
         public abstract Tensor<T> InsertDim(int dim);
-        
+
         public abstract BroadcastedTensor<T> BroadcastDim(int dim, int size);
 
         public abstract BroadcastedTensor<T> ToBroadcastedTensor();
@@ -1534,13 +1538,13 @@ namespace Lokad.Onnx
         {
             // Non-null values are fine.  Only accept nulls if T is a class or Nullable<T>.
             // Note that default(T) is not equal to null for value types except when T is Nullable<T>.
-            return ((value is T) || (value == null && default(T) == null));
+            return value is T;
         }
 
         #region ITensor members
         public string Name { get; set; } = "";
 
-        public TensorElementType ElementType { get; } = GetTypeInfo(typeof(T)).ElementType;   
+        public TensorElementType ElementType { get; } = GetTypeInfo(typeof(T)).ElementType;
 
         public Type PrimitiveType { get; } = typeof(T);
 

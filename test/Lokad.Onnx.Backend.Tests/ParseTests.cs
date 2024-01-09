@@ -1,8 +1,10 @@
 using Lokad.Onnx.Backend;
+using System.Runtime.Versioning;
 using System.Xml.Schema;
 
 namespace Lokad.Onnx.Backend.Tests
 {
+    [RequiresPreviewFeatures]
     public class ParseTests
     {
         [Fact]

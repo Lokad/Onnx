@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,7 +55,7 @@ namespace Lokad.Onnx
                 }
                 else
                 {
-                    return null;
+                    return Array.Empty<ITensor>();
                     //return OpResult.Failure(OpType.Broadcast, $"Trying to broadcast incompatible shapes: {inA.Dimensions.ToArray()} and {inB.Dimensions.ToArray()}");
                 }
             }
@@ -62,6 +63,7 @@ namespace Lokad.Onnx
         }
     }
 
+    [RequiresPreviewFeatures]
     public static class TensorExtensions
     {
         public static object GetTensorData(this TensorProto tp)
@@ -102,7 +104,7 @@ namespace Lokad.Onnx
                 case TensorElementType.Float16: return new DenseTensor<Float16>((Float16[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
                 case TensorElementType.BFloat16: return new DenseTensor<BFloat16>((BFloat16[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
                 case TensorElementType.Complex64: return new DenseTensor<Complex>((Complex[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.String: return new DenseTensor<string>((string[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                //case TensorElementType.String: return new DenseTensor<string>((string[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
                 default: throw new ArgumentException($"Cannot convert tensor proto of element type {tp.DataType}.");
             }
         }
@@ -130,7 +132,7 @@ namespace Lokad.Onnx
                 case TensorElementType.Float16: return new DenseTensor<Float16>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
                 case TensorElementType.BFloat16: return new DenseTensor<BFloat16>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
                 case TensorElementType.Complex64: return new DenseTensor<Complex>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.String: return new DenseTensor<string>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                //case TensorElementType.String: return new DenseTensor<string>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
                 default: throw new ArgumentException($"Cannot convert value info proto of element type {vp.Type.TensorType.ElemType}.");
             }
         }

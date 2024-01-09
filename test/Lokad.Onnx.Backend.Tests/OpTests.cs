@@ -1,5 +1,8 @@
-﻿namespace Lokad.Onnx.Backend.Tests
+﻿using System.Runtime.Versioning;
+
+namespace Lokad.Onnx.Backend.Tests
 {
+    [RequiresPreviewFeatures]
     public class OpTests
     {
         [Fact]
@@ -16,6 +19,7 @@
         {
             var a = new DenseTensor<int>(new[] { 256, 256, 3, });
             var b = new DenseTensor<int>(new[] { 3 });
+            //var c = a.Add(b);
             var r = CPUExecutionProvider.Broadcast(a, b);
             Assert.NotNull(r.Outputs);
             var ba = (Tensor<int>) r.Outputs[0];
@@ -32,5 +36,8 @@
             r = CPUExecutionProvider.Broadcast(a, new DenseTensor<int>(new[] { 256, 1 }));
             Assert.Equal(OpStatus.Success, r.Status);
         }
+
+
+        
     }
 }
