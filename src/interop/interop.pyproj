@@ -20,12 +20,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="runtimeconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="backend.py" />
     <Compile Include="tensors.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|VisualStudio|lokadonnx" />

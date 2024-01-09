@@ -328,7 +328,7 @@ namespace Lokad.Onnx
     /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
     [DebuggerDisplay("{GetArrayString(false)}")]
     // When we cross-compile for frameworks that expose ICloneable this must implement ICloneable as well.
-    public abstract class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
+    public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
     {
         internal static T Zero
         {
