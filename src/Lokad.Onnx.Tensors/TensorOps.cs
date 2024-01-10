@@ -18,6 +18,13 @@ where T :  struct
         }
     }
 
+    public Tensor<T> Apply(Func<T, T> op)
+    {
+        var output = CloneEmpty();
+        Apply(op, output);
+        return output;
+    }
+
     public virtual void Apply(Func<T, T, T> op, Tensor<T> tensor2, Tensor<T> destination)
     {
         if (this.Length > tensor2.Length)
@@ -32,13 +39,7 @@ where T :  struct
         }
     }
 
-    public Tensor<T> Apply(Func<T, T> op)
-    {
-        var output = CloneEmpty();
-        Apply(op, output);
-        return output;
-    }
-
+    
     public Tensor<T> Apply(Func<T, T, T> op, Tensor<T> tensor2)
     {
         var output = CloneEmpty();
@@ -63,5 +64,12 @@ where T :  struct
 
     public static Tensor<U> Square<U>(Tensor<U> x) where U : struct, IMultiplyOperators<U, U, U>
         => x.Apply(l => l * l);
+
+    public static Tensor<U> Abs<U>(Tensor<U> x) where U : struct, IAdditiveIdentity<U, U>, IUnaryNegationOperators<U, U>, IComparisonOperators<U, U>
+       => x.Apply(l => l >= U.AdditiveIdentity ? l : -l);
+
+    public static Tensor<float> Sqrt(Tensor<float> x) => x.Apply(MathF.Sqrt);
+
+    public static Tensor<double> Sqrt(Tensor<double> x) => x.Apply(Math.Sqrt);
 }
 

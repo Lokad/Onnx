@@ -15,6 +15,7 @@
       <Aliases>OnnxSharp</Aliases>
     </PackageReference>
     <PackageReference Include="pythonnet" Version="3.0.3" />
+    <PackageReference Include="System.Runtime.Experimental" Version="6.0.2" />
   </ItemGroup>
 
   <ItemGroup>
