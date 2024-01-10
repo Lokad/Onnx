@@ -20,7 +20,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
-    <Content Include="runtimeconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="backend.py" />

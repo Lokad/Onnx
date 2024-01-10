@@ -13,6 +13,7 @@ public enum ExecutionProvider
     CPU
 }
 
+[RequiresPreviewFeatures]
 public class CPUExecutionProvider
 {
     public static Dictionary<OpType, int[]> SupportedOps { get; } = new Dictionary<OpType, int[]>();

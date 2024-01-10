@@ -3,7 +3,7 @@
 using System;
 using System.Globalization;
 using System.Reflection;
-
+using System.Runtime.Versioning;
 using CommandLine;
 using CommandLine.Text;
 using Lokad.Onnx;
@@ -20,6 +20,7 @@ public enum ExitResult
 }
 #endregion
 
+[RequiresPreviewFeatures]
 class Program : Runtime
 {
     #region Constructor
@@ -45,81 +46,81 @@ class Program : Runtime
         PrintLogo();
         var result = new Parser().ParseArguments<Options, InfoOptions>(args);
         result.WithNotParsed(errors =>
-             {
-                 HelpText help = GetAutoBuiltHelpText(result);
-                 help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
-                 help.Copyright = "";
-                 if (errors.Any(e => e.Tag == ErrorType.VersionRequestedError))
-                 {
-                     help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
-                     help.Copyright = new CopyrightInfo("Allister Beharry", new int[] { 2023 });
-                     Info(help);
-                     Exit(ExitResult.SUCCESS);
-                 }
-                 else if (errors.Any(e => e.Tag == ErrorType.HelpVerbRequestedError))
-                 {
-                     HelpVerbRequestedError error = (HelpVerbRequestedError)errors.First(e => e.Tag == ErrorType.HelpVerbRequestedError);
-                     if (error.Type != null)
-                     {
-                         help.AddVerbs(error.Type);
-                     }
-                     else
-                     {
-                         help.AddVerbs(optionTypes);
-                     }
-                     Info(help.ToString().Replace("--", ""));
-                     Exit(ExitResult.SUCCESS);
-                 }
-                 else if (errors.Any(e => e.Tag == ErrorType.HelpRequestedError))
-                 {
-                     HelpRequestedError error = (HelpRequestedError)errors.First(e => e.Tag == ErrorType.HelpRequestedError);
-                     help.AddVerbs(result.TypeInfo.Current);
-                     help.AddOptions(result);
-                     help.AddPreOptionsLine($"{result.TypeInfo.Current.Name.Replace("Options", "").ToLower()} options:");
-                     Info(help);
-                     Exit(ExitResult.SUCCESS);
-                 }
-                 else if (errors.Any(e => e.Tag == ErrorType.NoVerbSelectedError))
-                 {
-                     help.AddVerbs(optionTypes);
-                     Info(help);
-                     Exit(ExitResult.INVALID_OPTIONS);
-                 }
-                 else if (errors.Any(e => e.Tag == ErrorType.MissingRequiredOptionError))
-                 {
-                     MissingRequiredOptionError error = (MissingRequiredOptionError)errors.First(e => e.Tag == ErrorType.MissingRequiredOptionError);
-                     Error("A required option is missing: {0}.", error.NameInfo.NameText);
-                     Info(help);
-                     Exit(ExitResult.INVALID_OPTIONS);
-                 }
-                 else if (errors.Any(e => e.Tag == ErrorType.UnknownOptionError))
-                 {
-                     UnknownOptionError error = (UnknownOptionError)errors.First(e => e.Tag == ErrorType.UnknownOptionError);
-                     help.AddVerbs(optionTypes);
-                     Error("Unknown option: {error}.", error.Token);
-                     Info(help);
-                     Exit(ExitResult.INVALID_OPTIONS);
-                 }
-                 else
-                 {
-                     Error("An error occurred parsing the program options: {errors}.", errors);
-                     help.AddVerbs(optionTypes);
-                     Info(help);
-                     Exit(ExitResult.INVALID_OPTIONS);
-                 }
-             })
-            .WithParsed<InfoOptions>(io =>
+        {
+            HelpText help = GetAutoBuiltHelpText(result);
+            help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
+            help.Copyright = "";
+            if (errors.Any(e => e.Tag == ErrorType.VersionRequestedError))
             {
-                ExitIfFileNotFound(io.File);
-                if (io.Ops)
+                help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
+                help.Copyright = "";
+                Info(help);
+                Exit(ExitResult.SUCCESS);
+            }
+            else if (errors.Any(e => e.Tag == ErrorType.HelpVerbRequestedError))
+            {
+                HelpVerbRequestedError error = (HelpVerbRequestedError)errors.First(e => e.Tag == ErrorType.HelpVerbRequestedError);
+                if (error.Type != null)
                 {
-                    PrintModelOps(io.File);
+                    help.AddVerbs(error.Type);
                 }
                 else
                 {
-                    PrintModelInfo(io.File);
+                    help.AddVerbs(optionTypes);
                 }
-            });
+                Info(help.ToString().Replace("--", ""));
+                Exit(ExitResult.SUCCESS);
+            }
+            else if (errors.Any(e => e.Tag == ErrorType.HelpRequestedError))
+            {
+                HelpRequestedError error = (HelpRequestedError)errors.First(e => e.Tag == ErrorType.HelpRequestedError);
+                help.AddVerbs(result.TypeInfo.Current);
+                help.AddOptions(result);
+                help.AddPreOptionsLine($"{result.TypeInfo.Current.Name.Replace("Options", "").ToLower()} options:");
+                Info(help);
+                Exit(ExitResult.SUCCESS);
+            }
+            else if (errors.Any(e => e.Tag == ErrorType.NoVerbSelectedError))
+            {
+                help.AddVerbs(optionTypes);
+                Info(help);
+                Exit(ExitResult.INVALID_OPTIONS);
+            }
+            else if (errors.Any(e => e.Tag == ErrorType.MissingRequiredOptionError))
+            {
+                MissingRequiredOptionError error = (MissingRequiredOptionError)errors.First(e => e.Tag == ErrorType.MissingRequiredOptionError);
+                Error("A required option is missing: {0}.", error.NameInfo.NameText);
+                Info(help);
+                Exit(ExitResult.INVALID_OPTIONS);
+            }
+            else if (errors.Any(e => e.Tag == ErrorType.UnknownOptionError))
+            {
+                UnknownOptionError error = (UnknownOptionError)errors.First(e => e.Tag == ErrorType.UnknownOptionError);
+                help.AddVerbs(optionTypes);
+                Error("Unknown option: {error}.", error.Token);
+                Info(help);
+                Exit(ExitResult.INVALID_OPTIONS);
+            }
+            else
+            {
+                Error("An error occurred parsing the program options: {errors}.", errors);
+                help.AddVerbs(optionTypes);
+                Info(help);
+                Exit(ExitResult.INVALID_OPTIONS);
+            }
+        })
+        .WithParsed<InfoOptions>(io =>
+        {
+            ExitIfFileNotFound(io.File);
+            if (io.Ops)
+            {
+                PrintModelOps(io.File);
+            }
+            else
+            {
+                PrintModelInfo(io.File);
+            }
+        });
     }
     #endregion
 
