@@ -901,18 +901,16 @@ namespace Lokad.Onnx
         public virtual T this[ReadOnlySpan<int> indices]
         {
             get
-            {
-                if (indices.Length != dimensions.Length) throw new ArgumentException(nameof(indices));  
+            {     
                 for (int i = 0; i < indices.Length; i++)
                 {
                     if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException(indices[i].ToString());
-                }
+                }     
                 return GetValue(ArrayUtilities.GetIndex(strides, indices));
             }
 
             set
             {
-                if (indices.Length != dimensions.Length) throw new ArgumentException(nameof(indices));
                 for (int i = 0; i < indices.Length; i++)
                 {
                     if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException(indices[i].ToString());
@@ -921,7 +919,7 @@ namespace Lokad.Onnx
             }
         }
 
-        public virtual TensorSlice<T> this[params SliceIndex[] indices] => new TensorSlice<T>(this, indices);
+        public virtual TensorSlice<T> this[string indices] => new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
         
         /// <summary>
         /// Gets the value at the specied index, where index is a linearized version of n-dimension indices using strides.
@@ -1631,8 +1629,9 @@ namespace Lokad.Onnx
             return sliced_axes;
         }
 
-        public IEnumerable<SliceIndex> ExpandEllipsis(SliceIndex[] slices)
+        public SliceIndex[] ExpandEllipsis(SliceIndex[] slices)
         {
+            List<SliceIndex> ret = new List<SliceIndex>();
             // count dimensions without counting ellipsis or newaxis
             var count = 0;
             foreach (var slice in slices)
@@ -1648,12 +1647,13 @@ namespace Lokad.Onnx
                 if (slice.IsEllipsis)
                 {
                     for (int i = 0; i < dimensions.Length - count; i++)
-                        yield return SliceIndex.All;
+                        ret.Add(SliceIndex.All);
                     continue;
                 }
 
-                yield return slice;
+                ret.Add(slice);
             }
+            return ret.ToArray();
         }
 
         /// <summary>
