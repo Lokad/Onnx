@@ -8,17 +8,16 @@ namespace Lokad.Onnx
     public class BroadcastedTensor<T> : Tensor<T> where T :  struct
     {
         #region Constructor
-        public BroadcastedTensor(Memory<T> memory, ReadOnlySpan<int> dimensions, int[] broadcastedStrides, bool reverseStride = false) : 
-            base(dimensions, reverseStride)
+        public BroadcastedTensor(Tensor<T> source, ReadOnlySpan<int> dimensions, int[] broadcastedStrides, bool reverseStride = false) : 
+            base(dimensions, reverseStride, broadcastedStrides)
         {
-            this.memory = memory;
-            this.sourceStrides = strides;
-            this.broadcastedStrides = broadcastedStrides;
+            this.source = source;
+            this.sourceStrides = source.strides.ToArray();  
         }
         #endregion
 
         #region Properties
-        public Memory<T> Buffer => memory;
+        //public Memory<T> Buffer => memory;
         #endregion
 
         #region Methods
@@ -26,17 +25,19 @@ namespace Lokad.Onnx
         #region Tensor<T> members
         public override T GetValue(int index)
         {
-            var idx = ArrayUtilities.TransformIndexByStrides(index, this.sourceStrides, IsReversedStride, broadcastedStrides);
-            return memory.Span[idx];
+            if (index >= Length) throw new IndexOutOfRangeException();
+            var idx = ArrayUtilities.TransformIndexByStrides(index, sourceStrides, IsReversedStride, strides);
+            return source.GetValue(idx);
         }
 
         public override void SetValue(int index, T value)
         {
-            var idx = ArrayUtilities.TransformIndexByStrides(index, this.sourceStrides, IsReversedStride, broadcastedStrides);
-            memory.Span[idx] = value;
+            if (index >= Length) throw new IndexOutOfRangeException();
+            var idx = ArrayUtilities.TransformIndexByStrides(index, sourceStrides, IsReversedStride, strides);
+            this.source.SetValue(idx, value);
         }
 
-        public override Tensor<T> Clone() => new BroadcastedTensor<T>(new Memory<T>(Buffer.ToArray()), dimensions, broadcastedStrides, IsReversedStride);
+        public override Tensor<T> Clone() => new BroadcastedTensor<T>(source, dimensions, strides, IsReversedStride);
         
         public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions);  
 
@@ -51,9 +52,9 @@ namespace Lokad.Onnx
             if (dim >= Rank) throw new IndexOutOfRangeException(nameof(dim));
             var dims = this.dimensions.ToList();
             dims.Insert(dim, 1);
-            var bstrides = broadcastedStrides.ToList();
+            var bstrides = strides.ToList();
             bstrides.Insert(dim, 0);    
-            return new BroadcastedTensor<T>(memory, dims.ToArray(), broadcastedStrides.ToArray(), IsReversedStride);
+            return new BroadcastedTensor<T>(source, dims.ToArray(), strides.ToArray(), IsReversedStride);
         }
 
         public override BroadcastedTensor<T> BroadcastDim(int dim, int size)
@@ -69,8 +70,8 @@ namespace Lokad.Onnx
             else
             {
                 dimensions[dim] = size;
-                broadcastedStrides[dim] = 0;
-                return new BroadcastedTensor<T>(memory, dimensions, broadcastedStrides, IsReversedStride);
+                strides[dim] = 0;
+                return new BroadcastedTensor<T>(source, dimensions, strides, IsReversedStride);
             }
         }
 
@@ -91,9 +92,8 @@ namespace Lokad.Onnx
         #endregion
 
         #region Fields
-        public readonly Memory<T> memory;
-        public readonly int[] sourceStrides;
-        public readonly int[] broadcastedStrides;
+        public readonly Tensor<T> source;
+        public int[] sourceStrides;
         #endregion
     }
 }

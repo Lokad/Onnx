@@ -22,4 +22,4 @@ def get_dims(t:ITensor) -> Array[int]: return t.Dims
 def broadcast_dim( t:ITensor, dim:int, size:int) -> ITensor: return t.BroadcastDim(dim, size)
 
 a = np.ones([9, 5, 7, 4])
-print a[0, 0]
+print (a[0, 0, 0])

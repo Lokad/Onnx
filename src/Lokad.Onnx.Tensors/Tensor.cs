@@ -20,6 +20,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Numerics;
 using System.Text;
+using System.Drawing;
 
 namespace Lokad.Onnx
 {
@@ -509,7 +510,7 @@ namespace Lokad.Onnx
         /// minor (closest together): akin to column-major in a rank-2 tensor.</param>
         /// <remarks>If you pass `null` for dimensions it will implicitly convert to an empty ReadOnlySpan, which is 
         /// equivalent to the dimensions for a scalar value.</remarks>
-        protected Tensor(ReadOnlySpan<int> dimensions, bool reverseStride) : base(typeof(T))
+        protected Tensor(ReadOnlySpan<int> dimensions, bool reverseStride, int[] strides = null) : base(typeof(T))
         {
             this.dimensions = new int[dimensions.Length];
             long size = 1;
@@ -523,7 +524,7 @@ namespace Lokad.Onnx
                 size *= dimensions[i];
             }
 
-            strides = ArrayUtilities.GetStrides(dimensions, reverseStride);
+            this.strides = strides ?? ArrayUtilities.GetStrides(dimensions, reverseStride);
             isReversedStride = reverseStride;
 
             length = size;
@@ -901,15 +902,27 @@ namespace Lokad.Onnx
         {
             get
             {
+                if (indices.Length != dimensions.Length) throw new ArgumentException(nameof(indices));  
+                for (int i = 0; i < indices.Length; i++)
+                {
+                    if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException(indices[i].ToString());
+                }
                 return GetValue(ArrayUtilities.GetIndex(strides, indices));
             }
 
             set
             {
+                if (indices.Length != dimensions.Length) throw new ArgumentException(nameof(indices));
+                for (int i = 0; i < indices.Length; i++)
+                {
+                    if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException(indices[i].ToString());
+                }
                 SetValue(ArrayUtilities.GetIndex(strides, indices), value);
             }
         }
 
+        public virtual TensorSlice<T> this[params SliceIndex[] indices] => new TensorSlice<T>(this, indices);
+        
         /// <summary>
         /// Gets the value at the specied index, where index is a linearized version of n-dimension indices using strides.
         /// </summary>
@@ -932,6 +945,8 @@ namespace Lokad.Onnx
         public abstract BroadcastedTensor<T> ToBroadcastedTensor();
 
         public BroadcastedTensor<T> PadLeft() => InsertDim(0).ToBroadcastedTensor();
+
+        public Tensor<T> Reshape(params int[] dims) => this.Reshape((ReadOnlySpan<int>) dims); 
         #endregion
 
         #region statics
@@ -1562,6 +1577,128 @@ namespace Lokad.Onnx
 
         ITensor ITensor.ToBroadcastedTensor() => this.ToBroadcastedTensor();
         #endregion
+
+        #region Slicing
+        public int[] SliceDims(params SliceIndex[] input_slices)
+        {
+            if (dimensions is null || dimensions.Length == 0)
+                throw new InvalidOperationException("Unable to slice an empty shape.");
+
+            //if (IsBroadcasted)
+            //    throw new NotSupportedException("Unable to slice a shape that is broadcasted.");
+
+            var slices = new List<SliceDef>(16);
+            var sliced_axes_unreduced = new List<int>();
+            for (int i = 0; i < dimensions.Length; i++)
+            {
+                var dim = dimensions[i];
+                var slice = input_slices.Length > i ? input_slices[i] : SliceIndex.All; //fill missing selectors
+                var slice_def = slice.ToSliceDef(dim);
+                slices.Add(slice_def);
+                var count = Math.Abs(slices[i].Count); // for index-slices count would be -1 but we need 1.
+                sliced_axes_unreduced.Add(count);
+            }
+
+            if (this is TensorSlice<T> ts)
+            {
+                // merge new slices with existing ones and insert the indices of the parent shape that were previously reduced
+                for (int i = 0; i < ts.parent.Rank; i++)
+                {
+                    var orig_slice = ts.slices[i];
+                    if (orig_slice.IsIndex)
+                    {
+                        slices.Insert(i, orig_slice);
+                        sliced_axes_unreduced.Insert(i, 1);
+                        continue;
+                    }
+
+                    slices[i] = ts.slices[i].Merge(slices[i]);
+                    sliced_axes_unreduced[i] = Math.Abs(slices[i].Count);
+                }
+            }
+
+            var sliced_axes = sliced_axes_unreduced.Where((dim, i) => !slices[i].IsIndex).ToArray();
+            // var origin = (this.IsSliced && ViewInfo.Slices != null) ? this.ViewInfo.OriginalShape : this;
+            //var viewInfo = new ViewInfo() { OriginalShape = origin, Slices = slices.ToArray(), UnreducedShape = new Shape(sliced_axes_unreduced.ToArray()), };
+
+            //if (IsRecursive)
+            //  viewInfo.ParentShape = ViewInfo.ParentShape;
+
+            //if (sliced_axes.Length == 0) //is it a scalar
+            //    return NewScalar(viewInfo);
+
+            //return new Shape(sliced_axes) { ViewInfo = viewInfo };
+            return sliced_axes;
+        }
+
+        public IEnumerable<SliceIndex> ExpandEllipsis(SliceIndex[] slices)
+        {
+            // count dimensions without counting ellipsis or newaxis
+            var count = 0;
+            foreach (var slice in slices)
+            {
+                if (slice.IsNewAxis || slice.IsEllipsis)
+                    continue;
+                count++;
+            }
+
+            // expand 
+            foreach (var slice in slices)
+            {
+                if (slice.IsEllipsis)
+                {
+                    for (int i = 0; i < dimensions.Length - count; i++)
+                        yield return SliceIndex.All;
+                    continue;
+                }
+
+                yield return slice;
+            }
+        }
+
+        /// <summary>
+        ///  Gets coordinates in this shape from index in this shape (slicing is ignored).
+        ///  Example: Shape (2,3)
+        /// 0 => [0, 0]
+        /// 1 => [0, 1]
+        /// ...
+        /// 6 => [1, 2]
+        /// </summary>
+        /// <param name="offset">the index if you would iterate from 0 to shape.size in row major order</param>
+        /// <returns></returns>
+        [MethodImpl((MethodImplOptions)768)]
+        public int[] GetCoordinates(int offset)
+        {
+            int[] coords = null;
+
+            if (strides.Length == 1)
+                coords = new int[] { offset };
+
+            int counter = offset;
+            coords = new int[strides.Length];
+            int stride;
+            for (int i = 0; i < strides.Length; i++)
+            {
+                unchecked
+                {
+                    stride = strides[i];
+                    if (stride == 0)
+                    {
+                        coords[i] = 0;
+                    }
+                    else
+                    {
+                        coords[i] = counter / stride;
+                        counter -= coords[i] * stride;
+                    }
+                }
+            }
+
+            return coords;
+        }
+        #endregion
+
+        
         public static BroadcastedTensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
         {
             var broadcastRank = Math.Max(inA.Rank, inB.Rank);
@@ -1599,6 +1736,61 @@ namespace Lokad.Onnx
                 }
             }
             return new[] { outA, outB };
+        }
+
+        public static Tensor<int> Arange(int start, int stop, int step = 1)
+        {
+            if (step == 0)
+                throw new ArgumentException("step can't be 0", nameof(step));
+
+            bool negativeStep = false;
+            if (step < 0)
+            {
+                negativeStep = true;
+                step = Math.Abs(step);
+                //swap
+                var tmp = start;
+                start = stop;
+                stop = tmp;
+            }
+
+            if (start > stop)
+                throw new Exception("parameters invalid, start is greater than stop.");
+
+
+            int length = (int)Math.Ceiling((stop - start + 0.0d) / step);
+            var nd = new DenseTensor<int>((ReadOnlySpan<int>) new int[] { length }); //do not fill, we are about to
+
+            if (negativeStep)
+            {
+                step = Math.Abs(step);
+                    for (int add = length - 1, i = 0; add >= 0; add--, i++)
+                        nd[i] = 1 + start + add * step;
+                
+            }
+            else
+            {
+                
+                    for (int i = 0; i < length; i++)
+                        nd[i] = start + i * step;
+                
+            }
+
+            return nd;
+        }
+
+        public static Tensor<T> Zeros(params int[] dims)
+        {
+            var t = new DenseTensor<T>((ReadOnlySpan<int>)dims);
+            t.Fill(Zero);
+            return t;
+        }
+
+        public static Tensor<T> Ones(params int[] dims)
+        {
+            var t = new DenseTensor<T>((ReadOnlySpan<int>)dims);
+            t.Fill(One);
+            return t;
         }
     }
 }

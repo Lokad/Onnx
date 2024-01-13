@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
 where T :  struct
@@ -71,5 +72,27 @@ where T :  struct
     public static Tensor<float> Sqrt(Tensor<float> x) => x.Apply(MathF.Sqrt);
 
     public static Tensor<double> Sqrt(Tensor<double> x) => x.Apply(Math.Sqrt);
+
+    public static Tensor<U> MatMul2D<U>(Tensor<U> x, Tensor<U> y) where U : struct, IAdditiveIdentity<U, U>, IAdditionOperators<U, U, U>, IMultiplyOperators<U, U, U>
+    {
+        if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
+        if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
+        if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first tensor is not equal to the num");
+        var output = new DenseTensor<U>((ReadOnlySpan<int>) new int[] { x.Dimensions[0], y.Dimensions[1] });
+        for (int i = 0; i < x.Dimensions[0]; i++)
+        {
+            for (int j = 0; j < x.Dimensions[1]; j++)
+            {
+                var sum = U.AdditiveIdentity;
+                for (int k = 0; k < y.Dimensions[0]; k++)
+                {
+                    sum += x[i, k] * y[k, j];
+                }
+                output[i, j] = sum;
+            }
+            
+        }
+        return output;
+    }
 }
 

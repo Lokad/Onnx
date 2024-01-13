@@ -35,7 +35,19 @@ namespace Lokad.Onnx.Tensors.Tests
             Assert.Equal(1, bc1[0, 204]);
             Assert.Equal(2, bc1[1, 254]);
             Assert.Equal(3, bc1[2, 164]);
-            Assert.Throws<IndexOutOfRangeException>(() => bc1[2, 255]);
+            Assert.Throws<IndexOutOfRangeException>(() => bc1[2, 256]);
+        }
+
+        [Fact]
+        public void CanIterateDims()
+        {
+            var a = new DenseTensor<int>(new[] { 256, 256, 3, });
+            var di = new TensorDimensionsIterator(a.Dimensions.ToArray());
+            while (di.Next() != null)
+            {
+                var i = di.Index;
+            }
+
         }
     }
 }
