@@ -331,7 +331,7 @@ namespace Lokad.Onnx
     [DebuggerDisplay("{GetArrayString(false)}")]
     // When we cross-compile for frameworks that expose ICloneable this must implement ICloneable as well.
     public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
-    where T :  struct
+    where T : struct
     {
         internal static T Zero
         {
@@ -901,11 +901,11 @@ namespace Lokad.Onnx
         public virtual T this[ReadOnlySpan<int> indices]
         {
             get
-            {     
+            {
                 for (int i = 0; i < indices.Length; i++)
                 {
                     if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException(indices[i].ToString());
-                }     
+                }
                 return GetValue(ArrayUtilities.GetIndex(strides, indices));
             }
 
@@ -919,7 +919,16 @@ namespace Lokad.Onnx
             }
         }
 
-        public virtual TensorSlice<T> this[string indices] => new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
+        public virtual Tensor<T> this[string indices]
+        {
+            get => new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
+            set
+            {
+                var ts = new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
+                ts.CopyFrom(value, checkDimensions: true);
+            }
+        }
+        
         
         /// <summary>
         /// Gets the value at the specied index, where index is a linearized version of n-dimension indices using strides.
@@ -1160,6 +1169,30 @@ namespace Lokad.Onnx
             for (int i = 0; i < length; i++)
             {
                 array[arrayIndex + i] = GetValue(i);
+            }
+        }
+
+        protected virtual void CopyFrom(Tensor<T> from, int arrayIndex = 0, bool checkDimensions = false)
+        {
+            if (from == null)
+            {
+                throw new ArgumentNullException(nameof(from));
+            }
+            if (from.Length < arrayIndex + Length)
+            {
+                throw new ArgumentException("The number of elements in the Tensor is greater than the available space from index to the end of the destination array.", nameof(from));
+            }
+            if (checkDimensions)
+            {
+                if (Rank != from.Rank) throw new ArgumentException();
+                for (int i = 0; i < Rank; i++)
+                {
+                    if (dimensions[i] != from.Dimensions[i]) throw new ArgumentException();
+                }
+            }
+            for (int i = 0; i < length; i++)
+            {
+                SetValue(i, from.GetValue(arrayIndex + i));
             }
         }
 
@@ -1698,7 +1731,12 @@ namespace Lokad.Onnx
         }
         #endregion
 
-        
+        #region Dimensions iterator
+        public TensorDimensionsIterator GetDimensionsIterator() => new TensorDimensionsIterator(dimensions);
+
+        //public TensorDimensionsIterator GetDimensionsIterator(string slices = null) => 
+        //    new TensorDimensionsIterator(slices is null ? this.dimensions : SliceDims(ExpandEllipsis(SliceIndex.ParseSlices(slices))));
+        #endregion
         public static BroadcastedTensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
         {
             var broadcastRank = Math.Max(inA.Rank, inB.Rank);

@@ -20,7 +20,7 @@ namespace Lokad.Onnx
         public TensorDimensionsIterator(int[] dims)
         {
             if (dims == null)
-                throw new InvalidOperationException("Can't construct ValueCoordinatesIncrementor with an empty shape.");
+                throw new InvalidOperationException("Can't construct TensorDimensionsIterator with an empty shape.");
 
             if (dims.Length == 0)
                 dims = new int[] { 1 };
