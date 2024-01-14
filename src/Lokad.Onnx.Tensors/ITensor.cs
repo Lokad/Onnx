@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections;
 
 namespace Lokad.Onnx
 {
-    public interface ITensor
+    public interface ITensor : IEnumerable
     {
         string Name { get; set; }
 
@@ -16,7 +17,9 @@ namespace Lokad.Onnx
 
         ITensor Clone();
 
-        ITensor Reshape(int[] shape);
+        ITensor Reshape(params int[] shape);
+
+        ITensor Slice(string indices);
 
         ITensor InsertDim(int dim);
         
@@ -28,6 +31,17 @@ namespace Lokad.Onnx
 
         ITensor ToDenseTensor();
 
+        object this[params int[] indices]
+        {
+            get;
+            set;
+        }
+
+        ITensor this[string indices]
+        {
+            get;
+            set;
+        }
         static ITensor[] Broadcast(ITensor inA, ITensor inB)
         {
             var broadcastRank = Math.Max(inA.Rank, inB.Rank);

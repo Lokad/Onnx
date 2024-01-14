@@ -24,6 +24,7 @@ using System.Drawing;
 
 namespace Lokad.Onnx
 {
+    #region Enums
     /// <summary>
     /// Supported Tensor DataType
     /// </summary>
@@ -47,7 +48,9 @@ namespace Lokad.Onnx
         BFloat16 = 16,
         DataTypeMax = 17
     }
+    #endregion
 
+    #region Types
     /// <summary>
     /// Helps typecasting. Holds Tensor element type traits.
     /// </summary>
@@ -323,6 +326,7 @@ namespace Lokad.Onnx
             return result;
         }
     }
+    #endregion
 
     /// <summary>
     /// Represents a multi-dimensional collection of objects of type T that can be accessed by indices.
@@ -1483,6 +1487,7 @@ namespace Lokad.Onnx
 
         #endregion
 
+        #region Display
         /// <summary>
         /// Get a string representation of Tensor
         /// </summary>
@@ -1584,6 +1589,7 @@ namespace Lokad.Onnx
             // Note that default(T) is not equal to null for value types except when T is Nullable<T>.
             return value is T;
         }
+        #endregion
 
         #region ITensor members
         public string Name { get; set; } = "";
@@ -1607,6 +1613,23 @@ namespace Lokad.Onnx
         ITensor ITensor.ToDenseTensor() => this.ToDenseTensor();
 
         ITensor ITensor.ToBroadcastedTensor() => this.ToBroadcastedTensor();
+
+        ITensor  ITensor.this[string indices]
+        {
+            get => new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
+            set
+            {
+                var ts = new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
+                ts.CopyFrom((Tensor<T>) value, checkDimensions: true);
+            }
+        }
+
+        object ITensor.this[params int[] indices]
+        {
+            get => this[indices];
+            set => this[indices] = (T)value;
+        }
+        ITensor ITensor.Slice(string indices) => new TensorSlice<T>(this, ExpandEllipsis(SliceIndex.ParseSlices(indices)));
         #endregion
 
         #region Slicing
