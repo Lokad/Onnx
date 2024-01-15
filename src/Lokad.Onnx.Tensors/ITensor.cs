@@ -38,7 +38,7 @@ namespace Lokad.Onnx
             set;
         }
 
-        ITensor this[string indices]
+        ITensor this[params object[] indices]
         {
             get;
             set;

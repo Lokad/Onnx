@@ -357,12 +357,17 @@ public class SliceIndex
 
     public static implicit operator SliceIndex(int index) => SliceIndex.Index(index);
     public static implicit operator SliceIndex(string slice) => new SliceIndex(slice);
-
     //public static implicit operator Slice(NDArray selection) => Slice.Select(selection);
 
     #endregion
 
-    
+    public static SliceIndex FromObj(object index) => index switch
+    {
+        string s => (SliceIndex)s,
+        int i => (SliceIndex)i,
+        _ => throw new NotSupportedException()
+    };
+
 }
 
 public struct SliceDef

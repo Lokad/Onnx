@@ -28,7 +28,7 @@ def test_arange():
 def test_slice():
     t  = tensors.arange(0, 9).Reshape(3, 3)
     tnd = np.arange(0, 9).reshape(3, 3)
-    ts = t["1:2,..."]
+    ts = t["1:2","..."]
     tnds = tnd[1:2,...]
     assert set(tnds.shape) == set(ts.Dims)
     assert ts[0, 2] == tnds[0, 2]

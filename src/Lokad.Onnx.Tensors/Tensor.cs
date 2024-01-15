@@ -923,12 +923,12 @@ namespace Lokad.Onnx
             }
         }
 
-        public virtual Tensor<T> this[string indices]
+        public virtual Tensor<T> this[params SliceIndex[] indices]
         {
-            get => new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
+            get => new TensorSlice<T>(this, ExpandEllipsis(indices));
             set
             {
-                var ts = new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
+                var ts = new TensorSlice<T>(this, ExpandEllipsis(indices));
                 ts.CopyFrom(value, checkDimensions: true);
             }
         }
@@ -1614,12 +1614,12 @@ namespace Lokad.Onnx
 
         ITensor ITensor.ToBroadcastedTensor() => this.ToBroadcastedTensor();
 
-        ITensor  ITensor.this[string indices]
+        ITensor  ITensor.this[params object[] indices]
         {
-            get => new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
+            get => new TensorSlice<T>(this, ExpandEllipsis(indices.Select(i => SliceIndex.FromObj(i)).ToArray()));
             set
             {
-                var ts = new TensorSlice<T>(this, SliceIndex.ParseSlices(indices));
+                var ts = new TensorSlice<T>(this, ExpandEllipsis(indices.Select(i => SliceIndex.FromObj(i)).ToArray()));
                 ts.CopyFrom((Tensor<T>) value, checkDimensions: true);
             }
         }

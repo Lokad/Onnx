@@ -40,7 +40,6 @@ where T :  struct
         }
     }
 
-    
     public Tensor<T> Apply(Func<T, T, T> op, Tensor<T> tensor2)
     {
         var output = CloneEmpty();
@@ -51,14 +50,26 @@ where T :  struct
     public static Tensor<U> Add<U>(Tensor<U> x, Tensor<U> y) where U : struct, IAdditionOperators<U, U, U> 
         => x.Apply((l, r) => l + r, y);
 
+    public static Tensor<U> Add<U>(Tensor<U> x, U y) where U : struct, IAdditionOperators<U, U, U>
+      => x.Apply(l => l + y);
+
     public static Tensor<U> Subtract<U>(Tensor<U> x, Tensor<U> y) where U : struct, ISubtractionOperators<U, U, U>
         => x.Apply((l, r) => l - r, y);
+
+    public static Tensor<U> Subtract<U>(Tensor<U> x, U y) where U : struct, ISubtractionOperators<U, U, U>
+      => x.Apply(l => l - y);
 
     public static Tensor<U> Multiply<U>(Tensor<U> x, Tensor<U> y) where U : struct, IMultiplyOperators<U, U, U> 
         => x.Apply((l, r) => l * r, y);
 
+    public static Tensor<U> Multiply<U>(Tensor<U> x, U y) where U : struct, IMultiplyOperators<U, U, U>
+      => x.Apply(l => l * y);
+
     public static Tensor<U> Divide<U>(Tensor<U> x, Tensor<U> y) where U : struct, IDivisionOperators<U, U, U>
         => x.Apply((l, r) => l / r, y);
+
+    public static Tensor<U> Divide<U>(Tensor<U> x, U y) where U : struct, IDivisionOperators<U, U, U>
+      => x.Apply(l => l / y);
 
     public static Tensor<U> Negate<U>(Tensor<U> x) where U : struct, IUnaryNegationOperators<U, U>
         => x.Apply(l => -l);

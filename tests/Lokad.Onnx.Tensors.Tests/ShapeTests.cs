@@ -42,7 +42,7 @@ namespace Lokad.Onnx.Tensors.Tests
         public void CanIterateDims()
         {
             var a = new DenseTensor<int>(new[] { 256, 256, 3, });
-            var di = new TensorDimsIterator(a.Dimensions.ToArray());
+            var di = new TensorDimensionsIterator(a.Dimensions.ToArray());
             while (di.Next() != null)
             {
                 var i = di.Index;
