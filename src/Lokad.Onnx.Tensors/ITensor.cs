@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 
 namespace Lokad.Onnx
 {
@@ -42,6 +43,12 @@ namespace Lokad.Onnx
             get;
             set;
         }
+
+        static void ThrowIfDifferentElementTypes(params ITensor[] tensors) => Array.ForEach(tensors, tensor =>
+        {
+            if (tensor.ElementType != tensors[0].ElementType) throw new ArgumentException("All tensors must have the same element type.");
+        });
+        
         static ITensor[] Broadcast(ITensor inA, ITensor inB)
         {
             var broadcastRank = Math.Max(inA.Rank, inB.Rank);
