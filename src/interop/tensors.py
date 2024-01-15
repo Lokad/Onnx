@@ -27,4 +27,4 @@ def slice(t: ITensor, *dims) -> ITensor:
     dimsa = Array[int](dims)
     return t.Slice(dimsa)
 
-def add(x:ITensor, y:ITensor) -> ITensor: return Tensors.Add(x, y)
+def add(x:ITensor, y) -> ITensor: return Tensors.Add(x, y)

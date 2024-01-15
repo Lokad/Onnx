@@ -56,4 +56,7 @@ def test_add():
      t2 = tensors.arange(0, 27).Reshape(3, 3, 3)
      rt = tensors.add(t1, t2)
      assert set(r.flat) == set(rt)
+     r = np.add(tnd1, 4)
+     rt = tensors.add(t1, 4)
+     assert set(r.flat) == set(rt)
 

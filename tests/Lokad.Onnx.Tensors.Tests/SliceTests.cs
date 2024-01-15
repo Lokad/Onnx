@@ -19,11 +19,16 @@ public class SliceTests
         var t2 = t.Reshape(2, 2, 3);
         var se = t2["...", 2];
         Assert.NotNull(se);
-
+        Assert.Equal(2, se.Rank);
+        Assert.Equal(2, se.Dimensions[1]);
         var ac = Tensor<int>.Arange(20, 24).Reshape(2, 2);
         t2["...",2] = ac;
+        Assert.Equal(2, ac.Rank);
         ac = ac.Reshape(4, 1);
         Assert.Throws<ArgumentException>(() => t2["...",2] = ac);
+
+        se = t2[1, "..."];
+        Assert.Equal(se.Dimensions.ToArray(), new int[] { 2, 3 });
         //Assert.Equal(3, t[0,0]);
         //var s2 = t.SliceDims("2", "3");
         //Assert.NotNull(s2);
