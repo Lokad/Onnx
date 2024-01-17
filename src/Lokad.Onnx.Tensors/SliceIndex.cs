@@ -355,8 +355,20 @@ public class SliceIndex
         return a;
     }
 
-    public static implicit operator SliceIndex(int index) => SliceIndex.Index(index);
+    public static implicit operator SliceIndex(int index) => Index(index);
     public static implicit operator SliceIndex(string slice) => new SliceIndex(slice);
+    public static implicit operator SliceIndex(Range range)
+    {
+        if (range.Equals(Range.All))
+        {
+            return Ellipsis;
+        }
+        else
+        {
+            return new SliceIndex(start: range.Start.Value, stop: range.End.IsFromEnd ? -range.End.Value : range.End.Value);
+        }
+    }
+        //new SliceIndex(range.Start.Value, range.End.Value);
     //public static implicit operator Slice(NDArray selection) => Slice.Select(selection);
 
     #endregion

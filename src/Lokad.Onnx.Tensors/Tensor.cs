@@ -1178,17 +1178,15 @@ namespace Lokad.Onnx
 
         protected virtual void CopyFrom(Tensor<T> from, int arrayIndex = 0, bool checkDimensions = false)
         {
-            if (from == null)
-            {
-                throw new ArgumentNullException(nameof(from));
-            }
+            if (from is null) throw new ArgumentNullException(nameof(from));
+            
             if (from.Length < arrayIndex + Length)
             {
-                throw new ArgumentException("The number of elements in the Tensor is greater than the available space from index to the end of the destination array.", nameof(from));
+                throw new ArgumentException("The number of elements in the source tensor is less than the number of elements from the index to the end of the destination tensor.", nameof(from));
             }
             if (checkDimensions)
             {
-                if (Rank != from.Rank) throw new ArgumentException();
+                if (Rank != from.Rank) throw new ArgumentException("The rank of the source tensor is not the same as the rank of the destination tensor");
                 for (int i = 0; i < Rank; i++)
                 {
                     if (dimensions[i] != from.Dimensions[i]) throw new ArgumentException();
@@ -1627,7 +1625,7 @@ namespace Lokad.Onnx
         object ITensor.this[params int[] indices]
         {
             get => this[indices];
-            set => this[indices] = (T)value;
+            set => this[indices] = (T) value;
         }
         ITensor ITensor.Slice(string indices) => new TensorSlice<T>(this, ExpandEllipsis(SliceIndex.ParseSlices(indices)));
         #endregion
@@ -1755,10 +1753,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region Dimensions iterator
-        public TensorDimensionsIterator GetDimensionsIterator() => new TensorDimensionsIterator(dimensions);
-
-        //public TensorDimensionsIterator GetDimensionsIterator(string slices = null) => 
-        //    new TensorDimensionsIterator(slices is null ? this.dimensions : SliceDims(ExpandEllipsis(SliceIndex.ParseSlices(slices))));
+        public TensorDimensionsIterator GetDimensionsIterator(Range r) => new TensorDimensionsIterator(dimensions.Take(r).ToArray());
         #endregion
         public static BroadcastedTensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
         {

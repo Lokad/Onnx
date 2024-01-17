@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -19,8 +20,7 @@ namespace Lokad.Onnx
    
         public TensorDimensionsIterator(int[] dims)
         {
-            if (dims == null)
-                throw new InvalidOperationException("Can't construct TensorDimensionsIterator with an empty shape.");
+            if (dims is null) throw new ArgumentNullException("Can't construct TensorDimensionsIterator with an empty shape.");
 
             if (dims.Length == 0)
                 dims = new int[] { 1 };
@@ -31,6 +31,7 @@ namespace Lokad.Onnx
             endCallback = null;
         }
 
+       
         public TensorDimensionsIterator(int[] dims, EndCallbackHandler endCallback) : this(dims)
         {
             this.endCallback = endCallback;
@@ -74,5 +75,14 @@ namespace Lokad.Onnx
 
             return Index;
         }
+
+        public TensorDimensionsIterator Append(params int[] dims) => new TensorDimensionsIterator(dimensions.Concat(dims).ToArray());
+
+        public SliceIndex[] AppendEllipsis() => Index.Select(i => new SliceIndex(i)).Append(SliceIndex.Ellipsis).ToArray();
+
+        public SliceIndex[] PrependEllipsis() => Index.Select(i => new SliceIndex(i)).Prepend(SliceIndex.Ellipsis).ToArray();
+        public SliceIndex[] AppendSliceIndices(params SliceIndex[] indices) => Index.Select(i => new SliceIndex(i)).Concat(indices).ToArray();  
+
+        public SliceIndex[] this[params SliceIndex[] indices] => AppendSliceIndices(indices);
     }
 }

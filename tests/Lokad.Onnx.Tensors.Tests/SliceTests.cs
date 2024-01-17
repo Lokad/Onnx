@@ -27,10 +27,13 @@ public class SliceTests
         ac = ac.Reshape(4, 1);
         Assert.Throws<ArgumentException>(() => t2["...",2] = ac);
 
-        se = t2[1, "..."];
+        se = t2[..3, 1, ..];
         Assert.Equal(se.Dimensions.ToArray(), new int[] { 2, 3 });
         //Assert.Equal(3, t[0,0]);
         //var s2 = t.SliceDims("2", "3");
         //Assert.NotNull(s2);
+
+
+        var b = ..4;
     }
 }
