@@ -365,14 +365,27 @@ public class SliceIndex
         }
         else
         {
-            return new SliceIndex(start: range.Start.Value, stop: range.End.IsFromEnd ? -range.End.Value : range.End.Value);
+            return new SliceIndex(start: FromIndex(range.Start), stop: FromIndex(range.End));
         }
     }
-        //new SliceIndex(range.Start.Value, range.End.Value);
+    public static implicit operator SliceIndex(Index idx) => new SliceIndex(FromIndex(idx));
+
     //public static implicit operator Slice(NDArray selection) => Slice.Select(selection);
 
     #endregion
 
+    public static int? FromIndex(Index idx)
+    {
+        if (idx.Equals(^0))
+        {
+            return null;
+        }
+        else if (idx.IsFromEnd) 
+        {
+            return -idx.Value;
+        }
+        else return idx.Value;  
+    }
     public static SliceIndex FromObj(object index) => index switch
     {
         string s => (SliceIndex)s,
