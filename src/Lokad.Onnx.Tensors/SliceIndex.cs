@@ -368,7 +368,7 @@ public class SliceIndex
             return new SliceIndex(start: FromIndex(range.Start), stop: FromIndex(range.End));
         }
     }
-    public static implicit operator SliceIndex(Index idx) => new SliceIndex(FromIndex(idx));
+    //public static implicit operator SliceIndex(Index idx) => new SliceIndex(FromIndex(idx));
 
     //public static implicit operator Slice(NDArray selection) => Slice.Select(selection);
 

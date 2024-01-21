@@ -1,8 +1,4 @@
-import sys,os
-
 import numpy as np
-import pytest
-
 from interop import tensors
 
 def test_make_tensors():

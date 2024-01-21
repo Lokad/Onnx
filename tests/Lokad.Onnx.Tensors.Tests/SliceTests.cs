@@ -49,12 +49,19 @@ public class SliceTests
         Assert.Equal(new[] { 0, 1, 2 }, x[..3]);
         Assert.Equal(new[] { 3, 4, 5, 6, 7, 8, 9 }, x[3..]);
         Assert.Equal(new[] { 8, 9 }, x[^2..10]);
+        x = x.Reshape(2, 5);
+        Assert.Equal(8, x[1, 3]);
+        Assert.Equal(9, x[1, ^1]);
         x = Tensor<int>.Arange(1, 7).Reshape(2, 3, 1);
         var r = x[1..2];
         Assert.Equal(3, r.Length);
         Assert.Equal(4, r[0, 0, 0]);
         Assert.Equal(5, r[0, 1, 0]);
         Assert.Equal(6, r[0, 2, 0]);
+        r = x[.., 0];
+        Assert.Equal(6, r.Length);
+        Assert.Equal(2, r.Rank);
+        Assert.Equal(3, r[0, 2]);
         //Assert.NotNull(x[1..2]);
     }
 }
