@@ -89,16 +89,17 @@ where T :  struct
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
         if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first tensor is not equal to the num");
+        var n = x.Dimensions[0];
+        var m = x.Dimensions[1];
+        var r = y.Dimensions[1];    
         var output = new DenseTensor<U>((ReadOnlySpan<int>) new int[] { x.Dimensions[0], y.Dimensions[1] });
-        for (int i = 0; i < x.Dimensions[0]; i++)
+        for (int i = 0; i < n; i++)
         {
-            for (int j = 0; j < x.Dimensions[1]; j++)
+            for (int j = 0; j < r; j++)
             {
                 var sum = U.AdditiveIdentity;
-                for (int k = 0; k < y.Dimensions[0]; k++)
-                {
+                for (int k = 0; k < m; k++)
                     sum += x[i, k] * y[k, j];
-                }
                 output[i, j] = sum;
             }
             

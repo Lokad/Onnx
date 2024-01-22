@@ -17,8 +17,8 @@ public class SliceTests
         var sd = t[1..3, 2..4];
         Assert.NotNull(sd);
 
-        var s3 = t[^0, 2];
-        Assert.NotNull(s3);
+        Assert.Equal(11, t[^0, 3]);
+        
 
         var t2 = t.Reshape(2, 2, 3);
         var se = t2[.., 2];
@@ -33,12 +33,6 @@ public class SliceTests
 
         se = t2[..3, 1, ..];
         Assert.Equal(se.Dimensions.ToArray(), new int[] { 2, 3 });
-        //Assert.Equal(3, t[0,0]);
-        //var s2 = t.SliceDims("2", "3");
-        //Assert.NotNull(s2);
-
-
-        var b = ..4;
     }
 
     [Fact]
@@ -62,6 +56,6 @@ public class SliceTests
         Assert.Equal(6, r.Length);
         Assert.Equal(2, r.Rank);
         Assert.Equal(3, r[0, 2]);
-        //Assert.NotNull(x[1..2]);
+        Assert.Equal(3, r[0, ^0]);
     }
 }

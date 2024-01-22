@@ -1539,7 +1539,7 @@ namespace Lokad.Onnx
                         Indent(builder, indent);
                     }
                     indent++;
-                    builder.Append('{');
+                    builder.Append('[');
                     if (includeWhitespace)
                     {
                         builder.AppendLine();
@@ -1556,7 +1556,7 @@ namespace Lokad.Onnx
                         {
                             Indent(builder, indent);
                         }
-                        builder.Append('{');
+                        builder.Append('[');
                     }
                     else
                     {
@@ -1564,7 +1564,7 @@ namespace Lokad.Onnx
                     }
                     builder.Append(this[indices]);
                 }
-                builder.Append('}');
+                builder.Append(']');
 
                 for (int i = Rank - 2; i >= 0; i--)
                 {
@@ -1578,7 +1578,7 @@ namespace Lokad.Onnx
                             builder.AppendLine();
                             Indent(builder, indent);
                         }
-                        builder.Append('}');
+                        builder.Append(']');
                     }
                     else
                     {
@@ -1593,18 +1593,20 @@ namespace Lokad.Onnx
             }
 
             return builder.ToString();
-        }
 
-        private static void Indent(StringBuilder builder, int tabs, int spacesPerTab = 4)
-        {
-            for (int tab = 0; tab < tabs; tab++)
+            void Indent(StringBuilder builder, int tabs, int spacesPerTab = 4)
             {
-                for (int space = 0; space < spacesPerTab; space++)
+                for (int tab = 0; tab < tabs; tab++)
                 {
-                    builder.Append(' ');
+                    for (int space = 0; space < spacesPerTab; space++)
+                    {
+                        builder.Append(' ');
+                    }
                 }
             }
         }
+
+        
 
         private static bool IsCompatibleObject(object value)
         {
