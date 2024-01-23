@@ -1777,11 +1777,18 @@ namespace Lokad.Onnx
 
             return coords;
         }
+
+        public TensorSlice<T> Slice(params SliceIndex[] indices) => new TensorSlice<T>(this, ExpandEllipsis(indices));
+
+        public TensorSlice<T> Slice(params int[] indices) => Slice(indices.Select(i => SliceIndex.FromObj(i)).ToArray());    
         #endregion
 
         #region Dimensions iterator
-        public TensorDimensionsIterator GetDimensionsIterator(Range r) => new TensorDimensionsIterator(dimensions.Take(r).ToArray());
+        public TensorDimensionsIterator GetDimensionsIterator(Range r) => new TensorDimensionsIterator(dimensions[r]);
+
+        public TensorDimensionsIterator GetDimensionsIterator() => GetDimensionsIterator(..);
         #endregion
+
         public static BroadcastedTensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
         {
             var broadcastRank = Math.Max(inA.Rank, inB.Rank);

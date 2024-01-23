@@ -57,5 +57,6 @@ public class SliceTests
         Assert.Equal(2, r.Rank);
         Assert.Equal(3, r[0, 2]);
         Assert.Equal(3, r[0, ^0]);
+        var p = x.Dimensions[^2];
     }
 }

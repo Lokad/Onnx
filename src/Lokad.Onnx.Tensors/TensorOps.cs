@@ -88,7 +88,7 @@ where T :  struct
     {
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
-        if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first tensor is not equal to the num");
+        if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
         var n = x.Dimensions[0];
         var m = x.Dimensions[1];
         var r = y.Dimensions[1];    
