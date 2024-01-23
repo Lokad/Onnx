@@ -519,9 +519,6 @@ namespace Lokad.Onnx
         public override Tensor<T> InsertDim(int dim) => this.ToDenseTensor().InsertDim(dim);
 
         public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => this.ToDenseTensor().BroadcastDim(dim, size);
-
-        public override BroadcastedTensor<T> ToBroadcastedTensor() => this.ToDenseTensor().ToBroadcastedTensor();
-
-        
+      
     }
 }

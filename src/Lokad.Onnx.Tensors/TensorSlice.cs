@@ -62,11 +62,6 @@ public class TensorSlice<T> : Tensor<T> where T : struct
     {
         throw new NotImplementedException();
     }
-
-    public override BroadcastedTensor<T> ToBroadcastedTensor()
-    {
-        throw new NotImplementedException();
-    }
     #endregion
 
 

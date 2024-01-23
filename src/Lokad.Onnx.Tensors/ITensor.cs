@@ -24,14 +24,12 @@ namespace Lokad.Onnx
 
         ITensor InsertDim(int dim);
         
-        ITensor PadLeft();
-
         ITensor BroadcastDim(int dim, int size);
-
-        ITensor ToBroadcastedTensor();
 
         ITensor ToDenseTensor();
 
+        ITensor PadLeft() => InsertDim(0);
+        
         object this[params int[] indices]
         {
             get;

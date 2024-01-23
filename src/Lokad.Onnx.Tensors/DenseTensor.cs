@@ -223,9 +223,7 @@ namespace Lokad.Onnx
             return new DenseTensor<T>(Buffer, dimensions, IsReversedStride);
         }
 
-        public override BroadcastedTensor<T> ToBroadcastedTensor() => new BroadcastedTensor<T>(this, dimensions, strides, IsReversedStride);
-
-        public static implicit operator BroadcastedTensor<T>(DenseTensor<T> t) => t.ToBroadcastedTensor();
+        public static implicit operator BroadcastedTensor<T>(DenseTensor<T> t) => new BroadcastedTensor<T>(t, t.dimensions, t.strides, t.IsReversedStride);
 
         public override Tensor<T> InsertDim(int dim)
         {

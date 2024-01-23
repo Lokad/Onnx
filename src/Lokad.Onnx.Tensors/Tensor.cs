@@ -978,9 +978,7 @@ namespace Lokad.Onnx
 
         public abstract BroadcastedTensor<T> BroadcastDim(int dim, int size);
 
-        public abstract BroadcastedTensor<T> ToBroadcastedTensor();
-
-        public BroadcastedTensor<T> PadLeft() => InsertDim(0).ToBroadcastedTensor();
+        public Tensor<T> PadLeft() => InsertDim(0);
 
         public Tensor<T> Reshape(params int[] dims) => this.Reshape((ReadOnlySpan<int>) dims); 
         #endregion
@@ -1631,13 +1629,9 @@ namespace Lokad.Onnx
 
         ITensor ITensor.InsertDim(int dim) => this.InsertDim(dim);
 
-        ITensor ITensor.PadLeft() => this.InsertDim(0);
-
         ITensor ITensor.BroadcastDim(int dim, int size) => this.BroadcastDim(dim, size);
 
         ITensor ITensor.ToDenseTensor() => this.ToDenseTensor();
-
-        ITensor ITensor.ToBroadcastedTensor() => this.ToBroadcastedTensor();
 
         ITensor  ITensor.this[params object[] indices]
         {
@@ -1789,11 +1783,11 @@ namespace Lokad.Onnx
         public TensorDimensionsIterator GetDimensionsIterator() => GetDimensionsIterator(..);
         #endregion
 
-        public static BroadcastedTensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
+        public static Tensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
         {
             var broadcastRank = Math.Max(inA.Rank, inB.Rank);
-            var outA = inA.ToBroadcastedTensor();
-            var outB = inB.ToBroadcastedTensor();
+            var outA = inA.Clone();
+            var outB = inB.Clone();
             for (var i = 0; i < broadcastRank; i++)
             {
                 var idxA = i - broadcastRank + inA.Rank;

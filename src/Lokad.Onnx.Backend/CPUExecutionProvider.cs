@@ -78,8 +78,8 @@ public class CPUExecutionProvider
     public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB) where T: struct, INumber<T>
     {
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
-        var outA = inA.ToBroadcastedTensor();
-        var outB = inB.ToBroadcastedTensor();
+        var outA = inA.Clone();
+        var outB = inB.Clone();
         for (var i = 0; i < broadcastRank; i++)
         {
             var idxA = i - broadcastRank + inA.Rank;

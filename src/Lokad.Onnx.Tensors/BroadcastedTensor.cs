@@ -75,9 +75,7 @@ namespace Lokad.Onnx
             }
         }
 
-        public override BroadcastedTensor<T> ToBroadcastedTensor() => this;
-
-        public static BroadcastedTensor<T>[] PadSame(Tensor<T> a, Tensor<T> b)
+        public static Tensor<T>[] PadSame(Tensor<T> a, Tensor<T> b)
         {
             if (a.Dimensions.Length < b.Dimensions.Length)
             {
@@ -87,7 +85,7 @@ namespace Lokad.Onnx
             {
                 return PadSame(a, b.PadLeft());
             }
-            else return new[] { a.ToBroadcastedTensor(), b.ToBroadcastedTensor() };
+            else return new[] { a, b };
         }
         #endregion
 
