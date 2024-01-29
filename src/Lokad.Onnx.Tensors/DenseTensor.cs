@@ -202,7 +202,7 @@ namespace Lokad.Onnx
         {
             return new DenseTensor<TResult>(dimensions, IsReversedStride);
         }
-
+        
         /// <summary>
         /// Reshapes the current tensor to new dimensions, using the same backing storage.
         /// </summary>
@@ -224,35 +224,5 @@ namespace Lokad.Onnx
         }
 
         public static implicit operator BroadcastedTensor<T>(DenseTensor<T> t) => new BroadcastedTensor<T>(t, t.dimensions, t.strides, t.IsReversedStride);
-
-        public override Tensor<T> InsertDim(int dim)
-        {
-            if (dim >= Rank) throw new IndexOutOfRangeException(nameof(dim));    
-            var dims = this.dimensions.ToList();
-            dims.Insert(dim, 1);
-            return this.Reshape(dims.ToArray());
-        }
-
-        public override BroadcastedTensor<T> BroadcastDim(int dim, int size)
-        {
-            if (dim >= Rank)
-            {
-                throw new ArgumentException($"The specified dimension {dim} exceeds the tensor rank.");
-            }
-            else if (dimensions[dim] != 1)
-            {
-                throw new ArgumentException($"Dimension {dim} must be of size 1 to broadcast.");
-            }
-            else
-            {
-                var dims = new int[Rank];
-                Array.Copy(dimensions, dims, Rank);
-                var bstrides = new int[Rank];
-                Array.Copy(strides, bstrides, Rank);
-                dims[dim] = size;
-                bstrides[dim] = 0;
-                return new BroadcastedTensor<T>(this, dims, bstrides, IsReversedStride);
-            }
-        }
     }
 }

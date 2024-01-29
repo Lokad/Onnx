@@ -49,11 +49,21 @@ namespace Lokad.Onnx
 
         public override Tensor<T> InsertDim(int dim)
         {
-            if (dim >= Rank) throw new IndexOutOfRangeException(nameof(dim));
+            if (dim >= Rank) throw new ArgumentException(nameof(dim));
             var dims = this.dimensions.ToList();
             dims.Insert(dim, 1);
             var bstrides = strides.ToList();
             bstrides.Insert(dim, 0);    
+            return new BroadcastedTensor<T>(source, dims.ToArray(), strides.ToArray(), IsReversedStride);
+        }
+
+        public override Tensor<T> RemoveDim(int dim)
+        {
+            if (dim >= Rank) throw new ArgumentException(nameof(dim));
+            var dims = dimensions.ToList();
+            dims.RemoveAt(dim);
+            var bstrides = strides.ToList();
+            bstrides.RemoveAt(dim);
             return new BroadcastedTensor<T>(source, dims.ToArray(), strides.ToArray(), IsReversedStride);
         }
 

@@ -29,12 +29,21 @@ public class MathTests
         var la = a.Dimensions[^2..];
         var di = a.GetDimensionsIterator(0..^2);
         foreach (var _ in di)
-        { 
+        {
             Assert.Equal(2, a[di[..]].Rank);
             Assert.Equal(2, b[di[..]].Rank);
             c[di[..]] = Tensor<int>.MatMul2D(a[di[..]], b[di[..]]);
         }
         Assert.Equal(98, c[0, 1, 1]);
     }
-}
 
+    [Fact]  
+    public void CanMatMul()
+    {
+        var a = Tensor<int>.Ones(9, 5, 7, 4);
+        var b = Tensor<int>.Ones(9, 5, 4, 3);
+        var c = Tensor<int>.MatMul(a, b);
+        Assert.Equal(98, c[0, 1, 1]);
+    }
+
+}

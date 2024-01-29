@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 public class TensorSlice<T> : Tensor<T> where T : struct 
 {
     #region Constructors
-    public TensorSlice(Tensor<T> parent, SliceIndex[] indices) : base((ReadOnlySpan<int>) parent.SliceDims(parent.ExpandEllipsis(indices)), parent.IsReversedStride)
+    public TensorSlice(Tensor<T> parent, SliceIndex[] indices) : base((ReadOnlySpan<int>) parent.SliceAxes(parent.ExpandEllipsis(indices)), parent.IsReversedStride)
     {
         this.parent = parent;
         this.slices = parent.ExpandEllipsis(indices).Select((i, n) => i.ToSliceDef(parent.dimensions[n])).ToArray(); 
@@ -33,39 +33,17 @@ public class TensorSlice<T> : Tensor<T> where T : struct
         parent.SetValue(idx, value);
     }
 
-    public override Tensor<T> Clone()
-    {
-        throw new NotImplementedException();
-    }
+    public override Tensor<T> Clone() => ToDenseTensor();
 
-    public override Tensor<T> CloneEmpty()
-    {
-        throw new NotImplementedException();
-    }
+    public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions, this.IsReversedStride);
+    
+    public override Tensor<T> InsertDim(int dim) => Clone().InsertDim(dim);
 
-    public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
-    {
-        throw new NotImplementedException();
-    }
+    public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions) => Clone().Reshape(dimensions);
 
-    public override Tensor<T> InsertDim(int dim)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override BroadcastedTensor<T> BroadcastDim(int dim, int size)
-    {
-        throw new NotImplementedException();
-    }
+    public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => Clone().BroadcastDim(dim, size);    
     #endregion
 
-
-    
     [MethodImpl((MethodImplOptions)768)]
     public int GetOffset(params int[] indices)
     {

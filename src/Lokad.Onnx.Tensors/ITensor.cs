@@ -23,7 +23,9 @@ namespace Lokad.Onnx
         ITensor Slice(string indices);
 
         ITensor InsertDim(int dim);
-        
+
+        ITensor RemoveDim(int dim);
+
         ITensor BroadcastDim(int dim, int size);
 
         ITensor ToDenseTensor();

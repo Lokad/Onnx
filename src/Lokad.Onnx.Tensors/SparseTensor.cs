@@ -151,10 +151,6 @@ namespace Lokad.Onnx
             return denseTensor;
         }
 
-        public override Tensor<T> InsertDim(int dim) => this.ToDenseTensor().InsertDim(dim);
-        
-        public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => this.ToDenseTensor().BroadcastDim(dim, size);
-
         /// <summary>
         /// Creates a copy of this tensor as a new SparseTensor&lt;T&gt; eliminating any unused space in the backing storage.
         /// </summary>

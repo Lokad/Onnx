@@ -974,13 +974,49 @@ namespace Lokad.Onnx
         public abstract void SetValue(int index, T value);
 
         #region ITensor support
-        public abstract Tensor<T> InsertDim(int dim);
+        public virtual Tensor<T> InsertDim(int dim)
+        {
+            if (dim >= Rank) throw new IndexOutOfRangeException(nameof(dim));
+            var dims = dimensions.ToList();
+            dims.Insert(dim, 1);
+            return Reshape(dims.ToArray());
+        }
 
-        public abstract BroadcastedTensor<T> BroadcastDim(int dim, int size);
+        public virtual Tensor<T> RemoveDim(int dim)
+        {
+            if (dim >= Rank) throw new IndexOutOfRangeException(nameof(dim));
+            if (dimensions[dim] != 1) throw new ArgumentException($"Dimension {dim} is size {dimensions[dim]}, not 1.");
+            var dims = dimensions.ToList();
+            dims.RemoveAt(dim);
+            return Reshape(dims.ToArray());
+        }
+        public virtual BroadcastedTensor<T> BroadcastDim(int dim, int size)
+        {
+            if (dim >= Rank)
+            {
+                throw new ArgumentException($"The specified dimension {dim} exceeds the tensor rank.");
+            }
+            else if (dimensions[dim] != 1)
+            {
+                throw new ArgumentException($"Dimension {dim} must be of size 1 to broadcast.");
+            }
+            else
+            {
+                var dims = new int[Rank];
+                Array.Copy(dimensions, dims, Rank);
+                var bstrides = new int[Rank];
+                Array.Copy(strides, bstrides, Rank);
+                dims[dim] = size;
+                bstrides[dim] = 0;
+                return new BroadcastedTensor<T>(this, dims, bstrides, IsReversedStride);
+            }
+        }
 
         public Tensor<T> PadLeft() => InsertDim(0);
 
-        public Tensor<T> Reshape(params int[] dims) => this.Reshape((ReadOnlySpan<int>) dims); 
+        public Tensor<T> PadRight() => InsertDim(Rank - 1);
+
+        public Tensor<T> Reshape(params int[] dims) => Reshape((ReadOnlySpan<int>) dims); 
         #endregion
 
         #region statics
@@ -1629,6 +1665,8 @@ namespace Lokad.Onnx
 
         ITensor ITensor.InsertDim(int dim) => this.InsertDim(dim);
 
+        ITensor ITensor.RemoveDim(int dim) => this.RemoveDim(dim);
+
         ITensor ITensor.BroadcastDim(int dim, int size) => this.BroadcastDim(dim, size);
 
         ITensor ITensor.ToDenseTensor() => this.ToDenseTensor();
@@ -1652,7 +1690,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region Slicing
-        public int[] SliceDims(params SliceIndex[] input_slices)
+        public int[] SliceAxes(params SliceIndex[] input_slices)
         {
             if (dimensions is null || dimensions.Length == 0)
                 throw new InvalidOperationException("Unable to slice an empty shape.");
@@ -1772,9 +1810,7 @@ namespace Lokad.Onnx
             return coords;
         }
 
-        public TensorSlice<T> Slice(params SliceIndex[] indices) => new TensorSlice<T>(this, ExpandEllipsis(indices));
-
-        public TensorSlice<T> Slice(params int[] indices) => Slice(indices.Select(i => SliceIndex.FromObj(i)).ToArray());    
+        public TensorSlice<T> Slice(params SliceIndex[] indices) => new TensorSlice<T>(this, ExpandEllipsis(indices));        
         #endregion
 
         #region Dimensions iterator
@@ -1782,45 +1818,6 @@ namespace Lokad.Onnx
 
         public TensorDimensionsIterator GetDimensionsIterator() => GetDimensionsIterator(..);
         #endregion
-
-        public static Tensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
-        {
-            var broadcastRank = Math.Max(inA.Rank, inB.Rank);
-            var outA = inA.Clone();
-            var outB = inB.Clone();
-            for (var i = 0; i < broadcastRank; i++)
-            {
-                var idxA = i - broadcastRank + inA.Rank;
-                var idxB = i - broadcastRank + inB.Rank;
-                if (i < broadcastRank - inA.Rank)
-                {
-                    outA = outA.PadLeft();
-                    outA = outA.BroadcastDim(0, inB.Dimensions[idxB]);
-                }
-                else if (i < broadcastRank - inB.Rank)
-                {
-                    outB = outB.PadLeft();
-                    outB = outB.BroadcastDim(0, inA.Dimensions[idxA]);
-                }
-                else if (inA.Dimensions[idxA] == inB.Dimensions[idxB])
-                {
-                }
-                else if (inA.Dimensions[idxA] == 1)
-                {
-                    outA = outA.BroadcastDim(i, inB.Dimensions[idxB]);
-                }
-                else if (inB.Dimensions[idxB] == 1)
-                {
-                    outB = outB.BroadcastDim(i, inA.Dimensions[idxA]);
-                }
-                else
-                {
-                    return null;
-                    //return OpResult.Failure(OpType.Broadcast, $"Trying to broadcast incompatible shapes: {inA.Dimensions.ToArray()} and {inB.Dimensions.ToArray()}");
-                }
-            }
-            return new[] { outA, outB };
-        }
 
         public static Tensor<int> Arange(int start, int stop, int step = 1)
         {
