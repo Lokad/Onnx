@@ -40,9 +40,21 @@ public class MathTests
     [Fact]  
     public void CanMatMul()
     {
-        var a = Tensor<int>.Ones(9, 5, 7, 4);
-        var b = Tensor<int>.Ones(9, 5, 4, 3);
+        var a = Tensor<int>.Ones(1, 1, 5, 6);
+        var b = Tensor<int>.Ones(3, 6, 7);
         var c = Tensor<int>.MatMul(a, b);
+        Assert.Equal(new int[] {1,3,5,7}, c.Dimensions.ToArray());
+        a = Tensor<int>.Ones(2, 3, 5, 6);
+        b = Tensor<int>.Ones(3, 6, 7);
+        c = Tensor<int>.MatMul(a, b);
+        Assert.Equal(new int[] { 2, 3, 5, 7 }, c.Dimensions.ToArray());
+        a = Tensor<int>.Ones(4, 1, 5, 6);
+        b = Tensor<int>.Ones(4, 2, 6, 7);
+        c = Tensor<int>.MatMul(a, b);
+        Assert.Equal(new int[] { 4, 2, 5, 7 }, c.Dimensions.ToArray());
+        a = Tensor<int>.Arange(0, 2 * 2 * 4).Reshape(2, 2, 4);
+        b = Tensor<int>.Arange(0, 2 * 2 * 4).Reshape(2, 4, 2);
+        c = Tensor<int>.MatMul(a, b);
         Assert.Equal(98, c[0, 1, 1]);
     }
 

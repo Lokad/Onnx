@@ -104,6 +104,9 @@ where T : struct
         }
     }
 
+    public static bool Broadcast<U>(Tensor<U> x, ReadOnlySpan<int> y, out Tensor<U> bx) where U : struct =>
+        Broadcast(x, new DenseTensor<U>(y), out bx, out _);
+        
     public static bool BroadcastShape(ReadOnlySpan<int> x, ReadOnlySpan<int> y, out int[] b)
     {
         var tx = new DenseTensor<byte>(x, true);
@@ -123,6 +126,8 @@ where T : struct
 
     public static bool BroadcastShape<U>(Tensor<U> x, Tensor<U> y, out int[] b) where U: struct => BroadcastShape(x.Dimensions, y.Dimensions, out b);   
 
+
+    //public static bool BroadcastShape<U>(Tensor<U> x,)
     public static Tensor<U> Add<U>(Tensor<U> x, Tensor<U> y) where U : struct, IAdditionOperators<U, U, U>
         => x.Apply((l, r) => l + r, y);
 
@@ -204,14 +209,24 @@ where T : struct
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
             
-            var d = (ReadOnlySpan<int>) bd.Append(xdl[0]).Append(ydl[1]).ToArray();
-            var c = new DenseTensor<U>(d);
-            var di = x.GetDimensionsIterator(0..^2);
+            var bdx = (ReadOnlySpan<int>)bd.Append(xdl[0]).Append(xdl[1]).ToArray();
+            if (!Tensor<U>.Broadcast(x, bdx, out var bx))
+            {
+                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+            }
+            var bdy = (ReadOnlySpan<int>)bd.Append(ydl[0]).Append(ydl[1]).ToArray();
+            if (!Tensor<U>.Broadcast(y, bdy, out var by))
+            {
+                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+            }
+            var z = new DenseTensor<U>((ReadOnlySpan<int>) bd.Append(xdl[0]).Append(ydl[1]).ToArray());
+            
+            var di = bx.GetDimensionsIterator(0..^2);
             foreach (var _ in di)
             {
-                c[di[..]] = Tensor<U>.MatMul2D(x[di[..]], y[di[..]]);
+                z[di[..]] = Tensor<U>.MatMul2D(bx[di[..]], by[di[..]]);
             }
-            return c;
+            return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
         {
