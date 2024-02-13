@@ -17,6 +17,16 @@ def make_tensor(dt:np.dtype, *dims) -> ITensor:
         return Tensors.MakeTensor[int](dimsa)
     #elif 
 
+def zeros(dt:np.dtype, *dims) -> ITensor:
+    dimsa = Array[int](dims)
+    if dt == np.int32:
+        return Tensors.Zeros[int](dimsa)
+
+def ones(dt:np.dtype, *dims) -> ITensor:
+    dimsa = Array[int](dims)
+    if dt == np.int32:
+        return Tensors.Ones[int](dimsa)
+
 def arange(start:int, stop:int, step:int=1)->ITensor: return Tensors.ARange(start, stop, step)
 
 def get_dims(t:ITensor) -> Array[int]: return t.Dims
@@ -28,3 +38,5 @@ def slice(t: ITensor, *dims) -> ITensor:
     return t.Slice(dimsa)
 
 def add(x:ITensor, y) -> ITensor: return Tensors.Add(x, y)
+
+def matmul(x:ITensor, y) -> ITensor: return Tensors.MatMul(x, y)

@@ -56,3 +56,10 @@ def test_add():
      rt = tensors.add(t1, 4)
      assert set(r.flat) == set(rt)
 
+def test_matmul():
+    a = np.ones([9, 5, 7, 4])
+    c = np.ones([9, 5, 4, 3])
+    ta = tensors.ones(np.int32, 9, 5, 7, 4)
+    tc = tensors.ones(np.int32, 9, 5, 4, 3)
+    assert set(tensors.matmul(ta,tc).Dims) == set([9,5,7,3])
+

@@ -332,7 +332,7 @@ namespace Lokad.Onnx
     /// Represents a multi-dimensional collection of objects of type T that can be accessed by indices.
     /// </summary>
     /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
-    [DebuggerDisplay("{GetArrayString(false)}")]
+    [DebuggerDisplay("{PrintShape()}")]
     // When we cross-compile for frameworks that expose ICloneable this must implement ICloneable as well.
     public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
     where T : struct
@@ -1640,14 +1640,7 @@ namespace Lokad.Onnx
             }
         }
 
-        
-
-        private static bool IsCompatibleObject(object value)
-        {
-            // Non-null values are fine.  Only accept nulls if T is a class or Nullable<T>.
-            // Note that default(T) is not equal to null for value types except when T is Nullable<T>.
-            return value is T;
-        }
+        public string PrintShape() => "{" + string.Join(',', dimensions) + "}"; 
         #endregion
 
         #region ITensor members
@@ -1818,6 +1811,13 @@ namespace Lokad.Onnx
 
         public TensorDimensionsIterator GetDimensionsIterator() => GetDimensionsIterator(..);
         #endregion
+
+        private static bool IsCompatibleObject(object value)
+        {
+            // Non-null values are fine.  Only accept nulls if T is a class or Nullable<T>.
+            // Note that default(T) is not equal to null for value types except when T is Nullable<T>.
+            return value is T;
+        }
 
         public static Tensor<int> Arange(int start, int stop, int step = 1)
         {

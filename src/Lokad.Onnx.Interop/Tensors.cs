@@ -7,6 +7,8 @@ public class Tensors
 {
     public static ITensor MakeTensor<T>(int[] dims) where T : struct => new DenseTensor<T>(dims);
 
+    public static ITensor Ones<T>(int[] dims) where T : struct => Tensor<T>.Ones(dims);
+
     public static ITensor ARange(int start, int end, int step = 1) => Tensor<int>.Arange(start, end, step);
 
     public static ITensor Add(ITensor x, object _y)
@@ -47,6 +49,24 @@ public class Tensors
         }
     }
 
+    public static ITensor MatMul(ITensor x, ITensor y)
+    {
+        ITensor.ThrowIfDifferentElementTypes(x, y);
+        switch (x.ElementType)
+        {
+            case TensorElementType.Int8: return Tensor<byte>.MatMul((Tensor<byte>)x, (Tensor<byte>)y);
+            case TensorElementType.UInt8: return Tensor<sbyte>.MatMul((Tensor<sbyte>)x, (Tensor<sbyte>)y);
+            case TensorElementType.Int16: return Tensor<short>.MatMul((Tensor<short>)x, (Tensor<short>)y);
+            case TensorElementType.UInt16: return Tensor<ushort>.MatMul((Tensor<ushort>)x, (Tensor<ushort>)y);
+            case TensorElementType.Int32: return Tensor<int>.MatMul((Tensor<int>)x, (Tensor<int>)y);
+            case TensorElementType.UInt32: return Tensor<uint>.MatMul((Tensor<uint>)x, (Tensor<uint>)y);
+            case TensorElementType.Int64: return Tensor<long>.MatMul((Tensor<long>)x, (Tensor<long>)y);
+            case TensorElementType.UInt64: return Tensor<ulong>.MatMul((Tensor<ulong>)x, (Tensor<ulong>)y);
+            case TensorElementType.Float: return Tensor<float>.MatMul((Tensor<float>)x, (Tensor<float>)y);
+            case TensorElementType.Double: return Tensor<double>.MatMul((Tensor<double>)x, (Tensor<double>)y);
+            default: throw new NotSupportedException();
+        }
+    }
     
 }
 

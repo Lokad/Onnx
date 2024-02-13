@@ -269,5 +269,10 @@ where T : struct
             return c;
         }
     }
+
+    public static Tensor<U> Conv2D<U>(Tensor<U> x, Tensor<U> W) where U : struct, IAdditiveIdentity<U, U>, IAdditionOperators<U, U, U>, IMultiplyOperators<U, U, U>
+    {
+        throw new NotImplementedException();
+    }
 }
 
