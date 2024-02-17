@@ -100,5 +100,7 @@ namespace Lokad.Onnx
             }
         }
         public static string TensorNameDesc(this ValueInfoProto vp) => $"{vp.Name}:{(TensorElementType) vp.Type.TensorType.ElemType}:{vp.Type.TensorType.Shape.Dim.Select(d => d.DimValue.ToString()).JoinWith("x")}";
+
+        public static string TensorNameDesc(this TensorProto vp) => $"{vp.Name}:{((TensorElementType)vp.DataType)}:{vp.Dims.Select(d => d.ToString()).JoinWith("x")}";
     }
 }

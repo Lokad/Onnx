@@ -35,21 +35,18 @@ namespace Lokad.Onnx.Backend
             graph.Metadata["IrVersion"] = (OnnxSharp::Onnx.Version) mp.IrVersion;
             graph.Metadata["DocString"] = mp.DocString;
             graph.Metadata["Domain"] = mp.Domain;
-            var op2 = Begin($"Converting {mp.Graph.Input.Count} model input tensor protos: {{{mp.Graph.Input.Select(i => i.TensorNameDesc()).JoinWith(", ")}}} to graph tensors");
-            graph.Inputs = mp.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
+            op = Begin($"Converting {mp.Graph.Input.Count} model initializer tensor protos: {{{mp.Graph.Initializer.Select(i => i.TensorNameDesc()).JoinWith(", ")}}} to graph tensors");
             foreach (var i in mp.Graph.Initializer)
             {
-                if (graph.Inputs.ContainsKey(i.Name))
-                {
-                    graph.Inputs[i.Name] = i.ToTensor();
-                }
-                else
-                {
-                    Error("The tensor initializer {t} does not match any graph input.", i.Name);
-                }
+                graph.Initializers.Add(i.Name, i.ToTensor());
             }
+            op.Complete();
+            var op2 = Begin($"Converting {mp.Graph.Input.Count} model input tensor protos: {{{mp.Graph.Input.Select(i => i.TensorNameDesc()).JoinWith(", ")}}} to graph tensors");
+            graph.Inputs = mp.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
             op2.Complete();
+            var op3 = Begin($"Converting {mp.Graph.Output.Count} model output tensor protos: {{{mp.Graph.Output.Select(i => i.TensorNameDesc()).JoinWith(", ")}}} to graph tensors");
             graph.Outputs = mp.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
+            op3.Complete(); 
             var op4 = Begin($"Converting {mp.Graph.Node.Count} model node protos to graph nodes");
             foreach (var np in mp.Graph.Node)
             {

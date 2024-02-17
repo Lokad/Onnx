@@ -23,6 +23,8 @@ public class ComputationalGraph : Runtime
 
     public Dictionary<string, ITensor> Outputs = new Dictionary<string, ITensor>();
 
+    public Dictionary<string, ITensor> Initializers = new Dictionary<string, ITensor>();
+
     public List<Node> Nodes { get; set; } = new List<Node>();
     
     public WeightedDirectedGraph WeightedDirectedGraph { get; } =  new WeightedDirectedGraph();
