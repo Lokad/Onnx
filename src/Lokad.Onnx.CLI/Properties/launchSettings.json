@@ -2,7 +2,7 @@
   "profiles": {
     "Model Info": {
       "commandName": "Project",
-      "commandLineArgs": "info \"C:\\Projects\\Lokad.Onnx\\tests\\Lokad.Onnx.Backend.Tests\\models\\mnist-8.onnx\" --filter-op conv"
+      "commandLineArgs": "info \"c:\\users\\allister\\downloads\\model.onnx\" --filter-op conv"
     }
   }
 }

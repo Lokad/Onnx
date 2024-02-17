@@ -25,6 +25,8 @@ public class ComputationalGraph : Runtime
 
     public Dictionary<string, ITensor> Initializers = new Dictionary<string, ITensor>();
 
+    public Dictionary<string, ITensor?> IntermediateOutputs = new Dictionary<string, ITensor?>();
+
     public List<Node> Nodes { get; set; } = new List<Node>();
     
     public WeightedDirectedGraph WeightedDirectedGraph { get; } =  new WeightedDirectedGraph();
@@ -34,8 +36,6 @@ public class ComputationalGraph : Runtime
     public Dictionary<string, object> Metadata = new Dictionary<string, object>();
 
     public Dictionary<string, string> MetadataProps = new Dictionary<string, string>();
-
-
     #endregion
 
     #region Methods
@@ -43,7 +43,8 @@ public class ComputationalGraph : Runtime
 
     public int GetOpVersion() => this.GetOpVersion("");
     
-    public ITensor GetTensor(string name) => Inputs.ContainsKey(name)? Inputs[name] : Outputs[name];
+    public ITensor GetTensor(string name) => 
+        Inputs.ContainsKey(name) ? Inputs[name] : Initializers.ContainsKey(name) ? Initializers[name]: Outputs[name];
     
     public ITensor[] GetTensors(string[] names) => names.Select(n => GetTensor(n)).ToArray();
     #endregion

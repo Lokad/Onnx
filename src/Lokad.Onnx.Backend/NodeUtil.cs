@@ -36,16 +36,27 @@ namespace Lokad.Onnx.Backend
                 Inputs = np.Input.ToArray(),
                 Outputs = np.Output.ToArray()
             };
+           
             graph.WeightedDirectedGraph.AddNode(node.Name);
+            
             foreach (var n in graph.Nodes)
             {
-                foreach(var o in n.Outputs)
+                foreach (var i in n.Inputs)
                 {
-                    if (node.Inputs.Contains(o))
+                    if (!graph.Inputs.ContainsKey(i) && !graph.Initializers.ContainsKey(i) && !graph.IntermediateOutputs.ContainsKey(i))
                     {
-                        graph.WeightedDirectedGraph.AddArc(n.WeightedGraphNode, node.WeightedGraphNode, Satsuma.Directedness.Directed, label:o);
-                        Runtime.Debug("Node {dest} has predecessor {src}.", node.Name, n.Name);
+                        throw new InvalidOperationException($"The input tensor {i} is not in the graph inputs or initializers or intermediate outputs.");
                     }
+                }
+
+                foreach (var o in n.Outputs)
+                {
+                    if (!graph.Outputs.ContainsKey(o) && !graph.IntermediateOutputs.ContainsKey(o))
+                    {
+                        graph.IntermediateOutputs.Add(o, null);
+                    }
+                    graph.WeightedDirectedGraph.AddArc(n.WeightedGraphNode, node.WeightedGraphNode, Satsuma.Directedness.Directed, label:o);
+                    Runtime.Debug("Node {dest} has predecessor {src}.", node.Name, n.Name);                    
                 }
             }
             return node;   

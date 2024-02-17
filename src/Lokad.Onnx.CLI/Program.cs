@@ -151,7 +151,6 @@ class Program : Runtime
         Info("Model has declared out tensors: {out}", graph.Outputs.Select(t => t.Value.Name + t.Value.PrintShape()));
         foreach (var t in graph.Inputs)
         {
-            
             tensors.Add(t.Key, t.Value.Name + t.Value.PrintShape());
         }
         foreach (var t in graph.Outputs)
