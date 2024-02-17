@@ -17,7 +17,7 @@ namespace Lokad.Onnx.Backend
                 case AttributeProto.Types.AttributeType.Float: return ap.F;
                 case AttributeProto.Types.AttributeType.Floats: return ap.Floats.ToArray();
                 case AttributeProto.Types.AttributeType.Tensor: return ap.T.ToTensor();
-                case AttributeProto.Types.AttributeType.String: return ap.S;
+                case AttributeProto.Types.AttributeType.String: return ap.S.ToStringUtf8();
                 case AttributeProto.Types.AttributeType.Strings: return ap.Strings.ToArray();
                 default: throw new NotSupportedException($"Cannot convert attribute proto value of type {ap.Type}.");
             }

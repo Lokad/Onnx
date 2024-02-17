@@ -119,15 +119,27 @@ class Program : Runtime
             }
             else
             {
-                PrintModelInfo(io.File);
+                PrintModelInfo(io.File, io.FilterOp); 
             }
         });
     }
     #endregion
 
-    static void PrintModelInfo(string file)
+    static void PrintModelInfo(string file, string? _opfilter = null)
     {
         ExitIfFileNotFound(file);
+        OpType? opfilter = null;
+        if (_opfilter is not null)
+        {
+            if (!Enum.TryParse<OpType>(_opfilter, true, out var op))
+            {
+                Error("The specified operation type {op} is not valid.", _opfilter);
+            }
+            else
+            {
+                opfilter = op;  
+            }
+        }
         var graph = Model.LoadFromFile(file);
         if (graph is null)
         {
@@ -149,6 +161,10 @@ class Program : Runtime
        
         foreach (var n in graph.Nodes)
         {
+            if (opfilter is not null && n.Op != opfilter)
+            {
+                continue;
+            }
             Info("Node {node} has op type: {op}, inputs: {inputs}, outputs: {outputs} and " 
                 + ((n.Attributes is not null && n.Attributes.Count > 0) ?  "the following attributes:" : "no attributes."), 
                 n.Name, n.Op.ToString(), 
