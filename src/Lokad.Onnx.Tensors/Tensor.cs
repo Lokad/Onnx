@@ -1640,7 +1640,7 @@ namespace Lokad.Onnx
             }
         }
 
-        public string PrintShape() => "{" + string.Join(',', dimensions) + "}"; 
+        public string PrintShape() => "[" + string.Join(',', dimensions) + "]"; 
         #endregion
 
         #region ITensor members

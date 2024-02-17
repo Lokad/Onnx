@@ -87,5 +87,7 @@ namespace Lokad.Onnx
             }
             return new[] { outA, outB };
         }
+
+        string PrintShape() => "[" + string.Join(',', Dims) + "]";
     }
 }

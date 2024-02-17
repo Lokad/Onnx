@@ -16,6 +16,7 @@ public enum ExitResult
     UNHANDLED_EXCEPTION = 1,
     INVALID_OPTIONS = 2,
     NOT_FOUND = 4,
+    INVALID_INPUT = 5,
     UNKNOWN_ERROR = 7
 }
 #endregion
@@ -128,6 +129,40 @@ class Program : Runtime
     {
         ExitIfFileNotFound(file);
         var graph = Model.LoadFromFile(file);
+        if (graph is null)
+        {
+            Exit(ExitResult.INVALID_INPUT);
+            return;
+        }
+        var tensors = new Dictionary<string, string>();
+        Info("Model has declared input tensors: {in}", graph.Inputs.Select(t => t.Value.Name + t.Value.PrintShape()));
+        Info("Model has declared out tensors: {out}", graph.Outputs.Select(t => t.Value.Name + t.Value.PrintShape()));
+        foreach (var t in graph.Inputs)
+        {
+            
+            tensors.Add(t.Key, t.Value.Name + t.Value.PrintShape());
+        }
+        foreach (var t in graph.Outputs)
+        {
+            tensors.Add(t.Key, t.Value.Name + t.Value.PrintShape());
+        }
+       
+        foreach (var n in graph.Nodes)
+        {
+            Info("Node {node} has op type: {op}, inputs: {inputs}, outputs: {outputs} and " 
+                + ((n.Attributes is not null && n.Attributes.Count > 0) ?  "the following attributes:" : "no attributes."), 
+                n.Name, n.Op.ToString(), 
+                n.Inputs.Select(t => tensors.ContainsKey(t) ? tensors[t] : t).ToArray(), 
+                n.Outputs.Select(t => tensors.ContainsKey(t) ? tensors[t] : t).ToArray());
+            
+            if (n.Attributes is not null && n.Attributes.Count > 0)
+            {
+                foreach (var kv in n.Attributes)
+                {
+                    Info("  {n}: {v}", kv.Key, kv.Value);
+                }
+            }
+        }
     }
 
     static void PrintModelOps(string file)
@@ -136,8 +171,7 @@ class Program : Runtime
         var m = Model.Parse(file);
         if (m is null)
         {
-            Error("Could not parse file {f} as ONNX model.", file);
-            Exit(ExitResult.UNKNOWN_ERROR);
+            Exit(ExitResult.INVALID_INPUT);
             return;
         }
         List<string> ops = new List<string>();

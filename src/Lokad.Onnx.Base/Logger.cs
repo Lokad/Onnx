@@ -395,7 +395,8 @@ namespace Lokad.Onnx
                 {
                     Regex = "\\{.+\\}",
                     CompileRegex = true,
-                    ForegroundColor = NLog.Targets.ConsoleOutputColor.Magenta
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.Magenta,
+                    
                 });
             }
         }
