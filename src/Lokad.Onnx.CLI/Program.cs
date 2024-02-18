@@ -117,6 +117,10 @@ class Program : Runtime
             {
                 PrintModelOps(io.File);
             }
+            else if (io.Initializers)
+            {
+                PrintModelInitializers(io.File);
+            }
             else
             {
                 PrintModelInfo(io.File, io.FilterOp); 
@@ -147,17 +151,33 @@ class Program : Runtime
             return;
         }
         var tensors = new Dictionary<string, string>();
-        Info("Model has declared input tensors: {in}", graph.Inputs.Select(t => t.Value.Name + t.Value.PrintShape()));
-        Info("Model has declared out tensors: {out}", graph.Outputs.Select(t => t.Value.Name + t.Value.PrintShape()));
-        foreach (var t in graph.Inputs)
+        Info($"Model has input tensors: {{{graph.Inputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
+        Info($"Model has output tensors: {{{graph.Outputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
+        Info($"Model has initializer tensors: {{{graph.Initializers.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
+        foreach (var t in graph.Initializers.Values)
         {
-            tensors.Add(t.Key, t.Value.Name + t.Value.PrintShape());
+            tensors.Add(t.Name, t.TensorNameDesc() + "<initializer>");
         }
-        foreach (var t in graph.Outputs)
+        foreach (var t in graph.Inputs.Values)
         {
-            tensors.Add(t.Key, t.Value.Name + t.Value.PrintShape());
+            if (!tensors.ContainsKey(t.Name)) tensors.Add(t.Name, t.TensorNameDesc() + "<input>");
         }
-       
+        foreach (var t in graph.Outputs.Values)
+        {
+            tensors.Add(t.Name, t.TensorNameDesc() + "<output>");
+        }
+        foreach (var t in graph.IntermediateOutputs)
+        {
+            tensors.Add(t.Key, t.Key + "<intermediate>");
+        }
+        if (opfilter is null)
+        {
+            Info("Printing model nodes...");
+        }
+        else
+        {
+            Info("Printing model nodes with op {op}...", opfilter);
+        }
         foreach (var n in graph.Nodes)
         {
             if (opfilter is not null && n.Op != opfilter)
@@ -167,8 +187,8 @@ class Program : Runtime
             Info("Node {node} has op type: {op}, inputs: {inputs}, outputs: {outputs} and " 
                 + ((n.Attributes is not null && n.Attributes.Count > 0) ?  "the following attributes:" : "no attributes."), 
                 n.Name, n.Op.ToString(), 
-                n.Inputs.Select(t => tensors.ContainsKey(t) ? tensors[t] : t).ToArray(), 
-                n.Outputs.Select(t => tensors.ContainsKey(t) ? tensors[t] : t).ToArray());
+                n.Inputs.Select(t => tensors[t]).ToArray(), 
+                n.Outputs.Select(t => tensors[t]).ToArray());
             
             if (n.Attributes is not null && n.Attributes.Count > 0)
             {
@@ -189,6 +209,9 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
+        Info("Model has {count} input tensor(s): {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
+        Info("Model has {count} output tensor(s): {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
+        Info("Model has {count} initializer tensor(s): {out}", m.Graph.Initializer.Count, m.Graph.Initializer.Select(t => t.TensorNameDesc()));
         List<string> ops = new List<string>();
         foreach(var node in m.Graph.Node)
         {
@@ -198,20 +221,54 @@ class Program : Runtime
                 ops.Add(node.OpType); 
             }
         }
-        Info("Printing list of ONNX operations in model {f}...", file);
+        Info("Printing list of distinct ONNX operations in model {f}...", file);
         foreach(var op in ops)
         {
             Con.Write(op + " ");
         }
         Con.WriteLine("");
-        Warn("{d} total operations in model.", m.Graph.Node.Count);
+        Info("{d} total distinct operations in model.", m.Graph.Node.Count);
     }
+
+    static void PrintModelInitializers(string file)
+    {
+        ExitIfFileNotFound(file);
+        var m = Model.Parse(file);
+        if (m is null)
+        {
+            Exit(ExitResult.INVALID_INPUT);
+            return;
+        }
+        var inputs = m.Graph.Input.Select(i => i.Name);
+        List<string> initializers = new List<string>();
+        foreach (var i in m.Graph.Initializer)
+        {
+            if (inputs.Contains(i.Name))
+            {
+                initializers.Add(i.TensorNameDesc() + "*");
+            }
+            else
+            {
+                initializers.Add(i.TensorNameDesc());
+            }
+             
+        }
+        Info("Model has {count} input tensors: {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
+        Info("Model has {count} output tensors: {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
+        Info("Printing list of ONNX initializers in model {f}...", file);
+        foreach (var i in initializers)
+        {
+            Con.WriteLine(i);
+        }
+        Con.WriteLine("");
+        Info("{d} total initializers in model. * = initializer for model input.", m.Graph.Initializer.Count);
+    }
+
     static void PrintLogo()
     {
         Con.Write(new FigletText(font, "Lokad.Onnx").Color(Color.Magenta1));
         Con.Write(new Text($"v{AssemblyVersion.ToString(3)}\n"));
     }
-
     public static void Exit(ExitResult result)
     {
         if (Cts != null && !Cts.Token.CanBeCanceled)

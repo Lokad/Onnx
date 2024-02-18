@@ -47,8 +47,11 @@ public class Options
 [Verb("info", HelpText = "Get information on an ONNX model.")]
 public class InfoOptions : Options
 {
-    [Option('o', "ops", Required = false, HelpText = "Only print out a list of distinct ops present in the model.")]
+    [Option("ops", Required = false, HelpText = "Only print out a list of distinct ops present in the model.")]
     public bool Ops { get; set; }
+
+    [Option("init", Required = false, HelpText = "Only print out a list of initializers present in the model.")]
+    public bool Initializers { get; set; }
 
     [Option("filter-op", Required = false, HelpText = "Filter on ops with this type.")]
     public string? FilterOp { get; set; }

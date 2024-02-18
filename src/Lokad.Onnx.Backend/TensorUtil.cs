@@ -99,8 +99,8 @@ namespace Lokad.Onnx
                 default: throw new ArgumentException($"Cannot convert value info proto of element type {vp.Type.TensorType.ElemType}.");
             }
         }
-        public static string TensorNameDesc(this ValueInfoProto vp) => $"{vp.Name}:{(TensorElementType) vp.Type.TensorType.ElemType}:{vp.Type.TensorType.Shape.Dim.Select(d => d.DimValue.ToString()).JoinWith("x")}";
+        public static string TensorNameDesc(this ValueInfoProto vp) => $"{vp.Name}:{((TensorElementType) vp.Type.TensorType.ElemType).ToString().ToLower()}:{vp.Type.TensorType.Shape.Dim.Select(d => d.DimValue.ToString()).JoinWith("x")}";
 
-        public static string TensorNameDesc(this TensorProto vp) => $"{vp.Name}:{((TensorElementType)vp.DataType)}:{vp.Dims.Select(d => d.ToString()).JoinWith("x")}";
+        public static string TensorNameDesc(this TensorProto vp) => $"{vp.Name}:{((TensorElementType)vp.DataType).ToString().ToLower()}:{vp.Dims.Select(d => d.ToString()).JoinWith("x")}";
     }
 }

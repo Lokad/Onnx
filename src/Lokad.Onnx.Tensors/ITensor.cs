@@ -89,5 +89,7 @@ namespace Lokad.Onnx
         }
 
         string PrintShape() => "[" + string.Join(',', Dims) + "]";
+
+        string TensorNameDesc() => $"{Name}:{ElementType.ToString().ToLower()}:{string.Join("x",Dims.Select(d => d.ToString()))}";
     }
 }
