@@ -57,14 +57,24 @@ public class MathTests
         c = Tensor<int>.MatMul(a, b);
         Assert.Equal(98, c[0, 1, 1]);
     }
-
+    
     [Fact]  
     public void CanConv2D()
     {
         var X = Tensor<float>.Arange(0.0f, 25.0f).Reshape(1,1,5,5);
         var W = Tensor<float>.Ones(1, 1, 3, 3);
-        var Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.SameLower);
-        Assert.NotEmpty(Y);
+        var Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.SameLower, strides: new int[] { 2,2});
+        Assert.Equal(Y.Dimensions.ToArray(), W.Dimensions.ToArray());
+        var Ye = DenseTensor<float>.OfData(new float[1,1,3,3] { { { 
+                    { 12.0f, 27.0f, 24.0f }, { 63.0f, 108.0f, 81.0f }, { 72.0f, 117.0f, 84.0f } 
+                } } }, new int[] { 1, 1, 3, 3 });
+        Assert.Equal(Ye, Y);
+        X = Tensor<float>.Arange(0.0f, 35.0f).Reshape(1, 1, 7, 5);
+        Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.Value, strides: new int[] { 2, 2 }, padvalue: 1);
+        Ye = DenseTensor<float>.OfData(new float[1, 1, 4, 3] { { {
+                { 12.0f, 27.0f, 24.0f }, { 63.0f, 108.0f, 81.0f },{ 123.0f, 198.0f, 141.0f }, { 112.0f, 177.0f, 124.0f },
+            } } }, new int[] { 1, 1, 4, 3 });
+        Assert.Equal(Ye, Y);
     }
-
+    
 }

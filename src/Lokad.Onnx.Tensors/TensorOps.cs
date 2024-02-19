@@ -12,7 +12,7 @@ using static Lokad.Onnx.MathOps;
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
 where T : struct
 {
-    
+
 
     public virtual void Apply(Func<T, T> op, Tensor<T> destination)
     {
@@ -53,7 +53,7 @@ where T : struct
         return output;
     }
 
-    public static Tensor<U>[] Broadcast<U>(Tensor<U> inA, Tensor<U> inB) where U: struct
+    public static Tensor<U>[] Broadcast<U>(Tensor<U> inA, Tensor<U> inB) where U : struct
     {
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
         var outA = inA.Clone();
@@ -92,7 +92,7 @@ where T : struct
         return new[] { outA, outB };
     }
 
-    public static bool Broadcast<U>(Tensor<U> x, Tensor<U> y, out Tensor<U> outx, out Tensor<U> outy) where U: struct
+    public static bool Broadcast<U>(Tensor<U> x, Tensor<U> y, out Tensor<U> outx, out Tensor<U> outy) where U : struct
     {
         var b = Broadcast(x, y);
         if (b.Length == 0)
@@ -111,7 +111,7 @@ where T : struct
 
     public static bool Broadcast<U>(Tensor<U> x, ReadOnlySpan<int> y, out Tensor<U> bx) where U : struct =>
         Broadcast(x, new DenseTensor<U>(y), out bx, out _);
-        
+
     public static bool BroadcastShape(ReadOnlySpan<int> x, ReadOnlySpan<int> y, out int[] b)
     {
         var tx = new DenseTensor<byte>(x, true);
@@ -124,12 +124,12 @@ where T : struct
         else
         {
             b = null;
-            return false;   
+            return false;
         }
 
     }
 
-    public static bool BroadcastShape<U>(Tensor<U> x, Tensor<U> y, out int[] b) where U: struct => BroadcastShape(x.Dimensions, y.Dimensions, out b);   
+    public static bool BroadcastShape<U>(Tensor<U> x, Tensor<U> y, out int[] b) where U : struct => BroadcastShape(x.Dimensions, y.Dimensions, out b);
 
 
     //public static bool BroadcastShape<U>(Tensor<U> x,)
@@ -213,7 +213,7 @@ where T : struct
             {
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
-            
+
             var bdx = (ReadOnlySpan<int>)bd.Append(xdl[0]).Append(xdl[1]).ToArray();
             if (!Tensor<U>.Broadcast(x, bdx, out var bx))
             {
@@ -224,8 +224,8 @@ where T : struct
             {
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
-            var z = new DenseTensor<U>((ReadOnlySpan<int>) bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            
+            var z = new DenseTensor<U>((ReadOnlySpan<int>)bd.Append(xdl[0]).Append(ydl[1]).ToArray());
+
             var di = bx.GetDimensionsIterator(0..^2);
             foreach (var _ in di)
             {
@@ -262,12 +262,12 @@ where T : struct
                 bcast = true;
             }
             if (y.Rank == 1)
-            { 
+            {
                 y = y.PadRight();
                 bcast = true;
             }
-            var c = MatMul2D(x, y); 
-            if (bcast) 
+            var c = MatMul2D(x, y);
+            if (bcast)
             {
                 c.RemoveDim(0);
             }
@@ -275,7 +275,7 @@ where T : struct
         }
     }
 
-    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, Tensor<float> bias = null, int[] kernelshape=null, int[] strides = null, int[] dilations = null, int? padvalue = null) 
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, Tensor<float> bias = null, int[] kernelshape = null, int[] strides = null, int[] dilations = null, int? padvalue = null)
     {
         if (input.Rank != 4)
         {
@@ -300,7 +300,7 @@ where T : struct
         var M = weight.Dimensions[0];
         var kH = kernelshape == null ? weight.Dimensions[2] : kernelshape[0];
         var kW = kernelshape == null ? weight.Dimensions[3] : kernelshape[1];
-        var info = GetConvOutputInfo(padtype, H, W, strides[0], strides[1], GetConvEffectiveFilterSize(kH, dilations[0]), GetConvEffectiveFilterSize(kW, dilations[1]), RoundingMode.None, padvalue);
+        var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
         var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, info.Shape[0], info.Shape[1] });
 
         unsafe
@@ -314,7 +314,7 @@ where T : struct
                     biasp = bias.ToDenseTensor().Buffer.Span
                     )
                 {
-                    MathOps.Conv2D(inputp, N, C, H, W, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo.bottom, info.PadInfo.left, info.PadInfo.top, info.PadInfo.right, group, weightp, outputp, Convert.ToInt32(output.Length), biasp);
+                    MathOps.Conv2D(inputp, N, C, H, W, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo.left, info.PadInfo.top, info.PadInfo.right, info.PadInfo.bottom, group, weightp, outputp, Convert.ToInt32(output.Length), biasp);
                 }
             }
             else
@@ -333,7 +333,6 @@ where T : struct
         }
 
         return output;
-        
+
     }
 }
-

@@ -555,12 +555,12 @@ ref float[,] c, int ldc)
     {
         public struct PadInfo
         {
+            public int h;
+            public int w;
             public int top;
             public int left;
             public int right;
             public int bottom;
-            public int alongh;
-            public int alongw;
         }
 
         public enum PadType
@@ -571,166 +571,85 @@ ref float[,] c, int ldc)
             Value
         }
 
-        public enum RoundingMode
-        {
-            None,
-            Floor,
-            Round,
-            Ceil
-        }
-
         public struct ConvOutputInfo
         {
             public PadInfo PadInfo;
             public int[] Shape;
         }
 
-        /// <summary>
-        /// apply floor, round or ceil rounding on value
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="mode"></param>
-        /// <returns></returns>
-        public static float ConditionalRound(float value, RoundingMode mode)
-        {
-            if (mode == RoundingMode.None)
-            {
-                return value;
-            }
-            switch (mode)
-            {
-                case RoundingMode.Floor:
-                    return (float)Math.Floor(value);
-                case RoundingMode.Round:
-                    return (float)Math.Round(value);
-                case RoundingMode.Ceil:
-                    return (float)Math.Ceiling(value);
-                default:
-                    throw new Exception("Unknown roundingMode");
-            }
-        }
-
-        /// <summary>
-        /// apply floor, round or ceil rounding on value
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="mode"></param>
-        /// <returns></returns>
-        public static double ConditionalRound(double value, RoundingMode mode)
-        {
-            if (mode == RoundingMode.None)
-            {
-                return value;
-            }
-            switch (mode)
-            {
-                case RoundingMode.Floor:
-                    return (double)Math.Floor(value);
-                case RoundingMode.Round:
-                    return (double)Math.Round(value);
-                case RoundingMode.Ceil:
-                    return (double)Math.Ceiling(value);
-                default:
-                    throw new Exception("Unknown roundingMode");
-            }
-        }
-
-        public static ConvOutputInfo GetConvOutputInfo(PadType pad, int inHeight, int inWidth,
-           int strideHeight, int strideWidth, int filterHeight, int filterWidth,
-           RoundingMode roundingMode = RoundingMode.None, int? padValue = null)
+        public static ConvOutputInfo GetConv2DOutputInfo(PadType pad, int inHeight, int inWidth, int strideHeight, int strideWidth, int filterHeight, int filterWidth, int? padValue = null)
         {
             var padInfo = new PadInfo();
             var outHeight = 0;
             var outWidth = 0;
 
-            if (pad == PadType.Value)
+            switch (pad)
             {
-                if (padValue == null) throw new ArgumentNullException(nameof(padValue));
-                padInfo.bottom = padValue.Value;
-                padInfo.left = padValue.Value;
-                padInfo.right = padValue.Value;
-                padInfo.top = padValue.Value;
+                case PadType.Value:
+                    if (padValue == null) throw new ArgumentNullException(nameof(padValue));
+                    padInfo.bottom = padValue.Value;
+                    padInfo.left = padValue.Value;
+                    padInfo.right = padValue.Value;
+                    padInfo.top = padValue.Value;
+                    padInfo.h = padInfo.top + padInfo.bottom;
+                    padInfo.w = padInfo.right + padInfo.left;
+                    var outShape = GetConv2DOutputShape(new int[] { inHeight, inWidth, 1 }, filterHeight, 1, strideHeight, padValue);
+                    outHeight = outShape[0];
+                    outWidth = outShape[1];
+     
+                    break;
 
-                var outShape = GetConvOutputShape3D(new int[] { inHeight, inWidth, 1 }, filterHeight, 1, strideHeight, padValue, roundingMode);
-                outHeight = outShape[0];
-                outWidth = outShape[1];
-                padInfo.alongh = padValue.Value;
-                padInfo.alongw = padValue.Value;
+                case PadType.Valid:
+                    padInfo.bottom = 0;
+                    padInfo.left = 0;
+                    padInfo.right = 0;
+                    padInfo.top = 0;
+                    outHeight = (int)Math.Ceiling((inHeight - filterHeight + 1d) / strideHeight);
+                    outWidth = (int)Math.Ceiling((inWidth - filterWidth + 1d) / strideWidth);
+                    padInfo.h = 0;
+                    padInfo.w = 0;
+                    break;
+
+                case PadType.SameUpper:
+                case PadType.SameLower:
+                    outHeight = (int)Math.Ceiling(inHeight / (float)strideHeight);
+                    outWidth = (int)Math.Ceiling(inWidth / (float)strideWidth);
+
+                    var padAlongHeight = (outHeight - 1) * strideHeight + filterHeight - inHeight;
+                    var padAlongWidth = (outWidth - 1) * strideWidth + filterWidth - inWidth;
+                    var top = (int)Math.Floor(padAlongHeight / 2f);
+                    var bottom = (int)padAlongHeight - top;
+                    var left = (int)Math.Floor(padAlongWidth / 2f);
+                    var right = (int)padAlongWidth - left;
+
+                    padInfo.bottom = bottom;
+                    padInfo.left = left;
+                    padInfo.right = right;
+                    padInfo.top = top;
+
+                    padInfo.h = padAlongHeight;
+                    padInfo.w = padAlongWidth;
+                    break;
+
             }
-            else if (pad == PadType.Valid)
-            {
-                padInfo.bottom = 0;
-                padInfo.left = 0;
-                padInfo.right = 0;
-                padInfo.top = 0;
-                outHeight = (int)Math.Ceiling((inHeight - filterHeight + 1d) / strideHeight);
-                outWidth = (int)Math.Ceiling((inWidth - filterWidth + 1d) / strideWidth);
-                padInfo.alongh = 0;
-                padInfo.alongw = 0;
-            }
-            else if (pad == PadType.SameUpper || pad == PadType.SameLower)
-            {
-                outHeight = (int)Math.Ceiling(inHeight / (float)strideHeight);
-                outWidth = (int)Math.Ceiling(inWidth / (float)strideWidth);
-
-                var padAlongHeight = (outHeight - 1) * strideHeight + filterHeight - inHeight;
-                var padAlongWidth = (outWidth - 1) * strideWidth + filterWidth - inWidth;
-                var top = (int)Math.Floor(padAlongHeight / 2f);
-                var bottom = (int)padAlongHeight - top;
-                var left = (int)Math.Floor(padAlongWidth / 2f);
-                var right = (int)padAlongWidth - left;
-
-                padInfo.bottom = bottom;
-                padInfo.left = left;
-                padInfo.right = right;
-                padInfo.top = top;
-
-                padInfo.alongh = padAlongHeight;
-                padInfo.alongw = padAlongWidth;
-            }
-            else
-            {
-                throw new Exception("Unknown padding parameter");
-            }
-
-
             return new ConvOutputInfo { PadInfo = padInfo, Shape = new int[] { outHeight, outWidth } };
         }
 
-        public static int[] GetConvOutputShape3D(int[] inShape,
-            int fieldSize, int outDepth, int stride, Nullable<int> zeroPad, RoundingMode roundingMode)
+        public static int[] GetConv2DOutputShape(int[] inShape, int fieldSize, int outDepth, int stride, int? defaultPad)
         {
-            if (zeroPad == null)
+            if (defaultPad == null)
             {
-                zeroPad = GetConvDefaultPad(inShape, fieldSize, stride);
+                defaultPad = GetConv2DDefaultPad(inShape, fieldSize, stride);
             }
-
-            var inputRows = inShape[0];
-            var inputCols = inShape[1];
-
-            var outputRows = (int)ConditionalRound((inputRows - fieldSize + 2 * zeroPad.Value) / stride + 1, roundingMode);
-
-            var outputCols = (int)ConditionalRound((inputCols - fieldSize + 2 * zeroPad.Value) / stride + 1, roundingMode);
-
+            var outputRows = (inShape[0] - fieldSize + 2 * defaultPad.Value) / stride + 1;
+            var outputCols = (inShape[1] - fieldSize + 2 * defaultPad.Value) / stride + 1;
             return new int[] { outputRows, outputCols, outDepth };
         }
 
-        public static int GetConvDefaultPad(int[] inputShape, int fieldSize, int stride, int dilation = 1)
-        {
-            var effectiveFieldSize = GetConvEffectiveFilterSize(fieldSize, dilation);
-            return (int)Math.Floor(
-              ((float)inputShape[0] * (stride - 1) - stride + effectiveFieldSize) / 2);
-        }
-        public static int GetConvEffectiveFilterSize(int filterSize, int dilation)
-        {
-            if (dilation <= 1)
-            {
-                return filterSize;
-            }
-
-            return filterSize + (filterSize - 1) * (dilation - 1);
-        }
-
+        public static int GetConv2DDefaultPad(int[] inputShape, int fieldSize, int stride, int dilation = 1) => 
+            (int) Math.Floor(((float)inputShape[0] * (stride - 1) - stride + GetConv2DEffectiveFilterSize(fieldSize, dilation)) / 2);
+        
+        public static int GetConv2DEffectiveFilterSize(int filterSize, int dilation) => dilation <= 1 ? filterSize : filterSize + (filterSize - 1) * (dilation - 1);
         
         /// <summary>
         /// Image to column conversion.
@@ -865,78 +784,6 @@ ref float[,] c, int ldc)
         }
 
         /// <summary>
-        /// Matrix multiplication.
-        /// </summary>
-        /// <param name="M">A rows.</param>
-        /// <param name="N">A columns.</param>
-        /// <param name="K">B columns.</param>
-        /// <param name="A">Left matrix.</param>
-        /// <param name="B">Right matrix.</param>
-        /// <param name="C">Result matrix.</param>
-        public static unsafe void mm(int M,
-                              int N,
-                              int K,
-                              float* A,
-                              float* B,
-                              float* C)
-        {
-            for( int i  = 0; i < M; i++) 
-            {
-                var Cp = C + i * N;
-                var Ap = A + i * K;
-                for (int j = 0; j < N; ++j)
-                {
-                    Cp[j] = 0;
-                }
-                for (int k = 0; k < K; ++k)
-                {
-                    var a = Ap[k];
-                    var Bp = B + k * N;
-                    for (int j = 0; j < N; ++j)
-                    {
-                        Cp[j] += a * Bp[j];
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Matrix multiplication.
-        /// </summary>
-        /// <param name="M">A rows.</param>
-        /// <param name="N">A columns.</param>
-        /// <param name="K">B columns.</param>
-        /// <param name="A">Left matrix.</param>
-        /// <param name="B">Right matrix.</param>
-        /// <param name="C">Result matrix.</param>
-        public static unsafe void mm(int M,
-                              int N,
-                              int K,
-                              double* A,
-                              double* B,
-                              double* C)
-        {
-            Parallel.For(0, M, (int i) =>
-            {
-                var Cp = C + i * N;
-                var Ap = A + i * K;
-                for (int j = 0; j < N; ++j)
-                {
-                    Cp[j] = 0;
-                }
-                for (int k = 0; k < K; ++k)
-                {
-                    var a = Ap[k];
-                    var Bp = B + k * N;
-                    for (int j = 0; j < N; ++j)
-                    {
-                        Cp[j] += a * Bp[j];
-                    }
-                }
-            });
-        }
-
-        /// <summary>
         /// Im2Col-based implementation of two-dimensional convolution.
         /// </summary>
         /// <param name="src">Source data.</param>
@@ -980,6 +827,42 @@ ref float[,] c, int ldc)
                                         int dstC,
                                         float* bias = null)
         {
+            /// <summary>
+            /// Matrix multiplication.
+            /// </summary>
+            /// <param name="M">A rows.</param>
+            /// <param name="N">A columns.</param>
+            /// <param name="K">B columns.</param>
+            /// <param name="A">Left matrix.</param>
+            /// <param name="B">Right matrix.</param>
+            /// <param name="C">Result matrix.</param>
+            unsafe void mm(int M,
+                                  int N,
+                                  int K,
+                                  float* A,
+                                  float* B,
+                                  float* C)
+            {
+                for (int i = 0; i < M; i++)
+                {
+                    var Cp = C + i * N;
+                    var Ap = A + i * K;
+                    for (int j = 0; j < N; ++j)
+                    {
+                        Cp[j] = 0;
+                    }
+                    for (int k = 0; k < K; ++k)
+                    {
+                        var a = Ap[k];
+                        var Bp = B + k * N;
+                        for (int j = 0; j < N; ++j)
+                        {
+                            Cp[j] += a * Bp[j];
+                        }
+                    }
+                }
+            }
+
             int dstH = (srcH + padY + padH - (dilationY * (kernelY - 1) + 1)) / strideY + 1;
             int dstW = (srcW + padX + padW - (dilationX * (kernelX - 1) + 1)) / strideX + 1;
             int M = dstC / group;
@@ -1011,6 +894,30 @@ ref float[,] c, int ldc)
             Marshal.FreeCoTaskMem((IntPtr)buf);
         }
 
+
+        /// <summary>
+        /// Im2Col-based implementation of two-dimensional convolution.
+        /// </summary>
+        /// <param name="src">Source data.</param>
+        /// <param name="batch">Batch size.</param>
+        /// <param name="srcC">Input channels.</param>
+        /// <param name="srcH">Input height.</param>
+        /// <param name="srcW">Input width.</param>
+        /// <param name="kernelY">Kernel height.</param>
+        /// <param name="kernelX">Kernel width.</param>
+        /// <param name="dilationY">Dilation of the kernel by height.</param>
+        /// <param name="dilationX">Dilation of the kernel by width.</param>
+        /// <param name="strideY">Stride of the convolution by height.</param>
+        /// <param name="strideX">Stride of the convolution by width.</param>
+        /// <param name="padY">Zero padding by left side.</param>
+        /// <param name="padX">Zero padding by top side.</param>
+        /// <param name="padH">Zero padding by right side.</param>
+        /// <param name="padW">Zero padding by bottom side.</param>
+        /// <param name="group">Convolution groups. If group=srcC=dstC, convolution is depthwise separable.</param>
+        /// <param name="weight">Weights (kernels).</param>
+        /// <param name="bias">Bias.</param>
+        /// <param name="dst">Destination memory.</param>
+        /// <param name="dstC">Output channels.</param
         public static unsafe void Conv2D(double* src,
                                         int batch,
                                         int srcC,
@@ -1032,6 +939,42 @@ ref float[,] c, int ldc)
                                         double* dst,
                                         int dstC)
         {
+            /// <summary>
+            /// Matrix multiplication.
+            /// </summary>
+            /// <param name="M">A rows.</param>
+            /// <param name="N">A columns.</param>
+            /// <param name="K">B columns.</param>
+            /// <param name="A">Left matrix.</param>
+            /// <param name="B">Right matrix.</param>
+            /// <param name="C">Result matrix.</param>
+            unsafe void mm(int M,
+                                  int N,
+                                  int K,
+                                  double* A,
+                                  double* B,
+                                  double* C)
+            {
+                for (int i = 0; i < M; i++)
+                {
+                    var Cp = C + i * N;
+                    var Ap = A + i * K;
+                    for (int j = 0; j < N; ++j)
+                    {
+                        Cp[j] = 0;
+                    }
+                    for (int k = 0; k < K; ++k)
+                    {
+                        var a = Ap[k];
+                        var Bp = B + k * N;
+                        for (int j = 0; j < N; ++j)
+                        {
+                            Cp[j] += a * Bp[j];
+                        }
+                    }
+                };
+            }
+
             int dstH = (srcH + padY + padH - (dilationY * (kernelY - 1) + 1)) / strideY + 1;
             int dstW = (srcW + padX + padW - (dilationX * (kernelX - 1) + 1)) / strideX + 1;
             int M = dstC / group;
@@ -1044,6 +987,7 @@ ref float[,] c, int ldc)
                 for (int g = 0; g < group; ++g)
                 {
                     mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
+                    //cs_BLAS.DGEMM("nota", "notb", M, N, K, 0.0f, )
                 }
                 for (int i = 0; i < dstC; ++i)
                 {

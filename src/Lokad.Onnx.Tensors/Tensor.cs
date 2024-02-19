@@ -1550,7 +1550,7 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="includeWhitespace"></param>
         /// <returns></returns>
-        public string GetArrayString(bool includeWhitespace = true)
+        public string PrintData(bool includeWhitespace = true)
         {
             var builder = new StringBuilder();
 
