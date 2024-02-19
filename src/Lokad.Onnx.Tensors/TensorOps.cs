@@ -5,10 +5,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
+
+using static Lokad.Onnx.MathOps;
 
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
 where T : struct
 {
+    
+
     public virtual void Apply(Func<T, T> op, Tensor<T> destination)
     {
         if (this.Length > destination.Length)
@@ -270,9 +275,65 @@ where T : struct
         }
     }
 
-    public static Tensor<U> Conv2D<U>(Tensor<U> x, Tensor<U> W) where U : struct, IAdditiveIdentity<U, U>, IAdditionOperators<U, U, U>, IMultiplyOperators<U, U, U>
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, Tensor<float> bias = null, int[] kernelshape=null, int[] strides = null, int[] dilations = null, int? padvalue = null) 
     {
-        throw new NotImplementedException();
+        if (input.Rank != 4)
+        {
+            throw new ArgumentException("Input tensors must be of rank 4 with the layout NxCxHxW.");
+        }
+        if (weight.Rank != 4)
+        {
+            throw new ArgumentException("Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
+        }
+        if (dilations == null)
+        {
+            dilations = new int[2] { 1, 1 };
+        }
+        if (strides == null)
+        {
+            strides = new int[2] { 1, 1 };
+        }
+        var N = input.Dimensions[0];
+        var C = input.Dimensions[1];
+        var H = input.Dimensions[2];
+        var W = input.Dimensions[3];
+        var M = weight.Dimensions[0];
+        var kH = kernelshape == null ? weight.Dimensions[2] : kernelshape[0];
+        var kW = kernelshape == null ? weight.Dimensions[3] : kernelshape[1];
+        var info = GetConvOutputInfo(padtype, H, W, strides[0], strides[1], GetConvEffectiveFilterSize(kH, dilations[0]), GetConvEffectiveFilterSize(kW, dilations[1]), RoundingMode.None, padvalue);
+        var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, info.Shape[0], info.Shape[1] });
+
+        unsafe
+        {
+            if (bias != null)
+            {
+                fixed (
+                    float* inputp = input.ToDenseTensor().Buffer.Span,
+                    outputp = output.Buffer.Span,
+                    weightp = input.ToDenseTensor().Buffer.Span,
+                    biasp = bias.ToDenseTensor().Buffer.Span
+                    )
+                {
+                    MathOps.Conv2D(inputp, N, C, H, W, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo.top, info.PadInfo.left, info.PadInfo.alongh, info.PadInfo.alongw, group, weightp, outputp, Convert.ToInt32(output.Length), biasp);
+                }
+            }
+            else
+            {
+                {
+                    fixed (
+                        float* inputp = input.ToDenseTensor().Buffer.Span,
+                        outputp = output.Buffer.Span,
+                        weightp = input.ToDenseTensor().Buffer.Span
+                        )
+                    {
+                        MathOps.Conv2D(inputp, N, C, H, W, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo.top, info.PadInfo.left, info.PadInfo.alongh, info.PadInfo.alongw, group, weightp, outputp, Convert.ToInt32(output.Length));
+                    }
+                }
+            }
+        }
+
+        return output;
+        
     }
 }
 

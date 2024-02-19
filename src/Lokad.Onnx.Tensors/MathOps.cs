@@ -551,7 +551,7 @@ ref float[,] c, int ldc)
         }
     }
 
-    internal class MathOps
+    public class MathOps
     {
         public struct PadInfo
         {
@@ -976,9 +976,9 @@ ref float[,] c, int ldc)
                                         int padW,
                                         int group,
                                         float* weight,
-                                        float* bias,
                                         float* dst,
-                                        int dstC)
+                                        int dstC,
+                                        float* bias = null)
         {
             int dstH = (srcH + padY + padH - (dilationY * (kernelY - 1) + 1)) / strideY + 1;
             int dstW = (srcW + padX + padW - (dilationX * (kernelX - 1) + 1)) / strideX + 1;
@@ -993,12 +993,16 @@ ref float[,] c, int ldc)
                 {
                     mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
                 }
-                for (int i = 0; i < dstC; ++i)
+
+                if (bias != null)
                 {
-                    var pdst = dst + i * N;
-                    for (int j = 0; j < N; ++j)
+                    for (int i = 0; i < dstC; ++i)
                     {
-                        pdst[j] += bias[i];
+                        var pdst = dst + i * N;
+                        for (int j = 0; j < N; ++j)
+                        {
+                            pdst[j] += bias[i];
+                        }
                     }
                 }
                 src += srcC * srcH * srcW;
