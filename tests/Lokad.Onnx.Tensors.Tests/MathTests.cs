@@ -58,4 +58,13 @@ public class MathTests
         Assert.Equal(98, c[0, 1, 1]);
     }
 
+    [Fact]  
+    public void CanConv2D()
+    {
+        var X = Tensor<float>.Arange(0.0f, 25.0f).Reshape(1,1,5,5);
+        var W = Tensor<float>.Ones(1, 1, 3, 3);
+        var Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.SameLower);
+        Assert.NotEmpty(Y);
+    }
+
 }

@@ -1860,6 +1860,46 @@ namespace Lokad.Onnx
             return nd;
         }
 
+        public static Tensor<float> Arange(float start, float stop, float step = 1.0f)
+        {
+            if (step == 0.0f)
+                throw new ArgumentException("step can't be 0", nameof(step));
+
+            bool negativeStep = false;
+            if (step < 0.0f)
+            {
+                negativeStep = true;
+                step = Math.Abs(step);
+                //swap
+                var tmp = start;
+                start = stop;
+                stop = tmp;
+            }
+
+            if (start > stop)
+                throw new Exception("parameters invalid, start is greater than stop.");
+
+
+            int length = (int)Math.Ceiling((stop - start + 0.0d) / step);
+            var nd = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { length }); //do not fill, we are about to
+
+            if (negativeStep)
+            {
+                step = Math.Abs(step);
+                for (int add = length - 1, i = 0; add >= 0; add--, i++)
+                    nd[i] = 1.0f + start + add * step;
+
+            }
+            else
+            {
+
+                for (int i = 0; i < length; i++)
+                    nd[i] = start + i * step;
+
+            }
+
+            return nd;
+        }
         public static Tensor<T> Zeros(params int[] dims)
         {
             var t = new DenseTensor<T>((ReadOnlySpan<int>)dims);

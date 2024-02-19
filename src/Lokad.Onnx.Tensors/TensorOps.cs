@@ -310,11 +310,11 @@ where T : struct
                 fixed (
                     float* inputp = input.ToDenseTensor().Buffer.Span,
                     outputp = output.Buffer.Span,
-                    weightp = input.ToDenseTensor().Buffer.Span,
+                    weightp = weight.ToDenseTensor().Buffer.Span,
                     biasp = bias.ToDenseTensor().Buffer.Span
                     )
                 {
-                    MathOps.Conv2D(inputp, N, C, H, W, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo.top, info.PadInfo.left, info.PadInfo.alongh, info.PadInfo.alongw, group, weightp, outputp, Convert.ToInt32(output.Length), biasp);
+                    MathOps.Conv2D(inputp, N, C, H, W, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo.bottom, info.PadInfo.left, info.PadInfo.top, info.PadInfo.right, group, weightp, outputp, Convert.ToInt32(output.Length), biasp);
                 }
             }
             else
@@ -323,10 +323,10 @@ where T : struct
                     fixed (
                         float* inputp = input.ToDenseTensor().Buffer.Span,
                         outputp = output.Buffer.Span,
-                        weightp = input.ToDenseTensor().Buffer.Span
+                        weightp = weight.ToDenseTensor().Buffer.Span
                         )
                     {
-                        MathOps.Conv2D(inputp, N, C, H, W, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo.top, info.PadInfo.left, info.PadInfo.alongh, info.PadInfo.alongw, group, weightp, outputp, Convert.ToInt32(output.Length));
+                        MathOps.Conv2D(inputp, N, C, H, W, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo.left, info.PadInfo.top, info.PadInfo.right, info.PadInfo.bottom, group, weightp, outputp, Convert.ToInt32(output.Length));
                     }
                 }
             }

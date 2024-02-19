@@ -880,7 +880,7 @@ ref float[,] c, int ldc)
                               float* B,
                               float* C)
         {
-            Parallel.For(0, M, (int i) =>
+            for( int i  = 0; i < M; i++) 
             {
                 var Cp = C + i * N;
                 var Ap = A + i * K;
@@ -897,7 +897,7 @@ ref float[,] c, int ldc)
                         Cp[j] += a * Bp[j];
                     }
                 }
-            });
+            }
         }
 
         /// <summary>
