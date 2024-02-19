@@ -226,7 +226,7 @@ class Program : Runtime
         {
             Con.Write(op + " ");
         }
-        Con.WriteLine("");
+        Con.Write(Environment.NewLine); 
         Info("{d} total distinct operations in model.", m.Graph.Node.Count);
     }
 
@@ -260,7 +260,6 @@ class Program : Runtime
         {
             Con.WriteLine(i);
         }
-        Con.WriteLine("");
         Info("{d} total initializers in model. * = initializer for model input.", m.Graph.Initializer.Count);
     }
 
