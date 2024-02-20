@@ -335,4 +335,76 @@ where T : struct
         return output;
 
     }
+
+    public static Tensor<float> MaxPool2D(Tensor<float> input, int[] kernelshape, PadType padtype, int[] strides = null, int[] dilations = null, int? padvalue = null)
+    {
+        if (input.Rank != 4)
+        {
+            throw new ArgumentException("Input tensors must be of rank 4 with the layout NxCxHxW.");
+        }
+        if (kernelshape == null)
+        {
+            throw new ArgumentNullException("kernelshape");
+        }
+        if (dilations == null)
+        {
+            dilations = new int[] { 1, 0 };
+        }
+        if (strides == null) 
+        {
+            strides = new int[] { 1, 1 };
+        }
+ 
+        var N = input.Dimensions[0];
+        var C = input.Dimensions[1];
+        var H = input.Dimensions[2];
+        var W = input.Dimensions[3];
+        var kH = kernelshape[0];
+        var kW = kernelshape[1];
+        var filterShape = new int[] { kH, kW, input.Dimensions[1]};
+        var strideHeight = strides[0];
+        var strideWidth = strides[1];
+        var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
+        var Y = DenseTensor<float>.OfDims(N, C, info.Shape[0], info.Shape[1]);
+
+        for (var b = 0; b < N; ++b)
+        {
+            for (var d = 0; d < C; ++d)
+            {
+                for (var yR = 0; yR < info.Shape[0]; ++yR)
+                {
+                    var xRCorner = yR * strideHeight - info.PadInfo.top;
+                    var xRMin = Math.Max(0, xRCorner);
+                    var xRMax = Math.Min(H, kH + xRCorner);
+                    for (var yC = 0; yC < info.Shape[1]; ++yC)
+                    {
+                        var xCCorner = yC * strideWidth - info.PadInfo.left;
+                        var xCMin = Math.Max(0, xCCorner);
+                        var xCMax = Math.Min(W, kW + xCCorner);
+
+                        var maxValue = float.NegativeInfinity;
+                          
+                        for (var xR = xRMin; xR < xRMax; ++xR)
+                        {
+                            for (var xC = xCMin; xC < xCMax; ++xC)
+                            {
+                                var v = input[b, d, xR, xC];
+
+                                if (v > maxValue)
+                                {
+                                    maxValue = v;
+                                }
+                            }
+                            if (float.IsNaN(maxValue))
+                            {
+                                break;
+                            }
+                        }
+                        Y[b, d, yR, yC] = maxValue;
+                    }
+                }
+            }
+        }
+        return Y;
+    }
 }

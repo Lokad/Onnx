@@ -1,6 +1,5 @@
 ﻿namespace Lokad.Onnx.Tensors.Tests;
 
-using System.Linq;
 public class MathTests
 {
     [Fact]
@@ -37,13 +36,13 @@ public class MathTests
         Assert.Equal(98, c[0, 1, 1]);
     }
 
-    [Fact]  
+    [Fact]
     public void CanMatMul()
     {
         var a = Tensor<int>.Ones(1, 1, 5, 6);
         var b = Tensor<int>.Ones(3, 6, 7);
         var c = Tensor<int>.MatMul(a, b);
-        Assert.Equal(new int[] {1,3,5,7}, c.Dimensions.ToArray());
+        Assert.Equal(new int[] { 1, 3, 5, 7 }, c.Dimensions.ToArray());
         a = Tensor<int>.Ones(2, 3, 5, 6);
         b = Tensor<int>.Ones(3, 6, 7);
         c = Tensor<int>.MatMul(a, b);
@@ -57,24 +56,35 @@ public class MathTests
         c = Tensor<int>.MatMul(a, b);
         Assert.Equal(98, c[0, 1, 1]);
     }
-    
-    [Fact]  
+
+    // Based on https://github.com/onnx/onnx/blob/main/docs/Operators.md#Conv
+    [Fact]
     public void CanConv2D()
     {
-        var X = Tensor<float>.Arange(0.0f, 25.0f).Reshape(1,1,5,5);
+        var X = Tensor<float>.Arange(0.0f, 25.0f).Reshape(1, 1, 5, 5);
         var W = Tensor<float>.Ones(1, 1, 3, 3);
-        var Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.SameLower, strides: new int[] { 2,2});
+        var Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.SameLower, strides: new int[] { 2, 2 });
         Assert.Equal(Y.Dimensions.ToArray(), W.Dimensions.ToArray());
-        var Ye = DenseTensor<float>.OfData(new float[1,1,3,3] { { { 
-                    { 12.0f, 27.0f, 24.0f }, { 63.0f, 108.0f, 81.0f }, { 72.0f, 117.0f, 84.0f } 
-                } } }, new int[] { 1, 1, 3, 3 });
+        var Ye = DenseTensor<float>.OfData(new float[1, 1, 3, 3] { { {
+                    { 12.0f, 27.0f, 24.0f }, { 63.0f, 108.0f, 81.0f }, { 72.0f, 117.0f, 84.0f }
+                } } });
         Assert.Equal(Ye, Y);
+
+
         X = Tensor<float>.Arange(0.0f, 35.0f).Reshape(1, 1, 7, 5);
         Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.Value, strides: new int[] { 2, 2 }, padvalue: 1);
         Ye = DenseTensor<float>.OfData(new float[1, 1, 4, 3] { { {
                 { 12.0f, 27.0f, 24.0f }, { 63.0f, 108.0f, 81.0f },{ 123.0f, 198.0f, 141.0f }, { 112.0f, 177.0f, 124.0f },
-            } } }, new int[] { 1, 1, 4, 3 });
+            } } });
         Assert.Equal(Ye, Y);
     }
-    
+
+    [Fact]
+    public void CanMaxPool2D()
+    {
+        var X = DenseTensor<float>.OfData(new float[1, 1, 4, 4] { { {
+            {12.0f, 20.0f, 30.0f, 0.0f  }, { 8.0f, 12.0f, 2.0f, 0.0f }, { 34.0f, 70.0f, 37.0f, 4.0f }, { 112.0f, 100.0f, 25.0f, 12.0f } } } });
+        var Y = Tensor<float>.MaxPool2D(X, new int[] { 2, 2 }, MathOps.PadType.Valid);
+        Assert.NotNull(Y);
+    }
 }

@@ -571,13 +571,13 @@ ref float[,] c, int ldc)
             Value
         }
 
-        public struct ConvOutputInfo
+        public struct Conv2DOutputInfo
         {
             public PadInfo PadInfo;
             public int[] Shape;
         }
 
-        public static ConvOutputInfo GetConv2DOutputInfo(PadType pad, int inHeight, int inWidth, int strideHeight, int strideWidth, int filterHeight, int filterWidth, int? padValue = null)
+        public static Conv2DOutputInfo GetConv2DOutputInfo(PadType pad, int inHeight, int inWidth, int strideHeight, int strideWidth, int filterHeight, int filterWidth, int? padValue = null)
         {
             var padInfo = new PadInfo();
             var outHeight = 0;
@@ -632,17 +632,17 @@ ref float[,] c, int ldc)
                     break;
 
             }
-            return new ConvOutputInfo { PadInfo = padInfo, Shape = new int[] { outHeight, outWidth } };
+            return new Conv2DOutputInfo { PadInfo = padInfo, Shape = new int[] { outHeight, outWidth } };
         }
 
-        public static int[] GetConv2DOutputShape(int[] inShape, int fieldSize, int outDepth, int stride, int? defaultPad)
+        public static int[] GetConv2DOutputShape(int[] inShape, int fieldSize, int outDepth, int stride, int? zeropad)
         {
-            if (defaultPad == null)
+            if (zeropad == null)
             {
-                defaultPad = GetConv2DDefaultPad(inShape, fieldSize, stride);
+                zeropad = GetConv2DDefaultPad(inShape, fieldSize, stride);
             }
-            var outputRows = (inShape[0] - fieldSize + 2 * defaultPad.Value) / stride + 1;
-            var outputCols = (inShape[1] - fieldSize + 2 * defaultPad.Value) / stride + 1;
+            var outputRows = (inShape[0] - fieldSize + 2 * zeropad.Value) / stride + 1;
+            var outputCols = (inShape[1] - fieldSize + 2 * zeropad.Value) / stride + 1;
             return new int[] { outputRows, outputCols, outDepth };
         }
 

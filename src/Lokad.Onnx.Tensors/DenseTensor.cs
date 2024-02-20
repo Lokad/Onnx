@@ -225,8 +225,8 @@ namespace Lokad.Onnx
 
         public static DenseTensor<T> OfDims(params int[] dims) => new DenseTensor<T>((ReadOnlySpan<int>) dims);
 
-        public static DenseTensor<T> OfData(Array data, int[] dims) => new DenseTensor<T>(data.Flatten<T>(), (ReadOnlySpan<int>)dims);
-        
+        public static DenseTensor<T> OfData(Array data) => data.ToTensor<T>();
+
         public static implicit operator BroadcastedTensor<T>(DenseTensor<T> t) => new BroadcastedTensor<T>(t, t.dimensions, t.strides, t.IsReversedStride);
     }
 }
