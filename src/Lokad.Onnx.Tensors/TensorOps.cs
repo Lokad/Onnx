@@ -275,7 +275,7 @@ where T : struct
         }
     }
 
-    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, Tensor<float> bias = null, int[] kernelshape = null, int[] strides = null, int[] dilations = null, int? padvalue = null)
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue = null, Tensor<float> bias = null, int[] kernelshape = null, int[] strides = null, int[] dilations = null)
     {
         if (input.Rank != 4)
         {
@@ -285,13 +285,13 @@ where T : struct
         {
             throw new ArgumentException("Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
         }
-        if (dilations == null)
-        {
-            dilations = new int[2] { 1, 1 };
-        }
         if (strides == null)
         {
             strides = new int[2] { 1, 1 };
+        }
+        if (dilations == null)
+        {
+            dilations = new int[2] { 1, 1 };
         }
         var N = input.Dimensions[0];
         var C = input.Dimensions[1];
@@ -336,38 +336,42 @@ where T : struct
 
     }
 
-    public static Tensor<float> MaxPool2D(Tensor<float> input, int[] kernelshape, PadType padtype, int[] strides = null, int[] dilations = null, int? padvalue = null)
+    public static Tensor<U> MaxPool2D<U>(Tensor<U> input, int[] kernelshape, PadType padtype = PadType.Valid, int? padvalue = null, int[] strides = null, int[] dilations = null)
+        where U : struct, IComparisonOperators<U, U>, IMinMaxValue<U>
     {
-        if (input.Rank != 4)
-        {
-            throw new ArgumentException("Input tensors must be of rank 4 with the layout NxCxHxW.");
-        }
         if (kernelshape == null)
         {
             throw new ArgumentNullException("kernelshape");
         }
+        if (input.Rank != 4)
+        {
+            throw new ArgumentException("Input tensors must be of rank 4 with the layout NxCxHxW.");
+        }
+        if (kernelshape.Rank != 1 || kernelshape.Length != 2)
+        {
+            throw new ArgumentException("The kernel must have shape m x n.");
+        }
+
+        if (strides == null)
+        {
+            strides = kernelshape;
+        }
         if (dilations == null)
         {
-            dilations = new int[] { 1, 0 };
+            dilations = new int[] { 1, 1 };
         }
-        if (strides == null) 
-        {
-            strides = new int[] { 1, 1 };
-        }
- 
         var N = input.Dimensions[0];
         var C = input.Dimensions[1];
         var H = input.Dimensions[2];
         var W = input.Dimensions[3];
         var kH = kernelshape[0];
         var kW = kernelshape[1];
-        var filterShape = new int[] { kH, kW, input.Dimensions[1]};
         var strideHeight = strides[0];
         var strideWidth = strides[1];
         var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
-        var Y = DenseTensor<float>.OfDims(N, C, info.Shape[0], info.Shape[1]);
+        var Y = DenseTensor<U>.OfShape(N, C, info.Shape[0], info.Shape[1]);
 
-        for (var b = 0; b < N; ++b)
+        for (var n = 0; n < N; ++n)
         {
             for (var d = 0; d < C; ++d)
             {
@@ -382,25 +386,25 @@ where T : struct
                         var xCMin = Math.Max(0, xCCorner);
                         var xCMax = Math.Min(W, kW + xCCorner);
 
-                        var maxValue = float.NegativeInfinity;
+                        var maxValue = U.MinValue;
                           
                         for (var xR = xRMin; xR < xRMax; ++xR)
                         {
                             for (var xC = xCMin; xC < xCMax; ++xC)
                             {
-                                var v = input[b, d, xR, xC];
+                                var v = input[n, d, xR, xC];
 
                                 if (v > maxValue)
                                 {
                                     maxValue = v;
                                 }
                             }
-                            if (float.IsNaN(maxValue))
+                            if (maxValue == U.MinValue)
                             {
                                 break;
                             }
                         }
-                        Y[b, d, yR, yC] = maxValue;
+                        Y[n, d, yR, yC] = maxValue;
                     }
                 }
             }

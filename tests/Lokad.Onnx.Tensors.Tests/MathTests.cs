@@ -65,7 +65,7 @@ public class MathTests
         var W = Tensor<float>.Ones(1, 1, 3, 3);
         var Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.SameLower, strides: new int[] { 2, 2 });
         Assert.Equal(Y.Dimensions.ToArray(), W.Dimensions.ToArray());
-        var Ye = DenseTensor<float>.OfData(new float[1, 1, 3, 3] { { {
+        var Ye = DenseTensor<float>.OfValues(new float[1, 1, 3, 3] { { {
                     { 12.0f, 27.0f, 24.0f }, { 63.0f, 108.0f, 81.0f }, { 72.0f, 117.0f, 84.0f }
                 } } });
         Assert.Equal(Ye, Y);
@@ -73,7 +73,7 @@ public class MathTests
 
         X = Tensor<float>.Arange(0.0f, 35.0f).Reshape(1, 1, 7, 5);
         Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.Value, strides: new int[] { 2, 2 }, padvalue: 1);
-        Ye = DenseTensor<float>.OfData(new float[1, 1, 4, 3] { { {
+        Ye = DenseTensor<float>.OfValues(new float[1, 1, 4, 3] { { {
                 { 12.0f, 27.0f, 24.0f }, { 63.0f, 108.0f, 81.0f },{ 123.0f, 198.0f, 141.0f }, { 112.0f, 177.0f, 124.0f },
             } } });
         Assert.Equal(Ye, Y);
@@ -82,9 +82,18 @@ public class MathTests
     [Fact]
     public void CanMaxPool2D()
     {
-        var X = DenseTensor<float>.OfData(new float[1, 1, 4, 4] { { {
+        var X = DenseTensor<float>.OfValues(new float[1, 1, 4, 4] { { {
             {12.0f, 20.0f, 30.0f, 0.0f  }, { 8.0f, 12.0f, 2.0f, 0.0f }, { 34.0f, 70.0f, 37.0f, 4.0f }, { 112.0f, 100.0f, 25.0f, 12.0f } } } });
-        var Y = Tensor<float>.MaxPool2D(X, new int[] { 2, 2 }, MathOps.PadType.Valid);
-        Assert.NotNull(Y);
+        var Y = Tensor<float>.MaxPool2D(X, new int[] { 2, 2 }, MathOps.PadType.Value, padvalue: 0, strides: new int[2] { 2,2});
+        Assert.Equal(DenseTensor<float>.OfValues(new float[2, 2] { { 20.0f, 30.0f }, { 112.0f, 37.0f } }), Y);
+        Y = Tensor<float>.MaxPool2D(X, new int[] { 2, 2 }, MathOps.PadType.Value, padvalue: 0, strides: new int[2] { 1, 1 });
+        Assert.Equal(DenseTensor<float>.OfValues(new float[3, 3] { { 20.0f, 30.0f, 30.0f }, { 70.0f, 70.0f, 37.0f }, { 112.0f, 100.0f, 37.0f } }), Y);
+        var N = DenseTensor<int>.OfValues(new int[1, 1, 4, 4]
+        {{{
+            {1,1,2,4 }, {5, 6, 7, 8 }, {3, 2, 1, 0 }, { 1, 2, 3, 4}
+        }}});
+        var Y2 = Tensor<int>.MaxPool2D(N, new int[] { 2, 2 });
+        Assert.Equal(DenseTensor<int>.OfValues(new int[2, 2] { { 6, 8 }, { 3, 4 } }), Y2);
+
     }
 }
