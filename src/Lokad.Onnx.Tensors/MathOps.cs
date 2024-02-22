@@ -582,23 +582,8 @@ ref float[,] c, int ldc)
             var padInfo = new PadInfo();
             var outHeight = 0;
             var outWidth = 0;
-
             switch (pad)
             {
-                case PadType.Value:
-                    if (padValue == null) throw new ArgumentNullException(nameof(padValue));
-                    padInfo.bottom = padValue.Value;
-                    padInfo.left = padValue.Value;
-                    padInfo.right = padValue.Value;
-                    padInfo.top = padValue.Value;
-                    padInfo.h = padInfo.top + padInfo.bottom;
-                    padInfo.w = padInfo.right + padInfo.left;
-                    var outShape = GetConv2DOutputShape(new int[] { inHeight, inWidth, 1 }, filterHeight, 1, strideHeight, padValue);
-                    outHeight = outShape[0];
-                    outWidth = outShape[1];
-     
-                    break;
-
                 case PadType.Valid:
                     padInfo.bottom = 0;
                     padInfo.left = 0;
@@ -631,19 +616,27 @@ ref float[,] c, int ldc)
                     padInfo.w = padAlongWidth;
                     break;
 
+                case PadType.Value:
+                    if (padValue == null) throw new ArgumentNullException(nameof(padValue));
+                    padInfo.bottom = padValue.Value;
+                    padInfo.left = padValue.Value;
+                    padInfo.right = padValue.Value;
+                    padInfo.top = padValue.Value;
+                    padInfo.h = padInfo.top + padInfo.bottom;
+                    padInfo.w = padInfo.right + padInfo.left;
+                    var outShape = GetConv2DOutputShape(new int[] { inHeight, inWidth}, filterHeight, filterWidth, strideHeight, strideWidth, padInfo.h, padInfo.w);
+                    outHeight = outShape[0];
+                    outWidth = outShape[1];
+                    break;
             }
             return new Conv2DOutputInfo { PadInfo = padInfo, Shape = new int[] { outHeight, outWidth } };
         }
 
-        public static int[] GetConv2DOutputShape(int[] inShape, int fieldSize, int outDepth, int stride, int? zeropad)
+        public static int[] GetConv2DOutputShape(int[] inputShape, int kernelHeight, int kernelWidth, int strideY, int strideX, int padY, int padX)
         {
-            if (zeropad == null)
-            {
-                zeropad = GetConv2DDefaultPad(inShape, fieldSize, stride);
-            }
-            var outputRows = (inShape[0] - fieldSize + 2 * zeropad.Value) / stride + 1;
-            var outputCols = (inShape[1] - fieldSize + 2 * zeropad.Value) / stride + 1;
-            return new int[] { outputRows, outputCols, outDepth };
+            var outputHeight = (int) Math.Floor((inputShape[0] - kernelHeight + padY * 1.0f) / strideY) + 1;
+            var outputWidth = (int) Math.Floor((inputShape[1] - kernelWidth + padX * 1.0f) / strideX) + 1;
+            return new int[] { outputHeight, outputWidth};
         }
 
         public static int GetConv2DDefaultPad(int[] inputShape, int fieldSize, int stride, int dilation = 1) => 

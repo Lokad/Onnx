@@ -12,8 +12,6 @@ using static Lokad.Onnx.MathOps;
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
 where T : struct
 {
-
-
     public virtual void Apply(Func<T, T> op, Tensor<T> destination)
     {
         if (this.Length > destination.Length)
@@ -131,8 +129,6 @@ where T : struct
 
     public static bool BroadcastShape<U>(Tensor<U> x, Tensor<U> y, out int[] b) where U : struct => BroadcastShape(x.Dimensions, y.Dimensions, out b);
 
-
-    //public static bool BroadcastShape<U>(Tensor<U> x,)
     public static Tensor<U> Add<U>(Tensor<U> x, Tensor<U> y) where U : struct, IAdditionOperators<U, U, U>
         => x.Apply((l, r) => l + r, y);
 
@@ -178,7 +174,7 @@ where T : struct
         var n = x.Dimensions[0];
         var m = x.Dimensions[1];
         var r = y.Dimensions[1];
-        var output = new DenseTensor<U>((ReadOnlySpan<int>)new int[] { x.Dimensions[0], y.Dimensions[1] });
+        var output = DenseTensor<U>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < r; j++)
@@ -214,17 +210,17 @@ where T : struct
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
 
-            var bdx = (ReadOnlySpan<int>)bd.Append(xdl[0]).Append(xdl[1]).ToArray();
+            var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
             if (!Tensor<U>.Broadcast(x, bdx, out var bx))
             {
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
-            var bdy = (ReadOnlySpan<int>)bd.Append(ydl[0]).Append(ydl[1]).ToArray();
+            var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
             if (!Tensor<U>.Broadcast(y, bdy, out var by))
             {
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
-            var z = new DenseTensor<U>((ReadOnlySpan<int>)bd.Append(xdl[0]).Append(ydl[1]).ToArray());
+            var z =  DenseTensor<U>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
 
             var di = bx.GetDimensionsIterator(0..^2);
             foreach (var _ in di)
@@ -275,15 +271,15 @@ where T : struct
         }
     }
 
-    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue = null, Tensor<float> bias = null, int[] kernelshape = null, int[] strides = null, int[] dilations = null)
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype = PadType.Valid, int? padvalue = null, Tensor<float> bias = null, int[] kernelshape = null, int[] strides = null, int[] dilations = null)
     {
         if (input.Rank != 4)
         {
-            throw new ArgumentException("Input tensors must be of rank 4 with the layout NxCxHxW.");
+            throw new ArgumentException(nameof(input), "Input tensors must be of rank 4 with the layout NxCxHxW.");
         }
         if (weight.Rank != 4)
         {
-            throw new ArgumentException("Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
+            throw new ArgumentException(nameof(weight), "Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
         }
         if (strides == null)
         {
