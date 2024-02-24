@@ -68,13 +68,14 @@ public class MathTests
                  {12.0f, 21.0f, 27.0f, 33.0f, 24.0f}, {33.0f, 54.0f, 63.0f, 72.0f, 51.0f}, {63.0f, 99.0f, 108.0f, 117.0f, 81.0f},  {93.0f, 144.0f, 153.0f, 162.0f, 111.0f}, {72.0f, 111.0f, 117.0f, 123.0f, 84.0f}
                 } } });
         Assert.Equal(Ye, Y);
-        Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.SameLower, strides: new int[] { 2, 2 });
-        Assert.Equal(Y.Dimensions.ToArray(), W.Dimensions.ToArray());
-        Ye = DenseTensor<float>.OfValues(new float[1, 1, 3, 3] { { {
-                    { 12.0f, 27.0f, 24.0f }, { 63.0f, 108.0f, 81.0f }, { 72.0f, 117.0f, 84.0f }
-                } } });
-        Assert.Equal(Ye, Y);
 
+
+        Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.Valid);
+        Ye = DenseTensor<float>.OfValues(new float[1, 1, 3, 3] { { {
+                 {54.0f, 63.0f, 72.0f}, {99.0f, 108.0f, 117.0f},  {144.0f, 153.0f, 162.0f}
+                } } });
+        Assert.Equal(Y.Dimensions.ToArray(), W.Dimensions.ToArray());
+        Assert.Equal(Ye, Y);
 
         X = Tensor<float>.Arange(0.0f, 35.0f).Reshape(1, 1, 7, 5);
         Y = Tensor<float>.Conv2D(X, W, 1, MathOps.PadType.Value, strides: new int[] { 2, 2 }, padvalue: 1);

@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Versioning;
 
 namespace Lokad.Onnx
@@ -148,5 +150,7 @@ namespace Lokad.Onnx
         {
             return new CompressedSparseTensor<T>(array, reverseStride);
         }
+
+        public static string Print<T>(this IEnumerable<T> a) => "[" + a.Select(v => a.ToString()).Aggregate((p, n) => p + ", " + n) + "]";
     }
 }

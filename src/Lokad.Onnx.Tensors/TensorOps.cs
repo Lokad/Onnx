@@ -356,6 +356,7 @@ where T : struct
         {
             dilations = new int[] { 1, 1 };
         }
+
         var N = input.Dimensions[0];
         var C = input.Dimensions[1];
         var H = input.Dimensions[2];
@@ -406,5 +407,63 @@ where T : struct
             }
         }
         return Y;
+    }
+
+    public static Tensor<U> ReLu<U>(Tensor<U> x) where U : struct, IComparisonOperators<U, U>, IAdditiveIdentity<U, U>
+       => x.Apply(l => l > U.AdditiveIdentity ? l : U.AdditiveIdentity);
+
+
+    public static Tensor<T> Reshape(Tensor<T> input,  Tensor<long> shape, bool allowZero = false)
+    {
+        if (shape.Rank != 1)
+        {
+            throw new ArgumentException(nameof(shape), "Shape tensors must be of rank 1.");
+        }
+        if (shape.Any(v => v <-1))
+        {
+            throw new ArgumentException(nameof(shape), $"A shape dimension cannot be < -1, got {shape.First(v => v < -1)}.");
+        }
+        if (shape.Count(v => v == -1) > 1)
+        {
+            throw new ArgumentException(nameof(shape), $"At most 1 shape dimension can be -1.");
+        }
+
+        int unknownDim = -1;
+        List<int> newShapeDims = new List<int>();
+        int newSize = 1;
+        for (int i = 0; i < shape.Length; i++)
+        {
+            if (shape[i] == -1)
+            {
+                unknownDim = i;
+                newShapeDims.Add(-1);
+            }
+            else if (shape[i] == 0 && !allowZero)
+            {
+                newShapeDims.Add(input.Dimensions[i]);
+                newSize *= input.Dimensions[i];
+            }
+            else if (shape[i] == 0 && allowZero)
+            {
+                newShapeDims.Add(0);
+            }
+            else
+            {
+                newShapeDims.Add(Convert.ToInt32(shape[i]));
+                newSize *= Convert.ToInt32(shape[i]);
+            }
+        }
+        if (unknownDim != -1) 
+        {
+            newShapeDims[unknownDim] = Convert.ToInt32(input.Length / newSize);
+            newSize *= newShapeDims[unknownDim];
+        }
+        
+        if (newSize != input.Length) 
+        {
+            throw new ArgumentException(nameof(shape), $"The input tensor cannot be reshaped to the requested shape. Input shape:{input.PrintShape()}, requested shape:{newShapeDims.Print()}");
+        }
+        
+        return input.Reshape(newShapeDims.ToArray());
     }
 }

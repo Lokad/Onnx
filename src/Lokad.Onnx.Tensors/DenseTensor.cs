@@ -216,8 +216,7 @@ namespace Lokad.Onnx
 
             if (newSize != Length)
             {
-                throw new ArgumentException($"Cannot reshape array due to mismatch in lengths, " +
-                    "currently {Length} would become {newSize}.", nameof(dimensions));
+                throw new ArgumentException($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
             }
 
             return new DenseTensor<T>(Buffer, dimensions, IsReversedStride);
