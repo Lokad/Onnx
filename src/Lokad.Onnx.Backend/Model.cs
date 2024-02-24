@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Lokad.Onnx.Backend
 {
-    [RequiresPreviewFeatures]
     public class Model : Runtime
     {
         public static ModelProto? Parse(string onnxInputFilePath)
@@ -20,6 +19,7 @@ namespace Lokad.Onnx.Backend
             return m;
         }
 
+        [RequiresPreviewFeatures]
         public static ComputationalGraph? LoadFromFile(string onnxInputFilePath) 
         {
             var mp = Parse(onnxInputFilePath);
@@ -32,9 +32,12 @@ namespace Lokad.Onnx.Backend
             var graph = new ComputationalGraph();
             graph.Opset = mp.OpsetImport.Select(o => new Opset(o.Domain, Convert.ToInt32(o.Version))).ToArray();
             graph.MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value);
+            graph.Metadata["Name"] = mp.Graph.Name;
             graph.Metadata["IrVersion"] = (OnnxSharp::Onnx.Version) mp.IrVersion;
             graph.Metadata["DocString"] = mp.DocString;
             graph.Metadata["Domain"] = mp.Domain;
+            graph.Metadata["ProducerName"] = mp.ProducerName;
+            graph.Metadata["ProducerVersion"] = mp.ProducerVersion;
             op = Begin("Converting {c} model initializer tensor protos to graph tensors", mp.Graph.Initializer.Count);
             foreach (var i in mp.Graph.Initializer)
             {

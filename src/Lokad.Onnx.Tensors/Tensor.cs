@@ -927,7 +927,7 @@ namespace Lokad.Onnx
         {
             get
             {
-                return GetValue(ArrayUtilities.GetIndex(strides, indices.Select((i, n)  =>
+                return GetValue(ArrayUtilities.GetIndex(strides, indices.Select((i, n) =>
                     {
                         if (i.Equals(^0)) return dimensions[n] - 1;
                         else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
@@ -957,8 +957,8 @@ namespace Lokad.Onnx
                 ts.CopyFrom(value, checkDimensions: true);
             }
         }
-        
-        
+
+
         /// <summary>
         /// Gets the value at the specied index, where index is a linearized version of n-dimension indices using strides.
         /// </summary>
@@ -1016,7 +1016,7 @@ namespace Lokad.Onnx
 
         public Tensor<T> PadRight() => InsertDim(Rank - 1);
 
-        public Tensor<T> Reshape(params int[] dims) => Reshape((ReadOnlySpan<int>) dims); 
+        public Tensor<T> Reshape(params int[] dims) => Reshape((ReadOnlySpan<int>)dims);
         #endregion
 
         #region statics
@@ -1238,7 +1238,7 @@ namespace Lokad.Onnx
         protected virtual void CopyFrom(Tensor<T> from, int arrayIndex = 0, bool checkDimensions = false)
         {
             if (from is null) throw new ArgumentNullException(nameof(from));
-            
+
             if (from.Length < arrayIndex + Length)
             {
                 throw new ArgumentException("The number of elements in the source tensor is less than the number of elements from the index to the end of the destination tensor.", nameof(from));
@@ -1640,7 +1640,7 @@ namespace Lokad.Onnx
             }
         }
 
-        public string PrintShape() => "[" + string.Join(',', dimensions) + "]"; 
+        public string PrintShape() => "[" + string.Join(',', dimensions) + "]";
         #endregion
 
         #region ITensor members

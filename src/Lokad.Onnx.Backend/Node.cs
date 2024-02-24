@@ -58,15 +58,18 @@ namespace Lokad.Onnx.Backend
         public string[] Inputs;
         public string[] Outputs;
 
-        public T? Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) ? (T)Attributes[name] : default(T);
+        public bool HasAttr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) ? true : false;
+
+        public T Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ? 
+            (T)Attributes[name] : throw new ArgumentException(name, $"The node {Name} does not have the attribute {name} of type {typeof(T)}.");
         
-        public OpResult Run(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU) => provider switch
+        public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU) => provider switch
         {
-            ExecutionProvider.CPU => RunCPU(graph),
+            ExecutionProvider.CPU => ExecuteCPU(graph),
             _ => throw new NotSupportedException(),
         };
 
-        public OpResult RunCPU(ComputationalGraph graph) => Op switch
+        public OpResult ExecuteCPU(ComputationalGraph graph) => Op switch
         {
             OpType.Squeeze => CPUExecutionProvider.Squeeze(graph.GetOpVersion(), graph.GetTensor(Inputs[0]), Attr<ITensor>("axes")),
             _ => throw new NotSupportedException(),

@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.2" />
     <PackageReference Include="Spectre.Console" Version="0.48.0" />
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
   </ItemGroup>

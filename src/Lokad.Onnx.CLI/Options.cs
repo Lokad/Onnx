@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using CommandLine;
+using CommandLine.Text;
 
 #region Base classes
 public class Options
@@ -55,4 +56,11 @@ public class InfoOptions : Options
 
     [Option("filter-op", Required = false, HelpText = "Filter on ops with this type.")]
     public string? FilterOp { get; set; }
+}
+
+[Verb("run", HelpText = "Run an ONNX model or node.")]
+public class RunOptions : Options
+{
+    [Value(1, Required = true, HelpText = "The ONNX model file to open.")]
+    public IEnumerable<string> Inputs { get; set; } = Array.Empty<string>();
 }

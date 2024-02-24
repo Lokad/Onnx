@@ -1,6 +1,7 @@
 ﻿namespace Lokad.Onnx.CLI;
 
 using System;
+using System.IO;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Versioning;
@@ -8,6 +9,8 @@ using CommandLine;
 using CommandLine.Text;
 using Lokad.Onnx;
 using Lokad.Onnx.Backend;
+
+//using Satsuma;
 
 #region Enums
 public enum ExitResult
@@ -21,7 +24,6 @@ public enum ExitResult
 }
 #endregion
 
-[RequiresPreviewFeatures]
 class Program : Runtime
 {
     #region Constructor
@@ -41,11 +43,12 @@ class Program : Runtime
     #region Methods
 
     #region Entry point
+    [RequiresPreviewFeatures]
     static void Main(string[] args)
     {
         Initialize("Lokad.Onnx.CLI", "CLI", (args.Contains("--debug") || args.Contains("-d")), true, true);
         PrintLogo();
-        var result = new Parser().ParseArguments<Options, InfoOptions>(args);
+        var result = new Parser().ParseArguments<Options, InfoOptions, RunOptions>(args);
         result.WithNotParsed(errors =>
         {
             HelpText help = GetAutoBuiltHelpText(result);
@@ -125,10 +128,15 @@ class Program : Runtime
             {
                 PrintModelInfo(io.File, io.FilterOp); 
             }
+        })
+        .WithParsed<RunOptions>(ro =>
+        {
+            Run(ro.File);
         });
     }
     #endregion
 
+    [RequiresPreviewFeatures]
     static void PrintModelInfo(string file, string? _opfilter = null)
     {
         ExitIfFileNotFound(file);
@@ -150,10 +158,13 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
+       
+        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", graph.Metadata["Name"], graph.Metadata["Domain"], graph.Metadata["ProducerName"], graph.Metadata["ProducerVersion"], graph.Metadata["IrVersion"].ToString(), graph.Metadata["DocString"]);
+  
         var tensors = new Dictionary<string, string>();
-        Info($"Model has input tensors: {{{graph.Inputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
-        Info($"Model has output tensors: {{{graph.Outputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
-        Info($"Model has initializer tensors: {{{graph.Initializers.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
+        Info($"Graph has input tensors: {{{graph.Inputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
+        Info($"Graph has output tensors: {{{graph.Outputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
+        Info($"Graph has initializer tensors: {{{graph.Initializers.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
         foreach (var t in graph.Initializers.Values)
         {
             tensors.Add(t.Name, t.TensorNameDesc() + "<initializer>");
@@ -172,11 +183,11 @@ class Program : Runtime
         }
         if (opfilter is null)
         {
-            Info("Printing model nodes...");
+            Info("Printing graph nodes...");
         }
         else
         {
-            Info("Printing model nodes with op {op}...", opfilter);
+            Info("Printing graph nodes with op {op}...", opfilter);
         }
         foreach (var n in graph.Nodes)
         {
@@ -200,6 +211,7 @@ class Program : Runtime
         }
     }
 
+    [RequiresPreviewFeatures]
     static void PrintModelOps(string file)
     {
         ExitIfFileNotFound(file);
@@ -209,16 +221,17 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
-        Info("Model has {count} input tensor(s): {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
-        Info("Model has {count} output tensor(s): {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
-        Info("Model has {count} initializer tensor(s): {out}", m.Graph.Initializer.Count, m.Graph.Initializer.Select(t => t.TensorNameDesc()));
+        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", m.Graph.Name, m.Domain, m.ProducerName, m.ProducerVersion, m.IrVersion.ToString(), m.Graph.DocString);
+        Info("Graph has {count} input tensor(s): {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
+        Info("Graph has {count} output tensor(s): {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
+        Info("Graph has {count} initializer tensor(s): {out}", m.Graph.Initializer.Count, m.Graph.Initializer.Select(t => t.TensorNameDesc()));
         List<string> ops = new List<string>();
         foreach(var node in m.Graph.Node)
         {
             var op = Enum.Parse<OpType>(node.OpType);
             if (!ops.Contains(node.OpType))
             {
-                ops.Add(node.OpType); 
+                ops.Add(node.OpType);
             }
         }
         Info("Printing list of distinct ONNX operations in model {f}...", file);
@@ -226,10 +239,11 @@ class Program : Runtime
         {
             Con.Write(op + " ");
         }
-        Con.Write(Environment.NewLine); 
+        Con.Write(Environment.NewLine);
         Info("{d} total distinct operations in model.", m.Graph.Node.Count);
     }
 
+    [RequiresPreviewFeatures]
     static void PrintModelInitializers(string file)
     {
         ExitIfFileNotFound(file);
@@ -253,14 +267,29 @@ class Program : Runtime
             }
              
         }
-        Info("Model has {count} input tensors: {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
-        Info("Model has {count} output tensors: {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
-        Info("Printing list of ONNX initializers in model {f}...", file);
+        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", m.Graph.Name, m.Domain, m.ProducerName, m.ProducerVersion, m.IrVersion.ToString(), m.Graph.DocString);
+        Info("Graph has {count} input tensors: {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
+        Info("Graph has {count} output tensors: {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
+        Info("Printing list of ONNX initializers in graph...");
         foreach (var i in initializers)
         {
             Con.WriteLine(i);
         }
-        Info("{d} total initializers in model. * = initializer for model input.", m.Graph.Initializer.Count);
+        Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
+    }
+
+    [RequiresPreviewFeatures]
+    static void Run(string file)
+    {
+        ExitIfFileNotFound(file);
+        var graph = Model.LoadFromFile(file);
+        if (graph is null)
+        {
+            Exit(ExitResult.INVALID_INPUT);
+            return;
+        }
+        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", graph.Metadata["Name"], graph.Metadata["Domain"], graph.Metadata["ProducerName"], graph.Metadata["ProducerVersion"], graph.Metadata["IrVersion"].ToString(), graph.Metadata["DocString"]);
+        graph.Execute(Array.Empty<ITensor>());
     }
 
     static void PrintLogo()
@@ -324,7 +353,7 @@ class Program : Runtime
     static object uilock = new object();
     static Type[] optionTypes =
     {
-        typeof(Options), typeof(InfoOptions)
+        typeof(Options), typeof(InfoOptions), typeof(RunOptions)
         
     };
     static FigletFont font = FigletFont.Load(Path.Combine(AssemblyLocation, "chunky.flf"));
