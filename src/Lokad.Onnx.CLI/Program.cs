@@ -93,16 +93,17 @@ class Program : Runtime
             else if (errors.Any(e => e.Tag == ErrorType.MissingRequiredOptionError))
             {
                 MissingRequiredOptionError error = (MissingRequiredOptionError)errors.First(e => e.Tag == ErrorType.MissingRequiredOptionError);
-                Error("A required option is missing: {0}.", error.NameInfo.NameText);
                 Info(help);
+                Error("A required option is missing.");
+               
                 Exit(ExitResult.INVALID_OPTIONS);
             }
             else if (errors.Any(e => e.Tag == ErrorType.UnknownOptionError))
             {
                 UnknownOptionError error = (UnknownOptionError)errors.First(e => e.Tag == ErrorType.UnknownOptionError);
                 help.AddVerbs(optionTypes);
-                Error("Unknown option: {error}.", error.Token);
                 Info(help);
+                Error("Unknown option: {error}.", error.Token);
                 Exit(ExitResult.INVALID_OPTIONS);
             }
             else
@@ -131,7 +132,7 @@ class Program : Runtime
         })
         .WithParsed<RunOptions>(ro =>
         {
-            Run(ro.File);
+            Run(ro.File, ro.Inputs);
         });
     }
     #endregion
@@ -159,7 +160,7 @@ class Program : Runtime
             return;
         }
        
-        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", graph.Metadata["Name"], graph.Metadata["Domain"], graph.Metadata["ProducerName"], graph.Metadata["ProducerVersion"], graph.Metadata["IrVersion"].ToString(), graph.Metadata["DocString"]);
+        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", graph.Metadata["Name"], graph.Metadata["Domain"], graph.Metadata["ProducerName"], graph.Metadata["ProducerVersion"], graph.Metadata["IrVersion"]?.ToString() ??"", graph.Metadata["DocString"]);
   
         var tensors = new Dictionary<string, string>();
         Info($"Graph has input tensors: {{{graph.Inputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
@@ -279,7 +280,7 @@ class Program : Runtime
     }
 
     [RequiresPreviewFeatures]
-    static void Run(string file)
+    static void Run(string file, IEnumerable<string> inputs)
     {
         ExitIfFileNotFound(file);
         var graph = Model.LoadFromFile(file);
@@ -288,8 +289,16 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
-        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", graph.Metadata["Name"], graph.Metadata["Domain"], graph.Metadata["ProducerName"], graph.Metadata["ProducerVersion"], graph.Metadata["IrVersion"].ToString(), graph.Metadata["DocString"]);
-        graph.Execute(Array.Empty<ITensor>());
+        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", graph.Metadata["Name"], graph.Metadata["Domain"], graph.Metadata["ProducerName"], graph.Metadata["ProducerVersion"], graph.Metadata["IrVersion"]?.ToString() ?? "", graph.Metadata["DocString"]);
+        var ui = Data.GetInputTensorsFromFileArgs(inputs);
+        if (ui is null)
+        {
+            Exit(ExitResult.INVALID_INPUT);
+        }
+        else
+        {
+            graph.Execute(ui);
+        }
     }
 
     static void PrintLogo()
@@ -324,12 +333,10 @@ class Program : Runtime
         return HelpText.AutoBuild(result, h =>
         {
             h.AddOptions(result);
+            HelpText.DefaultParsingErrorsHandler(result, h);
             return h;
         },
-        e =>
-        {
-            return e;
-        });
+        e => e);
     }
     #endregion
 

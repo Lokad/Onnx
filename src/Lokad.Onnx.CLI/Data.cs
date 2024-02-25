@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Text;
@@ -13,6 +14,107 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Lokad.Onnx.CLI;
 
+[RequiresPreviewFeatures]
+internal class Data : Runtime
+{
+    internal static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args)
+    {
+        var op = Begin("Converting {c} file arguments to tensors", args.Count());
+        var tensors = new List<ITensor>();  
+        foreach (string arg in args) 
+        {
+            var a = arg.Split("::");
+            var name = a[0];
+            if (ImageExtensions.Contains(Path.GetExtension(name)))
+            {
+                var t = GetImageTensorFromFileArg(name, a.Length > 1 ? a[1..] : Array.Empty<string>());
+                if (t is not null)
+                {
+                    tensors.Add(t);
+                }
+                else
+                {
+                    Error("Could not convert file argument {arg} to image tensor.", name);
+                    op.Abandon();
+                    return null;    
+                }
+            }
+        }
+        op.Complete();
+        return tensors.ToArray();
+    }
+    
+    internal static ITensor? GetImageTensorFromFileArg(string name, string[] props) 
+    {
+        Program.ExitIfFileNotFound(name);
+        var image = Image.Load<Rgba32>(name);
+        if (image is null)
+        {
+            Error("Could not load file {f} as image.", name);
+            return null;
+        }
+        
+        Info("File {f} is {H}x{W}x{p}bpp", name, image.Height, image.Width, image.PixelType.BitsPerPixel);
+        if (props.Length == 0)
+        {
+            return DenseTensor<int>.OfValues(ImageToArray(image));
+        }
+        else 
+        {
+            if (props[0] == "mnist")
+            { 
+                image.Mutate(i => i.Grayscale());
+                image.Mutate(i => i.Resize(28, 28));
+                return DenseTensor<int>.OfValues(ImageToArray(image));
+            }
+            else if (Char.IsDigit(props[0].Split(':').First()[0]))
+            {
+                if (props[0].Split(':').All(d => Int32.TryParse(d, out var _)))
+                {
+                    var dims = props[0].Split(':').Select(d => Int32.Parse(d)).ToArray();
+                    if (dims.Length != 2)
+                    {
+                        Error("Cannot parse specified image dimensions {d}.", props[0]);
+                        return null;
+                    }
+                    else
+                    {
+                        image.Mutate(i => i.Resize(dims[0], dims[1]));
+                        return DenseTensor<int>.OfValues(ImageToArray(image));
+                    }
+                }
+                else
+                {
+                    Error("Cannot parse specified image dimensions {d}.", props[0]);
+                    return null;
+                }
+            }
+            else
+            {
+                Error("Cannot parse specified image format {d}.", props[0]);
+                return null;
+            }
+        }
+        
+    }
+
+    public static int[,,,] ImageToArray(Image<Rgba32> image)
+    {
+        var pixels = new int[1, 1, image.Height, image.Width];
+        for (int i = 0; i < image.Height; i++)
+        {
+            for (int j = 0; j < image.Width; j++)
+            {
+                pixels[0, 0, i, j] = 255 - ((image[i, j].R + image[i, j].G + image[i, j].B) / 3);
+                i++;
+            }
+        }
+        return pixels;
+    }
+  
+    internal static string[] ImageExtensions = new string[] { ".bmp", ".png", ".jpeg", ".jpg" };
+}
+
 internal class Images
 {
     /// <summary>
@@ -23,9 +125,6 @@ internal class Images
     public static byte[] Preprocess(byte[] input)
     {
         var image = Image<Rgba32>.Load<Rgba32>(input);
-
-        var ima = Preprocess(image);
-
         var stream = new MemoryStream();
         image.SaveAsPng(stream);
 
@@ -48,49 +147,6 @@ internal class Images
 
         return image;
     }
-    public static int[] ConvertImageToArray(Image<Rgba32> image)
-    {
-        var pixels = new int[784];
-        var i = 0;
-        for (int j = 0; j < image.Height; j++)
-        {
-            for (int k = 0; k < image.Width; k++)
-            {
-                pixels[i] = 255 - ((image[k, j].R + image[k, j].G + image[k, j].B) / 3);
-                i++;
-            }
-        }
-
-        return pixels;
-    }
-}
-internal class Data
-{
-    [RequiresPreviewFeatures]
-    /*
-    private static Tensor<float> PreprocessTestImage(string path)
-    {
-        var img = new Bitmap(path);
-        var result = new float[img.Width][];
-
-        for (int i = 0; i < img.Width; i++)
-        {
-            result[i] = new float[img.Height];
-            for (int j = 0; j < img.Height; j++)
-            {
-                var pixel = img.GetPixel(i, j);
-
-                var gray = RgbToGray(pixel);
-
-                // Normalize the Gray value to 0-1 range
-                var normalized = gray / 255;
-
-                result[i][j] = normalized;
-            }
-        }
-        return result;
-    }
-    */
-    private static float RgbToGray(System.Drawing.Color pixel) => 0.299f * pixel.R + 0.587f * pixel.G + 0.114f * pixel.B;
+    
 }
 
