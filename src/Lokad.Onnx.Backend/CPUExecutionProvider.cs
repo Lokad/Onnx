@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 
-
+using static OpResult;
 public enum ExecutionProvider
 {
     CPU
@@ -20,9 +20,37 @@ public class CPUExecutionProvider
     
     public bool SupportsOp(OpType op, int version) => SupportedOps.ContainsKey(op) && SupportedOps[op].Any(v => v == version);
     
+    public static OpResult Reshape(ITensor? input, ITensor? shape, bool? allowZero = null)
+    {
+        var op = OpType.Reshape;
+        if (input is null) return MissingInput(op, nameof(input));
+        if (shape is null) return MissingInput(op, nameof(shape));
+        if (shape.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(shape), TensorElementType.Int64, shape);
+        switch (input.ElementType)
+        {
+            case TensorElementType.Bool: return Reshape((Tensor<bool>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.Int8: return Reshape((Tensor<byte>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.UInt8: return Reshape((Tensor<sbyte>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.Int16: return Reshape((Tensor<short>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.UInt16: return Reshape((Tensor<ushort>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.Int32: return Reshape((Tensor<int>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.UInt32: return Reshape((Tensor<uint>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.Int64: return Reshape((Tensor<long>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.UInt64: return Reshape((Tensor<ulong>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.Float: return Reshape((Tensor<float>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.Double: return Reshape((Tensor<double>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.Float16: return Reshape((Tensor<Half>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.BFloat16: return Reshape((Tensor<BFloat16>)input, (Tensor<long>) shape, allowZero);
+            case TensorElementType.Complex64: return Reshape((Tensor<System.Numerics.Complex>)input, (Tensor<long>) shape, allowZero);
+            default: return OpResult.NotSupported(OpType.Squeeze);
+        }
+    }
+
+    public static OpResult Reshape<T>(Tensor<T> input, Tensor<long> shape, bool? allowZero = null) where T : struct 
+        => Success(OpType.Reshape, Tensor<T>.Reshape(input, shape, allowZero ?? false));
     public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
     {
-        Tensor<long>? _axes = null;
+        Tensor<long>? shape = null;
         if (axes is not null)
         {
             if (axes.Dims.Length != 1)
@@ -35,26 +63,26 @@ public class CPUExecutionProvider
             }
             else
             {
-                _axes = (Tensor<long>)axes;
+                shape = (Tensor<long>)axes;
             }
         }
         
         switch (input.ElementType)
         {
-            case TensorElementType.Bool: return Squeeze((Tensor<bool>)input, _axes);
-            case TensorElementType.Int8: return Squeeze((Tensor<byte>)input, _axes);
-            case TensorElementType.UInt8: return Squeeze((Tensor<sbyte>)input, _axes);
-            case TensorElementType.Int16: return Squeeze((Tensor<short>)input, _axes);
-            case TensorElementType.UInt16: return Squeeze((Tensor<ushort>)input, _axes);
-            case TensorElementType.Int32: return Squeeze((Tensor<int>)input, _axes);
-            case TensorElementType.UInt32: return Squeeze((Tensor<uint>)input, _axes);
-            case TensorElementType.Int64: return Squeeze((Tensor<long>)input, _axes);
-            case TensorElementType.UInt64: return Squeeze((Tensor<ulong>)input, _axes);
-            case TensorElementType.Float: return Squeeze((Tensor<float>)input, _axes);
-            case TensorElementType.Double: return Squeeze((Tensor<double>)input, _axes);
-            case TensorElementType.Float16: return Squeeze((Tensor<Half>)input, _axes);
-            case TensorElementType.BFloat16: return Squeeze((Tensor<BFloat16>)input, _axes);
-            case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, _axes);
+            case TensorElementType.Bool: return Squeeze((Tensor<bool>)input, shape);
+            case TensorElementType.Int8: return Squeeze((Tensor<byte>)input, shape);
+            case TensorElementType.UInt8: return Squeeze((Tensor<sbyte>)input, shape);
+            case TensorElementType.Int16: return Squeeze((Tensor<short>)input, shape);
+            case TensorElementType.UInt16: return Squeeze((Tensor<ushort>)input, shape);
+            case TensorElementType.Int32: return Squeeze((Tensor<int>)input, shape);
+            case TensorElementType.UInt32: return Squeeze((Tensor<uint>)input, shape);
+            case TensorElementType.Int64: return Squeeze((Tensor<long>)input, shape);
+            case TensorElementType.UInt64: return Squeeze((Tensor<ulong>)input, shape);
+            case TensorElementType.Float: return Squeeze((Tensor<float>)input, shape);
+            case TensorElementType.Double: return Squeeze((Tensor<double>)input, shape);
+            case TensorElementType.Float16: return Squeeze((Tensor<Half>)input, shape);
+            case TensorElementType.BFloat16: return Squeeze((Tensor<BFloat16>)input, shape);
+            case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, shape);
             default: return OpResult.NotSupported(OpType.Squeeze);
         }
     }

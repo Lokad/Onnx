@@ -1,8 +1,9 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Versioning;
+
+using CPU = Lokad.Onnx.Backend.CPUExecutionProvider;
 
 namespace Lokad.Onnx.Backend
 {
@@ -37,13 +38,19 @@ namespace Lokad.Onnx.Backend
 
         public static OpResult NotSupported(OpType op, string pname, TensorElementType type) =>
             new OpResult(op, OpStatus.Failure) { Message = $"The operation {op} is not supported for input paramer {pname} type {type}." };
+        
         public static OpResult WrongInputParameterType(OpType op, TensorElementType ptype, ITensor input) =>
             new OpResult(op, OpStatus.Failure) { Message = $"The input parameter {input.Name} has type {ptype} not {input.ElementType}." };
+        
         public static OpResult Failure(OpType op, string message) =>
            new OpResult(op, OpStatus.Failure) { Message = message };
 
-        public static OpResult Success(OpType op, ITensor[]? output = null, string? message = null) =>
-           new OpResult(op, OpStatus.Success) { Outputs=output, Message = message };
+        public static OpResult MissingInput(OpType op, string name) => Failure(op, $"The input parameter {name} is missing or null.");
+
+        public static OpResult WrongInputType(OpType op, string name, TensorElementType type, ITensor input) => Failure(op, $"The input tensor {input.Name} for parameter {name} has type {input.ElementType} but is required to be .");
+
+        public static OpResult Success(OpType op, params ITensor[] output) =>
+           new OpResult(op, OpStatus.Success) { Outputs=output };
         #endregion
     }
 
@@ -58,11 +65,16 @@ namespace Lokad.Onnx.Backend
         public string[] Inputs;
         public string[] Outputs;
 
-        public bool HasAttr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) ? true : false;
-
-        public T Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ? 
-            (T)Attributes[name] : throw new ArgumentException(name, $"The node {Name} does not have the attribute {name} of type {typeof(T)}.");
+        public T? Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ? 
+            (T)Attributes[name] : default(T);
         
+        public ITensor? InputTensor(ComputationalGraph graph, int index) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : null;
+
+        public OpResult MissingInput(string name) => OpResult.Failure(Op, $"The input parameter {name} is missing or null.");
+
+        public OpResult WrongInputType(string name, TensorElementType type, ITensor input) => OpResult.Failure(Op, $"The input tensor {input.Name} for parameter {name} has type {input.ElementType} but is required to be .");
+
+
         public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU) => provider switch
         {
             ExecutionProvider.CPU => ExecuteCPU(graph),
@@ -71,7 +83,8 @@ namespace Lokad.Onnx.Backend
 
         public OpResult ExecuteCPU(ComputationalGraph graph) => Op switch
         {
-            OpType.Squeeze => CPUExecutionProvider.Squeeze(graph.GetOpVersion(), graph.GetTensor(Inputs[0]), Attr<ITensor>("axes")),
+            OpType.Resize => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool>("allowZero")),
+            OpType.Squeeze => CPU.Squeeze(graph.GetOpVersion(), graph.GetInputTensor(Inputs[0]), Attr<ITensor>("axes")),
             _ => throw new NotSupportedException(),
         };
     }

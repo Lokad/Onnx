@@ -6,12 +6,13 @@ namespace Lokad.Onnx.Backend.Tests
     public class OpTests
     {
         [Fact]
-        public void CanSqueeze()
+        public void CanReshape()
         {
-
-            var d = new DenseTensor<int>(new[] { 1, 2, 2, 3, 4, 4, 5, 4 });
-            var sd = d.Dimensions.ToArray();
-            Assert.Equal( new[] { 1, 2, 3, 4, 5, 4 }, sd);
+            var X = DenseTensor<int>.Ones(2, 3, 4);
+            var s = DenseTensor<long>.OfValues(new long[] { 4, 2, 3 });
+            var r = CPUExecutionProvider.Reshape(X, s);
+            Assert.Equal(OpStatus.Success, r.Status);
+            Assert.Equal(r.Outputs![0].Dims, new int[3] { 4, 2, 3 });
         }
 
         [Fact]

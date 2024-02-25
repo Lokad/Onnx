@@ -56,7 +56,7 @@ internal class Data : Runtime
             return null;
         }
         
-        Info("File {f} is {H}x{W}x{p}bpp", name, image.Height, image.Width, image.PixelType.BitsPerPixel);
+        Info("File {f} is {H}x{W}x{p}bpp image.", name, image.Height, image.Width, image.PixelType.BitsPerPixel);
         var n = Path.Combine(Path.GetDirectoryName(name)!, Path.GetFileNameWithoutExtension(name)
             + "_" + $"{image.Height}x{image.Width}_{index}.png");
         if (props.Length == 0)
@@ -143,7 +143,14 @@ internal class Data : Runtime
     internal static Image<Rgba32> SaveImage(Image<Rgba32> image, string name, bool save)
     {
         var stream = new FileStream(name, FileMode.Create);
-        Info("Saving input image to {n}...", name);
+        if (File.Exists(name))
+        {
+            Warn("Overwriting file {f} with input image.", name);
+        }
+        else
+        {
+            Info("Saving input image to {n}.", name);
+        }
         image.SaveAsPng(stream);
         return image;
     }

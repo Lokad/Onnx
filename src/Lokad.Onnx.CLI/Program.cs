@@ -303,7 +303,7 @@ class Program : Runtime
 
     static void PrintLogo()
     {
-        Con.Write(new FigletText(font, "Lokad.Onnx").Color(Color.Magenta1));
+        Con.Write(new FigletText(font, "Lokad.Onnx").Color(Color.Orange1));
         Con.Write(new Text($"v{AssemblyVersion.ToString(3)}\n"));
     }
     public static void Exit(ExitResult result)

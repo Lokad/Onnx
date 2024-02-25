@@ -33,10 +33,11 @@ public class ComputationalGraph : Runtime
 
     public int GetOpVersion() => this.GetOpVersion("");
 
-    public ITensor GetTensor(string name) =>
-        Inputs.ContainsKey(name) ? Inputs[name] : Initializers.ContainsKey(name) ? Initializers[name] : Outputs[name];
+    public ITensor GetInputTensor(string name) =>
+        Inputs.ContainsKey(name) ? Inputs[name] : Initializers.ContainsKey(name) ? Initializers[name] : 
+            IntermediateOutputs[name] ?? throw new InvalidOperationException($"The intermediate output tensor {name} has not been assigned a value.");
 
-    public ITensor[] GetTensors(string[] names) => names.Select(n => GetTensor(n)).ToArray();
+    public ITensor[] GetInputTensors(string[] names) => names.Select(n => GetInputTensor(n)).ToArray();
 
     public bool ResolveInputs(ITensor[] userInputs)
     {

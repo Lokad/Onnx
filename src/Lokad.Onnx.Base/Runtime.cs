@@ -37,7 +37,7 @@ namespace Lokad.Onnx
 
         public static string PathSeparator { get; } = Environment.OSVersion.Platform == PlatformID.Win32NT ? "\\" : "/";
 
-        public static string ToolName { get; set; } = "Stratis DevEx";
+        public static string ToolName { get; set; } = "Lokad ONNX";
         
         public static string LogName { get; set; } = "BASE";
 
