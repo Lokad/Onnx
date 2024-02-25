@@ -57,9 +57,11 @@ internal class Data : Runtime
         }
         
         Info("File {f} is {H}x{W}x{p}bpp", name, image.Height, image.Width, image.PixelType.BitsPerPixel);
+        var n = Path.Combine(Path.GetDirectoryName(name)!, Path.GetFileNameWithoutExtension(name)
+            + "_" + $"{image.Height}x{image.Width}_{index}.png");
         if (props.Length == 0)
         {
-            return DenseTensor<double>.OfValues(ImageToArrayD(SaveImage(image, name, index, saveInput)));
+            return DenseTensor<float>.OfValues(ImageToArrayF(SaveImage(image, n, saveInput))).WithName(n);
         }
         else 
         {
@@ -67,7 +69,7 @@ internal class Data : Runtime
             { 
                 image.Mutate(i => i.Grayscale());
                 image.Mutate(i => i.Resize(28, 28));
-                return DenseTensor<double>.OfValues(ImageToArrayD(SaveImage(image, name, index, saveInput)));
+                return DenseTensor<float>.OfValues(ImageToArrayF(SaveImage(image, n, saveInput))).WithName(n);
             }
             else if (char.IsDigit(props[0].Split(':').First()[0]))
             {
@@ -82,7 +84,7 @@ internal class Data : Runtime
                     else
                     {
                         image.Mutate(i => i.Resize(dims[0], dims[1]));
-                        return DenseTensor<double>.OfValues(ImageToArrayD(SaveImage(image, name, index, saveInput)));
+                        return DenseTensor<float>.OfValues(ImageToArrayF(SaveImage(image, n, saveInput))).WithName(n);
                     }
                 }
                 else
@@ -100,7 +102,7 @@ internal class Data : Runtime
         
     }
 
-    public static int[,,,] ImageToArray(Image<Rgba32> image)
+    public static int[,,,] ImageToArrayN(Image<Rgba32> image)
     {
         var pixels = new int[1, 1, image.Height, image.Width];
         for (int i = 0; i < image.Height; i++)
@@ -138,12 +140,10 @@ internal class Data : Runtime
         }
         return pixels;
     }
-    internal static Image<Rgba32> SaveImage(Image<Rgba32> image, string oname, int index, bool save)
+    internal static Image<Rgba32> SaveImage(Image<Rgba32> image, string name, bool save)
     {
-        var n = Path.Combine(Path.GetDirectoryName(oname)!, Path.GetFileNameWithoutExtension(oname) 
-            + "_" + $"{image.Height}x{image.Width}_{index}.png");
-        var stream = new FileStream(n, FileMode.Create);
-        Info("Saving input image to {n}...", n);
+        var stream = new FileStream(name, FileMode.Create);
+        Info("Saving input image to {n}...", name);
         image.SaveAsPng(stream);
         return image;
     }

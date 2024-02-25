@@ -1544,7 +1544,7 @@ namespace Lokad.Onnx
 
         #endregion
 
-        #region Display
+        #region Display and Description
         /// <summary>
         /// Get a string representation of Tensor
         /// </summary>
@@ -1641,6 +1641,12 @@ namespace Lokad.Onnx
         }
 
         public string PrintShape() => "[" + string.Join(',', dimensions) + "]";
+        
+        public Tensor<T> WithName(string name)
+        {
+            this.Name = name;
+            return this;
+        }
         #endregion
 
         #region ITensor members

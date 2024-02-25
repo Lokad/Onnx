@@ -71,7 +71,7 @@ public class ComputationalGraph : Runtime
         }
         for(int i = 0; i < requiredInputs.Keys.Count; i++)
         {
-            if (!userInputs[i].Dims.SequenceEqual(requiredInputs.ElementAt(i).Value.Dims) || userInputs[i].ElementType == requiredInputs.ElementAt(i).Value.ElementType)
+            if (!userInputs[i].Dims.SequenceEqual(requiredInputs.ElementAt(i).Value.Dims) || !(userInputs[i].ElementType == requiredInputs.ElementAt(i).Value.ElementType))
             {
                 Error("Cannot use user input {ui} for required input {ri}. Tensor shape or type does not match.", userInputs[i].TensorNameDesc(), requiredInputs.ElementAt(i).Value.TensorNameDesc());
                 op.Abandon();
