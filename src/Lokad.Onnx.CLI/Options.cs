@@ -63,4 +63,7 @@ public class RunOptions : Options
 {
     [Value(1, Required = true, HelpText = "The user input arguments to the model.")]
     public IEnumerable<string> Inputs { get; set; } = Array.Empty<string>();
+
+    [Option("save-input", Required = false, HelpText = "Save any input arguments to the model as additional files.")]
+    public bool SaveInput { get; set; }
 }

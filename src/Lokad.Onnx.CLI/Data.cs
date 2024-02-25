@@ -17,17 +17,19 @@ namespace Lokad.Onnx.CLI;
 [RequiresPreviewFeatures]
 internal class Data : Runtime
 {
-    internal static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args)
+    internal static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput)
     {
         var op = Begin("Converting {c} file arguments to tensors", args.Count());
-        var tensors = new List<ITensor>();  
+        var tensors = new List<ITensor>();
+        int index = 0;
         foreach (string arg in args) 
         {
             var a = arg.Split("::");
             var name = a[0];
+            index++;
             if (ImageExtensions.Contains(Path.GetExtension(name)))
             {
-                var t = GetImageTensorFromFileArg(name, a.Length > 1 ? a[1..] : Array.Empty<string>());
+                var t = GetImageTensorFromFileArg(name, a.Length > 1 ? a[1..] : Array.Empty<string>(), index, saveInput);
                 if (t is not null)
                 {
                     tensors.Add(t);
@@ -44,7 +46,7 @@ internal class Data : Runtime
         return tensors.ToArray();
     }
     
-    internal static ITensor? GetImageTensorFromFileArg(string name, string[] props) 
+    internal static ITensor? GetImageTensorFromFileArg(string name, string[] props, int index, bool saveInput) 
     {
         Program.ExitIfFileNotFound(name);
         var image = Image.Load<Rgba32>(name);
@@ -57,7 +59,7 @@ internal class Data : Runtime
         Info("File {f} is {H}x{W}x{p}bpp", name, image.Height, image.Width, image.PixelType.BitsPerPixel);
         if (props.Length == 0)
         {
-            return DenseTensor<int>.OfValues(ImageToArray(image));
+            return DenseTensor<double>.OfValues(ImageToArrayD(SaveImage(image, name, index, saveInput)));
         }
         else 
         {
@@ -65,9 +67,9 @@ internal class Data : Runtime
             { 
                 image.Mutate(i => i.Grayscale());
                 image.Mutate(i => i.Resize(28, 28));
-                return DenseTensor<int>.OfValues(ImageToArray(image));
+                return DenseTensor<double>.OfValues(ImageToArrayD(SaveImage(image, name, index, saveInput)));
             }
-            else if (Char.IsDigit(props[0].Split(':').First()[0]))
+            else if (char.IsDigit(props[0].Split(':').First()[0]))
             {
                 if (props[0].Split(':').All(d => Int32.TryParse(d, out var _)))
                 {
@@ -80,7 +82,7 @@ internal class Data : Runtime
                     else
                     {
                         image.Mutate(i => i.Resize(dims[0], dims[1]));
-                        return DenseTensor<int>.OfValues(ImageToArray(image));
+                        return DenseTensor<double>.OfValues(ImageToArrayD(SaveImage(image, name, index, saveInput)));
                     }
                 }
                 else
@@ -106,42 +108,46 @@ internal class Data : Runtime
             for (int j = 0; j < image.Width; j++)
             {
                 pixels[0, 0, i, j] = 255 - ((image[i, j].R + image[i, j].G + image[i, j].B) / 3);
-                i++;
             }
         }
         return pixels;
     }
-  
-    internal static string[] ImageExtensions = new string[] { ".bmp", ".png", ".jpeg", ".jpg" };
-}
 
-internal class Images
-{
-    internal static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args)
+    public static float[,,,] ImageToArrayF(Image<Rgba32> image)
     {
-        var image = Image<Rgba32>.Load<Rgba32>(input);
-        var stream = new MemoryStream();
-        image.SaveAsPng(stream);
-
-        return stream.ToArray();
+        var pixels = new float[1, 1, image.Height, image.Width];
+        for (int i = 0; i < image.Height; i++)
+        {
+            for (int j = 0; j < image.Width; j++)
+            {
+                pixels[0, 0, i, j] = 255.0f - ((image[i, j].R + image[i, j].G + image[i, j].B) / 3.0f);
+            }
+        }
+        return pixels;
     }
 
-    /// <summary>
-    /// Preprocess camera images for MNIST-based neural networks.
-    /// </summary>
-    /// <param name="image">Source image in a file format agnostic structure in memory as a series of Rgba32 pixels.</param>
-    /// <returns>Preprocessed image in a file format agnostic structure in memory as a series of Rgba32 pixels.</returns>
-    public static Image<Rgba32> Preprocess(Image<Rgba32> image)
+    public static double[,,,] ImageToArrayD(Image<Rgba32> image)
     {
-        // Step 1: Apply a grayscale filter 
-        image.Mutate(i => i.Grayscale());
-
-        // Step 6: Downscale to 20x20
-        image.Mutate(i => i.Resize(28, 28));
-
-
+        var pixels = new double[1, 1, image.Height, image.Width];
+        for (int i = 0; i < image.Height; i++)
+        {
+            for (int j = 0; j < image.Width; j++)
+            {
+                pixels[0, 0, i, j] = 255.0 - ((image[i, j].R + image[i, j].G + image[i, j].B) / 3.0);
+            }
+        }
+        return pixels;
+    }
+    internal static Image<Rgba32> SaveImage(Image<Rgba32> image, string oname, int index, bool save)
+    {
+        var n = Path.Combine(Path.GetDirectoryName(oname)!, Path.GetFileNameWithoutExtension(oname) 
+            + "_" + $"{image.Height}x{image.Width}_{index}.png");
+        var stream = new FileStream(n, FileMode.Create);
+        Info("Saving input image to {n}...", n);
+        image.SaveAsPng(stream);
         return image;
     }
-    
+
+    internal static string[] ImageExtensions = new string[] { ".bmp", ".png", ".jpeg", ".jpg" };
 }
 

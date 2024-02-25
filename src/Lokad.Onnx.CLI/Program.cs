@@ -132,7 +132,7 @@ class Program : Runtime
         })
         .WithParsed<RunOptions>(ro =>
         {
-            Run(ro.File, ro.Inputs);
+            Run(ro.File, ro.Inputs, ro.SaveInput);
         });
     }
     #endregion
@@ -280,7 +280,7 @@ class Program : Runtime
     }
 
     [RequiresPreviewFeatures]
-    static void Run(string file, IEnumerable<string> inputs)
+    static void Run(string file, IEnumerable<string> inputs, bool saveInput)
     {
         ExitIfFileNotFound(file);
         var graph = Model.LoadFromFile(file);
@@ -290,7 +290,7 @@ class Program : Runtime
             return;
         }
         Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", graph.Metadata["Name"], graph.Metadata["Domain"], graph.Metadata["ProducerName"], graph.Metadata["ProducerVersion"], graph.Metadata["IrVersion"]?.ToString() ?? "", graph.Metadata["DocString"]);
-        var ui = Data.GetInputTensorsFromFileArgs(inputs);
+        var ui = Data.GetInputTensorsFromFileArgs(inputs, saveInput);
         if (ui is null)
         {
             Exit(ExitResult.INVALID_INPUT);
