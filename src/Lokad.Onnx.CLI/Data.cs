@@ -117,12 +117,7 @@ internal class Data : Runtime
 
 internal class Images
 {
-    /// <summary>
-    /// Preprocess camera images for MNIST-based neural networks.
-    /// </summary>
-    /// <param name="image">Source image in a byte array.</param>
-    /// <returns>Preprocessed image in a byte array.</returns>
-    public static byte[] Preprocess(byte[] input)
+    internal static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args)
     {
         var image = Image<Rgba32>.Load<Rgba32>(input);
         var stream = new MemoryStream();
