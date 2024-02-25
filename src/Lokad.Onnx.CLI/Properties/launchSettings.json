@@ -2,7 +2,7 @@
   "profiles": {
     "Model Info": {
       "commandName": "Project",
-      "commandLineArgs": "run \"c:\\users\\allister\\downloads\\mnist-8(1).onnx\" foo bar baz --debug"
+      "commandLineArgs": "run C:\\Users\\Allister\\Downloads\\mnist-8(1).onnx C:\\Users\\Allister\\Downloads\\solidity.png --debug"
     }
   }
 }

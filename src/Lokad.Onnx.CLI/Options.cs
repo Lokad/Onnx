@@ -61,6 +61,6 @@ public class InfoOptions : Options
 [Verb("run", HelpText = "Run an ONNX model or node.")]
 public class RunOptions : Options
 {
-    [Value(1, Required = true, HelpText = "The ONNX model file to open.")]
+    [Value(1, Required = true, HelpText = "The user input arguments to the model.")]
     public IEnumerable<string> Inputs { get; set; } = Array.Empty<string>();
 }
