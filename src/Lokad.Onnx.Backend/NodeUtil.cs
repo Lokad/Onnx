@@ -25,7 +25,7 @@ namespace Lokad.Onnx.Backend
 
         public static Node ToNode(this NodeProto np, ComputationalGraph graph)
         {
-            Runtime.Debug($"Converting model node proto {np.Name} with op type {np.OpType} and inputs {np.Input} and outputs {np.Output} and attributes [{np.Attribute.Select(a => a.Name).JoinWithSpaces()}] to graph node.");
+            Runtime.Debug("Converting model node proto {npn} with op type {npot} and inputs {npi} and outputs {npot} and attributes [{npa}] to graph node.", np.Name, np.OpType, np.Input, np.Output, np.Attribute.Select(a => a.Name));
             var node = new Node()
             {
                 Name = np.Name,
@@ -36,27 +36,24 @@ namespace Lokad.Onnx.Backend
                 Inputs = np.Input.ToArray(),
                 Outputs = np.Output.ToArray()
             };
-           
-            graph.WeightedDirectedGraph.AddNode(node.Name);
-            
-            foreach (var n in graph.Nodes)
+            foreach (var o in node.Outputs)
             {
-                foreach (var i in n.Inputs)
+                if (!graph.Outputs.ContainsKey(o) && !graph.IntermediateOutputs.ContainsKey(o))
                 {
-                    if (!graph.Inputs.ContainsKey(i) && !graph.Initializers.ContainsKey(i) && !graph.IntermediateOutputs.ContainsKey(i))
-                    {
-                        throw new InvalidOperationException($"The input tensor {i} is not in the graph inputs or initializers or intermediate outputs.");
-                    }
+                    graph.IntermediateOutputs.Add(o, null);
                 }
-
-                foreach (var o in n.Outputs)
+            }
+            graph.WeightedDirectedGraph.AddNode(node.Name);
+            foreach (var n in graph.Nodes)
+            { 
+                foreach (var i in node.Inputs)
                 {
-                    if (!graph.Outputs.ContainsKey(o) && !graph.IntermediateOutputs.ContainsKey(o))
+                    if (n.Outputs.Contains(i))
                     {
-                        graph.IntermediateOutputs.Add(o, null);
+                        graph.WeightedDirectedGraph.AddArc(n.WeightedGraphNode, node.WeightedGraphNode, Satsuma.Directedness.Directed, label: i);
+                        Runtime.Debug("Node {dest} has predecessor {src}.", node.Name, n.Name);
                     }
-                    graph.WeightedDirectedGraph.AddArc(n.WeightedGraphNode, node.WeightedGraphNode, Satsuma.Directedness.Directed, label:o);
-                    Runtime.Debug("Node {dest} has predecessor {src}.", node.Name, n.Name);                    
+
                 }
             }
             return node;   

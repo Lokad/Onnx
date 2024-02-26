@@ -34,16 +34,16 @@ namespace Lokad.Onnx
             switch ((TensorElementType)tp.DataType)
             {
                 case TensorElementType.Int32:
-                    Runtime.Debug($"tensorproto {tp.Name} has embedded Int32 tensor data.");
+                    Runtime.Debug("tensorproto {tpn} has embedded int32 tensor data.", tp.Name);
                     return tp.Int32Data.Count == 0 && tp.RawData.Length > 0 ? MemoryMarshal.Cast<byte, int>(tp.RawData.Span).ToArray() : tp.Int32Data.ToArray();
                 case TensorElementType.Int64:
-                    Runtime.Debug($"tensorproto {tp.Name} has embedded Int64 tensor data.");
+                    Runtime.Debug("tensorproto {tpn} has embedded int64 tensor data.", tp.Name);
                     return tp.Int64Data.Count == 0 && tp.RawData.Length > 0 ? MemoryMarshal.Cast<byte, long>(tp.RawData.Span).ToArray() : tp.Int64Data.ToArray();
                 case TensorElementType.Float: 
-                    Runtime.Debug($"tensorproto {tp.Name} has embedded Float tensor data.");
+                    Runtime.Debug("tensorproto {tpn} has embedded float tensor data.", tp.Name);
                     return tp.FloatData.Count == 0 && tp.RawData.Length > 0 ? MemoryMarshal.Cast<byte, float>(tp.RawData.Span).ToArray() : tp.FloatData.ToArray();
                 case TensorElementType.Double: 
-                    Runtime.Debug($"tensorproto {tp.Name} has embedded Double tensor data.");
+                    Runtime.Debug("tensorproto {tpn} has embedded double tensor data.", tp.Name);
                     return tp.DoubleData.Count == 0 && tp.RawData.Length > 0 ? MemoryMarshal.Cast<byte, double>(tp.RawData.Span).ToArray() : tp.DoubleData.ToArray();
                 default: throw new NotSupportedException($"Cannot get embedded tensor data of tensor element type {tp.DataType}.");
             }
