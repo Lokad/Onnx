@@ -28,6 +28,7 @@ namespace Lokad.Onnx.Backend
                 Error("Could not parse {f} as ONNX model file.", onnxInputFilePath);
                 return null;
             }
+            Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
             var op = Begin("Creating computational graph from ONNX model file {file}", onnxInputFilePath);
             var graph = new ComputationalGraph();
             graph.Opset = mp.OpsetImport.Select(o => new Opset(o.Domain, Convert.ToInt32(o.Version))).ToArray();
@@ -57,6 +58,23 @@ namespace Lokad.Onnx.Backend
             }
             op.Complete();
             return graph;
+        }
+    }
+
+    public struct Opset
+    {
+        public string Domain = "ai";
+        public int Version;
+
+        public Opset(string domain, int version)
+        {
+            Domain = domain;
+            Version = version;
+        }
+
+        public Opset(int version)
+        {
+            Version = version;
         }
     }
 }

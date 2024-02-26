@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lokad.Onnx;
+using System;
 using System.Collections;
 using System.Linq;
 
@@ -91,5 +92,19 @@ namespace Lokad.Onnx
         string PrintShape() => "[" + string.Join(',', Dims) + "]";
 
         string TensorNameDesc() => $"{Name}:{ElementType.ToString().ToLower()}:{string.Join("x",Dims.Select(d => d.ToString()))}";
+    }
+}
+
+public class TensorInputShapeException : ArgumentException
+{
+    public ITensor Input { get; set; }
+    public int[] Shape { get; set; }
+
+    public string Name { get; set; }
+    public TensorInputShapeException(string paramName, int[] shape, ITensor input) : base(paramName, $"The input parameter {paramName} has shape {input.PrintShape()} but is required to be {shape.Print()}.")
+    {
+        Name = paramName;
+        Shape = shape;
+        Input = input;
     }
 }

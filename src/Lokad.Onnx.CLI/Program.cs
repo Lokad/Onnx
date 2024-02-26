@@ -159,9 +159,6 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
-       
-        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", graph.Metadata["Name"], graph.Metadata["Domain"], graph.Metadata["ProducerName"], graph.Metadata["ProducerVersion"], graph.Metadata["IrVersion"]?.ToString() ??"", graph.Metadata["DocString"]);
-  
         var tensors = new Dictionary<string, string>();
         Info($"Graph has input tensors: {{{graph.Inputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
         Info($"Graph has output tensors: {{{graph.Outputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
@@ -222,7 +219,6 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
-        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", m.Graph.Name, m.Domain, m.ProducerName, m.ProducerVersion, m.IrVersion.ToString(), m.Graph.DocString);
         Info("Graph has {count} input tensor(s): {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
         Info("Graph has {count} output tensor(s): {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
         Info("Graph has {count} initializer tensor(s): {out}", m.Graph.Initializer.Count, m.Graph.Initializer.Select(t => t.TensorNameDesc()));
@@ -268,7 +264,6 @@ class Program : Runtime
             }
              
         }
-        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", m.Graph.Name, m.Domain, m.ProducerName, m.ProducerVersion, m.IrVersion.ToString(), m.Graph.DocString);
         Info("Graph has {count} input tensors: {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
         Info("Graph has {count} output tensors: {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
         Info("Printing list of ONNX initializers in graph...");
@@ -289,7 +284,6 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
-        Info("Graph details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", graph.Metadata["Name"], graph.Metadata["Domain"], graph.Metadata["ProducerName"], graph.Metadata["ProducerVersion"], graph.Metadata["IrVersion"]?.ToString() ?? "", graph.Metadata["DocString"]);
         var ui = Data.GetInputTensorsFromFileArgs(inputs, saveInput);
         if (ui is null)
         {
