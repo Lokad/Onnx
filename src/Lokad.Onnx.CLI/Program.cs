@@ -10,8 +10,6 @@ using CommandLine.Text;
 using Lokad.Onnx;
 using Lokad.Onnx.Backend;
 
-//using Satsuma;
-
 #region Enums
 public enum ExitResult
 {

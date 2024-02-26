@@ -115,10 +115,12 @@ public class ComputationalGraph : Runtime
                     if (IntermediateOutputs.ContainsKey(node.Outputs[i]))
                     {
                         IntermediateOutputs[node.Outputs[i]] = r.Outputs[i];
+                        r.Outputs[i].Name = node.Outputs[i];
                     }
                     else
                     {
                         Outputs[node.Outputs[i]] = r.Outputs[i];
+                        r.Outputs[i].Name = node.Outputs[i];
                     }
                 }
             }

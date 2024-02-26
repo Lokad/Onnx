@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Versioning;
 
 using static Lokad.Onnx.Backend.OpResult;
@@ -25,6 +26,11 @@ public struct Node
 
     public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU) 
     {
+        Runtime.Debug("Executing node {node} with op type: {op}, inputs: {inputs}, outputs: {outputs} and "
+                + ((Attributes is not null && Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
+                Name, Op.ToString(),
+                Inputs,
+                Outputs);
         try
         {
             if (provider == ExecutionProvider.CPU) 
@@ -60,7 +66,10 @@ public struct Node
 
     public OpResult ExecuteCPU(ComputationalGraph graph) => Op switch
     {
-        OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool>("allowZero")),
+        OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool>("allow_zero")),
+        OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1)),
+        OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), 
+            Attr<string>("auto_pad"), Attr<int[]>("dilations"), Attr<int?>("group"), Attr<int[]>("kernel_shape"), Attr<int[]>("pads"), Attr<int[]>("strides")),
         OpType.Squeeze => CPU.Squeeze(graph.GetOpVersion(), graph.GetInputTensor(Inputs[0]), Attr<ITensor>("axes")),
         _ => NotSupported(Op)
     };
