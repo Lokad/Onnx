@@ -47,11 +47,13 @@ namespace Lokad.Onnx.Backend
         public static OpResult WrongInputParameterType(OpType op, TensorElementType ptype, ITensor input) =>
             new OpResult(op, OpStatus.Failure) { Message = $"The input parameter {input.Name} has type {ptype} not {input.ElementType}." };
 
-
+       
 
         public static OpResult MissingInput(OpType op, string name) => Failure(op, $"The input parameter {name} is missing or null.");
 
         public static OpResult WrongInputType(OpType op, string name, TensorElementType type, ITensor input) => Failure(op, $"The input tensor {input.Name} for parameter {name} has type {input.ElementType} but is required to be .");
+
+        public static OpResult WrongInputType(OpType op, string name, string message, ITensor input) => Failure(op, $"The input tensor {input.Name} for parameter {name} has the wrong type: {message}.");
 
         public static OpResult WrongInputShape(OpType op, string name, int[] dims, ITensor input) => Failure(op, $"The input tensor {input.Name} for parameter {name} has shape {input.PrintShape()} but is required to be {dims.Print()}.");
 

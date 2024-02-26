@@ -31,6 +31,7 @@ namespace Lokad.Onnx.Backend
             Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
             var op = Begin("Creating computational graph from ONNX model file {file}", onnxInputFilePath);
             var graph = new ComputationalGraph();
+            graph.ModelFile = onnxInputFilePath;
             graph.Opset = mp.OpsetImport.Select(o => new Opset(o.Domain, Convert.ToInt32(o.Version))).ToArray();
             graph.MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value);
             graph.Metadata["Name"] = mp.Graph.Name;

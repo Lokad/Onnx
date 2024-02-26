@@ -29,7 +29,15 @@ public struct Node
         {
             if (provider == ExecutionProvider.CPU) 
             {
-                return Execute(graph, provider);
+                var r =  ExecuteCPU(graph);
+                if (r.Status == OpStatus.Success && r.Outputs.Length != Outputs.Length)
+                {
+                    return Failure(Op, $"The operation returned {r.Outputs.Length} outputs but the graph node has {Outputs.Length} outputs.");
+                }
+                else
+                {
+                    return r;
+                }
             }
             else
             {
@@ -52,9 +60,9 @@ public struct Node
 
     public OpResult ExecuteCPU(ComputationalGraph graph) => Op switch
     {
-        OpType.Resize => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool>("allowZero")),
+        OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool>("allowZero")),
         OpType.Squeeze => CPU.Squeeze(graph.GetOpVersion(), graph.GetInputTensor(Inputs[0]), Attr<ITensor>("axes")),
-        _ => throw new NotSupportedException(),
+        _ => NotSupported(Op)
     };
 }
 

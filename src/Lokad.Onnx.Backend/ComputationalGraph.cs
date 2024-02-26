@@ -9,6 +9,8 @@ using System.Runtime.Versioning;
 public class ComputationalGraph : Runtime
 {
     #region Fields
+    public string ModelFile = "";
+    
     public Dictionary<string, ITensor> Inputs = new Dictionary<string, ITensor>();
 
     public Dictionary<string, ITensor> Outputs = new Dictionary<string, ITensor>();
@@ -93,14 +95,37 @@ public class ComputationalGraph : Runtime
         {
             return false;
         }
-        
-        return true;
-        /*
-        foreach(var node in Nodes) 
+
+        var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
+        foreach (var node in Nodes) 
         {
-            if (!node.Inputs.All(i => Inputs.ContainsKey(i) || Initializers.ContainsKey(i)))
+            var r = node.Execute(this);
+            if (r.Status == OpStatus.Failure)
+            {
+                Error("Execution of node {n} with op {op} failed: {m}.", node.Name, node.Op, r.Message ?? "");
+                Error("Stopping graph execution at node {n}.", node.Name);
+                return false;
+            }
+            else
+            {
+                Debug("Execution of node {n} with op {op} returned {s} with {c} output(s).", node.Name, node.Op, r.Status.ToString(), r.Outputs.Length);
+                for (int i = 0; i < node.Outputs.Length; i++)
+                {
+                    Debug("Assigning graph tensor {o} to node {n} output {c}.", node.Outputs[i], node.Name, i);
+                    if (IntermediateOutputs.ContainsKey(node.Outputs[i]))
+                    {
+                        IntermediateOutputs[node.Outputs[i]] = r.Outputs[i];
+                    }
+                    else
+                    {
+                        Outputs[node.Outputs[i]] = r.Outputs[i];
+                    }
+                }
+            }
         }
-        */
+        op.Complete();
+        return true;    
+        
     }
     #endregion
 }

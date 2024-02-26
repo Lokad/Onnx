@@ -42,12 +42,44 @@ public class CPUExecutionProvider
             case TensorElementType.Float16: return Reshape((Tensor<Half>)input, (Tensor<long>) shape, allowZero);
             case TensorElementType.BFloat16: return Reshape((Tensor<BFloat16>)input, (Tensor<long>) shape, allowZero);
             case TensorElementType.Complex64: return Reshape((Tensor<System.Numerics.Complex>)input, (Tensor<long>) shape, allowZero);
-            default: return OpResult.NotSupported(OpType.Squeeze);
+            default: return NotSupported(OpType.Reshape);
         }
     }
 
     public static OpResult Reshape<T>(Tensor<T> input, Tensor<long> shape, bool? allowZero = null) where T : struct 
         => Success(OpType.Reshape, Tensor<T>.Reshape(input, shape, allowZero ?? false));
+
+    public static OpResult Add(ITensor? A, ITensor? B)
+    {
+        var op = OpType.Add;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        if (!ITensor.Broadcast(A, B, out var bA, out var bB))
+        {
+            return Failure(op, nameof(A));
+        }
+        switch (A.ElementType)
+        {
+            case TensorElementType.Int8: return Success(op, Tensor<byte>.Add((Tensor<byte>) A, (Tensor<byte>) B));
+            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.Add((Tensor<sbyte>)A, (Tensor<sbyte>)B));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Add((Tensor<short>)A, (Tensor<short>)B));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Add((Tensor<ushort>)A, (Tensor<ushort>)B));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Add((Tensor<int>)A, (Tensor<int>)B));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Add((Tensor<uint>)A, (Tensor<uint>)B));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Add((Tensor<long>)A, (Tensor<long>)B));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Add((Tensor<ulong>)A, (Tensor<ulong>)B));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)A, (Tensor<float>)B));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)A, (Tensor<double>)B));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Add((Tensor<Half>)A, (Tensor<Half>)B)); 
+            default: return OpResult.NotSupported(OpType.Squeeze);
+        }
+    }
+
+    
     public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
     {
         Tensor<long>? shape = null;

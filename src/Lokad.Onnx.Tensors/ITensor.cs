@@ -89,6 +89,22 @@ namespace Lokad.Onnx
             return new[] { outA, outB };
         }
 
+        static bool Broadcast(ITensor x, ITensor y, out ITensor bx, out ITensor by)
+        {
+            var b = Broadcast(x, y);
+            if (b.Length == 0)
+            {
+                bx = x;
+                by = y;
+                return false;
+            }
+            else
+            {
+                bx = b[0];
+                by = b[1];  
+                return true;
+            }
+        }
         string PrintShape() => "[" + string.Join(',', Dims) + "]";
 
         string TensorNameDesc() => $"{Name}:{ElementType.ToString().ToLower()}:{string.Join("x",Dims.Select(d => d.ToString()))}";
