@@ -19,7 +19,7 @@ internal class Data : Runtime
 {
     internal static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput)
     {
-        var op = Begin("Converting {c} file arguments to tensors", args.Count());
+        var op = Begin("Converting {c} file argument(s) to tensors", args.Count());
         var tensors = new List<ITensor>();
         int index = 0;
         foreach (string arg in args) 
@@ -66,9 +66,12 @@ internal class Data : Runtime
         else 
         {
             if (props[0] == "mnist")
-            { 
+            {
+                Info("Converting image data to MINST format tensor data.");
                 image.Mutate(i => i.Grayscale());
                 image.Mutate(i => i.Resize(28, 28));
+                n = Path.Combine(Path.GetDirectoryName(name)!, Path.GetFileNameWithoutExtension(name)
+                    + "_" + $"{image.Height}x{image.Width}_{index}.png");
                 return DenseTensor<float>.OfValues(ImageToArrayF(SaveImage(image, n, saveInput))).WithName(n);
             }
             else if (char.IsDigit(props[0].Split(':').First()[0]))
@@ -84,6 +87,8 @@ internal class Data : Runtime
                     else
                     {
                         image.Mutate(i => i.Resize(dims[0], dims[1]));
+                        n = Path.Combine(Path.GetDirectoryName(name)!, Path.GetFileNameWithoutExtension(name)
+                            + "_" + $"{image.Height}x{image.Width}_{index}.png");
                         return DenseTensor<float>.OfValues(ImageToArrayF(SaveImage(image, n, saveInput))).WithName(n);
                     }
                 }

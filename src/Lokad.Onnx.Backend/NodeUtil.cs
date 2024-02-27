@@ -53,7 +53,6 @@ namespace Lokad.Onnx.Backend
                         graph.WeightedDirectedGraph.AddArc(n.WeightedGraphNode, node.WeightedGraphNode, Satsuma.Directedness.Directed, label: i);
                         Runtime.Debug("Node {dest} has predecessor {src}.", node.Name, n.Name);
                     }
-
                 }
             }
             return node;   

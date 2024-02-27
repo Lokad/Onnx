@@ -470,7 +470,7 @@ where T : struct
         return Y;
     }
 
-    public static Tensor<U> ReLu<U>(Tensor<U> x) where U : struct, IComparisonOperators<U, U>, IAdditiveIdentity<U, U>
+    public static Tensor<U> Relu<U>(Tensor<U> x) where U : struct, IComparisonOperators<U, U>, IAdditiveIdentity<U, U>
        => x.Apply(l => l > U.AdditiveIdentity ? l : U.AdditiveIdentity);
 
 

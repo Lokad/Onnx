@@ -75,7 +75,7 @@ public class CPUExecutionProvider
             case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)bA, (Tensor<double>)bB));
             case TensorElementType.Float16: return Success(op, Tensor<Half>.Add((Tensor<Half>)bA, (Tensor<Half>)bB)); 
-            default: return NotSupported(OpType.Add);
+            default: return InputTypeNotSupported(OpType.Add, nameof(A), A);
         }
     }
 
@@ -125,7 +125,28 @@ public class CPUExecutionProvider
         }
     }
 
-    public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
+    public static OpResult Relu(ITensor? X)
+    {
+        var op = OpType.Relu;
+        if (X is null) return MissingInput(op, nameof(X));
+        switch (X.ElementType)
+        {
+            case TensorElementType.Int8: return Success(op, Tensor<byte>.Relu((Tensor<byte>) X));
+            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.Relu((Tensor<sbyte>) X));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Relu((Tensor<short>) X));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Relu((Tensor<ushort>) X));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Relu((Tensor<int>) X));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Relu((Tensor<uint>)X));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Relu((Tensor<long>)X));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Relu((Tensor<ulong>)X));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Relu((Tensor<float>)X));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Relu((Tensor<double>)X));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Relu((Tensor<Half>)X));
+            default: return InputTypeNotSupported(OpType.Relu, nameof(X), X);
+        }
+    }
+
+        public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
     {
         Tensor<long>? shape = null;
         if (axes is not null)

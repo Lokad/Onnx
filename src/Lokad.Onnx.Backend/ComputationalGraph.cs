@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
+using static Lokad.Onnx.Logger;
+using System.Xml.Linq;
 
 [RequiresPreviewFeatures]
 public class ComputationalGraph : Runtime
@@ -99,6 +101,19 @@ public class ComputationalGraph : Runtime
         var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
         foreach (var node in Nodes) 
         {
+            Debug("Executing node {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
+                + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
+                node.Name, node.Op.ToString(),
+                node.Inputs,
+                node.Outputs
+            );
+            if (node.Attributes is not null && node.Attributes.Count > 0)
+            {
+                foreach (var kv in node.Attributes)
+                {
+                    Debug("  {n}: {v}", kv.Key, kv.Value);
+                }
+            }
             var r = node.Execute(this);
             if (r.Status == OpStatus.Failure)
             {
@@ -108,10 +123,10 @@ public class ComputationalGraph : Runtime
             }
             else
             {
-                Debug("Execution of node {n} with op {op} returned {s} with {c} output(s).", node.Name, node.Op, r.Status.ToString(), r.Outputs.Length);
+                Debug("Execution of node {n} with op {op} returned {s} with {c} output(s).", node.Name, node.Op.ToString(), r.Status.ToString(), r.Outputs.Length);
                 for (int i = 0; i < node.Outputs.Length; i++)
                 {
-                    Debug("Assigning graph tensor {o} to node {n} output {c}.", node.Outputs[i], node.Name, i);
+                    Debug("Assigning node {n} output {c} to graph tensor {o}.", node.Name, i, node.Outputs[i]);
                     if (IntermediateOutputs.ContainsKey(node.Outputs[i]))
                     {
                         IntermediateOutputs[node.Outputs[i]] = r.Outputs[i];
@@ -127,7 +142,6 @@ public class ComputationalGraph : Runtime
         }
         op.Complete();
         return true;    
-        
     }
     #endregion
 }
