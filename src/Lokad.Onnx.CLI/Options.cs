@@ -66,4 +66,7 @@ public class RunOptions : Options
 
     [Option("save-input", Required = false, HelpText = "Save any input arguments to the model as additional files.")]
     public bool SaveInput { get; set; }
+
+    [Option("softmax", Required = false, HelpText = "Apply the softmax function to output vectors.")]
+    public bool Softmax { get; set; }
 }

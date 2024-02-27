@@ -2,7 +2,7 @@
   "profiles": {
     "Model Info": {
       "commandName": "Project",
-      "commandLineArgs": "run C:\\Users\\Allister\\Downloads\\mnist-8(1).onnx C:\\Users\\Allister\\Downloads\\solidity.png::mnist --debug"
+      "commandLineArgs": "run C:\\Users\\Allister\\Downloads\\mnist-8(1).onnx C:\\Users\\Allister\\Downloads\\solidity.png::mnist --debug --softmax"
     }
   }
 }

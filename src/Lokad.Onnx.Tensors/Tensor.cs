@@ -1596,7 +1596,14 @@ namespace Lokad.Onnx
                     {
                         builder.Append(',');
                     }
-                    builder.Append(this[indices]);
+                    if (ElementType == TensorElementType.Float || ElementType == TensorElementType.Double)
+                    {
+                        builder.Append(string.Format("{0:0.00000}", this[indices]));
+                    }
+                    else
+                    {
+                        builder.Append(this[indices]);
+                    }
                 }
                 builder.Append(']');
 

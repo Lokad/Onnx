@@ -51,6 +51,16 @@ where T : struct
         return output;
     }
 
+    public virtual T Accumulate(Func<T, T, T> op, T state)
+    {
+        var result = state;
+        for (int index = 0; index < Length; index++)
+        {
+            result = op(result, GetValue(index));
+        }
+        return result;
+    }
+
     public static Tensor<U>[] Broadcast<U>(Tensor<U> inA, Tensor<U> inB) where U : struct
     {
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
@@ -527,4 +537,8 @@ where T : struct
         
         return input.Reshape(newShapeDims.ToArray());
     }
+
+    public static Tensor<float> Softmax(Tensor<float> x) => x.Apply(i => MathF.Exp(i) / (x.Apply(MathF.Exp).Accumulate((l, r) => l + r, 0.0f)));
+
+    public static Tensor<double> Softmax(Tensor<double> x) => x.Apply(i => Math.Exp(i) / (x.Apply(Math.Exp).Accumulate((l, r) => l + r, 0.0)));
 }

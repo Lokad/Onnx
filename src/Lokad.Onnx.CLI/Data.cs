@@ -110,11 +110,11 @@ internal class Data : Runtime
     public static int[,,,] ImageToArrayN(Image<Rgba32> image)
     {
         var pixels = new int[1, 1, image.Height, image.Width];
-        for (int i = 0; i < image.Height; i++)
+        for (int i = 0; i < image.Width; i++)
         {
-            for (int j = 0; j < image.Width; j++)
+            for (int j = 0; j < image.Height; j++)
             {
-                pixels[0, 0, i, j] = 255 - ((image[i, j].R + image[i, j].G + image[i, j].B) / 3);
+                pixels[0, 0, j, i] = 255 - ((image[i, j].R + image[i, j].G + image[i, j].B) / 3);
             }
         }
         return pixels;
@@ -127,7 +127,7 @@ internal class Data : Runtime
         {
             for (int j = 0; j < image.Height; j++)
             {
-                pixels[0, 0, i, j] = ((image[i, j].R + image[i, j].G + image[i, j].B) / 3.0f) / 255.0f;
+                pixels[0, 0, j, i] = ((image[i, j].R + image[i, j].G + image[i, j].B) / 3.0f) / 255.0f;
             }
         }
         return pixels;
@@ -140,7 +140,7 @@ internal class Data : Runtime
         {
             for (int j = 0; j < image.Width; j++)
             {
-                pixels[0, 0, i, j] = ((image[i, j].R + image[i, j].G + image[i, j].B) / 3.0) / 255.0;
+                pixels[0, 0, j, i] = ((image[i, j].R + image[i, j].G + image[i, j].B) / 3.0) / 255.0;
             }
         }
         return pixels;

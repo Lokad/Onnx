@@ -118,7 +118,7 @@ public class CPUExecutionProvider
                     {
                         return AttributeNotSupported(op, "pads", pads.Print(), "Asymmetric padding is not supported.");
                     }
-                    padvalue = pads?[0] ?? 0;
+                    padvalue = pads[0];
                     break;
             }
         }

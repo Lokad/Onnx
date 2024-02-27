@@ -130,7 +130,7 @@ class Program : Runtime
         })
         .WithParsed<RunOptions>(ro =>
         {
-            Run(ro.File, ro.Inputs, ro.SaveInput);
+            Run(ro.File, ro.Inputs, ro.SaveInput, ro.Softmax);
         });
     }
     #endregion
@@ -273,7 +273,7 @@ class Program : Runtime
     }
 
     [RequiresPreviewFeatures]
-    static void Run(string file, IEnumerable<string> inputs, bool saveInput)
+    static void Run(string file, IEnumerable<string> inputs, bool saveInput, bool softmax)
     {
         ExitIfFileNotFound(file);
         var graph = Model.LoadFromFile(file);
@@ -289,7 +289,7 @@ class Program : Runtime
         }
         else
         {
-            graph.Execute(ui);
+            graph.Execute(ui, softmax);
         }
     }
 
