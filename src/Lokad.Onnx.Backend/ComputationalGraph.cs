@@ -104,7 +104,7 @@ public class ComputationalGraph : Runtime
             Debug("Executing node {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
                 + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
                 node.Name, node.Op.ToString(),
-                node.Inputs,
+                GetInputTensors(node.Inputs).Select(t => t.TensorNameDesc()),
                 node.Outputs
             );
             if (node.Attributes is not null && node.Attributes.Count > 0)
@@ -141,6 +141,11 @@ public class ComputationalGraph : Runtime
             }
         }
         op.Complete();
+        Info("Printing outputs...");
+        foreach(var o in Outputs.Values)
+        {
+            Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
+        }
         return true;    
     }
     #endregion

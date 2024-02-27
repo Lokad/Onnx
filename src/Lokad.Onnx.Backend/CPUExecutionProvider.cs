@@ -183,7 +183,7 @@ public class CPUExecutionProvider
                     padmode = MathOps.PadType.Value;
                     if (pads is null)
                     {
-                        //return MissingAttribute(op, nameof(pads), "When auto_pad is NOTSET pads must be specified");
+                        return MissingAttribute(op, nameof(pads), "When auto_pad is NOTSET pads must be specified");
                     }
                     else if (!pads.All(p => p == pads[0]))
                     {
@@ -204,6 +204,27 @@ public class CPUExecutionProvider
         }
     }
 
+    public static OpResult MatMul(ITensor? A, ITensor? B)
+    {
+        var op = OpType.MatMul;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        switch (A.ElementType)
+        {
+            case TensorElementType.Int8: return Success(op, Tensor<byte>.MatMul((Tensor<byte>)A, (Tensor<byte>)B));
+            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.MatMul((Tensor<sbyte>)A, (Tensor<sbyte>)B));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.MatMul((Tensor<short>)A, (Tensor<short>)B));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.MatMul((Tensor<ushort>)A, (Tensor<ushort>)B));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul((Tensor<int>)A, (Tensor<int>)B));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.MatMul((Tensor<uint>)A, (Tensor<uint>)B));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.MatMul((Tensor<long>)A, (Tensor<long>)B));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.MatMul((Tensor<ulong>)A, (Tensor<ulong>)B));
+            case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B));
+            case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.MatMul((Tensor<Half>)A, (Tensor<Half>)B));
+            default: return InputTypeNotSupported(OpType.Add, nameof(A), A);
+        }
+    }
     public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
     {
         Tensor<long>? shape = null;

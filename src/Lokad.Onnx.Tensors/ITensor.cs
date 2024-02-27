@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using System.Text;
 
 namespace Lokad.Onnx
 {
@@ -106,6 +107,96 @@ namespace Lokad.Onnx
             }
         }
         string PrintShape() => "[" + string.Join(',', Dims) + "]";
+
+        int Length => Dims.Aggregate((p, n) => p * n);
+
+        string PrintData(bool includeWhitespace = true)
+        {
+            var builder = new StringBuilder();
+
+            var strides = ArrayUtilities.GetStrides(Dims);
+            var indices = new int[Rank];
+            var innerDimension = Rank - 1;
+            var innerLength = Dims[innerDimension];
+            var outerLength = Length / innerLength;
+
+            int indent = 0;
+            for (int outerIndex = 0; outerIndex < Length; outerIndex += innerLength)
+            {
+                ArrayUtilities.GetIndices(strides, false, outerIndex, indices);
+
+                while ((indent < innerDimension) && (indices[indent] == 0))
+                {
+                    // start up
+                    if (includeWhitespace)
+                    {
+                        Indent(builder, indent);
+                    }
+                    indent++;
+                    builder.Append('[');
+                    if (includeWhitespace)
+                    {
+                        builder.AppendLine();
+                    }
+                }
+
+                for (int innerIndex = 0; innerIndex < innerLength; innerIndex++)
+                {
+                    indices[innerDimension] = innerIndex;
+
+                    if ((innerIndex == 0))
+                    {
+                        if (includeWhitespace)
+                        {
+                            Indent(builder, indent);
+                        }
+                        builder.Append('[');
+                    }
+                    else
+                    {
+                        builder.Append(',');
+                    }
+                    builder.Append(this[indices]);
+                }
+                builder.Append(']');
+
+                for (int i = Rank - 2; i >= 0; i--)
+                {
+                    var lastIndex = Dims[i] - 1;
+                    if (indices[i] == lastIndex)
+                    {
+                        // close out
+                        --indent;
+                        if (includeWhitespace)
+                        {
+                            builder.AppendLine();
+                            Indent(builder, indent);
+                        }
+                        builder.Append(']');
+                    }
+                    else
+                    {
+                        builder.Append(',');
+                        if (includeWhitespace)
+                        {
+                            builder.AppendLine();
+                        }
+                        break;
+                    }
+                }
+            }
+            return builder.ToString();
+            void Indent(StringBuilder builder, int tabs, int spacesPerTab = 4)
+            {
+                for (int tab = 0; tab < tabs; tab++)
+                {
+                    for (int space = 0; space < spacesPerTab; space++)
+                    {
+                        builder.Append(' ');
+                    }
+                }
+            }
+        }
 
         string TensorNameDesc() => $"{Name}:{ElementType.ToString().ToLower()}:{string.Join("x",Dims.Select(d => d.ToString()))}";
     }

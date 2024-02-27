@@ -88,7 +88,9 @@ public struct Node
         OpType.Relu => CPU.Relu(InputTensor(graph, 0)),
 
         OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), ArrayAttr<int, long>("dilations"), ArrayAttr<int, long>("kernel_shape"), ArrayAttr<int, long>("pads"), Attr<int?>("storage_order"), ArrayAttr<int, long>("strides")),
-        
+
+        OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1)),
+
         OpType.Squeeze => CPU.Squeeze(graph.GetOpVersion(), graph.GetInputTensor(Inputs[0]), Attr<ITensor>("axes")),
         
         _ => NotSupported(Op)
