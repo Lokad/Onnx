@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx.Backend;
+﻿namespace Lokad.Onnx;
 
 using System;
 using System.Collections;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 
-using static Lokad.Onnx.Backend.OpResult;
+using static Lokad.Onnx.OpResult;
 using CPU = CPUExecutionProvider;
 
 [RequiresPreviewFeatures]

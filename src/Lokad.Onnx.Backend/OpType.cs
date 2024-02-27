@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx.Backend;
+﻿namespace Lokad.Onnx;
 
 public enum OpType
 {

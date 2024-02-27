@@ -2,13 +2,12 @@
 
 using System;
 using System.IO;
-using System.Globalization;
-using System.Reflection;
 using System.Runtime.Versioning;
+
 using CommandLine;
 using CommandLine.Text;
+
 using Lokad.Onnx;
-using Lokad.Onnx.Backend;
 
 #region Enums
 public enum ExitResult

@@ -7,7 +7,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lokad.Onnx.Backend
+namespace Lokad.Onnx
 {
     public class Model : Runtime
     {

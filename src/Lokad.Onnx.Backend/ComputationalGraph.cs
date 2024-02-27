@@ -1,11 +1,9 @@
-﻿namespace Lokad.Onnx.Backend;
+﻿namespace Lokad.Onnx;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
-using static Lokad.Onnx.Logger;
-using System.Xml.Linq;
 
 [RequiresPreviewFeatures]
 public class ComputationalGraph : Runtime
@@ -146,11 +144,11 @@ public class ComputationalGraph : Runtime
         {
             if (softmax && o.Rank == 1)
             {
-                Info("{n}:{v}", o.TensorNameDesc()+"<softmax>", o.Softmax().PrintData(false));
+                Info("{n}:{v}", o.TensorNameDesc()+"-><softmax>", o.Softmax().PrintData(false));
             }
             else if (softmax && o.Rank == 2 && o.Dims[0] == 1)
             {
-                Info("{n}:{v}", o.TensorNameDesc()+"<softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+                Info("{n}:{v}", o.TensorNameDesc()+"-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
             }
             else
             {
