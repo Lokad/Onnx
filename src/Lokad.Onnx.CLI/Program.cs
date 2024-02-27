@@ -2,7 +2,6 @@
 
 using System;
 using System.IO;
-using System.Runtime.Versioning;
 
 using CommandLine;
 using CommandLine.Text;
@@ -40,7 +39,6 @@ class Program : Runtime
     #region Methods
 
     #region Entry point
-    [RequiresPreviewFeatures]
     static void Main(string[] args)
     {
         Initialize("Lokad.Onnx.CLI", "CLI", (args.Contains("--debug") || args.Contains("-d")), true, true);
@@ -134,7 +132,6 @@ class Program : Runtime
     }
     #endregion
 
-    [RequiresPreviewFeatures]
     static void PrintModelInfo(string file, string? _opfilter = null)
     {
         ExitIfFileNotFound(file);
@@ -206,7 +203,6 @@ class Program : Runtime
         }
     }
 
-    [RequiresPreviewFeatures]
     static void PrintModelOps(string file)
     {
         ExitIfFileNotFound(file);
@@ -237,7 +233,6 @@ class Program : Runtime
         Info("{d} total distinct operations in model.", m.Graph.Node.Count);
     }
 
-    [RequiresPreviewFeatures]
     static void PrintModelInitializers(string file)
     {
         ExitIfFileNotFound(file);
@@ -271,7 +266,6 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
-    [RequiresPreviewFeatures]
     static void Run(string file, IEnumerable<string> inputs, bool saveInput, bool softmax)
     {
         ExitIfFileNotFound(file);

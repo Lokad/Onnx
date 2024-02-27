@@ -3,9 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 using static Lokad.Onnx.MathOps;
 
@@ -61,7 +59,7 @@ where T : struct
         return result;
     }
 
-    public static Tensor<U>[] Broadcast<U>(Tensor<U> inA, Tensor<U> inB) where U : struct
+    public static Tensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
     {
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
         var outA = inA.Clone();
@@ -94,13 +92,13 @@ where T : struct
             }
             else
             {
-                return Array.Empty<Tensor<U>>();
+                return Array.Empty<Tensor<T>>();
             }
         }
         return new[] { outA, outB };
     }
 
-    public static bool Broadcast<U>(Tensor<U> x, Tensor<U> y, out Tensor<U> outx, out Tensor<U> outy) where U : struct
+    public static bool Broadcast(Tensor<T> x, Tensor<T> y, out Tensor<T> outx, out Tensor<T> outy)
     {
         var b = Broadcast(x, y);
         if (b.Length == 0)
@@ -117,14 +115,14 @@ where T : struct
         }
     }
 
-    public static bool Broadcast<U>(Tensor<U> x, ReadOnlySpan<int> y, out Tensor<U> bx) where U : struct =>
-        Broadcast(x, new DenseTensor<U>(y), out bx, out _);
+    public static bool Broadcast(Tensor<T> x, ReadOnlySpan<int> y, out Tensor<T> bx) =>
+        Broadcast(x, new DenseTensor<T>(y), out bx, out _);
 
     public static bool BroadcastShape(ReadOnlySpan<int> x, ReadOnlySpan<int> y, out int[] b)
     {
-        var tx = new DenseTensor<byte>(x, true);
-        var ty = new DenseTensor<byte>(y, true);
-        if (Broadcast(tx, ty, out var bx, out var _))
+        var tx = new DenseTensor<T>(x, true);
+        var ty = new DenseTensor<T>(y, true);
+        if (Broadcast(tx, ty, out var bx, out var _) == true)
         {
             b = bx.dimensions;
             return true;
@@ -137,46 +135,57 @@ where T : struct
 
     }
 
-    public static bool BroadcastShape<U>(Tensor<U> x, Tensor<U> y, out int[] b) where U : struct => BroadcastShape(x.Dimensions, y.Dimensions, out b);
+    public static bool BroadcastShape(Tensor<T> x, Tensor<T> y, out int[] b) => BroadcastShape(x.Dimensions, y.Dimensions, out b);
 
-    public static Tensor<U> Add<U>(Tensor<U> x, Tensor<U> y) where U : struct, IAdditionOperators<U, U, U>
-        => x.Apply((l, r) => l + r, y);
+    public static Tensor<float> Add(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l + r, y);
 
-    public static Tensor<U> Add<U>(Tensor<U> x, U y) where U : struct, IAdditionOperators<U, U, U>
-      => x.Apply(l => l + y);
+    public static Tensor<float> Add(Tensor<float> x, float y) => x.Apply(l => l + y);
 
-    public static Tensor<U> Subtract<U>(Tensor<U> x, Tensor<U> y) where U : struct, ISubtractionOperators<U, U, U>
-        => x.Apply((l, r) => l - r, y);
+    public static Tensor<double> Add(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l + r, y);
 
-    public static Tensor<U> Subtract<U>(Tensor<U> x, U y) where U : struct, ISubtractionOperators<U, U, U>
-      => x.Apply(l => l - y);
+    public static Tensor<double> Add(Tensor<double> x, double y) => x.Apply(l => l + y);
 
-    public static Tensor<U> Multiply<U>(Tensor<U> x, Tensor<U> y) where U : struct, IMultiplyOperators<U, U, U>
-        => x.Apply((l, r) => l * r, y);
+    public static Tensor<float> Subtract(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l - r, y);
 
-    public static Tensor<U> Multiply<U>(Tensor<U> x, U y) where U : struct, IMultiplyOperators<U, U, U>
-      => x.Apply(l => l * y);
+    public static Tensor<float> Subtract(Tensor<float> x, float y) => x.Apply(l => l - y);
 
-    public static Tensor<U> Divide<U>(Tensor<U> x, Tensor<U> y) where U : struct, IDivisionOperators<U, U, U>
-        => x.Apply((l, r) => l / r, y);
+    public static Tensor<double> Subtract(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l - r, y);
 
-    public static Tensor<U> Divide<U>(Tensor<U> x, U y) where U : struct, IDivisionOperators<U, U, U>
-      => x.Apply(l => l / y);
+    public static Tensor<double> Subtract(Tensor<double> x, double y) => x.Apply(l => l - y);
+    
+    public static Tensor<float> Multiply(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l * r, y);
 
-    public static Tensor<U> Negate<U>(Tensor<U> x) where U : struct, IUnaryNegationOperators<U, U>
-        => x.Apply(l => -l);
+    public static Tensor<float> Multiply(Tensor<float> x, float y) => x.Apply(l => l * y);
 
-    public static Tensor<U> Square<U>(Tensor<U> x) where U : struct, IMultiplyOperators<U, U, U>
-        => x.Apply(l => l * l);
+    public static Tensor<double> Multiply(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l * r, y);
 
-    public static Tensor<U> Abs<U>(Tensor<U> x) where U : struct, IAdditiveIdentity<U, U>, IUnaryNegationOperators<U, U>, IComparisonOperators<U, U>
-       => x.Apply(l => l >= U.AdditiveIdentity ? l : -l);
+    public static Tensor<double> Multiply(Tensor<double> x, double y) => x.Apply(l => l * y);
+
+    public static Tensor<float> Divide(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l / r, y);
+
+    public static Tensor<float> Divide(Tensor<float> x, float y) => x.Apply(l => l / y);
+
+    public static Tensor<double> Divide(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l / r, y);
+
+    public static Tensor<double> Divide(Tensor<double> x, double y) => x.Apply(l => l / y);
+
+    public static Tensor<float> Negate(Tensor<float> x) => x.Apply(l => -l);
+
+    public static Tensor<double> Negate(Tensor<double> x) => x.Apply(l => -l);
+
+    public static Tensor<float> Square(Tensor<float> x) => x.Apply(l => l * l);
+
+    public static Tensor<double> Square(Tensor<double> x) => x.Apply(l => l * l);
+
+    public static Tensor<float> Abs(Tensor<float> x) => x.Apply(l => l >= 0.0f ? l : -l);
+
+    public static Tensor<double> Abs(Tensor<double> x) => x.Apply(l => l >= 0.0 ? l : -l);
 
     public static Tensor<float> Sqrt(Tensor<float> x) => x.Apply(MathF.Sqrt);
 
     public static Tensor<double> Sqrt(Tensor<double> x) => x.Apply(Math.Sqrt);
 
-    public static Tensor<U> MatMul2D<U>(Tensor<U> x, Tensor<U> y) where U : struct, IAdditiveIdentity<U, U>, IAdditionOperators<U, U, U>, IMultiplyOperators<U, U, U>
+    public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y)
     {
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
@@ -184,12 +193,12 @@ where T : struct
         var n = x.Dimensions[0];
         var m = x.Dimensions[1];
         var r = y.Dimensions[1];
-        var output = DenseTensor<U>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
+        var output = DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < r; j++)
             {
-                var sum = U.AdditiveIdentity;
+                var sum = 0.0f;
                 for (int k = 0; k < m; k++)
                     sum += x[i, k] * y[k, j];
                 output[i, j] = sum;
@@ -199,12 +208,35 @@ where T : struct
         return output;
     }
 
-    public static Tensor<U> MatMul<U>(Tensor<U> x, Tensor<U> y) where U : struct, IAdditiveIdentity<U, U>, IAdditionOperators<U, U, U>, IMultiplyOperators<U, U, U>
+    public static Tensor<double> MatMul2D(Tensor<double> x, Tensor<double> y)
+    {
+        if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
+        if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
+        if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
+        var n = x.Dimensions[0];
+        var m = x.Dimensions[1];
+        var r = y.Dimensions[1];
+        var output = DenseTensor<double>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < r; j++)
+            {
+                var sum = 0.0;
+                for (int k = 0; k < m; k++)
+                    sum += x[i, k] * y[k, j];
+                output[i, j] = sum;
+            }
+
+        }
+        return output;
+    }
+
+    public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y)
     {
         if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
         if (x.Rank == 2 && y.Rank == 2)
         {
-            return Tensor<U>.MatMul2D(x, y);
+            return Tensor<float>.MatMul2D(x, y);
         }
         else if (x.Rank >= 2 && y.Rank >= 2)
         {
@@ -221,30 +253,30 @@ where T : struct
             }
 
             var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
-            if (!Tensor<U>.Broadcast(x, bdx, out var bx))
+            if (!Tensor<float>.Broadcast(x, bdx, out var bx))
             {
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
             var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
-            if (!Tensor<U>.Broadcast(y, bdy, out var by))
+            if (!Tensor<float>.Broadcast(y, bdy, out var by))
             {
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
-            var z =  DenseTensor<U>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
+            var z =  DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
 
             var di = bx.GetDimensionsIterator(0..^2);
             foreach (var _ in di)
             {
-                z[di[..]] = Tensor<U>.MatMul2D(bx[di[..]], by[di[..]]);
+                z[di[..]] = Tensor<float>.MatMul2D(bx[di[..]], by[di[..]]);
             }
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
         {
-            var b = Tensor<U>.Broadcast(x, y);
+            var b = Tensor<float>.Broadcast(x, y);
             if (!b.Any())
             {
-                return null;
+                throw new ArgumentException($"The shapes {x.PrintShape()} and {y.PrintShape()} are not compatible for broadcasting.");
             }
             else
             {
@@ -254,7 +286,89 @@ where T : struct
                 var di = x.GetDimensionsIterator(0..^2);
                 foreach (var _ in di)
                 {
-                    c[di[..]] = Tensor<U>.MatMul2D(x[di[..]], y[di[..]]);
+                    c[di[..]] = Tensor<float>.MatMul2D(x[di[..]], y[di[..]]);
+                }
+                return c;
+            }
+        }
+        else
+        {
+            bool bcast = false;
+            if (x.Rank == 1)
+            {
+                x = x.PadLeft();
+                bcast = true;
+            }
+            if (y.Rank == 1)
+            {
+                y = y.PadRight();
+                bcast = true;
+            }
+            var c = MatMul2D(x, y);
+            if (bcast)
+            {
+                c.RemoveDim(0);
+            }
+            return c;
+        }
+    }
+
+    public static Tensor<double> MatMul(Tensor<double> x, Tensor<double> y)
+    {
+        if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
+        if (x.Rank == 2 && y.Rank == 2)
+        {
+            return Tensor<double>.MatMul2D(x, y);
+        }
+        else if (x.Rank >= 2 && y.Rank >= 2)
+        {
+            var xdl = x.Dimensions[^2..];
+            var ydl = y.Dimensions[^2..];
+            if (xdl[1] != ydl[0])
+            {
+                throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
+            }
+
+            if (!BroadcastShape(x.Dimensions[0..^2], y.Dimensions[0..^2], out var bd))
+            {
+                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+            }
+
+            var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
+            if (!Tensor<double>.Broadcast(x, bdx, out var bx))
+            {
+                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+            }
+            var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
+            if (!Tensor<double>.Broadcast(y, bdy, out var by))
+            {
+                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+            }
+            var z = DenseTensor<double>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
+
+            var di = bx.GetDimensionsIterator(0..^2);
+            foreach (var _ in di)
+            {
+                z[di[..]] = Tensor<double>.MatMul2D(bx[di[..]], by[di[..]]);
+            }
+            return z;
+        }
+        else if (x.Rank >= 2 || y.Rank >= 2)
+        {
+            var b = Tensor<double>.Broadcast(x, y);
+            if (!b.Any())
+            {
+                throw new ArgumentException($"The shapes {x.PrintShape()} and {y.PrintShape()} are not compatible for broadcasting.");
+            }
+            else
+            {
+                x = b[0];
+                y = b[1];
+                var c = x.CloneEmpty();
+                var di = x.GetDimensionsIterator(0..^2);
+                foreach (var _ in di)
+                {
+                    c[di[..]] = Tensor<double>.MatMul2D(x[di[..]], y[di[..]]);
                 }
                 return c;
             }
@@ -403,8 +517,7 @@ where T : struct
 
     }
 
-    public static Tensor<U> MaxPool2D<U>(Tensor<U> input, int[] kernelshape, PadType padtype = PadType.Valid, int? padvalue = null, int[] strides = null, int[] dilations = null)
-        where U : struct, IComparisonOperators<U, U>, IMinMaxValue<U>
+    public static Tensor<float> MaxPool2D(Tensor<float> input, int[] kernelshape, PadType padtype = PadType.Valid, int? padvalue = null, int[] strides = null, int[] dilations = null)
     {
         if (kernelshape == null)
         {
@@ -437,7 +550,7 @@ where T : struct
         var strideHeight = strides[0];
         var strideWidth = strides[1];
         var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
-        var Y = DenseTensor<U>.OfShape(N, C, info.Shape[0], info.Shape[1]);
+        var Y = DenseTensor<float>.OfShape(N, C, info.Shape[0], info.Shape[1]);
 
         for (var n = 0; n < N; ++n)
         {
@@ -454,7 +567,7 @@ where T : struct
                         var xCMin = Math.Max(0, xCCorner);
                         var xCMax = Math.Min(W, kW + xCCorner);
 
-                        var maxValue = U.MinValue;
+                        var maxValue = 0.0f;
                           
                         for (var xR = xRMin; xR < xRMax; ++xR)
                         {
@@ -467,7 +580,7 @@ where T : struct
                                     maxValue = v;
                                 }
                             }
-                            if (maxValue == U.MinValue)
+                            if (maxValue == 0.0f)
                             {
                                 break;
                             }
@@ -480,9 +593,85 @@ where T : struct
         return Y;
     }
 
-    public static Tensor<U> Relu<U>(Tensor<U> x) where U : struct, IComparisonOperators<U, U>, IAdditiveIdentity<U, U>
-       => x.Apply(l => l > U.AdditiveIdentity ? l : U.AdditiveIdentity);
+    public static Tensor<double> MaxPool2D(Tensor<double> input, int[] kernelshape, PadType padtype = PadType.Valid, int? padvalue = null, int[] strides = null, int[] dilations = null)
+    {
+        if (kernelshape == null)
+        {
+            throw new ArgumentNullException("kernelshape");
+        }
+        if (input.Rank != 4)
+        {
+            throw new ArgumentException("Input tensors must be of rank 4 with the layout NxCxHxW.");
+        }
+        if (kernelshape.Rank != 1 || kernelshape.Length != 2)
+        {
+            throw new ArgumentException("The kernel must have shape m x n.");
+        }
 
+        if (strides == null)
+        {
+            strides = kernelshape;
+        }
+        if (dilations == null)
+        {
+            dilations = new int[] { 1, 1 };
+        }
+
+        var N = input.Dimensions[0];
+        var C = input.Dimensions[1];
+        var H = input.Dimensions[2];
+        var W = input.Dimensions[3];
+        var kH = kernelshape[0];
+        var kW = kernelshape[1];
+        var strideHeight = strides[0];
+        var strideWidth = strides[1];
+        var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
+        var Y = DenseTensor<double>.OfShape(N, C, info.Shape[0], info.Shape[1]);
+
+        for (var n = 0; n < N; ++n)
+        {
+            for (var d = 0; d < C; ++d)
+            {
+                for (var yR = 0; yR < info.Shape[0]; ++yR)
+                {
+                    var xRCorner = yR * strideHeight - info.PadInfo.top;
+                    var xRMin = Math.Max(0, xRCorner);
+                    var xRMax = Math.Min(H, kH + xRCorner);
+                    for (var yC = 0; yC < info.Shape[1]; ++yC)
+                    {
+                        var xCCorner = yC * strideWidth - info.PadInfo.left;
+                        var xCMin = Math.Max(0, xCCorner);
+                        var xCMax = Math.Min(W, kW + xCCorner);
+
+                        var maxValue = 0.0;
+
+                        for (var xR = xRMin; xR < xRMax; ++xR)
+                        {
+                            for (var xC = xCMin; xC < xCMax; ++xC)
+                            {
+                                var v = input[n, d, xR, xC];
+
+                                if (v > maxValue)
+                                {
+                                    maxValue = v;
+                                }
+                            }
+                            if (maxValue == 0.0)
+                            {
+                                break;
+                            }
+                        }
+                        Y[n, d, yR, yC] = maxValue;
+                    }
+                }
+            }
+        }
+        return Y;
+    }
+
+    public static Tensor<float> Relu(Tensor<float> x) => x.Apply(l => l > 0.0f ? l : 0.0f);
+
+    public static Tensor<double> Relu(Tensor<double> x) => x.Apply(l => l > 0.0 ? l : 0.0);
 
     public static Tensor<T> Reshape(Tensor<T> input,  Tensor<long> shape, bool allowZero = false)
     {

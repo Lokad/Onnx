@@ -4,12 +4,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Versioning;
 
 using static Lokad.Onnx.OpResult;
 using CPU = CPUExecutionProvider;
 
-[RequiresPreviewFeatures]
 public struct Node
 {
     public long ID;

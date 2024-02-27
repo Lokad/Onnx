@@ -1,10 +1,7 @@
-﻿using System.Runtime.Versioning;
-
-using CPU = Lokad.Onnx.Backend.CPUExecutionProvider;
+﻿using CPU = Lokad.Onnx.CPUExecutionProvider;
 
 namespace Lokad.Onnx.Backend.Tests
 {
-    [RequiresPreviewFeatures]
     public class OpTests
     {
         [Fact]

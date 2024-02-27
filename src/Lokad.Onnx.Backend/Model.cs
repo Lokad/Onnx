@@ -19,7 +19,6 @@ namespace Lokad.Onnx
             return m;
         }
 
-        [RequiresPreviewFeatures]
         public static ComputationalGraph? LoadFromFile(string onnxInputFilePath) 
         {
             var mp = Parse(onnxInputFilePath);

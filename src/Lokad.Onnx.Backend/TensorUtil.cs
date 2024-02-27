@@ -26,7 +26,6 @@ namespace Lokad.Onnx
        
     }
 
-    [RequiresPreviewFeatures]
     public static class TensorExtensions
     {
         public static object GetTensorData(this TensorProto tp)

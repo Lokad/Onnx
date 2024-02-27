@@ -1,9 +1,7 @@
 ﻿using Lokad.Onnx.Backend;
-using System.Runtime.Versioning;
 
 namespace Lokad.Onnx.Backend.Tests
 {
-    [RequiresPreviewFeatures]
     public class GraphTests
     {
         [Fact]

@@ -3,9 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Versioning;
 
-[RequiresPreviewFeatures]
 public class ComputationalGraph : Runtime
 {
     #region Fields

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Versioning;
 
 namespace Lokad.Onnx
 {
-    [RequiresPreviewFeatures]
     public static class NodeExtensions
     {
         public static object Value(this AttributeProto ap)

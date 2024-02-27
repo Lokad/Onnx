@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.Versioning;
-
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -8,7 +6,6 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Lokad.Onnx.CLI;
 
-[RequiresPreviewFeatures]
 internal class Data : Runtime
 {
     internal static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput)

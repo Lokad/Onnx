@@ -5,7 +5,6 @@ extern alias OnnxSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Versioning;
 
 using static OpResult;
 public enum ExecutionProvider
@@ -13,7 +12,6 @@ public enum ExecutionProvider
     CPU
 }
 
-[RequiresPreviewFeatures]
 public class CPUExecutionProvider
 {
     public static Dictionary<OpType, int[]> SupportedOps { get; } = new Dictionary<OpType, int[]>()
@@ -64,17 +62,8 @@ public class CPUExecutionProvider
         }
         switch (A.ElementType)
         {
-            case TensorElementType.Int8: return Success(op, Tensor<byte>.Add((Tensor<byte>)bA, (Tensor<byte>)bB));
-            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.Add((Tensor<sbyte>)bA, (Tensor<sbyte>)bB));
-            case TensorElementType.Int16: return Success(op, Tensor<short>.Add((Tensor<short>)bA, (Tensor<short>)bB));
-            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Add((Tensor<ushort>)bA, (Tensor<ushort>)bB));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Add((Tensor<int>)bA, (Tensor<int>)bB));
-            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Add((Tensor<uint>)bA, (Tensor<uint>)bB));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.Add((Tensor<long>)bA, (Tensor<long>)bB));
-            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Add((Tensor<ulong>)bA, (Tensor<ulong>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)bA, (Tensor<double>)bB));
-            case TensorElementType.Float16: return Success(op, Tensor<Half>.Add((Tensor<Half>)bA, (Tensor<Half>)bB));
             default: return InputTypeNotSupported(OpType.Add, nameof(A), A);
         }
     }
@@ -141,17 +130,8 @@ public class CPUExecutionProvider
         if (X is null) return MissingInput(op, nameof(X));
         switch (X.ElementType)
         {
-            case TensorElementType.Int8: return Success(op, Tensor<byte>.Relu((Tensor<byte>)X));
-            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.Relu((Tensor<sbyte>)X));
-            case TensorElementType.Int16: return Success(op, Tensor<short>.Relu((Tensor<short>)X));
-            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Relu((Tensor<ushort>)X));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Relu((Tensor<int>)X));
-            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Relu((Tensor<uint>)X));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.Relu((Tensor<long>)X));
-            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Relu((Tensor<ulong>)X));
             case TensorElementType.Float: return Success(op, Tensor<float>.Relu((Tensor<float>)X));
             case TensorElementType.Double: return Success(op, Tensor<double>.Relu((Tensor<double>)X));
-            case TensorElementType.Float16: return Success(op, Tensor<Half>.Relu((Tensor<Half>)X));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
@@ -211,17 +191,8 @@ public class CPUExecutionProvider
         if (B is null) return MissingInput(op, nameof(B));
         switch (A.ElementType)
         {
-            case TensorElementType.Int8: return Success(op, Tensor<byte>.MatMul((Tensor<byte>)A, (Tensor<byte>)B));
-            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.MatMul((Tensor<sbyte>)A, (Tensor<sbyte>)B));
-            case TensorElementType.Int16: return Success(op, Tensor<short>.MatMul((Tensor<short>)A, (Tensor<short>)B));
-            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.MatMul((Tensor<ushort>)A, (Tensor<ushort>)B));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul((Tensor<int>)A, (Tensor<int>)B));
-            case TensorElementType.UInt32: return Success(op, Tensor<uint>.MatMul((Tensor<uint>)A, (Tensor<uint>)B));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.MatMul((Tensor<long>)A, (Tensor<long>)B));
-            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.MatMul((Tensor<ulong>)A, (Tensor<ulong>)B));
             case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B));
             case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B));
-            case TensorElementType.Float16: return Success(op, Tensor<Half>.MatMul((Tensor<Half>)A, (Tensor<Half>)B));
             default: return InputTypeNotSupported(OpType.Add, nameof(A), A);
         }
     }
@@ -280,7 +251,7 @@ public class CPUExecutionProvider
         return OpResult.Success(OpType.Squeeze, new[] { input.Reshape(squeezedDims.ToArray()) });
     }
 
-    public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB) where T : struct, INumber<T>
+    public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB) where T : struct
     {
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
         var outA = inA.Clone();

@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <EnablePreviewFeatures>True</EnablePreviewFeatures>
-    <GenerateRequiresPreviewFeaturesAttribute>False</GenerateRequiresPreviewFeaturesAttribute>
     <LangVersion>preview</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>warnings</Nullable>
@@ -12,7 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="System.Runtime.Experimental" Version="6.0.2" />
   </ItemGroup>
 
 </Project>
