@@ -1,6 +1,7 @@
 ﻿namespace Lokad.Onnx.Backend;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
@@ -21,7 +22,23 @@ public struct Node
 
     public T? Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ? 
         (T)Attributes[name] : default(T);
-        
+
+    public T[]? ArrayAttr<T, U>(string name)   
+    {
+        if (Attributes is null) return null;
+        var t = Attr<T[]>(name);
+        if (t is not null) return t;
+        var u = Attr<U[]>(name);  
+        if (u is null)
+        {
+            return null;  
+        }
+        else
+        {
+            return u.Select(e => (T) (Convert.ChangeType(e, typeof(T)) ?? throw new Exception("Cannot convert array element to type " + typeof(T).ToString()))).ToArray(); 
+        }
+
+    }
     public ITensor? InputTensor(ComputationalGraph graph, int index) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : null;
 
     public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU) 
@@ -61,7 +78,7 @@ public struct Node
 
     public OpResult ExecuteCPU(ComputationalGraph graph) => Op switch
     {
-        OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool>("allow_zero")),
+        OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool?>("allow_zero")),
         
         OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1)),
         
@@ -69,8 +86,11 @@ public struct Node
             Attr<string>("auto_pad"), Attr<int[]>("dilations"), Attr<int?>("group"), Attr<int[]>("kernel_shape"), Attr<int[]>("pads"), Attr<int[]>("strides")),
         
         OpType.Relu => CPU.Relu(InputTensor(graph, 0)),
+
+        OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), ArrayAttr<int, long>("dilations"), ArrayAttr<int, long>("kernel_shape"), ArrayAttr<int, long>("pads"), Attr<int?>("storage_order"), ArrayAttr<int, long>("strides")),
         
         OpType.Squeeze => CPU.Squeeze(graph.GetOpVersion(), graph.GetInputTensor(Inputs[0]), Attr<ITensor>("axes")),
+        
         _ => NotSupported(Op)
     };
 }

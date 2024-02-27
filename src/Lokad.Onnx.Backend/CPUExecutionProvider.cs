@@ -20,9 +20,9 @@ public class CPUExecutionProvider
     {
         {OpType.Add, new [] {16} }
     };
-    
+
     public bool SupportsOp(OpType op, int version) => SupportedOps.ContainsKey(op) && SupportedOps[op].Any(v => v == version);
-    
+
     public static OpResult Reshape(ITensor? input, ITensor? shape, bool? allow_zero = null)
     {
         var op = OpType.Reshape;
@@ -31,20 +31,20 @@ public class CPUExecutionProvider
         if (shape.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(shape), TensorElementType.Int64, shape);
         switch (input.ElementType)
         {
-            case TensorElementType.Bool: return Success(op, Tensor<bool>.Reshape((Tensor<bool>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.Int8: return Success(op, Tensor<byte>.Reshape((Tensor<byte>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.Reshape((Tensor<sbyte>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.Int16: return Success(op, Tensor<short>.Reshape((Tensor<short>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Reshape((Tensor<ushort>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Reshape((Tensor<int>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Reshape((Tensor<uint>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.Reshape((Tensor<long>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Reshape((Tensor<ulong>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Reshape((Tensor<float>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Reshape((Tensor<double>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.Float16: return Success(op, Tensor<Half>.Reshape((Tensor<Half>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Reshape((Tensor<BFloat16>)input, (Tensor<long>) shape, allow_zero ?? false));
-            case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Reshape((Tensor<System.Numerics.Complex>)input, (Tensor<long>) shape, allow_zero ?? false));
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Reshape((Tensor<bool>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.Int8: return Success(op, Tensor<byte>.Reshape((Tensor<byte>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.Reshape((Tensor<sbyte>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Reshape((Tensor<short>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Reshape((Tensor<ushort>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Reshape((Tensor<int>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Reshape((Tensor<uint>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Reshape((Tensor<long>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Reshape((Tensor<ulong>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Reshape((Tensor<float>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Reshape((Tensor<double>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Reshape((Tensor<Half>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Reshape((Tensor<BFloat16>)input, (Tensor<long>)shape, allow_zero ?? false));
+            case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Reshape((Tensor<System.Numerics.Complex>)input, (Tensor<long>)shape, allow_zero ?? false));
             default: return NotSupported(OpType.Reshape);
         }
     }
@@ -64,7 +64,7 @@ public class CPUExecutionProvider
         }
         switch (A.ElementType)
         {
-            case TensorElementType.Int8: return Success(op, Tensor<byte>.Add((Tensor<byte>) bA, (Tensor<byte>) bB));
+            case TensorElementType.Int8: return Success(op, Tensor<byte>.Add((Tensor<byte>)bA, (Tensor<byte>)bB));
             case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.Add((Tensor<sbyte>)bA, (Tensor<sbyte>)bB));
             case TensorElementType.Int16: return Success(op, Tensor<short>.Add((Tensor<short>)bA, (Tensor<short>)bB));
             case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Add((Tensor<ushort>)bA, (Tensor<ushort>)bB));
@@ -74,7 +74,7 @@ public class CPUExecutionProvider
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Add((Tensor<ulong>)bA, (Tensor<ulong>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)bA, (Tensor<double>)bB));
-            case TensorElementType.Float16: return Success(op, Tensor<Half>.Add((Tensor<Half>)bA, (Tensor<Half>)bB)); 
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Add((Tensor<Half>)bA, (Tensor<Half>)bB));
             default: return InputTypeNotSupported(OpType.Add, nameof(A), A);
         }
     }
@@ -85,11 +85,19 @@ public class CPUExecutionProvider
         if (X is null) return MissingInput(op, nameof(X));
         if (W is null) return MissingInput(op, nameof(W));
         if (W.ElementType != X.ElementType) return WrongInputType(op, nameof(W), X.ElementType, W, "The weights tensor must be the same type as the input tensor.");
+        if (X.Rank != 4)
+        {
+            return WrongInputShape(op, nameof(X), 4, X);
+        }
+        if (W.Rank != 4)
+        {
+            return WrongInputShape(op, nameof(W), 4, W);
+        }
         var padmode = MathOps.PadType.Valid;
         int? padvalue = null;
         if (!string.IsNullOrEmpty(auto_pad))
         {
-            switch(auto_pad) 
+            switch (auto_pad)
             {
                 case "VALID":
                     padmode = MathOps.PadType.Valid;
@@ -105,21 +113,23 @@ public class CPUExecutionProvider
                     if (pads is null)
                     {
                         return MissingAttribute(op, nameof(pads), "When auto_pad is NOTSET pads must be specified");
-                    } 
+                    }
                     else if (!pads.All(p => p == pads[0]))
                     {
                         return AttributeNotSupported(op, "pads", pads.Print(), "Asymmetric padding is not supported.");
                     }
-                    padvalue = pads[0];
+                    padvalue = pads?[0] ?? 0;
                     break;
             }
         }
         switch (X.ElementType)
         {
             case TensorElementType.Float:
-                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode, padvalue, null, kernel_shape, strides, dilations)); 
+                var bias = B is null ? null : (Tensor<float>)B;
+                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode, padvalue, bias, kernel_shape, strides, dilations));
             case TensorElementType.Double:
-                return Success(op, Tensor<double>.Conv2D((Tensor<double>)X, (Tensor<double>)W, group ?? 1, padmode, padvalue, null, kernel_shape, strides, dilations));
+                var biasd = B is null ? null : (Tensor<double>)B;
+                return Success(op, Tensor<double>.Conv2D((Tensor<double>)X, (Tensor<double>)W, group ?? 1, padmode, padvalue, biasd, kernel_shape, strides, dilations));
             default:
                 return InputTypeNotSupported(op, nameof(X), X);
         }
@@ -131,22 +141,70 @@ public class CPUExecutionProvider
         if (X is null) return MissingInput(op, nameof(X));
         switch (X.ElementType)
         {
-            case TensorElementType.Int8: return Success(op, Tensor<byte>.Relu((Tensor<byte>) X));
-            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.Relu((Tensor<sbyte>) X));
-            case TensorElementType.Int16: return Success(op, Tensor<short>.Relu((Tensor<short>) X));
-            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Relu((Tensor<ushort>) X));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Relu((Tensor<int>) X));
+            case TensorElementType.Int8: return Success(op, Tensor<byte>.Relu((Tensor<byte>)X));
+            case TensorElementType.UInt8: return Success(op, Tensor<sbyte>.Relu((Tensor<sbyte>)X));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Relu((Tensor<short>)X));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Relu((Tensor<ushort>)X));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Relu((Tensor<int>)X));
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Relu((Tensor<uint>)X));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Relu((Tensor<long>)X));
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Relu((Tensor<ulong>)X));
             case TensorElementType.Float: return Success(op, Tensor<float>.Relu((Tensor<float>)X));
             case TensorElementType.Double: return Success(op, Tensor<double>.Relu((Tensor<double>)X));
             case TensorElementType.Float16: return Success(op, Tensor<Half>.Relu((Tensor<Half>)X));
-            default: return InputTypeNotSupported(OpType.Relu, nameof(X), X);
+            default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
 
-        public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
+    public static OpResult MaxPool(ITensor? X, string? auto_pad = null, int? ceil_mode = null, int[]? dilations = null, int[]? kernel_shape = null, int[]? pads = null, int? storage_order = null, int[]? strides = null)
+    {
+        var op = OpType.MaxPool;
+        if (X is null) return MissingInput(op, nameof(X));
+        if (X.Rank != 4)
+        {
+            return WrongInputShape(op, nameof(X), 4, X);
+        }
+        var padmode = MathOps.PadType.Valid;
+        int? padvalue = null;
+        if (!string.IsNullOrEmpty(auto_pad))
+        {
+            switch (auto_pad)
+            {
+                case "VALID":
+                    padmode = MathOps.PadType.Valid;
+                    break;
+                case "SAME_UPPER":
+                    padmode = MathOps.PadType.SameUpper;
+                    break;
+                case "SAME_LOWER":
+                    padmode = MathOps.PadType.SameLower;
+                    break;
+                case "NOTSET":
+                    padmode = MathOps.PadType.Value;
+                    if (pads is null)
+                    {
+                        //return MissingAttribute(op, nameof(pads), "When auto_pad is NOTSET pads must be specified");
+                    }
+                    else if (!pads.All(p => p == pads[0]))
+                    {
+                        return AttributeNotSupported(op, "pads", pads.Print(), "Asymmetric padding is not supported.");
+                    }
+                    padvalue = pads?[0] ?? 0;
+                    break;
+            }
+        }
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float:
+                return Success(op, Tensor<float>.MaxPool2D((Tensor<float>) X, kernel_shape, padmode, padvalue, strides, dilations));
+            case TensorElementType.Double:
+                return Success(op, Tensor<double>.MaxPool2D((Tensor<double>)X, kernel_shape, padmode, padvalue, strides, dilations));
+            default:
+                return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
     {
         Tensor<long>? shape = null;
         if (axes is not null)
@@ -164,7 +222,7 @@ public class CPUExecutionProvider
                 shape = (Tensor<long>)axes;
             }
         }
-        
+
         switch (input.ElementType)
         {
             case TensorElementType.Bool: return Squeeze((Tensor<bool>)input, shape);
@@ -185,7 +243,7 @@ public class CPUExecutionProvider
         }
     }
 
-    public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes = null) where T: struct
+    public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes = null) where T : struct
     {
         long[] dims = (axes is not null) ? axes.ToArray() : Enumerable.Range(0, input.Dimensions.Length - 1).Cast<long>().ToArray();
         List<int> squeezedDims = new List<int>();
@@ -201,7 +259,7 @@ public class CPUExecutionProvider
         return OpResult.Success(OpType.Squeeze, new[] { input.Reshape(squeezedDims.ToArray()) });
     }
 
-    public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB) where T: struct, INumber<T>
+    public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB) where T : struct, INumber<T>
     {
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
         var outA = inA.Clone();
