@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.Backend.Tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interface", "Interface", "{85F89195-4B97-41EB-BAAD-78EA15916D2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lokad.Onnx.Data", "Lokad.Onnx.Data\Lokad.Onnx.Data.csproj", "{0A393A22-7056-47F3-A32C-60BED16AB97B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{2B8BEF79-6700-4721-BD34-7268790BD8CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B8BEF79-6700-4721-BD34-7268790BD8CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B8BEF79-6700-4721-BD34-7268790BD8CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A393A22-7056-47F3-A32C-60BED16AB97B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A393A22-7056-47F3-A32C-60BED16AB97B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A393A22-7056-47F3-A32C-60BED16AB97B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A393A22-7056-47F3-A32C-60BED16AB97B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +115,7 @@ Global
 		{A85C13C8-3263-4158-BACF-44BAAE8B240F} = {0049778C-13D5-4142-8DEA-866F9CA1B68F}
 		{CFFCD35A-AA1D-41FE-BBFC-4F6FE3912319} = {7620AA98-619B-4984-A038-D5731106FF04}
 		{2B8BEF79-6700-4721-BD34-7268790BD8CF} = {7620AA98-619B-4984-A038-D5731106FF04}
+		{0A393A22-7056-47F3-A32C-60BED16AB97B} = {2014E9FF-F5EC-4203-BA92-D495E9013ABF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B835BFE-A6A4-4235-A6F1-0B6F3F4BE6DF}

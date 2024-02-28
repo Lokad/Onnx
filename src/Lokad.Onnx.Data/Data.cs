@@ -1,14 +1,17 @@
-﻿using System;
+﻿namespace Lokad.Onnx;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace Lokad.Onnx.CLI;
-
-internal class Data : Runtime
+public class Data : Runtime
 {
-    internal static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput)
+    public static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput)
     {
         var op = Begin("Converting {c} file argument(s) to tensors", args.Count());
         var tensors = new List<ITensor>();
@@ -37,9 +40,12 @@ internal class Data : Runtime
         return tensors.ToArray();
     }
     
-    internal static ITensor? GetImageTensorFromFileArg(string name, string[] props, int index, bool saveInput) 
+    public static ITensor? GetImageTensorFromFileArg(string name, string[] props, int index, bool saveInput) 
     {
-        Program.ExitIfFileNotFound(name);
+        if (!File.Exists(name)) 
+        {
+            return null;
+        }
         var image = Image.Load<Rgba32>(name);
         if (image is null)
         {
@@ -136,7 +142,7 @@ internal class Data : Runtime
         }
         return pixels;
     }
-    internal static Image<Rgba32> SaveImage(Image<Rgba32> image, string name, bool save)
+    public static Image<Rgba32> SaveImage(Image<Rgba32> image, string name, bool save)
     {
         var stream = new FileStream(name, FileMode.Create);
         if (File.Exists(name))
@@ -151,6 +157,6 @@ internal class Data : Runtime
         return image;
     }
 
-    internal static string[] ImageExtensions = new string[] { ".bmp", ".png", ".jpeg", ".jpg" };
+    public static string[] ImageExtensions = new string[] { ".bmp", ".png", ".jpeg", ".jpg" };
 }
 

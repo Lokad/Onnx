@@ -279,10 +279,28 @@ class Program : Runtime
         if (ui is null)
         {
             Exit(ExitResult.INVALID_INPUT);
+            return;
         }
-        else
+       
+        if (graph.Execute(ui))
         {
-            graph.Execute(ui, softmax);
+            Info("Printing outputs...");
+            foreach (var o in graph.Outputs.Values)
+            {
+                if (softmax && o.Rank == 1)
+                {
+                    Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+                }
+                else if (softmax && o.Rank == 2 && o.Dims[0] == 1)
+                {
+                    Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+                }
+                else
+                {
+                    Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
+                }
+            }
+            Exit(ExitResult.SUCCESS);
         }
     }
 

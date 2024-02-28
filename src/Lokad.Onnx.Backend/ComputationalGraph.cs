@@ -87,7 +87,7 @@ public class ComputationalGraph : Runtime
         op.Complete();  
         return true;
     }
-    public bool Execute(ITensor[] userInputs, bool softmax = false, ExecutionProvider provider = ExecutionProvider.CPU)
+    public bool Execute(ITensor[] userInputs, ExecutionProvider provider = ExecutionProvider.CPU)
     {
         if (!ResolveInputs(userInputs))
         {
@@ -137,22 +137,6 @@ public class ComputationalGraph : Runtime
             }
         }
         op.Complete();
-        Info("Printing outputs...");
-        foreach(var o in Outputs.Values)
-        {
-            if (softmax && o.Rank == 1)
-            {
-                Info("{n}:{v}", o.TensorNameDesc()+"-><softmax>", o.Softmax().PrintData(false));
-            }
-            else if (softmax && o.Rank == 2 && o.Dims[0] == 1)
-            {
-                Info("{n}:{v}", o.TensorNameDesc()+"-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
-            }
-            else
-            {
-                Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
-            }
-        }
         return true;    
     }
     #endregion

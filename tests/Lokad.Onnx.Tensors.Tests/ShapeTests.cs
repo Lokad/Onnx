@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,7 +59,6 @@ namespace Lokad.Onnx.Tensors.Tests
 
             var ba = Tensor<int>.Broadcast(Tensor<int>.Ones(1, 2), Tensor<int>.Ones(3, 1));
             Assert.Equal(2, ba.Length);
-            //Array.is
         }
 
         [Fact]

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lokad.Onnx.Base\Lokad.Onnx.Base.csproj" />
+    <ProjectReference Include="..\Lokad.Onnx.Tensors\Lokad.Onnx.Tensors.csproj" />
+  </ItemGroup>
+
+</Project>

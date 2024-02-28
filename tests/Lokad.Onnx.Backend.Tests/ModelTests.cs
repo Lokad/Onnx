@@ -5,7 +5,7 @@ using System.Xml.Schema;
 namespace Lokad.Onnx.Backend.Tests
 {
     [RequiresPreviewFeatures]
-    public class ParseTests
+    public class ModelTests
     {
         [Fact]
         public void CanParseFile()
