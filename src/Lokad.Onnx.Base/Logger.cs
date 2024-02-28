@@ -384,6 +384,14 @@ namespace Lokad.Onnx
                     ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
                     BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkBlue
                 });
+
+
+                logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                {
+                    Regex = "\\d\\d\\:\\d\\d\\:\\d\\d\\.\\d{4}",
+                    CompileRegex = true,
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.Gray,
+                });
                 logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
                 {
                     Regex = "\\\"\\S+\\\"",                  
@@ -404,7 +412,6 @@ namespace Lokad.Onnx
                     ForegroundColor = NLog.Targets.ConsoleOutputColor.Magenta, 
                 });
                 
-               
             }
         }
         #endregion
