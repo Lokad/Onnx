@@ -20,7 +20,7 @@ if not %ERRORLEVEL%==0  (
 
 echo Building Lokad Onnx Python interop project..
 cd src\Lokad.Onnx.Interop
-dotnet publish Lokad.Onnx.Interop.csproj -f netstandard2.0 -p:PublishProfile=FolderProfile
+dotnet publish Lokad.Onnx.Interop.csproj -f net6.0 -p:PublishProfile=FolderProfile
 if not %ERRORLEVEL%==0  (
     echo Error building Lokad.ONNX projects.
     set ERROR_CODE=2

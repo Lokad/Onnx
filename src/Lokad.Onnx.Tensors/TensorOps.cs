@@ -139,6 +139,8 @@ where T : struct
 
     public static Tensor<int> Add(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => l + r, y);
 
+    public static Tensor<int> Add(Tensor<int> x, int y) => x.Apply(l => l + y);
+
     public static Tensor<float> Add(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l + r, y);
 
     public static Tensor<float> Add(Tensor<float> x, float y) => x.Apply(l => l + y);
