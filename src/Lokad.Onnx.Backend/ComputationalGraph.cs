@@ -1,5 +1,6 @@
 ﻿namespace Lokad.Onnx;
 
+using Satsuma;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,9 @@ public class ComputationalGraph : Runtime
 {
     #region Fields
     public string ModelFile = "";
-    
+
+    public ModelProto Model = new ModelProto();
+
     public Dictionary<string, ITensor> Inputs = new Dictionary<string, ITensor>();
 
     public Dictionary<string, ITensor> Outputs = new Dictionary<string, ITensor>();
@@ -81,7 +84,7 @@ public class ComputationalGraph : Runtime
             else
             {
                 Info("Using user input {n} for graph input {i}.", userInputs[i].TensorNameDesc(), requiredInputs.ElementAt(i).Value.TensorNameDesc());
-                Inputs[requiredInputs.ElementAt(i).Value.Name] = userInputs[i];
+                Inputs[requiredInputs.Keys.ElementAt(i)] = userInputs[i];
             }
         }
         op.Complete();  
@@ -138,6 +141,18 @@ public class ComputationalGraph : Runtime
         }
         op.Complete();
         return true;    
+    }
+
+    public void Reset()
+    {
+        Inputs = Model.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
+        Outputs = Model.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
+        foreach (var o in IntermediateOutputs.Keys)
+        {
+            IntermediateOutputs[o] = null;
+        }
+
+        Info("Reset graph state.");
     }
     #endregion
 }
