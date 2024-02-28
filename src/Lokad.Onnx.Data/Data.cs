@@ -11,7 +11,7 @@ using SixLabors.ImageSharp.Processing;
 
 public class Data : Runtime
 {
-    public static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput)
+    public static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput = false)
     {
         var op = Begin("Converting {c} file argument(s) to tensors", args.Count());
         var tensors = new List<ITensor>();

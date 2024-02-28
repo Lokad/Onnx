@@ -8,14 +8,17 @@ namespace Lokad.Onnx.Backend.Tests
         public void CanLoadFromFile()
         {
             var g = Model.LoadFromFile("models\\mnist-8.onnx");
-            Assert.Single(g.Outputs);
+            Assert.Single(g!.Outputs);
         }
 
         [Fact]
-        public void CanInfer()
+        public void CanInferWithMnist()
         {
-            var g = Model.LoadFromFile("models\\mnist-8.onnx");
-            g.Execute
+            var g = Model.LoadFromFile("models\\mnist-8.onnx")!;
+            var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png" })!;
+            Assert.True(g.Execute(ui));
+            var o = g.Outputs.Values.First().RemoveDim(0).Softmax();
+            Assert.True((float)o[4] > 0.9);
         }
     }
 }

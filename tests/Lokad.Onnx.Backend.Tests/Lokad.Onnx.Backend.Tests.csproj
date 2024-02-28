@@ -23,9 +23,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lokad.Onnx.Backend\Lokad.Onnx.Backend.csproj" />
+    <ProjectReference Include="..\..\src\Lokad.Onnx.Data\Lokad.Onnx.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="images\mnist4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="models\mnist-8.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
