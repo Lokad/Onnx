@@ -154,9 +154,9 @@ class Program : Runtime
             return;
         }
         var tensors = new Dictionary<string, string>();
-        Info($"Graph has input tensors: {{{graph.Inputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
-        Info($"Graph has output tensors: {{{graph.Outputs.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
-        Info($"Graph has initializer tensors: {{{graph.Initializers.Select(t => t.Value.TensorNameDesc()).JoinWith(",")}}}");
+        Info("Graph has input tensors: {i}", graph.Inputs.Select(t => t.Value.TensorNameDesc()));
+        Info("Graph has output tensors: {o}", graph.Outputs.Select(t => t.Value.TensorNameDesc()));
+        Info("Graph has initializer tensors: {i}", graph.Initializers.Select(t => t.Value.TensorNameDesc()));
         foreach (var t in graph.Initializers.Values)
         {
             tensors.Add(t.Name, t.TensorNameDesc() + "<initializer>");

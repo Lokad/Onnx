@@ -384,7 +384,6 @@ namespace Lokad.Onnx
                     ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
                     BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkBlue
                 });
-
                 logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
                 {
                     Regex = "\\\"\\S+\\\"",                  
@@ -393,11 +392,19 @@ namespace Lokad.Onnx
                 });
                 logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
                 {
-                    Regex = "\\{.+\\}",
+                    Regex = "\\s+([-+]?([0-9]+)?(ms)?(?!\\:))",
                     CompileRegex = true,
-                    ForegroundColor = NLog.Targets.ConsoleOutputColor.Magenta,
-                    
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.Cyan,
+
                 });
+                logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
+                {
+                    Regex = "\\[(\\[*)\\s*([-+]?([0-9]*[.])?[0-9]+([eE][-+]?\\d+)?\\,?)*(\\])*\\]",
+                    CompileRegex = true,
+                    ForegroundColor = NLog.Targets.ConsoleOutputColor.Magenta, 
+                });
+                
+               
             }
         }
         #endregion
@@ -437,6 +444,7 @@ namespace Lokad.Onnx
             if (timer.IsRunning) timer.Stop();
             if (!(isCompleted || isAbandoned))
             {
+                isAbandoned = true;
                 l.Error("{0} abandoned after {1}ms.", opName, timer.ElapsedMilliseconds);
             }
         }
