@@ -1,6 +1,10 @@
 {
   "profiles": {
-    "Model Info": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "Run mnist-8": {
       "commandName": "Project",
       "commandLineArgs": "run C:\\Users\\Allister\\Downloads\\mnist-8(1).onnx C:\\Users\\Allister\\Downloads\\solidity.png::mnist --debug --softmax"
     }

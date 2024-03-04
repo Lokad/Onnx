@@ -215,22 +215,29 @@ class Program : Runtime
         Info("Graph has {count} input tensor(s): {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
         Info("Graph has {count} output tensor(s): {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
         Info("Graph has {count} initializer tensor(s): {out}", m.Graph.Initializer.Count, m.Graph.Initializer.Select(t => t.TensorNameDesc()));
-        List<string> ops = new List<string>();
+        List<OpType> ops = new List<OpType>();
         foreach(var node in m.Graph.Node)
         {
             var op = Enum.Parse<OpType>(node.OpType);
-            if (!ops.Contains(node.OpType))
+            if (!ops.Contains(op))
             {
-                ops.Add(node.OpType);
+                ops.Add(op);
             }
         }
         Info("Printing list of distinct ONNX operations in model {f}...", file);
         foreach(var op in ops)
         {
-            Con.Write(op + " ");
+            if (CPUExecutionProvider.SupportsOp(op))
+            {
+                Con.Write(new Text(op + " ", new Style(foreground: Color.Green)));
+            }
+            else
+            {
+                Con.Write(new Text(op + " "));
+            }
         }
         Con.Write(Environment.NewLine);
-        Info("{d} total distinct operations in model.", m.Graph.Node.Count);
+        Info("{d} total distinct operations in model. Green = supported by backed.", ops.Count);
     }
 
     static void PrintModelInitializers(string file)
@@ -289,10 +296,12 @@ class Program : Runtime
             {
                 if (softmax && o.Rank == 1)
                 {
+                    Info("Applying softmax to {n}...", o.TensorNameDesc());
                     Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
                 }
                 else if (softmax && o.Rank == 2 && o.Dims[0] == 1)
                 {
+                    Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
                     Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
                 }
                 else

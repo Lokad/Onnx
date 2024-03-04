@@ -130,6 +130,20 @@ public class Data : Runtime
         return pixels;
     }
 
+    /*
+    public static float[][] ImageToArrayF(Image<Rgba32> image)
+    {
+        var pixels = new float[image.Height][image.Width];
+        for (int i = 0; i < image.Width; i++)
+        {
+            for (int j = 0; j < image.Height; j++)
+            {
+                pixels[j][i] = ((image[i, j].R + image[i, j].G + image[i, j].B) / 3.0f) / 255.0f;
+            }
+        }
+        return pixels;
+    }
+    */
     public static double[,,,] ImageToArrayD(Image<Rgba32> image)
     {
         var pixels = new double[1, 1, image.Height, image.Width];
@@ -155,6 +169,23 @@ public class Data : Runtime
         }
         image.SaveAsPng(stream);
         return image;
+    }
+
+    public static float[,,,]? LoadImageFromFile(string file)
+    {
+        if (!File.Exists(file))
+        {
+            return null;
+        }
+        var image = Image.Load<Rgba32>(file);
+        if (image is null)
+        {
+            Error("Could not load file {f} as image.", file);
+            return null;
+        }
+
+        Info("File {f} is {H}x{W}x{p}bpp image.", file, image.Height, image.Width, image.PixelType.BitsPerPixel);
+        return ImageToArrayF(image);    
     }
 
     public static string[] ImageExtensions = new string[] { ".bmp", ".png", ".jpeg", ".jpg" };

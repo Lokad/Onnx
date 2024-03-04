@@ -270,7 +270,7 @@ namespace Lokad.Onnx
                     if (iterator.Current is Array)
                     {
                         stack.Push(iterator);
-                        iterator = (iterator.Current as IEnumerable).GetEnumerator();
+                        iterator = ((IEnumerable) iterator.Current).GetEnumerator();
                     }
                     else
                         list.Add((T)iterator.Current);

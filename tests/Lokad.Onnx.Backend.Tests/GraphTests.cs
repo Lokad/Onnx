@@ -1,6 +1,4 @@
-﻿using Lokad.Onnx.Backend;
-
-namespace Lokad.Onnx.Backend.Tests
+﻿namespace Lokad.Onnx.Backend.Tests
 {
     public class GraphTests
     {
@@ -27,6 +25,13 @@ namespace Lokad.Onnx.Backend.Tests
             Assert.True(g.Execute(Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist5.png::mnist" })!));
             o = g.Outputs.Values.First().RemoveDim(0).Softmax();
             Assert.True((float)o[5] > 0.6);
+        }
+
+        [Fact]
+        public void CanInferWithMnist2()
+        {
+            var r = OnnxRuntime.MnistInfer("images\\mnist4.png");
+            Assert.NotNull(r);  
         }
     }
 }

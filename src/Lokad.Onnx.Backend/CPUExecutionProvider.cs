@@ -14,12 +14,17 @@ public enum ExecutionProvider
 
 public class CPUExecutionProvider
 {
-    public static Dictionary<OpType, int[]> SupportedOps { get; } = new Dictionary<OpType, int[]>()
+    public static List<OpType> SupportedOps { get; } = new List<OpType>()
     {
-        {OpType.Add, new [] {16} }
+        OpType.Reshape,
+        OpType.Add,
+        OpType.Conv,
+        OpType.Relu,
+        OpType.MaxPool,
+        OpType.MatMul
     };
 
-    public bool SupportsOp(OpType op, int version) => SupportedOps.ContainsKey(op) && SupportedOps[op].Any(v => v == version);
+    public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
 
     public static OpResult Reshape(ITensor? input, ITensor? shape, bool? allow_zero = null)
     {
