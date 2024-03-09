@@ -31,7 +31,12 @@
         public void CanInferWithMnist2()
         {
             var r = OnnxRuntime.MnistInfer("images\\mnist4.png");
-            Assert.NotNull(r);  
+            Assert.NotNull(r);
+            var g = Model.LoadFromFile("models\\mnist-8.onnx")!;
+            var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" })!;
+            Assert.True(g.Execute(ui));
+            var o = g.Outputs.Values.First().RemoveDim(0);
+            Assert.NotNull(o);
         }
     }
 }

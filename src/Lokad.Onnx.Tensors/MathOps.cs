@@ -911,7 +911,7 @@ ref float[,] c, int ldc)
         /// <param name="bias">Bias.</param>
         /// <param name="dst">Destination memory.</param>
         /// <param name="dstC">Output channels.</param
-        public static unsafe void Conv2DD(double* src,
+        public static unsafe void Conv2D(double* src,
                                         int batch,
                                         int srcC,
                                         int srcH,

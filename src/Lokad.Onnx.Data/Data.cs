@@ -188,6 +188,25 @@ public class Data : Runtime
         return ImageToArrayF(image);    
     }
 
+    public static float[,,,]? LoadMnistImageFromFile(string file)
+    {
+        if (!File.Exists(file))
+        {
+            return null;
+        }
+        var image = Image.Load<Rgba32>(file);
+        if (image is null)
+        {
+            Error("Could not load file {f} as image.", file);
+            return null;
+        }
+
+        Info("File {f} is {H}x{W}x{p}bpp image.", file, image.Height, image.Width, image.PixelType.BitsPerPixel);
+        image.Mutate(i => i.Grayscale());
+        image.Mutate(i => i.Resize(28, 28));
+        return ImageToArrayF(image);
+    }
+
     public static string[] ImageExtensions = new string[] { ".bmp", ".png", ".jpeg", ".jpg" };
 }
 

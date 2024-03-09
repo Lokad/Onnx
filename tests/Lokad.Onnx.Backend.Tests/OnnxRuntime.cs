@@ -15,15 +15,12 @@ namespace Lokad.Onnx.Backend.Tests
         public static float[] MnistInfer(string filepath)
         {
             string modelPath = Path.Combine("models", "mnist-8.onnx");
-            var image4 = Data.LoadImageFromFile(filepath);
-            
             using (var session = new InferenceSession(modelPath))
             {
                 
                 var inputMeta = session.InputMetadata;
                 var container = new List<NamedOnnxValue>();
-                var data = Data.LoadImageFromFile(filepath);
-                
+                var data = Data.LoadMnistImageFromFile(filepath);
                 var tensor = data.ToTensor();
                 container.Add(NamedOnnxValue.CreateFromTensor(inputMeta.Keys.First(), tensor));
                 using (var results = session.Run(container))  
