@@ -127,7 +127,7 @@ class Program : Runtime
         })
         .WithParsed<RunOptions>(ro =>
         {
-            Run(ro.File, ro.Inputs, ro.SaveInput, ro.Softmax);
+            Run(ro.File, ro.Inputs, ro.Node, ro.SaveInput, ro.Softmax);
         });
     }
     #endregion
@@ -273,7 +273,7 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
-    static void Run(string file, IEnumerable<string> inputs, bool saveInput, bool softmax)
+    static void Run(string file, IEnumerable<string> inputs, string node="", bool saveInput=false, bool softmax=false)
     {
         ExitIfFileNotFound(file);
         var graph = Model.LoadFromFile(file);
@@ -288,28 +288,56 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
-       
-        if (graph.Execute(ui))
+
+        if (node == "")
         {
-            Info("Printing outputs...");
-            foreach (var o in graph.Outputs.Values)
+            if (graph.Execute(ui))
             {
-                if (softmax && o.Rank == 1)
+                Info("Printing outputs...");
+                foreach (var o in graph.Outputs.Values)
                 {
-                    Info("Applying softmax to {n}...", o.TensorNameDesc());
-                    Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+                    if (softmax && o.Rank == 1)
+                    {
+                        Info("Applying softmax to {n}...", o.TensorNameDesc());
+                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+                    }
+                    else if (softmax && o.Rank == 2 && o.Dims[0] == 1)
+                    {
+                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
+                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+                    }
+                    else
+                    {
+                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
+                    }
                 }
-                else if (softmax && o.Rank == 2 && o.Dims[0] == 1)
-                {
-                    Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
-                    Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
-                }
-                else
-                {
-                    Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
-                }
+                Exit(ExitResult.SUCCESS);
             }
-            Exit(ExitResult.SUCCESS);
+        }
+        else
+        {
+            if (graph.ExecuteNode(ui, node))
+            {
+                Info("Printing outputs...");
+                foreach (var o in graph.Outputs.Values)
+                {
+                    if (softmax && o.Rank == 1)
+                    {
+                        Info("Applying softmax to {n}...", o.TensorNameDesc());
+                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+                    }
+                    else if (softmax && o.Rank == 2 && o.Dims[0] == 1)
+                    {
+                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
+                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+                    }
+                    else
+                    {
+                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
+                    }
+                }
+                Exit(ExitResult.SUCCESS);
+            }
         }
     }
 

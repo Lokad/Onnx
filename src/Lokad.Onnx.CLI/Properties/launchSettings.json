@@ -6,7 +6,7 @@
     },
     "Run mnist-8": {
       "commandName": "Project",
-      "commandLineArgs": "run C:\\Users\\Allister\\Downloads\\mnist-8(1).onnx C:\\Users\\Allister\\Downloads\\solidity.png::mnist --debug --softmax"
+      "commandLineArgs": "run C:\\Users\\Allister\\Downloads\\mnist-8(1).onnx C:\\Users\\Allister\\Downloads\\solidity.png::mnist --node Plus112 --debug --softmax"
     }
   }
 }
