@@ -913,4 +913,8 @@ where T : struct
     public static Tensor<float> Softmax(Tensor<float> x) => x.Apply(i => MathF.Exp(i) / (x.Apply(MathF.Exp).Accumulate((l, r) => l + r, 0.0f)));
 
     public static Tensor<double> Softmax(Tensor<double> x) => x.Apply(i => Math.Exp(i) / (x.Apply(Math.Exp).Accumulate((l, r) => l + r, 0.0)));
+
+    public static Tensor<float> Erf(Tensor<float> x) => x.Apply(MathOps.Erf);
+
+    public static Tensor<double> Erf(Tensor<double> x) => x.Apply(MathOps.Erf);
 }

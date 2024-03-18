@@ -21,7 +21,9 @@ public class CPUExecutionProvider
         OpType.Conv,
         OpType.Relu,
         OpType.MaxPool,
-        OpType.MatMul
+        OpType.MatMul,
+        OpType.Sqrt,
+        OpType.Div
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -198,9 +200,43 @@ public class CPUExecutionProvider
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B));
             case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B));
-            default: return InputTypeNotSupported(OpType.Add, nameof(A), A);
+            default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
+
+    public static OpResult Sqrt(ITensor? A)
+    {
+        var op = OpType.Sqrt;
+        if (A is null) return MissingInput(op, nameof(A));
+        switch (A.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Sqrt((Tensor<float>)A));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Sqrt((Tensor<double>)A));
+            default: return InputTypeNotSupported(op, nameof(A), A);
+        }
+    }
+
+    public static OpResult Div(ITensor? A, ITensor? B)
+    {
+        var op = OpType.Div;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        if (!ITensor.Broadcast(A, B, out var bA, out var bB))
+        {
+            return CannotBroadcast(op, A, B);
+        }
+        switch (A.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Divide((Tensor<float>)bA, (Tensor<float>)bB));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Divide((Tensor<double>)bA, (Tensor<double>)bB));
+            default: return InputTypeNotSupported(op, nameof(A), A);
+        }
+    }
+
     public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
     {
         Tensor<long>? shape = null;
