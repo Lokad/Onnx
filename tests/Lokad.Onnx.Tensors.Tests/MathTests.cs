@@ -1,4 +1,6 @@
-﻿namespace Lokad.Onnx.Tensors.Tests;
+﻿using System.Security.Cryptography;
+
+namespace Lokad.Onnx.Tensors.Tests;
 
 public class MathTests
 {
@@ -13,6 +15,14 @@ public class MathTests
         var c = Tensor<int>.Add(a, b);
         Assert.Equal(2, c[0, 0, 1]);
         Assert.Equal(0, c[0, 0, 0]);
+
+        var a1 = Tensor<float>.Ones(16, 1, 1);
+        var b1 = Tensor<float>.Ones(1, 1, 28, 28);
+        Assert.True(Tensor<float>.Broadcast(a1, b1, out var a2, out var b2));
+        var d = Tensor<float>.Add(a2, b2);
+
+        Assert.Equal(d.Dimensions, new int[] { 1, 16, 28, 28 });
+        Assert.Equal(2, d[0, 15, 27, 27]);
     }
 
 
@@ -104,7 +114,7 @@ public class MathTests
     {
         var X = DenseTensor<float>.OfValues(new float[1, 1, 4, 4] { { {
             {12.0f, 20.0f, 30.0f, 0.0f  }, { 8.0f, 12.0f, 2.0f, 0.0f }, { 34.0f, 70.0f, 37.0f, 4.0f }, { 112.0f, 100.0f, 25.0f, 12.0f } } } });
-        var Y = Tensor<float>.MaxPool2D(X, new int[] { 2, 2 }, MathOps.PadType.Value, padvalue: 0, strides: new int[2] { 2,2});
+        var Y = Tensor<float>.MaxPool2D(X, new int[] { 2, 2 }, MathOps.PadType.Value, padvalue: 0, strides: new int[2] { 2, 2 });
         Assert.Equal(DenseTensor<float>.OfValues(new float[2, 2] { { 20.0f, 30.0f }, { 112.0f, 37.0f } }), Y);
         Y = Tensor<float>.MaxPool2D(X, new int[] { 2, 2 }, MathOps.PadType.Value, padvalue: 0, strides: new int[2] { 1, 1 });
         Assert.Equal(DenseTensor<float>.OfValues(new float[3, 3] { { 20.0f, 30.0f, 30.0f }, { 70.0f, 70.0f, 37.0f }, { 112.0f, 100.0f, 37.0f } }), Y);
@@ -114,6 +124,5 @@ public class MathTests
         }}});
         var Y2 = Tensor<int>.MaxPool2D(N, new int[] { 2, 2 });
         Assert.Equal(DenseTensor<int>.OfValues(new int[2, 2] { { 6, 8 }, { 3, 4 } }), Y2);
-
     }
 }

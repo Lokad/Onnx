@@ -167,6 +167,7 @@ namespace Lokad.Onnx
             // TODO: use Span.IndexOf when/if it removes the IEquatable type constraint
             if (MemoryMarshal.TryGetArray<T>(Buffer, out var arraySegment))
             {
+                if (arraySegment.Array is null) throw new NullReferenceException(nameof(arraySegment));
                 var result = Array.IndexOf(arraySegment.Array, item, arraySegment.Offset, arraySegment.Count);
                 if (result != -1)
                 {
@@ -225,7 +226,5 @@ namespace Lokad.Onnx
         public static DenseTensor<T> OfShape(params int[] dims) => new DenseTensor<T>((ReadOnlySpan<int>) dims);
 
         public static DenseTensor<T> OfValues(Array data) => data.ToTensor<T>();
-
-        public static implicit operator BroadcastedTensor<T>(DenseTensor<T> t) => new BroadcastedTensor<T>(t, t.dimensions, t.strides, t.IsReversedStride);
     }
 }

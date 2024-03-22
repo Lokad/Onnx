@@ -514,7 +514,7 @@ namespace Lokad.Onnx
         /// minor (closest together): akin to column-major in a rank-2 tensor.</param>
         /// <remarks>If you pass `null` for dimensions it will implicitly convert to an empty ReadOnlySpan, which is 
         /// equivalent to the dimensions for a scalar value.</remarks>
-        protected Tensor(ReadOnlySpan<int> dimensions, bool reverseStride, int[] strides = null) : base(typeof(T))
+        protected Tensor(ReadOnlySpan<int> dimensions, bool reverseStride) : base(typeof(T))
         {
             this.dimensions = new int[dimensions.Length];
             long size = 1;
@@ -528,7 +528,7 @@ namespace Lokad.Onnx
                 size *= dimensions[i];
             }
 
-            this.strides = strides ?? ArrayUtilities.GetStrides(dimensions, reverseStride);
+            this.strides = ArrayUtilities.GetStrides(dimensions, reverseStride);
             isReversedStride = reverseStride;
 
             length = size;
@@ -1004,11 +1004,8 @@ namespace Lokad.Onnx
             {
                 var dims = new int[Rank];
                 Array.Copy(dimensions, dims, Rank);
-                var bstrides = new int[Rank];
-                Array.Copy(strides, bstrides, Rank);
                 dims[dim] = size;
-                bstrides[dim] = 0;
-                return new BroadcastedTensor<T>(this, dims, bstrides, IsReversedStride);
+                return new BroadcastedTensor<T>(this, dims, new int[] {dim});
             }
         }
 

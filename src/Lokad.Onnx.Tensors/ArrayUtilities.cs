@@ -149,6 +149,25 @@ namespace Lokad.Onnx
             return index;
         }
 
+        public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, ReadOnlySpan<int> broadcastedDims, int startFromDimension = 0)
+        {
+            Debug.Assert(strides.Length == indices.Length);
+
+            int index = 0;
+            for (int i = startFromDimension; i < indices.Length; i++)
+            {
+                if (indices[i] == 0 || broadcastedDims.Contains(i))
+                {
+                    continue;
+                }
+                else
+                {
+                    index += strides[i] * indices[i];
+                }
+            }
+
+            return index;
+        }
         /// <summary>
         /// Calculates the n-d indices from the 1-d index in a layout specified by strides
         /// </summary>

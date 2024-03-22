@@ -262,15 +262,6 @@ public class SliceIndex
         return $"{(Start == 0 ? "" : Start.ToString())}:{(Stop == null ? "" : Stop.ToString())}{optional_step}";
     }
 
-    // return the size of the slice, given the data dimension on this axis
-    // note: this works only with sanitized shapes!
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int GetSize()
-    {
-        var astep = Math.Abs(Step);
-        return (Math.Abs(Start.Value - Stop.Value) + (astep - 1)) / astep;
-    }
-
     /// <summary>
     /// Converts the user Slice into an internal SliceDef which is easier to calculate with
     /// </summary>
