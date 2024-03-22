@@ -156,7 +156,7 @@ where T : struct
     public static Tensor<double> Subtract(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l - r, y);
 
     public static Tensor<double> Subtract(Tensor<double> x, double y) => x.Apply(l => l - y);
-    
+
     public static Tensor<float> Multiply(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l * r, y);
 
     public static Tensor<float> Multiply(Tensor<float> x, float y) => x.Apply(l => l * y);
@@ -289,7 +289,7 @@ where T : struct
             {
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
-            var z =  DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
+            var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
 
             var di = bx.GetDimensionsIterator(0..^2);
             foreach (var _ in di)
@@ -676,7 +676,7 @@ where T : struct
                         var xCMax = Math.Min(W, kW + xCCorner);
 
                         var maxValue = 0.0f;
-                          
+
                         for (var xR = xRMin; xR < xRMax; ++xR)
                         {
                             for (var xC = xCMin; xC < xCMax; ++xC)
@@ -856,13 +856,13 @@ where T : struct
 
     public static Tensor<double> Relu(Tensor<double> x) => x.Apply(l => l > 0.0 ? l : 0.0);
 
-    public static Tensor<T> Reshape(Tensor<T> input,  Tensor<long> shape, bool allowZero = false)
+    public static Tensor<T> Reshape(Tensor<T> input, Tensor<long> shape, bool allowZero = false)
     {
         if (shape.Rank != 1)
         {
             throw new ArgumentException(nameof(shape), "Shape tensors must be of rank 1.");
         }
-        if (shape.Any(v => v <-1))
+        if (shape.Any(v => v < -1))
         {
             throw new ArgumentException(nameof(shape), $"A shape dimension cannot be < -1, got {shape.First(v => v < -1)}.");
         }
@@ -896,23 +896,31 @@ where T : struct
                 newSize *= Convert.ToInt32(shape[i]);
             }
         }
-        if (unknownDim != -1) 
+        if (unknownDim != -1)
         {
             newShapeDims[unknownDim] = Convert.ToInt32(input.Length / newSize);
             newSize *= newShapeDims[unknownDim];
         }
-        
-        if (newSize != input.Length) 
+
+        if (newSize != input.Length)
         {
             throw new ArgumentException(nameof(shape), $"The input tensor cannot be reshaped to the requested shape. Input shape:{input.PrintShape()}, requested shape:{newShapeDims.Print()}");
         }
-        
+
         return input.Reshape(newShapeDims.ToArray());
     }
 
-    public static Tensor<float> Softmax(Tensor<float> x) => x.Apply(i => MathF.Exp(i) / (x.Apply(MathF.Exp).Accumulate((l, r) => l + r, 0.0f)));
+    public static Tensor<float> Softmax(Tensor<float> x) 
+    {
+        var t = x.Apply(MathF.Exp).Accumulate((l, r) => l + r, 0.0f);
+        return x.Apply(i => MathF.Exp(i) / t);
+    }
 
-    public static Tensor<double> Softmax(Tensor<double> x) => x.Apply(i => Math.Exp(i) / (x.Apply(Math.Exp).Accumulate((l, r) => l + r, 0.0)));
+    public static Tensor<double> Softmax(Tensor<double> x)
+    {
+        var t = x.Apply(Math.Exp).Accumulate((l, r) => l + r, 0.0);
+        return x.Apply(i => Math.Exp(i) / t);
+    }
 
     public static Tensor<float> Erf(Tensor<float> x) => x.Apply(MathOps.Erf);
 

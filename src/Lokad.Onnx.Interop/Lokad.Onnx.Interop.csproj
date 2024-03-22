@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lokad.Onnx.Backend\Lokad.Onnx.Backend.csproj" />
+    <ProjectReference Include="..\Lokad.Onnx.Data\Lokad.Onnx.Data.csproj" />
   </ItemGroup>
 
 </Project>
