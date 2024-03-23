@@ -3,6 +3,8 @@ import random
 
 from onnx.backend.base import namedtupledict
 
+import numpy as np
+
 def generate_random_filename(length: int = 24, extension: str = "") -> str:
     """Generates a random filename"""
     characters = string.ascii_letters + string.digits

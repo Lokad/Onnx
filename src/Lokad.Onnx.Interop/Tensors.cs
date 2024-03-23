@@ -5,7 +5,11 @@ namespace Lokad.Onnx.Interop;
 
 public class Tensors
 {
-    public static ITensor MakeTensor<T>(int[] dims) where T : struct => new DenseTensor<T>(dims);
+    public static ITensor MakeTensor<T>(Array data) where T : struct => DenseTensor<T>.OfValues(data);
+    
+    public static ITensor MakeTensor<T>(T[] data, int[] dims) where T : struct => new DenseTensor<T>(data, dims);
+
+    public static ITensor MakeEmptyTensor<T>(int[] dims) where T : struct => new DenseTensor<T>(dims);
 
     public static ITensor Ones<T>(int[] dims) where T : struct => Tensor<T>.Ones(dims);
 

@@ -1,11 +1,14 @@
 import os
 import onnx
 
+from typing import Any
+import numpy as np
+from onnx.backend.base import Backend, BackendRep
+
 from . import util
 from . import tensors
 from . import lokadonnx
 
-from onnx.backend.base import Backend, BackendRep
 
 class LokadOnnxRep(BackendRep):
     def __init__(self, graph):
@@ -17,7 +20,8 @@ class LokadOnnxRep(BackendRep):
         if isinstance(inputs, dict):
             r = self.graph.Execute(inputs)
         elif isinstance(inputs, list):
-            r = self.graph.Execute(tensors.make_tensor_array(*inputs))
+            _inputs = map(tensors.make_tensor_from_ndarray, inputs)
+            r = self.graph.Execute(tensors.make_tensor_array(_inputs))
         else:
             raise RuntimeError(f'The input type {type(inputs)} is not supported by the backend.')
         if not r:
@@ -38,7 +42,7 @@ class LokadOnnxBackend(Backend):
     @classmethod
     def prepare(cls, model:onnx.ModelProto, device:str='CPU', **kwargs) -> LokadOnnxRep:
         super(LokadOnnxBackend, cls).prepare(model, device, **kwargs)
-        name = util.generate_random_filename()
+        name = model.graph.name + "_" + util.generate_random_filename()
         onnx.save(model, name)
         graph = lokadonnx.load_graph(name)
         os.remove(name)
