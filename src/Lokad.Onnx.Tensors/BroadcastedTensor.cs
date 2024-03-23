@@ -57,7 +57,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
         if (dim >= Rank) throw new ArgumentException(nameof(dim));
         var dims = this.dimensions.ToList();
         dims.Insert(dim, 1);
-        return new BroadcastedTensor<T>(source, dims.ToArray(), broadcastedDims);
+        return new BroadcastedTensor<T>(source.InsertDim(dim), dims.ToArray(), broadcastedDims);
     }
 
     public override Tensor<T> RemoveDim(int dim)
@@ -66,7 +66,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
         if (dimensions[dim] != 1) throw new ArgumentException(nameof(dim), $"Can only remove a dimension of size 1. Dimension {dim} has size {dimensions[dim]}.");
         var dims = dimensions.ToList();
         dims.RemoveAt(dim);
-        return new BroadcastedTensor<T>(source, dims.ToArray(), broadcastedDims);
+        return new BroadcastedTensor<T>(source.RemoveDim(dim), dims.ToArray(), broadcastedDims);
     }
 
     public override BroadcastedTensor<T> BroadcastDim(int dim, int size)

@@ -1,14 +1,13 @@
 import os
 import onnx
 
-from typing import Any
+from typing import Any, Optional, Sequence, Tuple, Dict
 import numpy as np
 from onnx.backend.base import Backend, BackendRep, namedtupledict
 
 from . import util
 from . import tensors
 from . import lokadonnx
-
 
 class LokadOnnxRep(BackendRep):
     def __init__(self, graph):
@@ -31,6 +30,22 @@ class LokadOnnxRep(BackendRep):
         self.graph.Reset()
         return outputs
     
+    def run_node(self, inputs, node_name:str, **kwargs):
+        r = False
+        if isinstance(inputs, dict):
+            r = self.graph.ExecuteNode(inputs, node_name)
+        elif isinstance(inputs, list):
+            _inputs = list(map(tensors.make_tensor_from_ndarray, inputs))
+            r = self.graph.ExecuteNode(tensors.make_tensor_array(_inputs), node_name)
+        else:
+            raise RuntimeError(f'The input type {type(inputs)} is not supported by the backend.')
+        if not r:
+            raise RuntimeError('The graph did not execute successfully.')
+        
+        outputs = self.convert_graph_outputs(self.graph.Outputs, 'Outputs')
+        self.graph.Reset()
+        return outputs
+
     def convert_graph_outputs(self, dict, name:str):
         keys = []
         values = []
@@ -55,6 +70,14 @@ class LokadOnnxBackend(Backend):
         graph = lokadonnx.load_graph(name)
         os.remove(name)
         return LokadOnnxRep(graph)
+    
+    @classmethod
+    def run_node(cls, node: onnx.NodeProto, inputs: Any, device: str = "CPU", outputs_info: Optional[Sequence[Tuple[np.dtype, Tuple[int, ...]]]] = None,**kwargs: Dict[str, Any],) -> Optional[Tuple[Any, ...]]:
+        super(LokadOnnxBackend, cls).run_node(node, inputs, device, outputs_info)
+        graph = onnx.helper.make_graph([node], node.name + "_graph", inputs, [node.name])
+        model = onnx.helper.make_model(graph)
+        rep = prepare(model)
+        return rep.run_node(inputs, node.name)
 
 def prepare_file(file_path:str) -> LokadOnnxRep:
      graph = lokadonnx.load_graph(file_path)
@@ -63,8 +86,8 @@ def prepare_file(file_path:str) -> LokadOnnxRep:
 prepare = LokadOnnxBackend.prepare
 
 
-#run_node = LokadOnnxBackend.run_node
+run_node = LokadOnnxBackend.run_node
 
-#run_model = LokadOnnxBackend.run_model
+run_model = LokadOnnxBackend.run_model
 
-#supports_device = LokadOnnxBackend.supports_device
+supports_device = LokadOnnxBackend.supports_device

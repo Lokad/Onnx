@@ -310,19 +310,11 @@ public class ComputationalGraph : Runtime
         else
         {
             Debug("Execution of node {n} with op {op} returned {s} with {c} output(s).", node.Name, node.Op.ToString(), r.Status.ToString(), r.Outputs.Length);
+            Outputs.Clear();
             for (int i = 0; i < node.Outputs.Length; i++)
             {
                 Debug("Assigning node {n} output {c} to graph tensor {o}.", node.Name, i, node.Outputs[i]);
-                if (IntermediateOutputs.ContainsKey(node.Outputs[i]))
-                {
-                    IntermediateOutputs[node.Outputs[i]] = r.Outputs[i];
-                    r.Outputs[i].Name = node.Outputs[i];
-                }
-                else
-                {
-                    Outputs[node.Outputs[i]] = r.Outputs[i];
-                    r.Outputs[i].Name = node.Outputs[i];
-                }
+                Outputs[node.Outputs[i]] = r.Outputs[i];
             }
         }
         
