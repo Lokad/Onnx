@@ -3,7 +3,7 @@ import onnx
 
 from typing import Any
 import numpy as np
-from onnx.backend.base import Backend, BackendRep
+from onnx.backend.base import Backend, BackendRep, namedtupledict
 
 from . import util
 from . import tensors
@@ -20,16 +20,24 @@ class LokadOnnxRep(BackendRep):
         if isinstance(inputs, dict):
             r = self.graph.Execute(inputs)
         elif isinstance(inputs, list):
-            _inputs = map(tensors.make_tensor_from_ndarray, inputs)
+            _inputs = list(map(tensors.make_tensor_from_ndarray, inputs))
             r = self.graph.Execute(tensors.make_tensor_array(_inputs))
         else:
             raise RuntimeError(f'The input type {type(inputs)} is not supported by the backend.')
         if not r:
             raise RuntimeError('The graph did not execute successfully.')
         
-        outputs = util.convert_dictionary_to_namedtupledict(self.graph.Output, 'Outputs')
+        outputs = self.convert_graph_outputs(self.graph.Outputs, 'Outputs')
         self.graph.Reset()
         return outputs
+    
+    def convert_graph_outputs(self, dict, name:str):
+        keys = []
+        values = []
+        for kv in dict:
+            keys.append(kv.Key)
+            values.append(tensors.make_ndarray_from_tensor(kv.Value))
+        return namedtupledict(name, keys)(*values)
 
 class LokadOnnxBackend(Backend):
     @classmethod

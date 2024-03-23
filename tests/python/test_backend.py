@@ -26,4 +26,8 @@ def test_backend():
     assert rep.graph.Nodes.Count == 1
     x = np.arange(0, 20).reshape(4, 5)
     r = rep.run([x, x])
+    a = r['Add1']
+    assert len(a.shape) == 2
+    assert a.shape[1] == 5
+    assert a[0,1] == 2  
 

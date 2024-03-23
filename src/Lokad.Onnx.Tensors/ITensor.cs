@@ -32,6 +32,8 @@ namespace Lokad.Onnx
 
         ITensor ToDenseTensor();
 
+        Array ToArray();
+
         ITensor PadLeft() => InsertDim(0);
         
         object this[params int[] indices]

@@ -9,6 +9,16 @@ def test_make_tensors():
     tn = np.ndarray((4,5,6), np.int32)
     assert set(tn.shape) == set(t.Dims)
 
+def test_convert_tensors():
+    a = np.random.rand(4,5,6)
+    at = tensors.make_tensor_from_ndarray(a)
+    assert at.Rank == 3
+    assert at.Dims[1] == 5
+    b = tensors.make_ndarray_from_tensor(at)
+    assert b.dtype == np.float64
+    assert b[1,4,5] == at[1,4,5]
+
+
 def test_arange():
     t  = tensors.arange(0, 9).Reshape(3, 3)
     tnd = np.arange(0, 9).reshape(3, 3)

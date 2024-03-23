@@ -69,6 +69,7 @@ public class CPUExecutionProvider
         }
         switch (A.ElementType)
         {
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Add((Tensor<int>)bA, (Tensor<int>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)bA, (Tensor<double>)bB));
             default: return InputTypeNotSupported(OpType.Add, nameof(A), A);

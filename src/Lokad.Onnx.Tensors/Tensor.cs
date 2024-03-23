@@ -1690,6 +1690,19 @@ namespace Lokad.Onnx
             set => this[indices] = (T) value;
         }
         ITensor ITensor.Slice(string indices) => new TensorSlice<T>(this, ExpandEllipsis(SliceIndex.ParseSlices(indices)));
+
+        Array ITensor.ToArray() => this.ToArray();  
+        /*
+        {
+            var a = Array.CreateInstance(this.PrimitiveType, this.dimensions);
+            
+            for (int i = 0; i < Length; i++)
+            {
+                a.SetValue(this.GetValue(i), i);
+            }
+            return a;
+        }
+        */
         #endregion
 
         #region Slicing

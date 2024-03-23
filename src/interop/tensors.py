@@ -114,6 +114,24 @@ def make_tensor_from_ndarray(a:np.ndarray[Any]) -> ITensor:
         return Tensors.MakeTensor[System.Byte](asNetArray(a))
     elif (a.dtype == np.uint8):
         return Tensors.MakeTensor[System.SByte](asNetArray(a))
+    elif (a.dtype == np.int16):
+        return Tensors.MakeTensor[System.Int16](asNetArray(a))
+    elif (a.dtype == np.uint16):
+        return Tensors.MakeTensor[System.UInt16](asNetArray(a))
+    elif (a.dtype == np.int32):
+        return Tensors.MakeTensor[System.Int32](asNetArray(a))
+    elif (a.dtype == np.uint32):
+        return Tensors.MakeTensor[System.UInt32](asNetArray(a))
+    elif (a.dtype == np.float32):
+        return Tensors.MakeTensor[System.Single](asNetArray(a))
+    elif (a.dtype == np.float64):
+        return Tensors.MakeTensor[System.Double](asNetArray(a))
+    else: raise RuntimeError('fThe type {a.dtype} is not supported.')
+
+def make_ndarray_from_tensor(t:ITensor) -> np.ndarray[Any]:
+    a =  asNumpyArray(t.ToArray())
+    a.resize(t.Dims)
+    return a
 
 def make_empty_tensor(dt:np.dtype, *dims) -> ITensor:
     dimsa = Array[int](*dims)
@@ -122,10 +140,8 @@ def make_empty_tensor(dt:np.dtype, *dims) -> ITensor:
     #elif 
 
 def make_tensor_array(tensors) -> Array[ITensor]:
-    return Array[ITensor](*tensors)
+    return Array[ITensor](tensors)
     
-
-
 def zeros(dt:np.dtype, *dims) -> ITensor:
     dimsa = Array[int](dims)
     if dt == np.int32:
