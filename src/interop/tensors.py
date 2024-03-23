@@ -17,6 +17,9 @@ def make_tensor(dt:np.dtype, *dims) -> ITensor:
         return Tensors.MakeTensor[int](dimsa)
     #elif 
 
+def make_tensor_array(*tensors) -> Array[ITensor]:
+    return Array[ITensor](tensors)
+    
 def zeros(dt:np.dtype, *dims) -> ITensor:
     dimsa = Array[int](dims)
     if dt == np.int32:

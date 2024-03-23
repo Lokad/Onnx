@@ -16,4 +16,5 @@ def test_backend():
     onnx_model_file = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "models", "mnist-8.onnx")
     rep = backend.prepare_file(onnx_model_file)
     assert rep.graph.Nodes.Count == 12
+    o = rep.run([])
 

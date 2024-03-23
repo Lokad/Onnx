@@ -1,43 +1,44 @@
-import sys,os
-import random
-import string
+import os
 import onnx
-import tempfile
 
+from . import util
+from . import tensors
 from . import lokadonnx
 
 from onnx.backend.base import Backend, BackendRep
-
-def generate_random_filename(length: int = 24, extension: str = "") -> str:
-    """Generates a random filename"""
-    characters = string.ascii_letters + string.digits
-    random_string = "".join(random.choice(characters) for _ in range(length))
-    if extension:
-        if "." in extension:
-            pieces = extension.split(".")
-            last_extension = pieces[-1]
-            extension = last_extension
-        return f"{random_string}.{extension}"
-    return random_string
-        
 
 class LokadOnnxRep(BackendRep):
     def __init__(self, graph):
         super().__init__()
         self.graph = graph
 
+    def run(self, inputs, **kwargs):
+        r = False
+        if isinstance(inputs, dict):
+            r = self.graph.Execute(inputs)
+        elif isinstance(inputs, list):
+            r = self.graph.Execute(tensors.make_tensor_array(*inputs))
+        else:
+            raise RuntimeError(f'The input type {type(inputs)} is not supported by the backend.')
+        if not r:
+            raise RuntimeError('The graph did not execute successfully.')
+        
+        outputs = util.convert_dictionary_to_namedtupledict(self.graph.Output, 'Outputs')
+        self.graph.Reset()
+        return outputs
+
 class LokadOnnxBackend(Backend):
     @classmethod
-    def is_compatible(self, model: onnx.ModelProto, device: str = "CPU", **kwargs) -> bool:
+    def is_compatible(cls, model: onnx.ModelProto, device: str = "CPU", **kwargs) -> bool:
         if device == 'CPU':
             return True
         else:
             return False
     
     @classmethod
-    def prepare(self, model:onnx.ModelProto, device:str='CPU', **kwargs) -> LokadOnnxRep:
-        super(LokadOnnxBackend, self).prepare(model, device, **kwargs)
-        name = generate_random_filename()
+    def prepare(cls, model:onnx.ModelProto, device:str='CPU', **kwargs) -> LokadOnnxRep:
+        super(LokadOnnxBackend, cls).prepare(model, device, **kwargs)
+        name = util.generate_random_filename()
         onnx.save(model, name)
         graph = lokadonnx.load_graph(name)
         os.remove(name)
