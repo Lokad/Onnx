@@ -20,6 +20,8 @@ Add1 = onnx.helper.make_tensor_value_info("Add1", onnx.TensorProto.INT32, [4,5])
 graph = onnx.helper.make_graph([node], "graph1", [x, y], [Add1])
 model = onnx.helper.make_model(graph)
 
+backend.set_debug_mode()
+
 def test_load_graph():
     g = backend.load_graph(os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "models", "mnist-8.onnx"))
     assert g.Nodes.Count == 12
@@ -54,8 +56,7 @@ def test_node_run():
     )
     x = np.arange(0, 20).reshape(4, 5)
     y = np.arange(0, 20).reshape(4, 5)
-    r = backend.run_node(node, [x, y])
-    a = r['Add2']
-    assert len(a.shape) == 2
-    assert a.shape[1] == 5
-    assert a[0,2] == 4  
+    a = backend.run_node(node, [x, y])
+    assert len(a['Add2'].shape) == 2
+    assert a['Add2'].shape[1] == 5
+    assert a['Add2'][0,2] == 4  
