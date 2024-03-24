@@ -52,6 +52,10 @@ public struct Node
                 }
                 else
                 {
+                    for (int i = 0; i < r.Outputs.Length; i++)
+                    {
+                        r.Outputs[i].Name = this.Outputs[i];
+                    }
                     return r;
                 }
             }

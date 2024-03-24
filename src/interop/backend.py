@@ -63,6 +63,10 @@ class LokadOnnxBackend(Backend):
             return False
     
     @classmethod
+    def supports_device(cls, device: str) -> bool:
+        return device == 'CPU'
+    
+    @classmethod
     def prepare(cls, model:onnx.ModelProto, device:str='CPU', **kwargs) -> LokadOnnxRep:
         super(LokadOnnxBackend, cls).prepare(model, device, **kwargs)
         name = model.graph.name + "_" + util.generate_random_filename()
@@ -74,7 +78,19 @@ class LokadOnnxBackend(Backend):
     @classmethod
     def run_node(cls, node: onnx.NodeProto, inputs: Any, device: str = "CPU", outputs_info: Optional[Sequence[Tuple[np.dtype, Tuple[int, ...]]]] = None,**kwargs: Dict[str, Any],) -> Optional[Tuple[Any, ...]]:
         super(LokadOnnxBackend, cls).run_node(node, inputs, device, outputs_info)
-        graph = onnx.helper.make_graph([node], node.name + "_graph", inputs, [node.name])
+        graph_inputs = []
+        graph_outputs = []
+        if isinstance(inputs, list):
+            for n, i in enumerate(node.input):
+                graph_inputs.append(onnx.helper.make_tensor_value_info(i, onnx.helper.np_dtype_to_tensor_dtype(inputs[n].dtype), inputs[n].shape))
+        elif isinstance(inputs, dict):
+            for name, val in inputs.iteritems():
+                graph_inputs.append(onnx.helper.make_tensor_value_info(name, onnx.helper.np_dtype_to_tensor_dtype(val.dtype), val.shape))
+        else:
+            raise TypeError(f'The type of inputs: {type(inputs)} is not supported.')
+        
+        graph_outputs = map(lambda i: onnx.helper.make_tensor_value_info(i, onnx.TensorProto.INT32, [0]), node.output)
+        graph = onnx.helper.make_graph([node], node.name + "_graph", graph_inputs, graph_outputs)
         model = onnx.helper.make_model(graph)
         rep = prepare(model)
         return rep.run_node(inputs, node.name)
@@ -84,7 +100,6 @@ def prepare_file(file_path:str) -> LokadOnnxRep:
      return LokadOnnxRep(graph)
 
 prepare = LokadOnnxBackend.prepare
-
 
 run_node = LokadOnnxBackend.run_node
 
