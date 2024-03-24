@@ -2,7 +2,7 @@ import os
 import ctypes
 
 import numpy as np
-from typing import Any
+from typing import Any, Dict
 import clr
 
 file_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
@@ -10,7 +10,8 @@ clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Rele
 clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Tensors.dll"))
 
 import System
-from System import Array, Int32, Single, Double
+from System import Array, Int32, Single, Double, String
+from System.Collections.Generic import Dictionary
 from System.Runtime.InteropServices import GCHandle, GCHandleType
 from Lokad.Onnx import ITensor
 from Lokad.Onnx.Interop import Tensors
@@ -141,6 +142,12 @@ def make_empty_tensor(dt:np.dtype, *dims) -> ITensor:
 
 def make_tensor_array(tensors) -> Array[ITensor]:
     return Array[ITensor](tensors)
+    
+def make_tensor_dictionary(tensors:Dict[str, ITensor]) -> Dictionary[str, ITensor]:
+    dictionary = Dictionary[String, ITensor]()
+    for key, value in tensors.items():
+        dictionary.Add(key, value)
+    return dictionary
     
 def zeros(dt:np.dtype, *dims) -> ITensor:
     dimsa = Array[int](dims)

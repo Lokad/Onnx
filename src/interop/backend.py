@@ -7,25 +7,52 @@ from onnx.backend.base import Backend, BackendRep, namedtupledict
 
 from . import util
 from . import tensors
-from . import lokadonnx
 
+import clr
+file_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Interop.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Tensors.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Backend.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Data.dll"))
+
+from Lokad.Onnx import ITensor, ComputationalGraph
+from Lokad.Onnx.Interop import Tensors,Graph
+        
 class LokadOnnxRep(BackendRep):
     def __init__(self, graph):
         super().__init__()
         self.graph = graph
 
     def run(self, inputs, **kwargs):
+        file_args = kwargs['file_args'] if 'file_args' in kwargs else []
+        save_file_arg = kwargs['save_file_arg'] if 'save_file_arg' in kwargs else False
+        if not isinstance(file_args, list):
+            raise TypeError(f'The file_args argument must be type list, not {type(file_args)}')
+        if not isinstance(save_file_arg, bool):
+            raise TypeError(f'The save_file_arg argument must be type bool, not {type(save_file_arg)}')
         r = False
         if isinstance(inputs, dict):
-            r = self.graph.Execute(inputs)
+            _inputs = {}
+            for key, value in inputs.items():
+                if not isinstance(key, str) or not isinstance(value, np.ndarray):
+                    raise TypeError(f'An input dictionary item must have type str:ndarray, not {type(key)}:{type(value)}.')
+                if key in file_args:
+                    _inputs[key] = Graph.GetInputTensorFromFileArg(value, save_file_arg)
+                else:
+                    _inputs[key] = tensors.make_tensor_from_ndarray(value)
+            r = self.graph.Execute(tensors.make_tensor_dictionary(_inputs))
         elif isinstance(inputs, list):
-            _inputs = list(map(tensors.make_tensor_from_ndarray, inputs))
+            _inputs=[]
+            for index,value in enumerate(inputs):
+                if index in file_args:
+                    _inputs.append(Graph.GetInputTensorFromFileArg(value, save_file_arg))
+                else:
+                    _inputs.append(tensors.make_tensor_from_ndarray(value))
             r = self.graph.Execute(tensors.make_tensor_array(_inputs))
         else:
             raise RuntimeError(f'The input type {type(inputs)} is not supported by the backend.')
         if not r:
             raise RuntimeError('The graph did not execute successfully.')
-        
         outputs = self.convert_graph_outputs(self.graph.Outputs, 'Outputs')
         self.graph.Reset()
         return outputs
@@ -71,7 +98,7 @@ class LokadOnnxBackend(Backend):
         super(LokadOnnxBackend, cls).prepare(model, device, **kwargs)
         name = model.graph.name + "_" + util.generate_random_filename()
         onnx.save(model, name)
-        graph = lokadonnx.load_graph(name)
+        graph = load_graph(name)
         os.remove(name)
         return LokadOnnxRep(graph)
     
@@ -80,12 +107,20 @@ class LokadOnnxBackend(Backend):
         super(LokadOnnxBackend, cls).run_node(node, inputs, device, outputs_info)
         graph_inputs = []
         graph_outputs = []
+        file_args = kwargs['file_args'] if 'file_args' in kwargs else {}
+        save_file_arg = kwargs['save_file_arg'] if 'save_file_arg' in kwargs else False
+        if not isinstance(file_args, dict):
+            raise TypeError(f'The file_args argument must be type dict, not {type(file_args)}')
+        if not isinstance(save_file_arg, bool):
+            raise TypeError(f'The save_file_arg argument must be type dict, not {type(save_file_arg)}')
         if isinstance(inputs, list):
             for n, i in enumerate(node.input):
-                graph_inputs.append(onnx.helper.make_tensor_value_info(i, onnx.helper.np_dtype_to_tensor_dtype(inputs[n].dtype), inputs[n].shape))
+                v = tensors.make_ndarray_from_tensor(Graph.GetInputTensorFromFileArg(inputs[n], save_file_arg)) if n in file_args else inputs[n]
+                graph_inputs.append(onnx.helper.make_tensor_value_info(i, onnx.helper.np_dtype_to_tensor_dtype(v.dtype), v.shape))
         elif isinstance(inputs, dict):
             for name, val in inputs.iteritems():
-                graph_inputs.append(onnx.helper.make_tensor_value_info(name, onnx.helper.np_dtype_to_tensor_dtype(val.dtype), val.shape))
+                v = tensors.make_ndarray_from_tensor(Graph.GetInputTensorFromFileArg(val, save_file_arg)) if name in file_args else val
+                graph_inputs.append(onnx.helper.make_tensor_value_info(name, onnx.helper.np_dtype_to_tensor_dtype(v.dtype), v.shape))
         else:
             raise TypeError(f'The type of inputs: {type(inputs)} is not supported.')
         
@@ -94,12 +129,18 @@ class LokadOnnxBackend(Backend):
         model = onnx.helper.make_model(graph)
         rep = prepare(model)
         return rep.run_node(inputs, node.name)
+    
+    @classmethod
+    def prepare_file(cls, file_path:str) -> LokadOnnxRep:
+        graph = load_graph(file_path)
+        return LokadOnnxRep(graph)
 
-def prepare_file(file_path:str) -> LokadOnnxRep:
-     graph = lokadonnx.load_graph(file_path)
-     return LokadOnnxRep(graph)
+def load_graph(file_path:str) -> ComputationalGraph:
+    return Graph.LoadFromFile(file_path)
 
 prepare = LokadOnnxBackend.prepare
+
+prepare_file = LokadOnnxBackend.prepare_file
 
 run_node = LokadOnnxBackend.run_node
 
