@@ -135,6 +135,10 @@ public class ComputationalGraph : Runtime
             {
                 requiredInputs.Add(i);  
             }
+            else
+            {
+                Inputs[i] = Initializers[i];
+            }
         }
         if (userInputs.Length != requiredInputs.Count)
         {
@@ -160,6 +164,10 @@ public class ComputationalGraph : Runtime
             if (!Initializers.ContainsKey(i))
             {
                 requiredInputs.Add(i);
+            }
+            else
+            {
+                Inputs[i] = Initializers[i];
             }
         }
         if (userInputs.Count != requiredInputs.Count)

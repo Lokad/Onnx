@@ -21,8 +21,9 @@ from Lokad.Onnx import ITensor, ComputationalGraph
 from Lokad.Onnx.Interop import Tensors,Graph
         
 class LokadOnnxRep(BackendRep):
-    def __init__(self, graph):
+    def __init__(self, model:onnx.ModelProto, graph):
         super().__init__()
+        self.model = model
         self.graph = graph
 
     def run(self, inputs, **kwargs):
@@ -74,7 +75,7 @@ class LokadOnnxRep(BackendRep):
             for name, val in inputs.iteritems():
                 if name in file_args and not isinstance(val, str):
                     raise TypeError('The type of a file_arg node input must be str, not {type(val)}.')
-                if not name in file_args and not isinstance(val, ndarray):
+                if not name in file_args and not isinstance(val, np.ndarray):
                     raise TypeError('The type of a node input must be ndarray, not {type(val)}.')
                 v = Graph.GetInputTensorFromFileArg(val, save_file_arg) if name in file_args else tensors.make_tensor_from_ndarray(val)
                 _inputs[name] = v
@@ -94,7 +95,19 @@ class LokadOnnxRep(BackendRep):
             keys.append(kv.Key)
             values.append(tensors.make_ndarray_from_tensor(kv.Value))
         return namedtupledict(name, keys)(*values)
-
+    
+    def get_onnx_node(self, name:str):
+        for node in self.model.graph.node:
+            if node.name == name:
+                return node
+        raise RuntimeError(f'The graph does not contain the node {name}.')
+    
+    def get_initializer(self, name:str):
+        if self.graph.Initializers.ContainsKey(name):
+            return tensors.make_ndarray_from_tensor(self.graph.Initializers[name])
+        else:
+            raise ValueError(f'The graph does not contain the initializer {name}.')
+    
 class LokadOnnxBackend(Backend):
     @classmethod
     def is_compatible(cls, model: onnx.ModelProto, device: str = "CPU", **kwargs) -> bool:
@@ -114,7 +127,7 @@ class LokadOnnxBackend(Backend):
         onnx.save(model, name)
         graph = load_graph(name)
         os.remove(name)
-        return LokadOnnxRep(graph)
+        return LokadOnnxRep(model, graph)
     
     @classmethod
     def run_node(cls, node: onnx.NodeProto, inputs: Any, device: str = "CPU", outputs_info: Optional[Sequence[Tuple[np.dtype, Tuple[int, ...]]]] = None,**kwargs: Dict[str, Any],) -> Optional[Tuple[Any, ...]]:
@@ -138,13 +151,13 @@ class LokadOnnxBackend(Backend):
             for name, val in inputs.iteritems():
                 if name in file_args and not isinstance(val, str):
                     raise TypeError('The type of a file_arg node input must be str, not {type(val)}.')
-                if not name in file_args and not isinstance(val, ndarray):
+                if not name in file_args and not isinstance(val, np.ndarray):
                     raise TypeError('The type of a node input must be ndarray, not {type(val)}.')
                 v = tensors.make_ndarray_from_tensor(Graph.GetInputTensorFromFileArg(val, save_file_arg)) if name in file_args else val
                 graph_inputs.append(onnx.helper.make_tensor_value_info(name, onnx.helper.np_dtype_to_tensor_dtype(v.dtype), v.shape))
                 node_inputs_dict[name] = v
         else:
-            raise TypeError(f'The type of inputs: {type(inputs)} is not supported.')
+            raise TypeError(f'The inputs type {type(inputs)} is not supported by the backend.')
         
         graph_outputs = map(lambda i: onnx.helper.make_tensor_value_info(i, onnx.TensorProto.INT32, [0]), node.output)
         graph = onnx.helper.make_graph([node], node.name + "_graph", graph_inputs, graph_outputs)
@@ -154,13 +167,18 @@ class LokadOnnxBackend(Backend):
         
     @classmethod
     def prepare_file(cls, file_path:str) -> LokadOnnxRep:
+        model = onnx.load(file_path)
         graph = load_graph(file_path)
-        return LokadOnnxRep(graph)
+        return LokadOnnxRep(model, graph)
 
     @classmethod
     def set_debug_mode(cls):
         Graph.SetDebugMode()
 
+    @classmethod
+    def get_input_ndarray_from_file_arg(cls, arg:str, save_input=False):
+        i = Graph.GetInputTensorFromFileArg(arg, save_input)
+        return tensors.make_ndarray_from_tensor(i) if i != None else None
 
 def load_graph(file_path:str) -> ComputationalGraph:
     return Graph.LoadFromFile(file_path)
@@ -176,3 +194,5 @@ run_model = LokadOnnxBackend.run_model
 supports_device = LokadOnnxBackend.supports_device
 
 set_debug_mode = LokadOnnxBackend.set_debug_mode
+
+get_input_ndarray_from_file_arg = LokadOnnxBackend.get_input_ndarray_from_file_arg

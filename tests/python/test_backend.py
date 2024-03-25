@@ -2,6 +2,8 @@ import os
 import onnx
 import numpy as np
 
+from onnx.reference import ReferenceEvaluator
+
 from interop import tensors, backend
 
 file_dir = os.path.dirname(os.path.realpath(__file__))
@@ -69,3 +71,21 @@ def test_model_node_run():
     rep = backend.prepare_file(onnx_model_file)
     r = rep.run_node(inputs, 'Plus214', file_args=file_args)
     assert set(r['Plus214_Output_0'].shape) == {1, 10}
+
+def test_mnist_model_run():
+    mnist4 = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "images", "mnist4.png") + "::mnist"
+    x = backend.get_input_ndarray_from_file_arg(mnist4)
+    sess = ReferenceEvaluator(onnx_model_file, verbose=1)
+    results = sess.run(None, {"Input3": x})
+    assert set(results[0].shape) == {1,10}
+    #assert results[0][0, 4] == .99
+    rep = backend.prepare_file(onnx_model_file)
+    node = rep.get_onnx_node('Plus30')
+    a = np.ones((8, 1, 1),dtype=np.float32)
+    r = rep.run_node([a], 'Plus30')
+    sess = ReferenceEvaluator(node)
+    results = sess.run(None, {'Convolution28_Output_0': a, 'Parameter6': rep.get_initializer('Parameter6')})
+    #print(rep.get_initializer('Parameter6'))
+    print(r['Plus30_Output_0'])
+    print(results[0])
+    assert set(results[0].flatten()) == set(r['Plus30_Output_0'].flatten())

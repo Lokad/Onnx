@@ -25,7 +25,6 @@
             Assert.True(g.Execute(Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist5.png::mnist" })!));
             o = g.Outputs.Values.First().RemoveDim(0).Softmax();
             Assert.True((float)o[5] > 0.6);
-            var f = int[] { }
         }
 
         [Fact]
@@ -36,7 +35,7 @@
             var g = Model.LoadFromFile("models\\mnist-8.onnx")!;
             var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" })!;
             Assert.True(g.Execute(ui));
-            var o = g.Outputs.Values.First().RemoveDim(0);
+            var o = g.Outputs.Values.First().RemoveDim(0).Softmax();
             Assert.NotNull(o);
         }
     }
