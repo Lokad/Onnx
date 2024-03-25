@@ -7,7 +7,7 @@ from interop import tensors, backend
 file_dir = os.path.dirname(os.path.realpath(__file__))
 
 onnx_model_file = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "models", "mnist-8.onnx")
-mnist4 = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "images", "mnist4.png") + "::mnist"
+
 node = onnx.helper.make_node(
             name="Add1",
             op_type="Add",
@@ -33,6 +33,7 @@ def test_model_prepare():
     assert rep.graph.Nodes.Count == 1
 
 def test_model_file_run():
+    mnist4 = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "images", "mnist4.png") + "::mnist"
     inputs = [mnist4]
     file_args = [0]
     rep = backend.prepare_file(onnx_model_file)
@@ -60,3 +61,11 @@ def test_node_run():
     assert len(a['Add2'].shape) == 2
     assert a['Add2'].shape[1] == 5
     assert a['Add2'][0,2] == 4  
+
+def test_model_node_run():
+    inp1 = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "images", "mnist4.png") + "::1:10"
+    inputs = [inp1]
+    file_args = [0]
+    rep = backend.prepare_file(onnx_model_file)
+    r = rep.run_node(inputs, 'Plus214', file_args=file_args)
+    assert set(r['Plus214_Output_0'].shape) == {1, 10}
