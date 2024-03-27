@@ -21,9 +21,7 @@ namespace Lokad.Onnx.Backend.Tests
             var tensor = Data.LoadMnistImageFromFile(filepath).ToTensor();
             container.Add(NamedOnnxValue.CreateFromTensor(inputMeta.Keys.First(), tensor));
             using var results = session.Run(container);  
-            return Softmax(results.First().AsTensor<float>());   
-                   
-          
+            return results.First().AsTensor<float>().ToArray();   
         }
 
         public static float[] Softmax(MSTensors.Tensor<float> output)

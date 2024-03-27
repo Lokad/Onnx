@@ -627,7 +627,7 @@ where T : struct
 
     public static Tensor<float> MaxPool2D(Tensor<float> input, int[] kernelshape, PadType padtype = PadType.Valid, int? padvalue = null, int[] strides = null, int[] dilations = null)
     {
-        if (kernelshape == null)
+        if (kernelshape is null)
         {
             throw new ArgumentNullException("kernelshape");
         }
@@ -675,7 +675,7 @@ where T : struct
                         var xCMin = Math.Max(0, xCCorner);
                         var xCMax = Math.Min(W, kW + xCCorner);
 
-                        var maxValue = 0.0f;
+                        var maxValue = float.NegativeInfinity;
 
                         for (var xR = xRMin; xR < xRMax; ++xR)
                         {
@@ -688,7 +688,7 @@ where T : struct
                                     maxValue = v;
                                 }
                             }
-                            if (maxValue == 0.0f)
+                            if (maxValue == float.NegativeInfinity)
                             {
                                 break;
                             }
@@ -703,7 +703,7 @@ where T : struct
 
     public static Tensor<double> MaxPool2D(Tensor<double> input, int[] kernelshape, PadType padtype = PadType.Valid, int? padvalue = null, int[] strides = null, int[] dilations = null)
     {
-        if (kernelshape == null)
+        if (kernelshape is null)
         {
             throw new ArgumentNullException("kernelshape");
         }
@@ -716,11 +716,11 @@ where T : struct
             throw new ArgumentException("The kernel must have shape m x n.");
         }
 
-        if (strides == null)
+        if (strides is null)
         {
             strides = kernelshape;
         }
-        if (dilations == null)
+        if (dilations is null)
         {
             dilations = new int[] { 1, 1 };
         }
@@ -751,7 +751,7 @@ where T : struct
                         var xCMin = Math.Max(0, xCCorner);
                         var xCMax = Math.Min(W, kW + xCCorner);
 
-                        var maxValue = 0.0;
+                        var maxValue = double.NegativeInfinity;
 
                         for (var xR = xRMin; xR < xRMax; ++xR)
                         {
@@ -764,7 +764,7 @@ where T : struct
                                     maxValue = v;
                                 }
                             }
-                            if (maxValue == 0.0)
+                            if (maxValue == double.NegativeInfinity)
                             {
                                 break;
                             }

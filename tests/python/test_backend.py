@@ -1,11 +1,11 @@
 import os
-import onnx
-import numpy as np
 from typing import Dict
+
+import numpy as np
+import onnx
 from onnx.reference import ReferenceEvaluator
 
 from interop import backend
-from interop.tensors import ndarray_eq
 
 file_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -73,22 +73,31 @@ def test_model_node_run():
     assert set(r[0].shape) == {1, 10}
 
 def test_mnist_model_run():
-    an = np.ones((1,1,28,28), np.float32)
     rep = backend.prepare_file(onnx_model_file)
     
     node = rep.get_onnx_node('Times212_reshape1')
     r = rep.run_node(node, [], use_initializers = True)
     ref_r = reference_eval_node(node, {'Parameter193': rep.get_initializer('Parameter193'), 'Parameter193_reshape1_shape':rep.get_initializer('Parameter193_reshape1_shape')})
-    assert ndarray_eq(ref_r[0], r[0])
+    np.testing.assert_equal(ref_r[0], r[0])
 
     node = rep.get_onnx_node('Plus30')
     r = rep.run_node(node, [mnist4], file_args=[0], use_initializers=True)
     ref_r = reference_eval_node(node, {'Convolution28_Output_0': rep.get_input_ndarray_from_file_arg(mnist4), 'Parameter6':rep.get_initializer('Parameter6')})
     np.testing.assert_almost_equal(ref_r[0], r[0])
 
-    #node = rep.get_onnx_node('Convolution28')
-    #r = rep.run_node(node, [mnist4, np.ones((1,1,28,28), np.float3)], file_args=[0])
-    #np.testing.assert_almost_equal(ref_r[0], r[0])
+    i = ref_r[0]
+    node = rep.get_onnx_node('Pooling66')
+    r = rep.run_node(node, [i])
+    ref_r = reference_eval_node(node, {'ReLU32_Output_0': i})
+    np.testing.assert_almost_equal(ref_r[0], r[0], 4)
 
-   
+
+    node = rep.get_onnx_node('ReLU32')
+    r = rep.run_node(node, [mnist4], file_args=[0])
+    ref_r = reference_eval_node(node, {'Plus30_Output_0': rep.get_input_ndarray_from_file_arg(mnist4)})
+    np.testing.assert_almost_equal(ref_r[0], r[0])
     
+    node = rep.get_onnx_node('Convolution28')
+    r = rep.run_node(node, [mnist4], file_args=[0], use_initializers=True)
+    ref_r = reference_eval_node(node, {'Input3': rep.get_input_ndarray_from_file_arg(mnist4), 'Parameter5': rep.get_initializer('Parameter5')})
+    np.testing.assert_almost_equal(ref_r[0], r[0], decimal=4)

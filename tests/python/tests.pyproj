@@ -6,7 +6,7 @@
     <ProjectHome>
     </ProjectHome>
     <StartupFile>test_backend.py</StartupFile>
-    <SearchPath>..\..\src</SearchPath>
+    <SearchPath>..\..\src;..\..\..\..\Python\VEnv\lokadonnx\Lib\site-packages</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>tests</Name>
