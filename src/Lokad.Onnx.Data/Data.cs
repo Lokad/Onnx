@@ -158,16 +158,19 @@ public class Data : Runtime
     }
     public static Image<Rgba32> SaveImage(Image<Rgba32> image, string name, bool save)
     {
-        var stream = new FileStream(name, FileMode.Create);
-        if (File.Exists(name))
+        if (save)
         {
-            Warn("Overwriting file {f} with input image.", name);
+            var stream = new FileStream(name, FileMode.Create);
+            if (File.Exists(name))
+            {
+                Warn("Overwriting file {f} with input image.", name);
+            }
+            else
+            {
+                Info("Saving input image to {n}.", name);
+            }
+            image.SaveAsPng(stream);
         }
-        else
-        {
-            Info("Saving input image to {n}.", name);
-        }
-        image.SaveAsPng(stream);
         return image;
     }
 

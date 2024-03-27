@@ -44,34 +44,37 @@ public class ComputationalGraph : Runtime
 
     public ITensor[] GetInputTensors(string[] names) => names.Select(n => GetInputTensor(n)).ToArray();
 
-    public Dictionary<string, ITensor> GetRequiredInputs()
+    public Dictionary<string, ITensor> GetRequiredInputs(bool useInitializers)
     {
         var requiredInputs = new Dictionary<string, ITensor>(Inputs);
-        foreach (var i in Inputs.Keys)
+        if (useInitializers)
         {
-            if (Initializers.ContainsKey(i))
+            foreach (var i in Inputs.Keys)
             {
-                var ii = Initializers[i];
-                var iv = Inputs[i];
-                if (ii.Dims.SequenceEqual(iv.Dims) && ii.ElementType == iv.ElementType)
+                if (Initializers.ContainsKey(i))
                 {
-                    Info("Using initializer value {n} for graph input {i}.", ii.TensorNameDesc(), Inputs[i].TensorNameDesc());
-                    Inputs[i] = Initializers[i];
-                    requiredInputs.Remove(i);
-                }
-                else
-                {
-                    Error("Cannot use initializer value {n} for graph input {i}. Tensor shape or type does not match.", ii.TensorNameDesc(), Inputs[i].TensorNameDesc());
+                    var ii = Initializers[i];
+                    var iv = Inputs[i];
+                    if (ii.Dims.SequenceEqual(iv.Dims) && ii.ElementType == iv.ElementType)
+                    {
+                        Info("Using initializer value {n} for graph input {i}.", ii.TensorNameDesc(), Inputs[i].TensorNameDesc());
+                        Inputs[i] = Initializers[i];
+                        requiredInputs.Remove(i);
+                    }
+                    else
+                    {
+                        Error("Cannot use initializer value {n} for graph input {i}. Tensor shape or type does not match.", ii.TensorNameDesc(), Inputs[i].TensorNameDesc());
+                    }
                 }
             }
         }
         return requiredInputs;
     }
 
-    public bool ResolveInputs(ITensor[] userInputs)
+    public bool ResolveInputs(ITensor[] userInputs, bool useInitializers)
     {
         var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
-        var requiredInputs = GetRequiredInputs();   
+        var requiredInputs = GetRequiredInputs(useInitializers);   
         Info("{uic} user input(s) required for graph execution: {uig}.", requiredInputs.Count, requiredInputs.Select(ui => ui.Value.TensorNameDesc()));
         if (userInputs.Length != requiredInputs.Count)
         {
@@ -97,10 +100,10 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public bool ResolveInputs(Dictionary<string, ITensor> userInputs)
+    public bool ResolveInputs(Dictionary<string, ITensor> userInputs, bool useInitializers)
     {
         var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
-        var requiredInputs = GetRequiredInputs();
+        var requiredInputs = GetRequiredInputs(useInitializers);
         Info("{uic} user input(s) required for graph execution: {uig}.", requiredInputs.Count, requiredInputs.Select(ui => ui.Value.TensorNameDesc()));
         if (userInputs.Count != requiredInputs.Count)
         {
@@ -125,24 +128,24 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public bool ResolveNodeExecuteInputs(Node node, ITensor[] userInputs)
+    public bool ResolveNodeExecuteInputs(Node node, ITensor[] userInputs, bool useInitializers)
     {
         var op = Begin("Resolving {c} node inputs for execution", node.Inputs.Length);
         var requiredInputs = new List<string>();
         foreach(var i in node.Inputs)
         {
-            if (!Initializers.ContainsKey(i))
+            if (useInitializers && Initializers.ContainsKey(i))
             {
-                requiredInputs.Add(i);  
+                Inputs[i] = Initializers[i];  
             }
             else
             {
-                Inputs[i] = Initializers[i];
+                requiredInputs.Add(i);
             }
         }
         if (userInputs.Length != requiredInputs.Count)
         {
-            Error("{uic} user input(s) required for node execution:{i} but only {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
+            Error("{uic} user input(s) required for node execution:{i} but {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
             op.Abandon();
             return false;
         }
@@ -155,24 +158,24 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public bool ResolveNodeExecuteInputs(Node node, Dictionary<string, ITensor> userInputs)
+    public bool ResolveNodeExecuteInputs(Node node, Dictionary<string, ITensor> userInputs, bool useInitializers)
     {
         var op = Begin("Resolving {c} node inputs for execution", node.Inputs.Length);
         var requiredInputs = new List<string>();
         foreach (var i in node.Inputs)
         {
-            if (!Initializers.ContainsKey(i))
+            if (useInitializers && Initializers.ContainsKey(i))
             {
-                requiredInputs.Add(i);
+                Inputs[i] = Initializers[i];
             }
             else
             {
-                Inputs[i] = Initializers[i];
+                requiredInputs.Add(i);
             }
         }
         if (userInputs.Count != requiredInputs.Count)
         {
-            Error("{uic} user input(s) required for node execution:{i} but only {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.Value.TensorNameDesc()), userInputs.Count);
+            Error("{uic} user input(s) required for node execution:{i} but {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.Value.TensorNameDesc()), userInputs.Count);
             op.Abandon();
             return false;
         }
@@ -192,18 +195,18 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public bool Execute(object userInputs, ExecutionProvider provider = ExecutionProvider.CPU)
+    public bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU)
     {
         if (userInputs is ITensor[] uia)
         {
-            if (!ResolveInputs(uia))
+            if (!ResolveInputs(uia, useInitializers))
             {
                 return false;
             }
         }
         else if (userInputs is Dictionary<string, ITensor> uid)
         {
-            if (!ResolveInputs(uid))
+            if (!ResolveInputs(uid, useInitializers))
             {
                 return false;
             }
@@ -260,7 +263,7 @@ public class ComputationalGraph : Runtime
         return true;    
     }
 
-    public bool ExecuteNode(object userInputs, string nodeLabel, ExecutionProvider provider = ExecutionProvider.CPU)
+    public bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU)
     {
         var node = Nodes.FirstOrDefault(n => n.Name == nodeLabel);
         if (node.Name == "")
@@ -270,14 +273,14 @@ public class ComputationalGraph : Runtime
         }
         if (userInputs is ITensor[] uia)
         {
-            if (!ResolveNodeExecuteInputs(node, uia))
+            if (!ResolveNodeExecuteInputs(node, uia, useInitializers))
             {
                 return false;
             }
         }
         else if (userInputs is Dictionary<string, ITensor> uid)
         {
-            if (!ResolveNodeExecuteInputs(node, uid))
+            if (!ResolveNodeExecuteInputs(node, uid, useInitializers))
             {
                 return false;
             }

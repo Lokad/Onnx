@@ -149,6 +149,9 @@ def make_tensor_dictionary(tensors:Dict[str, ITensor]) -> Dictionary[str, ITenso
         dictionary.Add(key, value)
     return dictionary
     
+def ndarray_eq(a:np.ndarray, b:np.ndarray) -> bool:
+    return set(a.shape) == set(b.shape) and set(a.flatten()) == set(b.flatten())
+
 def zeros(dt:np.dtype, *dims) -> ITensor:
     dimsa = Array[int](dims)
     if dt == np.int32:

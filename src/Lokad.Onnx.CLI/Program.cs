@@ -291,7 +291,7 @@ class Program : Runtime
 
         if (node == "")
         {
-            if (graph.Execute(ui))
+            if (graph.Execute(ui, true))
             {
                 Info("Printing outputs...");
                 foreach (var o in graph.Outputs.Values)
@@ -316,7 +316,7 @@ class Program : Runtime
         }
         else
         {
-            if (graph.ExecuteNode(ui, node))
+            if (graph.ExecuteNode(ui, node, true))
             {
                 Info("Printing outputs...");
                 foreach (var o in graph.Outputs.Values)
