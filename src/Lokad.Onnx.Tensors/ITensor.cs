@@ -64,13 +64,13 @@ namespace Lokad.Onnx
                 var idxB = i - broadcastRank + inB.Rank;
                 if (i < broadcastRank - inA.Rank)
                 {
-                    outA = outA.PadLeft();
-                    outA = outA.BroadcastDim(0, inB.Dims[idxB]);
+                    outA = outA.InsertDim(i);
+                    outA = outA.BroadcastDim(i, inB.Dims[idxB]);
                 }
                 else if (i < broadcastRank - inB.Rank)
                 {
-                    outB = outB.PadLeft();
-                    outB = outB.BroadcastDim(0, inA.Dims[idxA]);
+                    outB = outB.InsertDim(i);
+                    outB = outB.BroadcastDim(i, inA.Dims[idxA]);
                 }
                 else if (inA.Dims[idxA] == inB.Dims[idxB])
                 {

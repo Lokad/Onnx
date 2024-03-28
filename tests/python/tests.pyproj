@@ -24,6 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="test_backend.py" />
+    <Compile Include="_tf_test_node.py" />
     <Compile Include="test_tensors.py">
       <SubType>Code</SubType>
     </Compile>

@@ -111,9 +111,9 @@ def asNetArray(npArray:np.ndarray[Any]) -> Array:
     return netArray
 
 def make_tensor_from_ndarray(a:np.ndarray[Any]) -> ITensor:
-    if (a.dtype == np.int8):
+    if (a.dtype == np.uint8):
         return Tensors.MakeTensor[System.Byte](asNetArray(a))
-    elif (a.dtype == np.uint8):
+    elif (a.dtype == np.int8):
         return Tensors.MakeTensor[System.SByte](asNetArray(a))
     elif (a.dtype == np.int16):
         return Tensors.MakeTensor[System.Int16](asNetArray(a))

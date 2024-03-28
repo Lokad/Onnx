@@ -83,11 +83,19 @@ public struct Node
         OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool?>("allow_zero")),
         
         OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1)),
-        
+
+        OpType.Sub => CPU.Sub(InputTensor(graph, 0), InputTensor(graph, 1)),
+
+        OpType.Mul => CPU.Mul(InputTensor(graph, 0), InputTensor(graph, 1)),
+
+        OpType.Div => CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1)),
+
         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), 
             Attr<string>("auto_pad"), Attr<int[]>("dilations"), Attr<int?>("group"), Attr<int[]>("kernel_shape"), Attr<int[]>("pads"), Attr<int[]>("strides")),
         
         OpType.Relu => CPU.Relu(InputTensor(graph, 0)),
+
+        OpType.Erf => CPU.Erf(InputTensor(graph, 0)),
 
         OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), ArrayAttr<int, long>("dilations"), ArrayAttr<int, long>("kernel_shape"), ArrayAttr<int, long>("pads"), Attr<int?>("storage_order"), ArrayAttr<int, long>("strides")),
 

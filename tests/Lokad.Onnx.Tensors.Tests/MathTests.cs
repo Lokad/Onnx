@@ -23,6 +23,13 @@ public class MathTests
 
         Assert.Equal(d.Dimensions, new int[] { 1, 16, 28, 28 });
         Assert.Equal(2, d[0, 15, 27, 27]);
+
+        var a3 = Tensor<float>.Ones(3, 4, 5);
+        var b3 = Tensor<float>.Ones(5);
+        Assert.True(Tensor<float>.Broadcast(a3, b3, out var a4, out var b4));
+        Assert.Equal(a4.Dimensions, new int[] { 3, 4, 5 });
+        var e = Tensor<float>.Add(a4, b4);
+
     }
 
 

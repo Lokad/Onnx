@@ -1,9 +1,12 @@
 import os
 from typing import Dict
 
+import math
+
 import numpy as np
 import onnx
 from onnx.reference import ReferenceEvaluator
+from onnx.backend.test.case.node import expect
 
 from interop import backend
 
@@ -13,6 +16,23 @@ mnist4 = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests",
 onnx_model_file = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "models", "mnist-8.onnx")
 
 backend.set_debug_mode()
+
+def _get_rnd_float32(low=-1.0, high=1.0, shape=None):
+    output = np.random.uniform(low, high, shape)
+    if shape is None:
+      return np.float32(output)
+    else:
+      return output.astype(np.float32)
+
+def _get_rnd_float16(low=-1.0, high=1.0, shape=None):
+    output = np.random.uniform(low, high, shape)
+    if shape is None:
+      return np.float16(output)
+    else:
+      return output.astype(np.float16)
+
+def _get_rnd_int(low, high=None, shape=None, dtype=np.int32):
+    return np.random.randint(low, high, size=shape, dtype=dtype)
 
 def reference_eval_node(node:onnx.NodeProto, args:Dict[str, np.ndarray]):
     sess = ReferenceEvaluator(node)
@@ -101,3 +121,60 @@ def test_mnist_model_run():
     r = rep.run_node(node, [mnist4], file_args=[0], use_initializers=True)
     ref_r = reference_eval_node(node, {'Input3': rep.get_input_ndarray_from_file_arg(mnist4), 'Parameter5': rep.get_initializer('Parameter5')})
     np.testing.assert_almost_equal(ref_r[0], r[0], decimal=4)
+
+def test_add():
+    node_def = onnx.helper.make_node("Add", ["X", "Y"], ["Z"], "Add")
+    x = _get_rnd_float32(shape=[5, 10, 5, 5])
+    y = _get_rnd_float32(shape=[10, 1, 1])
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"],
+                                   np.add(x, y.reshape([1, 10, 1, 1])))
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+    y = np.random.randn(5).astype(np.float32)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"],
+                                   np.add(x, y))
+
+def test_sub():
+    node_def = onnx.helper.make_node("Sub", ["X", "Y"], ["Z"], "Sub1")
+    x = _get_rnd_float32(shape=[10, 10])
+    y = _get_rnd_float32(shape=[10, 10])
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], np.subtract(x, y))
+
+    x = np.array([1, 2, 3]).astype(np.float32)
+    y = np.array([3, 2, 1]).astype(np.float32)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x - y)
+
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+    y = np.random.randn(3, 4, 5).astype(np.float32)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x - y)
+
+    x = np.random.randint(12, 24, size=(3, 4, 5), dtype=np.int32)
+    y = np.random.randint(12, size=(3, 4, 5), dtype=np.int32)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x - y)
+
+
+def test_mul():
+    node_def = onnx.helper.make_node("Mul", ["X", "Y"], ["Z"], "Mul1")
+    x = _get_rnd_float32(shape=[5, 10, 5, 5])
+    y = _get_rnd_float32(shape=[10, 1, 1])
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"],
+                                    np.multiply(x, y.reshape([1, 10, 1, 1])))
+def test_div():
+    node_def = onnx.helper.make_node("Div", ["X", "Y"], ["Z"], "Div1")
+    x = _get_rnd_float32(shape=[10, 10])
+    y = _get_rnd_float32(shape=[10, 10])
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], np.divide(x, y))
+
+def test_erf():
+    node_def = onnx.helper.make_node("Erf", ["X"], ["Y"], "Erf1")
+    x = _get_rnd_float32(shape=[3, 4, 5])
+    output = backend.run_node(node_def, [x])
+    exp_output = np.vectorize(math.erf)(x).astype(np.float32)
+    np.testing.assert_allclose(output['Y'], exp_output, rtol=1e-6, atol=1e-6)

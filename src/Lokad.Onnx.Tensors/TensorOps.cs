@@ -70,13 +70,13 @@ where T : struct
             var idxB = i - broadcastRank + inB.Rank;
             if (i < broadcastRank - inA.Rank)
             {
-                outA = outA.PadLeft();
-                outA = outA.BroadcastDim(0, inB.Dimensions[idxB]);
+                outA = outA.InsertDim(i);
+                outA = outA.BroadcastDim(i, inB.Dimensions[idxB]);
             }
             else if (i < broadcastRank - inB.Rank)
             {
-                outB = outB.PadLeft();
-                outB = outB.BroadcastDim(0, inA.Dimensions[idxA]);
+                outB = outB.InsertDim(i);
+                outB = outB.BroadcastDim(i, inA.Dimensions[idxA]);
             }
             else if (inA.Dimensions[idxA] == inB.Dimensions[idxB])
             {
@@ -156,6 +156,14 @@ where T : struct
     public static Tensor<double> Subtract(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l - r, y);
 
     public static Tensor<double> Subtract(Tensor<double> x, double y) => x.Apply(l => l - y);
+
+    public static Tensor<int> Subtract(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => l - r, y);
+
+    public static Tensor<int> Subtract(Tensor<int> x, int y) => x.Apply(l => l - y);
+
+    public static Tensor<int> Multiply(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => l * r, y);
+
+    public static Tensor<int> Multiply(Tensor<int> x, int y) => x.Apply(l => l * y);
 
     public static Tensor<float> Multiply(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l * r, y);
 

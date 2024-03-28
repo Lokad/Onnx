@@ -23,7 +23,10 @@ public class CPUExecutionProvider
         OpType.MaxPool,
         OpType.MatMul,
         OpType.Sqrt,
-        OpType.Div
+        OpType.Div,
+        OpType.Sub,
+        OpType.Mul,
+        OpType.Erf
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -76,6 +79,49 @@ public class CPUExecutionProvider
         }
     }
 
+    public static OpResult Sub(ITensor? A, ITensor? B)
+    {
+        var op = OpType.Sub;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        if (!ITensor.Broadcast(A, B, out var bA, out var bB))
+        {
+            return CannotBroadcast(op, A, B);
+        }
+        switch (A.ElementType)
+        {
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Subtract((Tensor<int>)bA, (Tensor<int>)bB));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Subtract((Tensor<float>)bA, (Tensor<float>)bB));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Subtract((Tensor<double>)bA, (Tensor<double>)bB));
+            default: return InputTypeNotSupported(OpType.Add, nameof(A), A);
+        }
+    }
+
+    public static OpResult Mul(ITensor? A, ITensor? B)
+    {
+        var op = OpType.Mul;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        if (!ITensor.Broadcast(A, B, out var bA, out var bB))
+        {
+            return CannotBroadcast(op, A, B);
+        }
+        switch (A.ElementType)
+        {
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Multiply((Tensor<int>)bA, (Tensor<int>)bB));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Multiply((Tensor<float>)bA, (Tensor<float>)bB));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Multiply((Tensor<double>)bA, (Tensor<double>)bB));
+            default: return InputTypeNotSupported(op, nameof(A), A);
+        }
+    }
     public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad = null, int[]? dilations = null, int? group = null, int[]? kernel_shape = null, int[]? pads = null, int[]? strides = null)
     {
         var op = OpType.Conv;
@@ -329,6 +375,30 @@ public class CPUExecutionProvider
             }
         }
         return OpResult.Success(OpType.Broadcast, new[] { outA, outB });
+    }
+
+    public static OpResult Erf(ITensor? X)
+    {
+        var op = OpType.Erf;
+        if (X is null) return MissingInput(op, nameof(X));
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Erf((Tensor<float>)X));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Erf((Tensor<double>)X));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult Softmax(ITensor? X)
+    {
+        var op = OpType.Softmax;
+        if (X is null) return MissingInput(op, nameof(X));
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Erf((Tensor<float>)X));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Erf((Tensor<double>)X));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
     }
 }
 

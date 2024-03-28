@@ -152,11 +152,9 @@ class LokadOnnxBackend(Backend):
     @classmethod
     def run_node(cls, node: onnx.NodeProto, inputs: Any, device: str = "CPU", outputs_info: Optional[Sequence[Tuple[np.dtype, Tuple[int, ...]]]] = None,**kwargs: Dict[str, Any],) -> Optional[Tuple[Any, ...]]:
         super(LokadOnnxBackend, cls).run_node(node, inputs, device, outputs_info)
-        
-        graph_inputs = []
-        graph_outputs = []
-        node_inputs_list = []
-        node_inputs_dict = {}
+    
+        if node.name == None or node.name == '':
+            raise ValueError('The node definition must have a name.')
         file_args = kwargs['file_args'] if 'file_args' in kwargs else []
         save_file_arg = kwargs['save_file_arg'] if 'save_file_arg' in kwargs else False
         if not isinstance(file_args, list):
@@ -164,6 +162,11 @@ class LokadOnnxBackend(Backend):
         if not isinstance(save_file_arg, bool):
             raise TypeError(f'The save_file_arg argument must be type dict, not {type(save_file_arg)}')
         
+        graph_inputs = []
+        graph_outputs = []
+        node_inputs_list = []
+        node_inputs_dict = {}
+
         if isinstance(inputs, list):
             for n, i in enumerate(node.input):
                 v = tensors.make_ndarray_from_tensor(Graph.GetInputTensorFromFileArg(inputs[n], save_file_arg)) if n in file_args else inputs[n]
