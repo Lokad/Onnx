@@ -143,10 +143,10 @@ class LokadOnnxBackend(Backend):
     def prepare(cls, model:onnx.ModelProto, device:str='CPU', **kwargs) -> LokadOnnxRep:
         super(LokadOnnxBackend, cls).prepare(model, device, **kwargs)
         
-        name = model.graph.name + "_" + util.generate_random_filename()
-        onnx.save(model, name)
-        graph = load_graph(name)
-        os.remove(name)
+        #name = model.graph.name + "_" + util.generate_random_filename()
+        #onnx.save(model, name)
+        graph = load_graph(model.SerializeToString())
+        #os.remove(name)
         return LokadOnnxRep(model, graph)
     
     @classmethod
@@ -204,9 +204,10 @@ class LokadOnnxBackend(Backend):
     def get_input_ndarray_from_file_arg(cls, arg:str, save_input=False):
         i = Graph.GetInputTensorFromFileArg(arg, save_input)
         return tensors.make_ndarray_from_tensor(i) if i != None else None
-
-def load_graph(file_path:str) -> ComputationalGraph:
-    return Graph.LoadFromFile(file_path)
+    
+    @classmethod
+    def load_graph(cls, model) -> ComputationalGraph:
+        return Graph.Load(model)
 
 prepare = LokadOnnxBackend.prepare
 
@@ -221,3 +222,5 @@ supports_device = LokadOnnxBackend.supports_device
 set_debug_mode = LokadOnnxBackend.set_debug_mode
 
 get_input_ndarray_from_file_arg = LokadOnnxBackend.get_input_ndarray_from_file_arg
+
+load_graph = LokadOnnxBackend.load_graph

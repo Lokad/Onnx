@@ -26,7 +26,8 @@ public class CPUExecutionProvider
         OpType.Div,
         OpType.Sub,
         OpType.Mul,
-        OpType.Erf
+        OpType.Erf,
+        OpType.Transpose
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -72,10 +73,11 @@ public class CPUExecutionProvider
         }
         switch (A.ElementType)
         {
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Add((Tensor<byte>)bA, (Tensor<byte>)bB));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Add((Tensor<int>)bA, (Tensor<int>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)bA, (Tensor<double>)bB));
-            default: return InputTypeNotSupported(OpType.Add, nameof(A), A);
+            default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
 
@@ -94,10 +96,11 @@ public class CPUExecutionProvider
         }
         switch (A.ElementType)
         {
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Subtract((Tensor<byte>)bA, (Tensor<byte>)bB));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Subtract((Tensor<int>)bA, (Tensor<int>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Subtract((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Subtract((Tensor<double>)bA, (Tensor<double>)bB));
-            default: return InputTypeNotSupported(OpType.Add, nameof(A), A);
+            default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
 
@@ -116,12 +119,36 @@ public class CPUExecutionProvider
         }
         switch (A.ElementType)
         {
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Multiply((Tensor<byte>)bA, (Tensor<byte>)bB));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Multiply((Tensor<int>)bA, (Tensor<int>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Multiply((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Multiply((Tensor<double>)bA, (Tensor<double>)bB));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
+
+    public static OpResult Div(ITensor? A, ITensor? B)
+    {
+        var op = OpType.Div;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        if (!ITensor.Broadcast(A, B, out var bA, out var bB))
+        {
+            return CannotBroadcast(op, A, B);
+        }
+        switch (A.ElementType)
+        {
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Divide((Tensor<byte>)bA, (Tensor<byte>)bB));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Divide((Tensor<float>)bA, (Tensor<float>)bB));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Divide((Tensor<double>)bA, (Tensor<double>)bB));
+            default: return InputTypeNotSupported(op, nameof(A), A);
+        }
+    }
+
     public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad = null, int[]? dilations = null, int? group = null, int[]? kernel_shape = null, int[]? pads = null, int[]? strides = null)
     {
         var op = OpType.Conv;
@@ -263,65 +290,6 @@ public class CPUExecutionProvider
         }
     }
 
-    public static OpResult Div(ITensor? A, ITensor? B)
-    {
-        var op = OpType.Div;
-        if (A is null) return MissingInput(op, nameof(A));
-        if (B is null) return MissingInput(op, nameof(B));
-        if (A.ElementType != B.ElementType)
-        {
-            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
-        }
-        if (!ITensor.Broadcast(A, B, out var bA, out var bB))
-        {
-            return CannotBroadcast(op, A, B);
-        }
-        switch (A.ElementType)
-        {
-            case TensorElementType.Float: return Success(op, Tensor<float>.Divide((Tensor<float>)bA, (Tensor<float>)bB));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Divide((Tensor<double>)bA, (Tensor<double>)bB));
-            default: return InputTypeNotSupported(op, nameof(A), A);
-        }
-    }
-
-    public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
-    {
-        Tensor<long>? shape = null;
-        if (axes is not null)
-        {
-            if (axes.Dims.Length != 1)
-            {
-                return OpResult.Failure(OpType.Squeeze, $"The axes tensor  {axes.Name} must have dimension 1.");
-            }
-            else if (axes.ElementType != TensorElementType.Int64)
-            {
-                return OpResult.WrongInputType(OpType.Squeeze, nameof(axes), TensorElementType.Int64, axes);
-            }
-            else
-            {
-                shape = (Tensor<long>)axes;
-            }
-        }
-
-        switch (input.ElementType)
-        {
-            case TensorElementType.Bool: return Squeeze((Tensor<bool>)input, shape);
-            case TensorElementType.Int8: return Squeeze((Tensor<byte>)input, shape);
-            case TensorElementType.UInt8: return Squeeze((Tensor<sbyte>)input, shape);
-            case TensorElementType.Int16: return Squeeze((Tensor<short>)input, shape);
-            case TensorElementType.UInt16: return Squeeze((Tensor<ushort>)input, shape);
-            case TensorElementType.Int32: return Squeeze((Tensor<int>)input, shape);
-            case TensorElementType.UInt32: return Squeeze((Tensor<uint>)input, shape);
-            case TensorElementType.Int64: return Squeeze((Tensor<long>)input, shape);
-            case TensorElementType.UInt64: return Squeeze((Tensor<ulong>)input, shape);
-            case TensorElementType.Float: return Squeeze((Tensor<float>)input, shape);
-            case TensorElementType.Double: return Squeeze((Tensor<double>)input, shape);
-            case TensorElementType.Float16: return Squeeze((Tensor<Half>)input, shape);
-            case TensorElementType.BFloat16: return Squeeze((Tensor<BFloat16>)input, shape);
-            case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, shape);
-            default: return OpResult.NotSupported(OpType.Squeeze);
-        }
-    }
 
     public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes = null) where T : struct
     {
@@ -337,6 +305,45 @@ public class CPUExecutionProvider
 
         }
         return OpResult.Success(OpType.Squeeze, new[] { input.Reshape(squeezedDims.ToArray()) });
+    }
+
+    public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
+    {
+        Tensor<long>? shape = null;
+        if (axes is not null)
+        {
+            if (axes.Dims.Length != 1)
+            {
+                return OpResult.Failure(OpType.Transpose, $"The axes tensor  {axes.Name} must have dimension 1.");
+            }
+            else if (axes.ElementType != TensorElementType.Int64)
+            {
+                return OpResult.WrongInputType(OpType.Transpose, nameof(axes), TensorElementType.Int64, axes);
+            }
+            else
+            {
+                shape = (Tensor<long>)axes;
+            }
+        }
+
+        switch (input.ElementType)
+        {
+            case TensorElementType.Bool: return Squeeze((Tensor<bool>)input, (Tensor<long>?) shape);
+            case TensorElementType.Int8: return Squeeze((Tensor<byte>)input, shape);
+            case TensorElementType.UInt8: return Squeeze((Tensor<sbyte>)input, shape);
+            case TensorElementType.Int16: return Squeeze((Tensor<short>)input, shape);
+            case TensorElementType.UInt16: return Squeeze((Tensor<ushort>)input, shape);
+            case TensorElementType.Int32: return Squeeze((Tensor<int>)input, shape);
+            case TensorElementType.UInt32: return Squeeze((Tensor<uint>)input, shape);
+            case TensorElementType.Int64: return Squeeze((Tensor<long>)input, shape);
+            case TensorElementType.UInt64: return Squeeze((Tensor<ulong>)input, shape);
+            case TensorElementType.Float: return Squeeze((Tensor<float>)input, shape);
+            case TensorElementType.Double: return Squeeze((Tensor<double>)input, shape);
+            case TensorElementType.Float16: return Squeeze((Tensor<Half>)input, shape);
+            case TensorElementType.BFloat16: return Squeeze((Tensor<BFloat16>)input, shape);
+            case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, shape);
+            default: return OpResult.NotSupported(OpType.Squeeze);
+        }
     }
 
     public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB) where T : struct
@@ -399,6 +406,31 @@ public class CPUExecutionProvider
             case TensorElementType.Double: return Success(op, Tensor<double>.Erf((Tensor<double>)X));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
+    }
+
+    public static OpResult Transpose(ITensor? data, int[]? perm = null)
+    {
+        var op = OpType.Transpose;
+        if (data is null) return MissingInput(op, nameof(data));
+        switch (data.ElementType)
+        {
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Transpose((Tensor<bool>)data, perm));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Transpose((Tensor<sbyte>)data, perm));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Transpose((Tensor<byte>)data, perm));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Transpose((Tensor<short>)data, perm));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Transpose((Tensor<ushort>)data, perm));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Transpose((Tensor<int>)data, perm));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Transpose((Tensor<uint>)data, perm));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Transpose((Tensor<long>)data, perm));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Transpose((Tensor<ulong>)data, perm));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Transpose((Tensor<float>)data, perm));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Transpose((Tensor<double>)data, perm));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Transpose((Tensor<Half>)data, perm));
+            case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Transpose((Tensor<BFloat16>)data, perm));
+            case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Transpose((Tensor<System.Numerics.Complex>)data, perm));
+            default: return NotSupported(op);
+        }
+
     }
 }
 

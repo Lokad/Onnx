@@ -137,6 +137,10 @@ where T : struct
 
     public static bool BroadcastShape(Tensor<T> x, Tensor<T> y, out int[] b) => BroadcastShape(x.Dimensions, y.Dimensions, out b);
 
+    public static Tensor<byte> Add(Tensor<byte> x, Tensor<byte> y) => x.Apply((l, r) => (byte) (l + r), y);
+
+    public static Tensor<byte> Add(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l + y));
+
     public static Tensor<int> Add(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => l + r, y);
 
     public static Tensor<int> Add(Tensor<int> x, int y) => x.Apply(l => l + y);
@@ -148,6 +152,10 @@ where T : struct
     public static Tensor<double> Add(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l + r, y);
 
     public static Tensor<double> Add(Tensor<double> x, double y) => x.Apply(l => l + y);
+
+    public static Tensor<byte> Subtract(Tensor<byte> x, Tensor<byte> y) => x.Apply((l, r) => (byte)(l - r), y);
+
+    public static Tensor<byte> Subtract(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l - y));
 
     public static Tensor<float> Subtract(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l - r, y);
 
@@ -161,6 +169,10 @@ where T : struct
 
     public static Tensor<int> Subtract(Tensor<int> x, int y) => x.Apply(l => l - y);
 
+    public static Tensor<byte> Multiply(Tensor<byte> x, Tensor<byte> y) => x.Apply((l, r) => (byte)(l * r), y);
+
+    public static Tensor<byte> Multiply(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l * y));
+
     public static Tensor<int> Multiply(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => l * r, y);
 
     public static Tensor<int> Multiply(Tensor<int> x, int y) => x.Apply(l => l * y);
@@ -172,6 +184,10 @@ where T : struct
     public static Tensor<double> Multiply(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l * r, y);
 
     public static Tensor<double> Multiply(Tensor<double> x, double y) => x.Apply(l => l * y);
+
+    public static Tensor<byte> Divide(Tensor<byte> x, Tensor<byte> y) => x.Apply((l, r) => (byte)(l / r), y);
+
+    public static Tensor<byte> Divide(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l / y));
 
     public static Tensor<float> Divide(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l / r, y);
 
@@ -933,4 +949,43 @@ where T : struct
     public static Tensor<float> Erf(Tensor<float> x) => x.Apply(MathOps.Erf);
 
     public static Tensor<double> Erf(Tensor<double> x) => x.Apply(MathOps.Erf);
+
+    public static Tensor<T> Transpose(Tensor<T> data, int[] perm = null)
+    {
+        if (perm != null && perm.Length != data.Rank)
+        {
+            throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {data.Rank}.");
+        }
+        if (perm != null && !perm.All(p => p < data.Rank))
+        {
+            throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(p => p >= data.Rank)} exceeds the number of dimensions in the tensor.");
+        }
+        if (perm != null && !ArrayUtilities.CheckNoRepeatedDims(perm))
+        {
+            throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
+        }
+
+        if (perm is null)
+        {
+            perm = data.dimensions.Select((_, n) => n).Reverse().ToArray();
+        }
+        else
+        {
+            perm = perm.Select(p => ArrayUtilities.HandleNegativeDim(data.Rank, p)).ToArray();
+        }
+
+        if (data.Rank <= 1)
+        {
+            return data.Clone();
+        }
+        var shape = perm.Select((i, _) => data.dimensions[i]).ToArray();
+        var r = DenseTensor<T>.OfShape(shape);
+        var di = data.GetDimensionsIterator();
+        foreach (var index in di)
+        {
+            var permindex = index.Select((_,n) => index[perm[n]]).ToArray();
+            r[permindex] = data[index];
+        }
+        return r;
+    }
 }

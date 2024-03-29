@@ -6,7 +6,9 @@ using System.Linq;
 
 public class Graph : Runtime
 {
-    public static ComputationalGraph? LoadFromFile(string filepath) => Model.LoadFromFile(filepath);
+    public static ComputationalGraph? Load(string filepath) => Model.Load(filepath);
+
+    public static ComputationalGraph? Load(byte[] buffer) => Model.Load(buffer);
 
     public static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput = false) => Data.GetInputTensorsFromFileArgs(args, saveInput);
 

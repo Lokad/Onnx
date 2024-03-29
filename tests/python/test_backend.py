@@ -2,11 +2,11 @@ import os
 from typing import Dict
 
 import math
+import itertools
 
 import numpy as np
 import onnx
 from onnx.reference import ReferenceEvaluator
-from onnx.backend.test.case.node import expect
 
 from interop import backend
 
@@ -152,8 +152,8 @@ def test_sub():
     output = backend.run_node(node_def, [x, y])
     np.testing.assert_almost_equal(output["Z"], x - y)
 
-    x = np.random.randint(12, 24, size=(3, 4, 5), dtype=np.int32)
-    y = np.random.randint(12, size=(3, 4, 5), dtype=np.int32)
+    x = np.random.randint(12, 24, size=(3, 4, 5), dtype=np.uint8)
+    y = np.random.randint(12, size=(3, 4, 5), dtype=np.uint8)
     output = backend.run_node(node_def, [x, y])
     np.testing.assert_almost_equal(output["Z"], x - y)
 
@@ -165,6 +165,26 @@ def test_mul():
     output = backend.run_node(node_def, [x, y])
     np.testing.assert_almost_equal(output["Z"],
                                     np.multiply(x, y.reshape([1, 10, 1, 1])))
+    x = np.array([1, 2, 3]).astype(np.float32)
+    y = np.array([4, 5, 6]).astype(np.float32)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x * y)
+
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+    y = np.random.randn(3, 4, 5).astype(np.float32)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x * y)
+
+    x = np.random.randint(4, size=(3, 4, 5), dtype=np.uint8)
+    y = np.random.randint(24, size=(3, 4, 5), dtype=np.uint8)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x * y)
+
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+    y = np.random.randn(5).astype(np.float32)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x * y)
+
 def test_div():
     node_def = onnx.helper.make_node("Div", ["X", "Y"], ["Z"], "Div1")
     x = _get_rnd_float32(shape=[10, 10])
@@ -172,9 +192,58 @@ def test_div():
     output = backend.run_node(node_def, [x, y])
     np.testing.assert_almost_equal(output["Z"], np.divide(x, y))
 
+    x = np.array([3, 4]).astype(np.float32)
+    y = np.array([1, 2]).astype(np.float32)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x / y)
+
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+    y = np.random.rand(3, 4, 5).astype(np.float32) + 1.0
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x / y)
+
+    x = np.random.randint(24, size=(3, 4, 5), dtype=np.uint8)
+    y = np.random.randint(24, size=(3, 4, 5), dtype=np.uint8) + 1
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x // y)
+
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+    y = np.random.rand(5).astype(np.float32) + 1.0
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], x / y)
+
 def test_erf():
     node_def = onnx.helper.make_node("Erf", ["X"], ["Y"], "Erf1")
     x = _get_rnd_float32(shape=[3, 4, 5])
     output = backend.run_node(node_def, [x])
     exp_output = np.vectorize(math.erf)(x).astype(np.float32)
     np.testing.assert_allclose(output['Y'], exp_output, rtol=1e-6, atol=1e-6)
+
+def test_transpose():
+    node_def = onnx.helper.make_node("Transpose", ["X"], ["Y"], perm=[0, 2, 1], name="Transpose")
+    x = _get_rnd_float32(shape=[1000]).reshape([10, 10, 10])
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_almost_equal(output["Y"], np.transpose(x, (0, 2, 1)))
+
+    shape = (2, 3, 4)
+    data = np.random.random_sample(shape).astype(np.float32)
+    node_def = onnx.helper.make_node(
+        "Transpose", inputs=["data"], outputs=["transposed"], name="Transpose"
+    )
+    transposed = np.transpose(data)
+    output = backend.run_node(node_def, [data])
+    np.testing.assert_almost_equal(output["transposed"], transposed)
+
+    permutations = list(itertools.permutations(np.arange(len(shape))))
+    for _, permutation in enumerate(permutations):
+        node_def = onnx.helper.make_node(
+            "Transpose",
+            inputs=["data"],
+            outputs=["transposed"],
+            perm=permutation,
+            name="Transposed"
+        )
+        output = backend.run_node(node_def, [data])
+        transposed = np.transpose(data, permutation)
+        np.testing.assert_almost_equal(output["transposed"], transposed)
+    

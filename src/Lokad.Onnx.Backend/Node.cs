@@ -8,7 +8,7 @@ using System.Linq;
 using static Lokad.Onnx.OpResult;
 using CPU = CPUExecutionProvider;
 
-public struct Node
+public partial struct Node
 {
     public long ID;
     public string Name;
@@ -37,6 +37,9 @@ public struct Node
         }
 
     }
+
+    public int[]? Ints(string name) => ArrayAttr<int, long>(name);
+
     public ITensor? InputTensor(ComputationalGraph graph, int index) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : null;
 
     public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU) 
@@ -102,7 +105,9 @@ public struct Node
         OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1)),
 
         OpType.Squeeze => CPU.Squeeze(graph.GetOpVersion(), graph.GetInputTensor(Inputs[0]), Attr<ITensor>("axes")),
-        
+
+        OpType.Transpose => CPU.Transpose(graph.GetInputTensor(Inputs[0]), Ints("perm")),
+
         _ => NotSupported(Op)
     };
 }

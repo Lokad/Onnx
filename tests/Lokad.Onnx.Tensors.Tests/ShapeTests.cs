@@ -103,5 +103,19 @@ namespace Lokad.Onnx.Tensors.Tests
             Y = Tensor<int>.Reshape(X, s);
             Assert.Equal(new int[] { 2, 3, 1, 4 }, Y.Dimensions.ToArray());
         }
+
+        [Fact]
+        public void CanTranspose()
+        {
+            var X = DenseTensor<int>.Ones(2, 3, 4);
+            var tX = Tensor<int>.Transpose(X);
+            Assert.Equal(2, tX.Dimensions[2]);
+            tX = Tensor<int>.Transpose(X, new int[] { 2, 0, 1 });
+            Assert.Equal(4, tX.Dimensions[0]);
+            Assert.Equal(3, tX.Dimensions[2]);
+            Assert.Throws<ArgumentException>(() => Tensor<int>.Transpose(X, new int[] { 0, 0, 2 }));
+            Assert.Throws<ArgumentException>(() => Tensor<int>.Transpose(X, new int[] { 0 }));
+            Assert.Throws<ArgumentException>(() => Tensor<int>.Transpose(X, new int[] { 2, 6 }));
+        }
     }
 }

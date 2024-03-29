@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Lokad.Onnx
 {
@@ -297,6 +298,35 @@ namespace Lokad.Onnx
             }
             while (stack.Count > 0);
             return list.ToArray();
+        }
+
+        public static int HandleNegativeDim(int ndims, int axis)
+        {
+            if (axis >= 0)
+            {
+                return axis;
+            }
+            else
+            {
+                return ndims + axis;
+            }
+        }
+
+        public static bool CheckNoRepeatedDims(int[] dims)
+        {
+            var check = dims.Select(_ => -1).ToArray();
+            for (int i = 0; i < dims.Length; i++) 
+            {
+                if (check[dims[i]] != -1)
+                {
+                    return false;
+                }
+                else
+                {
+                    check[dims[i]] = i;
+                }
+            }
+            return true;
         }
     }
 }

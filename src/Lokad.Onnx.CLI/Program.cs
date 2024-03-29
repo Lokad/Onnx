@@ -147,7 +147,7 @@ class Program : Runtime
                 opfilter = op;  
             }
         }
-        var graph = Model.LoadFromFile(file);
+        var graph = Model.Load(file);
         if (graph is null)
         {
             Exit(ExitResult.INVALID_INPUT);
@@ -276,7 +276,7 @@ class Program : Runtime
     static void Run(string file, IEnumerable<string> inputs, string node="", bool saveInput=false, bool softmax=false)
     {
         ExitIfFileNotFound(file);
-        var graph = Model.LoadFromFile(file);
+        var graph = Model.Load(file);
         if (graph is null)
         {
             Exit(ExitResult.INVALID_INPUT);
