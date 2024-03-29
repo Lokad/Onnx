@@ -21,7 +21,7 @@ from Lokad.Onnx import ITensor, ComputationalGraph
 from Lokad.Onnx.Interop import Tensors,Graph
         
 class LokadOnnxRep(BackendRep):
-    def __init__(self, model:onnx.ModelProto, graph):
+    def __init__(self, model:onnx.ModelProto, graph:ComputationalGraph):
         super().__init__()
         self.model = model
         self.graph = graph
@@ -142,11 +142,7 @@ class LokadOnnxBackend(Backend):
     @classmethod
     def prepare(cls, model:onnx.ModelProto, device:str='CPU', **kwargs) -> LokadOnnxRep:
         super(LokadOnnxBackend, cls).prepare(model, device, **kwargs)
-        
-        #name = model.graph.name + "_" + util.generate_random_filename()
-        #onnx.save(model, name)
         graph = load_graph(model.SerializeToString())
-        #os.remove(name)
         return LokadOnnxRep(model, graph)
     
     @classmethod
