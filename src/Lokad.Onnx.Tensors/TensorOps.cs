@@ -971,7 +971,7 @@ where T : struct
         }
         else
         {
-            perm = perm.Select(p => ArrayUtilities.HandleNegativeDim(data.Rank, p)).ToArray();
+            perm = perm.Select(p => ArrayUtilities.HandleNegativeAxis(data.Rank, p)).ToArray();
         }
 
         if (data.Rank <= 1)
@@ -987,5 +987,31 @@ where T : struct
             r[permindex] = data[index];
         }
         return r;
+    }
+
+    public static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? axis = null)
+    {
+        if (axis is null)
+        {
+            axis = 0;
+        }
+        else
+        {
+            axis = ArrayUtilities.HandleNegativeAxis(data.Rank, axis.Value);
+        }
+        List<int> shape = new List<int>(data.Rank - 1 + indices.Rank);
+        for (int i = 0; i < axis; i++)
+        {
+            shape.Add(data.dimensions[i]);
+        }
+        for (int i = 0; i < indices.Rank; i++)
+        {
+            shape.Add(indices.dimensions[i]);
+        }
+        for (int i = axis.Value + 1; i < data.Rank; i++)
+        {
+            shape.Add(data.dimensions[i]);
+        }
+        throw new NotImplementedException();
     }
 }

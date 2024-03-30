@@ -27,8 +27,6 @@ namespace Lokad.Onnx
         #endregion
 
         #region Properties
-        public bool Initialized { get; protected set; }
-
         public static bool RuntimeInitialized { get; protected set; }
 
         public static bool DebugEnabled { get; set; }
@@ -139,28 +137,6 @@ namespace Lokad.Onnx
             return filename;
         }
 
-        [DebuggerStepThrough]
-        public void FailIfNotInitialized()
-        {
-            if (!Initialized)
-            {
-                throw new RuntimeNotInitializedException(this);
-            }
-        }
-
-        [DebuggerStepThrough]
-        public T FailIfNotInitialized<T>(Func<T> r) => Initialized ? r() : throw new RuntimeNotInitializedException(this);
-
-        [DebuggerStepThrough]
-        public static void SetProps<T>(T o, Dictionary<string, object> setprops)
-        {
-            PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            foreach (var kv in setprops)
-            {
-                properties.Where(x => x.Name == kv.Key).First().SetValue(o, kv.Value);
-            }
-        }
 
         [DebuggerStepThrough]
         public static object? GetProp(object o, string name)

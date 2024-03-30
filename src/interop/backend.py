@@ -150,7 +150,7 @@ class LokadOnnxBackend(Backend):
         super(LokadOnnxBackend, cls).run_node(node, inputs, device, outputs_info)
     
         if node.name == None or node.name == '':
-            raise ValueError('The node definition must have a name.')
+            node.name = 'node1'
         file_args = kwargs['file_args'] if 'file_args' in kwargs else []
         save_file_arg = kwargs['save_file_arg'] if 'save_file_arg' in kwargs else False
         if not isinstance(file_args, list):

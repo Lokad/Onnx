@@ -21,6 +21,14 @@ public partial struct Node
     public T? Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ? 
         (T)Attributes[name] : default(T);
 
+    public object? OneOfAttr(params string[] names)
+    {
+        var a = Attributes;
+        if (a is null) return null;
+        var name = names.FirstOrDefault(n => a.ContainsKey(n));
+        return name is null ? null : a[name];
+    }
+
     public T[]? ArrayAttr<T, U>(string name)   
     {
         if (Attributes is null) return null;
@@ -107,6 +115,8 @@ public partial struct Node
         OpType.Squeeze => CPU.Squeeze(graph.GetOpVersion(), graph.GetInputTensor(Inputs[0]), Attr<ITensor>("axes")),
 
         OpType.Transpose => CPU.Transpose(graph.GetInputTensor(Inputs[0]), Ints("perm")),
+
+        OpType.Constant => CPU.Constant(OneOfAttr("sparse_value", "value", "value_float", "value_floats", "value_int", "value_ints", "value_string", "value_strings")),
 
         _ => NotSupported(Op)
     };

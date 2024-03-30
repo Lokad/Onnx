@@ -45,7 +45,7 @@ namespace Lokad.Onnx
 
         public static OpResult MissingInput(OpType op, string name) => Failure(op, $"The required input parameter {name} is missing or null.");
 
-        public static OpResult MissingAttribute(OpType op, string name, string? msg) => Failure(op, $"The required attribute {name} is missing or null. " + msg ?? "");
+        public static OpResult MissingAttribute(OpType op, string name, string? msg = null) => Failure(op, $"The required attribute {name} is missing or null. " + msg ?? "");
 
         public static OpResult WrongInputType(OpType op, string name, TensorElementType type, ITensor input, string? msg = null) => Failure(op, $"The input tensor {input.Name} for parameter {name} has type {input.ElementType} but is required to be {type.ToString()}. " + msg ?? "");
 

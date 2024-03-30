@@ -1549,6 +1549,10 @@ namespace Lokad.Onnx
         /// <returns></returns>
         public string PrintData(bool includeWhitespace = true)
         {
+            if (Rank == 0)
+            {
+                return this.GetValue(0).ToString(); 
+            }
             var builder = new StringBuilder();
 
             var strides = ArrayUtilities.GetStrides(dimensions);

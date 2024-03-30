@@ -1996,7 +1996,7 @@ class TestNode(unittest.TestCase):
               defs.onnx_opset_version()))
 
     kernel_shape = [3, 3]
-    strides = [2, 2]test_matmul
+    strides = [2, 2]
     dilations = [3, 3]
     pads = [1, 1, 2, 2]
     ceil_mode = 1

@@ -300,7 +300,7 @@ namespace Lokad.Onnx
             return list.ToArray();
         }
 
-        public static int HandleNegativeDim(int ndims, int axis)
+        public static int HandleNegativeAxis(int ndims, int axis)
         {
             if (axis >= 0)
             {
@@ -327,6 +327,14 @@ namespace Lokad.Onnx
                 }
             }
             return true;
+        }
+
+        public static int[] GetShapeForAxis(int[] dims1, int[] dims2, int axis) 
+        {
+            var shape = new int[dims1.Length];
+            Array.Copy(dims1, shape, dims1.Length);
+            shape[axis] += dims2[axis];
+            return shape;
         }
     }
 }

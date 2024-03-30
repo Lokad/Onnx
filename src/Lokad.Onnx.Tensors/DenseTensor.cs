@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System;
 using System.Linq;
 using System.Runtime.Versioning;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Lokad.Onnx
 {
@@ -226,5 +227,7 @@ namespace Lokad.Onnx
         public static DenseTensor<T> OfShape(params int[] dims) => new DenseTensor<T>((ReadOnlySpan<int>) dims);
 
         public static DenseTensor<T> OfValues(Array data) => data.ToTensor<T>();
+
+        public static DenseTensor<T> Scalar(T value) => new DenseTensor<T>(new T[1] { value }, Array.Empty<int>());
     }
 }

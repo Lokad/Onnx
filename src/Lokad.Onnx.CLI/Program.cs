@@ -197,7 +197,7 @@ class Program : Runtime
             {
                 foreach (var kv in n.Attributes)
                 {
-                    Info("  {n}: {v}", kv.Key, kv.Value);
+                    Info("  {n}: {v}", kv.Key, GetAttributeValueDesc(kv.Value));
                 }
             }
         }
@@ -340,6 +340,21 @@ class Program : Runtime
             }
         }
     }
+
+    static string GetAttributeValueDesc(object value) =>
+        value switch
+        {
+            ITensor i => "tensor " + i.TensorNameDesc() + ":" + i.PrintData(),
+            int n => "int " + n.ToString(),
+            int[] na => "int[] " + na.Print(),
+            long l => "int64 " + l.ToString(),
+            long[] la => "int64[] " + la.Print(),
+            float f => "float " + f.ToString(),
+            float[] fa => "float[] " + fa.Print(),
+            string s => "string " + s,
+            string[] sa => "string[] " + sa.Print(),
+            _ => throw new NotSupportedException(value.GetType().Name), 
+        };
 
     static void PrintLogo()
     {

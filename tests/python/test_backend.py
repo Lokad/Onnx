@@ -246,4 +246,30 @@ def test_transpose():
         output = backend.run_node(node_def, [data])
         transposed = np.transpose(data, permutation)
         np.testing.assert_almost_equal(output["transposed"], transposed)
+
+def test_constant():
+    shape = [16, 16]
+    values = np.random.randn(*shape).flatten().astype(float)
+    const2_onnx = onnx.helper.make_tensor("const2", onnx.TensorProto.DOUBLE, shape,
+                                     values)
+    node_def = onnx.helper.make_node("Constant", [], ["Y"], value=const2_onnx)
+    output = backend.run_node(node_def, [])
+    np.testing.assert_equal(output["Y"].shape, shape)
+    np.testing.assert_almost_equal(output["Y"].flatten(), values)
+
+    values = np.random.randn(5, 5).astype(np.float32)
+    node_def = onnx.helper.make_node(
+        "Constant",
+        inputs=[],
+        outputs=["values"],
+        value=onnx.helper.make_tensor(
+            name="const_tensor",
+            data_type=onnx.TensorProto.FLOAT,
+            dims=values.shape,
+            vals=values.flatten().astype(float),
+        ),
+    )
+    output = backend.run_node(node_def, [])
+    np.testing.assert_almost_equal(output["values"], values)
+
     

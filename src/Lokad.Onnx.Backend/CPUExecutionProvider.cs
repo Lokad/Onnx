@@ -27,7 +27,8 @@ public class CPUExecutionProvider
         OpType.Sub,
         OpType.Mul,
         OpType.Erf,
-        OpType.Transpose
+        OpType.Transpose,
+        OpType.Constant
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -431,6 +432,21 @@ public class CPUExecutionProvider
             default: return NotSupported(op);
         }
 
+    }
+
+    public static OpResult Constant(object? value)
+    {
+        var op = OpType.Constant;
+        if (value is null) return MissingAttribute(op, nameof(value));
+        switch (value)
+        {
+            case ITensor t: return Success(op, t);
+            case float f: return Success(op, DenseTensor<float>.Scalar(f));
+            case float[] fa: return Success(op, DenseTensor<float>.OfValues(fa));
+            case int i: return Success(op, DenseTensor<int>.Scalar(i));
+            case int[] ia: return Success(op, DenseTensor<int>.OfValues(ia));
+            default: return NotSupported(op);
+        }
     }
 }
 
