@@ -7,12 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 
 using static OpResult;
+
 public enum ExecutionProvider
 {
     CPU
 }
 
-public class CPUExecutionProvider
+public class CPUExecutionProvider : Runtime
 {
     public static List<OpType> SupportedOps { get; } = new List<OpType>()
     {
@@ -30,7 +31,8 @@ public class CPUExecutionProvider
         OpType.Transpose,
         OpType.Constant,
         OpType.Cast,
-        OpType.Concat
+        OpType.Concat,
+        OpType.Shape
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -500,6 +502,18 @@ public class CPUExecutionProvider
             case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Concat(inputs.CastA<Tensor<System.Numerics.Complex>>(), axis));
             default: return InputTypeNotSupported(op, "inputs", inputs[0]);
         }
+    }
+
+    public static OpResult Shape(ITensor? data, int? _start = null, int? _end = null)
+    {
+        var op = OpType.Shape;
+        if (data is null) return MissingInput(op, nameof(data));
+        var start = ArrayUtilities.HandleNegativeAxis(data.Rank, _start.HasValue ? _start.Value : 0);
+        var end = ArrayUtilities.HandleNegativeAxis(data.Rank, _end.HasValue ? _end.Value : data.Rank);
+        start = ArrayUtilities.Clamp(start, 0, data.Rank);
+        end = ArrayUtilities.Clamp(end, 0, data.Rank);  
+        var _shape = data.Dims.Convert<int, long>()[start..end];
+        return Success(op, DenseTensor<long>.OfValues(_shape));
     }
 }
 

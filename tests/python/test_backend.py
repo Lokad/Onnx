@@ -321,6 +321,60 @@ def test_concat():
             output = backend.run_node(node_def, values)
             np.testing.assert_almost_equal(output["output"], np.concatenate(values, axis))
 
+        for axis in range(-len(values[0].shape), 0):
+            in_args = ["value" + str(k) for k in range(len(values))]
+            node_def = onnx.helper.make_node(
+                "Concat", inputs=list(in_args), outputs=["output"], axis=axis
+            )
+            output = backend.run_node(node_def, values)
+            np.testing.assert_almost_equal(output["output"], np.concatenate(values, axis))
+
+def _shape_reference_impl(x, start=None, end=None):  # type: ignore
+    dims = x.shape[start:end]
+    return np.array(dims).astype(np.int64)
+    
+def _test_shape(_, xval, start=None, end=None):  # type: ignore
+    node_def = onnx.helper.make_node(
+        "Shape", inputs=["x"], outputs=["y"], start=start, end=end
+    )
+    output = backend.run_node(node_def, [xval], start=start)
+    np.testing.assert_almost_equal(output["y"], _shape_reference_impl(xval, start, end))
+        
+
+def test_shape():
+    node_def = onnx.helper.make_node("Shape", ["X"], ["Y"])
+    x = _get_rnd_float32(shape=[5, 10, 10, 3])
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_allclose(output["Y"], np.shape(x))
+
+    x = np.array(
+        [
+            [1, 2, 3],
+            [4, 5, 6],
+        ]
+    ).astype(np.float32)
+    _test_shape("_example", x) 
+
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+
+    _test_shape("", x)  # preserve names of original test cases
+
+    _test_shape("_start_1", x, 1)
+
+    _test_shape("_end_1", x, end=1)
+
+    _test_shape("_start_negative_1", x, start=-1)
+
+    _test_shape("_end_negative_1", x, end=-1)
+
+    _test_shape("_start_1_end_negative_1", x, start=1, end=-1)
+
+    _test_shape("_start_1_end_2", x, start=1, end=2)
+
+    _test_shape("_clip_start", x, start=-10)
+
+    _test_shape("_clip_end", x, end=10)
+
  
 
     

@@ -47,7 +47,12 @@ namespace Lokad.Onnx.Backend.Tests
             Assert.Equal(OpStatus.Success, r.Status);
         }
 
-
+        [Fact]
+        public void CanGetShape()
+        {
+            var t = DenseTensor<float>.OfShape(3, 4, 5);
+            var o = CPU.Shape(t, 1);
+        }
         
     }
 }

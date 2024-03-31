@@ -34,62 +34,41 @@ public partial struct Node
         return name is null ? null : a[name];
     }
 
-    public T? Attr<T, U>(string name, T? d = default(T))
+    public int? Int(string name, int? d = null)
     {
         if (Attributes is null) return d;
-        if (HasAttr<T>(name)) return Attr<T>(name);
-        if (!HasAttr<U>(name))
+        if (HasAttr<int>(name)) return Attr<int>(name);
+        if (!HasAttr<long>(name))
         {
             return d;
         }
         else
         {
-            var u = Attr<U>(name);
-            return (T?) Convert.ChangeType(u, typeof(T)) ?? throw new Exception("Cannot convert attribute to type " + typeof(T).ToString());
-        }
-
-    }
-
-    public T RequiredAttr<T, U>(string name)
-    {
-        if (Attributes is null) throw new ArgumentException("The attribute " + name + " is required for node execution but was not found.");
-        if (HasAttr<T>(name))
-        {
-            return RequiredAttr<T>(name);
-        }
-        else if (HasAttr<U>(name))
-        {
-            var u = Attr<U>(name);
-            return (T)Convert.ChangeType(u, typeof(T))!;
-        }
-        else
-        {
-            throw new ArgumentException("The attribute " + name + " is required for node execution but was not found.");
+            var u = Attr<long>(name);
+            return (int?)Convert.ToInt32(u) ?? throw new Exception("Cannot convert attribute to type int.");
         }
     }
 
-    public int? Int(string name) => Attr<int?, long?>(name);
+    public int RequiredInt(string name) => Int(name) ?? throw new ArgumentException($"The Int attribute {name} is required but was not found.");
 
-    public int RequiredInt(string name) => RequiredAttr<int, long>(name);
-
-    public T[]? ArrayAttr<T, U>(string name)   
+    public int[]? Ints(string name)   
     {
         if (Attributes is null) return null;
-        var t = Attr<T[]>(name);
-        if (t is not null) return t;
-        var u = Attr<U[]>(name);  
-        if (u is null)
+        if (HasAttr<int[]>(name))
         {
-            return null;  
+            return Attr<int[]>(name);
+        }
+        else if (HasAttr<long[]>(name))
+        {
+            var u = Attr<long[]>(name);
+            return u!.Select(e => Convert.ToInt32(e)).ToArray();
         }
         else
         {
-            return u.Select(e => (T) (Convert.ChangeType(e, typeof(T)) ?? throw new Exception("Cannot convert array element to type " + typeof(T).ToString()))).ToArray(); 
+            return null;
         }
-
+       
     }
-
-    public int[]? Ints(string name) => ArrayAttr<int, long>(name);
 
     public ITensor? InputTensor(ComputationalGraph graph, int index) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : null;
 
@@ -151,7 +130,7 @@ public partial struct Node
 
         OpType.Erf => CPU.Erf(InputTensor(graph, 0)),
 
-        OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), ArrayAttr<int, long>("dilations"), ArrayAttr<int, long>("kernel_shape"), ArrayAttr<int, long>("pads"), Attr<int?>("storage_order"), ArrayAttr<int, long>("strides")),
+        OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), Attr<int?>("storage_order"), Ints("strides")),
 
         OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1)),
 
@@ -164,7 +143,9 @@ public partial struct Node
         OpType.Cast => CPU.Cast(graph.GetInputTensor(Inputs[0]), RequiredInt("to")),
 
         OpType.Concat => CPU.Concat(graph.GetInputTensors(Inputs), RequiredInt("axis")),
-        
+
+        OpType.Shape => CPU.Shape(graph.GetInputTensor(Inputs[0]), Int("start"), Int("end")),
+
         _ => NotSupported(Op)
     };
 }

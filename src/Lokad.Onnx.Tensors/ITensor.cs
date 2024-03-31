@@ -23,6 +23,7 @@ namespace Lokad.Onnx
         ITensor CloneEmpty();
 
         ITensor CloneEmpty<U>() where U : struct;
+        
         ITensor Reshape(params int[] shape);
 
         ITensor Slice(string indices);

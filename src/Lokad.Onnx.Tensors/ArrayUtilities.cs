@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Lokad.Onnx
 {
-    internal static class ArrayUtilities
+    public static class ArrayUtilities
     {
         public const int StackallocMax = 16;
 
@@ -329,6 +329,18 @@ namespace Lokad.Onnx
             return true;
         }
 
+        public static int Clamp(int value, int min, int max)
+        {
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max) 
+            {
+                return max;
+            }
+            else return value;
+        }
         public static int[] GetShapeForAxis(int[] dims1, int[] dims2, int axis) 
         {
             /*

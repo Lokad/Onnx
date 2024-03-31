@@ -1020,6 +1020,7 @@ where T : struct
     public static Tensor<T> Concat(Tensor<T> x, Tensor<T> y, int axis)
     {
         if (x.Rank != y.Rank) throw new ArgumentException(nameof(y), "The rank of each tensor in a concat operation must be the same.");
+        axis = ArrayUtilities.HandleNegativeAxis(x.Rank, axis);
         for (int i = 0; i < x.Rank; i++)
         {
             if (i == axis) continue;

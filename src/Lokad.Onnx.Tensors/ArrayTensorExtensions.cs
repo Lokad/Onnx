@@ -124,5 +124,8 @@ namespace Lokad.Onnx
         }
 
         public static U[] CastA<U>(this Array a) => a.Cast<U>().ToArray();
+
+        public static U[] Convert<T, U>(this T[] a) => 
+            a.Select(e => (U) System.Convert.ChangeType(e, typeof(U)) ?? throw new ArgumentException()).ToArray();
     }
 }
