@@ -50,7 +50,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
     {
         throw new NotSupportedException();
     }
-    #endregion
+    
 
     public override Tensor<T> InsertDim(int dim)
     {
@@ -98,6 +98,8 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
         }
         else return new[] { a, b };
     }
+    #endregion
+
     #endregion
 
     #region Fields

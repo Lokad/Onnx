@@ -1668,6 +1668,10 @@ namespace Lokad.Onnx
 
         ITensor ITensor.Clone() => Clone();
 
+        ITensor ITensor.CloneEmpty() => CloneEmpty();
+
+        ITensor ITensor.CloneEmpty<U>() => CloneEmpty<U>();
+
         ITensor ITensor.Reshape(int[] shape) => this.Reshape(shape);
 
         ITensor ITensor.InsertDim(int dim) => this.InsertDim(dim);
@@ -1693,6 +1697,11 @@ namespace Lokad.Onnx
             get => this[indices];
             set => this[indices] = (T) value;
         }
+
+        object ITensor.GetValue(int index) => this.GetValue(index); 
+
+        void ITensor.SetValue(int index, object value) => this.SetValue(index, (T) value);
+
         ITensor ITensor.Slice(string indices) => new TensorSlice<T>(this, ExpandEllipsis(SliceIndex.ParseSlices(indices)));
 
         Array ITensor.ToArray() => this.ToArray();  

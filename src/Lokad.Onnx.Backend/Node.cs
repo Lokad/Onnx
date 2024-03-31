@@ -18,8 +18,13 @@ public partial struct Node
     public string[] Inputs;
     public string[] Outputs;
 
-    public T? Attr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ? 
-        (T)Attributes[name] : default(T);
+    public bool HasAttr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T);
+
+    public T? Attr<T>(string name, T? d = default(T)) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ? 
+        (T)Attributes[name] : d;
+
+    public T RequiredAttr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ?
+    (T)Attributes[name] : throw new ArgumentException("The attribute " + name + " is required for node execution but was not found.");
 
     public object? OneOfAttr(params string[] names)
     {
@@ -28,6 +33,44 @@ public partial struct Node
         var name = names.FirstOrDefault(n => a.ContainsKey(n));
         return name is null ? null : a[name];
     }
+
+    public T? Attr<T, U>(string name, T? d = default(T))
+    {
+        if (Attributes is null) return d;
+        if (HasAttr<T>(name)) return Attr<T>(name);
+        if (!HasAttr<U>(name))
+        {
+            return d;
+        }
+        else
+        {
+            var u = Attr<U>(name);
+            return (T?) Convert.ChangeType(u, typeof(T)) ?? throw new Exception("Cannot convert attribute to type " + typeof(T).ToString());
+        }
+
+    }
+
+    public T RequiredAttr<T, U>(string name)
+    {
+        if (Attributes is null) throw new ArgumentException("The attribute " + name + " is required for node execution but was not found.");
+        if (HasAttr<T>(name))
+        {
+            return RequiredAttr<T>(name);
+        }
+        else if (HasAttr<U>(name))
+        {
+            var u = Attr<U>(name);
+            return (T)Convert.ChangeType(u, typeof(T))!;
+        }
+        else
+        {
+            throw new ArgumentException("The attribute " + name + " is required for node execution but was not found.");
+        }
+    }
+
+    public int? Int(string name) => Attr<int?, long?>(name);
+
+    public int RequiredInt(string name) => RequiredAttr<int, long>(name);
 
     public T[]? ArrayAttr<T, U>(string name)   
     {
@@ -118,6 +161,10 @@ public partial struct Node
 
         OpType.Constant => CPU.Constant(OneOfAttr("sparse_value", "value", "value_float", "value_floats", "value_int", "value_ints", "value_string", "value_strings")),
 
+        OpType.Cast => CPU.Cast(graph.GetInputTensor(Inputs[0]), RequiredInt("to")),
+
+        OpType.Concat => CPU.Concat(graph.GetInputTensors(Inputs), RequiredInt("axis")),
+        
         _ => NotSupported(Op)
     };
 }

@@ -20,6 +20,9 @@ namespace Lokad.Onnx
 
         ITensor Clone();
 
+        ITensor CloneEmpty();
+
+        ITensor CloneEmpty<U>() where U : struct;
         ITensor Reshape(params int[] shape);
 
         ITensor Slice(string indices);
@@ -47,6 +50,10 @@ namespace Lokad.Onnx
             get;
             set;
         }
+
+        object GetValue(int index);
+
+        void SetValue(int index, object value); 
 
         static void ThrowIfDifferentElementTypes(params ITensor[] tensors) => Array.ForEach(tensors, tensor =>
         {
@@ -130,6 +137,16 @@ namespace Lokad.Onnx
         string PrintData(bool includeWhitespace = true);
 
         string TensorNameDesc() => $"{Name}:{ElementType.ToString().ToLower()}:{string.Join("x",Dims.Select(d => d.ToString()))}";
+
+        ITensor Cast<U>() where U : struct
+        {
+            ITensor output = CloneEmpty<U>();
+            for (int i = 0; i < Length; i++)
+            {
+                output.SetValue(i, (U)Convert.ChangeType(GetValue(i), typeof(U)));
+            }
+            return output;
+        }
     }
 }
 

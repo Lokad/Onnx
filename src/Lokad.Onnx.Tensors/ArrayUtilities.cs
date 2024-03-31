@@ -331,6 +331,21 @@ namespace Lokad.Onnx
 
         public static int[] GetShapeForAxis(int[] dims1, int[] dims2, int axis) 
         {
+            /*
+            List<int> shape = new List<int>(data.Rank - 1 + indices.Rank);
+            for (int i = 0; i < axis; i++)
+            {
+                shape.Add(data.dimensions[i]);
+            }
+            for (int i = 0; i < indices.Rank; i++)
+            {
+                shape.Add(indices.dimensions[i]);
+            }
+            for (int i = axis.Value + 1; i < data.Rank; i++)
+            {
+                shape.Add(data.dimensions[i]);
+            }
+            */
             var shape = new int[dims1.Length];
             Array.Copy(dims1, shape, dims1.Length);
             shape[axis] += dims2[axis];

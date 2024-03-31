@@ -991,6 +991,10 @@ where T : struct
 
     public static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? axis = null)
     {
+        if (indices.Rank > 1)
+        {
+            throw new ArgumentException(nameof(indices), "The Gather op is not currently supported for indices with rank > 1");
+        }
         if (axis is null)
         {
             axis = 0;
@@ -999,19 +1003,63 @@ where T : struct
         {
             axis = ArrayUtilities.HandleNegativeAxis(data.Rank, axis.Value);
         }
-        List<int> shape = new List<int>(data.Rank - 1 + indices.Rank);
-        for (int i = 0; i < axis; i++)
+
+        var shape = new int[data.dimensions.Length];
+        Array.Copy(data.dimensions, shape, data.dimensions.Length);
+        shape[axis.Value] = (int) indices.Length;
+        var output = DenseTensor<T>.OfShape(shape);
+        foreach (var di in output.GetDimensionsIterator())
         {
-            shape.Add(data.dimensions[i]);
+            var oloc = di.Copy();
+            oloc[axis.Value] = indices[di[axis.Value]];
         }
-        for (int i = 0; i < indices.Rank; i++)
-        {
-            shape.Add(indices.dimensions[i]);
-        }
-        for (int i = axis.Value + 1; i < data.Rank; i++)
-        {
-            shape.Add(data.dimensions[i]);
-        }
-        throw new NotImplementedException();
+        throw new NotImplementedException();    
+        
     }
+
+    public static Tensor<T> Concat(Tensor<T> x, Tensor<T> y, int axis)
+    {
+        if (x.Rank != y.Rank) throw new ArgumentException(nameof(y), "The rank of each tensor in a concat operation must be the same.");
+        for (int i = 0; i < x.Rank; i++)
+        {
+            if (i == axis) continue;
+            if (x.dimensions[i] != y.dimensions[i])
+            {
+                throw new ArgumentException(nameof(y), "The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.");
+            }
+        }
+        var shape = x.dimensions.Copy();
+        shape[axis] += y.dimensions[axis];
+        var output = DenseTensor<T>.OfShape(shape);
+        var di = output.GetDimensionsIterator();    
+        foreach (var index in di)
+        {
+            if (index[axis] < x.dimensions[axis])
+            {
+                output[index] = x[index];
+            }
+            else
+            {
+                var loc = index.Copy();
+                loc[axis] -= x.dimensions[axis];
+                output[index] = y[loc];
+            }
+        }
+        return output;
+    }
+    public static Tensor<T> Concat(Tensor<T>[] inputs, int axis)
+    {
+        if (inputs.Length < 2) throw new ArgumentException(nameof(inputs), "At least two tensors must be specified for the concat operation.");
+        if (!inputs.All(i => i.Rank == inputs[0].Rank)) throw new ArgumentException(nameof(inputs), $"Each input tensor in a concat operation must be of the same rank.");
+        if (!inputs.All(i => i.dimensions.Select((d, n) => n == axis ? 0 : d - inputs[0].dimensions[n]).All(s => s == 0)))
+            throw new ArgumentException(nameof(inputs), "The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.");
+        Tensor<T> output = inputs[0];
+        for (int i = 1; i < inputs.Length; i++) 
+        {
+            output = Tensor<T>.Concat(output, inputs[i], axis);
+        }
+        return output;
+    }
+
+
 }

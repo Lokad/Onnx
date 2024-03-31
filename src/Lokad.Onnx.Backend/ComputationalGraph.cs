@@ -1,11 +1,8 @@
 ﻿namespace Lokad.Onnx;
 
-using Satsuma;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
-using static Lokad.Onnx.Logger;
 
 public class ComputationalGraph : Runtime
 {

@@ -272,4 +272,55 @@ def test_constant():
     output = backend.run_node(node_def, [])
     np.testing.assert_almost_equal(output["values"], values)
 
+def test_cast():
+    test_cases = [
+        (onnx.TensorProto.FLOAT),
+        (onnx.TensorProto.UINT8), 
+        (onnx.TensorProto.INT8),
+        (onnx.TensorProto.UINT16),
+        (onnx.TensorProto.INT16),
+        (onnx.TensorProto.INT32),
+        (onnx.TensorProto.INT64), 
+        (onnx.TensorProto.BOOL),
+        #(onnx.TensorProto.FLOAT16),
+        (onnx.TensorProto.DOUBLE),
+        #(onnx.TensorProto.COMPLEX64),
+        #(onnx.TensorProto.COMPLEX128)
+    ]
+    for ty in test_cases:
+      node_def = onnx.helper.make_node("Cast", ["input"], ["output"], to=ty)
+      vector = np.array([2, 3])
+      output = backend.run_node(node_def, [vector])
+      np.testing.assert_equal(output["output"].dtype, onnx.helper.tensor_dtype_to_np_dtype(ty))
+
+def test_concat():
+    shape = [10, 20, 5]
+    for axis in range(len(shape)):
+        node_def = onnx.helper.make_node("Concat", ["X1", "X2"], ["Y"], axis=axis)
+        x1 = _get_rnd_float32(shape=shape)
+        x2 = _get_rnd_float32(shape=shape)
+        output = backend.run_node(node_def, [x1, x2])
+        np.testing.assert_almost_equal(output["Y"], np.concatenate((x1, x2), axis))
+
+    test_cases = {
+        "1d": ([1, 2], [3, 4]),
+        "2d": ([[1, 2], [3, 4]], [[5, 6], [7, 8]]),
+        "3d": (
+            [[[1, 2], [3, 4]], [[5, 6], [7, 8]]],
+            [[[9, 10], [11, 12]], [[13, 14], [15, 16]]],
+        ),
+    }
+
+    for _, values_ in test_cases.items():
+        values = [np.asarray(v, dtype=np.float32) for v in values_]
+        for axis in range(len(values[0].shape)):
+            in_args = ["value" + str(k) for k in range(len(values))]
+            node_def = onnx.helper.make_node(
+                "Concat", inputs=list(in_args), outputs=["output"], axis=axis
+            )
+            output = backend.run_node(node_def, values)
+            np.testing.assert_almost_equal(output["output"], np.concatenate(values, axis))
+
+ 
+
     

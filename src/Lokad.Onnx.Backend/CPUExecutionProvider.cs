@@ -28,7 +28,9 @@ public class CPUExecutionProvider
         OpType.Mul,
         OpType.Erf,
         OpType.Transpose,
-        OpType.Constant
+        OpType.Constant,
+        OpType.Cast,
+        OpType.Concat
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -448,5 +450,57 @@ public class CPUExecutionProvider
             default: return NotSupported(op);
         }
     }
+
+    public static OpResult Cast(ITensor? input, long to)
+    {
+        var op = OpType.Cast;
+        if (input is null) return MissingInput(op, nameof(input));
+        var type = (TensorElementType)to;
+        switch (type)
+        {
+            case TensorElementType.Bool: return Success(op, input.Cast<bool>());
+            case TensorElementType.Int8: return Success(op, input.Cast<sbyte>());
+            case TensorElementType.UInt8: return Success(op, input.Cast<byte>());
+            case TensorElementType.Int16: return Success(op, input.Cast<short>());
+            case TensorElementType.UInt16: return Success(op, input.Cast<ushort>());
+            case TensorElementType.Int32: return Success(op, input.Cast<int>());
+            case TensorElementType.UInt32: return Success(op, input.Cast<uint>());
+            case TensorElementType.Int64: return Success(op, input.Cast<long>());
+            case TensorElementType.UInt64: return Success(op, input.Cast<ulong>());
+            case TensorElementType.Float: return Success(op, input.Cast<float>());
+            case TensorElementType.Double: return Success(op, input.Cast<double>());
+            //case TensorElementType.Float16: return Success(op, input.Cast<Half>());
+            //case TensorElementType.BFloat16: return Success(op, input.Cast<BFloat16>());
+            //case TensorElementType.Complex64: return Success(op, input.Cast<System.Numerics.Complex>());
+            default: return AttributeNotSupported(op, "to", to.ToString());
+
+        }
+    }
+    public static OpResult Concat(ITensor[]? inputs, int? _axis)
+    {
+        var op = OpType.Concat;
+        if (inputs is null) return MissingInput(op, nameof(inputs));
+        if (!inputs.All(i => i.ElementType == inputs[0].ElementType)) return WrongInputType(op, nameof(inputs), inputs[0].ElementType, inputs.First(i => i.ElementType == inputs[0].ElementType), "All tensors in a concat operation must have the same type.");
+        var axis = _axis.HasValue ? _axis.Value :  0;
+        switch (inputs[0].ElementType) 
+        {
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Concat(inputs.CastA<Tensor<bool>>(), axis));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Concat(inputs.CastA<Tensor<sbyte>>(), axis));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Concat(inputs.CastA<Tensor<byte>>(), axis));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Concat(inputs.CastA<Tensor<short>>(), axis));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Concat(inputs.CastA<Tensor<ushort>>(), axis));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Concat(inputs.CastA<Tensor<int>>(), axis));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Concat(inputs.CastA<Tensor<uint>>(), axis));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Concat(inputs.CastA<Tensor<long>>(), axis));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Concat(inputs.CastA<Tensor<ulong>>(), axis));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Concat(inputs.CastA<Tensor<float>>(), axis));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Concat(inputs.CastA<Tensor<double>>(), axis));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Concat(inputs.CastA<Tensor<Half>>(), axis));
+            case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Concat(inputs.CastA<Tensor<BFloat16>>(), axis));
+            case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Concat(inputs.CastA<Tensor<System.Numerics.Complex>>(), axis));
+            default: return InputTypeNotSupported(op, "inputs", inputs[0]);
+        }
+    }
 }
+
 
