@@ -146,6 +146,8 @@ public partial struct Node
 
         OpType.Shape => CPU.Shape(graph.GetInputTensor(Inputs[0]), Int("start"), Int("end")),
 
+        OpType.Gather => CPU.Gather(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), Int("axis")),
+
         _ => NotSupported(Op)
     };
 }

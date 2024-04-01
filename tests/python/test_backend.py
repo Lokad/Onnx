@@ -375,6 +375,63 @@ def test_shape():
 
     _test_shape("_clip_end", x, end=10)
 
- 
 
-    
+def test_gather():
+    node_def = onnx.helper.make_node("Gather", ["X", "Y"], ["Z"])
+    x = _get_rnd_float32(shape=[10, 10])
+    y = np.array([[0, 1], [1, 2]])
+    output = backend.run_node(node_def, [x, y])
+    test_output = np.zeros((2, 2, 10))
+    for i in range(0, 2):
+      for j in range(0, 10):
+        test_output[0][i][j] = x[i][j]
+    for i in range(0, 2):
+      for j in range(0, 10):
+        test_output[1][i][j] = x[i + 1][j]
+    np.testing.assert_almost_equal(output["Z"], test_output)
+     # test negative indices
+    y = np.array([[-10, -9], [1, -8]])
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["Z"], test_output)
+ 
+    node_def = onnx.helper.make_node(
+            "Gather",
+            inputs=["data", "indices"],
+            outputs=["y"],
+            axis=0,
+        )
+    data = np.random.randn(5, 4, 3, 2).astype(np.float32)
+    indices = np.array([0, 1, 3])
+    y = np.take(data, indices, axis=0)
+
+    output = backend.run_node(node_def, [data, indices])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    node_def = onnx.helper.make_node(
+            "Gather",
+            inputs=["data", "indices"],
+            outputs=["y"],
+            axis=1,
+        )
+    data = np.random.randn(5, 4, 3, 2).astype(np.float32)
+    indices = np.array([0, 1, 3])
+    y = np.take(data, indices, axis=1)
+    output = backend.run_node(node_def, [data, indices])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    data = np.random.randn(3, 3).astype(np.float32)
+    indices = np.array([[0, 2]])
+    y = np.take(data, indices, axis=1)
+    output = backend.run_node(node_def, [data, indices])
+    np.testing.assert_almost_equal(output["y"], y)
+    node_def = onnx.helper.make_node(
+            "Gather",
+            inputs=["data", "indices"],
+            outputs=["y"],
+            axis=0,
+        )
+    data = np.arange(10).astype(np.float32)
+    indices = np.array([0, -9, -10])
+    y = np.take(data, indices, axis=0)
+    output = backend.run_node(node_def, [data, indices])
+    np.testing.assert_almost_equal(output["y"], y)

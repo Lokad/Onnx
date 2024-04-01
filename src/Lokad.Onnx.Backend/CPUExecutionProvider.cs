@@ -32,7 +32,8 @@ public class CPUExecutionProvider : Runtime
         OpType.Constant,
         OpType.Cast,
         OpType.Concat,
-        OpType.Shape
+        OpType.Shape,
+        OpType.Gather,
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -508,12 +509,43 @@ public class CPUExecutionProvider : Runtime
     {
         var op = OpType.Shape;
         if (data is null) return MissingInput(op, nameof(data));
-        var start = ArrayUtilities.HandleNegativeAxis(data.Rank, _start.HasValue ? _start.Value : 0);
-        var end = ArrayUtilities.HandleNegativeAxis(data.Rank, _end.HasValue ? _end.Value : data.Rank);
+        var start = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _start.HasValue ? _start.Value : 0);
+        var end = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _end.HasValue ? _end.Value : data.Rank);
         start = ArrayUtilities.Clamp(start, 0, data.Rank);
         end = ArrayUtilities.Clamp(end, 0, data.Rank);  
         var _shape = data.Dims.Convert<int, long>()[start..end];
         return Success(op, DenseTensor<long>.OfValues(_shape));
+    }
+
+    public static OpResult Gather(ITensor? data, ITensor? indices, int? axis = null) 
+    {
+        var op = OpType.Gather;
+        if (data is null) return MissingInput(op, nameof(data));
+        if (indices is null) return MissingInput(op, nameof(indices));
+        if (indices.Rank > data.Rank) return WrongInputShape(op, nameof(indices), data.Rank, indices);
+        if (indices.ElementType == TensorElementType.Int64)
+        {
+            indices = indices.Cast<int>();
+        }
+        switch (data.ElementType)
+        {
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Gather((Tensor<bool>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Gather((Tensor<sbyte>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Gather((Tensor<byte>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Gather((Tensor<short>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Gather((Tensor<ushort>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Gather((Tensor<int>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Gather((Tensor<uint>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Gather((Tensor<long>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Gather((Tensor<ulong>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Gather((Tensor<float>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Gather((Tensor<double>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Gather((Tensor<Half>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Gather((Tensor<BFloat16>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Gather((Tensor<System.Numerics.Complex>)data, (Tensor<int>) indices, axis));
+            default: return NotSupported(op);
+        }
+
     }
 }
 

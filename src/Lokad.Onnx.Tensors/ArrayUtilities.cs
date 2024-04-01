@@ -300,7 +300,7 @@ namespace Lokad.Onnx
             return list.ToArray();
         }
 
-        public static int HandleNegativeAxis(int ndims, int axis)
+        public static int HandleNegativeAxisOrIndex(int size, int axis)
         {
             if (axis >= 0)
             {
@@ -308,7 +308,7 @@ namespace Lokad.Onnx
             }
             else
             {
-                return ndims + axis;
+                return size + axis;
             }
         }
 

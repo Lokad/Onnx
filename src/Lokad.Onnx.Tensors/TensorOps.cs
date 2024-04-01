@@ -971,7 +971,7 @@ where T : struct
         }
         else
         {
-            perm = perm.Select(p => ArrayUtilities.HandleNegativeAxis(data.Rank, p)).ToArray();
+            perm = perm.Select(p => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, p)).ToArray();
         }
 
         if (data.Rank <= 1)
@@ -992,7 +992,7 @@ where T : struct
     public static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? _axis = null)
     {
         if (data.Rank == 0) throw new ArgumentException(nameof (data), "Cannot gather from a tensor of rank 0.");
-        var axis = _axis.HasValue ? ArrayUtilities.HandleNegativeAxis(data.Rank, _axis.Value) : 0;    
+        var axis = _axis.HasValue ? ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _axis.Value) : 0;    
         if (axis > data.Rank - 1)
         {
             throw new ArgumentException(nameof(axis), $"The specified axis {_axis} exceeds the number of dimensions in the tensor.");
@@ -1015,7 +1015,7 @@ where T : struct
         foreach (var di in output.GetDimensionsIterator())
         {
             var a = di[0..axis];
-            var k = indices[di[axis..(axis + indices.Rank)]];
+            var k = ArrayUtilities.HandleNegativeAxisOrIndex(data.dimensions[axis], indices[di[axis..(axis + indices.Rank)]]);
             var b = di[(axis + indices.Rank)..].ToArray();
             var oloc = a.Append(k).Concat(b).ToArray();
             output[di] = data[oloc];
@@ -1026,7 +1026,7 @@ where T : struct
     public static Tensor<T> Concat(Tensor<T> x, Tensor<T> y, int axis)
     {
         if (x.Rank != y.Rank) throw new ArgumentException(nameof(y), "The rank of each tensor in a concat operation must be the same.");
-        axis = ArrayUtilities.HandleNegativeAxis(x.Rank, axis);
+        axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         for (int i = 0; i < x.Rank; i++)
         {
             if (i == axis) continue;
