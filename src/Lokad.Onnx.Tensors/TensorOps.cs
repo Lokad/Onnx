@@ -1063,10 +1063,44 @@ where T : struct
         Tensor<T> output = inputs[0];
         for (int i = 1; i < inputs.Length; i++) 
         {
-            output = Tensor<T>.Concat(output, inputs[i], axis);
+            output = Concat(output, inputs[i], axis);
         }
         return output;
     }
 
+    public static Tensor<T> Slice(Tensor<T> data, Tensor<int> start, Tensor<int> ends, Tensor<int> axes = null, Tensor<int> steps = null)
+    {
+        if (data.Rank == 0) throw new ArgumentException(nameof(data), "Cannot slice a tensor of rank 0.");
+        if (start.Rank != 1) throw new ArgumentException(nameof(start), "The rank of the start tensor must be 1.");
+        if (start.Length > data.Rank) throw new ArgumentException(nameof(start), "The length of the start tensor must be less-than or equal to the rank of the data tensor.");
+        if (ends.Rank != 1) throw new ArgumentException(nameof(start), "The rank of the end tensor must be 1.");
+        if (start.Length != ends.Length) throw new ArgumentException(nameof(ends), "The end tensor must be the same length as the start tensor.");
+        if (axes is not null && (axes.Rank != 1 || axes.Length != start.Length)) throw new ArgumentException(nameof(axes), "The axes tensor must be a rank 1 tensor with the same length as the start tensor.");
+        if (steps is not null && (steps.Rank != 1 || steps.Length != start.Length)) throw new ArgumentException(nameof(steps), "The steps tensor must be a rank 1 tensor with the same length as the start tensor.");
 
+        int length = Convert.ToInt32(start.Length);
+
+        if (axes is null)
+        {
+            axes = Enumerable.Range(0, length).ToArray().ToTensor<int>();
+        }
+        else
+        {
+            axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray().ToTensor<int>();
+        }
+        if (steps is null)
+        {
+            steps = Tensor<int>.Ones(length);
+        }
+
+        start = start.Select((s, i) => ArrayUtilities.Clamp(ArrayUtilities.HandleNegativeAxisOrIndex(data.Dimensions[axes[i]], s), 0, data.Dimensions[axes[i]])).ToArray().ToTensor<int>();
+        ends = ends.Select((s, i) => ArrayUtilities.Clamp(ArrayUtilities.HandleNegativeAxisOrIndex(data.Dimensions[axes[i]], s), 0, data.Dimensions[axes[i]])).ToArray().ToTensor<int>();
+
+        SliceIndex[] indices = new SliceIndex[data.Rank];
+        for (int i = 0; i < data.Rank; i++) 
+        {
+            indices[i] = axes.Contains(i) ? new SliceIndex(start[i], ends[i], steps[i]) : ..;
+        }
+        return data.Slice(indices); 
+    }
 }

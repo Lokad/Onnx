@@ -545,7 +545,6 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Gather((Tensor<System.Numerics.Complex>)data, (Tensor<int>) indices, axis));
             default: return NotSupported(op);
         }
-
     }
 }
 
