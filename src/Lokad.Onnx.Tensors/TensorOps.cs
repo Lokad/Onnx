@@ -989,32 +989,38 @@ where T : struct
         return r;
     }
 
-    public static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? axis = null)
+    public static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? _axis = null)
     {
-        if (indices.Rank > 1)
+        if (data.Rank == 0) throw new ArgumentException(nameof (data), "Cannot gather from a tensor of rank 0.");
+        var axis = _axis.HasValue ? ArrayUtilities.HandleNegativeAxis(data.Rank, _axis.Value) : 0;    
+        if (axis > data.Rank - 1)
         {
-            throw new ArgumentException(nameof(indices), "The Gather op is not currently supported for indices with rank > 1");
-        }
-        if (axis is null)
-        {
-            axis = 0;
-        }
-        else
-        {
-            axis = ArrayUtilities.HandleNegativeAxis(data.Rank, axis.Value);
+            throw new ArgumentException(nameof(axis), $"The specified axis {_axis} exceeds the number of dimensions in the tensor.");
         }
 
-        var shape = new int[data.dimensions.Length];
-        Array.Copy(data.dimensions, shape, data.dimensions.Length);
-        shape[axis.Value] = (int) indices.Length;
-        var output = DenseTensor<T>.OfShape(shape);
+        List<int> shape = new List<int>(data.Rank - 1 + indices.Rank);
+        for (int i = 0; i < axis; i++)
+        {
+            shape.Add(data.dimensions[i]);
+        }
+        for (int i = 0; i < indices.Rank; i++)
+        {
+            shape.Add(indices.dimensions[i]);
+        }
+        for (int i = axis + 1; i < data.Rank; i++)
+        {
+            shape.Add(data.dimensions[i]);
+        }
+        var output = DenseTensor<T>.OfShape(shape.ToArray());
         foreach (var di in output.GetDimensionsIterator())
         {
-            var oloc = di.Copy();
-            oloc[axis.Value] = indices[di[axis.Value]];
+            var a = di[0..axis];
+            var k = indices[di[axis..(axis + indices.Rank)]];
+            var b = di[(axis + indices.Rank)..].ToArray();
+            var oloc = a.Append(k).Concat(b).ToArray();
+            output[di] = data[oloc];
         }
-        throw new NotImplementedException();    
-        
+        return output;  
     }
 
     public static Tensor<T> Concat(Tensor<T> x, Tensor<T> y, int axis)

@@ -59,4 +59,26 @@ public class SliceTests
         Assert.Equal(3, r[0, ^0]);
         var p = x.Dimensions[^2];
     }
+
+    [Fact]
+    public void CanGather()
+    {
+        var data = DenseTensor<double>.OfValues(new double[3, 2]
+        {{ 1.0, 1.2 }, { 2.3, 3.4 }, { 4.5, 5.7 }});
+        var indices = DenseTensor<int>.OfValues(new int[2, 2]
+        {
+            { 0, 1 },
+            { 1, 2},
+        });
+        var output = Tensor<double>.Gather(data, indices);
+        Assert.NotNull(output);
+        var data2 = DenseTensor<double>.OfValues(new double[3, 3] {
+        { 1.0, 1.2, 1.9 },
+        { 2.3, 3.4, 3.9 },
+        { 4.5, 5.7, 5.9 },
+            });
+        var indices2 = DenseTensor<int>.OfValues(new int[1,2] { { 0, 2 } });
+        output = Tensor<double>.Gather(data2, indices2, 1);
+        Assert.NotNull(output);
+    }
 }
