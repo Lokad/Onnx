@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 
 namespace Lokad.Onnx.Tensors.Tests;
 
@@ -131,5 +132,14 @@ public class MathTests
         }}});
         var Y2 = Tensor<int>.MaxPool2D(N, new int[] { 2, 2 });
         Assert.Equal(DenseTensor<int>.OfValues(new int[2, 2] { { 6, 8 }, { 3, 4 } }), Y2);
+    }
+
+    [Fact]
+    public void CanReduceMean()
+    {
+        var data = new int[3, 2, 2] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } }, { { 9, 10 }, { 11, 12 } } };
+        var axes = new int[1] { 1 };
+        var output = Tensor<int>.ReduceSum(data.ToTensor<int>(), axes.ToTensor<int>()); 
+        Assert.NotNull(output); 
     }
 }

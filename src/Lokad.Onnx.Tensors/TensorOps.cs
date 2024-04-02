@@ -1092,10 +1092,7 @@ where T : struct
         {
             steps = Tensor<int>.Ones(length);
         }
-        else
-        {
-            if (steps.Any(s => s < 0)) throw new ArgumentException(nameof(steps), "Negative stepping is not currently supported.");
-        }
+       
         start = start.Select((s, i) => ArrayUtilities.Clamp(ArrayUtilities.HandleNegativeAxisOrIndex(data.Dimensions[axes[i]], s), 0, data.Dimensions[axes[i]])).ToArray().ToTensor<int>();
         ends = ends.Select((s, i) => ArrayUtilities.Clamp(ArrayUtilities.HandleNegativeAxisOrIndex(data.Dimensions[axes[i]], s), 0, data.Dimensions[axes[i]])).ToArray().ToTensor<int>();
 
@@ -1105,5 +1102,71 @@ where T : struct
             indices[i] = axes.Contains(i) ? new SliceIndex(start[axes.IndexOf(i)], ends[axes.IndexOf(i)], steps[axes.IndexOf(i)]) : new SliceIndex(0, data.dimensions[i]);
         }
         return data.Slice(indices); 
+    }
+
+
+    public static Tensor<T> Unsqueeze(Tensor<T> data, int[] axes)
+    {
+        if (!ArrayUtilities.CheckNoRepeatedDims(axes)) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+        if (axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
+        axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        if (axes.Any(a => a > (data.Rank + axes.Length) - 1)) throw new ArgumentException(nameof(axes), $"Each specified axis must be less than the rank of the output tensor. Got {axes.First(a => a > data.Rank - 1)}");
+        var newshape = new int[axes.Length + data.Rank];
+        for (int i = 0; i < axes.Length; i++)
+        {
+            newshape[axes[i]] = 1;
+        }
+        var e = data.Dimensions.GetEnumerator();
+        for (int i = 0; i < newshape.Length; i++)
+        {
+            if (newshape[i] == 0)
+            {
+                if (!e.MoveNext()) throw new InvalidOperationException("Out of dimensions.");
+                newshape[i] = (int)e.Current;
+            }
+        }
+        return data.Reshape(newshape.ToArray());
+    }
+    public static Tensor<int> ReduceSum(Tensor<int> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
+    {
+        if (axes is not null && !axes.All(a =>  a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
+        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
+        var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
+        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
+        Tensor<int> pdata;
+        int[] paxes;
+        if (permutation is not null)
+        {
+            pdata = Tensor<int>.Transpose(data, permutation);
+            paxes = ArrayUtilities.GetInnerMostAxes(_axes.Length, data.Rank);
+        }
+        else
+        {
+            pdata = data;
+            paxes = _axes;
+        }
+
+        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
+        var output = DenseTensor<int>.OfShape(oshape);
+        var r = ArrayUtilities.GetSize(rshape);
+        for (var i = 0; i < output.Length; ++i)
+        {
+            var offset = i * r;
+            var sum = 0;
+            for (int j = 0; j < r; ++j)
+            {
+                sum += pdata.GetValue(offset + j);
+            }
+            output.SetValue(i, sum);
+        }
+        if (keepDims)
+        {
+            return Tensor<int>.Unsqueeze(output, _axes);
+        }
+        else
+        {
+            return output;
+        }
     }
 }

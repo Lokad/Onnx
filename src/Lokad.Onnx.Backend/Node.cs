@@ -152,6 +152,8 @@ public partial struct Node
 
         OpType.Unsqueeze => CPU.Unsqueeze(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1])),
 
+        OpType.ReduceSum => CPU.ReduceSum(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), Int("keepdims"), Int("noop_with_empty_axes")),
+
         _ => NotSupported(Op)
     };
 }

@@ -35,7 +35,8 @@ public class CPUExecutionProvider : Runtime
         OpType.Shape,
         OpType.Gather,
         OpType.Slice,
-        OpType.Unsqueeze
+        OpType.Unsqueeze,
+        OpType.ReduceSum
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -614,6 +615,23 @@ public class CPUExecutionProvider : Runtime
         }
         var _axes = ((Tensor<int>) axes).ToArray();
         return Success(op, data.Unsqueeze(_axes));
+    }
+
+    public static OpResult ReduceSum(ITensor? data, ITensor? axes, int? _keep_dims, int? noop_with_empty_axes)
+    {
+        var op = OpType.ReduceSum;
+        if (data is null) return MissingInput(op, nameof(data));
+        if (axes is not null && axes.ElementType == TensorElementType.Int64)
+        {
+            axes = axes.Cast<int>();
+        }
+        var keepDims = _keep_dims.HasValue ? Convert.ToBoolean(_keep_dims.Value) : true;
+        var noopWithEmptyAxes = noop_with_empty_axes.HasValue ? Convert.ToBoolean(noop_with_empty_axes.Value) : false;
+        switch (data.ElementType)
+        {
+            case TensorElementType.Int32: return Success(op, Tensor<int>.ReduceSum((Tensor<int>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
+            default: return NotSupported(op);
+        }
     }
 }
 

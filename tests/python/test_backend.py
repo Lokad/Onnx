@@ -535,20 +535,20 @@ def test_slice():
     output = backend.run_node(node_def, [x, starts, ends, axes])
     np.testing.assert_almost_equal(output["y"], y)
 
-    #node_def = onnx.helper.make_node(
-    #        "Slice",
-    #        inputs=["x", "starts", "ends", "axes", "steps"],
-    #        outputs=["y"],
-    #    )
+    node_def = onnx.helper.make_node(
+            "Slice",
+            inputs=["x", "starts", "ends", "axes", "steps"],
+            outputs=["y"],
+        )
 
-    #x = np.random.randn(20, 10, 5).astype(np.float32)
-    #starts = np.array([20, 10, 4], dtype=np.int64)
-    #ends = np.array([0, 0, 1], dtype=np.int64)
-    #axes = np.array([0, 1, 2], dtype=np.int64)
-    #steps = np.array([-1, -3, -2]).astype(np.int64)
-    #y = x[20:0:-1, 10:0:-3, 4:1:-2]
-    #output = backend.run_node(node_def, [x, starts, ends, axes, steps])
-    #np.testing.assert_almost_equal(output["y"], y)
+    x = np.random.randn(20, 10, 5).astype(np.float32)
+    starts = np.array([20, 10, 4], dtype=np.int64)
+    ends = np.array([0, 0, 1], dtype=np.int64)
+    axes = np.array([0, 1, 2], dtype=np.int64)
+    steps = np.array([-1, -3, -2]).astype(np.int64)
+    y = x[20:0:-1, 10:0:-3, 4:1:-2]
+    output = backend.run_node(node_def, [x, starts, ends, axes, steps])
+    np.testing.assert_almost_equal(output["y"], y)
 
 def test_unsqueeze():
     x = np.random.randn(3, 4, 5).astype(np.float32)
@@ -615,3 +615,30 @@ def test_unsqueeze():
     y = np.expand_dims(x, axis=-2)
     output = backend.run_node(node_def, [x, axes])
     np.testing.assert_almost_equal(output["y"], y)
+
+
+
+def test_reduce_sum():
+    x = _get_rnd_float32(shape=[5, 10, 10, 3]).astype(np.int32)
+    axes = np.array([1, 2], dtype=np.int64)
+    node_def = onnx.helper.make_node("ReduceSum", ["data", "axes"], ["Y"])
+    output = backend.run_node(node_def, [x, axes])
+    np.testing.assert_allclose(output["Y"],
+                                np.sum(x, (1, 2), keepdims=True),
+                                rtol=1e-3)
+    shape = [3, 2, 2]
+    axes = np.array([1], dtype=np.int64)
+    keepdims = 0
+
+    node_def = onnx.helper.make_node(
+        "ReduceSum", inputs=["data", "axes"], outputs=["reduced"]
+    )
+
+    data = np.array(
+        [[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 10], [11, 12]]], dtype=np.int32
+    )
+    reduced = np.sum(data, axis=1, keepdims=True)
+
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)
+

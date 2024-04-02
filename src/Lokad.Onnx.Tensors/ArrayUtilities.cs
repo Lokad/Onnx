@@ -23,9 +23,9 @@ namespace Lokad.Onnx
     {
         public const int StackallocMax = 16;
 
-        public static long GetProduct(ReadOnlySpan<int> dimensions, int startIndex = 0)
+        public static int GetSize(ReadOnlySpan<int> dimensions, int startIndex = 0)
         {
-            long product = 1;
+            int product = 1;
             for (int i = startIndex; i < dimensions.Length; i++)
             {
                 if (dimensions[i] < 0)
@@ -340,6 +340,61 @@ namespace Lokad.Onnx
                 return max;
             }
             else return value;
+        }
+
+        public static Tuple<int[], int[]> ComputeShapesForReduction(int[] inShape, int[] axes)
+        {
+            List<int> shape = new List<int>();
+            var rank = inShape.Length;
+            for (var dim = 0; dim < rank; dim++)
+            {
+                if (!axes.Contains(dim))
+                {
+                    shape.Add(inShape[dim]);
+                }
+            }
+            var reducedShape = axes.Select(dim => inShape[dim]).ToArray();
+            return new Tuple<int[], int[]>(shape.ToArray(), reducedShape);
+
+        }
+
+        public static int[] GetAxesPermutationForReduction(int[] axes, int rank)
+        {
+            if (AxesAreInnerMostDims(axes, rank))
+            {
+                return null;
+            }
+            List<int> result = new List<int>();
+            for (var i = 0; i < rank; ++i)
+            {
+                if (axes.ToList().IndexOf(i) == -1)
+                {
+                    result.Add(i);
+                }
+            }
+            result.AddRange(axes);
+            return result.ToArray();
+        }
+        public static bool AxesAreInnerMostDims(int[] axes, int rank)
+        {
+            for (var i = 0; i < axes.Length; ++i)
+            {
+                if (axes[axes.Length - i - 1] != rank - 1 - i)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static int[] GetInnerMostAxes(int n, int rank)
+        {
+            List<int> axes = new List<int>();
+            for (var i = rank - n; i < rank; ++i)
+            {
+                axes.Add(i);
+            }
+            return axes.ToArray();
         }
     }
 }
