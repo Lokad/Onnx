@@ -55,6 +55,8 @@ namespace Lokad.Onnx
 
         public static OpResult WrongInputShape(OpType op, string name, int[] dims, ITensor input) => Failure(op, $"The input tensor {input.Name} for parameter {name} has shape {input.PrintShape()} but is required to be {dims.Print()}.");
 
+        public static OpResult WrongInputShape(OpType op, string name, ITensor input, string msg) => Failure(op, $"The input tensor {input.Name} for parameter {name} has shape {input.PrintShape()}. {msg}.");
+
         public static OpResult CannotBroadcast(OpType op, ITensor x, ITensor y) => Failure(op, $"The tensors {x.TensorNameDesc()} and {y.TensorNameDesc()} are not compatible for broadcasting.");
 
         #endregion

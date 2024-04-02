@@ -127,5 +127,14 @@ namespace Lokad.Onnx.Tensors.Tests
             y = Tensor<float>.Concat(x, x, 1);
             Assert.NotNull(y);
         }
+
+        [Fact]
+        public void CanUnsqueeze()
+        {
+            var X = (ITensor) DenseTensor<int>.Ones(3, 4, 5);
+            var tX = X.Unsqueeze(new int[] { 1 });
+            Assert.NotNull(tX);
+;
+        }
     }
 }

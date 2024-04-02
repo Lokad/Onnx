@@ -435,3 +435,183 @@ def test_gather():
     y = np.take(data, indices, axis=0)
     output = backend.run_node(node_def, [data, indices])
     np.testing.assert_almost_equal(output["y"], y)
+
+
+def test_slice():
+    # test case 1 with normal inputs
+    axes = np.array([0, 1, 2])
+    starts = np.array([0, 0, 0])
+    ends = np.array([2, 2, 2])
+    steps = np.array([1, 1, 1])
+    node_def = onnx.helper.make_node("Slice",
+                                  ["X", "starts", "ends", "axes", "steps"],
+                                  ["S"])
+    x = _get_rnd_float32(shape=[1000]).reshape([10, 10, 10])
+    output = backend.run_node(node_def, [x, starts, ends, axes, steps])
+    np.testing.assert_almost_equal(output["S"], x[0:2, 0:2, 0:2])
+
+    # test case 2 with negative, out-of-bound and default inputs
+    axes = np.array([0, 2])
+    starts = np.array([0, -7])
+    ends = np.array([-8, 20])
+
+    node_def = onnx.helper.make_node("Slice", ["X", "starts", "ends", "axes"],
+                                  ["S"])
+    x = _get_rnd_float32(shape=[1000]).reshape([10, 10, 10])
+    output = backend.run_node(node_def, [x, starts, ends, axes])
+    np.testing.assert_almost_equal(output["S"], x[0:-8, :, -7:20])
+
+    node_def = onnx.helper.make_node(
+            "Slice",
+            inputs=["x", "starts", "ends", "axes", "steps"],
+            outputs=["y"],
+        )
+
+    x = np.random.randn(20, 10, 5).astype(np.float32)
+    y = x[0:3, 0:10]
+    starts = np.array([0, 0], dtype=np.int64)
+    ends = np.array([3, 10], dtype=np.int64)
+    axes = np.array([0, 1], dtype=np.int64)
+    steps = np.array([1, 1], dtype=np.int64)
+
+    output = backend.run_node(node_def, [x, starts, ends, axes, steps])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    x = np.random.randn(20, 10, 5).astype(np.float32)
+    starts = np.array([0], dtype=np.int64)
+    ends = np.array([-1], dtype=np.int64)
+    axes = np.array([1], dtype=np.int64)
+    steps = np.array([1], dtype=np.int64)
+    y = x[:, 0:-1]
+    output = backend.run_node(node_def, [x, starts, ends, axes, steps])
+    np.testing.assert_almost_equal(output["y"], y)
+
+
+    x = np.random.randn(20, 10, 5).astype(np.float32)
+    starts = np.array([1000], dtype=np.int64)
+    ends = np.array([1000], dtype=np.int64)
+    axes = np.array([1], dtype=np.int64)
+    steps = np.array([1], dtype=np.int64)
+    y = x[:, 1000:1000]
+
+    output = backend.run_node(node_def, [x, starts, ends, axes, steps])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    x = np.random.randn(20, 10, 5).astype(np.float32)
+    starts = np.array([1], dtype=np.int64)
+    ends = np.array([1000], dtype=np.int64)
+    axes = np.array([1], dtype=np.int64)
+    steps = np.array([1], dtype=np.int64)
+    y = x[:, 1:1000]
+
+    output = backend.run_node(node_def, [x, starts, ends, axes, steps])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    node_def = onnx.helper.make_node(
+            "Slice",
+            inputs=["x", "starts", "ends"],
+            outputs=["y"],
+    )
+    x = np.random.randn(20, 10, 5).astype(np.float32)
+    starts = np.array([0, 0, 3], dtype=np.int64)
+    ends = np.array([20, 10, 4], dtype=np.int64)
+    y = x[:, :, 3:4]
+
+    output = backend.run_node(node_def, [x, starts, ends])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    node_def = onnx.helper.make_node(
+        "Slice",
+        inputs=["x", "starts", "ends", "axes"],
+        outputs=["y"],
+    )
+
+    x = np.random.randn(20, 10, 5).astype(np.float32)
+    starts = np.array([0, 0, 3], dtype=np.int64)
+    ends = np.array([20, 10, 4], dtype=np.int64)
+    axes = np.array([0, 1, 2], dtype=np.int64)
+    y = x[:, :, 3:4]
+
+    output = backend.run_node(node_def, [x, starts, ends, axes])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    #node_def = onnx.helper.make_node(
+    #        "Slice",
+    #        inputs=["x", "starts", "ends", "axes", "steps"],
+    #        outputs=["y"],
+    #    )
+
+    #x = np.random.randn(20, 10, 5).astype(np.float32)
+    #starts = np.array([20, 10, 4], dtype=np.int64)
+    #ends = np.array([0, 0, 1], dtype=np.int64)
+    #axes = np.array([0, 1, 2], dtype=np.int64)
+    #steps = np.array([-1, -3, -2]).astype(np.int64)
+    #y = x[20:0:-1, 10:0:-3, 4:1:-2]
+    #output = backend.run_node(node_def, [x, starts, ends, axes, steps])
+    #np.testing.assert_almost_equal(output["y"], y)
+
+def test_unsqueeze():
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+
+    for i in range(x.ndim):
+        axes = np.array([i]).astype(np.int64)
+        node_def = onnx.helper.make_node(
+            "Unsqueeze",
+            inputs=["x", "axes"],
+            outputs=["y"],
+        )
+        y = np.expand_dims(x, axis=i)
+
+        output = backend.run_node(node_def, [x, axes])
+        np.testing.assert_almost_equal(output["y"], y)
+
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+    axes = np.array([1, 4]).astype(np.int64)
+
+    node_def = onnx.helper.make_node(
+        "Unsqueeze",
+        inputs=["x", "axes"],
+        outputs=["y"],
+    )
+    y = np.expand_dims(x, axis=1)
+    y = np.expand_dims(y, axis=4)
+    output = backend.run_node(node_def, [x, axes])
+    np.testing.assert_almost_equal(output["y"], y)
+
+        
+    axes = np.array([2, 4, 5]).astype(np.int64)
+    node_def = onnx.helper.make_node(
+        "Unsqueeze",
+        inputs=["x", "axes"],
+        outputs=["y"],
+    )
+    y = np.expand_dims(x, axis=2)
+    y = np.expand_dims(y, axis=4)
+    y = np.expand_dims(y, axis=5)
+    output = backend.run_node(node_def, [x, axes])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    x = np.random.randn(3, 4, 5).astype(np.float32)
+    axes = np.array([5, 4, 2]).astype(np.int64)
+
+    node_def = onnx.helper.make_node(
+        "Unsqueeze",
+        inputs=["x", "axes"],
+        outputs=["y"],
+    )
+    y = np.expand_dims(x, axis=2)
+    y = np.expand_dims(y, axis=4)
+    y = np.expand_dims(y, axis=5)
+    output = backend.run_node(node_def, [x, axes])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    node_def = onnx.helper.make_node(
+        "Unsqueeze",
+        inputs=["x", "axes"],
+        outputs=["y"],
+    )
+    x = np.random.randn(1, 3, 1, 5).astype(np.float32)
+    axes = np.array([-2]).astype(np.int64)
+    y = np.expand_dims(x, axis=-2)
+    output = backend.run_node(node_def, [x, axes])
+    np.testing.assert_almost_equal(output["y"], y)

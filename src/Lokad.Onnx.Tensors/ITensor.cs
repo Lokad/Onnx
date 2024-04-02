@@ -148,6 +148,28 @@ namespace Lokad.Onnx
             }
             return output;
         }
+
+        ITensor Unsqueeze(int[] axes)
+        {
+            if (!ArrayUtilities.CheckNoRepeatedDims(axes)) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+            axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(Rank, a)).ToArray();
+            if (axes.Any(a => a > (Rank + axes.Length) - 1)) throw new ArgumentException(nameof(axes), $"Each specified axis must be less than the rank of the output tensor. Got {axes.First(a => a > Rank - 1)}");
+            var newshape = new int[axes.Length + Rank];
+            for (int i = 0; i < axes.Length; i++)
+            {
+                newshape[axes[i]] = 1;
+            }
+            var e = Dims.GetEnumerator();
+            for (int i = 0; i < newshape.Length; i++)
+            {
+                if (newshape[i] == 0)
+                {
+                    if (!e.MoveNext()) throw new InvalidOperationException("Out of dimensions.");
+                    newshape[i] = (int)e.Current;
+                }
+            }
+            return Reshape(newshape.ToArray());
+        }
     }
 }
 

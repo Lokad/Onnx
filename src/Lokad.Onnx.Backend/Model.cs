@@ -21,7 +21,7 @@ namespace Lokad.Onnx
 
         public static ModelProto? Parse(byte[] data)
         {
-            var op = Begin("Parsing ONNX model buffer of length {f} bytes.", data.Length);
+            var op = Begin("Parsing ONNX model buffer of length {f} bytes", data.Length);
             var m = ModelProto.Parser.ParseFrom(data);
             op.Complete();
             return m;
@@ -30,7 +30,7 @@ namespace Lokad.Onnx
         public static ComputationalGraph Load(ModelProto mp)
         {
             Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
-            var op = Begin("Creating computational graph from ONNX model buffer.");
+            var op = Begin("Creating computational graph from ONNX model buffer");
             var graph = new ComputationalGraph();
             graph.ModelFile = "<buffer>";
             graph.Model = mp;
@@ -71,7 +71,6 @@ namespace Lokad.Onnx
                 Error("Could not parse {f} as ONNX model file.", onnxInputFilePath);
                 return null;
             }
-            Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
             return Load(mp);
         }
 

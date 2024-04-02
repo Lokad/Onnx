@@ -20,7 +20,7 @@ public partial struct Node
 
     public bool HasAttr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T);
 
-    public T? Attr<T>(string name, T? d = default(T)) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ? 
+    public T? Attr<T>(string name, T? d = default(T)) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ?
         (T)Attributes[name] : d;
 
     public T RequiredAttr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ?
@@ -51,7 +51,7 @@ public partial struct Node
 
     public int RequiredInt(string name) => Int(name) ?? throw new ArgumentException($"The Int attribute {name} is required but was not found.");
 
-    public int[]? Ints(string name)   
+    public int[]? Ints(string name)
     {
         if (Attributes is null) return null;
         if (HasAttr<int[]>(name))
@@ -67,18 +67,18 @@ public partial struct Node
         {
             return null;
         }
-       
+
     }
 
     public ITensor? InputTensor(ComputationalGraph graph, int index) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : null;
 
-    public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU) 
+    public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU)
     {
         try
         {
-            if (provider == ExecutionProvider.CPU) 
+            if (provider == ExecutionProvider.CPU)
             {
-                var r =  ExecuteCPU(graph);
+                var r = ExecuteCPU(graph);
                 if (r.Status == OpStatus.Success && r.Outputs.Length != Outputs.Length)
                 {
                     return Failure(Op, $"The operation returned {r.Outputs.Length} outputs but the graph node has {Outputs.Length} outputs.");
@@ -97,9 +97,9 @@ public partial struct Node
                 throw new NotSupportedException();
             }
         }
-        catch (ArgumentNullException ane) 
+        catch (ArgumentNullException ane)
         {
-            return !string.IsNullOrEmpty(ane.ParamName) ? MissingInput(Op, ane.ParamName) : Failure(Op, ane.Message); 
+            return !string.IsNullOrEmpty(ane.ParamName) ? MissingInput(Op, ane.ParamName) : Failure(Op, ane.Message);
         }
         catch (TensorInputShapeException tise)
         {
@@ -114,7 +114,7 @@ public partial struct Node
     public OpResult ExecuteCPU(ComputationalGraph graph) => Op switch
     {
         OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool?>("allow_zero")),
-        
+
         OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1)),
 
         OpType.Sub => CPU.Sub(InputTensor(graph, 0), InputTensor(graph, 1)),
@@ -123,9 +123,9 @@ public partial struct Node
 
         OpType.Div => CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1)),
 
-        OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), 
+        OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad"), Attr<int[]>("dilations"), Attr<int?>("group"), Attr<int[]>("kernel_shape"), Attr<int[]>("pads"), Attr<int[]>("strides")),
-        
+
         OpType.Relu => CPU.Relu(InputTensor(graph, 0)),
 
         OpType.Erf => CPU.Erf(InputTensor(graph, 0)),
@@ -147,6 +147,10 @@ public partial struct Node
         OpType.Shape => CPU.Shape(graph.GetInputTensor(Inputs[0]), Int("start"), Int("end")),
 
         OpType.Gather => CPU.Gather(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), Int("axis")),
+
+        OpType.Slice => CPU.Slice(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), graph.GetInputTensor(Inputs[2]), graph.GetInputTensor(Inputs, 3), graph.GetInputTensor(Inputs, 4)),
+
+        OpType.Unsqueeze => CPU.Unsqueeze(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1])),
 
         _ => NotSupported(Op)
     };

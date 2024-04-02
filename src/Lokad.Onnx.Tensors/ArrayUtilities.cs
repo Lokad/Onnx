@@ -312,22 +312,7 @@ namespace Lokad.Onnx
             }
         }
 
-        public static bool CheckNoRepeatedDims(int[] dims)
-        {
-            var check = dims.Select(_ => -1).ToArray();
-            for (int i = 0; i < dims.Length; i++) 
-            {
-                if (check[dims[i]] != -1)
-                {
-                    return false;
-                }
-                else
-                {
-                    check[dims[i]] = i;
-                }
-            }
-            return true;
-        }
+        public static bool CheckNoRepeatedDims(int[] dims) => dims.Length == dims.Distinct().Count();
 
         public static int Clamp(int value, int min, int max)
         {
@@ -341,27 +326,20 @@ namespace Lokad.Onnx
             }
             else return value;
         }
-        public static int[] GetShapeForAxis(int[] dims1, int[] dims2, int axis) 
+
+        public static int Clamp(int value, int pmin, int pmax, int nmin, int nmax)
         {
-            /*
-            List<int> shape = new List<int>(data.Rank - 1 + indices.Rank);
-            for (int i = 0; i < axis; i++)
+            var max = value >= 0 ? pmax : nmax;
+            var min = value >= 0 ? pmin : nmin;
+            if (value < min)
             {
-                shape.Add(data.dimensions[i]);
+                return min;
             }
-            for (int i = 0; i < indices.Rank; i++)
+            else if (value > max)
             {
-                shape.Add(indices.dimensions[i]);
+                return max;
             }
-            for (int i = axis.Value + 1; i < data.Rank; i++)
-            {
-                shape.Add(data.dimensions[i]);
-            }
-            */
-            var shape = new int[dims1.Length];
-            Array.Copy(dims1, shape, dims1.Length);
-            shape[axis] += dims2[axis];
-            return shape;
+            else return value;
         }
     }
 }

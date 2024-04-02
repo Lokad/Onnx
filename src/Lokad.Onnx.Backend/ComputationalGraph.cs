@@ -39,6 +39,9 @@ public class ComputationalGraph : Runtime
         Inputs.ContainsKey(name) ? Inputs[name] : Initializers.ContainsKey(name) ? Initializers[name] : 
             IntermediateOutputs[name] ?? throw new InvalidOperationException($"The intermediate output tensor {name} has not been assigned a value.");
 
+    public ITensor? GetInputTensor(string[] Inputs, int index) =>
+       index < Inputs.Length ? GetInputTensor(Inputs[index]) : null;    
+
     public ITensor[] GetInputTensors(string[] names) => names.Select(n => GetInputTensor(n)).ToArray();
 
     public Dictionary<string, ITensor> GetRequiredInputs(bool useInitializers)

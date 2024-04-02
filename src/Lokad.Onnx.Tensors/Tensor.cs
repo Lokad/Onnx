@@ -908,7 +908,7 @@ namespace Lokad.Onnx
             {
                 for (int i = 0; i < indices.Length; i++)
                 {
-                    if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException(indices[i].ToString());
+                    if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
                 }
                 return GetValue(ArrayUtilities.GetIndex(strides, indices));
             }
@@ -917,7 +917,7 @@ namespace Lokad.Onnx
             {
                 for (int i = 0; i < indices.Length; i++)
                 {
-                    if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException(indices[i].ToString());
+                    if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
                 }
                 SetValue(ArrayUtilities.GetIndex(strides, indices), value);
             }

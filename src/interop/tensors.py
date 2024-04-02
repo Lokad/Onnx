@@ -123,6 +123,10 @@ def make_tensor_from_ndarray(a:np.ndarray[Any]) -> ITensor:
         return Tensors.MakeTensor[System.Int32](asNetArray(a))
     elif (a.dtype == np.uint32):
         return Tensors.MakeTensor[System.UInt32](asNetArray(a))
+    elif (a.dtype == np.int64):
+        return Tensors.MakeTensor[System.Int64](asNetArray(a))
+    elif (a.dtype == np.uint64):
+        return Tensors.MakeTensor[System.UInt64](asNetArray(a))
     elif (a.dtype == np.float32):
         return Tensors.MakeTensor[System.Single](asNetArray(a))
     elif (a.dtype == np.float64):

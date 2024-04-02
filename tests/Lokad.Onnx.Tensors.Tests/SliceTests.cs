@@ -85,7 +85,7 @@ public class SliceTests
     [Fact]
     public void CanSliceOp()
     {
-        var data = new int[2, 4] { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }.ToTensor<int>();
+        Tensor<int> data = new int[2, 4] { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }.ToTensor<int>();
         var axes = new int[2] { 0, 1 }.ToTensor<int>();
         var start = new int[2] { 1, 0 }.ToTensor<int>();
         var ends = new int[2] { 2, 3 }.ToTensor<int>();
@@ -98,6 +98,20 @@ public class SliceTests
         ends = new int[2] { -1, 1000 }.ToTensor<int>();
 
         output = Tensor<int>.Slice(data, start, ends);
+        Assert.NotNull(output);
+
+        axes = new int[2] { 0, 2 }.ToTensor<int>();
+        start = new int[2] { 0, -7 }.ToTensor<int>();
+        ends = new int[2] {-8, 20 }.ToTensor<int>();
+
+        output = Tensor<int>.Slice(Tensor<int>.Ones(10, 10, 10), start, ends, axes);
+        Assert.NotNull(output);
+
+        axes = new int[1] {1}.ToTensor<int>();
+        start = new int[1] {0}.ToTensor<int>();
+        ends = new int[1] {-1}.ToTensor<int>();
+
+        output = Tensor<int>.Slice(Tensor<int>.Ones(20, 10, 5), start, ends, axes);
         Assert.NotNull(output);
     }
 }

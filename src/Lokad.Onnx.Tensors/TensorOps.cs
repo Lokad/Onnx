@@ -1092,14 +1092,17 @@ where T : struct
         {
             steps = Tensor<int>.Ones(length);
         }
-
+        else
+        {
+            if (steps.Any(s => s < 0)) throw new ArgumentException(nameof(steps), "Negative stepping is not currently supported.");
+        }
         start = start.Select((s, i) => ArrayUtilities.Clamp(ArrayUtilities.HandleNegativeAxisOrIndex(data.Dimensions[axes[i]], s), 0, data.Dimensions[axes[i]])).ToArray().ToTensor<int>();
         ends = ends.Select((s, i) => ArrayUtilities.Clamp(ArrayUtilities.HandleNegativeAxisOrIndex(data.Dimensions[axes[i]], s), 0, data.Dimensions[axes[i]])).ToArray().ToTensor<int>();
 
         SliceIndex[] indices = new SliceIndex[data.Rank];
         for (int i = 0; i < data.Rank; i++) 
         {
-            indices[i] = axes.Contains(i) ? new SliceIndex(start[i], ends[i], steps[i]) : ..;
+            indices[i] = axes.Contains(i) ? new SliceIndex(start[axes.IndexOf(i)], ends[axes.IndexOf(i)], steps[axes.IndexOf(i)]) : new SliceIndex(0, data.dimensions[i]);
         }
         return data.Slice(indices); 
     }

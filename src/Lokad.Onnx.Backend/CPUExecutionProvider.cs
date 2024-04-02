@@ -34,6 +34,8 @@ public class CPUExecutionProvider : Runtime
         OpType.Concat,
         OpType.Shape,
         OpType.Gather,
+        OpType.Slice,
+        OpType.Unsqueeze
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -529,22 +531,89 @@ public class CPUExecutionProvider : Runtime
         }
         switch (data.ElementType)
         {
-            case TensorElementType.Bool: return Success(op, Tensor<bool>.Gather((Tensor<bool>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Gather((Tensor<sbyte>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Gather((Tensor<byte>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.Int16: return Success(op, Tensor<short>.Gather((Tensor<short>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Gather((Tensor<ushort>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Gather((Tensor<int>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Gather((Tensor<uint>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.Gather((Tensor<long>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Gather((Tensor<ulong>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Gather((Tensor<float>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Gather((Tensor<double>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.Float16: return Success(op, Tensor<Half>.Gather((Tensor<Half>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Gather((Tensor<BFloat16>)data, (Tensor<int>) indices, axis));
-            case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Gather((Tensor<System.Numerics.Complex>)data, (Tensor<int>) indices, axis));
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Gather((Tensor<bool>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Gather((Tensor<sbyte>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Gather((Tensor<byte>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Gather((Tensor<short>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Gather((Tensor<ushort>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Gather((Tensor<int>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Gather((Tensor<uint>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Gather((Tensor<long>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Gather((Tensor<ulong>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Gather((Tensor<float>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Gather((Tensor<double>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Gather((Tensor<Half>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Gather((Tensor<BFloat16>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Gather((Tensor<System.Numerics.Complex>)data, (Tensor<int>)  indices, axis));
             default: return NotSupported(op);
         }
+    }
+
+    public static OpResult Slice(ITensor? data, ITensor? starts, ITensor? ends, ITensor? axes, ITensor? steps)
+    {
+        var op = OpType.Slice;
+        if (data is null) return MissingInput(op, nameof(data));
+        if (starts is null) return MissingInput(op, nameof(starts));
+        if (ends is null) return MissingInput(op, nameof(ends));
+        if (data.Rank == 0) return WrongInputShape(op, nameof(data), data, "Cannot slice a tensor of rank 0.");
+        if (starts.Rank != 1) return WrongInputShape(op, nameof(starts), starts, "The rank of the start tensor must be 1.");
+        if (starts.Length > data.Rank) return WrongInputShape(op, nameof(starts), starts, "The length of the start tensor must be less-than or equal to the rank of the data tensor.");
+        if (ends.Rank != 1) return WrongInputShape(op, nameof(ends), ends, "The rank of the end tensor must be 1.");
+        if (starts.Length != ends.Length) return WrongInputShape(op, nameof(ends), ends, "The end tensor must be the same length as the start tensor.");
+        if (axes is not null && (axes.Rank != 1 || axes.Length != starts.Length)) return WrongInputShape(op, nameof(axes), axes, "The axes tensor must be a rank 1 tensor with the same length as the start tensor.");
+        if (steps is not null && (steps.Rank != 1 || steps.Length != starts.Length)) return WrongInputShape(op, nameof(steps), steps, "The steps tensor must be a rank 1 tensor with the same length as the start tensor.");
+        
+        if (starts.ElementType == TensorElementType.Int64)
+        {
+            starts = starts.Cast<int>();
+        }
+
+        if (ends.ElementType == TensorElementType.Int64)
+        {
+            ends = ends.Cast<int>();
+        }
+
+        if (axes is not null && axes.ElementType == TensorElementType.Int64)
+        {
+            axes = axes.Cast<int>();
+        }
+
+        if (steps is not null && steps.ElementType == TensorElementType.Int64)
+        {
+            steps = steps.Cast<int>();
+        }
+
+        switch (data.ElementType)
+        {
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Slice((Tensor<bool>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Slice((Tensor<sbyte>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Slice((Tensor<byte>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Slice((Tensor<short>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Slice((Tensor<ushort>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Slice((Tensor<int>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Slice((Tensor<uint>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Slice((Tensor<long>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Slice((Tensor<ulong>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Slice((Tensor<float>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Slice((Tensor<double>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Slice((Tensor<Half>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Slice((Tensor<BFloat16>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Slice((Tensor<System.Numerics.Complex>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            default: return NotSupported(op);
+        }
+    }
+
+    public static OpResult Unsqueeze(ITensor? data, ITensor? axes)
+    {
+        var op = OpType.Unsqueeze;
+        if (data is null) return MissingInput(op, nameof(data));
+        if (axes is null) return MissingInput(op, nameof(axes));
+        if (axes.ElementType == TensorElementType.Int64)
+        {
+            axes = axes.Cast<int>();
+        }
+        var _axes = ((Tensor<int>) axes).ToArray();
+        return Success(op, data.Unsqueeze(_axes));
     }
 }
 
