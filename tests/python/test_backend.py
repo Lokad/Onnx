@@ -1,4 +1,5 @@
 import os
+from secrets import token_urlsafe
 from typing import Dict
 
 import math
@@ -617,7 +618,6 @@ def test_unsqueeze():
     np.testing.assert_almost_equal(output["y"], y)
 
 
-
 def test_reduce_sum():
     x = _get_rnd_float32(shape=[5, 10, 10, 3]).astype(np.int32)
     axes = np.array([1, 2], dtype=np.int64)
@@ -641,4 +641,48 @@ def test_reduce_sum():
 
     output = backend.run_node(node_def, [data, axes])
     np.testing.assert_almost_equal(output["reduced"], reduced)
+
+    node_def = onnx.helper.make_node(
+        "ReduceSum", inputs=["data", "axes"], outputs=["reduced"], keepdims=0
+    )
+    reduced = np.sum(data, axis=1, keepdims=False)
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)
+
+    node_def = onnx.helper.make_node(
+        "ReduceSum", inputs=["data", "axes"], outputs=["reduced"], keepdims=1
+    )
+    data = np.array([[ 0.0569, -0.2475,  0.0737, -0.3429],
+        [-0.2993,  0.9138,  0.9337, -1.6864],
+        [ 0.1132,  0.7892, -0.1003,  0.5688],
+        [ 0.3637, -0.9906, -0.4752, -1.5197]]
+    )
+    axes = np.array([1], dtype=np.int64)
+    reduced = np.sum(data, axis=1, keepdims=True)
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)
+
+    data = np.arange(4 * 5 * 6).reshape(4, 5, 6)
+    axes = np.array([2, 1], dtype=np.int64)
+    reduced = np.sum(data, axis=(2,1), keepdims=True)
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)
+
+    
+def test_reduce_mean():
+    node_def = onnx.helper.make_node("ReduceMean", ["X", "axes"], ["y"])
+    x = np.array([[1., 1.], [2., 2.]])
+    axes = np.array([], dtype=np.int64)
+    output = backend.run_node(node_def, [x, axes])
+    np.testing.assert_almost_equal(output["y"],
+                                np.mean(x, (), keepdims=True))
+    axes = np.array([0], dtype=np.int64)
+    output = backend.run_node(node_def, [x, axes])
+    np.testing.assert_almost_equal(output["y"],
+                                np.mean(x, (0), keepdims=True))
+    axes = np.array([1], dtype=np.int64)
+    output = backend.run_node(node_def, [x, axes])
+    np.testing.assert_almost_equal(output["y"],
+                                np.mean(x, (1), keepdims=True))
+
 

@@ -154,6 +154,8 @@ public partial struct Node
 
         OpType.ReduceSum => CPU.ReduceSum(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), Int("keepdims"), Int("noop_with_empty_axes")),
 
+        OpType.ReduceMean => CPU.ReduceMean(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), Int("keepdims"), Int("noop_with_empty_axes")),
+        
         _ => NotSupported(Op)
     };
 }

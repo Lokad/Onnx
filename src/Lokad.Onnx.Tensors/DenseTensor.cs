@@ -214,7 +214,7 @@ namespace Lokad.Onnx
         public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions)
         {
  
-            var newSize = ArrayUtilities.GetSize(dimensions);
+            var newSize = ArrayUtilities.ComputeOffsetForReduction(dimensions);
 
             if (newSize != Length)
             {

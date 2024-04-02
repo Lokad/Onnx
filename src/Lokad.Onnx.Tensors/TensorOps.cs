@@ -189,6 +189,10 @@ where T : struct
 
     public static Tensor<byte> Divide(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l / y));
 
+    public static Tensor<int> Divide(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => (l / r), y);
+
+    public static Tensor<int> Divide(Tensor<int> x, int y) => x.Apply(l => (l / y));
+
     public static Tensor<float> Divide(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l / r, y);
 
     public static Tensor<float> Divide(Tensor<float> x, float y) => x.Apply(l => l / y);
@@ -1108,7 +1112,6 @@ where T : struct
     public static Tensor<T> Unsqueeze(Tensor<T> data, int[] axes)
     {
         if (!ArrayUtilities.CheckNoRepeatedDims(axes)) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
-        if (axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
         if (axes.Any(a => a > (data.Rank + axes.Length) - 1)) throw new ArgumentException(nameof(axes), $"Each specified axis must be less than the rank of the output tensor. Got {axes.First(a => a > data.Rank - 1)}");
         var newshape = new int[axes.Length + data.Rank];
@@ -1129,7 +1132,9 @@ where T : struct
     }
     public static Tensor<int> ReduceSum(Tensor<int> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
     {
+        if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         if (axes is not null && !axes.All(a =>  a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
+        if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
         var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
@@ -1149,7 +1154,7 @@ where T : struct
 
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
         var output = DenseTensor<int>.OfShape(oshape);
-        var r = ArrayUtilities.GetSize(rshape);
+        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
         for (var i = 0; i < output.Length; ++i)
         {
             var offset = i * r;
@@ -1163,6 +1168,171 @@ where T : struct
         if (keepDims)
         {
             return Tensor<int>.Unsqueeze(output, _axes);
+        }
+        else
+        {
+            return output;
+        }
+    }
+
+    public static Tensor<float> ReduceSum(Tensor<float> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
+    {
+        if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
+        if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
+        if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
+        var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
+        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
+        Tensor<float> pdata;
+        int[] paxes;
+        if (permutation is not null)
+        {
+            pdata = Tensor<float>.Transpose(data, permutation);
+            paxes = ArrayUtilities.GetInnerMostAxes(_axes.Length, data.Rank);
+        }
+        else
+        {
+            pdata = data;
+            paxes = _axes;
+        }
+
+        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
+        var output = DenseTensor<float>.OfShape(oshape);
+        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+        for (var i = 0; i < output.Length; ++i)
+        {
+            var offset = i * r;
+            var sum = 0.0f;
+            for (int j = 0; j < r; ++j)
+            {
+                sum += pdata.GetValue(offset + j);
+            }
+            output.SetValue(i, sum);
+        }
+        if (keepDims)
+        {
+            return Tensor<float>.Unsqueeze(output, _axes);
+        }
+        else
+        {
+            return output;
+        }
+    }
+
+    public static Tensor<double> ReduceSum(Tensor<double> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
+    {
+        if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
+        if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
+        if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
+        var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
+        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
+        Tensor<double> pdata;
+        int[] paxes;
+        if (permutation is not null)
+        {
+            pdata = Tensor<double>.Transpose(data, permutation);
+            paxes = ArrayUtilities.GetInnerMostAxes(_axes.Length, data.Rank);
+        }
+        else
+        {
+            pdata = data;
+            paxes = _axes;
+        }
+
+        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
+        var output = DenseTensor<double>.OfShape(oshape);
+        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+        for (var i = 0; i < output.Length; ++i)
+        {
+            var offset = i * r;
+            var sum = 0.0;
+            for (int j = 0; j < r; ++j)
+            {
+                sum += pdata.GetValue(offset + j);
+            }
+            output.SetValue(i, sum);
+        }
+        if (keepDims)
+        {
+            return Tensor<double>.Unsqueeze(output, _axes);
+        }
+        else
+        {
+            return output;
+        }
+    }
+
+    public static Tensor<int> ReduceMean(Tensor<int> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
+    {
+        if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
+        if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
+        if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+        
+        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
+        var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
+        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        
+        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
+        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+        Tensor<int> output = DenseTensor<int>.OfShape(oshape);
+        output = Tensor<int>.Divide(data, r);
+        output = Tensor<int>.ReduceSum(output, _axes.ToTensor<int>());
+        if (keepDims)
+        {
+            return Tensor<int>.Unsqueeze(output, _axes);
+        }
+        else
+        {
+            return output;
+        }
+    }
+
+    public static Tensor<float> ReduceMean(Tensor<float> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
+    {
+        if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
+        if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
+        if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+
+        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
+        var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
+        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+
+        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
+        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+        Tensor<float> output = DenseTensor<float>.OfShape(oshape);
+        output = Tensor<float>.Divide(data, r);
+        output = Tensor<float>.ReduceSum(output, _axes.ToTensor<int>());
+        if (keepDims)
+        {
+            return Tensor<float>.Unsqueeze(output, _axes);
+        }
+        else
+        {
+            return output;
+        }
+    }
+
+    public static Tensor<double> ReduceMean(Tensor<double> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
+    {
+        if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
+        if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
+        if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+
+        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
+        var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
+        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+
+        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
+        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+        Tensor<double> output = DenseTensor<double>.OfShape(oshape);
+        output = Tensor<double>.Divide(data, r);
+        output = Tensor<double>.ReduceSum(output, _axes.ToTensor<int>());
+        if (keepDims)
+        {
+            return Tensor<double>.Unsqueeze(output, _axes);
         }
         else
         {

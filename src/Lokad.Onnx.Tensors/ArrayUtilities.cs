@@ -23,7 +23,7 @@ namespace Lokad.Onnx
     {
         public const int StackallocMax = 16;
 
-        public static int GetSize(ReadOnlySpan<int> dimensions, int startIndex = 0)
+        public static int ComputeOffsetForReduction(ReadOnlySpan<int> dimensions, int startIndex = 0)
         {
             int product = 1;
             for (int i = startIndex; i < dimensions.Length; i++)
