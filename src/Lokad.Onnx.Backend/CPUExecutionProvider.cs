@@ -640,6 +640,7 @@ public class CPUExecutionProvider : Runtime
     {
         var op = OpType.ReduceMean;
         if (data is null) return MissingInput(op, nameof(data));
+        if (axes is not null && axes.Rank != 1) return WrongInputShape(op, nameof(axes), 1, axes);
         if (axes is not null && axes.ElementType == TensorElementType.Int64)
         {
             axes = axes.Cast<int>();

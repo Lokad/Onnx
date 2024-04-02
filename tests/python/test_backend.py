@@ -674,8 +674,7 @@ def test_reduce_mean():
     x = np.array([[1., 1.], [2., 2.]])
     axes = np.array([], dtype=np.int64)
     output = backend.run_node(node_def, [x, axes])
-    np.testing.assert_almost_equal(output["y"],
-                                np.mean(x, (), keepdims=True))
+    np.testing.assert_almost_equal(output["y"], np.mean(x, keepdims=True))
     axes = np.array([0], dtype=np.int64)
     output = backend.run_node(node_def, [x, axes])
     np.testing.assert_almost_equal(output["y"],
@@ -685,4 +684,77 @@ def test_reduce_mean():
     np.testing.assert_almost_equal(output["y"],
                                 np.mean(x, (1), keepdims=True))
 
+    node_def = onnx.helper.make_node("ReduceMean", ["X", "axes"], ["y"])
+    x = _get_rnd_float32(shape=[5, 10, 10, 3])
+    output = backend.run_node(node_def, [x, np.array([1, 2])])
+    np.testing.assert_almost_equal(output["y"],
+                               np.mean(x, (1, 2), keepdims=True))
+    
+    axes = np.array([1], dtype=np.int64)
+    keepdims = 0
 
+    node_def = onnx.helper.make_node(
+        "ReduceMean",
+        inputs=["data", "axes"],
+        outputs=["reduced"],
+        keepdims=keepdims,
+    )
+
+    data = np.array(
+        [[[5, 1], [20, 2]], [[30, 1], [40, 2]], [[55, 1], [60, 2]]],
+        dtype=np.float32,
+    )
+    reduced = np.mean(data, axis=tuple(axes), keepdims=keepdims == 1)
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)
+
+    np.random.seed(0)
+    shape = [3, 2, 2]
+    data = np.random.uniform(-10, 10, shape).astype(np.float32)
+    reduced = np.mean(data, axis=tuple(axes), keepdims=keepdims == 1)
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)
+
+
+    shape = [3, 2, 2]
+    axes = np.array([1], dtype=np.int64)
+    keepdims = 1
+
+    node_def = onnx.helper.make_node(
+            "ReduceMean",
+            inputs=["data", "axes"],
+            outputs=["reduced"],
+            keepdims=keepdims,
+        )
+
+    data = np.array(
+        [[[5, 1], [20, 2]], [[30, 1], [40, 2]], [[55, 1], [60, 2]]],
+        dtype=np.float32,
+    )
+    reduced = np.mean(data, axis=tuple(axes), keepdims=keepdims == 1)
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)
+
+    data = np.random.uniform(-10, 10, shape).astype(np.float32)
+    reduced = np.mean(data, axis=tuple(axes), keepdims=keepdims == 1)
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)
+
+    shape = [3, 2, 2]
+    axes = np.array([], dtype=np.int64)
+    keepdims = 1
+
+    node_def = onnx.helper.make_node(
+        "ReduceMean",
+        inputs=["data", "axes"],
+        outputs=["reduced"],
+        keepdims=keepdims,
+    )
+
+    data = np.array(
+        [[[5, 1], [20, 2]], [[30, 1], [40, 2]], [[55, 1], [60, 2]]],
+        dtype=np.float32,
+    )
+    reduced = np.mean(data, axis=None, keepdims=True)
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)

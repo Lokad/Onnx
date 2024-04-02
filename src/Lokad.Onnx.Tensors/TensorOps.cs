@@ -1137,7 +1137,7 @@ where T : struct
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
-        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
         var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
         Tensor<int> pdata;
         int[] paxes;
@@ -1182,7 +1182,7 @@ where T : struct
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
-        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
         var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
         Tensor<float> pdata;
         int[] paxes;
@@ -1227,7 +1227,7 @@ where T : struct
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
-        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
         var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
         Tensor<double> pdata;
         int[] paxes;
@@ -1273,7 +1273,7 @@ where T : struct
         
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
-        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
         
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
         var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
@@ -1298,13 +1298,13 @@ where T : struct
 
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
-        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
 
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
-        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+        var r = Convert.ToSingle(ArrayUtilities.ComputeOffsetForReduction(rshape)); 
         Tensor<float> output = DenseTensor<float>.OfShape(oshape);
-        output = Tensor<float>.Divide(data, r);
-        output = Tensor<float>.ReduceSum(output, _axes.ToTensor<int>());
+        output = Tensor<float>.ReduceSum(data, _axes.ToTensor<int>());
+        output = Tensor<float>.Divide(output, r);
         if (keepDims)
         {
             return Tensor<float>.Unsqueeze(output, _axes);
@@ -1323,10 +1323,10 @@ where T : struct
 
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
-        var _axes = axes is null ? data.dimensions : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
 
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
-        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+        var r = Convert.ToDouble(ArrayUtilities.ComputeOffsetForReduction(rshape));
         Tensor<double> output = DenseTensor<double>.OfShape(oshape);
         output = Tensor<double>.Divide(data, r);
         output = Tensor<double>.ReduceSum(output, _axes.ToTensor<int>());
