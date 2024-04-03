@@ -943,7 +943,13 @@ where T : struct
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");
 
-        var t = x.Apply(MathF.Exp);
+        var max = Tensor<float>.ReduceMax(x, (new int[] { axis }).ToTensor<int>(), true);
+        if (!Tensor<float>.Broadcast(x, max, out var bx, out var bmax))
+        {
+            throw new InvalidOperationException("Could not broadcast result of Max op with original tensor.");
+        }
+        var sub = Tensor<float>.Subtract(x, bmax);
+        var t = sub.Apply(MathF.Exp);
         var s = Tensor<float>.ReduceSum(t, (new int[] { axis }).ToTensor<int>(), true);
         if (!Tensor<float>.Broadcast(t, s, out var bt, out var bs))
         {
@@ -957,7 +963,13 @@ where T : struct
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");
 
-        var t = x.Apply(Math.Exp);
+        var max = Tensor<double>.ReduceMax(x, (new int[] { axis }).ToTensor<int>(), true);
+        if (!Tensor<double>.Broadcast(x, max, out var bx, out var bmax))
+        {
+            throw new InvalidOperationException("Could not broadcast result of Max op with original tensor.");
+        }
+        var sub = Tensor<double>.Subtract(x, bmax);
+        var t = sub.Apply(Math.Exp);
         var s = Tensor<double>.ReduceSum(t, (new int[] { axis }).ToTensor<int>(), true);
         if (!Tensor<double>.Broadcast(t, s, out var bt, out var bs))
         {
@@ -1346,6 +1358,106 @@ where T : struct
         Tensor<double> output = DenseTensor<double>.OfShape(oshape);
         output = Tensor<double>.Divide(data, r);
         output = Tensor<double>.ReduceSum(output, _axes.ToTensor<int>());
+        if (keepDims)
+        {
+            return Tensor<double>.Unsqueeze(output, _axes);
+        }
+        else
+        {
+            return output;
+        }
+    }
+
+    public static Tensor<float> ReduceMax(Tensor<float> data, Tensor<int> axes = null, bool? _keepDims = null)
+    {
+        if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
+        if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
+        if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+        
+        var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var keepDims = _keepDims.HasValue ? _keepDims.Value : true;
+
+        var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
+        Tensor<float> pdata;
+        int[] paxes;
+        if (permutation is not null)
+        {
+            pdata = Tensor<float>.Transpose(data, permutation);
+            paxes = ArrayUtilities.GetInnerMostAxes(_axes.Length, data.Rank);
+        }
+        else
+        {
+            pdata = data;
+            paxes = _axes;
+        }
+
+        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
+        var output = DenseTensor<float>.OfShape(oshape);
+        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+        for (var i = 0; i < output.Length; ++i)
+        {
+            var offset = i * r;
+            var max = 0.0f;
+            for (int j = 0; j < r; ++j)
+            {
+                var v = pdata.GetValue(offset + j);
+                if (v > max)
+                {
+                    max = v;
+                }
+            }
+            output.SetValue(i, max);
+        }
+        if (keepDims)
+        {
+            return Tensor<float>.Unsqueeze(output, _axes);
+        }
+        else
+        {
+            return output;
+        }
+    }
+
+    public static Tensor<double> ReduceMax(Tensor<double> data, Tensor<int> axes = null, bool? _keepDims = null)
+    {
+        if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
+        if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
+        if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+
+        var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
+        var keepDims = _keepDims.HasValue ? _keepDims.Value : true;
+
+        var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
+        Tensor<double> pdata;
+        int[] paxes;
+        if (permutation is not null)
+        {
+            pdata = Tensor<double>.Transpose(data, permutation);
+            paxes = ArrayUtilities.GetInnerMostAxes(_axes.Length, data.Rank);
+        }
+        else
+        {
+            pdata = data;
+            paxes = _axes;
+        }
+
+        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
+        var output = DenseTensor<double>.OfShape(oshape);
+        var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+        for (var i = 0; i < output.Length; ++i)
+        {
+            var offset = i * r;
+            var max = 0.0;
+            for (int j = 0; j < r; ++j)
+            {
+                var v = pdata.GetValue(offset + j);
+                if (v > max)
+                {
+                    max = v;
+                }
+            }
+            output.SetValue(i, max);
+        }
         if (keepDims)
         {
             return Tensor<double>.Unsqueeze(output, _axes);

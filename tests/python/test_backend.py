@@ -4,6 +4,7 @@ from typing import Dict
 
 import math
 import itertools
+from unicodedata import decimal
 
 import numpy as np
 import onnx
@@ -819,3 +820,60 @@ def test_softmax():
     y = _softmax(x, axis=1)
     output = backend.run_node(node_def, [x])
     np.testing.assert_almost_equal(output["y"], y)
+
+    x = np.array([[0, 1, 2, 3], [10000, 10001, 10002, 10003]]).astype(np.float32)
+        # expected output
+        # [[0.032058604 0.08714432  0.23688284  0.6439143  ]
+        # [0.032058604 0.08714432  0.23688284  0.6439143  ]]
+    y = _softmax(x)
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    node_def = onnx.helper.make_node(
+            "Softmax",
+            inputs=["x"],
+            outputs=["y"],
+            axis = 0
+        )
+    x = np.abs(np.random.randn(3, 4, 5).astype(np.float32))
+    y = _softmax(x, axis=0)
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    node_def = onnx.helper.make_node(
+            "Softmax",
+            inputs=["x"],
+            outputs=["y"],
+            axis=1,
+        )
+    y = _softmax(x, axis=1)
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    node_def = onnx.helper.make_node(
+            "Softmax",
+            inputs=["x"],
+            outputs=["y"],
+            axis=2,
+        )
+    y = _softmax(x, axis=2)
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    node_def = onnx.helper.make_node(
+            "Softmax",
+            inputs=["x"],
+            outputs=["y"],
+            axis=-1,
+        )
+    y = _softmax(x, axis=-1)
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_almost_equal(output["y"], y)
+
+    node_def = onnx.helper.make_node(
+            "Softmax",
+            inputs=["x"],
+            outputs=["y"],
+        )
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_almost_equal(output["y"], y, decimal=6)

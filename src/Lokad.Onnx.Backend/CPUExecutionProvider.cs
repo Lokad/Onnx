@@ -38,7 +38,8 @@ public class CPUExecutionProvider : Runtime
         OpType.Unsqueeze,
         OpType.ReduceSum,
         OpType.ReduceMean,
-        OpType.Softmax
+        OpType.ReduceMax,
+        OpType.Softmax,
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -300,7 +301,6 @@ public class CPUExecutionProvider : Runtime
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
-
 
     public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes = null) where T : struct
     {
@@ -654,6 +654,24 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Int32: return Success(op, Tensor<int>.ReduceMean((Tensor<int>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             case TensorElementType.Float: return Success(op, Tensor<float>.ReduceMean((Tensor<float>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             case TensorElementType.Double: return Success(op, Tensor<double>.ReduceMean((Tensor<double>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
+            default: return NotSupported(op);
+        }
+    }
+
+    public static OpResult ReduceMax(ITensor? data, ITensor? axes, int? _keep_dims)
+    {
+        var op = OpType.ReduceMax;
+        if (data is null) return MissingInput(op, nameof(data));
+        if (axes is not null && axes.Rank != 1) return WrongInputShape(op, nameof(axes), 1, axes);
+        if (axes is not null && axes.ElementType == TensorElementType.Int64)
+        {
+            axes = axes.Cast<int>();
+        }
+        var keepDims = _keep_dims.HasValue ? Convert.ToBoolean(_keep_dims.Value) : true;
+        switch (data.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.ReduceMax((Tensor<float>)data, (Tensor<int>?)axes, keepDims));
+            case TensorElementType.Double: return Success(op, Tensor<double>.ReduceMax((Tensor<double>)data, (Tensor<int>?)axes, keepDims));
             default: return NotSupported(op);
         }
     }
