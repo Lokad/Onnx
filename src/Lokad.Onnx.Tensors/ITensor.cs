@@ -63,6 +63,25 @@ namespace Lokad.Onnx
         
         static ITensor[] Broadcast(ITensor inA, ITensor inB)
         {
+            if (inA.Rank == 0 && inB.Rank != 0)
+            {
+                var _A = inB.CloneEmpty();
+                for (int i = 0; i < _A.Length; i++)
+                {
+                    _A.SetValue(i, inA.GetValue(0));
+                }
+                return new ITensor[2] { _A, inB };
+            }
+            else if (inB.Rank == 0 && inA.Rank != 0)
+            {
+                var _B = inA.CloneEmpty();
+                for (int i = 0; i < _B.Length; i++)
+                {
+                    _B.SetValue(i, inB.GetValue(0));
+                }
+                return new ITensor[2] { inA, _B };
+            }
+
             var broadcastRank = Math.Max(inA.Rank, inB.Rank);
             var outA = inA.Clone();
             var outB = inB.Clone();

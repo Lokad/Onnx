@@ -88,10 +88,11 @@ def asNetArray(npArray:np.ndarray[Any]) -> Array:
         dims.append(2)
         npArray = npArray.view(np.float64).reshape(dims)
 
-    netDims = Array.CreateInstance(Int32, npArray.ndim)
+   
+    netDims = Array.CreateInstance(Int32, npArray.ndim) 
+
     for I in range(npArray.ndim):
         netDims[I] = Int32(dims[I])
-    
     if not npArray.flags.c_contiguous:
         npArray = npArray.copy(order='C')
     assert npArray.flags.c_contiguous
@@ -112,25 +113,25 @@ def asNetArray(npArray:np.ndarray[Any]) -> Array:
 
 def make_tensor_from_ndarray(a:np.ndarray[Any]) -> ITensor:
     if (a.dtype == np.uint8):
-        return Tensors.MakeTensor[System.Byte](asNetArray(a))
+        return Tensors.MakeTensor[System.Byte](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.Byte](a.item())
     elif (a.dtype == np.int8):
-        return Tensors.MakeTensor[System.SByte](asNetArray(a))
+        return Tensors.MakeTensor[System.SByte](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.SByte](a.item())
     elif (a.dtype == np.int16):
-        return Tensors.MakeTensor[System.Int16](asNetArray(a))
+        return Tensors.MakeTensor[System.Int16](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.Int16](a.item())
     elif (a.dtype == np.uint16):
-        return Tensors.MakeTensor[System.UInt16](asNetArray(a))
+        return Tensors.MakeTensor[System.UInt16](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.UInt16](a.item())
     elif (a.dtype == np.int32):
-        return Tensors.MakeTensor[System.Int32](asNetArray(a))
+        return Tensors.MakeTensor[System.Int32](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.Int32](a.item())
     elif (a.dtype == np.uint32):
-        return Tensors.MakeTensor[System.UInt32](asNetArray(a))
+        return Tensors.MakeTensor[System.UInt32](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.UInt32](a.item())
     elif (a.dtype == np.int64):
-        return Tensors.MakeTensor[System.Int64](asNetArray(a))
+        return Tensors.MakeTensor[System.Int64](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.Int64](a.item())
     elif (a.dtype == np.uint64):
-        return Tensors.MakeTensor[System.UInt64](asNetArray(a))
+        return Tensors.MakeTensor[System.UInt64](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.UInt64](a.item())
     elif (a.dtype == np.float32):
-        return Tensors.MakeTensor[System.Single](asNetArray(a))
+        return Tensors.MakeTensor[System.Single](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.Single](a.item())
     elif (a.dtype == np.float64):
-        return Tensors.MakeTensor[System.Double](asNetArray(a))
+        return Tensors.MakeTensor[System.Double](asNetArray(a)) if a.ndim > 0 else Tensors.MakeScalar[System.Double](a.item())
     else: raise RuntimeError('fThe type {a.dtype} is not supported.')
 
 def make_ndarray_from_tensor(t:ITensor) -> np.ndarray[Any]:

@@ -877,3 +877,28 @@ def test_softmax():
         )
     output = backend.run_node(node_def, [x])
     np.testing.assert_almost_equal(output["y"], y, decimal=6)
+
+
+def pow(x, y):  # type: ignore  # noqa: A001
+    z = np.power(x, y).astype(x.dtype)
+    return z
+
+def test_pow():
+    node_def = onnx.helper.make_node("Pow", ["x", "y"], ["z"])
+    x = _get_rnd_float32(shape=1000) / 2.0 + 0.5
+    y = _get_rnd_float32(shape=1000) / 2.0 + 0.5
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["z"], np.power(x, y))
+
+    x = np.arange(60).reshape(3, 4, 5).astype(np.float32)
+    y = np.random.randn(3, 4, 5).astype(np.float32)
+    z = pow(x, y)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["z"], z)
+
+
+    x = np.array([1, 2, 3]).astype(np.float32)
+    y = np.array(2).astype(np.float32)
+    z = pow(x, y)  # expected output [1., 4., 9.]
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["z"], z)

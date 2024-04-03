@@ -19,14 +19,15 @@ public class CPUExecutionProvider : Runtime
     {
         OpType.Reshape,
         OpType.Add,
+        OpType.Div,
+        OpType.Sub,
+        OpType.Mul,
+        OpType.Pow,
         OpType.Conv,
         OpType.Relu,
         OpType.MaxPool,
         OpType.MatMul,
         OpType.Sqrt,
-        OpType.Div,
-        OpType.Sub,
-        OpType.Mul,
         OpType.Erf,
         OpType.Transpose,
         OpType.Constant,
@@ -161,6 +162,26 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
+    public static OpResult Pow(ITensor? A, ITensor? B)
+    {
+        var op = OpType.Pow;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        if (!ITensor.Broadcast(A, B, out var bA, out var bB))
+        {
+            return CannotBroadcast(op, A, B);
+        }
+        switch (A.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Pow((Tensor<float>)bA, (Tensor<float>)bB));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Pow((Tensor<double>)bA, (Tensor<double>)bB));
+            default: return InputTypeNotSupported(op, nameof(A), A);
+        }
+    }
     public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad = null, int[]? dilations = null, int? group = null, int[]? kernel_shape = null, int[]? pads = null, int[]? strides = null)
     {
         var op = OpType.Conv;
@@ -355,44 +376,6 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, shape);
             default: return OpResult.NotSupported(OpType.Squeeze);
         }
-    }
-
-    public static OpResult Broadcast<T>(DenseTensor<T> inA, DenseTensor<T> inB) where T : struct
-    {
-        var broadcastRank = Math.Max(inA.Rank, inB.Rank);
-        var outA = inA.Clone();
-        var outB = inB.Clone();
-        for (var i = 0; i < broadcastRank; i++)
-        {
-            var idxA = i - broadcastRank + inA.Rank;
-            var idxB = i - broadcastRank + inB.Rank;
-            if (i < broadcastRank - inA.Rank)
-            {
-                outA = outA.PadLeft();
-                outA = outA.BroadcastDim(0, inB.Dimensions[idxB]);
-            }
-            else if (i < broadcastRank - inB.Rank)
-            {
-                outB = outB.PadLeft();
-                outB = outB.BroadcastDim(0, inA.Dimensions[idxA]);
-            }
-            else if (inA.Dimensions[idxA] == inB.Dimensions[idxB])
-            {
-            }
-            else if (inA.Dimensions[idxA] == 1)
-            {
-                outA = outA.BroadcastDim(i, inB.Dimensions[idxB]);
-            }
-            else if (inB.Dimensions[idxB] == 1)
-            {
-                outB = outB.BroadcastDim(i, inA.Dimensions[idxA]);
-            }
-            else
-            {
-                return OpResult.Failure(OpType.Broadcast, $"Trying to broadcast incompatible shapes: {inA.Dimensions.ToArray()} and {inB.Dimensions.ToArray()}");
-            }
-        }
-        return OpResult.Success(OpType.Broadcast, new[] { outA, outB });
     }
 
     public static OpResult Erf(ITensor? X)

@@ -61,6 +61,24 @@ where T : struct
 
     public static Tensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
     {
+        if (inA.Rank == 0 && inB.Rank != 0)
+        {
+            var _A = inB.CloneEmpty();
+            for (int i = 0; i < _A.Length; i++)
+            {
+                _A.SetValue(i, inA.GetValue(0));
+            }
+            return new Tensor<T>[2] { _A, inB };
+        }
+        else if (inB.Rank == 0 && inA.Rank != 0)
+        {
+            var _B = inA.CloneEmpty();
+            for (int i = 0; i < _B.Length; i++)
+            {
+                _B.SetValue(i, inB.GetValue(0));
+            }
+            return new Tensor<T>[2] { inA, _B };
+        }
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
         var outA = inA.Clone();
         var outB = inB.Clone();
@@ -204,6 +222,10 @@ where T : struct
     public static Tensor<float> Negate(Tensor<float> x) => x.Apply(l => -l);
 
     public static Tensor<double> Negate(Tensor<double> x) => x.Apply(l => -l);
+
+    public static Tensor<float> Pow(Tensor<float> x, Tensor<float> y) => x.Apply(MathF.Pow, y);
+
+    public static Tensor<double> Pow(Tensor<double> x, Tensor<double> y) => x.Apply(Math.Pow, y);
 
     public static Tensor<float> Square(Tensor<float> x) => x.Apply(l => l * l);
 

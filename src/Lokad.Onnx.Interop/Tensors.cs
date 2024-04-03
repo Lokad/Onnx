@@ -11,6 +11,8 @@ public class Tensors
 
     public static ITensor MakeEmptyTensor<T>(int[] dims) where T : struct => new DenseTensor<T>(dims);
 
+    public static ITensor MakeScalar<T>(T val) where T : struct => DenseTensor<T>.Scalar(val);
+
     public static ITensor Ones<T>(int[] dims) where T : struct => Tensor<T>.Ones(dims);
 
     public static ITensor ARange(int start, int end, int step = 1) => Tensor<int>.Arange(start, end, step);

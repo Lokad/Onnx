@@ -123,6 +123,8 @@ public partial struct Node
 
         OpType.Div => CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1)),
 
+        OpType.Pow => CPU.Pow(InputTensor(graph, 0), InputTensor(graph, 1)),
+
         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad"), Attr<int[]>("dilations"), Attr<int?>("group"), Attr<int[]>("kernel_shape"), Attr<int[]>("pads"), Attr<int[]>("strides")),
 
