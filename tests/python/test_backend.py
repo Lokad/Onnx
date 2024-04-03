@@ -218,7 +218,14 @@ def test_erf():
     x = _get_rnd_float32(shape=[3, 4, 5])
     output = backend.run_node(node_def, [x])
     exp_output = np.vectorize(math.erf)(x).astype(np.float32)
+    #np.testing.assert_almost_equal(output['Y'], exp_output)
     np.testing.assert_allclose(output['Y'], exp_output, rtol=1e-6, atol=1e-6)
+
+
+    x = np.random.randn(1, 3, 32, 32).astype(np.float32)
+    y = np.vectorize(math.erf)(x).astype(np.float32)
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_allclose(output['Y'], y, rtol=1e-6, atol=1e-6)
 
 def test_transpose():
     node_def = onnx.helper.make_node("Transpose", ["X"], ["Y"], perm=[0, 2, 1], name="Transpose")
@@ -758,3 +765,57 @@ def test_reduce_mean():
     reduced = np.mean(data, axis=None, keepdims=True)
     output = backend.run_node(node_def, [data, axes])
     np.testing.assert_almost_equal(output["reduced"], reduced)
+
+    shape = [3, 2, 2]
+    axes = np.array([-2], dtype=np.int64)
+    keepdims = 1
+
+    node_def = onnx.helper.make_node(
+        "ReduceMean",
+        inputs=["data", "axes"],
+        outputs=["reduced"],
+        keepdims=keepdims,
+    )
+
+    data = np.array(
+        [[[5, 1], [20, 2]], [[30, 1], [40, 2]], [[55, 1], [60, 2]]],
+        dtype=np.float32,
+    )
+    reduced = np.mean(data, axis=tuple(axes), keepdims=keepdims == 1)
+    output = backend.run_node(node_def, [data, axes])
+    np.testing.assert_almost_equal(output["reduced"], reduced)
+
+def _softmax(x: np.ndarray, axis: int = -1) -> np.ndarray:
+    x_max = np.max(x, axis=axis, keepdims=True)
+    tmp = np.exp(x - x_max)
+    s = np.sum(tmp, axis=axis, keepdims=True)
+    return tmp / s
+
+def test_softmax():
+    node_def = onnx.helper.make_node("Softmax", ["X"], ["Y"], axis=0)
+    x = _get_rnd_float32(shape=[3, 4, 5])
+    output = backend.run_node(node_def, [x])
+    x_max = np.max(x, axis=0, keepdims=True)
+    tmp = np.exp(x - x_max)
+    s = np.sum(tmp, axis=0, keepdims=True)
+    y = tmp / s
+    np.testing.assert_almost_equal(output["Y"], y)
+
+    x = np.array([-1, 0., 1.])
+    output = backend.run_node(node_def, [x])
+    x_max = np.max(x, axis=0, keepdims=True)
+    tmp = np.exp(x - x_max)
+    s = np.sum(tmp, axis=0, keepdims=True)
+    y = tmp / s
+    np.testing.assert_almost_equal(output["Y"], y)
+
+    node_def = onnx.helper.make_node(
+            "Softmax",
+            inputs=["x"],
+            outputs=["y"],
+        )
+    x = np.array([[-1, 0, 1]]).astype(np.float32)
+    # expected output [[0.09003058, 0.24472848, 0.66524094]]
+    y = _softmax(x, axis=1)
+    output = backend.run_node(node_def, [x])
+    np.testing.assert_almost_equal(output["y"], y)

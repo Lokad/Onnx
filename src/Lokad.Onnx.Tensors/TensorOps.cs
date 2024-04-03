@@ -938,16 +938,32 @@ where T : struct
         return input.Reshape(newShapeDims.ToArray());
     }
 
-    public static Tensor<float> Softmax(Tensor<float> x) 
+    public static Tensor<float> Softmax(Tensor<float> x, int axis = -1) 
     {
-        var t = x.Apply(MathF.Exp).Accumulate((l, r) => l + r, 0.0f);
-        return x.Apply(i => MathF.Exp(i) / t);
+        axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
+        if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");
+
+        var t = x.Apply(MathF.Exp);
+        var s = Tensor<float>.ReduceSum(t, (new int[] { axis }).ToTensor<int>(), true);
+        if (!Tensor<float>.Broadcast(t, s, out var bt, out var bs))
+        {
+            throw new InvalidOperationException("Could not broadcast results of ReduceSum and Exp ops.");
+        }
+        return Tensor<float>.Divide(bt, bs);
     }
 
-    public static Tensor<double> Softmax(Tensor<double> x)
+    public static Tensor<double> Softmax(Tensor<double> x, int axis = -1)
     {
-        var t = x.Apply(Math.Exp).Accumulate((l, r) => l + r, 0.0);
-        return x.Apply(i => Math.Exp(i) / t);
+        axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
+        if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");
+
+        var t = x.Apply(Math.Exp);
+        var s = Tensor<double>.ReduceSum(t, (new int[] { axis }).ToTensor<int>(), true);
+        if (!Tensor<double>.Broadcast(t, s, out var bt, out var bs))
+        {
+            throw new InvalidOperationException("Could not broadcast results of ReduceSum and Exp ops.");
+        }
+        return Tensor<double>.Divide(bt, bs);
     }
 
     public static Tensor<float> Erf(Tensor<float> x) => x.Apply(MathOps.Erf);

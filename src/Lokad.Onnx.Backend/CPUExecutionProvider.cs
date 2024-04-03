@@ -36,7 +36,9 @@ public class CPUExecutionProvider : Runtime
         OpType.Gather,
         OpType.Slice,
         OpType.Unsqueeze,
-        OpType.ReduceSum
+        OpType.ReduceSum,
+        OpType.ReduceMean,
+        OpType.Softmax
     };
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
@@ -653,6 +655,19 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Float: return Success(op, Tensor<float>.ReduceMean((Tensor<float>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             case TensorElementType.Double: return Success(op, Tensor<double>.ReduceMean((Tensor<double>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             default: return NotSupported(op);
+        }
+    }
+
+    public static OpResult Softmax(ITensor? input, int? _axis)
+    {
+        var op = OpType.Softmax;
+        if (input is null) return MissingInput(op, nameof(input));
+        var axis = _axis.HasValue ? _axis.Value : -1;
+        switch (input.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Softmax((Tensor<float>) input, axis));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Softmax((Tensor<double>) input, axis));
+            default: return InputTypeNotSupported(op, nameof(input), input);
         }
     }
 }

@@ -142,4 +142,11 @@ public class MathTests
         var output = Tensor<int>.ReduceSum(data.ToTensor<int>(), axes.ToTensor<int>()); 
         Assert.NotNull(output); 
     }
+
+    [Fact]
+    public void CanSoftmax()
+    {
+        var data = Tensor<int>.Arange(0, (3 * 4 * 5)).ToArray().Convert<int, float>().ToTensor<float>().Reshape(3, 4, 5);
+        var o = Tensor<float>.Softmax(data, 0);
+    }
 }
