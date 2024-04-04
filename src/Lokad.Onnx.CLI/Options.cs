@@ -72,4 +72,7 @@ public class RunOptions : Options
 
     [Option("node", Required = false, HelpText = "Only run the model node with this label. The specified user inputs together with the graph initializers will be used as the node inputs.")]
     public string Node { get; set; } = "";
+
+    [Option("text", Required = false, HelpText = "The specified user input should be read as text using this model.")]
+    public string Text { get; set; } = "";
 }

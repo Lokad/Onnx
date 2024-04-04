@@ -906,6 +906,10 @@ namespace Lokad.Onnx
         {
             get
             {
+                if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
+                {
+                    return GetValue(0);
+                }
                 for (int i = 0; i < indices.Length; i++)
                 {
                     if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
@@ -915,6 +919,11 @@ namespace Lokad.Onnx
 
             set
             {
+                if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
+                {
+                    SetValue(0, value);
+                    return;
+                }
                 for (int i = 0; i < indices.Length; i++)
                 {
                     if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");

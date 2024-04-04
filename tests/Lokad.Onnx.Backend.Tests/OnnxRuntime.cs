@@ -18,7 +18,7 @@ namespace Lokad.Onnx.Backend.Tests
             using var session = new InferenceSession(modelPath);      
             var inputMeta = session.InputMetadata;
             var container = new List<NamedOnnxValue>();
-            var tensor = Data.LoadMnistImageFromFile(filepath).ToTensor();
+            var tensor = Images.LoadMnistImageFromFile(filepath).ToTensor();
             container.Add(NamedOnnxValue.CreateFromTensor(inputMeta.Keys.First(), tensor));
             using var results = session.Run(container);  
             return results.First().AsTensor<float>().ToArray();   

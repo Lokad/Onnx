@@ -511,10 +511,12 @@ public class CPUExecutionProvider : Runtime
         if (data is null) return MissingInput(op, nameof(data));
         if (indices is null) return MissingInput(op, nameof(indices));
         if (indices.Rank > data.Rank) return WrongInputShape(op, nameof(indices), data.Rank, indices);
+        
         if (indices.ElementType == TensorElementType.Int64)
         {
             indices = indices.Cast<int>();
         }
+        
         switch (data.ElementType)
         {
             case TensorElementType.Bool: return Success(op, Tensor<bool>.Gather((Tensor<bool>)data, (Tensor<int>)  indices, axis));
@@ -541,11 +543,11 @@ public class CPUExecutionProvider : Runtime
         if (data is null) return MissingInput(op, nameof(data));
         if (starts is null) return MissingInput(op, nameof(starts));
         if (ends is null) return MissingInput(op, nameof(ends));
-        if (data.Rank == 0) return WrongInputShape(op, nameof(data), data, "Cannot slice a tensor of rank 0.");
-        if (starts.Rank != 1) return WrongInputShape(op, nameof(starts), starts, "The rank of the start tensor must be 1.");
-        if (starts.Length > data.Rank) return WrongInputShape(op, nameof(starts), starts, "The length of the start tensor must be less-than or equal to the rank of the data tensor.");
-        if (ends.Rank != 1) return WrongInputShape(op, nameof(ends), ends, "The rank of the end tensor must be 1.");
-        if (starts.Length != ends.Length) return WrongInputShape(op, nameof(ends), ends, "The end tensor must be the same length as the start tensor.");
+        if (data.Rank == 0) return WrongInputShape(op, nameof(data), data, "Cannot slice a tensor of rank 0");
+        if (starts.Rank != 1) return WrongInputShape(op, nameof(starts), starts, "The rank of the starts tensor must be 1");
+        if (starts.Length > data.Rank) return WrongInputShape(op, nameof(starts), starts, "The length of the starts tensor must be less-than or equal to the rank of the data tensor.");
+        if (ends.Rank != 1) return WrongInputShape(op, nameof(ends), ends, "The rank of the ends tensor must be 1");
+        if (starts.Length != ends.Length) return WrongInputShape(op, nameof(ends), ends, "The ends tensor must be the same length as the start tensor.");
         if (axes is not null && (axes.Rank != 1 || axes.Length != starts.Length)) return WrongInputShape(op, nameof(axes), axes, "The axes tensor must be a rank 1 tensor with the same length as the start tensor.");
         if (steps is not null && (steps.Rank != 1 || steps.Length != starts.Length)) return WrongInputShape(op, nameof(steps), steps, "The steps tensor must be a rank 1 tensor with the same length as the start tensor.");
         

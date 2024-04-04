@@ -445,6 +445,11 @@ def test_gather():
     output = backend.run_node(node_def, [data, indices])
     np.testing.assert_almost_equal(output["y"], y)
 
+    indices = np.array([0, -9, -10])
+    y = np.take(data, 1, axis=0)
+    output = backend.run_node(node_def, [data, indices])
+    np.testing.assert_almost_equal(output["y"], y)
+
 
 def test_slice():
     # test case 1 with normal inputs
@@ -902,3 +907,49 @@ def test_pow():
     z = pow(x, y)  # expected output [1., 4., 9.]
     output = backend.run_node(node_def, [x, y])
     np.testing.assert_almost_equal(output["z"], z)
+
+    x = np.array([[1, 2, 3], [4, 5, 6]]).astype(np.float32)
+    y = np.array([1, 2, 3]).astype(np.float32)
+    # expected output [[1, 4, 27], [4, 25, 216]]
+    z = pow(x, y)
+    output = backend.run_node(node_def, [x, y])
+    np.testing.assert_almost_equal(output["z"], z)
+
+
+def reshape_reference_implementation(
+    data: np.ndarray, shape: np.ndarray, allowzero: int = 0
+) -> np.ndarray:
+    # replace zeros with corresponding dim size
+    # we need to do this because np.reshape doesn't support 0 by default unless 'allowzero' is set
+    new_shape = np.copy(shape)
+    if allowzero == 0:
+        zeros_index = np.where(shape == 0)
+        new_shape[zeros_index] = np.array(data.shape)[zeros_index]
+    reshaped = np.reshape(data, new_shape)
+    return reshaped
+
+def test_reshape():
+    original_shape = [2, 3, 4]
+    test_cases = {
+            "reordered_all_dims": np.array([4, 2, 3], dtype=np.int64),
+            "reordered_last_dims": np.array([2, 4, 3], dtype=np.int64),
+            "reduced_dims": np.array([2, 12], dtype=np.int64),
+            "extended_dims": np.array([2, 3, 2, 2], dtype=np.int64),
+            "one_dim": np.array([24], dtype=np.int64),
+            "negative_dim": np.array([2, -1, 2], dtype=np.int64),
+            "negative_extended_dims": np.array([-1, 2, 3, 4], dtype=np.int64),
+            "zero_dim": np.array([2, 0, 4, 1], dtype=np.int64),
+            "zero_and_negative_dim": np.array([2, 0, 1, -1], dtype=np.int64),
+        }
+    data = np.random.random_sample(original_shape).astype(np.float32)
+
+    for _, shape in test_cases.items():
+        node_def = onnx.helper.make_node(
+                "Reshape",
+                inputs=["data", "shape"],
+                outputs=["reshaped"],
+            )
+
+        reshaped = reshape_reference_implementation(data, shape)
+        output = backend.run_node(node_def, [data, shape])
+        np.testing.assert_almost_equal(output["reshaped"], reshaped)

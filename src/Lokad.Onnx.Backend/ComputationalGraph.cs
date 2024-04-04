@@ -23,7 +23,7 @@ public class ComputationalGraph : Runtime
 
     public WeightedDirectedGraph WeightedDirectedGraph { get; } = new WeightedDirectedGraph();
 
-    public Opset[] Opset = Array.Empty<Opset>();
+    public Dictionary<string, int> Opset = new Dictionary<string, int>();
 
     public Dictionary<string, object> Metadata = new Dictionary<string, object>();
 
@@ -31,9 +31,7 @@ public class ComputationalGraph : Runtime
     #endregion
 
     #region Methods
-    public int GetOpVersion(string domain) => this.Opset.Single(o => o.Domain == domain).Version;
-
-    public int GetOpVersion() => this.GetOpVersion("");
+    public int OpsetVersion(string domain = "") => this.Opset.ContainsKey(domain) ? this.Opset[domain] : throw new InvalidOperationException($"The domain {domain} does not ezist in the imported opsets.");
 
     public ITensor GetInputTensor(string name) =>
         Inputs.ContainsKey(name) ? Inputs[name] : Initializers.ContainsKey(name) ? Initializers[name] : 
@@ -84,9 +82,9 @@ public class ComputationalGraph : Runtime
         }
         for(int i = 0; i < requiredInputs.Keys.Count; i++)
         {
-            if (!userInputs[i].Dims.SequenceEqual(requiredInputs.ElementAt(i).Value.Dims) || !(userInputs[i].ElementType == requiredInputs.ElementAt(i).Value.ElementType))
+            if (!(userInputs[i].Rank == requiredInputs.ElementAt(i).Value.Rank && userInputs[i].ElementType == requiredInputs.ElementAt(i).Value.ElementType))
             {
-                Error("Cannot use user input {ui} for required input {ri}. Tensor shape or type does not match.", userInputs[i].TensorNameDesc(), requiredInputs.ElementAt(i).Value.TensorNameDesc());
+                Error("Cannot use user input {ui} for required input {ri}. Tensor type or rank does not match.", userInputs[i].TensorNameDesc(), requiredInputs.ElementAt(i).Value.TensorNameDesc());
                 op.Abandon();
                 return false;
             }
@@ -113,9 +111,9 @@ public class ComputationalGraph : Runtime
         }
         foreach (var kv in requiredInputs)
         {
-            if (!userInputs[kv.Key].Dims.SequenceEqual(kv.Value.Dims) || !(userInputs[kv.Key].ElementType == kv.Value.ElementType))
+            if (!(userInputs[kv.Key].Rank == kv.Value.Rank && userInputs[kv.Key].ElementType == kv.Value.ElementType))
             {
-                Error("Cannot use user input {ui} for required input {ri}. Tensor shape or type does not match.", userInputs[kv.Key].TensorNameDesc(), kv.Value.TensorNameDesc());
+                Error("Cannot use user input {ui} for required input {ri}. Tensor type or rank does not match.", userInputs[kv.Key].TensorNameDesc(), kv.Value.TensorNameDesc());
                 op.Abandon();
                 return false;
             }
@@ -218,11 +216,13 @@ public class ComputationalGraph : Runtime
         }
 
         var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
+        int count = 0;
         foreach (var node in Nodes) 
         {
-            Debug("Executing node {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
+            count++;
+            Debug("Executing node {c} {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
                 + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
-                node.Name, node.Op.ToString(),
+                count, node.Name, node.Op.ToString(),
                 GetInputTensors(node.Inputs).Select(t => t.TensorNameDesc()),
                 node.Outputs
             );
@@ -236,8 +236,8 @@ public class ComputationalGraph : Runtime
             var r = node.Execute(this);
             if (r.Status == OpStatus.Failure)
             {
-                Error("Execution of node {n} with op {op} failed: {m}.", node.Name, node.Op, r.Message ?? "");
-                Error("Stopping graph execution at node {n}.", node.Name);
+                Error("Execution of node {c} {n} with op {op} failed: {m}", count, node.Name, node.Op, r.Message ?? "");
+                Error("Stopping graph execution at node {c} {n}.", count, node.Name);
                 return false;
             }
             else

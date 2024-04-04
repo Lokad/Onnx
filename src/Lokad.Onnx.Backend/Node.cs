@@ -70,7 +70,12 @@ public partial struct Node
 
     }
 
+    public int[] RequiredInts(string name) => Ints(name) ?? throw new ArgumentException($"The Ints attribute {name} is required but was not found.");
+
+
     public ITensor? InputTensor(ComputationalGraph graph, int index) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : null;
+
+    public ITensor? InputTensorOrAttr(ComputationalGraph graph, int index, string name) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : Attr<ITensor>(name);
 
     public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU)
     {
@@ -125,6 +130,8 @@ public partial struct Node
 
         OpType.Pow => CPU.Pow(InputTensor(graph, 0), InputTensor(graph, 1)),
 
+        OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0)),
+
         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad"), Attr<int[]>("dilations"), Attr<int?>("group"), Attr<int[]>("kernel_shape"), Attr<int[]>("pads"), Attr<int[]>("strides")),
 
@@ -136,7 +143,7 @@ public partial struct Node
 
         OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1)),
 
-        OpType.Squeeze => CPU.Squeeze(graph.GetOpVersion(), graph.GetInputTensor(Inputs[0]), Attr<ITensor>("axes")),
+        //OpType.Squeeze => CPU.Squeeze(graph.GetOpVersigraph.GetInputTensor(Inputs[0]), Attr<ITensor>("axes")),
 
         OpType.Transpose => CPU.Transpose(graph.GetInputTensor(Inputs[0]), Ints("perm")),
 
@@ -152,12 +159,20 @@ public partial struct Node
 
         OpType.Slice => CPU.Slice(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), graph.GetInputTensor(Inputs[2]), graph.GetInputTensor(Inputs, 3), graph.GetInputTensor(Inputs, 4)),
 
-        OpType.Unsqueeze => CPU.Unsqueeze(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1])),
+        OpType.Unsqueeze => graph.OpsetVersion() switch
+        {
+            int v when v >= 13 => CPU.Unsqueeze(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[0])),
+            _ => CPU.Unsqueeze(graph.GetInputTensor(Inputs[0]), RequiredInts("axes")?.ToTensor<int>()),
+        }, 
 
         OpType.ReduceSum => CPU.ReduceSum(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), Int("keepdims"), Int("noop_with_empty_axes")),
 
-        OpType.ReduceMean => CPU.ReduceMean(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), Int("keepdims"), Int("noop_with_empty_axes")),
-
+        OpType.ReduceMean => graph.OpsetVersion() switch
+        {
+            int v when v >= 13 => CPU.ReduceMean(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), Int("keepdims"), Int("noop_with_empty_axes")),
+            _ => CPU.ReduceMean(graph.GetInputTensor(Inputs[0]), RequiredInts("axes")?.ToTensor<int>(), Int("keepdims"), Int("noop_with_empty_axes")),
+        },
+        
         OpType.ReduceMax => CPU.ReduceMax(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1]), Int("keepdims")),
 
         OpType.Softmax => CPU.Softmax(graph.GetInputTensor(Inputs[0]), Int("axis")),

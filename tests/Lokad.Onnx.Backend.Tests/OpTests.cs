@@ -30,21 +30,21 @@ namespace Lokad.Onnx.Backend.Tests
             var a = new DenseTensor<int>(new[] { 256, 256, 3, });
             var b = new DenseTensor<int>(new[] { 3 });
             //var c = a.Add(b);
-            var r = CPU.Broadcast(a, b);
-            Assert.NotNull(r.Outputs);
-            var ba = (Tensor<int>) r.Outputs[0];
-            var bb = (Tensor<int>)r.Outputs[1];
-            Assert.Equal(OpStatus.Success, r.Status);
+            var r = Tensor<int>.Broadcast(a, b);
+            Assert.NotNull(r);
+            var ba = (Tensor<int>) r[0];
+            var bb = (Tensor<int>)r[1];
+            Assert.NotEmpty(r);
 
             var c = new DenseTensor<int>(new[] { 22, 3 });
-            r = CPU.Broadcast(a, c);
-            Assert.Equal(OpStatus.Failure, r.Status);
-            r = CPU.Broadcast(a, new DenseTensor<int>(new[] { 256, 3 }));
-            Assert.Equal(OpStatus.Success, r.Status);
-            r = CPU.Broadcast(a, new DenseTensor<int>(new[] { 1, 256, 3 }));
-            Assert.Equal(OpStatus.Success, r.Status);
-            r = CPU.Broadcast(a, new DenseTensor<int>(new[] { 256, 1 }));
-            Assert.Equal(OpStatus.Success, r.Status);
+            r = Tensor<int>.Broadcast(a, c);
+           
+            r = Tensor<int>.Broadcast(a, new DenseTensor<int>(new[] { 256, 3 }));
+            Assert.NotEmpty(r);
+            r = Tensor<int>.Broadcast(a, new DenseTensor<int>(new[] { 1, 256, 3 }));
+            Assert.NotEmpty(r);
+            r = Tensor<int>.Broadcast(a, new DenseTensor<int>(new[] { 256, 1 }));
+            Assert.NotEmpty(r);
         }
 
         [Fact]

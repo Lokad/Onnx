@@ -1070,7 +1070,7 @@ where T : struct
         {
             var a = di[0..axis];
             var k = ArrayUtilities.HandleNegativeAxisOrIndex(data.dimensions[axis], indices[di[axis..(axis + indices.Rank)]]);
-            var b = di[(axis + indices.Rank)..].ToArray();
+            var b = di[(axis + indices.Rank == 0 ? 1 : indices.Rank)..].ToArray();
             var oloc = a.Append(k).Concat(b).ToArray();
             output[di] = data[oloc];
         }
@@ -1127,7 +1127,7 @@ where T : struct
         if (data.Rank == 0) throw new ArgumentException(nameof(data), "Cannot slice a tensor of rank 0.");
         if (start.Rank != 1) throw new ArgumentException(nameof(start), "The rank of the start tensor must be 1.");
         if (start.Length > data.Rank) throw new ArgumentException(nameof(start), "The length of the start tensor must be less-than or equal to the rank of the data tensor.");
-        if (ends.Rank != 1) throw new ArgumentException(nameof(start), "The rank of the end tensor must be 1.");
+        if (ends.Rank != 1) throw new ArgumentException(nameof(start), "The rank of the end tensor must be 1");
         if (start.Length != ends.Length) throw new ArgumentException(nameof(ends), "The end tensor must be the same length as the start tensor.");
         if (axes is not null && (axes.Rank != 1 || axes.Length != start.Length)) throw new ArgumentException(nameof(axes), "The axes tensor must be a rank 1 tensor with the same length as the start tensor.");
         if (steps is not null && (steps.Rank != 1 || steps.Length != start.Length)) throw new ArgumentException(nameof(steps), "The steps tensor must be a rank 1 tensor with the same length as the start tensor.");

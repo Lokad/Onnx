@@ -127,7 +127,7 @@ class Program : Runtime
         })
         .WithParsed<RunOptions>(ro =>
         {
-            Run(ro.File, ro.Inputs, ro.Node, ro.SaveInput, ro.Softmax);
+            Run(ro.File, ro.Inputs, ro.Node, ro.Text, ro.SaveInput, ro.Softmax);
         });
     }
     #endregion
@@ -229,11 +229,11 @@ class Program : Runtime
         {
             if (CPUExecutionProvider.SupportsOp(op))
             {
-                Con.Write(new Text(op + " ", new Style(foreground: Color.Green)));
+                Con.Write(new Spectre.Console.Text(op + " ", new Style(foreground: Color.Green)));
             }
             else
             {
-                Con.Write(new Text(op + " "));
+                Con.Write(new Spectre.Console.Text(op + " "));
             }
         }
         Con.Write(Environment.NewLine);
@@ -273,7 +273,7 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
-    static void Run(string file, IEnumerable<string> inputs, string node="", bool saveInput=false, bool softmax=false)
+    static void Run(string file, IEnumerable<string> inputs, string node="", string text="", bool saveInput=false, bool softmax=false)
     {
         ExitIfFileNotFound(file);
         var graph = Model.Load(file);
@@ -282,8 +282,16 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
-        var ui = Data.GetInputTensorsFromFileArgs(inputs, saveInput);
-        if (ui is null)
+        ITensor[]? ui;
+        if (!string.IsNullOrEmpty(text))
+        {
+            ui = Text.GetTextTensors(inputs.First(), text);
+        }
+        else
+        {
+            ui = Data.GetInputTensorsFromFileArgs(inputs);
+        }
+        if (ui is null || ui.Length == 0)
         {
             Exit(ExitResult.INVALID_INPUT);
             return;
@@ -359,7 +367,7 @@ class Program : Runtime
     static void PrintLogo()
     {
         Con.Write(new FigletText(font, "Lokad.Onnx").Color(Color.Orange1));
-        Con.Write(new Text($"v{AssemblyVersion.ToString(3)}\n"));
+        Con.Write(new Spectre.Console.Text($"v{AssemblyVersion.ToString(3)}\n"));
     }
     public static void Exit(ExitResult result)
     {

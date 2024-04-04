@@ -7,6 +7,10 @@
     "Run mnist-8": {
       "commandName": "Project",
       "commandLineArgs": "run C:\\Users\\Allister\\Downloads\\mnist-8(1).onnx C:\\Users\\Allister\\Downloads\\solidity.png::1:10 --node Plus214 --debug"
+    },
+    "Run me5s": {
+      "commandName": "Project",
+      "commandLineArgs": "run c:\\Users\\Allister\\downloads\\model.onnx --text \"me5s\" \"Hello world\""
     }
   }
 }

@@ -34,7 +34,7 @@ namespace Lokad.Onnx
             var graph = new ComputationalGraph();
             graph.ModelFile = "<buffer>";
             graph.Model = mp;
-            graph.Opset = mp.OpsetImport.Select(o => new Opset(o.Domain, Convert.ToInt32(o.Version))).ToArray();
+            graph.Opset = mp.OpsetImport.ToDictionary(o => o.Domain, o => Convert.ToInt32(o.Version));
             graph.MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value);
             graph.Metadata["Name"] = mp.Graph.Name;
             graph.Metadata["IrVersion"] = (OnnxSharp::Onnx.Version)mp.IrVersion;
@@ -71,7 +71,12 @@ namespace Lokad.Onnx
                 Error("Could not parse {f} as ONNX model file.", onnxInputFilePath);
                 return null;
             }
-            return Load(mp);
+            var g = Load(mp);
+            if (g is not null)
+            {
+                g.ModelFile = onnxInputFilePath;
+            }
+            return g;
         }
 
         public static ComputationalGraph? Load(byte[] buffer)
@@ -84,23 +89,6 @@ namespace Lokad.Onnx
             }
             Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
             return Load(mp);
-        }
-    }
-
-    public struct Opset
-    {
-        public string Domain = "ai";
-        public int Version;
-
-        public Opset(string domain, int version)
-        {
-            Domain = domain;
-            Version = version;
-        }
-
-        public Opset(int version)
-        {
-            Version = version;
         }
     }
 }
