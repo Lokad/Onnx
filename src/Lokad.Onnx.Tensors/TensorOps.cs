@@ -15,9 +15,22 @@ where T : struct
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
 
-        for (int index = 0; index < Length; index++)
+        if (this is DenseTensor<T> dd && destination is DenseTensor<T> dt)
         {
-            destination.SetValue(index, op(GetValue(index)));
+            var ts = dd.Buffer.Span;
+            var ds = dt.Buffer.Span;
+            for (int i = 0; i < destination.Length; i++)
+            {
+                ds[i] = op(ts[i]);
+            }
+            
+        }
+        else
+        {
+            for (int index = 0; index < Length; index++)
+            {
+                destination.SetValue(index, op(GetValue(index)));
+            }
         }
     }
 
@@ -36,9 +49,22 @@ where T : struct
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
 
-        for (int index = 0; index < this.Length; index++)
+        if (this is DenseTensor<T> t1 && tensor2 is DenseTensor<T> t2 && destination is DenseTensor<T> dt)
         {
-            destination.SetValue(index, op(GetValue(index), tensor2.GetValue(index)));
+            var t1s = t1.Buffer.Span;
+            var t2s = t2.Buffer.Span;   
+            var ds = dt.Buffer.Span;
+            for (int i = 0; i < destination.Length; i++)
+            {
+                ds[i] = op(t1s[i], t2s[i]);
+            }
+        }
+        else
+        {
+            for (int index = 0; index < this.Length; index++)
+            {
+                destination.SetValue(index, op(GetValue(index), tensor2.GetValue(index)));
+            }
         }
     }
 

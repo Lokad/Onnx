@@ -13,6 +13,12 @@ public enum ExecutionProvider
     CPU
 }
 
+public enum ExecutionOptimizationMode
+{
+    Speed,
+    Memory
+}
+
 public class CPUExecutionProvider : Runtime
 {
     public static List<OpType> SupportedOps { get; } = new List<OpType>()
@@ -42,6 +48,8 @@ public class CPUExecutionProvider : Runtime
         OpType.ReduceMax,
         OpType.Softmax,
     };
+
+    public static ExecutionOptimizationMode OptimizationMode { get; set; } = ExecutionOptimizationMode.Speed;
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
 
@@ -84,6 +92,11 @@ public class CPUExecutionProvider : Runtime
         {
             return CannotBroadcast(op, A, B);
         }
+        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        {
+            bA = bA.ToDenseTensor();
+            bB = bB.ToDenseTensor();    
+        }
         switch (A.ElementType)
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Add((Tensor<byte>)bA, (Tensor<byte>)bB));
@@ -106,6 +119,12 @@ public class CPUExecutionProvider : Runtime
         if (!ITensor.Broadcast(A, B, out var bA, out var bB))
         {
             return CannotBroadcast(op, A, B);
+        }
+
+        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        {
+            bA = bA.ToDenseTensor();
+            bB = bB.ToDenseTensor();
         }
         switch (A.ElementType)
         {
@@ -130,6 +149,12 @@ public class CPUExecutionProvider : Runtime
         {
             return CannotBroadcast(op, A, B);
         }
+
+        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        {
+            bA = bA.ToDenseTensor();
+            bB = bB.ToDenseTensor();
+        }
         switch (A.ElementType)
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Multiply((Tensor<byte>)bA, (Tensor<byte>)bB));
@@ -153,6 +178,12 @@ public class CPUExecutionProvider : Runtime
         {
             return CannotBroadcast(op, A, B);
         }
+
+        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        {
+            bA = bA.ToDenseTensor();
+            bB = bB.ToDenseTensor();
+        }
         switch (A.ElementType)
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Divide((Tensor<byte>)bA, (Tensor<byte>)bB));
@@ -174,6 +205,12 @@ public class CPUExecutionProvider : Runtime
         if (!ITensor.Broadcast(A, B, out var bA, out var bB))
         {
             return CannotBroadcast(op, A, B);
+        }
+
+        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        {
+            bA = bA.ToDenseTensor();
+            bB = bB.ToDenseTensor();
         }
         switch (A.ElementType)
         {
@@ -242,6 +279,11 @@ public class CPUExecutionProvider : Runtime
     {
         var op = OpType.Relu;
         if (X is null) return MissingInput(op, nameof(X));
+
+        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        {
+            X = X.ToDenseTensor();
+        }
         switch (X.ElementType)
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Relu((Tensor<float>)X));
@@ -303,6 +345,12 @@ public class CPUExecutionProvider : Runtime
         var op = OpType.MatMul;
         if (A is null) return MissingInput(op, nameof(A));
         if (B is null) return MissingInput(op, nameof(B));
+
+        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        {
+            A = A.ToDenseTensor();
+            B = B.ToDenseTensor();
+        }
         switch (A.ElementType)
         {
             case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul((Tensor<int>)A, (Tensor<int>)B));
@@ -316,6 +364,10 @@ public class CPUExecutionProvider : Runtime
     {
         var op = OpType.Sqrt;
         if (A is null) return MissingInput(op, nameof(A));
+        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        {
+            A = A.ToDenseTensor();
+        }
         switch (A.ElementType)
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Sqrt((Tensor<float>)A));
@@ -382,18 +434,6 @@ public class CPUExecutionProvider : Runtime
     public static OpResult Erf(ITensor? X)
     {
         var op = OpType.Erf;
-        if (X is null) return MissingInput(op, nameof(X));
-        switch (X.ElementType)
-        {
-            case TensorElementType.Float: return Success(op, Tensor<float>.Erf((Tensor<float>)X));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Erf((Tensor<double>)X));
-            default: return InputTypeNotSupported(op, nameof(X), X);
-        }
-    }
-
-    public static OpResult Softmax(ITensor? X)
-    {
-        var op = OpType.Softmax;
         if (X is null) return MissingInput(op, nameof(X));
         switch (X.ElementType)
         {
