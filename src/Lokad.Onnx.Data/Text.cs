@@ -20,9 +20,9 @@ public class Text : Runtime
         var (inputIds, attentionMask, tokenTypeIds) = tok.Encode(text, 512, 512);
         op.Complete();
         return new ITensor[3] {
-            DenseTensor<long>.OfValues(inputIds.ToArray()).PadLeft(),
-            DenseTensor<long>.OfValues(attentionMask.ToArray()).PadLeft(),
-            DenseTensor<long>.OfValues(tokenTypeIds.ToArray()).PadLeft(),
+            DenseTensor<long>.OfValues(inputIds.ToArray()).PadLeft().WithName("input_ids"),
+            DenseTensor<long>.OfValues(attentionMask.ToArray()).PadLeft().WithName("attention_mask"),
+            DenseTensor<long>.OfValues(tokenTypeIds.ToArray()).PadLeft().WithName("token_type_ids"),
         };
     }
 

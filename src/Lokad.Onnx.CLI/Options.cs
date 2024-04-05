@@ -54,8 +54,8 @@ public class InfoOptions : Options
     [Option("init", Required = false, HelpText = "Only print out a list of initializers present in the model.")]
     public bool Initializers { get; set; }
 
-    [Option("filter-op", Required = false, HelpText = "Filter on ops with this type.")]
-    public string? FilterOp { get; set; }
+    [Option("op-filter", Required = false, HelpText = "Filter on ops with this type.")]
+    public string? OpFilter { get; set; }
 }
 
 [Verb("run", HelpText = "Run an ONNX model or node.")]
@@ -69,6 +69,9 @@ public class RunOptions : Options
 
     [Option("softmax", Required = false, HelpText = "Apply the softmax function to output vectors.")]
     public bool Softmax { get; set; }
+
+    [Option("op-times", Required = false, HelpText = "After every n ops, print the time spent executing each op type.")]
+    public int OpTimes { get; set; }
 
     [Option("node", Required = false, HelpText = "Only run the model node with this label. The specified user inputs together with the graph initializers will be used as the node inputs.")]
     public string Node { get; set; } = "";

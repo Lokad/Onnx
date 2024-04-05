@@ -57,7 +57,15 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
         if (dim >= Rank) throw new ArgumentException(nameof(dim));
         var dims = this.dimensions.ToList();
         dims.Insert(dim, 1);
-        return new BroadcastedTensor<T>(source.InsertDim(dim), dims.ToArray(), broadcastedDims);
+        var bdims = broadcastedDims.Copy();
+        for(int i = 0; i < bdims.Length; i++)
+        {
+            if (bdims[i] >= dim)
+            {
+                bdims[i] += 1;
+            }
+        }
+        return new BroadcastedTensor<T>(source.InsertDim(dim), dims.ToArray(), bdims);
     }
 
     public override Tensor<T> RemoveDim(int dim)
@@ -66,7 +74,15 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
         if (dimensions[dim] != 1) throw new ArgumentException(nameof(dim), $"Can only remove a dimension of size 1. Dimension {dim} has size {dimensions[dim]}.");
         var dims = dimensions.ToList();
         dims.RemoveAt(dim);
-        return new BroadcastedTensor<T>(source.RemoveDim(dim), dims.ToArray(), broadcastedDims);
+        var bdims = broadcastedDims.Copy();
+        for (int i = 0; i < bdims.Length; i++)
+        {
+            if (bdims[i] >= dim)
+            {
+                bdims[i] -= 1;
+            }
+        }
+        return new BroadcastedTensor<T>(source.RemoveDim(dim), dims.ToArray(), bdims);
     }
 
     public override BroadcastedTensor<T> BroadcastDim(int dim, int size)
@@ -84,19 +100,6 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
             dimensions[dim] = size;
             return new BroadcastedTensor<T>(source, dimensions, broadcastedDims.Append(dim).ToArray());
         }
-    }
-
-    public static Tensor<T>[] PadSame(Tensor<T> a, Tensor<T> b)
-    {
-        if (a.Dimensions.Length < b.Dimensions.Length)
-        {
-            return PadSame(a.PadLeft(), b);
-        }
-        else if (b.Dimensions.Length < a.Dimensions.Length)
-        {
-            return PadSame(a, b.PadLeft());
-        }
-        else return new[] { a, b };
     }
     #endregion
 

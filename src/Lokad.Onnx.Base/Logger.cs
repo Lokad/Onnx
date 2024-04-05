@@ -14,6 +14,10 @@ namespace Lokad.Onnx
 
             public Logger L;
 
+            public string opName = "";
+
+            public Stopwatch timer = new Stopwatch();
+            
             protected bool isCompleted = false;
 
             protected bool isAbandoned = false;
@@ -85,9 +89,6 @@ namespace Lokad.Onnx
                 L.Error($"{opName} abandoned after {timer.ElapsedMilliseconds}ms.");
             }
         }
-
-        string opName;
-        Stopwatch timer = new Stopwatch();
     }
 
     public class ConsoleLogger : Logger
@@ -259,8 +260,7 @@ namespace Lokad.Onnx
             }
         }
 
-        string opName;
-        Stopwatch timer = new Stopwatch();
+
         FileLogger l;
     }
     #endregion
@@ -455,9 +455,6 @@ namespace Lokad.Onnx
                 l.Error("{0} abandoned after {1}ms.", opName, timer.ElapsedMilliseconds);
             }
         }
-
-        string opName;
-        Stopwatch timer = new Stopwatch();
         ConsoleLogger2 l;
     }
     #endregion

@@ -122,12 +122,12 @@ class Program : Runtime
             }
             else
             {
-                PrintModelInfo(io.File, io.FilterOp); 
+                PrintModelInfo(io.File, io.OpFilter); 
             }
         })
         .WithParsed<RunOptions>(ro =>
         {
-            Run(ro.File, ro.Inputs, ro.Node, ro.Text, ro.SaveInput, ro.Softmax);
+            Run(ro.File, ro.Inputs, ro.Node, ro.Text, ro.OpTimes, ro.SaveInput, ro.Softmax);
         });
     }
     #endregion
@@ -237,7 +237,7 @@ class Program : Runtime
             }
         }
         Con.Write(Environment.NewLine);
-        Info("{d} total distinct operations in model. Green = supported by backed.", ops.Count);
+        Info("{d} total distinct operations in model. Green = supported by backend.", ops.Count);
     }
 
     static void PrintModelInitializers(string file)
@@ -273,7 +273,7 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
-    static void Run(string file, IEnumerable<string> inputs, string node="", string text="", bool saveInput=false, bool softmax=false)
+    static void Run(string file, IEnumerable<string> inputs, string node="", string text="", int optimes = -1, bool nodeTimes = false, bool saveInput=false, bool softmax=false)
     {
         ExitIfFileNotFound(file);
         var graph = Model.Load(file);
@@ -299,7 +299,7 @@ class Program : Runtime
 
         if (node == "")
         {
-            if (graph.Execute(ui, true))
+            if (graph.Execute(ui, true, optimes:optimes, nodetimes: nodeTimes))
             {
                 Info("Printing outputs...");
                 foreach (var o in graph.Outputs.Values)

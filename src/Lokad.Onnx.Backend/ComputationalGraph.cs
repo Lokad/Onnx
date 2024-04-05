@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 public class ComputationalGraph : Runtime
@@ -193,7 +194,7 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU)
+    public bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU, int? optimes = -1, bool nodetimes=false)
     {
         if (userInputs is ITensor[] uia)
         {
@@ -215,11 +216,20 @@ public class ComputationalGraph : Runtime
             return false;
         }
 
-        var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
+        Dictionary<OpType, double> opTimes = new Dictionary<OpType, double>();
+        Dictionary<OpType, long> opCounts = new Dictionary<OpType, long>();
         int count = 0;
+        Stopwatch timer = new Stopwatch(); 
+        var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
+        
         foreach (var node in Nodes) 
         {
             count++;
+            if (!opCounts.ContainsKey(node.Op))
+            {
+                opCounts[node.Op] = 0;
+                opTimes[node.Op] = 0L;
+            }
             Debug("Executing node {c} {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
                 + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
                 count, node.Name, node.Op.ToString(),
@@ -233,7 +243,30 @@ public class ComputationalGraph : Runtime
                     Debug("  {n}: {v}", kv.Key, kv.Value);
                 }
             }
+            if (nodetimes)
+            {
+                Info("Executing node {c} {node}...", count, node.Name);
+            }
+
+            timer.Start();
             var r = node.Execute(this);
+            timer.Stop();
+
+            opCounts[node.Op]++;
+            var elapsed = timer.Elapsed.TotalMilliseconds;
+            opTimes[node.Op] += elapse;
+            if (nodetimes)
+            {
+                Info("Executing node {c} {node} completed in {t}ms.", count, node.Name, timer.ElapsedMilliseconds);
+            }
+            if (optimes != -1 && count % optimes == 0)
+            {
+                Info("Total op times after {c} nodes executed: {tt}.", count, 
+                    opTimes.Select(kv => kv.Key + "(" + opCounts[kv.Key] + "): " + kv.Value.ToString("F") + "ms").JoinWithSpaces());
+                //Info("Average op times after {c} nodes executed: {at}.\n", count,
+                //    opTimes.Select(kv => kv.Key + "(" + opCounts[kv.Key] + "): " + ((float) kv.Value / opCounts[kv.Key]).ToString() + "ms").JoinWithSpaces());
+            }
+            timer.Reset();
             if (r.Status == OpStatus.Failure)
             {
                 Error("Execution of node {c} {n} with op {op} failed: {m}", count, node.Name, node.Op, r.Message ?? "");
