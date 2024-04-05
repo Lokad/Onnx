@@ -1070,7 +1070,7 @@ where T : struct
         {
             var a = di[0..axis];
             var k = ArrayUtilities.HandleNegativeAxisOrIndex(data.dimensions[axis], indices[di[axis..(axis + indices.Rank)]]);
-            var b = di[(axis + indices.Rank == 0 ? 1 : indices.Rank)..].ToArray();
+            var b = di[(axis + (indices.Rank == 0 ? 1 : indices.Rank))..].ToArray();
             var oloc = a.Append(k).Concat(b).ToArray();
             output[di] = data[oloc];
         }

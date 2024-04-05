@@ -254,7 +254,7 @@ public class ComputationalGraph : Runtime
 
             opCounts[node.Op]++;
             var elapsed = timer.Elapsed.TotalMilliseconds;
-            opTimes[node.Op] += elapse;
+            opTimes[node.Op] += elapsed;
             if (nodetimes)
             {
                 Info("Executing node {c} {node} completed in {t}ms.", count, node.Name, timer.ElapsedMilliseconds);

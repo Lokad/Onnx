@@ -42,6 +42,41 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
         this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
     }
 
+    /// <summary>
+    /// Obtains the value at the specified indices
+    /// </summary>
+    /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
+    /// <returns>The value at the specified position in this Tensor.</returns>
+    public override T this[ReadOnlySpan<int> indices]
+    {
+        get
+        {
+            if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
+            {
+                return GetValue(0);
+            }
+            for (int i = 0; i < indices.Length; i++)
+            {
+                if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
+            }
+            return source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
+        }
+
+        set
+        {
+            if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
+            {
+                SetValue(0, value);
+                return;
+            }
+            for (int i = 0; i < indices.Length; i++)
+            {
+                if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
+            }
+            this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
+        }
+    }
+
     public override Tensor<T> Clone() => new BroadcastedTensor<T>(source, dimensions, broadcastedDims);
         
     public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions);  

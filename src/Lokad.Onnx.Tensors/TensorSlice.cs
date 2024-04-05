@@ -33,6 +33,52 @@ public class TensorSlice<T> : Tensor<T> where T : struct
         parent.SetValue(idx, value);
     }
 
+    /// <summary>
+    /// Obtains the value at the specified indices
+    /// </summary>
+    /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
+    /// <returns>The value at the specified position in this Tensor.</returns>
+    public override T this[ReadOnlySpan<int> indices]
+    {
+        get
+        {
+            if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
+            {
+                return GetValue(0);
+            }
+            for (int i = 0; i < indices.Length; i++)
+            {
+                if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
+            }
+            var idx = GetOffset(indices.ToArray());
+            return parent.GetValue(idx);
+        }
+
+        set
+        {
+            if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
+            {
+                SetValue(0, value);
+                return;
+            }
+            for (int i = 0; i < indices.Length; i++)
+            {
+                if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
+            }
+            var idx = GetOffset(indices.ToArray());
+            parent.SetValue(idx, value);
+        }
+    }
+
+    public override Tensor<T> this[params SliceIndex[] indices]
+    {
+        get => new TensorSlice<T>(this.ToDenseTensor(), ExpandEllipsis(indices));
+        set
+        {
+            var ts = new TensorSlice<T>(this.ToDenseTensor(), ExpandEllipsis(indices));
+            ts.CopyFrom(value, checkDimensions: true);
+        }
+    }
     public override Tensor<T> Clone() => ToDenseTensor();
 
     public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions, this.IsReversedStride);

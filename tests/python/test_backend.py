@@ -398,6 +398,7 @@ def test_gather():
       for j in range(0, 10):
         test_output[1][i][j] = x[i + 1][j]
     np.testing.assert_almost_equal(output["Z"], test_output)
+
      # test negative indices
     y = np.array([[-10, -9], [1, -8]])
     output = backend.run_node(node_def, [x, y])
@@ -445,11 +446,11 @@ def test_gather():
     output = backend.run_node(node_def, [data, indices])
     np.testing.assert_almost_equal(output["y"], y)
 
-    indices = np.array([0, -9, -10])
     y = np.take(data, 1, axis=0)
-    output = backend.run_node(node_def, [data, indices])
+    output = backend.run_node(node_def, [data, np.array(1)])
     np.testing.assert_almost_equal(output["y"], y)
 
+    
 
 def test_slice():
     # test case 1 with normal inputs

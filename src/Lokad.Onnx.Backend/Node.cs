@@ -161,7 +161,7 @@ public partial struct Node
 
         OpType.Unsqueeze => graph.OpsetVersion() switch
         {
-            int v when v >= 13 => CPU.Unsqueeze(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[0])),
+            int v when v >= 13 => CPU.Unsqueeze(graph.GetInputTensor(Inputs[0]), graph.GetInputTensor(Inputs[1])),
             _ => CPU.Unsqueeze(graph.GetInputTensor(Inputs[0]), RequiredInts("axes")?.ToTensor<int>()),
         }, 
 

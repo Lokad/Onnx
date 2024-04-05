@@ -936,24 +936,26 @@ namespace Lokad.Onnx
         {
             get
             {
-                return GetValue(ArrayUtilities.GetIndex(strides, indices.Select((i, n) =>
-                    {
-                        if (i.Equals(^0)) return dimensions[n] - 1;
-                        else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
-                        else if (i.IsFromEnd) return dimensions[n] - i.Value;
-                        else return i.Value;
-                    }).ToArray()));
-            }
-
-            set
-            {
-                SetValue(ArrayUtilities.GetIndex(strides, indices.Select((i, n) =>
+                var _indices = indices.Select((i, n) =>
                 {
                     if (i.Equals(^0)) return dimensions[n] - 1;
                     else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
                     else if (i.IsFromEnd) return dimensions[n] - i.Value;
                     else return i.Value;
-                }).ToArray()), value);
+                }).ToArray();
+                return this[indices];
+            }
+
+            set
+            {
+                var _indices = indices.Select((i, n) =>
+                {
+                    if (i.Equals(^0)) return dimensions[n] - 1;
+                    else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
+                    else if (i.IsFromEnd) return dimensions[n] - i.Value;
+                    else return i.Value;
+                }).ToArray();
+                this[_indices] = value;
             }
         }
 
