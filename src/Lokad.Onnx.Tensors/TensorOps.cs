@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics.Tensors;
 
 using static Lokad.Onnx.MathOps;
 
@@ -14,24 +15,11 @@ where T : struct
     {
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
-
-        if (this is DenseTensor<T> dd && destination is DenseTensor<T> dt)
+  
+        for (int index = 0; index < Length; index++)
         {
-            var ts = dd.Buffer.Span;
-            var ds = dt.Buffer.Span;
-            for (int i = 0; i < destination.Length; i++)
-            {
-                ds[i] = op(ts[i]);
-            }
-            
-        }
-        else
-        {
-            for (int index = 0; index < Length; index++)
-            {
-                destination.SetValue(index, op(GetValue(index)));
-            }
-        }
+            destination.SetValue(index, op(GetValue(index)));
+        }        
     }
 
     public Tensor<T> Apply(Func<T, T> op)
@@ -49,23 +37,10 @@ where T : struct
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
 
-        if (this is DenseTensor<T> t1 && tensor2 is DenseTensor<T> t2 && destination is DenseTensor<T> dt)
+        for (int index = 0; index < this.Length; index++)
         {
-            var t1s = t1.Buffer.Span;
-            var t2s = t2.Buffer.Span;   
-            var ds = dt.Buffer.Span;
-            for (int i = 0; i < destination.Length; i++)
-            {
-                ds[i] = op(t1s[i], t2s[i]);
-            }
-        }
-        else
-        {
-            for (int index = 0; index < this.Length; index++)
-            {
-                destination.SetValue(index, op(GetValue(index), tensor2.GetValue(index)));
-            }
-        }
+            destination.SetValue(index, op(GetValue(index), tensor2.GetValue(index)));
+        }        
     }
 
     public Tensor<T> Apply(Func<T, T, T> op, Tensor<T> tensor2)
@@ -176,7 +151,6 @@ where T : struct
             b = null;
             return false;
         }
-
     }
 
     public static bool BroadcastShape(Tensor<T> x, Tensor<T> y, out int[] b) => BroadcastShape(x.Dimensions, y.Dimensions, out b);
@@ -307,6 +281,7 @@ where T : struct
         var xh = _x.Buffer.Pin(); 
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
+        
         unsafe
         {
             mm(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
@@ -1002,19 +977,28 @@ where T : struct
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");
 
-        var max = Tensor<float>.ReduceMax(x, (new int[] { axis }).ToTensor<int>(), true);
-        if (!Tensor<float>.Broadcast(x, max, out var bx, out var bmax))
+        if (x is DenseTensor<float> dx)
         {
-            throw new InvalidOperationException("Could not broadcast result of Max op with original tensor.");
+            var r = (DenseTensor<float>)x.CloneEmpty();
+            TensorPrimitives.SoftMax(dx.Buffer.Span, r.Buffer.Span);
+            return r;
         }
-        var sub = Tensor<float>.Subtract(x, bmax);
-        var t = sub.Apply(MathF.Exp);
-        var s = Tensor<float>.ReduceSum(t, (new int[] { axis }).ToTensor<int>(), true);
-        if (!Tensor<float>.Broadcast(t, s, out var bt, out var bs))
+
         {
-            throw new InvalidOperationException("Could not broadcast results of ReduceSum and Exp ops.");
+            var max = Tensor<float>.ReduceMax(x, (new int[] { axis }).ToTensor<int>(), true);
+            if (!Tensor<float>.Broadcast(x, max, out var bx, out var bmax))
+            {
+                throw new InvalidOperationException("Could not broadcast result of Max op with original tensor.");
+            }
+            var sub = Tensor<float>.Subtract(x, bmax);
+            var t = sub.Apply(MathF.Exp);
+            var s = Tensor<float>.ReduceSum(t, (new int[] { axis }).ToTensor<int>(), true);
+            if (!Tensor<float>.Broadcast(t, s, out var bt, out var bs))
+            {
+                throw new InvalidOperationException("Could not broadcast results of ReduceSum and Exp ops.");
+            }
+            return Tensor<float>.Divide(bt, bs);
         }
-        return Tensor<float>.Divide(bt, bs);
     }
 
     public static Tensor<double> Softmax(Tensor<double> x, int axis = -1)

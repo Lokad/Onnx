@@ -707,6 +707,10 @@ public class CPUExecutionProvider : Runtime
         var op = OpType.Softmax;
         if (input is null) return MissingInput(op, nameof(input));
         var axis = _axis.HasValue ? _axis.Value : -1;
+        if (OptimizationMode == ExecutionOptimizationMode.Speed && input.ElementType == TensorElementType.Float)
+        {
+            input = input.ToDenseTensor();
+        }
         switch (input.ElementType)
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Softmax((Tensor<float>) input, axis));

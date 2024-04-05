@@ -17,7 +17,7 @@ public class Text : Runtime
         var tok = new BertTokenizer();
           
         tok.LoadFromHuggingFaceAsync(tokenizer).Wait();
-        var (inputIds, attentionMask, tokenTypeIds) = tok.Encode(text, 512, 512);
+        var (inputIds, attentionMask, tokenTypeIds) = tok.Encode(text, 512);
         op.Complete();
         return (new ITensor[3] {
             DenseTensor<long>.OfValues(inputIds.ToArray()).PadLeft().WithName("input_ids"),

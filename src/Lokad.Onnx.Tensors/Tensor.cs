@@ -1255,6 +1255,7 @@ namespace Lokad.Onnx
             if (!dimensions.SequenceEqual(from.dimensions))
                 throw new ArgumentException("The shape of the from tensor is not the same as this tensor.");
 
+            
             foreach (var index in from.GetDimensionsIterator())
             {
                 this[index] = from[index];
