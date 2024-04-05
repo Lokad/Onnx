@@ -643,7 +643,103 @@ ref float[,] c, int ldc)
             (int) Math.Floor(((float)inputShape[0] * (stride - 1) - stride + GetConv2DEffectiveFilterSize(fieldSize, dilation)) / 2);
         
         public static int GetConv2DEffectiveFilterSize(int filterSize, int dilation) => dilation <= 1 ? filterSize : filterSize + (filterSize - 1) * (dilation - 1);
-        
+
+        /// <summary>
+        /// Matrix multiplication.
+        /// </summary>
+        /// <param name="M">A rows.</param>
+        /// <param name="N">A columns.</param>
+        /// <param name="K">B columns.</param>
+        /// <param name="A">Left matrix.</param>
+        /// <param name="B">Right matrix.</param>
+        /// <param name="C">Result matrix.</param>
+        public unsafe static void mm(int M,
+                              int N,
+                              int K,
+                              int* A,
+                              int* B,
+                              int* C)
+        {
+            for (int i = 0; i < M; i++)
+            {
+                var Ap = A + i * N;
+                var Cp = C + i * K;
+                for (int j = 0; j < N; ++j)
+                {
+                    var a = Ap[j];
+                    var Bp = B + j * K;
+                    for (int k = 0; k < K; ++k)
+                    {
+                        Cp[k] += a * Bp[k];
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Matrix multiplication.
+        /// </summary>
+        /// <param name="M">A rows.</param>
+        /// <param name="N">A columns.</param>
+        /// <param name="K">B columns.</param>
+        /// <param name="A">Left matrix.</param>
+        /// <param name="B">Right matrix.</param>
+        /// <param name="C">Result matrix.</param>
+        public unsafe static void mm(int M,
+                              int N,
+                              int K,
+                              double* A,
+                              double* B,
+                              double* C)
+        {
+            for (int i = 0; i < M; i++)
+            {
+                var Ap = A + i * N;
+                var Cp = C + i * K;
+                for (int j = 0; j < N; ++j)
+                {
+                    var a = Ap[j];
+                    var Bp = B + j * K;
+                    for (int k = 0; k < K; ++k)
+                    {
+                        Cp[k] += a * Bp[k];
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Matrix multiplication.
+        /// </summary>
+        /// <param name="M">A rows.</param>
+        /// <param name="N">A columns.</param>
+        /// <param name="K">B columns.</param>
+        /// <param name="A">Left matrix.</param>
+        /// <param name="B">Right matrix.</param>
+        /// <param name="C">Result matrix.</param>
+        public unsafe static void mm(int M,
+                              int N,
+                              int K,
+                              float* A,
+                              float* B,
+                              float* C)
+        {
+            for (int i = 0; i < M; i++)
+            {
+                var Ap = A + i * N;
+                var Cp = C + i * K;
+                for (int j = 0; j < N; ++j)
+                {
+                    var a = Ap[j];
+                    var Bp = B + j * K;
+                    for (int k = 0; k < K; ++k)
+                    {
+                        Cp[k] += a * Bp[k];
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Image to column conversion.
         /// </summary>
@@ -829,7 +925,7 @@ ref float[,] c, int ldc)
             /// <param name="A">Left matrix.</param>
             /// <param name="B">Right matrix.</param>
             /// <param name="C">Result matrix.</param>
-            unsafe void mm(int M,
+            unsafe void _mm(int M,
                                   int N,
                                   int K,
                                   float* A,
@@ -867,7 +963,7 @@ ref float[,] c, int ldc)
                 Im2col(src, srcC, srcH, srcW, kernelY, kernelX, dilationY, dilationX, strideY, strideX, padY, padX, padH, padW, buf);
                 for (int g = 0; g < group; ++g)
                 {
-                    mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
+                    _mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
                 }
 
                 if (bias != null)
@@ -941,7 +1037,7 @@ ref float[,] c, int ldc)
             /// <param name="A">Left matrix.</param>
             /// <param name="B">Right matrix.</param>
             /// <param name="C">Result matrix.</param>
-            unsafe void mm(int M,
+            unsafe void _mm(int M,
                                   int N,
                                   int K,
                                   double* A,
@@ -965,7 +1061,7 @@ ref float[,] c, int ldc)
                             Cp[j] += a * Bp[j];
                         }
                     }
-                };
+                }
             }
 
             int dstH = (srcH + padY + padH - (dilationY * (kernelY - 1) + 1)) / strideY + 1;
@@ -979,7 +1075,7 @@ ref float[,] c, int ldc)
                 Im2col(src, srcC, srcH, srcW, kernelY, kernelX, dilationY, dilationX, strideY, strideX, padY, padX, padH, padW, buf);
                 for (int g = 0; g < group; ++g)
                 {
-                    mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
+                    _mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
                     //cs_BLAS.DGEMM("nota", "notb", M, N, K, 0.0f, )
                 }
                 for (int i = 0; i < dstC; ++i)

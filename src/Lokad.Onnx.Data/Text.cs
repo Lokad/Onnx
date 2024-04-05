@@ -11,7 +11,7 @@ using FastBertTokenizer;
 
 public class Text : Runtime
 {
-    public static ITensor[] BertTokenize(string text, string tokenizer)
+    public static (ITensor[]?, Func<long[], string>?) BertTokenize(string text, string tokenizer)
     {
         var op = Begin("Tokenizing {len} characters using BERT tokenizer {tok}", text.Length, tokenizer);
         var tok = new BertTokenizer();
@@ -19,14 +19,14 @@ public class Text : Runtime
         tok.LoadFromHuggingFaceAsync(tokenizer).Wait();
         var (inputIds, attentionMask, tokenTypeIds) = tok.Encode(text, 512, 512);
         op.Complete();
-        return new ITensor[3] {
+        return (new ITensor[3] {
             DenseTensor<long>.OfValues(inputIds.ToArray()).PadLeft().WithName("input_ids"),
             DenseTensor<long>.OfValues(attentionMask.ToArray()).PadLeft().WithName("attention_mask"),
             DenseTensor<long>.OfValues(tokenTypeIds.ToArray()).PadLeft().WithName("token_type_ids"),
-        };
+        }, (t) => tok.Decode(t));
     }
 
-    public static ITensor[]? GetTextTensors(string text, string props)
+    public static (ITensor[]?, Func<long[], string>?) GetTextTensors(string text, string props)
     {
         var tprops = props.Split(':');
         if (tprops.Length == 0 || tprops[0] == "me5s")
@@ -36,16 +36,16 @@ public class Text : Runtime
         else
         {
             Error("Could not interpret text using properties {p}.", props);
-            return null;
+            return (null, null);
         }
     }
 
-    public static ITensor[]? GetTextTensorsFromFileArg(string name, string[] p)
+    public static (ITensor[]?, Func<long[], string>?) GetTextTensorsFromFileArg(string name, string[] p)
     {
         if (!File.Exists(name)) 
         {
             Error("File {name} does not exist.", name); 
-            return null;
+            return (null, null);
         }
         else
         {

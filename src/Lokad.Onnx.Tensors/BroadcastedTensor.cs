@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 public class BroadcastedTensor<T> : Tensor<T> where T :  struct
 {
@@ -49,6 +50,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
     /// <returns>The value at the specified position in this Tensor.</returns>
     public override T this[ReadOnlySpan<int> indices]
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
             if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
@@ -62,6 +64,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
             return source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
             if (indices.Length == 1 && Rank == 0 && indices[0] == 0)

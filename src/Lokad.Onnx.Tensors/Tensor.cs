@@ -874,8 +874,10 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="indices">A one-dimensional array of integers that represent the indices specifying the position of the element to get.</param>
         /// <returns>The value at the specified position in this Tensor.</returns>
+        
         public virtual T this[params int[] indices]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if (indices == null)
@@ -886,6 +888,7 @@ namespace Lokad.Onnx
                 return this[span];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 if (indices == null)
@@ -902,8 +905,10 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
         /// <returns>The value at the specified position in this Tensor.</returns>
+        
         public virtual T this[ReadOnlySpan<int> indices]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
@@ -917,6 +922,7 @@ namespace Lokad.Onnx
                 return GetValue(ArrayUtilities.GetIndex(strides, indices));
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
@@ -965,7 +971,7 @@ namespace Lokad.Onnx
             set
             {
                 var ts = new TensorSlice<T>(this, ExpandEllipsis(indices));
-                ts.CopyFrom(value, checkDimensions: true);
+                ts.CopyFrom(value);
             }
         }
 
@@ -1243,28 +1249,17 @@ namespace Lokad.Onnx
             }
         }
 
-        protected virtual void CopyFrom(Tensor<T> from, int arrayIndex = 0, bool checkDimensions = false)
+        protected virtual void CopyFrom(Tensor<T> from)
         {
             if (from is null) throw new ArgumentNullException(nameof(from));
+            if (!dimensions.SequenceEqual(from.dimensions))
+                throw new ArgumentException("The shape of the from tensor is not the same as this tensor.");
 
-            if (from.Length < arrayIndex + Length)
+            foreach (var index in from.GetDimensionsIterator())
             {
-                throw new ArgumentException("The number of elements in the source tensor is less than the number of elements from the index to the end of the destination tensor.", nameof(from));
-            }
-            if (checkDimensions)
-            {
-                if (Rank != from.Rank) throw new ArgumentException("The rank of the source tensor is not the same as the rank of the destination tensor");
-                for (int i = 0; i < Rank; i++)
-                {
-                    if (dimensions[i] != from.Dimensions[i]) throw new ArgumentException();
-                }
-            }
-            for (int i = 0; i < length; i++)
-            {
-                SetValue(i, from.GetValue(arrayIndex + i));
+                this[index] = from[index];
             }
         }
-
         bool ICollection<T>.Remove(T item)
         {
             throw new InvalidOperationException();
@@ -1543,9 +1538,9 @@ namespace Lokad.Onnx
         public virtual DenseTensor<T> ToDenseTensor()
         {
             var denseTensor = new DenseTensor<T>(Dimensions, IsReversedStride);
-            for (int i = 0; i < Length; i++)
+            foreach (var index in denseTensor.GetDimensionsIterator())
             {
-                denseTensor.SetValue(i, GetValue(i));
+                denseTensor[index] = this[index];
             }
             return denseTensor;
         }
@@ -1699,7 +1694,7 @@ namespace Lokad.Onnx
             set
             {
                 var ts = new TensorSlice<T>(this, ExpandEllipsis(indices.Select(i => SliceIndex.FromObj(i)).ToArray()));
-                ts.CopyFrom((Tensor<T>) value, checkDimensions: true);
+                ts.CopyFrom((Tensor<T>) value);
             }
         }
 

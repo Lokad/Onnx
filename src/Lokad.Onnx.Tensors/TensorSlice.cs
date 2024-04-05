@@ -19,6 +19,7 @@ public class TensorSlice<T> : Tensor<T> where T : struct
     #region Methods
 
     #region Tensor<T> methods
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public override T GetValue(int index)
     {
         var indices = GetCoordinates(index);
@@ -26,6 +27,7 @@ public class TensorSlice<T> : Tensor<T> where T : struct
         return parent.GetValue(idx);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public override void SetValue(int index, T value)
     {
         var indices = GetCoordinates(index);
@@ -38,8 +40,10 @@ public class TensorSlice<T> : Tensor<T> where T : struct
     /// </summary>
     /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
     /// <returns>The value at the specified position in this Tensor.</returns>
+    
     public override T this[ReadOnlySpan<int> indices]
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get
         {
             if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
@@ -54,6 +58,7 @@ public class TensorSlice<T> : Tensor<T> where T : struct
             return parent.GetValue(idx);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         set
         {
             if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
@@ -70,15 +75,29 @@ public class TensorSlice<T> : Tensor<T> where T : struct
         }
     }
 
-    public override Tensor<T> this[params SliceIndex[] indices]
+    public override T this[params int[] indices]
     {
-        get => new TensorSlice<T>(this.ToDenseTensor(), ExpandEllipsis(indices));
+        get
+        {
+            if (indices == null)
+            {
+                throw new ArgumentNullException(nameof(indices));
+            }
+            var span = new ReadOnlySpan<int>(indices);
+            return this[span];
+        }
+
         set
         {
-            var ts = new TensorSlice<T>(this.ToDenseTensor(), ExpandEllipsis(indices));
-            ts.CopyFrom(value, checkDimensions: true);
+            if (indices == null)
+            {
+                throw new ArgumentNullException(nameof(indices));
+            }
+            var span = new ReadOnlySpan<int>(indices);
+            this[span] = value;
         }
     }
+
     public override Tensor<T> Clone() => ToDenseTensor();
 
     public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions, this.IsReversedStride);

@@ -305,6 +305,7 @@ public class CPUExecutionProvider : Runtime
         if (B is null) return MissingInput(op, nameof(B));
         switch (A.ElementType)
         {
+            case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul((Tensor<int>)A, (Tensor<int>)B));
             case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B));
             case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B));
             default: return InputTypeNotSupported(op, nameof(A), A);

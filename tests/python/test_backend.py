@@ -954,3 +954,43 @@ def test_reshape():
         reshaped = reshape_reference_implementation(data, shape)
         output = backend.run_node(node_def, [data, shape])
         np.testing.assert_almost_equal(output["reshaped"], reshaped)
+
+def test_matmul():
+    node_def = onnx.helper.make_node("MatMul", ["A", "B"], ["Y"])
+    a = _get_rnd_float32(shape=[5, 6])
+    b = _get_rnd_float32(shape=[6, 5])
+    output = backend.run_node(node_def, [a, b])
+    np.testing.assert_allclose(output["Y"],
+                               np.matmul(a, b),
+                               rtol=1e-6,
+                               atol=1e-6)
+
+    node_def = onnx.helper.make_node(
+            "MatMul",
+            inputs=["a", "b"],
+            outputs=["c"],
+        )
+
+    # 2d
+    a = np.random.randn(3, 4).astype(np.float32)
+    b = np.random.randn(4, 3).astype(np.float32)
+    c = np.matmul(a, b)
+    output = backend.run_node(node_def, [a, b])
+    np.testing.assert_allclose(output["c"], c,  rtol=1e-6,
+                               atol=1e-6)
+
+    # 3d
+    a = np.random.randn(2, 3, 4).astype(np.float32)
+    b = np.random.randn(2, 4, 3).astype(np.float32)
+    output = backend.run_node(node_def, [a, b])
+    c = np.matmul(a, b)
+    np.testing.assert_allclose(output["c"], c,  rtol=1e-6,
+                               atol=1e-6)
+
+    # 4d
+    a = np.random.randn(1, 2, 3, 4).astype(np.float32)
+    b = np.random.randn(1, 2, 4, 3).astype(np.float32)
+    c = np.matmul(a, b)
+    output = backend.run_node(node_def, [a, b])
+    np.testing.assert_allclose(output["c"], c,  rtol=1e-6,
+                               atol=1e-6)

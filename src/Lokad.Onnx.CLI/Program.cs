@@ -283,9 +283,10 @@ class Program : Runtime
             return;
         }
         ITensor[]? ui;
+        Func<long[], string>? decode = null;
         if (!string.IsNullOrEmpty(text))
         {
-            ui = Text.GetTextTensors(inputs.First(), text);
+            (ui, decode) = Text.GetTextTensors(inputs.First(), text);
         }
         else
         {
@@ -304,7 +305,15 @@ class Program : Runtime
                 Info("Printing outputs...");
                 foreach (var o in graph.Outputs.Values)
                 {
-                    if (softmax && o.Rank == 1)
+                    if (text != "")
+                    {
+                        if (decode is not null)
+                        {
+                            var d = decode(((Tensor<float>)o).Select(Convert.ToInt64).ToArray()).Replace("[PAD]", "");
+                            Info(d);
+                        }
+                    }
+                    else if (softmax && o.Rank == 1)
                     {
                         Info("Applying softmax to {n}...", o.TensorNameDesc());
                         Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
