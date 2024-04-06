@@ -27,9 +27,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test_backend.py" />
-    <Compile Include="test_me5s_model.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="_test_me5s_model.py" />
     <Compile Include="_tf_test_node.py" />
     <Compile Include="test_tensors.py">
       <SubType>Code</SubType>
