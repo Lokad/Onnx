@@ -30,6 +30,7 @@ namespace Lokad.Onnx
         public static ComputationalGraph Load(ModelProto mp)
         {
             Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
+            Info("Model opsets: {o}.", mp.OpsetImport.Select(o => "\"" + o.Domain + "\"" + ":" + o.Version).JoinWithSpaces());
             var op = Begin("Creating computational graph from ONNX model buffer");
             var graph = new ComputationalGraph();
             graph.ModelFile = "<buffer>";

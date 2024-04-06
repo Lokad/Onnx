@@ -23,6 +23,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="conftest.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="test_backend.py" />
     <Compile Include="test_me5s_model.py">
       <SubType>Code</SubType>

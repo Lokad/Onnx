@@ -202,6 +202,11 @@ class LokadOnnxBackend(Backend):
         return tensors.make_ndarray_from_tensor(i) if i != None else None
     
     @classmethod
+    def get_input_ndarray_from_text(cls, text:str,  props:str):
+        i = Graph.GetTextTensors(text, props)
+        return list(map(tensors.make_ndarray_from_tensor, i)) if i != None else None
+
+    @classmethod
     def load_graph(cls, model) -> ComputationalGraph:
         return Graph.Load(model)
 
@@ -218,5 +223,7 @@ supports_device = LokadOnnxBackend.supports_device
 set_debug_mode = LokadOnnxBackend.set_debug_mode
 
 get_input_ndarray_from_file_arg = LokadOnnxBackend.get_input_ndarray_from_file_arg
+
+get_input_ndarray_from_text = LokadOnnxBackend.get_input_ndarray_from_text
 
 load_graph = LokadOnnxBackend.load_graph

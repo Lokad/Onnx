@@ -1,10 +1,8 @@
 import os
-from secrets import token_urlsafe
 from typing import Dict
 
 import math
 import itertools
-from unicodedata import decimal
 
 import numpy as np
 import onnx
@@ -17,7 +15,7 @@ file_dir = os.path.dirname(os.path.realpath(__file__))
 mnist4 = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "images", "mnist4.png") + "::mnist"
 onnx_model_file = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "models", "mnist-8.onnx")
 
-backend.set_debug_mode()
+#backend.set_debug_mode()
 
 def _get_rnd_float32(low=-1.0, high=1.0, shape=None):
     output = np.random.uniform(low, high, shape)
@@ -25,13 +23,6 @@ def _get_rnd_float32(low=-1.0, high=1.0, shape=None):
       return np.float32(output)
     else:
       return output.astype(np.float32)
-
-def _get_rnd_float16(low=-1.0, high=1.0, shape=None):
-    output = np.random.uniform(low, high, shape)
-    if shape is None:
-      return np.float16(output)
-    else:
-      return output.astype(np.float16)
 
 def _get_rnd_int(low, high=None, shape=None, dtype=np.int32):
     return np.random.randint(low, high, size=shape, dtype=dtype)
