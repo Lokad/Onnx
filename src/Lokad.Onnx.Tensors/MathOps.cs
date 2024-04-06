@@ -5,9 +5,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-
-using System.Numerics.Tensors;
-
 namespace Lokad.Onnx
 {
     internal class cs_BLAS

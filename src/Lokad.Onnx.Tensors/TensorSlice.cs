@@ -104,6 +104,8 @@ public class TensorSlice<T> : Tensor<T> where T : struct
     
     public override Tensor<T> InsertDim(int dim) => Clone().InsertDim(dim);
 
+    public override Tensor<T> RemoveDim(int dim) => Clone().RemoveDim(dim);
+
     public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions) => Clone().Reshape(dimensions);
 
     public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => Clone().BroadcastDim(dim, size);    
