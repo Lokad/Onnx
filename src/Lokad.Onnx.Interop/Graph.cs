@@ -14,7 +14,7 @@ public class Graph : Runtime
 
     public static ITensor? GetInputTensorFromFileArg(string arg, bool saveInput = false) => Data.GetInputTensorsFromFileArgs(new[] { arg }, saveInput)?.First();
 
-    public static ITensor[] GetTextTensors(string text, string props) => Text.GetTextTensors(text, props);
+    public static ITensor[]? GetTextTensors(string text, string props) => Text.GetTextTensors(text, props);
 
     public static void SetDebugMode() => Runtime.Initialize("ONNX", "PYTHON", true, true);
 }
