@@ -1,3 +1,6 @@
 [submodule "ext/satsumagraph"]
 	path = ext/satsumagraph
 	url = https://github.com/allisterb/satsumagraph.git
+[submodule "ext/Tokenizers"]
+	path = ext/Tokenizers
+	url = https://github.com/Lokad/Tokenizers.git
