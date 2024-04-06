@@ -127,7 +127,7 @@ class Program : Runtime
         })
         .WithParsed<RunOptions>(ro =>
         {
-            Run(ro.File, ro.Inputs, ro.Node, ro.Text, ro.OpTimes, ro.SaveInput, ro.Softmax);
+            Run(ro);
         });
     }
     #endregion
@@ -273,52 +273,51 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
-    static void Run(string file, IEnumerable<string> inputs, string node="", string text="", int optimes = -1, bool nodeTimes = false, bool saveInput=false, bool softmax=false)
+    static void Run(RunOptions ro)
     {
-        ExitIfFileNotFound(file);
-        var graph = Model.Load(file);
+        ExitIfFileNotFound(ro.File);
+        var graph = Model.Load(ro.File);
         if (graph is null)
         {
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
         ITensor[]? ui;
-        Func<long[], string>? decode = null;
-        if (!string.IsNullOrEmpty(text))
+        if (!string.IsNullOrEmpty(ro.Text))
         {
-            (ui, decode) = Text.GetTextTensors(inputs.First(), text);
+            ui = Text.GetTextTensors(ro.Inputs.First(), ro.Text);
         }
         else
         {
-            ui = Data.GetInputTensorsFromFileArgs(inputs);
+            ui = Data.GetInputTensorsFromFileArgs(ro.Inputs);
         }
         if (ui is null || ui.Length == 0)
         {
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
-
-        if (node == "")
+        if (ro.PrintInput)
         {
-            if (graph.Execute(ui, true, optimes:optimes, nodetimes: nodeTimes))
+            Info("Printing {c} input tensor(s)...", ui.Length);
+            foreach (var t in ui)
+            {
+                Info("{n}:{d}", t.TensorNameDesc(), t.PrintData(false));
+            }
+        }
+
+        if (ro.Node == "")
+        {
+            if (graph.Execute(ui, true, optimes:ro.OpTimes, nodetimes: false))
             {
                 Info("Printing outputs...");
                 foreach (var o in graph.Outputs.Values)
                 {
-                    if (text != "")
-                    {
-                        if (decode is not null)
-                        {
-                            var d = decode(((Tensor<float>)o).Select(Convert.ToInt64).ToArray()).Replace("[PAD]", "");
-                            Info(d);
-                        }
-                    }
-                    else if (softmax && o.Rank == 1)
+                    if (ro.Softmax && o.Rank == 1)
                     {
                         Info("Applying softmax to {n}...", o.TensorNameDesc());
                         Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
                     }
-                    else if (softmax && o.Rank == 2 && o.Dims[0] == 1)
+                    else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
                     {
                         Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
                         Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
@@ -333,17 +332,17 @@ class Program : Runtime
         }
         else
         {
-            if (graph.ExecuteNode(ui, node, true))
+            if (graph.ExecuteNode(ui, ro.Node, true))
             {
                 Info("Printing outputs...");
                 foreach (var o in graph.Outputs.Values)
                 {
-                    if (softmax && o.Rank == 1)
+                    if (ro.Softmax && o.Rank == 1)
                     {
                         Info("Applying softmax to {n}...", o.TensorNameDesc());
                         Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
                     }
-                    else if (softmax && o.Rank == 2 && o.Dims[0] == 1)
+                    else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
                     {
                         Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
                         Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));

@@ -35,7 +35,7 @@ public class Data : Runtime
             }
             else if (Text.TextExtensions.Contains(Path.GetExtension(name))) 
             {
-                var (t,d) = Text.GetTextTensorsFromFileArg(name, a.Skip(1).ToArray());
+                var t = Text.GetTextTensorsFromFileArg(name, a.Skip(1).ToArray());
                 if (t is not null)
                 {
                     tensors.AddRange(t);    
