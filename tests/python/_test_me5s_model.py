@@ -44,7 +44,6 @@ def test_model_run():
     t = backend.get_input_ndarray_from_text('Hello world', 'me5s')
     rep = backend.prepare_file(onnx_model_file)
     r = rep.run(t)
-    #np.testing.assert_almost_equal(outputs.last_hidden_state.detach().numpy(), r[0])
     np.testing.assert_allclose(outputs.last_hidden_state.detach().numpy(), r[0], rtol=1e-6, atol=1e-6)
 
 if __name__ == '__main__':

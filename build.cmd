@@ -11,7 +11,7 @@ if not %ERRORLEVEL%==0  (
     goto End
 )
 
-dotnet build src\Lokad.Onnx.CLI\Lokad.Onnx.CLI.csproj /p:Configuration=Debug
+dotnet build src\Lokad.Onnx.CLI\Lokad.Onnx.CLI.csproj /p:Configuration=Release
 if not %ERRORLEVEL%==0  (
     echo Error building Lokad.ONNX projects.
     set ERROR_CODE=2
