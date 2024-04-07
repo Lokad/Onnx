@@ -2,7 +2,7 @@
 
 ## About
 Lokad.Onnx is a 100% managed code [ONNX backend](https://github.com/onnx/onnx/blob/main/docs/ImplementingAnOnnxBackend.md) implementation.
-
+![img](https://ajb.nyc3.cdn.digitaloceanspaces.com/lokadonnx2.gif)
 ## Getting started
 * Clone the repo and submodules: `git clone https://github.com/Lokad/Onnx.git --recurse-submodules`.
 * Run `build.cmd` from the repo root directory
