@@ -3,7 +3,7 @@ from transformers import AutoTokenizer, AutoModel
 
 # Each input text should start with "query: " or "passage: ", even for non-English texts.
 # For tasks other than retrieval, you can simply use the "query: " prefix.
-input_texts = ['Hello world']
+input_texts = ['Hello world this is some text']
 tokenizer = AutoTokenizer.from_pretrained('intfloat/multilingual-e5-small')
 model = AutoModel.from_pretrained('intfloat/multilingual-e5-small')
 

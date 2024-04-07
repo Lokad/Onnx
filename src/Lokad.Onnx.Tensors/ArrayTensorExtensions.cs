@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Versioning;
 
@@ -127,5 +128,25 @@ namespace Lokad.Onnx
 
         public static U[] Convert<T, U>(this T[] a) => 
             a.Select(e => (U) System.Convert.ChangeType(e, typeof(U)) ?? throw new ArgumentException()).ToArray();
+
+        public static bool AlmostEqual(this double expected, double actual, int precision)
+        {
+            double num = Math.Round(expected, precision);
+            double num2 = Math.Round(actual, precision);
+            return num == num2;
+        }
+
+        public static bool AlmostEqual(this IEnumerable<double> expected, IEnumerable<double> actual, int precision) =>
+            expected.Zip(actual).All(fs => fs.First.AlmostEqual(fs.Second, precision));
+
+        public static bool AlmostEqual(this float expected, float actual, int precision)
+        {
+            float num = MathF.Round(expected, precision);
+            float num2 = MathF.Round(actual, precision);
+            return num == num2;
+        }
+
+        public static bool AlmostEqual(this IEnumerable<float> expected, IEnumerable<float> actual, int precision) =>
+            expected.Zip(actual).All(fs => fs.First.AlmostEqual(fs.Second, precision));
     }
 }

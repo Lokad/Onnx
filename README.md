@@ -13,5 +13,5 @@ Lokad.Onnx is a 100% managed code [ONNX backend](https://github.com/onnx/onnx/bl
 ## Implementation notes
 * The tensors library is pure managed C# adapted from [here](https://github.com/microsoft/onnxruntime/tree/main/csharp/src/Microsoft.ML.OnnxRuntime/Tensors).
 * Current NuGet dependencies for the Backend library are:
-	1. System.Memory
-	2. OnnxSharp - For parsing ONNX ProtoBuf model files and getting the computational graph structure
+	 - System.Memory
+	 - OnnxSharp - For parsing ONNX ProtoBuf model files and getting the computational graph structure

@@ -1,4 +1,6 @@
-﻿namespace Lokad.Onnx.Backend.Tests
+﻿using Lokad.Onnx;
+
+namespace Lokad.Onnx.Backend.Tests
 {
     public class GraphTests
     {
@@ -25,6 +27,8 @@
             Assert.True(g.Execute(Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist5.png::mnist" })!, true));
             o = g.Outputs.Values.First().RemoveDim(0).Softmax();
             Assert.True((float)o[5] > 0.48);
+
+
         }
 
         [Fact]
@@ -36,7 +40,7 @@
             var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" })!;
             Assert.True(g.Execute(ui, true));
             var o = g.Outputs.Values.First().RemoveDim(0);
-            //Assert.True(r.SequenceEqual(o));
+            Assert.True(r.AlmostEqual((Tensor<float>) o, 4));
         }
     }
 }

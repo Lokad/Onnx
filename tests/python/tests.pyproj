@@ -23,10 +23,8 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="conftest.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="test_backend.py" />
+    <Compile Include="test_tokenizers.py" />
     <Compile Include="_test_me5s_model.py" />
     <Compile Include="_tf_test_node.py" />
     <Compile Include="test_tensors.py">
