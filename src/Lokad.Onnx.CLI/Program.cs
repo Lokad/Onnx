@@ -275,7 +275,24 @@ class Program : Runtime
 
     static void Run(RunOptions ro)
     {
-        ExitIfFileNotFound(ro.File);
+        if (ro.File.StartsWith("http"))
+        {
+            if (Uri.TryCreate(ro.File, UriKind.Absolute, out Uri? uri) && DownloadFile("ONNX model file", uri, Path.Combine(Directory.GetCurrentDirectory(), "model.onnx")))
+            {
+                ro.File = Path.Combine(Directory.GetCurrentDirectory(), "model.onnx");
+                Info("Successfully downloaded model file.");
+            }
+            else
+            {
+                Error("Could not download model file.");
+                Exit(ExitResult.NOT_FOUND);
+            }
+        }
+        else
+        {
+            ExitIfFileNotFound(ro.File);
+        }
+
         var graph = Model.Load(ro.File);
         if (graph is null)
         {

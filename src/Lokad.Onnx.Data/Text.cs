@@ -34,7 +34,7 @@ public class Text : Runtime
         {
             case "me5s":
                 Info("Using multilingual-e5-small tokenizer.");
-                var tokenizerPath = Path.Combine(Runtime.AssemblyLocation, "me5s-sentencepiece.bpe.model");
+                var tokenizerPath = Path.Combine(Directory.GetCurrentDirectory(), "me5s-sentencepiece.bpe.model");
                 if (!File.Exists(tokenizerPath))
                 {
                     if (!DownloadFile(

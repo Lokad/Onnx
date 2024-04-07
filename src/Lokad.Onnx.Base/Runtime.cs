@@ -289,6 +289,7 @@ namespace Lokad.Onnx
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
             using (var op = Begin("Downloading {0} from {1} to {2}", name, downloadUrl, downloadPath))
             {
+                WarnIfFileExists(downloadPath);
                 using (var client = new WebClient())
                 {
                     client.DownloadProgressChanged += (object sender, DownloadProgressChangedEventArgs e) =>
