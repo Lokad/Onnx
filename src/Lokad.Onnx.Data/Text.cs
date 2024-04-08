@@ -16,7 +16,6 @@ public class Text : Runtime
     {
         var op = Begin("Tokenizing {len} characters using BERT tokenizer {tok}", text.Length, tokenizer);
         var tok = new BertTokenizer();
-          
         tok.LoadFromHuggingFaceAsync(tokenizer).Wait();
         var (inputIds, attentionMask, tokenTypeIds) = tok.Encode(text, 512);
         op.Complete();
@@ -29,6 +28,7 @@ public class Text : Runtime
 
     public static ITensor[]? RobertaTokenize(string text1, string tokenizer)
     {
+        var op = Begin("Tokenizing text of length {l} chars using XLMRoberta type tokenizer {t}", text1.Length, tokenizer);
         XLMRobertaTokenizer? tok = null;
         switch (tokenizer)
         {
@@ -43,6 +43,7 @@ public class Text : Runtime
                         tokenizerPath))
                     {
                         Error("Could not download model file.");
+                        op.Abandon();
                         return null;    
                     }
                 }
@@ -50,16 +51,19 @@ public class Text : Runtime
                 break;
             default:
                 Error("Unknown Roberta tokenizer: {t}.", tokenizer);
+                op.Abandon();
                 return null;
         }
         var t = tok!.Encode(tok, text1, null, 512, TruncationStrategy.OnlyFirst, 0);
         if (t is null) 
         {
             Error("Could not encode text.");
+            op.Abandon();
             return null;
         }
         else
         {
+            op.Complete();
             return new ITensor[3]
             {
                  DenseTensor<long>.OfValues(t.TokenIds.ToArray()).PadLeft().WithName("input_ids"),

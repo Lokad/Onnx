@@ -30,7 +30,7 @@ namespace Lokad.Onnx
         public static ComputationalGraph Load(ModelProto mp)
         {
             Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
-            Info("Model opsets: {o}.", mp.OpsetImport.Select(o => "\"" + o.Domain + "\"" + ":" + o.Version).JoinWithSpaces());
+            Info("Model opsets: {o}.", mp.OpsetImport.Select(o => o.Domain + ":" + o.Version).JoinWithSpaces());
             var op = Begin("Creating computational graph from ONNX model buffer");
             var graph = new ComputationalGraph();
             graph.ModelFile = "<buffer>";
@@ -49,10 +49,8 @@ namespace Lokad.Onnx
                 graph.Initializers.Add(i.Name, i.ToTensor());
             }
             op.Complete();
-            op = Begin("Converting {c} model input tensor protos to graph tensors", mp.Graph.Input.Count);
+            op = Begin("Converting {c} model input and output tensor protos to graph tensors", mp.Graph.Input.Count + mp.Graph.Output.Count);
             graph.Inputs = mp.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
-            op.Complete();
-            op = Begin("Converting {c} model output tensor protos to graph tensors", mp.Graph.Output.Count);
             graph.Outputs = mp.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
             op.Complete();
             op = Begin("Converting {c} model node protos to graph nodes", mp.Graph.Node.Count);
