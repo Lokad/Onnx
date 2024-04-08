@@ -400,7 +400,7 @@ namespace Lokad.Onnx
                 });
                 logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
                 {
-                    Regex = "\\s+([-+]?([0-9]+)?(ms)?(?!\\:))",
+                    Regex = "\\s+([-+]?([0-9]*[.])?[0-9]+([eE][-+]?\\\\d+)?(ms)?(?!\\:))",
                     CompileRegex = true,
                     ForegroundColor = NLog.Targets.ConsoleOutputColor.Cyan,
 

@@ -15,7 +15,7 @@ file_dir = os.path.dirname(os.path.realpath(__file__))
 mnist4 = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "images", "mnist4.png") + "::mnist"
 onnx_model_file = os.path.join(file_dir, "..", "..", "tests", "Lokad.Onnx.Backend.Tests", "models", "mnist-8.onnx")
 
-#backend.set_debug_mode()
+backend.set_debug_mode()
 
 def _get_rnd_float32(low=-1.0, high=1.0, shape=None):
     output = np.random.uniform(low, high, shape)
