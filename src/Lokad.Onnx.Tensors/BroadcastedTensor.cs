@@ -27,17 +27,17 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
     #region Methods
 
     #region Tensor<T> members
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public override T GetValue(int index)
     {
-        if (index >= Length) throw new IndexOutOfRangeException();
         int[] indices = new int[this.Rank];
         ArrayUtilities.GetIndices(strides, IsReversedStride, index, indices);
         return source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public override void SetValue(int index, T value)
     {
-        if (index >= Length) throw new IndexOutOfRangeException();
         int[] indices = new int[this.Rank];
         ArrayUtilities.GetIndices(strides, IsReversedStride, index, indices);
         this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
@@ -50,16 +50,12 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
     /// <returns>The value at the specified position in this Tensor.</returns>
     public override T this[ReadOnlySpan<int> indices]
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get
         {
             if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
             {
                 return GetValue(0);
-            }
-            for (int i = 0; i < indices.Length; i++)
-            {
-                if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
             }
             return source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
         }
@@ -71,10 +67,6 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
             {
                 SetValue(0, value);
                 return;
-            }
-            for (int i = 0; i < indices.Length; i++)
-            {
-                if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
             }
             this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
         }

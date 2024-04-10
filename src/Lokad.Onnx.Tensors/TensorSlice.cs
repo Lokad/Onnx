@@ -50,10 +50,6 @@ public class TensorSlice<T> : Tensor<T> where T : struct
             {
                 return GetValue(0);
             }
-            for (int i = 0; i < indices.Length; i++)
-            {
-                if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
-            }
             var idx = GetOffset(indices.ToArray());
             return parent.GetValue(idx);
         }
@@ -66,10 +62,6 @@ public class TensorSlice<T> : Tensor<T> where T : struct
                 SetValue(0, value);
                 return;
             }
-            for (int i = 0; i < indices.Length; i++)
-            {
-                if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
-            }
             var idx = GetOffset(indices.ToArray());
             parent.SetValue(idx, value);
         }
@@ -77,6 +69,7 @@ public class TensorSlice<T> : Tensor<T> where T : struct
 
     public override T this[params int[] indices]
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get
         {
             if (indices == null)
@@ -87,6 +80,7 @@ public class TensorSlice<T> : Tensor<T> where T : struct
             return this[span];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         set
         {
             if (indices == null)
@@ -117,8 +111,6 @@ public class TensorSlice<T> : Tensor<T> where T : struct
         int offset;
 
         var coords = new List<int>(indices);
-        if (parent.Rank == 0 && indices.Length == 1 && indices[0] == 0)
-            return 0;
         if (indices.Length > parent.Dimensions.Length)
             throw new ArgumentOutOfRangeException(nameof(indices), $"select has too many coordinates for this shape");
         var orig_ndim = parent.Rank;
