@@ -425,11 +425,9 @@ namespace Lokad.Onnx
     {
         public ConsoleLogger2Op(ConsoleLogger2 l, string opName, params object[] args) : base(l)
         {
-           
-            this.opName = l.NLogFormatMessage(opName, args);
             timer.Start();
             this.l = l;
-            l.Info(this.opName + "...");
+            l.Info(this.opName + "...", args);
         }
 
         public override void Complete()
