@@ -28,12 +28,14 @@ public class Text : Runtime
 
     public static ITensor[]? RobertaTokenize(string text1, string tokenizer)
     {
-        var op = Begin("Tokenizing text of length {l} chars using XLMRoberta type tokenizer {t}", text1.Length, tokenizer);
         XLMRobertaTokenizer? tok = null;
+        string tok_desc;
+        Logger.Op op;
         switch (tokenizer)
         {
             case "me5s":
-                Info("Using multilingual-e5-small tokenizer.");
+                tok_desc = "multilingual-e5-small";
+                op = Begin("Tokenizing text of length {l} chars using {tok_desc} tokenizer", text1.Length, tok_desc);
                 var tokenizerPath = Path.Combine(Directory.GetCurrentDirectory(), "me5s-sentencepiece.bpe.model");
                 if (!File.Exists(tokenizerPath))
                 {
@@ -51,13 +53,12 @@ public class Text : Runtime
                 break;
             default:
                 Error("Unknown Roberta tokenizer: {t}.", tokenizer);
-                op.Abandon();
                 return null;
         }
         var t = tok!.Encode(tok, text1, null, 512, TruncationStrategy.OnlyFirst, 0);
         if (t is null) 
         {
-            Error("Could not encode text.");
+            Error("Could not encode text using {tok} tokenizer.", tok_desc);
             op.Abandon();
             return null;
         }

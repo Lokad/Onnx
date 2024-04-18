@@ -9,23 +9,6 @@ using System.Threading.Tasks;
 
 namespace Lokad.Onnx
 {
-    public class TensorUtil
-    {
-        public static int HandleNegativeAxis(int axis, int tensorRank)
-        {
-            if (axis > tensorRank) throw new ArgumentException("T");
-            return axis < 0 ? axis + tensorRank : axis; 
-        }
-
-        public static long HandleNegativeAxis(long axis, int tensorRank)
-        {
-            if (axis > tensorRank) throw new ArgumentException("T");
-            return axis < 0 ? axis + tensorRank : axis;
-        }
-
-       
-    }
-
     public static class TensorExtensions
     {
         public static object GetTensorData(this TensorProto tp)

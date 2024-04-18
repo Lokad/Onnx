@@ -29,9 +29,8 @@ namespace Lokad.Onnx
 
         public static ComputationalGraph Load(ModelProto mp)
         {
-            Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
-            Info("Model opsets: {o}.", mp.OpsetImport.Select(o => o.Domain + ":" + o.Version).JoinWithSpaces());
-            var op = Begin("Creating computational graph from ONNX model buffer");
+            Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.OpsetImport.Select(o => o.Domain + ":" + o.Version).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
+            var cop = Begin("Creating computational graph from ONNX model");
             var graph = new ComputationalGraph();
             graph.ModelFile = "<buffer>";
             graph.Model = mp;
@@ -43,7 +42,7 @@ namespace Lokad.Onnx
             graph.Metadata["Domain"] = mp.Domain;
             graph.Metadata["ProducerName"] = mp.ProducerName;
             graph.Metadata["ProducerVersion"] = mp.ProducerVersion;
-            op = Begin("Converting {c} model initializer tensor protos to graph tensors", mp.Graph.Initializer.Count);
+            var op = Begin("Converting {c} model initializer tensor protos to graph tensors", mp.Graph.Initializer.Count);
             foreach (var i in mp.Graph.Initializer)
             {
                 graph.Initializers.Add(i.Name, i.ToTensor());
@@ -59,6 +58,7 @@ namespace Lokad.Onnx
                 graph.Nodes.Add(np.ToNode(graph));
             }
             op.Complete();
+            cop.Complete(); 
             return graph;
         }
 

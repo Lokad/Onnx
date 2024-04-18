@@ -382,7 +382,7 @@ public class CPUExecutionProvider : Runtime
         List<int> squeezedDims = new List<int>();
         for (int i = 0; i < dims.Length; i++)
         {
-            var a = TensorUtil.HandleNegativeAxis((int)dims[i], input.Dimensions.Length);
+            var a = ArrayUtilities.HandleNegativeAxisOrIndex(input.Dimensions.Length, (int)dims[i]);
             if (input.Dimensions[a] == 1)
             {
                 squeezedDims.Add(a);
@@ -707,7 +707,7 @@ public class CPUExecutionProvider : Runtime
         var op = OpType.Softmax;
         if (input is null) return MissingInput(op, nameof(input));
         var axis = _axis.HasValue ? _axis.Value : -1;
-        if (OptimizationMode == ExecutionOptimizationMode.Speed && input.ElementType == TensorElementType.Float)
+        if (OptimizationMode == ExecutionOptimizationMode.Speed)
         {
             input = input.ToDenseTensor();
         }
