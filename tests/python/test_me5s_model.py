@@ -38,7 +38,7 @@ def test_tokenizer():
     input_texts = ['Hello world']
     # Tokenize the input texts
     batch_dict = tokenizer(input_texts, max_length=512, padding=False, truncation=True, return_tensors='pt')
-    t = backend.get_input_ndarray_from_text('Hello world', 'me5s')
+    t = backend.get_input_ndarray_from_text(input_texts[0], 'me5s')
     np.testing.assert_equal(batch_dict['input_ids'].numpy(), t[0])
     np.testing.assert_equal(batch_dict['attention_mask'].numpy(), t[1])
 
