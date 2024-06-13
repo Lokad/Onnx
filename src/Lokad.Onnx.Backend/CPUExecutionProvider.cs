@@ -13,7 +13,7 @@ public enum ExecutionProvider
     CPU
 }
 
-public enum ExecutionOptimizationMode
+public enum OptimizationMode
 {
     Speed,
     Memory
@@ -49,7 +49,7 @@ public class CPUExecutionProvider : Runtime
         OpType.Softmax,
     };
 
-    public static ExecutionOptimizationMode OptimizationMode { get; set; } = ExecutionOptimizationMode.Speed;
+    public static OptimizationMode OptimizationMode { get; set; } = OptimizationMode.Speed;
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
 
@@ -92,7 +92,7 @@ public class CPUExecutionProvider : Runtime
         {
             return CannotBroadcast(op, A, B);
         }
-        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        if (OptimizationMode == OptimizationMode.Speed)
         {
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();    
@@ -121,7 +121,7 @@ public class CPUExecutionProvider : Runtime
             return CannotBroadcast(op, A, B);
         }
 
-        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        if (OptimizationMode == OptimizationMode.Speed)
         {
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();
@@ -150,7 +150,7 @@ public class CPUExecutionProvider : Runtime
             return CannotBroadcast(op, A, B);
         }
 
-        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        if (OptimizationMode == OptimizationMode.Speed)
         {
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();
@@ -179,7 +179,7 @@ public class CPUExecutionProvider : Runtime
             return CannotBroadcast(op, A, B);
         }
 
-        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        if (OptimizationMode == OptimizationMode.Speed)
         {
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();
@@ -207,7 +207,7 @@ public class CPUExecutionProvider : Runtime
             return CannotBroadcast(op, A, B);
         }
 
-        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        if (OptimizationMode == OptimizationMode.Speed)
         {
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();
@@ -280,7 +280,7 @@ public class CPUExecutionProvider : Runtime
         var op = OpType.Relu;
         if (X is null) return MissingInput(op, nameof(X));
 
-        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        if (OptimizationMode == OptimizationMode.Speed)
         {
             X = X.ToDenseTensor();
         }
@@ -346,7 +346,7 @@ public class CPUExecutionProvider : Runtime
         if (A is null) return MissingInput(op, nameof(A));
         if (B is null) return MissingInput(op, nameof(B));
 
-        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        if (OptimizationMode == OptimizationMode.Speed)
         {
             A = A.ToDenseTensor();
             B = B.ToDenseTensor();
@@ -364,7 +364,7 @@ public class CPUExecutionProvider : Runtime
     {
         var op = OpType.Sqrt;
         if (A is null) return MissingInput(op, nameof(A));
-        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        if (OptimizationMode == OptimizationMode.Speed)
         {
             A = A.ToDenseTensor();
         }
@@ -707,7 +707,7 @@ public class CPUExecutionProvider : Runtime
         var op = OpType.Softmax;
         if (input is null) return MissingInput(op, nameof(input));
         var axis = _axis.HasValue ? _axis.Value : -1;
-        if (OptimizationMode == ExecutionOptimizationMode.Speed)
+        if (OptimizationMode == OptimizationMode.Speed)
         {
             input = input.ToDenseTensor();
         }
