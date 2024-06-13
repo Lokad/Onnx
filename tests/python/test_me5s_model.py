@@ -1,4 +1,4 @@
-import os
+import os, pytest, logging
 from typing import Dict
 import urllib.request
 
@@ -6,21 +6,26 @@ import numpy as np
 import onnx
 from onnx.reference import ReferenceEvaluator
 
-from interop import backend
-
 from torch import Tensor
 from transformers import AutoTokenizer, AutoModel
 
+from interop import backend
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+
 file_dir = os.path.dirname(os.path.realpath(__file__))
 onnx_model_file = os.path.join(file_dir, 'me5s.model.onnx')
+
 if not os.path.isfile(onnx_model_file):
-    print (f'Downloading multilingual embedded-small 5 ONNX model file to {onnx_model_file}...')
+    logger.info(f'Downloading multilingual-e5-small ONNX model file to {onnx_model_file}...')
     dl,_ = urllib.request.urlretrieve("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx?download=true", onnx_model_file)
     if dl != onnx_model_file: 
         raise RuntimeError(f'Could not download model file from https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx.')
     else:
-        print('download complete.')
+        logger.info('Download complete.')
 
+logger.info(f'Downloading multilingual-e5-small HuggingFace model and tokenizer data...')
 tokenizer = AutoTokenizer.from_pretrained('intfloat/multilingual-e5-small')
 model = AutoModel.from_pretrained('intfloat/multilingual-e5-small')
 
@@ -45,8 +50,3 @@ def test_model_run():
     rep = backend.prepare_file(onnx_model_file)
     r = rep.run(t)
     np.testing.assert_allclose(outputs.last_hidden_state.detach().numpy(), r[0], rtol=1e-6, atol=1e-6)
-
-if __name__ == '__main__':
-    test_model_file_prepare()
-    test_tokenizer()
-    test_model_run()
