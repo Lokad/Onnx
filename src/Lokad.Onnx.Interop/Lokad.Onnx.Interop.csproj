@@ -9,12 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Numpy.Bare" Version="3.11.1.33" />
     <PackageReference Include="OnnxSharp" Version="0.2.1">
       <Aliases>OnnxSharp</Aliases>
     </PackageReference>
-    <PackageReference Include="pythonnet" Version="3.0.3" />
-    <PackageReference Include="System.Runtime.Experimental" Version="6.0.2" />
   </ItemGroup>
 
   <ItemGroup>
