@@ -25,7 +25,7 @@
   <ItemGroup>
     <Compile Include="test_backend.py" />
     <Compile Include="test_tokenizers.py" />
-    <Compile Include="_test_me5s_model.py" />
+    <Compile Include="test_me5s_model.py" />
     <Compile Include="_tf_test_node.py" />
     <Compile Include="test_tensors.py">
       <SubType>Code</SubType>
@@ -36,6 +36,9 @@
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|VisualStudio|lokadonnx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="pytest.ini" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
