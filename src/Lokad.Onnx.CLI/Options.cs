@@ -82,3 +82,10 @@ public class RunOptions : Options
     [Option("print-input", Required = false, HelpText = "Print the input tensors that will be fed to the model.")]
     public bool PrintInput { get; set; }
 }
+
+[Verb("benchmark", HelpText = "Benchmark an ONNX model or operations.")]
+public class BenchmarkOptions : Options
+{
+    [Value(1, Required = true, HelpText = "The benchmark to run.")]
+    public string BenchmarkId { get; set; } = "";
+}

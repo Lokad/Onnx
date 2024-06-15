@@ -43,94 +43,202 @@ class Program : Runtime
     {
         Initialize("Lokad.Onnx.CLI", "CLI", (args.Contains("--debug") || args.Contains("-d")), true, true);
         PrintLogo();
-        var result = new Parser().ParseArguments<Options, InfoOptions, RunOptions>(args);
-        result.WithNotParsed(errors =>
-        {
-            HelpText help = GetAutoBuiltHelpText(result);
-            help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
-            help.Copyright = "";
-            if (errors.Any(e => e.Tag == ErrorType.VersionRequestedError))
-            {
-                help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
-                help.Copyright = "";
-                Info(help);
-                Exit(ExitResult.SUCCESS);
-            }
-            else if (errors.Any(e => e.Tag == ErrorType.HelpVerbRequestedError))
-            {
-                HelpVerbRequestedError error = (HelpVerbRequestedError)errors.First(e => e.Tag == ErrorType.HelpVerbRequestedError);
-                if (error.Type != null)
-                {
-                    help.AddVerbs(error.Type);
-                }
-                else
-                {
-                    help.AddVerbs(optionTypes);
-                }
-                Info(help.ToString().Replace("--", ""));
-                Exit(ExitResult.SUCCESS);
-            }
-            else if (errors.Any(e => e.Tag == ErrorType.HelpRequestedError))
-            {
-                HelpRequestedError error = (HelpRequestedError)errors.First(e => e.Tag == ErrorType.HelpRequestedError);
-                help.AddVerbs(result.TypeInfo.Current);
-                help.AddOptions(result);
-                help.AddPreOptionsLine($"{result.TypeInfo.Current.Name.Replace("Options", "").ToLower()} options:");
-                Info(help);
-                Exit(ExitResult.SUCCESS);
-            }
-            else if (errors.Any(e => e.Tag == ErrorType.NoVerbSelectedError))
-            {
-                help.AddVerbs(optionTypes);
-                Info(help);
-                Exit(ExitResult.INVALID_OPTIONS);
-            }
-            else if (errors.Any(e => e.Tag == ErrorType.MissingRequiredOptionError))
-            {
-                MissingRequiredOptionError error = (MissingRequiredOptionError)errors.First(e => e.Tag == ErrorType.MissingRequiredOptionError);
-                Info(help);
-                Error("A required option is missing.");
-               
-                Exit(ExitResult.INVALID_OPTIONS);
-            }
-            else if (errors.Any(e => e.Tag == ErrorType.UnknownOptionError))
-            {
-                UnknownOptionError error = (UnknownOptionError)errors.First(e => e.Tag == ErrorType.UnknownOptionError);
-                help.AddVerbs(optionTypes);
-                Info(help);
-                Error("Unknown option: {error}.", error.Token);
-                Exit(ExitResult.INVALID_OPTIONS);
-            }
-            else
-            {
-                Error("An error occurred parsing the program options: {errors}.", errors);
-                help.AddVerbs(optionTypes);
-                Info(help);
-                Exit(ExitResult.INVALID_OPTIONS);
-            }
-        })
-        .WithParsed<InfoOptions>(io =>
-        {
-            ExitIfFileNotFound(io.File);
-            if (io.Ops)
-            {
-                PrintModelOps(io.File);
-            }
-            else if (io.Initializers)
-            {
-                PrintModelInitializers(io.File);
-            }
-            else
-            {
-                PrintModelInfo(io.File, io.OpFilter); 
-            }
-        })
-        .WithParsed<RunOptions>(ro =>
-        {
-            Run(ro);
-        });
+        var result = new Parser().ParseArguments(args, optionTypes);
+        result.WithNotParsed(errors => Help(result, errors))
+        .WithParsed<InfoOptions>(Info)
+        .WithParsed<RunOptions>(Run)
+        .WithParsed<BenchmarkOptions>(Benchmark);
     }
     #endregion
+
+    static void Help(ParserResult<object> result, IEnumerable<Error> errors)
+    {
+        HelpText help = GetAutoBuiltHelpText(result);
+        help.Heading = new HeadingInfo("Lokad.Onnx command-line help");
+        help.Copyright = "";
+        if (errors.Any(e => e.Tag == ErrorType.VersionRequestedError))
+        {
+            help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
+            help.Copyright = "";
+            Info(help);
+            Exit(ExitResult.SUCCESS);
+        }
+        else if (errors.Any(e => e.Tag == ErrorType.HelpVerbRequestedError))
+        {
+            HelpVerbRequestedError error = (HelpVerbRequestedError)errors.First(e => e.Tag == ErrorType.HelpVerbRequestedError);
+            if (error.Type != null)
+            {
+                help.AddVerbs(error.Type);
+            }
+            else
+            {
+                help.AddVerbs(optionTypes);
+            }
+            Info(help.ToString().Replace("--", ""));
+            Exit(ExitResult.SUCCESS);
+        }
+        else if (errors.Any(e => e.Tag == ErrorType.HelpRequestedError))
+        {
+            HelpRequestedError error = (HelpRequestedError)errors.First(e => e.Tag == ErrorType.HelpRequestedError);
+            help.AddVerbs(result.TypeInfo.Current);
+            help.AddOptions(result);
+            help.AddPreOptionsLine($"{result.TypeInfo.Current.Name.Replace("Options", "").ToLower()} options:");
+            Info(help);
+            Exit(ExitResult.SUCCESS);
+        }
+        else if (errors.Any(e => e.Tag == ErrorType.NoVerbSelectedError))
+        {
+            help.AddVerbs(optionTypes);
+            Info(help);
+            Exit(ExitResult.INVALID_OPTIONS);
+        }
+        else if (errors.Any(e => e.Tag == ErrorType.MissingRequiredOptionError))
+        {
+            MissingRequiredOptionError error = (MissingRequiredOptionError)errors.First(e => e.Tag == ErrorType.MissingRequiredOptionError);
+            Info(help);
+            Error("A required option is missing.");
+
+            Exit(ExitResult.INVALID_OPTIONS);
+        }
+        else if (errors.Any(e => e.Tag == ErrorType.UnknownOptionError))
+        {
+            UnknownOptionError error = (UnknownOptionError)errors.First(e => e.Tag == ErrorType.UnknownOptionError);
+            help.AddVerbs(optionTypes);
+            Info(help);
+            Error("Unknown option: {error}.", error.Token);
+            Exit(ExitResult.INVALID_OPTIONS);
+        }
+        else
+        {
+            Error("An error occurred parsing the program options: {errors}.", errors);
+            help.AddVerbs(optionTypes);
+            Info(help);
+            Exit(ExitResult.INVALID_OPTIONS);
+        }
+    }
+
+    static void Info(InfoOptions io)
+    {
+        ExitIfFileNotFound(io.File);
+        if (io.Ops)
+        {
+            PrintModelOps(io.File);
+        }
+        else if (io.Initializers)
+        {
+            PrintModelInitializers(io.File);
+        }
+        else
+        {
+            PrintModelInfo(io.File, io.OpFilter);
+        }
+        ExitWithSuccess();
+    }
+    static void Run(RunOptions ro)
+    {
+        if (ro.File.StartsWith("http"))
+        {
+            if (Uri.TryCreate(ro.File, UriKind.Absolute, out Uri? uri) && DownloadFile("ONNX model file", uri, Path.Combine(Directory.GetCurrentDirectory(), "model.onnx")))
+            {
+                ro.File = Path.Combine(Directory.GetCurrentDirectory(), "model.onnx");
+                Info("Successfully downloaded model file.");
+            }
+            else
+            {
+                Error("Could not download model file.");
+                Exit(ExitResult.NOT_FOUND);
+            }
+        }
+        else
+        {
+            ExitIfFileNotFound(ro.File);
+        }
+
+        var graph = Model.Load(ro.File);
+        if (graph is null)
+        {
+            Exit(ExitResult.INVALID_INPUT);
+            return;
+        }
+        ITensor[]? ui;
+        if (!string.IsNullOrEmpty(ro.Text))
+        {
+            ui = Text.GetTextTensors(ro.Inputs.First(), ro.Text);
+        }
+        else
+        {
+            ui = Data.GetInputTensorsFromFileArgs(ro.Inputs);
+        }
+        if (ui is null || ui.Length == 0)
+        {
+            Exit(ExitResult.INVALID_INPUT);
+            return;
+        }
+        if (ro.PrintInput)
+        {
+            Info("Printing {c} input tensor(s)...", ui.Length);
+            foreach (var t in ui)
+            {
+                Info("{n}:{d}", t.TensorNameDesc(), t.PrintData(false));
+            }
+        }
+
+        if (ro.Node == "")
+        {
+            if (graph.Execute(ui, true, optimes: ro.OpTimes, nodetimes: false))
+            {
+                Info("Printing outputs...");
+                foreach (var o in graph.Outputs.Values)
+                {
+                    if (ro.Softmax && o.Rank == 1)
+                    {
+                        Info("Applying softmax to {n}...", o.TensorNameDesc());
+                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+                    }
+                    else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
+                    {
+                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
+                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+                    }
+                    else
+                    {
+                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
+                    }
+                }
+                Exit(ExitResult.SUCCESS);
+            }
+        }
+        else
+        {
+            if (graph.ExecuteNode(ui, ro.Node, true))
+            {
+                Info("Printing outputs...");
+                foreach (var o in graph.Outputs.Values)
+                {
+                    if (ro.Softmax && o.Rank == 1)
+                    {
+                        Info("Applying softmax to {n}...", o.TensorNameDesc());
+                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+                    }
+                    else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
+                    {
+                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
+                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+                    }
+                    else
+                    {
+                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
+                    }
+                }
+                Exit(ExitResult.SUCCESS);
+            }
+        }
+    }
+
+    static void Benchmark(BenchmarkOptions bo)
+    {
+
+    }
 
     static void PrintModelInfo(string file, string? _opfilter = null)
     {
@@ -273,107 +381,6 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
-    static void Run(RunOptions ro)
-    {
-        if (ro.File.StartsWith("http"))
-        {
-            if (Uri.TryCreate(ro.File, UriKind.Absolute, out Uri? uri) && DownloadFile("ONNX model file", uri, Path.Combine(Directory.GetCurrentDirectory(), "model.onnx")))
-            {
-                ro.File = Path.Combine(Directory.GetCurrentDirectory(), "model.onnx");
-                Info("Successfully downloaded model file.");
-            }
-            else
-            {
-                Error("Could not download model file.");
-                Exit(ExitResult.NOT_FOUND);
-            }
-        }
-        else
-        {
-            ExitIfFileNotFound(ro.File);
-        }
-
-        var graph = Model.Load(ro.File);
-        if (graph is null)
-        {
-            Exit(ExitResult.INVALID_INPUT);
-            return;
-        }
-        ITensor[]? ui;
-        if (!string.IsNullOrEmpty(ro.Text))
-        {
-            ui = Text.GetTextTensors(ro.Inputs.First(), ro.Text);
-        }
-        else
-        {
-            ui = Data.GetInputTensorsFromFileArgs(ro.Inputs);
-        }
-        if (ui is null || ui.Length == 0)
-        {
-            Exit(ExitResult.INVALID_INPUT);
-            return;
-        }
-        if (ro.PrintInput)
-        {
-            Info("Printing {c} input tensor(s)...", ui.Length);
-            foreach (var t in ui)
-            {
-                Info("{n}:{d}", t.TensorNameDesc(), t.PrintData(false));
-            }
-        }
-
-        if (ro.Node == "")
-        {
-            if (graph.Execute(ui, true, optimes:ro.OpTimes, nodetimes: false))
-            {
-                Info("Printing outputs...");
-                foreach (var o in graph.Outputs.Values)
-                {
-                    if (ro.Softmax && o.Rank == 1)
-                    {
-                        Info("Applying softmax to {n}...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
-                    }
-                    else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
-                    {
-                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
-                    }
-                    else
-                    {
-                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
-                    }
-                }
-                Exit(ExitResult.SUCCESS);
-            }
-        }
-        else
-        {
-            if (graph.ExecuteNode(ui, ro.Node, true))
-            {
-                Info("Printing outputs...");
-                foreach (var o in graph.Outputs.Values)
-                {
-                    if (ro.Softmax && o.Rank == 1)
-                    {
-                        Info("Applying softmax to {n}...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
-                    }
-                    else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
-                    {
-                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
-                    }
-                    else
-                    {
-                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
-                    }
-                }
-                Exit(ExitResult.SUCCESS);
-            }
-        }
-    }
-
     static string GetAttributeValueDesc(object value) =>
         value switch
         {
@@ -448,8 +455,8 @@ class Program : Runtime
     static object uilock = new object();
     static Type[] optionTypes =
     {
-        typeof(Options), typeof(InfoOptions), typeof(RunOptions)
-        
+        typeof(Options), typeof(InfoOptions), typeof(RunOptions), typeof(BenchmarkOptions)
+
     };
     static FigletFont font = FigletFont.Load(Path.Combine(AssemblyLocation, "chunky.flf"));
     static Dictionary<string, Type> optionTypesMap = new Dictionary<string, Type>();
