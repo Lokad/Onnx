@@ -16,9 +16,6 @@ public class Options
     [Option("options", Required = false, HelpText = "Any additional options for the selected operation.")]
     public string AdditionalOptions { get; set; } = String.Empty;
 
-    [Value(0, Required = true, HelpText = "The ONNX model file to open.")]
-    public string File { get; set; } = String.Empty;
-
     public static Dictionary<string, object> Parse(string o)
     {
         Dictionary<string, object> options = new Dictionary<string, object>();
@@ -48,6 +45,9 @@ public class Options
 [Verb("info", HelpText = "Get information on an ONNX model.")]
 public class InfoOptions : Options
 {
+    [Value(0, Required = true, HelpText = "The ONNX model file to open.")]
+    public string File { get; set; } = String.Empty;
+
     [Option("ops", Required = false, HelpText = "Only print out a list of distinct ops present in the model.")]
     public bool Ops { get; set; }
 
@@ -61,6 +61,9 @@ public class InfoOptions : Options
 [Verb("run", HelpText = "Run an ONNX model or node.")]
 public class RunOptions : Options
 {
+    [Value(0, Required = true, HelpText = "The ONNX model file to open.")]
+    public string File { get; set; } = String.Empty;
+
     [Value(1, Required = true, HelpText = "The user input arguments to the model.")]
     public IEnumerable<string> Inputs { get; set; } = Array.Empty<string>();
 

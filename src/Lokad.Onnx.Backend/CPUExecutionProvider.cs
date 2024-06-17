@@ -75,7 +75,7 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Float16: return Success(op, Tensor<Half>.Reshape((Tensor<Half>)input, (Tensor<long>)shape, allow_zero ?? false));
             case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Reshape((Tensor<BFloat16>)input, (Tensor<long>)shape, allow_zero ?? false));
             case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Reshape((Tensor<System.Numerics.Complex>)input, (Tensor<long>)shape, allow_zero ?? false));
-            default: return NotSupported(OpType.Reshape);
+            default: return NotSupported(op);
         }
     }
 
@@ -373,61 +373,6 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Float: return Success(op, Tensor<float>.Sqrt((Tensor<float>)A));
             case TensorElementType.Double: return Success(op, Tensor<double>.Sqrt((Tensor<double>)A));
             default: return InputTypeNotSupported(op, nameof(A), A);
-        }
-    }
-
-    public static OpResult Squeeze<T>(Tensor<T> input, Tensor<long>? axes = null) where T : struct
-    {
-        long[] dims = (axes is not null) ? axes.ToArray() : Enumerable.Range(0, input.Dimensions.Length - 1).Cast<long>().ToArray();
-        List<int> squeezedDims = new List<int>();
-        for (int i = 0; i < dims.Length; i++)
-        {
-            var a = ArrayUtilities.HandleNegativeAxisOrIndex(input.Dimensions.Length, (int)dims[i]);
-            if (input.Dimensions[a] == 1)
-            {
-                squeezedDims.Add(a);
-            }
-
-        }
-        return OpResult.Success(OpType.Squeeze, new[] { input.Reshape(squeezedDims.ToArray()) });
-    }
-
-    public static OpResult Squeeze(int version, ITensor input, ITensor? axes = null)
-    {
-        Tensor<long>? shape = null;
-        if (axes is not null)
-        {
-            if (axes.Dims.Length != 1)
-            {
-                return OpResult.Failure(OpType.Transpose, $"The axes tensor  {axes.Name} must have dimension 1.");
-            }
-            else if (axes.ElementType != TensorElementType.Int64)
-            {
-                return OpResult.WrongInputType(OpType.Transpose, nameof(axes), TensorElementType.Int64, axes);
-            }
-            else
-            {
-                shape = (Tensor<long>)axes;
-            }
-        }
-
-        switch (input.ElementType)
-        {
-            case TensorElementType.Bool: return Squeeze((Tensor<bool>)input, (Tensor<long>?) shape);
-            case TensorElementType.Int8: return Squeeze((Tensor<byte>)input, shape);
-            case TensorElementType.UInt8: return Squeeze((Tensor<sbyte>)input, shape);
-            case TensorElementType.Int16: return Squeeze((Tensor<short>)input, shape);
-            case TensorElementType.UInt16: return Squeeze((Tensor<ushort>)input, shape);
-            case TensorElementType.Int32: return Squeeze((Tensor<int>)input, shape);
-            case TensorElementType.UInt32: return Squeeze((Tensor<uint>)input, shape);
-            case TensorElementType.Int64: return Squeeze((Tensor<long>)input, shape);
-            case TensorElementType.UInt64: return Squeeze((Tensor<ulong>)input, shape);
-            case TensorElementType.Float: return Squeeze((Tensor<float>)input, shape);
-            case TensorElementType.Double: return Squeeze((Tensor<double>)input, shape);
-            case TensorElementType.Float16: return Squeeze((Tensor<Half>)input, shape);
-            case TensorElementType.BFloat16: return Squeeze((Tensor<BFloat16>)input, shape);
-            case TensorElementType.Complex64: return Squeeze((Tensor<System.Numerics.Complex>)input, shape);
-            default: return OpResult.NotSupported(OpType.Squeeze);
         }
     }
 
