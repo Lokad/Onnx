@@ -237,7 +237,18 @@ class Program : Runtime
 
     static void Benchmark(BenchmarkOptions bo)
     {
+        switch (bo.BenchmarkId) 
+        {
+            case "me5s":
+                Benchmarks.RunMe5s();
+                ExitWithSuccess();
+                break;
+            default:
+                Error("Unkown benchmark: {b}.", bo.BenchmarkId);
+                Exit(ExitResult.INVALID_OPTIONS);
+                break;
 
+        }
     }
 
     static void PrintModelInfo(string file, string? _opfilter = null)

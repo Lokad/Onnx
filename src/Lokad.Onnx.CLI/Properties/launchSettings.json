@@ -10,7 +10,7 @@
     },
     "Run me5s": {
       "commandName": "Project",
-      "commandLineArgs": "run c:\\Users\\Allister\\downloads\\model.onnx --text \"me5s\" \"Hello world\""
+      "commandLineArgs": "benchmark me5s"
     }
   }
 }
