@@ -40,7 +40,7 @@ internal class Benchmarks : Runtime
 {
     internal static void RunMe5s()
     {
-        Info("Running multilingual-embedded-5-small benchmark...");
+        var op = Begin("Preparing model and data for multilingual-embedded-5-small benchmark");
         var modelFile = Path.Combine(AssemblyLocation, "benchmark-model.onnx");
         var testDataFile = Path.Combine(AssemblyLocation, "train.jsonl");
         if (!File.Exists(modelFile))
@@ -48,6 +48,7 @@ internal class Benchmarks : Runtime
             if (!DownloadFile("benchmark-model.onnx", new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx?download=true"), modelFile))
             {
                 Error("Could not download benchmark model file.");
+                op.Abandon();
                 return;
             }
         }
@@ -56,6 +57,7 @@ internal class Benchmarks : Runtime
             if (!DownloadFile("train.jsonl", new Uri("https://huggingface.co/datasets/mteb/amazon_reviews_multi/resolve/main/en/train.jsonl?download=true"), testDataFile))
             {
                 Error("Could not download benchmark test data file.");
+                op.Abandon();
                 return;
             }
         }
@@ -63,17 +65,29 @@ internal class Benchmarks : Runtime
         {
             PropertyNameCaseInsensitive = true
         };
-        List<TextData?> textData = new List<TextData?>();
-        var td = File.ReadAllLines(testDataFile);
-        foreach (var s in td)
-        {
-            textData.Add(JsonSerializer.Deserialize<TextData>(s, options));
-        }
-
-
-        
+        TextData?[] textData = File.ReadAllLines(testDataFile).AsParallel().Select(t => JsonSerializer.Deserialize<TextData>(t, options)).ToArray();
+        Random rnd = new Random();
+        T20 = textData
+            .AsParallel()
+            .Where(t => t is not null)
+            .Select(t => t!.Text/*.Replace("\n", " ")*/)
+            .Where(t => t.Length >= 21 && t[20] == ' ')
+            .Select(t => t.Substring(0, 20))
+            .ToArray();
+        T200 = textData
+            .AsParallel()
+            .Where(t => t is not null)
+            .Select(t => t!.Text/*.Replace("\n", " ")*/)
+            .Where(t => t.Length >= 201 && t[200] == ' ')
+            .Select(t => t.Substring(0, 200))
+            .ToArray();
+        op.Complete();
         BenchmarkRunner.Run<MultilingualEmbedded5SmallBenchmarks>();
     }
+
+    public static string[] T20 = Array.Empty<string>();
+    public static string[] T200 = Array.Empty<string>();
+
 }
 
 
