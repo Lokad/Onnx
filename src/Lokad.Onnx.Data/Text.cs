@@ -36,20 +36,28 @@ public class Text : Runtime
             case "me5s":
                 tok_desc = "multilingual-e5-small";
                 op = Begin("Tokenizing text of length {l} chars using {tok_desc} tokenizer", text1.Length, tok_desc);
-                var tokenizerPath = Path.Combine(Directory.GetCurrentDirectory(), "me5s-sentencepiece.bpe.model");
-                if (!File.Exists(tokenizerPath))
+                if (Tokenizers.ContainsKey("me5s"))
                 {
-                    if (!DownloadFile(
-                        "sentencepiece.bpe.model",
-                        new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
-                        tokenizerPath))
-                    {
-                        Error("Could not download model file.");
-                        op.Abandon();
-                        return null;    
-                    }
+                    tok = (XLMRobertaTokenizer)Tokenizers["me5s"];
                 }
-                tok = new XLMRobertaTokenizer(tokenizerPath, false);
+                else
+                {
+                    var tokenizerPath = Path.Combine(AssemblyLocation, "me5s-sentencepiece.bpe.model");
+                    if (!File.Exists(tokenizerPath))
+                    {
+                        if (!DownloadFile(
+                            "sentencepiece.bpe.model",
+                            new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
+                            tokenizerPath))
+                        {
+                            Error("Could not download model file.");
+                            op.Abandon();
+                            return null;
+                        }
+                    }
+                    tok = new XLMRobertaTokenizer(tokenizerPath, false);
+                    Tokenizers["me5s"] = tok;
+                }
                 break;
             default:
                 Error("Unknown Roberta tokenizer: {t}.", tokenizer);
@@ -106,5 +114,6 @@ public class Text : Runtime
     }
 
     public static string[] TextExtensions = new string[] { ".txt" };
+    public static Dictionary<string, object> Tokenizers = new Dictionary<string, object>();
 }
 

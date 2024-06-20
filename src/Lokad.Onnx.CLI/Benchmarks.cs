@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Text.Json;
 
@@ -11,29 +12,56 @@ using BenchmarkDotNet.Running;
 
 using Lokad.Onnx;
 
-[SimpleJob(RuntimeMoniker.Net60)]
-public class MultilingualEmbedded5SmallBenchmarks
+
+[InProcess]
+[IterationCount(5)]
+public class MultilingualEmbedded5SmallBenchmarks : Runtime
 {
-    [GlobalSetup]
-    public void GlobalSetup()
+    [Benchmark(Description="1 string of 20 chars")]
+    public void Benchmark20_1()
     {
+        graph!.Reset();
+        graph.Execute(ui20_1!, true);
+    }
+
+    [GlobalSetup]
+    public void Setup() 
+    {
+        var op = Begin("Creating computational graph and tokenizing test data");
         graph = Model.Load(modelFile);
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        TextData?[] textData = File.ReadAllLines(testDataFile).AsParallel().Select(t => JsonSerializer.Deserialize<TextData>(t, options)).ToArray();
+        Random rnd = new Random();
+        T20 = textData
+            .AsParallel()
+            .Where(t => t is not null && t!.Text.Length >= 21 && t!.Text[20] == ' ')
+            .Select(t => t!.Text.Substring(0, 20)/*.Replace("\n", " ")*/)
+            .OrderBy(x => rnd.Next())
+            .ToArray();
+        T200 = textData
+            .AsParallel()
+            .Where(t => t is not null && t!.Text.Length >= 201 && t!.Text[200] == ' ')
+            .Select(t => t!.Text.Substring(0, 200)/*.Replace("\n", " ")*/)
+            .OrderBy(x => rnd.Next())
+            .ToArray();
+
+        ui20_1 = Text.GetTextTensors(T20[0], "me5s");
+        ui20_10 = T20[1..10].AsParallel().Select(t => Text.GetTextTensors(t,"me5s")!).ToArray();
+        ui20_100 = T20[11..110].AsParallel().Select(t => Text.GetTextTensors(t,"me5s")!).ToArray();
+        op.Complete();  
     }
 
-    [Benchmark]
-    public void Ten()
-    {
-
-    }
-
-    [GlobalSetup]
-    public void SetupTen() 
-    {
-        ui10 = Text.GetTextTensors("me5s",";;");
-    }
-    static string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
-    ComputationalGraph? graph;
-    ITensor[]? ui10;
+    string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
+    string testDataFile = Path.Combine(Runtime.AssemblyLocation, "train.jsonl");
+    public static string[] T20 = Array.Empty<string>();
+    public static string[] T200 = Array.Empty<string>();
+    public static ComputationalGraph? graph;
+    ITensor[]? ui20_1 = null;
+    ITensor[][]? ui20_10 = null;
+    ITensor[][]? ui20_100 = null;
 }
 
 internal class Benchmarks : Runtime
@@ -52,6 +80,7 @@ internal class Benchmarks : Runtime
                 return;
             }
         }
+
         if (!File.Exists(testDataFile))//
         {  //https://huggingface.co/datasets/mteb/quora/resolve/main/corpus.jsonl
             if (!DownloadFile("train.jsonl", new Uri("https://huggingface.co/datasets/mteb/amazon_reviews_multi/resolve/main/en/train.jsonl?download=true"), testDataFile))
@@ -61,38 +90,12 @@ internal class Benchmarks : Runtime
                 return;
             }
         }
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-        TextData?[] textData = File.ReadAllLines(testDataFile).AsParallel().Select(t => JsonSerializer.Deserialize<TextData>(t, options)).ToArray();
-        Random rnd = new Random();
-        T20 = textData
-            .AsParallel()
-            .Where(t => t is not null)
-            .Select(t => t!.Text/*.Replace("\n", " ")*/)
-            .Where(t => t.Length >= 21 && t[20] == ' ')
-            .Select(t => t.Substring(0, 20))
-            .ToArray();
-        T200 = textData
-            .AsParallel()
-            .Where(t => t is not null)
-            .Select(t => t!.Text/*.Replace("\n", " ")*/)
-            .Where(t => t.Length >= 201 && t[200] == ' ')
-            .Select(t => t.Substring(0, 200))
-            .ToArray();
         op.Complete();
         BenchmarkRunner.Run<MultilingualEmbedded5SmallBenchmarks>();
     }
-
-    public static string[] T20 = Array.Empty<string>();
-    public static string[] T200 = Array.Empty<string>();
-
 }
 
-
-
-    public partial class TextData
+public partial class TextData
 {
     public string Id { get; set; } = "";
 
