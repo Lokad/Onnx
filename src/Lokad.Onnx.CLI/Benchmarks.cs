@@ -3,26 +3,25 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text.Json;
 
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 
-using Lokad.Onnx;
-
+using static Lokad.Onnx.Text;
 
 [InProcess]
-[IterationCount(5)]
+[IterationCount(1)]
 public class MultilingualEmbedded5SmallBenchmarks : Runtime
 {
     [Benchmark(Description="1 string of 20 chars")]
-    public void Benchmark20_1()
-    {
-        graph!.Reset();
-        graph.Execute(ui20_1!, true);
-    }
+    public void Benchmark20_1() => graph!.Execute(ui20_1!, true);
+
+    [Benchmark(Description = "1 string of 20 chars")]
+    public void Benchmark20_10() => graph!.Execute(ui20_10!, true);
+
+    [IterationSetup]
+    public void Reset() => graph!.Reset();
 
     [GlobalSetup]
     public void Setup() 
@@ -48,20 +47,22 @@ public class MultilingualEmbedded5SmallBenchmarks : Runtime
             .OrderBy(x => rnd.Next())
             .ToArray();
 
-        ui20_1 = Text.GetTextTensors(T20[0], "me5s");
-        ui20_10 = T20[1..10].AsParallel().Select(t => Text.GetTextTensors(t,"me5s")!).ToArray();
-        ui20_100 = T20[11..110].AsParallel().Select(t => Text.GetTextTensors(t,"me5s")!).ToArray();
+        ui20_1 = GetTextTensors(T20[0], "me5s");
+        ui20_10 = GetTextTensors(T20[1..11], "me5s");
+        ui20_100 = GetTextTensors(T20[11..111], "me5s");
         op.Complete();  
     }
 
+    #region Fields
     string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
     string testDataFile = Path.Combine(Runtime.AssemblyLocation, "train.jsonl");
     public static string[] T20 = Array.Empty<string>();
     public static string[] T200 = Array.Empty<string>();
     public static ComputationalGraph? graph;
     ITensor[]? ui20_1 = null;
-    ITensor[][]? ui20_10 = null;
-    ITensor[][]? ui20_100 = null;
+    ITensor[]? ui20_10 = null;
+    ITensor[]? ui20_100 = null;
+    #endregion
 }
 
 internal class Benchmarks : Runtime
