@@ -189,7 +189,11 @@ namespace Lokad.Onnx
             }
             return Reshape(newshape.ToArray());
         }
+
+        Tensor<T> AsTensor<T>() where T : struct => (Tensor<T>) this;
     }
+
+    
 }
 
 public class TensorInputShapeException : ArgumentException
