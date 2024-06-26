@@ -6,24 +6,30 @@ using System.Linq;
 using System.Text.Json;
 
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
 
 using static Lokad.Onnx.Text;
 
 [InProcess]
-[IterationCount(1)]
+[IterationsColumn]
+[MemoryDiagnoser()]
 public class MultilingualEmbedded5SmallBenchmarks : Runtime
 {
     [Benchmark(Description="1 string of 20 chars")]
+    [WarmupCount(3)]
+    [IterationCount(3)]
     public void Benchmark20_1() => graph!.Execute(ui20_1!, true);
 
-    [Benchmark(Description = "1 string of 20 chars")]
+    [Benchmark(Description = "10 strings of 20 chars")]
+    [WarmupCount(1)]
+    [IterationCount(3)]
     public void Benchmark20_10() => graph!.Execute(ui20_10!, true);
 
     [IterationSetup]
     public void Reset() => graph!.Reset();
 
-    [GlobalSetup]
+    [GlobalSetup()]
     public void Setup() 
     {
         var op = Begin("Creating computational graph and tokenizing test data");
@@ -105,4 +111,8 @@ public partial class TextData
     public long Label { get; set; } = 0;
 
     public string Label_Text { get; set; } = "";
+}
+
+public class BenchmarkConfig : ManualConfig
+{
 }
