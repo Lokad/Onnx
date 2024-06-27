@@ -44,10 +44,11 @@ class Program : Runtime
         Initialize("Lokad.Onnx.CLI", "CLI", (args.Contains("--debug") || args.Contains("-d")), true, true);
         PrintLogo();
         var result = new Parser().ParseArguments(args, optionTypes);
-        result.WithNotParsed(errors => Help(result, errors))
-        .WithParsed<InfoOptions>(Info)
-        .WithParsed<RunOptions>(Run)
-        .WithParsed<BenchmarkOptions>(Benchmark);
+        result
+            .WithParsed<InfoOptions>(Info)
+            .WithParsed<RunOptions>(Run)
+            .WithParsed<BenchmarkOptions>(Benchmark)
+            .WithNotParsed(errors => Help(result, errors));
     }
     #endregion
 
@@ -241,6 +242,10 @@ class Program : Runtime
         {
             case "me5s":
                 Benchmarks.RunMe5s();
+                ExitWithSuccess();
+                break;
+            case "matmul":
+                Benchmarks.RunMatMul();
                 ExitWithSuccess();
                 break;
             default:

@@ -1956,5 +1956,16 @@ namespace Lokad.Onnx
             t.Fill(One);
             return t;
         }
+
+        public static Tensor<float> Rand(params int[] dims)
+        {
+            var t = new DenseTensor<float>((ReadOnlySpan<int>)dims);
+            var rnd = new Random();
+            for (int i = 0; i < t.Length; i++)
+            {
+                t.SetValue(i, rnd.NextSingle());
+            }
+            return t;
+        }
     }
 }
