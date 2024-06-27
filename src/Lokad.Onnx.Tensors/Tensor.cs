@@ -1033,7 +1033,7 @@ namespace Lokad.Onnx
         public Tensor<T> Reshape(params int[] dims) => Reshape((ReadOnlySpan<int>)dims);
         #endregion
 
-        #region statics
+        #region Static methods
         /// <summary>
         /// Performs a value comparison of the content and shape of two tensors.  Two tensors are equal if they have the same shape and same value at every set of indices.  If not equal a tensor is greater or less than another tensor based on the first non-equal element when enumerating in linear order.
         /// </summary>
@@ -1846,10 +1846,12 @@ namespace Lokad.Onnx
             return coords;
         }
 
-        public TensorSlice<T> Slice(params SliceIndex[] indices) => new TensorSlice<T>(this, ExpandEllipsis(indices));        
+        public TensorSlice<T> Slice(params SliceIndex[] indices) => new TensorSlice<T>(this, ExpandEllipsis(indices));
         #endregion
 
         #region Dimensions iterator
+        public bool ShapeEquals(Tensor<T> t) => this.dimensions.SequenceEqual(t.dimensions);
+        
         public TensorDimensionsIterator GetDimensionsIterator(Range r) => new TensorDimensionsIterator(dimensions[r]);
 
         public TensorDimensionsIterator GetDimensionsIterator() => GetDimensionsIterator(..);

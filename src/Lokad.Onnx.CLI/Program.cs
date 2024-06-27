@@ -244,6 +244,10 @@ class Program : Runtime
                 Benchmarks.RunMe5s();
                 ExitWithSuccess();
                 break;
+            case "matmul2d":
+                Benchmarks.RunMatMul2D();
+                ExitWithSuccess();
+                break;
             case "matmul":
                 Benchmarks.RunMatMul();
                 ExitWithSuccess();
