@@ -7,9 +7,44 @@ using System.Text.Json;
 
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Running;
 
 using static Lokad.Onnx.Text;
+
+[InProcess]
+[IterationsColumn]
+[MemoryDiagnoser()]
+public class MatMulBenchmarks : Runtime
+{
+    [GlobalSetup()]
+    public void Setup()
+    {
+        //Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false, true, true);
+    }
+
+    [IterationSetup]
+    public void IterationSetup() 
+    {
+        t_22_a = Tensor<float>.Rand(800, 600);
+        t_22_b = Tensor<float>.Rand(600, 500);
+        t_20_12_22_a = Tensor<float>.Rand(20, 10, 80, 60);
+        t_20_12_22_b = Tensor<float>.Rand(20, 10, 60, 80);
+    }
+
+    [Benchmark(Description = "Multiply 2 800x600 tensors")]
+    public void MatMul2D() => Tensor<float>.MatMul(t_22_a, t_22_b);
+
+    [Benchmark(Description = "Multiply 2 20x10xNxM tensors")]
+    public void MatMul2() => Tensor<float>.MatMul(t_20_12_22_a, t_20_12_22_b);
+
+    #region Fields
+    Tensor<float> t_22_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_22_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_20_12_22_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_20_12_22_b = Tensor<float>.Zeros(0);
+    #endregion
+}
 
 [InProcess]
 [IterationsColumn]
@@ -100,7 +135,11 @@ internal class Benchmarks : Runtime
         op.Complete();
         BenchmarkRunner.Run<MultilingualEmbedded5SmallBenchmarks>();
     }
+
+    internal static void RunMatMul() => BenchmarkRunner.Run<MatMulBenchmarks>();
 }
+
+
 
 public partial class TextData
 {
