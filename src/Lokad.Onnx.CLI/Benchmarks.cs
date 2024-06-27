@@ -1,6 +1,7 @@
 ﻿namespace Lokad.Onnx.CLI;
 
 using System;
+using System.Buffers;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -11,11 +12,61 @@ using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Running;
 
 using static Lokad.Onnx.Text;
+using static Lokad.Onnx.MathOps;
+using Lokad.Onnx;
 
+[RyuJitX64Job]
+[IterationsColumn]
+[MemoryDiagnoser()]
+[DisassemblyDiagnoser(printSource:true)]
+public class MatMul2DBenchmarks : Runtime
+{
+    [GlobalSetup()]
+    public void Setup()
+    {
+        Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false, true, true);
+    }
+
+    [IterationSetup]
+    public void IterationSetup()
+    {
+        t_384_384_a = Tensor<float>.Rand(384, 384);
+        ah_1 = t_384_384_a.ToDenseTensor().Buffer.Pin();
+        t_384_384_b = Tensor<float>.Rand(384, 384);
+        bh_1 = t_384_384_b.ToDenseTensor().Buffer.Pin();
+        ch = t_384_384_c.ToDenseTensor().Buffer.Pin();
+        t_384_1536_a = Tensor<float>.Rand(384, 1536);
+        ah_2 = t_384_1536_a.ToDenseTensor().Buffer.Pin();
+        t_1536_384_b = Tensor<float>.Rand(1536, 384);
+        bh_2 = t_1536_384_b.ToDenseTensor().Buffer.Pin();
+    }
+
+    [Benchmark(Description = "Matrix multiply 2 384x384 matrices")]
+    public unsafe void MatMul2D_1() =>
+        mm(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
+
+    [Benchmark(Description = "Matrix multiply 2 384x1536 matrices")]
+    public unsafe void MatMul2D_2() =>
+       mm(384, 1536, 384, (float*)ah_2.Pointer, (float*)bh_2.Pointer, (float*)ch.Pointer);
+
+    #region Fields
+    Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_384_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_384_384_c = Tensor<float>.Zeros(384, 384);
+    Tensor<float> t_384_1536_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_1536_384_b = Tensor<float>.Zeros(0);
+
+    MemoryHandle ah_1 = new MemoryHandle();
+    MemoryHandle bh_1 = new MemoryHandle();
+    MemoryHandle ah_2 = new MemoryHandle();
+    MemoryHandle bh_2 = new MemoryHandle();
+    MemoryHandle ch = new MemoryHandle();
+    #endregion
+}
 [InProcess]
 [IterationsColumn]
 [MemoryDiagnoser()]
-public class MatMulBenchmarks : Runtime
+public class TensorMatMulBenchmarks : Runtime
 {
     [GlobalSetup()]
     public void Setup()
@@ -26,23 +77,30 @@ public class MatMulBenchmarks : Runtime
     [IterationSetup]
     public void IterationSetup() 
     {
-        t_22_a = Tensor<float>.Rand(800, 600);
-        t_22_b = Tensor<float>.Rand(600, 500);
-        t_20_12_22_a = Tensor<float>.Rand(20, 10, 80, 60);
-        t_20_12_22_b = Tensor<float>.Rand(20, 10, 60, 80);
+        t_384_384_a = Tensor<float>.Rand(384, 384);
+        t_384_384_b = Tensor<float>.Rand(384, 384);
+        t_384_1536_a = Tensor<float>.Rand(384, 1536);
+        t_1536_384_b = Tensor<float>.Rand(1536, 384);
+        t_20_10_384_384_a = Tensor<float>.Rand(3, 4, 384, 384);
+        t_20_10_384_384_b = Tensor<float>.Rand(3, 4, 384, 384);
     }
 
-    [Benchmark(Description = "Multiply 2 800x600 tensors")]
-    public void MatMul2D() => Tensor<float>.MatMul(t_22_a, t_22_b);
+    [Benchmark(Description = "Matrix multiply 2 384x384 tensors")]
+    public void MatMul() => Tensor<float>.MatMul(t_384_384_a, t_384_384_b);
 
-    [Benchmark(Description = "Multiply 2 20x10xNxM tensors")]
-    public void MatMul2() => Tensor<float>.MatMul(t_20_12_22_a, t_20_12_22_b);
+    [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors")]
+    public void MatMul2() => Tensor<float>.MatMul(t_20_10_384_384_a, t_20_10_384_384_b);
+
+    [Benchmark(Description = "Matrix multiply 2 384x1536 tensors")]
+    public void MatMul_384_1536() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
 
     #region Fields
-    Tensor<float> t_22_a = Tensor<float>.Zeros(0);
-    Tensor<float> t_22_b = Tensor<float>.Zeros(0);
-    Tensor<float> t_20_12_22_a = Tensor<float>.Zeros(0);
-    Tensor<float> t_20_12_22_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_384_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_384_1536_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_1536_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_20_10_384_384_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_20_10_384_384_b = Tensor<float>.Zeros(0);
     #endregion
 }
 
@@ -136,7 +194,9 @@ internal class Benchmarks : Runtime
         BenchmarkRunner.Run<MultilingualEmbedded5SmallBenchmarks>();
     }
 
-    internal static void RunMatMul() => BenchmarkRunner.Run<MatMulBenchmarks>();
+    internal static void RunMatMul() => BenchmarkRunner.Run<TensorMatMulBenchmarks>();
+
+    internal static void RunMatMul2D() => BenchmarkRunner.Run<MatMul2DBenchmarks>();
 }
 
 
