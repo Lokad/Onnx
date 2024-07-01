@@ -54,6 +54,9 @@ public class MatMul2DBenchmarks : Runtime
     public void MatMul2D_3() =>
         mm_vectorized(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_a.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
 
+    [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe simd")]
+    public unsafe void MatMul2D_4() =>
+       mm_unsafe_vectorized(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
 
     #region Fields
     Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);

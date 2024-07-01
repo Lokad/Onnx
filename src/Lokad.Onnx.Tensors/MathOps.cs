@@ -863,30 +863,90 @@ ref float[,] c, int ldc)
                         Vector<float> vec4 = new Vector<float>(Ck);
                         Vector<float> vec5 = Vector.Add(vec3, vec4);
                         vec5.CopyTo(Ck);
-                        //for (int e = 0; e < v; e++)
-                        //{
-                        //    C[cp + k + e] += vec3[e];
-                        //}
                     }
                 }
             }
         }
-        /*
-        public unsafe static float[,] TransposeMatrix(float* m, int rows, int cols)
+
+        /// <summary>
+        /// Matrix multiplication.
+        /// </summary>
+        /// <param name="M">A rows.</param>
+        /// <param name="N">A columns.</param>
+        /// <param name="K">B columns.</param>
+        /// <param name="A">Left matrix.</param>
+        /// <param name="B">Right matrix.</param>
+        /// <param name="C">Result matrix.</param>
+        public unsafe static void mm_unsafe_vectorized(int M,
+                              int N,
+                              int K,
+                              int* A,
+                              int* B,
+                              int* C)
         {
-            //var tp = (float*)Marshal.AllocCoTaskMem(sizeof(float) * rows * cols);
-            float[,] tp = new float[cols, rows];
-            for (int i = 0; i < rows ; i++)
+            var v = Vector<int>.Count;
+            for (int i = 0; i < M; i++)
             {
-                for (int j = 0; j < cols; j++)
+                var Ap = A + i * N;
+                var Cp = C + i * K;
+                for (int j = 0; j < N; ++j)
                 {
-                    tp[j, i] = m[(i * rows) + j];
+                    var a = Ap[j];
+                    var Bp = B + j * K;
+                    for (int k = 0; k <= K - v; k+=v)
+                    {
+                        var Bk = new Span<int>(Bp + k, v);
+                        var Ck = new Span<int>(Cp + k, v);
+                        Vector<int> vec1 = new Vector<int>(a);
+                        Vector<int> vec2 = new Vector<int>(Bk);
+                        Vector<int> vec3 = Vector.Multiply(vec1, vec2);
+                        Vector<int> vec4 = new Vector<int>(Ck);
+                        Vector<int> vec5 = Vector.Add(vec3, vec4);
+                        vec5.CopyTo(Ck);
+                    }
                 }
             }
-            return tp;
         }
-        */
 
+        /// <summary>
+        /// Matrix multiplication.
+        /// </summary>
+        /// <param name="M">A rows.</param>
+        /// <param name="N">A columns.</param>
+        /// <param name="K">B columns.</param>
+        /// <param name="A">Left matrix.</param>
+        /// <param name="B">Right matrix.</param>
+        /// <param name="C">Result matrix.</param>
+        public unsafe static void mm_unsafe_vectorized(int M,
+                              int N,
+                              int K,
+                              float* A,
+                              float* B,
+                              float* C)
+        {
+            var v = Vector<float>.Count;
+            for (int i = 0; i < M; i++)
+            {
+                var Ap = A + i * N;
+                var Cp = C + i * K;
+                for (int j = 0; j < N; ++j)
+                {
+                    var a = Ap[j];
+                    var Bp = B + j * K;
+                    for (int k = 0; k <= K - v; k += v)
+                    {
+                        var Bk = new Span<float>(Bp + k, v);
+                        var Ck = new Span<float>(Cp + k, v);
+                        Vector<float> vec1 = new Vector<float>(a);
+                        Vector<float> vec2 = new Vector<float>(Bk);
+                        Vector<float> vec3 = Vector.Multiply(vec1, vec2);
+                        Vector<float> vec4 = new Vector<float>(Ck);
+                        Vector<float> vec5 = Vector.Add(vec3, vec4);
+                        vec5.CopyTo(Ck);
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Image to column conversion.
         /// </summary>

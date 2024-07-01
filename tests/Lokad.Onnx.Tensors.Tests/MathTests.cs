@@ -37,7 +37,7 @@ public class MathTests
 
 
     [Fact]
-    public void CanMatMul2D()
+    public unsafe void CanMatMul2D()
     {
         var a = Tensor<int>.Ones(9, 5, 7, 4);
         var b = Tensor<int>.Ones(9, 5, 4, 3);
@@ -60,6 +60,9 @@ public class MathTests
         b = Tensor<int>.RandN(8, 8);
         c = DenseTensor<int>.OfShape(8, 8);
         MathOps.mm_vectorized(8, 8, 8, a.ToDenseTensor().Buffer, b.ToDenseTensor().Buffer, c.ToDenseTensor().Buffer);
+        Assert.Equal(c, Tensor<int>.MatMul2D(a, b));
+        c = c.CloneEmpty();
+        MathOps.mm_unsafe_vectorized(8, 8, 8, (int*) a.ToDenseTensor().Buffer.Pin().Pointer, (int*) b.ToDenseTensor().Buffer.Pin().Pointer, (int*) c.ToDenseTensor().Buffer.Pin().Pointer);
         Assert.Equal(c, Tensor<int>.MatMul2D(a, b));
         //Assert.Equal(1, c[0, 1]);
 
