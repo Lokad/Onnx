@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
 namespace Lokad.Onnx.Tensors.Tests;
@@ -52,7 +54,14 @@ public class MathTests
         a = new DenseTensor<int>(new[] { 1, 0, 0, 1 }, new[] { 2, 2, });
         b = new DenseTensor<int>(new[] { 4, 1, 2, 2 }, new[] { 2, 2, });
         c = Tensor<int>.MatMul2D(a, b);
-        Assert.Equal(1, c[0, 1]);
+        Assert.Equal(c, Tensor<int>.MatMul2D_managed(a, b));
+        Assert.Equal(c, Tensor<int>.MatMul2D_managed2(a, b));
+        a = Tensor<int>.RandN(8, 8);
+        b = Tensor<int>.RandN(8, 8);
+        c = DenseTensor<int>.OfShape(8, 8);
+        MathOps.mm_vectorized(8, 8, 8, a.ToDenseTensor().Buffer, b.ToDenseTensor().Buffer, c.ToDenseTensor().Buffer);
+        Assert.Equal(c, Tensor<int>.MatMul2D(a, b));
+        //Assert.Equal(1, c[0, 1]);
 
         a = Tensor<int>.Arange(0, 2 * 2 * 4).Reshape(2, 2, 4);
         b = Tensor<int>.Arange(0, 2 * 2 * 4).Reshape(2, 4, 2);
@@ -64,6 +73,8 @@ public class MathTests
             Assert.Equal(2, a[di[..]].Rank);
             Assert.Equal(2, b[di[..]].Rank);
             c[di[..]] = Tensor<int>.MatMul2D(a[di[..]], b[di[..]]);
+            Assert.Equal(c[di[..]], Tensor<int>.MatMul2D_managed(a[di[..]], b[di[..]]));
+            Assert.Equal(c[di[..]], Tensor<int>.MatMul2D_managed2(a[di[..]], b[di[..]]));
         }
         Assert.Equal(98, c[0, 1, 1]);
     }
@@ -149,4 +160,21 @@ public class MathTests
         var data = Tensor<int>.Arange(0, (3 * 4 * 5)).ToArray().Convert<int, float>().ToTensor<float>().Reshape(3, 4, 5);
         var o = Tensor<float>.Softmax(data, 0);
     }
+
+    
+    /*
+    public unsafe void CanTranspose()
+    {
+        var t = Tensor<float>.Rand(5, 6).ToDenseTensor();
+        var mt = MathOps.TransposeMatrix((float*)t.Buffer.Pin().Pointer, 5, 6);
+        for (int i = 0; i < 5; i++) 
+        {
+            for (int j = 0; j < 6; j++)
+            {
+                Assert.Equal(t[i, j], mt[j,  i]);
+            }
+        }
+        //Marshal.FreeCoTaskMem(new IntPtr(mt));
+    }
+    */
 }

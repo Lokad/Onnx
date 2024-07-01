@@ -13,6 +13,7 @@ using BenchmarkDotNet.Running;
 
 using static Lokad.Onnx.Text;
 using static Lokad.Onnx.MathOps;
+
 using Lokad.Onnx;
 
 [RyuJitX64Job]
@@ -41,13 +42,18 @@ public class MatMul2DBenchmarks : Runtime
         bh_2 = t_1536_384_b.ToDenseTensor().Buffer.Pin();
     }
 
-    [Benchmark(Description = "Matrix multiply 2 384x384 matrices")]
-    public unsafe void MatMul2D_1() =>
-        mm(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
+    [Benchmark(Description = "Multiply 2 384x384 matrices - managed", Baseline = true)]
+    public void MatMul2D_1() =>
+        mm_managed(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_a.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
 
-    [Benchmark(Description = "Matrix multiply 2 384x1536 matrices")]
+    [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe")]
     public unsafe void MatMul2D_2() =>
-       mm(384, 1536, 384, (float*)ah_2.Pointer, (float*)bh_2.Pointer, (float*)ch.Pointer);
+       mm(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
+
+    [Benchmark(Description = "Multiply 2 384x384 matrices - managed simd")]
+    public void MatMul2D_3() =>
+        mm_vectorized(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_a.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
+
 
     #region Fields
     Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
@@ -63,6 +69,7 @@ public class MatMul2DBenchmarks : Runtime
     MemoryHandle ch = new MemoryHandle();
     #endregion
 }
+
 [InProcess]
 [IterationsColumn]
 [MemoryDiagnoser()]
@@ -196,10 +203,12 @@ internal class Benchmarks : Runtime
 
     internal static void RunMatMul() => BenchmarkRunner.Run<TensorMatMulBenchmarks>();
 
-    internal static void RunMatMul2D() => BenchmarkRunner.Run<MatMul2DBenchmarks>();
+    internal static void RunMatMul2D(string[] args)
+    {
+        Info("Creating new build of Lokad.Onnx solution in order to run and profile MatMul2D benchmark code...");
+        BenchmarkRunner.Run<MatMul2DBenchmarks>(DefaultConfig.Instance, args);
+    }
 }
-
-
 
 public partial class TextData
 {

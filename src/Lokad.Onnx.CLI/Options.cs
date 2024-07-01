@@ -89,6 +89,16 @@ public class RunOptions : Options
 [Verb("benchmark", HelpText = "Benchmark an ONNX model or operations.")]
 public class BenchmarkOptions : Options
 {
-    [Value(1, Required = true, HelpText = "The benchmark to run.")]
+    [Value(1, Required = true, HelpText = "The benchmark to run. Currently supported: matmul2d, matmul, me5s")]
     public string BenchmarkId { get; set; } = "";
+
+    [Option('f', "filter", Required = false, HelpText = "Filter the benchmarks by their full name (namespace.typeName.methodName) using glob patterns.")]
+    public string Filter { get; set; } = "";
+
+    [Option("list", Required = false, HelpText = "Allows you to print all of the available benchmark names.")]
+    public string List { get; set; } = ""; //
+
+    [Option("launchCount", Required = false, HelpText = "How many times we should launch process with target benchmark.")]
+    public int LaunchCount { get; set; }
+
 }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lokad.Onnx
 {
@@ -740,6 +738,156 @@ ref float[,] c, int ldc)
         }
 
         /// <summary>
+        /// Matrix multiplication.
+        /// </summary>
+        /// <param name="M">A rows.</param>
+        /// <param name="N">A columns.</param>
+        /// <param name="K">B columns.</param>
+        /// <param name="A">Left matrix.</param>
+        /// <param name="B">Right matrix.</param>
+        /// <param name="C">Result matrix.</param>
+        public static void mm_managed(int M,
+                              int N,
+                              int K,
+                              Memory<float> mA,
+                              Memory<float> mB,
+                              Memory<float> mC)
+        {
+            var A = mA.Span;
+            var B = mB.Span;
+            var C = mC.Span;
+            for (int i = 0; i < M; i++)
+            {
+                for (int j = 0; j < N; ++j)
+                {
+                    var a = A[i * N + j];
+                    var bp = j * K;
+                    var cp = i * K;
+
+                    for (int k = 0; k < K; ++k)
+                    {
+                        C[cp + k] += a * B[bp + k];
+                    }
+                }
+            }
+        }
+
+        public static void mm_managed(int M,
+                      int N,
+                      int K,
+                      Memory<int> mA,
+                      Memory<int> mB,
+                      Memory<int> mC)
+        {
+            var A = mA.Span;
+            var B = mB.Span;
+            var C = mC.Span;
+            for (int i = 0; i < M; i++)
+            {
+                for (int j = 0; j < N; ++j)
+                {
+                    var a = A[i * N + j];
+                    var bp = j * K;
+                    var cp = i * K;
+                    
+                    for (int k = 0; k < K; ++k)
+                    {
+                        C[cp + k] +=  a * B[bp + k];
+                    }
+                }
+            }
+        }
+
+        public static void mm_vectorized(int M,
+                     int N,
+                     int K,
+                     Memory<int> mA,
+                     Memory<int> mB,
+                     Memory<int> mC)
+        {
+            var v = Vector<int>.Count;
+            var A = mA.Span;
+            var B = mB.Span;
+            var C = mC.Span;
+
+            for (int i = 0; i < M; i++)
+            {
+                for (int j = 0; j < N; ++j)
+                {
+                    var a = A[i * N + j];
+                    var bp = j * K;
+                    var cp = i * K;
+
+                    for (int k = 0; k <= K - v; k+=v)
+                    {
+                        var Bk = B.Slice(bp + k, v);
+                        var Ck = C.Slice(cp + k, v);
+                        Vector<int> vec1 = new Vector<int>(a);
+                        Vector<int> vec2 = new Vector<int>(Bk);
+                        Vector<int> vec3 = Vector.Multiply(vec1, vec2);
+                        Vector<int> vec4 = new Vector<int>(Ck);
+                        Vector<int> vec5 = Vector.Add(vec3, vec4);
+                        vec5.CopyTo(Ck);
+                    }
+                }
+            }
+        }
+
+        public static void mm_vectorized(int M,
+                     int N,
+                     int K,
+                     Memory<float> mA,
+                     Memory<float> mB,
+                     Memory<float> mC)
+        {
+            var v = Vector<float>.Count;
+            var A = mA.Span;
+            var B = mB.Span;
+            var C = mC.Span;
+            for (int i = 0; i < M; i++)
+            {
+                for (int j = 0; j < N; ++j)
+                {
+                    var a = A[i * N + j];
+                    var bp = j * K;
+                    var cp = i * K;
+
+                    for (int k = 0; k <= K - v; k += v)
+                    {
+                        var Bk = B.Slice(bp + k, v);
+                        var Ck = C.Slice(cp + k, v);
+                        
+                        Vector<float> vec1 = new Vector<float>(a);
+                        Vector<float> vec2 = new Vector<float>(Bk);
+                        Vector<float> vec3 = Vector.Multiply(vec1, vec2);
+                        Vector<float> vec4 = new Vector<float>(Ck);
+                        Vector<float> vec5 = Vector.Add(vec3, vec4);
+                        vec5.CopyTo(Ck);
+                        //for (int e = 0; e < v; e++)
+                        //{
+                        //    C[cp + k + e] += vec3[e];
+                        //}
+                    }
+                }
+            }
+        }
+        /*
+        public unsafe static float[,] TransposeMatrix(float* m, int rows, int cols)
+        {
+            //var tp = (float*)Marshal.AllocCoTaskMem(sizeof(float) * rows * cols);
+            float[,] tp = new float[cols, rows];
+            for (int i = 0; i < rows ; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    tp[j, i] = m[(i * rows) + j];
+                }
+            }
+            return tp;
+        }
+        */
+
+        /// <summary>
         /// Image to column conversion.
         /// </summary>
         /// <param name="src">Source data.</param>
@@ -1153,9 +1301,9 @@ ref float[,] c, int ldc)
             * is preserved.
             */
 
-            #region Constants
+        #region Constants
 
-            const double tiny = 1e-300;
+        const double tiny = 1e-300;
             const double erx = 8.45062911510467529297e-01;
 
             // Coefficients for approximation to erf on [0, 0.84375]

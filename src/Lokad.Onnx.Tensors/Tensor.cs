@@ -603,6 +603,8 @@ namespace Lokad.Onnx
             }
         }
 
+        #region Cloning
+
         /// <summary>
         /// Creates a shallow copy of this tensor, with new backing storage.
         /// </summary>
@@ -645,6 +647,10 @@ namespace Lokad.Onnx
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new Tensor with the same layout as this tensor of specified <paramref name="dimensions"/> with elements of <typeparamref name="TResult"/> type initialized to their default value.</returns>
         public abstract Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) where TResult : struct;
+        
+        #endregion
+
+        #region Diagonals and Triangles
 
         /// <summary>
         /// Gets the n-1 dimension diagonal from the n dimension tensor.
@@ -862,6 +868,8 @@ namespace Lokad.Onnx
             return result;
         }
 
+        #endregion
+
         /// <summary>
         /// Reshapes the current tensor to new dimensions, using the same backing storage if possible.
         /// </summary>
@@ -874,107 +882,8 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="indices">A one-dimensional array of integers that represent the indices specifying the position of the element to get.</param>
         /// <returns>The value at the specified position in this Tensor.</returns>
-        
-        public virtual T this[params int[] indices]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if (indices == null)
-                {
-                    throw new ArgumentNullException(nameof(indices));
-                }
-                var span = new ReadOnlySpan<int>(indices);
-                return this[span];
-            }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set
-            {
-                if (indices == null)
-                {
-                    throw new ArgumentNullException(nameof(indices));
-                }
-                var span = new ReadOnlySpan<int>(indices);
-                this[span] = value;
-            }
-        }
-
-        /// <summary>
-        /// Obtains the value at the specified indices
-        /// </summary>
-        /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
-        /// <returns>The value at the specified position in this Tensor.</returns>
-        
-        public virtual T this[ReadOnlySpan<int> indices]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
-                {
-                    return GetValue(0);
-                }
-                for (int i = 0; i < indices.Length; i++)
-                {
-                    if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
-                }
-                return GetValue(ArrayUtilities.GetIndex(strides, indices));
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set
-            {
-                if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
-                {
-                    SetValue(0, value);
-                    return;
-                }
-                for (int i = 0; i < indices.Length; i++)
-                {
-                    if (indices[i] >= dimensions[i]) throw new IndexOutOfRangeException($"The index {indices[i]} for dimension {i} exceeds the size of the dimension {dimensions[i]}.");
-                }
-                SetValue(ArrayUtilities.GetIndex(strides, indices), value);
-            }
-        }
-
-        public virtual T this[params Index[] indices]
-        {
-            get
-            {
-                var _indices = indices.Select((i, n) =>
-                {
-                    if (i.Equals(^0)) return dimensions[n] - 1;
-                    else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
-                    else if (i.IsFromEnd) return dimensions[n] - i.Value;
-                    else return i.Value;
-                }).ToArray();
-                return this[indices];
-            }
-
-            set
-            {
-                var _indices = indices.Select((i, n) =>
-                {
-                    if (i.Equals(^0)) return dimensions[n] - 1;
-                    else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
-                    else if (i.IsFromEnd) return dimensions[n] - i.Value;
-                    else return i.Value;
-                }).ToArray();
-                this[_indices] = value;
-            }
-        }
-
-        public virtual Tensor<T> this[params SliceIndex[] indices]
-        {
-            get => new TensorSlice<T>(this, ExpandEllipsis(indices));
-            set
-            {
-                var ts = new TensorSlice<T>(this, ExpandEllipsis(indices));
-                ts.CopyFrom(value);
-            }
-        }
-
+        #region Indexing
 
         /// <summary>
         /// Gets the value at the specied index, where index is a linearized version of n-dimension indices using strides.
@@ -989,6 +898,94 @@ namespace Lokad.Onnx
         /// <param name="index">An integer index computed as a dot-product of indices.</param>
         /// <param name="value">The new value to set at the specified position in this Tensor.</param>
         public abstract void SetValue(int index, T value);
+
+        public virtual T this[params int[] indices]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            get => this[(ReadOnlySpan<int>) indices];
+            
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            set => this[(ReadOnlySpan<int>)indices] = value;
+        }
+
+        /// <summary>
+        /// Obtains the value at the specified indices
+        /// </summary>
+        /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
+        /// <returns>The value at the specified position in this Tensor.</returns>
+        
+        public virtual T this[ReadOnlySpan<int> indices]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
+                {
+                    return GetValue(0);
+                }
+                else
+                {
+                    return GetValue(ArrayUtilities.GetIndex(strides, indices));
+                }
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
+                {
+                    SetValue(0, value);
+                    return;
+                }
+                else
+                {
+                    SetValue(ArrayUtilities.GetIndex(strides, indices), value);
+                }
+            }
+        }
+
+        public T this[params Index[] indices]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                var _indices = indices.Select((i, n) =>
+                {
+                    if (i.Equals(^0)) return dimensions[n] - 1;
+                    else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
+                    else if (i.IsFromEnd) return dimensions[n] - i.Value;
+                    else return i.Value;
+                }).ToArray();
+                return this[_indices];
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                var _indices = indices.Select((i, n) =>
+                {
+                    if (i.Equals(^0)) return dimensions[n] - 1;
+                    else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
+                    else if (i.IsFromEnd) return dimensions[n] - i.Value;
+                    else return i.Value;
+                }).ToArray();
+                this[_indices] = value;
+            }
+        }
+
+        public Tensor<T> this[params SliceIndex[] indices]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            get => new TensorSlice<T>(this, ExpandEllipsis(indices));
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                var ts = new TensorSlice<T>(this, ExpandEllipsis(indices));
+                ts.CopyFrom(value);
+            }
+        }
+
+        #endregion
 
         #region ITensor support
         public virtual Tensor<T> InsertDim(int dim)
@@ -1966,6 +1963,17 @@ namespace Lokad.Onnx
             for (int i = 0; i < t.Length; i++)
             {
                 t.SetValue(i, rnd.NextSingle());
+            }
+            return t;
+        }
+
+        public static Tensor<int> RandN(params int[] dims)
+        {
+            var t = new DenseTensor<int>((ReadOnlySpan<int>)dims);
+            var rnd = new Random();
+            for (int i = 0; i < t.Length; i++)
+            {
+                t.SetValue(i, rnd.Next());
             }
             return t;
         }

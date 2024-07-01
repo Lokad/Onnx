@@ -47,7 +47,7 @@ class Program : Runtime
         result
             .WithParsed<InfoOptions>(Info)
             .WithParsed<RunOptions>(Run)
-            .WithParsed<BenchmarkOptions>(Benchmark)
+            .WithParsed<BenchmarkOptions>(bo => Benchmark(bo, GetBenchmarkArgs(args)))
             .WithNotParsed(errors => Help(result, errors));
     }
     #endregion
@@ -236,7 +236,7 @@ class Program : Runtime
         }
     }
 
-    static void Benchmark(BenchmarkOptions bo)
+    static void Benchmark(BenchmarkOptions bo, string[] args)
     {
         switch (bo.BenchmarkId) 
         {
@@ -245,7 +245,7 @@ class Program : Runtime
                 ExitWithSuccess();
                 break;
             case "matmul2d":
-                Benchmarks.RunMatMul2D();
+                Benchmarks.RunMatMul2D(args);
                 ExitWithSuccess();
                 break;
             case "matmul":
@@ -452,6 +452,15 @@ class Program : Runtime
             return h;
         },
         e => e);
+    }
+
+    static string[] GetBenchmarkArgs(string[] args)
+    {
+        List<string> result = args.ToList();
+        result.RemoveRange(0, 2);
+        result.Remove("--debug");
+        result.Remove("-d");
+        return result.ToArray();
     }
     #endregion
 

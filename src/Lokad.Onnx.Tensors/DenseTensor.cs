@@ -28,8 +28,18 @@ namespace Lokad.Onnx
     /// </typeparam>
     public class DenseTensor<T> : Tensor<T> where T :  struct
     {
+        #region Fields
         private readonly Memory<T> memory;
+        #endregion
 
+        #region Properties
+        /// <summary>
+        /// Memory storing backing values of this tensor.
+        /// </summary>
+        public Memory<T> Buffer => memory;
+        #endregion
+
+        #region Constructors
         internal DenseTensor(Array fromArray, bool reverseStride = false) : base(fromArray, reverseStride)
         {
             // copy initial array
@@ -108,12 +118,9 @@ namespace Lokad.Onnx
                     $"{nameof(dimensions)} ({Length}).");
             }
         }
+        #endregion
 
-        /// <summary>
-        /// Memory storing backing values of this tensor.
-        /// </summary>
-        public Memory<T> Buffer => memory;
-
+        #region Overrides
         /// <summary>
         /// Gets the value at the specified index, where index is a linearized version of n-dimension indices 
         /// using strides. For a scalar, use index = 0
@@ -224,10 +231,16 @@ namespace Lokad.Onnx
             return new DenseTensor<T>(Buffer, dimensions, IsReversedStride);
         }
 
-        public static DenseTensor<T> OfShape(params int[] dims) => new DenseTensor<T>((ReadOnlySpan<int>) dims);
+        public override DenseTensor<T> ToDenseTensor() => this;
 
+        public static DenseTensor<T> OfShape(params int[] dims) => new DenseTensor<T>((ReadOnlySpan<int>) dims);
+        #endregion
+
+        #region Static methods
         public static DenseTensor<T> OfValues(Array data) => data.ToTensor<T>();
 
         public static DenseTensor<T> Scalar(T value) => new DenseTensor<T>(new T[1] { value }, Array.Empty<int>());
+        #endregion
+
     }
 }
