@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Numerics;
 using static Lokad.Onnx.MathOps;
 
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
@@ -254,10 +254,21 @@ where T : struct
         var xh = _x.Buffer.Pin();
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        unsafe
+        if (HardwareConfig.UseSimd && k % Vector<int>.Count == 0)
         {
-            mm(m, n, k, (int*)xh.Pointer, (int*)yh.Pointer, (int*)oh.Pointer);
+            unsafe
+            {
+                mm_unsafe_vectorized(m, n, k, (int*)xh.Pointer, (int*)yh.Pointer, (int*)oh.Pointer);
+            }
         }
+        else
+        {
+            unsafe
+            {
+                mm(m, n, k, (int*)xh.Pointer, (int*)yh.Pointer, (int*)oh.Pointer);
+            }         
+        }
+
         xh.Dispose();
         yh.Dispose();
         oh.Dispose();
@@ -268,7 +279,7 @@ where T : struct
     {
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
-        if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
+        if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException($"The number of columns in the first matrix ({x.Dimensions[1]}) is not equal to the number of rows in the second matrix ({y.Dimensions[0]}).");
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
@@ -280,10 +291,19 @@ where T : struct
         var xh = _x.Buffer.Pin(); 
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        
-        unsafe
+        if (HardwareConfig.UseSimd && k % Vector<float>.Count == 0)
         {
-            mm(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
+            unsafe
+            {
+                mm_unsafe_vectorized(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
+            }
+        }
+        else
+        {
+            unsafe
+            {
+                mm(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
+            }     
         }
         xh.Dispose();
         yh.Dispose();
@@ -314,22 +334,6 @@ where T : struct
         xh.Dispose();
         yh.Dispose();
         oh.Dispose();
-        return output;
-    }
-
-    public static Tensor<int> MatMul2D_managed2(Tensor<int> x, Tensor<int> y)
-    {
-        if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
-        if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
-        if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
-        int rA = x.Dimensions[0];
-        int cA = x.Dimensions[1];
-        int cB = y.Dimensions[1];
-        var output = DenseTensor<int>.OfShape(new int[] { rA, cB });
-        var _x = x.ToDenseTensor();
-        var _y = y.ToDenseTensor();
-        MathOps.mm_managed(rA, cA, cB, _x.Buffer, _y.Buffer, output.Buffer);
-        
         return output;
     }
 
@@ -453,12 +457,12 @@ where T : struct
             var ydl = y.Dimensions[^2..];
             if (xdl[1] != ydl[0])
             {
-                throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
+                throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
             }
 
             if (!BroadcastShape(x.Dimensions[0..^2], y.Dimensions[0..^2], out var bd))
             {
-                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
 
             var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();

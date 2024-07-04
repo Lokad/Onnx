@@ -12,4 +12,8 @@
     <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lokad.Onnx.Base\Lokad.Onnx.Base.csproj" />
+  </ItemGroup>
+
 </Project>

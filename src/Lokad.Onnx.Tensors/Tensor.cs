@@ -1812,7 +1812,7 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="offset">the index if you would iterate from 0 to shape.size in row major order</param>
         /// <returns></returns>
-        [MethodImpl((MethodImplOptions)768)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public int[] GetCoordinates(int offset)
         {
             int[] coords = null;

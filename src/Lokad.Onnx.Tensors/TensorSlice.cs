@@ -70,16 +70,8 @@ public class TensorSlice<T> : Tensor<T> where T : struct
     public override T this[params int[] indices]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        get
-        {
-            if (indices == null)
-            {
-                throw new ArgumentNullException(nameof(indices));
-            }
-            var span = new ReadOnlySpan<int>(indices);
-            return this[span];
-        }
-
+        get => this[(ReadOnlySpan<int>) indices];
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         set
         {
@@ -105,7 +97,7 @@ public class TensorSlice<T> : Tensor<T> where T : struct
     public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => Clone().BroadcastDim(dim, size);    
     #endregion
 
-    [MethodImpl((MethodImplOptions)768)]
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public int GetOffset(params int[] indices)
     {
         int offset;

@@ -18,11 +18,11 @@ using Lokad.Onnx;
 
 [RyuJitX64Job]
 [IterationsColumn]
-[MemoryDiagnoser()]
+[MemoryDiagnoser]
 [DisassemblyDiagnoser(printSource:true)]
 public class MatMul2DBenchmarks : Runtime
 {
-    [GlobalSetup()]
+    [GlobalSetup]
     public void Setup()
     {
         Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false, true, true);
@@ -75,42 +75,51 @@ public class MatMul2DBenchmarks : Runtime
 
 [InProcess]
 [IterationsColumn]
-[MemoryDiagnoser()]
+[MemoryDiagnoser]
 public class TensorMatMulBenchmarks : Runtime
 {
-    [GlobalSetup()]
+    [GlobalSetup]
     public void Setup()
-    {
-        //Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false, true, true);
-    }
-
-    [IterationSetup]
-    public void IterationSetup() 
     {
         t_384_384_a = Tensor<float>.Rand(384, 384);
         t_384_384_b = Tensor<float>.Rand(384, 384);
         t_384_1536_a = Tensor<float>.Rand(384, 1536);
         t_1536_384_b = Tensor<float>.Rand(1536, 384);
-        t_20_10_384_384_a = Tensor<float>.Rand(3, 4, 384, 384);
-        t_20_10_384_384_b = Tensor<float>.Rand(3, 4, 384, 384);
+        t_3_4_384_384_a = Tensor<float>.Rand(4,1, 384, 384);
+        t_3_4_384_384_b = Tensor<float>.Rand(4, 1, 384, 384);
     }
+
+    [IterationSetup(Targets = ["MatMul_simd", "MatMul2_simd", "MatMul3_simd"])]
+    public void EnableSimd() => HardwareConfig.UseSimd = true;
+    
+    [IterationSetup(Targets = ["MatMul", "MatMul2", "MatMul3"])]
+    public void DisableSimd() => HardwareConfig.UseSimd = false;
+    
+    [Benchmark(Description = "Matrix multiply 2 384x384 tensors - simd")]
+    public void MatMul_simd() => Tensor<float>.MatMul(t_384_384_a, t_384_384_b);
 
     [Benchmark(Description = "Matrix multiply 2 384x384 tensors")]
     public void MatMul() => Tensor<float>.MatMul(t_384_384_a, t_384_384_b);
 
-    [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors")]
-    public void MatMul2() => Tensor<float>.MatMul(t_20_10_384_384_a, t_20_10_384_384_b);
+    [Benchmark(Description = "Matrix multiply 2 384x1536 tensors - simd")]
+    public void MatMul2_simd() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
 
     [Benchmark(Description = "Matrix multiply 2 384x1536 tensors")]
-    public void MatMul_384_1536() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
+    public void MatMul2() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
+
+    [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors - simd")]
+    public void MatMul3_simd() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
+
+    [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors")]
+    public void MatMul3() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
 
     #region Fields
     Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_b = Tensor<float>.Zeros(0);
     Tensor<float> t_384_1536_a = Tensor<float>.Zeros(0);
     Tensor<float> t_1536_384_b = Tensor<float>.Zeros(0);
-    Tensor<float> t_20_10_384_384_a = Tensor<float>.Zeros(0);
-    Tensor<float> t_20_10_384_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_3_4_384_384_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_3_4_384_384_b = Tensor<float>.Zeros(0);
     #endregion
 }
 
@@ -204,11 +213,17 @@ internal class Benchmarks : Runtime
         BenchmarkRunner.Run<MultilingualEmbedded5SmallBenchmarks>();
     }
 
-    internal static void RunMatMul() => BenchmarkRunner.Run<TensorMatMulBenchmarks>();
+    internal static void RunMatMul()
+    {
+        Info("Hardware config: {s}.", HardwareIntrinsics.GetFullInfo());
+        BenchmarkRunner.Run<TensorMatMulBenchmarks>();
+    }
 
     internal static void RunMatMul2D(string[] args)
     {
-        Info("Creating new build of Lokad.Onnx solution in order to run and profile MatMul2D benchmark code...");
+        Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
+        Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
+        Info("Creating new build of Lokad.Onnx solution to run and profile MatMul2D benchmark code...");
         BenchmarkRunner.Run<MatMul2DBenchmarks>(DefaultConfig.Instance, args);
     }
 }
