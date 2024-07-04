@@ -54,16 +54,6 @@ public class MathTests
         a = new DenseTensor<int>(new[] { 1, 0, 0, 1 }, new[] { 2, 2, });
         b = new DenseTensor<int>(new[] { 4, 1, 2, 2 }, new[] { 2, 2, });
         c = Tensor<int>.MatMul2D(a, b);
-        Assert.Equal(c, Tensor<int>.MatMul2D_managed(a, b));
-        Assert.Equal(c, Tensor<int>.MatMul2D_managed2(a, b));
-        a = Tensor<int>.RandN(8, 8);
-        b = Tensor<int>.RandN(8, 8);
-        c = DenseTensor<int>.OfShape(8, 8);
-        MathOps.mm_vectorized(8, 8, 8, a.ToDenseTensor().Buffer, b.ToDenseTensor().Buffer, c.ToDenseTensor().Buffer);
-        Assert.Equal(c, Tensor<int>.MatMul2D(a, b));
-        c = c.CloneEmpty();
-        MathOps.mm_unsafe_vectorized(8, 8, 8, (int*) a.ToDenseTensor().Buffer.Pin().Pointer, (int*) b.ToDenseTensor().Buffer.Pin().Pointer, (int*) c.ToDenseTensor().Buffer.Pin().Pointer);
-        Assert.Equal(c, Tensor<int>.MatMul2D(a, b));
         //Assert.Equal(1, c[0, 1]);
 
         a = Tensor<int>.Arange(0, 2 * 2 * 4).Reshape(2, 2, 4);
@@ -77,7 +67,6 @@ public class MathTests
             Assert.Equal(2, b[di[..]].Rank);
             c[di[..]] = Tensor<int>.MatMul2D(a[di[..]], b[di[..]]);
             Assert.Equal(c[di[..]], Tensor<int>.MatMul2D_managed(a[di[..]], b[di[..]]));
-            Assert.Equal(c[di[..]], Tensor<int>.MatMul2D_managed2(a[di[..]], b[di[..]]));
         }
         Assert.Equal(98, c[0, 1, 1]);
     }

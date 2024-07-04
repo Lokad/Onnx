@@ -14,7 +14,7 @@ namespace Lokad.Onnx
         {
             AppDomain.CurrentDomain.UnhandledException += AppDomain_UnhandledException;
             EntryAssembly = Assembly.GetEntryAssembly();
-            IsUnitTestRun = EntryAssembly?.FullName.StartsWith("testhost") ?? false;
+            IsUnitTestRun = EntryAssembly?.FullName?.StartsWith("testhost") ?? false;
             SessionId = Rng.Next(0, 99999);            
             Logger = new ConsoleLogger2();
         }

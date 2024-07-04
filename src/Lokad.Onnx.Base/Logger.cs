@@ -146,7 +146,7 @@ namespace Lokad.Onnx
                 config.Variables["logLevel"] = "Debug";
                 config.AddRule(new LoggingRule("*", LogLevel.Debug, logfile));
             }
-            if (logToConsole || (Runtime.EntryAssembly?.FullName.StartsWith("OmniSharp") ?? false))
+            if (logToConsole || (Runtime.EntryAssembly?.FullName?.StartsWith("OmniSharp") ?? false))
             {
                 ConsoleLogger2.ConfigureConsoleLogger(config, debug, colorConsole);
             }
