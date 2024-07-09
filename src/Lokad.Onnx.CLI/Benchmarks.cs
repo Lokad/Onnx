@@ -20,6 +20,7 @@ using Lokad.Onnx;
 [IterationsColumn]
 [MemoryDiagnoser]
 [DisassemblyDiagnoser(printSource:true)]
+
 public class MatMul2DBenchmarks : Runtime
 {
     [GlobalSetup]
@@ -76,6 +77,7 @@ public class MatMul2DBenchmarks : Runtime
 [InProcess]
 [IterationsColumn]
 [MemoryDiagnoser]
+[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 public class TensorMatMulBenchmarks : Runtime
 {
     [GlobalSetup]
@@ -94,23 +96,25 @@ public class TensorMatMulBenchmarks : Runtime
     
     [IterationSetup(Targets = ["MatMul", "MatMul2", "MatMul3"])]
     public void DisableSimd() => HardwareConfig.UseSimd = false;
-    
-    [Benchmark(Description = "Matrix multiply 2 384x384 tensors - simd")]
-    public void MatMul_simd() => Tensor<float>.MatMul(t_384_384_a, t_384_384_b);
+   
 
-    [Benchmark(Description = "Matrix multiply 2 384x384 tensors")]
+    [Benchmark(Description = "Matrix multiply 2 384x384 tensors", Baseline = true)]
+    [BenchmarkCategory("384x384")]
     public void MatMul() => Tensor<float>.MatMul(t_384_384_a, t_384_384_b);
 
     [Benchmark(Description = "Matrix multiply 2 384x1536 tensors - simd")]
+    [BenchmarkCategory("384x1536")]
     public void MatMul2_simd() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
 
-    [Benchmark(Description = "Matrix multiply 2 384x1536 tensors")]
+    [Benchmark(Description = "Matrix multiply 2 384x1536 tensors", Baseline = true)]
+    [BenchmarkCategory("384x1536")]
     public void MatMul2() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
 
     [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors - simd")]
+
     public void MatMul3_simd() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
 
-    [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors")]
+    [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors", Baseline = true)]
     public void MatMul3() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
 
     #region Fields
@@ -125,7 +129,46 @@ public class TensorMatMulBenchmarks : Runtime
 
 [InProcess]
 [IterationsColumn]
-[MemoryDiagnoser()]
+[MemoryDiagnoser]
+[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
+
+public class TensorIndexingBenchmarks : Runtime
+{
+    [IterationSetup]
+    public void Setup()
+    {
+        t_384_384_dense = Tensor<float>.Rand(384, 384);
+        t_384_384_slice = t_384_384_dense[..];
+
+    }
+
+
+    [Benchmark(Baseline = true)]
+    public void IndexDenseTensor()
+    {
+        var a = 0.0f;
+        for (int i = 0; i < 90000; i++)
+        {
+            a += t_384_384_dense.GetValue(i);
+        }
+    }
+
+    [Benchmark]
+    public void IndexTensorSlice()
+    {
+        var a = 0.0f;
+        for (int i = 0; i < 90000; i++)
+        {
+            a += t_384_384_slice.GetValue(i);
+        }
+    }
+    #region Fields
+    Tensor<float> t_384_384_dense = Tensor<float>.Zeros(0).ToDenseTensor();
+    Tensor<float> t_384_384_slice = Tensor<float>.Zeros(0).Slice();
+    #endregion
+    }
+
+
 public class MultilingualEmbedded5SmallBenchmarks : Runtime
 {
     [Benchmark(Description="1 string of 20 chars")]
@@ -217,6 +260,11 @@ internal class Benchmarks : Runtime
     {
         Info("Hardware config: {s}.", HardwareIntrinsics.GetFullInfo());
         BenchmarkRunner.Run<TensorMatMulBenchmarks>();
+    }
+
+    internal static void RunIndexing()
+    {
+        BenchmarkRunner.Run<TensorIndexingBenchmarks>();
     }
 
     internal static void RunMatMul2D(string[] args)
