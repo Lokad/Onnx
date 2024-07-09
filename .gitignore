@@ -365,4 +365,4 @@ FodyWeavers.xsd
 me5s.model.onnx
 *.model
 *.onnx
-bench/
+Bench*/

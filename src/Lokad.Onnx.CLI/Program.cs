@@ -252,6 +252,10 @@ class Program : Runtime
                 Benchmarks.RunMatMul();
                 ExitWithSuccess();
                 break;
+            case "indexing":
+                Benchmarks.RunIndexing();
+                ExitWithSuccess();
+                break;
             default:
                 Error("Unkown benchmark: {b}.", bo.BenchmarkId);
                 Exit(ExitResult.INVALID_OPTIONS);
