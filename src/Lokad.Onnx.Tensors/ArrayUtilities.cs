@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Lokad.Onnx
 {
@@ -137,6 +138,7 @@ namespace Lokad.Onnx
         /// <param name="indices"></param>
         /// <param name="startFromDimension"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int startFromDimension = 0)
         {
             Debug.Assert(strides.Length == indices.Length);
@@ -150,6 +152,7 @@ namespace Lokad.Onnx
             return index;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, ReadOnlySpan<int> broadcastedDims, int startFromDimension = 0)
         {
             Debug.Assert(strides.Length == indices.Length);
