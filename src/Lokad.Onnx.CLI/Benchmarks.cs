@@ -131,7 +131,6 @@ public class TensorMatMulBenchmarks : Runtime
 [IterationsColumn]
 [MemoryDiagnoser]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
-
 public class TensorIndexingBenchmarks : Runtime
 {
     [IterationSetup]
@@ -143,28 +142,55 @@ public class TensorIndexingBenchmarks : Runtime
     }
 
 
-    [Benchmark(Baseline = true)]
-    public void IndexDenseTensor()
+    [Benchmark(Baseline = true, Description = "Multi-dim index into a 384x384 dense tensor")]
+    [BenchmarkCategory("multidim")]
+    public void MultiDimIndexDenseTensor()
     {
         var a = 0.0f;
-        for (int i = 0; i < 90000; i++)
+        var di = t_384_384_dense.GetDimensionsIterator();
+        foreach (var _ in di)
+        {
+            a += t_384_384_dense[_];
+        }
+    }
+
+    [Benchmark(Description = "Multi-dim index into a 384x384 tensor slice")]
+    [BenchmarkCategory("multidim")]
+    public void MultidimIndexTensorSlice()
+    {
+        var a = 0.0f;
+        var di = t_384_384_slice.GetDimensionsIterator();
+        foreach (var _ in di)
+        {
+            a += t_384_384_slice[_];
+        }
+    }
+
+    [Benchmark(Baseline = true, Description = "Scalar index into a 384x384 dense tensor")]
+    [BenchmarkCategory("scalar")]
+    public void GetValueDenseTensor()
+    {
+        var a = 0.0f;
+        var di = t_384_384_dense.GetDimensionsIterator();
+        for(int i = 0; i < t_384_384_dense.Length; i++)
         {
             a += t_384_384_dense.GetValue(i);
         }
     }
 
-    [Benchmark]
-    public void IndexTensorSlice()
+    [Benchmark(Description = "Scalar index into a 384x384 tensor slice")]
+    [BenchmarkCategory("scalar")]
+    public void GetValueSlice()
     {
         var a = 0.0f;
-        for (int i = 0; i < 90000; i++)
+        for (int i = 0; i < t_384_384_slice.Length; i++)
         {
             a += t_384_384_slice.GetValue(i);
         }
     }
     #region Fields
-    Tensor<float> t_384_384_dense = Tensor<float>.Zeros(0).ToDenseTensor();
-    Tensor<float> t_384_384_slice = Tensor<float>.Zeros(0).Slice();
+    Tensor<float> t_384_384_dense = Tensor<float>.Zeros(0);
+    Tensor<float> t_384_384_slice = Tensor<float>.Zeros(0);
     #endregion
     }
 

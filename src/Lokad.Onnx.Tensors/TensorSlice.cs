@@ -94,8 +94,91 @@ public class TensorSlice<T> : Tensor<T> where T : struct
 
     public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions) => Clone().Reshape(dimensions);
 
-    public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => Clone().BroadcastDim(dim, size);    
+    public override BroadcastedTensor<T> BroadcastDim(int dim, int size) => Clone().BroadcastDim(dim, size);
     #endregion
+
+    [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+    public unsafe int* GetCoordinatesUnsafe(int offset)
+    {
+        //if (strides.Length == 1)
+        //    coords = new int[] { offset };
+
+        int counter = offset;
+        int* coords = stackalloc int[strides.Length];
+        int stride;
+        for (int i = 0; i < strides.Length; i++)
+        {
+            unchecked
+            {
+                stride = strides[i];
+                if (stride == 0)
+                {
+                    coords[i] = 0;
+                }
+                else
+                {
+                    coords[i] = counter / stride;
+                    counter -= coords[i] * stride;
+                }
+            }
+        }
+        return coords;
+    }
+    public unsafe int GetOffsetUnsafe(params int[] indices)
+    {
+        int offset;
+        var orig_ndim = parent.Rank;
+        int* coords = stackalloc int[orig_ndim];
+
+        // fill in reduced dimensions in the provided coordinates 
+        for (int i = 0; i < orig_ndim; i++)
+        {
+            var slice = slices[i];
+            if (slice.IsIndex)
+            {
+                coords[i] = 0;
+                coords[++i] = indices[i];
+            }
+            else
+            {
+                coords[i] = indices[i];
+            }
+        }
+
+            
+        
+
+        var orig_strides = parent.strides;
+        //var orig_dims = vi.OriginalShape.dimensions;
+        offset = 0;
+
+        for (int i = 0; i < 0; i++)
+        {
+            // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
+            //var coord = coords[i];
+            //var dim = orig_dims[i];
+            //if (coord < -dim || coord >= dim)
+            //    throw new ArgumentException($"index {coord} is out of bounds for axis {i} with a size of {dim}");
+            //if (coord < 0)
+            //    coord = dim + coord;
+            if (slices.Length <= i)
+            {
+                offset += orig_strides[i] * coords[i];
+                continue;
+            }
+
+            var slice = slices[i];
+            var start = slice.Start;
+            if (slice.IsIndex)
+                offset += orig_strides[i] * start; // the coord is irrelevant for index-slices (they are reduced dimensions)
+            else
+                offset += orig_strides[i] * (start + coords[i] * slice.Step);
+        }
+
+
+        return offset;
+
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public int GetOffset(params int[] indices)

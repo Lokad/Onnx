@@ -1843,6 +1843,47 @@ namespace Lokad.Onnx
             return coords;
         }
 
+        /// <summary>
+        ///  Gets coordinates in this shape from index in this shape (slicing is ignored).
+        ///  Example: Shape (2,3)
+        /// 0 => [0, 0]
+        /// 1 => [0, 1]
+        /// ...
+        /// 6 => [1, 2]
+        /// </summary>
+        /// <param name="offset">the index if you would iterate from 0 to shape.size in row major order</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        public unsafe int* GetCoordinatesUnsafe(int offset)
+        {
+            //int[] coords = null;
+
+            ///if (strides.Length == 1)
+             //   coords = new int[] { offset };
+
+            int counter = offset;
+            int* coords = stackalloc int[strides.Length];
+            int stride;
+            for (int i = 0; i < strides.Length; i++)
+            {
+                unchecked
+                {
+                    stride = strides[i];
+                    if (stride == 0)
+                    {
+                        coords[i] = 0;
+                    }
+                    else
+                    {
+                        coords[i] = counter / stride;
+                        counter -= coords[i] * stride;
+                    }
+                }
+            }
+
+            return coords;
+        }
+
         public TensorSlice<T> Slice(params SliceIndex[] indices) => new TensorSlice<T>(this, ExpandEllipsis(indices));
         #endregion
 
