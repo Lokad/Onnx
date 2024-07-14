@@ -1,3 +1,5 @@
+namespace Lokad.Onnx;
+
 /*
  * Created by Galvanic Games (http://galvanicgames.com)
  * 
@@ -34,16 +36,16 @@ using System.Runtime.InteropServices;
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 {
-	public UnsafeFixedSizeList(T* ptr, int size)
+	public UnsafeFixedSizeList(T* ptr, int size, int count = 0)
 	{
 		this.ptr = ptr;
 		this.size = size;
-
+		this._count = count;	
 	}
 
-	#region Implementation
+    #region Implementation
 
-	private T* ptr;
+    private T* ptr;
 	private int size;
 	private int _count;
 
@@ -93,7 +95,19 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 		_count += arr.Length;
 	}
 
-	public void AddRange(List<T> list)
+    public void AddRange(ReadOnlySpan<T> arr)
+    {
+        fixed (T* pThem = arr)
+        {
+            long copySizeInBytes = arr.Length * sizeof(T);
+
+            Buffer.MemoryCopy(pThem, ptr + _count, copySizeInBytes, copySizeInBytes);
+        }
+
+        _count += arr.Length;
+    }
+
+    public void AddRange(List<T> list)
 	{
 		int listCount = list.Count;
 			
@@ -126,6 +140,20 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 				sizeInBytes);
 		}
 	}
+
+	public void CopyTo(ReadOnlySpan<T> array, int arrayIndex)
+	{
+        fixed (T* pThem = array)
+        {
+            long sizeInBytes = _count * sizeof(T);
+
+            Buffer.MemoryCopy(
+                ptr,
+                pThem + arrayIndex,
+                sizeInBytes,
+                sizeInBytes);
+        }
+    }
 
 	public bool Remove(T item)
 	{
@@ -188,11 +216,7 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 
 	public void UnstableRemoveAt(int index)
 	{
-
-
-			*(ptr + index) = *(ptr + _count - 1);
-		
-		
+		*(ptr + index) = *(ptr + _count - 1);
 		_count--;
 	}
 
