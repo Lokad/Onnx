@@ -1,6 +1,5 @@
 ﻿namespace Lokad.Onnx.Tensors.Tests;
 
-
 public class SliceTests
 {
     [Fact]
