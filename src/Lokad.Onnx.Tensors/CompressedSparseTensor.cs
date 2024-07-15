@@ -20,7 +20,7 @@ namespace Lokad.Onnx
     ///
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class CompressedSparseTensor<T> : Tensor<T> where T :  struct
+    public class CompressedSparseTensor<T> : Tensor<T> where T :  unmanaged
     {
         private Memory<T> values;
         private readonly Memory<int> compressedCounts;

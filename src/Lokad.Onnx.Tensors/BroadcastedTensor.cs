@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-public class BroadcastedTensor<T> : Tensor<T> where T :  struct
+public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
 {
     #region Constructor
     public BroadcastedTensor(Tensor<T> source, ReadOnlySpan<int> dimensions, int[] broadcastedDims) : 
@@ -27,6 +27,29 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
     #region Methods
 
     #region Tensor<T> members
+    /// <summary>
+    /// Obtains the value at the specified indices
+    /// </summary>
+    /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
+    /// <returns>The value at the specified position in this Tensor.</returns>
+
+    public override T this[params int[] indices]
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get => this[(ReadOnlySpan<int>)indices];
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        set => this[(ReadOnlySpan<int>)indices] = value;
+    }
+    public override T this[ReadOnlySpan<int> indices]
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get => this.source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
+            
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        set => this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public override T GetValue(int index)
     {
@@ -35,41 +58,13 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
         return source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
     }
 
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public override void SetValue(int index, T value)
     {
         int[] indices = new int[this.Rank];
         ArrayUtilities.GetIndices(strides, IsReversedStride, index, indices);
         this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
-    }
-
-    /// <summary>
-    /// Obtains the value at the specified indices
-    /// </summary>
-    /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
-    /// <returns>The value at the specified position in this Tensor.</returns>
-    public override T this[ReadOnlySpan<int> indices]
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        get
-        {
-            if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
-            {
-                return GetValue(0);
-            }
-            return source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        set
-        {
-            if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
-            {
-                SetValue(0, value);
-                return;
-            }
-            this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
-        }
     }
 
     public override Tensor<T> Clone() => new BroadcastedTensor<T>(source, dimensions, broadcastedDims);
@@ -80,8 +75,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  struct
     {
         throw new NotSupportedException();
     }
-    
-
+   
     public override Tensor<T> InsertDim(int dim)
     {
         if (dim >= Rank) throw new ArgumentException(nameof(dim));

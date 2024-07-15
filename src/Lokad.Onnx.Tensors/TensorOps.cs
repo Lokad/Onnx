@@ -8,7 +8,7 @@ using System.Numerics;
 using static Lokad.Onnx.MathOps;
 
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
-where T : struct
+where T : unmanaged
 {
     public virtual void Apply(Func<T, T> op, Tensor<T> destination)
     {
