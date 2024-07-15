@@ -61,36 +61,38 @@ namespace Lokad.Onnx
 
         public int[] Current => Index;
 
-        [MethodImpl((MethodImplOptions)512)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public int[] Next()
         {
-            if (subcursor <= -1)
-                return null;
-
-            if (++Index[subcursor] >= dimensions[subcursor])
+            unchecked
             {
-            _repeat:
-                Index[subcursor] = 0;
+                if (subcursor <= -1)
+                    return null;
 
-                do
+                if (++Index[subcursor] >= dimensions[subcursor])
                 {
-                    if (--subcursor <= -1)
+                _repeat:
+                    Index[subcursor] = 0;
+
+                    do
                     {
-                        //TODO somehow can we skip all ones?
-                        endCallback?.Invoke(ref this);
-                        if (subcursor >= 0) //if callback has resetted it
-                            return Index;
-                        return null;
-                    }
-                } while (dimensions[subcursor] <= 1);
+                        if (--subcursor <= -1)
+                        {
+                            //TODO somehow can we skip all ones?
+                            endCallback?.Invoke(ref this);
+                            if (subcursor >= 0) //if callback has resetted it
+                                return Index;
+                            return null;
+                        }
+                    } while (dimensions[subcursor] <= 1);
 
-                ++Index[subcursor];
-                if (Index[subcursor] >= dimensions[subcursor])
-                    goto _repeat;
+                    ++Index[subcursor];
+                    if (Index[subcursor] >= dimensions[subcursor])
+                        goto _repeat;
 
-                subcursor = resetto;
+                    subcursor = resetto;
+                }
             }
-
             return Index;
         }
 
