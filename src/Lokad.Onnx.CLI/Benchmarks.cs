@@ -134,6 +134,7 @@ public class TensorMatMulBenchmarks : Runtime
 [IterationsColumn]
 [MemoryDiagnoser]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
+[Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
 public class TensorIndexingBenchmarks : Runtime
 {
     [IterationSetup]
@@ -141,9 +142,8 @@ public class TensorIndexingBenchmarks : Runtime
     {
         t_384_384_dense = Tensor<float>.Rand(384, 384);
         t_384_384_slice = t_384_384_dense[..];
-
+        t_384_384_bcast = t_384_384_dense.PadLeft().BroadcastDim(0, 2);  
     }
-
 
     [Benchmark(Baseline = true, Description = "Multi-dim index into a 384x384 dense tensor")]
     [BenchmarkCategory("multidim")]
@@ -169,6 +169,17 @@ public class TensorIndexingBenchmarks : Runtime
         }
     }
 
+    [Benchmark(Description = "Multi-dim index into a 2x384x384 broadcasted tensor")]
+    [BenchmarkCategory("multidim")]
+    public void MultidimIndexBroadcastedTensor()
+    {
+        var a = 0.0f;
+        var di = t_384_384_slice.GetDimensionsIterator();
+        foreach (var _ in di)
+        {
+            a += t_384_384_bcast[_];
+        }
+    }
     [Benchmark(Baseline = true, Description = "Scalar index into a 384x384 dense tensor")]
     [BenchmarkCategory("scalar")]
     public void GetValueDenseTensor()
@@ -191,11 +202,23 @@ public class TensorIndexingBenchmarks : Runtime
             a += t_384_384_slice.GetValue(i);
         }
     }
+
+    [Benchmark(Description = "Scalar index into a 2x384x384 broadcasted tensor")]
+    [BenchmarkCategory("scalar")]
+    public void GetValueBroadcastedTensor()
+    {
+        var a = 0.0f;
+        for (int i = 0; i < t_384_384_slice.Length; i++)
+        {
+            a += t_384_384_bcast.GetValue(i);
+        }
+    }
     #region Fields
     Tensor<float> t_384_384_dense = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_slice = Tensor<float>.Zeros(0);
+    Tensor<float> t_384_384_bcast = Tensor<float>.Zeros(0);
     #endregion
-    }
+}
 
 
 public class MultilingualEmbedded5SmallBenchmarks : Runtime

@@ -22,7 +22,7 @@ namespace Lokad.Onnx
 
         ITensor CloneEmpty();
 
-        ITensor CloneEmpty<U>() where U : struct;
+        ITensor CloneEmpty<U>() where U : unmanaged;
         
         ITensor Reshape(params int[] shape);
 
@@ -158,7 +158,7 @@ namespace Lokad.Onnx
 
         string TensorNameDesc() => $"{Name}:{ElementType.ToString().ToLower()}:{string.Join("x",Dims.Select(d => d.ToString()))}";
 
-        ITensor Cast<U>() where U : struct
+        ITensor Cast<U>() where U : unmanaged
         {
             ITensor output = CloneEmpty<U>();
             for (int i = 0; i < Length; i++)
@@ -190,7 +190,7 @@ namespace Lokad.Onnx
             return Reshape(newshape.ToArray());
         }
 
-        Tensor<T> AsTensor<T>() where T : struct => (Tensor<T>) this;
+        Tensor<T> AsTensor<T>() where T : unmanaged => (Tensor<T>) this;
     }
 
     

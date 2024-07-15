@@ -10,7 +10,7 @@
     },
     "Run me5s": {
       "commandName": "Project",
-      "commandLineArgs": "benchmark matmul2d --list flat"
+      "commandLineArgs": "benchmark indexing"
     }
   }
 }

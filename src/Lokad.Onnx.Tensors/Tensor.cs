@@ -214,7 +214,7 @@ namespace Lokad.Onnx
         /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
         /// <param name="size">Width and height of the identity tensor to create.</param>
         /// <returns>a <paramref name="size"/> by <paramref name="size"/> with 1s along the diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateIdentity<T>(int size) where T :  struct
+        public static Tensor<T> CreateIdentity<T>(int size) where T :  unmanaged
         {
             return CreateIdentity(size, false, Tensor<T>.One);
         }
@@ -226,7 +226,7 @@ namespace Lokad.Onnx
         /// <param name="size">Width and height of the identity tensor to create.</param>
         /// <param name="columMajor">>False to indicate that the first dimension is most minor (closest) and the last dimension is most major (farthest): row-major.  True to indicate that the last dimension is most minor (closest together) and the first dimension is most major (farthest apart): column-major.</param>
         /// <returns>a <paramref name="size"/> by <paramref name="size"/> with 1s along the diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateIdentity<T>(int size, bool columMajor) where T :  struct
+        public static Tensor<T> CreateIdentity<T>(int size, bool columMajor) where T :  unmanaged
         {
             return CreateIdentity(size, columMajor, Tensor<T>.One);
         }
@@ -239,7 +239,7 @@ namespace Lokad.Onnx
         /// <param name="columMajor">>False to indicate that the first dimension is most minor (closest) and the last dimension is most major (farthest): row-major.  True to indicate that the last dimension is most minor (closest together) and the first dimension is most major (farthest apart): column-major.</param>
         /// <param name="oneValue">Value of <typeparamref name="T"/> that is used along the diagonal.</param>
         /// <returns>a <paramref name="size"/> by <paramref name="size"/> with 1s along the diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateIdentity<T>(int size, bool columMajor, T oneValue) where T :  struct
+        public static Tensor<T> CreateIdentity<T>(int size, bool columMajor, T oneValue) where T :  unmanaged
         {
             unsafe
             {
@@ -263,7 +263,7 @@ namespace Lokad.Onnx
         /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
         /// <param name="diagonal">Tensor representing the diagonal to build the new tensor from.</param>
         /// <returns>A new tensor of the same layout and order as <paramref name="diagonal"/> of one higher rank, with the values of <paramref name="diagonal"/> along the diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateFromDiagonal<T>(Tensor<T> diagonal) where T :  struct
+        public static Tensor<T> CreateFromDiagonal<T>(Tensor<T> diagonal) where T :  unmanaged
         {
             return CreateFromDiagonal(diagonal, 0);
         }
@@ -279,7 +279,7 @@ namespace Lokad.Onnx
         /// less than zero for diagonals below, greater than zero from diagonals above.</param>
         /// <returns>A new tensor of the same layout and order as <paramref name="diagonal"/> of one higher rank, 
         /// with the values of <paramref name="diagonal"/> along the specified diagonal and zeros elsewhere.</returns>
-        public static Tensor<T> CreateFromDiagonal<T>(Tensor<T> diagonal, int offset) where T :  struct
+        public static Tensor<T> CreateFromDiagonal<T>(Tensor<T> diagonal, int offset) where T :  unmanaged  
         {
             if (diagonal.Rank < 1)
             {
@@ -335,7 +335,7 @@ namespace Lokad.Onnx
     [DebuggerDisplay("{PrintShape()}")]
     // When we cross-compile for frameworks that expose ICloneable this must implement ICloneable as well.
     public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
-    where T : struct
+    where T : unmanaged
     {
         internal static T Zero
         {
@@ -635,7 +635,7 @@ namespace Lokad.Onnx
         /// </summary>
         /// <typeparam name="TResult">Type contained within the new Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
         /// <returns>A new Tensor with the same layout and dimensions as this tensor with elements of <typeparamref name="TResult"/> type initialized to their default value.</returns>
-        public virtual Tensor<TResult> CloneEmpty<TResult>() where TResult : struct
+        public virtual Tensor<TResult> CloneEmpty<TResult>() where TResult : unmanaged
         {
             return CloneEmpty<TResult>(dimensions);
         }
@@ -646,7 +646,7 @@ namespace Lokad.Onnx
         /// <typeparam name="TResult">Type contained within the new Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
         /// <returns>A new Tensor with the same layout as this tensor of specified <paramref name="dimensions"/> with elements of <typeparamref name="TResult"/> type initialized to their default value.</returns>
-        public abstract Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) where TResult : struct;
+        public abstract Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) where TResult : unmanaged;
         
         #endregion
 
@@ -1252,10 +1252,19 @@ namespace Lokad.Onnx
             if (!dimensions.SequenceEqual(from.dimensions))
                 throw new ArgumentException("The shape of the from tensor is not the same as this tensor.");
 
-            
-            foreach (var index in from.GetDimensionsIterator())
+            if (this is DenseTensor<T> a && from is DenseTensor<T> b)
             {
-                this[index] = from[index];
+                for (int i = 0; i < from.Length; i++)
+                {
+                    a.Buffer.Span[i] = b.Buffer.Span[i];
+                }
+            }
+            else
+            {
+                foreach (var index in from.GetDimensionsIterator())
+                {
+                    this[index] = from[index];
+                }
             }
         }
         bool ICollection<T>.Remove(T item)

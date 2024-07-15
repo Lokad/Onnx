@@ -13,9 +13,11 @@
 
 using System.Runtime.InteropServices;
 using System;
+using System.Buffers;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 
 namespace Lokad.Onnx
 {
@@ -26,10 +28,12 @@ namespace Lokad.Onnx
     /// <typeparam name="T">
     /// Type contained within the Tensor. Typically a value type such as int, double, float, etc.
     /// </typeparam>
-    public class DenseTensor<T> : Tensor<T> where T :  struct
+    public unsafe class DenseTensor<T> : Tensor<T> where T :  unmanaged
     {
         #region Fields
         private readonly Memory<T> memory;
+        private readonly MemoryHandle handle;
+        private readonly T* ptr;
         #endregion
 
         #region Properties
@@ -44,7 +48,7 @@ namespace Lokad.Onnx
         {
             // copy initial array
             var backingArray = new T[fromArray.Length];
-
+            
             int index = 0;
             if (reverseStride)
             {
@@ -66,6 +70,9 @@ namespace Lokad.Onnx
             }
 
             memory = backingArray;
+            handle = memory.Pin();
+            ptr = (T*) handle.Pointer;
+            
         }
 
         /// <summary>
@@ -75,6 +82,8 @@ namespace Lokad.Onnx
         public DenseTensor(int length) : base(length)
         {
             memory = new T[length];
+            handle = memory.Pin();
+            ptr = (T*)handle.Pointer;
         }
 
         /// <summary>
@@ -92,6 +101,8 @@ namespace Lokad.Onnx
         public DenseTensor(ReadOnlySpan<int> dimensions, bool reverseStride = false) : base(dimensions, reverseStride)
         {
             memory = new T[Length];
+            handle = memory.Pin();
+            ptr = (T*)handle.Pointer;
         }
 
         /// <summary>
@@ -110,6 +121,8 @@ namespace Lokad.Onnx
             : base(dimensions, reverseStride)
         {
             this.memory = memory;
+            handle = memory.Pin();
+            ptr = (T*)handle.Pointer;
 
             if (Length != memory.Length)
             {
@@ -127,9 +140,11 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="index">An integer index computed as a dot-product of indices.</param>
         /// <returns>The value at the specified position in this Tensor.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override T GetValue(int index)
         {
-            return Buffer.Span[index];
+            return ptr[index];
+            //return Buffer.Span[index];
         }
 
         /// <summary>
@@ -138,9 +153,11 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="index">An integer index computed as a dot-product of indices.</param>
         /// <param name="value">The new value to set at the specified position in this Tensor.</param>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override void SetValue(int index, T value)
         {
-            Buffer.Span[index] = value;
+            //Buffer.Span[index] = value;
+            ptr[index] = value;
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-public class TensorSlice<T> : Tensor<T> where T : struct 
+public class TensorSlice<T> : Tensor<T> where T : unmanaged 
 {
     #region Constructors
     public TensorSlice(Tensor<T> parent, SliceIndex[] indices) : base((ReadOnlySpan<int>) parent.SliceAxes(parent.ExpandEllipsis(indices)), parent.IsReversedStride)
