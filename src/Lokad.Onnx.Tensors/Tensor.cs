@@ -1252,20 +1252,12 @@ namespace Lokad.Onnx
             if (!dimensions.SequenceEqual(from.dimensions))
                 throw new ArgumentException("The shape of the from tensor is not the same as this tensor.");
 
-            if (this is DenseTensor<T> a && from is DenseTensor<T> b)
+            
+            foreach (var index in from.GetDimensionsIterator())
             {
-                for (int i = 0; i < from.Length; i++)
-                {
-                    a.Buffer.Span[i] = b.Buffer.Span[i];
-                }
+                this[index] = from[index];
             }
-            else
-            {
-                foreach (var index in from.GetDimensionsIterator())
-                {
-                    this[index] = from[index];
-                }
-            }
+            
         }
         bool ICollection<T>.Remove(T item)
         {
@@ -1786,29 +1778,41 @@ namespace Lokad.Onnx
 
         public SliceIndex[] ExpandEllipsis(SliceIndex[] slices)
         {
-            List<SliceIndex> ret = new List<SliceIndex>();
-            // count dimensions without counting ellipsis or newaxis
-            var count = 0;
-            foreach (var slice in slices)
+            if (!slices.Any(s => s.IsEllipsis))
             {
-                if (slice.IsNewAxis || slice.IsEllipsis)
-                    continue;
-                count++;
+                return slices;
             }
-
-            // expand 
-            foreach (var slice in slices)
+            else if (slices.Length == 1 && slices[0].IsEllipsis)
             {
-                if (slice.IsEllipsis)
+                var r = new SliceIndex[Rank];
+                Array.Fill(r, SliceIndex.All);
+                return r;
+            }
+            else
+            {
+                // count dimensions without counting ellipsis or newaxis
+                var count = 0;
+                foreach (var slice in slices)
                 {
-                    for (int i = 0; i < dimensions.Length - count; i++)
-                        ret.Add(SliceIndex.All);
-                    continue;
+                    if (slice.IsNewAxis || slice.IsEllipsis)
+                        continue;
+                    count++;
                 }
+                List<SliceIndex> ret = new List<SliceIndex>();
+                // expand 
+                foreach (var slice in slices)
+                {
+                    if (slice.IsEllipsis)
+                    {
+                        for (int i = 0; i < dimensions.Length - count; i++)
+                            ret.Add(SliceIndex.All);
+                        continue;
+                    }
 
-                ret.Add(slice);
+                    ret.Add(slice);
+                }
+                return ret.ToArray();
             }
-            return ret.ToArray();
         }
 
         /// <summary>

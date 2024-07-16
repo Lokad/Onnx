@@ -61,7 +61,11 @@ where T : unmanaged
 
     public static Tensor<T>[] Broadcast(Tensor<T> inA, Tensor<T> inB)
     {
-        if (inA.Rank == 0 && inB.Rank != 0)
+        if (inA.dimensions.SequenceEqual(inB.dimensions))
+        {
+            return [inA, inB];
+        }
+        else if (inA.Rank == 0 && inB.Rank != 0)
         {
             var _A = inB.CloneEmpty();
             for (int i = 0; i < _A.Length; i++)
@@ -79,6 +83,7 @@ where T : unmanaged
             }
             return new Tensor<T>[2] { inA, _B };
         }
+
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
         var outA = inA.Clone();
         var outB = inB.Clone();
@@ -394,7 +399,8 @@ where T : unmanaged
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
             var z = DenseTensor<int>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-
+            bx = bx.ToDenseTensor();
+            by = by.ToDenseTensor();
             var di = bx.GetDimensionsIterator(0..^2);
             foreach (var _ in di)
             {
@@ -559,7 +565,8 @@ where T : unmanaged
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
             var z = DenseTensor<double>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-
+            bx = bx.ToDenseTensor();
+            by = by.ToDenseTensor();
             var di = bx.GetDimensionsIterator(0..^2);
             foreach (var _ in di)
             {

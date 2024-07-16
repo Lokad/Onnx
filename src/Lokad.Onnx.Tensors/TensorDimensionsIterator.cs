@@ -101,7 +101,9 @@ namespace Lokad.Onnx
         public SliceIndex[] AppendEllipsis() => Index.Select(i => new SliceIndex(i)).Append(SliceIndex.Ellipsis).ToArray();
 
         public SliceIndex[] PrependEllipsis() => Index.Select(i => new SliceIndex(i)).Prepend(SliceIndex.Ellipsis).ToArray();
-        public SliceIndex[] AppendSliceIndices(params SliceIndex[] indices) => Index.Select(i => SliceIndex.FromObj(i)).Concat(indices).ToArray();  
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        public SliceIndex[] AppendSliceIndices(params SliceIndex[] indices) => Index.Select(i => (SliceIndex) i).Concat(indices).ToArray();  
 
         public SliceIndex[] this[params SliceIndex[] indices] => AppendSliceIndices(indices);
 

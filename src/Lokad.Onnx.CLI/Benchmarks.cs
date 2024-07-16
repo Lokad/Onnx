@@ -220,24 +220,14 @@ public class TensorIndexingBenchmarks : Runtime
     #endregion
 }
 
-
+[InProcess]
+[IterationsColumn]
+[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
+[Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
 public class MultilingualEmbedded5SmallBenchmarks : Runtime
 {
-    [Benchmark(Description="1 string of 20 chars")]
-    [WarmupCount(3)]
-    [IterationCount(3)]
-    public void Benchmark20_1() => graph!.Execute(ui20_1!, true);
-
-    [Benchmark(Description = "10 strings of 20 chars")]
-    [WarmupCount(1)]
-    [IterationCount(3)]
-    public void Benchmark20_10() => graph!.Execute(ui20_10!, true);
-
-    [IterationSetup]
-    public void Reset() => graph!.Reset();
-
     [GlobalSetup()]
-    public void Setup() 
+    public void Setup()
     {
         var op = Begin("Creating computational graph and tokenizing test data");
         graph = Model.Load(modelFile);
@@ -263,8 +253,46 @@ public class MultilingualEmbedded5SmallBenchmarks : Runtime
         ui20_1 = GetTextTensors(T20[0], "me5s");
         ui20_10 = GetTextTensors(T20[1..11], "me5s");
         ui20_100 = GetTextTensors(T20[11..111], "me5s");
-        op.Complete();  
+        op.Complete();
     }
+
+    [IterationSetup(Targets = ["Benchmark20_1", "Benchmark20_10"])]
+    public void SetupNoSimd()
+    {
+        graph!.Reset();
+        HardwareConfig.UseSimd = false;
+    }
+
+    [IterationSetup(Targets = ["Benchmark20_1_simd", "Benchmark20_10_simd"])]
+    public void SetupSimd()
+    {
+        graph!.Reset();
+        HardwareConfig.UseSimd = true;
+    }
+
+    [Benchmark(Description="1 string of 20 chars", Baseline = true)]
+    [BenchmarkCategory("1_20")]
+    [WarmupCount(1)]
+    [IterationCount(5)]
+    public void Benchmark20_1() => graph!.Execute(ui20_1!, true);
+
+    [Benchmark(Description = "1 string of 20 chars - simd")]
+    [BenchmarkCategory("1_20")]
+    [WarmupCount(1)]
+    [IterationCount(5)]
+    public void Benchmark20_1_simd() => graph!.Execute(ui20_1!, true);
+
+    [Benchmark(Description = "10 strings of 20 chars")]
+    [BenchmarkCategory("10_20")]
+    [WarmupCount(1)]
+    [IterationCount(2)]
+    public void Benchmark20_10() => graph!.Execute(ui20_10!, true);
+
+    [Benchmark(Description = "10 strings of 20 chars - simd")]
+    [BenchmarkCategory("10_20")]
+    [WarmupCount(1)]
+    [IterationCount(2)]
+    public void Benchmark20_10_simd() => graph!.Execute(ui20_10!, true);
 
     #region Fields
     string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
