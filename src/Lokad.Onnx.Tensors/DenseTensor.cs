@@ -213,7 +213,9 @@ namespace Lokad.Onnx
         public override Tensor<T> Clone()
         {
             // create copy
-            return new DenseTensor<T>(new Memory<T>(memory.ToArray()), dimensions, IsReversedStride);
+            var memory = new T[Length];
+            this.memory.CopyTo(memory);
+            return new DenseTensor<T>(memory, dimensions, IsReversedStride);
         }
 
         /// <summary>
@@ -246,6 +248,26 @@ namespace Lokad.Onnx
             }
 
             return new DenseTensor<T>(Buffer, dimensions, IsReversedStride);
+        }
+
+        protected override void CopyFrom(Tensor<T> from)
+        {
+            if (from is DenseTensor<T> d)
+            {
+           
+                for (int i = 0; i < from.Length; i++)
+                {
+                    this.ptr[i] = d.ptr[i];
+                }
+                
+            }
+            else
+            {
+                foreach (var index in from.GetDimensionsIterator())
+                {
+                    this[index] = from[index];
+                }
+            }
         }
 
         public override DenseTensor<T> ToDenseTensor() => this;

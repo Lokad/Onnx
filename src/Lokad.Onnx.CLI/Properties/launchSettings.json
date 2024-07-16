@@ -10,7 +10,7 @@
     },
     "Run me5s": {
       "commandName": "Project",
-      "commandLineArgs": "benchmark indexing"
+      "commandLineArgs": "benchmark matmul"
     }
   }
 }
