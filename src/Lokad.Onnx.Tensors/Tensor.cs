@@ -1786,6 +1786,7 @@ namespace Lokad.Onnx
             return sliced_axes;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public SliceIndex[] ExpandEllipsis(SliceIndex[] slices)
         {
             if (!slices.Any(s => s.IsEllipsis))
