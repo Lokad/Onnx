@@ -143,8 +143,15 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override T GetValue(int index)
         {
-            return ptr[index];
-            //return Buffer.Span[index];
+            if (index > Length)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            else
+            {
+                return ptr[index];
+            }
+            
         }
 
         /// <summary>
@@ -156,8 +163,14 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override void SetValue(int index, T value)
         {
-            //Buffer.Span[index] = value;
-            ptr[index] = value;
+            if (index > Length)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            else
+            {
+                ptr[index] = value;
+            }
         }
 
         /// <summary>
@@ -280,6 +293,5 @@ namespace Lokad.Onnx
 
         public static DenseTensor<T> Scalar(T value) => new DenseTensor<T>(new T[1] { value }, Array.Empty<int>());
         #endregion
-
     }
 }
