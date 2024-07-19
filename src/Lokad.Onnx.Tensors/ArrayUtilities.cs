@@ -155,14 +155,14 @@ namespace Lokad.Onnx
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, ReadOnlySpan<int> broadcastedDims, int startFromDimension = 0)
+        public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int[] broadcastedDims, int startFromDimension = 0)
         {
             Debug.Assert(strides.Length == indices.Length);
 
             int index = 0;
             for (int i = startFromDimension; i < indices.Length; i++)
             {
-                if (indices[i] == 0 || broadcastedDims.Contains(i))
+                if (indices[i] == 0 || Array.IndexOf(broadcastedDims, i) != -1)
                 {
                     continue;
                 }

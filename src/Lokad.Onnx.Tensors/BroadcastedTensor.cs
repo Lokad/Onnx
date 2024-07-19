@@ -20,7 +20,15 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
             throw new ArgumentException(nameof(broadcastedDims), "The number of broadcasted dimensions cannot be more than the number of source dimensions.");
         }
         this.source = source;
-        this.broadcastedDims = broadcastedDims;  
+        this.broadcastedDims = broadcastedDims;
+        this.effectiveStrides = source.strides.Copy();
+        for (int i = 0; i < dimensions.Length; i++)
+        {
+            if (Array.IndexOf(broadcastedDims, i) != -1)
+            {
+                effectiveStrides[i] = 0;   
+            }
+        }  
     }
     #endregion
 
@@ -30,10 +38,10 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     public override T this[ReadOnlySpan<int> indices]
     {
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get => this.source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
+        get => this.source.GetValue(ArrayUtilities.GetIndex(effectiveStrides, indices));
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        set => this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
+        set => this.source.SetValue(ArrayUtilities.GetIndex(effectiveStrides, indices), value);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -41,7 +49,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     {
         int[] indices = new int[this.Rank];
         ArrayUtilities.GetIndices(strides, IsReversedStride, index, indices);
-        return source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
+        return source.GetValue(ArrayUtilities.GetIndex(effectiveStrides, indices));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -49,7 +57,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     {
         int[] indices = new int[this.Rank];
         ArrayUtilities.GetIndices(strides, IsReversedStride, index, indices);
-        this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
+        this.source.SetValue(ArrayUtilities.GetIndex(effectiveStrides, indices), value);
     }
 
     public override Tensor<T> Clone() => new BroadcastedTensor<T>(source, dimensions, broadcastedDims);
@@ -117,6 +125,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     #region Fields
     public readonly Tensor<T> source;
     public int[] broadcastedDims;
+    public int[] effectiveStrides;
     #endregion
 }
 
