@@ -141,7 +141,7 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int startFromDimension = 0)
         {
-            //Debug.Assert(strides.Length == indices.Length);
+            Debug.Assert(strides.Length == indices.Length);
             
             int index = 0;
             unchecked
