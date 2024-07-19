@@ -27,6 +27,15 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     #region Methods
 
     #region Tensor<T> members
+    public override T this[ReadOnlySpan<int> indices]
+    {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        get => this.source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        set => this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public override T GetValue(int index)
     {
