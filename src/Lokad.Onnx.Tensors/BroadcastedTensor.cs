@@ -27,29 +27,6 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
     #region Methods
 
     #region Tensor<T> members
-    /// <summary>
-    /// Obtains the value at the specified indices
-    /// </summary>
-    /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
-    /// <returns>The value at the specified position in this Tensor.</returns>
-
-    public override T this[params int[] indices]
-    {
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get => this[(ReadOnlySpan<int>)indices];
-
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        set => this[(ReadOnlySpan<int>)indices] = value;
-    }
-    public override T this[ReadOnlySpan<int> indices]
-    {
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        get => this.source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
-            
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        set => this.source.SetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims), value);
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public override T GetValue(int index)
     {
@@ -57,7 +34,6 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
         ArrayUtilities.GetIndices(strides, IsReversedStride, index, indices);
         return source.GetValue(ArrayUtilities.GetIndex(source.strides, indices, broadcastedDims));
     }
-
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public override void SetValue(int index, T value)
