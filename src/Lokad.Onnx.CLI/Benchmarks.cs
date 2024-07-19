@@ -47,14 +47,14 @@ public class MatMul2DBenchmarks : Runtime
     public void MatMul2D_1() =>
         mm_managed(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_a.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
 
+    [Benchmark(Description = "Multiply 2 384x384 matrices - managed simd")]
+    public void MatMul2D_3() =>
+      mm_vectorized(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_a.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
+
     [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe")]
     public unsafe void MatMul2D_2() =>
        mm(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
-
-    [Benchmark(Description = "Multiply 2 384x384 matrices - managed simd")]
-    public void MatMul2D_3() =>
-        mm_vectorized(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_a.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
-
+  
     [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe simd")]
     public unsafe void MatMul2D_4() =>
        mm_unsafe_vectorized(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
@@ -87,8 +87,8 @@ public class TensorMatMulBenchmarks : Runtime
         t_384_384_b = Tensor<float>.Rand(384, 384);
         t_384_1536_a = Tensor<float>.Rand(384, 1536);
         t_1536_384_b = Tensor<float>.Rand(1536, 384);
-        t_3_4_384_384_a = Tensor<float>.Rand(4,1, 384, 384);
-        t_3_4_384_384_b = Tensor<float>.Rand(4, 1, 384, 384);
+        t_3_4_384_384_a = Tensor<float>.Rand(3,4, 384, 384);
+        t_3_4_384_384_b = Tensor<float>.Rand(3, 4, 384, 384);
     }
 
     [IterationSetup(Targets = ["MatMul_simd", "MatMul2_simd", "MatMul3_simd"])]
@@ -224,7 +224,7 @@ public class TensorIndexingBenchmarks : Runtime
 [IterationsColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
-public class MultilingualEmbedded5SmallBenchmarks : Runtime
+public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
 {
     [GlobalSetup()]
     public void Setup()
@@ -306,11 +306,74 @@ public class MultilingualEmbedded5SmallBenchmarks : Runtime
     #endregion
 }
 
+[InProcess]
+[MemoryDiagnoser]
+[IterationsColumn]
+[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
+[Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
+public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
+{
+    [GlobalSetup()]
+    public void Setup()
+    {
+        var op = Begin("Loading test data");
+   
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        TextData?[] textData = File.ReadAllLines(testDataFile).AsParallel().Select(t => JsonSerializer.Deserialize<TextData>(t, options)).ToArray();
+        Random rnd = new Random();
+        T20 = textData
+            .AsParallel()
+            .Where(t => t is not null && t!.Text.Length >= 21 && t!.Text[20] == ' ')
+            .Select(t => t!.Text.Substring(0, 20)/*.Replace("\n", " ")*/)
+            .OrderBy(x => rnd.Next())
+            .ToArray();
+        T200 = textData
+            .AsParallel()
+            .Where(t => t is not null && t!.Text.Length >= 201 && t!.Text[200] == ' ')
+            .Select(t => t!.Text.Substring(0, 200)/*.Replace("\n", " ")*/)
+            .OrderBy(x => rnd.Next())
+            .ToArray();
+
+        op.Complete();
+    }
+
+    [Benchmark(Description = "Load model file")]
+    [BenchmarkCategory("model")]
+    [IterationCount(5)]
+    public void LoadModel() => Model.Load(modelFile);
+
+    [Benchmark(Description = "Tokenize 1 string of 20 chars")]
+    [BenchmarkCategory("tokenize")]
+    [IterationCount(5)]
+    public void Tokenize_20_1() => GetTextTensors(T20[0], "me5s");
+
+    [Benchmark(Description = "Tokenize 10 strings of 20 chars")]
+    [BenchmarkCategory("tokenize")]
+    [IterationCount(5)]
+    public void Tokenize_20_10() => GetTextTensors(T20[1..11], "me5s");
+
+    [Benchmark(Description = "Tokenize 100 strings of 20 chars")]
+    [BenchmarkCategory("tokenize")]
+    [IterationCount(5)]
+    public void Tokenize_20_100() => GetTextTensors(T20[11..111], "me5s");
+
+    #region Fields
+    string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
+    string testDataFile = Path.Combine(Runtime.AssemblyLocation, "train.jsonl");
+    public static string[] T20 = Array.Empty<string>();
+    public static string[] T200 = Array.Empty<string>();
+    #endregion
+}
+
 internal class Benchmarks : Runtime
 {
-    internal static void RunMe5s()
+    internal static void RunMe5sLoad()
     {
-        var op = Begin("Preparing model and data for multilingual-embedded-5-small benchmark");
+        var op = Begin("Preparing model and data for multilingual-embedded-5-small load benchmark");
         var modelFile = Path.Combine(AssemblyLocation, "benchmark-model.onnx");
         var testDataFile = Path.Combine(AssemblyLocation, "train.jsonl");
         if (!File.Exists(modelFile))
@@ -333,12 +396,43 @@ internal class Benchmarks : Runtime
             }
         }
         op.Complete();
-        BenchmarkRunner.Run<MultilingualEmbedded5SmallBenchmarks>();
+        BenchmarkRunner.Run<MultilingualEmbedded5SmallLoadBenchmarks>();
+    }
+
+    internal static void RunMe5sRun()
+    {
+        var op = Begin("Preparing model and data for multilingual-embedded-5-small run benchmark");
+        var modelFile = Path.Combine(AssemblyLocation, "benchmark-model.onnx");
+        var testDataFile = Path.Combine(AssemblyLocation, "train.jsonl");
+        if (!File.Exists(modelFile))
+        {
+            if (!DownloadFile("benchmark-model.onnx", new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx?download=true"), modelFile))
+            {
+                Error("Could not download benchmark model file.");
+                op.Abandon();
+                return;
+            }
+        }
+
+        if (!File.Exists(testDataFile))//
+        {  //https://huggingface.co/datasets/mteb/quora/resolve/main/corpus.jsonl
+            if (!DownloadFile("train.jsonl", new Uri("https://huggingface.co/datasets/mteb/amazon_reviews_multi/resolve/main/en/train.jsonl?download=true"), testDataFile))
+            {
+                Error("Could not download benchmark test data file.");
+                op.Abandon();
+                return;
+            }
+        }
+        op.Complete();
+        BenchmarkRunner.Run<MultilingualEmbedded5SmallRunBenchmarks>();
     }
 
     internal static void RunMatMul()
     {
-        Info("Hardware config: {s}.", HardwareIntrinsics.GetFullInfo());
+        Info("Running tensor matmul benchmark...");
+        Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
+        Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
+        Info("SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
         BenchmarkRunner.Run<TensorMatMulBenchmarks>();
     }
 
@@ -349,8 +443,10 @@ internal class Benchmarks : Runtime
 
     internal static void RunMatMul2D(string[] args)
     {
+        Info("Running matmul core benchmark...");
         Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
         Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
+        Info("SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
         Info("Creating new build of Lokad.Onnx solution to run and profile MatMul2D benchmark code...");
         BenchmarkRunner.Run<MatMul2DBenchmarks>(DefaultConfig.Instance, args);
     }

@@ -240,8 +240,12 @@ class Program : Runtime
     {
         switch (bo.BenchmarkId) 
         {
-            case "me5s":
-                Benchmarks.RunMe5s();
+            case "me5s-load":
+                Benchmarks.RunMe5sLoad();
+                ExitWithSuccess();
+                break;
+            case "me5s-run":
+                Benchmarks.RunMe5sRun();
                 ExitWithSuccess();
                 break;
             case "matmul2d":
