@@ -902,7 +902,17 @@ namespace Lokad.Onnx
         public virtual T this[params int[] indices]
         {
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-            get => this[(ReadOnlySpan<int>) indices];
+            get
+            {
+                for (int i = 0; i < indices.Length; i++)
+                {
+                    if (indices[i] >= dimensions[i])
+                    {
+                        throw new IndexOutOfRangeException();
+                    }
+                }
+                return this[(ReadOnlySpan<int>)indices];
+            }
             
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
             set => this[(ReadOnlySpan<int>)indices] = value;

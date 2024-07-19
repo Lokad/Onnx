@@ -174,7 +174,7 @@ public class TensorIndexingBenchmarks : Runtime
     public void MultidimIndexBroadcastedTensor()
     {
         var a = 0.0f;
-        var di = t_384_384_slice.GetDimensionsIterator();
+        var di = t_384_384_bcast.GetDimensionsIterator();
         foreach (var _ in di)
         {
             a += t_384_384_bcast[_];

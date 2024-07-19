@@ -55,7 +55,7 @@ namespace Lokad.Onnx.Tensors.Tests
             Assert.Equal(1, bc1[0, 204]);
             Assert.Equal(2, bc1[1, 254]);
             Assert.Equal(3, bc1[2, 164]);
-            Assert.Throws<IndexOutOfRangeException>(() => bc1[2, 256]);
+            Assert.Throws<IndexOutOfRangeException>(() => bc1[3, 256]);
 
             var ba = Tensor<int>.Broadcast(Tensor<int>.Ones(1, 2), Tensor<int>.Ones(3, 1));
             Assert.Equal(2, ba.Length);
