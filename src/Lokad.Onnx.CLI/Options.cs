@@ -89,16 +89,21 @@ public class RunOptions : Options
 [Verb("benchmark", HelpText = "Benchmark an ONNX model or operations.")]
 public class BenchmarkOptions : Options
 {
-    [Value(1, Required = true, HelpText = "The benchmark to run. Currently supported: matmul2d, matmul, me5s-load, me5s-run")]
+    [Value(1, Required = true, HelpText = "The benchmark to run. Currently supported: matmul2d, matmul, indexing, me5s-load, me5s-run")]
     public string BenchmarkId { get; set; } = "";
 
     [Option('f', "filter", Required = false, HelpText = "Filter the benchmarks by their full name (namespace.typeName.methodName) using glob patterns.")]
     public string Filter { get; set; } = "";
 
-    [Option("list", Required = false, HelpText = "Allows you to print all of the available benchmark names.")]
+    [Option("list", Required = false, HelpText = "Allows you to print all of the available benchmark names. Support values are flat or tree.")]
     public string List { get; set; } = ""; //
 
-    [Option("launchCount", Required = false, HelpText = "How many times we should launch process with target benchmark.")]
-    public int LaunchCount { get; set; }
+    [Option("iterationCount", Required = false, HelpText = "How many target iterations should be performed.")]
+    public int IterationCount { get; set; }
 
+    [Option("invocationCount", Required = false, HelpText = "Invocation count in a single iteration.")]
+    public int InvocationCount { get; set; }
+
+    [Option("runOncePerIteration", Required = false, HelpText = "Run the benchmark exactly once per iteration.")]
+    public int RunOncePerIteration { get; set; }
 }
