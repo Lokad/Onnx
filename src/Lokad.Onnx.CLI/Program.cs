@@ -47,7 +47,7 @@ class Program : Runtime
         result
             .WithParsed<InfoOptions>(Info)
             .WithParsed<RunOptions>(Run)
-            .WithParsed<BenchmarkOptions>(bo => Benchmark(bo, GetBenchmarkArgs(args)))
+            .WithParsed<BenchmarkOptions>(bo => Benchmark(bo, GetBenchmarkArgs(args, bo)))
             .WithNotParsed(errors => Help(result, errors));
     }
     #endregion
@@ -238,33 +238,44 @@ class Program : Runtime
 
     static void Benchmark(BenchmarkOptions bo, string[] args)
     {
-        switch (bo.BenchmarkId) 
+        try
         {
-            case "me5s-load":
-                Benchmarks.RunMe5sLoad();
-                ExitWithSuccess();
-                break;
-            case "me5s-run":
-                Benchmarks.RunMe5sRun();
-                ExitWithSuccess();
-                break;
-            case "matmul2d":
-                Benchmarks.RunMatMul2D(args);
-                ExitWithSuccess();
-                break;
-            case "matmul":
-                Benchmarks.RunMatMul();
-                ExitWithSuccess();
-                break;
-            case "indexing":
-                Benchmarks.RunIndexing();
-                ExitWithSuccess();
-                break;
-            default:
-                Error("Unkown benchmark: {b}.", bo.BenchmarkId);
-                Exit(ExitResult.INVALID_OPTIONS);
-                break;
+            switch (bo.BenchmarkId)
+            {
+                case "me5s-load":
+                    Benchmarks.RunMe5sLoad(args);
+                    ExitWithSuccess();
+                    break;
+                case "me5s-run":
+                    Benchmarks.RunMe5sRun(args);
+                    ExitWithSuccess();
+                    break;
+                case "matmul2d":
+                    Benchmarks.RunMatMul2D(args);
+                    ExitWithSuccess();
+                    break;
+                case "matmul":
+                    Benchmarks.RunMatMul(args);
+                    ExitWithSuccess();
+                    break;
+                case "indexing":
+                    Benchmarks.RunIndexing(args);
+                    ExitWithSuccess();
+                    break;
+                default:
+                    Error("Unknown benchmark: {b}.", bo.BenchmarkId);
+                    Exit(ExitResult.INVALID_OPTIONS);
+                    break;
 
+            }
+        }
+        catch (InvalidOperationException e)
+        {
+            if (e.Message == "Sequence contains no elements")
+            {
+                Exit(ExitResult.SUCCESS);
+            }
+            else throw new Exception("Exception thrown by BenchmarkDotNet runner.", e);
         }
     }
 
@@ -462,12 +473,19 @@ class Program : Runtime
         e => e);
     }
 
-    static string[] GetBenchmarkArgs(string[] args)
+    static string[] GetBenchmarkArgs(string[] args, BenchmarkOptions bo)
     {
         List<string> result = args.ToList();
         result.RemoveRange(0, 2);
         result.Remove("--debug");
         result.Remove("-d");
+        if (result.Contains("--iterationCount"))
+        {
+            result.Add("--maxIterationCount");
+            result.Add(bo.IterationCount.ToString());
+            result.Add("--minIterationCount");
+            result.Add((bo.IterationCount - 1).ToString());
+        }
         return result.ToArray();
     }
     #endregion

@@ -10,7 +10,7 @@
     },
     "Run me5s": {
       "commandName": "Project",
-      "commandLineArgs": "run c:\\Users\\Allister\\Downloads\\model.onnx \"Hello world I'm some text\" --text me5s"
+      "commandLineArgs": "benchmark me5s-load --filter Lokad.Onnx.CLI.MultilingualEmbedded5SmallLoadBenchmarks.Tokenize_20_1 --iterationCount 3 --runOncePerIteration"
     }
   }
 }

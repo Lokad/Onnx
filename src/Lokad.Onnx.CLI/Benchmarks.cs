@@ -15,6 +15,7 @@ using static Lokad.Onnx.Text;
 using static Lokad.Onnx.MathOps;
 
 using Lokad.Onnx;
+using BenchmarkDotNet.Jobs;
 
 [RyuJitX64Job]
 [IterationsColumn]
@@ -141,12 +142,13 @@ public class TensorIndexingBenchmarks : Runtime
     public void Setup()
     {
         t_384_384_dense = Tensor<float>.Rand(384, 384);
+        t_3_4_384_384_dense = Tensor<float>.Rand(3,4,384, 384);
         t_384_384_slice = t_384_384_dense[..];
         t_384_384_bcast = t_384_384_dense.PadLeft().BroadcastDim(0, 2);
         t_384_384_3_4_bcast = t_384_384_dense.PadLeft().PadLeft().BroadcastDim(0, 3).BroadcastDim(1,4);
     }
 
-    [Benchmark(Baseline = true, Description = "Multi-dim index into a 384x384 dense tensor")]
+    [Benchmark(Description = "Multi-dim index into a 384x384 dense tensor")]
     [BenchmarkCategory("multidim")]
     public void MultiDimIndexDenseTensor()
     {
@@ -179,6 +181,18 @@ public class TensorIndexingBenchmarks : Runtime
         foreach (var _ in di)
         {
             a += t_384_384_bcast[_];
+        }
+    }
+
+    [Benchmark(Description = "Multi-dim index into a 3x4x384x384 dense tensor")]
+    [BenchmarkCategory("multidim")]
+    public void MultiDimIndexDenseTensor2()
+    {
+        var a = 0.0f;
+        var di = t_3_4_384_384_dense.GetDimensionsIterator();
+        foreach (var _ in di)
+        {
+            a += t_3_4_384_384_dense[_];
         }
     }
 
@@ -240,16 +254,20 @@ public class TensorIndexingBenchmarks : Runtime
 
     #region Fields
     Tensor<float> t_384_384_dense = Tensor<float>.Zeros(0);
+    Tensor<float> t_3_4_384_384_dense = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_slice = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_bcast = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_3_4_bcast = Tensor<float>.Zeros(0);
+    int[] di = new int[2];
+
     #endregion
 }
 
 [InProcess]
+[MemoryDiagnoser]
 [IterationsColumn]
-[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
+[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
 {
     [GlobalSetup()]
@@ -279,17 +297,19 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
         ui20_1 = GetTextTensors(T20[0], "me5s");
         ui20_10 = GetTextTensors(T20[1..11], "me5s");
         ui20_100 = GetTextTensors(T20[11..111], "me5s");
+        ui200_1 = GetTextTensors(T200[0], "me5s");
+        ui200_10 = GetTextTensors(T200[1..11], "me5s");
         op.Complete();
     }
 
-    [IterationSetup(Targets = ["Benchmark20_1", "Benchmark20_10"])]
+    [IterationSetup(Targets = ["Benchmark20_1", "Benchmark20_10", "Benchmark200_1", "Benchmark200_10"])]
     public void SetupNoSimd()
     {
         graph!.Reset();
         HardwareConfig.UseSimd = false;
     }
 
-    [IterationSetup(Targets = ["Benchmark20_1_simd", "Benchmark20_10_simd"])]
+    [IterationSetup(Targets = ["Benchmark20_1_simd", "Benchmark20_10_simd", "Benchmark200_1_simd", "Benchmark200_10_simd"])]
     public void SetupSimd()
     {
         graph!.Reset();
@@ -320,6 +340,31 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     [IterationCount(2)]
     public void Benchmark20_10_simd() => graph!.Execute(ui20_10!, true);
 
+
+    [Benchmark(Description = "1 string of 200 chars")]
+    [BenchmarkCategory("1_200")]
+    [WarmupCount(1)]
+    [IterationCount(5)]
+    public void Benchmark200_1() => graph!.Execute(ui200_1!, true);
+    
+    [Benchmark(Description = "1 string of 200 chars - simd")]
+    [BenchmarkCategory("1_200")]
+    [WarmupCount(1)]
+    [IterationCount(5)]
+    public void Benchmark200_1_simd() => graph!.Execute(ui200_1!, true);
+
+    [Benchmark(Description = "10 strings of 200 chars")]
+    [BenchmarkCategory("10_200")]
+    [WarmupCount(1)]
+    [IterationCount(2)]
+    public void Benchmark200_10() => graph!.Execute(ui200_10!, true);
+
+    [Benchmark(Description = "10 strings of 200 chars - simd")]
+    [BenchmarkCategory("10_200")]
+    [WarmupCount(1)]
+    [IterationCount(2)]
+    public void Benchmark200_10_simd() => graph!.Execute(ui200_10!, true);
+
     #region Fields
     string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
     string testDataFile = Path.Combine(Runtime.AssemblyLocation, "train.jsonl");
@@ -329,6 +374,8 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     ITensor[]? ui20_1 = null;
     ITensor[]? ui20_10 = null;
     ITensor[]? ui20_100 = null;
+    ITensor[]? ui200_1 = null;
+    ITensor[]? ui200_10 = null;
     #endregion
 }
 
@@ -373,19 +420,34 @@ public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
     public void LoadModel() => Model.Load(modelFile);
 
     [Benchmark(Description = "Tokenize 1 string of 20 chars")]
-    [BenchmarkCategory("tokenize")]
+    [BenchmarkCategory("tokenize_20")]
     [IterationCount(5)]
     public void Tokenize_20_1() => GetTextTensors(T20[0], "me5s");
 
     [Benchmark(Description = "Tokenize 10 strings of 20 chars")]
-    [BenchmarkCategory("tokenize")]
+    [BenchmarkCategory("tokenize_20")]
     [IterationCount(5)]
     public void Tokenize_20_10() => GetTextTensors(T20[1..11], "me5s");
 
     [Benchmark(Description = "Tokenize 100 strings of 20 chars")]
-    [BenchmarkCategory("tokenize")]
+    [BenchmarkCategory("tokenize_20")]
     [IterationCount(5)]
     public void Tokenize_20_100() => GetTextTensors(T20[11..111], "me5s");
+
+    [Benchmark(Description = "Tokenize 1 string of 200 chars")]
+    [BenchmarkCategory("tokenize_200")]
+    [IterationCount(5)]
+    public void Tokenize_200_1() => GetTextTensors(T200[0], "me5s");
+
+    [Benchmark(Description = "Tokenize 10 strings of 200 chars")]
+    [BenchmarkCategory("tokenize_200")]
+    [IterationCount(5)]
+    public void Tokenize_200_10() => GetTextTensors(T200[1..11], "me5s");
+
+    [Benchmark(Description = "Tokenize 100 strings of 200 chars")]
+    [BenchmarkCategory("tokenize_200")]
+    [IterationCount(5)]
+    public void Tokenize_200_100() => GetTextTensors(T200[11..111], "me5s");
 
     #region Fields
     string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
@@ -397,7 +459,7 @@ public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
 
 internal class Benchmarks : Runtime
 {
-    internal static void RunMe5sLoad()
+    internal static void RunMe5sLoad(string[] args)
     {
         var op = Begin("Preparing model and data for multilingual-embedded-5-small load benchmark");
         var modelFile = Path.Combine(AssemblyLocation, "benchmark-model.onnx");
@@ -422,10 +484,10 @@ internal class Benchmarks : Runtime
             }
         }
         op.Complete();
-        BenchmarkRunner.Run<MultilingualEmbedded5SmallLoadBenchmarks>();
+        BenchmarkRunner.Run<MultilingualEmbedded5SmallLoadBenchmarks>(DefaultConfig.Instance, args);
     }
 
-    internal static void RunMe5sRun()
+    internal static void RunMe5sRun(string[] args)
     {
         var op = Begin("Preparing model and data for multilingual-embedded-5-small run benchmark");
         var modelFile = Path.Combine(AssemblyLocation, "benchmark-model.onnx");
@@ -450,21 +512,21 @@ internal class Benchmarks : Runtime
             }
         }
         op.Complete();
-        BenchmarkRunner.Run<MultilingualEmbedded5SmallRunBenchmarks>();
+        BenchmarkRunner.Run<MultilingualEmbedded5SmallRunBenchmarks>(DefaultConfig.Instance, args);
     }
 
-    internal static void RunMatMul()
+    internal static void RunMatMul(string[] args)
     {
         Info("Running tensor matmul benchmark...");
         Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
         Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
         Info("SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
-        BenchmarkRunner.Run<TensorMatMulBenchmarks>();
+        BenchmarkRunner.Run<TensorMatMulBenchmarks>(DefaultConfig.Instance, args);
     }
 
-    internal static void RunIndexing()
+    internal static void RunIndexing(string[] args)
     {
-        BenchmarkRunner.Run<TensorIndexingBenchmarks>();
+        BenchmarkRunner.Run<TensorIndexingBenchmarks>(DefaultConfig.Instance, args);
     }
 
     internal static void RunMatMul2D(string[] args)
