@@ -417,8 +417,8 @@ where T : unmanaged
             }
             else
             {
-                x = b[0];
-                y = b[1];
+                x = b[0].ToDenseTensor();
+                y = b[1].ToDenseTensor();
                 var c = x.CloneEmpty();
                 var di = x.GetDimensionsIterator(0..^2);
                 foreach (var _ in di)
@@ -500,8 +500,8 @@ where T : unmanaged
             }
             else
             {
-                x = b[0];
-                y = b[1];
+                x = b[0].ToDenseTensor();
+                y = b[1].ToDenseTensor();
                 var c = x.CloneEmpty();
                 var di = x.GetDimensionsIterator(0..^2);
                 foreach (var _ in di)
@@ -583,8 +583,8 @@ where T : unmanaged
             }
             else
             {
-                x = b[0];
-                y = b[1];
+                x = b[0].ToDenseTensor();
+                y = b[1].ToDenseTensor();
                 var c = x.CloneEmpty();
                 var di = x.GetDimensionsIterator(0..^2);
                 foreach (var _ in di)
@@ -599,12 +599,12 @@ where T : unmanaged
             bool bcast = false;
             if (x.Rank == 1)
             {
-                x = x.PadLeft();
+                x = x.PadLeft().ToDenseTensor();
                 bcast = true;
             }
             if (y.Rank == 1)
             {
-                y = y.PadRight();
+                y = y.PadRight().ToDenseTensor();
                 bcast = true;
             }
             var c = MatMul2D(x, y);

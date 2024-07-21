@@ -30,6 +30,7 @@ namespace Lokad.Onnx;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Security;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -77,7 +78,25 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 		return GetEnumerator();
 	}
 	
-	public void Add(T item)
+	public IEnumerable<T> Filter(Func<T, bool> filter)
+	{
+        for (int i = 0; i < _count; i++)
+        {
+            var x = this[i];
+			if (filter(x)) yield return x;
+        }
+    }
+
+    public IEnumerable<T> Filter(Func<T, int, bool> filter)
+    {
+        for (int i = 0; i < _count; i++)
+        {
+            var x = this[i];
+            if (filter(x, i)) yield return x;
+        }
+    }
+
+    public void Add(T item)
 	{
 		*(ptr + _count) = item;
 		_count++;
