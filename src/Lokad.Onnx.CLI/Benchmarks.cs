@@ -345,13 +345,13 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     [Benchmark(Description = "10 strings of 20 chars")]
     [BenchmarkCategory("10_20")]
     [WarmupCount(1)]
-    [IterationCount(2)]
+    [IterationCount(3)]
     public void Benchmark20_10() => graph!.Execute(ui20_10!, true);
 
     [Benchmark(Description = "10 strings of 20 chars - simd")]
     [BenchmarkCategory("10_20")]
     [WarmupCount(1)]
-    [IterationCount(2)]
+    [IterationCount(3)]
     public void Benchmark20_10_simd() => graph!.Execute(ui20_10!, true);
 
 

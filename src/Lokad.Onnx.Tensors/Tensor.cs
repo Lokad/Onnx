@@ -986,14 +986,32 @@ namespace Lokad.Onnx
         public Tensor<T> this[params SliceIndex[] indices]
         {
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-            get => new TensorSlice<T>(this, ExpandEllipsis(indices));   
+            get
+            {
+                /*
+                var _slices_expanded = ExpandEllipsis(indices);
+                var slices_expanded = new SliceDef[_slices_expanded.Length];
+                for (var i = 0; i < _slices_expanded.Length; i++)
+                {
+                    slices_expanded[i] = _slices_expanded[i].ToSliceDef(dimensions[i]);
+                }
+                var slice_dims = SliceAxes(_slices_expanded);
+                var dense = DenseTensor<T>.OfShape(slice_dims);
+                var it = dense.GetDimensionsIterator();
+
+                foreach (var index in it)
+                {
+
+                    dense[index] = this.GetValue(GetOffsetUnsafe(strides, slice_dims, slices_expanded, index));
+                }
+                return dense;
+                */
+                return new TensorSlice<T>(this, indices);
+            }
             
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
             set
-            {
-                //var _indices = ExpandEllipsis(indices);
-                //var ts = new TensorSlice<T>(this, ExpandEllipsis(indices));
-                /*
+            {           
                 var _slices_expanded = ExpandEllipsis(indices);              
                 var slices_expanded = new SliceDef[_slices_expanded.Length];
                 for (var i = 0; i < _slices_expanded.Length; i++)
@@ -1001,35 +1019,33 @@ namespace Lokad.Onnx
                     slices_expanded[i] = _slices_expanded[i].ToSliceDef(dimensions[i]);
                 }
                 
-                var slices = new SliceDef[indices.Length];
-                for (var i = 0; i < indices.Length; i++)
-                {
-                    slices[i] = indices[i].ToSliceDef(dimensions[i]);
-                }
-                var slice_indices = SliceAxes(_slices_expanded);
-                var slice_strides = ArrayUtilities.GetStrides(slice_indices, this.IsReversedStride);
+                
+                var slice_dims = SliceAxes(_slices_expanded);
+
                 var it = value.GetDimensionsIterator();
-                var tsw = new TensorSlice<T>(this, ExpandEllipsis(indices));
-                var it2 = value.GetDimensionsIterator();
+               
                 foreach (var index in it)
                 {
 
-                    this.SetValue(GetOffsetUnsafe(slices_expanded, index), value[index]);
+                    this.SetValue(GetOffsetUnsafe(strides, slice_dims, slices_expanded, index), value[index]);
                 }
-                */
+                
+                /*
                 var ts = new TensorSlice<T>(this, ExpandEllipsis(indices));
                 ts.CopyFrom(value);
+                */
             }
         }
 
-        protected unsafe int GetOffsetUnsafe(SliceDef[] slices, ReadOnlySpan<int> indices)
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        protected unsafe int GetOffsetUnsafe(int[] orig_strides, int[] slice_dims, SliceDef[] slices, ReadOnlySpan<int> indices)
         {
             int offset;
             var coordsptr = stackalloc int[Rank];
             var coords = new UnsafeFixedSizeList<int>(coordsptr, Rank);
             coords.AddRange(indices);
-            var orig_ndim = Rank;
-            if (orig_ndim > slices.Length && orig_ndim > indices.Length)
+            var orig_ndim = orig_strides.Length;
+            if (orig_ndim > slice_dims.Length && orig_ndim > indices.Length)
             {
                 // fill in reduced dimensions in the provided coordinates 
                 for (int i = 0; i < Rank; i++)
@@ -1039,8 +1055,6 @@ namespace Lokad.Onnx
                         coords.Insert(i, 0);
                 }
             }
-
-            var orig_strides = strides;
             //var orig_dims = vi.OriginalShape.dimensions;
             offset = 0;
 
