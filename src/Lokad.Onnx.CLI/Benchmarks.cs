@@ -76,9 +76,10 @@ public class MatMul2DBenchmarks : Runtime
 }
 
 [InProcess]
-[IterationsColumn]
 [MemoryDiagnoser]
+[IterationsColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
+[Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
 public class TensorMatMulBenchmarks : Runtime
 {
     [GlobalSetup]
@@ -88,14 +89,16 @@ public class TensorMatMulBenchmarks : Runtime
         t_384_384_b = Tensor<float>.Rand(384, 384);
         t_384_1536_a = Tensor<float>.Rand(384, 1536);
         t_1536_384_b = Tensor<float>.Rand(1536, 384);
+        t_6_384_384_a = Tensor<float>.Rand(6, 384, 384);
+        t_6_384_384_b = Tensor<float>.Rand(6, 384, 384);
         t_3_4_384_384_a = Tensor<float>.Rand(3,4, 384, 384);
         t_3_4_384_384_b = Tensor<float>.Rand(3, 4, 384, 384);
     }
 
-    [IterationSetup(Targets = ["MatMul_simd", "MatMul2_simd", "MatMul3_simd"])]
+    [IterationSetup(Targets = ["MatMul_simd", "MatMul2_simd", "MatMul3_simd", "MatMul4_simd"])]
     public void EnableSimd() => HardwareConfig.UseSimd = true;
     
-    [IterationSetup(Targets = ["MatMul", "MatMul2", "MatMul3"])]
+    [IterationSetup(Targets = ["MatMul", "MatMul2", "MatMul3", "MatMul4"])]
     public void DisableSimd() => HardwareConfig.UseSimd = false;
    
     [Benchmark(Description = "Matrix multiply 2 384x384 tensors", Baseline = true)]
@@ -106,26 +109,37 @@ public class TensorMatMulBenchmarks : Runtime
     [BenchmarkCategory("384x384")]
     public void MatMul_simd() => Tensor<float>.MatMul(t_384_384_a, t_384_384_b);
 
+    [Benchmark(Description = "Matrix multiply 2 384x1536 tensors", Baseline = true)]
+    [BenchmarkCategory("384x1536")]
+    public void MatMul2() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
+
     [Benchmark(Description = "Matrix multiply 2 384x1536 tensors - simd")]
     [BenchmarkCategory("384x1536")]
     public void MatMul2_simd() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
 
-    [Benchmark(Description = "Matrix multiply 2 384x1536 tensors", Baseline = true)]
-    [BenchmarkCategory("384x1536")]
-    public void MatMul2() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
-    [BenchmarkCategory("3x4x384x384")]
-    [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors - simd")]
-    public void MatMul3_simd() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
+    [Benchmark(Description = "Matrix multiply 2 6x384x384 tensors", Baseline = true)]
+    [BenchmarkCategory("6x384x384")]
+    public void MatMul3() => Tensor<float>.MatMul(t_6_384_384_a, t_6_384_384_b);
+
+    [Benchmark(Description = "Matrix multiply 2 6x384x384 tensors - simd")]
+    [BenchmarkCategory("6x384x384")]
+    public void MatMul3_simd() => Tensor<float>.MatMul(t_6_384_384_a, t_6_384_384_b);
 
     [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors", Baseline = true)]
     [BenchmarkCategory("3x4x384x384")]
-    public void MatMul3() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
+    public void MatMul4() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
+
+    [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors - simd")]
+    [BenchmarkCategory("3x4x384x384")]
+    public void MatMul4_simd() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
 
     #region Fields
     Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_b = Tensor<float>.Zeros(0);
     Tensor<float> t_384_1536_a = Tensor<float>.Zeros(0);
     Tensor<float> t_1536_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_6_384_384_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_6_384_384_b = Tensor<float>.Zeros(0);
     Tensor<float> t_3_4_384_384_a = Tensor<float>.Zeros(0);
     Tensor<float> t_3_4_384_384_b = Tensor<float>.Zeros(0);
     #endregion

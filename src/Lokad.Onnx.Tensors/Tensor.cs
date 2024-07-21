@@ -986,15 +986,91 @@ namespace Lokad.Onnx
         public Tensor<T> this[params SliceIndex[] indices]
         {
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-            get => new TensorSlice<T>(this, ExpandEllipsis(indices));
+            get => new TensorSlice<T>(this, ExpandEllipsis(indices));   
+            
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
             set
             {
+                //var _indices = ExpandEllipsis(indices);
+                //var ts = new TensorSlice<T>(this, ExpandEllipsis(indices));
+                /*
+                var _slices_expanded = ExpandEllipsis(indices);              
+                var slices_expanded = new SliceDef[_slices_expanded.Length];
+                for (var i = 0; i < _slices_expanded.Length; i++)
+                {
+                    slices_expanded[i] = _slices_expanded[i].ToSliceDef(dimensions[i]);
+                }
+                
+                var slices = new SliceDef[indices.Length];
+                for (var i = 0; i < indices.Length; i++)
+                {
+                    slices[i] = indices[i].ToSliceDef(dimensions[i]);
+                }
+                var slice_indices = SliceAxes(_slices_expanded);
+                var slice_strides = ArrayUtilities.GetStrides(slice_indices, this.IsReversedStride);
+                var it = value.GetDimensionsIterator();
+                var tsw = new TensorSlice<T>(this, ExpandEllipsis(indices));
+                var it2 = value.GetDimensionsIterator();
+                foreach (var index in it)
+                {
+
+                    this.SetValue(GetOffsetUnsafe(slices_expanded, index), value[index]);
+                }
+                */
                 var ts = new TensorSlice<T>(this, ExpandEllipsis(indices));
                 ts.CopyFrom(value);
             }
         }
 
+        protected unsafe int GetOffsetUnsafe(SliceDef[] slices, ReadOnlySpan<int> indices)
+        {
+            int offset;
+            var coordsptr = stackalloc int[Rank];
+            var coords = new UnsafeFixedSizeList<int>(coordsptr, Rank);
+            coords.AddRange(indices);
+            var orig_ndim = Rank;
+            if (orig_ndim > slices.Length && orig_ndim > indices.Length)
+            {
+                // fill in reduced dimensions in the provided coordinates 
+                for (int i = 0; i < Rank; i++)
+                {
+                    var slice = slices[i];
+                    if (slice.IsIndex)
+                        coords.Insert(i, 0);
+                }
+            }
+
+            var orig_strides = strides;
+            //var orig_dims = vi.OriginalShape.dimensions;
+            offset = 0;
+
+            for (int i = 0; i < coords.Count; i++)
+            {
+                // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
+                //var coord = coords[i];
+                //var dim = orig_dims[i];
+                //if (coord < -dim || coord >= dim)
+                //    throw new ArgumentException($"index {coord} is out of bounds for axis {i} with a size of {dim}");
+                //if (coord < 0)
+                //    coord = dim + coord;
+                if (slices.Length <= i)
+                {
+                    offset += orig_strides[i] * coords[i];
+                    continue;
+                }
+
+                var slice = slices[i];
+                var start = slice.Start;
+                if (slice.IsIndex)
+                    offset += orig_strides[i] * start; // the coord is irrelevant for index-slices (they are reduced dimensions)
+                else
+                    offset += orig_strides[i] * (start + coords[i] * slice.Step);
+            }
+
+
+            return offset;
+
+        }
         #endregion
 
         #region ITensor support
@@ -1719,7 +1795,7 @@ namespace Lokad.Onnx
 
         ITensor ITensor.Slice(string indices) => new TensorSlice<T>(this, ExpandEllipsis(SliceIndex.ParseSlices(indices)));
 
-        Array ITensor.ToArray() => this.ToArray();  
+        Array ITensor.ToArray() => this.ToArray();
         /*
         {
             var a = Array.CreateInstance(this.PrimitiveType, this.dimensions);
@@ -1734,16 +1810,19 @@ namespace Lokad.Onnx
         #endregion
 
         #region Slicing
-        public int[] SliceAxes(params SliceIndex[] input_slices)
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public unsafe int[] SliceAxes(params SliceIndex[] input_slices)
         {
             if (dimensions is null || dimensions.Length == 0)
                 throw new InvalidOperationException("Unable to slice an empty shape.");
 
             //if (IsBroadcasted)
             //    throw new NotSupportedException("Unable to slice a shape that is broadcasted.");
-
-            var slices = new List<SliceDef>(16);
-            var sliced_axes_unreduced = new List<int>();
+            int len = this is TensorSlice<T> _ts ? this.Rank + _ts.parent.Rank : this.Rank;
+            var slicesptr = stackalloc SliceDef[len];
+            var slices = new UnsafeFixedSizeList<SliceDef>(slicesptr, len);
+            var slices_axes_unreduced_ptr = stackalloc int[len];
+            var sliced_axes_unreduced = new UnsafeFixedSizeList<int>(slices_axes_unreduced_ptr, len);
             for (int i = 0; i < dimensions.Length; i++)
             {
                 var dim = dimensions[i];
@@ -1772,7 +1851,7 @@ namespace Lokad.Onnx
                 }
             }
 
-            var sliced_axes = sliced_axes_unreduced.Where((dim, i) => !slices[i].IsIndex).ToArray();
+            var sliced_axes = sliced_axes_unreduced.Filter((dim, i) => !slices[i].IsIndex).ToArray();
             // var origin = (this.IsSliced && ViewInfo.Slices != null) ? this.ViewInfo.OriginalShape : this;
             //var viewInfo = new ViewInfo() { OriginalShape = origin, Slices = slices.ToArray(), UnreducedShape = new Shape(sliced_axes_unreduced.ToArray()), };
 

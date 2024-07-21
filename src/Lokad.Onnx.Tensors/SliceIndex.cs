@@ -267,7 +267,7 @@ public class SliceIndex
     /// </summary>
     /// <param name="dim"></param>
     /// <returns></returns>
-    [MethodImpl((MethodImplOptions)768)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public SliceDef ToSliceDef(int dim)
     {
         if (IsIndex)
