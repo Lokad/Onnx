@@ -10,7 +10,7 @@
     },
     "Run me5s": {
       "commandName": "Project",
-      "commandLineArgs": "benchmark me5s-load --filter Lokad.Onnx.CLI.MultilingualEmbedded5SmallLoadBenchmarks.Tokenize_20_1 --iterationCount 3 --runOncePerIteration"
+      "commandLineArgs": "benchmark me5s-run --filter Lokad.Onnx.CLI.MultilingualEmbedded5SmallRunBenchmarks.Benchmark20_1_simd"
     }
   }
 }

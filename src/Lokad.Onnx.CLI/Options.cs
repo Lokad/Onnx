@@ -101,6 +101,9 @@ public class BenchmarkOptions : Options
     [Option("iterationCount", Required = false, HelpText = "How many target iterations should be performed.")]
     public int IterationCount { get; set; }
 
+    [Option("warmupCount", Required = false, HelpText = "How many target iterations should be performed.")]
+    public int WarmupCount { get; set; }
+
     [Option("invocationCount", Required = false, HelpText = "Invocation count in a single iteration.")]
     public int InvocationCount { get; set; }
 

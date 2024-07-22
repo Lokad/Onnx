@@ -1,9 +1,11 @@
 ﻿namespace Lokad.Onnx;
 
+using Satsuma;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime;
 
 public class ComputationalGraph : Runtime
 {
@@ -358,13 +360,17 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public void Reset()
+    public void Reset(bool gc = false)
     {
-        Inputs = Model.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
-        Outputs = Model.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
         foreach (var o in IntermediateOutputs.Keys)
         {
             IntermediateOutputs[o] = null;
+        }
+        Outputs = Model.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
+        if (gc)
+        {
+            GC.Collect(2, GCCollectionMode.Forced, true, true);
+            GC.WaitForPendingFinalizers();
         }
         Info("Reset graph state.");
     }

@@ -332,51 +332,35 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
 
     [Benchmark(Description="1 string of 20 chars", Baseline = true)]
     [BenchmarkCategory("1_20")]
-    [WarmupCount(1)]
-    [IterationCount(5)]
     public void Benchmark20_1() => graph!.Execute(ui20_1!, true);
 
     [Benchmark(Description = "1 string of 20 chars - simd")]
     [BenchmarkCategory("1_20")]
-    [WarmupCount(1)]
-    [IterationCount(5)]
     public void Benchmark20_1_simd() => graph!.Execute(ui20_1!, true);
 
     [Benchmark(Description = "10 strings of 20 chars")]
     [BenchmarkCategory("10_20")]
-    [WarmupCount(1)]
-    [IterationCount(3)]
     public void Benchmark20_10() => graph!.Execute(ui20_10!, true);
 
     [Benchmark(Description = "10 strings of 20 chars - simd")]
     [BenchmarkCategory("10_20")]
-    [WarmupCount(1)]
-    [IterationCount(3)]
     public void Benchmark20_10_simd() => graph!.Execute(ui20_10!, true);
 
 
     [Benchmark(Description = "1 string of 200 chars")]
     [BenchmarkCategory("1_200")]
-    [WarmupCount(1)]
-    [IterationCount(5)]
     public void Benchmark200_1() => graph!.Execute(ui200_1!, true);
     
     [Benchmark(Description = "1 string of 200 chars - simd")]
     [BenchmarkCategory("1_200")]
-    [WarmupCount(1)]
-    [IterationCount(5)]
     public void Benchmark200_1_simd() => graph!.Execute(ui200_1!, true);
 
     [Benchmark(Description = "10 strings of 200 chars")]
     [BenchmarkCategory("10_200")]
-    [WarmupCount(1)]
-    [IterationCount(2)]
     public void Benchmark200_10() => graph!.Execute(ui200_10!, true);
 
     [Benchmark(Description = "10 strings of 200 chars - simd")]
     [BenchmarkCategory("10_200")]
-    [WarmupCount(1)]
-    [IterationCount(2)]
     public void Benchmark200_10_simd() => graph!.Execute(ui200_10!, true);
 
     #region Fields
