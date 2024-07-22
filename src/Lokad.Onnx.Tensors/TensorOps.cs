@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using static Lokad.Onnx.MathOps;
 
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
@@ -28,6 +29,33 @@ where T : unmanaged
         return output;
     }
 
+    public virtual void VectorizedApply(Func<Vector<T>, Vector<T>> op, Func<T, T> sop, Tensor<T> destination)
+    {
+        if (this.Length > destination.Length)
+            throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
+
+        if (HardwareConfig.UseSimd && this.Length % Vector<T>.Count == 0 && this is DenseTensor<T> d1 && destination is DenseTensor<T> d2)
+        {
+            var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
+            var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
+            for (int i = 0; i < vspan1.Length; i++)
+            {
+                vspan2[i] = op(vspan1[i]);
+            }
+        }
+        else
+        {
+            Apply(sop, destination);
+        }
+    }
+
+    public Tensor<T> VectorizedApply(Func<Vector<T>, Vector<T>> op, Func<T, T> sop)
+    {
+        var output = CloneEmpty();
+        VectorizedApply(op, sop, output);
+        return output;
+    }
+
     public virtual void Apply(Func<T, T, T> op, Tensor<T> tensor2, Tensor<T> destination)
     {
         if (this.Length > tensor2.Length)
@@ -46,6 +74,37 @@ where T : unmanaged
     {
         var output = CloneEmpty();
         Apply(op, tensor2, output);
+        return output;
+    }
+
+    public virtual void VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2, Tensor<T> destination)
+    {
+        if (this.Length > tensor2.Length)
+            throw new ArgumentException(nameof(tensor2), "2nd tensor is too small.");
+
+        if (this.Length > destination.Length)
+            throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
+
+        if (HardwareConfig.UseSimd && this.Length % Vector<T>.Count == 0 && this is DenseTensor<T> d1 && tensor2 is DenseTensor<T> d2 && destination is DenseTensor<T> d3)
+        {
+            var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
+            var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
+            var vspan3 = MemoryMarshal.Cast<T, Vector<T>>(d3.Buffer.Span);
+            for (int i = 0; i < vspan1.Length; i++)
+            {
+                vspan3[i] = op(vspan1[i], vspan2[i]);
+            }
+        }
+        else
+        {
+            Apply(sop, tensor2, destination);
+        }
+    }
+
+    public virtual Tensor<T> VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2)
+    {
+        var output = CloneEmpty();
+        VectorizedApply(op, sop, tensor2, output);
         return output;
     }
 
@@ -159,73 +218,73 @@ where T : unmanaged
 
     public static bool BroadcastShape(Tensor<T> x, Tensor<T> y, out int[] b) => BroadcastShape(x.Dimensions, y.Dimensions, out b);
 
-    public static Tensor<byte> Add(Tensor<byte> x, Tensor<byte> y) => x.Apply((l, r) => (byte) (l + r), y);
+    public static Tensor<byte> Add(Tensor<byte> x, Tensor<byte> y) => x.VectorizedApply((l, r) => (l + r), (l, r) => (byte) (l + r), y);
 
     public static Tensor<byte> Add(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l + y));
 
-    public static Tensor<int> Add(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => l + r, y);
+    public static Tensor<int> Add(Tensor<int> x, Tensor<int> y) => x.VectorizedApply((l, r) => l + r, (l, r) => l + r, y);
 
-    public static Tensor<int> Add(Tensor<int> x, int y) => x.Apply(l => l + y);
+    public static Tensor<int> Add(Tensor<int> x, int y) => x.VectorizedApply(l => l + new Vector<int>(y), l => l + y);
 
-    public static Tensor<float> Add(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l + r, y);
+    public static Tensor<float> Add(Tensor<float> x, Tensor<float> y) => x.VectorizedApply((l, r) => l + r, (l, r) => l + r, y);
 
-    public static Tensor<float> Add(Tensor<float> x, float y) => x.Apply(l => l + y);
+    public static Tensor<float> Add(Tensor<float> x, float y) => x.VectorizedApply(l => l + new Vector<float>(y), l => l + y);
 
-    public static Tensor<double> Add(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l + r, y);
+    public static Tensor<double> Add(Tensor<double> x, Tensor<double> y) => x.VectorizedApply((l, r) => l + r, (l, r) => l + r, y);
 
-    public static Tensor<double> Add(Tensor<double> x, double y) => x.Apply(l => l + y);
+    public static Tensor<double> Add(Tensor<double> x, double y) => x.VectorizedApply(l => l + new Vector<double>(y), l => l + y);
 
-    public static Tensor<byte> Subtract(Tensor<byte> x, Tensor<byte> y) => x.Apply((l, r) => (byte)(l - r), y);
+    public static Tensor<byte> Subtract(Tensor<byte> x, Tensor<byte> y) => x.VectorizedApply((l, r) => (l - r), (l, r) => (byte)(l - r), y);
 
     public static Tensor<byte> Subtract(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l - y));
 
-    public static Tensor<float> Subtract(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l - r, y);
+    public static Tensor<int> Subtract(Tensor<int> x, Tensor<int> y) => x.VectorizedApply((l, r) => l - r, (l, r) => l - r, y);
 
-    public static Tensor<float> Subtract(Tensor<float> x, float y) => x.Apply(l => l - y);
+    public static Tensor<int> Subtract(Tensor<int> x, int y) => x.VectorizedApply(l => l - new Vector<int>(y), l => l - y);
 
-    public static Tensor<double> Subtract(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l - r, y);
+    public static Tensor<float> Subtract(Tensor<float> x, Tensor<float> y) => x.VectorizedApply((l, r) => l - r, (l, r) => l - r, y);
 
-    public static Tensor<double> Subtract(Tensor<double> x, double y) => x.Apply(l => l - y);
+    public static Tensor<float> Subtract(Tensor<float> x, float y) => x.VectorizedApply(l => l - new Vector<float>(y), l => l - y);
 
-    public static Tensor<int> Subtract(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => l - r, y);
+    public static Tensor<double> Subtract(Tensor<double> x, Tensor<double> y) => x.VectorizedApply((l, r) => l - r, (l, r) => l - r, y);
 
-    public static Tensor<int> Subtract(Tensor<int> x, int y) => x.Apply(l => l - y);
+    public static Tensor<double> Subtract(Tensor<double> x, double y) => x.VectorizedApply(l => l - new Vector<double>(y), l => l - y);
 
-    public static Tensor<byte> Multiply(Tensor<byte> x, Tensor<byte> y) => x.Apply((l, r) => (byte)(l * r), y);
+    public static Tensor<byte> Multiply(Tensor<byte> x, Tensor<byte> y) => x.VectorizedApply((l, r) => (l * r), (l, r) => (byte)(l * r), y);
 
     public static Tensor<byte> Multiply(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l * y));
 
-    public static Tensor<int> Multiply(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => l * r, y);
+    public static Tensor<int> Multiply(Tensor<int> x, Tensor<int> y) => x.VectorizedApply((l, r) => l * r, (l, r) => l * r, y);
 
-    public static Tensor<int> Multiply(Tensor<int> x, int y) => x.Apply(l => l * y);
+    public static Tensor<int> Multiply(Tensor<int> x, int y) => x.VectorizedApply(l => l * new Vector<int>(y), l => l * y);
 
-    public static Tensor<float> Multiply(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l * r, y);
+    public static Tensor<float> Multiply(Tensor<float> x, Tensor<float> y) => x.VectorizedApply((l, r) => l * r, (l, r) => l * r, y);
 
-    public static Tensor<float> Multiply(Tensor<float> x, float y) => x.Apply(l => l * y);
+    public static Tensor<float> Multiply(Tensor<float> x, float y) => x.VectorizedApply(l => l * new Vector<float>(y), l => l * y);
 
-    public static Tensor<double> Multiply(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l * r, y);
+    public static Tensor<double> Multiply(Tensor<double> x, Tensor<double> y) => x.VectorizedApply((l, r) => l * r, (l, r) => l * r, y);
 
-    public static Tensor<double> Multiply(Tensor<double> x, double y) => x.Apply(l => l * y);
+    public static Tensor<double> Multiply(Tensor<double> x, double y) => x.VectorizedApply(l => l * new Vector<double>(y), l => l * y);
 
-    public static Tensor<byte> Divide(Tensor<byte> x, Tensor<byte> y) => x.Apply((l, r) => (byte)(l / r), y);
+    public static Tensor<byte> Divide(Tensor<byte> x, Tensor<byte> y) => x.VectorizedApply((l, r) => (l / r), (l, r) => (byte)(l / r), y);
 
     public static Tensor<byte> Divide(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l / y));
 
-    public static Tensor<int> Divide(Tensor<int> x, Tensor<int> y) => x.Apply((l, r) => (l / r), y);
+    public static Tensor<int> Divide(Tensor<int> x, Tensor<int> y) => x.VectorizedApply((l, r) => l / r, (l, r) => l / r, y);
 
-    public static Tensor<int> Divide(Tensor<int> x, int y) => x.Apply(l => (l / y));
+    public static Tensor<int> Divide(Tensor<int> x, int y) => x.VectorizedApply(l => l / new Vector<int>(y), l => l / y);
 
-    public static Tensor<float> Divide(Tensor<float> x, Tensor<float> y) => x.Apply((l, r) => l / r, y);
+    public static Tensor<float> Divide(Tensor<float> x, Tensor<float> y) => x.VectorizedApply((l, r) => l / r, (l, r) => l / r, y);
 
-    public static Tensor<float> Divide(Tensor<float> x, float y) => x.Apply(l => l / y);
+    public static Tensor<float> Divide(Tensor<float> x, float y) => x.VectorizedApply(l => l / new Vector<float>(y), l => l / y);
 
-    public static Tensor<double> Divide(Tensor<double> x, Tensor<double> y) => x.Apply((l, r) => l / r, y);
+    public static Tensor<double> Divide(Tensor<double> x, Tensor<double> y) => x.VectorizedApply((l, r) => l / r, (l, r) => l / r, y);
 
-    public static Tensor<double> Divide(Tensor<double> x, double y) => x.Apply(l => l / y);
+    public static Tensor<double> Divide(Tensor<double> x, double y) => x.VectorizedApply(l => l / new Vector<double>(y), l => l / y);
 
-    public static Tensor<float> Negate(Tensor<float> x) => x.Apply(l => -l);
+    public static Tensor<float> Negate(Tensor<float> x) => x.VectorizedApply(Vector.Negate, l => -l);
 
-    public static Tensor<double> Negate(Tensor<double> x) => x.Apply(l => -l);
+    public static Tensor<double> Negate(Tensor<double> x) => x.VectorizedApply(Vector.Negate, l => -l);
 
     public static Tensor<float> Pow(Tensor<float> x, Tensor<float> y) => x.Apply(MathF.Pow, y);
 
@@ -239,9 +298,9 @@ where T : unmanaged
 
     public static Tensor<double> Abs(Tensor<double> x) => x.Apply(l => l >= 0.0 ? l : -l);
 
-    public static Tensor<float> Sqrt(Tensor<float> x) => x.Apply(MathF.Sqrt);
+    public static Tensor<float> Sqrt(Tensor<float> x) => x.VectorizedApply(Vector.SquareRoot, MathF.Sqrt);
 
-    public static Tensor<double> Sqrt(Tensor<double> x) => x.Apply(Math.Sqrt);
+    public static Tensor<double> Sqrt(Tensor<double> x) => x.VectorizedApply(Vector.SquareRoot, Math.Sqrt);
 
     public static Tensor<int> MatMul2D(Tensor<int> x, Tensor<int> y)
     {
