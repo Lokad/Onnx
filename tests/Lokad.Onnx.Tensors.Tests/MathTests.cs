@@ -35,7 +35,14 @@ public class MathTests
 
     }
 
-
+    [Fact]
+    public void CanVectorizedAdd()
+    {
+        var a = Tensor<float>.Rand(8, 8, 8, 8);
+        var b = Tensor<float>.Rand(8, 8, 8, 8);
+        var c = Tensor<float>.Add(a, b);
+    }
+    
     [Fact]
     public unsafe void CanMatMul2D()
     {
