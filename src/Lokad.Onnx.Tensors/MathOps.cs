@@ -350,16 +350,12 @@ public class MathOps
             {
                 var a = Ap[j];
                 var Bp = B + j * K;
-                for (int k = 0; k <= K - v; k+=v)
+                var av = new Vector<int>(a);    
+                var Bkv = MemoryMarshal.Cast<int, Vector<int>>(new Span<int>(Bp, K));
+                var Ckv = MemoryMarshal.Cast<int, Vector<int>>(new Span<int>(Cp, K));
+                for (int k = 0; k < Bkv.Length; k++)
                 {
-                    var Bk = new Span<int>(Bp + k, v);
-                    var Ck = new Span<int>(Cp + k, v);
-                    Vector<int> vec1 = new Vector<int>(a);
-                    Vector<int> vec2 = new Vector<int>(Bk);
-                    Vector<int> vec3 = Vector.Multiply(vec1, vec2);
-                    Vector<int> vec4 = new Vector<int>(Ck);
-                    Vector<int> vec5 = Vector.Add(vec3, vec4);
-                    vec5.CopyTo(Ck);
+                    Ckv[k] = Ckv[k] + av * Bkv[k];
                 }
             }
         }
@@ -390,17 +386,13 @@ public class MathOps
             {
                 var a = Ap[j];
                 var Bp = B + j * K;
-                for (int k = 0; k <= K - v; k += v)
+                var av = new Vector<float>(a);
+                var Bkv = MemoryMarshal.Cast<float, Vector<float>>(new Span<float>(Bp, K));
+                var Ckv = MemoryMarshal.Cast<float, Vector<float>>(new Span<float>(Cp, K));
+                for (int k = 0; k < Bkv.Length; k++)
                 {
-                    var Bk = new Span<float>(Bp + k, v);
-                    var Ck = new Span<float>(Cp + k, v);
-                    Vector<float> vec1 = new Vector<float>(a);
-                    Vector<float> vec2 = new Vector<float>(Bk);
-                    Vector<float> vec3 = Vector.Multiply(vec1, vec2);
-                    Vector<float> vec4 = new Vector<float>(Ck);
-                    Vector<float> vec5 = Vector.Add(vec3, vec4);
-                    vec5.CopyTo(Ck);
-                }
+                    Ckv[k] = Ckv[k] + av * Bkv[k];
+                } 
             }
         }
     }
