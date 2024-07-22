@@ -310,20 +310,20 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
 
         ui20_1 = GetTextTensors(T20[0], "me5s");
         ui20_10 = GetTextTensors(T20[1..11], "me5s");
-        ui20_100 = GetTextTensors(T20[11..111], "me5s");
+        ui20_100 = GetTextTensors(T20[11..61], "me5s");
         ui200_1 = GetTextTensors(T200[0], "me5s");
         ui200_10 = GetTextTensors(T200[1..11], "me5s");
         op.Complete();
     }
 
-    [IterationSetup(Targets = ["Benchmark20_1", "Benchmark20_10", "Benchmark200_1", "Benchmark200_10"])]
+    [IterationSetup(Targets = ["Benchmark20_1", "Benchmark20_10", "Benchmark20_50", "Benchmark200_1", "Benchmark200_10"])]
     public void SetupNoSimd()
     {
         graph!.Reset();
         HardwareConfig.UseSimd = false;
     }
 
-    [IterationSetup(Targets = ["Benchmark20_1_simd", "Benchmark20_10_simd", "Benchmark200_1_simd", "Benchmark200_10_simd"])]
+    [IterationSetup(Targets = ["Benchmark20_1_simd", "Benchmark20_10_simd", "Benchmark20_50_simd", "Benchmark200_1_simd", "Benchmark200_10_simd"])]
     public void SetupSimd()
     {
         graph!.Reset();
@@ -346,6 +346,13 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     [BenchmarkCategory("10_20")]
     public void Benchmark20_10_simd() => graph!.Execute(ui20_10!, true);
 
+    [Benchmark(Description = "50 strings of 20 chars")]
+    [BenchmarkCategory("100_20")]
+    public void Benchmark20_50() => graph!.Execute(ui20_100!, true);
+
+    [Benchmark(Description = "50 strings of 20 chars - simd")]
+    [BenchmarkCategory("100_20")]
+    public void Benchmark20_50_simd() => graph!.Execute(ui20_100!, true);
 
     [Benchmark(Description = "1 string of 200 chars")]
     [BenchmarkCategory("1_200")]
@@ -414,37 +421,30 @@ public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
 
     [Benchmark(Description = "Load model file")]
     [BenchmarkCategory("model")]
-    [IterationCount(5)]
     public void LoadModel() => Model.Load(modelFile);
 
     [Benchmark(Description = "Tokenize 1 string of 20 chars")]
     [BenchmarkCategory("tokenize_20")]
-    [IterationCount(5)]
     public void Tokenize_20_1() => GetTextTensors(T20[0], "me5s");
 
     [Benchmark(Description = "Tokenize 10 strings of 20 chars")]
     [BenchmarkCategory("tokenize_20")]
-    [IterationCount(5)]
     public void Tokenize_20_10() => GetTextTensors(T20[1..11], "me5s");
 
     [Benchmark(Description = "Tokenize 100 strings of 20 chars")]
     [BenchmarkCategory("tokenize_20")]
-    [IterationCount(5)]
     public void Tokenize_20_100() => GetTextTensors(T20[11..111], "me5s");
 
     [Benchmark(Description = "Tokenize 1 string of 200 chars")]
     [BenchmarkCategory("tokenize_200")]
-    [IterationCount(5)]
     public void Tokenize_200_1() => GetTextTensors(T200[0], "me5s");
 
     [Benchmark(Description = "Tokenize 10 strings of 200 chars")]
     [BenchmarkCategory("tokenize_200")]
-    [IterationCount(5)]
     public void Tokenize_200_10() => GetTextTensors(T200[1..11], "me5s");
 
     [Benchmark(Description = "Tokenize 100 strings of 200 chars")]
     [BenchmarkCategory("tokenize_200")]
-    [IterationCount(5)]
     public void Tokenize_200_100() => GetTextTensors(T200[11..111], "me5s");
 
     #region Fields
