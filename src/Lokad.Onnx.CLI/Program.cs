@@ -479,13 +479,7 @@ class Program : Runtime
         result.RemoveRange(0, 2);
         result.Remove("--debug");
         result.Remove("-d");
-        if (result.Contains("--iterationCount"))
-        {
-            result.Add("--maxIterationCount");
-            result.Add(bo.IterationCount.ToString());
-            result.Add("--minIterationCount");
-            result.Add((bo.IterationCount - 1).ToString());
-        }
+        
         return result.ToArray();
     }
     #endregion

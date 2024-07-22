@@ -32,8 +32,6 @@ namespace Lokad.Onnx
     {
         #region Fields
         private readonly Memory<T> memory;
-        private readonly MemoryHandle handle;
-        private readonly T* ptr;
         #endregion
 
         #region Properties
@@ -70,9 +68,6 @@ namespace Lokad.Onnx
             }
 
             memory = backingArray;
-            handle = memory.Pin();
-            ptr = (T*) handle.Pointer;
-            
         }
 
         /// <summary>
@@ -82,8 +77,6 @@ namespace Lokad.Onnx
         public DenseTensor(int length) : base(length)
         {
             memory = new T[length];
-            handle = memory.Pin();
-            ptr = (T*)handle.Pointer;
         }
 
         /// <summary>
@@ -101,8 +94,6 @@ namespace Lokad.Onnx
         public DenseTensor(ReadOnlySpan<int> dimensions, bool reverseStride = false) : base(dimensions, reverseStride)
         {
             memory = new T[Length];
-            handle = memory.Pin();
-            ptr = (T*)handle.Pointer;
         }
 
         /// <summary>
@@ -121,8 +112,6 @@ namespace Lokad.Onnx
             : base(dimensions, reverseStride)
         {
             this.memory = memory;
-            handle = memory.Pin();
-            ptr = (T*)handle.Pointer;
 
             if (Length != memory.Length)
             {
@@ -149,7 +138,7 @@ namespace Lokad.Onnx
             }
             else
             {
-                return ptr[index];
+                return memory.Span[index];
             }
             
         }
@@ -169,7 +158,7 @@ namespace Lokad.Onnx
             }
             else
             {
-                ptr[index] = value;
+                memory.Span[index] = value;
             }
         }
 
@@ -267,12 +256,13 @@ namespace Lokad.Onnx
         {
             if (from is DenseTensor<T> d)
             {
-           
+                var handle = memory.Pin();
+                var ptr = (T*) handle.Pointer;
                 for (int i = 0; i < from.Length; i++)
                 {
-                    this.ptr[i] = d.ptr[i];
+                    ptr[i] = ptr[i];
                 }
-                
+                handle.Dispose();   
             }
             else
             {
