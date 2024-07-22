@@ -56,8 +56,11 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 
 	public T this[int index]
 	{
-		get => *(ptr + index);
-		set => *(ptr + index) = value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        get => *(ptr + index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        set => *(ptr + index) = value;
 	}
 
 		
@@ -96,6 +99,7 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public void Add(T item)
 	{
 		*(ptr + _count) = item;
@@ -204,7 +208,8 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 		return NO_INDEX;
 	}
 
-	public void Insert(int index, T item)
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public void Insert(int index, T item)
 	{
 			_count++;
 			

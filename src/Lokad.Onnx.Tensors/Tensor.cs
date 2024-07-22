@@ -1001,7 +1001,6 @@ namespace Lokad.Onnx
 
                 foreach (var index in it)
                 {
-
                     dense[index] = this.GetValue(GetOffsetUnsafe(strides, slice_dims, slices_expanded, index));
                 }
                 return dense;
@@ -1057,33 +1056,32 @@ namespace Lokad.Onnx
             }
             //var orig_dims = vi.OriginalShape.dimensions;
             offset = 0;
-
-            for (int i = 0; i < coords.Count; i++)
+            unchecked
             {
-                // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
-                //var coord = coords[i];
-                //var dim = orig_dims[i];
-                //if (coord < -dim || coord >= dim)
-                //    throw new ArgumentException($"index {coord} is out of bounds for axis {i} with a size of {dim}");
-                //if (coord < 0)
-                //    coord = dim + coord;
-                if (slices.Length <= i)
+                for (int i = 0; i < coords.Count; i++)
                 {
-                    offset += orig_strides[i] * coords[i];
-                    continue;
+                    // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
+                    //var coord = coords[i];
+                    //var dim = orig_dims[i];
+                    //if (coord < -dim || coord >= dim)
+                    //    throw new ArgumentException($"index {coord} is out of bounds for axis {i} with a size of {dim}");
+                    //if (coord < 0)
+                    //    coord = dim + coord;
+                    if (slices.Length <= i)
+                    {
+                        offset += orig_strides[i] * coords[i];
+                        continue;
+                    }
+
+                    var slice = slices[i];
+                    var start = slice.Start;
+                    if (slice.IsIndex)
+                        offset += orig_strides[i] * start; // the coord is irrelevant for index-slices (they are reduced dimensions)
+                    else
+                        offset += orig_strides[i] * (start + coords[i] * slice.Step);
                 }
-
-                var slice = slices[i];
-                var start = slice.Start;
-                if (slice.IsIndex)
-                    offset += orig_strides[i] * start; // the coord is irrelevant for index-slices (they are reduced dimensions)
-                else
-                    offset += orig_strides[i] * (start + coords[i] * slice.Step);
             }
-
-
             return offset;
-
         }
         #endregion
 

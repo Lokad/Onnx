@@ -204,15 +204,7 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
         }
     }
 
-    public override T this[params int[] indices]
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        get => this[(ReadOnlySpan<int>) indices];
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        set => this[(ReadOnlySpan<int>) indices] = value;
-    }
-
+   
     public override Tensor<T> Clone() => ToDenseTensor();
 
     public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions, this.IsReversedStride);
