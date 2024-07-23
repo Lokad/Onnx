@@ -398,7 +398,43 @@ public class MathOps
         }
     }
 
- 
+    /// <summary>
+    /// Matrix multiplication.
+    /// </summary>
+    /// <param name="M">A rows.</param>
+    /// <param name="N">A columns.</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="B">Right matrix.</param>
+    /// <param name="C">Result matrix.</param>
+    public unsafe static void mm_unsafe_vectorized(int M,
+                          int N,
+                          int K,
+                          double* A,
+                          double* B,
+                          double* C)
+    {
+        var v = Vector<double>.Count;
+        for (int i = 0; i < M; i++)
+        {
+            var Ap = A + i * N;
+            var Cp = C + i * K;
+            for (int j = 0; j < N; ++j)
+            {
+                var a = Ap[j];
+                var Bp = B + j * K;
+                var av = new Vector<double>(a);
+                var Bkv = MemoryMarshal.Cast<double, Vector<double>>(new Span<double>(Bp, K));
+                var Ckv = MemoryMarshal.Cast<double, Vector<double>>(new Span<double>(Cp, K));
+                for (int k = 0; k < Bkv.Length; k++)
+                {
+                    Ckv[k] = Ckv[k] + av * Bkv[k];
+                }
+            }
+        }
+    }
+
+
     /// <summary>
     /// Matrix multiplication.
     /// </summary>
@@ -435,6 +471,41 @@ public class MathOps
         }
     }
 
+    /// <summary>
+    /// Matrix multiplication.
+    /// </summary>
+    /// <param name="M">A rows.</param>
+    /// <param name="N">A columns.</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="B">Right matrix.</param>
+    /// <param name="C">Result matrix.</param>
+    public unsafe static void mm_unsafe_vectorized_intrinsics(int M,
+                          int N,
+                          int K,
+                          double* A,
+                          double* B,
+                          double* C)
+    {
+
+        for (int i = 0; i < M; i++)
+        {
+            var Ap = A + i * N;
+            var Cp = C + i * K;
+            for (int j = 0; j < N; ++j)
+            {
+                var a = Ap[j];
+                var Bp = B + j * K;
+                var av = Vector256.Create(a);
+                var Bkv = MemoryMarshal.Cast<double, Vector256<double>>(new Span<double>(Bp, K));
+                var Ckv = MemoryMarshal.Cast<double, Vector256<double>>(new Span<double>(Cp, K));
+                for (int k = 0; k < Bkv.Length; k++)
+                {
+                    Ckv[k] = Fma.MultiplyAdd(Bkv[k], av, Ckv[k]);
+                }
+            }
+        }
+    }
     /// <summary>
     /// Image to column conversion.
     /// </summary>

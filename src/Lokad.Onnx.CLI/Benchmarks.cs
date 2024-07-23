@@ -100,8 +100,11 @@ public class TensorMatMulBenchmarks : Runtime
     }
 
     [IterationSetup(Targets = ["MatMul_simd", "MatMul2_simd", "MatMul3_simd", "MatMul4_simd"])]
-    public void EnableSimd() => HardwareConfig.UseSimd = true;
-    
+    public void EnableSimd() => HardwareConfig.EnableSimdOnly();
+
+    [IterationSetup(Targets = ["MatMul_simd_intrinsics", "MatMul2_simd_intrinsics", "MatMul3_simd_intrinsics", "MatMul4_simd_intrinsics"])]
+    public void EnableIntrinsics() => HardwareConfig.EnableIntrinsics();
+
     [IterationSetup(Targets = ["MatMul", "MatMul2", "MatMul3", "MatMul4"])]
     public void DisableSimd() => HardwareConfig.UseSimd = false;
    
@@ -113,6 +116,10 @@ public class TensorMatMulBenchmarks : Runtime
     [BenchmarkCategory("384x384")]
     public void MatMul_simd() => Tensor<float>.MatMul(t_384_384_a, t_384_384_b);
 
+    [Benchmark(Description = "Matrix multiply 2 384x384 tensors - simd intrinsics")]
+    [BenchmarkCategory("384x384")]
+    public void MatMul_simd_intrinsics() => Tensor<float>.MatMul(t_384_384_a, t_384_384_b);
+
     [Benchmark(Description = "Matrix multiply 2 384x1536 tensors", Baseline = true)]
     [BenchmarkCategory("384x1536")]
     public void MatMul2() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
@@ -120,6 +127,10 @@ public class TensorMatMulBenchmarks : Runtime
     [Benchmark(Description = "Matrix multiply 2 384x1536 tensors - simd")]
     [BenchmarkCategory("384x1536")]
     public void MatMul2_simd() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
+
+    [Benchmark(Description = "Matrix multiply 2 384x1536 tensors - simd intrinsics")]
+    [BenchmarkCategory("384x1536")]
+    public void MatMul2_simd_intrinsics() => Tensor<float>.MatMul(t_384_1536_a, t_1536_384_b);
 
     [Benchmark(Description = "Matrix multiply 2 6x384x384 tensors", Baseline = true)]
     [BenchmarkCategory("6x384x384")]
@@ -129,6 +140,10 @@ public class TensorMatMulBenchmarks : Runtime
     [BenchmarkCategory("6x384x384")]
     public void MatMul3_simd() => Tensor<float>.MatMul(t_6_384_384_a, t_6_384_384_b);
 
+    [Benchmark(Description = "Matrix multiply 2 6x384x384 tensors - simd intrinsics")]
+    [BenchmarkCategory("6x384x384")]
+    public void MatMul3_simd_intrinsics() => Tensor<float>.MatMul(t_6_384_384_a, t_6_384_384_b);
+
     [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors", Baseline = true)]
     [BenchmarkCategory("3x4x384x384")]
     public void MatMul4() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
@@ -136,6 +151,10 @@ public class TensorMatMulBenchmarks : Runtime
     [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors - simd")]
     [BenchmarkCategory("3x4x384x384")]
     public void MatMul4_simd() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
+
+    [Benchmark(Description = "Matrix multiply 2 3x4x384x384 tensors - simd intrinsics")]
+    [BenchmarkCategory("3x4x384x384")]
+    public void MatMul4_simd_intrinsics() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b);
 
     #region Fields
     Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
@@ -331,7 +350,14 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     public void SetupSimd()
     {
         graph!.Reset();
-        HardwareConfig.UseSimd = true;
+        HardwareConfig.EnableSimdOnly();
+    }
+
+    [IterationSetup(Targets = ["Benchmark20_1_simd_intrinsics", "Benchmark20_10_simd_intrinsics", "Benchmark20_50_simd_intrinsics", "Benchmark200_1_simd_intrinsics", "Benchmark200_10_simd_intrinsics"])]
+    public void SetupSimdIntrinsics()
+    {
+        graph!.Reset();
+        HardwareConfig.EnableIntrinsics();
     }
 
     [Benchmark(Description="1 string of 20 chars", Baseline = true)]
@@ -342,6 +368,10 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     [BenchmarkCategory("1_20")]
     public void Benchmark20_1_simd() => graph!.Execute(ui20_1!, true);
 
+    [Benchmark(Description = "1 string of 20 chars - simd intrinsics")]
+    [BenchmarkCategory("1_20")]
+    public void Benchmark20_1_simd_intrinsics() => graph!.Execute(ui20_1!, true);
+
     [Benchmark(Description = "10 strings of 20 chars")]
     [BenchmarkCategory("10_20")]
     public void Benchmark20_10() => graph!.Execute(ui20_10!, true);
@@ -349,6 +379,10 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     [Benchmark(Description = "10 strings of 20 chars - simd")]
     [BenchmarkCategory("10_20")]
     public void Benchmark20_10_simd() => graph!.Execute(ui20_10!, true);
+
+    [Benchmark(Description = "10 strings of 20 chars - simd intrinsics")]
+    [BenchmarkCategory("10_20")]
+    public void Benchmark20_10_simd_intrinsics() => graph!.Execute(ui20_10!, true);
 
     [Benchmark(Description = "50 strings of 20 chars")]
     [BenchmarkCategory("100_20")]
@@ -358,6 +392,10 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     [BenchmarkCategory("100_20")]
     public void Benchmark20_50_simd() => graph!.Execute(ui20_100!, true);
 
+    [Benchmark(Description = "50 strings of 20 chars - simd intrinsics")]
+    [BenchmarkCategory("100_20")]
+    public void Benchmark20_50_simd_intrinsics() => graph!.Execute(ui20_100!, true);
+
     [Benchmark(Description = "1 string of 200 chars")]
     [BenchmarkCategory("1_200")]
     public void Benchmark200_1() => graph!.Execute(ui200_1!, true);
@@ -366,6 +404,11 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     [BenchmarkCategory("1_200")]
     public void Benchmark200_1_simd() => graph!.Execute(ui200_1!, true);
 
+
+    [Benchmark(Description = "1 string of 200 chars - simd intrinsics")]
+    [BenchmarkCategory("1_200")]
+    public void Benchmark200_1_simd_intrinsics() => graph!.Execute(ui200_1!, true);
+
     [Benchmark(Description = "10 strings of 200 chars")]
     [BenchmarkCategory("10_200")]
     public void Benchmark200_10() => graph!.Execute(ui200_10!, true);
@@ -373,6 +416,10 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     [Benchmark(Description = "10 strings of 200 chars - simd")]
     [BenchmarkCategory("10_200")]
     public void Benchmark200_10_simd() => graph!.Execute(ui200_10!, true);
+
+    [Benchmark(Description = "10 strings of 200 chars - simd intrinsics")]
+    [BenchmarkCategory("10_200")]
+    public void Benchmark200_10_simd_intrinsics() => graph!.Execute(ui200_10!, true);
 
     #region Fields
     string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");

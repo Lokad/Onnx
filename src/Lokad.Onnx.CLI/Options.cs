@@ -84,6 +84,12 @@ public class RunOptions : Options
 
     [Option("print-input", Required = false, HelpText = "Print the input tensors that will be fed to the model.")]
     public bool PrintInput { get; set; }
+
+    [Option("disable-simd", Required = false, HelpText = "Disable CPU SIMD features.")]
+    public bool DisableSimd { get; set; }
+
+    [Option("enable-intrinsics", Required = false, HelpText = "Enable CPU SIMD intrinsics.")]
+    public bool EnableIntrinsics { get; set; }
 }
 
 [Verb("benchmark", HelpText = "Benchmark an ONNX model or operations.")]
