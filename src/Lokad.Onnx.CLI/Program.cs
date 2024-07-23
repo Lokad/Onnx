@@ -184,6 +184,30 @@ class Program : Runtime
             }
         }
 
+        if (ro.DisableSimd)
+        {
+            HardwareConfig.UseSimd = false;
+            Info("CPU SIMD features disabled.");
+        }
+        else
+        {
+            Info("CPU SIMD acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
+            if (System.Numerics.Vector.IsHardwareAccelerated)
+            {
+                Info("CPU SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
+
+            }
+        }
+        if (ro.EnableIntrinsics && System.Numerics.Vector.IsHardwareAccelerated)
+        {
+            HardwareConfig.UseIntrinsics = true;
+            Info("CPU SIMD available intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
+        }
+        else
+        {
+            Info("Not using CPU SIMD intrinsics.");
+        }
+
         if (ro.Node == "")
         {
             if (graph.Execute(ui, true, optimes: ro.OpTimes, nodetimes: false))

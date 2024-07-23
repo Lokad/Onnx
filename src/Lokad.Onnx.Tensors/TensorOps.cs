@@ -357,7 +357,14 @@ where T : unmanaged
         var xh = _x.Buffer.Pin(); 
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && k % Vector<float>.Count == 0)
+        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && Vector256<float>.Count % k == 0)
+        {
+            unsafe
+            {
+                mm_unsafe_vectorized_intrinsics(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
+            }
+        }
+        else if (HardwareConfig.UseSimd && k % Vector<float>.Count == 0)
         {
             unsafe
             {
@@ -393,7 +400,22 @@ where T : unmanaged
         var xh = _x.Buffer.Pin();
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        unsafe
+        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && Vector256<double>.Count % k == 0)
+        {
+            unsafe
+            {
+                mm_unsafe_vectorized_intrinsics(m, n, k, (double*)xh.Pointer, (double*)yh.Pointer, (double*)oh.Pointer);
+            }
+        }
+        else if (HardwareConfig.UseSimd && k % Vector<double>.Count == 0)
+        {
+            unsafe
+            {
+                mm_unsafe_vectorized(m, n, k, (double*)xh.Pointer, (double*)yh.Pointer, (double*)oh.Pointer);
+            }
+        }
+        else
+            unsafe
         {
             mm(m, n, k, (double*)xh.Pointer, (double*)yh.Pointer, (double*)oh.Pointer);
         }
