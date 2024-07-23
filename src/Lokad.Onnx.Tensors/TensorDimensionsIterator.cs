@@ -98,6 +98,8 @@ namespace Lokad.Onnx
 
         public TensorDimensionsIterator Append(params int[] dims) => new TensorDimensionsIterator(dimensions.Concat(dims).ToArray());
 
+        public TensorDimensionsIterator this [params int[] indices] => Append(indices);
+
         public SliceIndex[] AppendEllipsis() => Index.Select(i => new SliceIndex(i)).Append(SliceIndex.Ellipsis).ToArray();
 
         public SliceIndex[] PrependEllipsis() => Index.Select(i => new SliceIndex(i)).Prepend(SliceIndex.Ellipsis).ToArray();
@@ -105,6 +107,7 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public SliceIndex[] AppendSliceIndices(params SliceIndex[] indices) => Index.Select(i => (SliceIndex) i).Concat(indices).ToArray();  
 
+        
         public SliceIndex[] this[params SliceIndex[] indices] => AppendSliceIndices(indices);
 
         #region Fields

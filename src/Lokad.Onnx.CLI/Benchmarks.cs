@@ -60,6 +60,10 @@ public class MatMul2DBenchmarks : Runtime
     public unsafe void MatMul2D_4() =>
        mm_unsafe_vectorized(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
 
+    [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe simd intrinsics")]
+    public unsafe void MatMul2D_5() =>
+      mm_unsafe_vectorized_intrinsics(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
+
     #region Fields
     Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_b = Tensor<float>.Zeros(0);
