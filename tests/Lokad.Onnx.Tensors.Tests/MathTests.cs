@@ -99,6 +99,29 @@ public class MathTests
         Assert.Equal(98, c[0, 1, 1]);
     }
 
+    [Fact]
+    public void CanVectorizedMatMul()
+    {
+        var a = Tensor<float>.Ones(1, 1, 5, 6);
+        var b = Tensor<float>.Ones(3, 6, 7);
+        var c = Tensor<float>.MatMul(a, b);
+        Assert.Equal(new int[] { 1, 3, 5, 7 }, c.Dimensions.ToArray());
+        a = Tensor<float>.Ones(2, 3, 5, 6);
+        b = Tensor<float>.Ones(3, 6, 7);
+        c = Tensor<float>.MatMul(a, b);
+        Assert.Equal(new int[] { 2, 3, 5, 7 }, c.Dimensions.ToArray());
+        a = Tensor<float>.Ones(4, 1, 5, 6);
+        b = Tensor<float>.Ones(4, 2, 6, 7);
+        c = Tensor<float>.MatMul(a, b);
+        Assert.Equal(new int[] { 4, 2, 5, 7 }, c.Dimensions.ToArray());
+        a = Tensor<float>.Arange(0.0f, 2.0f * 2 * 4).Reshape(2, 2, 4);
+        b = Tensor<float>.Arange(0.0f, 2.0f * 4 * 8).Reshape(2, 4, 8);
+        c = Tensor<float>.MatMul(a, b);
+        var a_ = Tensor<int>.Arange(0, 2 * 2 * 4).Reshape(2, 2, 4);
+        var b_ = Tensor<int>.Arange(0, 2 * 4 * 8).Reshape(2, 4, 8);
+        var c_ = Tensor<int>.MatMul(a_, b_);
+        Assert.Equal(98, c[0, 1, 1]);
+    }
     // Based on https://github.com/onnx/onnx/blob/main/docs/Operators.md#Conv
     [Fact]
     public void CanConv2D()

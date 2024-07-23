@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Numerics;
-using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.X86;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 
 namespace Lokad.Onnx;
 
@@ -396,6 +397,44 @@ public class MathOps
             }
         }
     }
+
+ 
+    /// <summary>
+    /// Matrix multiplication.
+    /// </summary>
+    /// <param name="M">A rows.</param>
+    /// <param name="N">A columns.</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="B">Right matrix.</param>
+    /// <param name="C">Result matrix.</param>
+    public unsafe static void mm_unsafe_vectorized_intrinsics(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* B,
+                          float* C)
+    {
+
+        for (int i = 0; i < M; i++)
+        {
+            var Ap = A + i * N;
+            var Cp = C + i * K;
+            for (int j = 0; j < N; ++j)
+            {
+                var a = Ap[j];
+                var Bp = B + j * K;
+                var av = Vector256.Create(a);
+                var Bkv = MemoryMarshal.Cast<float, Vector256<float>>(new Span<float>(Bp, K));
+                var Ckv = MemoryMarshal.Cast<float, Vector256<float>>(new Span<float>(Cp, K));
+                for (int k = 0; k < Bkv.Length; k++)
+                {
+                    Ckv[k] = Fma.MultiplyAdd(Bkv[k], av, Ckv[k]);
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Image to column conversion.
     /// </summary>
