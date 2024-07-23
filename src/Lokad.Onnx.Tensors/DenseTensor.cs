@@ -31,7 +31,8 @@ namespace Lokad.Onnx
     public unsafe class DenseTensor<T> : Tensor<T> where T :  unmanaged
     {
         #region Fields
-        private readonly Memory<T> memory;
+        protected readonly ArraySegment<T> arr;
+        protected readonly Memory<T> memory;
         #endregion
 
         #region Properties
@@ -67,6 +68,7 @@ namespace Lokad.Onnx
                 }
             }
 
+            arr = backingArray;
             memory = backingArray;
         }
 
@@ -93,7 +95,8 @@ namespace Lokad.Onnx
         /// </param>
         public DenseTensor(ReadOnlySpan<int> dimensions, bool reverseStride = false) : base(dimensions, reverseStride)
         {
-            memory = new T[Length];
+            arr = new T[Length];
+            memory = arr;
         }
 
         /// <summary>
@@ -111,6 +114,7 @@ namespace Lokad.Onnx
         public DenseTensor(Memory<T> memory, ReadOnlySpan<int> dimensions, bool reverseStride = false) 
             : base(dimensions, reverseStride)
         {
+            if (!MemoryMarshal.TryGetArray<T>(memory, out arr)) throw new InvalidOperationException();
             this.memory = memory;
 
             if (Length != memory.Length)
@@ -132,6 +136,7 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override T GetValue(int index)
         {
+            /*
             if (index > Length)
             {
                 throw new IndexOutOfRangeException();
@@ -139,7 +144,8 @@ namespace Lokad.Onnx
             else
             {
                 return memory.Span[index];
-            }
+            }*/
+            return arr[index];
             
         }
 
@@ -152,6 +158,7 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override void SetValue(int index, T value)
         {
+            /*
             if (index > Length)
             {
                 throw new IndexOutOfRangeException();
@@ -159,7 +166,8 @@ namespace Lokad.Onnx
             else
             {
                 memory.Span[index] = value;
-            }
+            }*/
+            arr[index] = value;
         }
 
         /// <summary>
@@ -257,12 +265,15 @@ namespace Lokad.Onnx
             if (from is DenseTensor<T> d)
             {
                 var handle = memory.Pin();
+                var handle2 = d.memory.Pin();
                 var ptr = (T*) handle.Pointer;
+                var ptr2 = (T*)handle2.Pointer;
                 for (int i = 0; i < from.Length; i++)
                 {
-                    ptr[i] = ptr[i];
+                    ptr[i] = ptr2[i];
                 }
                 handle.Dispose();   
+                handle2.Dispose();
             }
             else
             {

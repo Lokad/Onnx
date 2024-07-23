@@ -9,6 +9,7 @@ using System.Runtime.Intrinsics;
 using System.Runtime.InteropServices;
 using static Lokad.Onnx.MathOps;
 using System.Runtime.Intrinsics.X86;
+using System.Runtime.CompilerServices;
 
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
 where T : unmanaged
@@ -509,12 +510,30 @@ where T : unmanaged
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
             var z = DenseTensor<int>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            bx = bx.ToDenseTensor();
-            by = by.ToDenseTensor();
             var di = bx.GetDimensionsIterator(0..^2);
-            foreach (var _ in di)
+            foreach (var idx in di)
             {
-                z[di[..]] = Tensor<int>.MatMul2D(bx[di[..]], by[di[..]]);
+                var bxe = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], bx.dimensions[^1]);
+                var bxs = DenseTensor<int>.OfShape(bx.dimensions[^2], bx.dimensions[^1]);
+                foreach(var idx2 in bxe)
+                {
+                    bxs[bxe.VariableIndex] = bx[idx2];
+                }
+
+                var bye = new TensorFixedDimensionsIterator(idx, by.dimensions[^2], by.dimensions[^1]);
+                var bys = DenseTensor<int>.OfShape(by.dimensions[^2], by.dimensions[^1]);
+                foreach (var idx2 in bye)
+                {
+                    bys[bye.VariableIndex] = by[idx2];
+                }
+
+                var bzs = Tensor<int>.MatMul2D(bxs, bys);
+                var bze = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], by.dimensions[^1]);
+                
+                foreach (var idx2 in bze)
+                {
+                    z[idx2] = bzs[bze.VariableIndex];
+                }
             }
             return z;
         }
@@ -560,6 +579,7 @@ where T : unmanaged
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]  
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y)
     {
         if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
@@ -592,12 +612,29 @@ where T : unmanaged
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
             var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            bx = bx.ToDenseTensor();
-            by = by.ToDenseTensor();
             var di = bx.GetDimensionsIterator(0..^2);
-            foreach (var _ in di)
+            foreach (var idx in di)
             {
-                z[di[..]] = Tensor<float>.MatMul2D(bx[di[..]], by[di[..]]);
+                var bxe = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], bx.dimensions[^1]);
+                var bxs = DenseTensor<float>.OfShape(bx.dimensions[^2], bx.dimensions[^1]);
+                foreach (var idx2 in bxe)
+                {
+                    bxs[bxe.VariableIndex] = bx[idx2];
+                }
+
+                var bye = new TensorFixedDimensionsIterator(idx, by.dimensions[^2], by.dimensions[^1]);
+                var bys = DenseTensor<float>.OfShape(by.dimensions[^2], by.dimensions[^1]);
+                foreach (var idx2 in bye)
+                {
+                    bys[bye.VariableIndex] = by[idx2];
+                }
+
+                var bzs = Tensor<float>.MatMul2D(bxs, bys);
+                var bze = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], by.dimensions[^1]);
+                foreach (var idx2 in bze)
+                {
+                    z[idx2] = bzs[bze.VariableIndex];
+                }
             }
             return z;
         }
@@ -675,8 +712,6 @@ where T : unmanaged
                 throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
             }
             var z = DenseTensor<double>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            bx = bx.ToDenseTensor();
-            by = by.ToDenseTensor();
             var di = bx.GetDimensionsIterator(0..^2);
             foreach (var _ in di)
             {
