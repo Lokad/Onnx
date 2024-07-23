@@ -136,17 +136,7 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override T GetValue(int index)
         {
-            /*
-            if (index > Length)
-            {
-                throw new IndexOutOfRangeException();
-            }
-            else
-            {
-                return memory.Span[index];
-            }*/
-            return arr[index];
-            
+            return arr[index];   
         }
 
         /// <summary>
@@ -158,15 +148,6 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override void SetValue(int index, T value)
         {
-            /*
-            if (index > Length)
-            {
-                throw new IndexOutOfRangeException();
-            }
-            else
-            {
-                memory.Span[index] = value;
-            }*/
             arr[index] = value;
         }
 

@@ -339,7 +339,7 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
         op.Complete();
     }
 
-    [IterationSetup(Targets = ["Benchmark20_1", "Benchmark20_10", "Benchmark20_50", "Benchmark200_1", "Benchmark200_10"])]
+    [IterationSetup(Targets = ["Benchmark20_1_1", "Benchmark20_10", "Benchmark20_50", "Benchmark200_1", "Benchmark200_10"])]
     public void SetupNoSimd()
     {
         graph!.Reset();
@@ -362,7 +362,7 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
 
     [Benchmark(Description="1 string of 20 chars", Baseline = true)]
     [BenchmarkCategory("1_20")]
-    public void Benchmark20_1() => graph!.Execute(ui20_1!, true);
+    public void Benchmark20_1_1() => graph!.Execute(ui20_1!, true);
 
     [Benchmark(Description = "1 string of 20 chars - simd")]
     [BenchmarkCategory("1_20")]

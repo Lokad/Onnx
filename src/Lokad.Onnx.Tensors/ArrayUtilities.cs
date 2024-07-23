@@ -415,5 +415,20 @@ namespace Lokad.Onnx
             }
             return result;
         }
+
+        public static void UncheckedCopy<T>(T[] arr1, ref T[] arr2)
+        {
+            if (arr1.Length != arr2.Length)
+            {
+                throw new ArgumentException("The arrays must be of the same length.");
+            }
+            unchecked
+            {
+                for (int i = 0; i < arr1.Length; i++)
+                {
+                    arr2[i] = arr1[i];
+                }
+            }
+        }
     }
 }
