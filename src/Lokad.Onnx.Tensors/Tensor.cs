@@ -1115,7 +1115,7 @@ namespace Lokad.Onnx
             else
             {
                 var dims = new int[Rank];
-                Array.Copy(dimensions, dims, Rank);
+                ArrayUtilities.UncheckedCopy(dimensions, ref dims);
                 dims[dim] = size;
                 return new BroadcastedTensor<T>(this, dims, new int[] {dim});
             }
