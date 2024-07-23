@@ -36,6 +36,7 @@ namespace Lokad.Onnx
 
         IEnumerator IEnumerable.GetEnumerator() => this;
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         bool IEnumerator.MoveNext()
         {
             if (!moveStart)
@@ -59,7 +60,13 @@ namespace Lokad.Onnx
             moveStart = false;
         }
 
-        public int[] Current => Index;
+       
+        public int[] Current
+        {
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            get => Index;
+        } 
+        
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public int[] Next()
@@ -79,7 +86,6 @@ namespace Lokad.Onnx
                         if (--subcursor <= -1)
                         {
                             //TODO somehow can we skip all ones?
-                            endCallback?.Invoke(ref this);
                             if (subcursor >= 0) //if callback has resetted it
                                 return Index;
                             return null;
@@ -121,4 +127,79 @@ namespace Lokad.Onnx
         #endregion
 
     }
+
+    public struct TensorFixedDimensionsIterator : IEnumerable<int[]>, IEnumerator<int[]>
+    {
+        public int[] fixedDims;
+        public int[] dims;
+        public int length;
+        public TensorDimensionsIterator iterator = new TensorDimensionsIterator();
+        public IEnumerator<int[]> iteratorEnumerator;
+        public int[] Index = null;
+        public int[] VariableIndex => iterator.Index;
+
+        public TensorFixedDimensionsIterator(int[] fixedDimensions, params int[] dims)
+        {
+            this.fixedDims = fixedDimensions;
+            this.dims = dims;
+            this.length = fixedDimensions.Length + dims.Length;
+            iterator = new TensorDimensionsIterator(dims);
+            iteratorEnumerator = iterator.GetEnumerator();
+            Index = new int[length];
+            fixedDims.CopyTo(Index, 0);
+        }
+
+        public TensorFixedDimensionsIterator(ITensor t, Range r, params int[] dims) : this(t.Dims[r], dims)
+        {
+
+        }
+        public IEnumerator<int[]> GetEnumerator() => this;
+
+        IEnumerator IEnumerable.GetEnumerator() => this;
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        bool IEnumerator.MoveNext()
+        { 
+            if (iteratorEnumerator.MoveNext())
+            {
+                unchecked
+                {
+                    for (int i = fixedDims.Length; i < length; i++)
+                    {
+                        Index[i] = iterator.Index[i - fixedDims.Length];
+                    }
+                    //iterator.Index.CopyTo(Index, fixedDims.Length);
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        
+        public int[] Current
+        {
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            get => Index;
+        }
+
+        object IEnumerator.Current
+        {
+            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            get => Index;
+        }
+
+        void IDisposable.Dispose() => Reset();
+        public void Reset()
+        {
+            iterator.Reset();
+            Index = null;
+        }
+
+
+
+    }
+
 }
