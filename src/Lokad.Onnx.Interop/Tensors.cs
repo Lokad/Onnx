@@ -5,15 +5,15 @@ namespace Lokad.Onnx.Interop;
 
 public class Tensors
 {
-    public static ITensor MakeTensor<T>(Array data) where T : struct => DenseTensor<T>.OfValues(data);
+    public static ITensor MakeTensor<T>(Array data) where T : unmanaged => DenseTensor<T>.OfValues(data);
     
-    public static ITensor MakeTensor<T>(T[] data, int[] dims) where T : struct => new DenseTensor<T>(data, dims);
+    public static ITensor MakeTensor<T>(T[] data, int[] dims) where T : unmanaged => new DenseTensor<T>(data, dims);
 
-    public static ITensor MakeEmptyTensor<T>(int[] dims) where T : struct => new DenseTensor<T>(dims);
+    public static ITensor MakeEmptyTensor<T>(int[] dims) where T : unmanaged => new DenseTensor<T>(dims);
 
-    public static ITensor MakeScalar<T>(T val) where T : struct => DenseTensor<T>.Scalar(val);
+    public static ITensor MakeScalar<T>(T val) where T : unmanaged => DenseTensor<T>.Scalar(val);
 
-    public static ITensor Ones<T>(int[] dims) where T : struct => Tensor<T>.Ones(dims);
+    public static ITensor Ones<T>(int[] dims) where T : unmanaged => Tensor<T>.Ones(dims);
 
     public static ITensor ARange(int start, int end, int step = 1) => Tensor<int>.Arange(start, end, step);
 

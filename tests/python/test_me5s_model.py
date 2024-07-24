@@ -43,10 +43,10 @@ def test_tokenizer():
     np.testing.assert_equal(batch_dict['attention_mask'].numpy(), t[1])
 
 def test_model_run():
-    input_texts = ['Hello world']
-    batch_dict = tokenizer(['Hello world'], max_length=512, padding=False, truncation=True, return_tensors='pt')
+    input_texts = ["Hello world"]
+    batch_dict = tokenizer(["Hello world"], max_length=512, padding=False, truncation=True, return_tensors='pt')
     outputs = model(**batch_dict)
-    t = backend.get_input_ndarray_from_text('Hello world', 'me5s')
+    t = backend.get_input_ndarray_from_text("Hello world", 'me5s')
     rep = backend.prepare_file(onnx_model_file)
     r = rep.run(t)
     np.testing.assert_allclose(outputs.last_hidden_state.detach().numpy(), r[0], rtol=1e-6, atol=1e-6)
