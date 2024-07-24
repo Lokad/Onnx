@@ -321,7 +321,7 @@ where T : unmanaged
         var xh = _x.Buffer.Pin();
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && k % Vector<int>.Count == 0)
+        if (HardwareConfig.UseSimd && k >= Vector<int>.Count && k % Vector<int>.Count == 0)
         {
             unsafe
             {
@@ -358,14 +358,14 @@ where T : unmanaged
         var xh = _x.Buffer.Pin(); 
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && Vector256<float>.Count % k == 0)
+        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && k >= Vector<float>.Count && Vector256<float>.Count % k == 0)
         {
             unsafe
             {
                 mm_unsafe_vectorized_intrinsics(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
             }
         }
-        else if (HardwareConfig.UseSimd && k % Vector<float>.Count == 0)
+        else if (HardwareConfig.UseSimd && k >= Vector<float>.Count && k % Vector<float>.Count == 0)
         {
             unsafe
             {
@@ -401,14 +401,14 @@ where T : unmanaged
         var xh = _x.Buffer.Pin();
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && Vector256<double>.Count % k == 0)
+        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && k >= Vector<double>.Count && Vector256<double>.Count % k == 0)
         {
             unsafe
             {
                 mm_unsafe_vectorized_intrinsics(m, n, k, (double*)xh.Pointer, (double*)yh.Pointer, (double*)oh.Pointer);
             }
         }
-        else if (HardwareConfig.UseSimd && k % Vector<double>.Count == 0)
+        else if (HardwareConfig.UseSimd && k >= Vector<double>.Count && k % Vector<double>.Count == 0)
         {
             unsafe
             {
