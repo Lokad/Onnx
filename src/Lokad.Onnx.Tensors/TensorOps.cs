@@ -37,7 +37,7 @@ where T : unmanaged
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
 
-        if (HardwareConfig.UseSimd && this.Length % Vector<T>.Count == 0 && this is DenseTensor<T> d1 && destination is DenseTensor<T> d2)
+        if (HardwareConfig.UseSimd && this.Length >= Vector<T>.Count && this.Length % Vector<T>.Count == 0 && this is DenseTensor<T> d1 && destination is DenseTensor<T> d2)
         {
             var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
             var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
@@ -88,7 +88,7 @@ where T : unmanaged
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
 
-        if (HardwareConfig.UseSimd && this.Length % Vector<T>.Count == 0 && this is DenseTensor<T> d1 && tensor2 is DenseTensor<T> d2 && destination is DenseTensor<T> d3)
+        if (HardwareConfig.UseSimd && this.Length >= Vector<T>.Count && this.Length % Vector<T>.Count == 0 && this is DenseTensor<T> d1 && tensor2 is DenseTensor<T> d2 && destination is DenseTensor<T> d3)
         {
             var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
             var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
@@ -358,7 +358,7 @@ where T : unmanaged
         var xh = _x.Buffer.Pin(); 
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && k >= Vector<float>.Count && Vector256<float>.Count % k == 0)
+        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && k >= Vector256<float>.Count && Vector256<float>.Count % k == 0)
         {
             unsafe
             {
@@ -401,7 +401,7 @@ where T : unmanaged
         var xh = _x.Buffer.Pin();
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && k >= Vector<double>.Count && Vector256<double>.Count % k == 0)
+        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && k >= Vector256<double>.Count && Vector256<double>.Count % k == 0)
         {
             unsafe
             {
