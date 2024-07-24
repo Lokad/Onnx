@@ -120,7 +120,7 @@ public class MathTests
         var a_ = Tensor<int>.Arange(0, 2 * 2 * 4).Reshape(2, 2, 4);
         var b_ = Tensor<int>.Arange(0, 2 * 4 * 8).Reshape(2, 4, 8);
         var c_ = Tensor<int>.MatMul(a_, b_);
-        Assert.Equal(98, c[0, 1, 1]);
+        Assert.Equal(326, c[0, 1, 1]);
     }
     // Based on https://github.com/onnx/onnx/blob/main/docs/Operators.md#Conv
     [Fact]

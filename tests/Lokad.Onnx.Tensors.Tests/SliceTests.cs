@@ -28,7 +28,7 @@ public class SliceTests
         t2[.., 1] = ac;
         Assert.Equal(2, ac.Rank);
         ac = ac.Reshape(4, 1);
-        Assert.Throws<IndexOutOfRangeException>(() => t2[.., 2] = ac);
+        Assert.Throws<ArgumentOutOfRangeException>(() => t2[.., 2] = ac);
 
         se = t2[..3, 1, ..];
         Assert.Equal(se.Dimensions.ToArray(), new int[] { 2, 3 });

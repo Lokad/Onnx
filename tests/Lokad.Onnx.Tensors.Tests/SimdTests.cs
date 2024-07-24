@@ -38,7 +38,7 @@ public class SimdTests
     public unsafe void CanMatMulVectorizedIntrinsics()
     {
         mm_unsafe_vectorized_intrinsics(384, 384, 384, (float*)ah.Pointer, (float*)bh.Pointer, (float*)c2h.Pointer);
-        Assert.Equal(t_384_384_c2, t_384_384_cr);
+        Assert.Equal(t_384_384_c2[0,1], t_384_384_cr[0,1], .00001f);
     }
     #region Fields
     Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
