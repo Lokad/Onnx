@@ -5,11 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.Intrinsics;
 using System.Runtime.InteropServices;
-using static Lokad.Onnx.MathOps;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.CompilerServices;
+
+using static Lokad.Onnx.MathOps;
 
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
 where T : unmanaged
@@ -37,13 +37,18 @@ where T : unmanaged
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
 
-        if (HardwareConfig.UseSimd && this.Length >= Vector<T>.Count && this.Length % Vector<T>.Count == 0 && this is DenseTensor<T> d1 && destination is DenseTensor<T> d2)
+        if (HardwareConfig.UseSimd && this is DenseTensor<T> d1 && destination is DenseTensor<T> d2)
         {
             var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
             var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
+            var ceiling = (Convert.ToInt32(this.length) / Vector<T>.Count) * Vector<T>.Count;
             for (int i = 0; i < vspan1.Length; i++)
             {
                 vspan2[i] = op(vspan1[i]);
+            }
+            for (int i = ceiling; i < this.length; i++)
+            {
+                destination.SetValue(i, sop(GetValue(i)));
             }
         }
         else
@@ -88,14 +93,19 @@ where T : unmanaged
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
 
-        if (HardwareConfig.UseSimd && this.Length >= Vector<T>.Count && this.Length % Vector<T>.Count == 0 && this is DenseTensor<T> d1 && tensor2 is DenseTensor<T> d2 && destination is DenseTensor<T> d3)
+        if (HardwareConfig.UseSimd && this is DenseTensor<T> d1 && tensor2 is DenseTensor<T> d2 && destination is DenseTensor<T> d3)
         {
             var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
             var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
             var vspan3 = MemoryMarshal.Cast<T, Vector<T>>(d3.Buffer.Span);
+            var ceiling = (Convert.ToInt32(this.length) / Vector<T>.Count) * Vector<T>.Count;
             for (int i = 0; i < vspan1.Length; i++)
             {
                 vspan3[i] = op(vspan1[i], vspan2[i]);
+            }
+            for (int i = ceiling; i < this.length; i++)
+            {
+                destination.SetValue(i, sop(GetValue(i), tensor2.GetValue(i)));
             }
         }
         else
@@ -321,7 +331,7 @@ where T : unmanaged
         var xh = _x.Buffer.Pin();
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && k >= Vector<int>.Count && k % Vector<int>.Count == 0)
+        if (HardwareConfig.UseSimd)
         {
             unsafe
             {
@@ -358,14 +368,14 @@ where T : unmanaged
         var xh = _x.Buffer.Pin(); 
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && k >= Vector256<float>.Count && Vector256<float>.Count % k == 0)
+        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
         {
             unsafe
             {
                 mm_unsafe_vectorized_intrinsics(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
             }
         }
-        else if (HardwareConfig.UseSimd && k >= Vector<float>.Count && k % Vector<float>.Count == 0)
+        else if (HardwareConfig.UseSimd)
         {
             unsafe
             {
@@ -401,14 +411,14 @@ where T : unmanaged
         var xh = _x.Buffer.Pin();
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported && k >= Vector256<double>.Count && Vector256<double>.Count % k == 0)
+        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
         {
             unsafe
             {
                 mm_unsafe_vectorized_intrinsics(m, n, k, (double*)xh.Pointer, (double*)yh.Pointer, (double*)oh.Pointer);
             }
         }
-        else if (HardwareConfig.UseSimd && k >= Vector<double>.Count && k % Vector<double>.Count == 0)
+        else if (HardwareConfig.UseSimd)
         {
             unsafe
             {
@@ -417,9 +427,9 @@ where T : unmanaged
         }
         else
             unsafe
-        {
-            mm(m, n, k, (double*)xh.Pointer, (double*)yh.Pointer, (double*)oh.Pointer);
-        }
+            {
+                mm(m, n, k, (double*)xh.Pointer, (double*)yh.Pointer, (double*)oh.Pointer);
+            }
         xh.Dispose();
         yh.Dispose();
         oh.Dispose();

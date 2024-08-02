@@ -351,12 +351,17 @@ public class MathOps
             {
                 var a = Ap[j];
                 var Bp = B + j * K;
-                var av = new Vector<int>(a);    
+                var av = new Vector<int>(a);
+                int ceiling = (K / Vector<int>.Count) * Vector<int>.Count;
                 var Bkv = MemoryMarshal.Cast<int, Vector<int>>(new Span<int>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<int, Vector<int>>(new Span<int>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Ckv[k] + av * Bkv[k];
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
                 }
             }
         }
@@ -388,12 +393,17 @@ public class MathOps
                 var a = Ap[j];
                 var Bp = B + j * K;
                 var av = new Vector<float>(a);
+                int ceiling = (K / Vector<float>.Count) * Vector<float>.Count;
                 var Bkv = MemoryMarshal.Cast<float, Vector<float>>(new Span<float>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<float, Vector<float>>(new Span<float>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Ckv[k] + av * Bkv[k];
-                } 
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
+                }
             }
         }
     }
@@ -424,11 +434,16 @@ public class MathOps
                 var a = Ap[j];
                 var Bp = B + j * K;
                 var av = new Vector<double>(a);
+                int ceiling = (K / Vector<double>.Count) * Vector<double>.Count;
                 var Bkv = MemoryMarshal.Cast<double, Vector<double>>(new Span<double>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<double, Vector<double>>(new Span<double>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Ckv[k] + av * Bkv[k];
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
                 }
             }
         }
@@ -461,11 +476,16 @@ public class MathOps
                 var a = Ap[j];
                 var Bp = B + j * K;
                 var av = Vector256.Create(a);
+                int ceiling = (K / Vector256<float>.Count) * Vector256<float>.Count;
                 var Bkv = MemoryMarshal.Cast<float, Vector256<float>>(new Span<float>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<float, Vector256<float>>(new Span<float>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Fma.MultiplyAdd(Bkv[k], av, Ckv[k]);
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
                 }
             }
         }
@@ -497,11 +517,16 @@ public class MathOps
                 var a = Ap[j];
                 var Bp = B + j * K;
                 var av = Vector256.Create(a);
+                int ceiling = (K / Vector256<double>.Count) * Vector256<double>.Count;
                 var Bkv = MemoryMarshal.Cast<double, Vector256<double>>(new Span<double>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<double, Vector256<double>>(new Span<double>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Fma.MultiplyAdd(Bkv[k], av, Ckv[k]);
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
                 }
             }
         }
