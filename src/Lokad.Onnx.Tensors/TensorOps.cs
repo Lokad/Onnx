@@ -370,9 +370,19 @@ where T : unmanaged
         var oh = output.Buffer.Pin();
         if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
         {
-            unsafe
+            if (m % 2 == 0 && k % 32 == 0)
             {
-                mm_unsafe_vectorized_intrinsics(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
+                unsafe
+                {
+                    mm_unsafe_vectorized_intrinsics_2x4(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
+                }
+            }
+            else
+            {
+                unsafe
+                {
+                    mm_unsafe_vectorized_intrinsics(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
+                }
             }
         }
         else if (HardwareConfig.UseSimd)
@@ -387,7 +397,7 @@ where T : unmanaged
             unsafe
             {
                 mm(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
-            }     
+            }
         }
         xh.Dispose();
         yh.Dispose();
