@@ -2002,6 +2002,26 @@ namespace Lokad.Onnx
         public TensorSlice<T> Slice(params SliceIndex[] indices) => new TensorSlice<T>(this, ExpandEllipsis(indices));
         #endregion
 
+        #region Storage
+        public Memory<T> Storage => this switch
+        {
+            DenseTensor<T> dt => dt.Buffer,
+            BroadcastedTensor<T> bt => bt.source.Storage,
+            TensorSlice<T> ts => ts.parent.Storage,
+            CompressedSparseTensor<T> cst => cst.Values,
+            _ => throw new NotSupportedException("Cannot get tensor for ")
+        };
+
+        public int GetStorageIndex(int[] indices) => this switch
+        {
+            DenseTensor<T> dt => ArrayUtilities.GetIndex(dt.strides, indices),
+            BroadcastedTensor<T> bt => ArrayUtilities.GetIndex(bt.effectiveStrides, indices),
+            TensorSlice<T> ts => ts.GetOffset(indices),
+            CompressedSparseTensor<T> cst => ArrayUtilities.GetIndex(cst.strides, indices),
+            _ => throw new NotSupportedException("Cannot get tensor for ")
+
+        };
+        #endregion
         #region Dimensions iterator
         public bool ShapeEquals(Tensor<T> t) => this.dimensions.SequenceEqual(t.dimensions);
         
