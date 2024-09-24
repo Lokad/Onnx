@@ -44,7 +44,7 @@ public class MatMul2DBenchmarks : Runtime
         bh_2 = t_1536_384_b.ToDenseTensor().Buffer.Pin();
     }
 
-    [Benchmark(Description = "Multiply 2 384x384 matrices - managed", Baseline = true)]
+    [Benchmark(Description = "Multiply 2 384x384 matrices - managed")]
     public void MatMul2D_1() =>
         mm_managed(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_a.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
 
@@ -60,10 +60,13 @@ public class MatMul2DBenchmarks : Runtime
     public unsafe void MatMul2D_4() =>
        mm_unsafe_vectorized(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
 
-    [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe simd intrinsics")]
+    [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe simd intrinsics", Baseline = true)]
     public unsafe void MatMul2D_5() =>
       mm_unsafe_vectorized_intrinsics(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
 
+    [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe simd intrinsics pointers 2x4")]
+    public unsafe void MatMul2D_6() =>
+      mm_unsafe_vectorized_intrinsics_2x4(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
     #region Fields
     Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_b = Tensor<float>.Zeros(0);

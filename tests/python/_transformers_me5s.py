@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import torch
 from transformers import AutoTokenizer, AutoModel
 
 # Each input text should start with "query: " or "passage: ", even for non-English texts.
@@ -11,5 +12,7 @@ model = AutoModel.from_pretrained('intfloat/multilingual-e5-small')
 batch_dict = tokenizer(input_texts, max_length=512, padding=True, truncation=True, return_tensors='pt')
 print(batch_dict)
 outputs = model(**batch_dict)
+
+torch.set_printoptions(precision=5)
 print(outputs.last_hidden_state)
 

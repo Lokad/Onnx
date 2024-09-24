@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
+using System.Diagnostics;
 
 namespace Lokad.Onnx;
 
@@ -351,12 +352,17 @@ public class MathOps
             {
                 var a = Ap[j];
                 var Bp = B + j * K;
-                var av = new Vector<int>(a);    
+                var av = new Vector<int>(a);
+                int ceiling = (K / Vector<int>.Count) * Vector<int>.Count;
                 var Bkv = MemoryMarshal.Cast<int, Vector<int>>(new Span<int>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<int, Vector<int>>(new Span<int>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Ckv[k] + av * Bkv[k];
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
                 }
             }
         }
@@ -388,12 +394,17 @@ public class MathOps
                 var a = Ap[j];
                 var Bp = B + j * K;
                 var av = new Vector<float>(a);
+                int ceiling = (K / Vector<float>.Count) * Vector<float>.Count;
                 var Bkv = MemoryMarshal.Cast<float, Vector<float>>(new Span<float>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<float, Vector<float>>(new Span<float>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Ckv[k] + av * Bkv[k];
-                } 
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
+                }
             }
         }
     }
@@ -424,11 +435,16 @@ public class MathOps
                 var a = Ap[j];
                 var Bp = B + j * K;
                 var av = new Vector<double>(a);
+                int ceiling = (K / Vector<double>.Count) * Vector<double>.Count;
                 var Bkv = MemoryMarshal.Cast<double, Vector<double>>(new Span<double>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<double, Vector<double>>(new Span<double>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Ckv[k] + av * Bkv[k];
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
                 }
             }
         }
@@ -461,11 +477,117 @@ public class MathOps
                 var a = Ap[j];
                 var Bp = B + j * K;
                 var av = Vector256.Create(a);
+                int ceiling = (K / Vector256<float>.Count) * Vector256<float>.Count;
                 var Bkv = MemoryMarshal.Cast<float, Vector256<float>>(new Span<float>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<float, Vector256<float>>(new Span<float>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Fma.MultiplyAdd(Bkv[k], av, Ckv[k]);
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Matrix multiplication.
+    /// </summary>
+    /// <param name="M">A rows.</param>
+    /// <param name="N">A columns.</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="B">Right matrix.</param>
+    /// <param name="C">Result matrix.</param>
+    public unsafe static void mm_unsafe_vectorized_intrinsics_2x4(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* B,
+                          float* C)
+    {
+
+        // Optimizations: 
+        //
+        //  - Process the output two lines at a time (to halve the number of loads from B),
+        //    and assume that M is even to avoid having dedicated code for a last odd line.
+        //
+        //  - Manually 4x unroll the inner loop, and assume that K is a multiple of 32 
+        //    to avoid having dedicated code for the remainder of lines.
+        //
+        //  - Use pointers and casts instead of span, in order to avoid overhead from bounds
+        //    checking. The #if DEBUG lines are here to protect against out-of-bounds in 
+        //    debug mode.
+
+        if (M % 2 != 0)
+            throw new ArgumentException(nameof(M));
+
+        if (K % (4 * Vector256<float>.Count) != 0)
+            throw new ArgumentException(nameof(K));
+
+#if DEBUG
+        var Aend = A + M * N;
+        var Bend = B + N * K;
+        var Cend = C + M * K;
+#endif
+
+        for (int i = 0; i < M; i += 2)
+        {
+            var Ap1 = A + i * N;
+            var Ap2 = A + N;
+
+            var Cp1 = C + i * K;
+            var Cp2 = Cp1 + K;
+
+            for (int j = 0; j < N; ++j)
+            {
+#if DEBUG
+                Debug.Assert(Ap1 + j < Aend);
+                Debug.Assert(Ap2 + j < Aend);
+#endif
+                var av1 = Vector256.Create(Ap1[j]);
+                var av2 = Vector256.Create(Ap2[j]);
+
+                var Bp = B + j * K;
+
+                var Bpv = (Vector256<float>*)Bp;
+                var Cpv1 = (Vector256<float>*)Cp1;
+                var Cpv2 = (Vector256<float>*)Cp2;
+                var Bepv = (Vector256<float>*)(Bp + K);
+
+#if DEBUG
+                Debug.Assert(Bepv <= Bend);
+#endif
+
+                while (Bpv < Bepv)
+                {
+#if DEBUG
+                    Debug.Assert(Cpv1 + 3 < Cend);
+                    Debug.Assert(Cpv2 + 3 < Cend);
+#endif
+                    Vector256<float> bv;
+
+                    bv = Bpv[0];
+                    Cpv1[0] = Fma.MultiplyAdd(bv, av1, Cpv1[0]);
+                    Cpv2[0] = Fma.MultiplyAdd(bv, av2, Cpv2[0]);
+
+                    bv = Bpv[1];
+                    Cpv1[1] = Fma.MultiplyAdd(bv, av1, Cpv1[1]);
+                    Cpv2[1] = Fma.MultiplyAdd(bv, av2, Cpv2[1]);
+
+                    bv = Bpv[2];
+                    Cpv1[2] = Fma.MultiplyAdd(bv, av1, Cpv1[2]);
+                    Cpv2[2] = Fma.MultiplyAdd(bv, av2, Cpv2[2]);
+
+                    bv = Bpv[3];
+                    Cpv1[3] = Fma.MultiplyAdd(bv, av1, Cpv1[3]);
+                    Cpv2[3] = Fma.MultiplyAdd(bv, av2, Cpv2[3]);
+
+                    Bpv += 4;
+                    Cpv1 += 4;
+                    Cpv2 += 4;
                 }
             }
         }
@@ -497,11 +619,16 @@ public class MathOps
                 var a = Ap[j];
                 var Bp = B + j * K;
                 var av = Vector256.Create(a);
+                int ceiling = (K / Vector256<double>.Count) * Vector256<double>.Count;
                 var Bkv = MemoryMarshal.Cast<double, Vector256<double>>(new Span<double>(Bp, K));
                 var Ckv = MemoryMarshal.Cast<double, Vector256<double>>(new Span<double>(Cp, K));
                 for (int k = 0; k < Bkv.Length; k++)
                 {
                     Ckv[k] = Fma.MultiplyAdd(Bkv[k], av, Ckv[k]);
+                }
+                for (int k = ceiling; k < K; k++)
+                {
+                    Cp[k] += a * Bp[k];
                 }
             }
         }

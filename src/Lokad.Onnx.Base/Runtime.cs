@@ -78,6 +78,7 @@ namespace Lokad.Onnx
                     Info("Runtime already initialized.");
                     return;
                 }
+
                 if (!IsUnitTestRun)
                 {
                     Logger.Close();
@@ -92,6 +93,19 @@ namespace Lokad.Onnx
                         Info("Debug mode enabled.");
                     }
                 }
+                
+                var logfiles = Directory.GetFiles(LokadDevDir, ToolName + ".*.log", SearchOption.AllDirectories) ?? Array.Empty<string>();
+                Info("{0} existing log file(s) found.", logfiles.Length);
+                foreach (var l in logfiles)
+                {
+                    var age = DateTime.Now.Subtract(File.GetLastWriteTime(l));
+                    if (age.TotalDays >= 3)
+                    {
+                        File.Delete(l);
+                        Info("Deleted log file {0} that is more than {1} day(s) old.", Path.GetFileName(l), 3);
+                    }
+                }
+                
                 RuntimeInitialized = true;
             }
         }
