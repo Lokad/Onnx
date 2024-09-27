@@ -2009,19 +2009,21 @@ namespace Lokad.Onnx
             BroadcastedTensor<T> bt => bt.source.Storage,
             TensorSlice<T> ts => ts.parent.Storage,
             CompressedSparseTensor<T> cst => cst.Values,
-            _ => throw new NotSupportedException("Cannot get tensor for ")
+            _ => throw new NotImplementedException("Storage property not implemented for this tensor type.")
         };
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetStorageIndex(int[] indices) => this switch
         {
             DenseTensor<T> dt => ArrayUtilities.GetIndex(dt.strides, indices),
             BroadcastedTensor<T> bt => ArrayUtilities.GetIndex(bt.effectiveStrides, indices),
             TensorSlice<T> ts => ts.GetOffset(indices),
             CompressedSparseTensor<T> cst => ArrayUtilities.GetIndex(cst.strides, indices),
-            _ => throw new NotSupportedException("Cannot get tensor for ")
+            _ => throw new NotSupportedException("GetStorageIndex method not implemented for this tensor type.")
 
         };
         #endregion
+
         #region Dimensions iterator
         public bool ShapeEquals(Tensor<T> t) => this.dimensions.SequenceEqual(t.dimensions);
         
