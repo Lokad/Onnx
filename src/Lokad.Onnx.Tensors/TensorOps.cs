@@ -1347,46 +1347,60 @@ where T : unmanaged
 
     public static Tensor<double> Erf(Tensor<double> x) => x.Apply(MathOps.Erf);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static Tensor<T> Transpose(Tensor<T> data, int[] perm = null)
     {
-        if (perm != null && perm.Length != data.Rank)
+        if (perm is not null)
         {
-            throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {data.Rank}.");
-        }
-        if (perm != null && !perm.All(p => p < data.Rank))
-        {
-            throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(p => p >= data.Rank)} exceeds the number of dimensions in the tensor.");
-        }
-        if (perm != null && !ArrayUtilities.CheckNoRepeatedDims(perm))
-        {
-            throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
-        }
-
-        if (perm is null)
-        {
-            perm = data.dimensions.Select((_, n) => n).Reverse().ToArray();
+            if (perm.Length != data.Rank)
+            {
+                throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {data.Rank}.");
+            }
+            if (!perm.All(p => p < data.Rank))
+            {
+                throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(p => p >= data.Rank)} exceeds the number of dimensions in the tensor.");
+            }
+            if (!ArrayUtilities.CheckNoRepeatedDims(perm))
+            {
+                throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
+            }
+            for (int i = 0; i < perm.Length; i++)
+            {
+                perm[i] = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, perm[i]);
+            }
         }
         else
         {
-            perm = perm.Select(p => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, p)).ToArray();
+            perm = Enumerable.Range(0, data.Rank).Reverse().ToArray();
         }
-
+      
         if (data.Rank <= 1)
         {
             return data.Clone();
         }
-        var shape = perm.Select((i, _) => data.dimensions[i]).ToArray();
+        var shape = new int[data.Rank];
+        for (int i =0; i < perm.Length; i++)
+        {
+            shape[i] = data.dimensions[perm[i]];
+        }
         var r = DenseTensor<T>.OfShape(shape);
         var di = data.GetDimensionsIterator();
         foreach (var index in di)
         {
-            var permindex = index.Select((_,n) => index[perm[n]]).ToArray();
-            r[permindex] = data[index];
+            int _index = 0;
+            int permindex = 0;
+            for (int i = 0; i < perm.Length; i++)
+            {
+                _index += index[i] * data.strides[i];
+                permindex += index[perm[i]] * r.strides[i];
+            }
+            r.SetValue(permindex, data.GetValue(_index));
         }
         return r;
     }
 
-    public static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? _axis = null)
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]  
+    public unsafe static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? _axis = null)
     {
         if (data.Rank == 0) throw new ArgumentException(nameof (data), "Cannot gather from a tensor of rank 0.");
         var axis = _axis.HasValue ? ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _axis.Value) : 0;    
@@ -1394,8 +1408,8 @@ where T : unmanaged
         {
             throw new ArgumentException(nameof(axis), $"The specified axis {_axis} exceeds the number of dimensions in the tensor.");
         }
-
-        List<int> shape = new List<int>(data.Rank - 1 + indices.Rank);
+        int* p = stackalloc int[data.Rank - 1 + indices.Rank];
+        UnsafeFixedSizeList<int> shape = new UnsafeFixedSizeList<int>(p, data.Rank - 1 + indices.Rank);
         for (int i = 0; i < axis; i++)
         {
             shape.Add(data.dimensions[i]);
@@ -1413,7 +1427,7 @@ where T : unmanaged
         {
             var a = di[0..axis];
             var k = ArrayUtilities.HandleNegativeAxisOrIndex(data.dimensions[axis], indices[di[axis..(axis + indices.Rank)]]);
-            var b = di[(axis + (indices.Rank == 0 ? 1 : indices.Rank))..].ToArray();
+            var b = di[(axis + (indices.Rank == 0 ? 1 : indices.Rank))..];
             var oloc = a.Append(k).Concat(b).ToArray();
             output[di] = data[oloc];
         }
