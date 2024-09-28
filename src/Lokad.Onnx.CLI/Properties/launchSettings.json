@@ -4,11 +4,11 @@
       "commandName": "WSL2",
       "distributionName": ""
     },
-    "Run mnist-8": {
+    "mnist-8": {
       "commandName": "Project",
       "commandLineArgs": "run C:\\Users\\Allister\\Downloads\\mnist-8(1).onnx C:\\Users\\Allister\\Downloads\\solidity.png::1:10 --node Plus214 --debug"
     },
-    "Run me5s": {
+    "benchmark me5s": {
       "commandName": "Project",
       "commandLineArgs": "benchmark me5s-run --filter Lokad.Onnx.CLI.MultilingualEmbedded5SmallRunBenchmarks.Benchmark20_1_simd"
     }

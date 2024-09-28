@@ -144,7 +144,7 @@ where T : unmanaged
             {
                 _A.SetValue(i, inA.GetValue(0));
             }
-            return new Tensor<T>[2] { _A, inB };
+            return [_A, inB ];
         }
         else if (inB.Rank == 0 && inA.Rank != 0)
         {
@@ -153,12 +153,12 @@ where T : unmanaged
             {
                 _B.SetValue(i, inB.GetValue(0));
             }
-            return new Tensor<T>[2] { inA, _B };
+            return [inA, _B ];
         }
 
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
-        var outA = inA.Clone();
-        var outB = inB.Clone();
+        var outA = inA;
+        var outB = inB;
         for (var i = 0; i < broadcastRank; i++)
         {
             var idxA = i - broadcastRank + inA.Rank;
@@ -190,7 +190,7 @@ where T : unmanaged
                 return Array.Empty<Tensor<T>>();
             }
         }
-        return new[] { outA, outB };
+        return [outA, outB ];
     }
 
     public static bool Broadcast(Tensor<T> x, Tensor<T> y, out Tensor<T> outx, out Tensor<T> outy)

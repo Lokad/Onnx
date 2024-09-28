@@ -79,13 +79,11 @@ namespace Lokad.Onnx
         /// <returns></returns>
         public static int[] GetStrides(ReadOnlySpan<int> dimensions, bool reverseStride = false)
         {
-            int[] strides = new int[dimensions.Length];
-
             if (dimensions.Length == 0)
             {
-                return strides;
+                return Array.Empty<int>();
             }
-
+            int[] strides = new int[dimensions.Length];
             int stride = 1;
             if (reverseStride)
             {
@@ -141,6 +139,10 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int startFromDimension = 0)
         {
+            if (strides.Length == 0) 
+            { 
+                return 0; 
+            }  
             int index = 0;
             for (int i = startFromDimension; i < indices.Length; i++)
             {
@@ -414,18 +416,15 @@ namespace Lokad.Onnx
             return result;
         }
 
-        public static void UncheckedCopy<T>(T[] arr1, ref T[] arr2)
+        public static void UnsafeCopy<T>(T[] arr1, ref T[] arr2) where T: unmanaged
         {
             if (arr1.Length != arr2.Length)
             {
                 throw new ArgumentException("The arrays must be of the same length.");
             }
-            unchecked
+            unsafe
             {
-                for (int i = 0; i < arr1.Length; i++)
-                {
-                    arr2[i] = arr1[i];
-                }
+                Buffer.BlockCopy(arr1, 0, arr2, 0, arr1.Length * sizeof(T));
             }
         }
     }
