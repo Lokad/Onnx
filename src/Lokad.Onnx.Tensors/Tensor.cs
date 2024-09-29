@@ -899,20 +899,10 @@ namespace Lokad.Onnx
         /// <param name="value">The new value to set at the specified position in this Tensor.</param>
         public abstract void SetValue(int index, T value);
 
-        public virtual T this[params int[] indices]
+        public T this[params int[] indices]
         {
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                for (int i = 0; i < indices.Length; i++)
-                {
-                    if (indices[i] >= dimensions[i])
-                    {
-                        throw new IndexOutOfRangeException();
-                    }
-                }
-                return this[(ReadOnlySpan<int>)indices];
-            }
+            get => this[(ReadOnlySpan<int>)indices];
             
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
             set => this[(ReadOnlySpan<int>)indices] = value;
@@ -927,31 +917,10 @@ namespace Lokad.Onnx
         public virtual T this[ReadOnlySpan<int> indices]
         {
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
-                {
-                    return GetValue(0);
-                }
-                else
-                {
-                    return GetValue(ArrayUtilities.GetIndex(strides, indices));
-                }
-            }
-
+            get => GetValue(ArrayUtilities.GetIndex(strides, indices));
+            
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-            set
-            {
-                if (indices.Length == 1 && Rank == 0 && indices[0] == 0)
-                {
-                    SetValue(0, value);
-                    return;
-                }
-                else
-                {
-                    SetValue(ArrayUtilities.GetIndex(strides, indices), value);
-                }
-            }
+            set => SetValue(ArrayUtilities.GetIndex(strides, indices), value);
         }
 
         public T this[params Index[] indices]
@@ -1102,6 +1071,7 @@ namespace Lokad.Onnx
             dims.RemoveAt(dim);
             return Reshape(dims.ToArray());
         }
+
         public virtual BroadcastedTensor<T> BroadcastDim(int dim, int size)
         {
             if (dim >= Rank)
@@ -1115,7 +1085,7 @@ namespace Lokad.Onnx
             else
             {
                 var dims = new int[Rank];
-                ArrayUtilities.UncheckedCopy(dimensions, ref dims);
+                ArrayUtilities.UnsafeCopy(dimensions, ref dims);
                 dims[dim] = size;
                 return new BroadcastedTensor<T>(this, dims, new int[] {dim});
             }
@@ -2009,19 +1979,21 @@ namespace Lokad.Onnx
             BroadcastedTensor<T> bt => bt.source.Storage,
             TensorSlice<T> ts => ts.parent.Storage,
             CompressedSparseTensor<T> cst => cst.Values,
-            _ => throw new NotSupportedException("Cannot get tensor for ")
+            _ => throw new NotImplementedException("Storage property not implemented for this tensor type.")
         };
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetStorageIndex(int[] indices) => this switch
         {
             DenseTensor<T> dt => ArrayUtilities.GetIndex(dt.strides, indices),
             BroadcastedTensor<T> bt => ArrayUtilities.GetIndex(bt.effectiveStrides, indices),
             TensorSlice<T> ts => ts.GetOffset(indices),
             CompressedSparseTensor<T> cst => ArrayUtilities.GetIndex(cst.strides, indices),
-            _ => throw new NotSupportedException("Cannot get tensor for ")
+            _ => throw new NotSupportedException("GetStorageIndex method not implemented for this tensor type.")
 
         };
         #endregion
+
         #region Dimensions iterator
         public bool ShapeEquals(Tensor<T> t) => this.dimensions.SequenceEqual(t.dimensions);
         

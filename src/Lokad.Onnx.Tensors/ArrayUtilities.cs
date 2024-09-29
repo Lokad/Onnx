@@ -79,13 +79,11 @@ namespace Lokad.Onnx
         /// <returns></returns>
         public static int[] GetStrides(ReadOnlySpan<int> dimensions, bool reverseStride = false)
         {
-            int[] strides = new int[dimensions.Length];
-
             if (dimensions.Length == 0)
             {
-                return strides;
+                return Array.Empty<int>();
             }
-
+            int[] strides = new int[dimensions.Length];
             int stride = 1;
             if (reverseStride)
             {
@@ -141,15 +139,14 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int startFromDimension = 0)
         {
-            Debug.Assert(strides.Length == indices.Length);
-            
+            if (strides.Length == 0) 
+            { 
+                return 0; 
+            }  
             int index = 0;
-            unchecked
+            for (int i = startFromDimension; i < indices.Length; i++)
             {
-                for (int i = startFromDimension; i < indices.Length; i++)
-                {
-                    index += strides[i] * indices[i];
-                }
+                index += strides[i] * indices[i];
             }
             return index;
         }
@@ -305,6 +302,7 @@ namespace Lokad.Onnx
             return list.ToArray();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int HandleNegativeAxisOrIndex(int size, int axis)
         {
             if (axis >= 0)
@@ -317,8 +315,10 @@ namespace Lokad.Onnx
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static bool CheckNoRepeatedDims(int[] dims) => dims.Length == dims.Distinct().Count();
 
+        
         public static int Clamp(int value, int min, int max)
         {
             if (value < min)
@@ -416,18 +416,15 @@ namespace Lokad.Onnx
             return result;
         }
 
-        public static void UncheckedCopy<T>(T[] arr1, ref T[] arr2)
+        public static void UnsafeCopy<T>(T[] arr1, ref T[] arr2) where T: unmanaged
         {
             if (arr1.Length != arr2.Length)
             {
                 throw new ArgumentException("The arrays must be of the same length.");
             }
-            unchecked
+            unsafe
             {
-                for (int i = 0; i < arr1.Length; i++)
-                {
-                    arr2[i] = arr1[i];
-                }
+                Buffer.BlockCopy(arr1, 0, arr2, 0, arr1.Length * sizeof(T));
             }
         }
     }

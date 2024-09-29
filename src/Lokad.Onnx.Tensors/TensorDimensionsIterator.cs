@@ -63,42 +63,38 @@ namespace Lokad.Onnx
        
         public int[] Current
         {
-            [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => Index;
         } 
         
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public int[] Next()
         {
-            unchecked
+            
+            if (subcursor <= -1)
+                return null;
+
+            if (++Index[subcursor] >= dimensions[subcursor])
             {
-                if (subcursor <= -1)
-                    return null;
+            _repeat:
+                Index[subcursor] = 0;
 
-                if (++Index[subcursor] >= dimensions[subcursor])
+                do
                 {
-                _repeat:
-                    Index[subcursor] = 0;
-
-                    do
+                    if (--subcursor <= -1)
                     {
-                        if (--subcursor <= -1)
-                        {
-                            //TODO somehow can we skip all ones?
-                            if (subcursor >= 0) //if callback has resetted it
-                                return Index;
-                            return null;
-                        }
-                    } while (dimensions[subcursor] <= 1);
+                        return null;
+                    }
+                } while (dimensions[subcursor] <= 1);
 
-                    ++Index[subcursor];
-                    if (Index[subcursor] >= dimensions[subcursor])
-                        goto _repeat;
+                ++Index[subcursor];
+                if (Index[subcursor] >= dimensions[subcursor])
+                    goto _repeat;
 
-                    subcursor = resetto;
-                }
+                subcursor = resetto;
             }
+            
             return Index;
         }
 

@@ -144,7 +144,7 @@ where T : unmanaged
             {
                 _A.SetValue(i, inA.GetValue(0));
             }
-            return new Tensor<T>[2] { _A, inB };
+            return [_A, inB ];
         }
         else if (inB.Rank == 0 && inA.Rank != 0)
         {
@@ -153,12 +153,12 @@ where T : unmanaged
             {
                 _B.SetValue(i, inB.GetValue(0));
             }
-            return new Tensor<T>[2] { inA, _B };
+            return [inA, _B ];
         }
 
         var broadcastRank = Math.Max(inA.Rank, inB.Rank);
-        var outA = inA.Clone();
-        var outB = inB.Clone();
+        var outA = inA;
+        var outB = inB;
         for (var i = 0; i < broadcastRank; i++)
         {
             var idxA = i - broadcastRank + inA.Rank;
@@ -190,7 +190,7 @@ where T : unmanaged
                 return Array.Empty<Tensor<T>>();
             }
         }
-        return new[] { outA, outB };
+        return [outA, outB ];
     }
 
     public static bool Broadcast(Tensor<T> x, Tensor<T> y, out Tensor<T> outx, out Tensor<T> outy)
@@ -343,7 +343,7 @@ where T : unmanaged
             unsafe
             {
                 mm(m, n, k, (int*)xh.Pointer, (int*)yh.Pointer, (int*)oh.Pointer);
-            }         
+            }
         }
 
         xh.Dispose();
@@ -498,6 +498,7 @@ where T : unmanaged
         return output;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static Tensor<int> MatMul(Tensor<int> x, Tensor<int> y)
     {
         if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
@@ -511,70 +512,63 @@ where T : unmanaged
             var ydl = y.Dimensions[^2..];
             if (xdl[1] != ydl[0])
             {
-                throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
+                throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
             }
-
+            
             if (!BroadcastShape(x.Dimensions[0..^2], y.Dimensions[0..^2], out var bd))
             {
-                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
-
+            
             var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
             if (!Tensor<int>.Broadcast(x, bdx, out var bx))
             {
-                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
             var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
             if (!Tensor<int>.Broadcast(y, bdy, out var by))
             {
-                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
             var z = DenseTensor<int>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
             var di = bx.GetDimensionsIterator(0..^2);
-            foreach (var idx in di)
+            var xh = bx.Storage.Pin();
+            var yh = by.Storage.Pin();
+            var zh = z.Storage.Pin();
+            var m = bx.Dimensions[^2];
+            var n = bx.Dimensions[^1];
+            var k = by.Dimensions[^1];
+            unsafe
             {
-                var bxe = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], bx.dimensions[^1]);
-                var bxs = DenseTensor<int>.OfShape(bx.dimensions[^2], bx.dimensions[^1]);
-                foreach(var idx2 in bxe)
+                var xp = (int*)xh.Pointer;
+                var yp = (int*)yh.Pointer;
+                var zp = (int*)zh.Pointer;
+                foreach (var idx in di)
                 {
-                    bxs[bxe.VariableIndex] = bx[idx2];
-                }
-
-                var bye = new TensorFixedDimensionsIterator(idx, by.dimensions[^2], by.dimensions[^1]);
-                var bys = DenseTensor<int>.OfShape(by.dimensions[^2], by.dimensions[^1]);
-                foreach (var idx2 in bye)
-                {
-                    bys[bye.VariableIndex] = by[idx2];
-                }
-
-                var bzs = Tensor<int>.MatMul2D(bxs, bys);
-                var bze = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], by.dimensions[^1]);
-                
-                foreach (var idx2 in bze)
-                {
-                    z[idx2] = bzs[bze.VariableIndex];
+                    if (HardwareConfig.UseSimd)
+                    {
+                        mm_unsafe_vectorized(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
+                    }
+                    else
+                    {
+                        mm(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
+                    }
                 }
             }
+            xh.Dispose();
+            yh.Dispose();
+            zh.Dispose();
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
         {
-            var b = Tensor<int>.Broadcast(x, y);
-            if (!b.Any())
+            if (!Tensor<int>.Broadcast(x, y, out var bx, out var by))
             {
                 throw new ArgumentException($"The shapes {x.PrintShape()} and {y.PrintShape()} are not compatible for broadcasting.");
             }
             else
             {
-                x = b[0].ToDenseTensor();
-                y = b[1].ToDenseTensor();
-                var c = x.CloneEmpty();
-                var di = x.GetDimensionsIterator(0..^2);
-                foreach (var _ in di)
-                {
-                    c[di[..]] = Tensor<int>.MatMul2D(x[di[..]], y[di[..]]);
-                }
-                return c;
+                return MatMul(bx, by);
             }
         }
         else //(x.Rank < 2 && y.Rank < 2)
@@ -624,58 +618,64 @@ where T : unmanaged
             var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
             if (!Tensor<float>.Broadcast(x, bdx, out var bx))
             {
-                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
             var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
             if (!Tensor<float>.Broadcast(y, bdy, out var by))
             {
-                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
             var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
             var di = bx.GetDimensionsIterator(0..^2);
-            foreach (var idx in di)
+            var xh = bx.Storage.Pin();
+            var yh = by.Storage.Pin();
+            var zh = z.Storage.Pin();
+            var m = bx.Dimensions[^2];
+            var n = bx.Dimensions[^1];
+            var k = by.Dimensions[^1];
+            unsafe
             {
-                var bxe = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], bx.dimensions[^1]);
-                var bxs = DenseTensor<float>.OfShape(bx.dimensions[^2], bx.dimensions[^1]);
-                foreach (var idx2 in bxe)
+                var xp = (float*)xh.Pointer;
+                var yp = (float*)yh.Pointer;
+                var zp = (float*)zh.Pointer;
+                foreach (var idx in di)
                 {
-                    bxs[bxe.VariableIndex] = bx[idx2];
-                }
-
-                var bye = new TensorFixedDimensionsIterator(idx, by.dimensions[^2], by.dimensions[^1]);
-                var bys = DenseTensor<float>.OfShape(by.dimensions[^2], by.dimensions[^1]);
-                foreach (var idx2 in bye)
-                {
-                    bys[bye.VariableIndex] = by[idx2];
-                }
-
-                var bzs = Tensor<float>.MatMul2D(bxs, bys);
-                var bze = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], by.dimensions[^1]);
-                foreach (var idx2 in bze)
-                {
-                    z[idx2] = bzs[bze.VariableIndex];
+                    if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
+                    {
+                        if (m % 2 == 0 && k % 32 == 0)
+                        {
+                            mm_unsafe_vectorized_intrinsics_2x4(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
+                        }
+                        else
+                        {
+                            mm_unsafe_vectorized_intrinsics(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));   
+                        }
+                    }
+                    else if (HardwareConfig.UseSimd)
+                    {
+                        mm_unsafe_vectorized(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));   
+                    }
+                    else
+                    {
+                        mm(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
+                    }
                 }
             }
+            xh.Dispose(); 
+            yh.Dispose();   
+            zh.Dispose();   
+   
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
         {
-            var b = Tensor<float>.Broadcast(x, y);
-            if (!b.Any())
+            if (!Tensor<float>.Broadcast(x, y, out var bx, out var by))
             {
                 throw new ArgumentException($"The shapes {x.PrintShape()} and {y.PrintShape()} are not compatible for broadcasting.");
             }
             else
             {
-                x = b[0].ToDenseTensor();
-                y = b[1].ToDenseTensor();
-                var c = x.CloneEmpty();
-                var di = x.GetDimensionsIterator(0..^2);
-                foreach (var _ in di)
-                {
-                    c[di[..]] = Tensor<float>.MatMul2D(x[di[..]], y[di[..]]);
-                }
-                return c;
+                return MatMul(bx, by);
             }
         }
         else //(x.Rank < 2 && y.Rank < 2)
@@ -700,6 +700,101 @@ where T : unmanaged
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    public static Tensor<float> MatMul_old(Tensor<float> x, Tensor<float> y)
+    {
+        if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
+        if (x.Rank == 2 && y.Rank == 2)
+        {
+            return Tensor<float>.MatMul2D(x, y);
+        }
+        else if (x.Rank >= 2 && y.Rank >= 2)
+        {
+            var xdl = x.Dimensions[^2..];
+            var ydl = y.Dimensions[^2..];
+            if (xdl[1] != ydl[0])
+            {
+                throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
+            }
+
+            if (!BroadcastShape(x.Dimensions[0..^2], y.Dimensions[0..^2], out var bd))
+            {
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+            }
+
+            var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
+            if (!Tensor<float>.Broadcast(x, bdx, out var bx))
+            {
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+            }
+            var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
+            if (!Tensor<float>.Broadcast(y, bdy, out var by))
+            {
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+            }
+            var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
+            var di = bx.GetDimensionsIterator(0..^2);
+            
+            foreach (var idx in di)
+            {
+                var bxe = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], bx.dimensions[^1]);
+                var bxs = DenseTensor<float>.OfShape(bx.dimensions[^2], bx.dimensions[^1]);
+                foreach (var idx2 in bxe)
+                {
+                    bxs[bxe.VariableIndex] = bx[idx2];
+                }
+
+                var bye = new TensorFixedDimensionsIterator(idx, by.dimensions[^2], by.dimensions[^1]);
+                var bys = DenseTensor<float>.OfShape(by.dimensions[^2], by.dimensions[^1]);
+                foreach (var idx2 in bye)
+                {
+                    bys[bye.VariableIndex] = by[idx2];
+                }
+
+                var bzs = Tensor<float>.MatMul2D(bxs, bys);
+                var bze = new TensorFixedDimensionsIterator(idx, bx.dimensions[^2], by.dimensions[^1]);
+                foreach (var idx2 in bze)
+                {
+                    z[idx2] = bzs[bze.VariableIndex];
+                }
+            }
+            
+            return z;
+        }
+        else if (x.Rank >= 2 || y.Rank >= 2)
+        {
+            if (!Tensor<float>.Broadcast(x, y, out var bx, out var by))
+            {
+                throw new ArgumentException($"The shapes {x.PrintShape()} and {y.PrintShape()} are not compatible for broadcasting.");
+            }
+            else
+            {
+                return MatMul(bx, by);
+            }
+        }
+        else //(x.Rank < 2 && y.Rank < 2)
+        {
+            bool bcast = false;
+            if (x.Rank == 1)
+            {
+                x = x.PadLeft();
+                bcast = true;
+            }
+            if (y.Rank == 1)
+            {
+                y = y.PadRight();
+                bcast = true;
+            }
+            var c = MatMul2D(x, y);
+            if (bcast)
+            {
+                c.RemoveDim(0);
+            }
+            return c;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static Tensor<double> MatMul(Tensor<double> x, Tensor<double> y)
     {
         if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
@@ -713,50 +808,71 @@ where T : unmanaged
             var ydl = y.Dimensions[^2..];
             if (xdl[1] != ydl[0])
             {
-                throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
+                throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
             }
 
             if (!BroadcastShape(x.Dimensions[0..^2], y.Dimensions[0..^2], out var bd))
             {
-                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
 
             var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
             if (!Tensor<double>.Broadcast(x, bdx, out var bx))
             {
-                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
             var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
             if (!Tensor<double>.Broadcast(y, bdy, out var by))
             {
-                throw new ArgumentException("The tensor shapes are not compatble for broadcasting.");
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
             var z = DenseTensor<double>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
             var di = bx.GetDimensionsIterator(0..^2);
-            foreach (var _ in di)
+            var xh = bx.Storage.Pin();
+            var yh = by.Storage.Pin();
+            var zh = z.Storage.Pin();
+            var m = bx.Dimensions[^2];
+            var n = bx.Dimensions[^1];
+            var k = by.Dimensions[^1];
+            unsafe
             {
-                z[di[..]] = Tensor<double>.MatMul2D(bx[di[..]], by[di[..]]);
+                var xp = (double*)xh.Pointer;
+                var yp = (double*)yh.Pointer;
+                var zp = (double*)zh.Pointer;
+                foreach (var idx in di)
+                {
+                    if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
+                    {
+                        mm_unsafe_vectorized_intrinsics(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
+                        
+                    }
+                    else if (HardwareConfig.UseSimd)
+                    {
+
+                        mm_unsafe_vectorized(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
+
+                    }
+                    else
+                    {
+                        mm(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
+                    }
+                }
             }
+            xh.Dispose();
+            yh.Dispose();
+            zh.Dispose();
+
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
         {
-            var b = Tensor<double>.Broadcast(x, y);
-            if (!b.Any())
+            if (!Tensor<double>.Broadcast(x, y, out var bx, out var by))
             {
                 throw new ArgumentException($"The shapes {x.PrintShape()} and {y.PrintShape()} are not compatible for broadcasting.");
             }
             else
             {
-                x = b[0].ToDenseTensor();
-                y = b[1].ToDenseTensor();
-                var c = x.CloneEmpty();
-                var di = x.GetDimensionsIterator(0..^2);
-                foreach (var _ in di)
-                {
-                    c[di[..]] = Tensor<double>.MatMul2D(x[di[..]], y[di[..]]);
-                }
-                return c;
+                return MatMul(bx, by);
             }
         }
         else //(x.Rank < 2 && y.Rank < 2)
@@ -764,12 +880,12 @@ where T : unmanaged
             bool bcast = false;
             if (x.Rank == 1)
             {
-                x = x.PadLeft().ToDenseTensor();
+                x = x.PadLeft();
                 bcast = true;
             }
             if (y.Rank == 1)
             {
-                y = y.PadRight().ToDenseTensor();
+                y = y.PadRight();
                 bcast = true;
             }
             var c = MatMul2D(x, y);
@@ -1231,46 +1347,60 @@ where T : unmanaged
 
     public static Tensor<double> Erf(Tensor<double> x) => x.Apply(MathOps.Erf);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static Tensor<T> Transpose(Tensor<T> data, int[] perm = null)
     {
-        if (perm != null && perm.Length != data.Rank)
+        if (perm is not null)
         {
-            throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {data.Rank}.");
-        }
-        if (perm != null && !perm.All(p => p < data.Rank))
-        {
-            throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(p => p >= data.Rank)} exceeds the number of dimensions in the tensor.");
-        }
-        if (perm != null && !ArrayUtilities.CheckNoRepeatedDims(perm))
-        {
-            throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
-        }
-
-        if (perm is null)
-        {
-            perm = data.dimensions.Select((_, n) => n).Reverse().ToArray();
+            if (perm.Length != data.Rank)
+            {
+                throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {data.Rank}.");
+            }
+            if (!perm.All(p => p < data.Rank))
+            {
+                throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(p => p >= data.Rank)} exceeds the number of dimensions in the tensor.");
+            }
+            if (!ArrayUtilities.CheckNoRepeatedDims(perm))
+            {
+                throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
+            }
+            for (int i = 0; i < perm.Length; i++)
+            {
+                perm[i] = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, perm[i]);
+            }
         }
         else
         {
-            perm = perm.Select(p => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, p)).ToArray();
+            perm = Enumerable.Range(0, data.Rank).Reverse().ToArray();
         }
-
+      
         if (data.Rank <= 1)
         {
             return data.Clone();
         }
-        var shape = perm.Select((i, _) => data.dimensions[i]).ToArray();
+        var shape = new int[data.Rank];
+        for (int i =0; i < perm.Length; i++)
+        {
+            shape[i] = data.dimensions[perm[i]];
+        }
         var r = DenseTensor<T>.OfShape(shape);
         var di = data.GetDimensionsIterator();
         foreach (var index in di)
         {
-            var permindex = index.Select((_,n) => index[perm[n]]).ToArray();
-            r[permindex] = data[index];
+            int _index = 0;
+            int permindex = 0;
+            for (int i = 0; i < perm.Length; i++)
+            {
+                _index += index[i] * data.strides[i];
+                permindex += index[perm[i]] * r.strides[i];
+            }
+            r.SetValue(permindex, data.GetValue(_index));
         }
         return r;
     }
 
-    public static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? _axis = null)
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]  
+    public unsafe static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? _axis = null)
     {
         if (data.Rank == 0) throw new ArgumentException(nameof (data), "Cannot gather from a tensor of rank 0.");
         var axis = _axis.HasValue ? ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _axis.Value) : 0;    
@@ -1278,8 +1408,8 @@ where T : unmanaged
         {
             throw new ArgumentException(nameof(axis), $"The specified axis {_axis} exceeds the number of dimensions in the tensor.");
         }
-
-        List<int> shape = new List<int>(data.Rank - 1 + indices.Rank);
+        int* p = stackalloc int[data.Rank - 1 + indices.Rank];
+        UnsafeFixedSizeList<int> shape = new UnsafeFixedSizeList<int>(p, data.Rank - 1 + indices.Rank);
         for (int i = 0; i < axis; i++)
         {
             shape.Add(data.dimensions[i]);
@@ -1297,7 +1427,7 @@ where T : unmanaged
         {
             var a = di[0..axis];
             var k = ArrayUtilities.HandleNegativeAxisOrIndex(data.dimensions[axis], indices[di[axis..(axis + indices.Rank)]]);
-            var b = di[(axis + (indices.Rank == 0 ? 1 : indices.Rank))..].ToArray();
+            var b = di[(axis + (indices.Rank == 0 ? 1 : indices.Rank))..];
             var oloc = a.Append(k).Concat(b).ToArray();
             output[di] = data[oloc];
         }
