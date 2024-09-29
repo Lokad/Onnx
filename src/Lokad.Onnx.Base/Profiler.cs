@@ -13,25 +13,55 @@ namespace Lokad.Onnx
         CALCULATE_INDICES
     }
     
-    public record OpProfile { OpType Op; OpStage Stage; public TimeSpan Time;  }
+    public record OpProfile { public OpStage Stage; public TimeSpan Time;  }
 
-    public class OpsProfiler
+    public record NodeProfile { public int NodeId; public OpType Op; public List<OpProfile> OpsProfile = new List<OpProfile>(); }
+
+    public class Profiler
     {
-        public static Dictionary<int, List<OpProfile>> Profile = new Dictionary<int, List<OpProfile>>();
+        #region Fields
+        private static Stopwatch timer = new Stopwatch();
+
+        public static List<NodeProfile> Profile = new List<NodeProfile>();
+        #endregion
+
+        #region Properties
+        public static NodeProfile CurrentNodeProfile => Profile.Last();
+        
+        public static OpProfile CurrentOpProfile => CurrentNodeProfile.OpsProfile.Last();
 
         public static bool Running => timer.IsRunning;
+        #endregion
 
-        public static void StartOpProfile(int id, OpType op, OpStage stage)
+        #region Methods
+        protected static void AddTimeIfTimerRunning()
         {
             if (Running)
             {
-                Profile.Last().Value.Last().Time = timer.Elapsed;
+                timer.Stop();
+                CurrentOpProfile.Time = timer.Elapsed;
                 timer.Reset();
-                Profile.Add(id, new List<OpProfile>());
-                
             }
         }
 
-        private static Stopwatch timer = new Stopwatch();
+        public static void StartNodeProfile(int id, OpType op)
+        {
+            AddTimeIfTimerRunning();
+            Profile.Add(new NodeProfile() { NodeId = id, Op = op });
+        }
+
+        public static void StopNodeProfile() => AddTimeIfTimerRunning();
+        
+
+        public static void StartOpStage(OpStage stage)
+        {
+            AddTimeIfTimerRunning();
+            CurrentNodeProfile.OpsProfile.Add(new OpProfile() { Stage = stage, Time = TimeSpan.Zero });
+            timer.Start();  
+        }
+
+        public static void StopOpStage() => AddTimeIfTimerRunning();
+        #endregion
+
     }
 }
