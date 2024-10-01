@@ -514,35 +514,37 @@ where T : unmanaged
             {
                 throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
             }
-            
+            Profiler.StartOpStage(OpStage.Broadcast);
             if (!BroadcastShape(x.Dimensions[0..^2], y.Dimensions[0..^2], out var bd))
             {
                 throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
-            
             var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
-            if (!Tensor<int>.Broadcast(x, bdx, out var bx))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
             var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
             if (!Tensor<int>.Broadcast(y, bdy, out var by))
             {
                 throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
+            if (!Tensor<int>.Broadcast(x, bdx, out var bx))
+            {
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+            }
+            Profiler.StopOpStage();
             var z = DenseTensor<int>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
             var di = bx.GetDimensionsIterator(0..^2);
-            var xh = bx.Storage.Pin();
-            var yh = by.Storage.Pin();
-            var zh = z.Storage.Pin();
+            using var xh = bx.Storage.Pin();
+            using var yh = by.Storage.Pin();
+            using var zh = z.Storage.Pin();
             var m = bx.Dimensions[^2];
             var n = bx.Dimensions[^1];
             var k = by.Dimensions[^1];
+            Profiler.StartOpStage(OpStage.Math);
             unsafe
             {
                 var xp = (int*)xh.Pointer;
                 var yp = (int*)yh.Pointer;
                 var zp = (int*)zh.Pointer;
+                
                 foreach (var idx in di)
                 {
                     if (HardwareConfig.UseSimd)
@@ -555,19 +557,18 @@ where T : unmanaged
                     }
                 }
             }
-            xh.Dispose();
-            yh.Dispose();
-            zh.Dispose();
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
         {
+            Profiler.StartOpStage(OpStage.Broadcast);
             if (!Tensor<int>.Broadcast(x, y, out var bx, out var by))
             {
                 throw new ArgumentException($"The shapes {x.PrintShape()} and {y.PrintShape()} are not compatible for broadcasting.");
             }
             else
             {
+                Profiler.StopOpStage();
                 return MatMul(bx, by);
             }
         }
@@ -609,7 +610,7 @@ where T : unmanaged
             {
                 throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
             }
-
+            Profiler.StartOpStage(OpStage.Broadcast);
             if (!BroadcastShape(x.Dimensions[0..^2], y.Dimensions[0..^2], out var bd))
             {
                 throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
@@ -625,14 +626,16 @@ where T : unmanaged
             {
                 throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
+            Profiler.StopOpStage();
             var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
             var di = bx.GetDimensionsIterator(0..^2);
-            var xh = bx.Storage.Pin();
-            var yh = by.Storage.Pin();
-            var zh = z.Storage.Pin();
+            using var xh = bx.Storage.Pin();
+            using var yh = by.Storage.Pin();
+            using var zh = z.Storage.Pin();
             var m = bx.Dimensions[^2];
             var n = bx.Dimensions[^1];
             var k = by.Dimensions[^1];
+            Profiler.StartOpStage(OpStage.Math);
             unsafe
             {
                 var xp = (float*)xh.Pointer;
@@ -661,10 +664,7 @@ where T : unmanaged
                     }
                 }
             }
-            xh.Dispose(); 
-            yh.Dispose();   
-            zh.Dispose();   
-   
+            Profiler.StopOpStage();
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
@@ -810,7 +810,7 @@ where T : unmanaged
             {
                 throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
             }
-
+            Profiler.StartOpStage(OpStage.Broadcast);
             if (!BroadcastShape(x.Dimensions[0..^2], y.Dimensions[0..^2], out var bd))
             {
                 throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
@@ -826,14 +826,16 @@ where T : unmanaged
             {
                 throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
+            Profiler.StopOpStage();
             var z = DenseTensor<double>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
             var di = bx.GetDimensionsIterator(0..^2);
-            var xh = bx.Storage.Pin();
-            var yh = by.Storage.Pin();
-            var zh = z.Storage.Pin();
+            using var xh = bx.Storage.Pin();
+            using var yh = by.Storage.Pin();
+            using var zh = z.Storage.Pin();
             var m = bx.Dimensions[^2];
             var n = bx.Dimensions[^1];
             var k = by.Dimensions[^1];
+            Profiler.StartOpStage(OpStage.Math);
             unsafe
             {
                 var xp = (double*)xh.Pointer;
@@ -858,10 +860,7 @@ where T : unmanaged
                     }
                 }
             }
-            xh.Dispose();
-            yh.Dispose();
-            zh.Dispose();
-
+            Profiler.StopOpStage();
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
@@ -1448,6 +1447,8 @@ where T : unmanaged
         }
         var shape = x.dimensions.Copy();
         shape[axis] += y.dimensions[axis];
+
+        Profiler.StartOpStage(OpStage.Copy);
         var output = DenseTensor<T>.OfShape(shape);
         var di = output.GetDimensionsIterator();    
         foreach (var index in di)
@@ -1467,6 +1468,7 @@ where T : unmanaged
     }
     public static Tensor<T> Concat(Tensor<T>[] inputs, int axis)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (inputs.Length < 2) throw new ArgumentException(nameof(inputs), "At least two tensors must be specified for the concat operation.");
         if (!inputs.All(i => i.Rank == inputs[0].Rank)) throw new ArgumentException(nameof(inputs), $"Each input tensor in a concat operation must be of the same rank.");
         if (!inputs.All(i => i.dimensions.Select((d, n) => n == axis ? 0 : d - inputs[0].dimensions[n]).All(s => s == 0)))
@@ -1481,6 +1483,7 @@ where T : unmanaged
 
     public static Tensor<T> Slice(Tensor<T> data, Tensor<int> start, Tensor<int> ends, Tensor<int> axes = null, Tensor<int> steps = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (data.Rank == 0) throw new ArgumentException(nameof(data), "Cannot slice a tensor of rank 0.");
         if (start.Rank != 1) throw new ArgumentException(nameof(start), "The rank of the start tensor must be 1.");
         if (start.Length > data.Rank) throw new ArgumentException(nameof(start), "The length of the start tensor must be less-than or equal to the rank of the data tensor.");
@@ -1488,9 +1491,9 @@ where T : unmanaged
         if (start.Length != ends.Length) throw new ArgumentException(nameof(ends), "The end tensor must be the same length as the start tensor.");
         if (axes is not null && (axes.Rank != 1 || axes.Length != start.Length)) throw new ArgumentException(nameof(axes), "The axes tensor must be a rank 1 tensor with the same length as the start tensor.");
         if (steps is not null && (steps.Rank != 1 || steps.Length != start.Length)) throw new ArgumentException(nameof(steps), "The steps tensor must be a rank 1 tensor with the same length as the start tensor.");
-
+        
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         int length = Convert.ToInt32(start.Length);
-
         if (axes is null)
         {
             axes = Enumerable.Range(0, length).ToArray().ToTensor<int>();
@@ -1515,12 +1518,17 @@ where T : unmanaged
         return data.Slice(indices); 
     }
 
-
     public static Tensor<T> Unsqueeze(Tensor<T> data, int[] axes)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (!ArrayUtilities.CheckNoRepeatedDims(axes)) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
-        axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
-        if (axes.Any(a => a > (data.Rank + axes.Length) - 1)) throw new ArgumentException(nameof(axes), $"Each specified axis must be less than the rank of the output tensor. Got {axes.First(a => a > data.Rank - 1)}");
+        
+        Profiler.StartOpStage(OpStage.CalculateIndices);
+        for (int i = 0; i < axes.Length; i++)
+        {
+            axes[i] = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, axes[i]);
+        }
+        if (!Array.TrueForAll(axes, (a => a <= (data.Rank + axes.Length) - 1))) throw new ArgumentException(nameof(axes), $"Each specified axis must be less than the rank of the output tensor. Got {axes.First(a => a > data.Rank - 1)}");
         var newshape = new int[axes.Length + data.Rank];
         for (int i = 0; i < axes.Length; i++)
         {
@@ -1532,16 +1540,19 @@ where T : unmanaged
             if (newshape[i] == 0)
             {
                 if (!e.MoveNext()) throw new InvalidOperationException("Out of dimensions.");
-                newshape[i] = (int)e.Current;
+                newshape[i] = e.Current;
             }
         }
-        return data.Reshape(newshape.ToArray());
+        return data.Reshape(newshape);
     }
     public static Tensor<int> ReduceSum(Tensor<int> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         if (axes is not null && !axes.All(a =>  a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
         var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
@@ -1558,10 +1569,11 @@ where T : unmanaged
             pdata = data;
             paxes = _axes;
         }
-
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
         var output = DenseTensor<int>.OfShape(oshape);
         var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+
+        Profiler.StartOpStage(OpStage.Math);
         for (var i = 0; i < output.Length; ++i)
         {
             var offset = i * r;
@@ -1584,9 +1596,12 @@ where T : unmanaged
 
     public static Tensor<float> ReduceSum(Tensor<float> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
         var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
@@ -1603,9 +1618,10 @@ where T : unmanaged
             pdata = data;
             paxes = _axes;
         }
-
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
         var output = DenseTensor<float>.OfShape(oshape);
+
+        Profiler.StartOpStage(OpStage.Math);
         var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
         for (var i = 0; i < output.Length; ++i)
         {
@@ -1629,9 +1645,12 @@ where T : unmanaged
 
     public static Tensor<double> ReduceSum(Tensor<double> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
         var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
@@ -1651,6 +1670,8 @@ where T : unmanaged
 
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
         var output = DenseTensor<double>.OfShape(oshape);
+
+        Profiler.StartOpStage(OpStage.Math);
         var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
         for (var i = 0; i < output.Length; ++i)
         {
@@ -1674,18 +1695,19 @@ where T : unmanaged
 
     public static Tensor<int> ReduceMean(Tensor<int> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
-        
+
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
         var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
-        
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
         var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
-        Tensor<int> output = DenseTensor<int>.OfShape(oshape);
-        output = Tensor<int>.Divide(data, r);
+        //Tensor<int> output = DenseTensor<int>.OfShape(oshape);
+        Tensor<int> output = Tensor<int>.Divide(data, r);
         output = Tensor<int>.ReduceSum(output, _axes.ToTensor<int>());
         if (keepDims)
         {
@@ -1699,18 +1721,20 @@ where T : unmanaged
 
     public static Tensor<float> ReduceMean(Tensor<float> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
 
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
         var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
-
-        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
+        var rshape = ArrayUtilities.ComputeReducedShape(data.dimensions, _axes);
         var r = Convert.ToSingle(ArrayUtilities.ComputeOffsetForReduction(rshape)); 
-        Tensor<float> output = DenseTensor<float>.OfShape(oshape);
-        output = Tensor<float>.ReduceSum(data, _axes.ToTensor<int>());
+        
+        Profiler.StartOpStage(OpStage.Math);
+        Tensor<float> output = Tensor<float>.ReduceSum(data, _axes.ToTensor<int>());
         output = Tensor<float>.Divide(output, r);
         if (keepDims)
         {
@@ -1724,18 +1748,20 @@ where T : unmanaged
 
     public static Tensor<double> ReduceMean(Tensor<double> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
 
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
         var noOpWithEmptyAxes = _noOpWithEmptyAxes.HasValue ? _noOpWithEmptyAxes.Value : false;
         var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
-
-        var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
+        var rshape = ArrayUtilities.ComputeReducedShape(data.dimensions, _axes);
         var r = Convert.ToDouble(ArrayUtilities.ComputeOffsetForReduction(rshape));
-        Tensor<double> output = DenseTensor<double>.OfShape(oshape);
-        output = Tensor<double>.Divide(data, r);
+        
+        Profiler.StartOpStage(OpStage.Math);
+        Tensor<double> output = Tensor<double>.Divide(data, r);
         output = Tensor<double>.ReduceSum(output, _axes.ToTensor<int>());
         if (keepDims)
         {
@@ -1749,13 +1775,14 @@ where T : unmanaged
 
     public static Tensor<float> ReduceMax(Tensor<float> data, Tensor<int> axes = null, bool? _keepDims = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
-        
+
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
         var keepDims = _keepDims.HasValue ? _keepDims.Value : true;
-
         var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
         Tensor<float> pdata;
         int[] paxes;
@@ -1769,10 +1796,11 @@ where T : unmanaged
             pdata = data;
             paxes = _axes;
         }
-
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
         var output = DenseTensor<float>.OfShape(oshape);
         var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+
+        Profiler.StartOpStage(OpStage.Math);
         for (var i = 0; i < output.Length; ++i)
         {
             var offset = i * r;
@@ -1799,13 +1827,14 @@ where T : unmanaged
 
     public static Tensor<double> ReduceMax(Tensor<double> data, Tensor<int> axes = null, bool? _keepDims = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
         if (axes is not null && !axes.All(a => a < data.Rank)) throw new ArgumentException(nameof(axes), $"Each axis specified must be less than the rank of the tensor.");
         if (axes is not null && !ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
 
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         var _axes = axes is null || axes.Length == 0 ? Enumerable.Range(0, data.Rank).ToArray() : axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray();
         var keepDims = _keepDims.HasValue ? _keepDims.Value : true;
-
         var permutation = ArrayUtilities.GetAxesPermutationForReduction(_axes, data.Rank);
         Tensor<double> pdata;
         int[] paxes;
@@ -1819,10 +1848,11 @@ where T : unmanaged
             pdata = data;
             paxes = _axes;
         }
-
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(pdata.dimensions, paxes);
         var output = DenseTensor<double>.OfShape(oshape);
         var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
+
+        Profiler.StartOpStage(OpStage.Math);
         for (var i = 0; i < output.Length; ++i)
         {
             var offset = i * r;

@@ -8,19 +8,23 @@ namespace Lokad.Onnx
 {
     public enum OpStage
     {
-        MATH,
-        COPY,
-        CALCULATE_INDICES
+        Math,
+        Copy,
+        Broadcast,
+        ValidateArguments,
+        CalculateIndices
     }
     
     public record OpProfile { public OpStage Stage; public TimeSpan Time;  }
 
-    public record NodeProfile { public int NodeId; public OpType Op; public List<OpProfile> OpsProfile = new List<OpProfile>(); }
+    public record NodeProfile { public long NodeId; public OpType Op; public List<OpProfile> OpsProfile = new List<OpProfile>(); }
 
     public class Profiler
     {
         #region Fields
         private static Stopwatch timer = new Stopwatch();
+
+        public static bool Enabled = false;
 
         public static List<NodeProfile> Profile = new List<NodeProfile>();
         #endregion
@@ -36,6 +40,8 @@ namespace Lokad.Onnx
         #region Methods
         protected static void AddTimeIfTimerRunning()
         {
+            if (!Enabled) return;
+
             if (Running)
             {
                 timer.Stop();
@@ -44,22 +50,30 @@ namespace Lokad.Onnx
             }
         }
 
-        public static void StartNodeProfile(int id, OpType op)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]  
+        public static void StartNodeProfile(long id, OpType op)
         {
+            if (!Enabled) return;
+            
             AddTimeIfTimerRunning();
             Profile.Add(new NodeProfile() { NodeId = id, Op = op });
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StopNodeProfile() => AddTimeIfTimerRunning();
-        
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StartOpStage(OpStage stage)
         {
+            if (!Enabled) return;
+
             AddTimeIfTimerRunning();
             CurrentNodeProfile.OpsProfile.Add(new OpProfile() { Stage = stage, Time = TimeSpan.Zero });
             timer.Start();  
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StopOpStage() => AddTimeIfTimerRunning();
         #endregion
 

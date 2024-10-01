@@ -88,15 +88,18 @@ public class CPUExecutionProvider : Runtime
         {
             return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
         }
+        Profiler.StartOpStage(OpStage.Broadcast);
         if (!ITensor.Broadcast(A, B, out var bA, out var bB))
         {
             return CannotBroadcast(op, A, B);
         }
         if (OptimizationMode == OptimizationMode.Speed)
         {
+            Profiler.StartOpStage(OpStage.Copy);
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();    
         }
+        Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Add((Tensor<byte>)bA, (Tensor<byte>)bB));
@@ -116,16 +119,18 @@ public class CPUExecutionProvider : Runtime
         {
             return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
         }
+        Profiler.StartOpStage(OpStage.Broadcast);
         if (!ITensor.Broadcast(A, B, out var bA, out var bB))
         {
             return CannotBroadcast(op, A, B);
         }
-
         if (OptimizationMode == OptimizationMode.Speed)
         {
+            Profiler.StartOpStage(OpStage.Copy);
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();
         }
+        Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Subtract((Tensor<byte>)bA, (Tensor<byte>)bB));
@@ -145,6 +150,7 @@ public class CPUExecutionProvider : Runtime
         {
             return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
         }
+        Profiler.StartOpStage(OpStage.Broadcast);
         if (!ITensor.Broadcast(A, B, out var bA, out var bB))
         {
             return CannotBroadcast(op, A, B);
@@ -152,9 +158,11 @@ public class CPUExecutionProvider : Runtime
 
         if (OptimizationMode == OptimizationMode.Speed)
         {
+            Profiler.StartOpStage(OpStage.Copy); 
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();
         }
+        Profiler.StartOpStage(OpStage.Math);     
         switch (A.ElementType)
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Multiply((Tensor<byte>)bA, (Tensor<byte>)bB));
@@ -174,6 +182,7 @@ public class CPUExecutionProvider : Runtime
         {
             return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
         }
+        Profiler.StartOpStage(OpStage.Broadcast);
         if (!ITensor.Broadcast(A, B, out var bA, out var bB))
         {
             return CannotBroadcast(op, A, B);
@@ -181,9 +190,12 @@ public class CPUExecutionProvider : Runtime
 
         if (OptimizationMode == OptimizationMode.Speed)
         {
+            Profiler.StartOpStage(OpStage.Copy);
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();
+            Profiler.StopOpStage();
         }
+        Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Divide((Tensor<byte>)bA, (Tensor<byte>)bB));
@@ -202,6 +214,7 @@ public class CPUExecutionProvider : Runtime
         {
             return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
         }
+        Profiler.StartOpStage(OpStage.Broadcast);    
         if (!ITensor.Broadcast(A, B, out var bA, out var bB))
         {
             return CannotBroadcast(op, A, B);
@@ -209,9 +222,11 @@ public class CPUExecutionProvider : Runtime
 
         if (OptimizationMode == OptimizationMode.Speed)
         {
+            Profiler.StartOpStage(OpStage.Copy);
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();
         }
+        Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Pow((Tensor<float>)bA, (Tensor<float>)bB));
@@ -279,11 +294,12 @@ public class CPUExecutionProvider : Runtime
     {
         var op = OpType.Relu;
         if (X is null) return MissingInput(op, nameof(X));
-
         if (OptimizationMode == OptimizationMode.Speed)
         {
+            Profiler.StartOpStage(OpStage.Copy);
             X = X.ToDenseTensor();
         }
+        Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Relu((Tensor<float>)X));
@@ -348,8 +364,10 @@ public class CPUExecutionProvider : Runtime
 
         if (OptimizationMode == OptimizationMode.Speed)
         {
+            Profiler.StartOpStage(OpStage.Copy);
             A = A.ToDenseTensor();
             B = B.ToDenseTensor();
+            Profiler.StopOpStage();
         }
         switch (A.ElementType)
         {
@@ -366,8 +384,10 @@ public class CPUExecutionProvider : Runtime
         if (A is null) return MissingInput(op, nameof(A));
         if (OptimizationMode == OptimizationMode.Speed)
         {
+            Profiler.StartOpStage(OpStage.Copy);
             A = A.ToDenseTensor();
         }
+        Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Sqrt((Tensor<float>)A));
@@ -380,6 +400,7 @@ public class CPUExecutionProvider : Runtime
     {
         var op = OpType.Erf;
         if (X is null) return MissingInput(op, nameof(X));
+        Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Erf((Tensor<float>)X));
@@ -410,13 +431,13 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Transpose((Tensor<System.Numerics.Complex>)data, perm));
             default: return NotSupported(op);
         }
-
     }
 
     public static OpResult Constant(object? value)
     {
         var op = OpType.Constant;
         if (value is null) return MissingAttribute(op, nameof(value));
+        Profiler.StartOpStage(OpStage.Copy);
         switch (value)
         {
             case ITensor t: return Success(op, t);
@@ -432,6 +453,7 @@ public class CPUExecutionProvider : Runtime
     {
         var op = OpType.Cast;
         if (input is null) return MissingInput(op, nameof(input));
+        Profiler.StartOpStage(OpStage.Copy);
         var type = (TensorElementType)to;
         switch (type)
         {

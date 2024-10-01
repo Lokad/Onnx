@@ -24,24 +24,14 @@ namespace Lokad.Onnx
     {
         public const int StackallocMax = 16;
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int ComputeOffsetForReduction(ReadOnlySpan<int> dimensions, int startIndex = 0)
         {
             int product = 1;
             for (int i = startIndex; i < dimensions.Length; i++)
             {
-                if (dimensions[i] < 0)
-                {
-                    throw new ArgumentOutOfRangeException($"{nameof(dimensions)}[{i}]");
-                }
-
-                // we use a long which should be much larger than is ever used here,
-                // but still force checked
-                checked
-                {
-                    product *= dimensions[i];
-                }
+                product *= dimensions[i];
             }
-
             return product;
         }
 
@@ -267,19 +257,6 @@ namespace Lokad.Onnx
             return transformIndex;
         }
 
-        public static T[] GetEmpty<T>()
-        {
-            // Match the implementation of Array.GetEmpty<T>()
-            // from dotnet/runtime. Having it as a static in a
-            // nested class ensures we only allocate the empty
-            // array once and only when actually necessary.
-            return EmptyArray<T>.Value;
-        }
-        private static class EmptyArray<T>
-        {
-            public static readonly T[] Value = new T[0];
-        }
-
         public static T[] Flatten<T>(this Array data)
         {
             var list = new List<T>();
@@ -347,10 +324,13 @@ namespace Lokad.Onnx
             else return value;
         }
 
-        public static Tuple<int[], int[]> ComputeShapesForReduction(int[] inShape, int[] axes)
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        public unsafe static Tuple<int[], int[]> ComputeShapesForReduction(int[] inShape, int[] axes)
         {
-            List<int> shape = new List<int>();
             var rank = inShape.Length;
+            var p = stackalloc int[rank];
+            UnsafeFixedSizeList<int> shape = new UnsafeFixedSizeList<int>(p, rank);
+            
             for (var dim = 0; dim < rank; dim++)
             {
                 if (!axes.Contains(dim))
@@ -360,7 +340,18 @@ namespace Lokad.Onnx
             }
             var reducedShape = axes.Select(dim => inShape[dim]).ToArray();
             return new Tuple<int[], int[]>(shape.ToArray(), reducedShape);
+        }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        public static int[] ComputeReducedShape(int[] inShape, int[] axes)
+        {
+            var rank = inShape.Length;
+            var reducedShape = new int[axes.Length];
+            for (int i =0; i < axes.Length; i++)
+            {
+                reducedShape[i] = inShape[axes[i]];
+            }
+            return reducedShape;
         }
 
         public static int[] GetAxesPermutationForReduction(int[] axes, int rank)

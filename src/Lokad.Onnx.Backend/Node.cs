@@ -79,11 +79,14 @@ public partial struct Node
 
     public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU)
     {
+        
         try
         {
             if (provider == ExecutionProvider.CPU)
             {
+                if (Profiler.Enabled) Profiler.StartNodeProfile(ID, Op);
                 var r = ExecuteCPU(graph);
+                if (Profiler.Enabled) Profiler.StopNodeProfile();
                 if (r.Status == OpStatus.Success && r.Outputs.Length != Outputs.Length)
                 {
                     return Failure(Op, $"The operation returned {r.Outputs.Length} outputs but the graph node has {Outputs.Length} outputs.");

@@ -90,6 +90,9 @@ public class RunOptions : Options
 
     [Option("enable-intrinsics", Required = false, HelpText = "Enable CPU SIMD intrinsics.")]
     public bool EnableIntrinsics { get; set; }
+
+    [Option("profile", Required = false, HelpText = "Enable the profiler which logs detailed stats about ONNX node execution times.")]
+    public bool EnableProfiler { get; set; }
 }
 
 [Verb("benchmark", HelpText = "Benchmark an ONNX model or operations.")]

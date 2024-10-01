@@ -1,11 +1,11 @@
 ﻿namespace Lokad.Onnx;
 
-using Satsuma;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime;
+
+using Satsuma;
 
 public class ComputationalGraph : Runtime
 {
@@ -377,7 +377,7 @@ public class ComputationalGraph : Runtime
     #endregion
 }
 
-public class WeightedDirectedGraph : Satsuma.AbstractGraph
+public class WeightedDirectedGraph : AbstractGraph
 {
     public Satsuma.Node AddNode(string id)
     {

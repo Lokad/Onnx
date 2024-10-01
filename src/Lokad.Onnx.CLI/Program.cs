@@ -198,6 +198,7 @@ class Program : Runtime
 
             }
         }
+        
         if (ro.EnableIntrinsics && System.Numerics.Vector.IsHardwareAccelerated)
         {
             HardwareConfig.UseIntrinsics = true;
@@ -206,6 +207,11 @@ class Program : Runtime
         else
         {
             Info("Not using CPU SIMD intrinsics.");
+        }
+
+        if (ro.EnableProfiler)
+        {
+            Profiler.Enabled = true;
         }
 
         if (ro.Node == "")
@@ -230,6 +236,7 @@ class Program : Runtime
                         Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
                     }
                 }
+                if (ro.EnableProfiler)
                 Exit(ExitResult.SUCCESS);
             }
         }
@@ -444,6 +451,10 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
+    static void PrintProfile()
+    {
+
+    }
     static string GetAttributeValueDesc(object value) =>
         value switch
         {
