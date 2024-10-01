@@ -62,7 +62,7 @@ public class Text : Runtime
                 return null;
         }
         op = Begin("Tokenizing text of length {l} chars using {tok_desc} tokenizer", text1.Length, tok_desc);
-        var t = tok!.Encode(tok, text1, null, 512, TruncationStrategy.OnlyFirst, 0);
+        var t = tok!.Encode(text1, null, 512, TruncationStrategy.OnlyFirst, 0);
         if (t is null) 
         {
             op.Abandon();
@@ -107,7 +107,7 @@ public class Text : Runtime
                 var tok = (XLMRobertaTokenizer) Tokenizers["me5s"];
                 var results = text.Select(text1 =>
                 {
-                    var t = tok!.Encode(tok, text1, null, 512, TruncationStrategy.OnlyFirst, 0);
+                    var t = tok!.Encode(text1, null, 512, TruncationStrategy.OnlyFirst, 0);
                     if (t is null)
                     {
                         op.Abandon();
@@ -148,9 +148,9 @@ public class Text : Runtime
                 Error("Unknown Roberta tokenizer: {t}.", tokenizer);
                 return null;
 
-        }
-       
+        }       
     }
+
     public static ITensor[]? GetTextTensors(string text, string props)
     {
         var tprops = props.Split(':');
