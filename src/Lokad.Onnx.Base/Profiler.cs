@@ -12,7 +12,8 @@ namespace Lokad.Onnx
         Copy,
         Broadcast,
         ValidateArguments,
-        CalculateIndices
+        CalculateIndices,
+        Cast
     }
     
     public record OpProfile { public OpStage Stage; public TimeSpan Time;  }

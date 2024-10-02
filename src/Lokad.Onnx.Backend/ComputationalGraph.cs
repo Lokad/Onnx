@@ -230,7 +230,7 @@ public class ComputationalGraph : Runtime
             if (!opCounts.ContainsKey(node.Op))
             {
                 opCounts[node.Op] = 0;
-                opTimes[node.Op] = 0L;
+                opTimes[node.Op] = 0.0;
             }
             Debug("Executing node {c} {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
                 + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),

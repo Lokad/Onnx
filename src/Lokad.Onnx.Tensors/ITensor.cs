@@ -83,8 +83,8 @@ namespace Lokad.Onnx
             }
 
             var broadcastRank = Math.Max(inA.Rank, inB.Rank);
-            var outA = inA.Clone();
-            var outB = inB.Clone();
+            var outA = inA;
+            var outB = inB;
             for (var i = 0; i < broadcastRank; i++)
             {
                 var idxA = i - broadcastRank + inA.Rank;
@@ -168,9 +168,25 @@ namespace Lokad.Onnx
             return output;
         }
 
+        ITensor ConvertToInt32() 
+        {
+            Profiler.StartOpStage(OpStage.Cast);
+            if (this.ElementType != TensorElementType.Int64) throw new ArgumentException();
+            Tensor<long> input = (Tensor<long>) this;
+            DenseTensor<int> output = DenseTensor<int>.OfShape(Dims);
+            for (int i = 0; i < Length; i++)
+            {
+                output.SetValue(i, (Convert.ToInt32(input.GetValue(i))));
+            }
+            return output;
+        }
+
         ITensor Unsqueeze(int[] axes)
         {
+            Profiler.StartOpStage(OpStage.ValidateArguments);    
             if (!ArrayUtilities.CheckNoRepeatedDims(axes)) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+            
+            Profiler.StartOpStage(OpStage.CalculateIndices);
             axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(Rank, a)).ToArray();
             if (axes.Any(a => a > (Rank + axes.Length) - 1)) throw new ArgumentException(nameof(axes), $"Each specified axis must be less than the rank of the output tensor. Got {axes.First(a => a > Rank - 1)}");
             var newshape = new int[axes.Length + Rank];
@@ -192,8 +208,6 @@ namespace Lokad.Onnx
 
         Tensor<T> AsTensor<T>() where T : unmanaged => (Tensor<T>) this;
     }
-
-    
 }
 
 public class TensorInputShapeException : ArgumentException

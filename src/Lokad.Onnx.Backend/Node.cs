@@ -163,7 +163,7 @@ public partial struct Node
         OpType.Unsqueeze => graph.OpsetVersion() switch
         {
             int v when v >= 13 => CPU.Unsqueeze(InputTensor(graph, 0), InputTensor(graph, 1)),
-            _ => CPU.Unsqueeze(InputTensor(graph, 0), RequiredInts("axes")?.ToTensor<int>()),
+            _ => CPU.Unsqueeze(InputTensor(graph, 0), RequiredInts("axes")),
         }, 
 
         OpType.ReduceSum => CPU.ReduceSum(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), Int("noop_with_empty_axes")),

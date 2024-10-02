@@ -1349,6 +1349,7 @@ where T : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static Tensor<T> Transpose(Tensor<T> data, int[] perm = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (perm is not null)
         {
             if (perm.Length != data.Rank)
@@ -1372,11 +1373,12 @@ where T : unmanaged
         {
             perm = Enumerable.Range(0, data.Rank).Reverse().ToArray();
         }
-      
         if (data.Rank <= 1)
         {
-            return data.Clone();
+            return data;
         }
+
+        Profiler.StartOpStage(OpStage.Copy);
         var shape = new int[data.Rank];
         for (int i =0; i < perm.Length; i++)
         {
@@ -1386,14 +1388,12 @@ where T : unmanaged
         var di = data.GetDimensionsIterator();
         foreach (var index in di)
         {
-            int _index = 0;
             int permindex = 0;
             for (int i = 0; i < perm.Length; i++)
             {
-                _index += index[i] * data.strides[i];
                 permindex += index[perm[i]] * r.strides[i];
             }
-            r.SetValue(permindex, data.GetValue(_index));
+            r.SetValue(permindex, data[index]);
         }
         return r;
     }
@@ -1401,7 +1401,10 @@ where T : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]  
     public unsafe static Tensor<T> Gather(Tensor<T> data, Tensor<int> indices, int? _axis = null)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (data.Rank == 0) throw new ArgumentException(nameof (data), "Cannot gather from a tensor of rank 0.");
+
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         var axis = _axis.HasValue ? ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _axis.Value) : 0;    
         if (axis > data.Rank - 1)
         {
@@ -1422,6 +1425,7 @@ where T : unmanaged
             shape.Add(data.dimensions[i]);
         }
         var output = DenseTensor<T>.OfShape(shape.ToArray());
+        Profiler.StartOpStage(OpStage.Copy);
         foreach (var di in output.GetDimensionsIterator())
         {
             var a = di[0..axis];
@@ -1435,6 +1439,7 @@ where T : unmanaged
 
     public static Tensor<T> Concat(Tensor<T> x, Tensor<T> y, int axis)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (x.Rank != y.Rank) throw new ArgumentException(nameof(y), "The rank of each tensor in a concat operation must be the same.");
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         for (int i = 0; i < x.Rank; i++)

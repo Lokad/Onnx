@@ -5,8 +5,10 @@ using System.IO;
 
 using CommandLine;
 using CommandLine.Text;
+using Spectre.Console;
 
-using Lokad.Onnx;
+using static Lokad.Onnx.Data;
+using static Lokad.Onnx.Text;
 
 #region Enums
 public enum ExitResult
@@ -164,11 +166,11 @@ class Program : Runtime
         ITensor[]? ui;
         if (!string.IsNullOrEmpty(ro.Text))
         {
-            ui = Text.GetTextTensors(ro.Inputs.First(), ro.Text);
+            ui = GetTextTensors(ro.Inputs.First(), ro.Text);
         }
         else
         {
-            ui = Data.GetInputTensorsFromFileArgs(ro.Inputs);
+            ui = GetInputTensorsFromFileArgs(ro.Inputs);
         }
         if (ui is null || ui.Length == 0)
         {
@@ -236,7 +238,7 @@ class Program : Runtime
                         Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
                     }
                 }
-                if (ro.EnableProfiler)
+                if (ro.EnableProfiler) PrintProfile();
                 Exit(ExitResult.SUCCESS);
             }
         }
@@ -453,7 +455,15 @@ class Program : Runtime
 
     static void PrintProfile()
     {
-
+        var times = Profiler.Profile.Select(np => (np.Op, np.OpsProfile.Sum(op => op.Time.TotalMilliseconds)))
+            .GroupBy(x => x.Item1)
+            .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2))));
+        var chart = new BarChart()
+            .Width(190)
+            .Label("[green bold underline]Op times[/]")
+            .CenterLabel()
+            .AddItems(times, (t) => new BarChartItem(t.Item1.ToString(), t.Item2, Color.Yellow));
+        Con.Write(chart);
     }
     static string GetAttributeValueDesc(object value) =>
         value switch

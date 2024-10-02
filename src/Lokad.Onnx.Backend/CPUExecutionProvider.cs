@@ -88,6 +88,7 @@ public class CPUExecutionProvider : Runtime
         {
             return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
         }
+
         Profiler.StartOpStage(OpStage.Broadcast);
         if (!ITensor.Broadcast(A, B, out var bA, out var bB))
         {
@@ -522,7 +523,7 @@ public class CPUExecutionProvider : Runtime
         
         if (indices.ElementType == TensorElementType.Int64)
         {
-            indices = indices.Cast<int>();
+            indices = indices.ConvertToInt32();
         }
         
         switch (data.ElementType)
@@ -606,10 +607,18 @@ public class CPUExecutionProvider : Runtime
         if (axes is null) return MissingInput(op, nameof(axes));
         if (axes.ElementType == TensorElementType.Int64)
         {
-            axes = axes.Cast<int>();
+            axes = axes.ConvertToInt32();
         }
         var _axes = ((Tensor<int>) axes).ToArray();
         return Success(op, data.Unsqueeze(_axes));
+    }
+
+    public static OpResult Unsqueeze(ITensor? data, int[] axes)
+    {
+        var op = OpType.Unsqueeze;
+        if (data is null) return MissingInput(op, nameof(data));
+        if (axes is null) return MissingInput(op, nameof(axes));
+        return Success(op, data.Unsqueeze(axes));
     }
 
     public static OpResult ReduceSum(ITensor? data, ITensor? axes, int? _keep_dims, int? noop_with_empty_axes)
