@@ -4,6 +4,7 @@
 	<TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
+	<NuspecFile>Lokad.Onnx.Backend.nuspec</NuspecFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,4 +19,16 @@
     <ProjectReference Include="..\Lokad.Onnx.Tensors\Lokad.Onnx.Tensors.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	<None Include="..\..\LICENSE.txt">
+	  <Pack>True</Pack>
+	  <PackagePath>\</PackagePath>
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Include="..\..\lokad.png">
+	  <Pack>True</Pack>
+	  <PackagePath>\</PackagePath>
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
 </Project>

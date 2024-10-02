@@ -1,0 +1,22 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Lokad.Onnx.Backend</id>
+    <version>0.1.0</version>
+    <authors>Lokad</authors>
+    <description>A C# ONNX backend implementation.</description>
+    <projectUrl>https://github.com/Lokad/Onnx</projectUrl>
+    <icon>lokad.png</icon>
+    <copyright>Copyright © Lokad 2024</copyright>
+    <dependencies>
+        <dependency id="OnnxSharp" version="0.2.1"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\net8.0\Satsuma.dll" target="lib\net8.0" />
+    <file src="bin\Release\net8.0\Lokad.Onnx.Base.dll" target="lib\net8.0" />
+    <file src="bin\Release\net8.0\Lokad.Onnx.Tensors.dll" target="lib\net8.0" />
+	<file src="bin\Release\net8.0\LICENSE.txt" target="" />
+    <file src="bin\Release\net8.0\lokad.png" target="" />
+  </files>
+</package>
