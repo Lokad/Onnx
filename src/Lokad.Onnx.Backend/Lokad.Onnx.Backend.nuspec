@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Lokad.Onnx.Backend</id>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
     <authors>Lokad</authors>
     <description>A C# ONNX backend implementation.</description>
     <projectUrl>https://github.com/Lokad/Onnx</projectUrl>
@@ -10,6 +10,7 @@
     <copyright>Copyright © Lokad 2024</copyright>
     <dependencies>
         <dependency id="OnnxSharp" version="0.2.1"/>
+		<dependency id="NLog" version="5.3.4" />
     </dependencies>
   </metadata>
   <files>
