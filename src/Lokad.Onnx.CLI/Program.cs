@@ -457,12 +457,22 @@ class Program : Runtime
     {
         var times = Profiler.Profile.Select(np => (np.Op, np.OpsProfile.Sum(op => op.Time.TotalMilliseconds)))
             .GroupBy(x => x.Item1)
-            .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2))));
+            .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2)), g.Count()));
         var chart = new BarChart()
             .Width(100)
             .Label("[green bold underline]Op times[/]")
             .CenterLabel()
-            .AddItems(times, (t) => new BarChartItem(t.Item1.ToString(), t.Item2, (Color) (((int) t.Item1 % 10) + 1 )));
+            .AddItems(times, (t) => new BarChartItem($"{t.Item1}({t.Item3})", t.Item2, (Color) (((int) t.Item1 % 10) + 1 )));
+        Con.Write(chart);
+
+        var times2 = Profiler.Profile.Select(np => (np.OpsProfile.Select(op => (op.Stage, op.Time)))).SelectMany(x=>x)//Sum(op => op.Time.TotalMilliseconds)))
+            .GroupBy(x => x.Item1)
+            .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2.TotalMilliseconds)), g.Count()));
+        chart = new BarChart()
+            .Width(100)
+            .Label("[green bold underline]Op times[/]")
+            .CenterLabel()
+            .AddItems(times2, (t) => new BarChartItem($"{t.Item1}({t.Item3})", t.Item2, (Color)(((int)t.Item1 % 10) + 1)));
         Con.Write(chart);
     }
     static string GetAttributeValueDesc(object value) =>
