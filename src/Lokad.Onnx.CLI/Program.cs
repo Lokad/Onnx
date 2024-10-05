@@ -458,22 +458,36 @@ class Program : Runtime
         var times = Profiler.Profile.Select(np => (np.Op, np.OpsProfile.Sum(op => op.Time.TotalMilliseconds)))
             .GroupBy(x => x.Item1)
             .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2)), g.Count()));
+        var times2 = Profiler.Profile.Select(np => (np.OpsProfile.Select(op => (op.Stage, op.Time)))).SelectMany(x => x)//Sum(op => op.Time.TotalMilliseconds)))
+         .GroupBy(x => x.Item1)
+         .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2.TotalMilliseconds)), g.Count()));
         var chart = new BarChart()
             .Width(100)
             .Label("[green bold underline]Op times[/]")
             .CenterLabel()
+            
             .AddItems(times, (t) => new BarChartItem($"{t.Item1}({t.Item3})", t.Item2, (Color) (((int) t.Item1 % 10) + 1 )));
         Con.Write(chart);
+        //Con.WriteLine();    
 
-        var times2 = Profiler.Profile.Select(np => (np.OpsProfile.Select(op => (op.Stage, op.Time)))).SelectMany(x=>x)//Sum(op => op.Time.TotalMilliseconds)))
-            .GroupBy(x => x.Item1)
-            .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2.TotalMilliseconds)), g.Count()));
+        var chart2 = new BreakdownChart()
+            .Width(100)
+            .FullSize()
+            .WithValueColor(Color.White)
+            .AddItems(times2, t => new BreakdownChartItem(t.Item1.ToString() + ":", t.Item2, (Color)(((int)t.Item1 % 10) + 1)));
+        Con.WriteLine();
+        Con.WriteLine("Total graph execution time: " + times.Sum(t => t.Item2) + "ms");
+
+     
         chart = new BarChart()
             .Width(100)
+            
             .Label("[green bold underline]Op times[/]")
             .CenterLabel()
             .AddItems(times2, (t) => new BarChartItem($"{t.Item1}({t.Item3})", t.Item2, (Color)(((int)t.Item1 % 10) + 1)));
-        Con.Write(chart);
+        
+        //Con.Write(chart);
+        Con.Write(chart2);
     }
     static string GetAttributeValueDesc(object value) =>
         value switch
