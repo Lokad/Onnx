@@ -459,10 +459,10 @@ class Program : Runtime
             .GroupBy(x => x.Item1)
             .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2))));
         var chart = new BarChart()
-            .Width(190)
+            .Width(100)
             .Label("[green bold underline]Op times[/]")
             .CenterLabel()
-            .AddItems(times, (t) => new BarChartItem(t.Item1.ToString(), t.Item2, Color.Yellow));
+            .AddItems(times, (t) => new BarChartItem(t.Item1.ToString(), t.Item2, (Color) (((int) t.Item1 % 10) + 1 )));
         Con.Write(chart);
     }
     static string GetAttributeValueDesc(object value) =>

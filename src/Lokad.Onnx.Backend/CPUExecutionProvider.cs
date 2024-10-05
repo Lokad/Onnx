@@ -368,7 +368,6 @@ public class CPUExecutionProvider : Runtime
             Profiler.StartOpStage(OpStage.Copy);
             A = A.ToDenseTensor();
             B = B.ToDenseTensor();
-            Profiler.StopOpStage();
         }
         switch (A.ElementType)
         {

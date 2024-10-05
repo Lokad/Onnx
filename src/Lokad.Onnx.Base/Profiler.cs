@@ -13,12 +13,13 @@ namespace Lokad.Onnx
         Broadcast,
         ValidateArguments,
         CalculateIndices,
-        Cast
+        Cast,
+        GraphOrchestration
     }
     
     public record OpProfile { public OpStage Stage; public TimeSpan Time;  }
 
-    public record NodeProfile { public long NodeId; public OpType Op; public List<OpProfile> OpsProfile = new List<OpProfile>(); }
+    public record NodeProfile { public long NodeId; public OpType Op; public Stack<OpProfile> OpsProfile = new Stack<OpProfile>(); }
 
     public class Profiler
     {
@@ -27,13 +28,13 @@ namespace Lokad.Onnx
 
         public static bool Enabled = false;
 
-        public static List<NodeProfile> Profile = new List<NodeProfile>();
+        public static Stack<NodeProfile> Profile = new Stack<NodeProfile>();
         #endregion
 
         #region Properties
-        public static NodeProfile CurrentNodeProfile => Profile.Last();
+        public static NodeProfile CurrentNodeProfile => Profile.Peek();
         
-        public static OpProfile CurrentOpProfile => CurrentNodeProfile.OpsProfile.Last();
+        public static OpProfile CurrentOpProfile => CurrentNodeProfile.OpsProfile.Peek();
 
         public static bool Running => timer.IsRunning;
         #endregion
@@ -57,7 +58,9 @@ namespace Lokad.Onnx
             if (!Enabled) return;
             
             AddTimeIfTimerRunning();
-            Profile.Add(new NodeProfile() { NodeId = id, Op = op });
+            Profile.Push(new NodeProfile() { NodeId = id, Op = op });
+            CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = OpStage.GraphOrchestration, Time = TimeSpan.Zero });
+            timer.Start();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -70,7 +73,7 @@ namespace Lokad.Onnx
             if (!Enabled) return;
 
             AddTimeIfTimerRunning();
-            CurrentNodeProfile.OpsProfile.Add(new OpProfile() { Stage = stage, Time = TimeSpan.Zero });
+            CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = stage, Time = TimeSpan.Zero });
             timer.Start();  
         }
 

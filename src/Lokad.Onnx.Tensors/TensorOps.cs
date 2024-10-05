@@ -354,20 +354,23 @@ where T : unmanaged
 
     public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y)
     {
+        Profiler.StartOpStage(OpStage.ValidateArguments);
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
         if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException($"The number of columns in the first matrix ({x.Dimensions[1]}) is not equal to the number of rows in the second matrix ({y.Dimensions[0]}).");
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
-        
+
+        Profiler.StartOpStage(OpStage.Copy);
         var _x = x.ToDenseTensor();
         var _y = y.ToDenseTensor();
         var output = DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
-        
-        var xh = _x.Buffer.Pin(); 
-        var yh = _y.Buffer.Pin();
-        var oh = output.Buffer.Pin();
+
+        Profiler.StartOpStage(OpStage.Math);
+        using var xh = _x.Buffer.Pin(); 
+        using var yh = _y.Buffer.Pin();
+        using var oh = output.Buffer.Pin();
         if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
         {
             if (m % 2 == 0 && k % 32 == 0)
@@ -399,9 +402,6 @@ where T : unmanaged
                 mm(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
             }
         }
-        xh.Dispose();
-        yh.Dispose();
-        oh.Dispose();
         return output;
     }
 
@@ -413,6 +413,7 @@ where T : unmanaged
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
+
 
         var _x = x.ToDenseTensor();
         var _y = y.ToDenseTensor();
@@ -626,7 +627,9 @@ where T : unmanaged
             {
                 throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
-            Profiler.StopOpStage();
+
+            Profiler.StartOpStage(OpStage.Math);
+
             var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
             var di = bx.GetDimensionsIterator(0..^2);
             using var xh = bx.Storage.Pin();
@@ -635,7 +638,7 @@ where T : unmanaged
             var m = bx.Dimensions[^2];
             var n = bx.Dimensions[^1];
             var k = by.Dimensions[^1];
-            Profiler.StartOpStage(OpStage.Math);
+          
             unsafe
             {
                 var xp = (float*)xh.Pointer;
@@ -664,7 +667,6 @@ where T : unmanaged
                     }
                 }
             }
-            Profiler.StopOpStage();
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
@@ -826,7 +828,8 @@ where T : unmanaged
             {
                 throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
-            Profiler.StopOpStage();
+
+            Profiler.StartOpStage(OpStage.Math);
             var z = DenseTensor<double>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
             var di = bx.GetDimensionsIterator(0..^2);
             using var xh = bx.Storage.Pin();
@@ -835,7 +838,6 @@ where T : unmanaged
             var m = bx.Dimensions[^2];
             var n = bx.Dimensions[^1];
             var k = by.Dimensions[^1];
-            Profiler.StartOpStage(OpStage.Math);
             unsafe
             {
                 var xp = (double*)xh.Pointer;
@@ -860,11 +862,11 @@ where T : unmanaged
                     }
                 }
             }
-            Profiler.StopOpStage();
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
         {
+            Profiler.StartOpStage(OpStage.Broadcast);
             if (!Tensor<double>.Broadcast(x, y, out var bx, out var by))
             {
                 throw new ArgumentException($"The shapes {x.PrintShape()} and {y.PrintShape()} are not compatible for broadcasting.");
@@ -876,6 +878,7 @@ where T : unmanaged
         }
         else //(x.Rank < 2 && y.Rank < 2)
         {
+            Profiler.StartOpStage(OpStage.Broadcast);
             bool bcast = false;
             if (x.Rank == 1)
             {

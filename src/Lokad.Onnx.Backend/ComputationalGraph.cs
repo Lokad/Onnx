@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 
 using Satsuma;
+using static Lokad.Onnx.Logger;
 
 public class ComputationalGraph : Runtime
 {
@@ -249,11 +250,11 @@ public class ComputationalGraph : Runtime
             {
                 Info("Executing node {c} {node}...", count, node.Name);
             }
-
+            Profiler.StartNodeProfile(node.ID, node.Op);
             timer.Start();
             var r = node.Execute(this);
             timer.Stop();
-
+            Profiler.StopNodeProfile();
             opCounts[node.Op]++;
             var elapsed = timer.Elapsed.TotalMilliseconds;
             opTimes[node.Op] += elapsed;
