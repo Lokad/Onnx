@@ -463,32 +463,22 @@ class Program : Runtime
          .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2.TotalMilliseconds)), g.Count()));
         var chart = new BarChart()
             .Width(100)
-            .Label("[green bold underline]Op times[/]")
+            .Label("[green bold underline]Graph Op Times[/]")
             .CenterLabel()
-            
             .AddItems(times, (t) => new BarChartItem($"{t.Item1}({t.Item3})", t.Item2, (Color) (((int) t.Item1 % 10) + 1 )));
-        Con.Write(chart);
-        //Con.WriteLine();    
-
         var chart2 = new BreakdownChart()
             .Width(100)
-            .FullSize()
+            .Compact()
             .WithValueColor(Color.White)
             .AddItems(times2, t => new BreakdownChartItem(t.Item1.ToString() + ":", t.Item2, (Color)(((int)t.Item1 % 10) + 1)));
+        Con.Write(chart);
         Con.WriteLine();
+        Con.WriteLine("Total graph node count: " + Profiler.Profile.Count);
         Con.WriteLine("Total graph execution time: " + times.Sum(t => t.Item2) + "ms");
-
-     
-        chart = new BarChart()
-            .Width(100)
-            
-            .Label("[green bold underline]Op times[/]")
-            .CenterLabel()
-            .AddItems(times2, (t) => new BarChartItem($"{t.Item1}({t.Item3})", t.Item2, (Color)(((int)t.Item1 % 10) + 1)));
-        
-        //Con.Write(chart);
+        Con.Write("Execution time breakdown (ms): ");
         Con.Write(chart2);
     }
+
     static string GetAttributeValueDesc(object value) =>
         value switch
         {
