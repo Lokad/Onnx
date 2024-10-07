@@ -482,25 +482,68 @@ class Program : Runtime
         Con.WriteLine("Total graph execution time: " + times.Sum(t => t.Item2) + "ms");
         Con.Write("Execution time breakdown (ms): ");
         Con.Write(chart2);
-        if (!detailed)
+
+        var times3 = Profiler.Profile.Select(np => (np.Op, 
+                                        np.OpsProfile.Select(op => (op.Stage, op.Time.TotalMilliseconds))
+                                                        .GroupBy(s => s.Stage)
+                                                        .Select(gs => (gs.Key, gs.Sum(i => i.TotalMilliseconds)))))
+            .GroupBy(x => x.Item1)
+            .Select(x => (x.Key, x.Select(i => i.Item2)
+                                    .SelectMany(x => x)
+                                    .GroupBy(x => x.Key)
+                                    .Select(x => (x.Key, x.Sum(i => i.Item2)))))
+            .ToArray();
+
+        var grid = new Grid(); 
+        grid.AddColumn(); 
+        grid.AddColumn();
+        grid.AddColumn();
+
+        for(int t = 0; t < times3.Length; t+=3)
         {
-            var times3 = Profiler.Profile.Select(np => (np.Op, 
-                                            np.OpsProfile.Select(op => (op.Stage, op.Time.TotalMilliseconds))
-                                                         .GroupBy(s => s.Stage)
-                                                         .Select(gs => (gs.Key, gs.Sum(i => i.TotalMilliseconds)))))
-                .GroupBy(x => x.Item1)
-                .Select(x => (x.Key, x.Select(i => i.Item2)
-                                      .SelectMany(x => x)
-                                      .GroupBy(x => x.Key)
-                                      .Select(x => (x.Key, x.Sum(i => i.Item2)))));
-            var data = times3.First(t => t.Key == OpType.Add);
-            var times4 = data.Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color) (((int) i.Item1) + 1)));
-            var chart3 = new BreakdownChart()
-                .Width(100)
+            var time = times3[t].Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color)(((int)i.Item1) + 1)));
+            var chart4 = new BreakdownChart()
+                .Width(50)
                 .Compact()
-                .AddItems(times4);
-            Con.Write(chart3);
+                .AddItems(time);
+            Panel p = new Panel(chart4);
+            p.Width = 50;
+            p.Header = new PanelHeader(times3[t].Item1.ToString(), Justify.Center);
+            if (t + 1 >= times3.Length)
+            {
+                grid.AddRow(p);
+                break;
+            }
+            else
+            {
+                var time2 = times3[t + 1].Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color)(((int)i.Item1) + 1)));
+                var chart5 = new BreakdownChart()
+                    .Width(50)
+                    .Compact()
+                    .AddItems(time2);
+                var p2 = new Panel(chart5);
+                p2.Width = 50;
+                p2.Header = new PanelHeader(times3[t + 1].Item1.ToString(), Justify.Center);
+                if (t + 2 >= times3.Length)
+                {
+                    grid.AddRow(p, p2);
+                    break;
+                }
+                else
+                {
+                    var time3 = times3[t + 1].Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color)(((int)i.Item1) + 1)));
+                    var chart6 = new BreakdownChart()
+                        .Width(50)
+                        .Compact()
+                        .AddItems(time3);
+                    var p3 = new Panel(chart6);
+                    p3.Width = 50;
+                    p3.Header = new PanelHeader(times3[t + 2].Item1.ToString(), Justify.Center);
+                    grid.AddRow(p, p2, p3);
+                }
+            }
         }
+        Con.Write(grid);
     }
 
     static string GetAttributeValueDesc(object value) =>
