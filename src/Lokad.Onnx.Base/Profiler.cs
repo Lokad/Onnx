@@ -77,8 +77,21 @@ namespace Lokad.Onnx
             timer.Start();  
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void StopOpStage() => AddTimeIfTimerRunning();
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public static void StopOpStage() => AddTimeIfTimerRunning();
+
+        public static string StageDescription(OpStage stage) => stage switch
+        {
+            OpStage.GraphOrchestration => "Graph Orchestration",
+            OpStage.Math => "Math",
+            OpStage.Copy => "Copy",
+            OpStage.Broadcast => "Broadcast",
+            OpStage.ValidateArguments => "Validate Arguments",
+            OpStage.CalculateIndices => "Calculate Indices",
+            OpStage.Cast => "Cast",
+            _ =>  throw new NotImplementedException()
+
+        };
         #endregion
 
     }

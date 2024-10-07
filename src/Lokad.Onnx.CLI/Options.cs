@@ -93,6 +93,9 @@ public class RunOptions : Options
 
     [Option("profile", Required = false, HelpText = "Enable the profiler which logs detailed stats about ONNX node execution times.")]
     public bool EnableProfiler { get; set; }
+
+    [Option("optimize-memory", Required = false, HelpText = "Optimize memory usage at the cost of performance.")]
+    public bool OptimizeMemory { get; set; }
 }
 
 [Verb("benchmark", HelpText = "Benchmark an ONNX model or operations.")]

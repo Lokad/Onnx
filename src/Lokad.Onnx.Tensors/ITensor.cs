@@ -160,6 +160,7 @@ namespace Lokad.Onnx
 
         ITensor Cast<U>() where U : unmanaged
         {
+            Profiler.StartOpStage(OpStage.Cast);
             ITensor output = CloneEmpty<U>();
             for (int i = 0; i < Length; i++)
             {

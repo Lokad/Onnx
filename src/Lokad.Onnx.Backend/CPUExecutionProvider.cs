@@ -194,7 +194,6 @@ public class CPUExecutionProvider : Runtime
             Profiler.StartOpStage(OpStage.Copy);
             bA = bA.ToDenseTensor();
             bB = bB.ToDenseTensor();
-            Profiler.StopOpStage();
         }
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
@@ -505,6 +504,7 @@ public class CPUExecutionProvider : Runtime
     {
         var op = OpType.Shape;
         if (data is null) return MissingInput(op, nameof(data));
+        Profiler.StartOpStage(OpStage.CalculateIndices);
         var start = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _start.HasValue ? _start.Value : 0);
         var end = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _end.HasValue ? _end.Value : data.Rank);
         start = ArrayUtilities.Clamp(start, 0, data.Rank);
@@ -561,22 +561,22 @@ public class CPUExecutionProvider : Runtime
         
         if (starts.ElementType == TensorElementType.Int64)
         {
-            starts = starts.Cast<int>();
+            starts = starts.ConvertToInt32();
         }
 
         if (ends.ElementType == TensorElementType.Int64)
         {
-            ends = ends.Cast<int>();
+            ends = ends.ConvertToInt32();
         }
 
         if (axes is not null && axes.ElementType == TensorElementType.Int64)
         {
-            axes = axes.Cast<int>();
+            axes = axes.ConvertToInt32();
         }
 
         if (steps is not null && steps.ElementType == TensorElementType.Int64)
         {
-            steps = steps.Cast<int>();
+            steps = steps.ConvertToInt32();
         }
 
         switch (data.ElementType)

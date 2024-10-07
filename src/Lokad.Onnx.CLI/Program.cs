@@ -211,6 +211,11 @@ class Program : Runtime
             Info("Not using CPU SIMD intrinsics.");
         }
 
+        if (ro.OptimizeMemory)
+        {
+            CPUExecutionProvider.OptimizationMode = OptimizationMode.Memory;    
+        }
+
         if (ro.EnableProfiler)
         {
             Profiler.Enabled = true;
@@ -453,7 +458,7 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
-    static void PrintProfile()
+    static void PrintProfile(bool detailed = false)
     {
         var times = Profiler.Profile.Select(np => (np.Op, np.OpsProfile.Sum(op => op.Time.TotalMilliseconds)))
             .GroupBy(x => x.Item1)
@@ -470,13 +475,32 @@ class Program : Runtime
             .Width(100)
             .Compact()
             .WithValueColor(Color.White)
-            .AddItems(times2, t => new BreakdownChartItem(t.Item1.ToString() + ":", t.Item2, (Color)(((int)t.Item1 % 10) + 1)));
+            .AddItems(times2, t => new BreakdownChartItem(Profiler.StageDescription(t.Item1) + ":", t.Item2, (Color)(((int)t.Item1 % 10) + 1)));
         Con.Write(chart);
         Con.WriteLine();
         Con.WriteLine("Total graph node count: " + Profiler.Profile.Count);
         Con.WriteLine("Total graph execution time: " + times.Sum(t => t.Item2) + "ms");
         Con.Write("Execution time breakdown (ms): ");
         Con.Write(chart2);
+        if (!detailed)
+        {
+            var times3 = Profiler.Profile.Select(np => (np.Op, 
+                                            np.OpsProfile.Select(op => (op.Stage, op.Time.TotalMilliseconds))
+                                                         .GroupBy(s => s.Stage)
+                                                         .Select(gs => (gs.Key, gs.Sum(i => i.TotalMilliseconds)))))
+                .GroupBy(x => x.Item1)
+                .Select(x => (x.Key, x.Select(i => i.Item2)
+                                      .SelectMany(x => x)
+                                      .GroupBy(x => x.Key)
+                                      .Select(x => (x.Key, x.Sum(i => i.Item2)))));
+            var data = times3.First(t => t.Key == OpType.Add);
+            var times4 = data.Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color) (((int) i.Item1) + 1)));
+            var chart3 = new BreakdownChart()
+                .Width(100)
+                .Compact()
+                .AddItems(times4);
+            Con.Write(chart3);
+        }
     }
 
     static string GetAttributeValueDesc(object value) =>
