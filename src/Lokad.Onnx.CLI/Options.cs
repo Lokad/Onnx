@@ -73,9 +73,6 @@ public class RunOptions : Options
     [Option("softmax", Required = false, HelpText = "Apply the softmax function to output vectors.")]
     public bool Softmax { get; set; }
 
-    [Option("op-times", Required = false, HelpText = "After every n ops, print the time spent executing each op type.", Default =-1)]
-    public int OpTimes { get; set; }
-
     [Option("node", Required = false, HelpText = "Only run the model node with this label. The specified user inputs together with the graph initializers will be used as the node inputs.")]
     public string Node { get; set; } = "";
 

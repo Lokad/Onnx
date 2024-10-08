@@ -1311,6 +1311,7 @@ where T : unmanaged
 
     public static Tensor<float> Softmax(Tensor<float> x, int axis = -1) 
     {
+        StartOpStage(OpStage.ValidateArguments);
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");      
         var max = Tensor<float>.ReduceMax(x, (new int[] { axis }).ToTensor<int>(), true);
@@ -1330,6 +1331,7 @@ where T : unmanaged
 
     public static Tensor<double> Softmax(Tensor<double> x, int axis = -1)
     {
+        StartOpStage(OpStage.ValidateArguments);
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");
 

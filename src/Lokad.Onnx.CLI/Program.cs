@@ -223,7 +223,7 @@ class Program : Runtime
 
         if (ro.Node == "")
         {
-            if (graph.Execute(ui, true, optimes: ro.OpTimes, nodetimes: false))
+            if (graph.Execute(ui, true))
             {
                 Info("Printing outputs...");
                 foreach (var o in graph.Outputs.Values)
@@ -458,7 +458,7 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
-    static void PrintProfile(bool detailed = false)
+    static void PrintProfile()
     {
         var times = Profiler.Profile.Select(np => (np.Op, np.OpsProfile.Sum(op => op.Time.TotalMilliseconds)))
             .GroupBy(x => x.Item1)
@@ -531,7 +531,7 @@ class Program : Runtime
                 }
                 else
                 {
-                    var time3 = times3[t + 1].Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color)(((int)i.Item1) + 1)));
+                    var time3 = times3[t + 2].Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color)(((int)i.Item1) + 1)));
                     var chart6 = new BreakdownChart()
                         .Width(50)
                         .Compact()
