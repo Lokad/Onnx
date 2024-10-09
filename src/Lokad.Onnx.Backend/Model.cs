@@ -13,24 +13,16 @@ namespace Lokad.Onnx
     {
         public static ModelProto? Parse(string onnxInputFilePath)
         {
-            var op = Begin("Parsing ONNX model file {f}", onnxInputFilePath);
-            var m =  ModelProto.Parser.ParseFromFile(onnxInputFilePath);
-            op.Complete();
-            return m;
+            return ModelProto.Parser.ParseFromFile(onnxInputFilePath);
         }
 
         public static ModelProto? Parse(byte[] data)
         {
-            var op = Begin("Parsing ONNX model buffer of length {f} bytes", data.Length);
-            var m = ModelProto.Parser.ParseFrom(data);
-            op.Complete();
-            return m;
+            return ModelProto.Parser.ParseFrom(data);
         }
 
         public static ComputationalGraph Load(ModelProto mp)
         {
-            Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.OpsetImport.Select(o => o.Domain + ":" + o.Version).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
-            var cop = Begin("Creating computational graph from ONNX model");
             var graph = new ComputationalGraph();
             graph.ModelFile = "<buffer>";
             graph.Model = mp;
@@ -42,23 +34,16 @@ namespace Lokad.Onnx
             graph.Metadata["Domain"] = mp.Domain;
             graph.Metadata["ProducerName"] = mp.ProducerName;
             graph.Metadata["ProducerVersion"] = mp.ProducerVersion;
-            var op = Begin("Converting {c} model initializer tensor protos to graph tensors", mp.Graph.Initializer.Count);
             foreach (var i in mp.Graph.Initializer)
             {
                 graph.Initializers.Add(i.Name, i.ToTensor());
             }
-            op.Complete();
-            op = Begin("Converting {c} model input and output tensor protos to graph tensors", mp.Graph.Input.Count + mp.Graph.Output.Count);
             graph.Inputs = mp.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
             graph.Outputs = mp.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
-            op.Complete();
-            op = Begin("Converting {c} model node protos to graph nodes", mp.Graph.Node.Count);
             foreach (var np in mp.Graph.Node)
             {
                 graph.Nodes.Add(np.ToNode(graph));
             }
-            op.Complete();
-            cop.Complete(); 
             return graph;
         }
 
@@ -67,7 +52,6 @@ namespace Lokad.Onnx
             var mp = Parse(onnxInputFilePath);
             if (mp is null)
             {
-                Error("Could not parse {f} as ONNX model file.", onnxInputFilePath);
                 return null;
             }
             var g = Load(mp);
@@ -83,10 +67,8 @@ namespace Lokad.Onnx
             var mp = Parse(buffer);
             if (mp is null)
             {
-                Error("Could not parse buffer as ONNX model.");
                 return null;
             }
-            Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
             return Load(mp);
         }
     }

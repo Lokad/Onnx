@@ -14,11 +14,9 @@ public class Text : Runtime
 {
     public static ITensor[]? BertTokenize(string text, string tokenizer)
     {
-        var op = Begin("Tokenizing {len} characters using BERT tokenizer {tok}", text.Length, tokenizer);
         var tok = new BertTokenizer();
         tok.LoadFromHuggingFaceAsync(tokenizer).Wait();
         var (inputIds, attentionMask, tokenTypeIds) = tok.Encode(text, 512);
-        op.Complete();
         return new ITensor[3] {
             DenseTensor<long>.OfValues(inputIds.ToArray()).PadLeft().WithName("input_ids"),
             DenseTensor<long>.OfValues(attentionMask.ToArray()).PadLeft().WithName("attention_mask"),
@@ -29,12 +27,9 @@ public class Text : Runtime
     public static ITensor[]? RobertaTokenize(string text1, string tokenizer)
     {
         XLMRobertaTokenizer? tok = null;
-        string tok_desc;
-        Logger.Op op;
         switch (tokenizer)
         {
             case "me5s":
-                tok_desc = "multilingual-e5-small";
                 if (Tokenizers.ContainsKey("me5s"))
                 {
                     tok = (XLMRobertaTokenizer)Tokenizers["me5s"];
@@ -45,11 +40,9 @@ public class Text : Runtime
                     if (!File.Exists(tokenizerPath))
                     {
                         if (!DownloadFile(
-                            "sentencepiece.bpe.model",
                             new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
                             tokenizerPath))
                         {
-                            Error("Could not download model file.");
                             return null;
                         }
                     }
@@ -58,19 +51,15 @@ public class Text : Runtime
                 }
                 break;
             default:
-                Error("Unknown Roberta tokenizer: {t}.", tokenizer);
                 return null;
         }
-        op = Begin("Tokenizing text of length {l} chars using {tok_desc} tokenizer", text1.Length, tok_desc);
         var t = tok!.Encode(text1, null, 512, TruncationStrategy.OnlyFirst, 0);
         if (t is null) 
         {
-            op.Abandon();
             return null;
         }
         else
         {
-            op.Complete();
             return new ITensor[3]
             {
                  DenseTensor<long>.OfValues(t.TokenIds.ToArray()).PadLeft().WithName("input_ids"),
@@ -92,25 +81,21 @@ public class Text : Runtime
                     if (!File.Exists(tokenizerPath))
                     {
                         if (!DownloadFile(
-                            "sentencepiece.bpe.model",
                             new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
                             tokenizerPath))
                         {
-                            Error("Could not download model file.");
                             return null;
                         }
                     }
                     Tokenizers["me5s"] = new XLMRobertaTokenizer(tokenizerPath, false); ;
                 }
                 string tok_desc = "multilingual-e5-small";
-                var op = Begin("Tokenizing text array of length {l} using {tok_desc} tokenizer", text.Length, tok_desc);
                 var tok = (XLMRobertaTokenizer) Tokenizers["me5s"];
                 var results = text.Select(text1 =>
                 {
                     var t = tok!.Encode(text1, null, 512, TruncationStrategy.OnlyFirst, 0);
                     if (t is null)
                     {
-                        op.Abandon();
                         throw new Exception("Error tokenizing text " + text1 + ". Stopping.");
                     }
                     else
@@ -138,14 +123,12 @@ public class Text : Runtime
                     typeids.Add(r[2].AsTensor<long>().Concat(new long[padl]).ToArray());
                     
                 }
-                op.Complete();  
                 return new ITensor[] { 
                     inputids.ToArray().To2DArray<long>().ToTensor<long>().WithName("input_ids"),
                     attentionMask.ToArray().To2DArray<long>().ToTensor<long>().WithName("attention_mask"),
                     typeids.ToArray().To2DArray<long>().ToTensor<long>().WithName("token_type_ids") 
                 };
             default:
-                Error("Unknown Roberta tokenizer: {t}.", tokenizer);
                 return null;
 
         }       
@@ -164,7 +147,6 @@ public class Text : Runtime
         }
         else
         {
-            Error("Could not tokenize text using properties {p}.", props);
             return null;
         }
     }
@@ -182,7 +164,6 @@ public class Text : Runtime
         //}
         else
         {
-            Error("Could not tokenize text using properties {p}.", props);
             return null;
         }
     }
@@ -191,7 +172,6 @@ public class Text : Runtime
     {
         if (!File.Exists(name)) 
         {
-            Error("File {name} does not exist.", name); 
             return null;
         }
         else

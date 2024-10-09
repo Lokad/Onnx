@@ -23,7 +23,6 @@ namespace Lokad.Onnx
 
         public static Node ToNode(this NodeProto np, ComputationalGraph graph)
         {
-            Runtime.Debug("Converting model node proto {npn} with op type {npot} and inputs {npi} and outputs {npot} and attributes [{npa}] to graph node.", np.Name, np.OpType, np.Input, np.Output, np.Attribute.Select(a => a.Name));
             var node = new Node()
             {
                 Name = np.Name,
@@ -49,7 +48,6 @@ namespace Lokad.Onnx
                     if (n.Outputs.Contains(i))
                     {
                         graph.WeightedDirectedGraph.AddArc(n.WeightedGraphNode, node.WeightedGraphNode, Satsuma.Directedness.Directed, label: i);
-                        Runtime.Debug("Node {dest} has predecessor {src}.", node.Name, n.Name);
                     }
                 }
             }

@@ -10,7 +10,6 @@
     <copyright>Copyright © Lokad 2024</copyright>
     <dependencies>
         <dependency id="OnnxSharp" version="0.2.1"/>
-		<dependency id="NLog" version="5.3.4" />
     </dependencies>
   </metadata>
   <files>

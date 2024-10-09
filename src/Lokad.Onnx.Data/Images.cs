@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 namespace Lokad.Onnx
 {
     public class Images : Runtime
@@ -21,11 +17,9 @@ namespace Lokad.Onnx
             var image = Image.Load<Rgba32>(name);
             if (image is null)
             {
-                Error("Could not load file {f} as image.", name);
                 return null;
             }
 
-            Info("File {f} is {H}x{W}x{p}bpp image.", name, image.Height, image.Width, image.PixelType.BitsPerPixel);
             var n = Path.Combine(Path.GetDirectoryName(name)!, Path.GetFileNameWithoutExtension(name)
                 + "_" + $"{image.Height}x{image.Width}_{index}.png");
             if (props.Length == 0)
@@ -36,7 +30,6 @@ namespace Lokad.Onnx
             {
                 if (props[0] == "mnist")
                 {
-                    Info("Converting image data to MINST format tensor data.");
                     image.Mutate(i => i.Grayscale());
                     image.Mutate(i => i.Resize(28, 28));
                     n = Path.Combine(Path.GetDirectoryName(name)!, Path.GetFileNameWithoutExtension(name)
@@ -50,7 +43,6 @@ namespace Lokad.Onnx
                         var dims = props[0].Split(':').Select(d => Int32.Parse(d)).ToArray();
                         if (dims.Length != 2)
                         {
-                            Error("Cannot parse specified image dimensions {d}.", props[0]);
                             return null;
                         }
                         else
@@ -63,13 +55,11 @@ namespace Lokad.Onnx
                     }
                     else
                     {
-                        Error("Cannot parse specified image dimensions {d}.", props[0]);
                         return null;
                     }
                 }
                 else
                 {
-                    Error("Cannot parse specified image format {d}.", props[0]);
                     return null;
                 }
             }
@@ -133,14 +123,6 @@ namespace Lokad.Onnx
             if (save)
             {
                 var stream = new FileStream(name, FileMode.Create);
-                if (File.Exists(name))
-                {
-                    Warn("Overwriting file {f} with input image.", name);
-                }
-                else
-                {
-                    Info("Saving input image to {n}.", name);
-                }
                 image.SaveAsPng(stream);
             }
             return image;
@@ -155,11 +137,9 @@ namespace Lokad.Onnx
             var image = Image.Load<Rgba32>(file);
             if (image is null)
             {
-                Error("Could not load file {f} as image.", file);
                 return null;
             }
 
-            Info("File {f} is {H}x{W}x{p}bpp image.", file, image.Height, image.Width, image.PixelType.BitsPerPixel);
             return ImageToArrayF(image);
         }
 
@@ -172,11 +152,9 @@ namespace Lokad.Onnx
             var image = Image.Load<Rgba32>(file);
             if (image is null)
             {
-                Error("Could not load file {f} as image.", file);
                 return null;
             }
 
-            Info("File {f} is {H}x{W}x{p}bpp image.", file, image.Height, image.Width, image.PixelType.BitsPerPixel);
             image.Mutate(i => i.Grayscale());
             image.Mutate(i => i.Resize(28, 28));
             return ImageToArrayF(image);

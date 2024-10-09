@@ -1,21 +1,17 @@
 ﻿namespace Lokad.Onnx.CLI;
 
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Diagnosers;
+using BenchmarkDotNet.Running;
+using Lokad.Onnx;
 using System;
 using System.Buffers;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Diagnosers;
-using BenchmarkDotNet.Running;
-
-using static Lokad.Onnx.Text;
 using static Lokad.Onnx.MathOps;
-
-using Lokad.Onnx;
-using BenchmarkDotNet.Jobs;
+using static Lokad.Onnx.Text;
 
 [RyuJitX64Job]
 [IterationsColumn]
@@ -310,10 +306,17 @@ public class TensorIndexingBenchmarks : Runtime
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
 {
+    public static Logger Logger { get; protected set; }
+
+    static MultilingualEmbedded5SmallRunBenchmarks()
+    {
+        Logger = new ConsoleLogger2();
+    }
+
     [GlobalSetup()]
     public void Setup()
     {
-        var op = Begin("Creating computational graph and tokenizing test data");
+        var op = Logging.Begin(Logger, "Creating computational graph and tokenizing test data");
         graph = Model.Load(modelFile);
         var options = new JsonSerializerOptions
         {
@@ -445,10 +448,17 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
 public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
 {
+    public static Logger Logger { get; protected set; }
+
+    static MultilingualEmbedded5SmallLoadBenchmarks()
+    {
+        Logger = new ConsoleLogger2();
+    }
+
     [GlobalSetup()]
     public void Setup()
     {
-        var op = Begin("Loading test data");
+        var op = Logging.Begin(Logger, "Loading test data");
    
         var options = new JsonSerializerOptions
         {
@@ -511,16 +521,23 @@ public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
 
 internal class Benchmarks : Runtime
 {
+    public static Logger Logger { get; protected set; }
+
+    static Benchmarks()
+    {
+        Logger = new ConsoleLogger2();
+    }
+
     internal static void RunMe5sLoad(string[] args)
     {
-        var op = Begin("Preparing model and data for multilingual-embedded-5-small load benchmark");
+        var op = Logging.Begin(Logger, "Preparing model and data for multilingual-embedded-5-small load benchmark");
         var modelFile = Path.Combine(AssemblyLocation, "benchmark-model.onnx");
         var testDataFile = Path.Combine(AssemblyLocation, "train.jsonl");
         if (!File.Exists(modelFile))
         {
-            if (!DownloadFile("benchmark-model.onnx", new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx?download=true"), modelFile))
+            if (!DownloadFile(new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx?download=true"), modelFile))
             {
-                Error("Could not download benchmark model file.");
+                Logging.Error(Logger, "Could not download benchmark model file.");
                 op.Abandon();
                 return;
             }
@@ -528,9 +545,9 @@ internal class Benchmarks : Runtime
 
         if (!File.Exists(testDataFile))//
         {  //https://huggingface.co/datasets/mteb/quora/resolve/main/corpus.jsonl
-            if (!DownloadFile("train.jsonl", new Uri("https://huggingface.co/datasets/mteb/amazon_reviews_multi/resolve/main/en/train.jsonl?download=true"), testDataFile))
+            if (!DownloadFile(new Uri("https://huggingface.co/datasets/mteb/amazon_reviews_multi/resolve/main/en/train.jsonl?download=true"), testDataFile))
             {
-                Error("Could not download benchmark test data file.");
+                Logging.Error(Logger, "Could not download benchmark test data file.");
                 op.Abandon();
                 return;
             }
@@ -541,14 +558,14 @@ internal class Benchmarks : Runtime
 
     internal static void RunMe5sRun(string[] args)
     {
-        var op = Begin("Preparing model and data for multilingual-embedded-5-small run benchmark");
+        var op = Logging.Begin(Logger, "Preparing model and data for multilingual-embedded-5-small run benchmark");
         var modelFile = Path.Combine(AssemblyLocation, "benchmark-model.onnx");
         var testDataFile = Path.Combine(AssemblyLocation, "train.jsonl");
         if (!File.Exists(modelFile))
         {
-            if (!DownloadFile("benchmark-model.onnx", new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx?download=true"), modelFile))
+            if (!DownloadFile(new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx?download=true"), modelFile))
             {
-                Error("Could not download benchmark model file.");
+                Logging.Error(Logger, "Could not download benchmark model file.");
                 op.Abandon();
                 return;
             }
@@ -556,9 +573,9 @@ internal class Benchmarks : Runtime
 
         if (!File.Exists(testDataFile))//
         {  //https://huggingface.co/datasets/mteb/quora/resolve/main/corpus.jsonl
-            if (!DownloadFile("train.jsonl", new Uri("https://huggingface.co/datasets/mteb/amazon_reviews_multi/resolve/main/en/train.jsonl?download=true"), testDataFile))
+            if (!DownloadFile(new Uri("https://huggingface.co/datasets/mteb/amazon_reviews_multi/resolve/main/en/train.jsonl?download=true"), testDataFile))
             {
-                Error("Could not download benchmark test data file.");
+                Logging.Error(Logger, "Could not download benchmark test data file.");
                 op.Abandon();
                 return;
             }
@@ -569,10 +586,10 @@ internal class Benchmarks : Runtime
 
     internal static void RunMatMul(string[] args)
     {
-        Info("Running tensor matmul benchmark...");
-        Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
-        Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
-        Info("SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
+        Logging.Info(Logger, "Running tensor matmul benchmark...");
+        Logging.Info(Logger, "SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
+        Logging.Info(Logger, "SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
+        Logging.Info(Logger, "SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
         BenchmarkRunner.Run<TensorMatMulBenchmarks>(DefaultConfig.Instance, args);
     }
 
@@ -583,11 +600,11 @@ internal class Benchmarks : Runtime
 
     internal static void RunMatMul2D(string[] args)
     {
-        Info("Running matmul core benchmark...");
-        Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
-        Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
-        Info("SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
-        Info("Creating new build of Lokad.Onnx solution to run and profile MatMul2D benchmark code...");
+        Logging.Info(Logger, "Running matmul core benchmark...");
+        Logging.Info(Logger, "SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
+        Logging.Info(Logger, "SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
+        Logging.Info(Logger, "SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
+        Logging.Info(Logger, "Creating new build of Lokad.Onnx solution to run and profile MatMul2D benchmark code...");
         BenchmarkRunner.Run<MatMul2DBenchmarks>(DefaultConfig.Instance, args);
     }
 }

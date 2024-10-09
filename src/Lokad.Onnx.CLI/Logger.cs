@@ -2,6 +2,9 @@ namespace Lokad.Onnx
 {
     using NLog;
     using NLog.Config;
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
 
     public abstract class Logger
     {

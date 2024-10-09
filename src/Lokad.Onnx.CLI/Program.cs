@@ -22,6 +22,8 @@ public enum ExitResult
 
 class Program : Runtime
 {
+    public static Logger Logger { get; protected set; }
+
     #region Constructor
     static Program()
     {
@@ -33,6 +35,7 @@ class Program : Runtime
         {
             optionTypesMap.Add(t.Name, t);
         }
+        Logger = new ConsoleLogger2();
     }
     #endregion
 
@@ -61,7 +64,7 @@ class Program : Runtime
         {
             help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
             help.Copyright = "";
-            Info(help);
+            Logging.Info(Logger, help);
             Exit(ExitResult.SUCCESS);
         }
         else if (errors.Any(e => e.Tag == ErrorType.HelpVerbRequestedError))
@@ -75,7 +78,7 @@ class Program : Runtime
             {
                 help.AddVerbs(optionTypes);
             }
-            Info(help.ToString().Replace("--", ""));
+            Logging.Info(Logger, help.ToString().Replace("--", ""));
             Exit(ExitResult.SUCCESS);
         }
         else if (errors.Any(e => e.Tag == ErrorType.HelpRequestedError))
@@ -84,20 +87,20 @@ class Program : Runtime
             help.AddVerbs(result.TypeInfo.Current);
             help.AddOptions(result);
             help.AddPreOptionsLine($"{result.TypeInfo.Current.Name.Replace("Options", "").ToLower()} options:");
-            Info(help);
+            Logging.Info(Logger, help);
             Exit(ExitResult.SUCCESS);
         }
         else if (errors.Any(e => e.Tag == ErrorType.NoVerbSelectedError))
         {
             help.AddVerbs(optionTypes);
-            Info(help);
+            Logging.Info(Logger, help);
             Exit(ExitResult.INVALID_OPTIONS);
         }
         else if (errors.Any(e => e.Tag == ErrorType.MissingRequiredOptionError))
         {
             MissingRequiredOptionError error = (MissingRequiredOptionError)errors.First(e => e.Tag == ErrorType.MissingRequiredOptionError);
-            Info(help);
-            Error("A required option is missing.");
+            Logging.Info(Logger, help);
+            Logging.Error(Logger, "A required option is missing.");
 
             Exit(ExitResult.INVALID_OPTIONS);
         }
@@ -105,15 +108,15 @@ class Program : Runtime
         {
             UnknownOptionError error = (UnknownOptionError)errors.First(e => e.Tag == ErrorType.UnknownOptionError);
             help.AddVerbs(optionTypes);
-            Info(help);
-            Error("Unknown option: {error}.", error.Token);
+            Logging.Info(Logger, help);
+            Logging.Error(Logger, "Unknown option: {error}.", error.Token);
             Exit(ExitResult.INVALID_OPTIONS);
         }
         else
         {
-            Error("An error occurred parsing the program options: {errors}.", errors);
+            Logging.Error(Logger, "An error occurred parsing the program options: {errors}.", errors);
             help.AddVerbs(optionTypes);
-            Info(help);
+            Logging.Info(Logger, help);
             Exit(ExitResult.INVALID_OPTIONS);
         }
     }
@@ -139,14 +142,14 @@ class Program : Runtime
     {
         if (ro.File.StartsWith("http"))
         {
-            if (Uri.TryCreate(ro.File, UriKind.Absolute, out Uri? uri) && DownloadFile("ONNX model file", uri, Path.Combine(Directory.GetCurrentDirectory(), "model.onnx")))
+            if (Uri.TryCreate(ro.File, UriKind.Absolute, out Uri? uri) && DownloadFile(uri, Path.Combine(Directory.GetCurrentDirectory(), "model.onnx")))
             {
                 ro.File = Path.Combine(Directory.GetCurrentDirectory(), "model.onnx");
-                Info("Successfully downloaded model file.");
+                Logging.Info(Logger, "Successfully downloaded model file.");
             }
             else
             {
-                Error("Could not download model file.");
+                Logging.Error(Logger, "Could not download model file.");
                 Exit(ExitResult.NOT_FOUND);
             }
         }
@@ -177,57 +180,57 @@ class Program : Runtime
         }
         if (ro.PrintInput)
         {
-            Info("Printing {c} input tensor(s)...", ui.Length);
+            Logging.Info(Logger, "Printing {c} input tensor(s)...", ui.Length);
             foreach (var t in ui)
             {
-                Info("{n}:{d}", t.TensorNameDesc(), t.PrintData(false));
+                Logging.Info(Logger, "{n}:{d}", t.TensorNameDesc(), t.PrintData(false));
             }
         }
 
         if (ro.DisableSimd)
         {
             HardwareConfig.UseSimd = false;
-            Info("CPU SIMD features disabled.");
+            Logging.Info(Logger, "CPU SIMD features disabled.");
         }
         else
         {
-            Info("CPU SIMD acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
+            Logging.Info(Logger, "CPU SIMD acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
             if (System.Numerics.Vector.IsHardwareAccelerated)
             {
-                Info("CPU SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
+                Logging.Info(Logger, "CPU SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
 
             }
         }
         if (ro.EnableIntrinsics && System.Numerics.Vector.IsHardwareAccelerated)
         {
             HardwareConfig.UseIntrinsics = true;
-            Info("CPU SIMD available intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
+            Logging.Info(Logger, "CPU SIMD available intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
         }
         else
         {
-            Info("Not using CPU SIMD intrinsics.");
+            Logging.Info(Logger, "Not using CPU SIMD intrinsics.");
         }
 
         if (ro.Node == "")
         {
             if (graph.Execute(ui, true, optimes: ro.OpTimes, nodetimes: false))
             {
-                Info("Printing outputs...");
+                Logging.Info(Logger, "Printing outputs...");
                 foreach (var o in graph.Outputs.Values)
                 {
                     if (ro.Softmax && o.Rank == 1)
                     {
-                        Info("Applying softmax to {n}...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+                        Logging.Info(Logger, "Applying softmax to {n}...", o.TensorNameDesc());
+                        Logging.Info(Logger, "{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
                     }
                     else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
                     {
-                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+                        Logging.Info(Logger, "Converting {n} to vector and applying softmax...", o.TensorNameDesc());
+                        Logging.Info(Logger, "{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
                     }
                     else
                     {
-                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
+                        Logging.Info(Logger, "{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
                     }
                 }
                 Exit(ExitResult.SUCCESS);
@@ -237,22 +240,22 @@ class Program : Runtime
         {
             if (graph.ExecuteNode(ui, ro.Node, true))
             {
-                Info("Printing outputs...");
+                Logging.Info(Logger, "Printing outputs...");
                 foreach (var o in graph.Outputs.Values)
                 {
                     if (ro.Softmax && o.Rank == 1)
                     {
-                        Info("Applying softmax to {n}...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+                        Logging.Info(Logger, "Applying softmax to {n}...", o.TensorNameDesc());
+                        Logging.Info(Logger, "{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
                     }
                     else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
                     {
-                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+                        Logging.Info(Logger, "Converting {n} to vector and applying softmax...", o.TensorNameDesc());
+                        Logging.Info(Logger, "{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
                     }
                     else
                     {
-                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
+                        Logging.Info(Logger, "{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
                     }
                 }
                 Exit(ExitResult.SUCCESS);
@@ -287,7 +290,7 @@ class Program : Runtime
                     ExitWithSuccess();
                     break;
                 default:
-                    Error("Unknown benchmark: {b}.", bo.BenchmarkId);
+                    Logging.Error(Logger, "Unknown benchmark: {b}.", bo.BenchmarkId);
                     Exit(ExitResult.INVALID_OPTIONS);
                     break;
 
@@ -311,7 +314,7 @@ class Program : Runtime
         {
             if (!Enum.TryParse<OpType>(_opfilter, true, out var op))
             {
-                Error("The specified operation type {op} is not valid.", _opfilter);
+                Logging.Error(Logger, "The specified operation type {op} is not valid.", _opfilter);
             }
             else
             {
@@ -325,9 +328,9 @@ class Program : Runtime
             return;
         }
         var tensors = new Dictionary<string, string>();
-        Info("Graph has input tensors: {i}", graph.Inputs.Select(t => t.Value.TensorNameDesc()));
-        Info("Graph has output tensors: {o}", graph.Outputs.Select(t => t.Value.TensorNameDesc()));
-        Info("Graph has initializer tensors: {i}", graph.Initializers.Select(t => t.Value.TensorNameDesc()));
+        Logging.Info(Logger, "Graph has input tensors: {i}", graph.Inputs.Select(t => t.Value.TensorNameDesc()));
+        Logging.Info(Logger, "Graph has output tensors: {o}", graph.Outputs.Select(t => t.Value.TensorNameDesc()));
+        Logging.Info(Logger, "Graph has initializer tensors: {i}", graph.Initializers.Select(t => t.Value.TensorNameDesc()));
         foreach (var t in graph.Initializers.Values)
         {
             tensors.Add(t.Name, t.TensorNameDesc() + "<initializer>");
@@ -346,11 +349,11 @@ class Program : Runtime
         }
         if (opfilter is null)
         {
-            Info("Printing graph nodes...");
+            Logging.Info(Logger, "Printing graph nodes...");
         }
         else
         {
-            Info("Printing graph nodes with op {op}...", opfilter);
+            Logging.Info(Logger, "Printing graph nodes with op {op}...", opfilter);
         }
         foreach (var n in graph.Nodes)
         {
@@ -358,7 +361,7 @@ class Program : Runtime
             {
                 continue;
             }
-            Info("Node {node} has op type: {op}, inputs: {inputs}, outputs: {outputs} and " 
+            Logging.Info(Logger,"Node {node} has op type: {op}, inputs: {inputs}, outputs: {outputs} and " 
                 + ((n.Attributes is not null && n.Attributes.Count > 0) ?  "the following attributes:" : "no attributes."), 
                 n.Name, n.Op.ToString(), 
                 n.Inputs.Select(t => tensors[t]).ToArray(), 
@@ -368,7 +371,7 @@ class Program : Runtime
             {
                 foreach (var kv in n.Attributes)
                 {
-                    Info("  {n}: {v}", kv.Key, GetAttributeValueDesc(kv.Value));
+                    Logging.Info(Logger, "  {n}: {v}", kv.Key, GetAttributeValueDesc(kv.Value));
                 }
             }
         }
@@ -383,9 +386,9 @@ class Program : Runtime
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
-        Info("Graph has {count} input tensor(s): {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
-        Info("Graph has {count} output tensor(s): {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
-        Info("Graph has {count} initializer tensor(s): {out}", m.Graph.Initializer.Count, m.Graph.Initializer.Select(t => t.TensorNameDesc()));
+        Logging.Info(Logger, "Graph has {count} input tensor(s): {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
+        Logging.Info(Logger, "Graph has {count} output tensor(s): {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
+        Logging.Info(Logger, "Graph has {count} initializer tensor(s): {out}", m.Graph.Initializer.Count, m.Graph.Initializer.Select(t => t.TensorNameDesc()));
         List<OpType> ops = new List<OpType>();
         foreach(var node in m.Graph.Node)
         {
@@ -395,7 +398,7 @@ class Program : Runtime
                 ops.Add(op);
             }
         }
-        Info("Printing list of distinct ONNX operations in model {f}...", file);
+        Logging.Info(Logger, "Printing list of distinct ONNX operations in model {f}...", file);
         foreach(var op in ops)
         {
             if (CPUExecutionProvider.SupportsOp(op))
@@ -408,7 +411,7 @@ class Program : Runtime
             }
         }
         Con.Write(Environment.NewLine);
-        Info("{d} total distinct operations in model. Green = supported by backend.", ops.Count);
+        Logging.Info(Logger, "{d} total distinct operations in model. Green = supported by backend.", ops.Count);
     }
 
     static void PrintModelInitializers(string file)
@@ -434,14 +437,14 @@ class Program : Runtime
             }
              
         }
-        Info("Graph has {count} input tensors: {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
-        Info("Graph has {count} output tensors: {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
-        Info("Printing list of ONNX initializers in graph...");
+        Logging.Info(Logger, "Graph has {count} input tensors: {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
+        Logging.Info(Logger, "Graph has {count} output tensors: {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
+        Logging.Info(Logger, "Printing list of ONNX initializers in graph...");
         foreach (var i in initializers)
         {
             Con.WriteLine(i);
         }
-        Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
+        Logging.Info(Logger, "{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
     static string GetAttributeValueDesc(object value) =>
@@ -479,7 +482,7 @@ class Program : Runtime
         if (filePath.StartsWith("http://") || filePath.StartsWith("https://")) return;
         if (!File.Exists(filePath))
         {
-            Error("The file {0} does not exist.", filePath);
+            Logging.Error(Logger, "The file {0} does not exist.", filePath);
             Exit(ExitResult.NOT_FOUND);
         }
     }
@@ -511,14 +514,14 @@ class Program : Runtime
     #region Event Handlers
     private static void Program_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-        Error("Unhandled runtime error occurred. Lokad.Onnx CLI will now shutdown.");
+        Logging.Info(Logger, "Unhandled runtime error occurred. Lokad.Onnx CLI will now shutdown.");
         Con.WriteException((Exception)e.ExceptionObject);
         Exit(ExitResult.UNHANDLED_EXCEPTION);
     }
 
     private static void Console_CancelKeyPress(object? sender, ConsoleCancelEventArgs e)
     {
-        Info("Ctrl-C pressed. Exiting.");
+        Logging.Info(Logger, "Ctrl-C pressed. Exiting.");
         Cts.Cancel();
         Exit(ExitResult.SUCCESS);
     }

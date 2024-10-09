@@ -12,11 +12,9 @@ namespace Lokad.Onnx
         #region Constructors
         static Runtime()
         {
-            AppDomain.CurrentDomain.UnhandledException += AppDomain_UnhandledException;
             EntryAssembly = Assembly.GetEntryAssembly();
             IsUnitTestRun = EntryAssembly?.FullName?.StartsWith("testhost") ?? false;
             SessionId = Rng.Next(0, 99999);            
-            Logger = new ConsoleLogger2();
         }
 
         public Runtime(CancellationToken ct)
@@ -39,8 +37,6 @@ namespace Lokad.Onnx
         public static string ToolName { get; set; } = "Lokad ONNX";
         
         public static string LogName { get; set; } = "BASE";
-
-        public static Logger Logger { get; protected set; }
 
         public static string UserHomeDir => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
@@ -72,64 +68,35 @@ namespace Lokad.Onnx
         {
             lock (__lock)
             {
-                Info("Initialize called on thread id {0}.", Thread.CurrentThread.ManagedThreadId);
                 if (RuntimeInitialized)
                 {
-                    Info("Runtime already initialized.");
                     return;
                 }
 
                 if (!IsUnitTestRun)
                 {
-                    Logger.Close();
                     ToolName = toolname;
                     LogName = logname;
                     var fulllogfilename = LokadDevDir.CombinePath($"{ToolName}.{SessionId}.log");
-                    Logger = new FileLogger(fulllogfilename, debug, LogName, logToConsole, colorConsole);
-                    Info("{0} initialized from entry assembly {1} with log file {2}...", ToolName, EntryAssembly?.GetName().FullName ?? "(none)", fulllogfilename);
                     if (debug)
                     {
                         DebugEnabled = true;
-                        Info("Debug mode enabled.");
                     }
                 }
                 
                 var logfiles = Directory.GetFiles(LokadDevDir, ToolName + ".*.log", SearchOption.AllDirectories) ?? Array.Empty<string>();
-                Info("{0} existing log file(s) found.", logfiles.Length);
                 foreach (var l in logfiles)
                 {
                     var age = DateTime.Now.Subtract(File.GetLastWriteTime(l));
                     if (age.TotalDays >= 3)
                     {
                         File.Delete(l);
-                        Info("Deleted log file {0} that is more than {1} day(s) old.", Path.GetFileName(l), 3);
                     }
                 }
                 
                 RuntimeInitialized = true;
             }
         }
-       
-        [DebuggerStepThrough]
-        public static void Info(string messageTemplate, params object[] args) => Logger.Info(messageTemplate, args);
-
-        [DebuggerStepThrough]
-        public static void Debug(string messageTemplate, params object[] args) => Logger.Debug(messageTemplate, args);
-
-        [DebuggerStepThrough]
-        public static void Error(string messageTemplate, params object[] args) => Logger.Error(messageTemplate, args);
-
-        [DebuggerStepThrough]
-        public static void Error(Exception ex, string messageTemplate, params object[] args) => Logger.Error(ex, messageTemplate, args);
-
-        [DebuggerStepThrough]
-        public static void Warn(string messageTemplate, params object[] args) => Logger.Warn(messageTemplate, args);
-
-        [DebuggerStepThrough]
-        public static void Fatal(string messageTemplate, params object[] args) => Logger.Fatal(messageTemplate, args);
-
-        [DebuggerStepThrough]
-        public static Logger.Op Begin(string messageTemplate, params object[] args) => Logger.Begin(messageTemplate, args);
 
         [DebuggerStepThrough]
         public static string FailIfFileNotFound(string filePath)
@@ -145,13 +112,6 @@ namespace Lokad.Onnx
             else return filePath;
         }
 
-        [DebuggerStepThrough]
-        public static string WarnIfFileExists(string filename)
-        {
-            if (File.Exists(filename)) Warn("File {0} exists, overwriting...", filename);
-            return filename;
-        }
-
 
         [DebuggerStepThrough]
         public static object? GetProp(object o, string name)
@@ -160,20 +120,11 @@ namespace Lokad.Onnx
             return properties.FirstOrDefault(x => x.Name == name)?.GetValue(o);
         }
 
-        private static void AppDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (Logger != null)
-            {
-                Error((Exception)e.ExceptionObject, "Unhandled runtime error occurred.");
-            }
-        }
-
         public static string? RunCmd(string cmdName, string arguments = "", string? workingDir = null, DataReceivedEventHandler? outputHandler = null, DataReceivedEventHandler? errorHandler = null,
             bool checkExists = true, bool isNETFxTool = false, bool isNETCoreTool = false)
         {
             if (checkExists && !(File.Exists(cmdName) || (isNETCoreTool && File.Exists(cmdName.Replace(".exe", "")))))
             {
-                Error("The executable {0} does not exist.", cmdName);
                 return null;
             }
             using (Process p = new Process())
@@ -208,7 +159,6 @@ namespace Lokad.Onnx
                     if (e.Data is not null)
                     {
                         output.AppendLine(e.Data);
-                        Debug(e.Data);
                         outputHandler?.Invoke(sender, e);
                     }
                 };
@@ -217,7 +167,6 @@ namespace Lokad.Onnx
                     if (e.Data is not null)
                     {
                         error.AppendLine(e.Data);
-                        Error(e.Data);
                         errorHandler?.Invoke(sender, e);
                     }
                 };
@@ -225,7 +174,6 @@ namespace Lokad.Onnx
                 {
                     p.StartInfo.WorkingDirectory = workingDir;
                 }
-                Debug("Executing cmd {0} in working directory {1}.", cmdName + " " + arguments, p.StartInfo.WorkingDirectory);
                 try
                 {
                     p.Start();
@@ -235,9 +183,8 @@ namespace Lokad.Onnx
                     return error.ToString().IsNotEmpty() ? null : output.ToString();
                 }
 
-                catch (Exception ex)
+                catch
                 {
-                    Error(ex, "Error executing command {0} {1}", cmdName, arguments);
                     return null;
                 }
             }
@@ -245,7 +192,6 @@ namespace Lokad.Onnx
 
         public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive = false)
         {
-            using var op = Begin("Copying {0} to {1}", sourceDir, destinationDir);
             // Get information about the source directory
             var dir = new DirectoryInfo(sourceDir);
 
@@ -275,7 +221,6 @@ namespace Lokad.Onnx
                     CopyDirectory(subDir.FullName, newDestinationDir, true);
                 }
             }
-            op.Complete();
         }
 
         public static string ViewFilePath(string path, string? relativeTo = null)
@@ -298,35 +243,20 @@ namespace Lokad.Onnx
             else return path;
         }
 
-        public static bool DownloadFile(string name, Uri downloadUrl, string downloadPath)
+        public static bool DownloadFile(Uri downloadUrl, string downloadPath)
         {
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-            using (var op = Begin("Downloading {0} from {1} to {2}", name, downloadUrl, downloadPath))
+            using (var client = new WebClient())
             {
-                WarnIfFileExists(downloadPath);
-                using (var client = new WebClient())
-                {
-                    client.DownloadProgressChanged += (object sender, DownloadProgressChangedEventArgs e) =>
-                    {
-                        Info("Received {b} bytes from of {t} for {p}.", e.BytesReceived, e.TotalBytesToReceive, downloadPath);
-                        
-                    };
-                    client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
-                    {
-
-                    };
-                    client.DownloadFile(downloadUrl, downloadPath);    
-                }
-                if (File.Exists(downloadPath)) 
-                {
-                    op.Complete();
-                    return true;
-                }
-                else
-                {
-                    Error("Did not locate file at {p}.", downloadPath);
-                    return false;
-                }
+                client.DownloadFile(downloadUrl, downloadPath);    
+            }
+            if (File.Exists(downloadPath)) 
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
         }

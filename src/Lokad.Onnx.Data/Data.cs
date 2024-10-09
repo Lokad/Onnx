@@ -11,7 +11,6 @@ public class Data : Runtime
 {
     public static ITensor[]? GetInputTensorsFromFileArgs(IEnumerable<string> args, bool saveInput = false)
     {
-        var op = Begin("Converting {c} file argument(s) to tensors", args.Count());
         var tensors = new List<ITensor>();
         int index = 0;
         foreach (string arg in args) 
@@ -28,8 +27,6 @@ public class Data : Runtime
                 }
                 else
                 {
-                    Error("Could not convert file argument {arg} to image tensor.", name);
-                    op.Abandon();
                     return null;    
                 }
             }
@@ -42,7 +39,6 @@ public class Data : Runtime
                 }
             }
         }
-        op.Complete();
         return tensors.ToArray();
     }
     
