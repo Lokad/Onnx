@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <LangVersion>10.0</LangVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Lokad.Onnx</PackageId>
+    <Authors>Lokad</Authors>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Compile Include="..\Lokad.Onnx.Base\**\*.cs" />
+    <Compile Include="..\Lokad.Onnx.Tensors\**\*.cs" />
+    <Compile Include="..\Lokad.Onnx.Backend\**\*.cs" />
+    <Compile Remove="**\obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OnnxSharp" Version="0.2.1">
+      <Aliases>OnnxSharp</Aliases>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
