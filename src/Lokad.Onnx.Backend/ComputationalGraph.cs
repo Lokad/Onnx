@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Linq;
 
 using Satsuma;
-using static Lokad.Onnx.Logger;
 
 public class ComputationalGraph : Runtime
 {

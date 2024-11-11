@@ -35,20 +35,20 @@ namespace Lokad.Onnx
         {
             switch ((TensorElementType) tp.DataType)
             {
-                case TensorElementType.Bool: return new DenseTensor<bool>((bool[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.Int8: return new DenseTensor<sbyte>((sbyte[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.UInt8: return new DenseTensor<byte>((byte[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.Int16: return new DenseTensor<short>((short[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.UInt16: return new DenseTensor<ushort>((ushort[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.Int32: return new DenseTensor<int>((int[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.UInt32: return new DenseTensor<uint>((uint[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.Int64: return new DenseTensor<long>((long[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.UInt64: return new DenseTensor<ulong>((ulong[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.Float: return new DenseTensor<float>((float[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.Double: return new DenseTensor<double>((double[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.Float16: return new DenseTensor<Float16>((Float16[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.BFloat16: return new DenseTensor<BFloat16>((BFloat16[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
-                case TensorElementType.Complex64: return new DenseTensor<Complex>((Complex[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.Bool: return new DenseTensor<bool>(memory: (bool[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.Int8: return new DenseTensor<sbyte>(memory: (sbyte[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.UInt8: return new DenseTensor<byte>(memory: (byte[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.Int16: return new DenseTensor<short>(memory: (short[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.UInt16: return new DenseTensor<ushort>(memory: (ushort[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.Int32: return new DenseTensor<int>(memory: (int[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.UInt32: return new DenseTensor<uint>(memory: (uint[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.Int64: return new DenseTensor<long>(memory: (long[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.UInt64: return new DenseTensor<ulong>(memory: (ulong[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.Float: return new DenseTensor<float>(memory: (float[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.Double: return new DenseTensor<double>(memory: (double[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.Float16: return new DenseTensor<Float16>(memory: (Float16[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.BFloat16: return new DenseTensor<BFloat16>(memory: (BFloat16[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
+                case TensorElementType.Complex64: return new DenseTensor<Complex>(memory: (Complex[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
                 //case TensorElementType.String: return new DenseTensor<string>((string[]) tp.GetTensorData(), tp.Dims.Select(d => Convert.ToInt32(d)).ToArray()) { Name = tp.Name };
                 default: throw new ArgumentException($"Cannot convert tensor proto of element type {tp.DataType}.");
             }
@@ -63,20 +63,20 @@ namespace Lokad.Onnx
 
             switch ((TensorElementType) vp.Type.TensorType.ElemType)
             {
-                case TensorElementType.Bool: return new DenseTensor<bool>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.Int8: return new DenseTensor<sbyte>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.UInt8: return new DenseTensor<byte>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.Int16: return new DenseTensor<short>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.UInt16: return new DenseTensor<ushort>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.Int32: return new DenseTensor<int>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.UInt32: return new DenseTensor<uint>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.Int64: return new DenseTensor<long>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.UInt64: return new DenseTensor<ulong>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.Float: return new DenseTensor<float>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.Double: return new DenseTensor<double>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.Float16: return new DenseTensor<Float16>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.BFloat16: return new DenseTensor<BFloat16>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
-                case TensorElementType.Complex64: return new DenseTensor<Complex>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.Bool: return new DenseTensor<bool>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.Int8: return new DenseTensor<sbyte>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.UInt8: return new DenseTensor<byte>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.Int16: return new DenseTensor<short>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.UInt16: return new DenseTensor<ushort>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.Int32: return new DenseTensor<int>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.UInt32: return new DenseTensor<uint>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.Int64: return new DenseTensor<long>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.UInt64: return new DenseTensor<ulong>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.Float: return new DenseTensor<float>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.Double: return new DenseTensor<double>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.Float16: return new DenseTensor<Float16>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.BFloat16: return new DenseTensor<BFloat16>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
+                case TensorElementType.Complex64: return new DenseTensor<Complex>(dimensions: vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
                 //case TensorElementType.String: return new DenseTensor<string>(vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray()) { Name = vp.Name };
                 default: throw new ArgumentException($"Cannot convert value info proto of element type {vp.Type.TensorType.ElemType}.");
             }
