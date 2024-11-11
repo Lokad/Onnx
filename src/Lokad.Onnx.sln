@@ -51,9 +51,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.Data", "Lokad.On
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Tokenizers", "..\ext\Tokenizers\src\Lokad.Tokenizers\Lokad.Tokenizers.csproj", "{B7264C72-C5B1-4978-A4EB-FA1516677FF3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packaging", "Packaging", "{A2CB283F-7338-4E50-8024-FC61B14F8577}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Package", "Package", "{A2CB283F-7338-4E50-8024-FC61B14F8577}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lokad.Onnx.Packaging", "Lokad.Onnx.Packaging\Lokad.Onnx.Packaging.csproj", "{247D05C2-5660-41D5-8FB9-6E85DAC640E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lokad.Onnx.Package", "Lokad.Onnx.Package\Lokad.Onnx.Package.csproj", "{247D05C2-5660-41D5-8FB9-6E85DAC640E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
