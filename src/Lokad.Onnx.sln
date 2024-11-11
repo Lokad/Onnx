@@ -31,6 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{20A6
 	ProjectSection(SolutionItems) = preProject
 		..\build.cmd = ..\build.cmd
 		..\lonnx.cmd = ..\lonnx.cmd
+		..\pack.cmd = ..\pack.cmd
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.Interop", "Lokad.Onnx.Interop\Lokad.Onnx.Interop.csproj", "{07FA371F-7765-4DC0-8B84-110672DA5483}"
@@ -53,7 +54,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Tokenizers", "..\ext\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Package", "Package", "{A2CB283F-7338-4E50-8024-FC61B14F8577}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lokad.Onnx.Package", "Lokad.Onnx.Package\Lokad.Onnx.Package.csproj", "{247D05C2-5660-41D5-8FB9-6E85DAC640E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lokad.Onnx.Package", "Lokad.Onnx.Package\Lokad.Onnx.Package.csproj", "{247D05C2-5660-41D5-8FB9-6E85DAC640E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
