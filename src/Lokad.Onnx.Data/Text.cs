@@ -30,7 +30,7 @@ public class Text : Runtime
     {
         XLMRobertaTokenizer? tok = null;
         string tok_desc;
-        Logger.Op op;
+        LoggerOp op;
         switch (tokenizer)
         {
             case "me5s":

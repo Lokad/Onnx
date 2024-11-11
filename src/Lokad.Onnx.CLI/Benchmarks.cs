@@ -27,7 +27,7 @@ public class MatMul2DBenchmarks : Runtime
     [GlobalSetup]
     public void Setup()
     {
-        Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false, true, true);
+        Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false, Program.CreateConsoleLogger(false, "CLI", true));
     }
 
     [IterationSetup]

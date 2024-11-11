@@ -7,6 +7,9 @@ namespace Lokad.Onnx
     using System.Reflection;
     using System.Threading;
 
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+
     public abstract class Runtime
     {
         #region Constructors
@@ -16,7 +19,6 @@ namespace Lokad.Onnx
             EntryAssembly = Assembly.GetEntryAssembly();
             IsUnitTestRun = EntryAssembly?.FullName?.StartsWith("testhost") ?? false;
             SessionId = Rng.Next(0, 99999);            
-            Logger = new ConsoleLogger2();
         }
 
         public Runtime(CancellationToken ct)
@@ -39,8 +41,6 @@ namespace Lokad.Onnx
         public static string ToolName { get; set; } = "Lokad ONNX";
         
         public static string LogName { get; set; } = "BASE";
-
-        public static Logger Logger { get; protected set; }
 
         public static string UserHomeDir => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
@@ -68,7 +68,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region Methods
-        public static void Initialize(string toolname, string logname, bool debug = false, bool logToConsole = false, bool colorConsole=false)
+        public static void Initialize(string toolname, string logname, bool debug, ILogger l)
         {
             lock (__lock)
             {
@@ -78,58 +78,34 @@ namespace Lokad.Onnx
                     Info("Runtime already initialized.");
                     return;
                 }
-
-                if (!IsUnitTestRun)
-                {
-                    Logger.Close();
-                    ToolName = toolname;
-                    LogName = logname;
-                    var fulllogfilename = LokadDevDir.CombinePath($"{ToolName}.{SessionId}.log");
-                    Logger = new FileLogger(fulllogfilename, debug, LogName, logToConsole, colorConsole);
-                    Info("{0} initialized from entry assembly {1} with log file {2}...", ToolName, EntryAssembly?.GetName().FullName ?? "(none)", fulllogfilename);
-                    if (debug)
-                    {
-                        DebugEnabled = true;
-                        Info("Debug mode enabled.");
-                    }
-                }
-                
-                var logfiles = Directory.GetFiles(LokadDevDir, ToolName + ".*.log", SearchOption.AllDirectories) ?? Array.Empty<string>();
-                Info("{0} existing log file(s) found.", logfiles.Length);
-                foreach (var l in logfiles)
-                {
-                    var age = DateTime.Now.Subtract(File.GetLastWriteTime(l));
-                    if (age.TotalDays >= 3)
-                    {
-                        File.Delete(l);
-                        Info("Deleted log file {0} that is more than {1} day(s) old.", Path.GetFileName(l), 3);
-                    }
-                }
-                
+                ToolName = toolname;
+                LogName = logname;
+                DebugEnabled = debug;
+                logger = l;
                 RuntimeInitialized = true;
             }
         }
        
         [DebuggerStepThrough]
-        public static void Info(string messageTemplate, params object[] args) => Logger.Info(messageTemplate, args);
+        public static void Info(string messageTemplate, params object[] args) => logger.LogInformation(messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Debug(string messageTemplate, params object[] args) => Logger.Debug(messageTemplate, args);
+        public static void Debug(string messageTemplate, params object[] args) => logger.LogDebug(messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Error(string messageTemplate, params object[] args) => Logger.Error(messageTemplate, args);
+        public static void Error(string messageTemplate, params object[] args) => logger.LogError(messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Error(Exception ex, string messageTemplate, params object[] args) => Logger.Error(ex, messageTemplate, args);
+        public static void Error(Exception ex, string messageTemplate, params object[] args) => logger.LogError(ex, messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Warn(string messageTemplate, params object[] args) => Logger.Warn(messageTemplate, args);
+        public static void Warn(string messageTemplate, params object[] args) => logger.LogWarning(messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Fatal(string messageTemplate, params object[] args) => Logger.Fatal(messageTemplate, args);
+        public static void Fatal(string messageTemplate, params object[] args) => logger.LogCritical(messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static Logger.Op Begin(string messageTemplate, params object[] args) => Logger.Begin(messageTemplate, args);
+        public static LoggerOp Begin(string messageTemplate, params object[] args) => new LoggerOp(logger, messageTemplate, args);
 
         [DebuggerStepThrough]
         public static string FailIfFileNotFound(string filePath)
@@ -162,10 +138,7 @@ namespace Lokad.Onnx
 
         private static void AppDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (Logger != null)
-            {
-                Error((Exception)e.ExceptionObject, "Unhandled runtime error occurred.");
-            }
+            Error((Exception)e.ExceptionObject, "Unhandled runtime error occurred.");   
         }
 
         public static string? RunCmd(string cmdName, string arguments = "", string? workingDir = null, DataReceivedEventHandler? outputHandler = null, DataReceivedEventHandler? errorHandler = null,
@@ -334,6 +307,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region Fields
+        public static ILogger logger = NullLogger.Instance;    
         protected static object __lock = new object();
         #endregion
     }

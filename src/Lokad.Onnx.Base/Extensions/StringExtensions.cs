@@ -56,7 +56,7 @@ namespace Lokad.Onnx
     {"seventy",70},{"eighty",80},{"ninety",90},{"hundred",100},
     {"thousand",1000},{"million",1000000}};
 
-        public static Version? ToVersion(this string s) => Version.TryParse(s, out var v) ? v : null;
+        public static System.Version? ToVersion(this string s) => System.Version.TryParse(s, out var v) ? v : null;
 
         public static string NormalizeFilePath(this string s) => s.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
