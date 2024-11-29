@@ -13,8 +13,11 @@
     <FileVersion>0.1.4</FileVersion>
     <Version>0.1.4</Version>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    
+    <AssemblyName>Lokad.Onnx</AssemblyName>
+    <RootNamespace>Lokad.Onnx</RootNamespace>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-
 
   <ItemGroup>
     <Compile Include="..\Lokad.Onnx.Base\**\*.cs" />
@@ -25,9 +28,12 @@
     <Compile Remove="**\obj\**" />
   </ItemGroup>
 
-
   <ItemGroup>
     <None Include="..\..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
