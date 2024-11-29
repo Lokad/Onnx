@@ -10,10 +10,10 @@ from . import tensors
 
 import clr
 file_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Interop.dll"))
-clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Tensors.dll"))
-clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Backend.dll"))
-clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Data.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net8.0", "publish", "Lokad.Onnx.Interop.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net8.0", "publish", "Lokad.Onnx.Tensors.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net8.0", "publish", "Lokad.Onnx.Backend.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net8.0", "publish", "Lokad.Onnx.Data.dll"))
 
 from System import Array, String
 from System.Collections.Generic import Dictionary

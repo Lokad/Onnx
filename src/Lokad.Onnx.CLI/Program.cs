@@ -5,7 +5,6 @@ using System.IO;
 
 using CommandLine;
 using CommandLine.Text;
-//using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Config;
 using Spectre.Console;

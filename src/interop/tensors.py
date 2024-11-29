@@ -6,8 +6,8 @@ from typing import Any, Dict
 import clr
 
 file_dir = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Interop.dll"))
-clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net6.0", "publish", "Lokad.Onnx.Tensors.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net8.0", "publish", "Lokad.Onnx.Interop.dll"))
+clr.AddReference(os.path.join(file_dir, "..", "Lokad.Onnx.Interop", "bin", "Release", "net8.0", "publish", "Lokad.Onnx.Tensors.dll"))
 
 import System
 from System import Array, Int32, Single, Double, String
