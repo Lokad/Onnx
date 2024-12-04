@@ -23,7 +23,6 @@
     <Compile Include="..\Lokad.Onnx.Base\**\*.cs" />
     <Compile Include="..\Lokad.Onnx.Tensors\**\*.cs" />
     <Compile Include="..\Lokad.Onnx.Backend\**\*.cs" />
-    <Compile Include="..\Lokad.Onnx.Data\**\*.cs" />
     <Compile Include="..\..\ext\satsumagraph\src\**\*.cs" />
     <Compile Remove="**\obj\**" />
   </ItemGroup>
@@ -40,14 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lokad.Tokenizers" Version="0.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.4" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="OnnxSharp" Version="0.2.1">
       <Aliases>OnnxSharp</Aliases>
     </PackageReference>
-    <PackageReference Include="FastBertTokenizer" Version="0.4.67" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
   </ItemGroup>
 
 </Project>
