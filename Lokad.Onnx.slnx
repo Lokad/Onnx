@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/ext/" />
+  <Folder Name="/ext/NLog/" />
+  <Folder Name="/ext/NLog/src/">
+    <Project Path="ext/NLog/src/NLog/NLog.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Lokad.Onnx.Backend/Lokad.Onnx.Backend.csproj" />
+    <Project Path="src/Lokad.Onnx.Base/Lokad.Onnx.Base.csproj" />
+    <Project Path="src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj" />
+    <Project Path="src/Lokad.Onnx.Data/Lokad.Onnx.Data.csproj" />
+    <Project Path="src/Lokad.Onnx.Interop/Lokad.Onnx.Interop.csproj" />
+    <Project Path="src/Lokad.Onnx.Package/Lokad.Onnx.Package.csproj" />
+    <Project Path="src/Lokad.Onnx.Tensors/Lokad.Onnx.Tensors.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lokad.Onnx.Backend.Tests/Lokad.Onnx.Backend.Tests.csproj" />
+    <Project Path="tests/Lokad.Onnx.Tensors.Tests/Lokad.Onnx.Tensors.Tests.csproj" />
+  </Folder>
+</Solution>

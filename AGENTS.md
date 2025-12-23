@@ -17,7 +17,7 @@ When writing complex features or significant refactors, use an ExecPlan (as desc
 The ONNX model at `models\multilingual-e5-small\model.onnx` is already downloaded from Hugging Face and is git-ignored. Use it for the `lonnx run` e5 example instead of fetching the URL.
 
 ## Repo map (high-signal)
-- `src\Lokad.Onnx.sln`: main solution; targets net10.0 across projects; includes vendored `ext\NLog` + submodule `ext\satsumagraph`.
+- `Lokad.Onnx.slnx`: root solution (XML format); targets net10.0 across projects; includes vendored `ext\NLog`.
 - `src\Lokad.Onnx.Base`: shared infra (logging, profiling, hardware config, utilities).
 - `src\Lokad.Onnx.Tensors`: core tensor types + ops (managed port of ONNX Runtime tensors); unsafe + SIMD options.
 - `src\Lokad.Onnx.Backend`: ONNX graph execution (Model/Node/ComputationalGraph/CPUExecutionProvider).

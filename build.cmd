@@ -4,9 +4,9 @@ set ERROR_CODE=0
 
 echo Building Lokad Onnx projects..
 
-dotnet restore --tl:off -v minimal src\Lokad.Onnx.sln
+dotnet restore --tl:off -v minimal Lokad.Onnx.slnx
 if not %ERRORLEVEL%==0  (
-    echo Error restoring NuGet packages for Lokad.Onnx.sln.
+    echo Error restoring NuGet packages for Lokad.Onnx.slnx.
     set ERROR_CODE=1
     goto End
 )
