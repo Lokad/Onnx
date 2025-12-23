@@ -23,7 +23,6 @@
     <Compile Include="..\Lokad.Onnx.Base\**\*.cs" />
     <Compile Include="..\Lokad.Onnx.Tensors\**\*.cs" />
     <Compile Include="..\Lokad.Onnx.Backend\**\*.cs" />
-    <Compile Include="..\..\ext\satsumagraph\src\**\*.cs" />
     <Compile Remove="**\obj\**" />
   </ItemGroup>
 

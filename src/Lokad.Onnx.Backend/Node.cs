@@ -13,7 +13,6 @@ public partial struct Node
     public long ID;
     public string Name;
     public Dictionary<string, object>? Attributes;
-    public Satsuma.Node WeightedGraphNode;
     public OpType Op;
     public string[] Inputs;
     public string[] Outputs;

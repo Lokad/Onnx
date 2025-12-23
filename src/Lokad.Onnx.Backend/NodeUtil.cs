@@ -28,7 +28,6 @@ namespace Lokad.Onnx
             {
                 Name = np.Name,
                 ID = np.Name.GetHashCode(),
-                WeightedGraphNode = new Satsuma.Node(np.Name.GetHashCode()),
                 Attributes = np.Attribute.ToDictionary(k => k.Name, v => v.Value()),
                 Op = (OpType) Enum.Parse(typeof(OpType), np.OpType),
                 Inputs = np.Input.ToArray(),
@@ -39,18 +38,6 @@ namespace Lokad.Onnx
                 if (!graph.Outputs.ContainsKey(o) && !graph.IntermediateOutputs.ContainsKey(o))
                 {
                     graph.IntermediateOutputs.Add(o, null);
-                }
-            }
-            graph.WeightedDirectedGraph.AddNode(node.Name);
-            foreach (var n in graph.Nodes)
-            { 
-                foreach (var i in node.Inputs)
-                {
-                    if (n.Outputs.Contains(i))
-                    {
-                        graph.WeightedDirectedGraph.AddArc(n.WeightedGraphNode, node.WeightedGraphNode, Satsuma.Directedness.Directed, label: i);
-                        Runtime.Debug("Node {dest} has predecessor {src}.", node.Name, n.Name);
-                    }
                 }
             }
             return node;   
