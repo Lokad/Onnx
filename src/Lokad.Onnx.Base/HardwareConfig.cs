@@ -4,7 +4,7 @@ public static class HardwareConfig
 {
     public static bool UseSimd { get; set; } = true;
 
-    public static bool UseIntrinsics { get; set; } = false;
+    public static bool UseIntrinsics { get; set; } = HardwareIntrinsics.IsX86FmaSupported;
 
     public static void EnableIntrinsics()
     {
