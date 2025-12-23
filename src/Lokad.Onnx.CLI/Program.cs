@@ -194,6 +194,7 @@ class Program : Runtime
         if (ro.DisableSimd)
         {
             HardwareConfig.UseSimd = false;
+            HardwareConfig.UseIntrinsics = false;
             Info("CPU SIMD features disabled.");
         }
         else
@@ -206,9 +207,12 @@ class Program : Runtime
             }
         }
         
-        if (ro.EnableIntrinsics && System.Numerics.Vector.IsHardwareAccelerated)
+        if (!ro.DisableSimd && System.Numerics.Vector.IsHardwareAccelerated)
         {
-            HardwareConfig.UseIntrinsics = true;
+            HardwareConfig.UseIntrinsics = (ro.EnableIntrinsics || HardwareConfig.UseIntrinsics);
+        }
+        if (HardwareConfig.UseIntrinsics)
+        {
             Info("CPU SIMD available intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
         }
         else
