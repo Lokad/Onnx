@@ -1,14 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net80</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>11.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FastBertTokenizer" Version="0.4.67" />
-    <PackageReference Include="Lokad.Tokenizers" Version="0.1.0" />
+    <PackageReference Include="Lokad.Tokenizers" Version="0.1.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
   </ItemGroup>
 
@@ -18,3 +18,4 @@
   </ItemGroup>
 
 </Project>
+
