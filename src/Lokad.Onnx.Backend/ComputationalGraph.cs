@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Satsuma;
-
 public class ComputationalGraph : Runtime
 {
     #region Fields
@@ -23,8 +21,6 @@ public class ComputationalGraph : Runtime
     public Dictionary<string, ITensor?> IntermediateOutputs = new Dictionary<string, ITensor?>();
 
     public List<Node> Nodes { get; set; } = new List<Node>();
-
-    public WeightedDirectedGraph WeightedDirectedGraph { get; } = new WeightedDirectedGraph();
 
     public Dictionary<string, int> Opset = new Dictionary<string, int>();
 
@@ -348,14 +344,4 @@ public class ComputationalGraph : Runtime
         Info("Reset graph state.");
     }
     #endregion
-}
-
-public class WeightedDirectedGraph : AbstractGraph
-{
-    public Satsuma.Node AddNode(string id)
-    {
-        var _id = id.GetHashCode();
-        this.AddNode(_id);
-        return new Satsuma.Node(_id);
-    }
 }
