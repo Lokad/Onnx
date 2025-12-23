@@ -325,8 +325,10 @@ where T : unmanaged
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
 
-        var _x = x.ToDenseTensor();
-        var _y = y.ToDenseTensor();
+        var dx = x as DenseTensor<int>;
+        var dy = y as DenseTensor<int>;
+        var _x = dx is not null && !dx.IsReversedStride ? dx : x.ToDenseTensor();
+        var _y = dy is not null && !dy.IsReversedStride ? dy : y.ToDenseTensor();
         var output = DenseTensor<int>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
 
         var xh = _x.Buffer.Pin();
@@ -363,9 +365,16 @@ where T : unmanaged
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
 
-        StartOpStage(OpStage.Copy);
-        var _x = x.ToDenseTensor();
-        var _y = y.ToDenseTensor();
+        var dx = x as DenseTensor<float>;
+        var dy = y as DenseTensor<float>;
+        var needsCopyX = dx is null || dx.IsReversedStride;
+        var needsCopyY = dy is null || dy.IsReversedStride;
+        if (needsCopyX || needsCopyY)
+        {
+            StartOpStage(OpStage.Copy);
+        }
+        var _x = needsCopyX ? x.ToDenseTensor() : dx!;
+        var _y = needsCopyY ? y.ToDenseTensor() : dy!;
         var output = DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
 
         StartOpStage(OpStage.Math);
@@ -416,8 +425,10 @@ where T : unmanaged
         var k = y.Dimensions[1];
 
 
-        var _x = x.ToDenseTensor();
-        var _y = y.ToDenseTensor();
+        var dx = x as DenseTensor<double>;
+        var dy = y as DenseTensor<double>;
+        var _x = dx is not null && !dx.IsReversedStride ? dx : x.ToDenseTensor();
+        var _y = dy is not null && !dy.IsReversedStride ? dy : y.ToDenseTensor();
         var output = DenseTensor<double>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
 
         var xh = _x.Buffer.Pin();
