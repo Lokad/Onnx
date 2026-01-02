@@ -1,34 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Linq;
-
-using Microsoft.ML.OnnxRuntime;
-using Microsoft.ML.OnnxRuntime.Tensors;
-using MSTensors=Microsoft.ML.OnnxRuntime.Tensors;
 
 namespace Lokad.Onnx.Backend.Tests
 {
     internal class OnnxRuntime
     {
-
-        public static float[] MnistInfer(string filepath)
+        public static Tensor<float> MnistInfer(string filepath)
         {
-            string modelPath = Path.Combine("models", "mnist-8.onnx");
-            using var session = new InferenceSession(modelPath);      
-            var inputMeta = session.InputMetadata;
-            var container = new List<NamedOnnxValue>();
-            var tensor = Images.LoadMnistImageFromFile(filepath).ToTensor();
-            container.Add(NamedOnnxValue.CreateFromTensor(inputMeta.Keys.First(), tensor));
-            using var results = session.Run(container);  
-            return results.First().AsTensor<float>().ToArray();   
-        }
+            var modelPath = Path.Combine(AppContext.BaseDirectory, "models", "mnist-8.onnx");
+            var modelBuffer = File.ReadAllBytes(modelPath);
+            using var session = new Microsoft.ML.OnnxRuntime.InferenceSession(modelBuffer);
 
-        public static float[] Softmax(MSTensors.Tensor<float> output)
-        {
-            float sum = output.Sum(x => (float)Math.Exp(x));
-            IEnumerable<float> softmax = output.Select(x => (float)Math.Exp(x) / sum);
-            return softmax.ToArray();   
+            var input = (Tensor<float>)Data.GetInputTensorsFromFileArgs(new[] { filepath + "::mnist" })!.First();
+            var name = session.InputMetadata.Keys.First();
+            var ortTensor = new Microsoft.ML.OnnxRuntime.Tensors.DenseTensor<float>(input.ToArray(), input.Dimensions);
+            var container = new System.Collections.Generic.List<Microsoft.ML.OnnxRuntime.NamedOnnxValue>
+            {
+                Microsoft.ML.OnnxRuntime.NamedOnnxValue.CreateFromTensor(name, ortTensor)
+            };
+
+            using var results = session.Run(container);
+            var t = results.First().AsTensor<float>();
+            return new DenseTensor<float>(t.ToArray(), t.Dimensions.ToArray());
         }
     }
 }
