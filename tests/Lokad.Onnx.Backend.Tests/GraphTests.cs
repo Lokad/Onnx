@@ -1,4 +1,6 @@
-﻿using Lokad.Onnx;
+using Lokad.Onnx;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lokad.Onnx.Backend.Tests
 {
@@ -39,6 +41,22 @@ namespace Lokad.Onnx.Backend.Tests
             Assert.True(g.Execute(ui, true));
             var o = (Tensor<float>) g.Outputs.Values.First().RemoveDim(0);
             Assert.True(r.AlmostEqual(o, 4));
+        }
+
+        [Fact]
+        public void CanInferWithMnist_DictionaryInputs()
+        {
+            var g = Model.Load("models\\mnist-8.onnx")!;
+            var inputName = g.Model.Graph.Input[0].Name;
+            var outputName = g.Model.Graph.Output[0].Name;
+            var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" })!;
+            var inputs = new Dictionary<string, ITensor> { { inputName, ui[0] } };
+
+            Assert.True(g.Execute(inputs, true));
+            Assert.True(g.Outputs.ContainsKey(outputName));
+
+            var probs = (Tensor<float>) g.Outputs[outputName].RemoveDim(0).Softmax();
+            Assert.True(probs[4] > 0.9);
         }
     }
 }
