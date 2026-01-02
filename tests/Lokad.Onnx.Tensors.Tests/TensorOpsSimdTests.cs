@@ -1,13 +1,11 @@
-﻿namespace Lokad.Onnx.Tensors.Tests;
+namespace Lokad.Onnx.Tensors.Tests;
 
 using System.Buffers;
-using Xunit;
-
 
 using static Lokad.Onnx.MathOps;
-public class SimdTests
+public class TensorOpsSimdTests
 {
-    public SimdTests()
+    public TensorOpsSimdTests()
     {
         t_384_384_a = Tensor<float>.Rand(384, 384);
         t_384_384_b = Tensor<float>.Rand(384, 384);

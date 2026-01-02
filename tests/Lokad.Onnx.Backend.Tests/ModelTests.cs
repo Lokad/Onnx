@@ -1,6 +1,7 @@
 using Lokad.Onnx.Backend;
 using System.Runtime.Versioning;
 using System.Xml.Schema;
+using System.IO;
 
 namespace Lokad.Onnx.Backend.Tests
 {
@@ -10,7 +11,9 @@ namespace Lokad.Onnx.Backend.Tests
         [Fact]
         public void CanParseFile()
         {
-            var m = Model.Parse("models\\mnist-8.onnx");
+            var modelPath = Path.Combine(AppContext.BaseDirectory, "models", "mnist-8.onnx");
+            var buffer = File.ReadAllBytes(modelPath);
+            var m = Model.Parse(buffer);
             Assert.NotNull(m);
         }
     }

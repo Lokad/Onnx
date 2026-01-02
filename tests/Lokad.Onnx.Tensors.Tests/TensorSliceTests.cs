@@ -1,6 +1,6 @@
-﻿namespace Lokad.Onnx.Tensors.Tests;
+namespace Lokad.Onnx.Tensors.Tests;
 
-public class SliceTests
+public class TensorSliceTests
 {
     [Fact]
     public void CanSlice()
