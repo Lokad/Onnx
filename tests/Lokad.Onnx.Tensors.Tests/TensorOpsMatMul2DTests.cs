@@ -87,6 +87,9 @@ public class TensorOpsMatMul2DTests
         var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
         var b = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f }, { 7f, 8f } });
 
+        using var _ = new HardwareConfigScope(HardwareConfig.UseSimd, HardwareConfig.UseIntrinsics);
+        Assert.Equal(HardwareIntrinsics.IsX86FmaSupported, HardwareConfig.UseIntrinsics);
+
         using var baseline = new HardwareConfigScope(useSimd: false, useIntrinsics: false);
         var scalar = Tensor<float>.MatMul2D(a, b);
 
@@ -100,6 +103,47 @@ public class TensorOpsMatMul2DTests
             var intrinsicsResult = Tensor<float>.MatMul2D(a, b);
             Assert.Equal(scalar, intrinsicsResult);
         }
+    }
+
+    [Fact]
+    public void MatMul2D_DenseVsReversedStride_MatchesManaged()
+    {
+        var ax = new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } };
+        var by = new float[,] { { 7f, 8f }, { 9f, 10f }, { 11f, 12f } };
+
+        var revX = ax.ToTensor<float>(reverseStride: true);
+        var revY = by.ToTensor<float>(reverseStride: true);
+
+        var denseX = revX.ToDenseTensor();
+        var denseY = revY.ToDenseTensor();
+        var expected = Tensor<float>.MatMul2D(denseX, denseY);
+        var reversedResult = Tensor<float>.MatMul2D(revX, revY);
+
+        Assert.Equal(expected[0, 0], reversedResult[0, 0], 5);
+        Assert.Equal(expected[1, 1], reversedResult[1, 1], 5);
+    }
+
+    [Fact]
+    public void MatMul2D_IntrinsicsBranch_LargeK_MatchesManaged()
+    {
+        if (!HardwareIntrinsics.IsX86FmaSupported)
+        {
+            return;
+        }
+
+        var x = Tensor<float>.Ones(2, 32);
+        var y = Tensor<float>.Ones(32, 32);
+
+        using var intrinsics = new HardwareConfigScope(useSimd: true, useIntrinsics: true);
+        Tensor<float> expected;
+        using (new HardwareConfigScope(useSimd: false, useIntrinsics: false))
+        {
+            expected = Tensor<float>.MatMul2D(x, y);
+        }
+        var actual = Tensor<float>.MatMul2D(x, y);
+
+        Assert.Equal(expected[0, 0], actual[0, 0], 5);
+        Assert.Equal(expected[1, 31], actual[1, 31], 5);
     }
 
     [Fact]
