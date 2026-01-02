@@ -170,4 +170,41 @@ public class CpuExecutionProviderOpTests
         var cstOut = (Tensor<int>)cst.Outputs![0];
         Assert.Equal(42, cstOut[0]);
     }
+
+    [Fact]
+    public void Equal_Where_Expand_Resize()
+    {
+        var a = DenseTensor<long>.OfValues(new long[,] { { 1, 2, 3 } });
+        var b = DenseTensor<long>.OfValues(new long[] { 1, 0, 3 });
+        var eq = CPU.Equal(a, b);
+        Assert.Equal(OpStatus.Success, eq.Status);
+        var eqOut = (Tensor<bool>)eq.Outputs![0];
+        Assert.True(eqOut[0, 0]);
+        Assert.False(eqOut[0, 1]);
+
+        var cond = DenseTensor<bool>.OfValues(new bool[,] { { true }, { false } });
+        var x = DenseTensor<long>.OfValues(new long[,] { { 7, 8, 9 }, { 10, 11, 12 } });
+        var y = DenseTensor<long>.OfValues(new long[] { 1, 1, 1 });
+        var where = CPU.Where(cond, x, y);
+        Assert.Equal(OpStatus.Success, where.Status);
+        var whereOut = (Tensor<long>)where.Outputs![0];
+        Assert.Equal(7, whereOut[0, 0]);
+        Assert.Equal(1, whereOut[1, 2]);
+
+        var expand = CPU.Expand(DenseTensor<float>.OfValues(new float[1, 1, 3] { { { 1f, 2f, 3f } } }),
+            DenseTensor<long>.OfValues(new long[] { 2, 1, 3 }));
+        Assert.Equal(OpStatus.Success, expand.Status);
+        var expandOut = (Tensor<float>)expand.Outputs![0];
+        Assert.Equal(new[] { 2, 1, 3 }, expandOut.Dimensions.ToArray());
+        Assert.Equal(2f, expandOut[1, 0, 1], 5);
+
+        var resizeInput = DenseTensor<float>.OfShape(1, 1, 2, 2);
+        resizeInput.Fill(2f);
+        var sizes = DenseTensor<int>.OfValues(new int[] { 1, 1, 3, 3 });
+        var resize = CPU.Resize(resizeInput, null, null, sizes, "cubic", "half_pixel", "floor", -0.75f, 0f);
+        Assert.Equal(OpStatus.Success, resize.Status);
+        var resizeOut = (Tensor<float>)resize.Outputs![0];
+        Assert.Equal(new[] { 1, 1, 3, 3 }, resizeOut.Dimensions.ToArray());
+        Assert.Equal(2f, resizeOut[0, 0, 1, 1], 5);
+    }
 }

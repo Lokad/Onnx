@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Text;
@@ -14,7 +15,8 @@ namespace Lokad.Onnx
         public static ModelProto? Parse(string onnxInputFilePath)
         {
             var op = Begin("Parsing ONNX model file {f}", onnxInputFilePath);
-            var m =  ModelProto.Parser.ParseFromFile(onnxInputFilePath);
+            var buffer = File.ReadAllBytes(onnxInputFilePath);
+            var m = ModelProto.Parser.ParseFrom(buffer);
             op.Complete();
             return m;
         }

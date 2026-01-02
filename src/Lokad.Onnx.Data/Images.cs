@@ -43,6 +43,14 @@ namespace Lokad.Onnx
                         + "_" + $"{image.Height}x{image.Width}_{index}.png");
                     return DenseTensor<float>.OfValues(ImageToArrayF(SaveImage(image, n, saveInput))).WithName(n);
                 }
+                else if (props[0] == "dinov2")
+                {
+                    Info("Converting image data to DINOv2 format tensor data.");
+                    image.Mutate(i => i.Resize(224, 224));
+                    n = Path.Combine(Path.GetDirectoryName(name)!, Path.GetFileNameWithoutExtension(name)
+                        + "_" + $"{image.Height}x{image.Width}_{index}.png");
+                    return DenseTensor<float>.OfValues(ImageToArrayF3(SaveImage(image, n, saveInput))).WithName(n);
+                }
                 else if (char.IsDigit(props[0].Split(':').First()[0]))
                 {
                     if (props[0].Split(':').All(d => Int32.TryParse(d, out var _)))
@@ -97,6 +105,22 @@ namespace Lokad.Onnx
                 for (int j = 0; j < image.Height; j++)
                 {
                     pixels[0, 0, j, i] = ((image[i, j].R + image[i, j].G + image[i, j].B) / 3.0f) / 255.0f;
+                }
+            }
+            return pixels;
+        }
+
+        public static float[,,,] ImageToArrayF3(Image<Rgba32> image)
+        {
+            var pixels = new float[1, 3, image.Height, image.Width];
+            for (int i = 0; i < image.Width; i++)
+            {
+                for (int j = 0; j < image.Height; j++)
+                {
+                    var p = image[i, j];
+                    pixels[0, 0, j, i] = p.R / 255.0f;
+                    pixels[0, 1, j, i] = p.G / 255.0f;
+                    pixels[0, 2, j, i] = p.B / 255.0f;
                 }
             }
             return pixels;

@@ -232,6 +232,145 @@ where T : unmanaged
 
     public static bool BroadcastShape(Tensor<T> x, Tensor<T> y, out int[] b) => BroadcastShape(x.Dimensions, y.Dimensions, out b);
 
+    public static Tensor<T> BroadcastTo(Tensor<T> input, int[] targetShape)
+    {
+        StartOpStage(OpStage.ValidateArguments);
+        if (targetShape is null) throw new ArgumentNullException(nameof(targetShape));
+
+        var targetRank = targetShape.Length;
+        if (input.Rank > targetRank)
+        {
+            throw new ArgumentException(nameof(targetShape), "Target shape has fewer dimensions than the input tensor.");
+        }
+
+        var paddedInputDims = new int[targetRank];
+        var offset = targetRank - input.Rank;
+        for (int i = 0; i < targetRank; i++)
+        {
+            paddedInputDims[i] = i < offset ? 1 : input.Dimensions[i - offset];
+        }
+
+        var normalizedShape = new int[targetRank];
+        for (int i = 0; i < targetRank; i++)
+        {
+            var dim = targetShape[i];
+            if (dim == -1)
+            {
+                dim = paddedInputDims[i];
+            }
+            if (dim < 1)
+            {
+                throw new ArgumentException(nameof(targetShape), "Target shape dimensions must be positive or -1.");
+            }
+            normalizedShape[i] = dim;
+        }
+
+        StartOpStage(OpStage.CalculateIndices);
+        var result = input;
+        for (int i = 0; i < offset; i++)
+        {
+            result = result.InsertDim(0);
+        }
+        for (int i = 0; i < targetRank; i++)
+        {
+            var dim = result.Dimensions[i];
+            var targetDim = normalizedShape[i];
+            if (dim == targetDim)
+            {
+                continue;
+            }
+            if (dim == 1)
+            {
+                result = result.BroadcastDim(i, targetDim);
+                continue;
+            }
+            throw new ArgumentException(nameof(targetShape), $"Cannot broadcast dimension {dim} to {targetDim}.");
+        }
+        return result;
+    }
+
+    public static Tensor<T> Expand(Tensor<T> data, int[] targetShape)
+    {
+        // NOTE: not perf optimized yet.
+        StartOpStage(OpStage.ValidateArguments);
+        if (data is null) throw new ArgumentNullException(nameof(data));
+        if (targetShape is null) throw new ArgumentNullException(nameof(targetShape));
+        var targetRank = targetShape.Length;
+        if (data.Rank > targetRank)
+        {
+            throw new ArgumentException(nameof(targetShape), "Target shape has fewer dimensions than the input tensor.");
+        }
+
+        StartOpStage(OpStage.CalculateIndices);
+        var result = data;
+        var offset = targetRank - data.Rank;
+        for (int i = 0; i < offset; i++)
+        {
+            result = result.InsertDim(0);
+        }
+
+        for (int i = 0; i < targetRank; i++)
+        {
+            var inputDim = result.Dimensions[i];
+            var targetDim = targetShape[i];
+            if (targetDim == -1)
+            {
+                targetDim = inputDim;
+            }
+            else if (targetDim == 1 && inputDim > 1)
+            {
+                // DINOv2 emits a shape mask that can collapse to ones; treat 1 as "keep dim" here.
+                targetDim = inputDim;
+            }
+
+            if (inputDim == targetDim)
+            {
+                continue;
+            }
+            if (inputDim == 1)
+            {
+                result = result.BroadcastDim(i, targetDim);
+                continue;
+            }
+            throw new ArgumentException(nameof(targetShape), $"Cannot broadcast dimension {inputDim} to {targetDim}.");
+        }
+
+        return result;
+    }
+
+    public static Tensor<bool> Equal(Tensor<T> x, Tensor<T> y)
+    {
+        // NOTE: not perf optimized yet.
+        StartOpStage(OpStage.ValidateArguments);
+        if (!Broadcast(x, y, out var bx, out var by))
+        {
+            throw new ArgumentException("Inputs are not broadcastable.");
+        }
+        var output = DenseTensor<bool>.OfShape(bx.Dimensions.ToArray());
+        for (int i = 0; i < output.Length; i++)
+        {
+            output.SetValue(i, EqualityComparer<T>.Default.Equals(bx.GetValue(i), by.GetValue(i)));
+        }
+        return output;
+    }
+
+    public static Tensor<T> Where(Tensor<bool> condition, Tensor<T> x, Tensor<T> y)
+    {
+        // NOTE: not perf optimized yet.
+        StartOpStage(OpStage.ValidateArguments);
+        if (!Broadcast(x, y, out var bx, out var by))
+        {
+            throw new ArgumentException("Inputs are not broadcastable.");
+        }
+        var bcond = Tensor<bool>.BroadcastTo(condition, bx.Dimensions.ToArray());
+        var output = bx.CloneEmpty();
+        for (int i = 0; i < output.Length; i++)
+        {
+            output.SetValue(i, bcond.GetValue(i) ? bx.GetValue(i) : by.GetValue(i));
+        }
+        return output;
+    }
+
     public static Tensor<byte> Add(Tensor<byte> x, Tensor<byte> y) => x.VectorizedApply((l, r) => (l + r), (l, r) => (byte) (l + r), y);
 
     public static Tensor<byte> Add(Tensor<byte> x, byte y) => x.Apply(l => (byte)(l + y));
@@ -288,6 +427,10 @@ where T : unmanaged
 
     public static Tensor<int> Divide(Tensor<int> x, int y) => x.VectorizedApply(l => l / new Vector<int>(y), l => l / y);
 
+    public static Tensor<long> Divide(Tensor<long> x, Tensor<long> y) => x.Apply((l, r) => l / r, y);
+
+    public static Tensor<long> Divide(Tensor<long> x, long y) => x.Apply(l => l / y);
+
     public static Tensor<float> Divide(Tensor<float> x, Tensor<float> y) => x.VectorizedApply((l, r) => l / r, (l, r) => l / r, y);
 
     public static Tensor<float> Divide(Tensor<float> x, float y) => x.VectorizedApply(l => l / new Vector<float>(y), l => l / y);
@@ -315,6 +458,310 @@ where T : unmanaged
     public static Tensor<float> Sqrt(Tensor<float> x) => x.VectorizedApply(Vector.SquareRoot, MathF.Sqrt);
 
     public static Tensor<double> Sqrt(Tensor<double> x) => x.VectorizedApply(Vector.SquareRoot, Math.Sqrt);
+
+    public static Tensor<float> Resize(Tensor<float> input, int[] sizes, string mode, string coordinateTransformationMode, string nearestMode, float cubicCoeffA)
+    {
+        // NOTE: not perf optimized yet.
+        StartOpStage(OpStage.ValidateArguments);
+        if (input.Rank != 4) throw new ArgumentException(nameof(input), "Resize currently supports only 4D tensors (NCHW).");
+        if (sizes is null || sizes.Length != 4) throw new ArgumentException(nameof(sizes), "Resize sizes must be a 1D array of length 4.");
+
+        var nOut = sizes[0];
+        var cOut = sizes[1];
+        var hOut = sizes[2];
+        var wOut = sizes[3];
+        var nIn = input.Dimensions[0];
+        var cIn = input.Dimensions[1];
+        var hIn = input.Dimensions[2];
+        var wIn = input.Dimensions[3];
+
+        if (nOut != nIn || cOut != cIn)
+        {
+            throw new ArgumentException(nameof(sizes), "Resize currently requires N and C dimensions to remain unchanged.");
+        }
+
+        var output = DenseTensor<float>.OfShape(sizes);
+        var scaleH = (float)hOut / hIn;
+        var scaleW = (float)wOut / wIn;
+
+        float TransformCoordinate(int outIndex, int inSize, int outSize, float scale)
+        {
+            return coordinateTransformationMode switch
+            {
+                "half_pixel" => (outIndex + 0.5f) / scale - 0.5f,
+                "align_corners" => outSize == 1 ? 0f : outIndex * (inSize - 1f) / (outSize - 1f),
+                "asymmetric" => outIndex / scale,
+                _ => throw new NotSupportedException($"coordinate_transformation_mode {coordinateTransformationMode} is not supported."),
+            };
+        }
+
+        int NearestIndex(float coord, int inSize)
+        {
+            var value = nearestMode switch
+            {
+                "floor" => (int)MathF.Floor(coord),
+                "ceil" => (int)MathF.Ceiling(coord),
+                "round_prefer_floor" => (int)MathF.Floor(coord + 0.5f),
+                "round_prefer_ceil" => (int)MathF.Ceiling(coord - 0.5f),
+                _ => throw new NotSupportedException($"nearest_mode {nearestMode} is not supported."),
+            };
+            return Math.Clamp(value, 0, inSize - 1);
+        }
+
+        static float CubicWeight(float x, float a)
+        {
+            var t = MathF.Abs(x);
+            if (t <= 1f)
+            {
+                return ((a + 2f) * t * t * t) - ((a + 3f) * t * t) + 1f;
+            }
+            if (t < 2f)
+            {
+                return (a * t * t * t) - (5f * a * t * t) + (8f * a * t) - (4f * a);
+            }
+            return 0f;
+        }
+
+        for (int n = 0; n < nOut; n++)
+        {
+            for (int c = 0; c < cOut; c++)
+            {
+                for (int oy = 0; oy < hOut; oy++)
+                {
+                    var inY = TransformCoordinate(oy, hIn, hOut, scaleH);
+                    if (mode == "nearest")
+                    {
+                        var ny = NearestIndex(inY, hIn);
+                        for (int ox = 0; ox < wOut; ox++)
+                        {
+                            var inX = TransformCoordinate(ox, wIn, wOut, scaleW);
+                            var nx = NearestIndex(inX, wIn);
+                            output[n, c, oy, ox] = input[n, c, ny, nx];
+                        }
+                    }
+                    else if (mode == "linear")
+                    {
+                        var y0 = MathF.Floor(inY);
+                        var y1 = y0 + 1f;
+                        var y0i = Math.Clamp((int)y0, 0, hIn - 1);
+                        var y1i = Math.Clamp((int)y1, 0, hIn - 1);
+                        var ly = inY - y0;
+                        var wy0 = 1f - ly;
+                        var wy1 = ly;
+                        for (int ox = 0; ox < wOut; ox++)
+                        {
+                            var inX = TransformCoordinate(ox, wIn, wOut, scaleW);
+                            var x0 = MathF.Floor(inX);
+                            var x1 = x0 + 1f;
+                            var x0i = Math.Clamp((int)x0, 0, wIn - 1);
+                            var x1i = Math.Clamp((int)x1, 0, wIn - 1);
+                            var lx = inX - x0;
+                            var wx0 = 1f - lx;
+                            var wx1 = lx;
+                            var v00 = input[n, c, y0i, x0i];
+                            var v01 = input[n, c, y0i, x1i];
+                            var v10 = input[n, c, y1i, x0i];
+                            var v11 = input[n, c, y1i, x1i];
+                            output[n, c, oy, ox] = (v00 * wy0 * wx0) + (v01 * wy0 * wx1) + (v10 * wy1 * wx0) + (v11 * wy1 * wx1);
+                        }
+                    }
+                    else if (mode == "cubic")
+                    {
+                        var yBase = (int)MathF.Floor(inY);
+                        var wy = new float[4];
+                        var yIdx = new int[4];
+                        for (int i = 0; i < 4; i++)
+                        {
+                            var yi = yBase - 1 + i;
+                            yIdx[i] = Math.Clamp(yi, 0, hIn - 1);
+                            wy[i] = CubicWeight(inY - yi, cubicCoeffA);
+                        }
+                        for (int ox = 0; ox < wOut; ox++)
+                        {
+                            var inX = TransformCoordinate(ox, wIn, wOut, scaleW);
+                            var xBase = (int)MathF.Floor(inX);
+                            var wx = new float[4];
+                            var xIdx = new int[4];
+                            for (int i = 0; i < 4; i++)
+                            {
+                                var xi = xBase - 1 + i;
+                                xIdx[i] = Math.Clamp(xi, 0, wIn - 1);
+                                wx[i] = CubicWeight(inX - xi, cubicCoeffA);
+                            }
+                            var sum = 0f;
+                            for (int iy = 0; iy < 4; iy++)
+                            {
+                                var wyv = wy[iy];
+                                for (int ix = 0; ix < 4; ix++)
+                                {
+                                    sum += wyv * wx[ix] * input[n, c, yIdx[iy], xIdx[ix]];
+                                }
+                            }
+                            output[n, c, oy, ox] = sum;
+                        }
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Resize mode {mode} is not supported.");
+                    }
+                }
+            }
+        }
+
+        return output;
+    }
+
+    public static Tensor<double> Resize(Tensor<double> input, int[] sizes, string mode, string coordinateTransformationMode, string nearestMode, double cubicCoeffA)
+    {
+        // NOTE: not perf optimized yet.
+        StartOpStage(OpStage.ValidateArguments);
+        if (input.Rank != 4) throw new ArgumentException(nameof(input), "Resize currently supports only 4D tensors (NCHW).");
+        if (sizes is null || sizes.Length != 4) throw new ArgumentException(nameof(sizes), "Resize sizes must be a 1D array of length 4.");
+
+        var nOut = sizes[0];
+        var cOut = sizes[1];
+        var hOut = sizes[2];
+        var wOut = sizes[3];
+        var nIn = input.Dimensions[0];
+        var cIn = input.Dimensions[1];
+        var hIn = input.Dimensions[2];
+        var wIn = input.Dimensions[3];
+
+        if (nOut != nIn || cOut != cIn)
+        {
+            throw new ArgumentException(nameof(sizes), "Resize currently requires N and C dimensions to remain unchanged.");
+        }
+
+        var output = DenseTensor<double>.OfShape(sizes);
+        var scaleH = (double)hOut / hIn;
+        var scaleW = (double)wOut / wIn;
+
+        double TransformCoordinate(int outIndex, int inSize, int outSize, double scale)
+        {
+            return coordinateTransformationMode switch
+            {
+                "half_pixel" => (outIndex + 0.5) / scale - 0.5,
+                "align_corners" => outSize == 1 ? 0d : outIndex * (inSize - 1d) / (outSize - 1d),
+                "asymmetric" => outIndex / scale,
+                _ => throw new NotSupportedException($"coordinate_transformation_mode {coordinateTransformationMode} is not supported."),
+            };
+        }
+
+        int NearestIndex(double coord, int inSize)
+        {
+            var value = nearestMode switch
+            {
+                "floor" => (int)Math.Floor(coord),
+                "ceil" => (int)Math.Ceiling(coord),
+                "round_prefer_floor" => (int)Math.Floor(coord + 0.5),
+                "round_prefer_ceil" => (int)Math.Ceiling(coord - 0.5),
+                _ => throw new NotSupportedException($"nearest_mode {nearestMode} is not supported."),
+            };
+            return Math.Clamp(value, 0, inSize - 1);
+        }
+
+        static double CubicWeight(double x, double a)
+        {
+            var t = Math.Abs(x);
+            if (t <= 1d)
+            {
+                return ((a + 2d) * t * t * t) - ((a + 3d) * t * t) + 1d;
+            }
+            if (t < 2d)
+            {
+                return (a * t * t * t) - (5d * a * t * t) + (8d * a * t) - (4d * a);
+            }
+            return 0d;
+        }
+
+        for (int n = 0; n < nOut; n++)
+        {
+            for (int c = 0; c < cOut; c++)
+            {
+                for (int oy = 0; oy < hOut; oy++)
+                {
+                    var inY = TransformCoordinate(oy, hIn, hOut, scaleH);
+                    if (mode == "nearest")
+                    {
+                        var ny = NearestIndex(inY, hIn);
+                        for (int ox = 0; ox < wOut; ox++)
+                        {
+                            var inX = TransformCoordinate(ox, wIn, wOut, scaleW);
+                            var nx = NearestIndex(inX, wIn);
+                            output[n, c, oy, ox] = input[n, c, ny, nx];
+                        }
+                    }
+                    else if (mode == "linear")
+                    {
+                        var y0 = Math.Floor(inY);
+                        var y1 = y0 + 1d;
+                        var y0i = Math.Clamp((int)y0, 0, hIn - 1);
+                        var y1i = Math.Clamp((int)y1, 0, hIn - 1);
+                        var ly = inY - y0;
+                        var wy0 = 1d - ly;
+                        var wy1 = ly;
+                        for (int ox = 0; ox < wOut; ox++)
+                        {
+                            var inX = TransformCoordinate(ox, wIn, wOut, scaleW);
+                            var x0 = Math.Floor(inX);
+                            var x1 = x0 + 1d;
+                            var x0i = Math.Clamp((int)x0, 0, wIn - 1);
+                            var x1i = Math.Clamp((int)x1, 0, wIn - 1);
+                            var lx = inX - x0;
+                            var wx0 = 1d - lx;
+                            var wx1 = lx;
+                            var v00 = input[n, c, y0i, x0i];
+                            var v01 = input[n, c, y0i, x1i];
+                            var v10 = input[n, c, y1i, x0i];
+                            var v11 = input[n, c, y1i, x1i];
+                            output[n, c, oy, ox] = (v00 * wy0 * wx0) + (v01 * wy0 * wx1) + (v10 * wy1 * wx0) + (v11 * wy1 * wx1);
+                        }
+                    }
+                    else if (mode == "cubic")
+                    {
+                        var yBase = (int)Math.Floor(inY);
+                        var wy = new double[4];
+                        var yIdx = new int[4];
+                        for (int i = 0; i < 4; i++)
+                        {
+                            var yi = yBase - 1 + i;
+                            yIdx[i] = Math.Clamp(yi, 0, hIn - 1);
+                            wy[i] = CubicWeight(inY - yi, cubicCoeffA);
+                        }
+                        for (int ox = 0; ox < wOut; ox++)
+                        {
+                            var inX = TransformCoordinate(ox, wIn, wOut, scaleW);
+                            var xBase = (int)Math.Floor(inX);
+                            var wx = new double[4];
+                            var xIdx = new int[4];
+                            for (int i = 0; i < 4; i++)
+                            {
+                                var xi = xBase - 1 + i;
+                                xIdx[i] = Math.Clamp(xi, 0, wIn - 1);
+                                wx[i] = CubicWeight(inX - xi, cubicCoeffA);
+                            }
+                            var sum = 0d;
+                            for (int iy = 0; iy < 4; iy++)
+                            {
+                                var wyv = wy[iy];
+                                for (int ix = 0; ix < 4; ix++)
+                                {
+                                    sum += wyv * wx[ix] * input[n, c, yIdx[iy], xIdx[ix]];
+                                }
+                            }
+                            output[n, c, oy, ox] = sum;
+                        }
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Resize mode {mode} is not supported.");
+                    }
+                }
+            }
+        }
+
+        return output;
+    }
 
     public static Tensor<int> MatMul2D(Tensor<int> x, Tensor<int> y)
     {

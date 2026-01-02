@@ -384,8 +384,8 @@ class Program : Runtime
             Info("Node {node} has op type: {op}, inputs: {inputs}, outputs: {outputs} and " 
                 + ((n.Attributes is not null && n.Attributes.Count > 0) ?  "the following attributes:" : "no attributes."), 
                 n.Name, n.Op.ToString(), 
-                n.Inputs.Select(t => tensors[t]).ToArray(), 
-                n.Outputs.Select(t => tensors[t]).ToArray());
+                n.Inputs.Select(t => GetTensorDesc(tensors, t)).ToArray(), 
+                n.Outputs.Select(t => GetTensorDesc(tensors, t)).ToArray());
             
             if (n.Attributes is not null && n.Attributes.Count > 0)
             {
@@ -395,6 +395,15 @@ class Program : Runtime
                 }
             }
         }
+    }
+
+    static string GetTensorDesc(Dictionary<string, string> tensors, string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            return "<empty>";
+        }
+        return tensors.TryGetValue(name, out var desc) ? desc : $"{name}<unknown>";
     }
 
     static void PrintModelOps(string file)

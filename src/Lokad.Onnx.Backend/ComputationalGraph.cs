@@ -27,6 +27,12 @@ public class ComputationalGraph : Runtime
     public Dictionary<string, object> Metadata = new Dictionary<string, object>();
 
     public Dictionary<string, string> MetadataProps = new Dictionary<string, string>();
+
+    public string? LastErrorMessage { get; private set; }
+
+    public string? LastFailedNodeName { get; private set; }
+
+    public OpType? LastFailedNodeOp { get; private set; }
     #endregion
 
     #region Methods
@@ -39,7 +45,8 @@ public class ComputationalGraph : Runtime
     public ITensor? GetInputTensor(string[] Inputs, int index) =>
        index < Inputs.Length ? GetInputTensor(Inputs[index]) : null;    
 
-    public ITensor[] GetInputTensors(string[] names) => names.Select(n => GetInputTensor(n)).ToArray();
+    public ITensor[] GetInputTensors(string[] names) =>
+        names.Where(n => !string.IsNullOrEmpty(n)).Select(n => GetInputTensor(n)).ToArray();
 
     public Dictionary<string, ITensor> GetRequiredInputs(bool useInitializers)
     {
@@ -194,6 +201,9 @@ public class ComputationalGraph : Runtime
 
     public bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU)
     {
+        LastErrorMessage = null;
+        LastFailedNodeName = null;
+        LastFailedNodeOp = null;
         if (userInputs is ITensor[] uia)
         {
             if (!ResolveInputs(uia, useInitializers))
@@ -242,6 +252,9 @@ public class ComputationalGraph : Runtime
             {
                 Error("Execution of node {c} {n} with op {op} failed: {m}", count, node.Name, node.Op, r.Message ?? "");
                 Error("Stopping graph execution at node {c} {n}.", count, node.Name);
+                LastErrorMessage = r.Message;
+                LastFailedNodeName = node.Name;
+                LastFailedNodeOp = node.Op;
                 return false;
             }
             else

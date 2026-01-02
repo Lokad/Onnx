@@ -72,7 +72,8 @@ public partial struct Node
     public int[] RequiredInts(string name) => Ints(name) ?? throw new ArgumentException($"The Ints attribute {name} is required but was not found.");
 
 
-    public ITensor? InputTensor(ComputationalGraph graph, int index) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : null;
+    public ITensor? InputTensor(ComputationalGraph graph, int index) =>
+        index < Inputs.Length && !string.IsNullOrEmpty(Inputs[index]) ? graph.GetInputTensor(Inputs[index]) : null;
 
     public ITensor? InputTensorOrAttr(ComputationalGraph graph, int index, string name) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : Attr<ITensor>(name);
 
@@ -134,7 +135,7 @@ public partial struct Node
         OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0)),
 
         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
-            Attr<string>("auto_pad"), Attr<int[]>("dilations"), Attr<int?>("group"), Attr<int[]>("kernel_shape"), Attr<int[]>("pads"), Attr<int[]>("strides")),
+            Attr<string>("auto_pad"), Ints("dilations"), Attr<int?>("group"), Ints("kernel_shape"), Ints("pads"), Ints("strides")),
 
         OpType.Relu => CPU.Relu(InputTensor(graph, 0)),
 
@@ -157,6 +158,16 @@ public partial struct Node
         OpType.Gather => CPU.Gather(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis")),
 
         OpType.Slice => CPU.Slice(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4)),
+
+        OpType.Equal => CPU.Equal(InputTensor(graph, 0), InputTensor(graph, 1)),
+
+        OpType.Where => CPU.Where(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2)),
+
+        OpType.Expand => CPU.Expand(InputTensor(graph, 0), InputTensor(graph, 1)),
+
+        OpType.Resize => CPU.Resize(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3),
+            Attr<string>("mode", "nearest"), Attr<string>("coordinate_transformation_mode", "half_pixel"), Attr<string>("nearest_mode", "round_prefer_floor"),
+            Attr<float>("cubic_coeff_a", -0.75f), Attr<float>("extrapolation_value", 0f)),
 
         OpType.Unsqueeze => graph.OpsetVersion() switch
         {
