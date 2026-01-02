@@ -1,6 +1,6 @@
-﻿namespace Lokad.Onnx.Tensors.Tests;
+namespace Lokad.Onnx.Tensors.Tests;
 
-public class CreationTests
+public class TensorCreationTests
 {
     [Fact]
     public void CanCreateARange()
@@ -11,4 +11,3 @@ public class CreationTests
         Assert.Equal(20, t2[6, 2]);
     }
 }
-

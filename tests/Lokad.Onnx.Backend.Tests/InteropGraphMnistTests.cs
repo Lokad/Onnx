@@ -6,7 +6,7 @@ using Lokad.Onnx.Interop;
 
 namespace Lokad.Onnx.Backend.Tests;
 
-public class InteropGraphTests
+public class InteropGraphMnistTests
 {
     [Fact]
     public void CanLoadAndExecuteWithFileArgs()

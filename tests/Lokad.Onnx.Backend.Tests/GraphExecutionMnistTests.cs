@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Lokad.Onnx.Backend.Tests
 {
-    public class GraphTests
+    public class GraphExecutionMnistTests
     {
         [Fact]
         public void CanLoadFromFile()
