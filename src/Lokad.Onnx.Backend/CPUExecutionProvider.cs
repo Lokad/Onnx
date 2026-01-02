@@ -42,6 +42,10 @@ public class CPUExecutionProvider : Runtime
         OpType.Shape,
         OpType.Gather,
         OpType.Slice,
+        OpType.Equal,
+        OpType.Where,
+        OpType.Expand,
+        OpType.Resize,
         OpType.Unsqueeze,
         OpType.ReduceSum,
         OpType.ReduceMean,
@@ -199,6 +203,8 @@ public class CPUExecutionProvider : Runtime
         switch (A.ElementType)
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Divide((Tensor<byte>)bA, (Tensor<byte>)bB));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Divide((Tensor<int>)bA, (Tensor<int>)bB));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Divide((Tensor<long>)bA, (Tensor<long>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Divide((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Divide((Tensor<double>)bA, (Tensor<double>)bB));
             default: return InputTypeNotSupported(op, nameof(A), A);
@@ -596,6 +602,125 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Slice((Tensor<BFloat16>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
             case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Slice((Tensor<System.Numerics.Complex>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
             default: return NotSupported(op);
+        }
+    }
+
+    public static OpResult Equal(ITensor? A, ITensor? B)
+    {
+        var op = OpType.Equal;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        switch (A.ElementType)
+        {
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Equal((Tensor<bool>)A, (Tensor<bool>)B));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Equal((Tensor<int>)A, (Tensor<int>)B));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Equal((Tensor<long>)A, (Tensor<long>)B));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Equal((Tensor<float>)A, (Tensor<float>)B));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Equal((Tensor<double>)A, (Tensor<double>)B));
+            default: return InputTypeNotSupported(op, nameof(A), A);
+        }
+    }
+
+    public static OpResult Where(ITensor? condition, ITensor? X, ITensor? Y)
+    {
+        var op = OpType.Where;
+        if (condition is null) return MissingInput(op, nameof(condition));
+        if (X is null) return MissingInput(op, nameof(X));
+        if (Y is null) return MissingInput(op, nameof(Y));
+        if (condition.ElementType != TensorElementType.Bool) return WrongInputType(op, nameof(condition), TensorElementType.Bool, condition);
+        if (X.ElementType != Y.ElementType)
+        {
+            return WrongInputType(op, nameof(Y), "Input tensors must be of the same type.", Y);
+        }
+        switch (X.ElementType)
+        {
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Where((Tensor<bool>)condition, (Tensor<bool>)X, (Tensor<bool>)Y));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Where((Tensor<bool>)condition, (Tensor<int>)X, (Tensor<int>)Y));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Where((Tensor<bool>)condition, (Tensor<long>)X, (Tensor<long>)Y));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Where((Tensor<bool>)condition, (Tensor<float>)X, (Tensor<float>)Y));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Where((Tensor<bool>)condition, (Tensor<double>)X, (Tensor<double>)Y));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult Expand(ITensor? data, ITensor? shape)
+    {
+        var op = OpType.Expand;
+        if (data is null) return MissingInput(op, nameof(data));
+        if (shape is null) return MissingInput(op, nameof(shape));
+        if (shape.ElementType == TensorElementType.Int64)
+        {
+            shape = shape.ConvertToInt32();
+        }
+        if (shape.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(shape), TensorElementType.Int32, shape);
+
+        var targetShape = ((Tensor<int>)shape).ToArray();
+        switch (data.ElementType)
+        {
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Expand((Tensor<bool>)data, targetShape));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Expand((Tensor<int>)data, targetShape));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Expand((Tensor<long>)data, targetShape));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Expand((Tensor<float>)data, targetShape));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Expand((Tensor<double>)data, targetShape));
+            default: return InputTypeNotSupported(op, nameof(data), data);
+        }
+    }
+
+    public static OpResult Resize(ITensor? X, ITensor? roi, ITensor? scales, ITensor? sizes,
+        string? mode, string? coordinateTransformationMode, string? nearestMode, float? cubicCoeffA, float? extrapolationValue)
+    {
+        var op = OpType.Resize;
+        if (X is null) return MissingInput(op, nameof(X));
+        if (sizes is null && scales is null) return MissingInput(op, nameof(sizes));
+        if (sizes is not null && sizes.ElementType == TensorElementType.Int64)
+        {
+            sizes = sizes.ConvertToInt32();
+        }
+        if (sizes is not null && sizes.ElementType != TensorElementType.Int32)
+        {
+            return WrongInputType(op, nameof(sizes), TensorElementType.Int32, sizes);
+        }
+
+        int[] targetSizes;
+        if (sizes is not null)
+        {
+            targetSizes = ((Tensor<int>)sizes).ToArray();
+        }
+        else
+        {
+            if (scales is null) return MissingInput(op, nameof(scales));
+            if (scales.ElementType != TensorElementType.Float && scales.ElementType != TensorElementType.Double)
+            {
+                return WrongInputType(op, nameof(scales), "Scales must be float or double.", scales);
+            }
+            var dims = X.Dims;
+            var scaleArray = scales.ElementType == TensorElementType.Float
+                ? ((Tensor<float>)scales).ToArray().Select(s => (double)s).ToArray()
+                : ((Tensor<double>)scales).ToArray();
+            if (scaleArray.Length != dims.Length)
+            {
+                return WrongInputShape(op, nameof(scales), dims.Length, scales);
+            }
+            targetSizes = dims.Select((d, i) => Convert.ToInt32(Math.Round(d * scaleArray[i]))).ToArray();
+        }
+
+        var resizeMode = mode ?? "nearest";
+        var ctm = coordinateTransformationMode ?? "half_pixel";
+        var nm = nearestMode ?? "round_prefer_floor";
+        var cubicA = cubicCoeffA ?? -0.75f;
+
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float:
+                return Success(op, Tensor<float>.Resize((Tensor<float>)X, targetSizes, resizeMode, ctm, nm, cubicA));
+            case TensorElementType.Double:
+                return Success(op, Tensor<double>.Resize((Tensor<double>)X, targetSizes, resizeMode, ctm, nm, cubicA));
+            default:
+                return InputTypeNotSupported(op, nameof(X), X);
         }
     }
 
