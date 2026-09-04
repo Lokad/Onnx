@@ -2,6 +2,7 @@ using System.IO;
 
 namespace Lokad.Onnx.Backend.Tests;
 
+[Collection("ProcessState")]
 public class ExecutionOptionsTests
 {
     [Fact]

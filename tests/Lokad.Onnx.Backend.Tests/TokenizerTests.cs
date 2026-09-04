@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 namespace Lokad.Onnx.Backend.Tests;
 
+[Collection("ProcessState")]
 public class TokenizerTests
 {
     static string AssetPath()
