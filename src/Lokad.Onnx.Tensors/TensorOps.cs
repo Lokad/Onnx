@@ -34,11 +34,14 @@ where T : unmanaged
     }
 
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>> op, Func<T, T> sop, Tensor<T> destination)
+        => VectorizedApply(op, sop, destination, TensorExecutionOptions.Auto);
+
+    public virtual void VectorizedApply(Func<Vector<T>, Vector<T>> op, Func<T, T> sop, Tensor<T> destination, TensorExecutionOptions options)
     {
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
 
-        if (HardwareConfig.UseSimd && this is DenseTensor<T> d1 && destination is DenseTensor<T> d2)
+        if (options.UseSimd && this is DenseTensor<T> d1 && destination is DenseTensor<T> d2)
         {
             var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
             var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
@@ -87,6 +90,9 @@ where T : unmanaged
     }
 
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2, Tensor<T> destination)
+        => VectorizedApply(op, sop, tensor2, destination, TensorExecutionOptions.Auto);
+
+    public virtual void VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2, Tensor<T> destination, TensorExecutionOptions options)
     {
         if (this.Length > tensor2.Length)
             throw new ArgumentException(nameof(tensor2), "2nd tensor is too small.");
@@ -94,7 +100,7 @@ where T : unmanaged
         if (this.Length > destination.Length)
             throw new ArgumentException(nameof(destination), "Destination tensor is too small.");
 
-        if (HardwareConfig.UseSimd && this is DenseTensor<T> d1 && tensor2 is DenseTensor<T> d2 && destination is DenseTensor<T> d3)
+        if (options.UseSimd && this is DenseTensor<T> d1 && tensor2 is DenseTensor<T> d2 && destination is DenseTensor<T> d3)
         {
             var vspan1 = MemoryMarshal.Cast<T, Vector<T>>(d1.Buffer.Span);
             var vspan2 = MemoryMarshal.Cast<T, Vector<T>>(d2.Buffer.Span);
@@ -1004,8 +1010,11 @@ where T : unmanaged
         return output;
     }
 
-    public static Tensor<int> MatMul2D(Tensor<int> x, Tensor<int> y)
+    public static Tensor<int> MatMul2D(Tensor<int> x, Tensor<int> y) => MatMul2D(x, y, TensorExecutionOptions.Auto);
+
+    public static Tensor<int> MatMul2D(Tensor<int> x, Tensor<int> y, TensorExecutionOptions options)
     {
+        options.Validate();
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
         if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
@@ -1022,7 +1031,7 @@ where T : unmanaged
         var xh = _x.Buffer.Pin();
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd)
+        if (options.UseSimd)
         {
             unsafe
             {
@@ -1108,8 +1117,11 @@ where T : unmanaged
         return output;
     }
 
-    public static Tensor<double> MatMul2D(Tensor<double> x, Tensor<double> y)
+    public static Tensor<double> MatMul2D(Tensor<double> x, Tensor<double> y) => MatMul2D(x, y, TensorExecutionOptions.Auto);
+
+    public static Tensor<double> MatMul2D(Tensor<double> x, Tensor<double> y, TensorExecutionOptions options)
     {
+        options.Validate();
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
         if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
@@ -1127,14 +1139,14 @@ where T : unmanaged
         var xh = _x.Buffer.Pin();
         var yh = _y.Buffer.Pin();
         var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
+        if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported)
         {
             unsafe
             {
                 mm_unsafe_vectorized_intrinsics(m, n, k, (double*)xh.Pointer, (double*)yh.Pointer, (double*)oh.Pointer);
             }
         }
-        else if (HardwareConfig.UseSimd)
+        else if (options.UseSimd)
         {
             unsafe
             {
@@ -1205,12 +1217,15 @@ where T : unmanaged
     }
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    public static Tensor<int> MatMul(Tensor<int> x, Tensor<int> y)
+    public static Tensor<int> MatMul(Tensor<int> x, Tensor<int> y) => MatMul(x, y, TensorExecutionOptions.Auto);
+
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    public static Tensor<int> MatMul(Tensor<int> x, Tensor<int> y, TensorExecutionOptions options)
     {
         if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
         if (x.Rank == 2 && y.Rank == 2)
         {
-            return Tensor<int>.MatMul2D(x, y);
+            return Tensor<int>.MatMul2D(x, y, options);
         }
         else if (x.Rank >= 2 && y.Rank >= 2)
         {
@@ -1253,7 +1268,7 @@ where T : unmanaged
                 
                 foreach (var idx in di)
                 {
-                    if (HardwareConfig.UseSimd)
+                    if (options.UseSimd)
                     {
                         mm_unsafe_vectorized(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
                     }
@@ -1275,7 +1290,7 @@ where T : unmanaged
             else
             {
                 //StopOpStage();
-                return MatMul(bx, by);
+                return MatMul(bx, by, options);
             }
         }
         else //(x.Rank < 2 && y.Rank < 2)
@@ -1291,7 +1306,7 @@ where T : unmanaged
                 y = y.PadRight();
                 bcast = true;
             }
-            var c = MatMul2D(x, y);
+            var c = MatMul2D(x, y, options);
             if (bcast)
             {
                 c.RemoveDim(0);
@@ -1486,12 +1501,15 @@ where T : unmanaged
     }
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    public static Tensor<double> MatMul(Tensor<double> x, Tensor<double> y)
+    public static Tensor<double> MatMul(Tensor<double> x, Tensor<double> y) => MatMul(x, y, TensorExecutionOptions.Auto);
+
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    public static Tensor<double> MatMul(Tensor<double> x, Tensor<double> y, TensorExecutionOptions options)
     {
         if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
         if (x.Rank == 2 && y.Rank == 2)
         {
-            return Tensor<double>.MatMul2D(x, y);
+            return Tensor<double>.MatMul2D(x, y, options);
         }
         else if (x.Rank >= 2 && y.Rank >= 2)
         {
@@ -1534,12 +1552,12 @@ where T : unmanaged
                 var zp = (double*)zh.Pointer;
                 foreach (var idx in di)
                 {
-                    if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
+                    if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported)
                     {
                         mm_unsafe_vectorized_intrinsics(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
                         
                     }
-                    else if (HardwareConfig.UseSimd)
+                    else if (options.UseSimd)
                     {
 
                         mm_unsafe_vectorized(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
@@ -1562,7 +1580,7 @@ where T : unmanaged
             }
             else
             {
-                return MatMul(bx, by);
+                return MatMul(bx, by, options);
             }
         }
         else //(x.Rank < 2 && y.Rank < 2)
@@ -1579,7 +1597,7 @@ where T : unmanaged
                 y = y.PadRight();
                 bcast = true;
             }
-            var c = MatMul2D(x, y);
+            var c = MatMul2D(x, y, options);
             if (bcast)
             {
                 c.RemoveDim(0);
