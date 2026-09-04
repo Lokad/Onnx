@@ -5,6 +5,13 @@ param(
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
+# Determinism: disable tiered-JIT On-Stack Replacement so repeated runs are
+# bit-stable. OSR can swap loop code mid-flight (e.g. FMA contraction), which
+# moves last-ulp results run to run under contention; verified: scalar repeats
+# drift ~1e-05 in a few dozen cells with OSR on and are byte-identical with it
+# off. Tolerances remain the correctness bar; this only stabilizes repeats.
+# The perf lane (bench.ps1) intentionally keeps default JIT settings.
+$env:DOTNET_JitOSR = '0'
 $model = "models/multilingual-e5-small/model.onnx"
 $tokenizer = "models/multilingual-e5-small/sentencepiece.bpe.model"
 $cases = "tests/e5/cases.json"
