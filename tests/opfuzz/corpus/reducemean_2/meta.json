@@ -1,0 +1,12 @@
+{
+ "case": "reducemean_2",
+ "seed": 20260904,
+ "opset": 14,
+ "ir": 8,
+ "env": {
+  "onnx": "1.22.0",
+  "onnxruntime": "1.29.0",
+  "numpy": "2.2.4"
+ },
+ "known_divergence": "ORT returns (1,) for full keepdims=0 reduction over a size-1 dim; spec and Lokad.Onnx give scalar ()"
+}
