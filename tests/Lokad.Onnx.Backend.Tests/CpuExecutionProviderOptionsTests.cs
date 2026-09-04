@@ -63,6 +63,18 @@ public class CpuExecutionProviderOptionsTests
     }
 
     [Fact]
+    public void ReduceMean_ExplicitScalarMatchesDefault()
+    {
+        var data = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var axes = new int[] { 1 }.ToTensor<int>();
+        var rDefault = CPU.ReduceMean(data, axes, 1, 0);
+        var rScalar = CPU.ReduceMean(data, axes, 1, 0, ExecutionOptions.Scalar);
+        AssertSuccess(rDefault);
+        AssertSuccess(rScalar);
+        AssertFloatTensorsEqual(rDefault.Outputs![0], rScalar.Outputs![0]);
+    }
+
+    [Fact]
     public void LongDivide_DefaultPathStillWorks()
     {
         var a = DenseTensor<long>.OfValues(new long[,] { { 7L, 8L }, { 9L, 10L } });

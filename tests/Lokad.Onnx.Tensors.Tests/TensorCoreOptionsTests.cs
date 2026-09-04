@@ -107,6 +107,22 @@ public class TensorCoreOptionsTests
     }
 
     [Fact]
+    public void ReduceMean_ExplicitOptionsMatchDefault()
+    {
+        var data = SmallFloat(2, 3);
+        var axes = new int[] { 1 }.ToTensor<int>();
+        foreach (bool? keepDims in new bool?[] { true, false, null })
+        {
+            var expected = Tensor<float>.ReduceMean(data, axes, keepDims, false);
+            AssertFloatEqual(expected, Tensor<float>.ReduceMean(data, axes, keepDims, false, TensorExecutionOptions.Scalar));
+            AssertFloatEqual(expected, Tensor<float>.ReduceMean(data, axes, keepDims, false, TensorExecutionOptions.Simd));
+        }
+        var idata = SmallInt(2, 3);
+        var iexpected = Tensor<int>.ReduceMean(idata, axes, true, false);
+        AssertIntEqual(iexpected, Tensor<int>.ReduceMean(idata, axes, true, false, TensorExecutionOptions.Scalar));
+    }
+
+    [Fact]
     public void DoubleNDMatMul_ExplicitOptionsMatchDefault()
     {
         var a = Tensor<double>.Zeros(2, 2, 2);

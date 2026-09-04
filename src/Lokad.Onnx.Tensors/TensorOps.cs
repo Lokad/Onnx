@@ -2555,6 +2555,9 @@ where T : unmanaged
     }
 
     public static Tensor<int> ReduceMean(Tensor<int> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
+        => ReduceMean(data, axes, _keepDims, _noOpWithEmptyAxes, TensorExecutionOptions.Auto);
+
+    public static Tensor<int> ReduceMean(Tensor<int> data, Tensor<int> axes, bool? _keepDims, bool? _noOpWithEmptyAxes, TensorExecutionOptions options)
     {
         StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
@@ -2568,7 +2571,7 @@ where T : unmanaged
         var (oshape, rshape) = ArrayUtilities.ComputeShapesForReduction(data.dimensions, _axes);
         var r = ArrayUtilities.ComputeOffsetForReduction(rshape);
         //Tensor<int> output = DenseTensor<int>.OfShape(oshape);
-        Tensor<int> output = Tensor<int>.Divide(data, r);
+        Tensor<int> output = Tensor<int>.Divide(data, r, options);
         output = Tensor<int>.ReduceSum(output, _axes.ToTensor<int>());
         if (keepDims)
         {
@@ -2581,6 +2584,9 @@ where T : unmanaged
     }
 
     public static Tensor<float> ReduceMean(Tensor<float> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
+        => ReduceMean(data, axes, _keepDims, _noOpWithEmptyAxes, TensorExecutionOptions.Auto);
+
+    public static Tensor<float> ReduceMean(Tensor<float> data, Tensor<int> axes, bool? _keepDims, bool? _noOpWithEmptyAxes, TensorExecutionOptions options)
     {
         StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
@@ -2596,7 +2602,7 @@ where T : unmanaged
         
         StartOpStage(OpStage.Math);
         Tensor<float> output = Tensor<float>.ReduceSum(data, _axes.ToTensor<int>());
-        output = Tensor<float>.Divide(output, r);
+        output = Tensor<float>.Divide(output, r, options);
         if (keepDims)
         {
             return Tensor<float>.Unsqueeze(output, _axes);
@@ -2608,6 +2614,9 @@ where T : unmanaged
     }
 
     public static Tensor<double> ReduceMean(Tensor<double> data, Tensor<int> axes = null, bool? _keepDims = null, bool? _noOpWithEmptyAxes = null)
+        => ReduceMean(data, axes, _keepDims, _noOpWithEmptyAxes, TensorExecutionOptions.Auto);
+
+    public static Tensor<double> ReduceMean(Tensor<double> data, Tensor<int> axes, bool? _keepDims, bool? _noOpWithEmptyAxes, TensorExecutionOptions options)
     {
         StartOpStage(OpStage.ValidateArguments);
         if (axes is not null && axes.Length > data.Rank) throw new ArgumentException(nameof(axes), "The number of axes specified must be less than the tensor rank.");
@@ -2622,7 +2631,7 @@ where T : unmanaged
         var r = Convert.ToDouble(ArrayUtilities.ComputeOffsetForReduction(rshape));
         
         StartOpStage(OpStage.Math);
-        Tensor<double> output = Tensor<double>.Divide(data, r);
+        Tensor<double> output = Tensor<double>.Divide(data, r, options);
         output = Tensor<double>.ReduceSum(output, _axes.ToTensor<int>());
         if (keepDims)
         {
