@@ -34,7 +34,8 @@ All figures in ms.
 - Machine was contended during capture (identical cells vary ~10-20% run to run).
   Compare with same-machine reruns, not across machines.
 - The 6x384x384 batched case shows intrinsics slightly slower than plain simd
-  (23.2 vs 21.2ms at 5 iterations). Unresolved whether noise or a real dispatch
+- Update 2026-09-04: the 6x384x384 inversion was noise. Focused rerun at 15 iterations plus 3 warmups gives scalar 133.0ms, simd 30.3ms (wide CI 22-39ms, high variance), intrinsics 19.0ms. Intrinsics is clearly fastest; the 5-iteration snapshot caught the simd variant on a lucky draw.
+  The simd variant variance itself is worth watching in future sweeps; prefer 10+ iterations for batched shapes.
   shape effect; rerun with higher iteration counts before concluding.
 - The `me5s-load` / `me5s-run` BDN benchmarks are intentionally excluded: they
   download model and corpus files at benchmark time and are not hermetic.
