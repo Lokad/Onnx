@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>preview</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>annotations</Nullable>
@@ -9,9 +9,9 @@
     <PackageId>Lokad.Onnx</PackageId>
     <Authors>Lokad</Authors>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <AssemblyVersion>0.1.4</AssemblyVersion>
-    <FileVersion>0.1.4</FileVersion>
-    <Version>0.1.4</Version>
+    <AssemblyVersion>0.2.0</AssemblyVersion>
+    <FileVersion>0.2.0</FileVersion>
+    <Version>0.2.0</Version>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     
     <AssemblyName>Lokad.Onnx</AssemblyName>
