@@ -13,6 +13,7 @@ Only 0.1.4 has been published to NuGet. Everything below is unreleased: the brea
 ### Fixed
 
 - MatMul intrinsics kernel read the wrong row pointer, and reverse-strided dense matrices reached row-major unsafe kernels without row-major materialization. Both repaired under independent oracles.
+- 0.1.4 with explicitly enabled CPU SIMD intrinsics (`--enable-intrinsics` or `HardwareConfig.UseIntrinsics`) silently corrupted MatMul results on outputs with more than two rows (wrong second-row pointer in the paired-row kernel, e.g. e5 embeddings diverge from ONNX Runtime). 0.1.4 defaulted intrinsics off, so default runs were unaffected; 0.2.0 enables intrinsics by default with the corrected kernel plus an odd-row regression test.
 - Tokenizer multi-space normalization now matches the Hugging Face reference.
 - Unsqueeze normalized negative axes against the input rank instead of the output rank, corrupting downstream Concat reads on the DINOv3 RoPE path.
 - ReduceMean and ReduceMax ignored the axes attribute on opsets 13 through 17, silently reducing over all axes on models such as DINOv2.
