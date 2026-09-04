@@ -12,6 +12,14 @@ $artifacts = "artifacts/e5"
 $expectedModel = "CA456C06B3A9505DDFD9131408916DD79290368331E7D76BB621F1CBA6BC8665"
 $expectedTokenizer = "CFC8146ABE2A0488E9E2A0C56DE7952F7C11AB059ECA145A0A727AFCE0DB2865"
 function Fail($msg) { Write-Host "FAIL e5: $msg"; exit 1 }
+function Invoke-GateNative {
+    param([scriptblock]$Command)
+    $prev = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        & $Command
+    } finally { $ErrorActionPreference = $prev }
+}
 if (!(Test-Path $model)) { Fail "missing model asset: $model" }
 if (!(Test-Path $tokenizer)) { Fail "missing tokenizer asset: $tokenizer" }
 if ((Get-FileHash $model -Algorithm SHA256).Hash -ne $expectedModel) { Fail "model hash mismatch" }
@@ -19,9 +27,14 @@ if ((Get-FileHash $tokenizer -Algorithm SHA256).Hash -ne $expectedTokenizer) { F
 Write-Host "PASS assets: model and tokenizer hashes match"
 $pyv = & $Python --version 2>&1
 Write-Host "Python: $pyv"
-& $Python -c "import numpy, onnxruntime, transformers, sentencepiece, pytest" 2>$null
-if ($LASTEXITCODE -ne 0) { Fail "python is missing test dependencies (see tests/e5/python/requirements.txt)" }
-& dotnet build tests/Lokad.Onnx.E5Runner --tl:off --nologo -v minimal -c Release -p:NuGetAudit=false
+$prevEAP = $ErrorActionPreference
+try {
+    $ErrorActionPreference = "Continue"
+    & $Python -c "import numpy, onnxruntime, transformers, sentencepiece, pytest" 2>&1 | Out-Null
+    $probeEc = $LASTEXITCODE
+} finally { $ErrorActionPreference = $prevEAP }
+if ($probeEc -ne 0) { Fail "python is missing test dependencies (see tests/e5/python/requirements.txt)" }
+Invoke-GateNative { & dotnet build tests/Lokad.Onnx.E5Runner --tl:off --nologo -v minimal -c Release -p:NuGetAudit=false }
 if ($LASTEXITCODE -ne 0) { Fail "E5Runner build failed" }
 $runner = "tests/Lokad.Onnx.E5Runner/bin/Release/net10.0/Lokad.Onnx.E5Runner.dll"
 New-Item -ItemType Directory -Path $artifacts -Force | Out-Null
@@ -29,7 +42,7 @@ $modes = @("scalar", "simd", "intrinsics")
 foreach ($m in $modes) {
     $first = "$artifacts/dotnet-$m.json"
     $repeat = "$artifacts/dotnet-$m.repeat.json"
-    & dotnet $runner --model $model --tokenizer $tokenizer --cases $cases --mode $m --output $first
+    Invoke-GateNative { & dotnet $runner --model $model --tokenizer $tokenizer --cases $cases --mode $m --output $first }
     if ($LASTEXITCODE -ne 0) {
         if ($m -eq "intrinsics" -and !$RequireIntrinsics) {
             Write-Host "UNSUPPORTED intrinsics: x86 FMA not available on this machine (rerun with -RequireIntrinsics to enforce)"
@@ -37,7 +50,7 @@ foreach ($m in $modes) {
         }
         Fail "E5Runner failed for mode $m"
     }
-    & dotnet $runner --model $model --tokenizer $tokenizer --cases $cases --mode $m --output $repeat
+    Invoke-GateNative { & dotnet $runner --model $model --tokenizer $tokenizer --cases $cases --mode $m --output $repeat }
     if ($LASTEXITCODE -ne 0) { Fail "E5Runner repeat failed for mode $m" }
     $h1 = (Get-FileHash $first -Algorithm SHA256).Hash
     $h2 = (Get-FileHash $repeat -Algorithm SHA256).Hash
@@ -45,6 +58,6 @@ foreach ($m in $modes) {
     Remove-Item $repeat -Force
     Write-Host "PASS ${m}: deterministic artifact"
 }
-& $Python -m pytest tests/e5/python/test_e5_conformance.py -q --no-header
+Invoke-GateNative { & $Python -m pytest tests/e5/python/test_e5_conformance.py -q --no-header }
 if ($LASTEXITCODE -ne 0) { Fail "native conformance suite failed" }
 Write-Host "PASS e5 conformance"

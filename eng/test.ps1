@@ -6,7 +6,11 @@ $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 function Invoke-Step($cmd) {
     Write-Host ">> $cmd"
-    Invoke-Expression $cmd
+    $prev = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        Invoke-Expression $cmd
+    } finally { $ErrorActionPreference = $prev }
     if ($LASTEXITCODE -ne 0) { throw "Step failed ($LASTEXITCODE): $cmd" }
 }
 Invoke-Step "dotnet restore --tl:off -v minimal Lokad.Onnx.slnx"

@@ -5,6 +5,14 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 function Fail($msg) { Write-Host "FAIL opfuzz: $msg"; exit 1 }
+function Invoke-GateNative {
+    param([scriptblock]$Command)
+    $prev = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        & $Command
+    } finally { $ErrorActionPreference = $prev }
+}
 $corpus = "tests/opfuzz/corpus"
 $sums = Join-Path $corpus "SHA256SUMS"
 if (!(Test-Path $sums)) { Fail "missing hash manifest: $sums" }
@@ -22,8 +30,8 @@ foreach ($f in $actual) {
     if (!$expected.ContainsKey($rel) -or $expected[$rel] -ne $h) { Fail "hash mismatch or unknown file: $rel" }
 }
 Write-Host "PASS assets: corpus hashes match ($($expected.Count) files)"
-& dotnet build tests/Lokad.Onnx.OpDump --tl:off --nologo -v minimal -c Release -p:NuGetAudit=false
+Invoke-GateNative { & dotnet build tests/Lokad.Onnx.OpDump --tl:off --nologo -v minimal -c Release -p:NuGetAudit=false }
 if ($LASTEXITCODE -ne 0) { Fail "OpDump build failed" }
-& $Python -m pytest tests/opfuzz/python -q --no-header
+Invoke-GateNative { & $Python -m pytest tests/opfuzz/python -q --no-header }
 if ($LASTEXITCODE -ne 0) { Fail "opfuzz conformance suite failed" }
 Write-Host "PASS opfuzz conformance"
