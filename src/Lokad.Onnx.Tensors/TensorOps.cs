@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 using static Lokad.Onnx.MathOps;
 using static Lokad.Onnx.Profiler;
@@ -1409,21 +1410,44 @@ where T : unmanaged
 
             var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
             var di = bx.GetDimensionsIterator(0..^2);
-            using var xh = bx.Storage.Pin();
-            using var yh = by.Storage.Pin();
-            using var zh = z.Storage.Pin();
             var m = bx.Dimensions[^2];
             var n = bx.Dimensions[^1];
             var k = by.Dimensions[^1];
-          
-            unsafe
+            var batches = di.Select(ix => ix.ToArray()).ToList();
+            int dop = options.MaxDegreeOfParallelism < 2 || batches.Count < 2
+                ? 1
+                : Math.Min(options.MaxDegreeOfParallelism, batches.Count);
+            if (dop > 1)
             {
-                var xp = (float*)xh.Pointer;
-                var yp = (float*)yh.Pointer;
-                var zp = (float*)zh.Pointer;
-                foreach (var idx in di)
+                Parallel.For(0, batches.Count, new ParallelOptions { MaxDegreeOfParallelism = dop }, bi =>
                 {
-                    RunFloatMatMulKernel(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx), options);
+                    var idx = batches[bi];
+                    using var xh = bx.Storage.Pin();
+                    using var yh = by.Storage.Pin();
+                    using var zh = z.Storage.Pin();
+                    unsafe
+                    {
+                        RunFloatMatMulKernel(m, n, k,
+                            (float*)xh.Pointer + bx.GetStorageIndex(idx),
+                            (float*)yh.Pointer + by.GetStorageIndex(idx),
+                            (float*)zh.Pointer + z.GetStorageIndex(idx), options);
+                    }
+                });
+            }
+            else
+            {
+                using var xh = bx.Storage.Pin();
+                using var yh = by.Storage.Pin();
+                using var zh = z.Storage.Pin();
+                unsafe
+                {
+                    var xp = (float*)xh.Pointer;
+                    var yp = (float*)yh.Pointer;
+                    var zp = (float*)zh.Pointer;
+                    foreach (var idx in batches)
+                    {
+                        RunFloatMatMulKernel(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx), options);
+                    }
                 }
             }
             return z;

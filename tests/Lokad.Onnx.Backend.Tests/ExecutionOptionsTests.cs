@@ -14,6 +14,14 @@ public class ExecutionOptionsTests
         Assert.False(TensorExecutionOptions.Simd.UseIntrinsics);
         Assert.True(TensorExecutionOptions.Intrinsics.UseSimd);
         Assert.True(TensorExecutionOptions.Intrinsics.UseIntrinsics);
+        Assert.Equal(1, TensorExecutionOptions.Scalar.MaxDegreeOfParallelism);
+        Assert.Equal(1, TensorExecutionOptions.Simd.MaxDegreeOfParallelism);
+        Assert.Equal(1, TensorExecutionOptions.Intrinsics.MaxDegreeOfParallelism);
+        Assert.Equal(1, TensorExecutionOptions.Auto.MaxDegreeOfParallelism);
+        var parallel = TensorExecutionOptions.Parallel(4);
+        Assert.True(parallel.UseSimd);
+        Assert.True(parallel.UseIntrinsics);
+        Assert.Equal(4, parallel.MaxDegreeOfParallelism);
     }
 
     [Fact]

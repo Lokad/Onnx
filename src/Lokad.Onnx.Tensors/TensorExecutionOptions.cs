@@ -3,13 +3,19 @@ using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx;
 
-public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntrinsics)
+/// <summary>MaxDegreeOfParallelism caps worker threads for batch-parallel kernels (1 keeps the historical sequential path). Values above the batch count are clamped by the kernel; only explicit values above 1 opt in.</summary>
+public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntrinsics, int MaxDegreeOfParallelism = 1)
 {
     public static TensorExecutionOptions Scalar => new TensorExecutionOptions(false, false);
 
     public static TensorExecutionOptions Simd => new TensorExecutionOptions(true, false);
 
     public static TensorExecutionOptions Intrinsics => new TensorExecutionOptions(true, true);
+
+    public static TensorExecutionOptions Parallel(int maxDegreeOfParallelism) =>
+        maxDegreeOfParallelism < 1
+            ? throw new ArgumentOutOfRangeException(nameof(maxDegreeOfParallelism), "Parallelism must request at least 1 worker.")
+            : new TensorExecutionOptions(true, true, maxDegreeOfParallelism);
 
     public static TensorExecutionOptions Auto
     {
