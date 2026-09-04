@@ -1,4 +1,0 @@
-onnx
-pythonnet
-transformers[torch]
-pytest
