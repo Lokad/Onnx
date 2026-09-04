@@ -191,10 +191,17 @@ class Program : Runtime
             }
         }
 
-        if (ro.DisableSimd)
+        bool useSimd = !ro.DisableSimd;
+        bool useIntrinsics = ro.DisableSimd
+            ? false
+            : (!System.Numerics.Vector.IsHardwareAccelerated
+                ? HardwareIntrinsics.IsX86FmaSupported
+                : (ro.EnableIntrinsics || HardwareIntrinsics.IsX86FmaSupported));
+        var execOptions = new ExecutionOptions(
+            ro.OptimizeMemory ? OptimizationMode.Memory : OptimizationMode.Speed,
+            new TensorExecutionOptions(useSimd, useIntrinsics));
+        if (!useSimd)
         {
-            HardwareConfig.UseSimd = false;
-            HardwareConfig.UseIntrinsics = false;
             Info("CPU SIMD features disabled.");
         }
         else
@@ -206,12 +213,8 @@ class Program : Runtime
 
             }
         }
-        
-        if (!ro.DisableSimd && System.Numerics.Vector.IsHardwareAccelerated)
-        {
-            HardwareConfig.UseIntrinsics = (ro.EnableIntrinsics || HardwareConfig.UseIntrinsics);
-        }
-        if (HardwareConfig.UseIntrinsics)
+
+        if (useIntrinsics)
         {
             Info("CPU SIMD available intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
         }
@@ -220,10 +223,6 @@ class Program : Runtime
             Info("Not using CPU SIMD intrinsics.");
         }
 
-        if (ro.OptimizeMemory)
-        {
-            CPUExecutionProvider.OptimizationMode = OptimizationMode.Memory;    
-        }
 
         if (ro.EnableProfiler)
         {
@@ -232,7 +231,7 @@ class Program : Runtime
 
         if (ro.Node == "")
         {
-            if (graph.Execute(ui, true))
+            if (graph.Execute(ui, true, ExecutionProvider.CPU, execOptions))
             {
                 Info("Printing outputs...");
                 foreach (var o in graph.Outputs.Values)
@@ -258,7 +257,7 @@ class Program : Runtime
         }
         else
         {
-            if (graph.ExecuteNode(ui, ro.Node, true))
+            if (graph.ExecuteNode(ui, ro.Node, true, ExecutionProvider.CPU, execOptions))
             {
                 Info("Printing outputs...");
                 foreach (var o in graph.Outputs.Values)

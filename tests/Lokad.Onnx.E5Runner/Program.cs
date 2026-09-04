@@ -75,8 +75,6 @@ static class E5Runner
                 Console.Error.WriteLine("E5Runner error: unknown mode: " + mode);
                 return 1;
         }
-        HardwareConfig.UseSimd = useSimd;
-        HardwareConfig.UseIntrinsics = useIntrinsics;
         var execOptions = new ExecutionOptions(OptimizationMode.Speed, new TensorExecutionOptions(useSimd, useIntrinsics));
 
         List<(string id, string text)> caseList = new List<(string, string)>();
