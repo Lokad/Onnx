@@ -40,10 +40,14 @@ public class ComputationalGraph : Runtime
     #region Methods
     public int OpsetVersion(string domain = "") => this.Opset.ContainsKey(domain) ? this.Opset[domain] : throw new InvalidOperationException($"The domain {domain} does not ezist in the imported opsets.");
 
-    public ITensor GetInputTensor(string name) =>
-        Inputs.ContainsKey(name) ? Inputs[name] : Initializers.ContainsKey(name) ? Initializers[name] : 
-            IntermediateOutputs[name] ?? throw new InvalidOperationException($"The intermediate output tensor {name} has not been assigned a value.");
-
+    public ITensor GetInputTensor(string name)
+    {
+        if (Inputs.TryGetValue(name, out var input)) return input;
+        if (Initializers.TryGetValue(name, out var init)) return init;
+        if (IntermediateOutputs.TryGetValue(name, out var mid) && mid is not null) return mid;
+        if (Outputs.TryGetValue(name, out var output)) return output;
+        throw new InvalidOperationException($"The intermediate output tensor {name} has not been assigned a value.");
+    }
     public ITensor? GetInputTensor(string[] Inputs, int index) =>
        index < Inputs.Length ? GetInputTensor(Inputs[index]) : null;    
 

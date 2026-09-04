@@ -46,7 +46,8 @@ namespace Lokad.Onnx
         Complex64 = 14,
         Complex128 = 15,
         BFloat16 = 16,
-        DataTypeMax = 17
+        DataTypeMax = 17,
+        Sequence = 100
     }
     #endregion
 

@@ -72,6 +72,11 @@ namespace Lokad.Onnx
                 Error("Could not parse {f} as ONNX model file.", onnxInputFilePath);
                 return null;
             }
+            var dir = Path.GetDirectoryName(Path.GetFullPath(onnxInputFilePath));
+            foreach (var init in mp.Graph.Initializer)
+            {
+                init.ResolveExternalData(dir!);
+            }
             var g = Load(mp);
             if (g is not null)
             {

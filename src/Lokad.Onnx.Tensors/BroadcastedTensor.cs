@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx;
+namespace Lokad.Onnx;
 
 using System;
 using System.Collections.Generic;
@@ -66,7 +66,7 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
 
     public override Tensor<T> Reshape(ReadOnlySpan<int> dims)
     {
-        throw new NotSupportedException();
+            return ToDenseTensor().Reshape(dims);
     }
    
     public override Tensor<T> InsertDim(int dim)

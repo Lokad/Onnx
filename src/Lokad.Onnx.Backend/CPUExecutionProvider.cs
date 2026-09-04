@@ -51,6 +51,17 @@ public class CPUExecutionProvider : Runtime
         OpType.ReduceMean,
         OpType.ReduceMax,
         OpType.Softmax,
+        OpType.Abs,
+        OpType.Cos,
+        OpType.Sin,
+        OpType.Neg,
+        OpType.Gelu,
+        OpType.Squeeze,
+        OpType.Range,
+        OpType.Tile,
+        OpType.LayerNormalization,
+        OpType.SplitToSequence,
+        OpType.SequenceAt,
     };
 
     public static OptimizationMode OptimizationMode { get; set; } = OptimizationMode.Speed;
@@ -109,6 +120,7 @@ public class CPUExecutionProvider : Runtime
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Add((Tensor<byte>)bA, (Tensor<byte>)bB));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Add((Tensor<int>)bA, (Tensor<int>)bB));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Add((Tensor<long>)bA, (Tensor<long>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)bA, (Tensor<double>)bB));
             default: return InputTypeNotSupported(op, nameof(A), A);
@@ -140,6 +152,7 @@ public class CPUExecutionProvider : Runtime
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Subtract((Tensor<byte>)bA, (Tensor<byte>)bB));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Subtract((Tensor<int>)bA, (Tensor<int>)bB));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Subtract((Tensor<long>)bA, (Tensor<long>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Subtract((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Subtract((Tensor<double>)bA, (Tensor<double>)bB));
             default: return InputTypeNotSupported(op, nameof(A), A);
@@ -172,6 +185,7 @@ public class CPUExecutionProvider : Runtime
         {
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Multiply((Tensor<byte>)bA, (Tensor<byte>)bB));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Multiply((Tensor<int>)bA, (Tensor<int>)bB));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Multiply((Tensor<long>)bA, (Tensor<long>)bB));
             case TensorElementType.Float: return Success(op, Tensor<float>.Multiply((Tensor<float>)bA, (Tensor<float>)bB));
             case TensorElementType.Double: return Success(op, Tensor<double>.Multiply((Tensor<double>)bA, (Tensor<double>)bB));
             default: return InputTypeNotSupported(op, nameof(A), A);
@@ -567,22 +581,22 @@ public class CPUExecutionProvider : Runtime
         
         if (starts.ElementType == TensorElementType.Int64)
         {
-            starts = starts.ConvertToInt32();
+            starts = ToInt32Saturating(starts);
         }
 
         if (ends.ElementType == TensorElementType.Int64)
         {
-            ends = ends.ConvertToInt32();
+            ends = ToInt32Saturating(ends);
         }
 
         if (axes is not null && axes.ElementType == TensorElementType.Int64)
         {
-            axes = axes.ConvertToInt32();
+            axes = ToInt32Saturating(axes);
         }
 
         if (steps is not null && steps.ElementType == TensorElementType.Int64)
         {
-            steps = steps.ConvertToInt32();
+            steps = ToInt32Saturating(steps);
         }
 
         switch (data.ElementType)
@@ -731,7 +745,7 @@ public class CPUExecutionProvider : Runtime
         if (axes is null) return MissingInput(op, nameof(axes));
         if (axes.ElementType == TensorElementType.Int64)
         {
-            axes = axes.ConvertToInt32();
+            axes = ToInt32Saturating(axes);
         }
         var _axes = ((Tensor<int>) axes).ToArray();
         return Success(op, data.Unsqueeze(_axes));
@@ -817,6 +831,247 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Double: return Success(op, Tensor<double>.Softmax((Tensor<double>) input, axis));
             default: return InputTypeNotSupported(op, nameof(input), input);
         }
+    }
+
+
+    static Tensor<int> ToInt32Saturating(ITensor data)
+    {
+        if (data is Tensor<int> i) return i;
+        if (data is Tensor<long> l)
+        {
+            var values = l.ToArray();
+            var clamped = new int[values.Length];
+            for (int k = 0; k < values.Length; k++) clamped[k] = values[k] > int.MaxValue ? int.MaxValue : values[k] < int.MinValue ? int.MinValue : (int)values[k];
+            return DenseTensor<int>.OfValues(clamped);
+        }
+        throw new ArgumentException("Expected int32/int64 tensor.");
+    }
+
+    static int[] ToIntArray(ITensor data, string name)
+    {
+        if (data is Tensor<long> l) return l.ToArray().Select(v => (int)v).ToArray();
+        if (data is Tensor<int> i) return i.ToArray();
+        throw new ArgumentException($"Expected int32/int64 tensor for {name}.");
+    }
+
+    static long ToInt64Scalar(ITensor data, string name)
+    {
+        if (data is Tensor<long> l) return l.ToArray()[0];
+        if (data is Tensor<int> i) return i.ToArray()[0];
+        throw new ArgumentException($"Expected int32/int64 scalar tensor for {name}.");
+    }
+
+    public static OpResult Abs(ITensor? X, ExecutionOptions? options = null)
+    {
+        var op = OpType.Abs;
+        if (X is null) return MissingInput(op, nameof(X));
+        Profiler.StartOpStage(OpStage.Math);
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Abs((Tensor<float>)X));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Abs((Tensor<double>)X));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Abs((Tensor<int>)X));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Abs((Tensor<long>)X));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult Cos(ITensor? X, ExecutionOptions? options = null)
+    {
+        var op = OpType.Cos;
+        if (X is null) return MissingInput(op, nameof(X));
+        Profiler.StartOpStage(OpStage.Math);
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Cos((Tensor<float>)X));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Cos((Tensor<double>)X));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult Sin(ITensor? X, ExecutionOptions? options = null)
+    {
+        var op = OpType.Sin;
+        if (X is null) return MissingInput(op, nameof(X));
+        Profiler.StartOpStage(OpStage.Math);
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Sin((Tensor<float>)X));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Sin((Tensor<double>)X));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult Neg(ITensor? X, ExecutionOptions? options = null)
+    {
+        var op = OpType.Neg;
+        if (X is null) return MissingInput(op, nameof(X));
+        Profiler.StartOpStage(OpStage.Math);
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Negate((Tensor<float>)X));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Negate((Tensor<double>)X));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Negate((Tensor<int>)X));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Negate((Tensor<long>)X));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult Gelu(ITensor? X, string? approximate = null, ExecutionOptions? options = null)
+    {
+        var op = OpType.Gelu;
+        if (X is null) return MissingInput(op, nameof(X));
+        if (approximate is not null && approximate != "none") return AttributeNotSupported(op, nameof(approximate), approximate);
+        Profiler.StartOpStage(OpStage.Math);
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Gelu((Tensor<float>)X));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Gelu((Tensor<double>)X));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    /// <summary>
+    /// Removes size-1 dimensions; a null axes removes every size-1 dimension.
+    /// Axes index the input tensor; squeezing a dimension whose size is not 1 fails.
+    /// </summary>
+    public static OpResult Squeeze(ITensor? data, ITensor? axes = null, ExecutionOptions? options = null)
+    {
+        var op = OpType.Squeeze;
+        if (data is null) return MissingInput(op, nameof(data));
+        Profiler.StartOpStage(OpStage.Math);
+        int[] dims = data.Dims.ToArray();
+        if (axes is null)
+        {
+            dims = dims.Where(d => d != 1).ToArray();
+        }
+        else
+        {
+            var ax = ToIntArray(axes, nameof(axes)).Select(a => a < 0 ? a + data.Rank : a).ToArray();
+            foreach (var a in ax)
+            {
+                if (a < 0 || a >= data.Rank) return WrongInputShape(op, nameof(axes), data, $"Axis {a} is out of range.");
+                if (dims[a] != 1) return WrongInputShape(op, nameof(axes), data, $"Axis {a} has size {dims[a]}, only size-1 dimensions can be squeezed.");
+            }
+            dims = dims.Where((d, i) => !ax.Contains(i)).ToArray();
+        }
+        return Success(op, data.Reshape(dims).ToDenseTensor());
+    }
+
+    /// <summary>
+    /// Dispatches scalar start, limit, and delta to the matching dtype Range kernel.
+    /// </summary>
+    public static OpResult Range(ITensor? start, ITensor? limit, ITensor? delta, ExecutionOptions? options = null)
+    {
+        var op = OpType.Range;
+        if (start is null) return MissingInput(op, nameof(start));
+        if (limit is null) return MissingInput(op, nameof(limit));
+        if (delta is null) return MissingInput(op, nameof(delta));
+        Profiler.StartOpStage(OpStage.Math);
+        switch (start.ElementType)
+        {
+            case TensorElementType.Float:
+                return Success(op, Tensor<float>.Range(Convert.ToSingle(start.GetValue(0)), Convert.ToSingle(limit.GetValue(0)), Convert.ToSingle(delta.GetValue(0))));
+            case TensorElementType.Double:
+                return Success(op, Tensor<double>.Range(Convert.ToDouble(start.GetValue(0)), Convert.ToDouble(limit.GetValue(0)), Convert.ToDouble(delta.GetValue(0))));
+            case TensorElementType.Int64:
+                return Success(op, Tensor<long>.Range(Convert.ToInt64(start.GetValue(0)), Convert.ToInt64(limit.GetValue(0)), Convert.ToInt64(delta.GetValue(0))));
+            case TensorElementType.Int32:
+                return Success(op, Tensor<int>.Range(Convert.ToInt32(start.GetValue(0)), Convert.ToInt32(limit.GetValue(0)), Convert.ToInt32(delta.GetValue(0))));
+            default: return InputTypeNotSupported(op, nameof(start), start);
+        }
+    }
+
+    /// <summary>
+    /// Dispatches data and int32/int64 repeats to the matching dtype Tile kernel.
+    /// </summary>
+    public static OpResult Tile(ITensor? data, ITensor? repeats, ExecutionOptions? options = null)
+    {
+        var op = OpType.Tile;
+        if (data is null) return MissingInput(op, nameof(data));
+        if (repeats is null) return MissingInput(op, nameof(repeats));
+        Profiler.StartOpStage(OpStage.Math);
+        var reps = ToIntArray(repeats, nameof(repeats));
+        switch (data.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.Tile((Tensor<float>)data, reps));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Tile((Tensor<double>)data, reps));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Tile((Tensor<int>)data, reps));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Tile((Tensor<long>)data, reps));
+            default: return InputTypeNotSupported(op, nameof(data), data);
+        }
+    }
+
+    public static OpResult LayerNormalization(ITensor? x, ITensor? scale, ITensor? bias, int? axis = null, float? epsilon = null, ExecutionOptions? options = null)
+    {
+        var op = OpType.LayerNormalization;
+        if (x is null) return MissingInput(op, nameof(x));
+        if (scale is null) return MissingInput(op, nameof(scale));
+        Profiler.StartOpStage(OpStage.Math);
+        int ax = axis ?? -1;
+        float eps = epsilon ?? 1e-5f;
+        switch (x.ElementType)
+        {
+            case TensorElementType.Float:
+                return Success(op, Tensor<float>.LayerNormalization((Tensor<float>)x, (Tensor<float>)scale, bias as Tensor<float>, ax, eps));
+            case TensorElementType.Double:
+                return Success(op, Tensor<double>.LayerNormalization((Tensor<double>)x, (Tensor<double>)scale, bias as Tensor<double>, ax, eps));
+            default: return InputTypeNotSupported(op, nameof(x), x);
+        }
+    }
+
+    /// <summary>
+    /// Splits the input along the axis into the given sizes and returns a TensorSequence.
+    /// Keepdims 1 preserves the rank; keepdims 0 drops the split axis and needs every size to be 1.
+    /// </summary>
+    public static OpResult SplitToSequence(ITensor? input, ITensor? split, int? axis = null, int? keepdims = null, ExecutionOptions? options = null)
+    {
+        var op = OpType.SplitToSequence;
+        if (input is null) return MissingInput(op, nameof(input));
+        if (split is null) return MissingInput(op, nameof(split));
+        Profiler.StartOpStage(OpStage.Math);
+        int rank = input.Rank;
+        int ax = axis.HasValue ? (axis.Value < 0 ? axis.Value + rank : axis.Value) : 0;
+        if (ax < 0 || ax >= rank) return WrongInputShape(op, nameof(axis), input, $"Axis {axis} is out of range.");
+        int[] sizes = ToIntArray(split, nameof(split));
+        int dim = input.Dims[ax];
+        if (sizes.Sum() != dim) return WrongInputShape(op, nameof(split), input, "Split sizes must sum to the split dimension.");
+        bool keep = (keepdims ?? 1) == 1;
+        var items = new List<ITensor>();
+        int start = 0;
+        foreach (var length in sizes)
+        {
+            if (start + length > dim) return WrongInputShape(op, nameof(split), input, "Split sizes exceed the split dimension.");
+            ITensor? chunk = input.ElementType switch
+            {
+                TensorElementType.Float => Tensor<float>.ChunkCopy((Tensor<float>)input, ax, start, length),
+                TensorElementType.Double => Tensor<double>.ChunkCopy((Tensor<double>)input, ax, start, length),
+                TensorElementType.Int32 => Tensor<int>.ChunkCopy((Tensor<int>)input, ax, start, length),
+                TensorElementType.Int64 => Tensor<long>.ChunkCopy((Tensor<long>)input, ax, start, length),
+                _ => null,
+            };
+            if (chunk is null) return InputTypeNotSupported(op, nameof(input), input);
+            if (!keep) chunk = chunk.Reshape(chunk.Dims.Where((d, i) => i != ax).ToArray()).ToDenseTensor();
+            items.Add(chunk);
+            start += length;
+        }
+        return Success(op, new TensorSequence(items));
+    }
+
+    /// <summary>
+    /// Returns the sequence element at the scalar index; negative indices count from the end.
+    /// </summary>
+    public static OpResult SequenceAt(ITensor? sequence, ITensor? index, ExecutionOptions? options = null)
+    {
+        var op = OpType.SequenceAt;
+        if (sequence is null) return MissingInput(op, nameof(sequence));
+        if (index is null) return MissingInput(op, nameof(index));
+        if (sequence is not TensorSequence seq) return WrongInputType(op, nameof(sequence), "Input must be a sequence.", sequence);
+        Profiler.StartOpStage(OpStage.Math);
+        long position = ToInt64Scalar(index, nameof(index));
+        if (position < 0) position += seq.Items.Count;
+        if (position < 0 || position >= seq.Items.Count) return WrongInputShape(op, nameof(index), index, "Sequence index is out of range.");
+        return Success(op, seq.Items[(int)position]);
     }
 }
 

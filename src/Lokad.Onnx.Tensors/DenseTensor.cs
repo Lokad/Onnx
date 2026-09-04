@@ -78,7 +78,8 @@ namespace Lokad.Onnx
         /// <param name="length">Size of the 1-dimensional tensor</param>
         public DenseTensor(int length) : base(length)
         {
-            memory = new T[length];
+            arr = new T[length];
+            memory = arr;
         }
 
         /// <summary>

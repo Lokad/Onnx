@@ -289,9 +289,13 @@ where T : unmanaged
         return result;
     }
 
+    /// <summary>
+    /// Broadcasts data to the target shape following ONNX broadcast rules.
+    /// A target dimension of 1 preserves the input dimension; added dimensions are stride-zero views.
+    /// </summary>
     public static Tensor<T> Expand(Tensor<T> data, int[] targetShape)
     {
-        // NOTE: not perf optimized yet.
+        // Broadcast is view-based: added dimensions are stride-zero views, so Expand itself allocates no element storage.
         StartOpStage(OpStage.ValidateArguments);
         if (data is null) throw new ArgumentNullException(nameof(data));
         if (targetShape is null) throw new ArgumentNullException(nameof(targetShape));
@@ -319,7 +323,7 @@ where T : unmanaged
             }
             else if (targetDim == 1 && inputDim > 1)
             {
-                // DINOv2 emits a shape mask that can collapse to ones; treat 1 as "keep dim" here.
+                // Keep-dim on target 1: variable-size models (verified on the DINOv2 position-embedding interpolation path at 224 and 518 pixels) emit shape masks that collapse to 1 for dimensions that must be preserved, so 1 means keep here rather than broadcast.
                 targetDim = inputDim;
             }
 
@@ -340,7 +344,6 @@ where T : unmanaged
 
     public static Tensor<bool> Equal(Tensor<T> x, Tensor<T> y)
     {
-        // NOTE: not perf optimized yet.
         StartOpStage(OpStage.ValidateArguments);
         if (!Broadcast(x, y, out var bx, out var by))
         {
@@ -356,7 +359,6 @@ where T : unmanaged
 
     public static Tensor<T> Where(Tensor<bool> condition, Tensor<T> x, Tensor<T> y)
     {
-        // NOTE: not perf optimized yet.
         StartOpStage(OpStage.ValidateArguments);
         if (!Broadcast(x, y, out var bx, out var by))
         {
@@ -427,6 +429,12 @@ where T : unmanaged
 
     public static Tensor<int> Divide(Tensor<int> x, int y) => x.VectorizedApply(l => l / new Vector<int>(y), l => l / y);
 
+    public static Tensor<long> Add(Tensor<long> x, Tensor<long> y) => x.VectorizedApply((l, r) => l + r, (l, r) => l + r, y);
+
+    public static Tensor<long> Subtract(Tensor<long> x, Tensor<long> y) => x.VectorizedApply((l, r) => l - r, (l, r) => l - r, y);
+
+    public static Tensor<long> Multiply(Tensor<long> x, Tensor<long> y) => x.VectorizedApply((l, r) => l * r, (l, r) => l * r, y);
+
     public static Tensor<long> Divide(Tensor<long> x, Tensor<long> y) => x.Apply((l, r) => l / r, y);
 
     public static Tensor<long> Divide(Tensor<long> x, long y) => x.Apply(l => l / y);
@@ -454,6 +462,241 @@ where T : unmanaged
     public static Tensor<float> Abs(Tensor<float> x) => x.Apply(l => l >= 0.0f ? l : -l);
 
     public static Tensor<double> Abs(Tensor<double> x) => x.Apply(l => l >= 0.0 ? l : -l);
+    public static Tensor<float> Cos(Tensor<float> x) => x.VectorizedApply(Vector.Cos, MathF.Cos);
+
+    public static Tensor<double> Cos(Tensor<double> x) => x.VectorizedApply(Vector.Cos, Math.Cos);
+
+    public static Tensor<float> Sin(Tensor<float> x) => x.VectorizedApply(Vector.Sin, MathF.Sin);
+
+    public static Tensor<double> Sin(Tensor<double> x) => x.VectorizedApply(Vector.Sin, Math.Sin);
+
+    public static Tensor<int> Negate(Tensor<int> x) => x.VectorizedApply(Vector.Negate, l => -l);
+
+    public static Tensor<long> Negate(Tensor<long> x) => x.VectorizedApply(Vector.Negate, l => -l);
+
+    public static Tensor<int> Abs(Tensor<int> x) => x.Apply(l => l >= 0 ? l : -l);
+
+    public static Tensor<long> Abs(Tensor<long> x) => x.Apply(l => l >= 0L ? l : -l);
+
+    /// <summary>
+    /// Exact Gaussian error linear unit: 0.5 * x * (1 + erf(x / sqrt(2))).
+    /// </summary>
+    public static Tensor<float> Gelu(Tensor<float> x) => x.Apply((float v) => 0.5f * v * (1f + MathOps.Erf(v * 0.7071067811865476f)));
+
+    /// <summary>
+    /// Exact Gaussian error linear unit: 0.5 * x * (1 + erf(x / sqrt(2))).
+    /// </summary>
+    public static Tensor<double> Gelu(Tensor<double> x) => x.Apply((double v) => 0.5 * v * (1.0 + MathOps.Erf(v * 0.7071067811865476)));
+
+    /// <summary>
+    /// Validates LayerNormalization arguments and derives the normalization block geometry.
+    /// The axis indexes the input tensor; negative values count from the back.
+    /// </summary>
+    static (int Block, int Outer) LayerNormalizationPlan(int rank, int axis, int[] dimensions, long inputLength, long scaleLength, long? biasLength)
+    {
+        int normalizedAxis = axis < 0 ? axis + rank : axis;
+        if (normalizedAxis < 0 || normalizedAxis >= rank) throw new ArgumentException(nameof(axis));
+        int block = 1;
+        for (int dimension = normalizedAxis; dimension < rank; dimension++) block *= dimensions[dimension];
+        if (scaleLength != block) throw new ArgumentException("Scale length must match the normalized dimensions.", "scale");
+        if (biasLength.HasValue && biasLength.Value != block) throw new ArgumentException("Bias length must match the normalized dimensions.", "bias");
+        return (block, (int)(inputLength / block));
+    }
+
+    /// <summary>
+    /// Normalizes over the input dimensions from axis to the last one using scale, optional bias, and epsilon.
+    /// Statistics accumulate in double precision; the axis indexes the input tensor.
+    /// </summary>
+    public static Tensor<float> LayerNormalization(Tensor<float> x, Tensor<float> scale, Tensor<float>? bias, int axis = -1, float epsilon = 1e-5f)
+    {
+        var xd = x.ToDenseTensor();
+        var sd = scale.ToDenseTensor();
+        var bd = bias?.ToDenseTensor();
+        var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
+        int block = plan.Block;
+        int outer = plan.Outer;
+        var output = new DenseTensor<float>(xd.Dimensions);
+        var xs = xd.Buffer.Span;
+        var ss = sd.Buffer.Span;
+        var os = output.Buffer.Span;
+        for (int o = 0; o < outer; o++)
+        {
+            double mean = 0.0;
+            for (int i = 0; i < block; i++) mean += xs[o * block + i];
+            mean /= block;
+            double variance = 0.0;
+            for (int i = 0; i < block; i++) { double d = xs[o * block + i] - mean; variance += d * d; }
+            variance /= block;
+            double inv = 1.0 / Math.Sqrt(variance + epsilon);
+            for (int i = 0; i < block; i++) os[o * block + i] = (float)((xs[o * block + i] - mean) * inv * ss[i] + (bd is null ? 0f : bd.Buffer.Span[i]));
+        }
+        return output;
+    }
+
+    /// <summary>
+    /// Normalizes over the input dimensions from axis to the last one using scale, optional bias, and epsilon.
+    /// Statistics accumulate in double precision; the axis indexes the input tensor.
+    /// </summary>
+    public static Tensor<double> LayerNormalization(Tensor<double> x, Tensor<double> scale, Tensor<double>? bias, int axis = -1, double epsilon = 1e-5)
+    {
+        var xd = x.ToDenseTensor();
+        var sd = scale.ToDenseTensor();
+        var bd = bias?.ToDenseTensor();
+        var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
+        int block = plan.Block;
+        int outer = plan.Outer;
+        var output = new DenseTensor<double>(xd.Dimensions);
+        var xs = xd.Buffer.Span;
+        var ss = sd.Buffer.Span;
+        var os = output.Buffer.Span;
+        for (int o = 0; o < outer; o++)
+        {
+            double mean = 0.0;
+            for (int i = 0; i < block; i++) mean += xs[o * block + i];
+            mean /= block;
+            double variance = 0.0;
+            for (int i = 0; i < block; i++) { double d = xs[o * block + i] - mean; variance += d * d; }
+            variance /= block;
+            double inv = 1.0 / Math.Sqrt(variance + epsilon);
+            for (int i = 0; i < block; i++) os[o * block + i] = (xs[o * block + i] - mean) * inv * ss[i] + (bd is null ? 0.0 : bd.Buffer.Span[i]);
+        }
+        return output;
+    }
+
+    /// <summary>
+    /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws.
+    /// </summary>
+    public static Tensor<float> Range(float start, float limit, float delta)
+    {
+        if (delta == 0f) throw new ArgumentException(nameof(delta));
+        int count = Math.Max((int)Math.Ceiling((limit - start) / delta), 0);
+        var output = new DenseTensor<float>(count);
+        var span = output.Buffer.Span;
+        for (int i = 0; i < count; i++) span[i] = start + i * delta;
+        return output;
+    }
+
+    /// <summary>
+    /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws.
+    /// </summary>
+    public static Tensor<double> Range(double start, double limit, double delta)
+    {
+        if (delta == 0.0) throw new ArgumentException(nameof(delta));
+        int count = Math.Max((int)Math.Ceiling((limit - start) / delta), 0);
+        var output = new DenseTensor<double>(count);
+        var span = output.Buffer.Span;
+        for (int i = 0; i < count; i++) span[i] = start + i * delta;
+        return output;
+    }
+
+    /// <summary>
+    /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws.
+    /// </summary>
+    public static Tensor<long> Range(long start, long limit, long delta)
+    {
+        if (delta == 0L) throw new ArgumentException(nameof(delta));
+        int count = Math.Max((int)Math.Ceiling(((double)limit - start) / delta), 0);
+        var output = new DenseTensor<long>(count);
+        var span = output.Buffer.Span;
+        for (int i = 0; i < count; i++) span[i] = start + i * delta;
+        return output;
+    }
+
+    /// <summary>
+    /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws.
+    /// </summary>
+    public static Tensor<int> Range(int start, int limit, int delta)
+    {
+        if (delta == 0) throw new ArgumentException(nameof(delta));
+        int count = Math.Max((int)Math.Ceiling(((double)limit - start) / delta), 0);
+        var output = new DenseTensor<int>(count);
+        var span = output.Buffer.Span;
+        for (int i = 0; i < count; i++) span[i] = start + i * delta;
+        return output;
+    }
+
+    static DenseTensor<U> TileCore<U>(Tensor<U> x, int[] repeats) where U : unmanaged
+    {
+        if (repeats.Length != x.Rank) throw new ArgumentException("Repeats rank must match input rank.", nameof(repeats));
+        var xd = x.ToDenseTensor();
+        var outDims = new int[x.Rank];
+        for (int i = 0; i < x.Rank; i++)
+        {
+            if (repeats[i] < 0) throw new ArgumentException("Repeats must be non-negative.", nameof(repeats));
+            outDims[i] = xd.Dimensions[i] * repeats[i];
+        }
+        var output = new DenseTensor<U>((ReadOnlySpan<int>)outDims);
+        var src = new int[x.Rank];
+        foreach (var index in output.GetDimensionsIterator())
+        {
+            for (int i = 0; i < x.Rank; i++) src[i] = xd.Dimensions[i] == 0 ? 0 : index[i] % xd.Dimensions[i];
+            output[index] = xd[src];
+        }
+        return output;
+    }
+
+    /// <summary>
+    /// Repeats the input repeats[i] times along each dimension.
+    /// The repeats rank must match the input rank and every repeat must be non-negative.
+    /// </summary>
+    public static Tensor<float> Tile(Tensor<float> x, int[] repeats) => TileCore(x, repeats);
+
+    /// <summary>
+    /// Repeats the input repeats[i] times along each dimension.
+    /// The repeats rank must match the input rank and every repeat must be non-negative.
+    /// </summary>
+    public static Tensor<double> Tile(Tensor<double> x, int[] repeats) => TileCore(x, repeats);
+
+    /// <summary>
+    /// Repeats the input repeats[i] times along each dimension.
+    /// The repeats rank must match the input rank and every repeat must be non-negative.
+    /// </summary>
+    public static Tensor<int> Tile(Tensor<int> x, int[] repeats) => TileCore(x, repeats);
+
+    /// <summary>
+    /// Repeats the input repeats[i] times along each dimension.
+    /// The repeats rank must match the input rank and every repeat must be non-negative.
+    /// </summary>
+    public static Tensor<long> Tile(Tensor<long> x, int[] repeats) => TileCore(x, repeats);
+
+    /// <summary>
+    /// Copies the length elements starting at start along the axis.
+    /// Negative axes resolve against the input rank; out-of-range chunks throw.
+    /// </summary>
+    public static DenseTensor<U> ChunkCopy<U>(Tensor<U> x, int axis, int start, int length) where U : unmanaged
+    {
+        int rank = x.Rank;
+        int ax = axis < 0 ? axis + rank : axis;
+        if (ax < 0 || ax >= rank) throw new ArgumentException(nameof(axis));
+        if (start < 0 || length < 0 || start + length > x.Dimensions[ax]) throw new ArgumentException("Chunk is out of range.");
+        var xd = x.ToDenseTensor();
+        var outDims = xd.Dimensions.ToArray();
+        outDims[ax] = length;
+        var output = new DenseTensor<U>((ReadOnlySpan<int>)outDims);
+        int inner = 1;
+        for (int trailing = ax + 1; trailing < rank; trailing++) inner *= outDims[trailing];
+        int outer = 1;
+        for (int leading = 0; leading < ax; leading++) outer *= outDims[leading];
+        if (HasStandardStrides(xd))
+        {
+            var outputSpan = output.Buffer.Span;
+            var sourceSpan = xd.Buffer.Span;
+            int axisLength = xd.Dimensions[ax];
+            for (int outerIndex = 0; outerIndex < outer; outerIndex++)
+            {
+                sourceSpan.Slice((outerIndex * axisLength + start) * inner, length * inner).CopyTo(outputSpan.Slice(outerIndex * length * inner, length * inner));
+            }
+            return output;
+        }
+        var src = new int[rank];
+        foreach (var index in output.GetDimensionsIterator())
+        {
+            for (int i = 0; i < rank; i++) src[i] = index[i];
+            src[ax] += start;
+            output[index] = xd[src];
+        }
+        return output;
+    }
 
     public static Tensor<float> Sqrt(Tensor<float> x) => x.VectorizedApply(Vector.SquareRoot, MathF.Sqrt);
 
@@ -461,7 +704,6 @@ where T : unmanaged
 
     public static Tensor<float> Resize(Tensor<float> input, int[] sizes, string mode, string coordinateTransformationMode, string nearestMode, float cubicCoeffA)
     {
-        // NOTE: not perf optimized yet.
         StartOpStage(OpStage.ValidateArguments);
         if (input.Rank != 4) throw new ArgumentException(nameof(input), "Resize currently supports only 4D tensors (NCHW).");
         if (sizes is null || sizes.Length != 4) throw new ArgumentException(nameof(sizes), "Resize sizes must be a 1D array of length 4.");
@@ -613,7 +855,6 @@ where T : unmanaged
 
     public static Tensor<double> Resize(Tensor<double> input, int[] sizes, string mode, string coordinateTransformationMode, string nearestMode, double cubicCoeffA)
     {
-        // NOTE: not perf optimized yet.
         StartOpStage(OpStage.ValidateArguments);
         if (input.Rank != 4) throw new ArgumentException(nameof(input), "Resize currently supports only 4D tensors (NCHW).");
         if (sizes is null || sizes.Length != 4) throw new ArgumentException(nameof(sizes), "Resize sizes must be a 1D array of length 4.");
@@ -1890,6 +2131,12 @@ where T : unmanaged
         return output;  
     }
 
+    static bool HasStandardStrides<T>(DenseTensor<T> tensor) where T : unmanaged
+    {
+        if (tensor.IsReversedStride) return false;
+        return tensor.strides.SequenceEqual(ArrayUtilities.GetStrides(tensor.dimensions));
+    }
+
     public static Tensor<T> Concat(Tensor<T> x, Tensor<T> y, int axis)
     {
         StartOpStage(OpStage.ValidateArguments);
@@ -1929,12 +2176,50 @@ where T : unmanaged
         StartOpStage(OpStage.ValidateArguments);
         if (inputs.Length < 2) throw new ArgumentException(nameof(inputs), "At least two tensors must be specified for the concat operation.");
         if (!inputs.All(i => i.Rank == inputs[0].Rank)) throw new ArgumentException(nameof(inputs), $"Each input tensor in a concat operation must be of the same rank.");
+        axis = ArrayUtilities.HandleNegativeAxisOrIndex(inputs[0].Rank, axis);
         if (!inputs.All(i => i.dimensions.Select((d, n) => n == axis ? 0 : d - inputs[0].dimensions[n]).All(s => s == 0)))
             throw new ArgumentException(nameof(inputs), "The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.");
-        Tensor<T> output = inputs[0];
-        for (int i = 1; i < inputs.Length; i++) 
+        var shape = inputs[0].dimensions.Copy();
+        shape[axis] = 0;
+        foreach (var input in inputs) shape[axis] += input.dimensions[axis];
+
+        StartOpStage(OpStage.Copy);
+        var output = DenseTensor<T>.OfShape(shape);
+        int inner = 1;
+        for (int trailing = axis + 1; trailing < output.Rank; trailing++) inner *= shape[trailing];
+        int outer = 1;
+        for (int leading = 0; leading < axis; leading++) outer *= shape[leading];
+        if (inputs.All(i => i is DenseTensor<T> dense && HasStandardStrides(dense)))
         {
-            output = Concat(output, inputs[i], axis);
+            var outputSpan = output.Buffer.Span;
+            int destinationAxisOffset = 0;
+            foreach (var input in inputs)
+            {
+                var sourceSpan = ((DenseTensor<T>)input).Buffer.Span;
+                int axisLength = input.dimensions[axis];
+                for (int outerIndex = 0; outerIndex < outer; outerIndex++)
+                {
+                    sourceSpan.Slice(outerIndex * axisLength * inner, axisLength * inner).CopyTo(outputSpan.Slice((outerIndex * shape[axis] + destinationAxisOffset) * inner, axisLength * inner));
+                }
+                destinationAxisOffset += axisLength;
+            }
+            return output;
+        }
+        var axisOffsets = new int[inputs.Length];
+        int runningAxisOffset = 0;
+        for (int inputIndex = 0; inputIndex < inputs.Length; inputIndex++)
+        {
+            axisOffsets[inputIndex] = runningAxisOffset;
+            runningAxisOffset += inputs[inputIndex].dimensions[axis];
+        }
+        var iterator = output.GetDimensionsIterator();
+        foreach (var index in iterator)
+        {
+            int source = 0;
+            while (source + 1 < inputs.Length && index[axis] >= axisOffsets[source + 1]) source++;
+            var location = index.Copy();
+            location[axis] -= axisOffsets[source];
+            output[index] = inputs[source][location];
         }
         return output;
     }

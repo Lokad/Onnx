@@ -1,4 +1,4 @@
-﻿using Lokad.Onnx;
+using Lokad.Onnx;
 using System;
 using System.Collections;
 using System.Linq;
@@ -182,14 +182,18 @@ namespace Lokad.Onnx
             return output;
         }
 
+        /// <summary>
+        /// Inserts size-1 dimensions at the given axes.
+        /// Axes index the output tensor, so negatives resolve against Rank plus the inserted count.
+        /// </summary>
         ITensor Unsqueeze(int[] axes)
         {
             Profiler.StartOpStage(OpStage.ValidateArguments);    
-            if (!ArrayUtilities.CheckNoRepeatedDims(axes)) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
             
             Profiler.StartOpStage(OpStage.CalculateIndices);
-            axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(Rank, a)).ToArray();
-            if (axes.Any(a => a > (Rank + axes.Length) - 1)) throw new ArgumentException(nameof(axes), $"Each specified axis must be less than the rank of the output tensor. Got {axes.First(a => a > Rank - 1)}");
+            axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(Rank + axes.Length, a)).ToArray();
+            if (!ArrayUtilities.CheckNoRepeatedDims(axes)) throw new ArgumentException(nameof(axes), "axes contains a repeated dimension.");
+            if (axes.Any(a => a < 0 || a > (Rank + axes.Length) - 1)) throw new ArgumentException(nameof(axes), "Each specified axis must be a dimension of the output tensor.");
             var newshape = new int[axes.Length + Rank];
             for (int i = 0; i < axes.Length; i++)
             {

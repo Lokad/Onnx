@@ -31,6 +31,35 @@ namespace Lokad.Onnx
             }
         }  
         
+        /// <summary>
+        /// Loads external tensor data addressed by tp from baseDirectory into RawData.
+        /// A missing location, a missing file, or an offset range past the end of the file throws.
+        /// </summary>
+        public static void ResolveExternalData(this TensorProto tp, string baseDirectory)
+        {
+            if (tp.DataLocation != TensorProto.Types.DataLocation.External) return;
+            string? location = null;
+            ulong offset = 0;
+            ulong length = 0;
+            bool hasLength = false;
+            foreach (var entry in tp.ExternalData)
+            {
+                if (entry.Key == "location") location = entry.Value;
+                else if (entry.Key == "offset") ulong.TryParse(entry.Value, out offset);
+                else if (entry.Key == "length") hasLength = ulong.TryParse(entry.Value, out length);
+            }
+            if (location is null) throw new InvalidOperationException($"Tensor {tp.Name} references external data without a location.");
+            var path = System.IO.Path.Combine(baseDirectory, location);
+            using var stream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
+            if (!hasLength) length = (ulong)stream.Length - offset;
+            if (offset + length > (ulong)stream.Length) throw new InvalidOperationException($"Tensor {tp.Name} references external data beyond the end of {location}.");
+            var buffer = new byte[length];
+            stream.Seek((long)offset, System.IO.SeekOrigin.Begin);
+            stream.ReadExactly(buffer);
+            tp.RawData = Google.Protobuf.ByteString.CopyFrom(buffer);
+            tp.DataLocation = TensorProto.Types.DataLocation.Default;
+        }
+
         public static ITensor ToTensor(this TensorProto tp)
         {
             switch ((TensorElementType) tp.DataType)

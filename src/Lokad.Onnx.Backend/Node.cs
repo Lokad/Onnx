@@ -182,13 +182,35 @@ public partial struct Node
 
         OpType.ReduceMean => graph.OpsetVersion() switch
         {
-            int v when v >= 13 => CPU.ReduceMean(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), Int("noop_with_empty_axes"), opt),
-            _ => CPU.ReduceMean(InputTensor(graph, 0), RequiredInts("axes")?.ToTensor<int>(), Int("keepdims"), Int("noop_with_empty_axes"), opt),
+            int v when v >= 18 => CPU.ReduceMean(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), Int("noop_with_empty_axes"), opt),
+            _ => CPU.ReduceMean(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims"), Int("noop_with_empty_axes"), opt),
         },
         
-        OpType.ReduceMax => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), opt),
+        OpType.ReduceMax => graph.OpsetVersion() switch { int v when v >= 18 => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), opt), _ => CPU.ReduceMax(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims"), opt), },
 
         OpType.Softmax => CPU.Softmax(InputTensor(graph, 0), Int("axis"), opt),
+
+        OpType.Abs => CPU.Abs(InputTensor(graph, 0), opt),
+
+        OpType.Cos => CPU.Cos(InputTensor(graph, 0), opt),
+
+        OpType.Sin => CPU.Sin(InputTensor(graph, 0), opt),
+
+        OpType.Neg => CPU.Neg(InputTensor(graph, 0), opt),
+
+        OpType.Gelu => CPU.Gelu(InputTensor(graph, 0), Attr<string>("approximate"), opt),
+
+        OpType.Squeeze => CPU.Squeeze(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+
+        OpType.Range => CPU.Range(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt),
+
+        OpType.Tile => CPU.Tile(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+
+        OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis"), Attr<float>("epsilon"), opt),
+
+        OpType.SplitToSequence => CPU.SplitToSequence(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis"), Int("keepdims"), opt),
+
+        OpType.SequenceAt => CPU.SequenceAt(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         _ => NotSupported(Op)
     };
