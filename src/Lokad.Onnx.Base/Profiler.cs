@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +25,7 @@ namespace Lokad.Onnx
     {
         #region Fields
         private static Stopwatch timer = new Stopwatch();
+        private static readonly object sync = new object();
 
         public static bool Enabled = false;
 
@@ -43,7 +44,11 @@ namespace Lokad.Onnx
         protected static void AddTimeIfTimerRunning()
         {
             if (!Enabled) return;
+            lock (sync) { AddTimeLocked(); }
+        }
 
+        private static void AddTimeLocked()
+        {
             if (Running)
             {
                 timer.Stop();
@@ -57,10 +62,13 @@ namespace Lokad.Onnx
         {
             if (!Enabled) return;
             
-            AddTimeIfTimerRunning();
-            Profile.Push(new NodeProfile() { NodeId = id, Op = op });
-            CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = OpStage.GraphOrchestration, Time = TimeSpan.Zero });
-            timer.Start();
+            lock (sync)
+            {
+                AddTimeIfTimerRunning();
+                Profile.Push(new NodeProfile() { NodeId = id, Op = op });
+                CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = OpStage.GraphOrchestration, Time = TimeSpan.Zero });
+                timer.Start();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -72,9 +80,12 @@ namespace Lokad.Onnx
         {
             if (!Enabled) return;
 
-            AddTimeIfTimerRunning();
-            CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = stage, Time = TimeSpan.Zero });
-            timer.Start();  
+            lock (sync)
+            {
+                AddTimeIfTimerRunning();
+                CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = stage, Time = TimeSpan.Zero });
+                timer.Start();  
+            }
         }
 
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]

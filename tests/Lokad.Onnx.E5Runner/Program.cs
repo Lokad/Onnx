@@ -77,7 +77,7 @@ static class E5Runner
         }
         HardwareConfig.UseSimd = useSimd;
         HardwareConfig.UseIntrinsics = useIntrinsics;
-
+        var execOptions = new ExecutionOptions(OptimizationMode.Speed, new TensorExecutionOptions(useSimd, useIntrinsics));
 
         List<(string id, string text)> caseList = new List<(string, string)>();
         using (var doc = JsonDocument.Parse(File.ReadAllText(cases)))
@@ -113,7 +113,7 @@ static class E5Runner
                 Console.Error.WriteLine("E5Runner error: tokenization failed for case: " + id);
                 return 4;
             }
-            if (!graph.Execute(inputs, true))
+            if (!graph.Execute(inputs, true, ExecutionProvider.CPU, execOptions))
             {
                 Console.Error.WriteLine("E5Runner error: inference failed for case " + id + ": " + graph.LastErrorMessage);
                 return 4;

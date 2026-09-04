@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx;
+namespace Lokad.Onnx;
 
 using System;
 using System.Collections;
@@ -77,14 +77,14 @@ public partial struct Node
 
     public ITensor? InputTensorOrAttr(ComputationalGraph graph, int index, string name) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : Attr<ITensor>(name);
 
-    public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU)
+    public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU, ExecutionOptions? options = null)
     {
         try
         {
             if (provider == ExecutionProvider.CPU)
             {
  
-                var r = ExecuteCPU(graph);
+                var r = ExecuteCPU(graph, options);
                 
                 if (r.Status == OpStatus.Success && r.Outputs.Length != Outputs.Length)
                 {
@@ -118,52 +118,55 @@ public partial struct Node
         }
     }
 
-    public OpResult ExecuteCPU(ComputationalGraph graph) => Op switch
+    public OpResult ExecuteCPU(ComputationalGraph graph, ExecutionOptions? options = null)
     {
-        OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool?>("allow_zero")),
+        var opt = options ?? graph.Options;
+        return Op switch
+    {
+        OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool?>("allow_zero"), opt),
 
-        OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1)),
+        OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Sub => CPU.Sub(InputTensor(graph, 0), InputTensor(graph, 1)),
+        OpType.Sub => CPU.Sub(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Mul => CPU.Mul(InputTensor(graph, 0), InputTensor(graph, 1)),
+        OpType.Mul => CPU.Mul(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Div => CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1)),
+        OpType.Div => CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Pow => CPU.Pow(InputTensor(graph, 0), InputTensor(graph, 1)),
+        OpType.Pow => CPU.Pow(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0)),
+        OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0), opt),
 
         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad"), Ints("dilations"), Attr<int?>("group"), Ints("kernel_shape"), Ints("pads"), Ints("strides")),
 
-        OpType.Relu => CPU.Relu(InputTensor(graph, 0)),
+        OpType.Relu => CPU.Relu(InputTensor(graph, 0), opt),
 
-        OpType.Erf => CPU.Erf(InputTensor(graph, 0)),
+        OpType.Erf => CPU.Erf(InputTensor(graph, 0), opt),
 
-        OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), Attr<int?>("storage_order"), Ints("strides")),
+        OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), Attr<int?>("storage_order"), Ints("strides"), opt),
 
-        OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1)),
+        OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Transpose => CPU.Transpose(InputTensor(graph, 0), Ints("perm")),
+        OpType.Transpose => CPU.Transpose(InputTensor(graph, 0), Ints("perm"), opt),
 
-        OpType.Constant => CPU.Constant(OneOfAttr("sparse_value", "value", "value_float", "value_floats", "value_int", "value_ints", "value_string", "value_strings")),
+        OpType.Constant => CPU.Constant(OneOfAttr("sparse_value", "value", "value_float", "value_floats", "value_int", "value_ints", "value_string", "value_strings"), opt),
 
-        OpType.Cast => CPU.Cast(InputTensor(graph, 0), RequiredInt("to")),
+        OpType.Cast => CPU.Cast(InputTensor(graph, 0), RequiredInt("to"), opt),
 
-        OpType.Concat => CPU.Concat(graph.GetInputTensors(Inputs), RequiredInt("axis")),
+        OpType.Concat => CPU.Concat(graph.GetInputTensors(Inputs), RequiredInt("axis"), opt),
 
-        OpType.Shape => CPU.Shape(InputTensor(graph, 0), Int("start"), Int("end")),
+        OpType.Shape => CPU.Shape(InputTensor(graph, 0), Int("start"), Int("end"), opt),
 
-        OpType.Gather => CPU.Gather(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis")),
+        OpType.Gather => CPU.Gather(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis"), opt),
 
-        OpType.Slice => CPU.Slice(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4)),
+        OpType.Slice => CPU.Slice(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4), opt),
 
-        OpType.Equal => CPU.Equal(InputTensor(graph, 0), InputTensor(graph, 1)),
+        OpType.Equal => CPU.Equal(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Where => CPU.Where(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2)),
+        OpType.Where => CPU.Where(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt),
 
-        OpType.Expand => CPU.Expand(InputTensor(graph, 0), InputTensor(graph, 1)),
+        OpType.Expand => CPU.Expand(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.Resize => CPU.Resize(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3),
             Attr<string>("mode", "nearest"), Attr<string>("coordinate_transformation_mode", "half_pixel"), Attr<string>("nearest_mode", "round_prefer_floor"),
@@ -171,23 +174,24 @@ public partial struct Node
 
         OpType.Unsqueeze => graph.OpsetVersion() switch
         {
-            int v when v >= 13 => CPU.Unsqueeze(InputTensor(graph, 0), InputTensor(graph, 1)),
-            _ => CPU.Unsqueeze(InputTensor(graph, 0), RequiredInts("axes")),
+            int v when v >= 13 => CPU.Unsqueeze(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+            _ => CPU.Unsqueeze(InputTensor(graph, 0), RequiredInts("axes"), opt),
         }, 
 
-        OpType.ReduceSum => CPU.ReduceSum(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), Int("noop_with_empty_axes")),
+        OpType.ReduceSum => CPU.ReduceSum(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), Int("noop_with_empty_axes"), opt),
 
         OpType.ReduceMean => graph.OpsetVersion() switch
         {
-            int v when v >= 13 => CPU.ReduceMean(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), Int("noop_with_empty_axes")),
-            _ => CPU.ReduceMean(InputTensor(graph, 0), RequiredInts("axes")?.ToTensor<int>(), Int("keepdims"), Int("noop_with_empty_axes")),
+            int v when v >= 13 => CPU.ReduceMean(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), Int("noop_with_empty_axes"), opt),
+            _ => CPU.ReduceMean(InputTensor(graph, 0), RequiredInts("axes")?.ToTensor<int>(), Int("keepdims"), Int("noop_with_empty_axes"), opt),
         },
         
-        OpType.ReduceMax => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims")),
+        OpType.ReduceMax => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), opt),
 
-        OpType.Softmax => CPU.Softmax(InputTensor(graph, 0), Int("axis")),
+        OpType.Softmax => CPU.Softmax(InputTensor(graph, 0), Int("axis"), opt),
 
         _ => NotSupported(Op)
     };
+    }
 }
 

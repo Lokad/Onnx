@@ -35,3 +35,11 @@ Lokad.Onnx is a 100% managed code [ONNX backend](https://onnx.ai/onnx/repo-docs/
 * Current NuGet dependencies for the Backend library are:
 	 - System.Memory
 	 - OnnxSharp - For parsing ONNX ProtoBuf model files and getting the computational graph structure
+
+## Release notes (0.2.0)
+
+- .NET 10 only: all maintained projects target exactly net10.0.
+- Removed Satsuma graph members and the pythonnet/Interop bridge (breaking). Python remains only as the native e5 test oracle.
+- Fixed MatMul wrong-answer defects (intrinsics row pointer, reverse-stride layout) under independent regression tests.
+- Explicit offline tokenizer loading plus multi-space normalization matching the Hugging Face reference.
+- New immutable TensorExecutionOptions / ExecutionOptions for per-execution control; deterministic offline tests plus native ONNX Runtime e5 conformance.

@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx;
+namespace Lokad.Onnx;
 
 using System;
 using System.Collections;
@@ -802,16 +802,8 @@ where T : unmanaged
         return output;
     }
 
-    public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y)
+    static (DenseTensor<float> x, DenseTensor<float> y) DensifyFloatOperands(Tensor<float> x, Tensor<float> y)
     {
-        StartOpStage(OpStage.ValidateArguments);
-        if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
-        if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
-        if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException($"The number of columns in the first matrix ({x.Dimensions[1]}) is not equal to the number of rows in the second matrix ({y.Dimensions[0]}).");
-        var m = x.Dimensions[0];
-        var n = x.Dimensions[1];
-        var k = y.Dimensions[1];
-
         var dx = x as DenseTensor<float>;
         var dy = y as DenseTensor<float>;
         var needsCopyX = dx is null || dx.IsReversedStride;
@@ -820,44 +812,55 @@ where T : unmanaged
         {
             StartOpStage(OpStage.Copy);
         }
-        var _x = needsCopyX ? x.ToDenseTensor() : dx!;
-        var _y = needsCopyY ? y.ToDenseTensor() : dy!;
+        return (needsCopyX ? x.ToDenseTensor() : dx!, needsCopyY ? y.ToDenseTensor() : dy!);
+    }
+
+    static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
+    {
+        if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported)
+        {
+            if (m % 2 == 0 && k % 32 == 0)
+            {
+                mm_unsafe_vectorized_intrinsics_2x4(m, n, k, x, y, output);
+            }
+            else
+            {
+                mm_unsafe_vectorized_intrinsics(m, n, k, x, y, output);
+            }
+        }
+        else if (options.UseSimd)
+        {
+            mm_unsafe_vectorized(m, n, k, x, y, output);
+        }
+        else
+        {
+            mm(m, n, k, x, y, output);
+        }
+    }
+
+    public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y) => MatMul2D(x, y, TensorExecutionOptions.Auto);
+
+    public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options)
+    {
+        options.Validate();
+        StartOpStage(OpStage.ValidateArguments);
+        if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
+        if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
+        if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException($"The number of columns in the first matrix ({x.Dimensions[1]}) is not equal to the number of rows in the second matrix ({y.Dimensions[0]}).");
+        var m = x.Dimensions[0];
+        var n = x.Dimensions[1];
+        var k = y.Dimensions[1];
+
+        var (_x, _y) = DensifyFloatOperands(x, y);
         var output = DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
 
         StartOpStage(OpStage.Math);
         using var xh = _x.Buffer.Pin(); 
         using var yh = _y.Buffer.Pin();
         using var oh = output.Buffer.Pin();
-        if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
+        unsafe
         {
-            if (m % 2 == 0 && k % 32 == 0)
-            {
-                unsafe
-                {
-                    mm_unsafe_vectorized_intrinsics_2x4(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
-                }
-            }
-            else
-            {
-                unsafe
-                {
-                    mm_unsafe_vectorized_intrinsics(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
-                }
-            }
-        }
-        else if (HardwareConfig.UseSimd)
-        {
-            unsafe
-            {
-                mm_unsafe_vectorized(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
-            }
-        }
-        else
-        {
-            unsafe
-            {
-                mm(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer);
-            }
+            RunFloatMatMulKernel(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer, options);
         }
         return output;
     }
@@ -1055,12 +1058,14 @@ where T : unmanaged
     }
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]  
-    public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y)
+    public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y) => MatMul(x, y, TensorExecutionOptions.Auto);
+
+    public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options)
     {
         if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
         if (x.Rank == 2 && y.Rank == 2)
         {
-            return Tensor<float>.MatMul2D(x, y);
+            return Tensor<float>.MatMul2D(x, y, options);
         }
         else if (x.Rank >= 2 && y.Rank >= 2)
         {
@@ -1105,25 +1110,7 @@ where T : unmanaged
                 var zp = (float*)zh.Pointer;
                 foreach (var idx in di)
                 {
-                    if (HardwareConfig.UseSimd && HardwareConfig.UseIntrinsics && Fma.IsSupported)
-                    {
-                        if (m % 2 == 0 && k % 32 == 0)
-                        {
-                            mm_unsafe_vectorized_intrinsics_2x4(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
-                        }
-                        else
-                        {
-                            mm_unsafe_vectorized_intrinsics(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));   
-                        }
-                    }
-                    else if (HardwareConfig.UseSimd)
-                    {
-                        mm_unsafe_vectorized(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));   
-                    }
-                    else
-                    {
-                        mm(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx));
-                    }
+                    RunFloatMatMulKernel(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx), options);
                 }
             }
             return z;
@@ -1136,7 +1123,7 @@ where T : unmanaged
             }
             else
             {
-                return MatMul(bx, by);
+                return MatMul(bx, by, options);
             }
         }
         else //(x.Rank < 2 && y.Rank < 2)
@@ -1152,7 +1139,7 @@ where T : unmanaged
                 y = y.PadRight();
                 bcast = true;
             }
-            var c = MatMul2D(x, y);
+            var c = MatMul2D(x, y, options);
             if (bcast)
             {
                 c.RemoveDim(0);

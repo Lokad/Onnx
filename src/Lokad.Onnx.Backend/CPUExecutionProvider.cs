@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx;
+namespace Lokad.Onnx;
 
 extern alias OnnxSharp;
 
@@ -21,7 +21,7 @@ public enum OptimizationMode
 
 public class CPUExecutionProvider : Runtime
 {
-    public static List<OpType> SupportedOps { get; } = new List<OpType>()
+    public static IReadOnlyList<OpType> SupportedOps { get; } = new List<OpType>()
     {
         OpType.Reshape,
         OpType.Add,
@@ -57,7 +57,7 @@ public class CPUExecutionProvider : Runtime
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
 
-    public static OpResult Reshape(ITensor? input, ITensor? shape, bool? allow_zero = null)
+    public static OpResult Reshape(ITensor? input, ITensor? shape, bool? allow_zero = null, ExecutionOptions? options = null)
     {
         var op = OpType.Reshape;
         if (input is null) return MissingInput(op, nameof(input));
@@ -83,7 +83,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Add(ITensor? A, ITensor? B)
+    public static OpResult Add(ITensor? A, ITensor? B, ExecutionOptions? options = null)
     {
         var op = OpType.Add;
         if (A is null) return MissingInput(op, nameof(A));
@@ -98,7 +98,7 @@ public class CPUExecutionProvider : Runtime
         {
             return CannotBroadcast(op, A, B);
         }
-        if (OptimizationMode == OptimizationMode.Speed)
+        if ((options ?? ExecutionOptions.Default).Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
             bA = bA.ToDenseTensor();
@@ -115,7 +115,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Sub(ITensor? A, ITensor? B)
+    public static OpResult Sub(ITensor? A, ITensor? B, ExecutionOptions? options = null)
     {
         var op = OpType.Sub;
         if (A is null) return MissingInput(op, nameof(A));
@@ -129,7 +129,7 @@ public class CPUExecutionProvider : Runtime
         {
             return CannotBroadcast(op, A, B);
         }
-        if (OptimizationMode == OptimizationMode.Speed)
+        if ((options ?? ExecutionOptions.Default).Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
             bA = bA.ToDenseTensor();
@@ -146,7 +146,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Mul(ITensor? A, ITensor? B)
+    public static OpResult Mul(ITensor? A, ITensor? B, ExecutionOptions? options = null)
     {
         var op = OpType.Mul;
         if (A is null) return MissingInput(op, nameof(A));
@@ -161,7 +161,7 @@ public class CPUExecutionProvider : Runtime
             return CannotBroadcast(op, A, B);
         }
 
-        if (OptimizationMode == OptimizationMode.Speed)
+        if ((options ?? ExecutionOptions.Default).Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy); 
             bA = bA.ToDenseTensor();
@@ -178,7 +178,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Div(ITensor? A, ITensor? B)
+    public static OpResult Div(ITensor? A, ITensor? B, ExecutionOptions? options = null)
     {
         var op = OpType.Div;
         if (A is null) return MissingInput(op, nameof(A));
@@ -193,7 +193,7 @@ public class CPUExecutionProvider : Runtime
             return CannotBroadcast(op, A, B);
         }
 
-        if (OptimizationMode == OptimizationMode.Speed)
+        if ((options ?? ExecutionOptions.Default).Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
             bA = bA.ToDenseTensor();
@@ -211,7 +211,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Pow(ITensor? A, ITensor? B)
+    public static OpResult Pow(ITensor? A, ITensor? B, ExecutionOptions? options = null)
     {
         var op = OpType.Pow;
         if (A is null) return MissingInput(op, nameof(A));
@@ -226,7 +226,7 @@ public class CPUExecutionProvider : Runtime
             return CannotBroadcast(op, A, B);
         }
 
-        if (OptimizationMode == OptimizationMode.Speed)
+        if ((options ?? ExecutionOptions.Default).Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
             bA = bA.ToDenseTensor();
@@ -240,7 +240,7 @@ public class CPUExecutionProvider : Runtime
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
-    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad = null, int[]? dilations = null, int? group = null, int[]? kernel_shape = null, int[]? pads = null, int[]? strides = null)
+    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad = null, int[]? dilations = null, int? group = null, int[]? kernel_shape = null, int[]? pads = null, int[]? strides = null, ExecutionOptions? options = null)
     {
         var op = OpType.Conv;
         if (X is null) return MissingInput(op, nameof(X));
@@ -296,11 +296,11 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Relu(ITensor? X)
+    public static OpResult Relu(ITensor? X, ExecutionOptions? options = null)
     {
         var op = OpType.Relu;
         if (X is null) return MissingInput(op, nameof(X));
-        if (OptimizationMode == OptimizationMode.Speed)
+        if ((options ?? ExecutionOptions.Default).Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
             X = X.ToDenseTensor();
@@ -314,7 +314,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult MaxPool(ITensor? X, string? auto_pad = null, int? ceil_mode = null, int[]? dilations = null, int[]? kernel_shape = null, int[]? pads = null, int? storage_order = null, int[]? strides = null)
+    public static OpResult MaxPool(ITensor? X, string? auto_pad = null, int? ceil_mode = null, int[]? dilations = null, int[]? kernel_shape = null, int[]? pads = null, int? storage_order = null, int[]? strides = null, ExecutionOptions? options = null)
     {
         var op = OpType.MaxPool;
         if (X is null) return MissingInput(op, nameof(X));
@@ -362,13 +362,13 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult MatMul(ITensor? A, ITensor? B)
+    public static OpResult MatMul(ITensor? A, ITensor? B, ExecutionOptions? options = null)
     {
         var op = OpType.MatMul;
         if (A is null) return MissingInput(op, nameof(A));
         if (B is null) return MissingInput(op, nameof(B));
 
-        if (OptimizationMode == OptimizationMode.Speed)
+        if ((options ?? ExecutionOptions.Default).Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
             A = A.ToDenseTensor();
@@ -377,17 +377,17 @@ public class CPUExecutionProvider : Runtime
         switch (A.ElementType)
         {
             case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul((Tensor<int>)A, (Tensor<int>)B));
-            case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B));
+            case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
 
-    public static OpResult Sqrt(ITensor? A)
+    public static OpResult Sqrt(ITensor? A, ExecutionOptions? options = null)
     {
         var op = OpType.Sqrt;
         if (A is null) return MissingInput(op, nameof(A));
-        if (OptimizationMode == OptimizationMode.Speed)
+        if ((options ?? ExecutionOptions.Default).Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
             A = A.ToDenseTensor();
@@ -401,7 +401,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Erf(ITensor? X)
+    public static OpResult Erf(ITensor? X, ExecutionOptions? options = null)
     {
         var op = OpType.Erf;
         if (X is null) return MissingInput(op, nameof(X));
@@ -414,7 +414,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Transpose(ITensor? data, int[]? perm = null)
+    public static OpResult Transpose(ITensor? data, int[]? perm = null, ExecutionOptions? options = null)
     {
         var op = OpType.Transpose;
         if (data is null) return MissingInput(op, nameof(data));
@@ -438,7 +438,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Constant(object? value)
+    public static OpResult Constant(object? value, ExecutionOptions? options = null)
     {
         var op = OpType.Constant;
         if (value is null) return MissingAttribute(op, nameof(value));
@@ -454,7 +454,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Cast(ITensor? input, long to)
+    public static OpResult Cast(ITensor? input, long to, ExecutionOptions? options = null)
     {
         var op = OpType.Cast;
         if (input is null) return MissingInput(op, nameof(input));
@@ -480,7 +480,7 @@ public class CPUExecutionProvider : Runtime
 
         }
     }
-    public static OpResult Concat(ITensor[]? inputs, int? _axis)
+    public static OpResult Concat(ITensor[]? inputs, int? _axis, ExecutionOptions? options = null)
     {
         var op = OpType.Concat;
         if (inputs is null) return MissingInput(op, nameof(inputs));
@@ -506,7 +506,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Shape(ITensor? data, int? _start = null, int? _end = null)
+    public static OpResult Shape(ITensor? data, int? _start = null, int? _end = null, ExecutionOptions? options = null)
     {
         var op = OpType.Shape;
         if (data is null) return MissingInput(op, nameof(data));
@@ -519,7 +519,7 @@ public class CPUExecutionProvider : Runtime
         return Success(op, DenseTensor<long>.OfValues(_shape));
     }
 
-    public static OpResult Gather(ITensor? data, ITensor? indices, int? axis = null) 
+    public static OpResult Gather(ITensor? data, ITensor? indices, int? axis = null, ExecutionOptions? options = null) 
     {
         var op = OpType.Gather;
         if (data is null) return MissingInput(op, nameof(data));
@@ -551,7 +551,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Slice(ITensor? data, ITensor? starts, ITensor? ends, ITensor? axes, ITensor? steps)
+    public static OpResult Slice(ITensor? data, ITensor? starts, ITensor? ends, ITensor? axes, ITensor? steps, ExecutionOptions? options = null)
     {
         var op = OpType.Slice;
         if (data is null) return MissingInput(op, nameof(data));
@@ -605,7 +605,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Equal(ITensor? A, ITensor? B)
+    public static OpResult Equal(ITensor? A, ITensor? B, ExecutionOptions? options = null)
     {
         var op = OpType.Equal;
         if (A is null) return MissingInput(op, nameof(A));
@@ -625,7 +625,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Where(ITensor? condition, ITensor? X, ITensor? Y)
+    public static OpResult Where(ITensor? condition, ITensor? X, ITensor? Y, ExecutionOptions? options = null)
     {
         var op = OpType.Where;
         if (condition is null) return MissingInput(op, nameof(condition));
@@ -647,7 +647,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Expand(ITensor? data, ITensor? shape)
+    public static OpResult Expand(ITensor? data, ITensor? shape, ExecutionOptions? options = null)
     {
         var op = OpType.Expand;
         if (data is null) return MissingInput(op, nameof(data));
@@ -671,7 +671,7 @@ public class CPUExecutionProvider : Runtime
     }
 
     public static OpResult Resize(ITensor? X, ITensor? roi, ITensor? scales, ITensor? sizes,
-        string? mode, string? coordinateTransformationMode, string? nearestMode, float? cubicCoeffA, float? extrapolationValue)
+        string? mode, string? coordinateTransformationMode, string? nearestMode, float? cubicCoeffA, float? extrapolationValue, ExecutionOptions? options = null)
     {
         var op = OpType.Resize;
         if (X is null) return MissingInput(op, nameof(X));
@@ -724,7 +724,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Unsqueeze(ITensor? data, ITensor? axes)
+    public static OpResult Unsqueeze(ITensor? data, ITensor? axes, ExecutionOptions? options = null)
     {
         var op = OpType.Unsqueeze;
         if (data is null) return MissingInput(op, nameof(data));
@@ -737,7 +737,7 @@ public class CPUExecutionProvider : Runtime
         return Success(op, data.Unsqueeze(_axes));
     }
 
-    public static OpResult Unsqueeze(ITensor? data, int[] axes)
+    public static OpResult Unsqueeze(ITensor? data, int[] axes, ExecutionOptions? options = null)
     {
         var op = OpType.Unsqueeze;
         if (data is null) return MissingInput(op, nameof(data));
@@ -745,7 +745,7 @@ public class CPUExecutionProvider : Runtime
         return Success(op, data.Unsqueeze(axes));
     }
 
-    public static OpResult ReduceSum(ITensor? data, ITensor? axes, int? _keep_dims, int? noop_with_empty_axes)
+    public static OpResult ReduceSum(ITensor? data, ITensor? axes, int? _keep_dims, int? noop_with_empty_axes, ExecutionOptions? options = null)
     {
         var op = OpType.ReduceSum;
         if (data is null) return MissingInput(op, nameof(data));
@@ -764,7 +764,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult ReduceMean(ITensor? data, ITensor? axes, int? _keep_dims, int? noop_with_empty_axes)
+    public static OpResult ReduceMean(ITensor? data, ITensor? axes, int? _keep_dims, int? noop_with_empty_axes, ExecutionOptions? options = null)
     {
         var op = OpType.ReduceMean;
         if (data is null) return MissingInput(op, nameof(data));
@@ -784,7 +784,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult ReduceMax(ITensor? data, ITensor? axes, int? _keep_dims)
+    public static OpResult ReduceMax(ITensor? data, ITensor? axes, int? _keep_dims, ExecutionOptions? options = null)
     {
         var op = OpType.ReduceMax;
         if (data is null) return MissingInput(op, nameof(data));
@@ -802,12 +802,12 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Softmax(ITensor? input, int? _axis)
+    public static OpResult Softmax(ITensor? input, int? _axis, ExecutionOptions? options = null)
     {
         var op = OpType.Softmax;
         if (input is null) return MissingInput(op, nameof(input));
         var axis = _axis.HasValue ? _axis.Value : -1;
-        if (OptimizationMode == OptimizationMode.Speed)
+        if ((options ?? ExecutionOptions.Default).Optimization == OptimizationMode.Speed)
         {
             input = input.ToDenseTensor();
         }

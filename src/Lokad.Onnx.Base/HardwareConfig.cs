@@ -1,5 +1,6 @@
-﻿namespace Lokad.Onnx;
+namespace Lokad.Onnx;
 
+/// <summary>Process-wide execution defaults. Prefer immutable per-execution <see cref="Lokad.Onnx.TensorExecutionOptions"/> (and <see cref="Lokad.Onnx.ExecutionOptions"/> for graphs) for concurrent or mode-pinned work; <see cref="Lokad.Onnx.TensorExecutionOptions.Auto"/> resolves from these defaults.</summary>
 public static class HardwareConfig
 {
     public static bool UseSimd { get; set; } = true;

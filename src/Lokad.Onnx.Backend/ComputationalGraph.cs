@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx;
+namespace Lokad.Onnx;
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +21,8 @@ public class ComputationalGraph : Runtime
     public Dictionary<string, ITensor?> IntermediateOutputs = new Dictionary<string, ITensor?>();
 
     public List<Node> Nodes { get; set; } = new List<Node>();
+
+    public ExecutionOptions Options { get; set; } = ExecutionOptions.Default;
 
     public Dictionary<string, int> Opset = new Dictionary<string, int>();
 
@@ -199,7 +201,7 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU)
+    public bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU, ExecutionOptions? options = null)
     {
         LastErrorMessage = null;
         LastFailedNodeName = null;
@@ -245,7 +247,7 @@ public class ComputationalGraph : Runtime
             }
            
             Profiler.StartNodeProfile(node.ID, node.Op);
-            var r = node.Execute(this);
+            var r = node.Execute(this, provider, options ?? Options);
             Profiler.StopNodeProfile();
             
             if (r.Status == OpStatus.Failure)
@@ -280,7 +282,7 @@ public class ComputationalGraph : Runtime
         return true;    
     }
 
-    public bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU)
+    public bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU, ExecutionOptions? options = null)
     {
         var node = Nodes.FirstOrDefault(n => n.Name == nodeLabel);
         if (node.Name == "")
@@ -322,7 +324,7 @@ public class ComputationalGraph : Runtime
                 Debug("  {n}: {v}", kv.Key, kv.Value);
             }
         }
-        var r = node.Execute(this);
+        var r = node.Execute(this, provider, options ?? Options);
         if (r.Status == OpStatus.Failure)
         {
             Error("Execution of node {n} with op {op} failed: {m}.", node.Name, node.Op, r.Message ?? "");
