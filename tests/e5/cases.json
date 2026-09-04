@@ -1,0 +1,36 @@
+{
+  "cases": [
+    {
+      "id": "plain-english",
+      "text": "The quick brown fox jumps over the lazy dog."
+    },
+    {
+      "id": "query-related",
+      "text": "query: What is the capital of France?"
+    },
+    {
+      "id": "passage-related",
+      "text": "passage: Paris is the capital of France."
+    },
+    {
+      "id": "passage-unrelated",
+      "text": "passage: Quantum computing uses qubits for calculation."
+    },
+    {
+      "id": "french-accents",
+      "text": "query: Où se trouve la cathédrale Notre-Dame de Paris ?"
+    },
+    {
+      "id": "japanese",
+      "text": "passage: 東京は日本の首都です。"
+    },
+    {
+      "id": "punctuation-whitespace",
+      "text": "Hello,\tworld! That-WAS-fine ... really\u00a0odd."
+    },
+    {
+      "id": "long-truncation",
+      "text": "The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. The e5 model maps text to multilingual embeddings. "
+    }
+  ]
+}
