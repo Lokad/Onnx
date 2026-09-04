@@ -366,3 +366,4 @@ me5s.model.onnx
 *.model
 *.onnx
 Bench*/
+external/
