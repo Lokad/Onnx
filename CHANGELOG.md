@@ -33,3 +33,4 @@ Only 0.1.4 has been published to NuGet. Everything below is unreleased: the brea
 - Test lanes codified with deterministic suites, coverage baselines, and file-coherent reviewable commits.
 - Package builds as net10-only Lokad.Onnx with no Satsuma, Interop, or Python content, with symbols, SourceLink, and a packed README, CHANGELOG, and icon.
 - Fused blocked Softmax kernel, Span block copies for Concat and ChunkCopy, and MatMul odd-row tail for the intrinsics kernel.
+- Transparent LayerNorm subgraph fusion at model load (strict matcher, interface-preserving) and opt-in batch-parallel float MatMul via TensorExecutionOptions.
