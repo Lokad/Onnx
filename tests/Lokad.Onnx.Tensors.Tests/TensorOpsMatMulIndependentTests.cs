@@ -197,4 +197,15 @@ public class TensorOpsMatMulIndependentTests
         Assert.Equal(43d, actual[1, 0], 10);
         Assert.Equal(50d, actual[1, 1], 10);
     }
+
+    [Fact]
+    public void MatMul2D_OddRowsWideOutput_AllModes()
+    {
+        foreach (int rows in new[] { 3, 5 })
+        {
+            var left = SeqFloat(rows, 5);
+            var right = SeqFloat(5, 64);
+            RunAllModes(left, right, actual => AssertMatMulMatchesIndependent(left, right, actual));
+        }
+    }
 }

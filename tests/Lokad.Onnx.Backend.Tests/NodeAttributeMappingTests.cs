@@ -196,4 +196,58 @@ public class NodeAttributeMappingTests
         Assert.Equal(new[] { 2 }, y.Dimensions.ToArray());
         Assert.Equal(1.5f, y[0], 5);
     }
+
+    [Fact]
+    public void ReduceMean_UsesAxesAttribute_ForOpset14()
+    {
+        var graph = CreateGraph(opsetVersion: 14);
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
+
+        var node = new Node
+        {
+            Name = "reducemean",
+            Op = OpType.ReduceMean,
+            Inputs = new[] { "x" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>
+            {
+                ["axes"] = new[] { 1 },
+                ["keepdims"] = 1
+            }
+        };
+
+        var result = node.Execute(graph);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var y = (Tensor<float>)result.Outputs[0];
+        Assert.Equal(new[] { 2, 1 }, y.Dimensions.ToArray());
+        Assert.Equal(1.5f, y[0, 0], 5);
+        Assert.Equal(3.5f, y[1, 0], 5);
+    }
+
+    [Fact]
+    public void ReduceMax_UsesAxesAttribute_ForOpset14()
+    {
+        var graph = CreateGraph(opsetVersion: 14);
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
+
+        var node = new Node
+        {
+            Name = "reducemax",
+            Op = OpType.ReduceMax,
+            Inputs = new[] { "x" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>
+            {
+                ["axes"] = new[] { 0 },
+                ["keepdims"] = 0
+            }
+        };
+
+        var result = node.Execute(graph);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var y = (Tensor<float>)result.Outputs[0];
+        Assert.Equal(new[] { 2 }, y.Dimensions.ToArray());
+        Assert.Equal(3f, y[0], 5);
+        Assert.Equal(4f, y[1], 5);
+    }
 }

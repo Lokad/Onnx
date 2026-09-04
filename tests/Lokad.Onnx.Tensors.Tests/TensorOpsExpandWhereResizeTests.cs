@@ -72,4 +72,14 @@ public class TensorOpsExpandWhereResizeTests
             }
         }
     }
+
+    [Fact]
+    public void Expand_Target_One_Keeps_Dimension()
+    {
+        var input = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var actual = Tensor<float>.Expand(input, new int[] { 2, 1 });
+        Assert.Equal(new[] { 2, 2 }, actual.Dimensions.ToArray());
+        Assert.Equal(1f, actual[0, 0], 5);
+        Assert.Equal(4f, actual[1, 1], 5);
+    }
 }

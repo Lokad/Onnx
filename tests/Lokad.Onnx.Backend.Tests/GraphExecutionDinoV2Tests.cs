@@ -36,6 +36,12 @@ public class GraphExecutionDinoV2Tests
         {
             Assert.False(float.IsNaN(v) || float.IsInfinity(v));
         }
+        double sum = 0;
+        foreach (var v in values) sum += v;
+        Assert.True(Math.Abs(sum / values.Length - 0.0890405351) < 1e-6, "Mean drift vs ORT reference.");
+        int[] spots = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 384, 385, 1000, 10000, 49344, 98687 };
+        float[] expected = new float[] { 2.78317356f, 2.0718112f, 0.99896085f, 0.58540159f, 1.33147788f, -0.90802592f, -0.7181195f, -1.58635163f, 2.34371638f, -2.9496913f, -0.32700467f, -1.35144138f, -0.95092082f, -2.83867621f };
+        for (int i = 0; i < spots.Length; i++) Assert.True(Math.Abs(values[spots[i]] - expected[i]) < 1e-3, "Spot " + spots[i] + " drift vs ORT reference.");
     }
 
     static string? FindModelPath()
