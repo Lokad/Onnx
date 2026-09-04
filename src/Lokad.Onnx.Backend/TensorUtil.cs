@@ -85,9 +85,13 @@ namespace Lokad.Onnx
 
         public static ITensor ToTensor(this ValueInfoProto vp)
         {
-            if (vp.Type.ValueCase != TypeProto.ValueOneofCase.TensorType)
+            if (vp.Type is null || vp.Type.ValueCase != TypeProto.ValueOneofCase.TensorType)
             {
                 throw new ArgumentException($"The value info {vp.Name} is not a tensor type.");
+            }
+            if (vp.Type.TensorType.Shape is null)
+            {
+                throw new ArgumentException($"The value info {vp.Name} declares a tensor type without shape metadata; shaped graph inputs and outputs are required.");
             }
 
             switch ((TensorElementType) vp.Type.TensorType.ElemType)

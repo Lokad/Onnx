@@ -1,6 +1,10 @@
+extern alias OnnxSharp;
+
 using System;
 using System.IO;
 using System.Linq;
+
+using OnnxSharp::Onnx;
 
 namespace Lokad.Onnx.Backend.Tests;
 
@@ -81,5 +85,21 @@ public class TensorProtoConversionTests
                 }
             }
         }
+    }
+
+    [Fact]
+    public void ShapelessTensorValueInfoThrowsArgumentException()
+    {
+        var vp = new ValueInfoProto { Name = "z", Type = new TypeProto { TensorType = new TypeProto.Types.Tensor { ElemType = 1 } } };
+        var ex = Assert.Throws<ArgumentException>(() => vp.ToTensor());
+        Assert.Contains("z", ex.Message);
+    }
+
+    [Fact]
+    public void UntypedValueInfoThrowsArgumentException()
+    {
+        var vp = new ValueInfoProto { Name = "w" };
+        var ex = Assert.Throws<ArgumentException>(() => vp.ToTensor());
+        Assert.Contains("w", ex.Message);
     }
 }
