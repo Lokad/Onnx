@@ -106,23 +106,22 @@ public class Text : Runtime
         switch (tokenizer)
         {
             case "me5s":
-                if (!Tokenizers.ContainsKey("me5s"))
+                var tokenizerPath = Path.Combine(AssemblyLocation, "me5s-sentencepiece.bpe.model");
+                if (!File.Exists(tokenizerPath))
                 {
-                    var tokenizerPath = Path.Combine(AssemblyLocation, "me5s-sentencepiece.bpe.model");
-                    if (!File.Exists(tokenizerPath))
+                    if (!DownloadFile(
+                        "sentencepiece.bpe.model",
+                        new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
+                        tokenizerPath))
                     {
-                        if (!DownloadFile(
-                            "sentencepiece.bpe.model",
-                            new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
-                            tokenizerPath))
-                        {
-                            Error("Could not download model file.");
-                            return null;
-                        }
+                        Error("Could not download model file.");
+                        return null;
                     }
-                    Tokenizers["me5s"] = new XLMRobertaTokenizer(tokenizerPath, false);
                 }
-                return EncodeSingleRoberta((XLMRobertaTokenizer)Tokenizers["me5s"], text1, "multilingual-e5-small");
+                lock (TokenizerLock)
+                {
+                    return EncodeSingleRoberta(GetOrLoadRobertaTokenizerLocked(tokenizerPath), text1, "multilingual-e5-small");
+                }
             default:
                 Error("Unknown Roberta tokenizer: {t}.", tokenizer);
                 return null;
@@ -134,26 +133,44 @@ public class Text : Runtime
         switch (tokenizer)
         {
             case "me5s":
-                if (!Tokenizers.ContainsKey("me5s"))
+                var tokenizerPath = Path.Combine(AssemblyLocation, "me5s-sentencepiece.bpe.model");
+                if (!File.Exists(tokenizerPath))
                 {
-                    var tokenizerPath = Path.Combine(AssemblyLocation, "me5s-sentencepiece.bpe.model");
-                    if (!File.Exists(tokenizerPath))
+                    if (!DownloadFile(
+                        "sentencepiece.bpe.model",
+                        new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
+                        tokenizerPath))
                     {
-                        if (!DownloadFile(
-                            "sentencepiece.bpe.model",
-                            new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
-                            tokenizerPath))
-                        {
-                            Error("Could not download model file.");
-                            return null;
-                        }
+                        Error("Could not download model file.");
+                        return null;
                     }
-                    Tokenizers["me5s"] = new XLMRobertaTokenizer(tokenizerPath, false);
                 }
-                return EncodeBatchRoberta((XLMRobertaTokenizer)Tokenizers["me5s"], text, "multilingual-e5-small");
+                lock (TokenizerLock)
+                {
+                    return EncodeBatchRoberta(GetOrLoadRobertaTokenizerLocked(tokenizerPath), text, "multilingual-e5-small");
+                }
             default:
                 Error("Unknown Roberta tokenizer: {t}.", tokenizer);
                 return null;
+        }
+    }
+
+    static XLMRobertaTokenizer GetOrLoadRobertaTokenizerLocked(string tokenizerModelPath)
+    {
+        if (!Tokenizers.TryGetValue(tokenizerModelPath, out var cached))
+        {
+            cached = new XLMRobertaTokenizer(tokenizerModelPath, false);
+            Tokenizers[tokenizerModelPath] = cached;
+        }
+        return (XLMRobertaTokenizer)cached;
+    }
+
+    public static XLMRobertaTokenizer GetOrLoadRobertaTokenizer(string tokenizerModelPath)
+    {
+        if (!File.Exists(tokenizerModelPath)) throw new FileNotFoundException("Tokenizer model not found.", tokenizerModelPath);
+        lock (TokenizerLock)
+        {
+            return GetOrLoadRobertaTokenizerLocked(tokenizerModelPath);
         }
     }
 
@@ -217,5 +234,7 @@ public class Text : Runtime
 
     public static string[] TextExtensions = new string[] { ".txt" };
     public static Dictionary<string, object> Tokenizers = new Dictionary<string, object>();
+
+    private static readonly object TokenizerLock = new object();
 }
 

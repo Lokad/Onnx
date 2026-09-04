@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Lokad.Onnx.Backend.Tests;
 
@@ -55,6 +56,41 @@ public class TokenizerTests
         Assert.Equal(0, mask[0, 4]);
         Assert.Equal(0, types[0, 0]);
         Assert.Equal(0, types[1, 0]);
+    }
+
+    [Fact]
+    public async Task ConcurrentFromFile_MatchesSerial()
+    {
+        string path = AssetPath();
+        var expectedHello = Ids("Hello world");
+        var expectedQuery = Ids("query: hello world");
+        var tasks = new Task<long[]>[8];
+        for (int i = 0; i < tasks.Length; i++)
+        {
+            string text = i % 2 == 0 ? "Hello world" : "query: hello world";
+            tasks[i] = Task.Run(() =>
+            {
+                var parts = Text.RobertaTokenizeFromFile(text, path);
+                Assert.NotNull(parts);
+                return ((Tensor<long>)parts![0]).ToArray();
+            });
+        }
+        var results = await Task.WhenAll(tasks);
+        for (int i = 0; i < results.Length; i++)
+            Assert.Equal(i % 2 == 0 ? expectedHello : expectedQuery, results[i]);
+    }
+
+    [Fact]
+    public void GetOrLoad_ReturnsSharedCachedInstance()
+    {
+        string path = AssetPath();
+        int before = Text.Tokenizers.Count;
+        var first = Text.GetOrLoadRobertaTokenizer(path);
+        var second = Text.GetOrLoadRobertaTokenizer(path);
+        Assert.Same(first, second);
+        Assert.Equal(before + 1, Text.Tokenizers.Count);
+        Assert.Throws<FileNotFoundException>(() => Text.GetOrLoadRobertaTokenizer("no-such-tokenizer.bpe.model"));
+        Assert.Equal(before + 1, Text.Tokenizers.Count);
     }
 
     [Fact]
