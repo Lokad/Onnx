@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx.Tensors.Tests;
+namespace Lokad.Onnx.Tensors.Tests;
 
 using System;
 using System.Buffers;
@@ -8,7 +8,7 @@ public class UnsafeFixedSizeListTests
     [Fact]
     public unsafe void CanCreate()
     {
-        var rnd = new Random();
+        const int Seed = 20260904; var rnd = new Random(Seed);
         var l0 = rnd.Next();
         var l1 = rnd.Next();
         var l4 = rnd.Next();
@@ -32,7 +32,7 @@ public class UnsafeFixedSizeListTests
     [Fact]
     public unsafe void CanStackAllocCreate()
     {
-        var rnd = new Random();
+        const int Seed = 20260904; var rnd = new Random(Seed);
         var l0 = rnd.Next();
         var l1 = rnd.Next();
         var l4 = rnd.Next();

@@ -1,21 +1,46 @@
 namespace Lokad.Onnx.Tensors.Tests;
 
+using System;
 using System.Buffers;
 
 using static Lokad.Onnx.MathOps;
-public class TensorOpsSimdTests
+public class TensorOpsSimdTests : IDisposable
 {
+    const int Seed = 20260904;
+
+    static Tensor<float> SeededRand(int rows, int cols, int seed)
+    {
+        var t = Tensor<float>.Zeros(rows, cols);
+        var rnd = new Random(seed);
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                t[i, j] = rnd.NextSingle();
+            }
+        }
+        return t;
+    }
+
     public TensorOpsSimdTests()
     {
-        t_384_384_a = Tensor<float>.Rand(384, 384);
-        t_384_384_b = Tensor<float>.Rand(384, 384);
-        t_384_384_cr = Tensor<float>.MatMul2D_managed(t_384_384_a, t_384_384_b); 
+        t_384_384_a = SeededRand(384, 384, Seed);
+        t_384_384_b = SeededRand(384, 384, Seed + 1);
+        t_384_384_cr = Tensor<float>.MatMul2D_managed(t_384_384_a, t_384_384_b);
         t_384_384_c.Fill(0.0f);
         t_384_384_c2.Fill(0.0f);
         ah = t_384_384_a.ToDenseTensor().Buffer.Pin();
         bh = t_384_384_b.ToDenseTensor().Buffer.Pin();
         ch = t_384_384_c.ToDenseTensor().Buffer.Pin();
         c2h = t_384_384_c2.ToDenseTensor().Buffer.Pin();
+    }
+
+    public void Dispose()
+    {
+        ah.Dispose();
+        bh.Dispose();
+        ch.Dispose();
+        c2h.Dispose();
     }
 
     [Fact]
@@ -50,4 +75,3 @@ public class TensorOpsSimdTests
     MemoryHandle c2h = new MemoryHandle();
     #endregion
 }
-

@@ -6,14 +6,15 @@ namespace Lokad.Onnx.Backend.Tests;
 
 public class GraphExecutionDinoV2Tests
 {
-    [Fact]
+    [SkippableFact]
     public void CanInferWithDinoV2Small()
     {
         var modelPath = FindModelPath();
-        if (modelPath is null)
+        if (modelPath is null && System.Environment.GetEnvironmentVariable("LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS") == "1")
         {
-            return;
+            Assert.Fail("DINOv2 model requested via LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1 but not found at models/dinov2-small-onnx/model.onnx.");
         }
+        Skip.If(modelPath is null, "DINOv2 model not present; set LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1 to require it.");
 
         var graph = Model.Load(modelPath);
         Assert.NotNull(graph);
