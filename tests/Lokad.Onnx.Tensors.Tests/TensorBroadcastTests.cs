@@ -42,20 +42,21 @@ public class TensorBroadcastTests
         Assert.Equal(2, ba.Length);
     }
 
-    [Fact]
+        [Fact]
     public void CanBroadcastLargeShapes()
     {
         var a = new DenseTensor<int>(new[] { 256, 256, 3, });
         var c = new DenseTensor<int>(new[] { 22, 3 });
-        var r = Tensor<int>.Broadcast(a, c);
-        Assert.NotNull(r);
-
-        r = Tensor<int>.Broadcast(a, new DenseTensor<int>(new[] { 256, 3 }));
-        Assert.NotEmpty(r);
+        Assert.Empty(Tensor<int>.Broadcast(a, c));
+        var r = Tensor<int>.Broadcast(a, new DenseTensor<int>(new[] { 256, 3 }));
+        Assert.Equal(2, r.Length);
+        Assert.Equal(new[] { 256, 256, 3 }, r[0].Dimensions.ToArray());
+        Assert.Equal(new[] { 256, 256, 3 }, r[1].Dimensions.ToArray());
         r = Tensor<int>.Broadcast(a, new DenseTensor<int>(new[] { 1, 256, 3 }));
-        Assert.NotEmpty(r);
+        Assert.Equal(2, r.Length);
+        Assert.Equal(new[] { 256, 256, 3 }, r[1].Dimensions.ToArray());
         r = Tensor<int>.Broadcast(a, new DenseTensor<int>(new[] { 256, 1 }));
-        Assert.NotEmpty(r);
+        Assert.Equal(2, r.Length);
+        Assert.Equal(new[] { 256, 256, 3 }, r[1].Dimensions.ToArray());
     }
 }
-

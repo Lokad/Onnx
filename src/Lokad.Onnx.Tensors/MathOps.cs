@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.InteropServices;
@@ -536,7 +536,7 @@ public class MathOps
         for (int i = 0; i < M; i += 2)
         {
             var Ap1 = A + i * N;
-            var Ap2 = A + N;
+            var Ap2 = Ap1 + N;
 
             var Cp1 = C + i * K;
             var Cp2 = Cp1 + K;

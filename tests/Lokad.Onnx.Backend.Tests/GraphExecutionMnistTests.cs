@@ -34,13 +34,13 @@ namespace Lokad.Onnx.Backend.Tests
         [Fact]
         public void CanInferWithMnist2()
         {
-            var r = OnnxRuntime.MnistInfer("images\\mnist4.png");
-            Assert.NotNull(r);
-            var g = Model.Load("models\\mnist-8.onnx")!;
-            var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" })!;
+            var g = Model.Load("models\\\\mnist-8.onnx")!;
+            var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\\\mnist4.png::mnist" })!;
             Assert.True(g.Execute(ui, true));
             var o = (Tensor<float>) g.Outputs.Values.First().RemoveDim(0);
-            Assert.True(r.AlmostEqual(o, 4));
+            var expected = new float[] { -7.3263092f, -1.658613f, -7.8152933f, -12.741977f, 18.316916f, -0.16605358f, -6.70112f, 11.390553f, 2.657311f, 1.4563596f };
+            Assert.Equal(10, o.Dimensions[0]);
+            for (int i = 0; i < 10; i++) Assert.Equal(expected[i], o[i], 4);
         }
 
         [Fact]
@@ -60,3 +60,4 @@ namespace Lokad.Onnx.Backend.Tests
         }
     }
 }
+

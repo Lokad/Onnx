@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 // This file is copied and adapted from the following git repository -
@@ -265,7 +265,21 @@ namespace Lokad.Onnx
             }
         }
 
-        public override DenseTensor<T> ToDenseTensor() => this;
+        public override DenseTensor<T> ToDenseTensor()
+        {
+            if (!IsReversedStride)
+            {
+                return this;
+            }
+
+            var rowMajor = new DenseTensor<T>(Dimensions, reverseStride: false);
+            foreach (var index in rowMajor.GetDimensionsIterator())
+            {
+                rowMajor[index] = this[index];
+            }
+
+            return rowMajor;
+        }
 
         public static DenseTensor<T> OfShape(params int[] dims) => new DenseTensor<T>((ReadOnlySpan<int>) dims);
         #endregion
