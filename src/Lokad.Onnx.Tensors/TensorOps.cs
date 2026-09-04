@@ -1058,16 +1058,18 @@ where T : unmanaged
 
     static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
     {
-        if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported)
+        if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && k % 32 == 0 && m >= 2)
         {
-            if (m % 2 == 0 && k % 32 == 0)
+            int blocked = m - (m % 2);
+            mm_unsafe_vectorized_intrinsics_2x4(blocked, n, k, x, y, output);
+            if (blocked != m)
             {
-                mm_unsafe_vectorized_intrinsics_2x4(m, n, k, x, y, output);
+                mm_unsafe_vectorized_intrinsics(1, n, k, x + blocked * n, y, output + blocked * k);
             }
-            else
-            {
-                mm_unsafe_vectorized_intrinsics(m, n, k, x, y, output);
-            }
+        }
+        else if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported)
+        {
+            mm_unsafe_vectorized_intrinsics(m, n, k, x, y, output);
         }
         else if (options.UseSimd)
         {
@@ -1999,20 +2001,33 @@ where T : unmanaged
     {
         StartOpStage(OpStage.ValidateArguments);
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
-        if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");      
-        var max = Tensor<float>.ReduceMax(x, (new int[] { axis }).ToTensor<int>(), true);
-        if (!Tensor<float>.Broadcast(x, max, out var bx, out var bmax))
+        if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");
+        var denseInput = x.ToDenseTensor();
+        int block = 1;
+        for (int dimension = axis; dimension < denseInput.Rank; dimension++) block *= denseInput.Dimensions[dimension];
+        var output = new DenseTensor<float>(denseInput.Dimensions);
+        var inputSpan = denseInput.Buffer.Span;
+        var outputSpan = output.Buffer.Span;
+        int outer = block == 0 ? 0 : (int)(denseInput.Length / block);
+        for (int outerIndex = 0; outerIndex < outer; outerIndex++)
         {
-            throw new InvalidOperationException("Could not broadcast result of Max op with original tensor.");
+            float max = float.NegativeInfinity;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            {
+                float candidate = inputSpan[outerIndex * block + blockIndex];
+                if (float.IsNaN(candidate)) { max = float.NaN; break; }
+                if (candidate > max) max = candidate;
+            }
+            float sum = 0f;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            {
+                float activated = MathF.Exp(inputSpan[outerIndex * block + blockIndex] - max);
+                outputSpan[outerIndex * block + blockIndex] = activated;
+                sum += activated;
+            }
+            for (int blockIndex = 0; blockIndex < block; blockIndex++) outputSpan[outerIndex * block + blockIndex] /= sum;
         }
-        var sub = Tensor<float>.Subtract(x, bmax);
-        var t = sub.Apply(MathF.Exp);
-        var s = Tensor<float>.ReduceSum(t, (new int[] { axis }).ToTensor<int>(), true);
-        if (!Tensor<float>.Broadcast(t, s, out var bt, out var bs))
-        {
-            throw new InvalidOperationException("Could not broadcast results of ReduceSum and Exp ops.");
-        }
-        return Tensor<float>.Divide(bt, bs);
+        return output;
     }
 
     public static Tensor<double> Softmax(Tensor<double> x, int axis = -1)
@@ -2020,20 +2035,32 @@ where T : unmanaged
         StartOpStage(OpStage.ValidateArguments);
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
         if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");
-
-        var max = Tensor<double>.ReduceMax(x, (new int[] { axis }).ToTensor<int>(), true);
-        if (!Tensor<double>.Broadcast(x, max, out var bx, out var bmax))
+        var denseInput = x.ToDenseTensor();
+        int block = 1;
+        for (int dimension = axis; dimension < denseInput.Rank; dimension++) block *= denseInput.Dimensions[dimension];
+        var output = new DenseTensor<double>(denseInput.Dimensions);
+        var inputSpan = denseInput.Buffer.Span;
+        var outputSpan = output.Buffer.Span;
+        int outer = block == 0 ? 0 : (int)(denseInput.Length / block);
+        for (int outerIndex = 0; outerIndex < outer; outerIndex++)
         {
-            throw new InvalidOperationException("Could not broadcast result of Max op with original tensor.");
+            double max = double.NegativeInfinity;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            {
+                double candidate = inputSpan[outerIndex * block + blockIndex];
+                if (double.IsNaN(candidate)) { max = double.NaN; break; }
+                if (candidate > max) max = candidate;
+            }
+            double sum = 0d;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            {
+                double activated = Math.Exp(inputSpan[outerIndex * block + blockIndex] - max);
+                outputSpan[outerIndex * block + blockIndex] = activated;
+                sum += activated;
+            }
+            for (int blockIndex = 0; blockIndex < block; blockIndex++) outputSpan[outerIndex * block + blockIndex] /= sum;
         }
-        var sub = Tensor<double>.Subtract(x, bmax);
-        var t = sub.Apply(Math.Exp);
-        var s = Tensor<double>.ReduceSum(t, (new int[] { axis }).ToTensor<int>(), true);
-        if (!Tensor<double>.Broadcast(t, s, out var bt, out var bs))
-        {
-            throw new InvalidOperationException("Could not broadcast results of ReduceSum and Exp ops.");
-        }
-        return Tensor<double>.Divide(bt, bs);
+        return output;
     }
 
     public static Tensor<float> Erf(Tensor<float> x) => x.Apply(MathOps.Erf);
@@ -2155,6 +2182,24 @@ where T : unmanaged
 
         StartOpStage(OpStage.Copy);
         var output = DenseTensor<T>.OfShape(shape);
+        int inner = 1;
+        for (int trailing = axis + 1; trailing < output.Rank; trailing++) inner *= shape[trailing];
+        int outer = 1;
+        for (int leading = 0; leading < axis; leading++) outer *= shape[leading];
+        if (x is DenseTensor<T> denseX && y is DenseTensor<T> denseY && HasStandardStrides(denseX) && HasStandardStrides(denseY))
+        {
+            var outputSpan = output.Buffer.Span;
+            var sourceSpanX = denseX.Buffer.Span;
+            var sourceSpanY = denseY.Buffer.Span;
+            int xAxisLength = x.dimensions[axis];
+            int yAxisLength = y.dimensions[axis];
+            for (int outerIndex = 0; outerIndex < outer; outerIndex++)
+            {
+                sourceSpanX.Slice(outerIndex * xAxisLength * inner, xAxisLength * inner).CopyTo(outputSpan.Slice(outerIndex * (xAxisLength + yAxisLength) * inner, xAxisLength * inner));
+                sourceSpanY.Slice(outerIndex * yAxisLength * inner, yAxisLength * inner).CopyTo(outputSpan.Slice((outerIndex * (xAxisLength + yAxisLength) + xAxisLength) * inner, yAxisLength * inner));
+            }
+            return output;
+        }
         var di = output.GetDimensionsIterator();    
         foreach (var index in di)
         {
