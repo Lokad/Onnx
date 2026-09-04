@@ -1,6 +1,7 @@
 ﻿namespace Lokad.Onnx.CLI;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 using CommandLine;
@@ -251,7 +252,7 @@ class Program : Runtime
                         Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
                     }
                 }
-                if (ro.EnableProfiler) PrintProfile();
+                if (ro.EnableProfiler && graph.LastProfile is { } profile) PrintProfile(profile);
                 Exit(ExitResult.SUCCESS);
             }
         }
@@ -475,12 +476,12 @@ class Program : Runtime
         Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
     }
 
-    static void PrintProfile()
+    static void PrintProfile(Stack<NodeProfile> profile)
     {
-        var times = Profiler.Profile.Select(np => (np.Op, np.OpsProfile.Sum(op => op.Time.TotalMilliseconds)))
+        var times = profile.Select(np => (np.Op, np.OpsProfile.Sum(op => op.Time.TotalMilliseconds)))
             .GroupBy(x => x.Item1)
             .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2)), g.Count()));
-        var times2 = Profiler.Profile.Select(np => (np.OpsProfile.Select(op => (op.Stage, op.Time)))).SelectMany(x => x)//Sum(op => op.Time.TotalMilliseconds)))
+        var times2 = profile.Select(np => (np.OpsProfile.Select(op => (op.Stage, op.Time)))).SelectMany(x => x)//Sum(op => op.Time.TotalMilliseconds)))
          .GroupBy(x => x.Item1)
          .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2.TotalMilliseconds)), g.Count()));
         var chart = new BarChart()
@@ -495,12 +496,12 @@ class Program : Runtime
             .AddItems(times2, t => new BreakdownChartItem(Profiler.StageDescription(t.Item1) + ":", t.Item2, (Color)(((int)t.Item1 % 10) + 1)));
         Con.Write(chart);
         Con.WriteLine();
-        Con.WriteLine("Total graph node count: " + Profiler.Profile.Count);
+        Con.WriteLine("Total graph node count: " + profile.Count);
         Con.WriteLine("Total graph execution time: " + times.Sum(t => t.Item2) + "ms");
         Con.Write("Execution time breakdown (ms): ");
         Con.Write(chart2);
 
-        var times3 = Profiler.Profile.Select(np => (np.Op, 
+        var times3 = profile.Select(np => (np.Op, 
                                         np.OpsProfile.Select(op => (op.Stage, op.Time.TotalMilliseconds))
                                                         .GroupBy(s => s.Stage)
                                                         .Select(gs => (gs.Key, gs.Sum(i => i.TotalMilliseconds)))))

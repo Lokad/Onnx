@@ -30,6 +30,8 @@ public class ComputationalGraph : Runtime
 
     public Dictionary<string, string> MetadataProps = new Dictionary<string, string>();
 
+    public Stack<NodeProfile>? LastProfile { get; private set; }
+
     public string? LastErrorMessage { get; private set; }
 
     public string? LastFailedNodeName { get; private set; }
@@ -210,6 +212,7 @@ public class ComputationalGraph : Runtime
         LastErrorMessage = null;
         LastFailedNodeName = null;
         LastFailedNodeOp = null;
+        LastProfile = null;
         if (userInputs is ITensor[] uia)
         {
             if (!ResolveInputs(uia, useInitializers))
@@ -232,8 +235,9 @@ public class ComputationalGraph : Runtime
 
         int count = 0;
         var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
-        
-        foreach (var node in Nodes) 
+
+        using var profilerScope = Profiler.BeginExecution();
+        foreach (var node in Nodes)
         {
             count++;
             Debug("Executing node {c} {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
@@ -282,8 +286,9 @@ public class ComputationalGraph : Runtime
                 }
             }
         }
+        LastProfile = profilerScope.Profile;
         op.Complete();
-        return true;    
+        return true;
     }
 
     public bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU, ExecutionOptions? options = null)

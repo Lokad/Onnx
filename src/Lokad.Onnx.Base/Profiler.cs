@@ -21,35 +21,25 @@ namespace Lokad.Onnx
 
     public record NodeProfile { public long NodeId; public OpType Op; public Stack<OpProfile> OpsProfile = new Stack<OpProfile>(); }
 
-    public class Profiler
+    public sealed class ProfilerContext : IDisposable
     {
-        #region Fields
-        private static Stopwatch timer = new Stopwatch();
-        private static readonly object sync = new object();
+        public bool Enabled;
+        public readonly Stack<NodeProfile> Profile = new Stack<NodeProfile>();
+        private readonly Stopwatch timer = new Stopwatch();
+        private readonly object sync = new object();
+        private readonly ProfilerContext? previous;
 
-        public static bool Enabled = false;
-
-        public static Stack<NodeProfile> Profile = new Stack<NodeProfile>();
-        #endregion
-
-        #region Properties
-        public static NodeProfile CurrentNodeProfile => Profile.Peek();
-        
-        public static OpProfile CurrentOpProfile => CurrentNodeProfile.OpsProfile.Peek();
-
-        public static bool Running => timer.IsRunning;
-        #endregion
-
-        #region Methods
-        protected static void AddTimeIfTimerRunning()
+        internal ProfilerContext(bool enabled, ProfilerContext? previous)
         {
-            if (!Enabled) return;
-            lock (sync) { AddTimeLocked(); }
+            Enabled = enabled;
+            this.previous = previous;
         }
 
-        private static void AddTimeLocked()
+        public void Dispose() => Profiler.Restore(previous);
+
+        void AddTimeLocked()
         {
-            if (Running)
+            if (timer.IsRunning)
             {
                 timer.Stop();
                 CurrentOpProfile.Time = timer.Elapsed;
@@ -57,11 +47,17 @@ namespace Lokad.Onnx
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]  
-        public static void StartNodeProfile(long id, OpType op)
+        void AddTimeIfTimerRunning()
         {
             if (!Enabled) return;
-            
+            lock (sync) { AddTimeLocked(); }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void StartNodeProfile(long id, OpType op)
+        {
+            if (!Enabled) return;
+
             lock (sync)
             {
                 AddTimeIfTimerRunning();
@@ -72,11 +68,10 @@ namespace Lokad.Onnx
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void StopNodeProfile() => AddTimeIfTimerRunning();
-
+        public void StopNodeProfile() => AddTimeIfTimerRunning();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void StartOpStage(OpStage stage)
+        public void StartOpStage(OpStage stage)
         {
             if (!Enabled) return;
 
@@ -84,9 +79,54 @@ namespace Lokad.Onnx
             {
                 AddTimeIfTimerRunning();
                 CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = stage, Time = TimeSpan.Zero });
-                timer.Start();  
+                timer.Start();
             }
         }
+
+        NodeProfile CurrentNodeProfile => Profile.Peek();
+
+        OpProfile CurrentOpProfile => CurrentNodeProfile.OpsProfile.Peek();
+
+        internal bool Running => timer.IsRunning;
+    }
+
+    public class Profiler
+    {
+        private static readonly ProfilerContext shared = new ProfilerContext(false, null);
+        private static readonly System.Threading.AsyncLocal<ProfilerContext?> ambient = new System.Threading.AsyncLocal<ProfilerContext?>();
+
+        static ProfilerContext Current => ambient.Value ?? shared;
+
+        public static bool Enabled { get => Current.Enabled; set => Current.Enabled = value; }
+
+        public static Stack<NodeProfile> Profile => Current.Profile;
+
+        public static NodeProfile CurrentNodeProfile => Current.Profile.Peek();
+
+        public static OpProfile CurrentOpProfile => CurrentNodeProfile.OpsProfile.Peek();
+
+        public static bool Running => Current.Running;
+
+        public static ProfilerContext BeginExecution() => BeginExecution(Current.Enabled);
+
+        public static ProfilerContext BeginExecution(bool enabled)
+        {
+            var ctx = new ProfilerContext(enabled, ambient.Value);
+            ambient.Value = ctx;
+            return ctx;
+        }
+
+        internal static void Restore(ProfilerContext? previous) => ambient.Value = previous;
+
+        #region Methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void StartNodeProfile(long id, OpType op) => Current.StartNodeProfile(id, op);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void StopNodeProfile() => Current.StopNodeProfile();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void StartOpStage(OpStage stage) => Current.StartOpStage(stage);
 
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
         //public static void StopOpStage() => AddTimeIfTimerRunning();
