@@ -114,7 +114,14 @@ namespace Lokad.Onnx
                 default: throw new ArgumentException($"Cannot convert value info proto of element type {vp.Type.TensorType.ElemType}.");
             }
         }
-        public static string TensorNameDesc(this ValueInfoProto vp) => $"{vp.Name}:{((TensorElementType) vp.Type.TensorType.ElemType).ToString().ToLower()}:{vp.Type.TensorType.Shape.Dim.Select(d => d.DimValue.ToString()).JoinWith("x")}";
+        public static string TensorNameDesc(this ValueInfoProto vp)
+        {
+            if (vp.Type is null || vp.Type.ValueCase != TypeProto.ValueOneofCase.TensorType)
+                throw new ArgumentException($"The value info {vp.Name} is not a tensor type.");
+            if (vp.Type.TensorType.Shape is null)
+                throw new ArgumentException($"The value info {vp.Name} declares a tensor type without shape metadata; shaped graph inputs and outputs are required.");
+            return $"{vp.Name}:{((TensorElementType) vp.Type.TensorType.ElemType).ToString().ToLower()}:{vp.Type.TensorType.Shape.Dim.Select(d => d.DimValue.ToString()).JoinWith("x")}";
+        }
 
         public static string TensorNameDesc(this TensorProto vp) => $"{vp.Name}:{((TensorElementType)vp.DataType).ToString().ToLower()}:{vp.Dims.Select(d => d.ToString()).JoinWith("x")}";
     }

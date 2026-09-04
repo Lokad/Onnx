@@ -96,6 +96,32 @@ public class TensorProtoConversionTests
     }
 
     [Fact]
+    public void ShapedValueInfoDescDescribesNameTypeAndDims()
+    {
+        var shape = new TensorShapeProto();
+        shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimValue = 2 });
+        shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimValue = 3 });
+        var vp = new ValueInfoProto { Name = "z", Type = new TypeProto { TensorType = new TypeProto.Types.Tensor { ElemType = 1, Shape = shape } } };
+        Assert.Equal("z:float:2x3", vp.TensorNameDesc());
+    }
+
+    [Fact]
+    public void ShapelessValueInfoDescThrowsArgumentException()
+    {
+        var vp = new ValueInfoProto { Name = "z", Type = new TypeProto { TensorType = new TypeProto.Types.Tensor { ElemType = 1 } } };
+        var ex = Assert.Throws<ArgumentException>(() => vp.TensorNameDesc());
+        Assert.Contains("z", ex.Message);
+    }
+
+    [Fact]
+    public void UntypedValueInfoDescThrowsArgumentException()
+    {
+        var vp = new ValueInfoProto { Name = "w" };
+        var ex = Assert.Throws<ArgumentException>(() => vp.TensorNameDesc());
+        Assert.Contains("w", ex.Message);
+    }
+
+    [Fact]
     public void UntypedValueInfoThrowsArgumentException()
     {
         var vp = new ValueInfoProto { Name = "w" };
