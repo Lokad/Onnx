@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx.CLI;
+namespace Lokad.Onnx.CLI;
 
 using System;
 using System.Collections.Generic;
@@ -225,10 +225,7 @@ class Program : Runtime
         }
 
 
-        if (ro.EnableProfiler)
-        {
-            Profiler.Enabled = true;
-        }
+        using var profilerScope = ro.EnableProfiler ? Profiler.BeginExecution(true) : null;
 
         if (ro.Node == "")
         {

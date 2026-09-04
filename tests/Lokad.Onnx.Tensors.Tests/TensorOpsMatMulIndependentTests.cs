@@ -44,24 +44,11 @@ public class TensorOpsMatMulIndependentTests
 
     static void RunAllModes(Tensor<float> a, Tensor<float> b, Action<Tensor<float>> assert)
     {
-        Tensor<float> scalar;
-        using (new HardwareConfigScope(useSimd: false, useIntrinsics: false))
-        {
-            scalar = Tensor<float>.MatMul2D(a, b);
-        }
-        assert(scalar);
-
-        using (new HardwareConfigScope(useSimd: true, useIntrinsics: false))
-        {
-            assert(Tensor<float>.MatMul2D(a, b));
-        }
-
+        assert(Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Scalar));
+        assert(Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Simd));
         if (Fma.IsSupported)
         {
-            using (new HardwareConfigScope(useSimd: true, useIntrinsics: true))
-            {
-                assert(Tensor<float>.MatMul2D(a, b));
-            }
+            assert(Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics));
         }
     }
 
@@ -165,11 +152,7 @@ public class TensorOpsMatMulIndependentTests
         var b = new int[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } };
         var ta = a.ToTensor<int>();
         var tb = b.ToTensor<int>();
-        Tensor<int> actual;
-        using (new HardwareConfigScope(false, false))
-        {
-            actual = Tensor<int>.MatMul2D(ta, tb);
-        }
+        Tensor<int> actual = Tensor<int>.MatMul2D(ta, tb, TensorExecutionOptions.Scalar);
         Assert.Equal(22, actual[0, 0]);
         Assert.Equal(28, actual[0, 1]);
         Assert.Equal(49, actual[1, 0]);
@@ -187,11 +170,7 @@ public class TensorOpsMatMulIndependentTests
         var b = new double[,] { { 5d, 6d }, { 7d, 8d } };
         var ta = a.ToTensor<double>();
         var tb = b.ToTensor<double>();
-        Tensor<double> actual;
-        using (new HardwareConfigScope(false, false))
-        {
-            actual = Tensor<double>.MatMul2D(ta, tb);
-        }
+        Tensor<double> actual = Tensor<double>.MatMul2D(ta, tb, TensorExecutionOptions.Scalar);
         Assert.Equal(19d, actual[0, 0], 10);
         Assert.Equal(22d, actual[0, 1], 10);
         Assert.Equal(43d, actual[1, 0], 10);

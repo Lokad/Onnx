@@ -18,6 +18,7 @@ public class ExecutionOptionsTests
     [Fact]
     public void TensorAuto_ReflectsHardwareConfig()
     {
+#pragma warning disable CS0618 // This test pins the documented Auto-resolves-legacy-defaults contract.
         bool simd = HardwareConfig.UseSimd;
         bool intr = HardwareConfig.UseIntrinsics;
         try
@@ -33,6 +34,7 @@ public class ExecutionOptionsTests
             HardwareConfig.UseSimd = simd;
             HardwareConfig.UseIntrinsics = intr;
         }
+#pragma warning restore CS0618
     }
 
     [Fact]

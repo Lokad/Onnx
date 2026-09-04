@@ -97,14 +97,19 @@ namespace Lokad.Onnx
 
         static ProfilerContext Current => ambient.Value ?? shared;
 
+        [System.Obsolete("Process-wide profiler state is obsolete. Open an explicit Profiler.BeginExecution scope and read its Profile instead.")]
         public static bool Enabled { get => Current.Enabled; set => Current.Enabled = value; }
 
+        [System.Obsolete("Process-wide profiler state is obsolete. Read the Profile of an explicit Profiler.BeginExecution scope instead.")]
         public static Stack<NodeProfile> Profile => Current.Profile;
 
+        [System.Obsolete("Process-wide profiler state is obsolete.")]
         public static NodeProfile CurrentNodeProfile => Current.Profile.Peek();
 
+        [System.Obsolete("Process-wide profiler state is obsolete.")]
         public static OpProfile CurrentOpProfile => CurrentNodeProfile.OpsProfile.Peek();
 
+        [System.Obsolete("Process-wide profiler state is obsolete.")]
         public static bool Running => Current.Running;
 
         public static ProfilerContext BeginExecution() => BeginExecution(Current.Enabled);

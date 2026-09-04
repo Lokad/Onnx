@@ -87,20 +87,16 @@ public class TensorOpsMatMul2DTests
         var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
         var b = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f }, { 7f, 8f } });
 
-        using var _ = new HardwareConfigScope(HardwareConfig.UseSimd, HardwareConfig.UseIntrinsics);
-        Assert.Equal(HardwareIntrinsics.IsX86FmaSupported, HardwareConfig.UseIntrinsics);
+        var scalar = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Scalar);
+        var auto = Tensor<float>.MatMul2D(a, b);
+        Assert.Equal(scalar, auto);
 
-        using var baseline = new HardwareConfigScope(useSimd: false, useIntrinsics: false);
-        var scalar = Tensor<float>.MatMul2D(a, b);
-
-        using var simdOnly = new HardwareConfigScope(useSimd: true, useIntrinsics: false);
-        var simd = Tensor<float>.MatMul2D(a, b);
+        var simd = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Simd);
         Assert.Equal(scalar, simd);
 
         if (Fma.IsSupported)
         {
-            using var intrinsics = new HardwareConfigScope(useSimd: true, useIntrinsics: true);
-            var intrinsicsResult = Tensor<float>.MatMul2D(a, b);
+            var intrinsicsResult = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics);
             Assert.Equal(scalar, intrinsicsResult);
         }
     }
@@ -134,13 +130,8 @@ public class TensorOpsMatMul2DTests
         var x = Tensor<float>.Ones(2, 32);
         var y = Tensor<float>.Ones(32, 32);
 
-        using var intrinsics = new HardwareConfigScope(useSimd: true, useIntrinsics: true);
-        Tensor<float> expected;
-        using (new HardwareConfigScope(useSimd: false, useIntrinsics: false))
-        {
-            expected = Tensor<float>.MatMul2D(x, y);
-        }
-        var actual = Tensor<float>.MatMul2D(x, y);
+        var expected = Tensor<float>.MatMul2D(x, y, TensorExecutionOptions.Scalar);
+        var actual = Tensor<float>.MatMul2D(x, y, TensorExecutionOptions.Intrinsics);
 
         Assert.Equal(expected[0, 0], actual[0, 0], 5);
         Assert.Equal(expected[1, 31], actual[1, 31], 5);

@@ -64,6 +64,7 @@ public class CPUExecutionProvider : Runtime
         OpType.SequenceAt,
     };
 
+    [System.Obsolete("Process-wide execution policy is obsolete. Pass ExecutionOptions explicitly instead.")]
     public static OptimizationMode OptimizationMode { get; set; } = OptimizationMode.Speed;
 
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
