@@ -118,11 +118,11 @@ public class CPUExecutionProvider : Runtime
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
-            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Add((Tensor<byte>)bA, (Tensor<byte>)bB));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Add((Tensor<int>)bA, (Tensor<int>)bB));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.Add((Tensor<long>)bA, (Tensor<long>)bB));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)bA, (Tensor<float>)bB));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)bA, (Tensor<double>)bB));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Add((Tensor<byte>)bA, (Tensor<byte>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Add((Tensor<int>)bA, (Tensor<int>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Add((Tensor<long>)bA, (Tensor<long>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)bA, (Tensor<float>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)bA, (Tensor<double>)bB, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
@@ -150,11 +150,11 @@ public class CPUExecutionProvider : Runtime
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
-            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Subtract((Tensor<byte>)bA, (Tensor<byte>)bB));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Subtract((Tensor<int>)bA, (Tensor<int>)bB));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.Subtract((Tensor<long>)bA, (Tensor<long>)bB));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Subtract((Tensor<float>)bA, (Tensor<float>)bB));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Subtract((Tensor<double>)bA, (Tensor<double>)bB));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Subtract((Tensor<byte>)bA, (Tensor<byte>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Subtract((Tensor<int>)bA, (Tensor<int>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Subtract((Tensor<long>)bA, (Tensor<long>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Subtract((Tensor<float>)bA, (Tensor<float>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Subtract((Tensor<double>)bA, (Tensor<double>)bB, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
@@ -183,11 +183,11 @@ public class CPUExecutionProvider : Runtime
         Profiler.StartOpStage(OpStage.Math);     
         switch (A.ElementType)
         {
-            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Multiply((Tensor<byte>)bA, (Tensor<byte>)bB));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Multiply((Tensor<int>)bA, (Tensor<int>)bB));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.Multiply((Tensor<long>)bA, (Tensor<long>)bB));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Multiply((Tensor<float>)bA, (Tensor<float>)bB));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Multiply((Tensor<double>)bA, (Tensor<double>)bB));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Multiply((Tensor<byte>)bA, (Tensor<byte>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Multiply((Tensor<int>)bA, (Tensor<int>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Multiply((Tensor<long>)bA, (Tensor<long>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Multiply((Tensor<float>)bA, (Tensor<float>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Multiply((Tensor<double>)bA, (Tensor<double>)bB, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
@@ -216,11 +216,11 @@ public class CPUExecutionProvider : Runtime
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
-            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Divide((Tensor<byte>)bA, (Tensor<byte>)bB));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Divide((Tensor<int>)bA, (Tensor<int>)bB));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Divide((Tensor<byte>)bA, (Tensor<byte>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Divide((Tensor<int>)bA, (Tensor<int>)bB, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Divide((Tensor<long>)bA, (Tensor<long>)bB));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Divide((Tensor<float>)bA, (Tensor<float>)bB));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Divide((Tensor<double>)bA, (Tensor<double>)bB));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Divide((Tensor<float>)bA, (Tensor<float>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Divide((Tensor<double>)bA, (Tensor<double>)bB, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
@@ -390,9 +390,9 @@ public class CPUExecutionProvider : Runtime
         }
         switch (A.ElementType)
         {
-            case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul((Tensor<int>)A, (Tensor<int>)B));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul((Tensor<int>)A, (Tensor<int>)B, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B, (options ?? ExecutionOptions.Default).Tensor));
-            case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B));
+            case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
@@ -409,8 +409,8 @@ public class CPUExecutionProvider : Runtime
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
-            case TensorElementType.Float: return Success(op, Tensor<float>.Sqrt((Tensor<float>)A));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Sqrt((Tensor<double>)A));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Sqrt((Tensor<float>)A, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Sqrt((Tensor<double>)A, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
@@ -883,8 +883,8 @@ public class CPUExecutionProvider : Runtime
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
-            case TensorElementType.Float: return Success(op, Tensor<float>.Cos((Tensor<float>)X));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Cos((Tensor<double>)X));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Cos((Tensor<float>)X, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Cos((Tensor<double>)X, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
@@ -896,8 +896,8 @@ public class CPUExecutionProvider : Runtime
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
-            case TensorElementType.Float: return Success(op, Tensor<float>.Sin((Tensor<float>)X));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Sin((Tensor<double>)X));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Sin((Tensor<float>)X, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Sin((Tensor<double>)X, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
@@ -909,10 +909,10 @@ public class CPUExecutionProvider : Runtime
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
-            case TensorElementType.Float: return Success(op, Tensor<float>.Negate((Tensor<float>)X));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Negate((Tensor<double>)X));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Negate((Tensor<int>)X));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.Negate((Tensor<long>)X));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Negate((Tensor<float>)X, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Negate((Tensor<double>)X, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Negate((Tensor<int>)X, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Negate((Tensor<long>)X, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
