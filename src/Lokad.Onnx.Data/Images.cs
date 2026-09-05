@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -50,6 +50,14 @@ namespace Lokad.Onnx
                     n = Path.Combine(Path.GetDirectoryName(name)!, Path.GetFileNameWithoutExtension(name)
                         + "_" + $"{image.Height}x{image.Width}_{index}.png");
                     return DenseTensor<float>.OfValues(ImageToArrayF3(SaveImage(image, n, saveInput))).WithName(n);
+                }
+                else if (props[0] == "dinov3")
+                {
+                    Info("Converting image data to DINOv3 format tensor data.");
+                    image.Mutate(i => i.Resize(new ResizeOptions { Size = new Size(224, 224), Mode = ResizeMode.Stretch, Sampler = KnownResamplers.Triangle })); // Triangle approximates the HF bilinear resample (resample 2); ImageSharp 3 removed Bilinear.
+                    n = Path.Combine(Path.GetDirectoryName(name)!, Path.GetFileNameWithoutExtension(name)
+                        + "_" + $"{image.Height}x{image.Width}_{index}.png");
+                    return DenseTensor<float>.OfValues(ImageToArrayF3N(SaveImage(image, n, saveInput))).WithName(n);
                 }
                 else if (char.IsDigit(props[0].Split(':').First()[0]))
                 {
@@ -121,6 +129,25 @@ namespace Lokad.Onnx
                     pixels[0, 0, j, i] = p.R / 255.0f;
                     pixels[0, 1, j, i] = p.G / 255.0f;
                     pixels[0, 2, j, i] = p.B / 255.0f;
+                }
+            }
+            return pixels;
+        }        /// <summary>
+        /// Converts an image to a channels-first float tensor matching the
+        /// DINOv3 image processor: 0-1 rescale then ImageNet
+        /// mean (0.485, 0.456, 0.406) / std (0.229, 0.224, 0.225) normalization.
+        /// </summary>
+        public static float[,,,] ImageToArrayF3N(Image<Rgba32> image)
+        {
+            var pixels = new float[1, 3, image.Height, image.Width];
+            for (int i = 0; i < image.Width; i++)
+            {
+                for (int j = 0; j < image.Height; j++)
+                {
+                    var p = image[i, j];
+                    pixels[0, 0, j, i] = (p.R / 255.0f - 0.485f) / 0.229f;
+                    pixels[0, 1, j, i] = (p.G / 255.0f - 0.456f) / 0.224f;
+                    pixels[0, 2, j, i] = (p.B / 255.0f - 0.406f) / 0.225f;
                 }
             }
             return pixels;
