@@ -1238,12 +1238,38 @@ where T : unmanaged
         var (_x, _y) = DensifyFloatOperands(x, y);
 
         StartOpStage(OpStage.Math);
-        using var xh = _x.Buffer.Pin();
-        using var yh = _y.Buffer.Pin();
-        using var oh = destination.Buffer.Pin();
-        unsafe
+        int rowDop = options.MaxDegreeOfParallelism < 2 || m < 64
+            ? 1
+            : Math.Min(options.MaxDegreeOfParallelism, m);
+        if (rowDop > 1)
         {
-            RunFloatMatMulKernel(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer, options);
+            int chunk = (m + rowDop - 1) / rowDop;
+            Parallel.For(0, rowDop, new ParallelOptions { MaxDegreeOfParallelism = rowDop }, w =>
+            {
+                int start = w * chunk;
+                int rows = Math.Min(chunk, m - start);
+                if (rows <= 0) return;
+                using var xh = _x.Buffer.Pin();
+                using var yh = _y.Buffer.Pin();
+                using var oh = destination.Buffer.Pin();
+                unsafe
+                {
+                    RunFloatMatMulKernel(rows, n, k,
+                        (float*)xh.Pointer + start * n,
+                        (float*)yh.Pointer,
+                        (float*)oh.Pointer + start * k, options);
+                }
+            });
+        }
+        else
+        {
+            using var xh = _x.Buffer.Pin();
+            using var yh = _y.Buffer.Pin();
+            using var oh = destination.Buffer.Pin();
+            unsafe
+            {
+                RunFloatMatMulKernel(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer, options);
+            }
         }
         return destination;
     }
