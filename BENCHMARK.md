@@ -41,8 +41,8 @@ Shapes follow the model profiles (attention batches, 257x384 DINO rows,
 | Add 257x384 | 140us | 64us | 73us |
 | Mul 257x384 | 263us | 61us | 68us |
 | Div 257x384 | 259us | 60us | 63us |
-| Erf 257x384 | 631us | 410us | 416us |
-| Gelu exact 257x384 | 622us | 432us | 441us |
+| Erf 257x384 | 603us | 124us | 123us |
+| Gelu exact 257x384 | 491us | 134us | 124us |
 | Softmax 12x30x30 | 51us | - | - |
 | Softmax 6x257x257 | 1775us | - | - |
 | LayerNorm 257x384 | 767us | - | - |
