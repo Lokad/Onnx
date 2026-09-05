@@ -17,7 +17,7 @@ It runs transformer and vision models end to end on CPU, with numeric parity aga
 
 - `lonnx info <model.onnx>`: model metadata; supports `--ops`, `--init`, `--op-filter`.
 - `lonnx run <model.onnx> <inputs...>`: image and text inputs, `--softmax`, `--print-input`, profiling, and SIMD toggles.
-- `lonnx benchmark <id>`: `matmul2d`, `matmul`, `indexing`, `me5s-load`, `me5s-run`, with BenchmarkDotNet flags.
+- `lonnx benchmark <id>`: `matmul2d`, `matmul`, `indexing`, `ops`, `me5s-load`, `me5s-run`, with BenchmarkDotNet flags (see BENCHMARK.md).
 
 ### Mini-tutorial: MNIST (image)
 * Use the bundled MNIST model and sample image:

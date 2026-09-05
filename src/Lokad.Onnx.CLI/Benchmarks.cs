@@ -298,6 +298,132 @@ public class TensorIndexingBenchmarks : Runtime
 [InProcess]
 [MemoryDiagnoser]
 [IterationsColumn]
+[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
+[Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
+public class TensorOpBenchmarks : Runtime
+{
+    [GlobalSetup]
+    public void Setup()
+    {
+        Program.UseConsoleLogging(false, "CLI", true);
+        Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false);
+        sm_e5 = Tensor<float>.Rand(12, 30, 30);
+        sm_dino = Tensor<float>.Rand(6, 257, 257);
+        ln_x = Tensor<float>.Rand(257, 384);
+        ln_s = Tensor<float>.Rand(384);
+        ln_b = Tensor<float>.Rand(384);
+        ew_a = Tensor<float>.Rand(257, 384);
+        ew_b = Tensor<float>.Rand(257, 384);
+        gath_t = Tensor<float>.Rand(1000, 384);
+        gath_i = Tensor<int>.Zeros(30);
+        for (int i = 0; i < 30; i++) gath_i[i] = (i * 7919) % 1000;
+        tr_x = Tensor<float>.Rand(12, 30, 30);
+        cc_a = Tensor<float>.Rand(201, 192);
+        cc_b = Tensor<float>.Rand(201, 192);
+    }
+
+    [Benchmark(Description = "Softmax over 12x30x30 attention scores")]
+    [BenchmarkCategory("softmax")]
+    public void SoftmaxAttn() => Tensor<float>.Softmax(sm_e5);
+
+    [Benchmark(Description = "Softmax over 6x257x257 attention scores")]
+    [BenchmarkCategory("softmax")]
+    public void SoftmaxDino() => Tensor<float>.Softmax(sm_dino);
+
+    [Benchmark(Description = "LayerNormalization over 257x384")]
+    [BenchmarkCategory("layernorm")]
+    public void LayerNorm() => Tensor<float>.LayerNormalization(ln_x, ln_s, ln_b);
+
+    [Benchmark(Description = "Erf over 257x384", Baseline = true)]
+    [BenchmarkCategory("erf")]
+    public void Erf() => Tensor<float>.Erf(ew_a, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Erf over 257x384 - simd")]
+    [BenchmarkCategory("erf")]
+    public void Erf_simd() => Tensor<float>.Erf(ew_a, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Erf over 257x384 - simd intrinsics")]
+    [BenchmarkCategory("erf")]
+    public void Erf_simd_intrinsics() => Tensor<float>.Erf(ew_a, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Exact Gelu over 257x384", Baseline = true)]
+    [BenchmarkCategory("gelu")]
+    public void Gelu() => Tensor<float>.Gelu(ew_a, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Exact Gelu over 257x384 - simd")]
+    [BenchmarkCategory("gelu")]
+    public void Gelu_simd() => Tensor<float>.Gelu(ew_a, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Exact Gelu over 257x384 - simd intrinsics")]
+    [BenchmarkCategory("gelu")]
+    public void Gelu_simd_intrinsics() => Tensor<float>.Gelu(ew_a, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Divide 257x384 tensors", Baseline = true)]
+    [BenchmarkCategory("div")]
+    public void Div() => Tensor<float>.Divide(ew_a, ew_b, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Divide 257x384 tensors - simd")]
+    [BenchmarkCategory("div")]
+    public void Div_simd() => Tensor<float>.Divide(ew_a, ew_b, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Divide 257x384 tensors - simd intrinsics")]
+    [BenchmarkCategory("div")]
+    public void Div_simd_intrinsics() => Tensor<float>.Divide(ew_a, ew_b, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Add 257x384 tensors", Baseline = true)]
+    [BenchmarkCategory("add")]
+    public void Add() => Tensor<float>.Add(ew_a, ew_b, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Add 257x384 tensors - simd")]
+    [BenchmarkCategory("add")]
+    public void Add_simd() => Tensor<float>.Add(ew_a, ew_b, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Add 257x384 tensors - simd intrinsics")]
+    [BenchmarkCategory("add")]
+    public void Add_simd_intrinsics() => Tensor<float>.Add(ew_a, ew_b, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Multiply 257x384 tensors", Baseline = true)]
+    [BenchmarkCategory("mul")]
+    public void Mul() => Tensor<float>.Multiply(ew_a, ew_b, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Multiply 257x384 tensors - simd")]
+    [BenchmarkCategory("mul")]
+    public void Mul_simd() => Tensor<float>.Multiply(ew_a, ew_b, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Multiply 257x384 tensors - simd intrinsics")]
+    [BenchmarkCategory("mul")]
+    public void Mul_simd_intrinsics() => Tensor<float>.Multiply(ew_a, ew_b, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Gather 30 rows from 1000x384 table")]
+    [BenchmarkCategory("gather")]
+    public void Gather() => Tensor<float>.Gather(gath_t, gath_i, 0);
+
+    [Benchmark(Description = "Transpose 12x30x30 over axes 0,2,1")]
+    [BenchmarkCategory("transpose")]
+    public void Transpose() => Tensor<float>.Transpose(tr_x, new[] { 0, 2, 1 });
+
+    [Benchmark(Description = "Concat two 201x192 tensors on axis 1")]
+    [BenchmarkCategory("concat")]
+    public void Concat() => Tensor<float>.Concat(new[] { cc_a, cc_b }, 1);
+
+    #region Fields
+    Tensor<float> sm_e5 = Tensor<float>.Zeros(0);
+    Tensor<float> sm_dino = Tensor<float>.Zeros(0);
+    Tensor<float> ln_x = Tensor<float>.Zeros(0);
+    Tensor<float> ln_s = Tensor<float>.Zeros(0);
+    Tensor<float> ln_b = Tensor<float>.Zeros(0);
+    Tensor<float> ew_a = Tensor<float>.Zeros(0);
+    Tensor<float> ew_b = Tensor<float>.Zeros(0);
+    Tensor<float> gath_t = Tensor<float>.Zeros(0);
+    Tensor<int> gath_i = Tensor<int>.Zeros(0);
+    Tensor<float> tr_x = Tensor<float>.Zeros(0);
+    Tensor<float> cc_a = Tensor<float>.Zeros(0);
+    Tensor<float> cc_b = Tensor<float>.Zeros(0);
+    #endregion
+}
+[InProcess]
+[MemoryDiagnoser]
+[IterationsColumn]
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
@@ -568,6 +694,15 @@ internal class Benchmarks : Runtime
     internal static void RunIndexing(string[] args)
     {
         BenchmarkRunner.Run<TensorIndexingBenchmarks>(DefaultConfig.Instance, args);
+    }
+
+    internal static void RunOps(string[] args)
+    {
+        Info("Running tensor op microbenchmarks...");
+        Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
+        Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
+        Info("SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
+        BenchmarkRunner.Run<TensorOpBenchmarks>(DefaultConfig.Instance, args);
     }
 
     internal static void RunMatMul2D(string[] args)

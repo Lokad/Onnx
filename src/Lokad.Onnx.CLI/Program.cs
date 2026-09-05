@@ -307,6 +307,10 @@ class Program : Runtime
                     Benchmarks.RunIndexing(args);
                     ExitWithSuccess();
                     break;
+                case "ops":
+                    Benchmarks.RunOps(args);
+                    ExitWithSuccess();
+                    break;
                 default:
                     Error("Unknown benchmark: {b}.", bo.BenchmarkId);
                     Exit(ExitResult.INVALID_OPTIONS);
