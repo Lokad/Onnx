@@ -1025,6 +1025,33 @@ public class MathOps
         return Vector.ConditionalSelect(Vector.GreaterThanOrEqual(v, Vector<float>.Zero), y, -y);
     }
 
+    /// <summary>Vectorized base-e exponential; Taylor degree-7 over a Cody-Waite reduced argument with FMA Horner evaluation.</summary>
+    /// <remarks>Relative error is order 1e-7 against MathF.Exp on finite inputs. NaN in, NaN out; large positives overflow to +Infinity and large negatives underflow toward zero like the scalar path.</remarks>
+    public static Vector<float> ExpVector(Vector<float> v)
+    {
+        var isFinite = Vector.Equals(v, v);
+        var x = Vector.Min(Vector.Max(v, new Vector<float>(-88.722839f)), new Vector<float>(88.722839f));
+        var scaled = x * new Vector<float>(1.44269504088896341f);
+        var shifted = Vector.ConditionalSelect(Vector.GreaterThanOrEqual(scaled, Vector<float>.Zero), scaled + new Vector<float>(0.5f), scaled - new Vector<float>(0.5f));
+        var n = Vector.ConvertToInt32(shifted);
+        var clamped = Vector.Min(Vector.Max(n, new Vector<int>(-126)), new Vector<int>(127));
+        var nf = Vector.ConvertToSingle(clamped);
+        var r = Vector.FusedMultiplyAdd(nf, new Vector<float>(-0.693359375f), x);
+        r = Vector.FusedMultiplyAdd(nf, new Vector<float>(2.12194440e-4f), r);
+        var p = new Vector<float>(1f / 5040f);
+        p = Vector.FusedMultiplyAdd(p, r, new Vector<float>(1f / 720f));
+        p = Vector.FusedMultiplyAdd(p, r, new Vector<float>(1f / 120f));
+        p = Vector.FusedMultiplyAdd(p, r, new Vector<float>(1f / 24f));
+        p = Vector.FusedMultiplyAdd(p, r, new Vector<float>(1f / 6f));
+        p = Vector.FusedMultiplyAdd(p, r, new Vector<float>(0.5f));
+        p = Vector.FusedMultiplyAdd(p, r, Vector<float>.One);
+        p = Vector.FusedMultiplyAdd(p, r, Vector<float>.One);
+        var scale = Vector.AsVectorSingle(Vector.ShiftLeft(clamped + new Vector<int>(127), 23));
+        var y = p * scale;
+        y = Vector.ConditionalSelect(Vector.GreaterThan(v, new Vector<float>(88.722839f)), new Vector<float>(float.PositiveInfinity), y);
+        y = Vector.ConditionalSelect(Vector.LessThan(v, new Vector<float>(-88.722839f)), Vector<float>.Zero, y);
+        return Vector.ConditionalSelect(isFinite, y, new Vector<float>(float.NaN));
+    }
     // From: https://www.johndcook.com/blog/2009/01/19/stand-alone-error-function-erf/
     public static double Erf(double x)
     {

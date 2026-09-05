@@ -2253,10 +2253,23 @@ where T : unmanaged
                 if (candidate > max) max = candidate;
             }
             float sum = 0f;
-            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            int expIndex = 0;
+            if (Vector.IsHardwareAccelerated)
             {
-                float activated = MathF.Exp(inputSpan[outerIndex * block + blockIndex] - max);
-                outputSpan[outerIndex * block + blockIndex] = activated;
+                int width = Vector<float>.Count;
+                var vmax = new Vector<float>(max);
+                for (; expIndex <= block - width; expIndex += width)
+                {
+                    int baseIndex = outerIndex * block + expIndex;
+                    var activated = MathOps.ExpVector(new Vector<float>(inputSpan.Slice(baseIndex, width)) - vmax);
+                    activated.CopyTo(outputSpan.Slice(baseIndex, width));
+                    for (int j = 0; j < width; j++) sum += outputSpan[baseIndex + j];
+                }
+            }
+            for (; expIndex < block; expIndex++)
+            {
+                float activated = MathF.Exp(inputSpan[outerIndex * block + expIndex] - max);
+                outputSpan[outerIndex * block + expIndex] = activated;
                 sum += activated;
             }
             for (int blockIndex = 0; blockIndex < block; blockIndex++) outputSpan[outerIndex * block + blockIndex] /= sum;
@@ -2289,10 +2302,23 @@ where T : unmanaged
                 if (candidate > max) max = candidate;
             }
             float sum = 0f;
-            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            int expIndex = 0;
+            if (Vector.IsHardwareAccelerated)
             {
-                float activated = MathF.Exp(inputSpan[outerIndex * block + blockIndex] - max);
-                outputSpan[outerIndex * block + blockIndex] = activated;
+                int width = Vector<float>.Count;
+                var vmax = new Vector<float>(max);
+                for (; expIndex <= block - width; expIndex += width)
+                {
+                    int baseIndex = outerIndex * block + expIndex;
+                    var activated = MathOps.ExpVector(new Vector<float>(inputSpan.Slice(baseIndex, width)) - vmax);
+                    activated.CopyTo(outputSpan.Slice(baseIndex, width));
+                    for (int j = 0; j < width; j++) sum += outputSpan[baseIndex + j];
+                }
+            }
+            for (; expIndex < block; expIndex++)
+            {
+                float activated = MathF.Exp(inputSpan[outerIndex * block + expIndex] - max);
+                outputSpan[outerIndex * block + expIndex] = activated;
                 sum += activated;
             }
             for (int blockIndex = 0; blockIndex < block; blockIndex++) outputSpan[outerIndex * block + blockIndex] /= sum;

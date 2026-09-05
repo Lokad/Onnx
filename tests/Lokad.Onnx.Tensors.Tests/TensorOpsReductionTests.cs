@@ -60,6 +60,52 @@ public class TensorOpsReductionTests
     }
 
     [Fact]
+    public void ExpVector_MatchesScalarExp()
+    {
+        var rnd = new System.Random(20260905);
+        var values = new float[2048];
+        for (int i = 0; i < values.Length; i++) values[i] = (float)(rnd.NextDouble() * 200.0 - 100.0);
+        int width = System.Numerics.Vector<float>.Count;
+        for (int i = 0; i + width <= values.Length; i += width)
+        {
+            Span<float> buf = stackalloc float[width];
+            MathOps.ExpVector(new System.Numerics.Vector<float>(values, i)).CopyTo(buf);
+            var got = buf;
+            for (int j = 0; j < width; j++)
+            {
+                float expected = MathF.Exp(values[i + j]);
+                if (float.IsNaN(expected)) { Assert.True(float.IsNaN(got[j])); continue; }
+                if (float.IsInfinity(expected)) { Assert.Equal(expected, got[j]); continue; }
+                if (System.Math.Abs(expected) > 1e-30f) Assert.True(System.Math.Abs(got[j] - expected) <= 1e-6f * System.Math.Abs(expected));
+                else Assert.True(System.Math.Abs(got[j] - expected) <= 1e-36f);
+            }
+        }
+        Assert.True(float.IsNaN(System.Numerics.Vector.GetElement(MathOps.ExpVector(new System.Numerics.Vector<float>(float.NaN)), 0)));
+        Assert.Equal(float.PositiveInfinity, System.Numerics.Vector.GetElement(MathOps.ExpVector(new System.Numerics.Vector<float>(float.PositiveInfinity)), 0));
+        Assert.Equal(0f, System.Numerics.Vector.GetElement(MathOps.ExpVector(new System.Numerics.Vector<float>(float.NegativeInfinity)), 0));
+        Assert.Equal(1f, System.Numerics.Vector.GetElement(MathOps.ExpVector(System.Numerics.Vector<float>.Zero), 0));
+    }
+
+    [Fact]
+    public void Softmax_MatchesScalarReference_OnWideRows()
+    {
+        var rnd = new System.Random(20260905);
+        var data = new float[3, 257];
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 257; j++) data[i, j] = (float)(rnd.NextDouble() * 20.0 - 10.0);
+        var output = Tensor<float>.Softmax(DenseTensor<float>.OfValues(data), axis: 1);
+        for (int i = 0; i < 3; i++)
+        {
+            float max = float.NegativeInfinity;
+            for (int j = 0; j < 257; j++) max = System.Math.Max(max, data[i, j]);
+            float sum = 0f;
+            for (int j = 0; j < 257; j++) sum += MathF.Exp(data[i, j] - max);
+            for (int j = 0; j < 257; j++) Assert.Equal(MathF.Exp(data[i, j] - max) / sum, output[i, j], 6);
+        }
+        var nan = Tensor<float>.Softmax(DenseTensor<float>.OfValues(new float[1, 10] { { 0f, 1f, float.NaN, 3f, 4f, 5f, 6f, 7f, 8f, 9f } }));
+        for (int j = 0; j < 10; j++) Assert.True(float.IsNaN(nan[0, j]));
+    }
+
+    [Fact]
     public void Softmax_NormalizesAlongAxis()
     {
         var data = DenseTensor<float>.OfValues(new float[2, 2] { { 0f, 1f }, { -1f, 1f } });
