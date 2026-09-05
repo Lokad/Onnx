@@ -27,6 +27,7 @@ Only 0.1.4 has been published to NuGet. Everything below is unreleased: the brea
 - ONNX operators Abs, Cos, Sin, Neg, Gelu, Squeeze, Range, Tile, LayerNormalization, SplitToSequence, and SequenceAt, plus int64 Add, Sub, and Mul and external-data model loading. Validated end-to-end on DINOv3 ViT-S/16 and DINOv2-small against native ONNX Runtime.
 - Direct unit coverage for the new operators, TensorSequence contracts, external-data failure paths, negative-axis Unsqueeze, and opset-13-to-17 attribute-form ReduceMean and ReduceMax routing.
 - Compact mean-plus-spot ONNX Runtime oracles for the DINOv2 and DINOv3 model tests.
+- Per-execution tensor buffer pool driven by file-order last-use analysis: transparent reuse of dense float outputs (Add, Mul, Div, MatMul, Softmax, Erf, Transpose, LayerNormalization, Gelu) with view-pinning alias protection and pool hit counters per execution.
 
 ### Engineering
 
@@ -34,3 +35,4 @@ Only 0.1.4 has been published to NuGet. Everything below is unreleased: the brea
 - Package builds as net10-only Lokad.Onnx with no Satsuma, Interop, or Python content, with symbols, SourceLink, and a packed README, CHANGELOG, and icon.
 - Fused blocked Softmax kernel, Span block copies for Concat and ChunkCopy, and MatMul odd-row tail for the intrinsics kernel.
 - Transparent LayerNorm subgraph fusion at model load (strict matcher, interface-preserving) and opt-in batch-parallel float MatMul via TensorExecutionOptions.
+- Vectorized float erf and exact GELU sharing one SIMD polynomial core (same proven coefficients, FMA contraction only); K-slab B-panel packing assessed against production micro-kernels and deferred (no demonstrable win on L2-resident shapes).
