@@ -365,5 +365,13 @@ FodyWeavers.xsd
 me5s.model.onnx
 *.model
 *.onnx
+*.onnx_data
 Bench*/
 external/
+
+# Local-only large model assets (never commit; see tests/README.md local-model
+# convention). Anchored to the root so the committed MNIST fixtures under tests/ are unaffected.
+/models/
+
+# The core project directory matches *.onnx above; re-include it (model files stay ignored).
+!/src/Lokad.Onnx/

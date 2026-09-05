@@ -125,13 +125,13 @@ public partial struct Node
     {
         OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool?>("allow_zero"), opt),
 
-        OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+        OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
         OpType.Sub => CPU.Sub(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Mul => CPU.Mul(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+        OpType.Mul => CPU.Mul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
-        OpType.Div => CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+        OpType.Div => CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
         OpType.Pow => CPU.Pow(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
@@ -142,13 +142,13 @@ public partial struct Node
 
         OpType.Relu => CPU.Relu(InputTensor(graph, 0), opt),
 
-        OpType.Erf => CPU.Erf(InputTensor(graph, 0), opt),
+        OpType.Erf => CPU.Erf(InputTensor(graph, 0), opt, graph.ActivePool),
 
         OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), Attr<int?>("storage_order"), Ints("strides"), opt),
 
-        OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+        OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
-        OpType.Transpose => CPU.Transpose(InputTensor(graph, 0), Ints("perm"), opt),
+        OpType.Transpose => CPU.Transpose(InputTensor(graph, 0), Ints("perm"), opt, graph.ActivePool),
 
         OpType.Constant => CPU.Constant(OneOfAttr("sparse_value", "value", "value_float", "value_floats", "value_int", "value_ints", "value_string", "value_strings"), opt),
 
@@ -188,7 +188,7 @@ public partial struct Node
         
         OpType.ReduceMax => graph.OpsetVersion() switch { int v when v >= 18 => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), opt), _ => CPU.ReduceMax(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims"), opt), },
 
-        OpType.Softmax => CPU.Softmax(InputTensor(graph, 0), Int("axis"), opt),
+        OpType.Softmax => CPU.Softmax(InputTensor(graph, 0), Int("axis"), opt, graph.ActivePool),
 
         OpType.Abs => CPU.Abs(InputTensor(graph, 0), opt),
 
@@ -198,7 +198,7 @@ public partial struct Node
 
         OpType.Neg => CPU.Neg(InputTensor(graph, 0), opt),
 
-        OpType.Gelu => CPU.Gelu(InputTensor(graph, 0), Attr<string>("approximate"), opt),
+        OpType.Gelu => CPU.Gelu(InputTensor(graph, 0), Attr<string>("approximate"), opt, graph.ActivePool),
 
         OpType.Squeeze => CPU.Squeeze(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
@@ -206,7 +206,7 @@ public partial struct Node
 
         OpType.Tile => CPU.Tile(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis"), Attr<float>("epsilon"), opt),
+        OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis"), Attr<float>("epsilon"), opt, graph.ActivePool),
 
         OpType.SplitToSequence => CPU.SplitToSequence(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis"), Int("keepdims"), opt),
 

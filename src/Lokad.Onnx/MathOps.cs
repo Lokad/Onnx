@@ -1009,6 +1009,22 @@ public class MathOps
         return sign * y;
     }
 
+    /// <summary>Vectorized Abramowitz-Stegun 7.1.26 error function; same formula as <see cref="Erf(float)"/> with FMA contraction.</summary>
+    /// <remarks>Matches the scalar entry within ~2e-7 (FMA reorder noise). NaN in, NaN out; infinities saturate to +-1 like the scalar path.</remarks>
+    public static Vector<float> ErfVector(Vector<float> v)
+    {
+        var ax = Vector.Abs(v);
+        var t = Vector<float>.One / (Vector<float>.One + new Vector<float>(0.3275911f) * ax);
+        var p = Vector.FusedMultiplyAdd(new Vector<float>(1.061405429f), t, new Vector<float>(-1.453152027f));
+        p = Vector.FusedMultiplyAdd(p, t, new Vector<float>(1.421413741f));
+        p = Vector.FusedMultiplyAdd(p, t, new Vector<float>(-0.284496736f));
+        p = Vector.FusedMultiplyAdd(p, t, new Vector<float>(0.254829592f));
+        Span<float> ex = stackalloc float[Vector<float>.Count];
+        for (int i = 0; i < ex.Length; i++) { float a = ax[i]; ex[i] = MathF.Exp(-a * a); }
+        var y = Vector<float>.One - p * t * new Vector<float>(ex);
+        return Vector.ConditionalSelect(Vector.GreaterThanOrEqual(v, Vector<float>.Zero), y, -y);
+    }
+
     // From: https://www.johndcook.com/blog/2009/01/19/stand-alone-error-function-erf/
     public static double Erf(double x)
     {

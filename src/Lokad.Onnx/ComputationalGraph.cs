@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 public class ComputationalGraph : Runtime
 {
@@ -37,6 +38,26 @@ public class ComputationalGraph : Runtime
     public string? LastFailedNodeName { get; private set; }
 
     public OpType? LastFailedNodeOp { get; private set; }
+
+    /// <summary>Last file-order node index consuming each tensor name.</summary>
+    public Dictionary<string, int> LastUseIndex { get; private set; } = new Dictionary<string, int>(StringComparer.Ordinal);
+
+    internal TensorBufferPool? ActivePool { get; private set; }
+
+    /// <summary>Pool arrays freshly allocated during the last execution.</summary>
+    public int LastPoolAllocatedNew { get; private set; }
+
+    /// <summary>Pool rents served from previously returned arrays during the last execution.</summary>
+    public int LastPoolReused { get; private set; }
+
+    /// <summary>Dead dense buffers adopted into the pool during the last execution.</summary>
+    public int LastPoolReturned { get; private set; }
+
+    /// <summary>Fresh pool array bytes allocated during the last execution.</summary>
+    public long LastPoolAllocatedNewBytes { get; private set; }
+
+    /// <summary>Pooled output bytes served from previously returned arrays during the last execution.</summary>
+    public long LastPoolReusedBytes { get; private set; }
     #endregion
 
     #region Methods
@@ -237,6 +258,7 @@ public class ComputationalGraph : Runtime
         var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
 
         using var profilerScope = Profiler.BeginExecution();
+        using var poolScope = new ExecutionPoolScope(this);
         foreach (var node in Nodes)
         {
             count++;
@@ -284,6 +306,7 @@ public class ComputationalGraph : Runtime
                         r.Outputs[i].Name = node.Outputs[i];
                     }
                 }
+                ReleaseDeadTensors(node, count - 1);
             }
         }
         LastProfile = profilerScope.Profile;
@@ -366,6 +389,117 @@ public class ComputationalGraph : Runtime
             GC.WaitForPendingFinalizers();
         }
         Info("Reset graph state.");
+    }
+
+    /// <summary>Recomputes <see cref="LastUseIndex"/> from the current <see cref="Nodes"/> order.</summary>
+    /// <remarks>Graph outputs map to <see cref="Nodes"/>.Count (live to the end); graph inputs and
+    /// initializers map to <see cref="int.MaxValue"/> (live forever); produced-but-unconsumed
+    /// intermediates map to their producer index. Inert: no execution state changes.</remarks>
+    public void RefreshLifetimeAnalysis()
+    {
+        var lastUse = new Dictionary<string, int>(StringComparer.Ordinal);
+        for (int i = 0; i < Nodes.Count; i++)
+        {
+            var inputs = Nodes[i].Inputs;
+            if (inputs is null) continue;
+            foreach (var input in inputs)
+            {
+                if (string.IsNullOrEmpty(input)) continue;
+                lastUse[input] = i;
+            }
+        }
+        foreach (var name in Outputs.Keys)
+        {
+            if (!string.IsNullOrEmpty(name)) lastUse[name] = Nodes.Count;
+        }
+        foreach (var name in Inputs.Keys)
+        {
+            if (!string.IsNullOrEmpty(name)) lastUse[name] = int.MaxValue;
+        }
+        foreach (var name in Initializers.Keys)
+        {
+            if (!string.IsNullOrEmpty(name)) lastUse[name] = int.MaxValue;
+        }
+        for (int i = 0; i < Nodes.Count; i++)
+        {
+            var outputs = Nodes[i].Outputs;
+            if (outputs is null) continue;
+            foreach (var output in outputs)
+            {
+                if (string.IsNullOrEmpty(output)) continue;
+                if (!lastUse.ContainsKey(output)) lastUse[output] = i;
+            }
+        }
+        LastUseIndex = lastUse;
+    }
+
+    readonly struct ExecutionPoolScope : IDisposable
+    {
+        readonly ComputationalGraph graph;
+        public ExecutionPoolScope(ComputationalGraph graph)
+        {
+            this.graph = graph;
+            graph.ActivePool = new TensorBufferPool();
+        }
+        public void Dispose()
+        {
+            if (graph.ActivePool is not null)
+            {
+                graph.LastPoolAllocatedNew = graph.ActivePool.AllocatedNew;
+                graph.LastPoolReused = graph.ActivePool.Reused;
+                graph.LastPoolReturned = graph.ActivePool.Returned;
+                graph.LastPoolAllocatedNewBytes = graph.ActivePool.AllocatedNewBytes;
+                graph.LastPoolReusedBytes = graph.ActivePool.ReusedBytes;
+            }
+            graph.ActivePool = null;
+        }
+    }
+
+    void ReleaseDeadTensors(Node node, int index)
+    {
+        var pool = ActivePool;
+        if (pool is null || node.Inputs is null) return;
+        foreach (var name in node.Inputs)
+        {
+            if (string.IsNullOrEmpty(name)) continue;
+            if (!LastUseIndex.TryGetValue(name, out var last) || last != index) continue;
+            if (node.Outputs is not null && node.Outputs.Contains(name)) continue;
+            if (Outputs.ContainsKey(name)) continue;
+            if (!IntermediateOutputs.TryGetValue(name, out var tensor) || tensor is not DenseTensor<float> dense) continue;
+            if (!MemoryMarshal.TryGetArray<float>(dense.Buffer, out var segment) || segment.Array is null) continue;
+            if (HasLiveAlias(segment.Array, tensor)) continue;
+            pool.Return(segment.Array);
+            IntermediateOutputs[name] = null;
+        }
+    }
+
+    bool HasLiveAlias(Array candidate, ITensor self)
+    {
+        foreach (var tensor in Inputs.Values) if (!ReferenceEquals(tensor, self) && SharesPooledStorage(candidate, tensor)) return true;
+        foreach (var tensor in Initializers.Values) if (!ReferenceEquals(tensor, self) && SharesPooledStorage(candidate, tensor)) return true;
+        foreach (var tensor in IntermediateOutputs.Values)
+        {
+            if (tensor is null || ReferenceEquals(tensor, self)) continue;
+            if (SharesPooledStorage(candidate, tensor)) return true;
+        }
+        foreach (var tensor in Outputs.Values) if (!ReferenceEquals(tensor, self) && SharesPooledStorage(candidate, tensor)) return true;
+        return false;
+    }
+
+    static bool SharesPooledStorage(Array candidate, ITensor tensor)
+    {
+        if (tensor is Tensor<float> typed)
+        {
+            try
+            {
+                return MemoryMarshal.TryGetArray<float>(typed.Storage, out var segment) && ReferenceEquals(segment.Array, candidate);
+            }
+            catch (NotImplementedException)
+            {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

@@ -62,6 +62,7 @@ namespace Lokad.Onnx
             op.Complete();
             int fused = GraphFusion.FuseLayerNormPatterns(graph);
             if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
+            graph.RefreshLifetimeAnalysis();
             cop.Complete();
             return graph;
         }

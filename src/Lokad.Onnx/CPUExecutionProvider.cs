@@ -95,7 +95,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Add(ITensor? A, ITensor? B, ExecutionOptions? options = null)
+    public static OpResult Add(ITensor? A, ITensor? B, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.Add;
         if (A is null) return MissingInput(op, nameof(A));
@@ -122,7 +122,15 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Add((Tensor<byte>)bA, (Tensor<byte>)bB, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Add((Tensor<int>)bA, (Tensor<int>)bB, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Add((Tensor<long>)bA, (Tensor<long>)bB, (options ?? ExecutionOptions.Default).Tensor));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Add((Tensor<float>)bA, (Tensor<float>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Float:
+            {
+                var tensorOptions = (options ?? ExecutionOptions.Default).Tensor;
+                var fa = (Tensor<float>)bA;
+                var fb = (Tensor<float>)bB;
+                if (pool is null) return Success(op, Tensor<float>.Add(fa, fb, tensorOptions));
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fa.Length)), fa.Dimensions.ToArray());
+                return Success(op, Tensor<float>.Add(fa, fb, rented, tensorOptions));
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Add((Tensor<double>)bA, (Tensor<double>)bB, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
@@ -160,7 +168,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Mul(ITensor? A, ITensor? B, ExecutionOptions? options = null)
+    public static OpResult Mul(ITensor? A, ITensor? B, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.Mul;
         if (A is null) return MissingInput(op, nameof(A));
@@ -187,13 +195,21 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Multiply((Tensor<byte>)bA, (Tensor<byte>)bB, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Multiply((Tensor<int>)bA, (Tensor<int>)bB, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Multiply((Tensor<long>)bA, (Tensor<long>)bB, (options ?? ExecutionOptions.Default).Tensor));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Multiply((Tensor<float>)bA, (Tensor<float>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Float:
+            {
+                var tensorOptions = (options ?? ExecutionOptions.Default).Tensor;
+                var fa = (Tensor<float>)bA;
+                var fb = (Tensor<float>)bB;
+                if (pool is null) return Success(op, Tensor<float>.Multiply(fa, fb, tensorOptions));
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fa.Length)), fa.Dimensions.ToArray());
+                return Success(op, Tensor<float>.Multiply(fa, fb, rented, tensorOptions));
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Multiply((Tensor<double>)bA, (Tensor<double>)bB, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
 
-    public static OpResult Div(ITensor? A, ITensor? B, ExecutionOptions? options = null)
+    public static OpResult Div(ITensor? A, ITensor? B, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.Div;
         if (A is null) return MissingInput(op, nameof(A));
@@ -220,7 +236,15 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.Divide((Tensor<byte>)bA, (Tensor<byte>)bB, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Divide((Tensor<int>)bA, (Tensor<int>)bB, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Divide((Tensor<long>)bA, (Tensor<long>)bB));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Divide((Tensor<float>)bA, (Tensor<float>)bB, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Float:
+            {
+                var tensorOptions = (options ?? ExecutionOptions.Default).Tensor;
+                var fa = (Tensor<float>)bA;
+                var fb = (Tensor<float>)bB;
+                if (pool is null) return Success(op, Tensor<float>.Divide(fa, fb, tensorOptions));
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fa.Length)), fa.Dimensions.ToArray());
+                return Success(op, Tensor<float>.Divide(fa, fb, rented, tensorOptions));
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Divide((Tensor<double>)bA, (Tensor<double>)bB, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
@@ -377,7 +401,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult MatMul(ITensor? A, ITensor? B, ExecutionOptions? options = null)
+    public static OpResult MatMul(ITensor? A, ITensor? B, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.MatMul;
         if (A is null) return MissingInput(op, nameof(A));
@@ -392,7 +416,7 @@ public class CPUExecutionProvider : Runtime
         switch (A.ElementType)
         {
             case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul((Tensor<int>)A, (Tensor<int>)B, (options ?? ExecutionOptions.Default).Tensor));
-            case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B, (options ?? ExecutionOptions.Default).Tensor, pool));
             case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
@@ -416,20 +440,27 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Erf(ITensor? X, ExecutionOptions? options = null)
+    public static OpResult Erf(ITensor? X, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.Erf;
         if (X is null) return MissingInput(op, nameof(X));
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
-            case TensorElementType.Float: return Success(op, Tensor<float>.Erf((Tensor<float>)X));
+            case TensorElementType.Float:
+            {
+                var tensorOptions = (options ?? ExecutionOptions.Default).Tensor;
+                var fx = (Tensor<float>)X;
+                if (pool is null) return Success(op, Tensor<float>.Erf(fx, tensorOptions));
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
+                return Success(op, Tensor<float>.Erf(fx, rented, tensorOptions));
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Erf((Tensor<double>)X));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
 
-    public static OpResult Transpose(ITensor? data, int[]? perm = null, ExecutionOptions? options = null)
+    public static OpResult Transpose(ITensor? data, int[]? perm = null, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.Transpose;
         if (data is null) return MissingInput(op, nameof(data));
@@ -444,7 +475,14 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Transpose((Tensor<uint>)data, perm));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Transpose((Tensor<long>)data, perm));
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Transpose((Tensor<ulong>)data, perm));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Transpose((Tensor<float>)data, perm));
+            case TensorElementType.Float:
+            {
+                var fx = (Tensor<float>)data;
+                if (pool is null) return Success(op, Tensor<float>.Transpose(fx, perm));
+                var dims = Tensor<float>.TransposedShape(fx.Dimensions, perm);
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), dims);
+                return Success(op, Tensor<float>.Transpose(fx, rented, perm));
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Transpose((Tensor<double>)data, perm));
             case TensorElementType.Float16: return Success(op, Tensor<Half>.Transpose((Tensor<Half>)data, perm));
             case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Transpose((Tensor<BFloat16>)data, perm));
@@ -817,7 +855,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Softmax(ITensor? input, int? _axis, ExecutionOptions? options = null)
+    public static OpResult Softmax(ITensor? input, int? _axis, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.Softmax;
         if (input is null) return MissingInput(op, nameof(input));
@@ -828,7 +866,13 @@ public class CPUExecutionProvider : Runtime
         }
         switch (input.ElementType)
         {
-            case TensorElementType.Float: return Success(op, Tensor<float>.Softmax((Tensor<float>) input, axis));
+            case TensorElementType.Float:
+            {
+                var fx = (Tensor<float>)input;
+                if (pool is null) return Success(op, Tensor<float>.Softmax(fx, axis));
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
+                return Success(op, Tensor<float>.Softmax(fx, rented, axis));
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Softmax((Tensor<double>) input, axis));
             default: return InputTypeNotSupported(op, nameof(input), input);
         }
@@ -918,7 +962,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult Gelu(ITensor? X, string? approximate = null, ExecutionOptions? options = null)
+    public static OpResult Gelu(ITensor? X, string? approximate = null, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.Gelu;
         if (X is null) return MissingInput(op, nameof(X));
@@ -926,7 +970,14 @@ public class CPUExecutionProvider : Runtime
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
-            case TensorElementType.Float: return Success(op, Tensor<float>.Gelu((Tensor<float>)X));
+            case TensorElementType.Float:
+            {
+                var tensorOptions = (options ?? ExecutionOptions.Default).Tensor;
+                var fx = (Tensor<float>)X;
+                if (pool is null) return Success(op, Tensor<float>.Gelu(fx, tensorOptions));
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
+                return Success(op, Tensor<float>.Gelu(fx, rented, tensorOptions));
+            }
             case TensorElementType.Double: return Success(op, Tensor<double>.Gelu((Tensor<double>)X));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
@@ -1003,7 +1054,7 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
-    public static OpResult LayerNormalization(ITensor? x, ITensor? scale, ITensor? bias, int? axis = null, float? epsilon = null, ExecutionOptions? options = null)
+    public static OpResult LayerNormalization(ITensor? x, ITensor? scale, ITensor? bias, int? axis = null, float? epsilon = null, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.LayerNormalization;
         if (x is null) return MissingInput(op, nameof(x));
@@ -1014,7 +1065,13 @@ public class CPUExecutionProvider : Runtime
         switch (x.ElementType)
         {
             case TensorElementType.Float:
-                return Success(op, Tensor<float>.LayerNormalization((Tensor<float>)x, (Tensor<float>)scale, bias as Tensor<float>, ax, eps));
+            {
+                var fx = (Tensor<float>)x;
+                var fb = bias as Tensor<float>;
+                if (pool is null) return Success(op, Tensor<float>.LayerNormalization(fx, (Tensor<float>)scale, fb, ax, eps));
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
+                return Success(op, Tensor<float>.LayerNormalization(fx, (Tensor<float>)scale, fb, rented, ax, eps));
+            }
             case TensorElementType.Double:
                 return Success(op, Tensor<double>.LayerNormalization((Tensor<double>)x, (Tensor<double>)scale, bias as Tensor<double>, ax, eps));
             default: return InputTypeNotSupported(op, nameof(x), x);

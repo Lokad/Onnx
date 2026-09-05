@@ -408,6 +408,14 @@ where T : unmanaged
     public static Tensor<float> Add(Tensor<float> x, Tensor<float> y) => Add(x, y, TensorExecutionOptions.Auto);
     public static Tensor<float> Add(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options) => x.VectorizedApply((l, r) => l + r, (l, r) => l + r, y, options);
 
+    /// <summary>Writes the float sum into an existing destination tensor.</summary>
+    public static Tensor<float> Add(Tensor<float> x, Tensor<float> y, Tensor<float> destination, TensorExecutionOptions options)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        x.VectorizedApply((l, r) => l + r, (l, r) => l + r, y, destination, options);
+        return destination;
+    }
+
     public static Tensor<float> Add(Tensor<float> x, float y) => Add(x, y, TensorExecutionOptions.Auto);
     public static Tensor<float> Add(Tensor<float> x, float y, TensorExecutionOptions options) => x.VectorizedApply(l => l + new Vector<float>(y), l => l + y, options);
 
@@ -454,6 +462,14 @@ where T : unmanaged
     public static Tensor<float> Multiply(Tensor<float> x, Tensor<float> y) => Multiply(x, y, TensorExecutionOptions.Auto);
     public static Tensor<float> Multiply(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options) => x.VectorizedApply((l, r) => l * r, (l, r) => l * r, y, options);
 
+    /// <summary>Writes the float product into an existing destination tensor.</summary>
+    public static Tensor<float> Multiply(Tensor<float> x, Tensor<float> y, Tensor<float> destination, TensorExecutionOptions options)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        x.VectorizedApply((l, r) => l * r, (l, r) => l * r, y, destination, options);
+        return destination;
+    }
+
     public static Tensor<float> Multiply(Tensor<float> x, float y) => Multiply(x, y, TensorExecutionOptions.Auto);
     public static Tensor<float> Multiply(Tensor<float> x, float y, TensorExecutionOptions options) => x.VectorizedApply(l => l * new Vector<float>(y), l => l * y, options);
 
@@ -489,6 +505,14 @@ where T : unmanaged
 
     public static Tensor<float> Divide(Tensor<float> x, Tensor<float> y) => Divide(x, y, TensorExecutionOptions.Auto);
     public static Tensor<float> Divide(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options) => x.VectorizedApply((l, r) => l / r, (l, r) => l / r, y, options);
+
+    /// <summary>Writes the float quotient into an existing destination tensor.</summary>
+    public static Tensor<float> Divide(Tensor<float> x, Tensor<float> y, Tensor<float> destination, TensorExecutionOptions options)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        x.VectorizedApply((l, r) => l / r, (l, r) => l / r, y, destination, options);
+        return destination;
+    }
 
     public static Tensor<float> Divide(Tensor<float> x, float y) => Divide(x, y, TensorExecutionOptions.Auto);
     public static Tensor<float> Divide(Tensor<float> x, float y, TensorExecutionOptions options) => x.VectorizedApply(l => l / new Vector<float>(y), l => l / y, options);
@@ -541,7 +565,19 @@ where T : unmanaged
     /// <summary>
     /// Exact Gaussian error linear unit: 0.5 * x * (1 + erf(x / sqrt(2))).
     /// </summary>
-    public static Tensor<float> Gelu(Tensor<float> x) => x.Apply((float v) => 0.5f * v * (1f + MathOps.Erf(v * 0.7071067811865476f)));
+    public static Tensor<float> Gelu(Tensor<float> x) => Gelu(x, TensorExecutionOptions.Auto);
+
+    public static Tensor<float> Gelu(Tensor<float> x, TensorExecutionOptions options) =>
+        x.VectorizedApply((Vector<float> v) => new Vector<float>(0.5f) * v * (Vector<float>.One + ErfVector(new Vector<float>(0.7071067811865476f) * v)), (float v) => 0.5f * v * (1f + MathOps.Erf(v * 0.7071067811865476f)), options);
+
+    public static Tensor<float> Gelu(Tensor<float> x, Tensor<float> destination) => Gelu(x, destination, TensorExecutionOptions.Auto);
+
+    public static Tensor<float> Gelu(Tensor<float> x, Tensor<float> destination, TensorExecutionOptions options)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        x.VectorizedApply((Vector<float> v) => new Vector<float>(0.5f) * v * (Vector<float>.One + ErfVector(new Vector<float>(0.7071067811865476f) * v)), (float v) => 0.5f * v * (1f + MathOps.Erf(v * 0.7071067811865476f)), destination, options);
+        return destination;
+    }
 
     /// <summary>
     /// Exact Gaussian error linear unit: 0.5 * x * (1 + erf(x / sqrt(2))).
@@ -591,6 +627,35 @@ where T : unmanaged
             for (int i = 0; i < block; i++) os[o * block + i] = (float)((xs[o * block + i] - mean) * inv * ss[i] + (bd is null ? 0f : bd.Buffer.Span[i]));
         }
         return output;
+    }
+
+    /// <summary>Writes float layer normalization into an existing dense destination.</summary>
+    public static Tensor<float> LayerNormalization(Tensor<float> x, Tensor<float> scale, Tensor<float>? bias, DenseTensor<float> destination, int axis = -1, float epsilon = 1e-5f)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        var xd = x.ToDenseTensor();
+        var sd = scale.ToDenseTensor();
+        var bd = bias?.ToDenseTensor();
+        var plan = LayerNormalizationPlan(x.Rank, axis, xd.Dimensions.ToArray(), xd.Length, sd.Length, bd?.Length);
+        if (!destination.Dimensions.SequenceEqual(xd.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
+        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        int block = plan.Block;
+        int outer = plan.Outer;
+        var xs = xd.Buffer.Span;
+        var ss = sd.Buffer.Span;
+        var os = destination.Buffer.Span;
+        for (int o = 0; o < outer; o++)
+        {
+            double mean = 0.0;
+            for (int i = 0; i < block; i++) mean += xs[o * block + i];
+            mean /= block;
+            double variance = 0.0;
+            for (int i = 0; i < block; i++) { double d = xs[o * block + i] - mean; variance += d * d; }
+            variance /= block;
+            double inv = 1.0 / Math.Sqrt(variance + epsilon);
+            for (int i = 0; i < block; i++) os[o * block + i] = (float)((xs[o * block + i] - mean) * inv * ss[i] + (bd is null ? 0f : bd.Buffer.Span[i]));
+        }
+        return destination;
     }
 
     /// <summary>
@@ -1150,27 +1215,48 @@ where T : unmanaged
 
     public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options)
     {
+        if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
+        if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
+        return MatMul2D(x, y, DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] }), options);
+    }
+
+    /// <summary>Writes the 2D float matrix product into an existing dense destination.</summary>
+    public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
         options.Validate();
         StartOpStage(OpStage.ValidateArguments);
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
         if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException($"The number of columns in the first matrix ({x.Dimensions[1]}) is not equal to the number of rows in the second matrix ({y.Dimensions[0]}).");
+        if (destination.Dimensions.Length != 2 || destination.Dimensions[0] != x.Dimensions[0] || destination.Dimensions[1] != y.Dimensions[1]) throw new ArgumentException(nameof(destination), "Destination shape must match the matrix product shape.");
+        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
 
         var (_x, _y) = DensifyFloatOperands(x, y);
-        var output = DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
 
         StartOpStage(OpStage.Math);
-        using var xh = _x.Buffer.Pin(); 
+        using var xh = _x.Buffer.Pin();
         using var yh = _y.Buffer.Pin();
-        using var oh = output.Buffer.Pin();
+        using var oh = destination.Buffer.Pin();
         unsafe
         {
             RunFloatMatMulKernel(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer, options);
         }
-        return output;
+        return destination;
+    }
+
+    /// <summary>Computes the 2D float matrix product, renting the output from the pool when provided.</summary>
+    public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options, TensorBufferPool? pool)
+    {
+        if (pool is null) return MatMul2D(x, y, options);
+        if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
+        if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
+        var dims = new int[] { x.Dimensions[0], y.Dimensions[1] };
+        var destination = new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>(dims[0] * dims[1])), dims);
+        return MatMul2D(x, y, destination, options);
     }
 
     public static Tensor<double> MatMul2D(Tensor<double> x, Tensor<double> y) => MatMul2D(x, y, TensorExecutionOptions.Auto);
@@ -1371,6 +1457,165 @@ where T : unmanaged
         }
     }
 
+    static int[] MatMulOutputShape(ReadOnlySpan<int> xd, ReadOnlySpan<int> yd)
+    {
+        if (xd.Length == 0 || yd.Length == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
+        if (xd.Length == 2 && yd.Length == 2)
+        {
+            if (xd[1] != yd[0]) throw new ArgumentException($"The number of columns in the first matrix ({xd[1]}) is not equal to the number of rows in the second matrix ({yd[0]}).");
+            return new int[] { xd[0], yd[1] };
+        }
+        else if (xd.Length >= 2 && yd.Length >= 2)
+        {
+            var xdl = xd[^2..];
+            var ydl = yd[^2..];
+            if (xdl[1] != ydl[0]) throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
+            if (!BroadcastShape(xd[0..^2], yd[0..^2], out var bd)) throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+            return bd.Append(xdl[0]).Append(ydl[1]).ToArray();
+        }
+        else if (xd.Length >= 2 || yd.Length >= 2)
+        {
+            if (!BroadcastShape(xd, yd, out var b)) throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+            return MatMulOutputShape(b, b);
+        }
+        else
+        {
+            // Both operands are rank 1 here. Mirror the dispatch below, where PadLeft and PadRight both
+            // prepend a size-1 dimension, so only a size-1 left operand reaches the 2D kernel.
+            if (xd[0] != 1) throw new ArgumentException($"The number of columns in the first matrix ({xd[0]}) is not equal to the number of rows in the second matrix (1).");
+            return new int[] { yd[0] };
+        }
+    }
+
+    static void RunBatchedFloatMatMul(Tensor<float> bx, Tensor<float> by, Tensor<float> z, TensorExecutionOptions options)
+    {
+        var di = bx.GetDimensionsIterator(0..^2);
+        var m = bx.Dimensions[^2];
+        var n = bx.Dimensions[^1];
+        var k = by.Dimensions[^1];
+        var batches = di.Select(ix => ix.ToArray()).ToList();
+        int dop = options.MaxDegreeOfParallelism < 2 || batches.Count < 2
+            ? 1
+            : Math.Min(options.MaxDegreeOfParallelism, batches.Count);
+        if (dop > 1)
+        {
+            Parallel.For(0, batches.Count, new ParallelOptions { MaxDegreeOfParallelism = dop }, bi =>
+            {
+                var idx = batches[bi];
+                using var xh = bx.Storage.Pin();
+                using var yh = by.Storage.Pin();
+                using var zh = z.Storage.Pin();
+                unsafe
+                {
+                    RunFloatMatMulKernel(m, n, k,
+                        (float*)xh.Pointer + bx.GetStorageIndex(idx),
+                        (float*)yh.Pointer + by.GetStorageIndex(idx),
+                        (float*)zh.Pointer + z.GetStorageIndex(idx), options);
+                }
+            });
+        }
+        else
+        {
+            using var xh = bx.Storage.Pin();
+            using var yh = by.Storage.Pin();
+            using var zh = z.Storage.Pin();
+            unsafe
+            {
+                var xp = (float*)xh.Pointer;
+                var yp = (float*)yh.Pointer;
+                var zp = (float*)zh.Pointer;
+                foreach (var idx in batches)
+                {
+                    RunFloatMatMulKernel(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx), options);
+                }
+            }
+        }
+    }
+
+    /// <summary>Writes the float matrix product into an existing dense destination.</summary>
+    public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        var expected = MatMulOutputShape(x.Dimensions, y.Dimensions);
+        if (!destination.Dimensions.SequenceEqual(expected)) throw new ArgumentException(nameof(destination), "Destination shape must match the matrix product shape.");
+        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        if (x.Rank == 2 && y.Rank == 2)
+        {
+            return MatMul2D(x, y, destination, options);
+        }
+        else if (x.Rank >= 2 && y.Rank >= 2)
+        {
+            var xdl = x.Dimensions[^2..];
+            var ydl = y.Dimensions[^2..];
+            if (xdl[1] != ydl[0])
+            {
+                throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
+            }
+            StartOpStage(OpStage.Broadcast);
+            if (!BroadcastShape(x.Dimensions[0..^2], y.Dimensions[0..^2], out var bd))
+            {
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+            }
+
+            var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
+            if (!Tensor<float>.Broadcast(x, bdx, out var bx))
+            {
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+            }
+            var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
+            if (!Tensor<float>.Broadcast(y, bdy, out var by))
+            {
+                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+            }
+
+            StartOpStage(OpStage.Math);
+            RunBatchedFloatMatMul(bx, by, destination, options);
+            return destination;
+        }
+        else if (x.Rank >= 2 || y.Rank >= 2)
+        {
+            if (!Tensor<float>.Broadcast(x, y, out var bx, out var by))
+            {
+                throw new ArgumentException($"The shapes {x.PrintShape()} and {y.PrintShape()} are not compatible for broadcasting.");
+            }
+            else
+            {
+                return MatMul(bx, by, destination, options);
+            }
+        }
+        else
+        {
+            bool bcast = false;
+            if (x.Rank == 1)
+            {
+                x = x.PadLeft();
+                bcast = true;
+            }
+            if (y.Rank == 1)
+            {
+                y = y.PadRight();
+                bcast = true;
+            }
+            var temp = MatMul2D(x, y, options);
+            if (bcast)
+            {
+                temp.RemoveDim(0);
+            }
+            for (int i = 0; i < (int)temp.Length; i++) destination.SetValue(i, temp.GetValue(i));
+            return destination;
+        }
+    }
+
+    /// <summary>Computes the float matrix product, renting the output from the pool when provided.</summary>
+    public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options, TensorBufferPool? pool)
+    {
+        if (pool is null) return MatMul(x, y, options);
+        var dims = MatMulOutputShape(x.Dimensions, y.Dimensions);
+        long length = 1;
+        foreach (var d in dims) length *= d;
+        var destination = new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>((int)length)), dims);
+        return MatMul(x, y, destination, options);
+    }
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]  
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y) => MatMul(x, y, TensorExecutionOptions.Auto);
 
@@ -1409,47 +1654,7 @@ where T : unmanaged
             StartOpStage(OpStage.Math);
 
             var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            var di = bx.GetDimensionsIterator(0..^2);
-            var m = bx.Dimensions[^2];
-            var n = bx.Dimensions[^1];
-            var k = by.Dimensions[^1];
-            var batches = di.Select(ix => ix.ToArray()).ToList();
-            int dop = options.MaxDegreeOfParallelism < 2 || batches.Count < 2
-                ? 1
-                : Math.Min(options.MaxDegreeOfParallelism, batches.Count);
-            if (dop > 1)
-            {
-                Parallel.For(0, batches.Count, new ParallelOptions { MaxDegreeOfParallelism = dop }, bi =>
-                {
-                    var idx = batches[bi];
-                    using var xh = bx.Storage.Pin();
-                    using var yh = by.Storage.Pin();
-                    using var zh = z.Storage.Pin();
-                    unsafe
-                    {
-                        RunFloatMatMulKernel(m, n, k,
-                            (float*)xh.Pointer + bx.GetStorageIndex(idx),
-                            (float*)yh.Pointer + by.GetStorageIndex(idx),
-                            (float*)zh.Pointer + z.GetStorageIndex(idx), options);
-                    }
-                });
-            }
-            else
-            {
-                using var xh = bx.Storage.Pin();
-                using var yh = by.Storage.Pin();
-                using var zh = z.Storage.Pin();
-                unsafe
-                {
-                    var xp = (float*)xh.Pointer;
-                    var yp = (float*)yh.Pointer;
-                    var zp = (float*)zh.Pointer;
-                    foreach (var idx in batches)
-                    {
-                        RunFloatMatMulKernel(m, n, k, xp + bx.GetStorageIndex(idx), yp + by.GetStorageIndex(idx), zp + z.GetStorageIndex(idx), options);
-                    }
-                }
-            }
+            RunBatchedFloatMatMul(bx, by, z, options);
             return z;
         }
         else if (x.Rank >= 2 || y.Rank >= 2)
@@ -2033,6 +2238,42 @@ where T : unmanaged
         return output;
     }
 
+    /// <summary>Writes the float softmax into an existing dense destination.</summary>
+    public static Tensor<float> Softmax(Tensor<float> x, DenseTensor<float> destination, int axis = -1)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        StartOpStage(OpStage.ValidateArguments);
+        axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
+        if (axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be less than the rank of the tensor.");
+        var denseInput = x.ToDenseTensor();
+        if (!destination.Dimensions.SequenceEqual(denseInput.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
+        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        int block = 1;
+        for (int dimension = axis; dimension < denseInput.Rank; dimension++) block *= denseInput.Dimensions[dimension];
+        var inputSpan = denseInput.Buffer.Span;
+        var outputSpan = destination.Buffer.Span;
+        int outer = block == 0 ? 0 : (int)(denseInput.Length / block);
+        for (int outerIndex = 0; outerIndex < outer; outerIndex++)
+        {
+            float max = float.NegativeInfinity;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            {
+                float candidate = inputSpan[outerIndex * block + blockIndex];
+                if (float.IsNaN(candidate)) { max = float.NaN; break; }
+                if (candidate > max) max = candidate;
+            }
+            float sum = 0f;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            {
+                float activated = MathF.Exp(inputSpan[outerIndex * block + blockIndex] - max);
+                outputSpan[outerIndex * block + blockIndex] = activated;
+                sum += activated;
+            }
+            for (int blockIndex = 0; blockIndex < block; blockIndex++) outputSpan[outerIndex * block + blockIndex] /= sum;
+        }
+        return destination;
+    }
+
     public static Tensor<double> Softmax(Tensor<double> x, int axis = -1)
     {
         StartOpStage(OpStage.ValidateArguments);
@@ -2066,7 +2307,19 @@ where T : unmanaged
         return output;
     }
 
-    public static Tensor<float> Erf(Tensor<float> x) => x.Apply(MathOps.Erf);
+    public static Tensor<float> Erf(Tensor<float> x) => Erf(x, TensorExecutionOptions.Auto);
+
+    public static Tensor<float> Erf(Tensor<float> x, TensorExecutionOptions options) => x.VectorizedApply(MathOps.ErfVector, MathOps.Erf, options);
+
+    /// <summary>Writes the float error function into an existing destination tensor.</summary>
+    public static Tensor<float> Erf(Tensor<float> x, Tensor<float> destination) => Erf(x, destination, TensorExecutionOptions.Auto);
+
+    public static Tensor<float> Erf(Tensor<float> x, Tensor<float> destination, TensorExecutionOptions options)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        x.VectorizedApply(MathOps.ErfVector, MathOps.Erf, destination, options);
+        return destination;
+    }
 
     public static Tensor<double> Erf(Tensor<double> x) => x.Apply(MathOps.Erf);
 
@@ -2120,6 +2373,56 @@ where T : unmanaged
             r.SetValue(permindex, data[index]);
         }
         return r;
+    }
+
+    /// <summary>Computes the transposed shape without moving elements.</summary>
+    public static int[] TransposedShape(ReadOnlySpan<int> dimensions, int[]? perm)
+    {
+        int rank = dimensions.Length;
+        int[] p;
+        if (perm is not null)
+        {
+            if (perm.Length != rank) throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {rank}.");
+            if (!perm.All(q => q < rank)) throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(q => q >= rank)} exceeds the number of dimensions in the tensor.");
+            if (!ArrayUtilities.CheckNoRepeatedDims(perm)) throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
+            p = (int[])perm.Clone();
+            for (int i = 0; i < p.Length; i++) p[i] = ArrayUtilities.HandleNegativeAxisOrIndex(rank, p[i]);
+        }
+        else p = Enumerable.Range(0, rank).Reverse().ToArray();
+        var shape = new int[rank];
+        for (int i = 0; i < p.Length; i++) shape[i] = dimensions[p[i]];
+        return shape;
+    }
+
+    /// <summary>Writes the transposed tensor into an existing dense destination.</summary>
+    public static Tensor<T> Transpose(Tensor<T> data, DenseTensor<T> destination, int[] perm = null)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        StartOpStage(OpStage.ValidateArguments);
+        if (perm is not null)
+        {
+            if (perm.Length != data.Rank) throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {data.Rank}.");
+            if (!perm.All(p => p < data.Rank)) throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(p => p >= data.Rank)} exceeds the number of dimensions in the tensor.");
+            if (!ArrayUtilities.CheckNoRepeatedDims(perm)) throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
+            for (int i = 0; i < perm.Length; i++) perm[i] = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, perm[i]);
+        }
+        else perm = Enumerable.Range(0, data.Rank).Reverse().ToArray();
+        if (!destination.Dimensions.SequenceEqual(TransposedShape(data.Dimensions, perm))) throw new ArgumentException(nameof(destination), "Destination shape must match the transposed shape.");
+        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        if (data.Rank <= 1)
+        {
+            for (int i = 0; i < (int)data.Length; i++) destination.SetValue(i, data.GetValue(i));
+            return destination;
+        }
+        StartOpStage(OpStage.Copy);
+        var di = data.GetDimensionsIterator();
+        foreach (var index in di)
+        {
+            int permindex = 0;
+            for (int i = 0; i < perm.Length; i++) permindex += index[perm[i]] * destination.strides[i];
+            destination.SetValue(permindex, data[index]);
+        }
+        return destination;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]  

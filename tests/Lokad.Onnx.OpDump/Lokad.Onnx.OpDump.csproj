@@ -11,8 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Lokad.Onnx.Backend\Lokad.Onnx.Backend.csproj" />
-    <ProjectReference Include="..\..\src\Lokad.Onnx.Tensors\Lokad.Onnx.Tensors.csproj" />
+    <ProjectReference Include="..\..\src\Lokad.Onnx\Lokad.Onnx.csproj" />
   </ItemGroup>
 
 </Project>

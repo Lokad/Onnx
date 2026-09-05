@@ -1,11 +1,8 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/Lokad.Onnx.Backend/Lokad.Onnx.Backend.csproj" />
-    <Project Path="src/Lokad.Onnx.Base/Lokad.Onnx.Base.csproj" />
+    <Project Path="src/Lokad.Onnx/Lokad.Onnx.csproj" />
     <Project Path="src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj" />
     <Project Path="src/Lokad.Onnx.Data/Lokad.Onnx.Data.csproj" />
-    <Project Path="src/Lokad.Onnx.Package/Lokad.Onnx.Package.csproj" />
-    <Project Path="src/Lokad.Onnx.Tensors/Lokad.Onnx.Tensors.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Lokad.Onnx.Backend.Tests/Lokad.Onnx.Backend.Tests.csproj" />
