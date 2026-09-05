@@ -1,30 +1,29 @@
 namespace Lokad.Onnx;
 
 using System;
-using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 public class LoggerOp :  IDisposable
 {
-    public LoggerOp(ILogger l, string opName, params object[] args)
+    public LoggerOp(string opName, params object?[] args)
     {
         timer.Start();
-        this.l = l;
-        this.opName = opName;   
-        this.l.LogInformation(opName + "...", args);
+        this.opName = opName;
+        Log.Write(LogLevel.Info, opName + "...", args);
     }
 
     public void Complete()
     {
         timer.Stop();
-        l.LogInformation("{0} completed in {1}ms.", opName, timer.ElapsedMilliseconds);
+        Log.Write(LogLevel.Info, "{0} completed in {1}ms.", opName, timer.ElapsedMilliseconds);
         isCompleted = true;
     }
 
     public void Abandon()
     {
         timer.Stop();
+        Log.Write(LogLevel.Error, "{0} abandoned after {1}ms.", opName, timer.ElapsedMilliseconds);
         isAbandoned = true;
-        l.LogError("{0} abandoned after {1}ms.", opName, timer.ElapsedMilliseconds);
     }
 
     public void Dispose()
@@ -33,10 +32,9 @@ public class LoggerOp :  IDisposable
         if (!(isCompleted || isAbandoned))
         {
             isAbandoned = true;
-            l.LogError("{0} abandoned after {1}ms.", opName, timer.ElapsedMilliseconds);
+            Log.Write(LogLevel.Error, "{0} abandoned after {1}ms.", opName, timer.ElapsedMilliseconds);
         }
     }
-    public ILogger l;
 
     public string opName = "";
 

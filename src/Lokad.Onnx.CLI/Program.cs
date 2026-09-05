@@ -49,7 +49,8 @@ class Program : Runtime
         string toolname = "Lokad.Onnx.CLI";
         string logname = "CLI";
         bool debug = (args.Contains("--debug") || args.Contains("-d"));
-        Initialize(toolname, logname, debug, CreateConsoleLogger(debug, logname, true));
+        UseConsoleLogging(debug, logname, true);
+        Initialize(toolname, logname, debug);
         PrintLogo();
         var result = new Parser().ParseArguments(args, optionTypes);
         result
@@ -723,20 +724,29 @@ class Program : Runtime
         return config;
     }
 
-    public static Microsoft.Extensions.Logging.ILogger CreateConsoleLogger(bool debug = false, string logname = "BASE", bool color = false) 
+    public static void UseConsoleLogging(bool debug = false, string logname = "BASE", bool color = false)
+    {
+        CreateConsoleLogger(debug, logname, color);
+        Log.Sink = (level, message) => LogManager.GetCurrentClassLogger().Log(ToNLogLevel(level), message);
+    }
+
+    static NLog.LogLevel ToNLogLevel(Lokad.Onnx.LogLevel level) => level switch
+    {
+        Lokad.Onnx.LogLevel.Debug => NLog.LogLevel.Debug,
+        Lokad.Onnx.LogLevel.Warn => NLog.LogLevel.Warn,
+        Lokad.Onnx.LogLevel.Error => NLog.LogLevel.Error,
+        Lokad.Onnx.LogLevel.Fatal => NLog.LogLevel.Fatal,
+        _ => NLog.LogLevel.Info,
+    };
+
+    public static void CreateConsoleLogger(bool debug = false, string logname = "BASE", bool color = false)
     {
         var config = new LoggingConfiguration();
         if (debug)
         {
             config.Variables["logLevel"] = "Debug";
         }
-        LogManager.Configuration = ConfigureConsoleLogger(config, debug, color); ;
-        return new NLog.Extensions.Logging.NLogLoggerFactory(
-            new NLog.Extensions.Logging.NLogProviderOptions() { 
-                AutoShutdown = true,
-                ParseMessageTemplates = true,   
-                CaptureMessageTemplates = true, 
-            }).CreateLogger(logname);
+        LogManager.Configuration = ConfigureConsoleLogger(config, debug, color);
     }
     #endregion
 

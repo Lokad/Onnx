@@ -7,8 +7,8 @@ namespace Lokad.Onnx
     using System.Reflection;
     using System.Threading;
 
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
+
+
 
     public abstract class Runtime
     {
@@ -68,7 +68,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region Methods
-        public static void Initialize(string toolname, string logname, bool debug, ILogger l)
+        public static void Initialize(string toolname, string logname, bool debug)
         {
             lock (__lock)
             {
@@ -81,31 +81,31 @@ namespace Lokad.Onnx
                 ToolName = toolname;
                 LogName = logname;
                 DebugEnabled = debug;
-                logger = l;
+
                 RuntimeInitialized = true;
             }
         }
        
         [DebuggerStepThrough]
-        public static void Info(string messageTemplate, params object[] args) => logger.LogInformation(messageTemplate, args);
+        public static void Info(string messageTemplate, params object[] args) => Log.Write(LogLevel.Info, messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Debug(string messageTemplate, params object[] args) => logger.LogDebug(messageTemplate, args);
+        public static void Debug(string messageTemplate, params object[] args) => Log.Write(LogLevel.Debug, messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Error(string messageTemplate, params object[] args) => logger.LogError(messageTemplate, args);
+        public static void Error(string messageTemplate, params object[] args) => Log.Write(LogLevel.Error, messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Error(Exception ex, string messageTemplate, params object[] args) => logger.LogError(ex, messageTemplate, args);
+        public static void Error(Exception ex, string messageTemplate, params object[] args) => Log.Write(LogLevel.Error, messageTemplate + " | " + ex.ToString(), args);
 
         [DebuggerStepThrough]
-        public static void Warn(string messageTemplate, params object[] args) => logger.LogWarning(messageTemplate, args);
+        public static void Warn(string messageTemplate, params object[] args) => Log.Write(LogLevel.Warn, messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Fatal(string messageTemplate, params object[] args) => logger.LogCritical(messageTemplate, args);
+        public static void Fatal(string messageTemplate, params object[] args) => Log.Write(LogLevel.Fatal, messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static LoggerOp Begin(string messageTemplate, params object[] args) => new LoggerOp(logger, messageTemplate, args);
+        public static LoggerOp Begin(string messageTemplate, params object[] args) => new LoggerOp(messageTemplate, args);
 
         [DebuggerStepThrough]
         public static string FailIfFileNotFound(string filePath)
@@ -307,7 +307,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region Fields
-        public static ILogger logger = NullLogger.Instance;    
+
         protected static object __lock = new object();
         #endregion
     }

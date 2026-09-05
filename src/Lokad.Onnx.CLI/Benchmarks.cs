@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx.CLI;
+namespace Lokad.Onnx.CLI;
 
 using System;
 using System.Buffers;
@@ -27,7 +27,8 @@ public class MatMul2DBenchmarks : Runtime
     [GlobalSetup]
     public void Setup()
     {
-        Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false, Program.CreateConsoleLogger(false, "CLI", true));
+        Program.UseConsoleLogging(false, "CLI", true);
+        Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false);
     }
 
     [IterationSetup]
