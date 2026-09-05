@@ -1,103 +1,114 @@
-﻿extern alias OnnxSharp;
+namespace Lokad.Onnx;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Versioning;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 
-namespace Lokad.Onnx
+public class Model : Runtime
 {
-    public class Model : Runtime
+    public static ComputationalGraph Load(OnnxModel mp)
     {
-        public static ModelProto? Parse(string onnxInputFilePath)
+        Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Name, mp.Domain, mp.Opset.Select(o => o.Key + ":" + o.Value).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.DocString);
+        var cop = Begin("Creating computational graph from ONNX model");
+        var graph = new ComputationalGraph();
+        graph.ModelFile = "<buffer>";
+        graph.Opset = new Dictionary<string, int>(mp.Opset);
+        graph.MetadataProps = new Dictionary<string, string>(mp.MetadataProps);
+        graph.Metadata["Name"] = mp.Name;
+        graph.Metadata["IrVersion"] = mp.IrVersion;
+        graph.Metadata["DocString"] = mp.DocString;
+        graph.Metadata["Domain"] = mp.Domain;
+        graph.Metadata["ProducerName"] = mp.ProducerName;
+        graph.Metadata["ProducerVersion"] = mp.ProducerVersion;
+        var op = Begin("Converting {c} model initializer tensors to graph tensors", mp.Initializers.Count);
+        foreach (var i in mp.Initializers)
         {
-            var op = Begin("Parsing ONNX model file {f}", onnxInputFilePath);
-            var buffer = File.ReadAllBytes(onnxInputFilePath);
-            var m = ModelProto.Parser.ParseFrom(buffer);
-            op.Complete();
-            return m;
+            graph.Initializers.Add(i.Name, ToTensor(i));
         }
-
-        public static ModelProto? Parse(byte[] data)
+        op.Complete();
+        op = Begin("Converting {c} model input and output descriptions to graph tensors", mp.Inputs.Count + mp.Outputs.Count);
+        graph.Inputs = mp.Inputs.ToDictionary(vp => vp.Name, vp => ToShapeTensor(vp));
+        graph.Outputs = mp.Outputs.ToDictionary(vp => vp.Name, vp => ToShapeTensor(vp));
+        graph.OutputDescs = mp.Outputs.ToList();
+        op.Complete();
+        op = Begin("Converting {c} model nodes to graph nodes", mp.Nodes.Count);
+        foreach (var np in mp.Nodes)
         {
-            var op = Begin("Parsing ONNX model buffer of length {f} bytes", data.Length);
-            var m = ModelProto.Parser.ParseFrom(data);
-            op.Complete();
-            return m;
+            graph.Nodes.Add(ToNode(np, graph));
         }
+        op.Complete();
+        int fused = GraphFusion.FuseLayerNormPatterns(graph);
+        if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
+        graph.RefreshLifetimeAnalysis();
+        cop.Complete();
+        return graph;
+    }
 
-        public static ComputationalGraph Load(ModelProto mp)
+    static Node ToNode(OnnxNode np, ComputationalGraph graph)
+    {
+        var node = new Node()
         {
-            Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.OpsetImport.Select(o => o.Domain + ":" + o.Version).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
-            var cop = Begin("Creating computational graph from ONNX model");
-            var graph = new ComputationalGraph();
-            graph.ModelFile = "<buffer>";
-            graph.Model = mp;
-            graph.Opset = mp.OpsetImport.ToDictionary(o => o.Domain, o => Convert.ToInt32(o.Version));
-            graph.MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value);
-            graph.Metadata["Name"] = mp.Graph.Name;
-            graph.Metadata["IrVersion"] = (OnnxSharp::Onnx.Version)mp.IrVersion;
-            graph.Metadata["DocString"] = mp.DocString;
-            graph.Metadata["Domain"] = mp.Domain;
-            graph.Metadata["ProducerName"] = mp.ProducerName;
-            graph.Metadata["ProducerVersion"] = mp.ProducerVersion;
-            var op = Begin("Converting {c} model initializer tensor protos to graph tensors", mp.Graph.Initializer.Count);
-            foreach (var i in mp.Graph.Initializer)
+            Name = np.Name,
+            ID = np.Name.GetHashCode(),
+            Attributes = new Dictionary<string, object>(np.Attributes),
+            Op = (OpType)Enum.Parse(typeof(OpType), np.OpType),
+            Inputs = np.Inputs.ToArray(),
+            Outputs = np.Outputs.ToArray()
+        };
+        foreach (var o in node.Outputs)
+        {
+            if (!graph.Outputs.ContainsKey(o) && !graph.IntermediateOutputs.ContainsKey(o))
             {
-                graph.Initializers.Add(i.Name, i.ToTensor());
+                graph.IntermediateOutputs.Add(o, null);
             }
-            op.Complete();
-            op = Begin("Converting {c} model input and output tensor protos to graph tensors", mp.Graph.Input.Count + mp.Graph.Output.Count);
-            graph.Inputs = mp.Graph.Input.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
-            graph.Outputs = mp.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
-            op.Complete();
-            op = Begin("Converting {c} model node protos to graph nodes", mp.Graph.Node.Count);
-            foreach (var np in mp.Graph.Node)
-            {
-                graph.Nodes.Add(np.ToNode(graph));
-            }
-            op.Complete();
-            int fused = GraphFusion.FuseLayerNormPatterns(graph);
-            if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
-            graph.RefreshLifetimeAnalysis();
-            cop.Complete();
-            return graph;
         }
+        return node;
+    }
 
-        public static ComputationalGraph? Load(string onnxInputFilePath)
+    public static ITensor ToTensor(OnnxTensor tp)
+    {
+        var dims = tp.Dims.ToArray();
+        switch (tp.ElementType)
         {
-            var mp = Parse(onnxInputFilePath);
-            if (mp is null)
-            {
-                Error("Could not parse {f} as ONNX model file.", onnxInputFilePath);
-                return null;
-            }
-            var dir = Path.GetDirectoryName(Path.GetFullPath(onnxInputFilePath));
-            foreach (var init in mp.Graph.Initializer)
-            {
-                init.ResolveExternalData(dir!);
-            }
-            var g = Load(mp);
-            if (g is not null)
-            {
-                g.ModelFile = onnxInputFilePath;
-            }
-            return g;
+            case TensorElementType.Bool: return new DenseTensor<bool>(memory: (bool[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.Int8: return new DenseTensor<sbyte>(memory: (sbyte[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.UInt8: return new DenseTensor<byte>(memory: (byte[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.Int16: return new DenseTensor<short>(memory: (short[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.UInt16: return new DenseTensor<ushort>(memory: (ushort[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.Int32: return new DenseTensor<int>(memory: (int[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.UInt32: return new DenseTensor<uint>(memory: (uint[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.Int64: return new DenseTensor<long>(memory: (long[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.UInt64: return new DenseTensor<ulong>(memory: (ulong[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.Float: return new DenseTensor<float>(memory: (float[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.Double: return new DenseTensor<double>(memory: (double[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.Float16: return new DenseTensor<Float16>(memory: (Float16[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.BFloat16: return new DenseTensor<BFloat16>(memory: (BFloat16[])tp.Data, dims) { Name = tp.Name };
+            case TensorElementType.Complex64: return new DenseTensor<Complex>(memory: (Complex[])tp.Data, dims) { Name = tp.Name };
+            default: throw new ArgumentException($"Cannot convert model tensor of element type {tp.ElementType}.");
         }
+    }
 
-        public static ComputationalGraph? Load(byte[] buffer)
+    public static ITensor ToShapeTensor(OnnxValueInfo vp)
+    {
+        var dims = vp.Dims.ToArray();
+        switch (vp.ElementType)
         {
-            var mp = Parse(buffer);
-            if (mp is null)
-            {
-                Error("Could not parse buffer as ONNX model.");
-                return null;
-            }
-            Info("Model details: Name: {name}. Domain: {dom}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Graph.Name, mp.Domain, mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.Graph.DocString);
-            return Load(mp);
+            case TensorElementType.Bool: return new DenseTensor<bool>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.Int8: return new DenseTensor<sbyte>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.UInt8: return new DenseTensor<byte>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.Int16: return new DenseTensor<short>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.UInt16: return new DenseTensor<ushort>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.Int32: return new DenseTensor<int>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.UInt32: return new DenseTensor<uint>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.Int64: return new DenseTensor<long>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.UInt64: return new DenseTensor<ulong>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.Float: return new DenseTensor<float>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.Double: return new DenseTensor<double>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.Float16: return new DenseTensor<Float16>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.BFloat16: return new DenseTensor<BFloat16>(dimensions: dims) { Name = vp.Name };
+            case TensorElementType.Complex64: return new DenseTensor<Complex>(dimensions: dims) { Name = vp.Name };
+            default: throw new ArgumentException($"Cannot convert model value info of element type {vp.ElementType}.");
         }
     }
 }

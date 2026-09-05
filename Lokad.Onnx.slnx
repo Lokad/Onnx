@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Lokad.Onnx/Lokad.Onnx.csproj" />
+    <Project Path="src/Lokad.Onnx.Import/Lokad.Onnx.Import.csproj" />
     <Project Path="src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj" />
     <Project Path="src/Lokad.Onnx.Data/Lokad.Onnx.Data.csproj" />
   </Folder>

@@ -13,11 +13,11 @@ namespace Lokad.Onnx.Backend.Tests
         {
             var modelPath = Path.Combine(AppContext.BaseDirectory, "models", "mnist-8.onnx");
             var buffer = File.ReadAllBytes(modelPath);
-            var m = Model.Parse(buffer);
+            var m = OnnxImport.Parse(buffer);
             Assert.NotNull(m);
-            Assert.Contains(m!.Graph.Input, i => i.Name == "Input3");
-            Assert.Single(m.Graph.Output); Assert.Equal("Plus214_Output_0", m.Graph.Output[0].Name);
-            Assert.NotEmpty(m.Graph.Node);
+            Assert.Contains(m!.Inputs, i => i.Name == "Input3");
+            Assert.Single(m.Outputs); Assert.Equal("Plus214_Output_0", m.Outputs[0].Name);
+            Assert.NotEmpty(m.Nodes);
         }
 
         [Fact]
@@ -35,9 +35,9 @@ namespace Lokad.Onnx.Backend.Tests
                     for (int j = 0; j < 4; j++)
                     {
                         var buffer = File.ReadAllBytes(modelPath);
-                        var m = Model.Parse(buffer);
+                        var m = OnnxImport.Parse(buffer);
                         Assert.NotNull(m);
-                        Assert.Contains(m!.Graph.Input, i => i.Name == "Input3");
+                        Assert.Contains(m!.Inputs, i => i.Name == "Input3");
                     }
                 });
             }

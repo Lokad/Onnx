@@ -87,7 +87,7 @@ static class E5Runner
         }
         caseList.Sort((a, b) => string.CompareOrdinal(a.id, b.id));
 
-        var graph = Model.Load(model);
+        var graph = OnnxImport.Load(model);
         if (graph is null)
         {
             Console.Error.WriteLine("E5Runner error: could not load model.");

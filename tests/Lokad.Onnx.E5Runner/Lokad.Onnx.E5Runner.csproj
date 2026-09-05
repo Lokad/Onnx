@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lokad.Onnx\Lokad.Onnx.csproj" />
+    <ProjectReference Include="..\..\src\Lokad.Onnx.Import\Lokad.Onnx.Import.csproj" />
     <ProjectReference Include="..\..\src\Lokad.Onnx.Data\Lokad.Onnx.Data.csproj" />
   </ItemGroup>
 

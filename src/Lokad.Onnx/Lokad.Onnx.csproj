@@ -8,24 +8,17 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <AssemblyName>Lokad.Onnx</AssemblyName>
     <RootNamespace>Lokad.Onnx</RootNamespace>
-    <LangVersion>preview</LangVersion>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>annotations</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>Lokad.Onnx</PackageId>
     <Title>Lokad.Onnx</Title>
     <Description>100% managed-code ONNX inference backend for .NET: tensors, CPU execution provider, text and image helpers, and a CLI for inspection, inference, and benchmarks.</Description>
     <Company>Lokad</Company>
     <Authors>Lokad</Authors>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <AssemblyVersion>0.2.0</AssemblyVersion>
     <FileVersion>0.2.0</FileVersion>
     <Version>0.2.0</Version>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
-    
-    <AssemblyName>Lokad.Onnx</AssemblyName>
-    <RootNamespace>Lokad.Onnx</RootNamespace>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>0.2.0 is the breaking .NET 10-only release: net10.0 floor, Satsuma and pythonnet bridge removals, MatMul wrong-answer fixes, offline tokenizer loading, immutable execution options, and the native e5 conformance gate.</PackageReleaseNotes>
     <PackageTags>onnx;inference;machine-learning;tensors;dotnet</PackageTags>
@@ -63,9 +56,6 @@
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-    <PackageReference Include="OnnxSharp" Version="0.2.1">
-      <Aliases>OnnxSharp</Aliases>
-    </PackageReference>
   </ItemGroup>
 
   <Target Name="EnforceReleasePackageConfiguration" BeforeTargets="GenerateNuspec"

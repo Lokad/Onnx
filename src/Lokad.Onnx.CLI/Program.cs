@@ -164,7 +164,7 @@ class Program : Runtime
             ExitIfFileNotFound(ro.File);
         }
 
-        var graph = Model.Load(ro.File);
+        var graph = OnnxImport.Load(ro.File);
         if (graph is null)
         {
             Exit(ExitResult.INVALID_INPUT);
@@ -339,7 +339,7 @@ class Program : Runtime
                 opfilter = op;  
             }
         }
-        var graph = Model.Load(file);
+        var graph = OnnxImport.Load(file);
         if (graph is null)
         {
             Exit(ExitResult.INVALID_INPUT);
@@ -407,17 +407,12 @@ class Program : Runtime
     static void PrintModelOps(string file)
     {
         ExitIfFileNotFound(file);
-        var m = Model.Parse(file);
-        if (m is null)
-        {
-            Exit(ExitResult.INVALID_INPUT);
-            return;
-        }
-        Info("Graph has {count} input tensor(s): {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
-        Info("Graph has {count} output tensor(s): {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
-        Info("Graph has {count} initializer tensor(s): {out}", m.Graph.Initializer.Count, m.Graph.Initializer.Select(t => t.TensorNameDesc()));
+        var m = OnnxImport.Parse(file);
+        Info("Graph has {count} input tensor(s): {in}", m.Inputs.Count, m.Inputs.Select(t => t.Describe()));
+        Info("Graph has {count} output tensor(s): {out}", m.Outputs.Count, m.Outputs.Select(t => t.Describe()));
+        Info("Graph has {count} initializer tensor(s): {out}", m.Initializers.Count, m.Initializers.Select(t => t.Describe()));
         List<OpType> ops = new List<OpType>();
-        foreach(var node in m.Graph.Node)
+        foreach(var node in m.Nodes)
         {
             var op = Enum.Parse<OpType>(node.OpType);
             if (!ops.Contains(op))
@@ -444,34 +439,29 @@ class Program : Runtime
     static void PrintModelInitializers(string file)
     {
         ExitIfFileNotFound(file);
-        var m = Model.Parse(file);
-        if (m is null)
-        {
-            Exit(ExitResult.INVALID_INPUT);
-            return;
-        }
-        var inputs = m.Graph.Input.Select(i => i.Name);
+        var m = OnnxImport.Parse(file);
+        var inputs = m.Inputs.Select(i => i.Name);
         List<string> initializers = new List<string>();
-        foreach (var i in m.Graph.Initializer)
+        foreach (var i in m.Initializers)
         {
             if (inputs.Contains(i.Name))
             {
-                initializers.Add(i.TensorNameDesc() + "*");
+                initializers.Add(i.Describe() + "*");
             }
             else
             {
-                initializers.Add(i.TensorNameDesc());
+                initializers.Add(i.Describe());
             }
              
         }
-        Info("Graph has {count} input tensors: {in}", m.Graph.Input.Count, m.Graph.Input.Select(t => t.TensorNameDesc()));
-        Info("Graph has {count} output tensors: {out}", m.Graph.Output.Count, m.Graph.Output.Select(t => t.TensorNameDesc()));
+        Info("Graph has {count} input tensors: {in}", m.Inputs.Count, m.Inputs.Select(t => t.Describe()));
+        Info("Graph has {count} output tensors: {out}", m.Outputs.Count, m.Outputs.Select(t => t.Describe()));
         Info("Printing list of ONNX initializers in graph...");
         foreach (var i in initializers)
         {
             Con.WriteLine(i);
         }
-        Info("{d} total initializers in model. * = initializer for graph input.", m.Graph.Initializer.Count);
+        Info("{d} total initializers in model. * = initializer for graph input.", m.Initializers.Count);
     }
 
     static void PrintProfile(Stack<NodeProfile> profile)

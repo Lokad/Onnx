@@ -8,8 +8,8 @@ public class ProfilerConcurrencyTests
     public async Task ConcurrentProfiledGraphs_AreDisjoint()
     {
         using var profilerScope = Profiler.BeginExecution(true);
-        var g1 = Model.Load("models\\mnist-8.onnx")!;
-        var g2 = Model.Load("models\\mnist-8.onnx")!;
+        var g1 = OnnxImport.Load("models\\mnist-8.onnx")!;
+        var g2 = OnnxImport.Load("models\\mnist-8.onnx")!;
         var ui1 = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" })!;
         var ui2 = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist2.png::mnist" })!;
         var r = await Task.WhenAll(

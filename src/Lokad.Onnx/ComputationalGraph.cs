@@ -11,11 +11,11 @@ public class ComputationalGraph : Runtime
     #region Fields
     public string ModelFile = "";
 
-    public ModelProto Model = new ModelProto();
-
     public Dictionary<string, ITensor> Inputs = new Dictionary<string, ITensor>();
 
     public Dictionary<string, ITensor> Outputs = new Dictionary<string, ITensor>();
+
+    public List<OnnxValueInfo> OutputDescs = new List<OnnxValueInfo>();
 
     public Dictionary<string, ITensor> Initializers = new Dictionary<string, ITensor>();
 
@@ -382,7 +382,7 @@ public class ComputationalGraph : Runtime
         {
             IntermediateOutputs[o] = null;
         }
-        Outputs = Model.Graph.Output.ToDictionary(vp => vp.Name, vp => vp.ToTensor());
+        Outputs = OutputDescs.ToDictionary(vp => vp.Name, vp => Model.ToShapeTensor(vp));
         if (gc)
         {
             GC.Collect(2, GCCollectionMode.Forced, true, true);

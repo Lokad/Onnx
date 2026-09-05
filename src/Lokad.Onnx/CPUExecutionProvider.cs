@@ -1,6 +1,5 @@
 namespace Lokad.Onnx;
 
-extern alias OnnxSharp;
 
 using System;
 using System.Collections.Generic;

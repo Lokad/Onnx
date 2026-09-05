@@ -20,32 +20,32 @@ public class TensorProtoConversionTests
             buffer = new byte[stream.Length];
             stream.ReadExactly(buffer);
         }
-        var model = Model.Parse(buffer);
+        var model = OnnxImport.Parse(buffer);
         Assert.NotNull(model);
 
-        var candidates = model!.Graph.Initializer
-            .Where(tp => tp.DataType == (int)TensorElementType.Float
-                || tp.DataType == (int)TensorElementType.Double
-                || tp.DataType == (int)TensorElementType.Int32
-                || tp.DataType == (int)TensorElementType.Int64)
+        var candidates = model!.Initializers
+            .Where(tp => tp.ElementType == TensorElementType.Float
+                || tp.ElementType == TensorElementType.Double
+                || tp.ElementType == TensorElementType.Int32
+                || tp.ElementType == TensorElementType.Int64)
             .ToArray();
         Assert.NotEmpty(candidates);
 
         foreach (var tp in candidates)
         {
-            var tensor = tp.ToTensor();
+            var tensor = Model.ToTensor(tp);
             Assert.Equal(tp.Name, tensor.Name);
-            Assert.Equal(tp.Dims.Select(d => (int)d).ToArray(), tensor.Dims);
-            Assert.Equal((TensorElementType)tp.DataType, tensor.ElementType);
+            Assert.Equal(tp.Dims.ToArray(), tensor.Dims);
+            Assert.Equal(tp.ElementType, tensor.ElementType);
 
-            var data = (Array)tp.GetTensorData();
+            var data = tp.Data;
             Assert.Equal(data.Length, (int)tensor.Length);
             if (data.Length == 0)
             {
                 continue;
             }
 
-            switch ((TensorElementType)tp.DataType)
+            switch (tp.ElementType)
             {
                 case TensorElementType.Float:
                 {

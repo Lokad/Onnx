@@ -75,7 +75,7 @@ public class ExecutionOptionsTests
     {
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "models", "mnist-8.onnx");
         var imageArg = Path.Combine(Directory.GetCurrentDirectory(), "images", "mnist4.png") + "::mnist";
-        var baselineGraph = Model.Load(modelPath)!;
+        var baselineGraph = OnnxImport.Load(modelPath)!;
         var ui = Data.GetInputTensorsFromFileArgs(new[] { imageArg })!;
         Assert.True(baselineGraph.Execute(ui, true));
         var baseline = ((Tensor<float>)baselineGraph.Outputs.Values.First()).ToArray();
@@ -86,7 +86,7 @@ public class ExecutionOptionsTests
             int mode = i;
             tasks[i] = Task.Run(() =>
             {
-                var g = Model.Load(modelPath)!;
+                var g = OnnxImport.Load(modelPath)!;
                 g.Options = mode % 2 == 0
                     ? new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Scalar)
                     : new ExecutionOptions(OptimizationMode.Memory, TensorExecutionOptions.Intrinsics);

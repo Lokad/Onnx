@@ -16,7 +16,7 @@ public class GraphExecutionDinoV3Tests
         }
         Skip.If(modelPath is null, "DINOv3 model not present; set LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1 to require it.");
 
-        var graph = Model.Load(modelPath);
+        var graph = OnnxImport.Load(modelPath);
         Assert.NotNull(graph);
 
         var input = DenseTensor<float>.OfShape(1, 3, 224, 224);

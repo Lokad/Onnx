@@ -306,7 +306,7 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     public void Setup()
     {
         var op = Begin("Creating computational graph and tokenizing test data");
-        graph = Model.Load(modelFile);
+        graph = OnnxImport.Load(modelFile);
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
@@ -464,7 +464,7 @@ public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
 
     [Benchmark(Description = "Load model file")]
     [BenchmarkCategory("model")]
-    public void LoadModel() => Model.Load(modelFile);
+    public void LoadModel() => OnnxImport.Load(modelFile);
 
     [Benchmark(Description = "Tokenize 1 string of 20 chars")]
     [BenchmarkCategory("tokenize_20")]

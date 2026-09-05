@@ -109,7 +109,7 @@ static class OpDump
             useSimd = true; useIntrinsics = true;
         }
         else { Console.Error.WriteLine("OpDump error: unknown mode " + mode); return 1; }
-        var graph = Model.Load(model);
+        var graph = OnnxImport.Load(model);
         if (graph is null) { Console.Error.WriteLine("OpDump error: load failed"); return 4; }
         var dict = new Dictionary<string, ITensor>();
         foreach (var kv in fed) dict[kv.Item1] = ReadTensor(kv.Item1, kv.Item2);

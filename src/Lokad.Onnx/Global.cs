@@ -1,5 +1,3 @@
-extern alias OnnxSharp;
-
 global using System;
 global using System.Collections.Generic;
 global using System.Diagnostics;
@@ -14,5 +12,5 @@ global using System.Threading.Tasks;
 
 global using static Lokad.Onnx.CollectionUtils;
 
-global using OnnxSharp::Onnx;
+
 using System.Runtime.Versioning;
