@@ -199,9 +199,19 @@ class Program : Runtime
             : (!System.Numerics.Vector.IsHardwareAccelerated
                 ? HardwareIntrinsics.IsX86FmaSupported
                 : (ro.EnableIntrinsics || HardwareIntrinsics.IsX86FmaSupported));
+        if (ro.Threads < 1)
+        {
+            Error("Thread count must be at least 1.");
+            Exit(ExitResult.INVALID_OPTIONS);
+            return;
+        }
+        if (ro.Threads > 1)
+        {
+            Info("Batch-parallel kernels using up to {t} worker threads.", ro.Threads);
+        }
         var execOptions = new ExecutionOptions(
             ro.OptimizeMemory ? OptimizationMode.Memory : OptimizationMode.Speed,
-            new TensorExecutionOptions(useSimd, useIntrinsics));
+            new TensorExecutionOptions(useSimd, useIntrinsics, ro.Threads));
         if (!useSimd)
         {
             Info("CPU SIMD features disabled.");

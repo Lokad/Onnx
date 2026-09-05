@@ -93,6 +93,9 @@ public class RunOptions : Options
 
     [Option("optimize-memory", Required = false, HelpText = "Optimize memory usage at the cost of performance.")]
     public bool OptimizeMemory { get; set; }
+
+    [Option("threads", Required = false, HelpText = "Worker threads for batch-parallel kernels (default 1, sequential).")]
+    public int Threads { get; set; } = 1;
 }
 
 [Verb("benchmark", HelpText = "Benchmark an ONNX model or operations.")]

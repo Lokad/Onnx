@@ -105,4 +105,44 @@ public class ExecutionOptionsTests
             }
         }
     }
+
+    [Fact]
+    public void BatchedMatMul_Parallel_MatchesSequential_AndRepeatsBitwise()
+    {
+        static ComputationalGraph TinyBatchedMatMul()
+        {
+            var graph = new ComputationalGraph();
+            graph.Metadata["Name"] = "test";
+            var ad = new float[24];
+            var bd = new float[24];
+            for (int i = 0; i < 24; i++) { ad[i] = 0.25f * i + 1f; bd[i] = 0.125f * i - 1f; }
+            var a = new DenseTensor<float>(ad, new[] { 4, 2, 3 });
+            var b = new DenseTensor<float>(bd, new[] { 4, 3, 2 });
+            graph.Inputs["a"] = a;
+            graph.Inputs["b"] = b;
+            graph.Outputs["c"] = DenseTensor<float>.OfShape(4, 2, 2);
+            graph.Nodes.Add(new Node { Name = "mm", Op = OpType.MatMul, Inputs = new[] { "a", "b" }, Outputs = new[] { "c" } });
+            graph.RefreshLifetimeAnalysis();
+            return graph;
+        }
+        static float[] Run(ComputationalGraph graph, ExecutionOptions options)
+        {
+            var inputs = new System.Collections.Generic.Dictionary<string, ITensor>
+            {
+                { "a", graph.Inputs["a"] },
+                { "b", graph.Inputs["b"] },
+            };
+            Assert.True(graph.Execute(inputs, true, ExecutionProvider.CPU, options));
+            return ((Tensor<float>)graph.Outputs["c"]).ToArray();
+        }
+        var sequential = Run(TinyBatchedMatMul(), new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Intrinsics));
+        var parallel = Run(TinyBatchedMatMul(), new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Parallel(4)));
+        var repeat = Run(TinyBatchedMatMul(), new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Parallel(4)));
+        Assert.Equal(sequential.Length, parallel.Length);
+        for (int i = 0; i < sequential.Length; i++)
+        {
+            Assert.Equal(sequential[i], parallel[i], 5);
+        }
+        Assert.Equal(parallel, repeat);
+    }
 }
