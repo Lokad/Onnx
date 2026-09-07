@@ -33,12 +33,19 @@ It runs transformer and vision models end to end on CPU, with numeric parity aga
 * Run with an image (224x224 resize, RGB channels in [0,1] range; no mean/std normalization yet):
   `lonnx.cmd run .\models\dinov2-small-onnx\model.onnx .\path\to\image.jpg::dinov2`
 
+### Mini-tutorial: DINOv3 ViT-S/16 (image)
+* Place the model under `models\dinov3-vits16\onnx\` (git-ignored; see Models below).
+* Run with an image (224x224 Triangle resize approximating the HF bilinear resample, rescale plus ImageNet mean/std normalization per the local preprocessor config):
+  `lonnx.cmd run .\models\dinov3-vits16\onnx\model.onnx .\path\to\image.jpg::dinov3`
+
 ## Models
 Large model assets live under the git-ignored `models\` directory and are never fetched by library or test code. Expected layout:
 
 - `models\multilingual-e5-small\model.onnx` plus `sentencepiece.bpe.model` (intfloat multilingual-e5-small ONNX export with matching SentencePiece file).
 - `models\dinov2-small-onnx\model.onnx` (single-file DINOv2-small ONNX export).
 - `models\dinov3-vits16\onnx\model.onnx` plus `model.onnx_data` (DINOv3 ViT-S/16 export using external data, loaded automatically).
+- `models\resnet50-onnx\model.onnx` (Conv-heavy ResNet50 feature export; covered by a model oracle, no dedicated CLI input format).
+- `models\gpt2-onnx\onnx\model.onnx` plus tokenizer files (fp32 GPT-2 with past-key-value inputs; covered by a model oracle, no dedicated CLI input format).
 - MNIST assets are bundled with the backend tests and need no download.
 
 Model tests follow the local-model convention: they run when the asset is present, report an explicit skip otherwise, and fail when `LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1` requests an asset that is absent.
@@ -48,7 +55,7 @@ Four lanes, from fastest to strongest:
 
 - Offline unit tests: `dotnet test --tl:off --nologo -v minimal Lokad.Onnx.slnx`.
 - Integration tests using committed assets such as MNIST (same command, no extra setup).
-- Local-model conformance (DINOv2, DINOv3): same command with assets present; compact mean-plus-spot oracles pin numeric parity with native ONNX Runtime.
+- Local-model conformance (DINOv2, DINOv3, ResNet50, GPT-2): same command with assets present; compact mean-plus-spot oracles pin numeric parity with native ONNX Runtime.
 - Native e5 gate: `.\eng\test-e5.ps1 -RequireIntrinsics` verifies asset hashes, exact tokenizer inputs, full hidden states, normalized embeddings, determinism across scalar, SIMD, and intrinsic modes, and the semantic ranking margin. Needs Python with the packages in `tests\e5\python\requirements.txt`.
 
 See `tests\README.md` for the lane definitions.
