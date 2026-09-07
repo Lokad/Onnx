@@ -18,7 +18,9 @@ static class Bench
         var tok = Path.Combine(root, "models", "multilingual-e5-small", "sentencepiece.bpe.model");
         var v2 = Path.Combine(root, "models", "dinov2-small-onnx", "model.onnx");
         var v3 = Path.Combine(root, "models", "dinov3-vits16", "onnx", "model.onnx");
-        foreach (var f in new[] { e5, tok, v2, v3 })
+        var rn = Path.Combine(root, "models", "resnet50-onnx", "model.onnx");
+        var g2 = Path.Combine(root, "models", "gpt2-onnx", "onnx", "model.onnx");
+        foreach (var f in new[] { e5, tok, v2, v3, rn, g2 })
         {
             if (!File.Exists(f)) { Console.WriteLine("missing asset, skipping all: " + f); return 1; }
         }
@@ -27,6 +29,8 @@ static class Bench
         CompareE5("e5-30tok", e5, tok, "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk");
         CompareVision("dinov2-224", v2);
         CompareVision("dinov3-224", v3);
+        CompareVision("resnet50-224", rn);
+        CompareGpt2("gpt2-4tok", g2);
         return 0;
     }
 
@@ -55,6 +59,27 @@ static class Bench
         using var sessionProbe = new InferenceSession(model);
         input.Name = sessionProbe.InputMetadata.Keys.First();
         Compare(name, model, new ITensor[] { input });
+    }
+
+    static void CompareGpt2(string name, string model)
+    {
+        var ids = new DenseTensor<long>(new long[] { 15496, 11, 314, 716 }, new[] { 1, 4 });
+        ids.Name = "input_ids";
+        var mask = new DenseTensor<long>(new long[] { 1, 1, 1, 1 }, new[] { 1, 4 });
+        mask.Name = "attention_mask";
+        var pos = new DenseTensor<long>(new long[] { 0, 1, 2, 3 }, new[] { 1, 4 });
+        pos.Name = "position_ids";
+        var inputs = new List<ITensor> { ids, mask, pos };
+        for (int layer = 0; layer < 12; layer++)
+        {
+            var k = new DenseTensor<float>(Array.Empty<float>(), new[] { 1, 12, 0, 64 });
+            k.Name = "past_key_values." + layer + ".key";
+            var v = new DenseTensor<float>(Array.Empty<float>(), new[] { 1, 12, 0, 64 });
+            v.Name = "past_key_values." + layer + ".value";
+            inputs.Add(k);
+            inputs.Add(v);
+        }
+        Compare(name, model, inputs.ToArray());
     }
 
     static void Compare(string name, string model, ITensor[] inputs)

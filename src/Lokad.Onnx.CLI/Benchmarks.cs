@@ -320,6 +320,17 @@ public class TensorOpBenchmarks : Runtime
         tr_x = Tensor<float>.Rand(12, 30, 30);
         cc_a = Tensor<float>.Rand(201, 192);
         cc_b = Tensor<float>.Rand(201, 192);
+        cv_stem_x = Tensor<float>.Rand(1, 3, 112, 112);
+        cv_stem_w = Tensor<float>.Rand(64, 3, 7, 7);
+        cv_33_x = Tensor<float>.Rand(1, 64, 28, 28);
+        cv_33_w = Tensor<float>.Rand(64, 64, 3, 3);
+        gm_a = Tensor<float>.Rand(4, 768);
+        gm_b = Tensor<float>.Rand(768, 2304);
+        gm_c = Tensor<float>.Rand(2304);
+        th_x = Tensor<float>.Rand(4, 3072);
+        sp_x = Tensor<float>.Rand(4, 12, 2304);
+        sp_sizes = DenseTensor<long>.OfValues(new long[] { 768L, 768L, 768L });
+        gap_x = Tensor<float>.Rand(1, 256, 14, 14);
     }
 
     [Benchmark(Description = "Softmax over 12x30x30 attention scores")]
@@ -406,6 +417,30 @@ public class TensorOpBenchmarks : Runtime
     [BenchmarkCategory("concat")]
     public void Concat() => Tensor<float>.Concat(new[] { cc_a, cc_b }, 1);
 
+    [Benchmark(Description = "Conv stem 7x7 s2 pad3 over 1x3x112x112")]
+    [BenchmarkCategory("conv")]
+    public void ConvStem() => CPUExecutionProvider.Conv(cv_stem_x, cv_stem_w, null, null, null, 1, new[] { 7, 7 }, new[] { 3, 3, 3, 3 }, new[] { 2, 2 });
+
+    [Benchmark(Description = "Conv 3x3 s1 pad1 over 1x64x28x28")]
+    [BenchmarkCategory("conv")]
+    public void ConvStage() => CPUExecutionProvider.Conv(cv_33_x, cv_33_w, null, null, null, 1, new[] { 3, 3 }, new[] { 1, 1, 1, 1 }, new[] { 1, 1 });
+
+    [Benchmark(Description = "Gemm 4x768 @ 768x2304 + bias (GPT-2 c_attn)")]
+    [BenchmarkCategory("gemm")]
+    public void GemmAttn() => CPUExecutionProvider.Gemm(gm_a, gm_b, gm_c, 1f, 1f);
+
+    [Benchmark(Description = "Tanh over 4x3072 (GPT-2 gelu path)")]
+    [BenchmarkCategory("tanh")]
+    public void TanhAct() => CPUExecutionProvider.Tanh(th_x);
+
+    [Benchmark(Description = "Split 4x12x2304 into 3 QKV parts")]
+    [BenchmarkCategory("split")]
+    public void SplitQkv() => CPUExecutionProvider.Split(sp_x, sp_sizes, 2, null, null);
+
+    [Benchmark(Description = "GlobalAveragePool over 1x256x14x14")]
+    [BenchmarkCategory("gap")]
+    public void GlobalAvgPool() => CPUExecutionProvider.GlobalAveragePool(gap_x);
+
     #region Fields
     Tensor<float> sm_e5 = Tensor<float>.Zeros(0);
     Tensor<float> sm_dino = Tensor<float>.Zeros(0);
@@ -419,6 +454,17 @@ public class TensorOpBenchmarks : Runtime
     Tensor<float> tr_x = Tensor<float>.Zeros(0);
     Tensor<float> cc_a = Tensor<float>.Zeros(0);
     Tensor<float> cc_b = Tensor<float>.Zeros(0);
+    Tensor<float> cv_stem_x = Tensor<float>.Zeros(0);
+    Tensor<float> cv_stem_w = Tensor<float>.Zeros(0);
+    Tensor<float> cv_33_x = Tensor<float>.Zeros(0);
+    Tensor<float> cv_33_w = Tensor<float>.Zeros(0);
+    Tensor<float> gm_a = Tensor<float>.Zeros(0);
+    Tensor<float> gm_b = Tensor<float>.Zeros(0);
+    Tensor<float> gm_c = Tensor<float>.Zeros(0);
+    Tensor<float> th_x = Tensor<float>.Zeros(0);
+    Tensor<float> sp_x = Tensor<float>.Zeros(0);
+    Tensor<long> sp_sizes = Tensor<long>.Zeros(0);
+    Tensor<float> gap_x = Tensor<float>.Zeros(0);
     #endregion
 }
 [InProcess]
