@@ -8,6 +8,7 @@ Only 0.1.4 has been published to NuGet. Everything below is unreleased: the brea
 
 - All maintained projects target exactly net10.0; legacy target frameworks removed from the solution.
 - Removed Satsuma graph members, metadata, and package content without compatibility shims.
+- Core ships as a single dependency-free `Lokad.Onnx` assembly: `Microsoft.Extensions.Logging.Abstractions` and OnnxSharp are no longer core dependencies (logging uses a tiny in-core sink, ONNX parsing lives in the non-shipped `Lokad.Onnx.Import` project).
 - Removed the pythonnet bridge and the Interop assembly. Python remains only as the out-of-process native ONNX Runtime oracle for e5.
 - Removed the obsolete process-wide execution statics (`HardwareConfig`, `CPUExecutionProvider.OptimizationMode`, `Profiler.Enabled/Profile/Running`). `TensorExecutionOptions.Auto` now probes hardware directly (SIMD on, intrinsics when x86 FMA is present); pass explicit options for pinned behavior.
 
@@ -18,6 +19,7 @@ Only 0.1.4 has been published to NuGet. Everything below is unreleased: the brea
 - Tokenizer multi-space normalization now matches the Hugging Face reference.
 - Unsqueeze normalized negative axes against the input rank instead of the output rank, corrupting downstream Concat reads on the DINOv3 RoPE path.
 - ReduceMean and ReduceMax ignored the axes attribute on opsets 13 through 17, silently reducing over all axes on models such as DINOv2.
+- Conv and MaxPool silently dropped explicit `pads` when `auto_pad` is absent (the standard export form), shrinking padded 3x3 conv outputs (54 wide to 52) and breaking residual adds; absent `auto_pad` now follows NOTSET semantics (found via the ResNet50 oracle).
 - LayerNormalization validation consolidated behind one shared helper; Unsqueeze validation now covers both bounds with a correct message.
 
 ### Added
@@ -28,6 +30,10 @@ Only 0.1.4 has been published to NuGet. Everything below is unreleased: the brea
 - ONNX operators Abs, Cos, Sin, Neg, Gelu, Squeeze, Range, Tile, LayerNormalization, SplitToSequence, and SequenceAt, plus int64 Add, Sub, and Mul and external-data model loading. Validated end-to-end on DINOv3 ViT-S/16 and DINOv2-small against native ONNX Runtime.
 - Direct unit coverage for the new operators, TensorSequence contracts, external-data failure paths, negative-axis Unsqueeze, and opset-13-to-17 attribute-form ReduceMean and ReduceMax routing.
 - Compact mean-plus-spot ONNX Runtime oracles for the DINOv2 and DINOv3 model tests.
+- ResNet50 and GPT-2 (fp32) model support with compact mean-plus-spot ONNX Runtime oracles, via new GlobalAveragePool, Gemm, Tanh, Split, Less, and ConstantOfShape operators.
+- BenchmarkDotNet op microbenchmarks (`lonnx benchmark ops`), a Lokad-vs-ORT model comparison harness, and BENCHMARK.md latency tables.
+- `lonnx run --threads` exposing opt-in batch-parallel MatMul (default stays sequential).
+- One README.md per src project (core, Data, CLI, Import).
 - Per-execution tensor buffer pool driven by file-order last-use analysis: transparent reuse of dense float outputs (Add, Mul, Div, MatMul, Softmax, Erf, Transpose, LayerNormalization, Gelu) with view-pinning alias protection and pool hit counters per execution.
 
 ### Engineering
@@ -37,3 +43,6 @@ Only 0.1.4 has been published to NuGet. Everything below is unreleased: the brea
 - Fused blocked Softmax kernel, Span block copies for Concat and ChunkCopy, and MatMul odd-row tail for the intrinsics kernel.
 - Transparent LayerNorm subgraph fusion at model load (strict matcher, interface-preserving) and opt-in batch-parallel float MatMul via TensorExecutionOptions.
 - Vectorized float erf and exact GELU sharing one SIMD polynomial core (same proven coefficients, FMA contraction only); K-slab B-panel packing assessed against production micro-kernels and deferred (no demonstrable win on L2-resident shapes).
+- Transparent RoPE-subgraph fusion at model load (24 branches to 1 node each on DINOv3, bitwise identical, ~20% end to end), row-split parallelism for large 2D float MatMul, and a portable vectorized exp serving both Softmax loops.
+- Framework-overhead increments: block-copy broadcast densify and Gather fast path plus silent-sink guards on per-node debug sites; buffer-pool liveness machinery measured net-neutral and kept.
+- Source restructure (no API break beyond the above): Base+Tensors+Backend merged into `src/Lokad.Onnx`, `Lokad.Onnx.Package` deleted (the core csproj packs directly), obsolete process-wide statics removed.
