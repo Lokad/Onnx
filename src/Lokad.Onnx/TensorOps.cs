@@ -2582,6 +2582,27 @@ where T : unmanaged
         }
         var output = DenseTensor<T>.OfShape(shape.ToArray());
         StartOpStage(OpStage.Copy);
+        if (data is DenseTensor<T> denseData && HasStandardStrides(denseData) && indices is DenseTensor<int> denseIndices)
+        {
+            int outer = 1;
+            for (int d = 0; d < axis; d++) outer *= data.dimensions[d];
+            int inner = 1;
+            for (int d = axis + 1; d < data.Rank; d++) inner *= data.dimensions[d];
+            int axisDim = data.dimensions[axis];
+            var indexSpan = denseIndices.Buffer.Span;
+            var srcSpan = denseData.Buffer.Span;
+            var dstSpan = output.Buffer.Span;
+            var rows = new int[indexSpan.Length];
+            for (int j = 0; j < rows.Length; j++) rows[j] = ArrayUtilities.HandleNegativeAxisOrIndex(axisDim, indexSpan[j]);
+            for (int o = 0; o < outer; o++)
+            {
+                for (int j = 0; j < rows.Length; j++)
+                {
+                    srcSpan.Slice((o * axisDim + rows[j]) * inner, inner).CopyTo(dstSpan.Slice((o * rows.Length + j) * inner, inner));
+                }
+            }
+            return output;
+        }
         foreach (var di in output.GetDimensionsIterator())
         {
             var a = di[0..axis];

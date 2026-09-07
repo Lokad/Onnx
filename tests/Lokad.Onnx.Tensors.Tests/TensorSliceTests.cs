@@ -82,6 +82,22 @@ public class TensorSliceTests
     }
 
     [Fact]
+    public void GatherBlockCopyMatchesIndexed() 
+    {
+        var data = DenseTensor<float>.OfValues(new float[3, 4] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f } });
+        var indices = DenseTensor<int>.OfValues(new int[2] { 2, 0 });
+        var output = Tensor<float>.Gather(data, indices);
+        Assert.Equal(new[] { 9f, 10f, 11f, 12f, 1f, 2f, 3f, 4f }, output.ToArray());
+        var neg = DenseTensor<int>.OfValues(new int[1] { -1 });
+        Assert.Equal(new[] { 9f, 10f, 11f, 12f }, Tensor<float>.Gather(data, neg).ToArray());
+        var data3 = DenseTensor<float>.OfValues(new float[2, 3, 2] { { { 1f, 2f }, { 3f, 4f }, { 5f, 6f } }, { { 7f, 8f }, { 9f, 10f }, { 11f, 12f } } });
+        var idx3 = DenseTensor<int>.OfValues(new int[2, 1] { { 2 }, { 0 } });
+        var out3 = Tensor<float>.Gather(data3, idx3, 1);
+        Assert.Equal(new[] { 2, 2, 1, 2 }, out3.Dimensions.ToArray());
+        Assert.Equal(new[] { 5f, 6f, 1f, 2f, 11f, 12f, 7f, 8f }, out3.ToArray());
+    }
+
+    [Fact]
     public void CanSliceOp()
     {
         Tensor<int> data = new int[2, 4] { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }.ToTensor<int>();
