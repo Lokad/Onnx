@@ -262,13 +262,13 @@ public class ComputationalGraph : Runtime
         foreach (var node in Nodes)
         {
             count++;
-            Debug("Executing node {c} {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
+            if (Log.Sink is not null) Debug("Executing node {c} {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
                 + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
                 count, node.Name, node.Op.ToString(),
                 GetInputTensors(node.Inputs).Select(t => t.TensorNameDesc()),
                 node.Outputs
             );
-            if (node.Attributes is not null && node.Attributes.Count > 0)
+            if (Log.Sink is not null && node.Attributes is not null && node.Attributes.Count > 0)
             {
                 foreach (var kv in node.Attributes)
                 {
@@ -291,10 +291,10 @@ public class ComputationalGraph : Runtime
             }
             else
             {
-                Debug("Execution of node {n} with op {op} returned {s} with {c} output(s).", node.Name, node.Op.ToString(), r.Status.ToString(), r.Outputs.Length);
+                if (Log.Sink is not null) Debug("Execution of node {n} with op {op} returned {s} with {c} output(s).", node.Name, node.Op.ToString(), r.Status.ToString(), r.Outputs.Length);
                 for (int i = 0; i < node.Outputs.Length; i++)
                 {
-                    Debug("Assigning node {n} output {c} to graph tensor {o}.", node.Name, i, node.Outputs[i]);
+                    if (Log.Sink is not null) Debug("Assigning node {n} output {c} to graph tensor {o}.", node.Name, i, node.Outputs[i]);
                     if (IntermediateOutputs.ContainsKey(node.Outputs[i]))
                     {
                         IntermediateOutputs[node.Outputs[i]] = r.Outputs[i];
