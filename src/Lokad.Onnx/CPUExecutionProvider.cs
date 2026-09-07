@@ -295,7 +295,20 @@ public class CPUExecutionProvider : Runtime
         }
         var padmode = MathOps.PadType.Valid;
         int? padvalue = null;
-        if (!string.IsNullOrEmpty(auto_pad))
+        if (string.IsNullOrEmpty(auto_pad) || auto_pad == "NOTSET")
+        {
+            padmode = MathOps.PadType.Value;
+            if (pads is null)
+            {
+                return MissingAttribute(op, nameof(pads), "When auto_pad is NOTSET pads must be specified");
+            }
+            else if (!pads.All(p => p == pads[0]))
+            {
+                return AttributeNotSupported(op, "pads", pads.Print(), "Asymmetric padding is not supported.");
+            }
+            padvalue = pads[0];
+        }
+        else
         {
             switch (auto_pad)
             {
@@ -363,7 +376,20 @@ public class CPUExecutionProvider : Runtime
         }
         var padmode = MathOps.PadType.Valid;
         int? padvalue = null;
-        if (!string.IsNullOrEmpty(auto_pad))
+        if (string.IsNullOrEmpty(auto_pad) || auto_pad == "NOTSET")
+        {
+            padmode = MathOps.PadType.Value;
+            if (pads is null)
+            {
+                return MissingAttribute(op, nameof(pads), "When auto_pad is NOTSET pads must be specified");
+            }
+            else if (!pads.All(p => p == pads[0]))
+            {
+                return AttributeNotSupported(op, "pads", pads.Print(), "Asymmetric padding is not supported.");
+            }
+            padvalue = pads?[0] ?? 0;
+        }
+        else
         {
             switch (auto_pad)
             {
