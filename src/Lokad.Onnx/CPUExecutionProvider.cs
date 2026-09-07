@@ -62,6 +62,12 @@ public class CPUExecutionProvider : Runtime
         OpType.SplitToSequence,
         OpType.SequenceAt,
         OpType.RotaryEmbedding,
+        OpType.Gemm,
+        OpType.Tanh,
+        OpType.Split,
+        OpType.Less,
+        OpType.ConstantOfShape,
+        OpType.GlobalAveragePool,
     };
 
     [System.Obsolete("Process-wide execution policy is obsolete. Pass ExecutionOptions explicitly instead.")]
@@ -321,18 +327,6 @@ public class CPUExecutionProvider : Runtime
                 case "SAME_LOWER":
                     padmode = MathOps.PadType.SameLower;
                     break;
-                case "NOTSET":
-                    padmode = MathOps.PadType.Value;
-                    if (pads is null)
-                    {
-                        return MissingAttribute(op, nameof(pads), "When auto_pad is NOTSET pads must be specified");
-                    }
-                    else if (!pads.All(p => p == pads[0]))
-                    {
-                        return AttributeNotSupported(op, "pads", pads.Print(), "Asymmetric padding is not supported.");
-                    }
-                    padvalue = pads[0];
-                    break;
             }
         }
         switch (X.ElementType)
@@ -402,18 +396,6 @@ public class CPUExecutionProvider : Runtime
                 case "SAME_LOWER":
                     padmode = MathOps.PadType.SameLower;
                     break;
-                case "NOTSET":
-                    padmode = MathOps.PadType.Value;
-                    if (pads is null)
-                    {
-                        return MissingAttribute(op, nameof(pads), "When auto_pad is NOTSET pads must be specified");
-                    }
-                    else if (!pads.All(p => p == pads[0]))
-                    {
-                        return AttributeNotSupported(op, "pads", pads.Print(), "Asymmetric padding is not supported.");
-                    }
-                    padvalue = pads?[0] ?? 0;
-                    break;
             }
         }
         switch (X.ElementType)
@@ -424,6 +406,22 @@ public class CPUExecutionProvider : Runtime
                 return Success(op, Tensor<double>.MaxPool2D((Tensor<double>)X, kernel_shape, padmode, padvalue, strides, dilations));
             default:
                 return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult GlobalAveragePool(ITensor? X, ExecutionOptions? options = null)
+    {
+        var op = OpType.GlobalAveragePool;
+        if (X is null) return MissingInput(op, nameof(X));
+        if (X.Rank < 3) return WrongInputShape(op, nameof(X), X, "GlobalAveragePool requires an input of rank 3 or more (NxCxD1..Dn).");
+        var axes = new int[X.Rank - 2];
+        for (int i = 0; i < axes.Length; i++) axes[i] = i + 2;
+        var axesTensor = DenseTensor<int>.OfValues(axes);
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, Tensor<float>.ReduceMean((Tensor<float>)X, axesTensor, true, false, (options ?? ExecutionOptions.Default).Tensor));
+            case TensorElementType.Double: return Success(op, Tensor<double>.ReduceMean((Tensor<double>)X, axesTensor, true, false, (options ?? ExecutionOptions.Default).Tensor));
+            default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
 
@@ -446,6 +444,70 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B, (options ?? ExecutionOptions.Default).Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
+    }
+
+    public static OpResult Gemm(ITensor? A, ITensor? B, ITensor? C, float alpha, float beta, ExecutionOptions? options = null)
+    {
+        var op = OpType.Gemm;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType) return WrongInputType(op, nameof(B), A.ElementType, B, "Gemm inputs A and B must have the same element type.");
+        if (A.Rank != 2) return WrongInputShape(op, nameof(A), 2, A);
+        if (B.Rank != 2) return WrongInputShape(op, nameof(B), 2, B);
+        if (C is not null && C.ElementType != A.ElementType) return WrongInputType(op, nameof(C), A.ElementType, C, "Gemm input C must have the same element type as A and B.");
+        int m = A.Dims[0], k = A.Dims[1], n = B.Dims[1];
+        if (B.Dims[0] != k) return WrongInputShape(op, nameof(B), B, "Gemm inner dimensions disagree.");
+        if (C is not null && C.Length > 1)
+        {
+            bool okc = (C.Rank == 1 && C.Dims[0] == n) || (C.Rank == 2 && C.Dims[0] == m && C.Dims[1] == n);
+            if (!okc) return WrongInputShape(op, nameof(C), C, "Gemm bias C must be a scalar, [N], or [M,N].");
+        }
+        switch (A.ElementType)
+        {
+            case TensorElementType.Float: return Success(op, GemmFloat((Tensor<float>)A, (Tensor<float>)B, (Tensor<float>?)C, m, k, n, alpha, beta));
+            case TensorElementType.Double: return Success(op, GemmDouble((Tensor<double>)A, (Tensor<double>)B, (Tensor<double>?)C, m, k, n, alpha, beta));
+            default: return InputTypeNotSupported(op, nameof(A), A);
+        }
+    }
+
+    static Tensor<float> GemmFloat(Tensor<float> a, Tensor<float> b, Tensor<float>? c, int m, int k, int n, float alpha, float beta)
+    {
+        var p = Tensor<float>.MatMul2D(a.ToDenseTensor(), b.ToDenseTensor()).ToDenseTensor();
+        var ps = p.Buffer.Span;
+        var y = DenseTensor<float>.OfShape(m, n);
+        for (int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                float cb = 0f;
+                if (c is not null && beta != 0f)
+                {
+                    cb = c.Length == 1 ? c.GetValue(0) : (c.Rank == 1 ? c.GetValue(j) : c.GetValue(i * n + j));
+                }
+                y.SetValue(i * n + j, alpha * ps[i * n + j] + beta * cb);
+            }
+        }
+        return y;
+    }
+
+    static Tensor<double> GemmDouble(Tensor<double> a, Tensor<double> b, Tensor<double>? c, int m, int k, int n, float alpha, float beta)
+    {
+        var p = Tensor<double>.MatMul2D(a.ToDenseTensor(), b.ToDenseTensor()).ToDenseTensor();
+        var ps = p.Buffer.Span;
+        var y = DenseTensor<double>.OfShape(m, n);
+        for (int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+            {
+                double cb = 0.0;
+                if (c is not null && beta != 0f)
+                {
+                    cb = c.Length == 1 ? c.GetValue(0) : (c.Rank == 1 ? c.GetValue(j) : c.GetValue(i * n + j));
+                }
+                y.SetValue(i * n + j, alpha * ps[i * n + j] + beta * cb);
+            }
+        }
+        return y;
     }
 
     public static OpResult Sqrt(ITensor? A, ExecutionOptions? options = null)
@@ -530,6 +592,28 @@ public class CPUExecutionProvider : Runtime
             case int i: return Success(op, DenseTensor<int>.Scalar(i));
             case int[] ia: return Success(op, DenseTensor<int>.OfValues(ia));
             default: return NotSupported(op);
+        }
+    }
+
+    public static OpResult ConstantOfShape(ITensor? shape, ITensor? value, ExecutionOptions? options = null)
+    {
+        var op = OpType.ConstantOfShape;
+        if (shape is null) return MissingInput(op, nameof(shape));
+        int[] dims;
+        if (shape.ElementType == TensorElementType.Int64) dims = ((Tensor<long>)shape).ToArray().Select(v => checked((int)v)).ToArray();
+        else if (shape.ElementType == TensorElementType.Int32) dims = ((Tensor<int>)shape).ToArray();
+        else return InputTypeNotSupported(op, nameof(shape), shape);
+        if (dims.Any(d => d < 0)) return WrongInputShape(op, nameof(shape), shape, "ConstantOfShape dimensions must be non-negative.");
+        value ??= DenseTensor<float>.OfValues(new float[] { 0f });
+        if (value.Length != 1) return WrongInputShape(op, nameof(value), value, "ConstantOfShape value must hold a single element.");
+        switch (value.ElementType)
+        {
+            case TensorElementType.Float: { var y = DenseTensor<float>.OfShape(dims); y.Fill(((Tensor<float>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.Double: { var y = DenseTensor<double>.OfShape(dims); y.Fill(((Tensor<double>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.Int32: { var y = DenseTensor<int>.OfShape(dims); y.Fill(((Tensor<int>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.Int64: { var y = DenseTensor<long>.OfShape(dims); y.Fill(((Tensor<long>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.Bool: { var y = DenseTensor<bool>.OfShape(dims); y.Fill(((Tensor<bool>)value).GetValue(0)); return Success(op, y); }
+            default: return InputTypeNotSupported(op, nameof(value), value);
         }
     }
 
@@ -684,6 +768,61 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
+    public static OpResult Split(ITensor? data, ITensor? split, int? _axis, int[]? _split, int? _numOutputs, ExecutionOptions? options = null)
+    {
+        var op = OpType.Split;
+        if (data is null) return MissingInput(op, nameof(data));
+        int axis = _axis ?? 0;
+        if (axis < 0) axis += data.Rank;
+        if (axis < 0 || axis >= data.Rank) return WrongInputShape(op, nameof(data), data, "Split axis is out of range.");
+        int dim = data.Dims[axis];
+        int[] sizes;
+        if (split is not null)
+        {
+            if (split.ElementType == TensorElementType.Int64) sizes = ((Tensor<long>)split).ToArray().Select(v => checked((int)v)).ToArray();
+            else if (split.ElementType == TensorElementType.Int32) sizes = ((Tensor<int>)split).ToArray();
+            else return InputTypeNotSupported(op, "split", split);
+        }
+        else if (_split is not null) sizes = _split;
+        else if (_numOutputs.HasValue && _numOutputs.Value > 0 && dim % _numOutputs.Value == 0) sizes = Enumerable.Repeat(dim / _numOutputs.Value, _numOutputs.Value).ToArray();
+        else return MissingAttribute(op, "split", "Split needs the split input, the split attribute, or num_outputs with an evenly divisible axis.");
+        if (sizes.Any(z => z < 0) || sizes.Sum() != dim) return WrongInputShape(op, "split", data, "Split sizes must be non-negative and sum to the axis dimension.");
+        var inDims = data.Dims.ToArray();
+        int inner = 1;
+        for (int i = axis + 1; i < data.Rank; i++) inner *= inDims[i];
+        int outer = 1;
+        for (int i = 0; i < axis; i++) outer *= inDims[i];
+        var outputs = new ITensor[sizes.Length];
+        int start = 0;
+        for (int p = 0; p < sizes.Length; p++)
+        {
+            var partDims = (int[])inDims.Clone();
+            partDims[axis] = sizes[p];
+            switch (data.ElementType)
+            {
+                case TensorElementType.Float: outputs[p] = SplitPart(((Tensor<float>)data).ToDenseTensor().Buffer.Span, partDims, outer, inner, dim, start, sizes[p]); break;
+                case TensorElementType.Double: outputs[p] = SplitPart(((Tensor<double>)data).ToDenseTensor().Buffer.Span, partDims, outer, inner, dim, start, sizes[p]); break;
+                case TensorElementType.Int32: outputs[p] = SplitPart(((Tensor<int>)data).ToDenseTensor().Buffer.Span, partDims, outer, inner, dim, start, sizes[p]); break;
+                case TensorElementType.Int64: outputs[p] = SplitPart(((Tensor<long>)data).ToDenseTensor().Buffer.Span, partDims, outer, inner, dim, start, sizes[p]); break;
+                default: return InputTypeNotSupported(op, nameof(data), data);
+            }
+            start += sizes[p];
+        }
+        return Success(op, outputs);
+    }
+
+    static DenseTensor<T> SplitPart<T>(System.ReadOnlySpan<T> src, int[] partDims, int outer, int inner, int dim, int start, int size) where T : unmanaged
+    {
+        var dst = DenseTensor<T>.OfShape(partDims);
+        var ds = dst.Buffer.Span;
+        for (int o = 0; o < outer; o++)
+        {
+            src.Slice(o * dim * inner + start * inner, size * inner).CopyTo(ds.Slice(o * size * inner));
+        }
+        return dst;
+    }
+
+
     public static OpResult Equal(ITensor? A, ITensor? B, ExecutionOptions? options = null)
     {
         var op = OpType.Equal;
@@ -700,6 +839,25 @@ public class CPUExecutionProvider : Runtime
             case TensorElementType.Int64: return Success(op, Tensor<long>.Equal((Tensor<long>)A, (Tensor<long>)B));
             case TensorElementType.Float: return Success(op, Tensor<float>.Equal((Tensor<float>)A, (Tensor<float>)B));
             case TensorElementType.Double: return Success(op, Tensor<double>.Equal((Tensor<double>)A, (Tensor<double>)B));
+            default: return InputTypeNotSupported(op, nameof(A), A);
+        }
+    }
+
+    public static OpResult Less(ITensor? A, ITensor? B, ExecutionOptions? options = null)
+    {
+        var op = OpType.Less;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        switch (A.ElementType)
+        {
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Less((Tensor<int>)A, (Tensor<int>)B));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Less((Tensor<long>)A, (Tensor<long>)B));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Less((Tensor<float>)A, (Tensor<float>)B));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Less((Tensor<double>)A, (Tensor<double>)B));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
@@ -969,6 +1127,34 @@ public class CPUExecutionProvider : Runtime
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Sin((Tensor<float>)X, (options ?? ExecutionOptions.Default).Tensor));
             case TensorElementType.Double: return Success(op, Tensor<double>.Sin((Tensor<double>)X, (options ?? ExecutionOptions.Default).Tensor));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult Tanh(ITensor? X, ExecutionOptions? options = null)
+    {
+        var op = OpType.Tanh;
+        if (X is null) return MissingInput(op, nameof(X));
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float:
+            {
+                var x = ((Tensor<float>)X).ToDenseTensor();
+                var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = MathF.Tanh(xs[i]);
+                return Success(op, y);
+            }
+            case TensorElementType.Double:
+            {
+                var x = ((Tensor<double>)X).ToDenseTensor();
+                var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = Math.Tanh(xs[i]);
+                return Success(op, y);
+            }
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }

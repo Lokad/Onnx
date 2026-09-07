@@ -146,11 +146,17 @@ public partial struct Node
 
         OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), Attr<int?>("storage_order"), Ints("strides"), opt),
 
+        OpType.GlobalAveragePool => CPU.GlobalAveragePool(InputTensor(graph, 0), opt),
+
         OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+
+        OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), HasAttr<float>("alpha") ? Attr<float>("alpha") : 1f, HasAttr<float>("beta") ? Attr<float>("beta") : 1f, opt),
 
         OpType.Transpose => CPU.Transpose(InputTensor(graph, 0), Ints("perm"), opt, graph.ActivePool),
 
         OpType.Constant => CPU.Constant(OneOfAttr("sparse_value", "value", "value_float", "value_floats", "value_int", "value_ints", "value_string", "value_strings"), opt),
+
+        OpType.ConstantOfShape => CPU.ConstantOfShape(InputTensor(graph, 0), OneOfAttr("value") as ITensor, opt),
 
         OpType.Cast => CPU.Cast(InputTensor(graph, 0), RequiredInt("to"), opt),
 
@@ -162,7 +168,11 @@ public partial struct Node
 
         OpType.Slice => CPU.Slice(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4), opt),
 
+        OpType.Split => CPU.Split(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis"), Ints("split"), Int("num_outputs"), opt),
+
         OpType.Equal => CPU.Equal(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+
+        OpType.Less => CPU.Less(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.Where => CPU.Where(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt),
 
@@ -195,6 +205,8 @@ public partial struct Node
         OpType.Cos => CPU.Cos(InputTensor(graph, 0), opt),
 
         OpType.Sin => CPU.Sin(InputTensor(graph, 0), opt),
+
+        OpType.Tanh => CPU.Tanh(InputTensor(graph, 0), opt),
 
         OpType.Neg => CPU.Neg(InputTensor(graph, 0), opt),
 

@@ -378,6 +378,21 @@ where T : unmanaged
         return output;
     }
 
+    public static Tensor<bool> Less(Tensor<T> x, Tensor<T> y)
+    {
+        StartOpStage(OpStage.ValidateArguments);
+        if (!Broadcast(x, y, out var bx, out var by))
+        {
+            throw new ArgumentException("Inputs are not broadcastable.");
+        }
+        var output = DenseTensor<bool>.OfShape(bx.Dimensions.ToArray());
+        for (int i = 0; i < output.Length; i++)
+        {
+            output.SetValue(i, Comparer<T>.Default.Compare(bx.GetValue(i), by.GetValue(i)) < 0);
+        }
+        return output;
+    }
+
     public static Tensor<T> Where(Tensor<bool> condition, Tensor<T> x, Tensor<T> y)
     {
         StartOpStage(OpStage.ValidateArguments);
