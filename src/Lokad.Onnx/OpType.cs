@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx;
+namespace Lokad.Onnx;
 
 public enum OpType
 {
@@ -196,4 +196,5 @@ public enum OpType
     Softplus,
     Softsign,
     ThresholdedRelu,
+    RotaryEmbedding,
 }

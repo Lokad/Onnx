@@ -61,6 +61,7 @@ public class CPUExecutionProvider : Runtime
         OpType.LayerNormalization,
         OpType.SplitToSequence,
         OpType.SequenceAt,
+        OpType.RotaryEmbedding,
     };
 
     [System.Obsolete("Process-wide execution policy is obsolete. Pass ExecutionOptions explicitly instead.")]
@@ -1053,6 +1054,22 @@ public class CPUExecutionProvider : Runtime
         }
     }
 
+    public static OpResult RotaryEmbedding(ITensor? x, ITensor? cos, ITensor? sin, int? half, int? axis = null, int? concatAxis = null, ExecutionOptions? options = null, TensorBufferPool? pool = null)
+    {
+        var op = OpType.RotaryEmbedding;
+        if (x is null) return MissingInput(op, nameof(x));
+        if (cos is null) return MissingInput(op, nameof(cos));
+        if (sin is null) return MissingInput(op, nameof(sin));
+        if (half is null) return MissingInput(op, nameof(half));
+        Profiler.StartOpStage(OpStage.Math);
+        if (x.ElementType != TensorElementType.Float) return InputTypeNotSupported(op, nameof(x), x);
+        if (cos.ElementType != TensorElementType.Float) return InputTypeNotSupported(op, nameof(cos), cos);
+        if (sin.ElementType != TensorElementType.Float) return InputTypeNotSupported(op, nameof(sin), sin);
+        var fx = (Tensor<float>)x;
+        var rented = pool is null ? null : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
+        if (rented is null) return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, half.Value, axis ?? -1, concatAxis ?? -1));
+        return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, rented, half.Value, axis ?? -1, concatAxis ?? -1));
+    }
     public static OpResult LayerNormalization(ITensor? x, ITensor? scale, ITensor? bias, int? axis = null, float? epsilon = null, ExecutionOptions? options = null, TensorBufferPool? pool = null)
     {
         var op = OpType.LayerNormalization;

@@ -212,6 +212,8 @@ public partial struct Node
 
         OpType.SequenceAt => CPU.SequenceAt(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
+        OpType.RotaryEmbedding => CPU.RotaryEmbedding(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), RequiredInt("half"), Int("axis"), Int("concatAxis"), opt, graph.ActivePool),
+
         _ => NotSupported(Op)
     };
     }

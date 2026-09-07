@@ -40,6 +40,8 @@ public class Model : Runtime
         op.Complete();
         int fused = GraphFusion.FuseLayerNormPatterns(graph);
         if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
+        int rope = GraphFusion.FuseRopePatterns(graph);
+        if (rope > 0) Info("Fused {c} rotary-embedding patterns into native nodes.", rope);
         graph.RefreshLifetimeAnalysis();
         cop.Complete();
         return graph;
