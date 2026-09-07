@@ -59,4 +59,23 @@ public class TensorBroadcastTests
         Assert.Equal(2, r.Length);
         Assert.Equal(new[] { 256, 256, 3 }, r[1].Dimensions.ToArray());
     }
+
+    [Fact]
+    public void BroadcastedViewDensifiesExactly()
+    {
+        var rnd = new System.Random(20260907);
+        foreach (var (srcDims, dstDims) in new[] { (new[] { 384 }, new[] { 8, 384 }), (new[] { 1, 384 }, new[] { 8, 384 }), (new[] { 8, 1 }, new[] { 8, 384 }), (new[] { 1 }, new[] { 4, 5 }), (new[] { 4, 1, 6 }, new[] { 4, 5, 6 }) })
+        {
+            int n = 1;
+            foreach (var d in srcDims) n *= d;
+            var data = new float[n];
+            for (int i = 0; i < n; i++) data[i] = (float)rnd.NextDouble();
+            var src = new DenseTensor<float>(data, srcDims);
+            var dst = new DenseTensor<float>(dstDims);
+            ITensor.Broadcast(src, dst, out var bA, out var bB);
+            var view = bA as BroadcastedTensor<float> ?? (BroadcastedTensor<float>)bB;
+            var fast = view.ToDenseTensor().ToArray();
+            for (int i = 0; i < fast.Length; i++) Assert.Equal((float)view.GetValue(i), fast[i]);
+        }
+    }
 }

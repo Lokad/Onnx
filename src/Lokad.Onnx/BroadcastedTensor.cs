@@ -64,6 +64,65 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
         
     public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions);  
 
+    /// <summary>
+    /// Materializes the broadcast view with block copies over contiguous source
+    /// runs instead of the per-element indexed base implementation, which
+    /// allocates an index array per element. Falls back to the base path when
+    /// the source is not a standard row-major dense tensor or the positional
+    /// dimension mapping does not hold.
+    /// </summary>
+    public override DenseTensor<T> ToDenseTensor()
+    {
+        var src = source as DenseTensor<T> ?? source.ToDenseTensor();
+        if (src.IsReversedStride) return base.ToDenseTensor();
+        int rank = Rank;
+        var dims = Dimensions.ToArray();
+        var sd = src.Dimensions.ToArray();
+        if (sd.Length != rank) return base.ToDenseTensor();
+        var srcStrides = ArrayUtilities.GetStrides(sd);
+        var estride = new int[rank];
+        for (int d = 0; d < rank; d++)
+        {
+            if (Array.IndexOf(broadcastedDims, d) != -1) estride[d] = 0;
+            else
+            {
+                if (sd[d] != dims[d]) return base.ToDenseTensor();
+                estride[d] = srcStrides[d];
+            }
+        }
+        var output = new DenseTensor<T>(dimensions);
+        var dst = output.Buffer.Span;
+        var sbuf = src.Buffer.Span;
+        int run = 1;
+        int rd = rank - 1;
+        while (rd >= 0)
+        {
+            if (dims[rd] == 1) { rd--; continue; }
+            if (estride[rd] != run) break;
+            run *= dims[rd];
+            rd--;
+        }
+        Span<int> pos = stackalloc int[rank];
+        int srcPos = 0;
+        int dstPos = 0;
+        int total = 1;
+        foreach (var dd in dims) total *= dd;
+        int blocks = total / run;
+        for (int b = 0; b < blocks; b++)
+        {
+            sbuf.Slice(srcPos, run).CopyTo(dst.Slice(dstPos, run));
+            dstPos += run;
+            for (int d = rd; d >= 0; d--)
+            {
+                pos[d]++;
+                srcPos += estride[d];
+                if (pos[d] < dims[d]) break;
+                pos[d] = 0;
+                srcPos -= estride[d] * dims[d];
+            }
+        }
+        return output;
+    }
     public override Tensor<T> Reshape(ReadOnlySpan<int> dims)
     {
             return ToDenseTensor().Reshape(dims);
