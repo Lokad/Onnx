@@ -2,7 +2,6 @@ using System.IO;
 
 namespace Lokad.Onnx.Backend.Tests;
 
-[Collection("ProcessState")]
 public class ExecutionOptionsTests
 {
     [Fact]
@@ -25,25 +24,11 @@ public class ExecutionOptionsTests
     }
 
     [Fact]
-    public void TensorAuto_ReflectsHardwareConfig()
+    public void TensorAuto_ProbesHardwareDirectly()
     {
-#pragma warning disable CS0618 // This test pins the documented Auto-resolves-legacy-defaults contract.
-        bool simd = HardwareConfig.UseSimd;
-        bool intr = HardwareConfig.UseIntrinsics;
-        try
-        {
-            HardwareConfig.UseSimd = false;
-            HardwareConfig.UseIntrinsics = false;
-            Assert.False(TensorExecutionOptions.Auto.UseSimd);
-            HardwareConfig.UseSimd = true;
-            Assert.True(TensorExecutionOptions.Auto.UseSimd);
-        }
-        finally
-        {
-            HardwareConfig.UseSimd = simd;
-            HardwareConfig.UseIntrinsics = intr;
-        }
-#pragma warning restore CS0618
+        Assert.True(TensorExecutionOptions.Auto.UseSimd);
+        Assert.Equal(System.Runtime.Intrinsics.X86.Fma.IsSupported, TensorExecutionOptions.Auto.UseIntrinsics);
+        Assert.Equal(1, TensorExecutionOptions.Auto.MaxDegreeOfParallelism);
     }
 
     [Fact]

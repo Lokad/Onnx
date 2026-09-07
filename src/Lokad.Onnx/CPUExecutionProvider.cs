@@ -70,9 +70,6 @@ public class CPUExecutionProvider : Runtime
         OpType.GlobalAveragePool,
     };
 
-    [System.Obsolete("Process-wide execution policy is obsolete. Pass ExecutionOptions explicitly instead.")]
-    public static OptimizationMode OptimizationMode { get; set; } = OptimizationMode.Speed;
-
     public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
 
     public static OpResult Reshape(ITensor? input, ITensor? shape, bool? allow_zero = null, ExecutionOptions? options = null)

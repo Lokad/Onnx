@@ -9,6 +9,7 @@ Only 0.1.4 has been published to NuGet. Everything below is unreleased: the brea
 - All maintained projects target exactly net10.0; legacy target frameworks removed from the solution.
 - Removed Satsuma graph members, metadata, and package content without compatibility shims.
 - Removed the pythonnet bridge and the Interop assembly. Python remains only as the out-of-process native ONNX Runtime oracle for e5.
+- Removed the obsolete process-wide execution statics (`HardwareConfig`, `CPUExecutionProvider.OptimizationMode`, `Profiler.Enabled/Profile/Running`). `TensorExecutionOptions.Auto` now probes hardware directly (SIMD on, intrinsics when x86 FMA is present); pass explicit options for pinned behavior.
 
 ### Fixed
 
