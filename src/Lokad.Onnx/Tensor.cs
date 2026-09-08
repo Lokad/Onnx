@@ -125,7 +125,7 @@ namespace Lokad.Onnx
     {
         /// <summary>
         /// Exact backing array when this value densely owns precisely its logical
-        /// contents, else null. Views, slices and sparse layouts never qualify,
+        /// contents, else null. Views and slices never qualify,
         /// so returning their storage through this probe is impossible.
         /// </summary>
         internal virtual Array? OwnedBufferArray() => null;
@@ -2029,16 +2029,14 @@ namespace Lokad.Onnx
         #region Storage
         /// <summary>
         /// Root backing storage for dense data. Views resolve to their ultimate
-        /// dense owner (slices to the parent chain, broadcasts to the source);
-        /// sparse tensors expose their value buffer. Non-dense views are
-        /// densified before kernels pin this storage.
+        /// dense owner (slices to the parent chain, broadcasts to the source).
+        /// Non-dense views are densified before kernels pin this storage.
         /// </summary>
         public Memory<T> Storage => this switch
         {
             DenseTensor<T> dt => dt.Buffer,
             BroadcastedTensor<T> bt => bt.source.Storage,
             TensorSlice<T> ts => ts.parent.Storage,
-            CompressedSparseTensor<T> cst => cst.Values,
             _ => throw new NotImplementedException("Storage property not implemented for this tensor type.")
         };
 
@@ -2054,7 +2052,6 @@ namespace Lokad.Onnx
             DenseTensor<T> dt => ArrayUtilities.GetIndex(dt.strides, indices),
             BroadcastedTensor<T> bt => ArrayUtilities.GetIndex(bt.effectiveStrides, indices),
             TensorSlice<T> ts => ts.GetOffset(indices),
-            CompressedSparseTensor<T> cst => ArrayUtilities.GetIndex(cst.strides, indices),
             _ => throw new NotSupportedException("GetStorageIndex method not implemented for this tensor type.")
 
         };

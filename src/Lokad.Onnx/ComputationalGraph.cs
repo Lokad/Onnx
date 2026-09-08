@@ -1067,9 +1067,8 @@ public class ComputationalGraph
     /// <summary>
     /// Checks one runtime value against a pooled backing array with explicit
     /// per-kind storage traversal: sequences recurse into elements, views
-    /// recurse into their sources and parents, dense and compressed tensors
-    /// check their value buffers, and dictionary-backed sparse tensors never
-    /// alias pool arrays. Unknown future tensor kinds stay conservative
+    /// recurse into their sources and parents, and dense tensors check their
+    /// value buffers. Unknown future tensor kinds stay conservative
     /// (true) so arrays are never returned while possibly referenced. The pool
     /// manages float backing arrays, so non-float tensors cannot alias.
     /// </summary>
@@ -1088,8 +1087,6 @@ public class ComputationalGraph
         if (typed is DenseTensor<float> dense) return SharesBuffer(candidate, dense.Buffer);
         if (typed is BroadcastedTensor<float> broadcast) return SharesPooledStorage(candidate, broadcast.source);
         if (typed is TensorSlice<float> slice) return SharesPooledStorage(candidate, slice.parent);
-        if (typed is CompressedSparseTensor<float> compressed) return SharesBuffer(candidate, compressed.Values);
-        if (typed is SparseTensor<float>) return false;
         return true;
     }
 

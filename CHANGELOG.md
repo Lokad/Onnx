@@ -43,6 +43,7 @@ as planned or a known limitation. This is not a release-readiness claim.
   must account for changed signatures and unsupported-input diagnostics.
 - Removed uncalled public surface: `IOExtensions.GetRelativePath` and `Node.InputTensorOrAttr`; the legacy framework branches and reflection fallback in hardware-capability queries are gone (net10.0 only).
   Half-precision conversions use base-library bit primitives with unchanged ONNX bit patterns.
+- Removed the sparse tensor surface: `SparseTensor<T>`, `CompressedSparseTensor<T>` and their array-conversion overloads. No model import or kernel path produced sparse tensors; dense views and layouts are unchanged.
 
 ### Fixed
 
