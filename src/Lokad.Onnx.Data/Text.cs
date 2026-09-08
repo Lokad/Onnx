@@ -167,21 +167,77 @@ public class Text
     static readonly Dictionary<string, SharedRobertaTokenizer> RobertaCache = new Dictionary<string, SharedRobertaTokenizer>();
     static readonly object RobertaCacheGate = new object();
 
-    /// <summary>Asset path for the bundled multilingual-e5-small tokenizer.</summary>
-    public static string Me5sTokenizerPath() => Path.Combine(AssemblyLocation, "me5s-sentencepiece.bpe.model");
+    const string Me5sTokenizerFileName = "me5s-sentencepiece.bpe.model";
 
-    /// <summary>Acquires the me5s tokenizer asset, downloading it when absent.</summary>
+    /// <summary>
+    /// Searches a directory and its ancestors for a relative file path,
+    /// returning the first existing file or null.
+    /// </summary>
+    public static string? FindAssetUnderAncestors(string startDirectory, params string[] parts)
+    {
+        if (parts.Length == 0) return null;
+        var relative = Path.Combine(parts);
+        var dir = new DirectoryInfo(startDirectory);
+        while (dir is not null)
+        {
+            var candidate = Path.Combine(dir.FullName, relative);
+            if (File.Exists(candidate)) return candidate;
+            dir = dir.Parent;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Resolved usable path for the bundled multilingual-e5-small tokenizer:
+    /// the binary cache when present, otherwise the documented models tree,
+    /// otherwise the cache path as the acquisition target.
+    /// </summary>
+    public static string Me5sTokenizerPath()
+    {
+        var cached = Path.Combine(AssemblyLocation, Me5sTokenizerFileName);
+        if (File.Exists(cached)) return cached;
+        var documented = FindAssetUnderAncestors(
+            Directory.GetCurrentDirectory(), "models", "multilingual-e5-small", "sentencepiece.bpe.model");
+        if (documented is not null) return documented;
+        return cached;
+    }
+
+    static bool DownloadAsset(string name, Uri downloadUrl, string downloadPath)
+    {
+        using var op = Begin("Downloading {0} from {1} to {2}", name, downloadUrl, downloadPath);
+        try
+        {
+            if (File.Exists(downloadPath)) Warn("File {0} exists, overwriting...", downloadPath);
+            using var client = new System.Net.Http.HttpClient() { Timeout = TimeSpan.FromMinutes(10) };
+            var bytes = client.GetByteArrayAsync(downloadUrl).GetAwaiter().GetResult();
+            File.WriteAllBytes(downloadPath, bytes);
+        }
+        catch (Exception ex)
+        {
+            Error(ex, "Could not download {0} from {1}.", name, downloadUrl);
+            return false;
+        }
+        if (File.Exists(downloadPath))
+        {
+            op.Complete();
+            return true;
+        }
+        Error("Did not locate file at {p}.", downloadPath);
+        return false;
+    }
+
+    /// <summary>Acquires the me5s tokenizer asset, downloading it when absent everywhere.</summary>
     /// <remarks>This is the only tokenizer entry that performs network
     /// acquisition; all encoding entries are offline and fail clearly when
     /// their asset is missing. Returns false when the asset cannot be obtained.</remarks>
     public static bool EnsureMe5sTokenizer()
     {
-        var tokenizerPath = Me5sTokenizerPath();
-        if (File.Exists(tokenizerPath)) return true;
-        if (!DownloadFile(
+        var resolved = Me5sTokenizerPath();
+        if (File.Exists(resolved)) return true;
+        if (!DownloadAsset(
             "sentencepiece.bpe.model",
             new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
-            tokenizerPath))
+            Path.Combine(AssemblyLocation, Me5sTokenizerFileName)))
         {
             Error("Could not download model file.");
             return false;

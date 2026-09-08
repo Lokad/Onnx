@@ -36,9 +36,11 @@ Native e5 conformance: `eng/test-e5.ps1` (see `tests/e5/README.md`).
   `tests/e5/README.md`), `models/dinov3-vits16/onnx/model.onnx` plus its
   `model.onnx_data` weights file, `models/dinov2-small-onnx/model.onnx`,
   `models/resnet50-onnx/model.onnx`, and `models/gpt2-onnx/onnx/model.onnx`.
-- The e5 tokenizer is copied on first use into the running binary directory
-  through the explicit acquisition step and reused from the locked cache
-  offline afterwards. Committed MNIST assets need no setup.
+- The e5 tokenizer resolves from the running binary directory or from
+  models/multilingual-e5-small/sentencepiece.bpe.model, and downloads only
+  through the explicit acquisition step when absent everywhere; everything
+  downstream reuses the locked cache offline. Committed MNIST assets need
+  no setup.
 - Distribution check: `eng/smoke-pack.ps1` packs the core, installs it into
   a scratch console with no source references, runs inference, and verifies
   the dependency graph and file list.

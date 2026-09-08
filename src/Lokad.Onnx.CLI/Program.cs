@@ -134,21 +134,11 @@ class Program
     {
         if (ro.File.StartsWith("http"))
         {
-            if (Uri.TryCreate(ro.File, UriKind.Absolute, out Uri? uri) && DownloadFile("ONNX model file", uri, Path.Combine(Directory.GetCurrentDirectory(), "model.onnx")))
-            {
-                ro.File = Path.Combine(Directory.GetCurrentDirectory(), "model.onnx");
-                Info("Successfully downloaded model file.");
-            }
-            else
-            {
-                Error("Could not download model file.");
-                Exit(ExitResult.NOT_FOUND);
-            }
+            Error("Remote model locations are not supported; download the model first and pass a local file path.");
+            Exit(ExitResult.NOT_FOUND);
+            return;
         }
-        else
-        {
-            ExitIfFileNotFound(ro.File);
-        }
+        ExitIfFileNotFound(ro.File);
 
         var graph = OnnxImport.Load(ro.File);
         if (graph is null)

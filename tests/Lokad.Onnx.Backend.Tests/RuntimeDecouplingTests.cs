@@ -36,7 +36,7 @@ public class RuntimeDecouplingTests
         {
             Assert.Null(typeof(Runtime).GetMethod(name));
         }
-        foreach (var name in new[] { "Info", "Debug", "Error", "Warn", "Fatal", "Begin", "DownloadFile" })
+        foreach (var name in new[] { "Info", "Debug", "Error", "Warn", "Fatal", "Begin" })
         {
             Assert.NotEmpty(typeof(Runtime).GetMethods().Where(m => m.Name == name));
         }

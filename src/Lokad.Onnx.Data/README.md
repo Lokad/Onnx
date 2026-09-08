@@ -1,6 +1,6 @@
 # Lokad.Onnx.Data
 
-Text and image input helpers. File-explicit entry points are offline: they only read the paths handed to them and never download. Tokenizer acquisition is the explicit exception: EnsureMe5sTokenizer and the named BERT loader download the asset when absent, so call them up front; everything downstream reuses the locked cache offline.
+Text and image input helpers. File-explicit entry points are offline: they only read the paths handed to them and never download. Tokenizer acquisition is the explicit exception: EnsureMe5sTokenizer and the named BERT loader download the asset when absent, so call them up front; everything downstream reuses the locked cache offline. The me5s lookup resolves the binary cache first, then models/multilingual-e5-small/sentencepiece.bpe.model by ancestor search, so the documented setup needs no manual copy.
 
 ## Text (Text.cs)
 

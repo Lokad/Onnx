@@ -2,7 +2,6 @@ namespace Lokad.Onnx
 {
     using System;
     using System.IO;
-    using System.Net;
     using System.Reflection;
 
     /// <summary>
@@ -41,38 +40,5 @@ namespace Lokad.Onnx
         [DebuggerStepThrough]
         public static LoggerOp Begin(string messageTemplate, params object?[] args) =>
             Log.Sink is null ? LoggerOp.Silent : new LoggerOp(messageTemplate, args);
-
-        public static bool DownloadFile(string name, Uri downloadUrl, string downloadPath)
-        {
-#pragma warning disable SYSLIB0014 // Type or member is obsolete
-            using (var op = Begin("Downloading {0} from {1} to {2}", name, downloadUrl, downloadPath))
-            {
-                if (File.Exists(downloadPath)) Warn("File {0} exists, overwriting...", downloadPath);
-                using (var client = new WebClient())
-                {
-                    client.DownloadProgressChanged += (object sender, DownloadProgressChangedEventArgs e) =>
-                    {
-                        Info("Received {b} bytes from of {t} for {p}.", e.BytesReceived, e.TotalBytesToReceive, downloadPath);
-
-                    };
-                    client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
-                    {
-
-                    };
-                    client.DownloadFile(downloadUrl, downloadPath);
-                }
-                if (File.Exists(downloadPath))
-                {
-                    op.Complete();
-                    return true;
-                }
-                else
-                {
-                    Error("Did not locate file at {p}.", downloadPath);
-                    return false;
-                }
-            }
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
-        }
     }
 }
