@@ -2,7 +2,7 @@ namespace Lokad.Onnx.Tensors.Tests;
 
 /// <summary>
 /// Guards the G06 rule: dead implementation files, commented-out code and
-/// stale prehistory identifiers stay out of product sources. The five
+/// stale prehistory identifiers stay out of product sources. The two
 /// remaining TODOs are triaged future work (API design or framework support),
 /// so the test pins their exact list instead of demanding zero.
 /// </summary>
@@ -97,11 +97,10 @@ public class DeadCodeGuardTests
             string file = t.Split(':')[0];
             if (file.EndsWith("DenseTensor.cs") && t.Contains("Span.IndexOf")) expected.Add(t);
             else if (file.EndsWith("HardwareIntrinsics.cs") && t.Contains("MOVBE")) expected.Add(t);
-            else if (file.EndsWith("Tensor.cs") && t.Contains("axis1 and axis2")) expected.Add(t);
         }
         var unexpected = todos.Where(t => !expected.Contains(t)).ToList();
         Assert.True(unexpected.Count == 0,
             "Untriaged TODOs found:\n" + string.Join("\n", unexpected.Take(20)));
-        Assert.Equal(5, todos.Count);
+        Assert.Equal(2, todos.Count);
     }
 }
