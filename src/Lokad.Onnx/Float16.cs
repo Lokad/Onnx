@@ -7,13 +7,15 @@
 
 using System;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Lokad.Onnx
 {
-    // Utilities class created to fill in the gaps
-    // of functionality that is absent in BitConverter class in NETSTANDARD 2.0
-    // as well as some Single precision bit constants.
+    // Bit-level helpers for the half-precision conversions below that the base
+    // class library does not provide (float NaN constructors, bfloat16 shifts)
+    // plus shared single-precision bit constants. Plain reinterpretation and
+    // leading-zero counts use BitConverter and BitOperations directly.
     internal class BitOpsUtils
     {
         // Lifted from .NET source code internal code
@@ -30,75 +32,8 @@ namespace Lokad.Onnx
         internal const uint SingleTrailingSignificandMask = 0x007F_FFFF;
 
         /// <summary>
-        /// Required because BitOperations are not available in NETSTANDARD 2.0.
-        /// There are more efficient ways with bit twiddling, but this one has clarity.
-        /// </summary>
-        /// <param name="num">value</param>
-        /// <returns>number of leading zeros. Useful to compute log2 as well.</returns>
-        internal static int LeadingZeroCount(uint num)
-        {
-            if (num == 0)
-            {
-                return 32;
-            }
-
-            int count = 0;
-            while ((num & 0xF000_0000) == 0)
-            {
-                count += 4;
-                num <<= 4;
-            }
-
-            while ((num & 0x8000_0000) == 0)
-            {
-                count += 1;
-                num <<= 1;
-            }
-            return count;
-        }
-
-        /// <summary>
-        /// Extracts single precision number bit representation as uint
-        /// so its bits can be manipulated.
-        /// 
-        /// This API is the reverse of UInt32BitsToSingle().
-        /// 
-        /// </summary>
-        /// <param name="single">float value</param>
-        /// <returns></returns>
-        internal static uint SingleToUInt32Bits(float single)
-        {
-            uint result;
-            unsafe
-            {
-                Buffer.MemoryCopy(&single, &result, sizeof(uint), sizeof(uint));
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Needed because BitConverter impl is not available until
-        /// later versions. This API is the reverse of SingleToUInt32Bits().
-        /// 
-        /// For the exact bit representation of float see IEEE 754 standard for single precision.
-        /// 
-        /// </summary>
-        /// <param name="singleBits">bit representation of float either obtained from 
-        /// SingleToUInt32Bits or assembled using bitwise operators</param>
-        /// <returns></returns>
-        internal static float UInt32BitsToSingle(uint singleBits)
-        {
-            float result;
-            unsafe
-            {
-                Buffer.MemoryCopy(&singleBits, &result, sizeof(uint), sizeof(uint));
-            }
-            return result;
-        }
-
-        /// <summary>
         /// Converts single precision bits representation which can be obtained using
-        /// SingleToUInt32Bits() or manually constructed according to IEEE 754 standard.
+        /// BitConverter.SingleToUInt32Bits() or manually constructed according to IEEE 754 standard.
         /// 
         /// </summary>
         /// <param name="singleBits">bits representation of a single precision number (float)</param>
@@ -117,7 +52,7 @@ namespace Lokad.Onnx
 
         /// <summary>
         /// Converts bfloat16 ushort bits representation to single precision bits which then in turn can be
-        /// manipulated or converted to float using UInt32BitsToSingle()
+        /// manipulated or converted to float using BitConverter.UInt32BitsToSingle()
         /// </summary>
         /// <param name="bfloatBits">ushort bits representation of bfloat16</param>
         /// <returns></returns>
@@ -149,7 +84,7 @@ namespace Lokad.Onnx
             uint sigInt = (uint)(significand >> 41);
             uint singleBits = signInt | NaNBits | sigInt;
 
-            return UInt32BitsToSingle(singleBits);
+            return BitConverter.UInt32BitsToSingle(singleBits);
         }
 
         /// <summary>
@@ -165,7 +100,7 @@ namespace Lokad.Onnx
             uint expInt = ((uint)exponent << SingleBiasedExponentShift) + significand;
             uint singleBits = signInt + expInt;
 
-            return UInt32BitsToSingle(singleBits);
+            return BitConverter.UInt32BitsToSingle(singleBits);
         }
     }
 
@@ -661,7 +596,7 @@ namespace Lokad.Onnx
         {
             const int SingleMaxExponent = 0xFF;
 
-            uint floatInt = BitOpsUtils.SingleToUInt32Bits(value);
+            uint floatInt = BitConverter.SingleToUInt32Bits(value);
             bool sign = (floatInt & BitOpsUtils.SingleSignMask) >> BitOpsUtils.SingleSignShift != 0;
             int exp = (int)(floatInt & BitOpsUtils.SingleBiasedExponentMask) >> BitOpsUtils.SingleBiasedExponentShift;
             uint sig = floatInt & BitOpsUtils.SingleTrailingSignificandMask;
@@ -757,7 +692,7 @@ namespace Lokad.Onnx
 
         private static (int Exp, uint Sig) NormSubnormalF16Sig(uint sig)
         {
-            int shiftDist = BitOpsUtils.LeadingZeroCount(sig) - 16 - 5;
+            int shiftDist = BitOperations.LeadingZeroCount(sig) - 16 - 5;
             return (1 - shiftDist, sig << shiftDist);
         }
 
@@ -1285,7 +1220,7 @@ namespace Lokad.Onnx
                 return NaN;
             }
 
-            uint singleBits = BitOpsUtils.SingleToUInt32Bits(value);
+            uint singleBits = BitConverter.SingleToUInt32Bits(value);
             ushort bfloatBits = BitOpsUtils.SingleBitsToBFloat16Bits(singleBits);
 
             // Round this up. Implement the same logic pytorch uses for rounding.
@@ -1327,7 +1262,7 @@ namespace Lokad.Onnx
             // All subnormal numbers in BFloat16 would be also subnormal in FP32 because they
             // share the exponent.
             uint singleBits = BitOpsUtils.BFloat16BitsToSingleBits(value.value);
-            return BitOpsUtils.UInt32BitsToSingle(singleBits);
+            return BitConverter.UInt32BitsToSingle(singleBits);
         }
 
         /// <summary>
