@@ -5,7 +5,7 @@
 - Fast offline unit tests: the default `dotnet test` run. No network, no ignored large assets, no source-tree writes. Must be deterministic: repeated runs give identical pass/skip counts.
 - Integration tests with committed assets: MNIST model and images under `tests/Lokad.Onnx.Backend.Tests/models` and `images`. Always run, offline.
 - Local-model conformance: ignored large assets under `models/` (e5, DINOv2). Selected explicitly, never part of the default run. Missing requested assets fail only when `LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1`; otherwise the test reports a skip with a reason.
-- Benchmarks: never correctness tests. See `lonnx benchmark`.
+- Benchmarks: never correctness tests. See `Bench micro` and `bench.ps1`.
 - Single-op differential conformance: frozen seeded corpus under `tests/opfuzz/corpus` compared in scalar, SIMD, and intrinsics modes against frozen ONNX Runtime references. Selected explicitly via `eng/test-opfuzz.ps1`, never part of the default run. See `tests/opfuzz/README.md`.
 
 ## Commands

@@ -66,9 +66,6 @@ class Program
             case "run":
                 if (parsed.Value is RunOptions run) Run(run);
                 break;
-            case "benchmark":
-                if (parsed.Value is BenchmarkOptions benchmark) Benchmark(benchmark, GetBenchmarkArgs(args, benchmark));
-                break;
         }
     }
     #endregion
@@ -80,7 +77,6 @@ class Program
         Console.WriteLine("Commands:");
         Console.WriteLine("  info <file> [--ops] [--init] [--op-filter <type>]   Get information on an ONNX model.");
         Console.WriteLine("  run <file> <inputs...> [options]                    Run an ONNX model or node.");
-        Console.WriteLine("  benchmark <id> [options]                            Benchmark an ONNX model or operations.");
         Console.WriteLine("Common options:");
         Console.WriteLine("  --debug, -d   Enable debug mode.");
         Console.WriteLine("  --help        Show this help and exit.");
@@ -114,19 +110,7 @@ class Program
             Console.WriteLine("  --optimize-memory   Optimize memory usage at the cost of performance.");
             Console.WriteLine("  --threads <n>       Worker threads for batch-parallel kernels (default 1, sequential).");
         }
-        else if (verb == "benchmark")
-        {
-            Console.WriteLine("Lokad.Onnx command-line help");
-            Console.WriteLine("Usage: lonnx benchmark <id> [options]");
-            Console.WriteLine("Benchmarks: matmul2d, matmul, indexing, ops, me5s-load, me5s-run.");
-            Console.WriteLine("Options:");
-            Console.WriteLine("  --filter <glob>          Filter the benchmarks by their full name using glob patterns.");
-            Console.WriteLine("  --list <flat|tree>       Print all of the available benchmark names.");
-            Console.WriteLine("  --iterationCount <n>     How many target iterations should be performed.");
-            Console.WriteLine("  --warmupCount <n>        How many warmup iterations should be performed.");
-            Console.WriteLine("  --invocationCount <n>    Invocation count in a single iteration.");
-            Console.WriteLine("  --runOncePerIteration <n> Run the benchmark exactly once per iteration.");
-        }
+
     }
 
     static void ShowInfo(InfoOptions io)
@@ -305,53 +289,6 @@ class Program
             {
                 Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
             }
-        }
-    }
-
-    static void Benchmark(BenchmarkOptions bo, string[] args)
-    {
-        try
-        {
-            switch (bo.BenchmarkId)
-            {
-                case "me5s-load":
-                    Benchmarks.RunMe5sLoad(args);
-                    ExitWithSuccess();
-                    break;
-                case "me5s-run":
-                    Benchmarks.RunMe5sRun(args);
-                    ExitWithSuccess();
-                    break;
-                case "matmul2d":
-                    Benchmarks.RunMatMul2D(args);
-                    ExitWithSuccess();
-                    break;
-                case "matmul":
-                    Benchmarks.RunMatMul(args);
-                    ExitWithSuccess();
-                    break;
-                case "indexing":
-                    Benchmarks.RunIndexing(args);
-                    ExitWithSuccess();
-                    break;
-                case "ops":
-                    Benchmarks.RunOps(args);
-                    ExitWithSuccess();
-                    break;
-                default:
-                    Error("Unknown benchmark: {b}.", bo.BenchmarkId);
-                    Exit(ExitResult.INVALID_OPTIONS);
-                    break;
-
-            }
-        }
-        catch (InvalidOperationException e)
-        {
-            if (e.Message == "Sequence contains no elements")
-            {
-                Exit(ExitResult.SUCCESS);
-            }
-            else throw new Exception("Exception thrown by BenchmarkDotNet runner.", e);
         }
     }
 
@@ -577,16 +514,6 @@ class Program
     }
 
     public static void ExitWithSuccess() => Exit(ExitResult.SUCCESS);
-
-    static string[] GetBenchmarkArgs(string[] args, BenchmarkOptions bo)
-    {
-        List<string> result = args.ToList();
-        result.RemoveRange(0, 2);
-        result.Remove("--debug");
-        result.Remove("-d");
-        
-        return result.ToArray();
-    }
 
     public static void UseConsoleLogging(bool debug)
     {

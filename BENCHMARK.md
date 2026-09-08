@@ -105,9 +105,8 @@ utilization. Keep the default, one-thread and equal-budget results distinct.
 Validate every named output's dtype, shape, finite values and numerical
 tolerance outside timing for each actual session.
 
-For operator benchmarks, the current command is `lonnx.cmd benchmark ops`;
-`matmul2d`, `matmul` and `indexing` cover other kernel cases. These workloads
-are scheduled to move out of the CLI. Pin execution modes and record
+For operator benchmarks, the current command is `dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll micro ops`;
+`matmul2d`, `matmul` and `indexing` cover other kernel cases. Pin execution modes and record
 allocations as well as latency; profiler-enabled timings are separate.
 
 `bench.ps1` launches a fresh CLI process for every e5 sample. Its separate

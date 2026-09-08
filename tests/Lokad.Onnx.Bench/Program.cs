@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Lokad.Onnx;
+using Lokad.Onnx.Bench;
 using Microsoft.ML.OnnxRuntime;
 
 static class Bench
@@ -24,6 +25,10 @@ static class Bench
             ["resnet50"] = new[] { Path.Combine(root, "models", "resnet50-onnx", "model.onnx") },
             ["gpt2"] = new[] { Path.Combine(root, "models", "gpt2-onnx", "onnx", "model.onnx") },
         };
+        if (args.Length > 0 && args[0] == "micro")
+        {
+            return RunMicro(args.Skip(1).ToArray());
+        }
         var selected = new List<string>();
         string modeName = "auto";
         int threads = Environment.ProcessorCount;
@@ -68,6 +73,45 @@ static class Bench
         if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters);
         if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters);
         return 0;
+    }
+
+    static int RunMicro(string[] args)
+    {
+        if (args.Length == 0)
+        {
+            Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops> [BenchmarkDotNet options]");
+            return 2;
+        }
+        try
+        {
+            switch (args[0])
+            {
+                case "matmul2d":
+                    MicroBenchmarks.RunMatMul2D(args.Skip(1).ToArray());
+                    return 0;
+                case "matmul":
+                    MicroBenchmarks.RunMatMul(args.Skip(1).ToArray());
+                    return 0;
+                case "indexing":
+                    MicroBenchmarks.RunIndexing(args.Skip(1).ToArray());
+                    return 0;
+                case "ops":
+                    MicroBenchmarks.RunOps(args.Skip(1).ToArray());
+                    return 0;
+                default:
+                    Console.WriteLine("Unknown micro benchmark: " + args[0] + ".");
+                    Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops> [BenchmarkDotNet options]");
+                    return 2;
+            }
+        }
+        catch (InvalidOperationException e)
+        {
+            if (e.Message == "Sequence contains no elements")
+            {
+                return 0;
+            }
+            throw;
+        }
     }
 
     static string FindRoot()

@@ -74,6 +74,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   fused-versus-imported standing once for support queries, dispatch,
   fusion eligibility, and CLI reporting; imported fused-only operations
   and malformed arities fail naming the reason.
+  Benchmark workloads moved from the CLI to the non-packable benchmark
+  project with BenchmarkDotNet; the CLI keeps inspection and inference
+  only, and bench.ps1 drives model timings plus the relocated sweep.
   LayerNorm and RoPE fusion now check operand order, exported intermediates,
   standard operator domains, supported schemas and proven float dtypes and
   shapes for every matched node including Constants and the surviving node.

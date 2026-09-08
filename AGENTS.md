@@ -39,4 +39,4 @@ The ONNX model at `models\multilingual-e5-small\model.onnx` is already downloade
 ## CLI quick notes
 - `lonnx info <model.onnx>`: model metadata; supports `--ops`, `--init`, `--op-filter`.
 - `lonnx run <model.onnx> <inputs...>`: supports image/text inputs, `--softmax`, `--print-input`, profiling, SIMD toggles.
-- `lonnx benchmark <id>`: `matmul2d`, `matmul`, `indexing`, `me5s-load`, `me5s-run` with BenchmarkDotNet flags.
+- Benchmarks live in `tests/Lokad.Onnx.Bench` (`dotnet Lokad.Onnx.Bench.dll micro <matmul2d|matmul|indexing|ops>` with BenchmarkDotNet flags); model comparisons via `Bench` model keys or `bench.ps1`.

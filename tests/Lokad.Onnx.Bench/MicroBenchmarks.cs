@@ -1,34 +1,29 @@
-namespace Lokad.Onnx.CLI;
+namespace Lokad.Onnx.Bench;
 
 using System;
 using System.Buffers;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
+using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 
-using static Lokad.Onnx.Text;
-using static Lokad.Onnx.MathOps;
-
 using Lokad.Onnx;
-using BenchmarkDotNet.Jobs;
+
+using static Lokad.Onnx.MathOps;
 using static Lokad.Onnx.Runtime;
 
-[RyuJitX64Job]
-[IterationsColumn]
-[MemoryDiagnoser]
-[DisassemblyDiagnoser(printSource:true)]
+// Microbenchmark workloads moved from the CLI (BenchmarkDotNet travels with
+// them). The corpus-dependent entries stay behind: their model and data files
+// do not exist in the repo. Console writes replace CLI logging calls.
 
 public class MatMul2DBenchmarks
 {
     [GlobalSetup]
     public void Setup()
     {
-        Program.UseConsoleLogging(false);
     }
 
     [IterationSetup]
@@ -74,7 +69,7 @@ public class MatMul2DBenchmarks
         float s1 = Checksum(expected);
         float s2 = Checksum(actual);
         float tolerance = 1e-3f * Math.Max(1f, Math.Abs(s1));
-        Info("MatMul2D checksum agreement: managed={m} intrinsics={i}.", s1, s2);
+        Console.WriteLine("MatMul2D checksum agreement: managed=" + s1 + " intrinsics=" + s2 + ".");
         if (Math.Abs(s1 - s2) > tolerance)
             throw new InvalidOperationException($"MatMul2D variants disagree: managed={s1} intrinsics={s2}.");
     }
@@ -354,7 +349,6 @@ public class TensorOpBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        Program.UseConsoleLogging(false);
         sm_e5 = Tensor<float>.Rand(12, 30, 30);
         sm_dino = Tensor<float>.Rand(6, 257, 257);
         ln_x = Tensor<float>.Rand(257, 384);
@@ -531,287 +525,25 @@ public class TensorOpBenchmarks
     Tensor<float> gap_x = Tensor<float>.Zeros(0);
     #endregion
 }
-[InProcess]
-[MemoryDiagnoser]
-[IterationsColumn]
-[Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
-[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
-public class MultilingualEmbedded5SmallRunBenchmarks
+
+internal static class MicroBenchmarks
 {
-    [GlobalSetup()]
-    public void Setup()
+    internal static void RunMatMul2D(string[] args)
     {
-        var op = Begin("Creating computational graph and tokenizing test data");
-        graph = OnnxImport.Load(modelFile);
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-        TextData?[] textData = File.ReadAllLines(testDataFile).AsParallel().Select(t => JsonSerializer.Deserialize<TextData>(t, options)).ToArray();
-        Random rnd = new Random();
-        T20 = textData
-            .AsParallel()
-            .OfType<TextData>().Where(t => t.Text.Length >= 21 && t.Text[20] == ' ')
-            .Select(t => t.Text.Substring(0, 20)/*.Replace("\n", " ")*/)
-            .OrderBy(x => rnd.Next())
-            .ToArray();
-        T200 = textData
-            .AsParallel()
-            .OfType<TextData>().Where(t => t.Text.Length >= 201 && t.Text[200] == ' ')
-            .Select(t => t.Text.Substring(0, 200)/*.Replace("\n", " ")*/)
-            .OrderBy(x => rnd.Next())
-            .ToArray();
-
-        ui20_1 = GetTextTensors(T20[0], "me5s");
-        ui20_10 = GetTextTensors(T20[1..11], "me5s");
-        ui20_100 = GetTextTensors(T20[11..61], "me5s");
-        ui200_1 = GetTextTensors(T200[0], "me5s");
-        ui200_10 = GetTextTensors(T200[1..11], "me5s");
-        op.Complete();
-    }
-
-    [IterationSetup(Targets = ["Benchmark20_1_1", "Benchmark20_10", "Benchmark20_50", "Benchmark200_1", "Benchmark200_10"])]
-    public void SetupNoSimd()
-    {
-        Required(graph, nameof(graph)).Reset();
-    }
-
-    [IterationSetup(Targets = ["Benchmark20_1_simd", "Benchmark20_10_simd", "Benchmark20_50_simd", "Benchmark200_1_simd", "Benchmark200_10_simd"])]
-    public void SetupSimd()
-    {
-        Required(graph, nameof(graph)).Reset();
-    }
-
-    [IterationSetup(Targets = ["Benchmark20_1_simd_intrinsics", "Benchmark20_10_simd_intrinsics", "Benchmark20_50_simd_intrinsics", "Benchmark200_1_simd_intrinsics", "Benchmark200_10_simd_intrinsics"])]
-    public void SetupSimdIntrinsics()
-    {
-        Required(graph, nameof(graph)).Reset();
-    }
-
-    [Benchmark(Description="1 string of 20 chars", Baseline = true)]
-    [BenchmarkCategory("1_20")]
-    public void Benchmark20_1_1() => Required(graph, nameof(graph)).Execute(Required(ui20_1, nameof(ui20_1)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
-
-    [Benchmark(Description = "1 string of 20 chars - simd")]
-    [BenchmarkCategory("1_20")]
-    public void Benchmark20_1_simd() => Required(graph, nameof(graph)).Execute(Required(ui20_1, nameof(ui20_1)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
-
-    [Benchmark(Description = "1 string of 20 chars - simd intrinsics")]
-    [BenchmarkCategory("1_20")]
-    public void Benchmark20_1_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui20_1, nameof(ui20_1)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
-
-    [Benchmark(Description = "10 strings of 20 chars")]
-    [BenchmarkCategory("10_20")]
-    public void Benchmark20_10() => Required(graph, nameof(graph)).Execute(Required(ui20_10, nameof(ui20_10)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
-
-    [Benchmark(Description = "10 strings of 20 chars - simd")]
-    [BenchmarkCategory("10_20")]
-    public void Benchmark20_10_simd() => Required(graph, nameof(graph)).Execute(Required(ui20_10, nameof(ui20_10)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
-
-    [Benchmark(Description = "10 strings of 20 chars - simd intrinsics")]
-    [BenchmarkCategory("10_20")]
-    public void Benchmark20_10_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui20_10, nameof(ui20_10)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
-
-    [Benchmark(Description = "50 strings of 20 chars")]
-    [BenchmarkCategory("100_20")]
-    public void Benchmark20_50() => Required(graph, nameof(graph)).Execute(Required(ui20_100, nameof(ui20_100)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
-
-    [Benchmark(Description = "50 strings of 20 chars - simd")]
-    [BenchmarkCategory("100_20")]
-    public void Benchmark20_50_simd() => Required(graph, nameof(graph)).Execute(Required(ui20_100, nameof(ui20_100)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
-
-    [Benchmark(Description = "50 strings of 20 chars - simd intrinsics")]
-    [BenchmarkCategory("100_20")]
-    public void Benchmark20_50_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui20_100, nameof(ui20_100)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
-
-    [Benchmark(Description = "1 string of 200 chars")]
-    [BenchmarkCategory("1_200")]
-    public void Benchmark200_1() => Required(graph, nameof(graph)).Execute(Required(ui200_1, nameof(ui200_1)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
-    
-    [Benchmark(Description = "1 string of 200 chars - simd")]
-    [BenchmarkCategory("1_200")]
-    public void Benchmark200_1_simd() => Required(graph, nameof(graph)).Execute(Required(ui200_1, nameof(ui200_1)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
-
-
-    [Benchmark(Description = "1 string of 200 chars - simd intrinsics")]
-    [BenchmarkCategory("1_200")]
-    public void Benchmark200_1_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui200_1, nameof(ui200_1)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
-
-    [Benchmark(Description = "10 strings of 200 chars")]
-    [BenchmarkCategory("10_200")]
-    public void Benchmark200_10() => Required(graph, nameof(graph)).Execute(Required(ui200_10, nameof(ui200_10)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
-
-    [Benchmark(Description = "10 strings of 200 chars - simd")]
-    [BenchmarkCategory("10_200")]
-    public void Benchmark200_10_simd() => Required(graph, nameof(graph)).Execute(Required(ui200_10, nameof(ui200_10)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
-
-    [Benchmark(Description = "10 strings of 200 chars - simd intrinsics")]
-    [BenchmarkCategory("10_200")]
-    public void Benchmark200_10_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui200_10, nameof(ui200_10)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
-
-    #region Fields
-    string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
-    string testDataFile = Path.Combine(Runtime.AssemblyLocation, "train.jsonl");
-    public static string[] T20 = Array.Empty<string>();
-    public static string[] T200 = Array.Empty<string>();
-    static T Required<T>(T? value, string name) => value ?? throw new InvalidOperationException($"Benchmark {name} was used before setup completed.");
-
-    public static ComputationalGraph? graph;
-    ITensor[]? ui20_1 = null;
-    ITensor[]? ui20_10 = null;
-    ITensor[]? ui20_100 = null;
-    ITensor[]? ui200_1 = null;
-    ITensor[]? ui200_10 = null;
-    #endregion
-}
-
-[InProcess]
-[MemoryDiagnoser]
-[IterationsColumn]
-[GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
-[Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
-public class MultilingualEmbedded5SmallLoadBenchmarks
-{
-    [GlobalSetup()]
-    public void Setup()
-    {
-        var op = Begin("Loading test data");
-   
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        TextData?[] textData = File.ReadAllLines(testDataFile).AsParallel().Select(t => JsonSerializer.Deserialize<TextData>(t, options)).ToArray();
-        Random rnd = new Random();
-        T20 = textData
-            .AsParallel()
-            .OfType<TextData>().Where(t => t.Text.Length >= 21 && t.Text[20] == ' ')
-            .Select(t => t.Text.Substring(0, 20)/*.Replace("\n", " ")*/)
-            .OrderBy(x => rnd.Next())
-            .ToArray();
-        T200 = textData
-            .AsParallel()
-            .OfType<TextData>().Where(t => t.Text.Length >= 201 && t.Text[200] == ' ')
-            .Select(t => t.Text.Substring(0, 200)/*.Replace("\n", " ")*/)
-            .OrderBy(x => rnd.Next())
-            .ToArray();
-
-        op.Complete();
-    }
-
-    [Benchmark(Description = "Load model file")]
-    [BenchmarkCategory("model")]
-    public void LoadModel() => OnnxImport.Load(modelFile);
-
-    [Benchmark(Description = "Tokenize 1 string of 20 chars")]
-    [BenchmarkCategory("tokenize_20")]
-    public void Tokenize_20_1() => GetTextTensors(T20[0], "me5s");
-
-    [Benchmark(Description = "Tokenize 10 strings of 20 chars")]
-    [BenchmarkCategory("tokenize_20")]
-    public void Tokenize_20_10() => GetTextTensors(T20[1..11], "me5s");
-
-    [Benchmark(Description = "Tokenize 100 strings of 20 chars")]
-    [BenchmarkCategory("tokenize_20")]
-    public void Tokenize_20_100() => GetTextTensors(T20[11..111], "me5s");
-
-    [Benchmark(Description = "Tokenize 1 string of 200 chars")]
-    [BenchmarkCategory("tokenize_200")]
-    public void Tokenize_200_1() => GetTextTensors(T200[0], "me5s");
-
-    [Benchmark(Description = "Tokenize 10 strings of 200 chars")]
-    [BenchmarkCategory("tokenize_200")]
-    public void Tokenize_200_10() => GetTextTensors(T200[1..11], "me5s");
-
-    [Benchmark(Description = "Tokenize 100 strings of 200 chars")]
-    [BenchmarkCategory("tokenize_200")]
-    public void Tokenize_200_100() => GetTextTensors(T200[11..111], "me5s");
-
-    #region Fields
-    string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
-    string testDataFile = Path.Combine(Runtime.AssemblyLocation, "train.jsonl");
-    public static string[] T20 = Array.Empty<string>();
-    public static string[] T200 = Array.Empty<string>();
-    #endregion
-}
-
-internal class Benchmarks
-{
-    internal static void RunMe5sLoad(string[] args)
-    {
-        var op = Begin("Preparing model and data for multilingual-embedded-5-small load benchmark");
-        var modelFile = Path.Combine(AssemblyLocation, "benchmark-model.onnx");
-        var testDataFile = Path.Combine(AssemblyLocation, "train.jsonl");
-        if (!File.Exists(modelFile))
-        {
-            if (!DownloadFile("benchmark-model.onnx", new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx?download=true"), modelFile))
-            {
-                Error("Could not download benchmark model file.");
-                op.Abandon();
-                return;
-            }
-        }
-
-        if (!File.Exists(testDataFile))//
-        {  //https://huggingface.co/datasets/mteb/quora/resolve/main/corpus.jsonl
-            if (!DownloadFile("train.jsonl", new Uri("https://huggingface.co/datasets/mteb/amazon_reviews_multi/resolve/main/en/train.jsonl?download=true"), testDataFile))
-            {
-                Error("Could not download benchmark test data file.");
-                op.Abandon();
-                return;
-            }
-        }
-        if (!Lokad.Onnx.Text.EnsureMe5sTokenizer())
-        {
-            Error("Could not download tokenizer model file.");
-            op.Abandon();
-            return;
-        }
-        op.Complete();
-        BenchmarkRunner.Run<MultilingualEmbedded5SmallLoadBenchmarks>(DefaultConfig.Instance, args);
-    }
-
-    internal static void RunMe5sRun(string[] args)
-    {
-        var op = Begin("Preparing model and data for multilingual-embedded-5-small run benchmark");
-        var modelFile = Path.Combine(AssemblyLocation, "benchmark-model.onnx");
-        var testDataFile = Path.Combine(AssemblyLocation, "train.jsonl");
-        if (!File.Exists(modelFile))
-        {
-            if (!DownloadFile("benchmark-model.onnx", new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/onnx/model.onnx?download=true"), modelFile))
-            {
-                Error("Could not download benchmark model file.");
-                op.Abandon();
-                return;
-            }
-        }
-
-        if (!File.Exists(testDataFile))//
-        {  //https://huggingface.co/datasets/mteb/quora/resolve/main/corpus.jsonl
-            if (!DownloadFile("train.jsonl", new Uri("https://huggingface.co/datasets/mteb/amazon_reviews_multi/resolve/main/en/train.jsonl?download=true"), testDataFile))
-            {
-                Error("Could not download benchmark test data file.");
-                op.Abandon();
-                return;
-            }
-        }
-        if (!Lokad.Onnx.Text.EnsureMe5sTokenizer())
-        {
-            Error("Could not download tokenizer model file.");
-            op.Abandon();
-            return;
-        }
-        op.Complete();
-        BenchmarkRunner.Run<MultilingualEmbedded5SmallRunBenchmarks>(DefaultConfig.Instance, args);
+        Console.WriteLine("Running matmul core benchmark...");
+        Console.WriteLine("SIMD hardware acceleration: " + System.Numerics.Vector.IsHardwareAccelerated + ".");
+        Console.WriteLine("SIMD vector size: " + (System.Numerics.Vector<int>.Count * 4 * 8) + " bits.");
+        Console.WriteLine("SIMD supported intrinsics: " + HardwareIntrinsics.GetFullInfo() + ".");
+        Console.WriteLine("Running MatMul2D benchmark code...");
+        BenchmarkRunner.Run<MatMul2DBenchmarks>(DefaultConfig.Instance, args);
     }
 
     internal static void RunMatMul(string[] args)
     {
-        Info("Running tensor matmul benchmark...");
-        Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
-        Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
-        Info("SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
+        Console.WriteLine("Running tensor matmul benchmark...");
+        Console.WriteLine("SIMD hardware acceleration: " + System.Numerics.Vector.IsHardwareAccelerated + ".");
+        Console.WriteLine("SIMD vector size: " + (System.Numerics.Vector<int>.Count * 4 * 8) + " bits.");
+        Console.WriteLine("SIMD supported intrinsics: " + HardwareIntrinsics.GetFullInfo() + ".");
         BenchmarkRunner.Run<TensorMatMulBenchmarks>(DefaultConfig.Instance, args);
     }
 
@@ -822,35 +554,10 @@ internal class Benchmarks
 
     internal static void RunOps(string[] args)
     {
-        Info("Running tensor op microbenchmarks...");
-        Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
-        Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
-        Info("SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
+        Console.WriteLine("Running tensor op microbenchmarks...");
+        Console.WriteLine("SIMD hardware acceleration: " + System.Numerics.Vector.IsHardwareAccelerated + ".");
+        Console.WriteLine("SIMD vector size: " + (System.Numerics.Vector<int>.Count * 4 * 8) + " bits.");
+        Console.WriteLine("SIMD supported intrinsics: " + HardwareIntrinsics.GetFullInfo() + ".");
         BenchmarkRunner.Run<TensorOpBenchmarks>(DefaultConfig.Instance, args);
     }
-
-    internal static void RunMatMul2D(string[] args)
-    {
-        Info("Running matmul core benchmark...");
-        Info("SIMD hardware acceleration: {a}.", System.Numerics.Vector.IsHardwareAccelerated);
-        Info("SIMD vector size: {v} bits.", System.Numerics.Vector<int>.Count * 4 * 8);
-        Info("SIMD supported intrinsics: {s}.", HardwareIntrinsics.GetFullInfo());
-        Info("Creating new build of Lokad.Onnx solution to run and profile MatMul2D benchmark code...");
-        BenchmarkRunner.Run<MatMul2DBenchmarks>(DefaultConfig.Instance, args);
-    }
-}
-
-public partial class TextData
-{
-    public string Id { get; set; } = "";
-
-    public string Text { get; set; } = "";
-
-    public long Label { get; set; } = 0;
-
-    public string Label_Text { get; set; } = "";
-}
-
-public class BenchmarkConfig : ManualConfig
-{
 }

@@ -33,16 +33,6 @@ public class RunOptions : Options
     public int Threads { get; set; } = 1;
 }
 
-public class BenchmarkOptions : Options
-{
-    public string BenchmarkId { get; set; } = "";
-    public string Filter { get; set; } = "";
-    public string List { get; set; } = "";
-    public int IterationCount { get; set; }
-    public int WarmupCount { get; set; }
-    public int InvocationCount { get; set; }
-    public int RunOncePerIteration { get; set; }
-}
 #endregion
 
 #region Bounded parser
@@ -70,9 +60,6 @@ public static class ArgsParser
     static readonly HashSet<string> RunFlags = new HashSet<string>(StringComparer.Ordinal)
         { "save-input", "softmax", "node", "text", "print-input", "disable-simd",
           "enable-intrinsics", "profile", "optimize-memory", "threads", "debug" };
-    static readonly HashSet<string> BenchmarkFlags = new HashSet<string>(StringComparer.Ordinal)
-        { "filter", "list", "iterationCount", "warmupCount", "invocationCount",
-          "runOncePerIteration", "debug" };
 
     static bool IsFlag(string token) => token.StartsWith("--", StringComparison.Ordinal);
     static bool IsShort(string token) => token.Length == 2 && token[0] == '-' && token[1] != '-';
@@ -110,7 +97,7 @@ public static class ArgsParser
             result.Exit = ExitResult.INVALID_OPTIONS;
             return result;
         }
-        if (verb != "info" && verb != "run" && verb != "benchmark")
+        if (verb != "info" && verb != "run")
         {
             result.Outcome = ParseOutcome.Error;
             result.Message = "Unknown command: " + verb + ".";
@@ -124,9 +111,7 @@ public static class ArgsParser
             return result;
         }
         result.Verb = verb;
-        var parsed = verb == "info" ? ParseInfo(rest)
-            : verb == "run" ? ParseRun(rest)
-            : ParseBenchmark(rest);
+        var parsed = verb == "info" ? ParseInfo(rest) : ParseRun(rest);
         if (parsed.Outcome == ParseOutcome.Ok && parsed.Value is not null) parsed.Value.Debug = debug;
         return parsed;
     }
@@ -299,58 +284,6 @@ public static class ArgsParser
         options.Inputs = positionals.GetRange(1, positionals.Count - 1);
         return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "run", Value = options };
     }
-
-    static ParseResult ParseBenchmark(List<string> rest)
-    {
-        var options = new BenchmarkOptions();
-        var positionals = new List<string>();
-        for (int i = 0; i < rest.Count; i++)
-        {
-            var token = rest[i];
-            if (IsFlag(token))
-            {
-                SplitFlag(token, out var name, out var inline);
-                if (!BenchmarkFlags.Contains(name)) return Fail("Unknown option: " + token + ".");
-                switch (name)
-                {
-                    case "filter":
-                        if (!TakeString("benchmark", "filter", rest, ref i, inline, out var filter, out var e1)) return Fail(e1);
-                        options.Filter = filter;
-                        break;
-                    case "list":
-                        if (!TakeString("benchmark", "list", rest, ref i, inline, out var list, out var e2)) return Fail(e2);
-                        options.List = list;
-                        break;
-                    case "iterationCount":
-                        if (!TakeInt("benchmark", "iterationCount", rest, ref i, inline, out var ic, out var e3)) return Fail(e3);
-                        options.IterationCount = ic;
-                        break;
-                    case "warmupCount":
-                        if (!TakeInt("benchmark", "warmupCount", rest, ref i, inline, out var wc, out var e4)) return Fail(e4);
-                        options.WarmupCount = wc;
-                        break;
-                    case "invocationCount":
-                        if (!TakeInt("benchmark", "invocationCount", rest, ref i, inline, out var vc, out var e5)) return Fail(e5);
-                        options.InvocationCount = vc;
-                        break;
-                    case "runOncePerIteration":
-                        if (!TakeInt("benchmark", "runOncePerIteration", rest, ref i, inline, out var ro, out var e6)) return Fail(e6);
-                        options.RunOncePerIteration = ro;
-                        break;
-                }
-            }
-            else if (IsShort(token))
-            {
-                return Fail("Unknown option: " + token + ".");
-            }
-            else
-            {
-                positionals.Add(token);
-            }
-        }
-        if (positionals.Count < 1) return Fail("The benchmark command requires a benchmark id.");
-        options.BenchmarkId = positionals[0];
-        return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "benchmark", Value = options };
-    }
 }
+
 #endregion
