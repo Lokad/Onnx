@@ -4,17 +4,8 @@ namespace Lokad.Onnx.Backend.Tests;
 [Collection("ProcessState")]
 public class TokenizerLifetimeTests
 {
-    static string AssetPath()
-    {
-        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
-        while (dir is not null)
-        {
-            var candidate = Path.Combine(dir.FullName, "models", "multilingual-e5-small", "sentencepiece.bpe.model");
-            if (File.Exists(candidate)) return candidate;
-            dir = dir.Parent;
-        }
-        throw new FileNotFoundException("e5 tokenizer asset not found under models/multilingual-e5-small.");
-    }
+    static string AssetPath() =>
+        ModelFixture.RequireModelOrSkip("e5 tokenizer", "models", "multilingual-e5-small", "sentencepiece.bpe.model");
 
     static string SeedMe5s()
     {
@@ -30,7 +21,7 @@ public class TokenizerLifetimeTests
         GC.Collect(2, GCCollectionMode.Forced, true, true);
     }
 
-    [Fact]
+    [SkippableFact]
     public void SecondSharedCall_AllocatesLittle()
     {
         string path = AssetPath();
@@ -48,14 +39,14 @@ public class TokenizerLifetimeTests
         Assert.True(alloc < 10_000_000L, $"Second shared call allocated {alloc} bytes; expected a cache hit in the kilobyte range.");
     }
 
-    [Fact]
+    [SkippableFact]
     public void EnsureMe5sTokenizer_SucceedsWhenSeeded()
     {
         Assert.True(File.Exists(SeedMe5s()));
         Assert.True(Text.EnsureMe5sTokenizer());
     }
 
-    [Fact]
+    [SkippableFact]
     public void ConcurrentSharedBatch_MatchesSerial()
     {
         SeedMe5s();
@@ -75,7 +66,7 @@ public class TokenizerLifetimeTests
         foreach (var t in tasks) Assert.Equal(expected, t.Result);
     }
 
-    [Fact]
+    [SkippableFact]
     public void GetOrLoad_IdentityAndMissingPath()
     {
         string path = AssetPath();

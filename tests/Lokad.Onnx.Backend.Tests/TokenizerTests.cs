@@ -6,17 +6,8 @@ namespace Lokad.Onnx.Backend.Tests;
 [Collection("ProcessState")]
 public class TokenizerTests
 {
-    static string AssetPath()
-    {
-        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
-        while (dir is not null)
-        {
-            var candidate = Path.Combine(dir.FullName, "models", "multilingual-e5-small", "sentencepiece.bpe.model");
-            if (File.Exists(candidate)) return candidate;
-            dir = dir.Parent;
-        }
-        throw new FileNotFoundException("e5 tokenizer asset not found under models/multilingual-e5-small.");
-    }
+    static string AssetPath() =>
+        ModelFixture.RequireModelOrSkip("e5 tokenizer", "models", "multilingual-e5-small", "sentencepiece.bpe.model");
 
     static long[] Ids(string text)
     {
@@ -25,20 +16,20 @@ public class TokenizerTests
         return ((Tensor<long>)parts![0]).ToArray();
     }
 
-    [Fact]
+    [SkippableFact]
     public void HelloWorld_HasLiteralIds()
     {
         Assert.Equal(new long[] { 0, 35378, 8999, 2 }, Ids("Hello world"));
     }
 
-    [Fact]
+    [SkippableFact]
     public void MultiSpace_CollapsesToSingleSpaceIds()
     {
         Assert.Equal(new long[] { 0, 10, 876, 2 }, Ids("a  b"));
         Assert.Equal(Ids("a b"), Ids("a   b"));
     }
 
-    [Fact]
+    [SkippableFact]
     public void Batch_PadsToLongestWithMasks()
     {
         var parts = Text.RobertaTokenizeFromFile(new[] { "Hello world", "query: What is the capital of France?" }, AssetPath());
@@ -59,7 +50,7 @@ public class TokenizerTests
         Assert.Equal(0, types[1, 0]);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task ConcurrentFromFile_MatchesSerial()
     {
         string path = AssetPath();
@@ -81,7 +72,7 @@ public class TokenizerTests
             Assert.Equal(i % 2 == 0 ? expectedHello : expectedQuery, results[i]);
     }
 
-    [Fact]
+    [SkippableFact]
     public void GetOrLoad_ReturnsSharedCachedInstance()
     {
         string path = AssetPath();

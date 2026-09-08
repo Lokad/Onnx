@@ -1,25 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Lokad.Onnx.Backend.Tests;
 
 public class GraphExecutionGpt2Tests
 {
-    [SkippableFact]
-    public void CanInferWithGpt2()
+    static Dictionary<string, ITensor> FirstStepInputs()
     {
-        var modelPath = FindModelPath();
-        if (modelPath is null && System.Environment.GetEnvironmentVariable("LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS") == "1")
-        {
-            Assert.Fail("GPT-2 model requested via LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1 but not found at models/gpt2-onnx/onnx/model.onnx.");
-        }
-        Skip.If(modelPath is null, "GPT-2 model not present; set LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1 to require it.");
-
-        var graph = OnnxImport.Load(modelPath);
-        Assert.NotNull(graph);
-
         var inputs = new Dictionary<string, ITensor>();
         var ids = DenseTensor<long>.OfShape(1, 4);
         ids[0, 0] = 15496; ids[0, 1] = 11; ids[0, 2] = 314; ids[0, 3] = 716;
@@ -35,41 +21,77 @@ public class GraphExecutionGpt2Tests
             inputs["past_key_values." + layer + ".key"] = DenseTensor<float>.OfShape(1, 12, 0, 64);
             inputs["past_key_values." + layer + ".value"] = DenseTensor<float>.OfShape(1, 12, 0, 64);
         }
+        return inputs;
+    }
 
-        var ok = graph!.Execute(inputs, true);
-        if (!ok)
-        {
-            var details = $"Failure at node '{graph.LastFailedNodeName}' ({graph.LastFailedNodeOp}): {graph.LastErrorMessage}";
-            Assert.True(ok, details);
-        }
+    [SkippableFact]
+    public void CanInferWithGpt2()
+    {
+        var graph = ModelFixture.LoadRequiredModel("GPT-2", "models", "gpt2-onnx", "onnx", "model.onnx");
+
+        ModelFixture.AssertExecuted(graph, graph.Execute(FirstStepInputs(), true));
         var output = (Tensor<float>)graph.Outputs["logits"];
         Assert.Equal(new[] { 1, 4, 50257 }, output.Dimensions.ToArray());
 
-        var values = output.ToArray();
-        foreach (var v in values)
-        {
-            Assert.False(float.IsNaN(v) || float.IsInfinity(v));
-        }
-        double sum = 0;
-        foreach (var v in values) sum += v;
-        Assert.True(Math.Abs(sum / values.Length - -111.89471436) < 1e-4, "Mean drift vs ORT reference.");
-        int[] spots = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 100, 384, 385, 1000, 10000, 50000 };
-        float[] expected = new float[] { -35.23624420f, -35.32659531f, -38.97534943f, -39.39067459f, -37.65318298f, -38.67243576f, -36.02489090f, -36.48415375f, -43.31263733f, -40.13024902f, -38.99939346f, -40.74980927f, -41.98722839f, -44.11378098f };
-        for (int i = 0; i < spots.Length; i++) Assert.True(Math.Abs(values[spots[i]] - expected[i]) < 1e-3, "Spot " + spots[i] + " drift vs ORT reference.");
+        var values = ModelFixture.CheckedOutput(graph, "logits");
+        ModelFixture.AssertMean(values, -111.89471436, 1e-4, "gpt2");
+        ModelFixture.AssertSpots(values,
+            new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 100, 384, 385, 1000, 10000, 50000 },
+            new float[] { -35.23624420f, -35.32659531f, -38.97534943f, -39.39067459f, -37.65318298f, -38.67243576f, -36.02489090f, -36.48415375f, -43.31263733f, -40.13024902f, -38.99939346f, -40.74980927f, -41.98722839f, -44.11378098f },
+            1e-3, "gpt2");
     }
 
-    static string? FindModelPath()
+    [SkippableFact]
+    public void Gpt2Continuation_WithNonemptyPast_StateAdvances()
     {
-        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
-        while (dir is not null)
+        var graph = ModelFixture.LoadRequiredModel("GPT-2", "models", "gpt2-onnx", "onnx", "model.onnx");
+
+        ModelFixture.AssertExecuted(graph, graph.Execute(FirstStepInputs(), true));
+        var first = (Tensor<float>)graph.Outputs["logits"];
+        Assert.Equal(new[] { 1, 4, 50257 }, first.Dimensions.ToArray());
+        var firstValues = ModelFixture.CheckedOutput(graph, "logits");
+
+        var next = new Dictionary<string, ITensor>();
+        var ids = DenseTensor<long>.OfShape(1, 1);
+        ids[0, 0] = 317;
+        next["input_ids"] = ids;
+        var mask = DenseTensor<long>.OfShape(1, 5);
+        mask.Fill(1);
+        next["attention_mask"] = mask;
+        var pos = DenseTensor<long>.OfShape(1, 1);
+        pos[0, 0] = 4;
+        next["position_ids"] = pos;
+        for (int layer = 0; layer < 12; layer++)
         {
-            var candidate = Path.Combine(dir.FullName, "models", "gpt2-onnx", "onnx", "model.onnx");
-            if (File.Exists(candidate))
-            {
-                return candidate;
-            }
-            dir = dir.Parent;
+            var pastKey = (Tensor<float>)graph.Outputs["present." + layer + ".key"];
+            var pastValue = (Tensor<float>)graph.Outputs["present." + layer + ".value"];
+            Assert.Equal(new[] { 1, 12, 4, 64 }, pastKey.Dimensions.ToArray());
+            Assert.Equal(new[] { 1, 12, 4, 64 }, pastValue.Dimensions.ToArray());
+            next["past_key_values." + layer + ".key"] = pastKey;
+            next["past_key_values." + layer + ".value"] = pastValue;
         }
-        return null;
+
+        graph.Reset();
+        ModelFixture.AssertExecuted(graph, graph.Execute(next, true));
+        var logits = (Tensor<float>)graph.Outputs["logits"];
+        Assert.Equal(new[] { 1, 1, 50257 }, logits.Dimensions.ToArray());
+        var values = ModelFixture.CheckedOutput(graph, "logits");
+        for (int layer = 0; layer < 12; layer++)
+        {
+            var pastKey = (Tensor<float>)graph.Outputs["present." + layer + ".key"];
+            var pastValue = (Tensor<float>)graph.Outputs["present." + layer + ".value"];
+            Assert.Equal(new[] { 1, 12, 5, 64 }, pastKey.Dimensions.ToArray());
+            Assert.Equal(new[] { 1, 12, 5, 64 }, pastValue.Dimensions.ToArray());
+            ModelFixture.CheckedOutput(graph, "present." + layer + ".key");
+            ModelFixture.CheckedOutput(graph, "present." + layer + ".value");
+        }
+        // The new position id must move the logits: identical outputs would
+        // prove the past state and position were ignored.
+        bool moved = false;
+        for (int i = 0; i < values.Length; i++)
+        {
+            if (values[i] != firstValues[3 * 50257 + i]) { moved = true; break; }
+        }
+        Assert.True(moved, "Continuation logits match the first-step last position exactly; past state had no effect.");
     }
 }

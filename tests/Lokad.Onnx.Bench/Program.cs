@@ -84,12 +84,13 @@ static class Bench
     static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters)
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
-        // The tokenizer leaves tensors unnamed, so bind session order explicitly
-        // with a count check instead of silently falling back to positions later.
+        // The tokenizer names its outputs; verify the exact session match instead of
+        // silently falling back to positions.
         using var probe = new InferenceSession(model);
         var inNames = probe.InputMetadata.Keys.ToArray();
         if (inputs.Length != inNames.Length) throw new InvalidOperationException(name + ": tokenized " + inputs.Length + " inputs but the session wants " + inNames.Length + ".");
-        for (int i = 0; i < inputs.Length; i++) inputs[i].Name = inNames[i];
+        for (int i = 0; i < inputs.Length; i++)
+            if (inputs[i].Name != inNames[i]) throw new InvalidOperationException(name + ": input " + i + " is '" + inputs[i].Name + "', session wants '" + inNames[i] + "'.");
         Compare(name, model, inputs, tensorOpts, threads, iters);
     }
 

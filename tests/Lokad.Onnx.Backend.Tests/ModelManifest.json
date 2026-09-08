@@ -1,0 +1,73 @@
+{
+  "$schemaNote": "Model oracle manifest: exact asset identity, oracle provenance and tolerances for every local-model test. Verified by ModelManifestTests.",
+  "ortOracle": "1.29",
+  "models": [
+    {
+      "key": "e5",
+      "file": "models/multilingual-e5-small/model.onnx",
+      "sha256": "CA456C06B3A9505DDFD9131408916DD79290368331E7D76BB621F1CBA6BC8665",
+      "bytes": 470268510,
+      "opset": 11,
+      "generator": "tests/e5/python/test_e5_conformance.py over tests/e5/cases.json (native ORT oracle, tokenizer framed independently)",
+      "test": "eng/test-e5.ps1 lane; GraphLifetimeTests.Lifetime_PinsFusedE5Graph and GraphFusionRopeTests.E5HasNoRopePatterns (structure only)",
+      "inputs": "tokenized query/passage triples: input_ids, attention_mask, token_type_ids",
+      "oracle": "exact tokenizer inputs, full hidden states, pooled embeddings, ranking margin >= 0.10"
+    },
+    {
+      "key": "e5-tokenizer",
+      "file": "models/multilingual-e5-small/sentencepiece.bpe.model",
+      "sha256": "CFC8146ABE2A0488E9E2A0C56DE7952F7C11AB059ECA145A0A727AFCE0DB2865",
+      "bytes": 5069051,
+      "opset": 0,
+      "generator": "intfloat/multilingual-e5-small Hugging Face repo file (see tests/e5/README.md)",
+      "test": "TokenizerTests, TokenizerBatchTests, TokenizerLifetimeTests",
+      "inputs": "literal strings (Hello world -> 0,35378,8999,2)",
+      "oracle": "exact token id sequences"
+    },
+    {
+      "key": "dinov2",
+      "file": "models/dinov2-small-onnx/model.onnx",
+      "sha256": "6266C3CD72DB6953CECDCBFEAB9422A9F783D96F1A4E296BA70FFBAC43B54A18",
+      "bytes": 88513997,
+      "opset": 14,
+      "generator": "tests/README.md bisection procedure (dtype-generic probe, native ORT oracle)",
+      "test": "GraphExecutionDinoV2Tests.CanInferWithDinoV2Small",
+      "inputs": "0.5-filled 1x3x224x224",
+      "oracle": "shape 1x257x384, finite, mean 1e-6, spots 1e-3"
+    },
+    {
+      "key": "dinov3",
+      "file": "models/dinov3-vits16/onnx/model.onnx",
+      "sha256": "BB75E9E30FF382ECDBD150266445AB41272BE4ACC85FD3563218DD89781E36DA",
+      "bytes": 137969,
+      "opset": 20,
+      "generator": "tests/README.md bisection procedure (dtype-generic probe, native ORT oracle)",
+      "test": "GraphExecutionDinoV3Tests.CanInferWithDinoV3Small (currently red: LayerNormalization stash_type)",
+      "inputs": "0.5-filled 1x3x224x224",
+      "oracle": "shape 1x201x384, finite, mean 1e-6, spots 1e-4",
+      "note": "Asset carries graph structure with placeholder-sized initializers; inference test red for the known stash_type defect, not for asset drift."
+    },
+    {
+      "key": "resnet50",
+      "file": "models/resnet50-onnx/model.onnx",
+      "sha256": "4F0558B775C85B568012F7174CADDA33FB4B4E5A253CE17E5D839F123E0BC7E6",
+      "bytes": 93961728,
+      "opset": 11,
+      "generator": "tests/README.md bisection procedure (dtype-generic probe, native ORT oracle)",
+      "test": "GraphExecutionResNetTests.CanInferWithResNet50",
+      "inputs": "0.5-filled 1x3x224x224",
+      "oracle": "shape 1x2048, finite, mean 1e-6, spots 1e-4"
+    },
+    {
+      "key": "gpt2",
+      "file": "models/gpt2-onnx/onnx/model.onnx",
+      "sha256": "42C1E92A21C41EBD3C536D4C6F09732450A43DB35977593236F696D3346C7C0D",
+      "bytes": 498126358,
+      "opset": 14,
+      "generator": "tests/README.md bisection procedure (dtype-generic probe, native ORT oracle)",
+      "test": "GraphExecutionGpt2Tests (logits oracle plus past-state continuation)",
+      "inputs": "ids [15496,11,314,716], ones mask, positions 0..3, empty past per layer",
+      "oracle": "logits 1x4x50257, finite, mean 1e-4 (large-magnitude logits), spots 1e-3; continuation: 1x1x50257 logits plus 1x12x1x64 pasts, finite"
+    }
+  ]
+}

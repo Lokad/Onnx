@@ -20,6 +20,7 @@ public class CliInputTests
 
     static string SeedMe5sTokenizer()
     {
+        ModelFixture.RequireModelOrSkip("e5 tokenizer", "models", "multilingual-e5-small", "sentencepiece.bpe.model");
         var target = Path.Combine(Runtime.AssemblyLocation, "me5s-sentencepiece.bpe.model");
         if (!File.Exists(target))
         {
@@ -65,7 +66,7 @@ public class CliInputTests
         Assert.Null(Text.GetTextTensors("hi", "bogus"));
     }
 
-    [Fact]
+    [SkippableFact]
     public void DefaultTextFile_TokenizesWithMe5s()
     {
         Assert.True(File.Exists(SeedMe5sTokenizer()));
@@ -80,7 +81,7 @@ public class CliInputTests
         });
     }
 
-    [Fact]
+    [SkippableFact]
     public void ExplicitMe5sProps_Tokenize()
     {
         Assert.True(File.Exists(SeedMe5sTokenizer()));

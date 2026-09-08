@@ -4,17 +4,8 @@ namespace Lokad.Onnx.Backend.Tests;
 [Collection("SequentialLogSink")]
 public class TokenizerBatchTests
 {
-    static string AssetPath()
-    {
-        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
-        while (dir is not null)
-        {
-            var candidate = Path.Combine(dir.FullName, "models", "multilingual-e5-small", "sentencepiece.bpe.model");
-            if (File.Exists(candidate)) return candidate;
-            dir = dir.Parent;
-        }
-        throw new FileNotFoundException("e5 tokenizer asset not found under models/multilingual-e5-small.");
-    }
+    static string AssetPath() =>
+        ModelFixture.RequireModelOrSkip("e5 tokenizer", "models", "multilingual-e5-small", "sentencepiece.bpe.model");
 
     static Tensor<long> Part(ITensor[]? parts, int i)
     {
@@ -22,7 +13,7 @@ public class TokenizerBatchTests
         return (Tensor<long>)parts![i];
     }
 
-    [Fact]
+    [SkippableFact]
     public void EmptyBatch_ReturnsZeroShapedNamedTensors()
     {
         var parts = Text.RobertaTokenizeFromFile(System.Array.Empty<string>(), AssetPath());
@@ -38,7 +29,7 @@ public class TokenizerBatchTests
         Assert.Equal("token_type_ids", types.Name);
     }
 
-    [Fact]
+    [SkippableFact]
     public void Batch_MatchesSerialSingles_Exactly()
     {
         string path = AssetPath();
@@ -70,7 +61,7 @@ public class TokenizerBatchTests
         Assert.Equal(new int[] { texts.Length, max }, Part(batch, 0).Dimensions.ToArray());
     }
 
-    [Fact]
+    [SkippableFact]
     public void Batch_Truncates_LikeSingle()
     {
         string path = AssetPath();
