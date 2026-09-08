@@ -18,11 +18,34 @@ Ordinary gate (from repo root):
 
 Or use `eng/test.ps1`, which runs the same steps and collects Cobertura coverage under ignored `artifacts/coverage`.
 
-Native e5 conformance: `eng/test-e5.ps1` (see `tests/e5/README.md` once Commit 07 lands).
+Native e5 conformance: `eng/test-e5.ps1` (see `tests/e5/README.md`).
+
+## Local setup
+
+- .NET 10 SDK (verified with 10.0.300-preview.0.26177.108), PowerShell 7, and
+  Python 3.13 for the native lanes. All NuGet references use exact versions
+  in the project files; nothing is vendored.
+- Python lane environments (test-only oracles, never loaded by .NET):
+  `pip install -r tests/e5/python/requirements.txt` for the e5 lane,
+  `pip install -r tests/opfuzz/python/requirements.txt` plus the generator
+  file for corpus maintenance.
+- Large model assets are git-ignored under `models/` and hash-pinned in
+  `tests/Lokad.Onnx.Backend.Tests/ModelManifest.json` (verified by
+  ModelManifestTests): `models/multilingual-e5-small/model.onnx` plus its
+  `sentencepiece.bpe.model` (fetch once from the intfloat repo, see
+  `tests/e5/README.md`), `models/dinov3-vits16/onnx/model.onnx` plus its
+  `model.onnx_data` weights file, `models/dinov2-small-onnx/model.onnx`,
+  `models/resnet50-onnx/model.onnx`, and `models/gpt2-onnx/onnx/model.onnx`.
+- The e5 tokenizer is copied on first use into the running binary directory
+  through the explicit acquisition step and reused from the locked cache
+  offline afterwards. Committed MNIST assets need no setup.
+- Distribution check: `eng/smoke-pack.ps1` packs the core, installs it into
+  a scratch console with no source references, runs inference, and verifies
+  the dependency graph and file list.
 
 ## Supported ops
 
-`CPUExecutionProvider.SupportedOps` is the supported surface (47 entries at last count; the code list is authoritative). It starts: Reshape, Add, Div, Sub, Mul, Pow, Conv, Relu, MaxPool, MatMul, Sqrt, Erf, Transpose, Constant, Cast, Concat, Shape, Gather, Slice, Equal, Where, Expand, Resize, Unsqueeze, ReduceSum, ReduceMean, ReduceMax, Softmax. Every listed op needs at least one assertion-complete C# happy path plus non-happy paths (Commits 09-10).
+`CPUExecutionProvider.SupportedOps` is the supported surface (44 entries at last count; the code list is authoritative). It starts: Reshape, Add, Div, Sub, Mul, Pow, Conv, Relu, MaxPool, MatMul, Sqrt, Erf, Transpose, Constant, Cast, Concat, Shape, Gather, Slice, Equal, Where, Expand, Resize, Unsqueeze, ReduceSum, ReduceMean, ReduceMax, Softmax. Every listed op needs at least one assertion-complete C# happy path plus non-happy paths (Commits 09-10).
 
 ## Python migration ledger (historical)
 

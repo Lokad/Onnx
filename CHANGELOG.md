@@ -74,6 +74,10 @@ as planned or a known limitation. This is not a release-readiness claim.
   fused-versus-imported standing once for support queries, dispatch,
   fusion eligibility, and CLI reporting; imported fused-only operations
   and malformed arities fail naming the reason.
+  Distribution is explicit: pack restores and packs only the core, every
+  support project declares non-packable, a smoke script proves the package
+  dependency-free and runnable from a source-less consumer, and setup plus
+  the core file-free boundary are documented with a local example.
   Removed dead Sun, vendored-list, and string-helper attributions with their
   code, and independently reimplemented index arithmetic and slice-notation
   parsing; tensor, sparse, and half-precision sources stay attributed
