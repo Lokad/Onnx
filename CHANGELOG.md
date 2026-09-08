@@ -57,8 +57,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   input routing, and supported Expand/Resize shape handling.
 - Added explicit pool ownership to protect caller inputs, constants and live
   aliases, plus destination validation and dirty-buffer regression coverage.
-  LayerNorm fusion now checks operand order and exported intermediates;
-  domain validation still needs the repair listed below.
+  LayerNorm and RoPE fusion now check operand order, exported intermediates,
+  standard operator domains, supported schemas and proven float dtypes and
+  shapes for every matched node including Constants and the surviving node.
 - Added graph input-name, fixed/symbolic-dimension and failure diagnostics;
   tensor descriptions no longer allocate placeholder element buffers.
 - Hardened external tensor-data descriptors and local file ranges, removed
@@ -96,9 +97,8 @@ as planned or a known limitation. This is not a release-readiness claim.
 
 ### Known limitations before release
 
-- Fusion can absorb a custom-domain operator into a standard LayerNorm node.
-  A direct-output graph can report success with no outputs on retry after a
-  binding failure. Both were reproduced in the 2026-09-08 review.
+- A direct-output graph can report success with no outputs on retry after a
+  binding failure, as reproduced in the 2026-09-08 review.
 - Graph Conv dispatch discards selected execution options. Prepared graph
   collections remain mutable, and concurrency rejection can mutate run state.
   Operator capability reporting is not yet fully schema-aware.
@@ -110,5 +110,7 @@ as planned or a known limitation. This is not a release-readiness claim.
   Current diagnostic timings are not a completed release performance gate.
 - Review validation: Release solution build passes with 17 test-analyzer
   warnings; Debug core build passes without warnings. Release tests report
-  **210 tensor passes, 343 backend passes and one DINOv3 failure**, with no
-  skips. Python conformance was not rerun for this documentation review.
+  **210 tensor passes, 371 backend passes and one DINOv3 failure**, with no
+  skips. Python conformance rerun for the fusion domain repair: e5 native
+  lane 9 passed across scalar, SIMD and intrinsics modes; single-op
+  differential lane 109 passed with 1 xfailed.

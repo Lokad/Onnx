@@ -43,6 +43,153 @@ namespace Lokad.Onnx
             return idx;
         }
 
+        static bool IsFusableParticipant(Node node)
+        {
+            if (node.IsFused) return false;
+            if (node.Op == OpType.Unknown) return false;
+            if (!Node.IsStandardDomain(node.Domain)) return false;
+            if (node.OpsetVersion < 0) return false;
+            if (!CPUExecutionProvider.SupportsNode(node)) return false;
+            return true;
+        }
+
+        static int StandardOpset(ComputationalGraph graph)
+        {
+            if (graph.Opset.TryGetValue("", out var v)) return v;
+            return -1;
+        }
+
+        static bool IsStandardAttributeReduceMean(Node node)
+        {
+            return IsFusableParticipant(node) && node.OpsetVersion < 18;
+        }
+
+        static bool IsStandardSlice(Node node)
+        {
+            return IsFusableParticipant(node) && node.OpsetVersion >= 10;
+        }
+
+        static bool IsProvenFloat(ComputationalGraph graph, Dictionary<string, int> producer, string name)
+        {
+            return IsProvenFloatInner(graph, producer, name, new HashSet<string>(StringComparer.Ordinal), new Dictionary<string, bool>(StringComparer.Ordinal));
+        }
+
+        static bool IsProvenFloatInner(ComputationalGraph graph, Dictionary<string, int> producer, string name, HashSet<string> visiting, Dictionary<string, bool> memo)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            if (graph.Inputs.TryGetValue(name, out var gi)) return gi.ElementType == TensorElementType.Float;
+            if (graph.Initializers.TryGetValue(name, out var ti)) return ti.ElementType == TensorElementType.Float;
+            if (memo.TryGetValue(name, out var cached)) return cached;
+            if (!producer.TryGetValue(name, out var pi)) return false;
+            if (pi < 0 || pi >= graph.Nodes.Count) return false;
+            if (!visiting.Add(name)) return false;
+            bool result = ProveFloat(graph, producer, graph.Nodes[pi], visiting, memo);
+            visiting.Remove(name);
+            memo[name] = result;
+            return result;
+        }
+
+        static bool ProveFloat(ComputationalGraph graph, Dictionary<string, int> producer, Node pn, HashSet<string> visiting, Dictionary<string, bool> memo)
+        {
+            if (pn.IsFused)
+            {
+                if (!Node.IsStandardDomain(pn.Domain)) return false;
+                if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding) return false;
+                if (pn.Inputs.Length < 1) return false;
+                return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo);
+            }
+            if (!IsFusableParticipant(pn)) return false;
+            if (pn.Op == OpType.Constant)
+            {
+                var ct = ConstantValue(pn);
+                return ct is not null && ct.ElementType == TensorElementType.Float;
+            }
+            if (pn.Op == OpType.Cast)
+            {
+                int? to = pn.Int("to", null);
+                return to.HasValue && to.Value == (int)TensorElementType.Float;
+            }
+            switch (pn.Op)
+            {
+                case OpType.Add:
+                case OpType.Sub:
+                case OpType.Mul:
+                case OpType.Div:
+                case OpType.Pow:
+                    if (pn.Inputs.Length != 2) return false;
+                    return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo) && IsProvenFloatInner(graph, producer, pn.Inputs[1], visiting, memo);
+                case OpType.Concat:
+                    if (pn.Inputs.Length < 1) return false;
+                    foreach (var inp in pn.Inputs)
+                    {
+                        if (string.IsNullOrEmpty(inp)) continue;
+                        if (!IsProvenFloatInner(graph, producer, inp, visiting, memo)) return false;
+                    }
+                    return true;
+                case OpType.MatMul:
+                    if (pn.Inputs.Length != 2) return false;
+                    return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo) && IsProvenFloatInner(graph, producer, pn.Inputs[1], visiting, memo);
+                case OpType.Conv:
+                    if (pn.Inputs.Length < 2) return false;
+                    if (!IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo) || !IsProvenFloatInner(graph, producer, pn.Inputs[1], visiting, memo)) return false;
+                    if (pn.Inputs.Length >= 3 && !string.IsNullOrEmpty(pn.Inputs[2])) return IsProvenFloatInner(graph, producer, pn.Inputs[2], visiting, memo);
+                    return true;
+                case OpType.Where:
+                    if (pn.Inputs.Length != 3) return false;
+                    return IsProvenFloatInner(graph, producer, pn.Inputs[1], visiting, memo) && IsProvenFloatInner(graph, producer, pn.Inputs[2], visiting, memo);
+                case OpType.Range:
+                    if (pn.Inputs.Length != 3) return false;
+                    return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo) && IsProvenFloatInner(graph, producer, pn.Inputs[1], visiting, memo) && IsProvenFloatInner(graph, producer, pn.Inputs[2], visiting, memo);
+                case OpType.Gemm:
+                    if (pn.Inputs.Length < 2) return false;
+                    if (!IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo) || !IsProvenFloatInner(graph, producer, pn.Inputs[1], visiting, memo)) return false;
+                    if (pn.Inputs.Length >= 3 && !string.IsNullOrEmpty(pn.Inputs[2])) return IsProvenFloatInner(graph, producer, pn.Inputs[2], visiting, memo);
+                    return true;
+                case OpType.Gather:
+                case OpType.Split:
+                case OpType.SplitToSequence:
+                case OpType.SequenceAt:
+                case OpType.Tile:
+                case OpType.GlobalAveragePool:
+                case OpType.MaxPool:
+                case OpType.Sqrt:
+                case OpType.ReduceMean:
+                case OpType.ReduceSum:
+                case OpType.ReduceMax:
+                case OpType.Transpose:
+                case OpType.Squeeze:
+                case OpType.Unsqueeze:
+                case OpType.Reshape:
+                case OpType.Slice:
+                case OpType.Resize:
+                case OpType.Expand:
+                case OpType.Relu:
+                case OpType.Gelu:
+                case OpType.Tanh:
+                case OpType.Erf:
+                case OpType.Softmax:
+                case OpType.Neg:
+                case OpType.Abs:
+                case OpType.Cos:
+                case OpType.Sin:
+                case OpType.LayerNormalization:
+                case OpType.RotaryEmbedding:
+                    if (pn.Inputs.Length < 1 || string.IsNullOrEmpty(pn.Inputs[0])) return false;
+                    return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo);
+                default:
+                    return false;
+            }
+        }
+
+        static int FloatRankOneLength(ComputationalGraph graph, string name)
+        {
+            if (!graph.Initializers.TryGetValue(name, out var t)) return -1;
+            if (t.ElementType != TensorElementType.Float) return -1;
+            if (t.Rank != 1) return -1;
+            if (t.Length < 1 || t.Length > int.MaxValue) return -1;
+            return (int)t.Length;
+        }
+
         public static int FuseLayerNormPatterns(ComputationalGraph graph)
         {
             var idx = BuildIndex(graph);
@@ -56,6 +203,7 @@ namespace Lokad.Onnx
             for (int i = 0; i < graph.Nodes.Count; i++)
             {
                 if (graph.Nodes[i].Op != OpType.Div) continue;
+                if (!IsFusableParticipant(graph.Nodes[i])) continue;
                 if (drop.Contains(i)) continue;
                 if (TryMatchLayerNorm(graph, producer, consumers, outputs, drop, i, out var dead, out var epsConst))
                 {
@@ -97,6 +245,7 @@ namespace Lokad.Onnx
             dead = new List<int>();
             epsConst = -1;
             var div = graph.Nodes[divIndex];
+            if (!IsFusableParticipant(div)) return false;
             if (div.Inputs.Length != 2) return false;
             if (div.Outputs.Length != 1) return false;
             int OnlyConsumer(string output, OpType op)
@@ -106,13 +255,17 @@ namespace Lokad.Onnx
                 var live = new List<int>();
                 foreach (var u in uses) if (!drop.Contains(u)) live.Add(u);
                 if (live.Count != 1) return -1;
-                return graph.Nodes[live[0]].Op == op ? live[0] : -1;
+                var cand = graph.Nodes[live[0]];
+                if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
+                return live[0];
             }
             int ProducerOf(string input, OpType op)
             {
                 if (string.IsNullOrEmpty(input) || !producer.TryGetValue(input, out var pi)) return -1;
                 if (drop.Contains(pi)) return -1;
-                return graph.Nodes[pi].Op == op ? pi : -1;
+                var cand = graph.Nodes[pi];
+                if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
+                return pi;
             }
             float? ScalarFloatOf(string input, out int constNode)
             {
@@ -149,20 +302,9 @@ namespace Lokad.Onnx
                 if (axes is null || axes.Length != 1 || axes[0] != -1) return false;
                 return (rm.Int("keepdims", null) ?? 1) == 1;
             }
-            bool IsFloatRankOne(string name, int expectedLength)
-            {
-                if (!graph.Initializers.TryGetValue(name, out var t)) return false;
-                if (t.ElementType != TensorElementType.Float) return false;
-                if (t.Rank != 1) return false;
-                if (t.Length < 1) return false;
-                if (expectedLength > 0 && (int)t.Length != expectedLength) return false;
-                return true;
-            }
             bool IsKnownFloat(string name)
             {
-                if (graph.Inputs.TryGetValue(name, out var gi)) return gi.ElementType == TensorElementType.Float;
-                if (graph.Initializers.TryGetValue(name, out var ti)) return ti.ElementType == TensorElementType.Float;
-                return true;
+                return IsProvenFloat(graph, producer, name);
             }
             int LastDimOf(string name)
             {
@@ -196,6 +338,7 @@ namespace Lokad.Onnx
             if (rm1Node.Inputs[0] != xPos) return false;
             if (!IsKnownFloat(xPos)) return false;
             if (!IsLastAxisKeepDims(rm1Node)) return false;
+            if (!IsStandardAttributeReduceMean(rm1Node)) return false;
             int addEps = ProducerOf(sqrtNode.Inputs[0], OpType.Add);
             if (addEps < 0) return false;
             var addEpsNode = graph.Nodes[addEps];
@@ -217,6 +360,7 @@ namespace Lokad.Onnx
             if (rm2Node.Inputs.Length != 1) return false;
             if (rm2Node.Outputs.Length != 1) return false;
             if (!IsLastAxisKeepDims(rm2Node)) return false;
+            if (!IsStandardAttributeReduceMean(rm2Node)) return false;
             var pow = ProducerOf(rm2Node.Inputs[0], OpType.Pow);
             if (pow < 0) return false;
             var powNode = graph.Nodes[pow];
@@ -234,14 +378,21 @@ namespace Lokad.Onnx
             if (muNode.Outputs.Length != 1) return false;
             string gamma = muNode.Inputs[0] == div.Outputs[0] ? muNode.Inputs[1] : muNode.Inputs[0];
             int lastDim = LastDimOf(xPos);
-            if (!IsFloatRankOne(gamma, lastDim)) return false;
+            int gammaLen = FloatRankOneLength(graph, gamma);
+            if (gammaLen <= 0) return false;
+            if (lastDim > 0 && gammaLen != lastDim) return false;
+            if (lastDim == 0) return false;
             int ab = OnlyConsumer(muNode.Outputs[0], OpType.Add);
             if (ab < 0) return false;
             var abNode = graph.Nodes[ab];
             if (abNode.Inputs.Length != 2) return false;
             if (abNode.Outputs.Length != 1) return false;
             string beta = abNode.Inputs[0] == muNode.Outputs[0] ? abNode.Inputs[1] : abNode.Inputs[0];
-            if (!IsFloatRankOne(beta, lastDim)) return false;
+            int betaLen = FloatRankOneLength(graph, beta);
+            if (betaLen <= 0) return false;
+            if (lastDim > 0 && betaLen != lastDim) return false;
+            if (lastDim == 0) return false;
+            if (lastDim < 0 && gammaLen != betaLen) return false;
             if (drop.Contains(ab)) return false;
             var deadSet = new HashSet<int> { sub, pow, rm1, rm2, addEps, sqrt, divIndex, mu };
             foreach (var dd in deadSet) if (drop.Contains(dd)) return false;
@@ -255,11 +406,15 @@ namespace Lokad.Onnx
                     if (consumers.TryGetValue(o, out var uses) && uses.Any(u => !deadSet.Contains(u) && u != ab && !drop.Contains(u))) return false;
                 }
             }
+            if (!IsFusableParticipant(abNode)) return false;
             dead.AddRange(deadSet);
             epsConst = epsC;
             var ln = abNode;
             ln.Op = OpType.LayerNormalization;
             ln.OpTypeName = OpType.LayerNormalization.ToString();
+            ln.Domain = "";
+            int stdv = StandardOpset(graph);
+            if (stdv >= 0) ln.OpsetVersion = stdv;
             ln.IsFused = true;
             ln.Inputs = new[] { xPos, gamma, beta };
             ln.Attributes = new Dictionary<string, object> { { "axis", -1 }, { "epsilon", eps.Value } };
@@ -280,6 +435,7 @@ namespace Lokad.Onnx
             for (int i = 0; i < graph.Nodes.Count; i++)
             {
                 if (graph.Nodes[i].Op != OpType.Add) continue;
+                if (!IsFusableParticipant(graph.Nodes[i])) continue;
                 if (drop.Contains(i)) continue;
                 if (TryMatchRope(graph, producer, consumers, outputs, drop, i, out var dead))
                 {
@@ -312,13 +468,16 @@ namespace Lokad.Onnx
         {
             dead = new List<int>();
             var add = graph.Nodes[addIndex];
+            if (!IsFusableParticipant(add)) return false;
             if (add.Inputs.Length != 2) return false;
             if (add.Outputs.Length != 1) return false;
             int ProducerOf(string input, OpType op)
             {
                 if (string.IsNullOrEmpty(input) || !producer.TryGetValue(input, out var pi)) return -1;
                 if (drop.Contains(pi)) return -1;
-                return graph.Nodes[pi].Op == op ? pi : -1;
+                var cand = graph.Nodes[pi];
+                if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
+                return pi;
             }
             int OnlyConsumer(string output, OpType op)
             {
@@ -327,7 +486,9 @@ namespace Lokad.Onnx
                 var live = new List<int>();
                 foreach (var u in uses) if (!drop.Contains(u)) live.Add(u);
                 if (live.Count != 1) return -1;
-                return graph.Nodes[live[0]].Op == op ? live[0] : -1;
+                var cand = graph.Nodes[live[0]];
+                if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
+                return live[0];
             }
             long[]? LongsOf(string input)
             {
@@ -378,6 +539,7 @@ namespace Lokad.Onnx
                             axes = 0;
                             steps = 0;
                             var node = graph.Nodes[sliceIdx];
+                            if (!IsStandardSlice(node)) return false;
                             if (node.Inputs.Length != 5) return false;
                             var s = LongsOf(node.Inputs[1]);
                             var e = LongsOf(node.Inputs[2]);
@@ -442,8 +604,10 @@ namespace Lokad.Onnx
                     if (cosIdx < 0) continue;
                     var cosNode = graph.Nodes[cosIdx];
                     if (cosNode.Inputs.Length != 1) continue;
+                    if (!IsProvenFloat(graph, producer, x)) continue;
+                    if (!IsProvenFloat(graph, producer, c)) continue;
                     if (!consumers.TryGetValue(x, out var xuses)) continue;
-                    var sliceUses = xuses.Where(u => !drop.Contains(u) && graph.Nodes[u].Op == OpType.Slice).ToList();
+                    var sliceUses = xuses.Where(u => !drop.Contains(u) && graph.Nodes[u].Op == OpType.Slice && IsStandardSlice(graph.Nodes[u])).ToList();
                     if (sliceUses.Count != 2) continue;
                     if (outputs.Contains(x)) continue;
                     for (int ri = 0; ri < 2; ri++)
@@ -455,6 +619,7 @@ namespace Lokad.Onnx
                         if (sinIdx < 0) continue;
                         var sinNode = graph.Nodes[sinIdx];
                         if (sinNode.Inputs.Length != 1) continue;
+                        if (!IsProvenFloat(graph, producer, sIn)) continue;
                         if (cosNode.Inputs[0] != sinNode.Inputs[0]) continue;
                         int concatIdx = ProducerOf(ccIn, OpType.Concat);
                         if (concatIdx < 0) continue;
@@ -481,10 +646,14 @@ namespace Lokad.Onnx
                                     if (consumers.TryGetValue(o, out var uses) && uses.Any(u => !deadSet.Contains(u) && u != addIndex && !drop.Contains(u))) return false;
                                 }
                             }
+                            if (!IsFusableParticipant(branchAdd)) return false;
                             branchDead.AddRange(deadSet);
                             var fused = branchAdd;
                             fused.Op = OpType.RotaryEmbedding;
                             fused.OpTypeName = OpType.RotaryEmbedding.ToString();
+                            fused.Domain = "";
+                            int rstdv = StandardOpset(graph);
+                            if (rstdv >= 0) fused.OpsetVersion = rstdv;
                             fused.IsFused = true;
                             fused.Inputs = new[] { x, c, sIn };
                             fused.Attributes = new Dictionary<string, object> { { "half", half }, { "axis", axis }, { "concatAxis", caxis.Value } };
