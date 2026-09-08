@@ -111,8 +111,6 @@ public partial struct Node
     public ITensor? InputTensor(ComputationalGraph graph, int index) =>
         index < Inputs.Length && !string.IsNullOrEmpty(Inputs[index]) ? graph.GetInputTensor(Inputs[index]) : null;
 
-    public ITensor? InputTensorOrAttr(ComputationalGraph graph, int index, string name) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : Attr<ITensor>(name, null);
-
     static bool IsFatal(Exception e) => e is OutOfMemoryException or StackOverflowException;
 
     public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider, ExecutionOptions? options)
