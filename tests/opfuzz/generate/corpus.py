@@ -27,7 +27,7 @@ OPSET = 14
 ENV = {"onnx": onnx.__version__, "onnxruntime": ort.__version__, "numpy": np.__version__}
 
 def txt_save(path, arr):
-    arr = np.ascontiguousarray(arr)
+    arr = np.asarray(arr)
     dtype = {np.dtype("float32"): "float32", np.dtype("float64"): "float64", np.dtype("int64"): "int64"}[arr.dtype]
     with open(path, "w") as f:
         f.write("%s %d %s\n" % (dtype, arr.ndim, " ".join(str(d) for d in arr.shape)))
@@ -48,7 +48,7 @@ def bshape(a, b):
 
 def run_ort(mp, feed):
     sess = ort.InferenceSession(mp, providers=["CPUExecutionProvider"])
-    return sess.run(None, {n: np.ascontiguousarray(a, dtype=np.float32) for n, a in feed.items()})
+    return sess.run(None, {n: np.asarray(a, dtype=np.float32) for n, a in feed.items()})
 
 def write_model(d, case_id, node, inputs, out_shapes, inits):
     vin = [helper.make_tensor_value_info(n, TensorProto.FLOAT, list(s)) for n, s in inputs]
@@ -248,6 +248,58 @@ def gather_cases(n=4):
         with open(os.path.join(d, "meta.json"), "w") as f:
             json.dump({"case": "gather_%d" % i, "seed": SEED, "opset": OPSET, "ir": 8, "env": ENV}, f, indent=1)
 
+def boundary_cases():
+    # Scalar (rank-0) broadcast against a matrix.
+    a = rarray([2, 3])
+    b = np.float32(1.5)
+    node = helper.make_node("Add", ["x", "y"], ["z"])
+    emit("add_scalar", node, [("x", [2, 3]), ("y", [])], [("z", [2, 3])], {"x": a, "y": b})
+    # Size-1 axis in the middle, broadcast on both sides.
+    a = rarray([2, 1, 4]); b = rarray([2, 3, 4])
+    node = helper.make_node("Mul", ["x", "y"], ["z"])
+    emit("mul_mid1", node, [("x", [2, 1, 4]), ("y", [2, 3, 4])], [("z", [2, 3, 4])], {"x": a, "y": b})
+    a = rarray([3, 1]); b = rarray([1, 4])
+    node = helper.make_node("Sub", ["x", "y"], ["z"])
+    emit("sub_rowcol", node, [("x", [3, 1]), ("y", [1, 4])], [("z", [3, 4])], {"x": a, "y": b})
+    # Reshape with -1 dimension inference.
+    a = rarray([2, 6])
+    shape_init = helper.make_tensor("shape", TensorProto.INT64, [2], np.array([-1, 3], dtype=np.int64))
+    node = helper.make_node("Reshape", ["x", "shape"], ["z"])
+    emit("reshape_neg1", node, [("x", [2, 6])], [("z", [4, 3])], {"x": a}, inits=[shape_init])
+    # Three-input concat.
+    c0 = rarray([2, 2]); c1 = rarray([2, 2]); c2 = rarray([2, 2])
+    node = helper.make_node("Concat", ["x", "y", "w"], ["z"], axis=1)
+    emit("concat_3way", node, [("x", [2, 2]), ("y", [2, 2]), ("w", [2, 2])], [("z", [2, 6])],
+         {"x": c0, "y": c1, "w": c2})
+    # Softmax over large logits (stability boundary).
+    a = rarray([2, 4], -50.0, 50.0)
+    node = helper.make_node("Softmax", ["x"], ["z"], axis=-1)
+    emit("softmax_big", node, [("x", [2, 4])], [("z", [2, 4])], {"x": a})
+    # Full reduction with no axes attribute, keepdims=1.
+    a = rarray([2, 3])
+    node = helper.make_node("ReduceMean", ["x"], ["z"], keepdims=1)
+    emit("reducemean_full", node, [("x", [2, 3])], [("z", [1, 1])], {"x": a})
+    # Gather on a negative axis with negative indices.
+    a = rarray([2, 3, 4])
+    idx = npr.integers(-4, 4, size=[3]).astype(np.int64)
+    idx_init = helper.make_tensor("idx", TensorProto.INT64, [3], idx)
+    node = helper.make_node("Gather", ["x", "idx"], ["z"], axis=-1)
+    d = os.path.join(ROOT, "gather_negaxis")
+    os.makedirs(d, exist_ok=True)
+    vin = [helper.make_tensor_value_info("x", TensorProto.FLOAT, [2, 3, 4])]
+    vout = [helper.make_tensor_value_info("z", TensorProto.FLOAT, [2, 3, 3])]
+    g = helper.make_graph([node], "g", vin, vout, initializer=[idx_init])
+    m = helper.make_model(g, opset_imports=[helper.make_opsetid("", OPSET)], producer_name="opfuzz")
+    m.ir_version = 8
+    mp = os.path.join(d, "model.onnx")
+    onnx.save(m, mp)
+    txt_save(os.path.join(d, "in_x.txt"), a)
+    res = run_ort(mp, {"x": a})
+    assert list(res[0].shape) == [2, 3, 3] and np.all(np.isfinite(res[0]))
+    txt_save(os.path.join(d, "ref_z.txt"), res[0])
+    with open(os.path.join(d, "meta.json"), "w") as f:
+        json.dump({"case": "gather_negaxis", "seed": SEED, "opset": OPSET, "ir": 8, "env": ENV}, f, indent=1)
+
 if __name__ == "__main__":
     for op in ["Add", "Sub", "Mul", "Div"]:
         binary_cases(op)
@@ -255,4 +307,5 @@ if __name__ == "__main__":
         unary_cases(op, lo=(0.01 if op == "Sqrt" else -3.0))
     transpose_cases(); reshape_cases(); concat_cases(); softmax_cases()
     matmul_cases(); reducemean_cases(); unsqueeze_cases(); squeeze_cases(); gather_cases()
+    boundary_cases()
     print("cases:", len([d for d in os.listdir(ROOT) if os.path.isdir(os.path.join(ROOT, d))]))
