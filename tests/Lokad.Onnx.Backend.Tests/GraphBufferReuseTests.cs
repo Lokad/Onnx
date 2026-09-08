@@ -155,8 +155,8 @@ public class GraphBufferReuseTests
         var lnIn = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } });
         var gamma = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f, 1f });
         var beta = DenseTensor<float>.OfValues(new float[] { 0f, 0f, 0f, 0f });
-        var legacyLn = CPU.LayerNormalization(lnIn, gamma, beta, -1, 1e-5f, options, null, null);
-        var pooledLn = CPU.LayerNormalization(lnIn, gamma, beta, -1, 1e-5f, options, pool, null);
+        var legacyLn = CPU.LayerNormalization(lnIn, gamma, beta, -1, 1e-5f, null, 1, options, null);
+        var pooledLn = CPU.LayerNormalization(lnIn, gamma, beta, -1, 1e-5f, null, 1, options, pool);
         Assert.Equal(OpStatus.Success, legacyLn.Status);
         Assert.Equal(OpStatus.Success, pooledLn.Status);
         AssertBitwise(ToArray(legacyLn.Outputs[0]), pooledLn.Outputs[0]);

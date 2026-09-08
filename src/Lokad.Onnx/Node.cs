@@ -298,7 +298,7 @@ public partial struct Node
 
         OpType.Tile => CPU.Tile(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis", null), GetFloat("epsilon", null), opt, graph.ActivePool, Attributes),
+        OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis", null), GetFloat("epsilon", null), Int("stash_type", null), Outputs.Length, opt, graph.ActivePool),
 
         OpType.SplitToSequence => CPU.SplitToSequence(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), Int("keepdims", null), opt),
 

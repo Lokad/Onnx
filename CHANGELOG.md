@@ -84,9 +84,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   common reduction preparation, broadcast and Gather/block-copy paths,
   vectorized exp/erf/GELU, and pooled dense-float outputs.
 - Deterministic native e5 conformance and single-op differential lanes;
-  local-model manifest and MNIST, DINOv2, ResNet50 and GPT-2 coverage,
-  including GPT-2 past-state continuation. DINOv3 has structural coverage
-  and an unresolved inference gate.
+  local-model manifest and MNIST, DINOv2, DINOv3, ResNet50 and GPT-2 coverage,
+  including GPT-2 past-state continuation and the DINOv3 full-weight
+  inference gate with ORT-confirmed references.
 - Metadata inspection without typed initializer materialization; direct typed
   reads for supported external tensor data.
 - Normal Debug/Release builds no longer produce packages. Release packing
@@ -102,15 +102,18 @@ as planned or a known limitation. This is not a release-readiness claim.
 - Graph Conv dispatch discards selected execution options. Prepared graph
   collections remain mutable, and concurrency rejection can mutate run state.
   Operator capability reporting is not yet fully schema-aware.
-- LayerNormalization rejects explicit `stash_type=1`. The DINOv3 inference
-  test fails here; the currently recorded local asset also has placeholder-sized
-  initializers and is not adequate evidence for full-weight model performance.
+- LayerNormalization supports only stash_type 1 (32-bit float stage-one
+  compute) with one to three positional outputs; other precisions and output
+  counts fail explicitly. No speed claim is made for DINOv3 inference.
 - Benchmark validation can miss NaNs and shape mismatches, and does not
   validate the exact ORT session used for the matched-thread timing.
   Current diagnostic timings are not a completed release performance gate.
 - Review validation: Release solution build passes with 17 test-analyzer
   warnings; Debug core build passes without warnings. Release tests report
-  **210 tensor passes, 371 backend passes and one DINOv3 failure**, with no
+  **210 tensor passes and 382 backend passes with no failures** and no
   skips. Python conformance rerun for the fusion domain repair: e5 native
   lane 9 passed across scalar, SIMD and intrinsics modes; single-op
-  differential lane 109 passed with 1 xfailed.
+  differential lane 115 passed with 1 xfailed, including 6 seeded
+  LayerNormalization oracle cases; DINOv3 frozen references confirmed
+  against native ORT 1.29 on the full-weight asset (mean drift 1.4e-10,
+  worst spot drift 3.3e-07).

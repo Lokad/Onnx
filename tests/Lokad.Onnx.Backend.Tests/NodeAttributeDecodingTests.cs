@@ -121,19 +121,5 @@ public class NodeAttributeDecodingTests
         Assert.Equal(OpStatus.Failure, r.Status);
     }
 
-    [Fact]
-    public void LayerNorm_StashType_FailsExplicitly()
-    {
-        var graph = Graph(13);
-        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f } });
-        graph.Inputs["scale"] = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f, 1f });
-        var node = new Node
-        {
-            Name = "ln", Op = OpType.LayerNormalization, Inputs = new[] { "x", "scale" }, Outputs = new[] { "y" },
-            Attributes = new Dictionary<string, object> { ["axis"] = -1L, ["stash_type"] = 1L },
-        };
-        var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-    }
 }
 

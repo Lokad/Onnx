@@ -46,25 +46,28 @@ def rarray(shape, lo=-3.0, hi=3.0):
 def bshape(a, b):
     return list(np.broadcast_shapes(tuple(a), tuple(b)))
 
-def run_ort(mp, feed):
+def run_ort(mp, feed, dtypes=None):
+    dtypes = dtypes or {}
     sess = ort.InferenceSession(mp, providers=["CPUExecutionProvider"])
-    return sess.run(None, {n: np.asarray(a, dtype=np.float32) for n, a in feed.items()})
+    return sess.run(None, {n: np.asarray(a, dtype=dtypes.get(n, np.float32)) for n, a in feed.items()})
 
-def write_model(d, case_id, node, inputs, out_shapes, inits):
-    vin = [helper.make_tensor_value_info(n, TensorProto.FLOAT, list(s)) for n, s in inputs]
-    vout = [helper.make_tensor_value_info(n, TensorProto.FLOAT, list(s)) for n, s in out_shapes]
+def write_model(d, case_id, node, inputs, out_shapes, inits, dtypes=None, opset=None):
+    dtypes = dtypes or {}
+    opset = OPSET if opset is None else opset
+    vin = [helper.make_tensor_value_info(n, dtypes.get(n, TensorProto.FLOAT), list(s)) for n, s in inputs]
+    vout = [helper.make_tensor_value_info(n, dtypes.get(n, TensorProto.FLOAT), list(s)) for n, s in out_shapes]
     g = helper.make_graph([node], "g_" + case_id, vin, vout, initializer=list(inits))
-    m = helper.make_model(g, opset_imports=[helper.make_opsetid("", OPSET)], producer_name="opfuzz")
+    m = helper.make_model(g, opset_imports=[helper.make_opsetid("", opset)], producer_name="opfuzz")
     m.ir_version = 8
     mp = os.path.join(d, "model.onnx")
     onnx.save(m, mp)
     return mp
 
-def emit(case_id, node, inputs, out_shapes, feed, inits=()):
+def emit(case_id, node, inputs, out_shapes, feed, inits=(), dtypes=None, opset=None, feed_dtypes=None):
     d = os.path.join(ROOT, case_id)
     os.makedirs(d, exist_ok=True)
-    mp = write_model(d, case_id, node, inputs, out_shapes, inits)
-    res = run_ort(mp, feed)
+    mp = write_model(d, case_id, node, inputs, out_shapes, inits, dtypes, opset)
+    res = run_ort(mp, feed, feed_dtypes)
     drifted = [(n, list(a.shape)) for (n, s), a in zip(out_shapes, res) if list(a.shape) != list(s)]
     if drifted:
         out_shapes = [(n, list(a.shape)) for (n, s), a in zip(out_shapes, res)]
@@ -81,7 +84,7 @@ def emit(case_id, node, inputs, out_shapes, feed, inits=()):
         assert np.all(np.isfinite(a)), "non-finite ORT output in " + case_id
         txt_save(os.path.join(d, "ref_" + n + ".txt"), a)
     with open(os.path.join(d, "meta.json"), "w") as f:
-        meta = {"case": case_id, "seed": SEED, "opset": OPSET, "ir": 8, "env": ENV}
+        meta = {"case": case_id, "seed": SEED, "opset": OPSET if opset is None else opset, "ir": 8, "env": ENV}
         if case_id in KNOWN_DIVERGENCES:
             meta["known_divergence"] = KNOWN_DIVERGENCES[case_id]
         json.dump(meta, f, indent=1)
@@ -248,6 +251,56 @@ def gather_cases(n=4):
         with open(os.path.join(d, "meta.json"), "w") as f:
             json.dump({"case": "gather_%d" % i, "seed": SEED, "opset": OPSET, "ir": 8, "env": ENV}, f, indent=1)
 
+def layernorm_cases():
+    LNOPSET = 20
+    F32 = TensorProto.FLOAT
+    F64 = TensorProto.DOUBLE
+
+    def finit(name, dtype, shape, vals):
+        t = F32 if dtype == np.float32 else F64
+        return helper.make_tensor(name, t, list(shape), np.asarray(vals, dtype=dtype).reshape(-1))
+
+    # Default form: no attributes at all, single output.
+    a = rarray([2, 4])
+    node = helper.make_node("LayerNormalization", ["x", "s", "b"], ["y"])
+    emit("layernorm_default", node, [("x", [2, 4])], [("y", [2, 4])], {"x": a},
+         inits=[finit("s", np.float32, [4], rarray([4]) + 1.0), finit("b", np.float32, [4], rarray([4]))],
+         opset=LNOPSET)
+    # Explicit standard form: axis, epsilon and stash_type=1.
+    a = rarray([2, 4])
+    node = helper.make_node("LayerNormalization", ["x", "s", "b"], ["y"], axis=-1, epsilon=1e-5, stash_type=1)
+    emit("layernorm_explicit", node, [("x", [2, 4])], [("y", [2, 4])], {"x": a},
+         inits=[finit("s", np.float32, [4], rarray([4]) + 1.0), finit("b", np.float32, [4], rarray([4]))],
+         opset=LNOPSET)
+    # Non-last axis with all three outputs (Y, Mean, InvStdDev).
+    a = rarray([2, 3, 4])
+    node = helper.make_node("LayerNormalization", ["x", "s", "b"], ["y", "m", "v"], axis=1, epsilon=1e-3, stash_type=1)
+    emit("layernorm_axis1", node, [("x", [2, 3, 4])],
+         [("y", [2, 3, 4]), ("m", [2, 1, 1]), ("v", [2, 1, 1])], {"x": a},
+         inits=[finit("s", np.float32, [3, 4], rarray([3, 4]) + 1.0), finit("b", np.float32, [3, 4], rarray([3, 4]))],
+         opset=LNOPSET)
+    # No-bias form with Mean output.
+    a = rarray([2, 4])
+    node = helper.make_node("LayerNormalization", ["x", "s"], ["y", "m"], axis=-1, epsilon=1e-5, stash_type=1)
+    emit("layernorm_nobias", node, [("x", [2, 4])], [("y", [2, 4]), ("m", [2, 1])], {"x": a},
+         inits=[finit("s", np.float32, [4], rarray([4]) + 1.0)],
+         opset=LNOPSET)
+    # Double precision, single output.
+    a = npr.uniform(-3.0, 3.0, size=[2, 4]).astype(np.float64)
+    node = helper.make_node("LayerNormalization", ["x", "s", "b"], ["y"], axis=-1, epsilon=1e-5, stash_type=1)
+    emit("layernorm_double", node, [("x", [2, 4])], [("y", [2, 4])], {"x": a},
+         inits=[finit("s", np.float64, [4], npr.uniform(-3.0, 3.0, size=[4]).astype(np.float64) + 1.0),
+                finit("b", np.float64, [4], npr.uniform(-3.0, 3.0, size=[4]).astype(np.float64))],
+         dtypes={"x": F64, "y": F64}, feed_dtypes={"x": np.float64}, opset=LNOPSET)
+    # Double precision with float32 stats outputs.
+    a = npr.uniform(-3.0, 3.0, size=[1, 6]).astype(np.float64)
+    node = helper.make_node("LayerNormalization", ["x", "s", "b"], ["y", "m", "v"], axis=-1, epsilon=1e-5, stash_type=1)
+    emit("layernorm_double_stats", node, [("x", [1, 6])],
+         [("y", [1, 6]), ("m", [1, 1]), ("v", [1, 1])], {"x": a},
+         inits=[finit("s", np.float64, [6], npr.uniform(-3.0, 3.0, size=[6]).astype(np.float64) + 1.0),
+                finit("b", np.float64, [6], npr.uniform(-3.0, 3.0, size=[6]).astype(np.float64))],
+         dtypes={"x": F64, "y": F64}, feed_dtypes={"x": np.float64}, opset=LNOPSET)
+
 def boundary_cases():
     # Scalar (rank-0) broadcast against a matrix.
     a = rarray([2, 3])
@@ -308,4 +361,5 @@ if __name__ == "__main__":
     transpose_cases(); reshape_cases(); concat_cases(); softmax_cases()
     matmul_cases(); reducemean_cases(); unsqueeze_cases(); squeeze_cases(); gather_cases()
     boundary_cases()
+    layernorm_cases()
     print("cases:", len([d for d in os.listdir(ROOT) if os.path.isdir(os.path.join(ROOT, d))]))

@@ -1492,12 +1492,14 @@ public class CPUExecutionProvider
         if (rented is null) return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, half.Value, axis ?? -1, concatAxis ?? -1));
         return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, rented, half.Value, axis ?? -1, concatAxis ?? -1));
     }
-    public static OpResult LayerNormalization(ITensor? x, ITensor? scale, ITensor? bias, int? axis, float? epsilon, ExecutionOptions? options, TensorBufferPool? pool, Dictionary<string, object>? attributes)
+    public static OpResult LayerNormalization(ITensor? x, ITensor? scale, ITensor? bias, int? axis, float? epsilon, int? stashType, int outputCount, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.LayerNormalization;
         if (x is null) return MissingInput(op, nameof(x));
         if (scale is null) return MissingInput(op, nameof(scale));
-        if (attributes is not null && attributes.ContainsKey("stash_type")) return AttributeNotSupported(op, "stash_type", "stash_type output selection is not supported.", null);
+        int stash = stashType ?? 1;
+        if (stash != 1) return AttributeNotSupported(op, "stash_type", stash.ToString(), "Only stash_type 1 (32-bit float stage-one compute) is supported.");
+        if (outputCount < 1 || outputCount > 3) return Failure(op, "LayerNormalization declares " + outputCount + " outputs; 1 (Y) to 3 (Y, Mean, InvStdDev) are supported.");
         (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
         int ax = axis ?? -1;
@@ -1510,16 +1512,106 @@ public class CPUExecutionProvider
                 if (bias is not null && bias.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(bias), TensorElementType.Float, bias);
                 var fx = (Tensor<float>)x;
                 var fb = (Tensor<float>?)bias;
-                if (pool is null) return Success(op, Tensor<float>.LayerNormalization(fx, (Tensor<float>)scale, fb, ax, eps));
-                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
-                return Success(op, Tensor<float>.LayerNormalization(fx, (Tensor<float>)scale, fb, rented, ax, eps));
+                Tensor<float> y;
+                if (pool is null) y = Tensor<float>.LayerNormalization(fx, (Tensor<float>)scale, fb, ax, eps);
+                else
+                {
+                    var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
+                    y = Tensor<float>.LayerNormalization(fx, (Tensor<float>)scale, fb, rented, ax, eps);
+                }
+                if (outputCount == 1) return Success(op, y);
+                var stats = LayerNormStats(fx.ToDenseTensor(), ax, eps);
+                if (outputCount == 2) return Success(op, y, stats.Mean);
+                return Success(op, y, stats.Mean, stats.InvStdDev);
             }
             case TensorElementType.Double:
+            {
                 if (scale.ElementType != TensorElementType.Double) return WrongInputType(op, nameof(scale), TensorElementType.Double, scale);
                 if (bias is not null && bias.ElementType != TensorElementType.Double) return WrongInputType(op, nameof(bias), TensorElementType.Double, bias);
-                return Success(op, Tensor<double>.LayerNormalization((Tensor<double>)x, (Tensor<double>)scale, (Tensor<double>?)bias, ax, eps));
+                var dx = (Tensor<double>)x;
+                var y = Tensor<double>.LayerNormalization(dx, (Tensor<double>)scale, (Tensor<double>?)bias, ax, eps);
+                if (outputCount == 1) return Success(op, y);
+                var stats = LayerNormStats(dx.ToDenseTensor(), ax, eps);
+                if (outputCount == 2) return Success(op, y, stats.Mean);
+                return Success(op, y, stats.Mean, stats.InvStdDev);
+            }
             default: return InputTypeNotSupported(op, nameof(x), x);
         }
+    }
+
+    readonly struct LayerNormStatTensors
+    {
+        public readonly DenseTensor<float> Mean;
+        public readonly DenseTensor<float> InvStdDev;
+        public LayerNormStatTensors(DenseTensor<float> mean, DenseTensor<float> invStdDev)
+        {
+            Mean = mean;
+            InvStdDev = invStdDev;
+        }
+    }
+
+    static LayerNormStatTensors LayerNormStats(DenseTensor<float> xd, int axis, double epsilon)
+    {
+        int rank = xd.Rank;
+        int a = axis < 0 ? axis + rank : axis;
+        var dims = xd.Dimensions.ToArray();
+        var statDims = new int[rank];
+        int block = 1;
+        for (int d = 0; d < rank; d++)
+        {
+            if (d < a) statDims[d] = dims[d];
+            else { statDims[d] = 1; block *= dims[d]; }
+        }
+        int outer = (int)(xd.Length / block);
+        var xs = xd.Buffer.Span;
+        var mean = new DenseTensor<float>(statDims);
+        var inv = new DenseTensor<float>(statDims);
+        var ms = mean.Buffer.Span;
+        var vs = inv.Buffer.Span;
+        for (int o = 0; o < outer; o++)
+        {
+            double m = 0.0;
+            for (int i = 0; i < block; i++) m += xs[o * block + i];
+            m /= block;
+            double v = 0.0;
+            for (int i = 0; i < block; i++) { double dd = xs[o * block + i] - m; v += dd * dd; }
+            v /= block;
+            ms[o] = (float)m;
+            vs[o] = (float)(1.0 / Math.Sqrt(v + epsilon));
+        }
+        return new LayerNormStatTensors(mean, inv);
+    }
+
+    static LayerNormStatTensors LayerNormStats(DenseTensor<double> xd, int axis, double epsilon)
+    {
+        int rank = xd.Rank;
+        int a = axis < 0 ? axis + rank : axis;
+        var dims = xd.Dimensions.ToArray();
+        var statDims = new int[rank];
+        int block = 1;
+        for (int d = 0; d < rank; d++)
+        {
+            if (d < a) statDims[d] = dims[d];
+            else { statDims[d] = 1; block *= dims[d]; }
+        }
+        int outer = (int)(xd.Length / block);
+        var xs = xd.Buffer.Span;
+        var mean = new DenseTensor<float>(statDims);
+        var inv = new DenseTensor<float>(statDims);
+        var ms = mean.Buffer.Span;
+        var vs = inv.Buffer.Span;
+        for (int o = 0; o < outer; o++)
+        {
+            double m = 0.0;
+            for (int i = 0; i < block; i++) m += xs[o * block + i];
+            m /= block;
+            double v = 0.0;
+            for (int i = 0; i < block; i++) { double dd = xs[o * block + i] - m; v += dd * dd; }
+            v /= block;
+            ms[o] = (float)m;
+            vs[o] = (float)(1.0 / Math.Sqrt(v + epsilon));
+        }
+        return new LayerNormStatTensors(mean, inv);
     }
 
     /// <summary>

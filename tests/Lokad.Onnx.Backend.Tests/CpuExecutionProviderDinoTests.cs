@@ -122,14 +122,14 @@ public class CpuExecutionProviderDinoTests
     {
         var input = DenseTensor<float>.OfValues(new float[,] { { 1f, 3f }, { 2f, 4f } });
         var scale = DenseTensor<float>.OfValues(new float[] { 1f, 1f });
-        var result = CPU.LayerNormalization(input, scale, null, -1, 0f, null, null, null);
+        var result = CPU.LayerNormalization(input, scale, null, -1, 0f, null, 1, null, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var actual = (Tensor<float>)result.Outputs[0];
         Assert.Equal(-1f, actual[1, 0], 5);
         Assert.Equal(1f, actual[1, 1], 5);
 
-        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(input, null, null, -1, 0f, null, null, null).Status);
-        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(DenseTensor<int>.OfValues(new int[,] { { 1, 2 } }), DenseTensor<int>.OfValues(new int[] { 1, 1 }), null, -1, 0f, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(input, null, null, -1, 0f, null, 1, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(DenseTensor<int>.OfValues(new int[,] { { 1, 2 } }), DenseTensor<int>.OfValues(new int[] { 1, 1 }), null, -1, 0f, null, 1, null, null).Status);
     }
 
     [Fact]

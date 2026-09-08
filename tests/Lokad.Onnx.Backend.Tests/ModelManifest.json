@@ -41,11 +41,22 @@
       "sha256": "BB75E9E30FF382ECDBD150266445AB41272BE4ACC85FD3563218DD89781E36DA",
       "bytes": 137969,
       "opset": 20,
-      "generator": "tests/README.md bisection procedure (dtype-generic probe, native ORT oracle)",
-      "test": "GraphExecutionDinoV3Tests.CanInferWithDinoV3Small (currently red: LayerNormalization stash_type)",
+      "generator": "tests/README.md bisection procedure (dtype-generic probe, native ORT 1.29 oracle on the full-weight asset)",
+      "test": "GraphExecutionDinoV3Tests.CanInferWithDinoV3Small",
       "inputs": "0.5-filled 1x3x224x224",
       "oracle": "shape 1x201x384, finite, mean 1e-6, spots 1e-4",
-      "note": "Asset carries graph structure with placeholder-sized initializers; inference test red for the known stash_type defect, not for asset drift."
+      "note": "Full-weight asset: model.onnx (graph structure and small initializers) plus model.onnx_data (86,347,776-byte external weights, see dinov3-weights). Frozen references confirmed 2026-09-08 by running native ORT 1.29 on the full asset with the fixed input: mean drift 1.4e-10 (tol 1e-6), worst spot drift 3.3e-07 (tol 1e-4)."
+    },
+    {
+      "key": "dinov3-weights",
+      "file": "models/dinov3-vits16/onnx/model.onnx_data",
+      "sha256": "1EFF0BB9F4FDEF831CA61C8BC2B5C88D8CC21EF4756D3B483D9B9C15D8D5D27F",
+      "bytes": 86347776,
+      "opset": 0,
+      "generator": "Upstream DINOv3 ViT-S/16 ONNX export accompanying model.onnx (Hugging Face cache tree record, lfs sha256 1eff0bb9f4fdef83)",
+      "test": "External-data resolution for GraphExecutionDinoV3Tests.CanInferWithDinoV3Small",
+      "inputs": "external tensor data referenced by model.onnx",
+      "oracle": "exact hash and byte match; inference oracle lives on the dinov3 entry"
     },
     {
       "key": "resnet50",
