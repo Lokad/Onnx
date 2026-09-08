@@ -1,62 +1,59 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-// This file is copied and adapted from the following git repository -
-// https://github.com/dotnet/corefx
-// Commit ID: bdd0814360d4c3a58860919f292a306242f27da1
-// Path: /src/System.Numerics.Tensors/src/System/Numerics/Tensors/ArrayUtilities.cs
-// Original license statement below -
-
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-
 namespace Lokad.Onnx
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Runtime.CompilerServices;
+
     public static class ArrayUtilities
     {
         public const int StackallocMax = 16;
 
         /// <summary>
-        /// Copies length elements along one axis from src at srcStart into dst at
-        /// dstStart, streaming outer blocks of inner runs. Shared by split, chunk
-        /// and concat paths so the block geometry lives in one place.
+        /// Copies runs of elements along one axis for every outer block.
+        /// Block o reads length*inner elements at ((o * srcAxisLength) + srcStart) * inner
+        /// and writes them at ((o * dstAxisLength) + dstStart) * inner.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static void CopyAxisChunks<T>(ReadOnlySpan<T> src, int srcAxisLength, Span<T> dst, int dstAxisLength, int outer, int inner, int srcStart, int dstStart, int length)
         {
             for (int o = 0; o < outer; o++)
-                src.Slice((o * srcAxisLength + srcStart) * inner, length * inner)
-                   .CopyTo(dst.Slice((o * dstAxisLength + dstStart) * inner, length * inner));
+            {
+                int from = (o * srcAxisLength + srcStart) * inner;
+                int to = (o * dstAxisLength + dstStart) * inner;
+                src.Slice(from, length * inner).CopyTo(dst.Slice(to, length * inner));
+            }
         }
 
+        /// <summary>
+        /// Multiplies dimensions[startIndex..] with overflow checking.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int ComputeOffsetForReduction(ReadOnlySpan<int> dimensions, int startIndex)
         {
             if (startIndex < 0 || startIndex > dimensions.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
             try
             {
-            checked
-            {
-                int product = 1;
-                for (int i = startIndex; i < dimensions.Length; i++)
+                checked
                 {
-                    if (dimensions[i] < 0) throw new ArgumentException("Dimensions must be non-negative.", nameof(dimensions));
-                    product *= dimensions[i];
+                    int product = 1;
+                    for (int i = startIndex; i < dimensions.Length; i++)
+                    {
+                        if (dimensions[i] < 0) throw new ArgumentException("Dimensions must be non-negative.", nameof(dimensions));
+                        product *= dimensions[i];
+                    }
+                    return product;
                 }
-                return product;
-            }
             }
             catch (OverflowException ex) { throw new ArgumentException("Tensor shape product overflows.", nameof(dimensions), ex); }
         }
 
+        /// <summary>
+        /// Multiplies dimensions[startIndex..] with overflow checking into a long.
+        /// Unlike the int version, an overflowing product escapes as OverflowException.
+        /// </summary>
         public static long ComputeOffsetForReductionLong(ReadOnlySpan<int> dimensions, int startIndex)
         {
             if (startIndex < 0 || startIndex > dimensions.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
@@ -76,12 +73,8 @@ namespace Lokad.Onnx
         {
             for (int i = 1; i < values.Length; i++)
             {
-                if (values[i] < values[i - 1])
-                {
-                    return false;
-                }
+                if (values[i] < values[i - 1]) return false;
             }
-
             return true;
         }
 
@@ -89,386 +82,287 @@ namespace Lokad.Onnx
         {
             for (int i = 1; i < values.Length; i++)
             {
-                if (values[i] > values[i - 1])
-                {
-                    return false;
-                }
+                if (values[i] > values[i - 1]) return false;
             }
-
             return true;
         }
 
         /// <summary>
-        /// Gets the set of strides that can be used to calculate the offset of n-dimensions in a 1-dimensional layout
+        /// Row-major strides for the given dimensions: the last dimension has stride 1.
         /// </summary>
-        /// <param name="dimensions"></param>
-        /// <param name="reverseStride"></param>
-        /// <returns></returns>
         public static int[] GetStrides(ReadOnlySpan<int> dimensions) => GetStrides(dimensions, false);
 
+        /// <summary>
+        /// Strides for the given dimensions, row-major by default or column-major
+        /// (first dimension stride 1) when reverseStride holds. Rejects negative
+        /// dimensions and overflowing products.
+        /// </summary>
         public static int[] GetStrides(ReadOnlySpan<int> dimensions, bool reverseStride)
         {
-            if (dimensions.Length == 0)
-            {
-                return Array.Empty<int>();
-            }
+            if (dimensions.Length == 0) return Array.Empty<int>();
             try
             {
-            checked
-            {
-                for (int i = 0; i < dimensions.Length; i++)
+                checked
                 {
-                    if (dimensions[i] < 0) throw new ArgumentException("Dimensions must be non-negative.", nameof(dimensions));
-                }
-                int[] strides = new int[dimensions.Length];
-                int stride = 1;
-                if (reverseStride)
-                {
-                    for (int i = 0; i < strides.Length; i++)
+                    foreach (var d in dimensions)
                     {
-                        strides[i] = stride;
-                        stride *= dimensions[i];
+                        if (d < 0) throw new ArgumentException("Dimensions must be non-negative.", nameof(dimensions));
                     }
-                }
-                else
-                {
-                    for (int i = strides.Length - 1; i >= 0; i--)
+                    var strides = new int[dimensions.Length];
+                    int stride = 1;
+                    if (reverseStride)
                     {
-                        strides[i] = stride;
-                        stride *= dimensions[i];
+                        for (int i = 0; i < strides.Length; i++)
+                        {
+                            strides[i] = stride;
+                            stride *= dimensions[i];
+                        }
                     }
+                    else
+                    {
+                        for (int i = strides.Length - 1; i >= 0; i--)
+                        {
+                            strides[i] = stride;
+                            stride *= dimensions[i];
+                        }
+                    }
+                    return strides;
                 }
-
-                return strides;
-            }
             }
             catch (OverflowException ex) { throw new ArgumentException("Tensor shape product overflows.", nameof(dimensions), ex); }
         }
 
+        /// <summary>
+        /// Partitions strides by axis membership, preserving order: entries whose
+        /// axis is listed go to splitStrides, the rest to newStrides.
+        /// </summary>
         public static void SplitStrides(int[] strides, int[] splitAxes, int[] newStrides, int stridesOffset, int[] splitStrides, int splitStridesOffset)
         {
-            int newStrideIndex = 0;
+            int kept = 0;
             for (int i = 0; i < strides.Length; i++)
             {
-                int stride = strides[i];
-                bool isSplit = false;
+                bool split = false;
                 for (int j = 0; j < splitAxes.Length; j++)
                 {
                     if (splitAxes[j] == i)
                     {
-                        splitStrides[splitStridesOffset + j] = stride;
-                        isSplit = true;
+                        splitStrides[splitStridesOffset + j] = strides[i];
+                        split = true;
                         break;
                     }
                 }
-
-                if (!isSplit)
+                if (!split)
                 {
-                    newStrides[stridesOffset + newStrideIndex++] = stride;
+                    newStrides[stridesOffset + kept] = strides[i];
+                    kept++;
                 }
             }
         }
 
         /// <summary>
-        /// Calculates the 1-d index for n-d indices in layout specified by strides.
+        /// Dot product of strides and indices: the flat offset of n-d indices.
         /// </summary>
-        /// <param name="strides"></param>
-        /// <param name="indices"></param>
-        /// <param name="startFromDimension"></param>
-        /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int GetIndex(int[] strides, ReadOnlySpan<int> indices) => GetIndex(strides, indices, 0);
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int startFromDimension)
         {
-            if (strides.Length == 0) 
-            { 
-                return 0; 
-            }  
+            if (strides.Length == 0) return 0;
             checked
             {
                 int index = 0;
-                for (int i = startFromDimension; i < indices.Length; i++)
-                {
-                    index += strides[i] * indices[i];
-                }
+                for (int i = startFromDimension; i < indices.Length; i++) index += strides[i] * indices[i];
                 return index;
             }
         }
 
+        /// <summary>
+        /// Flat offset skipping broadcast dimensions and zero entries.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int[] broadcastedDims, int startFromDimension)
         {
             Debug.Assert(strides.Length == indices.Length);
-
             int index = 0;
             for (int i = startFromDimension; i < indices.Length; i++)
             {
-                if (indices[i] == 0 || Array.IndexOf(broadcastedDims, i) != -1)
-                {
-                    continue;
-                }
-                else
-                {
-                    index += strides[i] * indices[i];
-                }
+                if (indices[i] != 0 && Array.IndexOf(broadcastedDims, i) == -1) index += strides[i] * indices[i];
             }
-
             return index;
         }
+
         /// <summary>
-        /// Calculates the n-d indices from the 1-d index in a layout specified by strides
+        /// Decomposes a flat index into n-d indices, dividing by the largest
+        /// stride first for reverse layouts.
         /// </summary>
-        /// <param name="strides"></param>
-        /// <param name="reverseStride"></param>
-        /// <param name="index"></param>
-        /// <param name="indices"></param>
-        /// <param name="startFromDimension"></param>
         public static void GetIndices(ReadOnlySpan<int> strides, bool reverseStride, int index, int[] indices, int startFromDimension)
         {
             Debug.Assert(reverseStride ? IsAscending(strides) : IsDescending(strides), "Index decomposition requires ordered strides");
             Debug.Assert(strides.Length == indices.Length);
-
-            // scalar tensor - nothing to process
-            if (indices.Length == 0)
-            {
-                return;
-            }
-
+            if (indices.Length == 0) return;
             int remainder = index;
             for (int i = startFromDimension; i < strides.Length; i++)
             {
-                // reverse the index for reverseStride so that we divide by largest stride first
-                var nIndex = reverseStride ? strides.Length - 1 - i : i;
-
-                var stride = strides[nIndex];
-                indices[nIndex] = remainder / stride;
-                remainder %= stride;
+                int axis = reverseStride ? strides.Length - 1 - i : i;
+                indices[axis] = remainder / strides[axis];
+                remainder %= strides[axis];
             }
         }
 
         /// <summary>
-        /// Calculates the n-d indices from the 1-d index in a layout specificed by strides
+        /// Decomposes a flat index into n-d indices, dividing by the largest
+        /// stride first for reverse layouts.
         /// </summary>
-        /// <param name="strides"></param>
-        /// <param name="reverseStride"></param>
-        /// <param name="index"></param>
-        /// <param name="indices"></param>
-        /// <param name="startFromDimension"></param>
         public static void GetIndices(ReadOnlySpan<int> strides, bool reverseStride, int index, Span<int> indices, int startFromDimension)
         {
             Debug.Assert(reverseStride ? IsAscending(strides) : IsDescending(strides), "Index decomposition requires ordered strides");
             Debug.Assert(strides.Length == indices.Length);
-
-            // scalar tensor - nothing to process
-            if (indices.Length == 0)
-            {
-                return;
-            }
-
+            if (indices.Length == 0) return;
             int remainder = index;
             for (int i = startFromDimension; i < strides.Length; i++)
             {
-                // reverse the index for reverseStride so that we divide by largest stride first
-                var nIndex = reverseStride ? strides.Length - 1 - i : i;
-
-                var stride = strides[nIndex];
-                indices[nIndex] = remainder / stride;
-                remainder %= stride;
+                int axis = reverseStride ? strides.Length - 1 - i : i;
+                indices[axis] = remainder / strides[axis];
+                remainder %= strides[axis];
             }
         }
 
         /// <summary>
-        /// Takes an 1-d index over n-d sourceStrides and recalculates it assuming same n-d coordinates over a different n-d strides
+        /// Re-expresses a flat index from one stride layout in another layout
+        /// over the same coordinates.
         /// </summary>
         public static int TransformIndexByStrides(int index, int[] sourceStrides, bool sourceReverseStride, int[] transformStrides)
         {
             Debug.Assert(index >= 0);
             Debug.Assert(sourceReverseStride ? IsAscending(sourceStrides) : IsDescending(sourceStrides), "Index decomposition requires ordered strides");
             Debug.Assert(sourceStrides.Length == transformStrides.Length);
-
-            // scalar tensor
             if (sourceStrides.Length == 0)
             {
                 Debug.Assert(index == 0, "Index has to be zero for a scalar tensor");
                 return 0;
             }
-
-            int transformIndex = 0;
+            int mapped = 0;
             int remainder = index;
-
             for (int i = 0; i < sourceStrides.Length; i++)
             {
-                // reverse the index for reverseStride so that we divide by largest stride first
-                var nIndex = sourceReverseStride ? sourceStrides.Length - 1 - i : i;
-
-                var sourceStride = sourceStrides[nIndex];
-                var transformStride = transformStrides[nIndex];
-
-                transformIndex += transformStride * (remainder / sourceStride);
-                remainder %= sourceStride;
+                int axis = sourceReverseStride ? sourceStrides.Length - 1 - i : i;
+                mapped += transformStrides[axis] * (remainder / sourceStrides[axis]);
+                remainder %= sourceStrides[axis];
             }
-
-            return transformIndex;
+            return mapped;
         }
 
+        /// <summary>
+        /// Collects every leaf element of a nested array in depth-first order.
+        /// </summary>
         public static T[] Flatten<T>(this Array data)
         {
-            var list = new List<T>();
-            var stack = new Stack<IEnumerator>();
-            stack.Push(data.GetEnumerator());
-            do
+            var flat = new List<T>();
+            CollectLeaves<T>(data, flat);
+            return flat.ToArray();
+        }
+
+        static void CollectLeaves<T>(Array node, List<T> flat)
+        {
+            foreach (var item in node)
             {
-                for (var iterator = stack.Pop(); iterator.MoveNext();)
-                {
-                    if (iterator.Current is Array)
-                    {
-                        stack.Push(iterator);
-                        iterator = ((IEnumerable) iterator.Current).GetEnumerator();
-                    }
-                    else
-                        list.Add((T)iterator.Current);
-                }
+                if (item is Array nested) CollectLeaves<T>(nested, flat);
+                else flat.Add((T)item);
             }
-            while (stack.Count > 0);
-            return list.ToArray();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        public static int HandleNegativeAxisOrIndex(int size, int axis)
-        {
-            if (axis >= 0)
-            {
-                return axis;
-            }
-            else
-            {
-                return size + axis;
-            }
-        }
+        public static int HandleNegativeAxisOrIndex(int size, int axis) => axis >= 0 ? axis : size + axis;
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static bool CheckNoRepeatedDims(int[] dims) => dims.Length == dims.Distinct().Count();
 
-        
         public static int Clamp(int value, int min, int max)
         {
-            if (value < min)
-            {
-                return min;
-            }
-            else if (value > max) 
-            {
-                return max;
-            }
-            else return value;
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
         }
 
         public static int Clamp(int value, int pmin, int pmax, int nmin, int nmax)
         {
-            var max = value >= 0 ? pmax : nmax;
-            var min = value >= 0 ? pmin : nmin;
-            if (value < min)
-            {
-                return min;
-            }
-            else if (value > max)
-            {
-                return max;
-            }
-            else return value;
+            int min = value >= 0 ? pmin : nmin;
+            int max = value >= 0 ? pmax : nmax;
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
         }
 
+        /// <summary>
+        /// Splits a shape into kept dimensions (in order) and reduced ones (in axes order).
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static Tuple<int[], int[]> ComputeShapesForReduction(int[] inShape, int[] axes)
         {
-            var rank = inShape.Length;
-            Span<int> buf = stackalloc int[rank];
-            int n = 0;
-            for (var dim = 0; dim < rank; dim++)
+            var kept = new List<int>(inShape.Length);
+            for (int dim = 0; dim < inShape.Length; dim++)
             {
-                if (!axes.Contains(dim))
-                {
-                    buf[n] = inShape[dim];
-                    n++;
-                }
+                if (Array.IndexOf(axes, dim) < 0) kept.Add(inShape[dim]);
             }
-            var reducedShape = axes.Select(dim => inShape[dim]).ToArray();
-            return new Tuple<int[], int[]>(buf.Slice(0, n).ToArray(), reducedShape);
+            var reduced = new int[axes.Length];
+            for (int i = 0; i < axes.Length; i++) reduced[i] = inShape[axes[i]];
+            return new Tuple<int[], int[]>(kept.ToArray(), reduced);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public static int[] ComputeReducedShape(int[] inShape, int[] axes)
         {
-            var rank = inShape.Length;
             var reducedShape = new int[axes.Length];
-            for (int i =0; i < axes.Length; i++)
-            {
-                reducedShape[i] = inShape[axes[i]];
-            }
+            for (int i = 0; i < axes.Length; i++) reducedShape[i] = inShape[axes[i]];
             return reducedShape;
         }
 
+        /// <summary>
+        /// Permutation moving every non-reduced axis first (in order) and the
+        /// reduced axes last, or null when they already sit innermost.
+        /// </summary>
         public static int[]? GetAxesPermutationForReduction(int[] axes, int rank)
         {
-            if (AxesAreInnerMostDims(axes, rank))
+            if (AxesAreInnerMostDims(axes, rank)) return null;
+            var permutation = new List<int>(rank);
+            for (int i = 0; i < rank; i++)
             {
-                return null;
+                if (Array.IndexOf(axes, i) < 0) permutation.Add(i);
             }
-            List<int> result = new List<int>();
-            for (var i = 0; i < rank; ++i)
-            {
-                if (axes.ToList().IndexOf(i) == -1)
-                {
-                    result.Add(i);
-                }
-            }
-            result.AddRange(axes);
-            return result.ToArray();
+            permutation.AddRange(axes);
+            return permutation.ToArray();
         }
+
         public static bool AxesAreInnerMostDims(int[] axes, int rank)
         {
-            for (var i = 0; i < axes.Length; ++i)
+            for (int i = 0; i < axes.Length; i++)
             {
-                if (axes[axes.Length - i - 1] != rank - 1 - i)
-                {
-                    return false;
-                }
+                if (axes[axes.Length - 1 - i] != rank - 1 - i) return false;
             }
             return true;
         }
 
         public static int[] GetInnerMostAxes(int n, int rank)
         {
-            List<int> axes = new List<int>();
-            for (var i = rank - n; i < rank; ++i)
-            {
-                axes.Add(i);
-            }
-            return axes.ToArray();
+            var axes = new int[n];
+            for (int i = 0; i < n; i++) axes[i] = rank - n + i;
+            return axes;
         }
 
         public static T[,] To2DArray<T>(this T[][] source)
         {
-            T[,] result = new T[source.Length, source[0].Length];
-
+            var result = new T[source.Length, source[0].Length];
             for (int i = 0; i < source.Length; i++)
             {
-                for (int k = 0; k < source[0].Length; k++)
-                {
-                    result[i, k] = source[i][k];
-                }
+                for (int j = 0; j < source[0].Length; j++) result[i, j] = source[i][j];
             }
             return result;
         }
 
-        public static void UnsafeCopy<T>(T[] arr1, ref T[] arr2) where T: unmanaged
+        public static void UnsafeCopy<T>(T[] arr1, ref T[] arr2) where T : unmanaged
         {
-            if (arr1.Length != arr2.Length)
-            {
-                throw new ArgumentException("The arrays must be of the same length.");
-            }
+            if (arr1.Length != arr2.Length) throw new ArgumentException("The arrays must be of the same length.");
             unsafe
             {
                 Buffer.BlockCopy(arr1, 0, arr2, 0, arr1.Length * sizeof(T));
