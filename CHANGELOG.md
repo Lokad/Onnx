@@ -74,6 +74,10 @@ as planned or a known limitation. This is not a release-readiness claim.
   fused-versus-imported standing once for support queries, dispatch,
   fusion eligibility, and CLI reporting; imported fused-only operations
   and malformed arities fail naming the reason.
+  Removed dead Sun, vendored-list, and string-helper attributions with their
+  code, and independently reimplemented index arithmetic and slice-notation
+  parsing; tensor, sparse, and half-precision sources stay attributed
+  pending their own items, and the package still ships no notices file.
   Benchmark workloads moved from the CLI to the non-packable benchmark
   project with BenchmarkDotNet; the CLI keeps inspection and inference
   only, and bench.ps1 drives model timings plus the relocated sweep.
