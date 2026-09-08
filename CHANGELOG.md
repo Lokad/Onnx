@@ -67,6 +67,10 @@ as planned or a known limitation. This is not a release-readiness claim.
   validates duplicate producers, producer-before-consumer order, and output
   roots with named fast failures, and overlapping calls are rejected without
   touching the active options, outputs, or diagnostics.
+  One schema-aware operator registry resolves domain, opset, arity, and
+  fused-versus-imported standing once for support queries, dispatch,
+  fusion eligibility, and CLI reporting; imported fused-only operations
+  and malformed arities fail naming the reason.
   LayerNorm and RoPE fusion now check operand order, exported intermediates,
   standard operator domains, supported schemas and proven float dtypes and
   shapes for every matched node including Constants and the surviving node.
@@ -120,9 +124,10 @@ as planned or a known limitation. This is not a release-readiness claim.
   Current diagnostic timings are not a completed release performance gate.
 - Review validation: Release solution build passes with 17 test-analyzer
   warnings; Debug core build passes without warnings. Release tests report
-  **210 tensor passes and 410 backend passes with no failures** and no
+  **210 tensor passes and 422 backend passes with no failures** and no
   skips. Python conformance rerun for the fusion domain, LayerNorm stash,
-  output-binding, options-propagation, and preparation-concurrency repairs:
+  output-binding, options-propagation, preparation-concurrency, and
+  operator-schema repairs:
   e5 native lane 9 passed across scalar, SIMD and intrinsics modes;
   single-op differential lane 115 passed with 1 xfailed, including 6 seeded
   LayerNormalization oracle cases; DINOv3 frozen references confirmed

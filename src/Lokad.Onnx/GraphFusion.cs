@@ -46,9 +46,6 @@ namespace Lokad.Onnx
         static bool IsFusableParticipant(Node node)
         {
             if (node.IsFused) return false;
-            if (node.Op == OpType.Unknown) return false;
-            if (!Node.IsStandardDomain(node.Domain)) return false;
-            if (node.OpsetVersion < 0) return false;
             if (!CPUExecutionProvider.SupportsNode(node)) return false;
             return true;
         }

@@ -21,15 +21,10 @@ public partial struct Node
     public int OpsetVersion;
     public bool IsFused;
 
-    public string DescribeOperator()
-    {
-        var domain = string.IsNullOrEmpty(Domain) ? "ai.onnx" : Domain;
-        var op = string.IsNullOrEmpty(OpTypeName) ? Op.ToString() : OpTypeName;
-        return domain + ":" + op + ":" + OpsetVersion;
-    }
+    public string DescribeOperator() => OperatorSchemas.Describe(this);
 
     public static bool IsStandardDomain(string? domain) =>
-        string.IsNullOrEmpty(domain) || domain == "ai.onnx";
+        OperatorSchemas.IsStandardDomain(domain);
 
     public bool HasAttr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T);
 
@@ -175,13 +170,9 @@ public partial struct Node
     public OpResult ExecuteCPU(ComputationalGraph graph, ExecutionOptions? options)
     {
         var opt = options ?? graph.Options;
-        if (Op == OpType.Unknown)
+        if (!OperatorSchemas.TryResolve(this, out _, out var rejection))
         {
-            return Failure(Op, "The operator " + DescribeOperator() + " is not supported by the backend.");
-        }
-        if (!IsStandardDomain(Domain))
-        {
-            return Failure(Op, "The operator " + DescribeOperator() + " uses a non-standard domain and is not supported by the backend.");
+            return Failure(Op, rejection ?? "The operator " + DescribeOperator() + " is not supported by the backend.");
         }
         return Op switch
     {
@@ -206,9 +197,7 @@ public partial struct Node
 
         OpType.Erf => CPU.Erf(InputTensor(graph, 0), opt, graph.ActivePool),
 
-        OpType.MaxPool => Outputs.Length > 1
-            ? Failure(Op, "MaxPool with more than one output is not supported because the optional Indices output is not implemented.")
-            : CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad", null), GetInt("ceil_mode", null), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), GetInt("storage_order", null), Ints("strides"), opt),
+        OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad", null), GetInt("ceil_mode", null), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), GetInt("storage_order", null), Ints("strides"), opt),
 
         OpType.GlobalAveragePool => CPU.GlobalAveragePool(InputTensor(graph, 0), opt),
 

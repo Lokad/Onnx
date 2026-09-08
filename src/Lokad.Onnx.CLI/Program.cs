@@ -474,9 +474,10 @@ class Program
         foreach(var (domain, opName) in ops)
         {
             var display = (string.IsNullOrEmpty(domain) ? "" : domain + ":") + opName + " ";
+            int version = m.Opset.TryGetValue(domain ?? "", out var v) ? v
+                : m.Opset.TryGetValue("", out var d) ? d : -1;
             bool supported = Enum.TryParse<OpType>(opName, false, out var op)
-                && (string.IsNullOrEmpty(domain) || domain == "ai.onnx")
-                && CPUExecutionProvider.SupportsOp(op);
+                && OperatorSchemas.IsSupported(op, domain, version, false);
             if (supported)
             {
                 Con.Write(new Spectre.Console.Text(display, new Style(foreground: Color.Green)));

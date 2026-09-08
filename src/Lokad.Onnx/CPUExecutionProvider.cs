@@ -20,70 +20,17 @@ public enum OptimizationMode
 
 public class CPUExecutionProvider
 {
-    public static IReadOnlyList<OpType> SupportedOps { get; } = new List<OpType>()
-    {
-        OpType.Reshape,
-        OpType.Add,
-        OpType.Div,
-        OpType.Sub,
-        OpType.Mul,
-        OpType.Pow,
-        OpType.Conv,
-        OpType.Relu,
-        OpType.MaxPool,
-        OpType.MatMul,
-        OpType.Sqrt,
-        OpType.Erf,
-        OpType.Transpose,
-        OpType.Constant,
-        OpType.Cast,
-        OpType.Concat,
-        OpType.Shape,
-        OpType.Gather,
-        OpType.Slice,
-        OpType.Equal,
-        OpType.Where,
-        OpType.Expand,
-        OpType.Resize,
-        OpType.Unsqueeze,
-        OpType.ReduceSum,
-        OpType.ReduceMean,
-        OpType.ReduceMax,
-        OpType.Softmax,
-        OpType.Abs,
-        OpType.Cos,
-        OpType.Sin,
-        OpType.Neg,
-        OpType.Gelu,
-        OpType.Squeeze,
-        OpType.Range,
-        OpType.Tile,
-        OpType.LayerNormalization,
-        OpType.SplitToSequence,
-        OpType.SequenceAt,
-        OpType.RotaryEmbedding,
-        OpType.Gemm,
-        OpType.Tanh,
-        OpType.Split,
-        OpType.Less,
-        OpType.ConstantOfShape,
-        OpType.GlobalAveragePool,
-    };
+    public static IReadOnlyList<OpType> SupportedOps { get; } = OperatorSchemas.All.Keys.ToList();
 
-    public static bool SupportsOp(OpType op) => SupportedOps.Contains(op);
+    public static bool SupportsOp(OpType op) => OperatorSchemas.All.ContainsKey(op);
 
     public static bool IsStandardDomain(string? domain) =>
-        string.IsNullOrEmpty(domain) || domain == "ai.onnx";
+        OperatorSchemas.IsStandardDomain(domain);
 
     public static bool SupportsNode(Node node) =>
-        node.Op != OpType.Unknown && IsStandardDomain(node.Domain) && SupportedOps.Contains(node.Op);
+        OperatorSchemas.TryResolve(node, out _, out _);
 
-    public static string DescribeNode(Node node)
-    {
-        var domain = string.IsNullOrEmpty(node.Domain) ? "ai.onnx" : node.Domain;
-        var op = string.IsNullOrEmpty(node.OpTypeName) ? node.Op.ToString() : node.OpTypeName;
-        return domain + ":" + op + ":" + node.OpsetVersion + (node.IsFused ? " (fused)" : "");
-    }
+    public static string DescribeNode(Node node) => OperatorSchemas.Describe(node);
 
     public static OpResult Reshape(ITensor? input, ITensor? shape, bool? allow_zero, ExecutionOptions? options)
     {
