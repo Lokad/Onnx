@@ -34,24 +34,59 @@ public class MatMul2DBenchmarks
     [IterationSetup]
     public void IterationSetup()
     {
-        t_384_384_a = Tensor<float>.Rand(384, 384);
-        ah_1 = t_384_384_a.ToDenseTensor().Buffer.Pin();
-        t_384_384_b = Tensor<float>.Rand(384, 384);
-        bh_1 = t_384_384_b.ToDenseTensor().Buffer.Pin();
-        ch = t_384_384_c.ToDenseTensor().Buffer.Pin();
-        t_384_1536_a = Tensor<float>.Rand(384, 1536);
-        ah_2 = t_384_1536_a.ToDenseTensor().Buffer.Pin();
-        t_1536_384_b = Tensor<float>.Rand(1536, 384);
-        bh_2 = t_1536_384_b.ToDenseTensor().Buffer.Pin();
+        // Same deterministic inputs and a freshly zeroed destination for every
+        // compared variant; conversion runs once here, never in the timed body.
+        var rnd = new Random(Seed);
+        t_384_384_a = FillDeterministic(384, 384, rnd);
+        t_384_384_b = FillDeterministic(384, 384, rnd);
+        t_384_384_c = Tensor<float>.Zeros(384, 384);
+        da = t_384_384_a.ToDenseTensor();
+        db = t_384_384_b.ToDenseTensor();
+        dc = t_384_384_c.ToDenseTensor();
+        ah_1 = da.Buffer.Pin();
+        bh_1 = db.Buffer.Pin();
+        ch = dc.Buffer.Pin();
     }
+
+    [IterationCleanup]
+    public void IterationCleanup()
+    {
+        ah_1.Dispose();
+        bh_1.Dispose();
+        ch.Dispose();
+    }
+
+    [GlobalCleanup]
+    public void VerifyAgreement()
+    {
+        // Recompute both paths on fresh destinations outside the timed loop and
+        // require checksum agreement within float-reorder tolerance.
+        var expected = Tensor<float>.Zeros(384, 384).ToDenseTensor();
+        mm_managed(384, 384, 384, da.Buffer, db.Buffer, expected.Buffer);
+        var actual = Tensor<float>.Zeros(384, 384).ToDenseTensor();
+        unsafe
+        {
+            using var pa = da.Buffer.Pin();
+            using var pb = db.Buffer.Pin();
+            using var pc = actual.Buffer.Pin();
+            mm_unsafe_vectorized_intrinsics(384, 384, 384, (float*)pa.Pointer, (float*)pb.Pointer, (float*)pc.Pointer);
+        }
+        float s1 = Checksum(expected);
+        float s2 = Checksum(actual);
+        float tolerance = 1e-3f * Math.Max(1f, Math.Abs(s1));
+        Info("MatMul2D checksum agreement: managed={m} intrinsics={i}.", s1, s2);
+        if (Math.Abs(s1 - s2) > tolerance)
+            throw new InvalidOperationException($"MatMul2D variants disagree: managed={s1} intrinsics={s2}.");
+    }
+
 
     [Benchmark(Description = "Multiply 2 384x384 matrices - managed")]
     public void MatMul2D_1() =>
-        mm_managed(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_a.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
+        mm_managed(384, 384, 384, da.Buffer, db.Buffer, dc.Buffer);
 
     [Benchmark(Description = "Multiply 2 384x384 matrices - managed simd")]
     public void MatMul2D_3() =>
-      mm_vectorized(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_a.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
+      mm_vectorized(384, 384, 384, da.Buffer, db.Buffer, dc.Buffer);
 
     [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe")]
     public unsafe void MatMul2D_2() =>
@@ -68,17 +103,31 @@ public class MatMul2DBenchmarks
     [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe simd intrinsics pointers 2x4")]
     public unsafe void MatMul2D_6() =>
       mm_unsafe_vectorized_intrinsics_2x4(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
+    static DenseTensor<float> FillDeterministic(int rows, int cols, Random rnd)
+    {
+        var t = Tensor<float>.Zeros(rows, cols).ToDenseTensor();
+        for (int i = 0; i < t.Length; i++) t.SetValue(i, rnd.NextSingle());
+        return t;
+    }
+
+    static float Checksum(DenseTensor<float> t)
+    {
+        float s = 0f;
+        for (int i = 0; i < t.Length; i++) s += t.GetValue(i);
+        return s;
+    }
+
     #region Fields
     Tensor<float> t_384_384_a = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_b = Tensor<float>.Zeros(0);
     Tensor<float> t_384_384_c = Tensor<float>.Zeros(384, 384);
-    Tensor<float> t_384_1536_a = Tensor<float>.Zeros(0);
-    Tensor<float> t_1536_384_b = Tensor<float>.Zeros(0);
+    const int Seed = 12345;
+    DenseTensor<float> da = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> db = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> dc = Tensor<float>.Zeros(384, 384).ToDenseTensor();
 
     MemoryHandle ah_1 = new MemoryHandle();
     MemoryHandle bh_1 = new MemoryHandle();
-    MemoryHandle ah_2 = new MemoryHandle();
-    MemoryHandle bh_2 = new MemoryHandle();
     MemoryHandle ch = new MemoryHandle();
     #endregion
 }
@@ -336,9 +385,25 @@ public class TensorOpBenchmarks
     [BenchmarkCategory("softmax")]
     public void SoftmaxAttn() => Tensor<float>.Softmax(sm_e5, -1, null, 13);
 
+    [Benchmark(Description = "Softmax over 12x30x30 attention scores - simd")]
+    [BenchmarkCategory("softmax")]
+    public void SoftmaxAttn_simd() => Tensor<float>.Softmax(sm_e5, -1, TensorExecutionOptions.Simd, 13);
+
+    [Benchmark(Description = "Softmax over 12x30x30 attention scores - simd intrinsics")]
+    [BenchmarkCategory("softmax")]
+    public void SoftmaxAttn_simd_intrinsics() => Tensor<float>.Softmax(sm_e5, -1, TensorExecutionOptions.Intrinsics, 13);
+
     [Benchmark(Description = "Softmax over 6x257x257 attention scores")]
     [BenchmarkCategory("softmax")]
     public void SoftmaxDino() => Tensor<float>.Softmax(sm_dino, -1, null, 13);
+
+    [Benchmark(Description = "Softmax over 6x257x257 attention scores - simd")]
+    [BenchmarkCategory("softmax")]
+    public void SoftmaxDino_simd() => Tensor<float>.Softmax(sm_dino, -1, TensorExecutionOptions.Simd, 13);
+
+    [Benchmark(Description = "Softmax over 6x257x257 attention scores - simd intrinsics")]
+    [BenchmarkCategory("softmax")]
+    public void SoftmaxDino_simd_intrinsics() => Tensor<float>.Softmax(sm_dino, -1, TensorExecutionOptions.Intrinsics, 13);
 
     [Benchmark(Description = "LayerNormalization over 257x384")]
     [BenchmarkCategory("layernorm")]
