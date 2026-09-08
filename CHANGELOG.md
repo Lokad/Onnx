@@ -67,6 +67,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   validates duplicate producers, producer-before-consumer order, and output
   roots with named fast failures, and overlapping calls are rejected without
   touching the active options, outputs, or diagnostics.
+  The CLI drops its parser, logging, and graphics packages for a bounded
+  hand-written parser, a timestamped console sink, and plain redirected
+  output with identical verbs, flags, and exit codes.
   One schema-aware operator registry resolves domain, opset, arity, and
   fused-versus-imported standing once for support queries, dispatch,
   fusion eligibility, and CLI reporting; imported fused-only operations

@@ -4,12 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using CommandLine;
-using CommandLine.Text;
-using NLog;
-using NLog.Config;
-using Spectre.Console;
-
 using static Lokad.Onnx.Data;
 using static Lokad.Onnx.Text;
 using static Lokad.Onnx.Runtime;
@@ -34,10 +28,6 @@ class Program
         AppDomain.CurrentDomain.UnhandledException += Program_UnhandledException;
         Console.CancelKeyPress += Console_CancelKeyPress;
         Console.OutputEncoding = Encoding.UTF8;
-        foreach (var t in optionTypes)
-        {
-            optionTypesMap.Add(t.Name, t);
-        }
     }
     #endregion
 
@@ -46,82 +36,96 @@ class Program
     #region Entry point
     static void Main(string[] args)
     {
-        string logname = "CLI";
         bool debug = (args.Contains("--debug") || args.Contains("-d"));
-        UseConsoleLogging(debug, logname, true);
-        PrintLogo();
-        var result = new Parser().ParseArguments(args, optionTypes);
-        result
-            .WithParsed<InfoOptions>(ShowInfo)
-            .WithParsed<RunOptions>(Run)
-            .WithParsed<BenchmarkOptions>(bo => Benchmark(bo, GetBenchmarkArgs(args, bo)))
-            .WithNotParsed(errors => Help(result, errors));
+        UseConsoleLogging(debug);
+        var parsed = ArgsParser.Parse(args);
+        switch (parsed.Outcome)
+        {
+            case ParseOutcome.Version:
+                Console.WriteLine("Lokad.Onnx v" + AssemblyVersion.ToString(3));
+                Exit(ExitResult.SUCCESS);
+                return;
+            case ParseOutcome.Help:
+                if (string.IsNullOrEmpty(parsed.Verb)) PrintGlobalHelp();
+                else PrintVerbHelp(parsed.Verb);
+                Exit(ExitResult.SUCCESS);
+                return;
+            case ParseOutcome.Error:
+                Error(parsed.Message);
+                PrintGlobalHelp();
+                Exit(parsed.Exit);
+                return;
+            default:
+                break;
+        }
+        switch (parsed.Verb)
+        {
+            case "info":
+                if (parsed.Value is InfoOptions info) ShowInfo(info);
+                break;
+            case "run":
+                if (parsed.Value is RunOptions run) Run(run);
+                break;
+            case "benchmark":
+                if (parsed.Value is BenchmarkOptions benchmark) Benchmark(benchmark, GetBenchmarkArgs(args, benchmark));
+                break;
+        }
     }
     #endregion
 
-    static void Help(ParserResult<object> result, IEnumerable<Error> errors)
+    static void PrintGlobalHelp()
     {
-        HelpText help = GetAutoBuiltHelpText(result);
-        help.Heading = new HeadingInfo("Lokad.Onnx command-line help");
-        help.Copyright = "";
-        if (errors.Any(e => e.Tag == ErrorType.VersionRequestedError))
-        {
-            help.Heading = new HeadingInfo("Lokad.Onnx", AssemblyVersion.ToString(3));
-            help.Copyright = "";
-            Info(help);
-            Exit(ExitResult.SUCCESS);
-        }
-        else if (errors.Any(e => e.Tag == ErrorType.HelpVerbRequestedError))
-        {
-            HelpVerbRequestedError error = (HelpVerbRequestedError)errors.First(e => e.Tag == ErrorType.HelpVerbRequestedError);
-            if (error.Type != null)
-            {
-                help.AddVerbs(error.Type);
-            }
-            else
-            {
-                help.AddVerbs(optionTypes);
-            }
-            Info(help.ToString().Replace("--", ""));
-            Exit(ExitResult.SUCCESS);
-        }
-        else if (errors.Any(e => e.Tag == ErrorType.HelpRequestedError))
-        {
-            HelpRequestedError error = (HelpRequestedError)errors.First(e => e.Tag == ErrorType.HelpRequestedError);
-            help.AddVerbs(result.TypeInfo.Current);
-            help.AddOptions(result);
-            help.AddPreOptionsLine($"{result.TypeInfo.Current.Name.Replace("Options", "").ToLower()} options:");
-            Info(help);
-            Exit(ExitResult.SUCCESS);
-        }
-        else if (errors.Any(e => e.Tag == ErrorType.NoVerbSelectedError))
-        {
-            help.AddVerbs(optionTypes);
-            Info(help);
-            Exit(ExitResult.INVALID_OPTIONS);
-        }
-        else if (errors.Any(e => e.Tag == ErrorType.MissingRequiredOptionError))
-        {
-            MissingRequiredOptionError error = (MissingRequiredOptionError)errors.First(e => e.Tag == ErrorType.MissingRequiredOptionError);
-            Info(help);
-            Error("A required option is missing.");
+        Console.WriteLine("Lokad.Onnx command-line help");
+        Console.WriteLine("Usage: lonnx <command> [options]");
+        Console.WriteLine("Commands:");
+        Console.WriteLine("  info <file> [--ops] [--init] [--op-filter <type>]   Get information on an ONNX model.");
+        Console.WriteLine("  run <file> <inputs...> [options]                    Run an ONNX model or node.");
+        Console.WriteLine("  benchmark <id> [options]                            Benchmark an ONNX model or operations.");
+        Console.WriteLine("Common options:");
+        Console.WriteLine("  --debug, -d   Enable debug mode.");
+        Console.WriteLine("  --help        Show this help and exit.");
+        Console.WriteLine("  --version     Show version and exit.");
+    }
 
-            Exit(ExitResult.INVALID_OPTIONS);
-        }
-        else if (errors.Any(e => e.Tag == ErrorType.UnknownOptionError))
+    static void PrintVerbHelp(string verb)
+    {
+        if (verb == "info")
         {
-            UnknownOptionError error = (UnknownOptionError)errors.First(e => e.Tag == ErrorType.UnknownOptionError);
-            help.AddVerbs(optionTypes);
-            Info(help);
-            Error("Unknown option: {error}.", error.Token);
-            Exit(ExitResult.INVALID_OPTIONS);
+            Console.WriteLine("Lokad.Onnx command-line help");
+            Console.WriteLine("Usage: lonnx info <file> [options]");
+            Console.WriteLine("Options:");
+            Console.WriteLine("  --ops               Only print out a list of distinct ops present in the model.");
+            Console.WriteLine("  --init              Only print out a list of initializers present in the model.");
+            Console.WriteLine("  --op-filter <type>  Filter on ops with this type.");
         }
-        else
+        else if (verb == "run")
         {
-            Error("An error occurred parsing the program options: {errors}.", errors);
-            help.AddVerbs(optionTypes);
-            Info(help);
-            Exit(ExitResult.INVALID_OPTIONS);
+            Console.WriteLine("Lokad.Onnx command-line help");
+            Console.WriteLine("Usage: lonnx run <file> <inputs...> [options]");
+            Console.WriteLine("Options:");
+            Console.WriteLine("  --save-input        Save any input arguments to the model as additional files.");
+            Console.WriteLine("  --softmax           Apply the softmax function to output vectors.");
+            Console.WriteLine("  --node <label>      Only run the model node with this label.");
+            Console.WriteLine("  --text <model>      Read the user input as text using this model.");
+            Console.WriteLine("  --print-input       Print the input tensors that will be fed to the model.");
+            Console.WriteLine("  --disable-simd      Disable CPU SIMD features.");
+            Console.WriteLine("  --enable-intrinsics Enable CPU SIMD intrinsics.");
+            Console.WriteLine("  --profile           Enable the profiler which logs detailed stats about ONNX node execution times.");
+            Console.WriteLine("  --optimize-memory   Optimize memory usage at the cost of performance.");
+            Console.WriteLine("  --threads <n>       Worker threads for batch-parallel kernels (default 1, sequential).");
+        }
+        else if (verb == "benchmark")
+        {
+            Console.WriteLine("Lokad.Onnx command-line help");
+            Console.WriteLine("Usage: lonnx benchmark <id> [options]");
+            Console.WriteLine("Benchmarks: matmul2d, matmul, indexing, ops, me5s-load, me5s-run.");
+            Console.WriteLine("Options:");
+            Console.WriteLine("  --filter <glob>          Filter the benchmarks by their full name using glob patterns.");
+            Console.WriteLine("  --list <flat|tree>       Print all of the available benchmark names.");
+            Console.WriteLine("  --iterationCount <n>     How many target iterations should be performed.");
+            Console.WriteLine("  --warmupCount <n>        How many warmup iterations should be performed.");
+            Console.WriteLine("  --invocationCount <n>    Invocation count in a single iteration.");
+            Console.WriteLine("  --runOncePerIteration <n> Run the benchmark exactly once per iteration.");
         }
     }
 
@@ -478,17 +482,9 @@ class Program
                 : m.Opset.TryGetValue("", out var d) ? d : -1;
             bool supported = Enum.TryParse<OpType>(opName, false, out var op)
                 && OperatorSchemas.IsSupported(op, domain, version, false);
-            if (supported)
-            {
-                Con.Write(new Spectre.Console.Text(display, new Style(foreground: Color.Green)));
-            }
-            else
-            {
-                Con.Write(new Spectre.Console.Text(display));
-            }
+            Console.WriteLine(display + (supported ? "[supported]" : "[unsupported]"));
         }
-        Con.Write(Environment.NewLine);
-        Info("{d} total distinct operations in model. Green = supported by backend.", ops.Count);
+        Info("{d} total distinct operations in model. [supported] = supported by backend.", ops.Count);
     }
 
     static void PrintModelInitializers(string file)
@@ -514,7 +510,7 @@ class Program
         Info("Printing list of ONNX initializers in graph...");
         foreach (var i in initializers)
         {
-            Con.WriteLine(i);
+            Console.WriteLine(i);
         }
         Info("{d} total initializers in model. * = initializer for graph input.", m.Initializers.Count);
     }
@@ -523,28 +519,27 @@ class Program
     {
         var times = profile.Select(np => (np.Op, np.OpsProfile.Sum(op => op.Time.TotalMilliseconds)))
             .GroupBy(x => x.Item1)
-            .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2)), g.Count()));
-        var times2 = profile.Select(np => (np.OpsProfile.Select(op => (op.Stage, op.Time)))).SelectMany(x => x)//Sum(op => op.Time.TotalMilliseconds)))
+            .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2)), g.Count()))
+            .OrderByDescending(t => t.Item2)
+            .ToArray();
+        var times2 = profile.Select(np => (np.OpsProfile.Select(op => (op.Stage, op.Time)))).SelectMany(x => x)
          .GroupBy(x => x.Item1)
-         .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2.TotalMilliseconds)), g.Count()));
-        var chart = new BarChart()
-            .Width(100)
-            .Label("[green bold underline]Graph Op Times[/]")
-            .CenterLabel()
-            .AddItems(times, (t) => new BarChartItem($"{t.Item1}({t.Item3})", t.Item2, (Color) (((int) t.Item1 % 10) + 1 )));
-        var chart2 = new BreakdownChart()
-            .Width(100)
-            .Compact()
-            .WithValueColor(Color.White)
-            .AddItems(times2, t => new BreakdownChartItem(Profiler.StageDescription(t.Item1) + ":", t.Item2, (Color)(((int)t.Item1 % 10) + 1)));
-        Con.Write(chart);
-        Con.WriteLine();
-        Con.WriteLine("Total graph node count: " + profile.Count);
-        Con.WriteLine("Total graph execution time: " + times.Sum(t => t.Item2) + "ms");
-        Con.Write("Execution time breakdown (ms): ");
-        Con.Write(chart2);
-
-        var times3 = profile.Select(np => (np.Op, 
+         .Select(g => (g.Key, Convert.ToInt32(g.Sum(gx => gx.Item2.TotalMilliseconds)), g.Count()))
+         .OrderByDescending(t => t.Item2)
+         .ToArray();
+        Info("Graph op times (ms):");
+        foreach (var t in times)
+        {
+            Info("  {op}({count}): {ms}ms", t.Item1, t.Item3, t.Item2);
+        }
+        Info("Total graph node count: " + profile.Count);
+        Info("Total graph execution time: " + times.Sum(t => t.Item2) + "ms");
+        Info("Execution time breakdown (ms):");
+        foreach (var t in times2)
+        {
+            Info("  {stage}: {ms}ms", Profiler.StageDescription(t.Item1), t.Item2);
+        }
+        var times3 = profile.Select(np => (np.Op,
                                         np.OpsProfile.Select(op => (op.Stage, op.Time.TotalMilliseconds))
                                                         .GroupBy(s => s.Stage)
                                                         .Select(gs => (gs.Key, gs.Sum(i => i.TotalMilliseconds)))))
@@ -554,64 +549,13 @@ class Program
                                     .GroupBy(x => x.Key)
                                     .Select(x => (x.Key, x.Sum(i => i.Item2)))))
             .ToArray();
-
-        var grid = new Grid(); 
-        grid.AddColumn(); 
-        grid.AddColumn();
-        grid.AddColumn();
-
-        for(int t = 0; t < times3.Length; t+=3)
+        Info("Per-op stage breakdown (ms):");
+        foreach (var op in times3)
         {
-            var time = times3[t].Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color)(((int)i.Item1) + 1)));
-            var chart4 = new BreakdownChart()
-                .Width(50)
-                .Compact()
-                .AddItems(time);
-            Panel p = new Panel(chart4);
-            p.Width = 50;
-            p.Header = new PanelHeader(times3[t].Item1.ToString(), Justify.Center);
-            if (t + 1 >= times3.Length)
-            {
-                grid.AddRow(p);
-                break;
-            }
-            else
-            {
-                var time2 = times3[t + 1].Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color)(((int)i.Item1) + 1)));
-                var chart5 = new BreakdownChart()
-                    .Width(50)
-                    .Compact()
-                    .AddItems(time2);
-                var p2 = new Panel(chart5);
-                p2.Width = 50;
-                p2.Header = new PanelHeader(times3[t + 1].Item1.ToString(), Justify.Center);
-                if (t + 2 >= times3.Length)
-                {
-                    grid.AddRow(p, p2);
-                    break;
-                }
-                else
-                {
-                    var time3 = times3[t + 2].Item2.Select(i => new BreakdownChartItem(Profiler.StageDescription(i.Item1), i.Item2, (Color)(((int)i.Item1) + 1)));
-                    var chart6 = new BreakdownChart()
-                        .Width(50)
-                        .Compact()
-                        .AddItems(time3);
-                    var p3 = new Panel(chart6);
-                    p3.Width = 50;
-                    p3.Header = new PanelHeader(times3[t + 2].Item1.ToString(), Justify.Center);
-                    grid.AddRow(p, p2, p3);
-                }
-            }
+            Info("  {op}: {stages}", op.Item1, string.Join(", ", op.Item2.Select(s => Profiler.StageDescription(s.Item1) + "=" + s.Item2.ToString("F1") + "ms")));
         }
-        Con.Write(grid);
     }
 
-    static void PrintLogo()
-    {
-        Con.Write(new FigletText(font, "Lokad.Onnx").Color(Color.Orange1));
-        Con.Write(new Spectre.Console.Text($"v{AssemblyVersion.ToString(3)}\n"));
-    }
     public static void Exit(ExitResult result)
     {
         if (Cts != null && !Cts.Token.CanBeCanceled)
@@ -634,17 +578,6 @@ class Program
 
     public static void ExitWithSuccess() => Exit(ExitResult.SUCCESS);
 
-    static HelpText GetAutoBuiltHelpText(ParserResult<object> result)
-    {
-        return HelpText.AutoBuild(result, h =>
-        {
-            h.AddOptions(result);
-            HelpText.DefaultParsingErrorsHandler(result, h);
-            return h;
-        },
-        e => e);
-    }
-
     static string[] GetBenchmarkArgs(string[] args, BenchmarkOptions bo)
     {
         List<string> result = args.ToList();
@@ -655,139 +588,23 @@ class Program
         return result.ToArray();
     }
 
-    public static LoggingConfiguration ConfigureConsoleLogger(LoggingConfiguration config, bool debug, bool color)
+    public static void UseConsoleLogging(bool debug)
     {
-        var logconsole = new NLog.Targets.ColoredConsoleTarget("logconsole")
-        {
-            Layout = debug ? NLogDebugLayout : NLogLayout,
-        };
-        config.AddTarget(logconsole);
-        config.AddRule(new LoggingRule("*", LogLevel.Info, logconsole));
-        config.AddRule(new LoggingRule("*", LogLevel.Warn, logconsole));
-        config.AddRule(new LoggingRule("*", LogLevel.Error, logconsole));
-        config.AddRule(new LoggingRule("*", LogLevel.Fatal, logconsole));
-        if (debug)
-        {
-            config.AddRule(new LoggingRule("*", LogLevel.Debug, logconsole));
-        }
-        if (color)
-        {
-            logconsole.RowHighlightingRules.Add(new NLog.Targets.ConsoleRowHighlightingRule() { ForegroundColor = NLog.Targets.ConsoleOutputColor.Gray });
-
-            logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-            {
-                Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Info"),
-                Regex = "INFO",
-                WholeWords = true,
-                CompileRegex = true,
-                ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkGreen
-            });
-
-            logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-            {
-                Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Warn"),
-                Regex = "WARN",
-                WholeWords = true,
-                CompileRegex = true,
-                ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkYellow
-            });
-
-            logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-            {
-                Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Error"),
-                Regex = "ERROR",
-                WholeWords = true,
-                CompileRegex = true,
-                ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkRed
-            });
-
-            logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-            {
-                Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Fatal"),
-                Regex = "FATAL",
-                WholeWords = true,
-                CompileRegex = true,
-                ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                BackgroundColor = NLog.Targets.ConsoleOutputColor.Red
-            });
-
-            logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-            {
-                Condition = NLog.Conditions.ConditionParser.ParseExpression("level == LogLevel.Debug"),
-                Regex = "DEBUG",
-                WholeWords = true,
-                CompileRegex = true,
-                ForegroundColor = NLog.Targets.ConsoleOutputColor.White,
-                BackgroundColor = NLog.Targets.ConsoleOutputColor.DarkBlue
-            });
-
-
-            logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-            {
-                Regex = "\\d\\d\\:\\d\\d\\:\\d\\d\\.\\d{4}",
-                CompileRegex = true,
-                ForegroundColor = NLog.Targets.ConsoleOutputColor.Gray,
-            });
-            logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-            {
-                Regex = "\\\"\\S+\\\"",
-                CompileRegex = true,
-                ForegroundColor = NLog.Targets.ConsoleOutputColor.Red
-            });
-            logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-            {
-                Regex = "\\s+([-+]?([0-9]*[.])?[0-9]+([eE][-+]?\\\\d+)?(ms)?(?!\\:))",
-                CompileRegex = true,
-                ForegroundColor = NLog.Targets.ConsoleOutputColor.Cyan,
-
-            });
-            logconsole.WordHighlightingRules.Add(new NLog.Targets.ConsoleWordHighlightingRule()
-            {
-                Regex = "\\[(\\[*)\\s*([-+]?([0-9]*[.])?[0-9]+([eE][-+]?\\d+)?\\,?)*(\\])*\\]",
-                CompileRegex = true,
-                ForegroundColor = NLog.Targets.ConsoleOutputColor.Magenta,
-            });
-        }
-        return config;
-    }
-
-    static readonly Logger CliLogger = LogManager.GetCurrentClassLogger();
-
-    public static void UseConsoleLogging(bool debug, string logname, bool color)
-    {
-        CreateConsoleLogger(debug, logname, color);
         Log.MinLevel = debug ? Lokad.Onnx.LogLevel.Debug : Lokad.Onnx.LogLevel.Info;
-        Log.Sink = (level, message) => CliLogger.Log(ToNLogLevel(level), message);
-    }
-
-    static NLog.LogLevel ToNLogLevel(Lokad.Onnx.LogLevel level) => level switch
-    {
-        Lokad.Onnx.LogLevel.Debug => NLog.LogLevel.Debug,
-        Lokad.Onnx.LogLevel.Warn => NLog.LogLevel.Warn,
-        Lokad.Onnx.LogLevel.Error => NLog.LogLevel.Error,
-        Lokad.Onnx.LogLevel.Fatal => NLog.LogLevel.Fatal,
-        _ => NLog.LogLevel.Info,
-    };
-
-    public static void CreateConsoleLogger(bool debug, string logname, bool color)
-    {
-        var config = new LoggingConfiguration();
-        if (debug)
+        Log.Sink = (level, message) =>
         {
-            config.Variables["logLevel"] = "Debug";
-        }
-        LogManager.Configuration = ConfigureConsoleLogger(config, debug, color);
+            var stamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff");
+            Console.WriteLine(stamp + " " + level.ToString().ToUpperInvariant().PadRight(5) + " " + message);
+        };
     }
+
     #endregion
 
     #region Event Handlers
     private static void Program_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
         Error("Unhandled runtime error occurred. Lokad.Onnx CLI will now shutdown.");
-        Con.WriteException((Exception)e.ExceptionObject);
+        Console.Error.WriteLine((e.ExceptionObject as Exception)?.ToString() ?? "Unknown error.");
         Exit(ExitResult.UNHANDLED_EXCEPTION);
     }
 
@@ -801,15 +618,5 @@ class Program
     
     #region Fields
     static readonly CancellationTokenSource Cts = new CancellationTokenSource();
-    static object uilock = new object();
-    static Type[] optionTypes =
-    {
-        typeof(Options), typeof(InfoOptions), typeof(RunOptions), typeof(BenchmarkOptions)
-
-    };
-    static FigletFont font = FigletFont.Load(Path.Combine(AssemblyLocation, "chunky.flf"));
-    static Dictionary<string, Type> optionTypesMap = new Dictionary<string, Type>();
-    static string NLogDebugLayout = "${longdate}${pad:padding=6:inner=${level:uppercase=true}} ${logger}(${threadid}) ${callsite:skipFrames=2:includeNamespace=false}: ${message:withexception=true}";
-    static string NLogLayout = "${longdate}${pad:padding=6:inner=${level:uppercase=true}} ${logger}(${threadid}) ${message:withexception=true}";
     #endregion
 }

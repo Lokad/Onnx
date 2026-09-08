@@ -28,7 +28,7 @@ public class MatMul2DBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        Program.UseConsoleLogging(false, "CLI", true);
+        Program.UseConsoleLogging(false);
     }
 
     [IterationSetup]
@@ -354,7 +354,7 @@ public class TensorOpBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        Program.UseConsoleLogging(false, "CLI", true);
+        Program.UseConsoleLogging(false);
         sm_e5 = Tensor<float>.Rand(12, 30, 30);
         sm_dino = Tensor<float>.Rand(6, 257, 257);
         ln_x = Tensor<float>.Rand(257, 384);

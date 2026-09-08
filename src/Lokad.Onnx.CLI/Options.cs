@@ -2,123 +2,355 @@ namespace Lokad.Onnx.CLI;
 
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
-using CommandLine;
-using CommandLine.Text;
-
-#region Base classes
+#region Option records
 public class Options
 {
-    [Option("debug", Required = false, HelpText = "Enable debug mode.")]
     public bool Debug { get; set; }
-
-    [Option("options", Required = false, HelpText = "Any additional options for the selected operation.")]
-    public string AdditionalOptions { get; set; } = String.Empty;
-
-    public static Dictionary<string, object> Parse(string o)
-    {
-        Dictionary<string, object> options = new Dictionary<string, object>();
-        Regex re = new Regex(@"(\w+)\=([^\,]+)", RegexOptions.Compiled);
-        string[] pairs = o.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-        foreach (string s in pairs)
-        {
-            Match m = re.Match(s);
-            if (!m.Success)
-            {
-                options.Add("_ERROR_", s);
-            }
-            else if (options.ContainsKey(m.Groups[1].Value))
-            {
-                options[m.Groups[1].Value] = m.Groups[2].Value;
-            }
-            else
-            {
-                options.Add(m.Groups[1].Value, m.Groups[2].Value);
-            }
-        }
-        return options;
-    }
 }
-#endregion
 
-[Verb("info", HelpText = "Get information on an ONNX model.")]
 public class InfoOptions : Options
 {
-    [Value(0, Required = true, HelpText = "The ONNX model file to open.")]
     public string File { get; set; } = String.Empty;
-
-    [Option("ops", Required = false, HelpText = "Only print out a list of distinct ops present in the model.")]
     public bool Ops { get; set; }
-
-    [Option("init", Required = false, HelpText = "Only print out a list of initializers present in the model.")]
     public bool Initializers { get; set; }
-
-    [Option("op-filter", Required = false, HelpText = "Filter on ops with this type.")]
     public string? OpFilter { get; set; }
 }
 
-[Verb("run", HelpText = "Run an ONNX model or node.")]
 public class RunOptions : Options
 {
-    [Value(0, Required = true, HelpText = "The ONNX model file to open.")]
     public string File { get; set; } = String.Empty;
-
-    [Value(1, Required = true, HelpText = "The user input arguments to the model.")]
-    public IEnumerable<string> Inputs { get; set; } = Array.Empty<string>();
-
-    [Option("save-input", Required = false, HelpText = "Save any input arguments to the model as additional files.")]
+    public List<string> Inputs { get; set; } = new List<string>();
     public bool SaveInput { get; set; }
-
-    [Option("softmax", Required = false, HelpText = "Apply the softmax function to output vectors.")]
     public bool Softmax { get; set; }
-
-    [Option("node", Required = false, HelpText = "Only run the model node with this label. The specified user inputs together with the graph initializers will be used as the node inputs.")]
     public string Node { get; set; } = "";
-
-    [Option("text", Required = false, HelpText = "The specified user input should be read as text using this model.")]
     public string Text { get; set; } = "";
-
-    [Option("print-input", Required = false, HelpText = "Print the input tensors that will be fed to the model.")]
     public bool PrintInput { get; set; }
-
-    [Option("disable-simd", Required = false, HelpText = "Disable CPU SIMD features.")]
     public bool DisableSimd { get; set; }
-
-    [Option("enable-intrinsics", Required = false, HelpText = "Enable CPU SIMD intrinsics.")]
     public bool EnableIntrinsics { get; set; }
-
-    [Option("profile", Required = false, HelpText = "Enable the profiler which logs detailed stats about ONNX node execution times.")]
     public bool EnableProfiler { get; set; }
-
-    [Option("optimize-memory", Required = false, HelpText = "Optimize memory usage at the cost of performance.")]
     public bool OptimizeMemory { get; set; }
-
-    [Option("threads", Required = false, HelpText = "Worker threads for batch-parallel kernels (default 1, sequential).")]
     public int Threads { get; set; } = 1;
 }
 
-[Verb("benchmark", HelpText = "Benchmark an ONNX model or operations.")]
 public class BenchmarkOptions : Options
 {
-    [Value(1, Required = true, HelpText = "The benchmark to run. Currently supported: matmul2d, matmul, indexing, ops, me5s-load, me5s-run")]
     public string BenchmarkId { get; set; } = "";
-
-    [Option('f', "filter", Required = false, HelpText = "Filter the benchmarks by their full name (namespace.typeName.methodName) using glob patterns.")]
     public string Filter { get; set; } = "";
-
-    [Option("list", Required = false, HelpText = "Allows you to print all of the available benchmark names. Support values are flat or tree.")]
-    public string List { get; set; } = ""; //
-
-    [Option("iterationCount", Required = false, HelpText = "How many target iterations should be performed.")]
+    public string List { get; set; } = "";
     public int IterationCount { get; set; }
-
-    [Option("warmupCount", Required = false, HelpText = "How many target iterations should be performed.")]
     public int WarmupCount { get; set; }
-
-    [Option("invocationCount", Required = false, HelpText = "Invocation count in a single iteration.")]
     public int InvocationCount { get; set; }
-
-    [Option("runOncePerIteration", Required = false, HelpText = "Run the benchmark exactly once per iteration.")]
     public int RunOncePerIteration { get; set; }
 }
+#endregion
+
+#region Bounded parser
+public enum ParseOutcome
+{
+    Ok,
+    Help,
+    Version,
+    Error,
+}
+
+public sealed class ParseResult
+{
+    public ParseOutcome Outcome;
+    public string Verb = "";
+    public Options? Value;
+    public string Message = "";
+    public ExitResult Exit = ExitResult.SUCCESS;
+}
+
+public static class ArgsParser
+{
+    static readonly HashSet<string> InfoFlags = new HashSet<string>(StringComparer.Ordinal)
+        { "ops", "init", "op-filter", "debug" };
+    static readonly HashSet<string> RunFlags = new HashSet<string>(StringComparer.Ordinal)
+        { "save-input", "softmax", "node", "text", "print-input", "disable-simd",
+          "enable-intrinsics", "profile", "optimize-memory", "threads", "debug" };
+    static readonly HashSet<string> BenchmarkFlags = new HashSet<string>(StringComparer.Ordinal)
+        { "filter", "list", "iterationCount", "warmupCount", "invocationCount",
+          "runOncePerIteration", "debug" };
+
+    static bool IsFlag(string token) => token.StartsWith("--", StringComparison.Ordinal);
+    static bool IsShort(string token) => token.Length == 2 && token[0] == '-' && token[1] != '-';
+
+    public static ParseResult Parse(string[] args)
+    {
+        var result = new ParseResult();
+        bool debug = false;
+        bool help = false;
+        bool version = false;
+        string verb = "";
+        var rest = new List<string>();
+        foreach (var token in args)
+        {
+            if (token == "--debug" || token == "-d") { debug = true; continue; }
+            if (token == "--help") { help = true; continue; }
+            if (token == "--version") { version = true; continue; }
+            if (verb.Length == 0 && !IsFlag(token) && !IsShort(token)) { verb = token; continue; }
+            rest.Add(token);
+        }
+        if (version)
+        {
+            result.Outcome = ParseOutcome.Version;
+            return result;
+        }
+        if (verb.Length == 0)
+        {
+            if (help)
+            {
+                result.Outcome = ParseOutcome.Help;
+                return result;
+            }
+            result.Outcome = ParseOutcome.Error;
+            result.Message = "No command specified.";
+            result.Exit = ExitResult.INVALID_OPTIONS;
+            return result;
+        }
+        if (verb != "info" && verb != "run" && verb != "benchmark")
+        {
+            result.Outcome = ParseOutcome.Error;
+            result.Message = "Unknown command: " + verb + ".";
+            result.Exit = ExitResult.INVALID_OPTIONS;
+            return result;
+        }
+        if (help)
+        {
+            result.Outcome = ParseOutcome.Help;
+            result.Verb = verb;
+            return result;
+        }
+        result.Verb = verb;
+        var parsed = verb == "info" ? ParseInfo(rest)
+            : verb == "run" ? ParseRun(rest)
+            : ParseBenchmark(rest);
+        if (parsed.Outcome == ParseOutcome.Ok && parsed.Value is not null) parsed.Value.Debug = debug;
+        return parsed;
+    }
+
+    static void SplitFlag(string token, out string name, out string? value)
+    {
+        int eq = token.IndexOf('=');
+        if (eq < 0)
+        {
+            name = token.Substring(2);
+            value = null;
+        }
+        else
+        {
+            name = token.Substring(2, eq - 2);
+            value = token.Substring(eq + 1);
+        }
+    }
+
+    static ParseResult Fail(string? message)
+    {
+        return new ParseResult { Outcome = ParseOutcome.Error, Message = message ?? "Invalid arguments.", Exit = ExitResult.INVALID_OPTIONS };
+    }
+
+    static bool TakeBool(string verb, string name, string? value, out bool parsed, out string? error)
+    {
+        if (value is null)
+        {
+            parsed = true;
+            error = null;
+            return true;
+        }
+        if (bool.TryParse(value, out parsed))
+        {
+            error = null;
+            return true;
+        }
+        error = "Option --" + name + " for command " + verb + " must be true or false.";
+        return false;
+    }
+
+    static bool TakeString(string verb, string name, List<string> rest, ref int i, string? inline, out string value, out string? error)
+    {
+        if (inline is not null)
+        {
+            value = inline;
+            error = null;
+            return true;
+        }
+        if (i + 1 < rest.Count && !IsFlag(rest[i + 1]) && !IsShort(rest[i + 1]))
+        {
+            value = rest[i + 1];
+            i++;
+            error = null;
+            return true;
+        }
+        value = "";
+        error = "Option --" + name + " for command " + verb + " requires a value.";
+        return false;
+    }
+
+    static bool TakeInt(string verb, string name, List<string> rest, ref int i, string? inline, out int value, out string? error)
+    {
+        if (!TakeString(verb, name, rest, ref i, inline, out var text, out error))
+        {
+            value = 0;
+            return false;
+        }
+        if (int.TryParse(text, out value))
+        {
+            error = null;
+            return true;
+        }
+        error = "Option --" + name + " for command " + verb + " must be an integer.";
+        return false;
+    }
+
+    static ParseResult ParseInfo(List<string> rest)
+    {
+        var options = new InfoOptions();
+        var positionals = new List<string>();
+        for (int i = 0; i < rest.Count; i++)
+        {
+            var token = rest[i];
+            if (IsFlag(token))
+            {
+                SplitFlag(token, out var name, out var inline);
+                if (!InfoFlags.Contains(name)) return Fail("Unknown option: " + token + ".");
+                if (name == "ops" || name == "init")
+                {
+                    if (!TakeBool("info", name, inline, out var b, out var eb)) return Fail(eb);
+                    if (name == "ops") options.Ops = b; else options.Initializers = b;
+                }
+                else if (name == "op-filter")
+                {
+                    if (!TakeString("info", "op-filter", rest, ref i, inline, out var v, out var e)) return Fail(e);
+                    options.OpFilter = v;
+                }
+            }
+            else if (IsShort(token))
+            {
+                return Fail("Unknown option: " + token + ".");
+            }
+            else
+            {
+                positionals.Add(token);
+            }
+        }
+        if (positionals.Count < 1) return Fail("The info command requires a model file.");
+        if (positionals.Count > 1) return Fail("The info command takes a single model file.");
+        options.File = positionals[0];
+        return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "info", Value = options };
+    }
+
+    static ParseResult ParseRun(List<string> rest)
+    {
+        var options = new RunOptions();
+        var positionals = new List<string>();
+        for (int i = 0; i < rest.Count; i++)
+        {
+            var token = rest[i];
+            if (IsFlag(token))
+            {
+                SplitFlag(token, out var name, out var inline);
+                if (!RunFlags.Contains(name)) return Fail("Unknown option: " + token + ".");
+                switch (name)
+                {
+                    case "save-input":
+                    case "softmax":
+                    case "print-input":
+                    case "disable-simd":
+                    case "enable-intrinsics":
+                    case "profile":
+                    case "optimize-memory":
+                        if (!TakeBool("run", name, inline, out var b, out var eb)) return Fail(eb);
+                        if (name == "save-input") options.SaveInput = b;
+                        else if (name == "softmax") options.Softmax = b;
+                        else if (name == "print-input") options.PrintInput = b;
+                        else if (name == "disable-simd") options.DisableSimd = b;
+                        else if (name == "enable-intrinsics") options.EnableIntrinsics = b;
+                        else if (name == "profile") options.EnableProfiler = b;
+                        else options.OptimizeMemory = b;
+                        break;
+                    case "node":
+                        if (!TakeString("run", "node", rest, ref i, inline, out var node, out var e1)) return Fail(e1);
+                        options.Node = node;
+                        break;
+                    case "text":
+                        if (!TakeString("run", "text", rest, ref i, inline, out var text, out var e2)) return Fail(e2);
+                        options.Text = text;
+                        break;
+                    case "threads":
+                        if (!TakeInt("run", "threads", rest, ref i, inline, out var threads, out var e3)) return Fail(e3);
+                        options.Threads = threads;
+                        break;
+                }
+            }
+            else if (IsShort(token))
+            {
+                return Fail("Unknown option: " + token + ".");
+            }
+            else
+            {
+                positionals.Add(token);
+            }
+        }
+        if (positionals.Count < 1) return Fail("The run command requires a model file.");
+        if (positionals.Count < 2) return Fail("The run command requires at least one model input.");
+        options.File = positionals[0];
+        options.Inputs = positionals.GetRange(1, positionals.Count - 1);
+        return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "run", Value = options };
+    }
+
+    static ParseResult ParseBenchmark(List<string> rest)
+    {
+        var options = new BenchmarkOptions();
+        var positionals = new List<string>();
+        for (int i = 0; i < rest.Count; i++)
+        {
+            var token = rest[i];
+            if (IsFlag(token))
+            {
+                SplitFlag(token, out var name, out var inline);
+                if (!BenchmarkFlags.Contains(name)) return Fail("Unknown option: " + token + ".");
+                switch (name)
+                {
+                    case "filter":
+                        if (!TakeString("benchmark", "filter", rest, ref i, inline, out var filter, out var e1)) return Fail(e1);
+                        options.Filter = filter;
+                        break;
+                    case "list":
+                        if (!TakeString("benchmark", "list", rest, ref i, inline, out var list, out var e2)) return Fail(e2);
+                        options.List = list;
+                        break;
+                    case "iterationCount":
+                        if (!TakeInt("benchmark", "iterationCount", rest, ref i, inline, out var ic, out var e3)) return Fail(e3);
+                        options.IterationCount = ic;
+                        break;
+                    case "warmupCount":
+                        if (!TakeInt("benchmark", "warmupCount", rest, ref i, inline, out var wc, out var e4)) return Fail(e4);
+                        options.WarmupCount = wc;
+                        break;
+                    case "invocationCount":
+                        if (!TakeInt("benchmark", "invocationCount", rest, ref i, inline, out var vc, out var e5)) return Fail(e5);
+                        options.InvocationCount = vc;
+                        break;
+                    case "runOncePerIteration":
+                        if (!TakeInt("benchmark", "runOncePerIteration", rest, ref i, inline, out var ro, out var e6)) return Fail(e6);
+                        options.RunOncePerIteration = ro;
+                        break;
+                }
+            }
+            else if (IsShort(token))
+            {
+                return Fail("Unknown option: " + token + ".");
+            }
+            else
+            {
+                positionals.Add(token);
+            }
+        }
+        if (positionals.Count < 1) return Fail("The benchmark command requires a benchmark id.");
+        options.BenchmarkId = positionals[0];
+        return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "benchmark", Value = options };
+    }
+}
+#endregion
