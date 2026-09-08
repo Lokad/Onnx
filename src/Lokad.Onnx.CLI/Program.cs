@@ -265,6 +265,7 @@ class Program
         Info("Printing outputs...");
         foreach (var o in graph.Outputs.Values)
         {
+            if (o is null) continue;
             if (ro.Softmax && o.Rank == 1)
             {
                 Info("Applying softmax to {n}...", o.TensorNameDesc());

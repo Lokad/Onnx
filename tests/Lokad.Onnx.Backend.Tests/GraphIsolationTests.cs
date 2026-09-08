@@ -44,8 +44,9 @@ public class GraphIsolationTests
         var user = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
         Assert.True(exec.Execute(user, false));
         Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)exec.Outputs["y"]).ToArray());
-        Assert.Equal(new int[] { 2 }, g.Outputs["y"].Dims.ToArray());
-        Assert.Throws<InvalidOperationException>(() => g.Outputs["y"].ToArray());
+        Assert.True(g.Outputs.TryGetValue("y", out var facadeMarker));
+        Assert.Null(facadeMarker);
+        Assert.Throws<InvalidOperationException>(() => g.Outputs["y"]);
     }
 
     [Fact]
@@ -81,9 +82,9 @@ public class GraphIsolationTests
         var uiA = Data.GetInputTensorsFromFileArgs(new[] { Path.Combine(MnistAsset("images"), "mnist4.png::mnist") })!;
         var uiB = Data.GetInputTensorsFromFileArgs(new[] { Path.Combine(MnistAsset("images"), "mnist2.png::mnist") })!;
         Assert.True(g.Execute(uiA, true));
-        var refA = ((Tensor<float>)g.Outputs.Values.First()).ToArray();
+        var refA = ((Tensor<float>)g.Outputs.Values.First()!).ToArray();
         Assert.True(g.Execute(uiB, true));
-        var refB = ((Tensor<float>)g.Outputs.Values.First()).ToArray();
+        var refB = ((Tensor<float>)g.Outputs.Values.First()!).ToArray();
         var execA = g.CreateExecution(null);
         var execB = g.CreateExecution(null);
         using var barrier = new Barrier(2);
@@ -91,7 +92,7 @@ public class GraphIsolationTests
         {
             barrier.SignalAndWait();
             bool ok = exec.Execute(ui, true);
-            float[] arr = ok ? ((Tensor<float>)exec.Outputs.Values.First()).ToArray() : Array.Empty<float>();
+            float[] arr = ok ? ((Tensor<float>)exec.Outputs.Values.First()!).ToArray() : Array.Empty<float>();
             return (ok, arr);
         };
         var tA = Task.Run(() => run(execA, uiA));
@@ -109,7 +110,7 @@ public class GraphIsolationTests
         var g = OnnxImport.Load(Path.Combine(MnistAsset("models"), "mnist-8.onnx"))!;
         var ui = Data.GetInputTensorsFromFileArgs(new[] { Path.Combine(MnistAsset("images"), "mnist4.png::mnist") })!;
         Assert.True(g.Execute(ui, true));
-        var reference = ((Tensor<float>)g.Outputs.Values.First()).ToArray();
+        var reference = ((Tensor<float>)g.Outputs.Values.First()!).ToArray();
         const int rounds = 25;
         var resultsA = new bool[rounds];
         var resultsB = new bool[rounds];
@@ -122,6 +123,6 @@ public class GraphIsolationTests
         Assert.True(rejected >= 1, "expected at least one clean rejection under hammer");
         Assert.True(succeeded >= 1, "expected at least one success under hammer");
         Assert.True(g.Execute(ui, true));
-        Assert.Equal(reference, ((Tensor<float>)g.Outputs.Values.First()).ToArray());
+        Assert.Equal(reference, ((Tensor<float>)g.Outputs.Values.First()!).ToArray());
     }
 }

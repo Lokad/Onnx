@@ -307,8 +307,6 @@ public static class ProtoConversions
         };
     }
 
-    public static ITensor ToTensor(this ValueInfoProto vp) => Model.ToShapeTensor(vp.ToValueDto());
-
     public static string TensorNameDesc(this ValueInfoProto vp) => vp.ToValueDto().Describe();
 
     public static string TensorNameDesc(this TensorProto tp) => $"{tp.Name}:{((TensorElementType)tp.DataType).ToString().ToLowerInvariant()}:{string.Join("x", tp.Dims)}";

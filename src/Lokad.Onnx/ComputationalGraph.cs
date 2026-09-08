@@ -12,9 +12,9 @@ public class ComputationalGraph
     #region Fields
     public string ModelFile = "";
 
-    public Dictionary<string, ITensor> Inputs = new Dictionary<string, ITensor>();
+    public BindingMap Inputs = new BindingMap();
 
-    public Dictionary<string, ITensor> Outputs = new Dictionary<string, ITensor>();
+    public BindingMap Outputs = new BindingMap();
 
     public List<OnnxValueInfo> OutputDescs = new List<OnnxValueInfo>();
 
@@ -115,7 +115,7 @@ public class ComputationalGraph
         LastPoolReusedBytes = exec.LastPoolReusedBytes;
     }
 
-    static void ReplaceMap(Dictionary<string, ITensor> target, Dictionary<string, ITensor> source)
+    static void ReplaceMap(Dictionary<string, ITensor?> target, Dictionary<string, ITensor?> source)
     {
         target.Clear();
         foreach (var kv in source) target.Add(kv.Key, kv.Value);
@@ -149,10 +149,11 @@ public class ComputationalGraph
 
     public ITensor GetInputTensor(string name)
     {
-        if (Inputs.TryGetValue(name, out var input)) return input;
+        if (Inputs.TryGetValue(name, out var input) && input is not null) return input;
         if (Initializers.TryGetValue(name, out var init)) return init;
         if (IntermediateOutputs.TryGetValue(name, out var mid) && mid is not null) return mid;
-        if (Outputs.TryGetValue(name, out var output)) return output;
+        if (Outputs.TryGetValue(name, out var output) && output is not null) return output;
+        if (Inputs.ContainsKey(name) || Outputs.ContainsKey(name)) throw new InvalidOperationException($"The graph value {name} is declared but has no value in this run.");
         throw new InvalidOperationException($"The intermediate output tensor {name} has not been assigned a value.");
     }
     public ITensor? GetInputTensor(string[] Inputs, int index) =>
@@ -248,9 +249,19 @@ public class ComputationalGraph
         return true;
     }
 
-    public Dictionary<string, ITensor> GetRequiredInputs(bool useInitializers)
+    /// <summary>
+    /// Describes a bound input value for logs, falling back to the retained
+    /// input declaration and then the bare name when the slot is unbound.
+    /// </summary>
+    string DescribeBoundInput(string name)
     {
-        var requiredInputs = new Dictionary<string, ITensor>(Inputs);
+        if (Inputs.TryGetValue(name, out var bound) && bound is not null) return bound.TensorNameDesc();
+        return FindInputDesc(name)?.Describe() ?? name;
+    }
+
+    public Dictionary<string, ITensor?> GetRequiredInputs(bool useInitializers)
+    {
+        var requiredInputs = new Dictionary<string, ITensor?>(Inputs);
         if (useInitializers)
         {
             foreach (var i in Inputs.Keys)
@@ -258,16 +269,19 @@ public class ComputationalGraph
                 if (Initializers.ContainsKey(i))
                 {
                     var ii = Initializers[i];
-                    var iv = Inputs[i];
-                    if (ii.Dims.SequenceEqual(iv.Dims) && ii.ElementType == iv.ElementType)
+                    var declared = FindInputDesc(i);
+                    Inputs.TryGetValue(i, out var bound);
+                    var dims = bound?.Dims ?? declared?.Dims;
+                    var elementType = bound?.ElementType ?? declared?.ElementType;
+                    if (dims is not null && elementType is not null && ii.Dims.SequenceEqual(dims) && ii.ElementType == elementType)
                     {
-                        Info("Using initializer value {n} for graph input {i}.", ii.TensorNameDesc(), Inputs[i].TensorNameDesc());
+                        Info("Using initializer value {n} for graph input {i}.", ii.TensorNameDesc(), DescribeBoundInput(i));
                         Inputs[i] = Initializers[i];
                         requiredInputs.Remove(i);
                     }
                     else
                     {
-                        Error("Cannot use initializer value {n} for graph input {i}. Tensor shape or type does not match.", ii.TensorNameDesc(), Inputs[i].TensorNameDesc());
+                        Error("Cannot use initializer value {n} for graph input {i}. Tensor shape or type does not match.", ii.TensorNameDesc(), DescribeBoundInput(i));
                     }
                 }
             }
@@ -279,7 +293,7 @@ public class ComputationalGraph
     {
         using var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
         var requiredInputs = GetRequiredInputs(useInitializers);   
-        Info("{uic} user input(s) required for graph execution: {uig}.", requiredInputs.Count, requiredInputs.Select(ui => ui.Value.TensorNameDesc()));
+        Info("{uic} user input(s) required for graph execution: {uig}.", requiredInputs.Count, requiredInputs.Select(ui => DescribeBoundInput(ui.Key)));
         if (userInputs.Length != requiredInputs.Count)
         {
             op.Abandon();
@@ -291,17 +305,18 @@ public class ComputationalGraph
             var key = requiredInputs.Keys.ElementAt(i);
             var desc = FindInputDesc(key);
             string? detail = null;
+            var declared = requiredInputs[key];
             bool ok = desc is null
-                ? InputDimsCompatible(requiredInputs[key], userInputs[i])
+                ? declared is not null && InputDimsCompatible(declared, userInputs[i])
                 : CheckDescriptorDims(desc, userInputs[i], symbolic, out detail);
             if (!ok)
             {
                 op.Abandon();
-                return Fail("Cannot use user input {ui} for required input {ri}. Tensor type, rank or dimensions do not match. {d}", userInputs[i].TensorNameDesc(), requiredInputs[key].TensorNameDesc(), detail ?? "");
+                return Fail("Cannot use user input {ui} for required input {ri}. Tensor type, rank or dimensions do not match. {d}", userInputs[i].TensorNameDesc(), DescribeBoundInput(key), detail ?? "");
             }
             else
             {
-                Info("Using user input {n} for graph input {i}.", userInputs[i].TensorNameDesc(), requiredInputs[key].TensorNameDesc());
+                Info("Using user input {n} for graph input {i}.", userInputs[i].TensorNameDesc(), DescribeBoundInput(key));
                 Inputs[key] = userInputs[i];
             }
         }
@@ -313,7 +328,7 @@ public class ComputationalGraph
     {
         using var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
         var requiredInputs = GetRequiredInputs(useInitializers);
-        Info("{uic} user input(s) required for graph execution: {uig}.", requiredInputs.Count, requiredInputs.Select(ui => ui.Value.TensorNameDesc()));
+        Info("{uic} user input(s) required for graph execution: {uig}.", requiredInputs.Count, requiredInputs.Select(ui => DescribeBoundInput(ui.Key)));
         // Validate names before indexing the user dictionary so unknown or
         // missing names fail cleanly instead of throwing KeyNotFoundException,
         // and validate everything before mutating run state.
@@ -336,17 +351,17 @@ public class ComputationalGraph
             var desc = FindInputDesc(kv.Key);
             string? detail = null;
             bool ok = desc is null
-                ? InputDimsCompatible(kv.Value, userInputs[kv.Key])
+                ? kv.Value is not null && InputDimsCompatible(kv.Value, userInputs[kv.Key])
                 : CheckDescriptorDims(desc, userInputs[kv.Key], symbolic, out detail);
             if (!ok)
             {
                 op.Abandon();
-                return Fail("Cannot use user input {ui} for required input {ri}. Tensor type, rank or dimensions do not match. {d}", userInputs[kv.Key].TensorNameDesc(), kv.Value.TensorNameDesc(), detail ?? "");
+                return Fail("Cannot use user input {ui} for required input {ri}. Tensor type, rank or dimensions do not match. {d}", userInputs[kv.Key].TensorNameDesc(), DescribeBoundInput(kv.Key), detail ?? "");
             }
         }
         foreach (var kv in requiredInputs)
         {
-            Info("Using user input {n} for graph input {i}.", userInputs[kv.Key].TensorNameDesc(), kv.Value.TensorNameDesc());
+            Info("Using user input {n} for graph input {i}.", userInputs[kv.Key].TensorNameDesc(), DescribeBoundInput(kv.Key));
             Inputs[kv.Key] = userInputs[kv.Key];
         }
         op.Complete();
@@ -575,7 +590,7 @@ public class ComputationalGraph
             {
                 Outputs[name] = mid;
             }
-            else if (Inputs.TryGetValue(name, out var inp))
+            else if (Inputs.TryGetValue(name, out var inp) && inp is not null)
             {
                 Outputs[name] = inp.Clone();
             }
@@ -587,7 +602,7 @@ public class ComputationalGraph
         foreach (var desc in OutputDescs)
         {
             if (string.IsNullOrEmpty(desc.Name)) continue;
-            if (!Outputs.TryGetValue(desc.Name, out var bound) || bound is TensorDesc)
+            if (!Outputs.TryGetValue(desc.Name, out var bound) || bound is null)
             {
                 return Fail("Graph output {n} was not resolved by this run.", desc.Name);
             }
@@ -600,14 +615,14 @@ public class ComputationalGraph
     /// <summary>
     /// Re-seeds the output bindings from the immutable output declarations so
     /// every run resolves names even after a failure cleared the map. Declared
-    /// keys get fresh dataless descriptors; anything else is left untouched.
+    /// keys get fresh null markers; anything else is left untouched.
     /// </summary>
     void SeedDeclaredOutputs()
     {
         foreach (var vp in OutputDescs)
         {
             if (string.IsNullOrEmpty(vp.Name)) continue;
-            Outputs[vp.Name] = Model.ToShapeTensor(vp);
+            Outputs.MarkUnresolved(vp.Name);
         }
     }
 
@@ -779,7 +794,7 @@ public class ComputationalGraph
         foreach (var vp in OutputDescs)
         {
             if (string.IsNullOrEmpty(vp.Name)) continue;
-            Outputs.Add(vp.Name, Model.ToShapeTensor(vp));
+            Outputs.MarkUnresolved(vp.Name);
         }
         if (gc)
         {

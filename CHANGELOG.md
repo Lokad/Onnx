@@ -47,6 +47,7 @@ as planned or a known limitation. This is not a release-readiness claim.
 - Moved the benchmark-only reference kernels out of the shipped core: `MathOps.mm_managed/mm_vectorized` now live in the benchmark project and `Tensor<T>.MatMul2D_managed` in a test helper. Production scalar/SIMD/intrinsics dispatch kernels are unchanged.
 - Removed the uncalled identity/diagonal/triangle helpers (`Tensor.CreateIdentity/CreateFromDiagonal/GetDiagonal/GetTriangle`); the TODO guard pin drops from five triaged TODOs to two.
 - Centralized the dtype policy on `TensorBase` (element byte size, dense-tensor factory, element-array factory); model materialization and import size/array tables delegate to it with identical values and errors.
+- Removed the throw-only shape-descriptor tensor: graph input/output slots are null markers in a dedicated binding map whose indexer names unbound reads instead of leaking descriptors. Shape metadata stays on the retained input/output declarations.
 
 ### Fixed
 

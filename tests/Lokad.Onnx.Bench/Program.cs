@@ -226,7 +226,7 @@ static class Bench
         var shapes = new string[outNames.Length];
         for (int i = 0; i < outNames.Length; i++)
         {
-            shapes[i] = graph.Outputs.TryGetValue(outNames[i], out var t)
+            shapes[i] = graph.Outputs.TryGetValue(outNames[i], out var t) && t is not null
                 ? outNames[i] + ":" + string.Join("x", t.Dims)
                 : outNames[i] + ":unresolved";
         }

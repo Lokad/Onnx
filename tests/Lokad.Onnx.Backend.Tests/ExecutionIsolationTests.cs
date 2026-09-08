@@ -8,7 +8,7 @@ public class ExecutionIsolationTests
     {
         var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\" + image + "::mnist" })!;
         Assert.True(graph.Execute(ui, true, ExecutionProvider.CPU, options));
-        var output = (Tensor<float>)graph.Outputs.Values.First();
+        var output = (Tensor<float>)graph.Outputs.Values.First()!;
         return output.ToArray();
     }
 

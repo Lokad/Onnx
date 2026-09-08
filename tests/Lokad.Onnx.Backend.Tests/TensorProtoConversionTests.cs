@@ -91,7 +91,7 @@ public class TensorProtoConversionTests
     public void ShapelessTensorValueInfoThrowsArgumentException()
     {
         var vp = new ValueInfoProto { Name = "z", Type = new TypeProto { TensorType = new TypeProto.Types.Tensor { ElemType = 1 } } };
-        var ex = Assert.Throws<ArgumentException>(() => vp.ToTensor());
+        var ex = Assert.Throws<ArgumentException>(() => vp.ToValueDto());
         Assert.Contains("z", ex.Message);
     }
 
@@ -125,7 +125,7 @@ public class TensorProtoConversionTests
     public void UntypedValueInfoThrowsArgumentException()
     {
         var vp = new ValueInfoProto { Name = "w" };
-        var ex = Assert.Throws<ArgumentException>(() => vp.ToTensor());
+        var ex = Assert.Throws<ArgumentException>(() => vp.ToValueDto());
         Assert.Contains("w", ex.Message);
     }
 }

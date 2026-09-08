@@ -74,7 +74,8 @@ namespace Lokad.Onnx
         static bool IsProvenFloatInner(ComputationalGraph graph, Dictionary<string, int> producer, string name, HashSet<string> visiting, Dictionary<string, bool> memo)
         {
             if (string.IsNullOrEmpty(name)) return false;
-            if (graph.Inputs.TryGetValue(name, out var gi)) return gi.ElementType == TensorElementType.Float;
+            if (graph.Inputs.TryGetValue(name, out var gi) && gi is not null) return gi.ElementType == TensorElementType.Float;
+            foreach (var desc in graph.InputDescs) if (desc.Name == name) return desc.ElementType == TensorElementType.Float;
             if (graph.Initializers.TryGetValue(name, out var ti)) return ti.ElementType == TensorElementType.Float;
             if (memo.TryGetValue(name, out var cached)) return cached;
             if (!producer.TryGetValue(name, out var pi)) return false;
@@ -305,7 +306,8 @@ namespace Lokad.Onnx
             }
             int LastDimOf(string name)
             {
-                if (graph.Inputs.TryGetValue(name, out var gi) && gi.Dims.Length > 0) return gi.Dims[gi.Dims.Length - 1];
+                if (graph.Inputs.TryGetValue(name, out var gi) && gi is not null && gi.Dims.Length > 0) return gi.Dims[gi.Dims.Length - 1];
+                foreach (var desc in graph.InputDescs) if (desc.Name == name && desc.Dims.Length > 0) return desc.Dims[desc.Dims.Length - 1];
                 if (graph.Initializers.TryGetValue(name, out var ti) && ti.Dims.Length > 0) return ti.Dims[ti.Dims.Length - 1];
                 return -1;
             }

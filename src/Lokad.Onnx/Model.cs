@@ -35,8 +35,8 @@ public class Model
         }
         op.Complete();
         op = Begin("Converting {c} model input and output descriptions to graph tensors", mp.Inputs.Count + mp.Outputs.Count);
-        graph.Inputs = mp.Inputs.ToDictionary(vp => vp.Name, vp => ToShapeTensor(vp));
-        graph.Outputs = mp.Outputs.ToDictionary(vp => vp.Name, vp => ToShapeTensor(vp));
+        graph.Inputs = new BindingMap(mp.Inputs.ToDictionary(vp => vp.Name, vp => (ITensor?)null));
+        graph.Outputs = new BindingMap(mp.Outputs.ToDictionary(vp => vp.Name, vp => (ITensor?)null));
         graph.InputDescs = mp.Inputs;
         graph.OutputDescs = mp.Outputs;
         op.Complete();
@@ -94,10 +94,4 @@ public class Model
         tensor.Name = tp.Name;
         return tensor;
     }
-
-    /// <summary>
-    /// Builds a data-free shape descriptor for graph input/output slots.
-    /// No element storage is allocated regardless of the declared size.
-    /// </summary>
-    public static ITensor ToShapeTensor(OnnxValueInfo vp) => new TensorDesc(vp);
 }

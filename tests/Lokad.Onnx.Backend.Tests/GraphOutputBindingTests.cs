@@ -135,7 +135,7 @@ public class GraphOutputBindingTests
     }
 
     [Fact]
-    public void Reset_RestoresDeclaredKeysAsDescriptors()
+    public void Reset_RestoresDeclaredKeysAsUnresolved()
     {
         var graph = Model.Load(PassthroughModel())!;
         Assert.True(graph.Execute(GoodX(), true));
@@ -143,7 +143,8 @@ public class GraphOutputBindingTests
         Assert.Empty(graph.Outputs);
         graph.Reset();
         Assert.Equal(new[] { "x" }, graph.Outputs.Keys.OrderBy(k => k).ToArray());
-        Assert.IsType<TensorDesc>(graph.Outputs["x"]);
+        Assert.True(graph.Outputs.TryGetValue("x", out var marker));
+        Assert.Null(marker);
         Assert.True(graph.Execute(GoodX(), true));
         Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)graph.Outputs["x"]).ToArray());
     }

@@ -57,7 +57,7 @@ static class ModelFixture
 
     public static float[] CheckedFirstOutput(ComputationalGraph graph)
     {
-        var output = (Tensor<float>)graph.Outputs.Values.First();
+        var output = (Tensor<float>)graph.Outputs.Values.First()!;
         return CheckedValues(output.ToArray(), "first-output");
     }
 

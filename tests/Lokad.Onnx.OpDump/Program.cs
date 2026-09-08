@@ -117,7 +117,10 @@ static class OpDump
         if (!graph.Execute(dict, true, ExecutionProvider.CPU, opts)) { Console.Error.WriteLine("OpDump error: exec failed: " + graph.LastErrorMessage); return 4; }
         Directory.CreateDirectory(outdir);
         foreach (var kv in graph.Outputs)
+        {
+            if (kv.Value is null) { Console.Error.WriteLine("OpDump error: unresolved output " + kv.Key); return 4; }
             WriteTensor(Path.Combine(outdir, "dotnet_" + Sanitize(kv.Key) + ".txt"), kv.Value);
+        }
         Console.WriteLine("OpDump ok: outputs=" + graph.Outputs.Count);
         return 0;
     }

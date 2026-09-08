@@ -11,7 +11,7 @@ public class GraphExecutionDinoV2Tests
         input.Fill(0.5f);
 
         ModelFixture.AssertExecuted(graph, graph.Execute(new ITensor[] { input }, true));
-        var output = (Tensor<float>)graph.Outputs.Values.First();
+        var output = (Tensor<float>)graph.Outputs.Values.First()!;
         Assert.Equal(new[] { 1, 257, 384 }, output.Dimensions.ToArray());
 
         var values = ModelFixture.CheckedFirstOutput(graph);

@@ -27,8 +27,8 @@ public sealed class GraphExecution : ComputationalGraph
         Options = options ?? prepared.Options;
         LastUseIndex = prepared.LastUseIndex;
         ModelFile = prepared.ModelFile;
-        Inputs = new Dictionary<string, ITensor>(prepared.Inputs);
-        Outputs = new Dictionary<string, ITensor>(prepared.Outputs);
+        Inputs = new BindingMap(prepared.Inputs);
+        Outputs = new BindingMap(prepared.Outputs);
         IntermediateOutputs = new Dictionary<string, ITensor?>(prepared.IntermediateOutputs);
     }
 

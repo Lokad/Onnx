@@ -63,7 +63,7 @@ public class ExecutionOptionsTests
         var baselineGraph = OnnxImport.Load(modelPath)!;
         var ui = Data.GetInputTensorsFromFileArgs(new[] { imageArg })!;
         Assert.True(baselineGraph.Execute(ui, true));
-        var baseline = ((Tensor<float>)baselineGraph.Outputs.Values.First()).ToArray();
+        var baseline = ((Tensor<float>)baselineGraph.Outputs.Values.First()!).ToArray();
 
         var tasks = new Task<float[]>[4];
         for (int i = 0; i < tasks.Length; i++)
@@ -77,7 +77,7 @@ public class ExecutionOptionsTests
                     : new ExecutionOptions(OptimizationMode.Memory, TensorExecutionOptions.Intrinsics);
                 var inputs = Data.GetInputTensorsFromFileArgs(new[] { imageArg })!;
                 Assert.True(g.Execute(inputs, true, ExecutionProvider.CPU, g.Options));
-                return ((Tensor<float>)g.Outputs.Values.First()).ToArray();
+                return ((Tensor<float>)g.Outputs.Values.First()!).ToArray();
             });
         }
         var results = await Task.WhenAll(tasks);

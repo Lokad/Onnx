@@ -19,15 +19,15 @@ namespace Lokad.Onnx.Backend.Tests
             var g = OnnxImport.Load("models\\mnist-8.onnx")!;
             var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" })!;
             Assert.True(g.Execute(ui, true));
-            var o = (Tensor<float>) g.Outputs.Values.First().RemoveDim(0).Softmax();
+            var o = (Tensor<float>) g.Outputs.Values.First()!.RemoveDim(0).Softmax();
             Assert.True(o[4] > 0.9);
             g.Reset();
             Assert.True(g.Execute(Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist2.png::mnist" })!, true));
-            o = (Tensor<float>) g.Outputs.Values.First().RemoveDim(0).Softmax();
+            o = (Tensor<float>) g.Outputs.Values.First()!.RemoveDim(0).Softmax();
             Assert.True((float)o[2] > 0.9);
             g.Reset();
             Assert.True(g.Execute(Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist5.png::mnist" })!, true));
-            o = (Tensor<float>) g.Outputs.Values.First().RemoveDim(0).Softmax();
+            o = (Tensor<float>) g.Outputs.Values.First()!.RemoveDim(0).Softmax();
             Assert.True(o[5] > 0.48);
         }
 
@@ -37,7 +37,7 @@ namespace Lokad.Onnx.Backend.Tests
             var g = OnnxImport.Load("models\\\\mnist-8.onnx")!;
             var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\\\mnist4.png::mnist" })!;
             Assert.True(g.Execute(ui, true));
-            var o = (Tensor<float>) g.Outputs.Values.First().RemoveDim(0);
+            var o = (Tensor<float>) g.Outputs.Values.First()!.RemoveDim(0);
             var expected = new float[] { -7.3263092f, -1.658613f, -7.8152933f, -12.741977f, 18.316916f, -0.16605358f, -6.70112f, 11.390553f, 2.657311f, 1.4563596f };
             Assert.Equal(10, o.Dimensions[0]);
             for (int i = 0; i < 10; i++) Assert.Equal(expected[i], o[i], 4);
