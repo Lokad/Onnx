@@ -462,6 +462,14 @@ public class ComputationalGraph
         LastFailedNodeOp = null;
         LastErrorCause = null;
         LastProfile = null;
+        try
+        {
+            (Options ?? ExecutionOptions.Default).Validated();
+        }
+        catch (Exception ex)
+        {
+            return Fail("Invalid execution options: {m}.", ex.Message);
+        }
         SeedDeclaredOutputs();
         if (userInputs is ITensor[] uia)
         {

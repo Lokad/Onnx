@@ -200,7 +200,7 @@ public partial struct Node
         OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0), opt),
 
         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
-            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), null),
+            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt),
 
         OpType.Relu => CPU.Relu(InputTensor(graph, 0), opt),
 
@@ -248,7 +248,7 @@ public partial struct Node
 
         OpType.Resize => CPU.Resize(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3),
             Attr<string>("mode", "nearest"), Attr<string>("coordinate_transformation_mode", "half_pixel"), Attr<string>("nearest_mode", "round_prefer_floor"),
-            GetFloat("cubic_coeff_a", -0.75f), GetFloat("extrapolation_value", 0f), null),
+            GetFloat("cubic_coeff_a", -0.75f), GetFloat("extrapolation_value", 0f), opt),
 
         OpType.Unsqueeze => graph.OpsetVersion("") switch
         {

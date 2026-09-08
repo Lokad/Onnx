@@ -1061,6 +1061,7 @@ public class CPUExecutionProvider
         }
         if (X is null) return MissingInput(op, nameof(X));
         if (sizes is null && scales is null) return MissingInput(op, nameof(sizes));
+        (options ?? ExecutionOptions.Default).Validated();
         if (sizes is not null && sizes.ElementType == TensorElementType.Int64)
         {
             sizes = sizes.ConvertToInt32();

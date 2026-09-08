@@ -59,6 +59,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   aliases, plus destination validation and dirty-buffer regression coverage.
   Graph runs re-seed output bindings from the immutable output declarations,
   fail naming any declared output left unresolved, and keep retrying without
+  Graph Conv and Resize dispatch carries the selected execution options,
+  Resize validates them at its boundary like every other operator, and runs
+  reject invalid options at entry before any work starts, including empty graphs.
   Reset after failures that still publish nothing.
   LayerNorm and RoPE fusion now check operand order, exported intermediates,
   standard operator domains, supported schemas and proven float dtypes and
@@ -113,9 +116,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   Current diagnostic timings are not a completed release performance gate.
 - Review validation: Release solution build passes with 17 test-analyzer
   warnings; Debug core build passes without warnings. Release tests report
-  **210 tensor passes and 391 backend passes with no failures** and no
+  **210 tensor passes and 404 backend passes with no failures** and no
   skips. Python conformance rerun for the fusion domain, LayerNorm stash,
-  and output-binding repairs: e5 native lane 9 passed across scalar, SIMD
+  and output-binding repairs, revalidated after the options-propagation fix:
   and intrinsics modes; single-op differential lane 115 passed with 1
   xfailed, including 6 seeded LayerNormalization oracle cases; DINOv3
   frozen references confirmed against native ORT 1.29 on the full-weight
