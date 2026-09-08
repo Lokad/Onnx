@@ -61,7 +61,7 @@ public class TensorOpsExpandWhereResizeTests
         var input = DenseTensor<float>.OfShape(1, 1, 2, 2);
         input.Fill(1.5f);
 
-        var resized = Tensor<float>.Resize(input, new[] { 1, 1, 3, 3 }, "cubic", "half_pixel", "floor", -0.75f);
+        var resized = Tensor<float>.Resize(input, new[] { 1, 1, 3, 3 }, MathOps.ResizeMode.Cubic, MathOps.ResizeCoordinateTransformation.HalfPixel, MathOps.ResizeNearestMode.Floor, -0.75f, null);
 
         Assert.Equal(new[] { 1, 1, 3, 3 }, resized.Dimensions.ToArray());
         for (int y = 0; y < 3; y++)

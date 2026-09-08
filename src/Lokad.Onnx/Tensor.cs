@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
@@ -122,6 +123,13 @@ namespace Lokad.Onnx
     /// </summary>
     public class TensorBase
     {
+        /// <summary>
+        /// Exact backing array when this value densely owns precisely its logical
+        /// contents, else null. Views, slices and sparse layouts never qualify,
+        /// so returning their storage through this probe is impossible.
+        /// </summary>
+        internal virtual Array? OwnedBufferArray() => null;
+
         private static readonly Dictionary<Type, TensorTypeInfo> typeInfoMap;
 
         private static readonly Dictionary<TensorElementType, TensorElementTypeInfo> tensorElementTypeInfoMap;
@@ -143,7 +151,8 @@ namespace Lokad.Onnx
                 { typeof(double), new TensorTypeInfo( TensorElementType.Double, sizeof(double)) },
                 { typeof(uint), new TensorTypeInfo( TensorElementType.UInt32, sizeof(uint)) },
                 { typeof(ulong), new TensorTypeInfo( TensorElementType.UInt64, sizeof(ulong)) },
-                { typeof(BFloat16), new TensorTypeInfo( TensorElementType.BFloat16, sizeof(ushort)) }
+                { typeof(BFloat16), new TensorTypeInfo( TensorElementType.BFloat16, sizeof(ushort)) },
+                { typeof(System.Numerics.Complex), new TensorTypeInfo( TensorElementType.Complex64, sizeof(double) * 2) }
             };
 
             tensorElementTypeInfoMap = new Dictionary<TensorElementType, TensorElementTypeInfo>();
@@ -175,9 +184,9 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="type"></param>
         /// <returns>TensorTypeInfo or null if not supported</returns>
-        public static TensorTypeInfo GetTypeInfo(Type type)
+        public static TensorTypeInfo? GetTypeInfo(Type type)
         {
-            TensorTypeInfo result = null;
+            TensorTypeInfo? result = null;
             typeInfoMap.TryGetValue(type, out result);
             return result;
         }
@@ -187,9 +196,9 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="elementType">type enum</param>
         /// <returns>instance of TensorElementTypeInfo or null if not found</returns>
-        public static TensorElementTypeInfo GetElementTypeInfo(TensorElementType elementType)
+        public static TensorElementTypeInfo? GetElementTypeInfo(TensorElementType elementType)
         {
-            TensorElementTypeInfo result = null;
+            TensorElementTypeInfo? result = null;
             tensorElementTypeInfoMap.TryGetValue(elementType, out result);
             return result;
         }
@@ -198,7 +207,7 @@ namespace Lokad.Onnx
         /// Query TensorTypeInfo using this Tensor type
         /// </summary>
         /// <returns></returns>
-        public TensorTypeInfo GetTypeInfo()
+        public TensorTypeInfo? GetTypeInfo()
         {
             return GetTypeInfo(_primitiveType);
         }
@@ -396,11 +405,15 @@ namespace Lokad.Onnx
                 }
                 else if (typeof(T) == typeof(Float16))
                 {
-                    return (T)(object)(ushort)(0);
+                    return (T)(object)Float16.Zero;
                 }
                 else if (typeof(T) == typeof(BFloat16))
                 {
-                    return (T)(object)(ushort)(0);
+                    return (T)(object)BFloat16.Zero;
+                }
+                else if (typeof(T) == typeof(System.Numerics.Complex))
+                {
+                    return (T)(object)System.Numerics.Complex.Zero;
                 }
                 else if (typeof(T) == typeof(string))
                 {
@@ -468,11 +481,15 @@ namespace Lokad.Onnx
                 }
                 else if (typeof(T) == typeof(Float16))
                 {
-                    return (T)(object)(ushort)(15360);
+                    return (T)(object)Float16.One;
                 }
                 else if (typeof(T) == typeof(BFloat16))
                 {
-                    return (T)(object)(ushort)(16256);
+                    return (T)(object)BFloat16.One;
+                }
+                else if (typeof(T) == typeof(System.Numerics.Complex))
+                {
+                    return (T)(object)System.Numerics.Complex.One;
                 }
                 else if (typeof(T) == typeof(string))
                 {
@@ -518,21 +535,25 @@ namespace Lokad.Onnx
         protected Tensor(ReadOnlySpan<int> dimensions, bool reverseStride) : base(typeof(T))
         {
             this.dimensions = new int[dimensions.Length];
-            long size = 1;
-            for (int i = 0; i < dimensions.Length; i++)
+            checked
             {
-                if (dimensions[i] < 0)
+                long size = 1;
+                for (int i = 0; i < dimensions.Length; i++)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(dimensions), "Dimensions must be non-negative");
+                    if (dimensions[i] < 0)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(dimensions), "Dimensions must be non-negative");
+                    }
+                    this.dimensions[i] = dimensions[i];
+                    size *= dimensions[i];
                 }
-                this.dimensions[i] = dimensions[i];
-                size *= dimensions[i];
+
+                this.strides = ArrayUtilities.GetStrides(dimensions, reverseStride);
+                isReversedStride = reverseStride;
+
+                if (size > int.MaxValue) throw new ArgumentException("Tensor element count exceeds maximum backing-store length.", nameof(dimensions));
+                length = size;
             }
-
-            this.strides = ArrayUtilities.GetStrides(dimensions, reverseStride);
-            isReversedStride = reverseStride;
-
-            length = size;
         }
 
         /// <summary>
@@ -554,17 +575,21 @@ namespace Lokad.Onnx
             }
 
             dimensions = new int[fromArray.Rank];
-            long size = 1;
-            for (int i = 0; i < dimensions.Length; i++)
+            checked
             {
-                dimensions[i] = fromArray.GetLength(i);
-                size *= dimensions[i];
+                long size = 1;
+                for (int i = 0; i < dimensions.Length; i++)
+                {
+                    dimensions[i] = fromArray.GetLength(i);
+                    size *= dimensions[i];
+                }
+
+                strides = ArrayUtilities.GetStrides(dimensions, reverseStride);
+                isReversedStride = reverseStride;
+
+                if (size > int.MaxValue) throw new ArgumentException("Tensor element count exceeds maximum backing-store length.", nameof(fromArray));
+                length = size;
             }
-
-            strides = ArrayUtilities.GetStrides(dimensions, reverseStride);
-            isReversedStride = reverseStride;
-
-            length = size;
         }
 
         /// <summary>
@@ -991,12 +1016,15 @@ namespace Lokad.Onnx
                 
                 var slice_dims = SliceAxes(_slices_expanded);
 
-                var it = value.GetDimensionsIterator();
-               
+                // Overlapping source storage snapshots first so reads observe
+                // original values (memmove semantics for shared buffers).
+                var src = SharesStorage(this, value) ? Snapshot(value) : value;
+                var it = src.GetDimensionsIterator();
+
                 foreach (var index in it)
                 {
 
-                    this.SetValue(GetOffsetUnsafe(strides, slice_dims, slices_expanded, index), value[index]);
+                    this.SetValue(GetOffsetUnsafe(strides, slice_dims, slices_expanded, index), src[index]);
                 }
                 
                 /*
@@ -1007,28 +1035,36 @@ namespace Lokad.Onnx
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        protected unsafe int GetOffsetUnsafe(int[] orig_strides, int[] slice_dims, SliceDef[] slices, ReadOnlySpan<int> indices)
+        protected int GetOffsetUnsafe(int[] orig_strides, int[] slice_dims, SliceDef[] slices, ReadOnlySpan<int> indices)
         {
             int offset;
-            var coordsptr = stackalloc int[Rank];
-            var coords = new UnsafeFixedSizeList<int>(coordsptr, Rank);
-            coords.AddRange(indices);
+            // Bounded span instead of a pointer list: capacity is Rank and the
+            // rank is validated before anything is written.
+            if (indices.Length > Rank) throw new ArgumentOutOfRangeException(nameof(indices), $"Too many coordinates for tensor rank {Rank}.");
+            Span<int> coords = stackalloc int[Rank];
+            int coordCount = indices.Length;
+            indices.CopyTo(coords);
             var orig_ndim = orig_strides.Length;
             if (orig_ndim > slice_dims.Length && orig_ndim > indices.Length)
             {
-                // fill in reduced dimensions in the provided coordinates 
+                // fill in reduced dimensions in the provided coordinates
                 for (int i = 0; i < Rank; i++)
                 {
                     var slice = slices[i];
                     if (slice.IsIndex)
-                        coords.Insert(i, 0);
+                    {
+                        if (coordCount >= Rank) throw new ArgumentOutOfRangeException(nameof(indices), "Too many coordinates for tensor rank {Rank}.");
+                        for (int j = coordCount; j > i; j--) coords[j] = coords[j - 1];
+                        coords[i] = 0;
+                        coordCount++;
+                    }
                 }
             }
             //var orig_dims = vi.OriginalShape.dimensions;
             offset = 0;
             unchecked
             {
-                for (int i = 0; i < coords.Count; i++)
+                for (int i = 0; i < coordCount; i++)
                 {
                     // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
                     //var coord = coords[i];
@@ -1058,7 +1094,7 @@ namespace Lokad.Onnx
         #region ITensor support
         public virtual Tensor<T> InsertDim(int dim)
         {
-            if (dim >= Rank) throw new IndexOutOfRangeException(nameof(dim));
+            if (dim < 0 || dim > Rank) throw new IndexOutOfRangeException(nameof(dim));
             var dims = dimensions.ToList();
             dims.Insert(dim, 1);
             return Reshape(dims.ToArray());
@@ -1094,7 +1130,7 @@ namespace Lokad.Onnx
 
         public Tensor<T> PadLeft() => InsertDim(0);
 
-        public Tensor<T> PadRight() => InsertDim(Rank - 1);
+        public Tensor<T> PadRight() => InsertDim(Rank);
 
         public Tensor<T> Reshape(params int[] dims) => Reshape((ReadOnlySpan<int>)dims);
         #endregion
@@ -1167,7 +1203,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region IList members
-        object IList.this[int index]
+        object? IList.this[int index]
         {
             get
             {
@@ -1177,7 +1213,7 @@ namespace Lokad.Onnx
             {
                 try
                 {
-                    SetValue(index, (T)value);
+                    SetValue(index, value is null ? default(T) : (T)value);
                 }
                 catch (InvalidCastException)
                 {
@@ -1198,7 +1234,7 @@ namespace Lokad.Onnx
         /// <value>always false</value>
         public bool IsReadOnly => false;
 
-        int IList.Add(object value)
+        int IList.Add(object? value)
         {
             throw new InvalidOperationException();
         }
@@ -1208,7 +1244,7 @@ namespace Lokad.Onnx
             Fill(default(T));
         }
 
-        bool IList.Contains(object value)
+        bool IList.Contains(object? value)
         {
             if (IsCompatibleObject(value))
             {
@@ -1217,7 +1253,7 @@ namespace Lokad.Onnx
             return false;
         }
 
-        int IList.IndexOf(object value)
+        int IList.IndexOf(object? value)
         {
             if (IsCompatibleObject(value))
             {
@@ -1226,12 +1262,12 @@ namespace Lokad.Onnx
             return -1;
         }
 
-        void IList.Insert(int index, object value)
+        void IList.Insert(int index, object? value)
         {
             throw new InvalidOperationException();
         }
 
-        void IList.Remove(object value)
+        void IList.Remove(object? value)
         {
             throw new InvalidOperationException();
         }
@@ -1315,11 +1351,48 @@ namespace Lokad.Onnx
             }
         }
 
+        /// <summary>
+        /// True when both tensors ultimately read and write the same backing
+        /// array (views, reshapes and broadcasts of shared storage included).
+        /// Unknown layouts report shared so callers take the safe path.
+        /// </summary>
+        protected static bool SharesStorage(Tensor<T> a, Tensor<T> b)
+        {
+            if (ReferenceEquals(a, b)) return true;
+            try
+            {
+                if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(a.Storage, out System.ArraySegment<T> sa) || sa.Array is null) return true;
+                if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(b.Storage, out System.ArraySegment<T> sb) || sb.Array is null) return true;
+                return ReferenceEquals(sa.Array, sb.Array);
+            }
+            catch (Exception) { return true; }
+        }
+
+        /// <summary>
+        /// Materializes an independent dense copy through public indexing, so
+        /// overlapping copies observe original values (memmove semantics).
+        /// </summary>
+        protected static DenseTensor<T> Snapshot(Tensor<T> source)
+        {
+            var dims = source.Dimensions.ToArray();
+            var tmp = new DenseTensor<T>(dims);
+            foreach (var index in source.GetDimensionsIterator())
+            {
+                tmp[index] = source[index];
+            }
+            return tmp;
+        }
+
+        /// <summary>
+        /// Copies values into this tensor. Overlapping source and destination
+        /// behave as if copied through a temporary: no corruption.
+        /// </summary>
         protected virtual void CopyFrom(Tensor<T> from)
         {
             if (from is null) throw new ArgumentNullException(nameof(from));
             if (!dimensions.SequenceEqual(from.dimensions))
                 throw new ArgumentException("The shape of the from tensor is not the same as this tensor.");
+            if (SharesStorage(this, from)) from = Snapshot(from);
 
             
             foreach (var index in from.GetDimensionsIterator())
@@ -1388,7 +1461,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region IStructuralComparable members
-        int IStructuralComparable.CompareTo(object other, IComparer comparer)
+        int IStructuralComparable.CompareTo(object? other, IComparer comparer)
         {
             if (other == null)
             {
@@ -1443,7 +1516,7 @@ namespace Lokad.Onnx
                 var indices = Rank < ArrayUtilities.StackallocMax ? stackalloc int[Rank] : new int[Rank];
                 for (int i = 0; i < Length; i++)
                 {
-                    ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices);
+                    ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices, 0);
                     result = comparer.Compare(this[indices], other[indices]);
                     if (result != 0)
                     {
@@ -1475,7 +1548,7 @@ namespace Lokad.Onnx
             var indices = new int[Rank];
             for (int i = 0; i < Length; i++)
             {
-                ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices);
+                ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices, 0);
 
                 result = comparer.Compare(GetValue(i), other.GetValue(indices));
 
@@ -1490,7 +1563,7 @@ namespace Lokad.Onnx
         #endregion
 
         #region IStructuralEquatable members
-        bool IStructuralEquatable.Equals(object other, IEqualityComparer comparer)
+        bool IStructuralEquatable.Equals(object? other, IEqualityComparer comparer)
         {
             if (other == null)
             {
@@ -1542,7 +1615,7 @@ namespace Lokad.Onnx
                 var indices = Rank < ArrayUtilities.StackallocMax ? stackalloc int[Rank] : new int[Rank];
                 for (int i = 0; i < Length; i++)
                 {
-                    ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices);
+                    ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices, 0);
 
                     if (!comparer.Equals(this[indices], other[indices]))
                     {
@@ -1573,7 +1646,7 @@ namespace Lokad.Onnx
             var indices = new int[Rank];
             for (int i = 0; i < Length; i++)
             {
-                ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices);
+                ArrayUtilities.GetIndices(strides, IsReversedStride, i, indices, 0);
 
                 if (!comparer.Equals(GetValue(i), other.GetValue(indices)))
                 {
@@ -1621,11 +1694,11 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="includeWhitespace"></param>
         /// <returns></returns>
-        public string PrintData(bool includeWhitespace = true)
+        public string PrintData(bool includeWhitespace)
         {
             if (Rank == 0)
             {
-                return this.GetValue(0).ToString(); 
+                return ((object?)this.GetValue(0))?.ToString() ?? ""; 
             }
             var builder = new StringBuilder();
 
@@ -1638,14 +1711,14 @@ namespace Lokad.Onnx
             int indent = 0;
             for (int outerIndex = 0; outerIndex < Length; outerIndex += innerLength)
             {
-                ArrayUtilities.GetIndices(strides, false, outerIndex, indices);
+                ArrayUtilities.GetIndices(strides, false, outerIndex, indices, 0);
 
                 while ((indent < innerDimension) && (indices[indent] == 0))
                 {
                     // start up
                     if (includeWhitespace)
                     {
-                        Indent(builder, indent);
+                        Indent(builder, indent, 4);
                     }
                     indent++;
                     builder.Append('[');
@@ -1663,7 +1736,7 @@ namespace Lokad.Onnx
                     {
                         if (includeWhitespace)
                         {
-                            Indent(builder, indent);
+                            Indent(builder, indent, 4);
                         }
                         builder.Append('[');
                     }
@@ -1692,7 +1765,7 @@ namespace Lokad.Onnx
                         if (includeWhitespace)
                         {
                             builder.AppendLine();
-                            Indent(builder, indent);
+                            Indent(builder, indent, 4);
                         }
                         builder.Append(']');
                     }
@@ -1710,7 +1783,7 @@ namespace Lokad.Onnx
 
             return builder.ToString();
 
-            void Indent(StringBuilder builder, int tabs, int spacesPerTab = 4)
+            void Indent(StringBuilder builder, int tabs, int spacesPerTab)
             {
                 for (int tab = 0; tab < tabs; tab++)
                 {
@@ -1734,11 +1807,15 @@ namespace Lokad.Onnx
         #region ITensor members
         public string Name { get; set; } = "";
 
-        public TensorElementType ElementType { get; } = GetTypeInfo(typeof(T)).ElementType;
+        public TensorElementType ElementType { get; } = GetTypeInfo(typeof(T))?.ElementType ?? throw new NotSupportedException($"Tensor element type {typeof(T).Name} is not supported.");
 
         public Type PrimitiveType { get; } = typeof(T);
 
-        int[] ITensor.Dims => this.dimensions;
+        /// <summary>
+        /// A copy of the shape metadata. Mutating the result never affects
+        /// this tensor; use <see cref="Dimensions"/> for an allocation-free view.
+        /// </summary>
+        int[] ITensor.Dims => (int[])this.dimensions.Clone();
 
         ITensor ITensor.Clone() => Clone();
 
@@ -1774,7 +1851,7 @@ namespace Lokad.Onnx
 
         object ITensor.GetValue(int index) => this.GetValue(index); 
 
-        void ITensor.SetValue(int index, object value) => this.SetValue(index, (T) value);
+        void ITensor.SetValue(int index, object? value) => this.SetValue(index, value is null ? default(T) : (T)value);
 
         ITensor ITensor.Slice(string indices) => new TensorSlice<T>(this, ExpandEllipsis(SliceIndex.ParseSlices(indices)));
 
@@ -1794,7 +1871,7 @@ namespace Lokad.Onnx
 
         #region Slicing
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public unsafe int[] SliceAxes(params SliceIndex[] input_slices)
+        public int[] SliceAxes(params SliceIndex[] input_slices)
         {
             if (dimensions is null || dimensions.Length == 0)
                 throw new InvalidOperationException("Unable to slice an empty shape.");
@@ -1802,18 +1879,21 @@ namespace Lokad.Onnx
             //if (IsBroadcasted)
             //    throw new NotSupportedException("Unable to slice a shape that is broadcasted.");
             int len = this is TensorSlice<T> _ts ? this.Rank + _ts.parent.Rank : this.Rank;
-            var slicesptr = stackalloc SliceDef[len];
-            var slices = new UnsafeFixedSizeList<SliceDef>(slicesptr, len);
-            var slices_axes_unreduced_ptr = stackalloc int[len];
-            var sliced_axes_unreduced = new UnsafeFixedSizeList<int>(slices_axes_unreduced_ptr, len);
+            // Bounded spans instead of pointer lists: capacities are checked
+            // before every write that could previously overflow the buffers.
+            Span<SliceDef> slices = stackalloc SliceDef[len];
+            Span<int> sliced_axes_unreduced = stackalloc int[len];
+            int sliceCount = 0;
             for (int i = 0; i < dimensions.Length; i++)
             {
+                if (sliceCount >= len) throw new ArgumentOutOfRangeException(nameof(input_slices), "Too many slice selectors for this tensor shape.");
                 var dim = dimensions[i];
                 var slice = input_slices.Length > i ? input_slices[i] : SliceIndex.All; //fill missing selectors
                 var slice_def = slice.ToSliceDef(dim);
-                slices.Add(slice_def);
-                var count = Math.Abs(slices[i].Count); // for index-slices count would be -1 but we need 1.
-                sliced_axes_unreduced.Add(count);
+                slices[sliceCount] = slice_def;
+                var count = Math.Abs(slices[sliceCount].Count); // for index-slices count would be -1 but we need 1.
+                sliced_axes_unreduced[sliceCount] = count;
+                sliceCount++;
             }
 
             if (this is TensorSlice<T> ts)
@@ -1824,8 +1904,11 @@ namespace Lokad.Onnx
                     var orig_slice = ts.slices[i];
                     if (orig_slice.IsIndex)
                     {
-                        slices.Insert(i, orig_slice);
-                        sliced_axes_unreduced.Insert(i, 1);
+                        if (sliceCount >= len) throw new ArgumentOutOfRangeException(nameof(input_slices), "Too many slice selectors for this tensor shape.");
+                        for (int j = sliceCount; j > i; j--) { slices[j] = slices[j - 1]; sliced_axes_unreduced[j] = sliced_axes_unreduced[j - 1]; }
+                        slices[i] = orig_slice;
+                        sliced_axes_unreduced[i] = 1;
+                        sliceCount++;
                         continue;
                     }
 
@@ -1834,7 +1917,11 @@ namespace Lokad.Onnx
                 }
             }
 
-            var sliced_axes = sliced_axes_unreduced.Filter((dim, i) => !slices[i].IsIndex).ToArray();
+            int kept = 0;
+            for (int i = 0; i < sliceCount; i++) if (!slices[i].IsIndex) kept++;
+            var sliced_axes = new int[kept];
+            kept = 0;
+            for (int i = 0; i < sliceCount; i++) if (!slices[i].IsIndex) { sliced_axes[kept] = sliced_axes_unreduced[i]; kept++; }
             // var origin = (this.IsSliced && ViewInfo.Slices != null) ? this.ViewInfo.OriginalShape : this;
             //var viewInfo = new ViewInfo() { OriginalShape = origin, Slices = slices.ToArray(), UnreducedShape = new Shape(sliced_axes_unreduced.ToArray()), };
 
@@ -1901,7 +1988,7 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public int[] GetCoordinates(int offset)
         {
-            int[] coords = null;
+            int[] coords;
 
             if (strides.Length == 1)
                 coords = new int[] { offset };
@@ -1929,51 +2016,16 @@ namespace Lokad.Onnx
             return coords;
         }
 
-        /// <summary>
-        ///  Gets coordinates in this shape from index in this shape (slicing is ignored).
-        ///  Example: Shape (2,3)
-        /// 0 => [0, 0]
-        /// 1 => [0, 1]
-        /// ...
-        /// 6 => [1, 2]
-        /// </summary>
-        /// <param name="offset">the index if you would iterate from 0 to shape.size in row major order</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        public unsafe int* GetCoordinatesUnsafe(int offset)
-        {
-            //int[] coords = null;
-
-            ///if (strides.Length == 1)
-             //   coords = new int[] { offset };
-
-            int counter = offset;
-            int* coords = stackalloc int[strides.Length];
-            int stride;
-            for (int i = 0; i < strides.Length; i++)
-            {
-                unchecked
-                {
-                    stride = strides[i];
-                    if (stride == 0)
-                    {
-                        coords[i] = 0;
-                    }
-                    else
-                    {
-                        coords[i] = counter / stride;
-                        counter -= coords[i] * stride;
-                    }
-                }
-            }
-
-            return coords;
-        }
-
         public TensorSlice<T> Slice(params SliceIndex[] indices) => new TensorSlice<T>(this, ExpandEllipsis(indices));
         #endregion
 
         #region Storage
+        /// <summary>
+        /// Root backing storage for dense data. Views resolve to their ultimate
+        /// dense owner (slices to the parent chain, broadcasts to the source);
+        /// sparse tensors expose their value buffer. Non-dense views are
+        /// densified before kernels pin this storage.
+        /// </summary>
         public Memory<T> Storage => this switch
         {
             DenseTensor<T> dt => dt.Buffer,
@@ -1983,6 +2035,12 @@ namespace Lokad.Onnx
             _ => throw new NotImplementedException("Storage property not implemented for this tensor type.")
         };
 
+        /// <summary>
+        /// Maps logical coordinates to an offset in <see cref="Storage"/> using
+        /// each level standard dense strides (broadcasts via effective strides,
+        /// slices via parent-relative offsets). Exact for dense-compatible
+        /// layouts, which is all kernels ever pass after densification.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetStorageIndex(int[] indices) => this switch
         {
@@ -2003,14 +2061,16 @@ namespace Lokad.Onnx
         public TensorDimensionsIterator GetDimensionsIterator() => GetDimensionsIterator(..);
         #endregion
 
-        private static bool IsCompatibleObject(object value)
+        private static bool IsCompatibleObject([NotNullWhen(true)] object? value)
         {
             // Non-null values are fine.  Only accept nulls if T is a class or Nullable<T>.
             // Note that default(T) is not equal to null for value types except when T is Nullable<T>.
             return value is T;
         }
 
-        public static Tensor<int> Arange(int start, int stop, int step = 1)
+        public static Tensor<int> Arange(int start, int stop) => Arange(start, stop, 1);
+
+        public static Tensor<int> Arange(int start, int stop, int step)
         {
             if (step == 0)
                 throw new ArgumentException("step can't be 0", nameof(step));
@@ -2051,7 +2111,9 @@ namespace Lokad.Onnx
             return nd;
         }
 
-        public static Tensor<float> Arange(float start, float stop, float step = 1.0f)
+        public static Tensor<float> Arange(float start, float stop) => Arange(start, stop, 1.0f);
+
+        public static Tensor<float> Arange(float start, float stop, float step)
         {
             if (step == 0.0f)
                 throw new ArgumentException("step can't be 0", nameof(step));

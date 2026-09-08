@@ -7,7 +7,7 @@ public class NodeRunTests
     {
         var x = Tensor<int>.Arange(0, 20).Reshape(4, 5);
         var y = Tensor<int>.Arange(0, 20).Reshape(4, 5);
-        var r = CPUExecutionProvider.Add(x, y);
+        var r = CPUExecutionProvider.Add(x, y, null, null);
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Single(r.Outputs);
         var c = (Tensor<int>)r.Outputs[0];
@@ -25,8 +25,8 @@ public class NodeRunTests
     public void Add_NullInput_Fails()
     {
         var x = Tensor<int>.Ones(2, 2);
-        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Add(null, x).Status);
-        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Add(x, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Add(null, x, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Add(x, null, null, null).Status);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class NodeRunTests
     {
         var x = Tensor<int>.Ones(2, 2);
         var y = Tensor<float>.Ones(2, 2);
-        var r = CPUExecutionProvider.Add(x, y);
+        var r = CPUExecutionProvider.Add(x, y, null, null);
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.NotNull(r.Message);
     }
@@ -44,7 +44,7 @@ public class NodeRunTests
     {
         var x = Tensor<float>.Ones(2, 2);
         var shape = Tensor<int>.Ones(2);
-        var r = CPUExecutionProvider.Reshape(x, shape);
+        var r = CPUExecutionProvider.Reshape(x, shape, null, null);
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.NotNull(r.Message);
     }
@@ -53,7 +53,7 @@ public class NodeRunTests
     public void Reshape_MissingInput_Fails()
     {
         var shape = Tensor<long>.Ones(2);
-        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Reshape(null, shape).Status);
-        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Reshape(Tensor<float>.Ones(2, 2), null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Reshape(null, shape, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Reshape(Tensor<float>.Ones(2, 2), null, null, null).Status);
     }
 }

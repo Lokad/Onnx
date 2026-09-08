@@ -12,6 +12,7 @@ using Spectre.Console;
 
 using static Lokad.Onnx.Data;
 using static Lokad.Onnx.Text;
+using static Lokad.Onnx.Runtime;
 
 #region Enums
 public enum ExitResult
@@ -25,13 +26,12 @@ public enum ExitResult
 }
 #endregion
 
-class Program : Runtime
+class Program
 {
     #region Constructor
     static Program()
     {
         AppDomain.CurrentDomain.UnhandledException += Program_UnhandledException;
-        InteractiveConsole = true;
         Console.CancelKeyPress += Console_CancelKeyPress;
         Console.OutputEncoding = Encoding.UTF8;
         foreach (var t in optionTypes)
@@ -46,15 +46,13 @@ class Program : Runtime
     #region Entry point
     static void Main(string[] args)
     {
-        string toolname = "Lokad.Onnx.CLI";
         string logname = "CLI";
         bool debug = (args.Contains("--debug") || args.Contains("-d"));
         UseConsoleLogging(debug, logname, true);
-        Initialize(toolname, logname, debug);
         PrintLogo();
         var result = new Parser().ParseArguments(args, optionTypes);
         result
-            .WithParsed<InfoOptions>(Info)
+            .WithParsed<InfoOptions>(ShowInfo)
             .WithParsed<RunOptions>(Run)
             .WithParsed<BenchmarkOptions>(bo => Benchmark(bo, GetBenchmarkArgs(args, bo)))
             .WithNotParsed(errors => Help(result, errors));
@@ -127,7 +125,7 @@ class Program : Runtime
         }
     }
 
-    static void Info(InfoOptions io)
+    static void ShowInfo(InfoOptions io)
     {
         ExitIfFileNotFound(io.File);
         if (io.Ops)
@@ -173,11 +171,23 @@ class Program : Runtime
         ITensor[]? ui;
         if (!string.IsNullOrEmpty(ro.Text))
         {
+            if (ro.Inputs.Count() != 1)
+            {
+                Error("The --text option requires exactly one input argument.");
+                Exit(ExitResult.INVALID_INPUT);
+                return;
+            }
+            var head = ro.Text.Split(':')[0];
+            if ((string.IsNullOrEmpty(head) || head == "me5s") && !Lokad.Onnx.Text.EnsureMe5sTokenizer())
+            {
+                Exit(ExitResult.INVALID_INPUT);
+                return;
+            }
             ui = GetTextTensors(ro.Inputs.First(), ro.Text);
         }
         else
         {
-            ui = GetInputTensorsFromFileArgs(ro.Inputs);
+            ui = GetInputTensorsFromFileArgs(ro.Inputs, ro.SaveInput);
         }
         if (ui is null || ui.Length == 0)
         {
@@ -207,7 +217,7 @@ class Program : Runtime
         }
         if (ro.Threads > 1)
         {
-            Info("Batch-parallel kernels using up to {t} worker threads.", ro.Threads);
+            Info("Multi-threaded kernels using up to {t} worker threads.", ro.Threads);
         }
         var execOptions = new ExecutionOptions(
             ro.OptimizeMemory ? OptimizationMode.Memory : OptimizationMode.Speed,
@@ -242,51 +252,54 @@ class Program : Runtime
         {
             if (graph.Execute(ui, true, ExecutionProvider.CPU, execOptions))
             {
-                Info("Printing outputs...");
-                foreach (var o in graph.Outputs.Values)
-                {
-                    if (ro.Softmax && o.Rank == 1)
-                    {
-                        Info("Applying softmax to {n}...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
-                    }
-                    else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
-                    {
-                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
-                    }
-                    else
-                    {
-                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
-                    }
-                }
+                PrintOutputs(graph, ro);
                 if (ro.EnableProfiler && graph.LastProfile is { } profile) PrintProfile(profile);
                 Exit(ExitResult.SUCCESS);
+            }
+            else
+            {
+                Error("Inference failed: {m}.", graph.LastErrorMessage ?? "invalid inputs");
+                Exit(graph.LastFailedNodeName is null ? ExitResult.INVALID_INPUT : ExitResult.UNKNOWN_ERROR);
             }
         }
         else
         {
             if (graph.ExecuteNode(ui, ro.Node, true, ExecutionProvider.CPU, execOptions))
             {
-                Info("Printing outputs...");
-                foreach (var o in graph.Outputs.Values)
-                {
-                    if (ro.Softmax && o.Rank == 1)
-                    {
-                        Info("Applying softmax to {n}...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
-                    }
-                    else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
-                    {
-                        Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
-                        Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
-                    }
-                    else
-                    {
-                        Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
-                    }
-                }
+                PrintOutputs(graph, ro);
                 Exit(ExitResult.SUCCESS);
+            }
+            else if (!graph.Nodes.Any(n => n.Name == ro.Node))
+            {
+                Error("Inference failed: node {n} not found in graph.", ro.Node);
+                Exit(ExitResult.NOT_FOUND);
+            }
+            else
+            {
+                Error("Inference failed at node {n}: {m}.", ro.Node, graph.LastErrorMessage ?? "invalid inputs");
+                Exit(graph.LastFailedNodeName is null ? ExitResult.INVALID_INPUT : ExitResult.UNKNOWN_ERROR);
+            }
+        }
+    }
+
+    static void PrintOutputs(ComputationalGraph graph, RunOptions ro)
+    {
+        Info("Printing outputs...");
+        foreach (var o in graph.Outputs.Values)
+        {
+            if (ro.Softmax && o.Rank == 1)
+            {
+                Info("Applying softmax to {n}...", o.TensorNameDesc());
+                Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
+            }
+            else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
+            {
+                Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
+                Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+            }
+            else
+            {
+                Info("{n}:{v}", o.TensorNameDesc(), o.PrintData(false));
             }
         }
     }
@@ -338,7 +351,7 @@ class Program : Runtime
         }
     }
 
-    static void PrintModelInfo(string file, string? _opfilter = null)
+    static void PrintModelInfo(string file, string? _opfilter)
     {
         ExitIfFileNotFound(file);
         OpType? opfilter = null;
@@ -353,32 +366,62 @@ class Program : Runtime
                 opfilter = op;  
             }
         }
-        var graph = OnnxImport.Load(file);
-        if (graph is null)
+        OnnxModel m;
+        try
         {
+            m = OnnxImport.ParseMetadata(file);
+        }
+        catch (Exception ex)
+        {
+            Error(ex, "Could not parse {f} as ONNX model file.", file);
             Exit(ExitResult.INVALID_INPUT);
             return;
         }
         var tensors = new Dictionary<string, string>();
-        Info("Graph has input tensors: {i}", graph.Inputs.Select(t => t.Value.TensorNameDesc()));
-        Info("Graph has output tensors: {o}", graph.Outputs.Select(t => t.Value.TensorNameDesc()));
-        Info("Graph has initializer tensors: {i}", graph.Initializers.Select(t => t.Value.TensorNameDesc()));
-        foreach (var t in graph.Initializers.Values)
+        Info("Graph has input tensors: {i}", m.Inputs.Select(t => t.Describe()));
+        Info("Graph has output tensors: {o}", m.Outputs.Select(t => t.Describe()));
+        Info("Graph has initializer tensors: {i}", m.Initializers.Select(t => t.Describe()));
+        foreach (var t in m.Initializers)
         {
-            tensors.Add(t.Name, t.TensorNameDesc() + "<initializer>");
+            tensors.Add(t.Name, t.Describe() + "<initializer>");
         }
-        foreach (var t in graph.Inputs.Values)
+        foreach (var t in m.Inputs)
         {
-            if (!tensors.ContainsKey(t.Name)) tensors.Add(t.Name, t.TensorNameDesc() + "<input>");
+            if (!tensors.ContainsKey(t.Name)) tensors.Add(t.Name, t.Describe() + "<input>");
         }
-        foreach (var t in graph.Outputs.Values)
+        foreach (var t in m.Outputs)
         {
-            tensors.Add(t.Name, t.TensorNameDesc() + "<output>");
+            tensors.Add(t.Name, t.Describe() + "<output>");
         }
-        foreach (var t in graph.IntermediateOutputs)
+        foreach (var n in m.Nodes)
         {
-            tensors.Add(t.Key, t.Key + "<intermediate>");
+            foreach (var o in n.Outputs)
+            {
+                if (!string.IsNullOrEmpty(o) && !tensors.ContainsKey(o)) tensors.Add(o, o + "<intermediate>");
+            }
         }
+        string GetTensorDesc(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return "<empty>";
+            }
+            return tensors.TryGetValue(name, out var desc) ? desc : $"{name}<unknown>";
+        }
+        string GetAttributeValueDesc(object value) =>
+            value switch
+            {
+                ITensor i => "tensor " + i.TensorNameDesc() + ":" + i.PrintData(true),
+                int n => "int " + n.ToString(),
+                int[] na => "int[] " + na.Print(),
+                long l => "int64 " + l.ToString(),
+                long[] la => "int64[] " + la.Print(),
+                float f => "float " + f.ToString(),
+                float[] fa => "float[] " + fa.Print(),
+                string s => "string " + s,
+                string[] sa => "string[] " + sa.Print(),
+                _ => throw new NotSupportedException(value.GetType().Name), 
+            };
         if (opfilter is null)
         {
             Info("Printing graph nodes...");
@@ -387,18 +430,20 @@ class Program : Runtime
         {
             Info("Printing graph nodes with op {op}...", opfilter);
         }
-        foreach (var n in graph.Nodes)
+        foreach (var n in m.Nodes)
         {
-            if (opfilter is not null && n.Op != opfilter)
+            OpType op = OpType.Unknown;
+            Enum.TryParse<OpType>(n.OpType, false, out op);
+            if (opfilter is not null && op != opfilter)
             {
                 continue;
             }
-            Info("Node {node} has op type: {op}, inputs: {inputs}, outputs: {outputs} and " 
-                + ((n.Attributes is not null && n.Attributes.Count > 0) ?  "the following attributes:" : "no attributes."), 
-                n.Name, n.Op.ToString(), 
-                n.Inputs.Select(t => GetTensorDesc(tensors, t)).ToArray(), 
-                n.Outputs.Select(t => GetTensorDesc(tensors, t)).ToArray());
-            
+            Info("Node {node} has op type: {op}, inputs: {inputs}, outputs: {outputs} and "
+                + ((n.Attributes is not null && n.Attributes.Count > 0) ?  "the following attributes:" : "no attributes."),
+                n.Name, op.ToString(),
+                n.Inputs.Select(t => GetTensorDesc(t)).ToArray(),
+                n.Outputs.Select(t => GetTensorDesc(t)).ToArray());
+
             if (n.Attributes is not null && n.Attributes.Count > 0)
             {
                 foreach (var kv in n.Attributes)
@@ -409,41 +454,36 @@ class Program : Runtime
         }
     }
 
-    static string GetTensorDesc(Dictionary<string, string> tensors, string name)
-    {
-        if (string.IsNullOrEmpty(name))
-        {
-            return "<empty>";
-        }
-        return tensors.TryGetValue(name, out var desc) ? desc : $"{name}<unknown>";
-    }
-
     static void PrintModelOps(string file)
     {
         ExitIfFileNotFound(file);
-        var m = OnnxImport.Parse(file);
+        var m = OnnxImport.ParseMetadata(file);
         Info("Graph has {count} input tensor(s): {in}", m.Inputs.Count, m.Inputs.Select(t => t.Describe()));
         Info("Graph has {count} output tensor(s): {out}", m.Outputs.Count, m.Outputs.Select(t => t.Describe()));
         Info("Graph has {count} initializer tensor(s): {out}", m.Initializers.Count, m.Initializers.Select(t => t.Describe()));
-        List<OpType> ops = new List<OpType>();
+        List<(string Domain, string OpType)> ops = new List<(string Domain, string OpType)>();
         foreach(var node in m.Nodes)
         {
-            var op = Enum.Parse<OpType>(node.OpType);
-            if (!ops.Contains(op))
+            var key = (node.Domain ?? "", node.OpType ?? "");
+            if (!ops.Contains(key))
             {
-                ops.Add(op);
+                ops.Add(key);
             }
         }
         Info("Printing list of distinct ONNX operations in model {f}...", file);
-        foreach(var op in ops)
+        foreach(var (domain, opName) in ops)
         {
-            if (CPUExecutionProvider.SupportsOp(op))
+            var display = (string.IsNullOrEmpty(domain) ? "" : domain + ":") + opName + " ";
+            bool supported = Enum.TryParse<OpType>(opName, false, out var op)
+                && (string.IsNullOrEmpty(domain) || domain == "ai.onnx")
+                && CPUExecutionProvider.SupportsOp(op);
+            if (supported)
             {
-                Con.Write(new Spectre.Console.Text(op + " ", new Style(foreground: Color.Green)));
+                Con.Write(new Spectre.Console.Text(display, new Style(foreground: Color.Green)));
             }
             else
             {
-                Con.Write(new Spectre.Console.Text(op + " "));
+                Con.Write(new Spectre.Console.Text(display));
             }
         }
         Con.Write(Environment.NewLine);
@@ -453,7 +493,7 @@ class Program : Runtime
     static void PrintModelInitializers(string file)
     {
         ExitIfFileNotFound(file);
-        var m = OnnxImport.Parse(file);
+        var m = OnnxImport.ParseMetadata(file);
         var inputs = m.Inputs.Select(i => i.Name);
         List<string> initializers = new List<string>();
         foreach (var i in m.Initializers)
@@ -565,21 +605,6 @@ class Program : Runtime
         }
         Con.Write(grid);
     }
-
-    static string GetAttributeValueDesc(object value) =>
-        value switch
-        {
-            ITensor i => "tensor " + i.TensorNameDesc() + ":" + i.PrintData(),
-            int n => "int " + n.ToString(),
-            int[] na => "int[] " + na.Print(),
-            long l => "int64 " + l.ToString(),
-            long[] la => "int64[] " + la.Print(),
-            float f => "float " + f.ToString(),
-            float[] fa => "float[] " + fa.Print(),
-            string s => "string " + s,
-            string[] sa => "string[] " + sa.Print(),
-            _ => throw new NotSupportedException(value.GetType().Name), 
-        };
 
     static void PrintLogo()
     {
@@ -728,10 +753,13 @@ class Program : Runtime
         return config;
     }
 
-    public static void UseConsoleLogging(bool debug = false, string logname = "BASE", bool color = false)
+    static readonly Logger CliLogger = LogManager.GetCurrentClassLogger();
+
+    public static void UseConsoleLogging(bool debug, string logname, bool color)
     {
         CreateConsoleLogger(debug, logname, color);
-        Log.Sink = (level, message) => LogManager.GetCurrentClassLogger().Log(ToNLogLevel(level), message);
+        Log.MinLevel = debug ? Lokad.Onnx.LogLevel.Debug : Lokad.Onnx.LogLevel.Info;
+        Log.Sink = (level, message) => CliLogger.Log(ToNLogLevel(level), message);
     }
 
     static NLog.LogLevel ToNLogLevel(Lokad.Onnx.LogLevel level) => level switch
@@ -743,7 +771,7 @@ class Program : Runtime
         _ => NLog.LogLevel.Info,
     };
 
-    public static void CreateConsoleLogger(bool debug = false, string logname = "BASE", bool color = false)
+    public static void CreateConsoleLogger(bool debug, string logname, bool color)
     {
         var config = new LoggingConfiguration();
         if (debug)
@@ -771,6 +799,7 @@ class Program : Runtime
     #endregion
     
     #region Fields
+    static readonly CancellationTokenSource Cts = new CancellationTokenSource();
     static object uilock = new object();
     static Type[] optionTypes =
     {

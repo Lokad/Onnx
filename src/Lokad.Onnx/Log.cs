@@ -25,10 +25,20 @@ public static class Log
 {
     public static Action<LogLevel, string>? Sink;
 
+    /// <summary>
+    /// Lowest level that renders. Hosts set this once (the CLI uses info by
+    /// default, debug with its debug flag); it defaults to the most verbose so
+    /// existing hosts and tests behave exactly as before.
+    /// </summary>
+    public static LogLevel MinLevel { get; set; } = LogLevel.Debug;
+
+    /// <summary>Cheap gate: false without a sink or below the minimum level.</summary>
+    public static bool IsEnabled(LogLevel level) => Sink is not null && level >= MinLevel;
+
     public static void Write(LogLevel level, string messageTemplate, params object?[] args)
     {
         var sink = Sink;
-        if (sink is null) return;
+        if (sink is null || level < MinLevel) return;
         sink(level, Render(messageTemplate, args));
     }
 

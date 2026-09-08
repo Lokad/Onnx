@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx;
+namespace Lokad.Onnx;
 
 using System;
 using System.Collections.Generic;
@@ -10,98 +10,35 @@ using System.Runtime.InteropServices;
 public class TensorSlice<T> : Tensor<T> where T : unmanaged 
 {
     #region Constructors
-    public TensorSlice(Tensor<T> parent, SliceIndex[] indices) : base((ReadOnlySpan<int>) parent.SliceAxes(parent.ExpandEllipsis(indices)), parent.IsReversedStride)
+    public TensorSlice(Tensor<T> parent, SliceIndex[] indices)
+        : base((ReadOnlySpan<int>)SliceDims(parent, indices, out var expanded), parent.IsReversedStride)
     {
         this.parent = parent;
-        this.slices = parent.ExpandEllipsis(indices).Select((i, n) => i.ToSliceDef(parent.dimensions[n])).ToArray(); 
+        this.slices = expanded.Select((i, n) => i.ToSliceDef(parent.dimensions[n])).ToArray();
+    }
+    static int[] SliceDims(Tensor<T> parent, SliceIndex[] indices, out SliceIndex[] expanded)
+    {
+        expanded = parent.ExpandEllipsis(indices);
+        return parent.SliceAxes(expanded);
     }
     #endregion
 
     #region Methods
 
     #region Tensor<T> methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public override T GetValue(int index) => parent.GetValue(ParentOffset(index));
+
+    /// <summary>
+    /// Translates a linear index of this view to a parent storage offset using
+    /// a method-local span: coordinates never escape, reduced dimensions are
+    /// re-inserted as zeros, and every write is capacity-checked.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public unsafe override T GetValue(int index)
+    int ParentOffset(int index)
     {
-        int* coords = stackalloc int[parent.Rank];
-
-        if (strides.Length == 1)
-            coords[0] = index;  
-
-        int counter = index;
-       
-        int stride;
-        for (int i = 0; i < strides.Length; i++)
-        {
-            unchecked
-            {
-                stride = strides[i];
-                if (stride == 0)
-                {
-                    coords[i] = 0;
-                }
-                else
-                {
-                    coords[i] = counter / stride;
-                    counter -= coords[i] * stride;
-                }
-            }
-        }
-       
-        var _coords = new UnsafeFixedSizeList<int>(coords, parent.Rank, strides.Length);
-        int offset;
-
-        var orig_ndim = parent.Rank;
-        if (orig_ndim > this.Rank && orig_ndim > _coords.Count)
-        {
-            // fill in reduced dimensions in the provided coordinates 
-            for (int i = 0; i < parent.Rank; i++)
-            {
-                var slice = slices[i];
-                if (slice.IsIndex)
-                    _coords.Insert(i, 0);
-               
-            }
-        }
-
-        var orig_strides = parent.strides;
-        //var orig_dims = vi.OriginalShape.dimensions;
-        offset = 0;
-
-        for (int i = 0; i < _coords.Count; i++)
-        {
-            // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
-            //var coord = coords[i];
-            //var dim = orig_dims[i];
-            //if (coord < -dim || coord >= dim)
-            //    throw new ArgumentException($"index {coord} is out of bounds for axis {i} with a size of {dim}");
-            //if (coord < 0)
-            //    coord = dim + coord;
-            if (slices.Length <= i)
-            {
-                offset += orig_strides[i] * _coords[i];
-                continue;
-            }
-
-            var slice = slices[i];
-            var start = slice.Start;
-            if (slice.IsIndex)
-                offset += orig_strides[i] * start; // the coord is irrelevant for index-slices (they are reduced dimensions)
-            else
-                offset += orig_strides[i] * (start + _coords[i] * slice.Step);
-        }
-
-        return parent.GetValue(offset);
-
-        //var indices = GetCoordinates(index);
-        //var idx = GetOffset(indices);
-        //return parent.GetValue(idx);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public unsafe override void SetValue(int index, T value)
-    {
-        int* coords = stackalloc int[parent.Rank];
+        if (strides.Length > parent.Rank) throw new ArgumentOutOfRangeException(nameof(index), "Too many stride dimensions for the parent rank.");
+        Span<int> coords = parent.Rank < ArrayUtilities.StackallocMax ? stackalloc int[parent.Rank] : new int[parent.Rank];
 
         if (strides.Length == 1)
             coords[0] = index;
@@ -126,38 +63,44 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
             }
         }
 
-        var _coords = new UnsafeFixedSizeList<int>(coords, parent.Rank, strides.Length);
-        int offset;
+        return GetOffsetCore(coords, strides.Length);
+    }
 
+    /// <summary>
+    /// Shared offset translation: inserts reduced dimensions into count user
+    /// coordinates, then maps through slice starts, steps and parent strides.
+    /// Both coordinate-length contracts funnel here after bounds checks.
+    /// </summary>
+    int GetOffsetCore(Span<int> coords, int count)
+    {
         var orig_ndim = parent.Rank;
-        if (orig_ndim > this.Rank && orig_ndim > _coords.Count)
+        if (orig_ndim > Rank && orig_ndim > count)
         {
-            // fill in reduced dimensions in the provided coordinates 
+            // fill in reduced dimensions in the provided coordinates
             for (int i = 0; i < parent.Rank; i++)
             {
+                if (i >= slices.Length) break;
                 var slice = slices[i];
                 if (slice.IsIndex)
-                    _coords.Insert(i, 0);
-
+                {
+                    if (count >= parent.Rank) throw new ArgumentOutOfRangeException(nameof(coords), "Too many coordinates for the parent rank.");
+                    for (int j = count; j > i; j--) coords[j] = coords[j - 1];
+                    coords[i] = 0;
+                    count++;
+                }
+                if (count == orig_ndim)
+                    break;
             }
         }
 
         var orig_strides = parent.strides;
-        //var orig_dims = vi.OriginalShape.dimensions;
-        offset = 0;
+        int offset = 0;
 
-        for (int i = 0; i < _coords.Count; i++)
+        for (int i = 0; i < count; i++)
         {
-            // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
-            //var coord = coords[i];
-            //var dim = orig_dims[i];
-            //if (coord < -dim || coord >= dim)
-            //    throw new ArgumentException($"index {coord} is out of bounds for axis {i} with a size of {dim}");
-            //if (coord < 0)
-            //    coord = dim + coord;
             if (slices.Length <= i)
             {
-                offset += orig_strides[i] * _coords[i];
+                offset += orig_strides[i] * coords[i];
                 continue;
             }
 
@@ -166,11 +109,14 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
             if (slice.IsIndex)
                 offset += orig_strides[i] * start; // the coord is irrelevant for index-slices (they are reduced dimensions)
             else
-                offset += orig_strides[i] * (start + _coords[i] * slice.Step);
+                offset += orig_strides[i] * (start + coords[i] * slice.Step);
         }
 
-        parent.SetValue(offset, value);
+        return offset;
     }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public override void SetValue(int index, T value) => parent.SetValue(ParentOffset(index), value);
 
     /// <summary>
     /// Obtains the value at the specified indices
@@ -187,7 +133,7 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
             {
                 return GetValue(0);
             }
-            var idx = GetOffsetUnsafe(indices);
+            var idx = GetOffset(indices);
             return parent.GetValue(idx);
         }
 
@@ -199,7 +145,7 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
                 SetValue(0, value);
                 return;
             }
-            var idx = GetOffsetUnsafe(indices);
+            var idx = GetOffset(indices);
             parent.SetValue(idx, value);
         }
     }
@@ -221,108 +167,22 @@ public class TensorSlice<T> : Tensor<T> where T : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
     public int GetOffset(params int[] indices)
     {
-        int offset;
-
-        var coords = new List<int>(indices);
         if (indices.Length > parent.Dimensions.Length)
             throw new ArgumentOutOfRangeException(nameof(indices), $"select has too many coordinates for this shape");
-        var orig_ndim = parent.Rank;
-        if (orig_ndim > this.Rank && orig_ndim > indices.Length)
-        {
-            // fill in reduced dimensions in the provided coordinates 
-            for (int i = 0; i < parent.Rank; i++)
-            {
-                var slice = slices[i];
-                if (slice.IsIndex)
-                    coords.Insert(i, 0);
-                if (coords.Count == orig_ndim)
-                    break;
-            }
-        }
-
-        var orig_strides = parent.strides;
-        //var orig_dims = vi.OriginalShape.dimensions;
-        offset = 0;
-    
-        for (int i = 0; i < coords.Count; i++)
-        {
-            // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
-            //var coord = coords[i];
-            //var dim = orig_dims[i];
-            //if (coord < -dim || coord >= dim)
-            //    throw new ArgumentException($"index {coord} is out of bounds for axis {i} with a size of {dim}");
-            //if (coord < 0)
-            //    coord = dim + coord;
-            if (slices.Length <= i)
-            {
-                offset += orig_strides[i] * coords[i];
-                continue;
-            }
-
-            var slice = slices[i];
-            var start = slice.Start;
-            if (slice.IsIndex)
-                offset += orig_strides[i] * start; // the coord is irrelevant for index-slices (they are reduced dimensions)
-            else
-                offset += orig_strides[i] * (start + coords[i] * slice.Step);
-        }
-        
-
-        return offset;
-       
+        Span<int> coords = parent.Rank < ArrayUtilities.StackallocMax ? stackalloc int[parent.Rank] : new int[parent.Rank];
+        indices.CopyTo(coords);
+        return GetOffsetCore(coords, indices.Length);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-    public unsafe int GetOffsetUnsafe(ReadOnlySpan<int> indices)
+    public int GetOffset(ReadOnlySpan<int> indices)
     {
-        int offset;
-        var coordsptr = stackalloc int[parent.Rank]; 
-        var coords = new UnsafeFixedSizeList<int>(coordsptr, parent.Rank);
-        coords.AddRange(indices);
-        var orig_ndim = parent.Rank;
-        if (orig_ndim > this.Rank && orig_ndim > indices.Length)
-        {
-            // fill in reduced dimensions in the provided coordinates 
-            for (int i = 0; i < parent.Rank; i++)
-            {
-                var slice = slices[i];
-                if (slice.IsIndex)
-                    coords.Insert(i, 0);
-                if (coords.Count == orig_ndim)
-                    break;
-            }
-        }
-
-        var orig_strides = parent.strides;
-        //var orig_dims = vi.OriginalShape.dimensions;
-        offset = 0;
-
-        for (int i = 0; i < coords.Count; i++)
-        {
-            // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
-            //var coord = coords[i];
-            //var dim = orig_dims[i];
-            //if (coord < -dim || coord >= dim)
-            //    throw new ArgumentException($"index {coord} is out of bounds for axis {i} with a size of {dim}");
-            //if (coord < 0)
-            //    coord = dim + coord;
-            if (slices.Length <= i)
-            {
-                offset += orig_strides[i] * coords[i];
-                continue;
-            }
-
-            var slice = slices[i];
-            var start = slice.Start;
-            if (slice.IsIndex)
-                offset += orig_strides[i] * start; // the coord is irrelevant for index-slices (they are reduced dimensions)
-            else
-                offset += orig_strides[i] * (start + coords[i] * slice.Step);
-        }
-
-
-        return offset;
-
+        // Bounded buffer instead of a pointer list: more indices than this view
+        // holds are rejected before anything is written.
+        if (indices.Length > this.Rank) throw new ArgumentOutOfRangeException(nameof(indices), $"Too many coordinates for tensor rank {this.Rank}.");
+        Span<int> coords = parent.Rank < ArrayUtilities.StackallocMax ? stackalloc int[parent.Rank] : new int[parent.Rank];
+        indices.CopyTo(coords);
+        return GetOffsetCore(coords, indices.Length);
     }
     #endregion
 

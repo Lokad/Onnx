@@ -17,7 +17,7 @@ public class GraphFusionTests
         return d;
     }
 
-    static OnnxNode Nod(string op, string[] inputs, string[] outputs, Dictionary<string, object>? attrs = null) =>
+    static OnnxNode Nod(string op, string[] inputs, string[] outputs, Dictionary<string, object>? attrs) =>
         new OnnxNode { OpType = op, Inputs = inputs, Outputs = outputs, Attributes = attrs ?? new Dictionary<string, object>() };
 
     static OnnxModel TinyLayerNormModel()
@@ -31,15 +31,15 @@ public class GraphFusionTests
         mp.Initializers.Add(FloatInit("two", new int[0], new[] { 2f }));
         var eps = Model.ToTensor(new OnnxTensor { ElementType = TensorElementType.Float, Dims = new int[0], Data = new[] { 1e-5f } });
         mp.Nodes.Add(Nod("ReduceMean", new[] { "x" }, new[] { "m" }, Attrs(("axes", new long[] { -1 }), ("keepdims", 1L))));
-        mp.Nodes.Add(Nod("Sub", new[] { "x", "m" }, new[] { "d" }));
-        mp.Nodes.Add(Nod("Pow", new[] { "d", "two" }, new[] { "s" }));
+        mp.Nodes.Add(Nod("Sub", new[] { "x", "m" }, new[] { "d" }, null));
+        mp.Nodes.Add(Nod("Pow", new[] { "d", "two" }, new[] { "s" }, null));
         mp.Nodes.Add(Nod("ReduceMean", new[] { "s" }, new[] { "v" }, Attrs(("axes", new long[] { -1 }), ("keepdims", 1L))));
-        mp.Nodes.Add(Nod("Add", new[] { "v", "e" }, new[] { "ve" }));
         mp.Nodes.Add(Nod("Constant", new string[0], new[] { "e" }, Attrs(("value", eps))));
-        mp.Nodes.Add(Nod("Sqrt", new[] { "ve" }, new[] { "sd" }));
-        mp.Nodes.Add(Nod("Div", new[] { "d", "sd" }, new[] { "n" }));
-        mp.Nodes.Add(Nod("Mul", new[] { "n", "gamma" }, new[] { "g" }));
-        mp.Nodes.Add(Nod("Add", new[] { "g", "beta" }, new[] { "z" }));
+        mp.Nodes.Add(Nod("Add", new[] { "v", "e" }, new[] { "ve" }, null));
+        mp.Nodes.Add(Nod("Sqrt", new[] { "ve" }, new[] { "sd" }, null));
+        mp.Nodes.Add(Nod("Div", new[] { "d", "sd" }, new[] { "n" }, null));
+        mp.Nodes.Add(Nod("Mul", new[] { "n", "gamma" }, new[] { "g" }, null));
+        mp.Nodes.Add(Nod("Add", new[] { "g", "beta" }, new[] { "z" }, null));
         return mp;
     }
 
@@ -88,7 +88,7 @@ public class GraphFusionTests
         mp.Inputs.Add(NamedIO("x", 1, 2));
         mp.Outputs.Add(NamedIO("z", 1, 2));
         mp.Initializers.Add(FloatInit("two", new[] { 2 }, new[] { 2f, 2f }));
-        mp.Nodes.Add(Nod("Div", new[] { "x", "two" }, new[] { "z" }));
+        mp.Nodes.Add(Nod("Div", new[] { "x", "two" }, new[] { "z" }, null));
         var graph = Model.Load(mp)!;
         Assert.Single(graph.Nodes);
         Assert.Equal(OpType.Div, graph.Nodes[0].Op);

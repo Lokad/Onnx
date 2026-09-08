@@ -11,7 +11,7 @@ public class CpuExecutionProviderExtendedOpTests
     {
         var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
         var b = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f }, { 7f, 8f } });
-        var r = CPU.Gemm(a, b, null, 1f, 1f);
+        var r = CPU.Gemm(a, b, null, 1f, 1f, null, 0, 0);
         Assert.Equal(OpStatus.Success, r.Status);
         var y = (Tensor<float>)r.Outputs![0];
         Assert.Equal(new[] { 2, 2 }, y.Dimensions.ToArray());
@@ -21,13 +21,13 @@ public class CpuExecutionProviderExtendedOpTests
         Assert.Equal(50f, y[1, 1], 4);
 
         var bias = DenseTensor<float>.OfValues(new float[] { 100f, 200f });
-        var rb = CPU.Gemm(a, b, bias, 1f, 1f);
+        var rb = CPU.Gemm(a, b, bias, 1f, 1f, null, 0, 0);
         Assert.Equal(OpStatus.Success, rb.Status);
         var yb = (Tensor<float>)rb.Outputs![0];
         Assert.Equal(119f, yb[0, 0], 4);
         Assert.Equal(222f, yb[0, 1], 4);
 
-        var rs = CPU.Gemm(a, b, null, 2f, 0f);
+        var rs = CPU.Gemm(a, b, null, 2f, 0f, null, 0, 0);
         Assert.Equal(OpStatus.Success, rs.Status);
         Assert.Equal(38f, ((Tensor<float>)rs.Outputs![0])[0, 0], 4);
     }
@@ -36,7 +36,7 @@ public class CpuExecutionProviderExtendedOpTests
     public void Tanh_MatchesMath()
     {
         var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, -1f });
-        var r = CPU.Tanh(x);
+        var r = CPU.Tanh(x, null);
         Assert.Equal(OpStatus.Success, r.Status);
         var y = (Tensor<float>)r.Outputs![0];
         Assert.Equal(0f, y[0], 5);
@@ -50,7 +50,7 @@ public class CpuExecutionProviderExtendedOpTests
         var x = DenseTensor<float>.OfShape(1, 2, 6);
         for (int i = 0; i < 12; i++) x.SetValue(i, i);
         var sizes = DenseTensor<long>.OfValues(new long[] { 2L, 4L });
-        var r = CPU.Split(x, sizes, 2, null, null);
+        var r = CPU.Split(x, sizes, 2, null, null, null, null);
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Equal(2, r.Outputs!.Length);
         var p0 = (Tensor<float>)r.Outputs[0];
@@ -68,7 +68,7 @@ public class CpuExecutionProviderExtendedOpTests
     {
         var a = DenseTensor<long>.OfValues(new long[] { 1L, 5L, 3L });
         var b = DenseTensor<long>.OfValues(new long[] { 2L, 4L, 3L });
-        var r = CPU.Less(a, b);
+        var r = CPU.Less(a, b, null);
         Assert.Equal(OpStatus.Success, r.Status);
         var y = (Tensor<bool>)r.Outputs![0];
         Assert.True(y[0]);
@@ -80,14 +80,14 @@ public class CpuExecutionProviderExtendedOpTests
     public void ConstantOfShape_DefaultAndTyped()
     {
         var shape = DenseTensor<long>.OfValues(new long[] { 2L, 3L });
-        var r = CPU.ConstantOfShape(shape, null);
+        var r = CPU.ConstantOfShape(shape, null, null);
         Assert.Equal(OpStatus.Success, r.Status);
         var y = (Tensor<float>)r.Outputs![0];
         Assert.Equal(new[] { 2, 3 }, y.Dimensions.ToArray());
         Assert.Equal(0f, y[1, 2], 5);
 
         var one = DenseTensor<long>.OfValues(new long[] { 7L });
-        var r2 = CPU.ConstantOfShape(shape, one);
+        var r2 = CPU.ConstantOfShape(shape, one, null);
         Assert.Equal(OpStatus.Success, r2.Status);
         Assert.Equal(7L, ((Tensor<long>)r2.Outputs![0])[1, 2]);
     }
@@ -97,7 +97,7 @@ public class CpuExecutionProviderExtendedOpTests
     {
         var x = DenseTensor<float>.OfShape(1, 2, 2, 2);
         for (int i = 0; i < 8; i++) x.SetValue(i, i);
-        var r = CPU.GlobalAveragePool(x);
+        var r = CPU.GlobalAveragePool(x, null);
         Assert.Equal(OpStatus.Success, r.Status);
         var y = (Tensor<float>)r.Outputs![0];
         Assert.Equal(new[] { 1, 2, 1, 1 }, y.Dimensions.ToArray());

@@ -113,7 +113,7 @@ static class OpDump
         if (graph is null) { Console.Error.WriteLine("OpDump error: load failed"); return 4; }
         var dict = new Dictionary<string, ITensor>();
         foreach (var kv in fed) dict[kv.Item1] = ReadTensor(kv.Item1, kv.Item2);
-        var opts = new ExecutionOptions(OptimizationMode.Speed, new TensorExecutionOptions(useSimd, useIntrinsics));
+        var opts = new ExecutionOptions(OptimizationMode.Speed, new TensorExecutionOptions(useSimd, useIntrinsics, 1));
         if (!graph.Execute(dict, true, ExecutionProvider.CPU, opts)) { Console.Error.WriteLine("OpDump error: exec failed: " + graph.LastErrorMessage); return 4; }
         Directory.CreateDirectory(outdir);
         foreach (var kv in graph.Outputs)

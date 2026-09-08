@@ -12,9 +12,19 @@ namespace Lokad.Onnx
     public struct TensorDimensionsIterator : IEnumerable<int[]>, IEnumerator<int[]>
     {
         #region Constructors
+        /// <summary>
+        /// Defines the enumeration contract: a scalar (rank 0) enumerates a
+        /// single zero coordinate; any zero extent enumerates nothing;
+        /// negative extents are rejected. The yielded <see cref="Index"/> array
+        /// is borrowed and reused across steps: copy it to retain coordinates.
+        /// </summary>
         public TensorDimensionsIterator(int[] dims)
         {
             if (dims is null) throw new ArgumentNullException("Can't construct TensorDimensionsIterator with an empty shape.");
+            foreach (var d in dims)
+            {
+                if (d < 0) throw new ArgumentOutOfRangeException(nameof(dims), "Tensor shape extents must be non-negative.");
+            }
 
             if (dims.Length == 0)
                 dims = new int[] { 1 };
@@ -23,6 +33,7 @@ namespace Lokad.Onnx
             Index = new int[dims.Length];
             resetto = subcursor = dimensions.Length - 1;
             endCallback = null;
+            empty = dims.Any(d => d == 0);
         }
 
        
@@ -32,24 +43,39 @@ namespace Lokad.Onnx
         }
         #endregion
 
-        public IEnumerator<int[]> GetEnumerator() => this;
-
-        IEnumerator IEnumerable.GetEnumerator() => this;
-
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        bool IEnumerator.MoveNext()
+        /// <summary>
+        /// Starts an independent cursor over the shared configuration: manual
+        /// cursor moves (<see cref="Next"/>) never affect new enumerations, and
+        /// pattern-based foreach over the struct avoids boxing entirely.
+        /// </summary>
+        public TensorDimensionsIterator GetEnumerator()
         {
+            if (dimensions is null) return default;
+            return new TensorDimensionsIterator(dimensions);
+        }
+
+        IEnumerator<int[]> IEnumerable<int[]>.GetEnumerator() => GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        /// <summary>Advances this cursor; false when the sequence is exhausted.</summary>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        public bool MoveNext()
+        {
+            if (Index is null || empty) return false;
             if (!moveStart)
             {
                 moveStart = true;
-                return Index != null;
+                return true;
             }
             else
             {
                 return Next() != null;
             }
         }
-        
+
+        bool IEnumerator.MoveNext() => MoveNext();
+
         object IEnumerator.Current => Index;
 
         void IDisposable.Dispose() => Reset();
@@ -69,10 +95,9 @@ namespace Lokad.Onnx
         
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-        public int[] Next()
+        public int[]? Next()
         {
-            
-            if (subcursor <= -1)
+            if (Index is null || empty || subcursor <= -1)
                 return null;
 
             if (++Index[subcursor] >= dimensions[subcursor])
@@ -114,9 +139,10 @@ namespace Lokad.Onnx
 
         #region Fields
         public delegate void EndCallbackHandler(ref TensorDimensionsIterator incr);
-        private readonly EndCallbackHandler endCallback;
+        private readonly EndCallbackHandler? endCallback;
         private readonly int[] dimensions;
         private readonly int resetto;
+        private readonly bool empty;
         public readonly int[] Index;
         private int subcursor;
         private bool moveStart = false;
@@ -129,9 +155,8 @@ namespace Lokad.Onnx
         public int[] fixedDims;
         public int[] dims;
         public int length;
-        public TensorDimensionsIterator iterator = new TensorDimensionsIterator();
-        public IEnumerator<int[]> iteratorEnumerator;
-        public int[] Index = null;
+        public TensorDimensionsIterator iterator;
+        public int[] Index;
         public int[] VariableIndex => iterator.Index;
 
         public TensorFixedDimensionsIterator(int[] fixedDimensions, params int[] dims)
@@ -140,7 +165,6 @@ namespace Lokad.Onnx
             this.dims = dims;
             this.length = fixedDimensions.Length + dims.Length;
             iterator = new TensorDimensionsIterator(dims);
-            iteratorEnumerator = iterator.GetEnumerator();
             Index = new int[length];
             fixedDims.CopyTo(Index, 0);
         }
@@ -149,14 +173,28 @@ namespace Lokad.Onnx
         {
 
         }
-        public IEnumerator<int[]> GetEnumerator() => this;
 
-        IEnumerator IEnumerable.GetEnumerator() => this;
+        /// <summary>
+        /// Starts an independent cursor: the fixed head is copied once per
+        /// enumeration and the variable cursor starts fresh, so repeated
+        /// enumeration and Reset behave identically.
+        /// </summary>
+        public TensorFixedDimensionsIterator GetEnumerator()
+        {
+            if (fixedDims is null || dims is null) return default;
+            return new TensorFixedDimensionsIterator(fixedDims, dims);
+        }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        bool IEnumerator.MoveNext()
-        { 
-            if (iteratorEnumerator.MoveNext())
+        IEnumerator<int[]> IEnumerable<int[]>.GetEnumerator() => GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        /// <summary>Advances this cursor; false when the sequence is exhausted.</summary>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveOptimization)]
+        public bool MoveNext()
+        {
+            if (Index is null) return false;
+            if (iterator.MoveNext())
             {
                 unchecked
                 {
@@ -174,7 +212,13 @@ namespace Lokad.Onnx
             }
         }
 
-        
+        bool IEnumerator.MoveNext() => MoveNext();
+
+
+        /// <summary>
+        /// The current coordinate array is borrowed and reused across steps:
+        /// copy it to retain coordinates.
+        /// </summary>
         public int[] Current
         {
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
@@ -190,12 +234,13 @@ namespace Lokad.Onnx
         void IDisposable.Dispose() => Reset();
         public void Reset()
         {
+            if (fixedDims is null || dims is null) return;
             iterator.Reset();
-            Index = null;
+            Index = new int[length];
+            fixedDims.CopyTo(Index, 0);
         }
 
 
 
     }
-
 }

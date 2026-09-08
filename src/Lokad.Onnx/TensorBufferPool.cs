@@ -2,17 +2,35 @@ namespace Lokad.Onnx;
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 /// <summary>Per-execution pool of exact-size backing arrays for dense tensor outputs.</summary>
-/// <remarks>Rent and return are single-threaded by construction: only graph dispatch rents and only the
+/// <remarks>
+/// Rent and return are single-threaded by construction: only graph dispatch rents and only the
 /// owning execution releases at recorded last uses, while parallel kernel workers merely write disjoint
 /// spans. Kernels stay destination-based and never see the pool. Misses allocate; returns beyond a small
-/// per-shape cap are dropped. Never static: one pool per graph execution.</remarks>
+/// per-shape cap are dropped. Never static: one pool per graph execution.
+/// Ownership: every array ever handed out by Rent on this pool instance is remembered. Release logic
+/// must only return arrays for which IsOwned reports true, so caller inputs, model constants,
+/// attribute tensors and unrelated fresh buffers are never adopted. See C01.
+/// Metrics: AllocatedNew/AllocatedNewBytes count fresh rents (GC allocation); Reused/ReusedBytes count
+/// rents served from previously returned storage (pool-served bytes, not new GC bytes); Returned counts
+/// dead buffers adopted into the pool; Dropped counts returns discarded by the per-shape cap. None is a
+/// substitute for the others: GC bytes come from the collector, live payload from tensor shapes, scratch
+/// from temporary kernel buffers, and pool-served bytes from these counters.
+/// Return contract: only single-dimensional (SZ) arrays are pooled. Null, multidimensional, and duplicate
+/// (already buffered) arrays are rejected with an exception. Foreign arrays (never rented from this pool)
+/// are adopted for reuse; release logic still only returns owned storage.
+/// </remarks>
 public sealed class TensorBufferPool
 {
     const int MaxBufferedPerShape = 32;
 
     readonly Dictionary<(Type, int), Stack<Array>> free = new();
+
+    readonly HashSet<Array> owned = new();
+
+    readonly HashSet<Array> buffered = new();
 
     public int AllocatedNew { get; private set; }
 
@@ -26,26 +44,31 @@ public sealed class TensorBufferPool
 
     public long ReusedBytes { get; private set; }
 
-    public T[] Rent<T>(int length)
+    public T[] Rent<T>(int length) where T : unmanaged
     {
         if (length < 0) throw new ArgumentOutOfRangeException(nameof(length));
         var key = (typeof(T), length);
-        long bytes = (long)length * System.Runtime.InteropServices.Marshal.SizeOf<T>();
+        long bytes = (long)length * Unsafe.SizeOf<T>();
         if (free.TryGetValue(key, out var stack) && stack.Count > 0)
         {
             Reused++;
             ReusedBytes += bytes;
-            return (T[])stack.Pop();
+            var reused = (T[])stack.Pop();
+            buffered.Remove(reused);
+            owned.Add(reused);
+            return reused;
         }
         AllocatedNew++;
         AllocatedNewBytes += bytes;
-        return new T[length];
+        var fresh = new T[length];
+        owned.Add(fresh);
+        return fresh;
     }
 
     /// <summary>Rents an array zeroed throughout, for kernels with accumulate semantics.</summary>
     /// <remarks>Fresh arrays are already zeroed; reused arrays are cleared here because float MatMul
     /// kernels accumulate into their destination and historically relied on zeroed fresh outputs.</remarks>
-    public T[] RentCleared<T>(int length)
+    public T[] RentCleared<T>(int length) where T : unmanaged
     {
         int reusedBefore = Reused;
         var rented = Rent<T>(length);
@@ -53,11 +76,16 @@ public sealed class TensorBufferPool
         return rented;
     }
 
+    /// <summary>Reports whether the array was rented from this pool instance.</summary>
+    public bool IsOwned(Array array) => array is not null && owned.Contains(array);
+
     public void Return(Array array)
     {
         if (array is null) throw new ArgumentNullException(nameof(array));
+        if (array.Rank != 1) throw new ArgumentException("Only single-dimensional arrays can be pooled.", nameof(array));
         var element = array.GetType().GetElementType();
         if (element is null) throw new ArgumentException("Only single-dimensional arrays can be pooled.", nameof(array));
+        if (buffered.Contains(array)) throw new ArgumentException("Array was already returned to the pool.", nameof(array));
         var key = (element, array.Length);
         if (!free.TryGetValue(key, out var stack))
         {
@@ -67,6 +95,7 @@ public sealed class TensorBufferPool
         if (stack.Count < MaxBufferedPerShape)
         {
             stack.Push(array);
+            buffered.Add(array);
             Returned++;
         }
         else

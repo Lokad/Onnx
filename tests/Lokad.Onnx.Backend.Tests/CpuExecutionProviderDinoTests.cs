@@ -7,26 +7,26 @@ public class CpuExecutionProviderDinoTests
     [Fact]
     public void Abs_Cos_Sin_Neg_Dispatch()
     {
-        var abs = CPU.Abs(DenseTensor<float>.OfValues(new float[] { -0.5f, 0f }));
+        var abs = CPU.Abs(DenseTensor<float>.OfValues(new float[] { -0.5f, 0f }), null);
         Assert.Equal(OpStatus.Success, abs.Status);
         Assert.Equal(0.5f, ((Tensor<float>)abs.Outputs[0])[0], 5);
 
-        var neg = CPU.Neg(DenseTensor<long>.OfValues(new long[] { -7L, 7L }));
+        var neg = CPU.Neg(DenseTensor<long>.OfValues(new long[] { -7L, 7L }), null);
         Assert.Equal(OpStatus.Success, neg.Status);
         Assert.Equal(7L, ((Tensor<long>)neg.Outputs[0])[0]);
         Assert.Equal(-7L, ((Tensor<long>)neg.Outputs[0])[1]);
 
-        var cos = CPU.Cos(DenseTensor<double>.OfValues(new double[] { 0d }));
+        var cos = CPU.Cos(DenseTensor<double>.OfValues(new double[] { 0d }), null);
         Assert.Equal(OpStatus.Success, cos.Status);
         Assert.Equal(1d, ((Tensor<double>)cos.Outputs[0])[0], 10);
 
-        var sin = CPU.Sin(DenseTensor<double>.OfValues(new double[] { 0d }));
+        var sin = CPU.Sin(DenseTensor<double>.OfValues(new double[] { 0d }), null);
         Assert.Equal(OpStatus.Success, sin.Status);
         Assert.Equal(0d, ((Tensor<double>)sin.Outputs[0])[0], 10);
 
-        Assert.Equal(OpStatus.Failure, CPU.Cos(DenseTensor<int>.OfValues(new int[] { 0 })).Status);
-        Assert.Equal(OpStatus.Failure, CPU.Abs(DenseTensor<byte>.OfValues(new byte[] { 1 })).Status);
-        Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<bool>.OfValues(new bool[] { true })).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Cos(DenseTensor<int>.OfValues(new int[] { 0 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Abs(DenseTensor<byte>.OfValues(new byte[] { 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<bool>.OfValues(new bool[] { true }), null).Status);
     }
 
     [Fact]
@@ -34,15 +34,15 @@ public class CpuExecutionProviderDinoTests
     {
         var input = DenseTensor<float>.OfValues(new float[] { 0f, 1f });
 
-        var exact = CPU.Gelu(input, "none");
+        var exact = CPU.Gelu(input, "none", null, null);
         Assert.Equal(OpStatus.Success, exact.Status);
         Assert.Equal(0.8413f, ((Tensor<float>)exact.Outputs[0])[1], 3);
 
-        var fallback = CPU.Gelu(input);
+        var fallback = CPU.Gelu(input, null, null, null);
         Assert.Equal(OpStatus.Success, fallback.Status);
         Assert.Equal(0.8413f, ((Tensor<float>)fallback.Outputs[0])[1], 3);
 
-        var rejected = CPU.Gelu(input, "tanh");
+        var rejected = CPU.Gelu(input, "tanh", null, null);
         Assert.Equal(OpStatus.Failure, rejected.Status);
         Assert.NotNull(rejected.Message);
     }
@@ -51,7 +51,7 @@ public class CpuExecutionProviderDinoTests
     public void Unsqueeze_Accepts_Int64_Axes()
     {
         var data = DenseTensor<int>.OfValues(new int[] { 7, 8 });
-        var result = CPU.Unsqueeze(data, DenseTensor<long>.OfValues(new long[] { -1 }));
+        var result = CPU.Unsqueeze(data, DenseTensor<long>.OfValues(new long[] { -1 }), null);
         Assert.Equal(OpStatus.Success, result.Status);
         Assert.Equal(new[] { 2, 1 }, ((Tensor<int>)result.Outputs[0]).Dimensions.ToArray());
     }
@@ -61,7 +61,7 @@ public class CpuExecutionProviderDinoTests
     {
         var threeDim = DenseTensor<int>.OfShape(1, 2, 1);
         threeDim.Fill(7);
-        var squeezedAll = CPU.Squeeze(threeDim);
+        var squeezedAll = CPU.Squeeze(threeDim, null, null);
         Assert.Equal(OpStatus.Success, squeezedAll.Status);
         var allOut = (Tensor<int>)squeezedAll.Outputs[0];
         Assert.Equal(new[] { 2 }, allOut.Dimensions.ToArray());
@@ -69,35 +69,35 @@ public class CpuExecutionProviderDinoTests
 
         var twoDim = DenseTensor<int>.OfShape(2, 1);
         twoDim.Fill(3);
-        var squeezedAxis = CPU.Squeeze(twoDim, DenseTensor<int>.OfValues(new int[] { -1 }));
+        var squeezedAxis = CPU.Squeeze(twoDim, DenseTensor<int>.OfValues(new int[] { -1 }), null);
         Assert.Equal(OpStatus.Success, squeezedAxis.Status);
         Assert.Equal(new[] { 2 }, ((Tensor<int>)squeezedAxis.Outputs[0]).Dimensions.ToArray());
 
         var wide = DenseTensor<int>.OfShape(2, 2);
-        Assert.Equal(OpStatus.Failure, CPU.Squeeze(wide, DenseTensor<int>.OfValues(new int[] { 0 })).Status);
-        Assert.Equal(OpStatus.Failure, CPU.Squeeze(wide, DenseTensor<int>.OfValues(new int[] { 5 })).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Squeeze(wide, DenseTensor<int>.OfValues(new int[] { 0 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Squeeze(wide, DenseTensor<int>.OfValues(new int[] { 5 }), null).Status);
     }
 
     [Fact]
     public void Range_All_Dtypes()
     {
-        var floatRange = CPU.Range(DenseTensor<float>.OfValues(new float[] { 0f }), DenseTensor<float>.OfValues(new float[] { 1.1f }), DenseTensor<float>.OfValues(new float[] { 0.5f }));
+        var floatRange = CPU.Range(DenseTensor<float>.OfValues(new float[] { 0f }), DenseTensor<float>.OfValues(new float[] { 1.1f }), DenseTensor<float>.OfValues(new float[] { 0.5f }), null);
         Assert.Equal(OpStatus.Success, floatRange.Status);
         Assert.Equal(1f, ((Tensor<float>)floatRange.Outputs[0])[2], 5);
 
-        var doubleRange = CPU.Range(DenseTensor<double>.OfValues(new double[] { 0d }), DenseTensor<double>.OfValues(new double[] { 1.1d }), DenseTensor<double>.OfValues(new double[] { 0.5d }));
+        var doubleRange = CPU.Range(DenseTensor<double>.OfValues(new double[] { 0d }), DenseTensor<double>.OfValues(new double[] { 1.1d }), DenseTensor<double>.OfValues(new double[] { 0.5d }), null);
         Assert.Equal(OpStatus.Success, doubleRange.Status);
         Assert.Equal(1d, ((Tensor<double>)doubleRange.Outputs[0])[2], 10);
 
-        var longRange = CPU.Range(DenseTensor<long>.OfValues(new long[] { 3L }), DenseTensor<long>.OfValues(new long[] { 0L }), DenseTensor<long>.OfValues(new long[] { -1L }));
+        var longRange = CPU.Range(DenseTensor<long>.OfValues(new long[] { 3L }), DenseTensor<long>.OfValues(new long[] { 0L }), DenseTensor<long>.OfValues(new long[] { -1L }), null);
         Assert.Equal(OpStatus.Success, longRange.Status);
         Assert.Equal(1L, ((Tensor<long>)longRange.Outputs[0])[2]);
 
-        var intRange = CPU.Range(DenseTensor<int>.OfValues(new int[] { 0 }), DenseTensor<int>.OfValues(new int[] { 3 }), DenseTensor<int>.OfValues(new int[] { 1 }));
+        var intRange = CPU.Range(DenseTensor<int>.OfValues(new int[] { 0 }), DenseTensor<int>.OfValues(new int[] { 3 }), DenseTensor<int>.OfValues(new int[] { 1 }), null);
         Assert.Equal(OpStatus.Success, intRange.Status);
         Assert.Equal(2, ((Tensor<int>)intRange.Outputs[0])[2]);
 
-        var rejected = CPU.Range(DenseTensor<bool>.OfValues(new bool[] { true }), DenseTensor<bool>.OfValues(new bool[] { true }), DenseTensor<bool>.OfValues(new bool[] { true }));
+        var rejected = CPU.Range(DenseTensor<bool>.OfValues(new bool[] { true }), DenseTensor<bool>.OfValues(new bool[] { true }), DenseTensor<bool>.OfValues(new bool[] { true }), null);
         Assert.Equal(OpStatus.Failure, rejected.Status);
     }
 
@@ -105,14 +105,14 @@ public class CpuExecutionProviderDinoTests
     public void Tile_Repeats_Values()
     {
         var input = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f } });
-        var result = CPU.Tile(input, DenseTensor<int>.OfValues(new int[] { 2, 3 }));
+        var result = CPU.Tile(input, DenseTensor<int>.OfValues(new int[] { 2, 3 }), null);
         Assert.Equal(OpStatus.Success, result.Status);
         var actual = (Tensor<float>)result.Outputs[0];
         Assert.Equal(new[] { 2, 6 }, actual.Dimensions.ToArray());
         Assert.Equal(6f, actual[0, 5], 5);
         Assert.Equal(5f, actual[1, 0], 5);
 
-        var longTile = CPU.Tile(DenseTensor<long>.OfValues(new long[,] { { 1L, 2L } }), DenseTensor<long>.OfValues(new long[] { 1L, 2L }));
+        var longTile = CPU.Tile(DenseTensor<long>.OfValues(new long[,] { { 1L, 2L } }), DenseTensor<long>.OfValues(new long[] { 1L, 2L }), null);
         Assert.Equal(OpStatus.Success, longTile.Status);
         Assert.Equal(new[] { 1, 4 }, ((Tensor<long>)longTile.Outputs[0]).Dimensions.ToArray());
     }
@@ -122,21 +122,21 @@ public class CpuExecutionProviderDinoTests
     {
         var input = DenseTensor<float>.OfValues(new float[,] { { 1f, 3f }, { 2f, 4f } });
         var scale = DenseTensor<float>.OfValues(new float[] { 1f, 1f });
-        var result = CPU.LayerNormalization(input, scale, null, -1, 0f);
+        var result = CPU.LayerNormalization(input, scale, null, -1, 0f, null, null, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var actual = (Tensor<float>)result.Outputs[0];
         Assert.Equal(-1f, actual[1, 0], 5);
         Assert.Equal(1f, actual[1, 1], 5);
 
-        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(input, null, null, -1, 0f).Status);
-        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(DenseTensor<int>.OfValues(new int[,] { { 1, 2 } }), DenseTensor<int>.OfValues(new int[] { 1, 1 }), null, -1, 0f).Status);
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(input, null, null, -1, 0f, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(DenseTensor<int>.OfValues(new int[,] { { 1, 2 } }), DenseTensor<int>.OfValues(new int[] { 1, 1 }), null, -1, 0f, null, null, null).Status);
     }
 
     [Fact]
     public void SplitToSequence_SequenceAt_Roundtrip()
     {
         var input = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f }, { 5f, 6f } });
-        var splitResult = CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 2, 1 }), 0, 1);
+        var splitResult = CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 2, 1 }), 0, 1, null);
         Assert.Equal(OpStatus.Success, splitResult.Status);
         var sequence = Assert.IsType<TensorSequence>(splitResult.Outputs[0]);
         Assert.Equal(2, sequence.Length);
@@ -147,30 +147,32 @@ public class CpuExecutionProviderDinoTests
         Assert.Equal(3f, firstChunk[1, 0], 5);
         Assert.Equal(5f, secondChunk[0, 0], 5);
 
-        var last = CPU.SequenceAt(sequence, DenseTensor<long>.OfValues(new long[] { -1 }));
+        var last = CPU.SequenceAt(sequence, DenseTensor<long>.OfValues(new long[] { -1 }), null);
         Assert.Equal(OpStatus.Success, last.Status);
         Assert.Equal(5f, ((Tensor<float>)last.Outputs[0])[0, 0], 5);
 
-        var flatSplit = CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 1, 1, 1 }), 0, 0);
+        // keepdims is ignored for explicit vector splits: the axis is kept
+        // (verified against ORT 1.29, which squeezes only scalar-chunk pieces).
+        var flatSplit = CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 1, 1, 1 }), 0, 0, null);
         Assert.Equal(OpStatus.Success, flatSplit.Status);
         var flatSequence = Assert.IsType<TensorSequence>(flatSplit.Outputs[0]);
         Assert.Equal(3, flatSequence.Length);
-        Assert.Equal(new[] { 2 }, ((Tensor<float>)flatSequence.Items[0]).Dimensions.ToArray());
-        Assert.Equal(5f, ((Tensor<float>)flatSequence.Items[2])[0], 5);
-        Assert.Equal(6f, ((Tensor<float>)flatSequence.Items[2])[1], 5);
+        Assert.Equal(new[] { 1, 2 }, ((Tensor<float>)flatSequence.Items[0]).Dimensions.ToArray());
+        Assert.Equal(5f, ((Tensor<float>)flatSequence.Items[2])[0, 0], 5);
+        Assert.Equal(6f, ((Tensor<float>)flatSequence.Items[2])[0, 1], 5);
     }
 
     [Fact]
     public void SplitToSequence_SequenceAt_Rejects_Bad_Arguments()
     {
         var input = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
-        Assert.Equal(OpStatus.Failure, CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 1, 2 }), 0, 1).Status);
-        Assert.Equal(OpStatus.Failure, CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 2 }), 5, 1).Status);
+        Assert.Equal(OpStatus.Failure, CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 1, 2 }), 0, 1, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 2 }), 5, 1, null).Status);
 
-        var split = CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 1, 1 }), 0, 1);
+        var split = CPU.SplitToSequence(input, DenseTensor<int>.OfValues(new int[] { 1, 1 }), 0, 1, null);
         Assert.Equal(OpStatus.Success, split.Status);
         var sequence = Assert.IsType<TensorSequence>(split.Outputs[0]);
-        Assert.Equal(OpStatus.Failure, CPU.SequenceAt(sequence, DenseTensor<long>.OfValues(new long[] { 5 })).Status);
-        Assert.Equal(OpStatus.Failure, CPU.SequenceAt(input, DenseTensor<long>.OfValues(new long[] { 0 })).Status);
+        Assert.Equal(OpStatus.Failure, CPU.SequenceAt(sequence, DenseTensor<long>.OfValues(new long[] { 5 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.SequenceAt(input, DenseTensor<long>.OfValues(new long[] { 0 }), null).Status);
     }
 }

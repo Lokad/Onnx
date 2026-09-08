@@ -54,7 +54,7 @@ namespace Lokad.Onnx
 
         object GetValue(int index);
 
-        void SetValue(int index, object value); 
+        void SetValue(int index, object? value); 
 
         static void ThrowIfDifferentElementTypes(params ITensor[] tensors) => Array.ForEach(tensors, tensor =>
         {
@@ -144,8 +144,8 @@ namespace Lokad.Onnx
             }
             switch (ElementType)
             {
-                case TensorElementType.Float: return Tensor<float>.Softmax((Tensor<float>)this);
-                case TensorElementType.Double: return Tensor<double>.Softmax((Tensor<double>)this);
+                case TensorElementType.Float: return Tensor<float>.Softmax((Tensor<float>)this, -1, null, 13);
+                case TensorElementType.Double: return Tensor<double>.Softmax((Tensor<double>)this, -1, null, 13);
                 default: throw new NotSupportedException($"The Softmax method is not supported for type {ElementType}.");
             }
         }
@@ -154,19 +154,16 @@ namespace Lokad.Onnx
 
         long Length { get; }
 
-        string PrintData(bool includeWhitespace = true);
+        string PrintData(bool includeWhitespace);
 
         string TensorNameDesc() => $"{Name}:{ElementType.ToString().ToLower()}:{string.Join("x",Dims.Select(d => d.ToString()))}";
 
         ITensor Cast<U>() where U : unmanaged
         {
             Profiler.StartOpStage(OpStage.Cast);
-            ITensor output = CloneEmpty<U>();
-            for (int i = 0; i < Length; i++)
-            {
-                output.SetValue(i, (U)Convert.ChangeType(GetValue(i), typeof(U)));
-            }
-            return output;
+            var info = TensorBase.GetTypeInfo(typeof(U));
+            if (info is null) throw new NotSupportedException($"Cast to {typeof(U).Name} is not supported.");
+            return CastOps.Cast(this, info.ElementType);
         }
 
         ITensor ConvertToInt32() 

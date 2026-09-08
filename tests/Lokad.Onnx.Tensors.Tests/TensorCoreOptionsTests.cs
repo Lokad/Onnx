@@ -5,7 +5,7 @@ namespace Lokad.Onnx.Tensors.Tests;
 
 public class TensorCoreOptionsTests
 {
-    static Tensor<float> SmallFloat(int rows, int cols, float start = 1f)
+    static Tensor<float> SmallFloat(int rows, int cols, float start)
     {
         var t = Tensor<float>.Zeros(rows, cols);
         float v = start;
@@ -15,7 +15,7 @@ public class TensorCoreOptionsTests
         return t;
     }
 
-    static Tensor<int> SmallInt(int rows, int cols, int start = 1)
+    static Tensor<int> SmallInt(int rows, int cols, int start)
     {
         var t = Tensor<int>.Zeros(rows, cols);
         int v = start;
@@ -25,7 +25,7 @@ public class TensorCoreOptionsTests
         return t;
     }
 
-    static Tensor<double> SmallDouble(int rows, int cols, double start = 1.0)
+    static Tensor<double> SmallDouble(int rows, int cols, double start)
     {
         var t = Tensor<double>.Zeros(rows, cols);
         double v = start;
@@ -35,7 +35,7 @@ public class TensorCoreOptionsTests
         return t;
     }
 
-    static void AssertFloatEqual(Tensor<float> expected, Tensor<float> actual, int precision = 5)
+    static void AssertFloatEqual(Tensor<float> expected, Tensor<float> actual, int precision)
     {
         Assert.Equal(expected.Dimensions.ToArray(), actual.Dimensions.ToArray());
         var e = expected.ToArray();
@@ -45,7 +45,7 @@ public class TensorCoreOptionsTests
             Assert.Equal(e[i], a[i], precision);
     }
 
-    static void AssertDoubleEqual(Tensor<double> expected, Tensor<double> actual, int precision = 10)
+    static void AssertDoubleEqual(Tensor<double> expected, Tensor<double> actual, int precision)
     {
         Assert.Equal(expected.Dimensions.ToArray(), actual.Dimensions.ToArray());
         var e = expected.ToArray();
@@ -64,21 +64,21 @@ public class TensorCoreOptionsTests
     [Fact]
     public void ElementwiseCore_ExplicitOptionsMatchDefault()
     {
-        var x = SmallFloat(2, 3);
+        var x = SmallFloat(2, 3, 1f);
         var y = SmallFloat(2, 3, 10f);
         var scalar = Tensor<float>.Zeros(2, 3);
         var simd = Tensor<float>.Zeros(2, 3);
         x.VectorizedApply((l, r) => l + r, (l, r) => l + r, y, scalar, TensorExecutionOptions.Scalar);
         x.VectorizedApply((l, r) => l + r, (l, r) => l + r, y, simd, TensorExecutionOptions.Simd);
         var @default = Tensor<float>.Add(x, y);
-        AssertFloatEqual(@default, scalar);
-        AssertFloatEqual(@default, simd);
+        AssertFloatEqual(@default, scalar, 5);
+        AssertFloatEqual(@default, simd, 5);
     }
 
     [Fact]
     public void IntMatMul2D_ExplicitOptionsMatchDefault()
     {
-        var a = SmallInt(2, 3);
+        var a = SmallInt(2, 3, 1);
         var b = SmallInt(3, 2, 10);
         var expected = Tensor<int>.MatMul2D(a, b);
         AssertIntEqual(expected, Tensor<int>.MatMul2D(a, b, TensorExecutionOptions.Scalar));
@@ -88,11 +88,11 @@ public class TensorCoreOptionsTests
     [Fact]
     public void DoubleMatMul2D_ExplicitOptionsMatchDefault()
     {
-        var a = SmallDouble(2, 3);
+        var a = SmallDouble(2, 3, 1.0);
         var b = SmallDouble(3, 2, 0.5);
         var expected = Tensor<double>.MatMul2D(a, b);
-        AssertDoubleEqual(expected, Tensor<double>.MatMul2D(a, b, TensorExecutionOptions.Scalar));
-        AssertDoubleEqual(expected, Tensor<double>.MatMul2D(a, b, TensorExecutionOptions.Simd));
+        AssertDoubleEqual(expected, Tensor<double>.MatMul2D(a, b, TensorExecutionOptions.Scalar), 10);
+        AssertDoubleEqual(expected, Tensor<double>.MatMul2D(a, b, TensorExecutionOptions.Simd), 10);
     }
 
     [Fact]
@@ -109,15 +109,15 @@ public class TensorCoreOptionsTests
     [Fact]
     public void ReduceMean_ExplicitOptionsMatchDefault()
     {
-        var data = SmallFloat(2, 3);
+        var data = SmallFloat(2, 3, 1f);
         var axes = new int[] { 1 }.ToTensor<int>();
         foreach (bool? keepDims in new bool?[] { true, false, null })
         {
             var expected = Tensor<float>.ReduceMean(data, axes, keepDims, false);
-            AssertFloatEqual(expected, Tensor<float>.ReduceMean(data, axes, keepDims, false, TensorExecutionOptions.Scalar));
-            AssertFloatEqual(expected, Tensor<float>.ReduceMean(data, axes, keepDims, false, TensorExecutionOptions.Simd));
+            AssertFloatEqual(expected, Tensor<float>.ReduceMean(data, axes, keepDims, false, TensorExecutionOptions.Scalar), 5);
+            AssertFloatEqual(expected, Tensor<float>.ReduceMean(data, axes, keepDims, false, TensorExecutionOptions.Simd), 5);
         }
-        var idata = SmallInt(2, 3);
+        var idata = SmallInt(2, 3, 1);
         var iexpected = Tensor<int>.ReduceMean(idata, axes, true, false);
         AssertIntEqual(iexpected, Tensor<int>.ReduceMean(idata, axes, true, false, TensorExecutionOptions.Scalar));
     }
@@ -129,7 +129,10 @@ public class TensorCoreOptionsTests
         var b = Tensor<double>.Zeros(2, 2, 2);
         for (int i = 0; i < 8; i++) { a[i / 4, (i / 2) % 2, i % 2] = i + 1; b[i / 4, (i / 2) % 2, i % 2] = 0.5 * (i + 1); }
         var expected = Tensor<double>.MatMul(a, b);
-        AssertDoubleEqual(expected, Tensor<double>.MatMul(a, b, TensorExecutionOptions.Scalar));
-        AssertDoubleEqual(expected, Tensor<double>.MatMul(a, b, TensorExecutionOptions.Simd));
+        AssertDoubleEqual(expected, Tensor<double>.MatMul(a, b, TensorExecutionOptions.Scalar), 10);
+        AssertDoubleEqual(expected, Tensor<double>.MatMul(a, b, TensorExecutionOptions.Simd), 10);
     }
+
+
 }
+

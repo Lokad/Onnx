@@ -18,7 +18,10 @@ namespace Lokad.Onnx
         /// <param name="array">The array to create a DenseTensor&lt;T&gt; from.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): akin to row-major in a rank-2 tensor.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): akin to column-major in a rank-2 tensor.</param>
         /// <returns>A n-dimensional DenseTensor&lt;T&gt; with the same dimensions and content as <paramref name="array"/>.</returns>
-        public static DenseTensor<T> ToTensor<T>(this Array array, bool reverseStride = false) where T : unmanaged
+        public static DenseTensor<T> ToTensor<T>(this Array array) where T : unmanaged
+            => array.ToTensor<T>(false);
+
+        public static DenseTensor<T> ToTensor<T>(this Array array, bool reverseStride) where T : unmanaged
             => new DenseTensor<T>(array, reverseStride);
 
         /// <summary>
@@ -29,7 +32,7 @@ namespace Lokad.Onnx
         /// <returns>A 1-dimensional SparseTensor&lt;T&gt; with the same length and content as <paramref name="array"/>.</returns>
         public static SparseTensor<T> ToSparseTensor<T>(this T[] array) where T : unmanaged
         {
-            return new SparseTensor<T>(array);
+            return new SparseTensor<T>(array, false);
         }
 
         /// <summary>
@@ -39,7 +42,7 @@ namespace Lokad.Onnx
         /// <param name="array">The array to create a SparseTensor&lt;T&gt; from.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): row-major.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): column-major.</param>
         /// <returns>A 2-dimensional SparseTensor&lt;T&gt; with the same dimensions and content as <paramref name="array"/>.</returns>
-        public static SparseTensor<T> ToSparseTensor<T>(this T[,] array, bool reverseStride = false) where T : unmanaged
+        public static SparseTensor<T> ToSparseTensor<T>(this T[,] array, bool reverseStride) where T : unmanaged
         {
             return new SparseTensor<T>(array, reverseStride);
         }
@@ -51,7 +54,7 @@ namespace Lokad.Onnx
         /// <param name="array">The array to create a SparseTensor&lt;T&gt; from.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): akin to row-major in a rank-2 tensor.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): akin to column-major in a rank-2 tensor.</param>
         /// <returns>A 3-dimensional SparseTensor&lt;T&gt; with the same dimensions and content as <paramref name="array"/>.</returns>
-        public static SparseTensor<T> ToSparseTensor<T>(this T[,,] array, bool reverseStride = false) where T : unmanaged
+        public static SparseTensor<T> ToSparseTensor<T>(this T[,,] array, bool reverseStride) where T : unmanaged
         {
             return new SparseTensor<T>(array, reverseStride);
         }
@@ -63,7 +66,7 @@ namespace Lokad.Onnx
         /// <param name="array">The array to create a SparseTensor&lt;T&gt; from.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): akin to row-major in a rank-2 tensor.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): akin to column-major in a rank-2 tensor.</param>
         /// <returns>A n-dimensional SparseTensor&lt;T&gt; with the same dimensions and content as <paramref name="array"/>.</returns>
-        public static SparseTensor<T> ToSparseTensor<T>(this Array array, bool reverseStride = false) where T : unmanaged
+        public static SparseTensor<T> ToSparseTensor<T>(this Array array, bool reverseStride) where T : unmanaged
         {
             return new SparseTensor<T>(array, reverseStride);
         }
@@ -76,7 +79,7 @@ namespace Lokad.Onnx
         /// <returns>A 1-dimensional CompressedSparseTensor&lt;T&gt; with the same length and content as <paramref name="array"/>.</returns>
         public static CompressedSparseTensor<T> ToCompressedSparseTensor<T>(this T[] array) where T : unmanaged
         {
-            return new CompressedSparseTensor<T>(array);
+            return new CompressedSparseTensor<T>(array, false);
         }
 
         /// <summary>
@@ -86,7 +89,7 @@ namespace Lokad.Onnx
         /// <param name="array">The array to create a CompressedSparseTensor&lt;T&gt; from.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): row-major.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): column-major.</param>
         /// <returns>A 2-dimensional CompressedSparseTensor&lt;T&gt; with the same dimensions and content as <paramref name="array"/>.</returns>
-        public static CompressedSparseTensor<T> ToCompressedSparseTensor<T>(this T[,] array, bool reverseStride = false) where T : unmanaged
+        public static CompressedSparseTensor<T> ToCompressedSparseTensor<T>(this T[,] array, bool reverseStride) where T : unmanaged
         {
             return new CompressedSparseTensor<T>(array, reverseStride);
         }
@@ -98,7 +101,7 @@ namespace Lokad.Onnx
         /// <param name="array">The array to create a CompressedSparseTensor&lt;T&gt; from.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): akin to row-major in a rank-2 tensor.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): akin to column-major in a rank-2 tensor.</param>
         /// <returns>A 3-dimensional CompressedSparseTensor&lt;T&gt; with the same dimensions and content as <paramref name="array"/>.</returns>
-        public static CompressedSparseTensor<T> ToCompressedSparseTensor<T>(this T[,,] array, bool reverseStride = false) where T : unmanaged
+        public static CompressedSparseTensor<T> ToCompressedSparseTensor<T>(this T[,,] array, bool reverseStride) where T : unmanaged
         {
             return new CompressedSparseTensor<T>(array, reverseStride);
         }
@@ -110,7 +113,7 @@ namespace Lokad.Onnx
         /// <param name="array">The array to create a CompressedSparseTensor&lt;T&gt; from.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): akin to row-major in a rank-2 tensor.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): akin to column-major in a rank-2 tensor.</param>
         /// <returns>A n-dimensional CompressedSparseTensor&lt;T&gt; with the same dimensions and content as <paramref name="array"/>.</returns>
-        public static CompressedSparseTensor<T> ToCompressedSparseTensor<T>(this Array array, bool reverseStride = false) where T : unmanaged           
+        public static CompressedSparseTensor<T> ToCompressedSparseTensor<T>(this Array array, bool reverseStride) where T : unmanaged           
         {
             return new CompressedSparseTensor<T>(array, reverseStride);
         }
@@ -127,7 +130,7 @@ namespace Lokad.Onnx
         public static U[] CastA<U>(this Array a) => a.Cast<U>().ToArray();
 
         public static U[] Convert<T, U>(this T[] a) => 
-            a.Select(e => (U) System.Convert.ChangeType(e, typeof(U)) ?? throw new ArgumentException()).ToArray();
+            a.Select(e => (U?) System.Convert.ChangeType(e, typeof(U)) ?? throw new ArgumentException()).ToArray();
 
         public static bool AlmostEqual(this double expected, double actual, int precision)
         {

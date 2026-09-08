@@ -44,23 +44,35 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
         set => this.source.SetValue(ArrayUtilities.GetIndex(effectiveStrides, indices), value);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public override T GetValue(int index)
+    /// <summary>
+    /// Index decomposition without per-element coordinate arrays: this view is
+    /// always standard row-major, so digits come straight from the flat index.
+    /// </summary>
+    int ToSourceOffset(int index)
     {
-        int[] indices = new int[this.Rank];
-        ArrayUtilities.GetIndices(strides, IsReversedStride, index, indices);
-        return source.GetValue(ArrayUtilities.GetIndex(effectiveStrides, indices));
+        int rem = index;
+        int offset = 0;
+        for (int d = Rank - 1; d >= 0; d--)
+        {
+            int dim = dimensions[d];
+            int coord = dim == 0 ? 0 : rem % dim;
+            rem = dim == 0 ? rem : rem / dim;
+            offset += coord * effectiveStrides[d];
+        }
+        return offset;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public override void SetValue(int index, T value)
-    {
-        int[] indices = new int[this.Rank];
-        ArrayUtilities.GetIndices(strides, IsReversedStride, index, indices);
-        this.source.SetValue(ArrayUtilities.GetIndex(effectiveStrides, indices), value);
-    }
+    public override T GetValue(int index) => source.GetValue(ToSourceOffset(index));
 
-    public override Tensor<T> Clone() => new BroadcastedTensor<T>(source, dimensions, broadcastedDims);
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public override void SetValue(int index, T value) => this.source.SetValue(ToSourceOffset(index), value);
+
+    /// <summary>
+    /// Copies values into new backing storage, per the clone contract.
+    /// Use <see cref="BroadcastDim"/> to create sharing views instead.
+    /// </summary>
+    public override Tensor<T> Clone() => ToDenseTensor();
         
     public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions);  
 
@@ -173,8 +185,9 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
         }
         else
         {
-            dimensions[dim] = size;
-            return new BroadcastedTensor<T>(source, dimensions, broadcastedDims.Append(dim).ToArray());
+            var dims = (int[])dimensions.Clone();
+            dims[dim] = size;
+            return new BroadcastedTensor<T>(source, dims, broadcastedDims.Append(dim).ToArray());
         }
     }
     #endregion

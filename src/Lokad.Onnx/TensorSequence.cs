@@ -6,8 +6,15 @@ using System.Linq;
 namespace Lokad.Onnx;
 
 /// <summary>
-/// Ordered ONNX sequence of tensors produced by SplitToSequence and consumed by SequenceAt.
-/// Tensor members that have no sequence meaning throw NotSupportedException.
+/// Ordered ONNX sequence runtime value produced by SplitToSequence and
+/// consumed by SequenceAt. It implements <see cref="ITensor"/> so sequences
+/// flow through graph bindings, validation and ownership analysis like other
+/// runtime values: Rank is structurally 1, Dims holds the item count and
+/// ElementType is Sequence, all for validation and logging (copy Dims before
+/// mutating; the array is fresh per call). Numeric tensor operations
+/// (reshape, slice, broadcast, densify, typed clones) are unsupported by
+/// design and throw, exactly like descriptor placeholders; use SequenceAt to
+/// extract elements and per-element ops to compute on them.
 /// </summary>
 public sealed class TensorSequence : ITensor
 {
@@ -73,11 +80,15 @@ public sealed class TensorSequence : ITensor
 
     public object GetValue(int index) => items[index];
 
-    public void SetValue(int index, object value) => items[index] = (ITensor)value;
+    public void SetValue(int index, object? value)
+    {
+        if (value is null) throw new ArgumentNullException(nameof(value), "Tensor sequences hold non-null tensors.");
+        items[index] = (ITensor)value;
+    }
 
     public IEnumerator GetEnumerator() => items.GetEnumerator();
 
     public string PrintShape() => "seq[" + items.Count + "]";
 
-    public string PrintData(bool includeWhitespace = true) => "seq[" + items.Count + "]";
+    public string PrintData(bool includeWhitespace) => "seq[" + items.Count + "]";
 }

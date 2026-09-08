@@ -54,12 +54,13 @@ public class TensorOpsMatMulTests
     }
 
     [Fact]
-    public void MatMul_Int_RejectsVectorVector()
+    public void MatMul_Int_VectorVectorReturnsScalarDot()
     {
         var x = DenseTensor<int>.OfValues(new[] { 1, 2, 3 });
         var y = DenseTensor<int>.OfValues(new[] { 4, 5, 6 });
-
-        Assert.Throws<ArgumentException>(() => Tensor<int>.MatMul(x, y));
+        var c = Tensor<int>.MatMul(x, y);
+        Assert.Equal(new int[0], c.Dimensions.ToArray());
+        Assert.Equal(32, c.GetValue(0));
     }
 
     [Fact]

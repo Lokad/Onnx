@@ -65,7 +65,7 @@ public class TensorRotaryEmbeddingTests
         var cos = new DenseTensor<float>((float[])cd.Clone(), (int[])cosDims.Clone());
         var sin = new DenseTensor<float>((float[])sd.Clone(), (int[])cosDims.Clone());
         var expected = Oracle(xd, dims, cd, cosDims, sd, half, axis);
-        var actual = Tensor<float>.RotaryEmbedding(x, cos, sin, half, axis).ToArray();
+        var actual = Tensor<float>.RotaryEmbedding(x, cos, sin, half, axis, -1).ToArray();
         Assert.Equal(expected.Length, actual.Length);
         for (int i = 0; i < expected.Length; i++) Assert.Equal(expected[i], actual[i], 5);
     }
@@ -94,9 +94,9 @@ public class TensorRotaryEmbeddingTests
         var x = new DenseTensor<float>(new[] { 1f, 2f, 3f, 4f }, new[] { 4 });
         var ones = new DenseTensor<float>(new[] { 1f, 1f, 1f, 1f }, new[] { 4 });
         var zeros = new DenseTensor<float>(new[] { 0f, 0f, 0f, 0f }, new[] { 4 });
-        var through = Tensor<float>.RotaryEmbedding(x, ones, zeros, 2, 0).ToArray();
+        var through = Tensor<float>.RotaryEmbedding(x, ones, zeros, 2, 0, -1).ToArray();
         Assert.Equal(new[] { 1f, 2f, 3f, 4f }, through);
-        var rotated = Tensor<float>.RotaryEmbedding(x, zeros, ones, 2, 0).ToArray();
+        var rotated = Tensor<float>.RotaryEmbedding(x, zeros, ones, 2, 0, -1).ToArray();
         Assert.Equal(new[] { -3f, -4f, 1f, 2f }, rotated);
     }
 
@@ -106,8 +106,8 @@ public class TensorRotaryEmbeddingTests
         var x = new DenseTensor<float>(new float[2 * 3 * 8], new[] { 2, 3, 8 });
         var cos = new DenseTensor<float>(new float[3 * 8], new[] { 3, 8 });
         var sin = new DenseTensor<float>(new float[3 * 8], new[] { 3, 8 });
-        Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, new DenseTensor<float>(new float[3 * 7], new[] { 3, 7 }), sin, 4));
-        Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, cos, sin, 9));
-        Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, cos, sin, 4, 3));
+        Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, new DenseTensor<float>(new float[3 * 7], new[] { 3, 7 }), sin, 4, -1, -1));
+        Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, cos, sin, 9, -1, -1));
+        Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, cos, sin, 4, 3, -1));
     }
 }

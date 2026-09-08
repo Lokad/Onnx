@@ -1,0 +1,105 @@
+using System.Collections.Generic;
+
+namespace Lokad.Onnx.Backend.Tests;
+
+public class CastNumericTests
+{
+    [Fact]
+    public void FloatFractions_TruncateTowardZero()
+    {
+        var x = DenseTensor<float>.OfValues(new float[] { 1.9f, -1.9f, 2.5f, -2.5f, 0.5f });
+        var r = CPUExecutionProvider.Cast(x, TensorElementType.Int32, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 1, -1, 2, -2, 0 }, ((Tensor<int>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void FloatOverflowAndNan_SaturateToMin()
+    {
+        var x = DenseTensor<float>.OfValues(new float[] { 1e20f, -1e20f, float.NaN, float.PositiveInfinity });
+        var r = CPUExecutionProvider.Cast(x, TensorElementType.Int32, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        foreach (var v in ((Tensor<int>)r.Outputs[0]).ToArray()) Assert.Equal(int.MinValue, v);
+        var d = DenseTensor<double>.OfValues(new double[] { 1e300, double.NaN });
+        var rd = CPUExecutionProvider.Cast(d, TensorElementType.Int64, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        foreach (var v in ((Tensor<long>)rd.Outputs[0]).ToArray()) Assert.Equal(long.MinValue, v);
+    }
+
+    [Fact]
+    public void IntegerNarrowing_Wraps()
+    {
+        var x = DenseTensor<int>.OfValues(new int[] { 300, -1, 128, 257 });
+        var r = CPUExecutionProvider.Cast(x, TensorElementType.Int8, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new sbyte[] { 44, -1, -128, 1 }, ((Tensor<sbyte>)r.Outputs[0]).ToArray());
+        var u = DenseTensor<int>.OfValues(new int[] { 300, -1 });
+        var ru = CPUExecutionProvider.Cast(u, TensorElementType.UInt8, null);
+        Assert.Equal(OpStatus.Success, ru.Status);
+        Assert.Equal(new byte[] { 44, 255 }, ((Tensor<byte>)ru.Outputs[0]).ToArray());
+        var l = DenseTensor<long>.OfValues(new long[] { 4294967297L, -1L });
+        var rl = CPUExecutionProvider.Cast(l, TensorElementType.Int32, null);
+        Assert.Equal(OpStatus.Success, rl.Status);
+        Assert.Equal(new int[] { 1, -1 }, ((Tensor<int>)rl.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void UnsignedExtremes_MatchOracle()
+    {
+        var x = DenseTensor<float>.OfValues(new float[] { 5e9f, 3e9f });
+        var r = CPUExecutionProvider.Cast(x, TensorElementType.UInt32, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new uint[] { 705032704u, 3000000000u }, ((Tensor<uint>)r.Outputs[0]).ToArray());
+        var nan = DenseTensor<float>.OfValues(new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity });
+        var rn = CPUExecutionProvider.Cast(nan, TensorElementType.UInt32, null);
+        Assert.Equal(OpStatus.Success, rn.Status);
+        Assert.Equal(new uint[] { 0u, 0u, 0u }, ((Tensor<uint>)rn.Outputs[0]).ToArray());
+        var big = DenseTensor<float>.OfValues(new float[] { 1e19f });
+        var rb = CPUExecutionProvider.Cast(big, TensorElementType.UInt64, null);
+        Assert.Equal(OpStatus.Success, rb.Status);
+        Assert.Equal(new ulong[] { 9999999980506447872ul }, ((Tensor<ulong>)rb.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void Bools_ConvertBothWays()
+    {
+        var b = DenseTensor<bool>.OfValues(new bool[] { true, false });
+        var r = CPUExecutionProvider.Cast(b, TensorElementType.Int32, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 1, 0 }, ((Tensor<int>)r.Outputs[0]).ToArray());
+        var z = DenseTensor<int>.OfValues(new int[] { 0, 1, -3 });
+        var rz = CPUExecutionProvider.Cast(z, TensorElementType.Bool, null);
+        Assert.Equal(OpStatus.Success, rz.Status);
+        Assert.Equal(new bool[] { false, true, true }, ((Tensor<bool>)rz.Outputs[0]).ToArray());
+        var f = DenseTensor<float>.OfValues(new float[] { 0f, 0.5f, float.NaN });
+        var rf = CPUExecutionProvider.Cast(f, TensorElementType.Bool, null);
+        Assert.Equal(OpStatus.Success, rf.Status);
+        Assert.Equal(new bool[] { false, true, true }, ((Tensor<bool>)rf.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void SameType_ReturnsCopy()
+    {
+        var x = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        var r = CPUExecutionProvider.Cast(x, TensorElementType.Float, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void UnsupportedPairs_FailExplicitly()
+    {
+        var x = DenseTensor<float>.OfValues(new float[] { 1f });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Cast(x, TensorElementType.Float16, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Cast(x, TensorElementType.String, null).Status);
+    }
+
+    [Fact]
+    public void DoubleFractions_TruncateTowardZero()
+    {
+        var x = DenseTensor<double>.OfValues(new double[] { 300.7, -300.7 });
+        var r = CPUExecutionProvider.Cast(x, TensorElementType.UInt16, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new ushort[] { 300, 65236 }, ((Tensor<ushort>)r.Outputs[0]).ToArray());
+    }
+}

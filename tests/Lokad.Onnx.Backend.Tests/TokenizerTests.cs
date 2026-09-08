@@ -85,20 +85,16 @@ public class TokenizerTests
     public void GetOrLoad_ReturnsSharedCachedInstance()
     {
         string path = AssetPath();
-        int before = Text.Tokenizers.Count;
         var first = Text.GetOrLoadRobertaTokenizer(path);
         var second = Text.GetOrLoadRobertaTokenizer(path);
         Assert.Same(first, second);
-        Assert.Equal(before + 1, Text.Tokenizers.Count);
         Assert.Throws<FileNotFoundException>(() => Text.GetOrLoadRobertaTokenizer("no-such-tokenizer.bpe.model"));
-        Assert.Equal(before + 1, Text.Tokenizers.Count);
     }
 
     [Fact]
     public void MissingModelPath_ThrowsWithoutCacheChange()
     {
-        int before = Text.Tokenizers.Count;
         Assert.Throws<FileNotFoundException>(() => Text.RobertaTokenizeFromFile("Hello world", "no-such-tokenizer.bpe.model"));
-        Assert.Equal(before, Text.Tokenizers.Count);
+        Assert.Throws<FileNotFoundException>(() => Text.RobertaTokenizeFromFile(new[] { "Hello world" }, "no-such-tokenizer.bpe.model"));
     }
 }

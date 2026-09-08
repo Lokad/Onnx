@@ -4,17 +4,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using static Lokad.Onnx.Runtime;
 
-public class Model : Runtime
+public class Model
 {
+    /// <summary>Assembles an executable graph from a plain-data description.</summary>
+    /// <remarks>The description is consumed: its collections, node arrays and
+    /// tensor payloads move into the graph without copying, so callers must
+    /// not reuse the description after this call. Tensor payload arrays become
+    /// the backing storage of the graph initializers with no further copy.
+    /// </remarks>
     public static ComputationalGraph Load(OnnxModel mp)
     {
         Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Name, mp.Domain, mp.Opset.Select(o => o.Key + ":" + o.Value).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.DocString);
         var cop = Begin("Creating computational graph from ONNX model");
         var graph = new ComputationalGraph();
         graph.ModelFile = "<buffer>";
-        graph.Opset = new Dictionary<string, int>(mp.Opset);
-        graph.MetadataProps = new Dictionary<string, string>(mp.MetadataProps);
+        graph.Opset = mp.Opset;
+        graph.MetadataProps = mp.MetadataProps;
         graph.Metadata["Name"] = mp.Name;
         graph.Metadata["IrVersion"] = mp.IrVersion;
         graph.Metadata["DocString"] = mp.DocString;
@@ -30,7 +37,8 @@ public class Model : Runtime
         op = Begin("Converting {c} model input and output descriptions to graph tensors", mp.Inputs.Count + mp.Outputs.Count);
         graph.Inputs = mp.Inputs.ToDictionary(vp => vp.Name, vp => ToShapeTensor(vp));
         graph.Outputs = mp.Outputs.ToDictionary(vp => vp.Name, vp => ToShapeTensor(vp));
-        graph.OutputDescs = mp.Outputs.ToList();
+        graph.InputDescs = mp.Inputs;
+        graph.OutputDescs = mp.Outputs;
         op.Complete();
         op = Begin("Converting {c} model nodes to graph nodes", mp.Nodes.Count);
         foreach (var np in mp.Nodes)
@@ -42,21 +50,33 @@ public class Model : Runtime
         if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
         int rope = GraphFusion.FuseRopePatterns(graph);
         if (rope > 0) Info("Fused {c} rotary-embedding patterns into native nodes.", rope);
-        graph.RefreshLifetimeAnalysis();
+        graph.Prepare();
         cop.Complete();
         return graph;
     }
 
     static Node ToNode(OnnxNode np, ComputationalGraph graph)
     {
+        var domain = np.Domain ?? "";
+        if (!Enum.TryParse<OpType>(np.OpType, false, out var op))
+        {
+            op = OpType.Unknown;
+        }
+        int opset = -1;
+        if (graph.Opset.TryGetValue(domain, out var v)) opset = v;
+        else if (graph.Opset.TryGetValue("", out var d)) opset = d;
         var node = new Node()
         {
             Name = np.Name,
             ID = np.Name.GetHashCode(),
-            Attributes = new Dictionary<string, object>(np.Attributes),
-            Op = (OpType)Enum.Parse(typeof(OpType), np.OpType),
-            Inputs = np.Inputs.ToArray(),
-            Outputs = np.Outputs.ToArray()
+            Attributes = np.Attributes,
+            Op = op,
+            OpTypeName = np.OpType ?? "",
+            Domain = domain,
+            OpsetVersion = opset,
+            IsFused = false,
+            Inputs = np.Inputs,
+            Outputs = np.Outputs
         };
         foreach (var o in node.Outputs)
         {
@@ -91,26 +111,9 @@ public class Model : Runtime
         }
     }
 
-    public static ITensor ToShapeTensor(OnnxValueInfo vp)
-    {
-        var dims = vp.Dims.ToArray();
-        switch (vp.ElementType)
-        {
-            case TensorElementType.Bool: return new DenseTensor<bool>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.Int8: return new DenseTensor<sbyte>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.UInt8: return new DenseTensor<byte>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.Int16: return new DenseTensor<short>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.UInt16: return new DenseTensor<ushort>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.Int32: return new DenseTensor<int>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.UInt32: return new DenseTensor<uint>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.Int64: return new DenseTensor<long>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.UInt64: return new DenseTensor<ulong>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.Float: return new DenseTensor<float>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.Double: return new DenseTensor<double>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.Float16: return new DenseTensor<Float16>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.BFloat16: return new DenseTensor<BFloat16>(dimensions: dims) { Name = vp.Name };
-            case TensorElementType.Complex64: return new DenseTensor<Complex>(dimensions: dims) { Name = vp.Name };
-            default: throw new ArgumentException($"Cannot convert model value info of element type {vp.ElementType}.");
-        }
-    }
+    /// <summary>
+    /// Builds a data-free shape descriptor for graph input/output slots.
+    /// No element storage is allocated regardless of the declared size.
+    /// </summary>
+    public static ITensor ToShapeTensor(OnnxValueInfo vp) => new TensorDesc(vp);
 }

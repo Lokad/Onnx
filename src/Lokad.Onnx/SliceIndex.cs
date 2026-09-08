@@ -120,7 +120,9 @@ public class SliceIndex
     /// <param name="start">Start index of the slice, null means from the start of the array</param>
     /// <param name="stop">Stop index (first index after end of slice), null means to the end of the array</param>
     /// <param name="step">Optional step to select every n-th element, defaults to 1</param>
-    public SliceIndex(int? start = null, int? stop = null, int step = 1)
+    public SliceIndex(int? start) : this(start, null, 1) { }
+    public SliceIndex(int? start, int? stop) : this(start, stop, 1) { }
+    public SliceIndex(int? start, int? stop, int step)
     {
         Start = start;
         Stop = stop;
@@ -231,7 +233,7 @@ public class SliceIndex
         return !(a == b);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null)
             return false;

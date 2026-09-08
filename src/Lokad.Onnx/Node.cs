@@ -16,10 +16,24 @@ public partial struct Node
     public OpType Op;
     public string[] Inputs;
     public string[] Outputs;
+    public string? Domain;
+    public string? OpTypeName;
+    public int OpsetVersion;
+    public bool IsFused;
+
+    public string DescribeOperator()
+    {
+        var domain = string.IsNullOrEmpty(Domain) ? "ai.onnx" : Domain;
+        var op = string.IsNullOrEmpty(OpTypeName) ? Op.ToString() : OpTypeName;
+        return domain + ":" + op + ":" + OpsetVersion;
+    }
+
+    public static bool IsStandardDomain(string? domain) =>
+        string.IsNullOrEmpty(domain) || domain == "ai.onnx";
 
     public bool HasAttr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T);
 
-    public T? Attr<T>(string name, T? d = default(T)) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ?
+    public T? Attr<T>(string name, T? d) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ?
         (T)Attributes[name] : d;
 
     public T RequiredAttr<T>(string name) => Attributes is not null && Attributes.ContainsKey(name) && Attributes[name].GetType() == typeof(T) ?
@@ -33,40 +47,67 @@ public partial struct Node
         return name is null ? null : a[name];
     }
 
-    public int? Int(string name, int? d = null)
+    public int? Int(string name, int? d) => GetInt(name, d);
+
+    public int? GetInt(string name, int? d)
     {
         if (Attributes is null) return d;
-        if (HasAttr<int>(name)) return Attr<int>(name);
-        if (!HasAttr<long>(name))
-        {
-            return d;
-        }
-        else
-        {
-            var u = Attr<long>(name);
-            return (int?)Convert.ToInt32(u) ?? throw new Exception("Cannot convert attribute to type int.");
-        }
+        if (!Attributes.TryGetValue(name, out var v) || v is null) return d;
+        if (v is int i) return i;
+        if (v is long l) return checked((int)l);
+        throw new ArgumentException("The attribute " + name + " must be an integer.");
     }
 
-    public int RequiredInt(string name) => Int(name) ?? throw new ArgumentException($"The Int attribute {name} is required but was not found.");
+    public float? GetFloat(string name, float? d)
+    {
+        if (Attributes is null) return d;
+        if (!Attributes.TryGetValue(name, out var v) || v is null) return d;
+        if (v is float f) return f;
+        if (v is double g) return checked((float)g);
+        if (v is int i) return i;
+        if (v is long l) return checked((float)l);
+        throw new ArgumentException("The attribute " + name + " must be a float.");
+    }
+
+    public bool? GetBool(string name, bool? d)
+    {
+        if (Attributes is null) return d;
+        if (!Attributes.TryGetValue(name, out var v) || v is null) return d;
+        if (v is bool b) return b;
+        if (v is int i) return i != 0;
+        if (v is long l) return l != 0L;
+        throw new ArgumentException("The attribute " + name + " must be a boolean or 0/1 integer.");
+    }
+
+    public bool GetReshapeAllowZero()
+    {
+        if (Attributes is not null)
+        {
+            if (Attributes.TryGetValue("allowzero", out var v) && v is not null)
+            {
+                if (v is bool b) return b;
+                if (v is int i) return i != 0;
+                if (v is long l) return l != 0L;
+                throw new ArgumentException("The attribute allowzero must be a 0/1 integer.");
+            }
+            if (Attributes.TryGetValue("allow_zero", out var w) && w is not null)
+            {
+                if (w is bool b2) return b2;
+                throw new ArgumentException("The attribute allow_zero must be a boolean.");
+            }
+        }
+        return false;
+    }
+
+    public int RequiredInt(string name) => Int(name, null) ?? throw new ArgumentException($"The Int attribute {name} is required but was not found.");
 
     public int[]? Ints(string name)
     {
         if (Attributes is null) return null;
-        if (HasAttr<int[]>(name))
-        {
-            return Attr<int[]>(name);
-        }
-        else if (HasAttr<long[]>(name))
-        {
-            var u = Attr<long[]>(name);
-            return u!.Select(e => Convert.ToInt32(e)).ToArray();
-        }
-        else
-        {
-            return null;
-        }
-
+        if (!Attributes.TryGetValue(name, out var v) || v is null) return null;
+        if (v is int[] ia) return ia;
+        if (v is long[] la) return la.Select(e => checked((int)e)).ToArray();
+        throw new ArgumentException("The attribute " + name + " must be an integer array.");
     }
 
     public int[] RequiredInts(string name) => Ints(name) ?? throw new ArgumentException($"The Ints attribute {name} is required but was not found.");
@@ -75,9 +116,11 @@ public partial struct Node
     public ITensor? InputTensor(ComputationalGraph graph, int index) =>
         index < Inputs.Length && !string.IsNullOrEmpty(Inputs[index]) ? graph.GetInputTensor(Inputs[index]) : null;
 
-    public ITensor? InputTensorOrAttr(ComputationalGraph graph, int index, string name) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : Attr<ITensor>(name);
+    public ITensor? InputTensorOrAttr(ComputationalGraph graph, int index, string name) => index < Inputs.Length ? graph.GetInputTensor(Inputs[index]) : Attr<ITensor>(name, null);
 
-    public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider = ExecutionProvider.CPU, ExecutionOptions? options = null)
+    static bool IsFatal(Exception e) => e is OutOfMemoryException or StackOverflowException;
+
+    public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider, ExecutionOptions? options)
     {
         try
         {
@@ -106,24 +149,43 @@ public partial struct Node
         }
         catch (ArgumentNullException ane)
         {
-            return !string.IsNullOrEmpty(ane.ParamName) ? MissingInput(Op, ane.ParamName) : Failure(Op, ane.Message);
+            var r = !string.IsNullOrEmpty(ane.ParamName) ? MissingInput(Op, ane.ParamName) : Failure(Op, ane.Message);
+            r.Cause = ane;
+            return r;
         }
         catch (TensorInputShapeException tise)
         {
-            return WrongInputShape(Op, tise.Name, tise.Shape, tise.Input);
+            var r = WrongInputShape(Op, tise.Name, tise.Shape, tise.Input);
+            r.Cause = tise;
+            return r;
         }
-        catch (Exception e)
+        catch (Exception e) when (!IsFatal(e))
         {
-            return Failure(Op, e.Message);
+            return Failure(Op, e.Message, e);
         }
     }
 
-    public OpResult ExecuteCPU(ComputationalGraph graph, ExecutionOptions? options = null)
+        static OpResult CastChecked(ITensor? input, int to, ExecutionOptions? opt)
+    {
+        var op = OpType.Cast;
+        if (!Enum.IsDefined(typeof(TensorElementType), to)) return AttributeNotSupported(op, "to", to.ToString(), null);
+        return CPU.Cast(input, (TensorElementType)to, opt);
+    }
+
+    public OpResult ExecuteCPU(ComputationalGraph graph, ExecutionOptions? options)
     {
         var opt = options ?? graph.Options;
+        if (Op == OpType.Unknown)
+        {
+            return Failure(Op, "The operator " + DescribeOperator() + " is not supported by the backend.");
+        }
+        if (!IsStandardDomain(Domain))
+        {
+            return Failure(Op, "The operator " + DescribeOperator() + " uses a non-standard domain and is not supported by the backend.");
+        }
         return Op switch
     {
-        OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), Attr<bool?>("allow_zero"), opt),
+        OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), GetReshapeAllowZero(), opt),
 
         OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
@@ -138,19 +200,21 @@ public partial struct Node
         OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0), opt),
 
         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
-            Attr<string>("auto_pad"), Ints("dilations"), Attr<int?>("group"), Ints("kernel_shape"), Ints("pads"), Ints("strides")),
+            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), null),
 
         OpType.Relu => CPU.Relu(InputTensor(graph, 0), opt),
 
         OpType.Erf => CPU.Erf(InputTensor(graph, 0), opt, graph.ActivePool),
 
-        OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad"), Attr<int?>("ceil_mode"), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), Attr<int?>("storage_order"), Ints("strides"), opt),
+        OpType.MaxPool => Outputs.Length > 1
+            ? Failure(Op, "MaxPool with more than one output is not supported because the optional Indices output is not implemented.")
+            : CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad", null), GetInt("ceil_mode", null), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), GetInt("storage_order", null), Ints("strides"), opt),
 
         OpType.GlobalAveragePool => CPU.GlobalAveragePool(InputTensor(graph, 0), opt),
 
         OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
-        OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), HasAttr<float>("alpha") ? Attr<float>("alpha") : 1f, HasAttr<float>("beta") ? Attr<float>("beta") : 1f, opt),
+        OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0),
 
         OpType.Transpose => CPU.Transpose(InputTensor(graph, 0), Ints("perm"), opt, graph.ActivePool),
 
@@ -158,17 +222,21 @@ public partial struct Node
 
         OpType.ConstantOfShape => CPU.ConstantOfShape(InputTensor(graph, 0), OneOfAttr("value") as ITensor, opt),
 
-        OpType.Cast => CPU.Cast(InputTensor(graph, 0), RequiredInt("to"), opt),
+        OpType.Cast => CastChecked(InputTensor(graph, 0), RequiredInt("to"), opt),
 
         OpType.Concat => CPU.Concat(graph.GetInputTensors(Inputs), RequiredInt("axis"), opt),
 
-        OpType.Shape => CPU.Shape(InputTensor(graph, 0), Int("start"), Int("end"), opt),
+        OpType.Shape => CPU.Shape(InputTensor(graph, 0), Int("start", null), Int("end", null), opt),
 
-        OpType.Gather => CPU.Gather(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis"), opt),
+        OpType.Gather => CPU.Gather(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), opt),
 
-        OpType.Slice => CPU.Slice(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4), opt),
+        OpType.Slice => graph.OpsetVersion("") switch
+        {
+            int v when v >= 10 => CPU.Slice(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4), opt),
+            _ => CPU.Slice(InputTensor(graph, 0), RequiredInts("starts").ToTensor<int>(), RequiredInts("ends").ToTensor<int>(), Ints("axes")?.ToTensor<int>(), null, opt),
+        },
 
-        OpType.Split => CPU.Split(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis"), Ints("split"), Int("num_outputs"), opt),
+        OpType.Split => CPU.Split(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), Ints("split"), Int("num_outputs", null), opt, Outputs.Length),
 
         OpType.Equal => CPU.Equal(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
@@ -180,25 +248,33 @@ public partial struct Node
 
         OpType.Resize => CPU.Resize(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3),
             Attr<string>("mode", "nearest"), Attr<string>("coordinate_transformation_mode", "half_pixel"), Attr<string>("nearest_mode", "round_prefer_floor"),
-            Attr<float>("cubic_coeff_a", -0.75f), Attr<float>("extrapolation_value", 0f)),
+            GetFloat("cubic_coeff_a", -0.75f), GetFloat("extrapolation_value", 0f), null),
 
-        OpType.Unsqueeze => graph.OpsetVersion() switch
+        OpType.Unsqueeze => graph.OpsetVersion("") switch
         {
             int v when v >= 13 => CPU.Unsqueeze(InputTensor(graph, 0), InputTensor(graph, 1), opt),
             _ => CPU.Unsqueeze(InputTensor(graph, 0), RequiredInts("axes"), opt),
         }, 
 
-        OpType.ReduceSum => CPU.ReduceSum(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), Int("noop_with_empty_axes"), opt),
-
-        OpType.ReduceMean => graph.OpsetVersion() switch
+        OpType.ReduceSum => graph.OpsetVersion("") switch
         {
-            int v when v >= 18 => CPU.ReduceMean(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), Int("noop_with_empty_axes"), opt),
-            _ => CPU.ReduceMean(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims"), Int("noop_with_empty_axes"), opt),
+            int v when v >= 13 => CPU.ReduceSum(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),
+            _ => CPU.ReduceSum(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),
+        },
+
+        OpType.ReduceMean => graph.OpsetVersion("") switch
+        {
+            int v when v >= 18 => CPU.ReduceMean(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),
+            _ => CPU.ReduceMean(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),
         },
         
-        OpType.ReduceMax => graph.OpsetVersion() switch { int v when v >= 18 => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims"), opt), _ => CPU.ReduceMax(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims"), opt), },
+        OpType.ReduceMax => graph.OpsetVersion("") switch { int v when v >= 18 => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), null, opt), _ => CPU.ReduceMax(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), null, opt), },
 
-        OpType.Softmax => CPU.Softmax(InputTensor(graph, 0), Int("axis"), opt, graph.ActivePool),
+        OpType.Softmax => graph.OpsetVersion("") switch
+        {
+            int v when v >= 13 => CPU.Softmax(InputTensor(graph, 0), Int("axis", null) ?? -1, opt, graph.ActivePool, v),
+            int v => CPU.Softmax(InputTensor(graph, 0), Int("axis", null) ?? 1, opt, graph.ActivePool, v),
+        },
 
         OpType.Abs => CPU.Abs(InputTensor(graph, 0), opt),
 
@@ -210,21 +286,25 @@ public partial struct Node
 
         OpType.Neg => CPU.Neg(InputTensor(graph, 0), opt),
 
-        OpType.Gelu => CPU.Gelu(InputTensor(graph, 0), Attr<string>("approximate"), opt, graph.ActivePool),
+        OpType.Gelu => CPU.Gelu(InputTensor(graph, 0), Attr<string>("approximate", null), opt, graph.ActivePool),
 
-        OpType.Squeeze => CPU.Squeeze(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+        OpType.Squeeze => graph.OpsetVersion("") switch
+        {
+            int v when v >= 13 => CPU.Squeeze(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+            _ => CPU.Squeeze(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), opt),
+        },
 
         OpType.Range => CPU.Range(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt),
 
         OpType.Tile => CPU.Tile(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis"), Attr<float>("epsilon"), opt, graph.ActivePool),
+        OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis", null), GetFloat("epsilon", null), opt, graph.ActivePool, Attributes),
 
-        OpType.SplitToSequence => CPU.SplitToSequence(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis"), Int("keepdims"), opt),
+        OpType.SplitToSequence => CPU.SplitToSequence(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), Int("keepdims", null), opt),
 
         OpType.SequenceAt => CPU.SequenceAt(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.RotaryEmbedding => CPU.RotaryEmbedding(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), RequiredInt("half"), Int("axis"), Int("concatAxis"), opt, graph.ActivePool),
+        OpType.RotaryEmbedding => CPU.RotaryEmbedding(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), RequiredInt("half"), Int("axis", null), Int("concatAxis", null), opt, graph.ActivePool),
 
         _ => NotSupported(Op)
     };

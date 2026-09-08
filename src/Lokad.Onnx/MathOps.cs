@@ -27,13 +27,35 @@ public class MathOps
         Value
     }
 
+    public enum ResizeMode
+    {
+        Nearest,
+        Linear,
+        Cubic
+    }
+
+    public enum ResizeCoordinateTransformation
+    {
+        HalfPixel,
+        AlignCorners,
+        Asymmetric
+    }
+
+    public enum ResizeNearestMode
+    {
+        Floor,
+        Ceil,
+        RoundPreferFloor,
+        RoundPreferCeil
+    }
+
     public struct Conv2DOutputInfo
     {
         public PadInfo PadInfo;
         public int[] Shape;
     }
 
-    public static Conv2DOutputInfo GetConv2DOutputInfo(PadType pad, int inHeight, int inWidth, int strideHeight, int strideWidth, int filterHeight, int filterWidth, int? padValue = null)
+    public static Conv2DOutputInfo GetConv2DOutputInfo(PadType pad, int inHeight, int inWidth, int strideHeight, int strideWidth, int filterHeight, int filterWidth, int? padValue)
     {
         var padInfo = new PadInfo();
         var outHeight = 0;
@@ -56,11 +78,11 @@ public class MathOps
                 outHeight = (int)Math.Ceiling(inHeight / (float)strideHeight);
                 outWidth = (int)Math.Ceiling(inWidth / (float)strideWidth);
 
-                var padAlongHeight = (outHeight - 1) * strideHeight + filterHeight - inHeight;
-                var padAlongWidth = (outWidth - 1) * strideWidth + filterWidth - inWidth;
-                var top = (int)Math.Floor(padAlongHeight / 2f);
+                var padAlongHeight = Math.Max(0, (outHeight - 1) * strideHeight + filterHeight - inHeight);
+                var padAlongWidth = Math.Max(0, (outWidth - 1) * strideWidth + filterWidth - inWidth);
+                var top = pad == PadType.SameLower ? (int)Math.Ceiling(padAlongHeight / 2f) : (int)Math.Floor(padAlongHeight / 2f);
                 var bottom = (int)padAlongHeight - top;
-                var left = (int)Math.Floor(padAlongWidth / 2f);
+                var left = pad == PadType.SameLower ? (int)Math.Ceiling(padAlongWidth / 2f) : (int)Math.Floor(padAlongWidth / 2f);
                 var right = (int)padAlongWidth - left;
 
                 padInfo.bottom = bottom;
@@ -95,7 +117,7 @@ public class MathOps
         return new int[] { outputHeight, outputWidth};
     }
 
-    public static int GetConv2DDefaultPad(int[] inputShape, int fieldSize, int stride, int dilation = 1) => 
+    public static int GetConv2DDefaultPad(int[] inputShape, int fieldSize, int stride, int dilation) => 
         (int) Math.Floor(((float)inputShape[0] * (stride - 1) - stride + GetConv2DEffectiveFilterSize(fieldSize, dilation)) / 2);
     
     public static int GetConv2DEffectiveFilterSize(int filterSize, int dilation) => dilation <= 1 ? filterSize : filterSize + (filterSize - 1) * (dilation - 1);
@@ -646,10 +668,10 @@ public class MathOps
     /// <param name="dilationX">Dilation of the kernel by width.</param>
     /// <param name="strideY">Stride of the convolution by height.</param>
     /// <param name="strideX">Stride of the convolution by width.</param>
-    /// <param name="padY">Zero padding by left side.</param>
-    /// <param name="padX">Zero padding by top side.</param>
-    /// <param name="padH">Zero padding by right side.</param>
-    /// <param name="padW">Zero padding by bottom side.</param>
+    /// <param name="padY">Zero padding at the top (begin height).</param>
+    /// <param name="padX">Zero padding at the left (begin width).</param>
+    /// <param name="padH">Zero padding at the bottom (end height).</param>
+    /// <param name="padW">Zero padding at the right (end width).</param>
     /// <param name="buf">Buffer.</param>
     public static unsafe void Im2col(float* src,
                               int srcC,
@@ -779,10 +801,10 @@ public class MathOps
     /// <param name="dilationX">Dilation of the kernel by width.</param>
     /// <param name="strideY">Stride of the convolution by height.</param>
     /// <param name="strideX">Stride of the convolution by width.</param>
-    /// <param name="padY">Zero padding by left side.</param>
-    /// <param name="padX">Zero padding by top side.</param>
-    /// <param name="padH">Zero padding by right side.</param>
-    /// <param name="padW">Zero padding by bottom side.</param>
+    /// <param name="padY">Zero padding at the top (begin height).</param>
+    /// <param name="padX">Zero padding at the left (begin width).</param>
+    /// <param name="padH">Zero padding at the bottom (end height).</param>
+    /// <param name="padW">Zero padding at the right (end width).</param>
     /// <param name="group">Convolution groups. If group=srcC=dstC, convolution is depthwise separable.</param>
     /// <param name="weight">Weights (kernels).</param>
     /// <param name="bias">Bias.</param>
@@ -807,7 +829,7 @@ public class MathOps
                                     float* weight,
                                     float* dst,
                                     int dstC,
-                                    float* bias = null)
+                                    float* bias)
     {
         /// <summary>
         /// Matrix multiplication.
@@ -851,29 +873,32 @@ public class MathOps
         int N = dstH * dstW;
         int K = srcC * kernelY * kernelX / group;
         var buf = (float*)Marshal.AllocCoTaskMem(srcC * kernelY * kernelX * dstH * dstW * sizeof(float));
-        for (int b = 0; b < batch; ++b)
+        try
         {
-            Im2col(src, srcC, srcH, srcW, kernelY, kernelX, dilationY, dilationX, strideY, strideX, padY, padX, padH, padW, buf);
-            for (int g = 0; g < group; ++g)
+            for (int b = 0; b < batch; ++b)
             {
-                _mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
-            }
-
-            if (bias != null)
-            {
-                for (int i = 0; i < dstC; ++i)
+                Im2col(src, srcC, srcH, srcW, kernelY, kernelX, dilationY, dilationX, strideY, strideX, padY, padX, padH, padW, buf);
+                for (int g = 0; g < group; ++g)
                 {
-                    var pdst = dst + i * N;
-                    for (int j = 0; j < N; ++j)
+                    _mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
+                }
+
+                if (bias != null)
+                {
+                    for (int i = 0; i < dstC; ++i)
                     {
-                        pdst[j] += bias[i];
+                        var pdst = dst + i * N;
+                        for (int j = 0; j < N; ++j)
+                        {
+                            pdst[j] += bias[i];
+                        }
                     }
                 }
+                src += srcC * srcH * srcW;
+                dst += dstC * dstH * dstW;
             }
-            src += srcC * srcH * srcW;
-            dst += dstC * dstH * dstW;
         }
-        Marshal.FreeCoTaskMem((IntPtr)buf);
+        finally { Marshal.FreeCoTaskMem((IntPtr)buf); }
     }
 
 
@@ -891,10 +916,10 @@ public class MathOps
     /// <param name="dilationX">Dilation of the kernel by width.</param>
     /// <param name="strideY">Stride of the convolution by height.</param>
     /// <param name="strideX">Stride of the convolution by width.</param>
-    /// <param name="padY">Zero padding by left side.</param>
-    /// <param name="padX">Zero padding by top side.</param>
-    /// <param name="padH">Zero padding by right side.</param>
-    /// <param name="padW">Zero padding by bottom side.</param>
+    /// <param name="padY">Zero padding at the top (begin height).</param>
+    /// <param name="padX">Zero padding at the left (begin width).</param>
+    /// <param name="padH">Zero padding at the bottom (end height).</param>
+    /// <param name="padW">Zero padding at the right (end width).</param>
     /// <param name="group">Convolution groups. If group=srcC=dstC, convolution is depthwise separable.</param>
     /// <param name="weight">Weights (kernels).</param>
     /// <param name="bias">Bias.</param>
@@ -963,26 +988,31 @@ public class MathOps
         int N = dstH * dstW;
         int K = srcC * kernelY * kernelX / group;
         var buf = (double*)Marshal.AllocCoTaskMem(srcC * kernelY * kernelX * dstH * dstW * sizeof(double));
-        for (int b = 0; b < batch; ++b)
+        try
         {
-            Im2col(src, srcC, srcH, srcW, kernelY, kernelX, dilationY, dilationX, strideY, strideX, padY, padX, padH, padW, buf);
-            for (int g = 0; g < group; ++g)
+            for (int b = 0; b < batch; ++b)
             {
-                _mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
-                //cs_BLAS.DGEMM("nota", "notb", M, N, K, 0.0f, )
-            }
-            for (int i = 0; i < dstC; ++i)
-            {
-                var pdst = dst + i * N;
-                for (int j = 0; j < N; ++j)
+                Im2col(src, srcC, srcH, srcW, kernelY, kernelX, dilationY, dilationX, strideY, strideX, padY, padX, padH, padW, buf);
+                for (int g = 0; g < group; ++g)
                 {
-                    pdst[j] += bias[i];
+                    _mm(M, N, K, weight + M * K * g, buf + N * K * g, dst + M * N * g);
                 }
+                if (bias != null)
+                {
+                    for (int i = 0; i < dstC; ++i)
+                    {
+                        var pdst = dst + i * N;
+                        for (int j = 0; j < N; ++j)
+                        {
+                            pdst[j] += bias[i];
+                        }
+                    }
+                }
+                src += srcC * srcH * srcW;
+                dst += dstC * dstH * dstW;
             }
-            src += srcC * srcH * srcW;
-            dst += dstC * dstH * dstW;
         }
-        Marshal.FreeCoTaskMem((IntPtr)buf);
+        finally { Marshal.FreeCoTaskMem((IntPtr)buf); }
     }
 
     // From: https://www.johndcook.com/blog/2009/01/19/stand-alone-error-function-erf/

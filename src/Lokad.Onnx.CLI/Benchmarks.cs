@@ -16,19 +16,19 @@ using static Lokad.Onnx.MathOps;
 
 using Lokad.Onnx;
 using BenchmarkDotNet.Jobs;
+using static Lokad.Onnx.Runtime;
 
 [RyuJitX64Job]
 [IterationsColumn]
 [MemoryDiagnoser]
 [DisassemblyDiagnoser(printSource:true)]
 
-public class MatMul2DBenchmarks : Runtime
+public class MatMul2DBenchmarks
 {
     [GlobalSetup]
     public void Setup()
     {
         Program.UseConsoleLogging(false, "CLI", true);
-        Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false);
     }
 
     [IterationSetup]
@@ -88,7 +88,7 @@ public class MatMul2DBenchmarks : Runtime
 [IterationsColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
-public class TensorMatMulBenchmarks : Runtime
+public class TensorMatMulBenchmarks
 {
     [GlobalSetup]
     public void Setup()
@@ -168,7 +168,7 @@ public class TensorMatMulBenchmarks : Runtime
 [MemoryDiagnoser]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
-public class TensorIndexingBenchmarks : Runtime
+public class TensorIndexingBenchmarks
 {
     [IterationSetup]
     public void Setup()
@@ -300,13 +300,12 @@ public class TensorIndexingBenchmarks : Runtime
 [IterationsColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
-public class TensorOpBenchmarks : Runtime
+public class TensorOpBenchmarks
 {
     [GlobalSetup]
     public void Setup()
     {
         Program.UseConsoleLogging(false, "CLI", true);
-        Initialize("Lokad.Onnx.CLI Benchmarks", "CLI", false);
         sm_e5 = Tensor<float>.Rand(12, 30, 30);
         sm_dino = Tensor<float>.Rand(6, 257, 257);
         ln_x = Tensor<float>.Rand(257, 384);
@@ -335,15 +334,15 @@ public class TensorOpBenchmarks : Runtime
 
     [Benchmark(Description = "Softmax over 12x30x30 attention scores")]
     [BenchmarkCategory("softmax")]
-    public void SoftmaxAttn() => Tensor<float>.Softmax(sm_e5);
+    public void SoftmaxAttn() => Tensor<float>.Softmax(sm_e5, -1, null, 13);
 
     [Benchmark(Description = "Softmax over 6x257x257 attention scores")]
     [BenchmarkCategory("softmax")]
-    public void SoftmaxDino() => Tensor<float>.Softmax(sm_dino);
+    public void SoftmaxDino() => Tensor<float>.Softmax(sm_dino, -1, null, 13);
 
     [Benchmark(Description = "LayerNormalization over 257x384")]
     [BenchmarkCategory("layernorm")]
-    public void LayerNorm() => Tensor<float>.LayerNormalization(ln_x, ln_s, ln_b);
+    public void LayerNorm() => Tensor<float>.LayerNormalization(ln_x, ln_s, ln_b, -1, 1e-5f);
 
     [Benchmark(Description = "Erf over 257x384", Baseline = true)]
     [BenchmarkCategory("erf")]
@@ -419,27 +418,27 @@ public class TensorOpBenchmarks : Runtime
 
     [Benchmark(Description = "Conv stem 7x7 s2 pad3 over 1x3x112x112")]
     [BenchmarkCategory("conv")]
-    public void ConvStem() => CPUExecutionProvider.Conv(cv_stem_x, cv_stem_w, null, null, null, 1, new[] { 7, 7 }, new[] { 3, 3, 3, 3 }, new[] { 2, 2 });
+    public void ConvStem() => CPUExecutionProvider.Conv(cv_stem_x, cv_stem_w, null, null, null, 1, new[] { 7, 7 }, new[] { 3, 3, 3, 3 }, new[] { 2, 2 }, null);
 
     [Benchmark(Description = "Conv 3x3 s1 pad1 over 1x64x28x28")]
     [BenchmarkCategory("conv")]
-    public void ConvStage() => CPUExecutionProvider.Conv(cv_33_x, cv_33_w, null, null, null, 1, new[] { 3, 3 }, new[] { 1, 1, 1, 1 }, new[] { 1, 1 });
+    public void ConvStage() => CPUExecutionProvider.Conv(cv_33_x, cv_33_w, null, null, null, 1, new[] { 3, 3 }, new[] { 1, 1, 1, 1 }, new[] { 1, 1 }, null);
 
     [Benchmark(Description = "Gemm 4x768 @ 768x2304 + bias (GPT-2 c_attn)")]
     [BenchmarkCategory("gemm")]
-    public void GemmAttn() => CPUExecutionProvider.Gemm(gm_a, gm_b, gm_c, 1f, 1f);
+    public void GemmAttn() => CPUExecutionProvider.Gemm(gm_a, gm_b, gm_c, 1f, 1f, null, 0, 0);
 
     [Benchmark(Description = "Tanh over 4x3072 (GPT-2 gelu path)")]
     [BenchmarkCategory("tanh")]
-    public void TanhAct() => CPUExecutionProvider.Tanh(th_x);
+    public void TanhAct() => CPUExecutionProvider.Tanh(th_x, null);
 
     [Benchmark(Description = "Split 4x12x2304 into 3 QKV parts")]
     [BenchmarkCategory("split")]
-    public void SplitQkv() => CPUExecutionProvider.Split(sp_x, sp_sizes, 2, null, null);
+    public void SplitQkv() => CPUExecutionProvider.Split(sp_x, sp_sizes, 2, null, null, null, null);
 
     [Benchmark(Description = "GlobalAveragePool over 1x256x14x14")]
     [BenchmarkCategory("gap")]
-    public void GlobalAvgPool() => CPUExecutionProvider.GlobalAveragePool(gap_x);
+    public void GlobalAvgPool() => CPUExecutionProvider.GlobalAveragePool(gap_x, null);
 
     #region Fields
     Tensor<float> sm_e5 = Tensor<float>.Zeros(0);
@@ -472,7 +471,7 @@ public class TensorOpBenchmarks : Runtime
 [IterationsColumn]
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
-public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
+public class MultilingualEmbedded5SmallRunBenchmarks
 {
     [GlobalSetup()]
     public void Setup()
@@ -487,14 +486,14 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
         Random rnd = new Random();
         T20 = textData
             .AsParallel()
-            .Where(t => t is not null && t!.Text.Length >= 21 && t!.Text[20] == ' ')
-            .Select(t => t!.Text.Substring(0, 20)/*.Replace("\n", " ")*/)
+            .OfType<TextData>().Where(t => t.Text.Length >= 21 && t.Text[20] == ' ')
+            .Select(t => t.Text.Substring(0, 20)/*.Replace("\n", " ")*/)
             .OrderBy(x => rnd.Next())
             .ToArray();
         T200 = textData
             .AsParallel()
-            .Where(t => t is not null && t!.Text.Length >= 201 && t!.Text[200] == ' ')
-            .Select(t => t!.Text.Substring(0, 200)/*.Replace("\n", " ")*/)
+            .OfType<TextData>().Where(t => t.Text.Length >= 201 && t.Text[200] == ' ')
+            .Select(t => t.Text.Substring(0, 200)/*.Replace("\n", " ")*/)
             .OrderBy(x => rnd.Next())
             .ToArray();
 
@@ -509,87 +508,89 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
     [IterationSetup(Targets = ["Benchmark20_1_1", "Benchmark20_10", "Benchmark20_50", "Benchmark200_1", "Benchmark200_10"])]
     public void SetupNoSimd()
     {
-        graph!.Reset();
+        Required(graph, nameof(graph)).Reset();
     }
 
     [IterationSetup(Targets = ["Benchmark20_1_simd", "Benchmark20_10_simd", "Benchmark20_50_simd", "Benchmark200_1_simd", "Benchmark200_10_simd"])]
     public void SetupSimd()
     {
-        graph!.Reset();
+        Required(graph, nameof(graph)).Reset();
     }
 
     [IterationSetup(Targets = ["Benchmark20_1_simd_intrinsics", "Benchmark20_10_simd_intrinsics", "Benchmark20_50_simd_intrinsics", "Benchmark200_1_simd_intrinsics", "Benchmark200_10_simd_intrinsics"])]
     public void SetupSimdIntrinsics()
     {
-        graph!.Reset();
+        Required(graph, nameof(graph)).Reset();
     }
 
     [Benchmark(Description="1 string of 20 chars", Baseline = true)]
     [BenchmarkCategory("1_20")]
-    public void Benchmark20_1_1() => graph!.Execute(ui20_1!, true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
+    public void Benchmark20_1_1() => Required(graph, nameof(graph)).Execute(Required(ui20_1, nameof(ui20_1)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
 
     [Benchmark(Description = "1 string of 20 chars - simd")]
     [BenchmarkCategory("1_20")]
-    public void Benchmark20_1_simd() => graph!.Execute(ui20_1!, true, ExecutionProvider.CPU, ExecutionOptions.Simd);
+    public void Benchmark20_1_simd() => Required(graph, nameof(graph)).Execute(Required(ui20_1, nameof(ui20_1)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
 
     [Benchmark(Description = "1 string of 20 chars - simd intrinsics")]
     [BenchmarkCategory("1_20")]
-    public void Benchmark20_1_simd_intrinsics() => graph!.Execute(ui20_1!, true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
+    public void Benchmark20_1_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui20_1, nameof(ui20_1)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
 
     [Benchmark(Description = "10 strings of 20 chars")]
     [BenchmarkCategory("10_20")]
-    public void Benchmark20_10() => graph!.Execute(ui20_10!, true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
+    public void Benchmark20_10() => Required(graph, nameof(graph)).Execute(Required(ui20_10, nameof(ui20_10)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
 
     [Benchmark(Description = "10 strings of 20 chars - simd")]
     [BenchmarkCategory("10_20")]
-    public void Benchmark20_10_simd() => graph!.Execute(ui20_10!, true, ExecutionProvider.CPU, ExecutionOptions.Simd);
+    public void Benchmark20_10_simd() => Required(graph, nameof(graph)).Execute(Required(ui20_10, nameof(ui20_10)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
 
     [Benchmark(Description = "10 strings of 20 chars - simd intrinsics")]
     [BenchmarkCategory("10_20")]
-    public void Benchmark20_10_simd_intrinsics() => graph!.Execute(ui20_10!, true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
+    public void Benchmark20_10_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui20_10, nameof(ui20_10)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
 
     [Benchmark(Description = "50 strings of 20 chars")]
     [BenchmarkCategory("100_20")]
-    public void Benchmark20_50() => graph!.Execute(ui20_100!, true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
+    public void Benchmark20_50() => Required(graph, nameof(graph)).Execute(Required(ui20_100, nameof(ui20_100)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
 
     [Benchmark(Description = "50 strings of 20 chars - simd")]
     [BenchmarkCategory("100_20")]
-    public void Benchmark20_50_simd() => graph!.Execute(ui20_100!, true, ExecutionProvider.CPU, ExecutionOptions.Simd);
+    public void Benchmark20_50_simd() => Required(graph, nameof(graph)).Execute(Required(ui20_100, nameof(ui20_100)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
 
     [Benchmark(Description = "50 strings of 20 chars - simd intrinsics")]
     [BenchmarkCategory("100_20")]
-    public void Benchmark20_50_simd_intrinsics() => graph!.Execute(ui20_100!, true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
+    public void Benchmark20_50_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui20_100, nameof(ui20_100)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
 
     [Benchmark(Description = "1 string of 200 chars")]
     [BenchmarkCategory("1_200")]
-    public void Benchmark200_1() => graph!.Execute(ui200_1!, true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
+    public void Benchmark200_1() => Required(graph, nameof(graph)).Execute(Required(ui200_1, nameof(ui200_1)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
     
     [Benchmark(Description = "1 string of 200 chars - simd")]
     [BenchmarkCategory("1_200")]
-    public void Benchmark200_1_simd() => graph!.Execute(ui200_1!, true, ExecutionProvider.CPU, ExecutionOptions.Simd);
+    public void Benchmark200_1_simd() => Required(graph, nameof(graph)).Execute(Required(ui200_1, nameof(ui200_1)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
 
 
     [Benchmark(Description = "1 string of 200 chars - simd intrinsics")]
     [BenchmarkCategory("1_200")]
-    public void Benchmark200_1_simd_intrinsics() => graph!.Execute(ui200_1!, true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
+    public void Benchmark200_1_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui200_1, nameof(ui200_1)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
 
     [Benchmark(Description = "10 strings of 200 chars")]
     [BenchmarkCategory("10_200")]
-    public void Benchmark200_10() => graph!.Execute(ui200_10!, true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
+    public void Benchmark200_10() => Required(graph, nameof(graph)).Execute(Required(ui200_10, nameof(ui200_10)), true, ExecutionProvider.CPU, ExecutionOptions.Scalar);
 
     [Benchmark(Description = "10 strings of 200 chars - simd")]
     [BenchmarkCategory("10_200")]
-    public void Benchmark200_10_simd() => graph!.Execute(ui200_10!, true, ExecutionProvider.CPU, ExecutionOptions.Simd);
+    public void Benchmark200_10_simd() => Required(graph, nameof(graph)).Execute(Required(ui200_10, nameof(ui200_10)), true, ExecutionProvider.CPU, ExecutionOptions.Simd);
 
     [Benchmark(Description = "10 strings of 200 chars - simd intrinsics")]
     [BenchmarkCategory("10_200")]
-    public void Benchmark200_10_simd_intrinsics() => graph!.Execute(ui200_10!, true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
+    public void Benchmark200_10_simd_intrinsics() => Required(graph, nameof(graph)).Execute(Required(ui200_10, nameof(ui200_10)), true, ExecutionProvider.CPU, ExecutionOptions.Intrinsics);
 
     #region Fields
     string modelFile = Path.Combine(Runtime.AssemblyLocation, "benchmark-model.onnx");
     string testDataFile = Path.Combine(Runtime.AssemblyLocation, "train.jsonl");
     public static string[] T20 = Array.Empty<string>();
     public static string[] T200 = Array.Empty<string>();
+    static T Required<T>(T? value, string name) => value ?? throw new InvalidOperationException($"Benchmark {name} was used before setup completed.");
+
     public static ComputationalGraph? graph;
     ITensor[]? ui20_1 = null;
     ITensor[]? ui20_10 = null;
@@ -604,7 +605,7 @@ public class MultilingualEmbedded5SmallRunBenchmarks : Runtime
 [IterationsColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
-public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
+public class MultilingualEmbedded5SmallLoadBenchmarks
 {
     [GlobalSetup()]
     public void Setup()
@@ -620,14 +621,14 @@ public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
         Random rnd = new Random();
         T20 = textData
             .AsParallel()
-            .Where(t => t is not null && t!.Text.Length >= 21 && t!.Text[20] == ' ')
-            .Select(t => t!.Text.Substring(0, 20)/*.Replace("\n", " ")*/)
+            .OfType<TextData>().Where(t => t.Text.Length >= 21 && t.Text[20] == ' ')
+            .Select(t => t.Text.Substring(0, 20)/*.Replace("\n", " ")*/)
             .OrderBy(x => rnd.Next())
             .ToArray();
         T200 = textData
             .AsParallel()
-            .Where(t => t is not null && t!.Text.Length >= 201 && t!.Text[200] == ' ')
-            .Select(t => t!.Text.Substring(0, 200)/*.Replace("\n", " ")*/)
+            .OfType<TextData>().Where(t => t.Text.Length >= 201 && t.Text[200] == ' ')
+            .Select(t => t.Text.Substring(0, 200)/*.Replace("\n", " ")*/)
             .OrderBy(x => rnd.Next())
             .ToArray();
 
@@ -670,7 +671,7 @@ public class MultilingualEmbedded5SmallLoadBenchmarks : Runtime
     #endregion
 }
 
-internal class Benchmarks : Runtime
+internal class Benchmarks
 {
     internal static void RunMe5sLoad(string[] args)
     {
@@ -695,6 +696,12 @@ internal class Benchmarks : Runtime
                 op.Abandon();
                 return;
             }
+        }
+        if (!Lokad.Onnx.Text.EnsureMe5sTokenizer())
+        {
+            Error("Could not download tokenizer model file.");
+            op.Abandon();
+            return;
         }
         op.Complete();
         BenchmarkRunner.Run<MultilingualEmbedded5SmallLoadBenchmarks>(DefaultConfig.Instance, args);
@@ -723,6 +730,12 @@ internal class Benchmarks : Runtime
                 op.Abandon();
                 return;
             }
+        }
+        if (!Lokad.Onnx.Text.EnsureMe5sTokenizer())
+        {
+            Error("Could not download tokenizer model file.");
+            op.Abandon();
+            return;
         }
         op.Complete();
         BenchmarkRunner.Run<MultilingualEmbedded5SmallRunBenchmarks>(DefaultConfig.Instance, args);

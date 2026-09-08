@@ -75,7 +75,7 @@ static class E5Runner
                 Console.Error.WriteLine("E5Runner error: unknown mode: " + mode);
                 return 1;
         }
-        var execOptions = new ExecutionOptions(OptimizationMode.Speed, new TensorExecutionOptions(useSimd, useIntrinsics));
+        var execOptions = new ExecutionOptions(OptimizationMode.Speed, new TensorExecutionOptions(useSimd, useIntrinsics, 1));
 
         List<(string id, string text)> caseList = new List<(string, string)>();
         using (var doc = JsonDocument.Parse(File.ReadAllText(cases)))

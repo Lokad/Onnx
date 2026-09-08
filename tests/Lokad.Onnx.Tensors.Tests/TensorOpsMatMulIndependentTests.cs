@@ -16,7 +16,7 @@ public class TensorOpsMatMulIndependentTests
         return s;
     }
 
-    static void AssertMatMulMatchesIndependent(Tensor<float> a, Tensor<float> b, Tensor<float> actual, float eps = 1e-4f)
+    static void AssertMatMulMatchesIndependent(Tensor<float> a, Tensor<float> b, Tensor<float> actual, float eps)
     {
         Assert.Equal(new[] { a.Dimensions[0], b.Dimensions[1] }, actual.Dimensions.ToArray());
         for (int i = 0; i < actual.Dimensions[0]; i++)
@@ -28,7 +28,7 @@ public class TensorOpsMatMulIndependentTests
         }
     }
 
-    static DenseTensor<float> SeqFloat(int rows, int cols, int start = 1)
+    static DenseTensor<float> SeqFloat(int rows, int cols, int start)
     {
         var t = new DenseTensor<float>(new[] { rows, cols });
         int v = start;
@@ -55,9 +55,9 @@ public class TensorOpsMatMulIndependentTests
     [Fact]
     public void MatMul2D_IntrinsicsThirdRow_UsesCorrectPointer()
     {
-        var a = SeqFloat(4, 3);
-        var b = SeqFloat(3, 32);
-        RunAllModes(a, b, actual => AssertMatMulMatchesIndependent(a, b, actual));
+        var a = SeqFloat(4, 3, 1);
+        var b = SeqFloat(3, 32, 1);
+        RunAllModes(a, b, actual => AssertMatMulMatchesIndependent(a, b, actual, 1e-4f));
     }
 
     [Fact]
@@ -65,9 +65,9 @@ public class TensorOpsMatMulIndependentTests
     {
         foreach (int m in new[] { 1, 2, 3, 4, 5 })
         {
-            var a = SeqFloat(m, 3);
-            var b = SeqFloat(3, 4);
-            RunAllModes(a, b, actual => AssertMatMulMatchesIndependent(a, b, actual));
+            var a = SeqFloat(m, 3, 1);
+            var b = SeqFloat(3, 4, 1);
+            RunAllModes(a, b, actual => AssertMatMulMatchesIndependent(a, b, actual, 1e-4f));
         }
     }
 
@@ -76,9 +76,9 @@ public class TensorOpsMatMulIndependentTests
     {
         foreach (int k in new[] { 31, 32, 33 })
         {
-            var a = SeqFloat(4, 3);
-            var b = SeqFloat(3, k);
-            RunAllModes(a, b, actual => AssertMatMulMatchesIndependent(a, b, actual));
+            var a = SeqFloat(4, 3, 1);
+            var b = SeqFloat(3, k, 1);
+            RunAllModes(a, b, actual => AssertMatMulMatchesIndependent(a, b, actual, 1e-4f));
         }
     }
 
@@ -89,17 +89,17 @@ public class TensorOpsMatMulIndependentTests
         var by = new float[,] { { 7f, 8f }, { 9f, 10f }, { 11f, 12f } };
         var revX = ax.ToTensor<float>(reverseStride: true);
         var revY = by.ToTensor<float>(reverseStride: true);
-        RunAllModes(revX, revY, actual => AssertMatMulMatchesIndependent(revX, revY, actual));
+        RunAllModes(revX, revY, actual => AssertMatMulMatchesIndependent(revX, revY, actual, 1e-4f));
     }
 
     [Fact]
     public void MatMul2D_NonContiguousSlice_MatchesIndependent()
     {
-        var big = SeqFloat(4, 6);
+        var big = SeqFloat(4, 6, 1);
         var a = big[0..2, 0..3];
-        var b = SeqFloat(3, 2);
+        var b = SeqFloat(3, 2, 1);
         var aa = (Tensor<float>)a;
-        RunAllModes(aa, b, actual => AssertMatMulMatchesIndependent(aa, b, actual));
+        RunAllModes(aa, b, actual => AssertMatMulMatchesIndependent(aa, b, actual, 1e-4f));
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public class TensorOpsMatMulIndependentTests
     [Fact]
     public void ToDenseTensor_RowMajor_ReturnsSame()
     {
-        var dense = SeqFloat(2, 3);
+        var dense = SeqFloat(2, 3, 1);
         Assert.Same(dense, dense.ToDenseTensor());
     }
 
@@ -182,9 +182,9 @@ public class TensorOpsMatMulIndependentTests
     {
         foreach (int rows in new[] { 3, 5 })
         {
-            var left = SeqFloat(rows, 5);
-            var right = SeqFloat(5, 64);
-            RunAllModes(left, right, actual => AssertMatMulMatchesIndependent(left, right, actual));
+            var left = SeqFloat(rows, 5, 1);
+            var right = SeqFloat(5, 64, 1);
+            RunAllModes(left, right, actual => AssertMatMulMatchesIndependent(left, right, actual, 1e-4f));
         }
     }
 }

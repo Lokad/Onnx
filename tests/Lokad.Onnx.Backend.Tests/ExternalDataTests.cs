@@ -49,7 +49,7 @@ public class ExternalDataTests
     {
         WithTempDirectory(directory =>
         {
-            var payload = new byte[] { 20, 21, 22, 23 };
+            var payload = new byte[] { 20, 21, 22, 23, 24, 25, 26, 27 };
             File.WriteAllBytes(Path.Combine(directory, "whole.bin"), payload);
             var proto = ExternalProto("whole.bin");
             proto.ResolveExternalData(directory);
@@ -62,14 +62,14 @@ public class ExternalDataTests
     {
         WithTempDirectory(directory =>
         {
-            File.WriteAllBytes(Path.Combine(directory, "first.bin"), new byte[] { 1, 1, 1, 1 });
-            File.WriteAllBytes(Path.Combine(directory, "second.bin"), new byte[] { 2, 2, 2, 2 });
+            File.WriteAllBytes(Path.Combine(directory, "first.bin"), new byte[] { 1, 1, 1, 1, 1, 1, 1, 1 });
+            File.WriteAllBytes(Path.Combine(directory, "second.bin"), new byte[] { 2, 2, 2, 2, 2, 2, 2, 2 });
             var first = ExternalProto("first.bin");
             var second = ExternalProto("second.bin");
             first.ResolveExternalData(directory);
             second.ResolveExternalData(directory);
-            Assert.Equal(new byte[] { 1, 1, 1, 1 }, first.RawData.ToByteArray());
-            Assert.Equal(new byte[] { 2, 2, 2, 2 }, second.RawData.ToByteArray());
+            Assert.Equal(new byte[] { 1, 1, 1, 1, 1, 1, 1, 1 }, first.RawData.ToByteArray());
+            Assert.Equal(new byte[] { 2, 2, 2, 2, 2, 2, 2, 2 }, second.RawData.ToByteArray());
         });
     }
 

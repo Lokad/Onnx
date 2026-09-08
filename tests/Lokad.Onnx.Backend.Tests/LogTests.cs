@@ -1,5 +1,6 @@
 namespace Lokad.Onnx.Backend.Tests;
 
+[Collection("SequentialLogSink")]
 public class LogTests
 {
     [Fact]
@@ -69,4 +70,7 @@ public class LogTests
             Log.Sink = previous;
         }
     }
+
+
 }
+

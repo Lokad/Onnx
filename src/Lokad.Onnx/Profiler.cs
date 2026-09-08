@@ -17,7 +17,7 @@ namespace Lokad.Onnx
         GraphOrchestration
     }
     
-    public record OpProfile { public OpStage Stage; public TimeSpan Time;  }
+    public record struct OpProfile { public OpStage Stage; public TimeSpan Time; }
 
     public record NodeProfile { public long NodeId; public OpType Op; public Stack<OpProfile> OpsProfile = new Stack<OpProfile>(); }
 
@@ -28,21 +28,29 @@ namespace Lokad.Onnx
         private readonly Stopwatch timer = new Stopwatch();
         private readonly object sync = new object();
         private readonly ProfilerContext? previous;
+        private readonly bool shared;
 
-        internal ProfilerContext(bool enabled, ProfilerContext? previous)
+        internal ProfilerContext(bool enabled, ProfilerContext? previous, bool shared)
         {
             Enabled = enabled;
             this.previous = previous;
+            this.shared = shared;
         }
 
-        public void Dispose() => Profiler.Restore(previous);
+        public void Dispose()
+        {
+            if (shared) return;
+            Profiler.Restore(previous);
+        }
 
         void AddTimeLocked()
         {
             if (timer.IsRunning)
             {
                 timer.Stop();
-                CurrentOpProfile.Time = timer.Elapsed;
+                var top = Profile.Peek().OpsProfile.Pop();
+                top.Time = timer.Elapsed;
+                Profile.Peek().OpsProfile.Push(top);
                 timer.Reset();
             }
         }
@@ -60,7 +68,7 @@ namespace Lokad.Onnx
 
             lock (sync)
             {
-                AddTimeIfTimerRunning();
+                AddTimeLocked();
                 Profile.Push(new NodeProfile() { NodeId = id, Op = op });
                 CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = OpStage.GraphOrchestration, Time = TimeSpan.Zero });
                 timer.Start();
@@ -77,7 +85,7 @@ namespace Lokad.Onnx
 
             lock (sync)
             {
-                AddTimeIfTimerRunning();
+                AddTimeLocked();
                 CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = stage, Time = TimeSpan.Zero });
                 timer.Start();
             }
@@ -85,14 +93,12 @@ namespace Lokad.Onnx
 
         NodeProfile CurrentNodeProfile => Profile.Peek();
 
-        OpProfile CurrentOpProfile => CurrentNodeProfile.OpsProfile.Peek();
-
         internal bool Running => timer.IsRunning;
     }
 
     public class Profiler
     {
-        private static readonly ProfilerContext shared = new ProfilerContext(false, null);
+        private static readonly ProfilerContext shared = new ProfilerContext(false, null, shared: true);
         private static readonly System.Threading.AsyncLocal<ProfilerContext?> ambient = new System.Threading.AsyncLocal<ProfilerContext?>();
 
         static ProfilerContext Current => ambient.Value ?? shared;
@@ -101,7 +107,10 @@ namespace Lokad.Onnx
 
         public static ProfilerContext BeginExecution(bool enabled)
         {
-            var ctx = new ProfilerContext(enabled, ambient.Value);
+            var current = ambient.Value;
+            if (!enabled && (current is null || !current.Enabled))
+                return shared;
+            var ctx = new ProfilerContext(enabled, current, false);
             ambient.Value = ctx;
             return ctx;
         }

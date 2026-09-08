@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using static Lokad.Onnx.Runtime;
 
-public class ComputationalGraph : Runtime
+public class ComputationalGraph
 {
     #region Fields
     public string ModelFile = "";
@@ -18,6 +19,13 @@ public class ComputationalGraph : Runtime
     public List<OnnxValueInfo> OutputDescs = new List<OnnxValueInfo>();
 
     public Dictionary<string, ITensor> Initializers = new Dictionary<string, ITensor>();
+
+    /// <summary>
+    /// Retained input descriptions (with symbolic dimension names) for
+    /// descriptor-aware validation. Treated as immutable after load; empty for
+    /// hand-built graphs, which validate against placeholder shapes instead.
+    /// </summary>
+    public List<OnnxValueInfo> InputDescs = new List<OnnxValueInfo>();
 
     public Dictionary<string, ITensor?> IntermediateOutputs = new Dictionary<string, ITensor?>();
 
@@ -39,10 +47,79 @@ public class ComputationalGraph : Runtime
 
     public OpType? LastFailedNodeOp { get; private set; }
 
+    /// <summary>Original exception behind the last failure, when one was captured; null otherwise.</summary>
+    public Exception? LastErrorCause { get; private set; }
+
     /// <summary>Last file-order node index consuming each tensor name.</summary>
-    public Dictionary<string, int> LastUseIndex { get; private set; } = new Dictionary<string, int>(StringComparer.Ordinal);
+    public Dictionary<string, int> LastUseIndex { get; internal set; } = new Dictionary<string, int>(StringComparer.Ordinal);
 
     internal TensorBufferPool? ActivePool { get; private set; }
+
+    /// <summary>Reentrancy guard: at most one execution at a time per graph or context.</summary>
+    protected int _executing;
+    /// <summary>Whether lifetime analysis is current for <see cref="Nodes"/>.</summary>
+    private bool _prepared;
+    private int _preparedNodeCount = -1;
+
+    /// <summary>
+    /// Freezes the prepared plan after (re)analyzing lifetimes. Called by
+    /// Model.Load; call it again after editing Nodes or descriptors.
+    /// </summary>
+    public void Prepare()
+    {
+        RefreshLifetimeAnalysis();
+    }
+
+    /// <summary>Clears the frozen state so the next execution re-prepares.</summary>
+    public void InvalidatePreparation()
+    {
+        _prepared = false;
+    }
+
+    /// <summary>Creates an isolated execution context sharing this prepared plan.</summary>
+    public GraphExecution CreateExecution(ExecutionOptions? options)
+    {
+        EnsurePrepared();
+        var exec = new GraphExecution(this, options);
+        exec._prepared = _prepared;
+        exec._preparedNodeCount = _preparedNodeCount;
+        return exec;
+    }
+
+    protected void EnsurePrepared()
+    {
+        if (!_prepared || Nodes.Count != _preparedNodeCount)
+        {
+            RefreshLifetimeAnalysis();
+            _prepared = true;
+            _preparedNodeCount = Nodes.Count;
+        }
+    }
+
+    void CopyFromExecution(GraphExecution exec)
+    {
+        ReplaceMap(Inputs, exec.Inputs);
+        ReplaceMap(Outputs, exec.Outputs);
+        IntermediateOutputs.Clear();
+        foreach (var kv in exec.IntermediateOutputs) IntermediateOutputs.Add(kv.Key, kv.Value);
+        LastErrorMessage = exec.LastErrorMessage;
+        LastFailedNodeName = exec.LastFailedNodeName;
+        LastFailedNodeOp = exec.LastFailedNodeOp;
+        LastErrorCause = exec.LastErrorCause;
+        LastProfile = exec.LastProfile;
+        LastPoolAllocatedNew = exec.LastPoolAllocatedNew;
+        LastPoolReused = exec.LastPoolReused;
+        LastPoolReturned = exec.LastPoolReturned;
+        LastPoolDropped = exec.LastPoolDropped;
+        LastPoolAllocatedNewBytes = exec.LastPoolAllocatedNewBytes;
+        LastPoolReusedBytes = exec.LastPoolReusedBytes;
+    }
+
+    static void ReplaceMap(Dictionary<string, ITensor> target, Dictionary<string, ITensor> source)
+    {
+        target.Clear();
+        foreach (var kv in source) target.Add(kv.Key, kv.Value);
+    }
 
     /// <summary>Pool arrays freshly allocated during the last execution.</summary>
     public int LastPoolAllocatedNew { get; private set; }
@@ -51,17 +128,24 @@ public class ComputationalGraph : Runtime
     public int LastPoolReused { get; private set; }
 
     /// <summary>Dead dense buffers adopted into the pool during the last execution.</summary>
+    /// <remarks>GC bytes are reported by the collector; this counts pool adoptions, not live payload.</remarks>
     public int LastPoolReturned { get; private set; }
 
+    /// <summary>Pool returns discarded by the per-shape cap during the last execution.</summary>
+    /// <remarks>Dropped storage was not retained for reuse; it is reclaimed by the collector.</remarks>
+    public int LastPoolDropped { get; private set; }
+
     /// <summary>Fresh pool array bytes allocated during the last execution.</summary>
+    /// <remarks>New GC allocation; pool-served bytes are reported separately via LastPoolReusedBytes.</remarks>
     public long LastPoolAllocatedNewBytes { get; private set; }
 
     /// <summary>Pooled output bytes served from previously returned arrays during the last execution.</summary>
+    /// <remarks>Pool-served bytes avoid new GC allocation; they are not live payload or scratch memory.</remarks>
     public long LastPoolReusedBytes { get; private set; }
     #endregion
 
     #region Methods
-    public int OpsetVersion(string domain = "") => this.Opset.ContainsKey(domain) ? this.Opset[domain] : throw new InvalidOperationException($"The domain {domain} does not ezist in the imported opsets.");
+    public int OpsetVersion(string domain) => this.Opset.ContainsKey(domain) ? this.Opset[domain] : throw new InvalidOperationException($"The domain {domain} does not ezist in the imported opsets.");
 
     public ITensor GetInputTensor(string name)
     {
@@ -76,6 +160,93 @@ public class ComputationalGraph : Runtime
 
     public ITensor[] GetInputTensors(string[] names) =>
         names.Where(n => !string.IsNullOrEmpty(n)).Select(n => GetInputTensor(n)).ToArray();
+
+    /// <summary>
+    /// Checks a user tensor against a retained input descriptor. Rank and
+    /// element type must match; fixed descriptor dims (positive) must match
+    /// exactly, while symbolic descriptor dims (zero or negative, which is
+    /// also what the importer produces for dim_params) accept any
+    /// non-negative extent.
+    /// </summary>
+    OnnxValueInfo? FindInputDesc(string name)
+    {
+        for (int i = 0; i < InputDescs.Count; i++)
+        {
+            if (InputDescs[i].Name == name) return InputDescs[i];
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Validates one user tensor against a retained descriptor: rank and type
+    /// must match, fixed dims (no symbolic name) must match exactly including
+    /// real zero extents, and symbolic dims accept any non-negative extent while
+    /// enforcing agreement across inputs sharing a symbolic name.
+    /// </summary>
+    static bool CheckDescriptorDims(OnnxValueInfo desc, ITensor actual, Dictionary<string, int> symbolic, out string? message)
+    {
+        message = null;
+        // Sequence-typed descriptors accept sequence values (of any length)
+        // and reject tensors; lengths are irrelevant, only sequence-ness matters.
+        if (actual is TensorSequence)
+        {
+            if (desc.ElementType != TensorElementType.Sequence)
+            {
+                message = $"Tensor {actual.Name} is a sequence but descriptor {desc.Describe()} is not.";
+                return false;
+            }
+            return true;
+        }
+        if (desc.Dims.Length != actual.Rank || desc.ElementType != actual.ElementType)
+        {
+            message = $"Tensor type or rank does not match descriptor {desc.Describe()}.";
+            return false;
+        }
+        var ad = actual.Dims;
+        for (int i = 0; i < desc.Dims.Length; i++)
+        {
+            if (ad[i] < 0)
+            {
+                message = $"Tensor dimension {ad[i]} is negative.";
+                return false;
+            }
+            string? param = (desc.DimParams is not null && i < desc.DimParams.Length) ? desc.DimParams[i] : null;
+            if (param is null)
+            {
+                if (desc.Dims[i] != ad[i])
+                {
+                    message = $"Tensor dimension {ad[i]} does not match declared fixed dimension {desc.Dims[i]} of {desc.Describe()}.";
+                    return false;
+                }
+            }
+            else if (symbolic.TryGetValue(param, out var size))
+            {
+                if (size != ad[i])
+                {
+                    message = $"Shared symbolic dimension {param} has conflicting extents {size} and {ad[i]}.";
+                    return false;
+                }
+            }
+            else
+            {
+                symbolic[param] = ad[i];
+            }
+        }
+        return true;
+    }
+
+    static bool InputDimsCompatible(ITensor declared, ITensor actual)
+    {
+        if (declared.Rank != actual.Rank || declared.ElementType != actual.ElementType) return false;
+        var dd = declared.Dims;
+        var ad = actual.Dims;
+        for (int i = 0; i < dd.Length; i++)
+        {
+            if (ad[i] < 0) return false;
+            if (dd[i] > 0 && dd[i] != ad[i]) return false;
+        }
+        return true;
+    }
 
     public Dictionary<string, ITensor> GetRequiredInputs(bool useInitializers)
     {
@@ -106,27 +277,32 @@ public class ComputationalGraph : Runtime
 
     public bool ResolveInputs(ITensor[] userInputs, bool useInitializers)
     {
-        var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
+        using var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
         var requiredInputs = GetRequiredInputs(useInitializers);   
         Info("{uic} user input(s) required for graph execution: {uig}.", requiredInputs.Count, requiredInputs.Select(ui => ui.Value.TensorNameDesc()));
         if (userInputs.Length != requiredInputs.Count)
         {
-            Error("{uic} user input(s) required for graph execution:{i} but only {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
             op.Abandon();
-            return false;
+            return Fail("{uic} user input(s) required for graph execution:{i} but only {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
         }
+        var symbolic = new Dictionary<string, int>(StringComparer.Ordinal);
         for(int i = 0; i < requiredInputs.Keys.Count; i++)
         {
-            if (!(userInputs[i].Rank == requiredInputs.ElementAt(i).Value.Rank && userInputs[i].ElementType == requiredInputs.ElementAt(i).Value.ElementType))
+            var key = requiredInputs.Keys.ElementAt(i);
+            var desc = FindInputDesc(key);
+            string? detail = null;
+            bool ok = desc is null
+                ? InputDimsCompatible(requiredInputs[key], userInputs[i])
+                : CheckDescriptorDims(desc, userInputs[i], symbolic, out detail);
+            if (!ok)
             {
-                Error("Cannot use user input {ui} for required input {ri}. Tensor type or rank does not match.", userInputs[i].TensorNameDesc(), requiredInputs.ElementAt(i).Value.TensorNameDesc());
                 op.Abandon();
-                return false;
+                return Fail("Cannot use user input {ui} for required input {ri}. Tensor type, rank or dimensions do not match. {d}", userInputs[i].TensorNameDesc(), requiredInputs[key].TensorNameDesc(), detail ?? "");
             }
             else
             {
-                Info("Using user input {n} for graph input {i}.", userInputs[i].TensorNameDesc(), requiredInputs.ElementAt(i).Value.TensorNameDesc());
-                Inputs[requiredInputs.Keys.ElementAt(i)] = userInputs[i];
+                Info("Using user input {n} for graph input {i}.", userInputs[i].TensorNameDesc(), requiredInputs[key].TensorNameDesc());
+                Inputs[key] = userInputs[i];
             }
         }
         op.Complete();  
@@ -135,52 +311,69 @@ public class ComputationalGraph : Runtime
 
     public bool ResolveInputs(Dictionary<string, ITensor> userInputs, bool useInitializers)
     {
-        var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
+        using var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
         var requiredInputs = GetRequiredInputs(useInitializers);
         Info("{uic} user input(s) required for graph execution: {uig}.", requiredInputs.Count, requiredInputs.Select(ui => ui.Value.TensorNameDesc()));
-        if (userInputs.Count != requiredInputs.Count)
+        // Validate names before indexing the user dictionary so unknown or
+        // missing names fail cleanly instead of throwing KeyNotFoundException,
+        // and validate everything before mutating run state.
+        foreach (var name in userInputs.Keys)
         {
-            Error("{uic} user input(s) required for graph execution:{i} but only {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.Value.TensorNameDesc()), userInputs.Count);
-            op.Abandon();
-            return false;
+            if (!requiredInputs.ContainsKey(name))
+            {
+                op.Abandon();
+                return Fail("User input {n} is not a required graph input.", name);
+            }
+        }
+        var symbolic = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var kv in requiredInputs)
+        {
+            if (!userInputs.ContainsKey(kv.Key))
+            {
+                op.Abandon();
+                return Fail("User inputs do not contain required input {i}.", kv.Key);
+            }
+            var desc = FindInputDesc(kv.Key);
+            string? detail = null;
+            bool ok = desc is null
+                ? InputDimsCompatible(kv.Value, userInputs[kv.Key])
+                : CheckDescriptorDims(desc, userInputs[kv.Key], symbolic, out detail);
+            if (!ok)
+            {
+                op.Abandon();
+                return Fail("Cannot use user input {ui} for required input {ri}. Tensor type, rank or dimensions do not match. {d}", userInputs[kv.Key].TensorNameDesc(), kv.Value.TensorNameDesc(), detail ?? "");
+            }
         }
         foreach (var kv in requiredInputs)
         {
-            if (!(userInputs[kv.Key].Rank == kv.Value.Rank && userInputs[kv.Key].ElementType == kv.Value.ElementType))
-            {
-                Error("Cannot use user input {ui} for required input {ri}. Tensor type or rank does not match.", userInputs[kv.Key].TensorNameDesc(), kv.Value.TensorNameDesc());
-                op.Abandon();
-                return false;
-            }
-            else
-            {
-                Info("Using user input {n} for graph input {i}.", userInputs[kv.Key].TensorNameDesc(), kv.Value.TensorNameDesc());
-                Inputs[kv.Key] = userInputs[kv.Key];
-            }
+            Info("Using user input {n} for graph input {i}.", userInputs[kv.Key].TensorNameDesc(), kv.Value.TensorNameDesc());
+            Inputs[kv.Key] = userInputs[kv.Key];
         }
+        op.Complete();
         return true;
     }
 
     public bool ResolveNodeExecuteInputs(Node node, ITensor[] userInputs, bool useInitializers)
     {
-        var op = Begin("Resolving {c} node inputs for execution", node.Inputs.Length);
+        using var op = Begin("Resolving {c} node inputs for execution", node.Inputs.Length);
         var requiredInputs = new List<string>();
-        foreach(var i in node.Inputs)
+        foreach (var i in node.Inputs)
         {
+            // Absent optional slots bind nothing; repeated inputs resolve once.
+            if (string.IsNullOrEmpty(i)) continue;
             if (useInitializers && Initializers.ContainsKey(i))
             {
-                Inputs[i] = Initializers[i];  
+                Inputs[i] = Initializers[i];
             }
-            else
+            else if (!requiredInputs.Contains(i))
             {
                 requiredInputs.Add(i);
             }
         }
         if (userInputs.Length != requiredInputs.Count)
         {
-            Error("{uic} user input(s) required for node execution:{i} but {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
             op.Abandon();
-            return false;
+            return Fail("{uic} user input(s) required for node execution:{i} but {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
         }
         for (int i = 0; i < requiredInputs.Count; i++)
         { 
@@ -193,31 +386,32 @@ public class ComputationalGraph : Runtime
 
     public bool ResolveNodeExecuteInputs(Node node, Dictionary<string, ITensor> userInputs, bool useInitializers)
     {
-        var op = Begin("Resolving {c} node inputs for execution", node.Inputs.Length);
+        using var op = Begin("Resolving {c} node inputs for execution", node.Inputs.Length);
         var requiredInputs = new List<string>();
         foreach (var i in node.Inputs)
         {
+            // Absent optional slots bind nothing; repeated inputs resolve once.
+            if (string.IsNullOrEmpty(i)) continue;
             if (useInitializers && Initializers.ContainsKey(i))
             {
                 Inputs[i] = Initializers[i];
             }
-            else
+            else if (!requiredInputs.Contains(i))
             {
                 requiredInputs.Add(i);
             }
         }
         if (userInputs.Count != requiredInputs.Count)
         {
-            Error("{uic} user input(s) required for node execution:{i} but {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.Value.TensorNameDesc()), userInputs.Count);
             op.Abandon();
-            return false;
+            return Fail("{uic} user input(s) required for node execution:{i} but {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.Value.TensorNameDesc()), userInputs.Count);
         }
         for (int i = 0; i < requiredInputs.Count; i++)
         {
             if (!userInputs.ContainsKey(requiredInputs[i]))
             {
-                Error("User inputs do not contain required input {i}.", requiredInputs[i]);
-                return false;
+                op.Abandon();
+                return Fail("User inputs do not contain required input {i}.", requiredInputs[i]);
             }
             else
             {
@@ -228,11 +422,33 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU, ExecutionOptions? options = null)
+    public bool Execute(object userInputs, bool useInitializers) => Execute(userInputs, useInitializers, ExecutionProvider.CPU, null);
+
+    public virtual bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider, ExecutionOptions? options)
+    {
+        EnsurePrepared();
+        if (Interlocked.CompareExchange(ref _executing, 1, 0) != 0)
+        {
+            return Fail("Graph is already executing; use a separate execution context for concurrent runs.");
+        }
+        try
+        {
+            var exec = new GraphExecution(this, options);
+            exec._prepared = _prepared;
+            exec._preparedNodeCount = _preparedNodeCount;
+            bool ok = exec.RunCore(userInputs, useInitializers, provider);
+            CopyFromExecution(exec);
+            return ok;
+        }
+        finally { Volatile.Write(ref _executing, 0); }
+    }
+
+    protected bool RunCore(object userInputs, bool useInitializers, ExecutionProvider provider)
     {
         LastErrorMessage = null;
         LastFailedNodeName = null;
         LastFailedNodeOp = null;
+        LastErrorCause = null;
         LastProfile = null;
         if (userInputs is ITensor[] uia)
         {
@@ -250,25 +466,25 @@ public class ComputationalGraph : Runtime
         }
         else
         {
-            Error("Unsupported user inputs type: {t}.", userInputs.GetType().Name);
-            return false;
+            return Fail("Unsupported user inputs type: {t}.", userInputs.GetType().Name);
         }
 
         int count = 0;
-        var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
+        var boundThisRun = new HashSet<string>(StringComparer.Ordinal);
+        using var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
 
         using var profilerScope = Profiler.BeginExecution();
         using var poolScope = new ExecutionPoolScope(this);
         foreach (var node in Nodes)
         {
             count++;
-            if (Log.Sink is not null) Debug("Executing node {c} {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
+            if (Log.IsEnabled(LogLevel.Debug)) Debug("Executing node {c} {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
                 + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
                 count, node.Name, node.Op.ToString(),
                 GetInputTensors(node.Inputs).Select(t => t.TensorNameDesc()),
                 node.Outputs
             );
-            if (Log.Sink is not null && node.Attributes is not null && node.Attributes.Count > 0)
+            if (Log.IsEnabled(LogLevel.Debug) && node.Attributes is not null && node.Attributes.Count > 0)
             {
                 foreach (var kv in node.Attributes)
                 {
@@ -276,25 +492,40 @@ public class ComputationalGraph : Runtime
                 }
             }
            
-            Profiler.StartNodeProfile(node.ID, node.Op);
-            var r = node.Execute(this, provider, options ?? Options);
-            Profiler.StopNodeProfile();
-            
+            OpResult r;
+            try
+            {
+                Profiler.StartNodeProfile(node.ID, node.Op);
+                try
+                {
+                    r = node.Execute(this, provider, Options);
+                }
+                finally
+                {
+                    Profiler.StopNodeProfile();
+                }
+            }
+            catch (Exception ex)
+            {
+                FailNode(node, ex, "Execution of node {c} {n} with op {op} threw {t}: {m}", count, node.Name, node.Op, ex.GetType().Name, ex.Message);
+                throw;
+            }
+
             if (r.Status == OpStatus.Failure)
             {
-                Error("Execution of node {c} {n} with op {op} failed: {m}", count, node.Name, node.Op, r.Message ?? "");
+                FailNode(node, r.Cause, "Execution of node {c} {n} with op {op} failed: {m}", count, node.Name, node.Op, r.Message ?? "");
                 Error("Stopping graph execution at node {c} {n}.", count, node.Name);
-                LastErrorMessage = r.Message;
-                LastFailedNodeName = node.Name;
-                LastFailedNodeOp = node.Op;
                 return false;
             }
             else
             {
-                if (Log.Sink is not null) Debug("Execution of node {n} with op {op} returned {s} with {c} output(s).", node.Name, node.Op.ToString(), r.Status.ToString(), r.Outputs.Length);
+                if (Log.IsEnabled(LogLevel.Debug)) Debug("Execution of node {n} with op {op} returned {s} with {c} output(s).", node.Name, node.Op.ToString(), r.Status.ToString(), r.Outputs.Length);
                 for (int i = 0; i < node.Outputs.Length; i++)
                 {
-                    if (Log.Sink is not null) Debug("Assigning node {n} output {c} to graph tensor {o}.", node.Name, i, node.Outputs[i]);
+                    // Optional outputs use empty names: the value is produced
+                    // (positions still validate) but binds to no tensor name.
+                    if (string.IsNullOrEmpty(node.Outputs[i])) continue;
+                    if (Log.IsEnabled(LogLevel.Debug)) Debug("Assigning node {n} output {c} to graph tensor {o}.", node.Name, i, node.Outputs[i]);
                     if (IntermediateOutputs.ContainsKey(node.Outputs[i]))
                     {
                         IntermediateOutputs[node.Outputs[i]] = r.Outputs[i];
@@ -304,9 +535,30 @@ public class ComputationalGraph : Runtime
                     {
                         Outputs[node.Outputs[i]] = r.Outputs[i];
                         r.Outputs[i].Name = node.Outputs[i];
+                        boundThisRun.Add(node.Outputs[i]);
                     }
                 }
                 ReleaseDeadTensors(node, count - 1);
+            }
+        }
+        // Resolve graph outputs independently of producers: outputs routed
+        // to IntermediateOutputs surface here, and outputs aliasing inputs or
+        // initializers with no producing node bind those tensors (cloned) rather
+        // than leaking zero placeholders. Names bound by nodes win as-is.
+        foreach (var name in Outputs.Keys.ToArray())
+        {
+            if (string.IsNullOrEmpty(name) || boundThisRun.Contains(name)) continue;
+            if (IntermediateOutputs.TryGetValue(name, out var mid) && mid is not null)
+            {
+                Outputs[name] = mid;
+            }
+            else if (Inputs.TryGetValue(name, out var inp))
+            {
+                Outputs[name] = inp.Clone();
+            }
+            else if (Initializers.TryGetValue(name, out var init))
+            {
+                Outputs[name] = init.Clone();
             }
         }
         LastProfile = profilerScope.Profile;
@@ -314,14 +566,88 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider = ExecutionProvider.CPU, ExecutionOptions? options = null)
+    /// <summary>
+    /// Drops run outputs so a failed execution never leaves previous-run values
+    /// looking current. Inputs (descriptors and bindings) are kept so the caller
+    /// can correct the inputs and retry.
+    /// </summary>
+    /// <summary>
+    /// Records a binding or lifecycle rejection: logs it, snapshots it as the
+    /// current error with no node identity, drops run outputs and returns false.
+    /// </summary>
+    protected bool Fail(string messageTemplate, params object?[] args)
     {
-        var node = Nodes.FirstOrDefault(n => n.Name == nodeLabel);
-        if (node.Name == "")
+        Error(messageTemplate, args);
+        LastErrorMessage = Log.Render(messageTemplate, args);
+        LastFailedNodeName = null;
+        LastFailedNodeOp = null;
+        LastErrorCause = null;
+        InvalidateOutputs();
+        return false;
+    }
+
+    /// <summary>
+    /// Records a node failure: logs it with its original exception when one was
+    /// captured, snapshots message, node identity and cause, drops run outputs
+    /// and returns false.
+    /// </summary>
+    protected bool FailNode(Node node, Exception? cause, string messageTemplate, params object?[] args)
+    {
+        if (cause is not null) Error(cause, messageTemplate, args);
+        else Error(messageTemplate, args);
+        LastErrorMessage = Log.Render(messageTemplate, args);
+        LastFailedNodeName = node.Name;
+        LastFailedNodeOp = node.Op;
+        LastErrorCause = cause;
+        InvalidateOutputs();
+        return false;
+    }
+
+    public void InvalidateOutputs()
+    {
+        Outputs.Clear();
+        foreach (var key in IntermediateOutputs.Keys.ToArray())
         {
-            Error("Could not find node {n} in graph.", nodeLabel); 
-            return false;    
+            IntermediateOutputs[key] = null;
         }
+    }
+
+    public bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers) => ExecuteNode(userInputs, nodeLabel, useInitializers, ExecutionProvider.CPU, null);
+
+    public virtual bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider, ExecutionOptions? options)
+    {
+        EnsurePrepared();
+        if (Interlocked.CompareExchange(ref _executing, 1, 0) != 0)
+        {
+            return Fail("Graph is already executing; use a separate execution context for concurrent runs.");
+        }
+        try
+        {
+            var exec = new GraphExecution(this, options);
+            exec._prepared = _prepared;
+            exec._preparedNodeCount = _preparedNodeCount;
+            bool ok = exec.RunNodeCore(userInputs, nodeLabel, useInitializers, provider);
+            CopyFromExecution(exec);
+            return ok;
+        }
+        finally { Volatile.Write(ref _executing, 0); }
+    }
+
+    protected bool RunNodeCore(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider)
+    {
+        LastErrorMessage = null;
+        LastFailedNodeName = null;
+        LastFailedNodeOp = null;
+        LastErrorCause = null;
+        LastProfile = null;
+        // Node is a struct, so a miss yields default(Node) with null Name;
+        // search by index instead of comparing against an empty name.
+        var nodeIndex = Nodes.FindIndex(n => n.Name == nodeLabel);
+        if (nodeIndex < 0)
+        {
+            return Fail("Could not find node {n} in graph.", nodeLabel);
+        }
+        var node = Nodes[nodeIndex];
         if (userInputs is ITensor[] uia)
         {
             if (!ResolveNodeExecuteInputs(node, uia, useInitializers))
@@ -338,11 +664,10 @@ public class ComputationalGraph : Runtime
         }
         else
         {
-            Error("Unsupported user inputs type: {t}.", userInputs.GetType().Name);
-            return false;
+            return Fail("Unsupported user inputs type: {t}.", userInputs.GetType().Name);
         }
 
-        var op = Begin("Executing node {node} in graph {n} from {f}", nodeLabel, Metadata["Name"], ModelFile);
+        using var op = Begin("Executing node {node} in graph {n} from {f}", nodeLabel, Metadata["Name"], ModelFile);
         Debug("Executing node {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
             + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
             node.Name, node.Op.ToString(),
@@ -356,10 +681,19 @@ public class ComputationalGraph : Runtime
                 Debug("  {n}: {v}", kv.Key, kv.Value);
             }
         }
-        var r = node.Execute(this, provider, options ?? Options);
+        OpResult r;
+        try
+        {
+            r = node.Execute(this, provider, Options);
+        }
+        catch (Exception ex)
+        {
+            FailNode(node, ex, "Execution of node {n} with op {op} threw {t}: {m}.", node.Name, node.Op, ex.GetType().Name, ex.Message);
+            throw;
+        }
         if (r.Status == OpStatus.Failure)
         {
-            Error("Execution of node {n} with op {op} failed: {m}.", node.Name, node.Op, r.Message ?? "");
+            FailNode(node, r.Cause, "Execution of node {n} with op {op} failed: {m}.", node.Name, node.Op, r.Message ?? "");
             return false;
         }
         else
@@ -368,6 +702,7 @@ public class ComputationalGraph : Runtime
             Outputs.Clear();
             for (int i = 0; i < node.Outputs.Length; i++)
             {
+                if (string.IsNullOrEmpty(node.Outputs[i])) continue;
                 Debug("Assigning node {n} output {c} to graph tensor {o}.", node.Name, i, node.Outputs[i]);
                 Outputs[node.Outputs[i]] = r.Outputs[i];
             }
@@ -376,7 +711,9 @@ public class ComputationalGraph : Runtime
         return true;
     }
 
-    public void Reset(bool gc = false)
+    public void Reset() => Reset(false);
+
+    public void Reset(bool gc)
     {
         foreach (var o in IntermediateOutputs.Keys)
         {
@@ -397,6 +734,15 @@ public class ComputationalGraph : Runtime
     /// intermediates map to their producer index. Inert: no execution state changes.</remarks>
     public void RefreshLifetimeAnalysis()
     {
+        // Preparation assigns stable sequential identities by file-order
+        // position: unlike name hashes they are distinct for duplicate or
+        // anonymous names and identical across processes.
+        for (int i = 0; i < Nodes.Count; i++)
+        {
+            var node = Nodes[i];
+            node.ID = i;
+            Nodes[i] = node;
+        }
         var lastUse = new Dictionary<string, int>(StringComparer.Ordinal);
         for (int i = 0; i < Nodes.Count; i++)
         {
@@ -431,6 +777,8 @@ public class ComputationalGraph : Runtime
             }
         }
         LastUseIndex = lastUse;
+        _prepared = true;
+        _preparedNodeCount = Nodes.Count;
     }
 
     readonly struct ExecutionPoolScope : IDisposable
@@ -448,6 +796,7 @@ public class ComputationalGraph : Runtime
                 graph.LastPoolAllocatedNew = graph.ActivePool.AllocatedNew;
                 graph.LastPoolReused = graph.ActivePool.Reused;
                 graph.LastPoolReturned = graph.ActivePool.Returned;
+                graph.LastPoolDropped = graph.ActivePool.Dropped;
                 graph.LastPoolAllocatedNewBytes = graph.ActivePool.AllocatedNewBytes;
                 graph.LastPoolReusedBytes = graph.ActivePool.ReusedBytes;
             }
@@ -455,51 +804,138 @@ public class ComputationalGraph : Runtime
         }
     }
 
+    /// <summary>
+    /// Drops one dead reference, returning exactly-backed pool-owned storage
+    /// with no live aliases. Reference dropping covers every dtype and layout
+    /// (letting the collector reclaim); storage return additionally requires
+    /// pool ownership. Owned storage pinned by a live view stays readable (its
+    /// observer may still hold the alias); graph outputs are never touched.
+    /// </summary>
+    /// <returns>True when the reference was dropped.</returns>
+    bool TryReleaseValue(string name, ref HashSet<Array>? returned)
+    {
+        var pool = ActivePool;
+        if (pool is null) return false;
+        if (!IntermediateOutputs.TryGetValue(name, out var tensor) || tensor is null) return false;
+        if (Outputs.ContainsKey(name)) return false;
+        var arr = (tensor as TensorBase)?.OwnedBufferArray();
+        if (arr is not null && pool.IsOwned(arr) && !(returned?.Contains(arr) ?? false))
+        {
+            if (HasLiveAlias(arr, name)) return false;
+            pool.Return(arr);
+            returned ??= new HashSet<Array>();
+            returned.Add(arr);
+        }
+        IntermediateOutputs[name] = null;
+        return true;
+    }
+
     void ReleaseDeadTensors(Node node, int index)
     {
         var pool = ActivePool;
         if (pool is null || node.Inputs is null) return;
+        HashSet<Array>? returned = null;
         foreach (var name in node.Inputs)
         {
             if (string.IsNullOrEmpty(name)) continue;
             if (!LastUseIndex.TryGetValue(name, out var last) || last != index) continue;
             if (node.Outputs is not null && node.Outputs.Contains(name)) continue;
+            TryReleaseValue(name, ref returned);
+        }
+        // Reclaiming after the final node serves no later rent, so only
+        // earlier nodes retry values that died behind a live alias plus
+        // outputs this node produced but nobody consumes.
+        if (index >= Nodes.Count - 1) return;
+        if (node.Outputs is not null)
+        {
+            foreach (var name in node.Outputs)
+            {
+                if (string.IsNullOrEmpty(name)) continue;
+                if (!LastUseIndex.TryGetValue(name, out var last) || last != index) continue;
+                TryReleaseValue(name, ref returned);
+            }
+        }
+        foreach (var name in IntermediateOutputs.Keys.ToArray())
+        {
+            if (string.IsNullOrEmpty(name)) continue;
             if (Outputs.ContainsKey(name)) continue;
-            if (!IntermediateOutputs.TryGetValue(name, out var tensor) || tensor is not DenseTensor<float> dense) continue;
-            if (!MemoryMarshal.TryGetArray<float>(dense.Buffer, out var segment) || segment.Array is null) continue;
-            if (HasLiveAlias(segment.Array, tensor)) continue;
-            pool.Return(segment.Array);
-            IntermediateOutputs[name] = null;
+            if (!LastUseIndex.TryGetValue(name, out var last) || last >= index) continue;
+            TryReleaseValue(name, ref returned);
         }
     }
 
-    bool HasLiveAlias(Array candidate, ITensor self)
+    bool HasLiveAlias(Array candidate, string dyingName)
     {
-        foreach (var tensor in Inputs.Values) if (!ReferenceEquals(tensor, self) && SharesPooledStorage(candidate, tensor)) return true;
-        foreach (var tensor in Initializers.Values) if (!ReferenceEquals(tensor, self) && SharesPooledStorage(candidate, tensor)) return true;
-        foreach (var tensor in IntermediateOutputs.Values)
+        foreach (var tensor in Inputs.Values) if (SharesPooledStorage(candidate, tensor)) return true;
+        foreach (var tensor in Initializers.Values) if (SharesPooledStorage(candidate, tensor)) return true;
+        foreach (var kv in IntermediateOutputs)
         {
-            if (tensor is null || ReferenceEquals(tensor, self)) continue;
-            if (SharesPooledStorage(candidate, tensor)) return true;
+            if (kv.Key.Equals(dyingName, StringComparison.Ordinal)) continue;
+            if (kv.Value is null) continue;
+            if (SharesPooledStorage(candidate, kv.Value)) return true;
         }
-        foreach (var tensor in Outputs.Values) if (!ReferenceEquals(tensor, self) && SharesPooledStorage(candidate, tensor)) return true;
+        foreach (var tensor in Outputs.Values) if (SharesPooledStorage(candidate, tensor)) return true;
+        foreach (var attr in EnumerateAttributeTensors()) if (SharesPooledStorage(candidate, attr)) return true;
         return false;
     }
 
-    static bool SharesPooledStorage(Array candidate, ITensor tensor)
+    IEnumerable<ITensor> EnumerateAttributeTensors()
     {
-        if (tensor is Tensor<float> typed)
+        foreach (var n in Nodes)
         {
-            try
+            var attrs = n.Attributes;
+            if (attrs is null) continue;
+            foreach (var value in attrs.Values)
             {
-                return MemoryMarshal.TryGetArray<float>(typed.Storage, out var segment) && ReferenceEquals(segment.Array, candidate);
-            }
-            catch (NotImplementedException)
-            {
-                return true;
+                if (value is ITensor single)
+                {
+                    yield return single;
+                }
+                else if (value is System.Collections.IEnumerable enumerable && value is not string)
+                {
+                    foreach (var item in enumerable)
+                    {
+                        if (item is ITensor inner) yield return inner;
+                    }
+                }
             }
         }
-        return false;
+    }
+
+    /// <summary>
+    /// Checks one runtime value against a pooled backing array with explicit
+    /// per-kind storage traversal: sequences recurse into elements, views
+    /// recurse into their sources and parents, dense and compressed tensors
+    /// check their value buffers, and dictionary-backed sparse tensors never
+    /// alias pool arrays. Unknown future tensor kinds stay conservative
+    /// (true) so arrays are never returned while possibly referenced. The pool
+    /// manages float backing arrays, so non-float tensors cannot alias.
+    /// </summary>
+    static bool SharesPooledStorage(Array candidate, ITensor? tensor)
+    {
+        if (tensor is null) return false;
+        if (tensor is TensorSequence seq)
+        {
+            foreach (var item in seq.Items)
+            {
+                if (SharesPooledStorage(candidate, item)) return true;
+            }
+            return false;
+        }
+        if (tensor is not Tensor<float> typed) return false;
+        if (typed is DenseTensor<float> dense) return SharesBuffer(candidate, dense.Buffer);
+        if (typed is BroadcastedTensor<float> broadcast) return SharesPooledStorage(candidate, broadcast.source);
+        if (typed is TensorSlice<float> slice) return SharesPooledStorage(candidate, slice.parent);
+        if (typed is CompressedSparseTensor<float> compressed) return SharesBuffer(candidate, compressed.Values);
+        if (typed is SparseTensor<float>) return false;
+        return true;
+    }
+
+    static bool SharesBuffer(Array candidate, Memory<float> buffer)
+    {
+        if (MemoryMarshal.TryGetArray(buffer, out ArraySegment<float> segment)) return ReferenceEquals(segment.Array, candidate);
+        return true;
     }
     #endregion
 }
+

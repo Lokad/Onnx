@@ -40,14 +40,34 @@ namespace Lokad.Onnx
         /// Memory storing backing values of this tensor.
         /// </summary>
         public Memory<T> Buffer => memory;
+
+        internal override Array? OwnedBufferArray()
+        {
+            if (memory.Length != Length) return null;
+            if (!MemoryMarshal.TryGetArray(memory, out ArraySegment<T> segment) || segment.Array is null) return null;
+            if (segment.Offset != 0 || segment.Array.Length != memory.Length) return null;
+            return segment.Array;
+        }
         #endregion
 
         #region Constructors
-        internal DenseTensor(Array fromArray, bool reverseStride = false) : base(fromArray, reverseStride)
+        internal DenseTensor(Array fromArray, bool reverseStride) : base(fromArray, reverseStride)
         {
             // copy initial array
             var backingArray = new T[fromArray.Length];
-            
+            if (!reverseStride && fromArray.GetType().GetElementType() == typeof(T))
+            {
+                // Exact-type rectangular arrays are contiguous whatever the rank:
+                // one block copy with no per-element boxing, valid for every
+                // unmanaged element type including custom structs.
+                MemoryMarshal.CreateReadOnlySpan(
+                    ref Unsafe.As<byte, T>(ref MemoryMarshal.GetArrayDataReference(fromArray)),
+                    fromArray.Length).CopyTo(backingArray);
+                arr = backingArray;
+                memory = backingArray;
+                return;
+            }
+
             int index = 0;
             if (reverseStride)
             {
@@ -94,10 +114,17 @@ namespace Lokad.Onnx
         /// True to indicate that the last dimension is most major (farthest apart) and the first dimension is most 
         /// minor (closest together): akin to column-major in a rank-2 tensor.
         /// </param>
-        public DenseTensor(ReadOnlySpan<int> dimensions, bool reverseStride = false) : base(dimensions, reverseStride)
+        public DenseTensor(ReadOnlySpan<int> dimensions, bool reverseStride) : base(dimensions, reverseStride)
         {
             arr = new T[Length];
             memory = arr;
+        }
+
+        /// <summary>
+        /// Constructs a new row-major DenseTensor of the specified dimensions.
+        /// </summary>
+        public DenseTensor(ReadOnlySpan<int> dimensions) : this(dimensions, false)
+        {
         }
 
         /// <summary>
@@ -112,7 +139,15 @@ namespace Lokad.Onnx
         /// True to indicate that the last dimension is most major (farthest apart) and the first dimension is most 
         /// minor (closest together): akin to column-major in a rank-2 tensor.
         /// </param>
-        public DenseTensor(Memory<T> memory, ReadOnlySpan<int> dimensions, bool reverseStride = false) 
+        /// <summary>
+        /// Constructs a new row-major DenseTensor wrapping existing backing memory for the contents.
+        /// </summary>
+        public DenseTensor(Memory<T> memory, ReadOnlySpan<int> dimensions)
+            : this(memory, dimensions, false)
+        {
+        }
+
+        public DenseTensor(Memory<T> memory, ReadOnlySpan<int> dimensions, bool reverseStride) 
             : base(dimensions, reverseStride)
         {
             if (!MemoryMarshal.TryGetArray<T>(memory, out arr)) throw new InvalidOperationException();
@@ -232,7 +267,7 @@ namespace Lokad.Onnx
         public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions)
         {
  
-            var newSize = ArrayUtilities.ComputeOffsetForReduction(dimensions);
+            var newSize = ArrayUtilities.ComputeOffsetForReduction(dimensions, 0);
 
             if (newSize != Length)
             {
@@ -244,6 +279,9 @@ namespace Lokad.Onnx
 
         protected override void CopyFrom(Tensor<T> from)
         {
+            // Overlapping storage (views, reshapes of shared buffers) snapshots
+            // first so reads observe original values.
+            if (SharesStorage(this, from)) from = Snapshot(from);
             if (from is DenseTensor<T> d)
             {
                 var handle = memory.Pin();
@@ -287,6 +325,32 @@ namespace Lokad.Onnx
 
         #region Static methods
         public static DenseTensor<T> OfValues(Array data) => data.ToTensor<T>();
+
+        /// <summary>
+        /// Copies a single-dimensional array into a new rank-1 tensor with a
+        /// block copy and no per-element boxing. The source keeps its contents.
+        /// </summary>
+        public static DenseTensor<T> OfValues(T[] values)
+        {
+            if (values is null) throw new ArgumentNullException(nameof(values));
+            var output = new DenseTensor<T>(values.Length);
+            values.AsSpan().CopyTo(output.Buffer.Span);
+            return output;
+        }
+
+        /// <summary>
+        /// Copies a span into a new tensor of the given dimensions with a block
+        /// copy and no per-element boxing. The span length must equal the shape
+        /// product. For shared storage, wrap memory with the Memory constructor.
+        /// </summary>
+        public static DenseTensor<T> OfValues(ReadOnlySpan<T> values, int[] dims)
+        {
+            if (dims is null) throw new ArgumentNullException(nameof(dims));
+            var output = new DenseTensor<T>(dims);
+            if (values.Length != (int)output.Length) throw new ArgumentException("Span length must match the product of the dimensions.", nameof(values));
+            values.CopyTo(output.Buffer.Span);
+            return output;
+        }
 
         public static DenseTensor<T> Scalar(T value) => new DenseTensor<T>(new T[1] { value }, Array.Empty<int>());
         #endregion

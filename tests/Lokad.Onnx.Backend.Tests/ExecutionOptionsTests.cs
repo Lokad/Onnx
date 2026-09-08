@@ -130,4 +130,94 @@ public class ExecutionOptionsTests
         }
         Assert.Equal(parallel, repeat);
     }
+
+    [Fact]
+    public void Validate_AcceptsPresets_RejectsBadConfigurations()
+    {
+        foreach (var valid in new[]
+        {
+            TensorExecutionOptions.Scalar,
+            TensorExecutionOptions.Simd,
+            TensorExecutionOptions.Intrinsics,
+            TensorExecutionOptions.Auto,
+            TensorExecutionOptions.Parallel(4),
+        })
+        {
+            valid.Validate();
+        }
+        Assert.Throws<ArgumentOutOfRangeException>(() => new TensorExecutionOptions(true, true, 0).Validate());
+        Assert.Throws<ArgumentOutOfRangeException>(() => new TensorExecutionOptions(true, false, -2).Validate());
+        Assert.Throws<ArgumentException>(() => new TensorExecutionOptions(false, true, 1).Validate());
+    }
+
+    [Fact]
+    public void Provider_RejectsInvalidParallelism()
+    {
+        var a = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        var b = DenseTensor<float>.OfValues(new float[] { 3f, 4f });
+        var bad = new ExecutionOptions(OptimizationMode.Speed, new TensorExecutionOptions(true, true, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CPUExecutionProvider.Add(a, b, bad, null));
+    }
+
+    [Fact]
+    public void ScalarMode_OnSimdHardware_MatchesAutomatic()
+    {
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var b = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f }, { 7f, 8f } });
+        var mmScalar = (Tensor<float>)CPUExecutionProvider.MatMul(a, b, ExecutionOptions.Scalar, null).Outputs[0];
+        var mmAuto = (Tensor<float>)CPUExecutionProvider.MatMul(a, b, null, null).Outputs[0];
+        Assert.Equal(mmAuto.ToArray(), mmScalar.ToArray());
+        var gemmScalar = (Tensor<float>)CPUExecutionProvider.Gemm(a, b, null, 1f, 0f, ExecutionOptions.Scalar, 0, 0).Outputs[0];
+        var gemmAuto = (Tensor<float>)CPUExecutionProvider.Gemm(a, b, null, 1f, 0f, null, 0, 0).Outputs[0];
+        Assert.Equal(gemmAuto.ToArray(), gemmScalar.ToArray());
+        var sm = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        Assert.Equal(
+            Tensor<float>.Softmax(sm, 0, TensorExecutionOptions.Auto, 13).ToArray(),
+            Tensor<float>.Softmax(sm, 0, TensorExecutionOptions.Scalar, 13).ToArray());
+        Assert.Equal(
+            Tensor<float>.Softmax(sm, 1, TensorExecutionOptions.Auto, 13).ToArray(),
+            Tensor<float>.Softmax(sm, 1, TensorExecutionOptions.Scalar, 13).ToArray());
+        var t = DenseTensor<float>.OfValues(new float[] { -1f, 0f, 1f });
+        var tanhScalar = (Tensor<float>)CPUExecutionProvider.Tanh(t, ExecutionOptions.Scalar).Outputs[0];
+        var tanhAuto = (Tensor<float>)CPUExecutionProvider.Tanh(t, null).Outputs[0];
+        Assert.Equal(tanhAuto.ToArray(), tanhScalar.ToArray());
+    }
+
+    [Fact]
+    public void Gemm_Threading_MatchesSequential()
+    {
+        var ad = new float[64 * 8];
+        var bd = new float[8 * 4];
+        for (int i = 0; i < ad.Length; i++) ad[i] = 0.1f * (i % 7) - 0.3f;
+        for (int i = 0; i < bd.Length; i++) bd[i] = 0.05f * (i % 5) + 0.25f;
+        var a = new DenseTensor<float>(ad, new[] { 64, 8 });
+        var b = new DenseTensor<float>(bd, new[] { 8, 4 });
+        var sequential = (Tensor<float>)CPUExecutionProvider.Gemm(a, b, null, 1f, 0f,
+            new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Scalar), 0, 0).Outputs[0];
+        var threaded = (Tensor<float>)CPUExecutionProvider.Gemm(a, b, null, 1f, 0f,
+            new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Parallel(4)), 0, 0).Outputs[0];
+        Assert.Equal(sequential.ToArray(), threaded.ToArray());
+    }
+
+    [Fact]
+    public void DoubleErfAndGelu_HonorExplicitScalar()
+    {
+        var x = DenseTensor<double>.OfValues(new double[] { -1.0, 0.0, 1.0 });
+        var erfOverload = typeof(Tensor<double>).GetMethod("Erf",
+            new[] { typeof(Tensor<double>), typeof(TensorExecutionOptions) });
+        Assert.NotNull(erfOverload);
+        var geluOverload = typeof(Tensor<double>).GetMethod("Gelu",
+            new[] { typeof(Tensor<double>), typeof(TensorExecutionOptions) });
+        Assert.NotNull(geluOverload);
+        var erfScalar = (Tensor<double>)erfOverload!.Invoke(null, new object[] { x, TensorExecutionOptions.Scalar })!;
+        var erfAuto = Tensor<double>.Erf(x);
+        Assert.Equal(erfAuto.ToArray(), erfScalar.ToArray());
+        var geluScalar = (Tensor<double>)geluOverload!.Invoke(null, new object[] { x, TensorExecutionOptions.Scalar })!;
+        var geluAuto = Tensor<double>.Gelu(x);
+        Assert.Equal(geluAuto.ToArray(), geluScalar.ToArray());
+    }
+
+
 }
+
+

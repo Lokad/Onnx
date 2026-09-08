@@ -6,7 +6,7 @@ namespace Lokad.Onnx.Backend.Tests;
 
 public class NodeAttributeMappingTests
 {
-    private static ComputationalGraph CreateGraph(int opsetVersion = 13)
+    private static ComputationalGraph CreateGraph(int opsetVersion)
     {
         return new ComputationalGraph
         {
@@ -18,7 +18,7 @@ public class NodeAttributeMappingTests
     [Fact]
     public void Transpose_UsesPermAttribute()
     {
-        var graph = CreateGraph();
+        var graph = CreateGraph(13);
         var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
         graph.Inputs["x"] = x;
 
@@ -31,7 +31,7 @@ public class NodeAttributeMappingTests
             Attributes = new Dictionary<string, object> { ["perm"] = new[] { 1, 0 } }
         };
 
-        var result = node.Execute(graph);
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var y = (Tensor<float>)result.Outputs[0];
         Assert.Equal(new[] { 2, 2 }, y.Dimensions.ToArray());
@@ -42,7 +42,7 @@ public class NodeAttributeMappingTests
     [Fact]
     public void Concat_UsesAxisAttribute()
     {
-        var graph = CreateGraph();
+        var graph = CreateGraph(13);
         graph.Inputs["a"] = DenseTensor<int>.OfValues(new int[,] { { 1, 2 } });
         graph.Inputs["b"] = DenseTensor<int>.OfValues(new int[,] { { 3, 4 } });
 
@@ -55,7 +55,7 @@ public class NodeAttributeMappingTests
             Attributes = new Dictionary<string, object> { ["axis"] = 0 }
         };
 
-        var result = node.Execute(graph);
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var y = (Tensor<int>)result.Outputs[0];
         Assert.Equal(new[] { 2, 2 }, y.Dimensions.ToArray());
@@ -65,7 +65,7 @@ public class NodeAttributeMappingTests
     [Fact]
     public void Softmax_UsesAxisAttribute()
     {
-        var graph = CreateGraph();
+        var graph = CreateGraph(13);
         graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f }, { 1f, 1f } });
 
         var node = new Node
@@ -77,7 +77,7 @@ public class NodeAttributeMappingTests
             Attributes = new Dictionary<string, object> { ["axis"] = 1 }
         };
 
-        var result = node.Execute(graph);
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var y = (Tensor<float>)result.Outputs[0];
         Assert.Equal(1f, y[0, 0] + y[0, 1], 5);
@@ -88,7 +88,7 @@ public class NodeAttributeMappingTests
     [Fact]
     public void Conv_UsesPadsStridesKernelShapeAttributes()
     {
-        var graph = CreateGraph();
+        var graph = CreateGraph(13);
         var x = DenseTensor<float>.OfValues(new float[1, 1, 3, 3] { { {
             { 1f, 2f, 3f }, { 4f, 5f, 6f }, { 7f, 8f, 9f }
         } } });
@@ -113,17 +113,17 @@ public class NodeAttributeMappingTests
             }
         };
 
-        var result = node.Execute(graph);
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var y = (Tensor<float>)result.Outputs[0];
-        var expected = Tensor<float>.Conv2D(x, w, 1, MathOps.PadType.Value, padvalue: 1, bias: (Tensor<float>)b, kernelshape: new[] { 2, 2 }, strides: new[] { 1, 1 });
+        var expected = Tensor<float>.Conv2D(x, w, 1, MathOps.PadType.Value, padvalue: 1, bias: (Tensor<float>)b, kernelshape: new[] { 2, 2 }, strides: new[] { 1, 1 }, dilations: null);
         Assert.Equal(expected, y);
     }
 
     [Fact]
     public void MaxPool_UsesKernelStridesAttributes()
     {
-        var graph = CreateGraph();
+        var graph = CreateGraph(13);
         var x = DenseTensor<float>.OfValues(new float[1, 1, 4, 4] { { {
             {12.0f, 20.0f, 30.0f, 0.0f  }, { 8.0f, 12.0f, 2.0f, 0.0f }, { 34.0f, 70.0f, 37.0f, 4.0f }, { 112.0f, 100.0f, 25.0f, 12.0f } } } });
         graph.Inputs["x"] = x;
@@ -142,10 +142,10 @@ public class NodeAttributeMappingTests
             }
         };
 
-        var result = node.Execute(graph);
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var y = (Tensor<float>)result.Outputs[0];
-        var expected = Tensor<float>.MaxPool2D(x, new[] { 2, 2 }, MathOps.PadType.Valid, strides: new[] { 2, 2 });
+        var expected = Tensor<float>.MaxPool2D(x, new[] { 2, 2 }, MathOps.PadType.Valid, strides: new[] { 2, 2 }, padvalue: null, dilations: null, ceilMode: false);
         Assert.Equal(expected, y);
     }
 
@@ -164,7 +164,7 @@ public class NodeAttributeMappingTests
             Attributes = new Dictionary<string, object> { ["axes"] = new[] { 0 } }
         };
 
-        var result = node.Execute(graph);
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var y = (Tensor<int>)result.Outputs[0];
         Assert.Equal(new[] { 1, 2 }, y.Dimensions.ToArray());
@@ -190,7 +190,7 @@ public class NodeAttributeMappingTests
             }
         };
 
-        var result = node.Execute(graph);
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var y = (Tensor<float>)result.Outputs[0];
         Assert.Equal(new[] { 2 }, y.Dimensions.ToArray());
@@ -216,7 +216,7 @@ public class NodeAttributeMappingTests
             }
         };
 
-        var result = node.Execute(graph);
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var y = (Tensor<float>)result.Outputs[0];
         Assert.Equal(new[] { 2, 1 }, y.Dimensions.ToArray());
@@ -243,7 +243,7 @@ public class NodeAttributeMappingTests
             }
         };
 
-        var result = node.Execute(graph);
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Success, result.Status);
         var y = (Tensor<float>)result.Outputs[0];
         Assert.Equal(new[] { 2 }, y.Dimensions.ToArray());

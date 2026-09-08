@@ -69,7 +69,7 @@ public class TensorSliceTests
             { 0, 1 },
             { 1, 2},
         });
-        var output = Tensor<double>.Gather(data, indices);
+        var output = Tensor<double>.Gather(data, indices, null);
         Assert.NotNull(output);
         var data2 = DenseTensor<double>.OfValues(new double[3, 3] {
         { 1.0, 1.2, 1.9 },
@@ -86,10 +86,10 @@ public class TensorSliceTests
     {
         var data = DenseTensor<float>.OfValues(new float[3, 4] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f } });
         var indices = DenseTensor<int>.OfValues(new int[2] { 2, 0 });
-        var output = Tensor<float>.Gather(data, indices);
+        var output = Tensor<float>.Gather(data, indices, null);
         Assert.Equal(new[] { 9f, 10f, 11f, 12f, 1f, 2f, 3f, 4f }, output.ToArray());
         var neg = DenseTensor<int>.OfValues(new int[1] { -1 });
-        Assert.Equal(new[] { 9f, 10f, 11f, 12f }, Tensor<float>.Gather(data, neg).ToArray());
+        Assert.Equal(new[] { 9f, 10f, 11f, 12f }, Tensor<float>.Gather(data, neg, null).ToArray());
         var data3 = DenseTensor<float>.OfValues(new float[2, 3, 2] { { { 1f, 2f }, { 3f, 4f }, { 5f, 6f } }, { { 7f, 8f }, { 9f, 10f }, { 11f, 12f } } });
         var idx3 = DenseTensor<int>.OfValues(new int[2, 1] { { 2 }, { 0 } });
         var out3 = Tensor<float>.Gather(data3, idx3, 1);
@@ -112,21 +112,21 @@ public class TensorSliceTests
         start = new int[2] { 0, 1 }.ToTensor<int>();
         ends = new int[2] { -1, 1000 }.ToTensor<int>();
 
-        output = Tensor<int>.Slice(data, start, ends);
+        output = Tensor<int>.Slice(data, start, ends, null, null);
         Assert.NotNull(output);
 
         axes = new int[2] { 0, 2 }.ToTensor<int>();
         start = new int[2] { 0, -7 }.ToTensor<int>();
         ends = new int[2] {-8, 20 }.ToTensor<int>();
 
-        output = Tensor<int>.Slice(Tensor<int>.Ones(10, 10, 10), start, ends, axes);
+        output = Tensor<int>.Slice(Tensor<int>.Ones(10, 10, 10), start, ends, axes, null);
         Assert.NotNull(output);
 
         axes = new int[1] {1}.ToTensor<int>();
         start = new int[1] {0}.ToTensor<int>();
         ends = new int[1] {-1}.ToTensor<int>();
 
-        output = Tensor<int>.Slice(Tensor<int>.Ones(20, 10, 5), start, ends, axes);
+        output = Tensor<int>.Slice(Tensor<int>.Ones(20, 10, 5), start, ends, axes, null);
         Assert.NotNull(output);
     }
 }

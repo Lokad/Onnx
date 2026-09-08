@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 {
-	public UnsafeFixedSizeList(T* ptr, int size, int count = 0)
+	public UnsafeFixedSizeList(T* ptr, int size, int count)
 	{
 		this.ptr = ptr;
 		this.size = size;
@@ -57,10 +57,18 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 	public T this[int index]
 	{
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        get => *(ptr + index);
+        get
+        {
+            if ((uint)index >= (uint)_count) throw new ArgumentOutOfRangeException(nameof(index));
+            return *(ptr + index);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        set => *(ptr + index) = value;
+        set
+        {
+            if ((uint)index >= (uint)_count) throw new ArgumentOutOfRangeException(nameof(index));
+            *(ptr + index) = value;
+        }
 	}
 
 		
@@ -102,24 +110,27 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public void Add(T item)
 	{
+		if (_count >= size) throw new ArgumentOutOfRangeException(nameof(item), "The list has reached its fixed capacity.");
 		*(ptr + _count) = item;
 		_count++;
 	}
 
 	public void AddRange(T[] arr)
-	{		
+	{
+		if (arr.Length > size - _count) throw new ArgumentOutOfRangeException(nameof(arr), "The list has reached its fixed capacity.");
 		fixed (T* pThem = arr)
 		{
 			long copySizeInBytes = arr.Length * sizeof(T);
-			
+
 			Buffer.MemoryCopy(pThem, ptr + _count, copySizeInBytes, copySizeInBytes);
 		}
-		
+
 		_count += arr.Length;
 	}
 
     public void AddRange(ReadOnlySpan<T> arr)
     {
+        if (arr.Length > size - _count) throw new ArgumentOutOfRangeException(nameof(arr), "The list has reached its fixed capacity.");
         fixed (T* pThem = arr)
         {
             long copySizeInBytes = arr.Length * sizeof(T);
@@ -133,11 +144,11 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
     public void AddRange(List<T> list)
 	{
 		int listCount = list.Count;
-			
+		if (listCount > size - _count) throw new ArgumentOutOfRangeException(nameof(list), "The list has reached its fixed capacity.");
 		for (int i = 0; i < listCount; i++)
 		{
 			*(ptr + i + _count) = list[i];
-		}		
+		}
 	}
 
 	public void Clear()
@@ -152,6 +163,7 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 
 	public void CopyTo(T[] array, int arrayIndex)
 	{
+		if (arrayIndex < 0 || arrayIndex > array.Length - _count) throw new ArgumentOutOfRangeException(nameof(arrayIndex));
 		fixed (T* pThem = array)
 		{
 			long sizeInBytes = _count * sizeof(T);
@@ -166,6 +178,7 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 
 	public void CopyTo(ReadOnlySpan<T> array, int arrayIndex)
 	{
+        if (arrayIndex < 0 || _count > array.Length - arrayIndex) throw new ArgumentOutOfRangeException(nameof(arrayIndex));
         fixed (T* pThem = array)
         {
             long sizeInBytes = _count * sizeof(T);
@@ -211,19 +224,22 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public void Insert(int index, T item)
 	{
+			if ((uint)index > (uint)_count) throw new ArgumentOutOfRangeException(nameof(index));
+			if (_count >= size) throw new ArgumentOutOfRangeException(nameof(item), "The list has reached its fixed capacity.");
 			_count++;
-			
+
 			for (int i = _count - 1; i >= index + 1; i--)
 			{
 				*(ptr + i) = *(ptr + i - 1);
 			}
 
 			*(ptr + index) = item;
-		
+
 	}
 
 	public void RemoveAt(int index)
 	{
+		if ((uint)index >= (uint)_count) throw new ArgumentOutOfRangeException(nameof(index));
 
 		T* pItem = ptr + index;
 		long copyAmountBytes = sizeof(T) * (_count - (index + 1));
@@ -240,6 +256,7 @@ public unsafe struct UnsafeFixedSizeList<T> : IList<T> where T : unmanaged
 
 	public void UnstableRemoveAt(int index)
 	{
+		if ((uint)index >= (uint)_count) throw new ArgumentOutOfRangeException(nameof(index));
 		*(ptr + index) = *(ptr + _count - 1);
 		_count--;
 	}

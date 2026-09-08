@@ -78,4 +78,45 @@ public class TensorBroadcastTests
             for (int i = 0; i < fast.Length; i++) Assert.Equal((float)view.GetValue(i), fast[i]);
         }
     }
+
+    [Fact]
+    public void BroadcastShape_Allocates_ByRank_NotElements()
+    {
+        var x = new int[] { 1000, 1000 };
+        var y = new int[] { 1, 1000 };
+        Assert.True(Tensor<int>.BroadcastShape(x, y, out _));
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 10; i++) Assert.True(Tensor<int>.BroadcastShape(x, y, out var b));
+        long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+        Assert.True(Tensor<int>.BroadcastShape(x, y, out var shape));
+        Assert.Equal(new int[] { 1000, 1000 }, shape);
+        Assert.True(allocated < 4096L, $"shape broadcast allocated {allocated} bytes for rank-2 shapes");
+    }
+
+    [Fact]
+    public void BroadcastTensorAgainstSpan_BuildsView_WithoutElementStorage()
+    {
+        var x = Tensor<int>.Ones(1, 1000);
+        var target = new int[] { 1000, 1000 };
+        Assert.True(Tensor<int>.Broadcast(x, target, out _));
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 10; i++) Assert.True(Tensor<int>.Broadcast(x, target, out var view));
+        long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+        Assert.True(Tensor<int>.Broadcast(x, target, out var result));
+        Assert.Equal(target, result.Dimensions.ToArray());
+        Assert.Equal(1, result.GetValue(0));
+        Assert.Equal(1, result.GetValue(999999));
+        Assert.True(allocated < 8192L, $"span broadcast allocated {allocated} bytes for rank-2 shapes");
+    }
+
+    [Fact]
+    public void BroadcastShape_Incompatible_ReturnsFalse()
+    {
+        Assert.False(Tensor<int>.BroadcastShape(new int[] { 2, 3 }, new int[] { 4 }, out var b));
+        Assert.Null(b);
+    }
+
+
 }
+
+

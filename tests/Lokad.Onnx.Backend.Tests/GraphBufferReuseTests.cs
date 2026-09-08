@@ -43,9 +43,9 @@ public class GraphBufferReuseTests
             var pool = new TensorBufferPool();
             OpResult legacy = op switch
             {
-                OpType.Add => CPU.Add(a, b, options),
-                OpType.Mul => CPU.Mul(a, b, options),
-                _ => CPU.Div(a, b, options),
+                OpType.Add => CPU.Add(a, b, options, null),
+                OpType.Mul => CPU.Mul(a, b, options, null),
+                _ => CPU.Div(a, b, options, null),
             };
             OpResult pooled = op switch
             {
@@ -75,7 +75,7 @@ public class GraphBufferReuseTests
         var mixed_b = DenseTensor<float>.OfShape(3);
         mixed_b.Fill(2f);
         var vector_a = DenseTensor<float>.OfValues(new float[] { 7f });
-        var vector_b = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f });
+        var vector_b = DenseTensor<float>.OfValues(new float[] { 3f });
         var cases = new[]
         {
             (twoD_a, twoD_b),
@@ -86,7 +86,7 @@ public class GraphBufferReuseTests
         foreach (var (x, y) in cases)
         {
             var pool = new TensorBufferPool();
-            var legacy = CPU.MatMul(x, y, options);
+            var legacy = CPU.MatMul(x, y, options, null);
             var pooled = CPU.MatMul(x, y, options, pool);
             Assert.Equal(OpStatus.Success, legacy.Status);
             Assert.Equal(OpStatus.Success, pooled.Status);
@@ -104,7 +104,7 @@ public class GraphBufferReuseTests
         a.Fill(0.5f);
         var b = DenseTensor<float>.OfShape(32, 32);
         b.Fill(-0.25f);
-        var legacy = CPU.MatMul(a, b, options);
+        var legacy = CPU.MatMul(a, b, options, null);
         Assert.Equal(OpStatus.Success, legacy.Status);
         var dirtied = 0;
         for (int i = 0; i < 4; i++)
@@ -128,25 +128,25 @@ public class GraphBufferReuseTests
         var options = ExecutionOptions.Default;
         var pool = new TensorBufferPool();
         var logits = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f }, { 1f, 1f, 1f } });
-        var legacySm = CPU.Softmax(logits, 1);
-        var pooledSm = CPU.Softmax(logits, 1, options, pool);
+        var legacySm = CPU.Softmax(logits, 1, null, null, 13);
+        var pooledSm = CPU.Softmax(logits, 1, options, pool, 13);
         Assert.Equal(OpStatus.Success, legacySm.Status);
         Assert.Equal(OpStatus.Success, pooledSm.Status);
         AssertBitwise(ToArray(legacySm.Outputs[0]), pooledSm.Outputs[0]);
         var erfIn = DenseTensor<float>.OfValues(new float[] { 0f, 0.5f, 1f });
-        var legacyErf = CPU.Erf(erfIn, options);
+        var legacyErf = CPU.Erf(erfIn, options, null);
         var pooledErf = CPU.Erf(erfIn, options, pool);
         Assert.Equal(OpStatus.Success, legacyErf.Status);
         Assert.Equal(OpStatus.Success, pooledErf.Status);
         AssertBitwise(ToArray(legacyErf.Outputs[0]), pooledErf.Outputs[0]);
         var square = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
-        var legacyTr = CPU.Transpose(square, new[] { 1, 0 }, options);
+        var legacyTr = CPU.Transpose(square, new[] { 1, 0 }, options, null);
         var pooledTr = CPU.Transpose(square, new[] { 1, 0 }, options, pool);
         Assert.Equal(OpStatus.Success, legacyTr.Status);
         Assert.Equal(OpStatus.Success, pooledTr.Status);
         AssertBitwise(ToArray(legacyTr.Outputs[0]), pooledTr.Outputs[0]);
         var rect = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
-        var legacyRect = CPU.Transpose(rect, new[] { 1, 0 }, options);
+        var legacyRect = CPU.Transpose(rect, new[] { 1, 0 }, options, null);
         var pooledRect = CPU.Transpose(rect, new[] { 1, 0 }, options, pool);
         Assert.Equal(OpStatus.Success, legacyRect.Status);
         Assert.Equal(OpStatus.Success, pooledRect.Status);
@@ -155,8 +155,8 @@ public class GraphBufferReuseTests
         var lnIn = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } });
         var gamma = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f, 1f });
         var beta = DenseTensor<float>.OfValues(new float[] { 0f, 0f, 0f, 0f });
-        var legacyLn = CPU.LayerNormalization(lnIn, gamma, beta, -1, 1e-5f, options);
-        var pooledLn = CPU.LayerNormalization(lnIn, gamma, beta, -1, 1e-5f, options, pool);
+        var legacyLn = CPU.LayerNormalization(lnIn, gamma, beta, -1, 1e-5f, options, null, null);
+        var pooledLn = CPU.LayerNormalization(lnIn, gamma, beta, -1, 1e-5f, options, pool, null);
         Assert.Equal(OpStatus.Success, legacyLn.Status);
         Assert.Equal(OpStatus.Success, pooledLn.Status);
         AssertBitwise(ToArray(legacyLn.Outputs[0]), pooledLn.Outputs[0]);

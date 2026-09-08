@@ -557,7 +557,7 @@ namespace Lokad.Onnx
         /// if this is greater than <paramref name="obj"/>.
         /// </returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="obj"/> is not of type <see cref="Float16"/>.</exception>
-        public int CompareTo(object obj)
+        public int CompareTo(object? obj)
         {
             if (!(obj is Float16))
             {
@@ -617,7 +617,7 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="obj">An System.Object.</param>
         /// <returns>true if obj is Float16 and its value is equal to this instance; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return (obj is Float16 other) && Equals(other);
         }
@@ -1178,7 +1178,7 @@ namespace Lokad.Onnx
         /// if this is greater than <paramref name="obj"/>.
         /// </returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="obj"/> is not of type <see cref="BFloat16"/>.</exception>
-        public int CompareTo(object obj)
+        public int CompareTo(object? obj)
         {
             if (!(obj is BFloat16))
             {
@@ -1238,7 +1238,7 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="obj">An System.Object.</param>
         /// <returns>true if obj is BFloat16 its value is equal to this instance; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return (obj is BFloat16 other) && Equals(other);
         }

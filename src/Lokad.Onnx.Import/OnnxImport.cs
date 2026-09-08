@@ -14,24 +14,36 @@ public static class OnnxImport
 {
     public static OnnxModel Parse(string onnxInputFilePath)
     {
-        var op = Runtime.Begin("Parsing ONNX model file {f}", onnxInputFilePath);
-        var buffer = File.ReadAllBytes(onnxInputFilePath);
-        var m = ModelProto.Parser.ParseFrom(buffer);
-        op.Complete();
+        using var op = Runtime.Begin("Parsing ONNX model file {f}", onnxInputFilePath);
         var dir = Path.GetDirectoryName(Path.GetFullPath(onnxInputFilePath));
-        foreach (var init in m.Graph.Initializer)
-        {
-            init.ResolveExternalData(dir!);
-        }
-        return m.ToModelDto();
+        using var stream = new FileStream(onnxInputFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 1 << 16, FileOptions.SequentialScan);
+        var m = ModelProto.Parser.ParseFrom(stream);
+        op.Complete();
+        return m.ToModelDto(dir, true);
+    }
+
+    /// <summary>
+    /// Parses names, shapes, types and nodes without materializing initializer
+    /// payloads, for inspection commands that never read weight values.
+    /// Initializer descriptions report element types and dimensions with empty
+    /// payloads; attribute tensors still materialize as small constants.
+    /// </summary>
+    public static OnnxModel ParseMetadata(string onnxInputFilePath)
+    {
+        using var op = Runtime.Begin("Parsing ONNX model metadata {f}", onnxInputFilePath);
+        var dir = Path.GetDirectoryName(Path.GetFullPath(onnxInputFilePath));
+        using var stream = new FileStream(onnxInputFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 1 << 16, FileOptions.SequentialScan);
+        var m = ModelProto.Parser.ParseFrom(stream);
+        op.Complete();
+        return m.ToModelDto(dir, materializeInitializers: false);
     }
 
     public static OnnxModel Parse(byte[] data)
     {
-        var op = Runtime.Begin("Parsing ONNX model buffer of length {f} bytes", data.Length);
+        using var op = Runtime.Begin("Parsing ONNX model buffer of length {f} bytes", data.Length);
         var m = ModelProto.Parser.ParseFrom(data);
         op.Complete();
-        return m.ToModelDto();
+        return m.ToModelDto(null, true);
     }
 
     public static ComputationalGraph? Load(string onnxInputFilePath)
@@ -46,9 +58,17 @@ public static class OnnxImport
             Runtime.Error(ex, "Could not parse {f} as ONNX model file.", onnxInputFilePath);
             return null;
         }
-        var g = Model.Load(mp);
-        g.ModelFile = onnxInputFilePath;
-        return g;
+        try
+        {
+            var g = Model.Load(mp);
+            g.ModelFile = onnxInputFilePath;
+            return g;
+        }
+        catch (Exception ex)
+        {
+            Runtime.Error(ex, "Could not load {f} as ONNX model.", onnxInputFilePath);
+            return null;
+        }
     }
 
     public static ComputationalGraph? Load(byte[] buffer)
@@ -63,10 +83,18 @@ public static class OnnxImport
             Runtime.Error(ex, "Could not parse buffer as ONNX model.");
             return null;
         }
-        return Model.Load(mp);
+        try
+        {
+            return Model.Load(mp);
+        }
+        catch (Exception ex)
+        {
+            Runtime.Error(ex, "Could not load buffer as ONNX model.");
+            return null;
+        }
     }
 
-    static OnnxModel ToModelDto(this ModelProto mp)
+    static OnnxModel ToModelDto(this ModelProto mp, string? baseDirectory, bool materializeInitializers)
     {
         return new OnnxModel
         {
@@ -80,8 +108,8 @@ public static class OnnxImport
             MetadataProps = mp.MetadataProps.ToDictionary(p => p.Key, p => p.Value),
             Inputs = mp.Graph.Input.Select(vp => vp.ToValueDto()).ToList(),
             Outputs = mp.Graph.Output.Select(vp => vp.ToValueDto()).ToList(),
-            Initializers = mp.Graph.Initializer.Select(tp => tp.ToTensorDto()).ToList(),
-            Nodes = mp.Graph.Node.Select(np => np.ToNodeDto()).ToList(),
+            Initializers = mp.Graph.Initializer.Select(tp => tp.ToTensorDto(baseDirectory, materializeInitializers)).ToList(),
+            Nodes = mp.Graph.Node.Select(np => np.ToNodeDto(baseDirectory)).ToList(),
         };
     }
 }

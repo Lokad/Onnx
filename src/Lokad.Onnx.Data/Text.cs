@@ -9,21 +9,68 @@ using System.Threading.Tasks;
 
 using Lokad.Tokenizers.Tokenizer;
 using FastBertTokenizer;
+using static Lokad.Onnx.Runtime;
 
-public class Text : Runtime
+public class Text
 {
+    /// <summary>Loaded BERT tokenizer plus its encode gate.</summary>
+    sealed class SharedBertTokenizer
+    {
+        public BertTokenizer Tokenizer;
+        public readonly object Sync = new object();
+        public SharedBertTokenizer(BertTokenizer tokenizer) { Tokenizer = tokenizer; }
+    }
+
+    static readonly Dictionary<string, SharedBertTokenizer> BertCache = new Dictionary<string, SharedBertTokenizer>();
+    static readonly object BertCacheGate = new object();
+
+    /// <summary>Loads (downloading when absent) and caches the named BERT tokenizer.</summary>
+    /// <remarks>Shared process-wide like the Roberta cache. The async load runs
+    /// on a worker thread so waiting for it cannot deadlock a captured
+    /// synchronization context. BERT stays outside the offline guarantee:
+    /// this entry performs network acquisition.</remarks>
+    public static BertTokenizer GetOrLoadBertTokenizer(string tokenizer)
+    {
+        lock (BertCacheGate)
+        {
+            if (BertCache.TryGetValue(tokenizer, out var cached)) return cached.Tokenizer;
+            var tok = new BertTokenizer();
+            System.Threading.Tasks.Task.Run(() => tok.LoadFromHuggingFaceAsync(tokenizer)).GetAwaiter().GetResult();
+            BertCache[tokenizer] = new SharedBertTokenizer(tok);
+            return tok;
+        }
+    }
+
+    /// <summary>Tokenizes one text with a BERT tokenizer.</summary>
+    /// <remarks>Uses the shared cached instance for the id; encodes serialize
+    /// on that instance gate. Requires network on first use per id.</remarks>
     public static ITensor[]? BertTokenize(string text, string tokenizer)
     {
         var op = Begin("Tokenizing {len} characters using BERT tokenizer {tok}", text.Length, tokenizer);
-        var tok = new BertTokenizer();
-        tok.LoadFromHuggingFaceAsync(tokenizer).Wait();
-        var (inputIds, attentionMask, tokenTypeIds) = tok.Encode(text, 512);
+        SharedBertTokenizer shared;
+        lock (BertCacheGate)
+        {
+            if (!BertCache.TryGetValue(tokenizer, out var cached))
+            {
+                var tok = new BertTokenizer();
+                System.Threading.Tasks.Task.Run(() => tok.LoadFromHuggingFaceAsync(tokenizer)).GetAwaiter().GetResult();
+                cached = new SharedBertTokenizer(tok);
+                BertCache[tokenizer] = cached;
+            }
+            shared = cached;
+        }
+        ITensor[] result;
+        lock (shared.Sync)
+        {
+            var (eInputIds, eAttentionMask, eTokenTypeIds) = shared.Tokenizer.Encode(text, 512);
+            result = new ITensor[3] {
+                DenseTensor<long>.OfValues(eInputIds.ToArray()).PadLeft().WithName("input_ids"),
+                DenseTensor<long>.OfValues(eAttentionMask.ToArray()).PadLeft().WithName("attention_mask"),
+                DenseTensor<long>.OfValues(eTokenTypeIds.ToArray()).PadLeft().WithName("token_type_ids"),
+            };
+        }
         op.Complete();
-        return new ITensor[3] {
-            DenseTensor<long>.OfValues(inputIds.ToArray()).PadLeft().WithName("input_ids"),
-            DenseTensor<long>.OfValues(attentionMask.ToArray()).PadLeft().WithName("attention_mask"),
-            DenseTensor<long>.OfValues(tokenTypeIds.ToArray()).PadLeft().WithName("token_type_ids"),
-        };
+        return result;
     }
 
     public static XLMRobertaTokenizer LoadRobertaTokenizerFromFile(string tokenizerModelPath)
@@ -61,7 +108,14 @@ public class Text : Runtime
     static ITensor[] EncodeBatchRoberta(XLMRobertaTokenizer tok, string[] texts, string tokDesc)
     {
         var op = Begin("Tokenizing text array of length {l} using {tok_desc} tokenizer", texts.Length, tokDesc);
-        var results = texts.Select(text1 =>
+        // Single pass: each text is encoded exactly once into a materialized
+        // id array while tracking the maximum length inline. The three batch
+        // tensors are then allocated once and filled directly: input ids copy
+        // each row and pad-fill with 1, attention writes ones over real tokens
+        // leaving pad zeros, and type ids stay zero-initialized.
+        var ids = new List<long[]>(texts.Length);
+        int maxl = 0;
+        foreach (var text1 in texts)
         {
             var t = tok.Encode(NormalizeRobertaText(text1), null, 512, TruncationStrategy.OnlyFirst, 0);
             if (t is null)
@@ -69,58 +123,91 @@ public class Text : Runtime
                 op.Abandon();
                 throw new Exception("Error tokenizing text " + text1 + ". Stopping.");
             }
-            else
-            {
-                return new ITensor[3]
-                {
-                    DenseTensor<long>.OfValues(t.TokenIds.ToArray()).WithName("input_ids"),
-                    DenseTensor<long>.Ones(1, t.TokenIds.Count).WithName("attention_mask"),
-                    DenseTensor<long>.Zeros(1, t.TokenIds.Count).WithName("token_type_ids"),
-                };
-            }
-        });
-        var maxl = results.Select(r => r[0].Length).Max();
-        var inputids = new List<long[]>();
-        var attentionMask = new List<long[]>();
-        var typeids = new List<long[]>();
-        foreach (var r in results)
+            var arr = t.TokenIds.ToArray();
+            ids.Add(arr);
+            if (arr.Length > maxl) maxl = arr.Length;
+        }
+        if (ids.Count == 0)
         {
-            var length = r[0].Length;
-            var padl = maxl - length;
-            var padding = new long[padl];
-            Array.Fill(padding, 1L);
-            inputids.Add(r[0].AsTensor<long>().Concat(padding).ToArray());
-            attentionMask.Add(r[1].AsTensor<long>().Concat(new long[padl]).ToArray());
-            typeids.Add(r[2].AsTensor<long>().Concat(new long[padl]).ToArray());
+            op.Complete();
+            return new ITensor[] {
+                new DenseTensor<long>(new Memory<long>(Array.Empty<long>()), new[]{0, 0}).WithName("input_ids"),
+                new DenseTensor<long>(new Memory<long>(Array.Empty<long>()), new[]{0, 0}).WithName("attention_mask"),
+                new DenseTensor<long>(new Memory<long>(Array.Empty<long>()), new[]{0, 0}).WithName("token_type_ids")
+            };
+        }
+        var inputIds = new DenseTensor<long>(new Memory<long>(new long[ids.Count * maxl]), new[]{ids.Count, maxl});
+        var attentionMask = new DenseTensor<long>(new Memory<long>(new long[ids.Count * maxl]), new[]{ids.Count, maxl});
+        var typeIds = new DenseTensor<long>(new Memory<long>(new long[ids.Count * maxl]), new[]{ids.Count, maxl});
+        var ii = inputIds.Buffer.Span;
+        var am = attentionMask.Buffer.Span;
+        for (int i = 0; i < ids.Count; i++)
+        {
+            var row = ids[i];
+            row.CopyTo(ii.Slice(i * maxl, row.Length));
+            ii.Slice(i * maxl + row.Length, maxl - row.Length).Fill(1L);
+            am.Slice(i * maxl, row.Length).Fill(1L);
         }
         op.Complete();
         return new ITensor[] {
-            inputids.ToArray().To2DArray<long>().ToTensor<long>().WithName("input_ids"),
-            attentionMask.ToArray().To2DArray<long>().ToTensor<long>().WithName("attention_mask"),
-            typeids.ToArray().To2DArray<long>().ToTensor<long>().WithName("token_type_ids")
+            inputIds.WithName("input_ids"),
+            attentionMask.WithName("attention_mask"),
+            typeIds.WithName("token_type_ids")
         };
     }
 
+    /// <summary>Loaded Roberta tokenizer plus its encode gate.</summary>
+    sealed class SharedRobertaTokenizer
+    {
+        public XLMRobertaTokenizer Tokenizer;
+        public readonly object Sync = new object();
+        public SharedRobertaTokenizer(XLMRobertaTokenizer tokenizer) { Tokenizer = tokenizer; }
+    }
+
+    static readonly Dictionary<string, SharedRobertaTokenizer> RobertaCache = new Dictionary<string, SharedRobertaTokenizer>();
+    static readonly object RobertaCacheGate = new object();
+
+    /// <summary>Asset path for the bundled multilingual-e5-small tokenizer.</summary>
+    public static string Me5sTokenizerPath() => Path.Combine(AssemblyLocation, "me5s-sentencepiece.bpe.model");
+
+    /// <summary>Acquires the me5s tokenizer asset, downloading it when absent.</summary>
+    /// <remarks>This is the only tokenizer entry that performs network
+    /// acquisition; all encoding entries are offline and fail clearly when
+    /// their asset is missing. Returns false when the asset cannot be obtained.</remarks>
+    public static bool EnsureMe5sTokenizer()
+    {
+        var tokenizerPath = Me5sTokenizerPath();
+        if (File.Exists(tokenizerPath)) return true;
+        if (!DownloadFile(
+            "sentencepiece.bpe.model",
+            new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
+            tokenizerPath))
+        {
+            Error("Could not download model file.");
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>Tokenizes one text with the named Roberta tokenizer.</summary>
+    /// <remarks>Offline: a missing me5s asset fails clearly instead of
+    /// downloading; call EnsureMe5sTokenizer first when acquisition is
+    /// wanted. Encodes serialize on the shared instance gate.</remarks>
     public static ITensor[]? RobertaTokenize(string text1, string tokenizer)
     {
         switch (tokenizer)
         {
             case "me5s":
-                var tokenizerPath = Path.Combine(AssemblyLocation, "me5s-sentencepiece.bpe.model");
+                var tokenizerPath = Me5sTokenizerPath();
                 if (!File.Exists(tokenizerPath))
                 {
-                    if (!DownloadFile(
-                        "sentencepiece.bpe.model",
-                        new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
-                        tokenizerPath))
-                    {
-                        Error("Could not download model file.");
-                        return null;
-                    }
+                    Error("Tokenizer asset {f} is missing; call EnsureMe5sTokenizer to acquire it.", tokenizerPath);
+                    return null;
                 }
-                lock (TokenizerLock)
+                var shared = GetOrLoadRobertaTokenizerLocked(tokenizerPath);
+                lock (shared.Sync)
                 {
-                    return EncodeSingleRoberta(GetOrLoadRobertaTokenizerLocked(tokenizerPath), text1, "multilingual-e5-small");
+                    return EncodeSingleRoberta(shared.Tokenizer, text1, "multilingual-e5-small");
                 }
             default:
                 Error("Unknown Roberta tokenizer: {t}.", tokenizer);
@@ -128,26 +215,25 @@ public class Text : Runtime
         }
     }
 
+    /// <summary>Tokenizes a batch of texts with the named Roberta tokenizer.</summary>
+    /// <remarks>Offline: a missing me5s asset fails clearly instead of
+    /// downloading; call EnsureMe5sTokenizer first when acquisition is
+    /// wanted. Encodes serialize on the shared instance gate.</remarks>
     public static ITensor[]? RobertaTokenize(string[] text, string tokenizer)
     {
         switch (tokenizer)
         {
             case "me5s":
-                var tokenizerPath = Path.Combine(AssemblyLocation, "me5s-sentencepiece.bpe.model");
+                var tokenizerPath = Me5sTokenizerPath();
                 if (!File.Exists(tokenizerPath))
                 {
-                    if (!DownloadFile(
-                        "sentencepiece.bpe.model",
-                        new Uri("https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentencepiece.bpe.model"),
-                        tokenizerPath))
-                    {
-                        Error("Could not download model file.");
-                        return null;
-                    }
+                    Error("Tokenizer asset {f} is missing; call EnsureMe5sTokenizer to acquire it.", tokenizerPath);
+                    return null;
                 }
-                lock (TokenizerLock)
+                var shared = GetOrLoadRobertaTokenizerLocked(tokenizerPath);
+                lock (shared.Sync)
                 {
-                    return EncodeBatchRoberta(GetOrLoadRobertaTokenizerLocked(tokenizerPath), text, "multilingual-e5-small");
+                    return EncodeBatchRoberta(shared.Tokenizer, text, "multilingual-e5-small");
                 }
             default:
                 Error("Unknown Roberta tokenizer: {t}.", tokenizer);
@@ -155,38 +241,63 @@ public class Text : Runtime
         }
     }
 
-    static XLMRobertaTokenizer GetOrLoadRobertaTokenizerLocked(string tokenizerModelPath)
+    /// <summary>Returns the shared cached holder, loading it on first use.</summary>
+    /// <remarks>Only the dictionary membership is gated; the load itself runs
+    /// inside the same gate so two threads never load the same path twice.
+    /// The gate is never held during encoding.</remarks>
+    static SharedRobertaTokenizer GetOrLoadRobertaTokenizerLocked(string tokenizerModelPath)
     {
-        if (!Tokenizers.TryGetValue(tokenizerModelPath, out var cached))
+        lock (RobertaCacheGate)
         {
-            cached = new XLMRobertaTokenizer(tokenizerModelPath, false);
-            Tokenizers[tokenizerModelPath] = cached;
+            if (!RobertaCache.TryGetValue(tokenizerModelPath, out var cached))
+            {
+                cached = new SharedRobertaTokenizer(LoadRobertaTokenizerFromFile(tokenizerModelPath));
+                RobertaCache[tokenizerModelPath] = cached;
+            }
+            return cached;
         }
-        return (XLMRobertaTokenizer)cached;
     }
 
+    /// <summary>Returns the shared cached Roberta tokenizer for a model path.</summary>
+    /// <remarks>Shared process-wide with no eviction. Encodes through the
+    /// returned instance are only safe via the Text encode methods, which
+    /// serialize on the instance gate; calling Encode on the instance
+    /// directly from several threads is not synchronized. A path that was
+    /// never loaded throws FileNotFoundException without touching the cache.</remarks>
     public static XLMRobertaTokenizer GetOrLoadRobertaTokenizer(string tokenizerModelPath)
     {
-        if (!File.Exists(tokenizerModelPath)) throw new FileNotFoundException("Tokenizer model not found.", tokenizerModelPath);
-        lock (TokenizerLock)
+        return GetOrLoadRobertaTokenizerLocked(tokenizerModelPath).Tokenizer;
+    }
+
+    /// <summary>Tokenizes one text with the shared cached file tokenizer.</summary>
+    /// <remarks>Fully offline: reuses the cached instance and never downloads.
+    /// Encodes serialize on the instance gate.</remarks>
+    public static ITensor[]? RobertaTokenizeFromFile(string text, string tokenizerModelPath)
+    {
+        var shared = GetOrLoadRobertaTokenizerLocked(tokenizerModelPath);
+        lock (shared.Sync)
         {
-            return GetOrLoadRobertaTokenizerLocked(tokenizerModelPath);
+            return EncodeSingleRoberta(shared.Tokenizer, text, "multilingual-e5-small");
         }
     }
 
-    public static ITensor[]? RobertaTokenizeFromFile(string text, string tokenizerModelPath)
-    {
-        return EncodeSingleRoberta(LoadRobertaTokenizerFromFile(tokenizerModelPath), text, "multilingual-e5-small");
-    }
-
+    /// <summary>Tokenizes a batch of texts with the shared cached file tokenizer.</summary>
+    /// <remarks>Fully offline: reuses the cached instance and never downloads.
+    /// Encodes serialize on the instance gate.</remarks>
     public static ITensor[]? RobertaTokenizeFromFile(IReadOnlyList<string> texts, string tokenizerModelPath)
     {
-        return EncodeBatchRoberta(LoadRobertaTokenizerFromFile(tokenizerModelPath), texts.ToArray(), "multilingual-e5-small");
+        var shared = GetOrLoadRobertaTokenizerLocked(tokenizerModelPath);
+        lock (shared.Sync)
+        {
+            return EncodeBatchRoberta(shared.Tokenizer, texts.ToArray(), "multilingual-e5-small");
+        }
     }
     public static ITensor[]? GetTextTensors(string text, string props)
     {
+        // An empty properties string selects the default me5s tokenizer:
+        // Split never yields an empty array, so test the head instead.
         var tprops = props.Split(':');
-        if (tprops.Length == 0 || tprops[0] == "me5s")
+        if (tprops.Length == 0 || string.IsNullOrEmpty(tprops[0]) || tprops[0] == "me5s")
         {
             return RobertaTokenize(text, "me5s");
         }
@@ -201,10 +312,10 @@ public class Text : Runtime
         }
     }
 
-    public static ITensor[]? GetTextTensors(string[] text, string props) 
+    public static ITensor[]? GetTextTensors(string[] text, string props)
     {
         var tprops = props.Split(':');
-        if (tprops.Length == 0 || tprops[0] == "me5s")
+        if (tprops.Length == 0 || string.IsNullOrEmpty(tprops[0]) || tprops[0] == "me5s")
         {
             return RobertaTokenize(text, "me5s");
         }
@@ -228,13 +339,10 @@ public class Text : Runtime
         }
         else
         {
-            return GetTextTensors(File.ReadAllText(name), p.Length > 1 ? p[1] : "");
+            return GetTextTensors(File.ReadAllText(name), p.Length > 0 ? p[0] : "");
         }
     }
 
     public static string[] TextExtensions = new string[] { ".txt" };
-    public static Dictionary<string, object> Tokenizers = new Dictionary<string, object>();
-
-    private static readonly object TokenizerLock = new object();
 }
 

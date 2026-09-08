@@ -30,6 +30,13 @@ public class OnnxValueInfo
     public string Name = "";
     public TensorElementType ElementType;
     public int[] Dims = Array.Empty<int>();
+    /// <summary>
+    /// Optional per-dimension symbolic names, aligned with <see cref="Dims"/>.
+    /// Null means legacy/unknown (no symbolic info); a null entry means the
+    /// dimension is fixed; a non-null entry names a symbolic dimension shared
+    /// across the model. Descriptions are treated as immutable after load.
+    /// </summary>
+    public string?[]? DimParams = null;
 
     public string Describe() => $"{Name}:{ElementType.ToString().ToLowerInvariant()}:{string.Join("x", Dims.Select(d => d.ToString()))}";
 }
@@ -43,6 +50,7 @@ public sealed class OnnxNode
 {
     public string Name = "";
     public string OpType = "";
+    public string Domain = "";
     public string[] Inputs = Array.Empty<string>();
     public string[] Outputs = Array.Empty<string>();
     public Dictionary<string, object> Attributes = new Dictionary<string, object>();

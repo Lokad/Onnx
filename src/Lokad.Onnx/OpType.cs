@@ -197,4 +197,5 @@ public enum OpType
     Softsign,
     ThresholdedRelu,
     RotaryEmbedding,
+    Unknown,
 }

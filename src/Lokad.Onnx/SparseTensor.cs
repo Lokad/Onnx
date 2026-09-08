@@ -20,17 +20,17 @@ namespace Lokad.Onnx
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the SparseTensor to create.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): akin to row-major in a rank-2 tensor.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): akin to column-major in a rank-2 tensor.</param>
         /// <param name="capacity">The number of non-zero values this tensor can store without resizing.</param>
-        public SparseTensor(ReadOnlySpan<int> dimensions, bool reverseStride = false, int capacity = 0) : base(dimensions, reverseStride)
+        public SparseTensor(ReadOnlySpan<int> dimensions, bool reverseStride, int capacity) : base(dimensions, reverseStride)
         {
             values = new Dictionary<int, T>(capacity);
         }
 
-        internal SparseTensor(Dictionary<int, T> values, ReadOnlySpan<int> dimensions, bool reverseStride = false) : base(dimensions, reverseStride)
+        internal SparseTensor(Dictionary<int, T> values, ReadOnlySpan<int> dimensions, bool reverseStride) : base(dimensions, reverseStride)
         {
             this.values = values;
         }
 
-        internal SparseTensor(Array fromArray, bool reverseStride = false) : base(fromArray, reverseStride)
+        internal SparseTensor(Array fromArray, bool reverseStride) : base(fromArray, reverseStride)
         {
             values = new Dictionary<int, T>(fromArray.Length);
 
@@ -42,7 +42,7 @@ namespace Lokad.Onnx
 
                 foreach (T item in fromArray)
                 {
-                    if (!item!.Equals(Zero))
+                    if (!item.Equals(Zero))
                     {
                         var destIndex = ArrayUtilities.TransformIndexByStrides(index, sourceStrides, false, strides);
                         values[destIndex] = item;
@@ -55,7 +55,7 @@ namespace Lokad.Onnx
             {
                 foreach (T item in fromArray)
                 {
-                    if (!item!.Equals(Zero))
+                    if (!item.Equals(Zero))
                     {
                         values[index] = item;
                     }
@@ -88,7 +88,7 @@ namespace Lokad.Onnx
         /// <param name="value">The new value to set at the specified position in this Tensor.</param>
         public override void SetValue(int index, T value)
         {
-            if (value!.Equals(Zero))
+            if (value.Equals(Zero))
             {
                 values.Remove(index);
             }
@@ -121,7 +121,7 @@ namespace Lokad.Onnx
         /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
         public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
-            return new SparseTensor<TResult>(dimensions, IsReversedStride);
+            return new SparseTensor<TResult>(dimensions, IsReversedStride, 0);
         }
 
         /// <summary>

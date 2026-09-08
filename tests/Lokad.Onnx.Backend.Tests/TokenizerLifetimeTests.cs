@@ -1,0 +1,87 @@
+
+namespace Lokad.Onnx.Backend.Tests;
+
+[Collection("ProcessState")]
+public class TokenizerLifetimeTests
+{
+    static string AssetPath()
+    {
+        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
+        while (dir is not null)
+        {
+            var candidate = Path.Combine(dir.FullName, "models", "multilingual-e5-small", "sentencepiece.bpe.model");
+            if (File.Exists(candidate)) return candidate;
+            dir = dir.Parent;
+        }
+        throw new FileNotFoundException("e5 tokenizer asset not found under models/multilingual-e5-small.");
+    }
+
+    static string SeedMe5s()
+    {
+        var target = Path.Combine(Runtime.AssemblyLocation, "me5s-sentencepiece.bpe.model");
+        if (!File.Exists(target)) File.Copy(AssetPath(), target);
+        return target;
+    }
+
+    static void Gc()
+    {
+        GC.Collect(2, GCCollectionMode.Forced, true, true);
+        GC.WaitForPendingFinalizers();
+        GC.Collect(2, GCCollectionMode.Forced, true, true);
+    }
+
+    [Fact]
+    public void SecondSharedCall_AllocatesLittle()
+    {
+        string path = AssetPath();
+        var texts = new[] { "Hello world", "query: What is the capital of France?", "a  b" };
+        var first = Text.RobertaTokenizeFromFile(texts, path);
+        Assert.NotNull(first);
+        Gc();
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        var second = Text.RobertaTokenizeFromFile(texts, path);
+        long alloc = GC.GetAllocatedBytesForCurrentThread() - before;
+        Assert.NotNull(second);
+        Assert.Equal(
+            ((Tensor<long>)first![0]).ToArray(),
+            ((Tensor<long>)second![0]).ToArray());
+        Assert.True(alloc < 10_000_000L, $"Second shared call allocated {alloc} bytes; expected a cache hit in the kilobyte range.");
+    }
+
+    [Fact]
+    public void EnsureMe5sTokenizer_SucceedsWhenSeeded()
+    {
+        Assert.True(File.Exists(SeedMe5s()));
+        Assert.True(Text.EnsureMe5sTokenizer());
+    }
+
+    [Fact]
+    public void ConcurrentSharedBatch_MatchesSerial()
+    {
+        SeedMe5s();
+        var texts = new[] { "Hello world", "query: What is the capital of France?" };
+        var serial = Text.RobertaTokenize(texts, "me5s");
+        Assert.NotNull(serial);
+        var expected = ((Tensor<long>)serial![0]).ToArray();
+        var tasks = new Task<long[]>[8];
+        for (int i = 0; i < tasks.Length; i++)
+            tasks[i] = Task.Run(() =>
+            {
+                var parts = Text.RobertaTokenize(texts, "me5s");
+                Assert.NotNull(parts);
+                return ((Tensor<long>)parts![0]).ToArray();
+            });
+        Task.WaitAll(tasks);
+        foreach (var t in tasks) Assert.Equal(expected, t.Result);
+    }
+
+    [Fact]
+    public void GetOrLoad_IdentityAndMissingPath()
+    {
+        string path = AssetPath();
+        var first = Text.GetOrLoadRobertaTokenizer(path);
+        var second = Text.GetOrLoadRobertaTokenizer(path);
+        Assert.Same(first, second);
+        Assert.Throws<FileNotFoundException>(() => Text.GetOrLoadRobertaTokenizer("no-such-tokenizer.bpe.model"));
+    }
+}

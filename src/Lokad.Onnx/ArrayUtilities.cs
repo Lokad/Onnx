@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 // This file is copied and adapted from the following git repository -
@@ -24,15 +24,52 @@ namespace Lokad.Onnx
     {
         public const int StackallocMax = 16;
 
+        /// <summary>
+        /// Copies length elements along one axis from src at srcStart into dst at
+        /// dstStart, streaming outer blocks of inner runs. Shared by split, chunk
+        /// and concat paths so the block geometry lives in one place.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        public static int ComputeOffsetForReduction(ReadOnlySpan<int> dimensions, int startIndex = 0)
+        public static void CopyAxisChunks<T>(ReadOnlySpan<T> src, int srcAxisLength, Span<T> dst, int dstAxisLength, int outer, int inner, int srcStart, int dstStart, int length)
         {
-            int product = 1;
-            for (int i = startIndex; i < dimensions.Length; i++)
+            for (int o = 0; o < outer; o++)
+                src.Slice((o * srcAxisLength + srcStart) * inner, length * inner)
+                   .CopyTo(dst.Slice((o * dstAxisLength + dstStart) * inner, length * inner));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        public static int ComputeOffsetForReduction(ReadOnlySpan<int> dimensions, int startIndex)
+        {
+            if (startIndex < 0 || startIndex > dimensions.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
+            try
             {
-                product *= dimensions[i];
+            checked
+            {
+                int product = 1;
+                for (int i = startIndex; i < dimensions.Length; i++)
+                {
+                    if (dimensions[i] < 0) throw new ArgumentException("Dimensions must be non-negative.", nameof(dimensions));
+                    product *= dimensions[i];
+                }
+                return product;
             }
-            return product;
+            }
+            catch (OverflowException ex) { throw new ArgumentException("Tensor shape product overflows.", nameof(dimensions), ex); }
+        }
+
+        public static long ComputeOffsetForReductionLong(ReadOnlySpan<int> dimensions, int startIndex)
+        {
+            if (startIndex < 0 || startIndex > dimensions.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
+            checked
+            {
+                long product = 1;
+                for (int i = startIndex; i < dimensions.Length; i++)
+                {
+                    if (dimensions[i] < 0) throw new ArgumentException("Dimensions must be non-negative.", nameof(dimensions));
+                    product *= dimensions[i];
+                }
+                return product;
+            }
         }
 
         public static bool IsAscending(ReadOnlySpan<int> values)
@@ -67,32 +104,45 @@ namespace Lokad.Onnx
         /// <param name="dimensions"></param>
         /// <param name="reverseStride"></param>
         /// <returns></returns>
-        public static int[] GetStrides(ReadOnlySpan<int> dimensions, bool reverseStride = false)
+        public static int[] GetStrides(ReadOnlySpan<int> dimensions) => GetStrides(dimensions, false);
+
+        public static int[] GetStrides(ReadOnlySpan<int> dimensions, bool reverseStride)
         {
             if (dimensions.Length == 0)
             {
                 return Array.Empty<int>();
             }
-            int[] strides = new int[dimensions.Length];
-            int stride = 1;
-            if (reverseStride)
+            try
             {
-                for (int i = 0; i < strides.Length; i++)
-                {
-                    strides[i] = stride;
-                    stride *= dimensions[i];
-                }
-            }
-            else
+            checked
             {
-                for (int i = strides.Length - 1; i >= 0; i--)
+                for (int i = 0; i < dimensions.Length; i++)
                 {
-                    strides[i] = stride;
-                    stride *= dimensions[i];
+                    if (dimensions[i] < 0) throw new ArgumentException("Dimensions must be non-negative.", nameof(dimensions));
                 }
-            }
+                int[] strides = new int[dimensions.Length];
+                int stride = 1;
+                if (reverseStride)
+                {
+                    for (int i = 0; i < strides.Length; i++)
+                    {
+                        strides[i] = stride;
+                        stride *= dimensions[i];
+                    }
+                }
+                else
+                {
+                    for (int i = strides.Length - 1; i >= 0; i--)
+                    {
+                        strides[i] = stride;
+                        stride *= dimensions[i];
+                    }
+                }
 
-            return strides;
+                return strides;
+            }
+            }
+            catch (OverflowException ex) { throw new ArgumentException("Tensor shape product overflows.", nameof(dimensions), ex); }
         }
 
         public static void SplitStrides(int[] strides, int[] splitAxes, int[] newStrides, int stridesOffset, int[] splitStrides, int splitStridesOffset)
@@ -127,22 +177,28 @@ namespace Lokad.Onnx
         /// <param name="startFromDimension"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int startFromDimension = 0)
+        public static int GetIndex(int[] strides, ReadOnlySpan<int> indices) => GetIndex(strides, indices, 0);
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int startFromDimension)
         {
             if (strides.Length == 0) 
             { 
                 return 0; 
             }  
-            int index = 0;
-            for (int i = startFromDimension; i < indices.Length; i++)
+            checked
             {
-                index += strides[i] * indices[i];
+                int index = 0;
+                for (int i = startFromDimension; i < indices.Length; i++)
+                {
+                    index += strides[i] * indices[i];
+                }
+                return index;
             }
-            return index;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int[] broadcastedDims, int startFromDimension = 0)
+        public static int GetIndex(int[] strides, ReadOnlySpan<int> indices, int[] broadcastedDims, int startFromDimension)
         {
             Debug.Assert(strides.Length == indices.Length);
 
@@ -169,7 +225,7 @@ namespace Lokad.Onnx
         /// <param name="index"></param>
         /// <param name="indices"></param>
         /// <param name="startFromDimension"></param>
-        public static void GetIndices(ReadOnlySpan<int> strides, bool reverseStride, int index, int[] indices, int startFromDimension = 0)
+        public static void GetIndices(ReadOnlySpan<int> strides, bool reverseStride, int index, int[] indices, int startFromDimension)
         {
             Debug.Assert(reverseStride ? IsAscending(strides) : IsDescending(strides), "Index decomposition requires ordered strides");
             Debug.Assert(strides.Length == indices.Length);
@@ -200,7 +256,7 @@ namespace Lokad.Onnx
         /// <param name="index"></param>
         /// <param name="indices"></param>
         /// <param name="startFromDimension"></param>
-        public static void GetIndices(ReadOnlySpan<int> strides, bool reverseStride, int index, Span<int> indices, int startFromDimension = 0)
+        public static void GetIndices(ReadOnlySpan<int> strides, bool reverseStride, int index, Span<int> indices, int startFromDimension)
         {
             Debug.Assert(reverseStride ? IsAscending(strides) : IsDescending(strides), "Index decomposition requires ordered strides");
             Debug.Assert(strides.Length == indices.Length);
@@ -325,21 +381,21 @@ namespace Lokad.Onnx
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        public unsafe static Tuple<int[], int[]> ComputeShapesForReduction(int[] inShape, int[] axes)
+        public static Tuple<int[], int[]> ComputeShapesForReduction(int[] inShape, int[] axes)
         {
             var rank = inShape.Length;
-            var p = stackalloc int[rank];
-            UnsafeFixedSizeList<int> shape = new UnsafeFixedSizeList<int>(p, rank);
-            
+            Span<int> buf = stackalloc int[rank];
+            int n = 0;
             for (var dim = 0; dim < rank; dim++)
             {
                 if (!axes.Contains(dim))
                 {
-                    shape.Add(inShape[dim]);
+                    buf[n] = inShape[dim];
+                    n++;
                 }
             }
             var reducedShape = axes.Select(dim => inShape[dim]).ToArray();
-            return new Tuple<int[], int[]>(shape.ToArray(), reducedShape);
+            return new Tuple<int[], int[]>(buf.Slice(0, n).ToArray(), reducedShape);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
@@ -354,7 +410,7 @@ namespace Lokad.Onnx
             return reducedShape;
         }
 
-        public static int[] GetAxesPermutationForReduction(int[] axes, int rank)
+        public static int[]? GetAxesPermutationForReduction(int[] axes, int rank)
         {
             if (AxesAreInnerMostDims(axes, rank))
             {

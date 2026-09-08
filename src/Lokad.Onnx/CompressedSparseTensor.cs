@@ -38,7 +38,7 @@ namespace Lokad.Onnx
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the CompressedSparseTensor to create.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): akin to row-major in a rank-2 tensor.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): akin to column-major in a rank-2 tensor.</param>
-        public CompressedSparseTensor(ReadOnlySpan<int> dimensions, bool reverseStride = false) : this(dimensions, defaultCapacity, reverseStride)
+        public CompressedSparseTensor(ReadOnlySpan<int> dimensions, bool reverseStride) : this(dimensions, defaultCapacity, reverseStride)
         { }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Lokad.Onnx
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the CompressedSparseTensor to create.</param>
         /// <param name="capacity">The number of non-zero values this tensor can store without resizing.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): akin to row-major in a rank-2 tensor.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): akin to column-major in a rank-2 tensor.</param>
-        public CompressedSparseTensor(ReadOnlySpan<int> dimensions, int capacity, bool reverseStride = false) : base(dimensions, reverseStride)
+        public CompressedSparseTensor(ReadOnlySpan<int> dimensions, int capacity, bool reverseStride) : base(dimensions, reverseStride)
         {
             nonZeroCount = 0;
             compressedDimension = reverseStride ? Rank - 1 : 0;
@@ -69,7 +69,7 @@ namespace Lokad.Onnx
         /// <param name="nonZeroCount">The number of valid entries (eg: non-zero values) in <paramref name="values"/> and <paramref name="indices"/>.</param>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the CompressedSparseTensor to create.</param>
         /// <param name="reverseStride">False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension is most minor (closest together): akin to row-major in a rank-2 tensor.  True to indicate that the last dimension is most major (farthest apart) and the first dimension is most minor (closest together): akin to column-major in a rank-2 tensor.</param>
-        public CompressedSparseTensor(Memory<T> values, Memory<int> compressedCounts, Memory<int> indices, int nonZeroCount, ReadOnlySpan<int> dimensions, bool reverseStride = false) : base(dimensions, reverseStride)
+        public CompressedSparseTensor(Memory<T> values, Memory<int> compressedCounts, Memory<int> indices, int nonZeroCount, ReadOnlySpan<int> dimensions, bool reverseStride) : base(dimensions, reverseStride)
         {
             compressedDimension = reverseStride ? Rank - 1 : 0;
             nonCompressedStrides = (int[])strides.Clone();
@@ -80,7 +80,7 @@ namespace Lokad.Onnx
             this.nonZeroCount = nonZeroCount;
         }
 
-        internal CompressedSparseTensor(Array fromArray, bool reverseStride = false) : base(fromArray, reverseStride)
+        internal CompressedSparseTensor(Array fromArray, bool reverseStride) : base(fromArray, reverseStride)
         {
             nonZeroCount = 0;
             compressedDimension = reverseStride ? Rank - 1 : 0;
@@ -97,7 +97,7 @@ namespace Lokad.Onnx
 
                 foreach (T item in fromArray)
                 {
-                    if (!item!.Equals(Zero))
+                    if (!item.Equals(Zero))
                     {
                         var destIndex = ArrayUtilities.TransformIndexByStrides(index, sourceStrides, false, strides);
                         var compressedIndex = destIndex / strides[compressedDimension];
@@ -113,7 +113,7 @@ namespace Lokad.Onnx
             {
                 foreach (T item in fromArray)
                 {
-                    if (!item!.Equals(Zero))
+                    if (!item.Equals(Zero))
                     {
                         var compressedIndex = index / strides[compressedDimension];
                         var nonCompressedIndex = index % strides[compressedDimension];
@@ -220,7 +220,7 @@ namespace Lokad.Onnx
         /// </summary>
         public Memory<int> Indices => indices;
 
-        private void EnsureCapacity(int min, int allocateIndex = -1)
+        private void EnsureCapacity(int min, int allocateIndex)
         {
             if (values.Length < min)
             {
@@ -330,7 +330,7 @@ namespace Lokad.Onnx
 
         private void SetAt(T value, int compressedIndex, int nonCompressedIndex)
         {
-            bool isZero = value!.Equals(Zero);
+            bool isZero = value.Equals(Zero);
 
             if (TryFindIndex(compressedIndex, nonCompressedIndex, out int valueIndex))
             {

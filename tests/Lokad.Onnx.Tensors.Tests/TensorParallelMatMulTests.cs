@@ -4,7 +4,7 @@ namespace Lokad.Onnx.Tensors.Tests;
 
 public class TensorParallelMatMulTests
 {
-    static Tensor<float> Seq(int[] dims, int start = 1)
+    static Tensor<float> Seq(int[] dims, int start)
     {
         var t = new DenseTensor<float>(dims);
         var sp = t.Buffer.Span;
@@ -21,7 +21,7 @@ public class TensorParallelMatMulTests
     [Fact]
     public void BatchedParallelMatchesSequentialBitwise()
     {
-        var a = Seq(new[] { 4, 8, 8 });
+        var a = Seq(new[] { 4, 8, 8 }, 1);
         var b = Seq(new[] { 4, 8, 8 }, 100);
         var expected = Tensor<float>.MatMul(a, b);
         foreach (int dop in new[] { 1, 2, 4, 16 })
@@ -31,7 +31,7 @@ public class TensorParallelMatMulTests
     [Fact]
     public void UnbatchedIgnoresParallelism()
     {
-        var a = Seq(new[] { 8, 8 });
+        var a = Seq(new[] { 8, 8 }, 1);
         var b = Seq(new[] { 8, 8 }, 100);
         var expected = Tensor<float>.MatMul(a, b);
         AssertTensorsBitwiseEqual(expected, Tensor<float>.MatMul(a, b, TensorExecutionOptions.Parallel(8)));
@@ -40,7 +40,7 @@ public class TensorParallelMatMulTests
     [Fact]
     public void RowSplitMatchesSequentialBitwise()
     {
-        var a = Seq(new[] { 257, 128 });
+        var a = Seq(new[] { 257, 128 }, 1);
         var b = Seq(new[] { 128, 64 }, 100);
         var expected = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics);
         foreach (int dop in new[] { 1, 2, 4, 8, 16 })
@@ -50,7 +50,7 @@ public class TensorParallelMatMulTests
     [Fact]
     public void RowSplitMatchesSequentialInScalarAndSimd()
     {
-        var a = Seq(new[] { 130, 64 });
+        var a = Seq(new[] { 130, 64 }, 1);
         var b = Seq(new[] { 64, 32 }, 100);
         foreach (var mode in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd })
         {
@@ -62,7 +62,7 @@ public class TensorParallelMatMulTests
     [Fact]
     public void BelowRowThresholdIgnoresParallelism()
     {
-        var a = Seq(new[] { 30, 32 });
+        var a = Seq(new[] { 30, 32 }, 1);
         var b = Seq(new[] { 32, 16 }, 100);
         var expected = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics);
         AssertTensorsBitwiseEqual(expected, Tensor<float>.MatMul2D(a, b, new TensorExecutionOptions(true, true, 8)));

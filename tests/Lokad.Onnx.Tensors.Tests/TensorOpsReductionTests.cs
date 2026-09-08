@@ -17,7 +17,9 @@ public class TensorOpsReductionTests
         Assert.Equal(new[] { 2 }, sum.Dimensions.ToArray());
         Assert.Equal(4, sum[0]);
         Assert.Equal(6, sum[1]);
-        Assert.Equal(1, mean[0]);
+        // Integer means sum before dividing (verified against ORT 1.29:
+        // column sums [4,6] average to [2,3], not divide-first [1,3]).
+        Assert.Equal(2, mean[0]);
         Assert.Equal(3, mean[1]);
     }
 
@@ -92,7 +94,7 @@ public class TensorOpsReductionTests
         var rnd = new System.Random(20260905);
         var data = new float[3, 257];
         for (int i = 0; i < 3; i++) for (int j = 0; j < 257; j++) data[i, j] = (float)(rnd.NextDouble() * 20.0 - 10.0);
-        var output = Tensor<float>.Softmax(DenseTensor<float>.OfValues(data), axis: 1);
+        var output = Tensor<float>.Softmax(DenseTensor<float>.OfValues(data), 1, null, 13);
         for (int i = 0; i < 3; i++)
         {
             float max = float.NegativeInfinity;
@@ -101,7 +103,7 @@ public class TensorOpsReductionTests
             for (int j = 0; j < 257; j++) sum += MathF.Exp(data[i, j] - max);
             for (int j = 0; j < 257; j++) Assert.Equal(MathF.Exp(data[i, j] - max) / sum, output[i, j], 6);
         }
-        var nan = Tensor<float>.Softmax(DenseTensor<float>.OfValues(new float[1, 10] { { 0f, 1f, float.NaN, 3f, 4f, 5f, 6f, 7f, 8f, 9f } }));
+        var nan = Tensor<float>.Softmax(DenseTensor<float>.OfValues(new float[1, 10] { { 0f, 1f, float.NaN, 3f, 4f, 5f, 6f, 7f, 8f, 9f } }), -1, null, 13);
         for (int j = 0; j < 10; j++) Assert.True(float.IsNaN(nan[0, j]));
     }
 
@@ -109,7 +111,7 @@ public class TensorOpsReductionTests
     public void Softmax_NormalizesAlongAxis()
     {
         var data = DenseTensor<float>.OfValues(new float[2, 2] { { 0f, 1f }, { -1f, 1f } });
-        var output = Tensor<float>.Softmax(data, axis: 1);
+        var output = Tensor<float>.Softmax(data, 1, null, 13);
 
         var expected0 = MathF.Exp(0f) / (MathF.Exp(0f) + MathF.Exp(1f));
         var expected1 = MathF.Exp(1f) / (MathF.Exp(0f) + MathF.Exp(1f));
