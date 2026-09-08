@@ -1,509 +1,373 @@
-﻿namespace Lokad.Onnx;
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-
-
-/// <summary>                                                                                                                                         <br></br>
-/// A tensor can be indexed using slicing                                                                                                              <br></br>
-/// A slice is constructed by start:stop:step notation                                                                                                <br></br>
-///                                                                                                                                                   <br></br>
-/// Examples:                                                                                                                                         <br></br>
-///                                                                                                                                                   <br></br>
-/// a[start:stop]  # items start through stop-1                                                                                                       <br></br>
-/// a[start:]      # items start through the rest of the array                                                                                        <br></br>
-/// a[:stop]       # items from the beginning through stop-1                                                                                          <br></br>
-///                                                                                                                                                   <br></br>
-/// The key point to remember is that the :stop value represents the first value that is not                                                          <br></br>
-/// in the selected slice. So, the difference between stop and start is the number of elements                                                        <br></br>
-/// selected (if step is 1, the default).                                                                                                             <br></br>
-///                                                                                                                                                   <br></br>
-/// There is also the step value, which can be used with any of the above:                                                                            <br></br>
-/// a[:]           # a copy of the whole array                                                                                                        <br></br>
-/// a[start:stop:step] # start through not past stop, by step                                                                                         <br></br>
-///                                                                                                                                                   <br></br>
-/// The other feature is that start or stop may be a negative number, which means it counts                                                           <br></br>
-/// from the end of the array instead of the beginning. So:                                                                                           <br></br>
-/// a[-1]    # last item in the array                                                                                                                 <br></br>
-/// a[-2:]   # last two items in the array                                                                                                            <br></br>
-/// a[:-2]   # everything except the last two items                                                                                                   <br></br>
-/// Similarly, step may be a negative number:                                                                                                         <br></br>
-///                                                                                                                                                   <br></br>
-/// a[::- 1]    # all items in the array, reversed                                                                                                    <br></br>
-/// a[1::- 1]   # the first two items, reversed                                                                                                       <br></br>
-/// a[:-3:-1]  # the last two items, reversed                                                                                                         <br></br>
-/// a[-3::- 1]  # everything except the last two items, reversed                                                                                      <br></br>
-///                                                                                                                                                   <br></br>
-/// NumSharp is kind to the programmer if there are fewer items than                                                                                  <br></br>
-/// you ask for. For example, if you  ask for a[:-2] and a only contains one element, you get an                                                      <br></br>
-/// empty list instead of an error.Sometimes you would prefer the error, so you have to be aware                                                      <br></br>
-/// that this may happen.                                                                                                                             <br></br>
-///                                                                                                                                                   <br></br>
-/// Adapted from Greg Hewgill's answer on Stackoverflow: https://stackoverflow.com/questions/509211/understanding-slice-notation                      <br></br>
-///                                                                                                                                                   <br></br>
-/// Note: special IsIndex == true                                                                                                                     <br></br>
-/// It will pick only a single value at Start in this dimension effectively reducing the Shape of the sliced matrix by 1 dimension.                   <br></br>
-/// It can be used to reduce an N-dimensional array/matrix to a (N-1)-dimensional array/matrix                                                        <br></br>
-///                                                                                                                                                   <br></br>
-/// Example:                                                                                                                                          <br></br>
-/// a=[[1, 2], [3, 4]]                                                                                                                                <br></br>
-/// a[:, 1] returns the second column of that 2x2 matrix as a 1-D vector                                                                              <br></br>
-/// </summary>
-public class SliceIndex
+namespace Lokad.Onnx
 {
-    /// <summary>
-    /// return : for this dimension
-    /// </summary>
-    public static readonly SliceIndex All = new SliceIndex(null, null);
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// return 0:0 for this dimension
+    /// One dimension of a Python-style slice selection: an optional inclusive
+    /// start, an optional exclusive stop, and a step, plus markers for single
+    /// index, ellipsis, and new-axis selections.
     /// </summary>
-    public static readonly SliceIndex None = new SliceIndex(0, 0, 1);
-
-    /// <summary>
-    /// fill up the missing dimensions with : at this point, corresponds to ... 
-    /// </summary>
-    public static readonly SliceIndex Ellipsis = new SliceIndex(0, 0, 1) { IsEllipsis = true };
-
-    /// <summary>
-    /// insert a new dimension at this point
-    /// </summary>
-    public static readonly SliceIndex NewAxis = new SliceIndex(0, 0, 1) { IsNewAxis = true };
-
-    /// <summary>
-    /// return exactly one element at this dimension and reduce the shape from n-dim to (n-1)-dim
-    /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static SliceIndex Index(int index) => new SliceIndex(index, index + 1) { IsIndex = true };
-
-
-    public int? Start;
-    public int? Stop;
-    public int Step;
-    public bool IsIndex;
-    public bool IsEllipsis;
-    public bool IsNewAxis;
-
-
-    /// <summary>
-    /// Length of the slice. 
-    /// <remarks>
-    /// The length is not guaranteed to be known for i.e. a slice like ":". Make sure to check Start and Stop 
-    /// for null before using it</remarks>
-    /// </summary>
-    public int? Length => Stop - Start;
-
-    /// <summary>
-    /// a tensor can be indexed using slicing
-    /// slice is constructed by start:stop:step notation
-    /// </summary>
-    /// <param name="start">Start index of the slice, null means from the start of the array</param>
-    /// <param name="stop">Stop index (first index after end of slice), null means to the end of the array</param>
-    /// <param name="step">Optional step to select every n-th element, defaults to 1</param>
-    public SliceIndex(int? start) : this(start, null, 1) { }
-    public SliceIndex(int? start, int? stop) : this(start, stop, 1) { }
-    public SliceIndex(int? start, int? stop, int step)
+    public class SliceIndex
     {
-        Start = start;
-        Stop = stop;
-        Step = step;
-    }
+        public static readonly SliceIndex All = new SliceIndex(null, null);
+        public static readonly SliceIndex None = new SliceIndex(0, 0, 1);
+        public static readonly SliceIndex Ellipsis = new SliceIndex(0, 0, 1) { IsEllipsis = true };
+        public static readonly SliceIndex NewAxis = new SliceIndex(0, 0, 1) { IsNewAxis = true };
 
-    public SliceIndex(string slice_notation)
-    {
-        Parse(slice_notation);
-    }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static SliceIndex Index(int index) => new SliceIndex(index, index + 1) { IsIndex = true };
 
-    /// <summary>
-    /// Parses Python array slice notation and returns an array of Slice objects
-    /// </summary>
-    public static SliceIndex[] ParseSlices(string multi_slice_notation)
-    {
-        return Regex.Split(multi_slice_notation, @",\s*").Where(s => !string.IsNullOrWhiteSpace(s)).Select(token => new SliceIndex(token)).ToArray();
-    }
+        public int? Start;
+        public int? Stop;
+        public int Step;
+        public bool IsIndex;
+        public bool IsEllipsis;
+        public bool IsNewAxis;
 
-    /// <summary>
-    /// Creates Python array slice notation out of an array of Slice objects (mainly used for tests)
-    /// </summary>
-    public static string FormatSlices(params SliceIndex[] slices)
-    {
-        return string.Join(",", slices.Select(s => s.ToString()));
-    }
+        public int? Length => Stop - Start;
 
-    private void Parse(string slice_notation)
-    {
-        if (string.IsNullOrEmpty(slice_notation))
-            throw new ArgumentException("Slice notation expected, got empty string or null");
-        var match = Regex.Match(slice_notation, @"^\s*((?'start'[+-]?\s*\d+)?\s*:\s*(?'stop'[+-]?\s*\d+)?\s*(:\s*(?'step'[+-]?\s*\d+)?)?|(?'index'[+-]?\s*\d+)|(?'ellipsis'\.\.\.)|(?'newaxis'(np\.)?newaxis))\s*$");
-        if (!match.Success)
-            throw new ArgumentException($"Invalid slice notation: '{slice_notation}'");
-        if (match.Groups["ellipsis"].Success)
+        public SliceIndex(int? start) : this(start, null, 1) { }
+        public SliceIndex(int? start, int? stop) : this(start, stop, 1) { }
+        public SliceIndex(int? start, int? stop, int step)
         {
-            Start = 0;
-            Stop = 0;
-            Step = 1;
-            IsEllipsis = true;
-            return;
-        }
-        if (match.Groups["newaxis"].Success)
-        {
-            Start = 0;
-            Stop = 0;
-            Step = 1;
-            IsNewAxis = true;
-            return;
-        }
-        if (match.Groups["index"].Success)
-        {
-            if (!int.TryParse(Regex.Replace(match.Groups["index"].Value ?? "", @"\s+", ""), out var start))
-                throw new ArgumentException($"Invalid value for index: '{match.Groups["index"].Value}'");
             Start = start;
-            Stop = start + 1;
-            Step = 1; // special case for dimensionality reduction by picking a single element
-            IsIndex = true;
-            return;
-        }
-        var start_string = Regex.Replace(match.Groups["start"].Value ?? "", @"\s+", ""); // removing spaces from match to be able to parse what python allows, like: "+ 1" or  "-   9";
-        var stop_string = Regex.Replace(match.Groups["stop"].Value ?? "", @"\s+", "");
-        var step_string = Regex.Replace(match.Groups["step"].Value ?? "", @"\s+", "");
-
-        if (string.IsNullOrWhiteSpace(start_string))
-            Start = null;
-        else
-        {
-            if (!int.TryParse(start_string, out var start))
-                throw new ArgumentException($"Invalid value for start: {start_string}");
-            Start = start;
-        }
-
-        if (string.IsNullOrWhiteSpace(stop_string))
-            Stop = null;
-        else
-        {
-            if (!int.TryParse(stop_string, out var stop))
-                throw new ArgumentException($"Invalid value for start: {stop_string}");
             Stop = stop;
-        }
-
-        if (string.IsNullOrWhiteSpace(step_string))
-            Step = 1;
-        else
-        {
-            if (!int.TryParse(step_string, out var step))
-                throw new ArgumentException($"Invalid value for start: {step_string}");
             Step = step;
         }
-    }
 
-    #region Equality comparison
-
-    public static bool operator ==(SliceIndex a, SliceIndex b)
-    {
-        if (ReferenceEquals(a, b))
-            return true;
-
-        if (a is null || b is null)
-            return false;
-
-        return a.Start == b.Start && a.Stop == b.Stop && a.Step == b.Step;
-    }
-
-    public static bool operator !=(SliceIndex a, SliceIndex b)
-    {
-        return !(a == b);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj == null)
-            return false;
-
-        if (obj.GetType() != typeof(SliceIndex))
-            return false;
-
-        var b = (SliceIndex)obj;
-        return Start == b.Start && Stop == b.Stop && Step == b.Step;
-    }
-
-    public override int GetHashCode()
-    {
-        return ToString().GetHashCode();
-    }
-
-    #endregion
-
-    public override string ToString()
-    {
-        if (IsIndex)
-            return $"{Start ?? 0}";
-        else if (IsNewAxis)
-            return "np.newaxis";
-        else if (IsEllipsis)
-            return "...";
-        var optional_step = Step == 1 ? "" : $":{Step}";
-        return $"{(Start == 0 ? "" : Start.ToString())}:{(Stop == null ? "" : Stop.ToString())}{optional_step}";
-    }
-
-    /// <summary>
-    /// Converts the user Slice into an internal SliceDef which is easier to calculate with
-    /// </summary>
-    /// <param name="dim"></param>
-    /// <returns></returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public SliceDef ToSliceDef(int dim)
-    {
-        if (IsIndex)
+        public SliceIndex(string slice_notation)
         {
-            var index = Start ?? 0;
-            if (index < 0)
+            Step = 1;
+            Parse(slice_notation);
+        }
+
+        public static SliceIndex[] ParseSlices(string multi_slice_notation)
+        {
+            if (multi_slice_notation is null) throw new ArgumentNullException(nameof(multi_slice_notation));
+            var tokens = multi_slice_notation.Split(',');
+            var slices = new List<SliceIndex>();
+            foreach (var token in tokens)
             {
-                if (Math.Abs(index) > dim)
-                    throw new ArgumentException($"Index {index} is out of bounds for the axis with size {dim}");
-                return new SliceDef(dim + index);
+                if (!string.IsNullOrWhiteSpace(token)) slices.Add(new SliceIndex(token));
             }
-
-            if (index > 0 && index >= dim)
-                throw new ArgumentException($"Index {index} is out of bounds for the axis with size {dim}");
-            return new SliceDef(index);
+            return slices.ToArray();
         }
 
-        if (Step == 0)
-            return new SliceDef() { Count = 0, Start = 0, Step = 0 };
-        var astep = Math.Abs(Step);
-        if (Step > 0)
+        public static string FormatSlices(params SliceIndex[] slices)
         {
-            var start = Start ?? 0;
-            var stop = Stop ?? dim;
-            if (start >= dim)
-                return new SliceDef() { Count = 0, Start = 0, Step = 0 };
-            if (start < 0)
-                start = Math.Abs(start) <= dim ? dim + start : 0;
-            if (stop > dim)
-                stop = dim;
-            if (stop < 0)
-                stop = Math.Abs(stop) <= dim ? dim + stop : 0;
-            if (start >= stop)
-                return new SliceDef() { Count = 0, Start = 0, Step = 0 };
-            var count = (Math.Abs(start - stop) + (astep - 1)) / astep;
-            return new SliceDef() { Start = start, Step = Step, Count = count };
+            var texts = new string[slices.Length];
+            for (int i = 0; i < slices.Length; i++) texts[i] = slices[i].ToString();
+            return string.Join(",", texts);
         }
-        else
+
+        static bool LooksLikeInteger(string text)
         {
-            // negative step!
-            var start = Start ?? dim - 1;
-            var stop = Stop ?? -1;
-            if (start < 0)
-                start = Math.Abs(start) <= dim ? dim + start : 0;
-            if (start >= dim)
-                start = dim - 1;
-            if (Stop < 0)
-                stop = Math.Abs(stop) <= dim ? dim + stop : -1;
-            if (start <= stop)
-                return new SliceDef() { Count = 0, Start = 0, Step = 0 };
-            var count = (Math.Abs(start - stop) + (astep - 1)) / astep;
-            var retval = new SliceDef() { Start = start, Step = Step, Count = count };
-            return retval;
+            int i = 0;
+            if (i < text.Length && (text[i] == '+' || text[i] == '-')) i++;
+            int digits = 0;
+            while (i < text.Length && text[i] >= '0' && text[i] <= '9')
+            {
+                i++;
+                digits++;
+            }
+            return digits > 0 && i == text.Length;
         }
-    }
 
-
-    #region Operators
-
-    public static SliceIndex operator ++(SliceIndex a)
-    {
-        if (a.Start.HasValue)
-            a.Start++;
-        if (a.Stop.HasValue)
-            a.Stop++;
-        return a;
-    }
-
-    public static SliceIndex operator --(SliceIndex a)
-    {
-        if (a.Start.HasValue)
-            a.Start--;
-        if (a.Stop.HasValue)
-            a.Stop--;
-        return a;
-    }
-
-    public static implicit operator SliceIndex(int index) => Index(index);
-    public static implicit operator SliceIndex(string slice) => new SliceIndex(slice);
-    public static implicit operator SliceIndex(Range range)
-    {
-        if (range.Equals(Range.All))
+        static bool StrictShape(string text)
         {
-            return Ellipsis;
+            int i = 0;
+            if (i < text.Length && (text[i] == '+' || text[i] == '-')) i++;
+            while (i < text.Length && text[i] == ' ') i++;
+            int digits = 0;
+            while (i < text.Length && text[i] >= '0' && text[i] <= '9')
+            {
+                i++;
+                digits++;
+            }
+            return digits > 0 && i == text.Length;
         }
-        else
+
+        static string SqueezeSpaces(string text)
         {
+            int gaps = 0;
+            foreach (char c in text) if (c == ' ' || c == '\t') gaps++;
+            if (gaps == 0) return text;
+            char[] kept = new char[text.Length - gaps];
+            int n = 0;
+            foreach (char c in text)
+            {
+                if (c != ' ' && c != '\t') kept[n++] = c;
+            }
+            return new string(kept);
+        }
+
+        void Parse(string slice_notation)
+        {
+            if (string.IsNullOrEmpty(slice_notation))
+                throw new ArgumentException("Slice notation expected, got empty string or null");
+            string text = slice_notation.Trim();
+            if (text == "...")
+            {
+                Start = 0;
+                Stop = 0;
+                Step = 1;
+                IsEllipsis = true;
+                return;
+            }
+            if (text == "newaxis" || text == "np.newaxis")
+            {
+                Start = 0;
+                Stop = 0;
+                Step = 1;
+                IsNewAxis = true;
+                return;
+            }
+            int firstColon = text.IndexOf(':');
+            if (firstColon < 0)
+            {
+                if (!StrictShape(text))
+                    throw new ArgumentException($"Invalid slice notation: '{slice_notation}'");
+                string digits = SqueezeSpaces(text);
+                if (!int.TryParse(digits, out var index))
+                    throw new ArgumentException($"Invalid value for index: '{digits}'");
+                Start = index;
+                Stop = index + 1;
+                Step = 1;
+                IsIndex = true;
+                return;
+            }
+            int secondColon = text.IndexOf(':', firstColon + 1);
+            if (secondColon >= 0 && text.IndexOf(':', secondColon + 1) >= 0)
+                throw new ArgumentException($"Invalid slice notation: '{slice_notation}'");
+            string startPart = text.Substring(0, firstColon).Trim();
+            string stopPart = secondColon < 0 ? text.Substring(firstColon + 1).Trim() : text.Substring(firstColon + 1, secondColon - firstColon - 1).Trim();
+            string stepPart = secondColon < 0 ? "" : text.Substring(secondColon + 1).Trim();
+            Start = ParseBound(startPart, "start", slice_notation);
+            Stop = ParseBound(stopPart, "stop", slice_notation);
+            if (stepPart.Length == 0)
+            {
+                Step = 1;
+                return;
+            }
+            string squeezed = SqueezeSpaces(stepPart);
+            if (!LooksLikeInteger(squeezed))
+                throw new ArgumentException($"Invalid slice notation: '{slice_notation}'");
+            if (!int.TryParse(squeezed, out var step))
+                throw new ArgumentException($"Invalid value for step: '{squeezed}'");
+            Step = step;
+        }
+
+        static int? ParseBound(string part, string role, string original)
+        {
+            if (part.Length == 0) return null;
+            string squeezed = SqueezeSpaces(part);
+            if (!LooksLikeInteger(squeezed))
+                throw new ArgumentException($"Invalid slice notation: '{original}'");
+            if (!int.TryParse(squeezed, out var value))
+                throw new ArgumentException($"Invalid value for {role}: '{squeezed}'");
+            return value;
+        }
+
+        public static bool operator ==(SliceIndex a, SliceIndex b)
+        {
+            if (ReferenceEquals(a, b)) return true;
+            if (a is null || b is null) return false;
+            return a.Start == b.Start && a.Stop == b.Stop && a.Step == b.Step;
+        }
+
+        public static bool operator !=(SliceIndex a, SliceIndex b) => !(a == b);
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null || obj.GetType() != typeof(SliceIndex)) return false;
+            var other = (SliceIndex)obj;
+            return Start == other.Start && Stop == other.Stop && Step == other.Step;
+        }
+
+        public override int GetHashCode() => ToString().GetHashCode();
+
+        public override string ToString()
+        {
+            if (IsIndex) return (Start ?? 0).ToString();
+            if (IsNewAxis) return "np.newaxis";
+            if (IsEllipsis) return "...";
+            string head = Start == 0 ? "" : Start?.ToString() ?? "";
+            string tail = Stop?.ToString() ?? "";
+            string stride = Step == 1 ? "" : ":" + Step;
+            return head + ":" + tail + stride;
+        }
+
+        /// <summary>
+        /// Resolves this selection against an axis of the given size into an
+        /// absolute start, step, and element count.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public SliceDef ToSliceDef(int dim)
+        {
+            if (IsIndex)
+            {
+                int index = Start ?? 0;
+                if (index < 0)
+                {
+                    if (Math.Abs(index) > dim)
+                        throw new ArgumentException($"Index {index} is out of bounds for the axis with size {dim}");
+                    return new SliceDef(dim + index);
+                }
+                if (index > 0 && index >= dim)
+                    throw new ArgumentException($"Index {index} is out of bounds for the axis with size {dim}");
+                return new SliceDef(index);
+            }
+            if (Step == 0) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
+            int magnitude = Math.Abs(Step);
+            if (Step > 0)
+            {
+                int start = Start ?? 0;
+                int stop = Stop ?? dim;
+                if (start >= dim) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
+                if (start < 0) start = Math.Abs(start) <= dim ? dim + start : 0;
+                if (stop > dim) stop = dim;
+                if (stop < 0) stop = Math.Abs(stop) <= dim ? dim + stop : 0;
+                if (start >= stop) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
+                return new SliceDef() { Start = start, Step = Step, Count = (Math.Abs(start - stop) + magnitude - 1) / magnitude };
+            }
+            // Negative steps walk downward. A start below -dim clamps to 0
+            // rather than yielding empty; kept deliberately for parity.
+            int downStart = Start ?? (dim - 1);
+            int downStop = Stop ?? -1;
+            if (downStart < 0) downStart = Math.Abs(downStart) <= dim ? dim + downStart : 0;
+            if (downStart >= dim) downStart = dim - 1;
+            if (Stop < 0) downStop = Math.Abs(downStop) <= dim ? dim + downStop : -1;
+            if (downStart <= downStop) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
+            return new SliceDef() { Start = downStart, Step = Step, Count = (Math.Abs(downStart - downStop) + magnitude - 1) / magnitude };
+        }
+
+        public static SliceIndex operator ++(SliceIndex a)
+        {
+            if (a.Start.HasValue) a.Start++;
+            if (a.Stop.HasValue) a.Stop++;
+            return a;
+        }
+
+        public static SliceIndex operator --(SliceIndex a)
+        {
+            if (a.Start.HasValue) a.Start--;
+            if (a.Stop.HasValue) a.Stop--;
+            return a;
+        }
+
+        public static implicit operator SliceIndex(int index) => Index(index);
+        public static implicit operator SliceIndex(string slice) => new SliceIndex(slice);
+        public static implicit operator SliceIndex(Range range)
+        {
+            if (range.Equals(Range.All)) return Ellipsis;
             return new SliceIndex(start: FromIndex(range.Start), stop: FromIndex(range.End));
         }
-    }
 
-
-    #endregion
-
-    public static int? FromIndex(Index idx)
-    {
-        if (idx.Equals(^0))
+        public static int? FromIndex(Index idx)
         {
-            return null;
-        }
-        else if (idx.IsFromEnd) 
-        {
-            return -idx.Value;
-        }
-        else return idx.Value;  
-    }
-    public static SliceIndex FromObj(object index) => index switch
-    {
-        string s => (SliceIndex)s,
-        int i => (SliceIndex)i,
-        Range range => (SliceIndex)range,
-        _ => throw new NotSupportedException()
-    };
-
-}
-
-public struct SliceDef
-{
-    public int Start; // start index in array
-    public int Step; // positive => forward from Start, 
-    public int Count; // number of steps to take from Start (1 means just take Start, 0 means take nothing, -1 means this is an index)
-
-    public SliceDef(int start, int step, int count)
-    {
-        (Start, Step, Count) = (start, step, count);
-    }
-
-    public SliceDef(int idx)
-    {
-        (Start, Step, Count) = (idx, 1, -1);
-    }
-
-    /// <summary>
-    /// (Start>>Step*Count)
-    /// </summary>
-    /// <param name="def"></param>
-    public SliceDef(string def)
-    {
-        if (def == "()")
-        {
-            (Start, Step, Count) = (0, 0, 0);
-            return;
+            if (idx.Equals(^0)) return null;
+            if (idx.IsFromEnd) return -idx.Value;
+            return idx.Value;
         }
 
-        var m = Regex.Match(def, @"\((\d+)>>(-?\d+)\*(\d+)\)");
-        Start = int.Parse(m.Groups[1].Value);
-        Step = int.Parse(m.Groups[2].Value);
-        Count = int.Parse(m.Groups[3].Value);
-    }
-
-    public bool IsIndex
-    {
-        [MethodImpl((MethodImplOptions)768)]
-        get => Count == -1;
-    }
-
-    /// <summary>
-    /// reverts the order of the slice sequence
-    /// </summary>
-    /// <returns></returns>
-    [MethodImpl((MethodImplOptions)768)]
-    public SliceDef Invert()
-    {
-        return new SliceDef() { Count = Count, Start = (Start + Step * Count), Step = -Step };
-    }
-
-    public override string ToString()
-    {
-        if (IsIndex)
-            return $"[{Start}]";
-        if (Count <= 0)
-            return "()";
-        return $"({Start}>>{Step}*{Count})";
-    }
-
-    /// <summary>
-    /// Merge calculates the resulting one-time slice on the original data if it is sliced repeatedly
-    /// </summary>
-    [MethodImpl((MethodImplOptions)768)]
-    public SliceDef Merge(SliceDef other)
-    {
-        if (other.Count == 0)
-            return new SliceDef() { Start = 0, Step = 0, Count = 0 };
-        var self = this;
-        if (other.IsIndex)
-            return new SliceDef(self.Start + other.Start * self.Step);
-        var result = new SliceDef() { Start = self.Start + other.Start * self.Step, Step = Step * other.Step, Count = other.Count, };
-        return result;
-    }
-
-    /// <summary>
-    ///     Translates coordinates with negative indices, e.g:<br></br>
-    ///     np.arange(9)[-1] == np.arange(9)[8]<br></br>
-    ///     np.arange(9)[-2] == np.arange(9)[7]<br></br>
-    /// </summary>
-    /// <param name="dimensions">The dimensions these coordinates are targeting</param>
-    /// <param name="coords">The coordinates.</param>
-    /// <returns>Coordinates without negative indices.</returns>
-    public static int[] InferNegativeCoordinates(int[] dimensions, int[] coords)
-    {
-        for (int i = 0; i < coords.Length; i++)
+        public static SliceIndex FromObj(object index) => index switch
         {
-            var curr = coords[i];
-            if (curr < 0)
-                coords[i] = dimensions[i] + curr;
+            string s => (SliceIndex)s,
+            int i => (SliceIndex)i,
+            Range range => (SliceIndex)range,
+            _ => throw new NotSupportedException(),
+        };
+    }
+
+    public struct SliceDef
+    {
+        public int Start;
+        public int Step;
+        public int Count;
+
+        public SliceDef(int start, int step, int count)
+        {
+            Start = start;
+            Step = step;
+            Count = count;
         }
 
-        return coords;
-    }
-
-    /// <summary>
-    ///     Get offset index out of coordinate indices.
-    ///
-    ///     The offset is the absolute offset in memory for the given coordinates.
-    ///     Even for shapes that were sliced and reshaped after slicing and sliced again (and so forth)
-    ///     this returns the absolute memory offset.
-    ///
-    ///     Note: the inverse operation to this is GetCoordinatesFromAbsoluteIndex
-    /// </summary>
-    /// <param name="indices">The coordinates to turn into linear offset</param>
-    /// <returns>The index in the memory block that refers to a specific value.</returns>
-    /// <remarks>Handles sliced indices and broadcasting</remarks>
-    
-    public static int[] ReplaySlicingOnCoords(int[] parentCoords, SliceDef[] slices)
-    {
-        var coords = new List<int>();
-        for (int i = 0; i < parentCoords.Length; i++)
+        public SliceDef(int idx)
         {
-            var slice = slices[i];
-            var coord = parentCoords[i];
-            if (slice.Count == -1) // this is a Slice.Index so we remove this dim from coords
-                continue;
-            if (slice.Count == 0) // this is a Slice.None which means there is no set of coordinates that can index anything in this shape
-                return new int[0];
-            if (slice.Start > coord && slice.Step > 0 || slice.Start < coord && slice.Step < 0) // outside of the slice, return empty coords
-                return new int[0];
-            if (coord % Math.Abs(slice.Step) != 0) // coord is between the steps, so we are "outside" of this shape, return empty coords
-                return new int[0];
-            coords.Add((coord - slice.Start) / slice.Step);
+            Start = idx;
+            Step = 1;
+            Count = -1;
         }
 
-        return coords.ToArray();
+        public SliceDef(string def)
+        {
+            if (def == "()")
+            {
+                Start = 0;
+                Step = 0;
+                Count = 0;
+                return;
+            }
+            int arrow = def.IndexOf(">>", StringComparison.Ordinal);
+            int star = def.IndexOf('*', arrow + 2);
+            if (!def.StartsWith("(", StringComparison.Ordinal) || !def.EndsWith(")", StringComparison.Ordinal) || arrow < 0 || star < 0)
+                throw new FormatException("Invalid slice definition: '" + def + "'.");
+            Start = int.Parse(def.Substring(1, arrow - 1));
+            Step = int.Parse(def.Substring(arrow + 2, star - arrow - 2));
+            Count = int.Parse(def.Substring(star + 1, def.Length - star - 2));
+        }
 
+        public bool IsIndex
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+            get => Count == -1;
+        }
+
+        public SliceDef Invert()
+        {
+            return new SliceDef() { Count = Count, Start = Start + Step * Count, Step = -Step };
+        }
+
+        public override string ToString()
+        {
+            if (IsIndex) return "[" + Start + "]";
+            if (Count <= 0) return "()";
+            return "(" + Start + ">>" + Step + "*" + Count + ")";
+        }
+
+        public SliceDef Merge(SliceDef other)
+        {
+            if (other.Count == 0) return new SliceDef() { Start = 0, Step = 0, Count = 0 };
+            if (other.IsIndex) return new SliceDef(Start + other.Start * Step);
+            return new SliceDef() { Start = Start + other.Start * Step, Step = Step * other.Step, Count = other.Count };
+        }
+
+        public static int[] InferNegativeCoordinates(int[] dimensions, int[] coords)
+        {
+            for (int i = 0; i < coords.Length; i++)
+            {
+                if (coords[i] < 0) coords[i] = dimensions[i] + coords[i];
+            }
+            return coords;
+        }
+
+        public static int[] ReplaySlicingOnCoords(int[] parentCoords, SliceDef[] slices)
+        {
+            var coords = new List<int>();
+            for (int i = 0; i < parentCoords.Length; i++)
+            {
+                var slice = slices[i];
+                var coord = parentCoords[i];
+                if (slice.Count == -1) continue;
+                if (slice.Count == 0) return Array.Empty<int>();
+                bool ahead = slice.Step > 0 ? slice.Start > coord : slice.Start < coord;
+                if (ahead) return Array.Empty<int>();
+                if (coord % Math.Abs(slice.Step) != 0) return Array.Empty<int>();
+                coords.Add((coord - slice.Start) / slice.Step);
+            }
+            return coords.ToArray();
+        }
     }
 }
-
-
-
