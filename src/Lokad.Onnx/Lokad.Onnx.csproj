@@ -8,7 +8,6 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <AssemblyName>Lokad.Onnx</AssemblyName>
     <RootNamespace>Lokad.Onnx</RootNamespace>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>Lokad.Onnx</PackageId>
     <Title>Lokad.Onnx</Title>
     <Description>100% managed-code ONNX inference backend for .NET: tensors, CPU execution provider, text and image helpers, and a CLI for inspection, inference, and benchmarks.</Description>
@@ -54,7 +53,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 

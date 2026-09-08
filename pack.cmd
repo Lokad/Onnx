@@ -11,9 +11,9 @@ if not %ERRORLEVEL%==0 (
     goto End
 )
 
-dotnet build --tl:off --nologo -v minimal src\Lokad.Onnx\Lokad.Onnx.csproj /p:Configuration=Release
+dotnet pack --tl:off --nologo -v minimal src\Lokad.Onnx\Lokad.Onnx.csproj -c Release
 if not %ERRORLEVEL%==0 (
-    echo Error building Lokad.ONNX package.
+    echo Error packing Lokad.ONNX package.
     set ERROR_CODE=2
     goto End
 )
