@@ -57,11 +57,17 @@ static class Bench
                 if (!File.Exists(f)) { Console.WriteLine("missing asset for " + key + ": " + f); return 1; }
             }
         }
-        Console.WriteLine("host=" + Environment.MachineName + " procs=" + Environment.ProcessorCount
+        string cpu = Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER") ?? "unknown";
+        string ortOpt;
+        using (var probeOpts = new SessionOptions()) ortOpt = probeOpts.GraphOptimizationLevel.ToString();
+        Console.WriteLine("host=" + Environment.MachineName + " cpu=" + cpu
+            + " procs=" + Environment.ProcessorCount + " (logical, no affinity pinning)"
             + " fma=" + System.Runtime.Intrinsics.X86.Fma.IsSupported
             + " runtime=" + RuntimeInformation.FrameworkDescription
+            + " lokad=" + typeof(ComputationalGraph).Assembly.GetName().Version
             + " ort=" + typeof(InferenceSession).Assembly.GetName().Version
-            + " mode=" + modeName + " threads=" + threads + " iters=" + iters);
+            + " ort-provider=cpu-only ort-optimizations=" + ortOpt
+            + " mode=" + modeName + " threads=" + threads + " iters=" + iters + " warmup=" + Warm);
         if (selected.Contains("e5", StringComparer.OrdinalIgnoreCase))
         {
             var e5 = assets["e5"];
@@ -128,6 +134,7 @@ static class Bench
     static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters)
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
+        Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + ShortHash(tokenizer));
         Compare(name, model, inputs, tensorOpts, threads, iters);
     }
 
@@ -163,34 +170,75 @@ static class Bench
     static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters)
     {
         var graph = OnnxImport.Load(model)!;
-        using var ortDefault = new InferenceSession(model);
-        var inNames = ortDefault.InputMetadata.Keys.ToArray();
-        var outNames = ortDefault.OutputMetadata.Keys.ToArray();
+        var sidecar = Path.ChangeExtension(model, ".onnx_data");
+        string sidecarInfo = File.Exists(sidecar)
+            ? " sidecar=" + Path.GetFileName(sidecar) + " bytes=" + new FileInfo(sidecar).Length + " sha12=" + ShortHash(sidecar)
+            : "";
+        using (var ortDefault = new InferenceSession(model))
+        {
+            TimedRow(name, model, graph, inputs, ortDefault, ExecutionOptions.Default,
+                "defaults", "ort-defaults", iters, sidecarInfo);
+        }
+        var oneOpts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Scalar);
+        using (var oneSo = new SessionOptions())
+        {
+            oneSo.IntraOpNumThreads = 1;
+            oneSo.InterOpNumThreads = 1;
+            oneSo.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
+            using var ortOne = new InferenceSession(model, oneSo);
+            TimedRow(name, model, graph, inputs, ortOne, oneOpts,
+                "one-thread", "intraop=1 interop=1 seq", iters, sidecarInfo);
+        }
+        var matchedOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
+        using (var matchedSo = new SessionOptions())
+        {
+            matchedSo.IntraOpNumThreads = threads;
+            matchedSo.InterOpNumThreads = 1;
+            matchedSo.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
+            using var ortMatched = new InferenceSession(model, matchedSo);
+            TimedRow(name, model, graph, inputs, ortMatched, matchedOpts,
+                "mode-threads=" + threads, "intraop=" + threads + " interop=1 seq", iters, sidecarInfo);
+        }
+    }
+
+    static void TimedRow(string name, string model, ComputationalGraph graph, ITensor[] inputs,
+        InferenceSession ortSession, ExecutionOptions lokadOpts, string lokDesc, string ortDesc,
+        int iters, string sidecarInfo)
+    {
+        var inNames = ortSession.InputMetadata.Keys.ToArray();
+        var outNames = ortSession.OutputMetadata.Keys.ToArray();
         if (inputs.Length == 1 && string.IsNullOrEmpty(inputs[0].Name) && inNames.Length == 1) inputs[0].Name = inNames[0];
         var named = ToNamed(name, inputs, inNames);
-        Console.WriteLine("case " + name + ": model=" + Path.GetFileName(Path.GetDirectoryName(model)) + "/model.onnx"
-            + " bytes=" + new FileInfo(model).Length + " sha12=" + ShortHash(model)
-            + " inputs=[" + string.Join(",", named.Select(kv => kv.Key + ":" + string.Join("x", kv.Value.Dims))) + "]"
-            + " outputs=[" + string.Join(",", outNames) + "]");
         var valSw = Stopwatch.StartNew();
-        double worstDefault = Validate(name, graph, ortDefault, named, outNames, ExecutionOptions.Default);
-        var matchedOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
-        using var matchedSo = new SessionOptions();
-        matchedSo.IntraOpNumThreads = threads;
-        matchedSo.InterOpNumThreads = 1;
-        matchedSo.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
-        using var ortMatched = new InferenceSession(model, matchedSo);
-        double worstMatched = Validate(name, graph, ortMatched, named, outNames, matchedOpts);
+        double worst = Validate(name, graph, ortSession, named, outNames, lokadOpts);
         valSw.Stop();
-        double copyMs = valSw.Elapsed.TotalMilliseconds;
-        TimedRun(name, graph, named, outNames, ExecutionOptions.Default, "defaults", "ort-defaults", iters, copyMs, worstDefault, ortDefault);
-        TimedRun(name, graph, named, outNames, matchedOpts, "mode-threads=" + threads, "intraop=" + threads + " interop=1 seq", iters, copyMs, worstMatched, ortMatched);
+        Console.WriteLine("case " + name + " [" + lokDesc + " vs " + ortDesc + "]: model="
+            + Path.GetFileName(Path.GetDirectoryName(model)) + "/model.onnx"
+            + " bytes=" + new FileInfo(model).Length + " sha12=" + ShortHash(model) + sidecarInfo
+            + " inputs=[" + string.Join(",", named.Select(kv => kv.Key + ":" + string.Join("x", kv.Value.Dims))) + "]"
+            + " outputs=[" + string.Join(",", OutputShapes(graph, outNames)) + "]"
+            + " warmup=" + Warm + " iters=" + iters);
+        TimedRun(name, graph, named, outNames, lokadOpts, lokDesc, ortDesc, iters, valSw.Elapsed.TotalMilliseconds, worst, ortSession);
+    }
+
+    static string[] OutputShapes(ComputationalGraph graph, string[] outNames)
+    {
+        var shapes = new string[outNames.Length];
+        for (int i = 0; i < outNames.Length; i++)
+        {
+            shapes[i] = graph.Outputs.TryGetValue(outNames[i], out var t)
+                ? outNames[i] + ":" + string.Join("x", t.Dims)
+                : outNames[i] + ":unresolved";
+        }
+        return shapes;
     }
 
     static void TimedRun(string name, ComputationalGraph graph, Dictionary<string, ITensor> named, string[] outNames,
-        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, double copyMs, double maxDiff, InferenceSession ortSession)
+        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, double validationMs, double maxDiff, InferenceSession ortSession)
     {
+        var convSw = Stopwatch.StartNew();
         var ortInputs = BuildOrtInputs(named, ortSession.InputMetadata.Keys.ToArray());
+        convSw.Stop();
         try
         {
             using var ro = new RunOptions();
@@ -206,19 +254,37 @@ static class Bench
             var sw = new Stopwatch();
             for (int i = 0; i < iters; i++)
             {
-                graph.Reset();
-                sw.Restart();
-                if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
-                sw.Stop();
-                lok.Add(sw.Elapsed.TotalMilliseconds);
-                sw.Restart();
-                using var results = ortSession.Run(ro, ortInputs, outNames);
-                sw.Stop();
-                ort.Add(sw.Elapsed.TotalMilliseconds);
+                if (i % 2 == 0)
+                {
+                    sw.Restart();
+                    using var first = ortSession.Run(ro, ortInputs, outNames);
+                    sw.Stop();
+                    ort.Add(sw.Elapsed.TotalMilliseconds);
+                    graph.Reset();
+                    sw.Restart();
+                    if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
+                    sw.Stop();
+                    lok.Add(sw.Elapsed.TotalMilliseconds);
+                }
+                else
+                {
+                    graph.Reset();
+                    sw.Restart();
+                    if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
+                    sw.Stop();
+                    lok.Add(sw.Elapsed.TotalMilliseconds);
+                    sw.Restart();
+                    using var second = ortSession.Run(ro, ortInputs, outNames);
+                    sw.Stop();
+                    ort.Add(sw.Elapsed.TotalMilliseconds);
+                }
             }
             Console.WriteLine(name + " [" + lokDesc + " vs " + ortDesc + "]: lokad " + Dist(lok) + " | ort " + Dist(ort)
-                + " | reset " + Dist(resets) + " | copy=" + copyMs.ToString("F1") + "ms"
+                + " | reset " + Dist(resets) + " | convert=" + convSw.Elapsed.TotalMilliseconds.ToString("F1") + "ms"
+                + " | validation=" + validationMs.ToString("F1") + "ms | disposal=outside"
                 + " | maxdiff=" + maxDiff.ToString("E2"));
+            Console.WriteLine("raw lok=[" + string.Join(",", lok.Select(v => v.ToString("F2"))) + "]"
+                + " raw ort=[" + string.Join(",", ort.Select(v => v.ToString("F2"))) + "]");
         }
         finally
         {

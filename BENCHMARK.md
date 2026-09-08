@@ -1,93 +1,168 @@
 # CPU benchmarks
 
-The model harness uses `Microsoft.ML.OnnxRuntime` 1.23.2 and constructs CPU
-sessions without registering a GPU provider. The package is the CPU build;
+The model harness (`tests/Lokad.Onnx.Bench`) compares the managed engine
+against native ONNX Runtime (`Microsoft.ML.OnnxRuntime` 1.23.2) sessions on
+CPU only, without registering a GPU provider. The package is the CPU build;
 GPU execution requires a different package/provider configuration.
 [ORT C# packages](https://onnxruntime.ai/docs/get-started/with-csharp.html)
 
-The previous model table compared single-threaded Lokad with ORT's default
-CPU thread pool, using an earlier implementation and a first-output harness.
-It was not an equal-thread comparison. ORT's default intra-op pool uses physical
-CPU cores and enables graph optimizations and worker spinning. This does not
-establish that every operator uses every core, or that threading and matrix
-packing explain most of the observed gap.
-[ORT thread settings](https://onnxruntime.ai/docs/performance/tune-performance/threading.html)
+## Methodology
 
-## Diagnostic run — 2026-09-08
+Each model case reports three validated rows measured in one process:
 
-Source: `a5c7aba7be9a46392625ee69a49db37eeaa07ac1`, Release build.
-Host: LOKAD-0399, Intel Core i7-14700KF, 20 cores / 28 logical processors,
-x86 FMA available; .NET runtime 10.0.11; ORT assembly 1.23.2.0.
-Build SDK: 10.0.300-preview.0.26177.108.
+- `defaults` — Lokad `ExecutionOptions.Default` against a default ORT
+  `InferenceSession` (default thread pool, `ORT_ENABLE_ALL` graph
+  optimizations).
+- `one-thread` — Lokad Scalar mode (`TensorExecutionOptions.Scalar`,
+  `MaxDegreeOfParallelism=1`) against ORT with `IntraOpNumThreads=1`,
+  `InterOpNumThreads=1`, `ORT_SEQUENTIAL`.
+- `mode-threads=N` — Lokad `--mode` with `MaxDegreeOfParallelism=N`
+  against ORT with `IntraOpNumThreads=N`, `InterOpNumThreads=1`,
+  `ORT_SEQUENTIAL`.
 
-Three warmups and nine timed iterations per row, interleaved Lokad then ORT.
-Inputs and models are local; parsing and tokenization occur outside timing.
-The runner measures Execute/Run with all declared outputs requested. Explicit
-Reset, input conversion and ORT output disposal are outside the timed region.
-No process affinity or power configuration was pinned for this run.
+With `--threads 1`, the second and third rows share the same thread budget
+but differ in kernel mode (Scalar vs the selected `--mode`, here Auto with
+vectorization enabled and one thread). Keeping both documents that
+distinction instead of implying a new thread condition.
 
-Default settings: Lokad Auto, one thread; ORT default session options.
+Per-row isolation: each row opens its own ORT session, validates, times,
+then disposes it before the next row starts, so worker threads and
+optimization state from one condition do not leak into the next. The Lokad
+`ComputationalGraph` is loaded once per model and `Reset()` between
+executions; ORT sessions are the isolated unit. Engine order alternates per
+iteration (ORT-first on even iterations, Lokad-first on odd iterations) to
+avoid giving either engine a systematic warm-cache advantage.
 
-| Case | Lokad best | Lokad median | ORT best | ORT median | Median ratio |
-|---|---:|---:|---:|---:|---:|
-| e5, 8 tokens | 155.8 ms | 201.1 ms | 2.9 ms | 3.2 ms | 62.8× |
-| e5, 30 tokens | 207.2 ms | 231.4 ms | 4.1 ms | 4.7 ms | 49.2× |
-| ResNet50, 224×224 | 344.5 ms | 409.0 ms | 8.0 ms | 15.2 ms | 26.9× |
+Validation before timing: every row validates first, outside timing, with
+`BenchValidate.RequireAgreement` — exact output names, float32 dtype, exact
+shapes, finite values, and per-element relative tolerance 1e-4 on every
+declared output against the actual session used for that row. A diverging
+row throws instead of timing incorrect results.
 
-Explicit one-thread settings: Lokad Auto with MaxDegreeOfParallelism=1;
-ORT IntraOpNumThreads=1, InterOpNumThreads=1, ORT_SEQUENTIAL.
+Timing boundaries per timed iteration: the measured region is exactly one
+`graph.Execute` (Lokad) or one `session.Run` (ORT) with all declared outputs
+requested. Outside the region: `Reset` (reported separately as `reset`),
+input conversion to `OrtValue`s (reported as `convert`), validation
+executions plus comparison (reported as `validation`), and ORT output
+disposal (`disposal=outside`; `using` scopes end after the stopwatch stops).
+Tokenization and model parsing happen once before timing. Three warmup
+executions per engine precede nine timed iterations; the tables report best
+and median with p95/max in the transcript, plus the raw samples below.
 
-| Case | Lokad best | Lokad median | ORT best | ORT median | Median ratio |
-|---|---:|---:|---:|---:|---:|
-| e5, 8 tokens | 120.9 ms | 124.2 ms | 5.9 ms | 6.5 ms | 19.1× |
-| e5, 30 tokens | 150.0 ms | 154.7 ms | 11.9 ms | 13.2 ms | 11.7× |
-| ResNet50, 224×224 | 276.1 ms | 286.3 ms | 50.6 ms | 51.6 ms | 5.5× |
+No process affinity or power plan was pinned; logical processor count only,
+worker spinning left at ORT defaults. Equal thread budgets do not imply
+equal CPU utilization between the two engines.
 
-The one-thread rows still show a substantial CPU performance gap. The old
-~199× ResNet figure is not a current equal-thread baseline. These samples also
-show Lokad latency changing between the two lanes despite equivalent Lokad
-settings: session interference, run order, JIT/GC and host activity need to be
-controlled before attributing changes to kernels or thread counts. In
-particular, the slower e5 figures do not establish a regression magnitude
-against the historical table without a controlled before/after run.
+## Environment — 2026-09-08 run
 
-Assets are identified in
-[ModelManifest.json](tests/Lokad.Onnx.Backend.Tests/ModelManifest.json):
+Runner transcript host line:
 
-| Asset | Model bytes | SHA-256 prefix | Inputs | Output |
-|---|---:|---|---|---|
-| multilingual-e5-small | 470,268,510 | CA456C06B3A9 | three int64 tensors, 1×8 or 1×30 | last_hidden_state |
-| ResNet50 feature export | 93,961,728 | 4F0558B775C8 | float32, 1×3×224×224, filled with 0.5 | output |
+    host=LOKAD-0399 cpu=Intel64 Family 6 Model 183 Stepping 1, GenuineIntel procs=28 (logical, no affinity pinning) fma=True runtime=.NET 10.0.11 lokad=0.2.0.0 ort=1.23.2.0 ort-provider=cpu-only ort-optimizations=ORT_ENABLE_ALL mode=auto threads=1 iters=9 warmup=3
 
-The manifest records full hashes, including the e5 tokenizer. This run did
-not refresh DINOv2, DINOv3 or GPT-2 timing. DINOv3 currently fails its
-LayerNormalization gate and its recorded asset contains placeholder-sized
-initializers; it needs a full-weight asset and validated outputs before a
-model-speed claim.
+- Host: LOKAD-0399, Intel Core i7-14700KF, 20 cores / 28 logical processors.
+- Build: Release, .NET SDK 10.0.300-preview.0.26177.108, .NET runtime 10.0.11.
+- Source: commit `b1b447d` plus the benchmark-harness rework in this commit
+  (`tests/Lokad.Onnx.Bench/Program.cs`: per-row sessions, alternated order,
+  raw samples, `validation`/`convert` boundaries, output shapes, sidecars).
+  Rebuilding at this commit and rerunning the command below reproduces the
+  harness; numbers remain machine- and load-dependent.
+- Native reference: `Microsoft.ML.OnnxRuntime` 1.23.2.0, CPU provider only,
+  graph optimizations `ORT_ENABLE_ALL`, default worker spinning, no affinity.
 
-## Limits of the current harness
+## Assets
 
-The source review found issues that must be fixed before treating this as a
-validated performance baseline:
+All models and sidecars are local; parsing and tokenization occur outside
+timing. Full hashes live in
+[ModelManifest.json](tests/Lokad.Onnx.Backend.Tests/ModelManifest.json).
 
-- Validation compares flattened lengths, omits shape equality, and can accept
-  NaN differences. The reported maximum errors (7.28e-7, 1.15e-6 and 1.98e-6)
-  come from that existing check against the default ORT session; the exact
-  matched-thread ORT session is not validated.
-- Graph Conv currently drops explicit execution options. Its Auto/one-thread
-  fallback agrees with the setting requested above, but other mode/thread
-  comparisons cannot rely on that route until corrected.
-- Metadata probe sessions and the default ORT session remain alive during
-  portions of the comparison. Worker spinning can affect nearby Lokad samples.
-  The engine order is always Lokad first.
-- The printed `copy` value includes two full validation executions and comparison
-  work. It is not isolated copy time. The runner reports summary statistics,
-  but does not retain all raw samples or explicit optimization/spinning settings.
+| Asset | Model bytes | SHA-256 prefix | Sidecar | Inputs | Outputs |
+|---|---:|---|---|---|---|
+| multilingual-e5-small | 470,268,510 | CA456C06B3A9 | tokenizer `sentencepiece.bpe.model`, 5,069,051 bytes, CFC8146ABE2A | three int64 tensors, 1x8 or 1x30 (`input_ids`, `attention_mask`, `token_type_ids`) | `last_hidden_state` 1x8x384 / 1x30x384 |
+| DINOv3 ViT-S/16 (full weights) | 137,969 | BB75E9E30FF3 | `model.onnx_data`, 86,347,776 bytes, 1EFF0BB9F4FD | float32 1x3x224x224 (`pixel_values`, filled with 0.5) | `last_hidden_state` 1x201x384, `pooler_output` 1x384 |
+| ResNet50 feature export | 93,961,728 | 4F0558B775C8 | none | float32 1x3x224x224 (`input`, filled with 0.5) | `output` 1x2048 |
+| GPT-2 (past-state) | 498,126,358 | 42C1E92A21C4 | none | `input_ids` 1x4, `attention_mask` 1x4, `position_ids` 1x4, 24 empty past tensors 1x12x0x64 | `logits` 1x4x50257 plus 24 present tensors 1x12x4x64 |
 
-Resolve these issues before publishing a release performance baseline. The old
-latency/microbenchmark tables are available in Git history; they predate
-substantial kernel and allocation changes and should not be reused as current
-measurements.
+DINOv3 now runs against the full-weight asset (graph plus `model.onnx_data`)
+and validates end to end; the earlier placeholder-asset caveat no longer
+applies. DINOv2 is excluded: it diverges at max relative difference
+1.86E-004 on `last_hidden_state`, above the 1e-4 gate, so the runner throws
+instead of publishing its rows:
+
+    Unhandled exception. System.InvalidOperationException: dinov2-224:last_hidden_state: outputs diverge (max rel diff 1.86E-004).
+
+## Results
+
+`Bench e5 resnet50 dinov3 gpt2 --mode auto --threads 1 --iters 9`
+(three warmups, nine timed iterations per row). Median ratio is
+Lokad median / ORT median. `maxdiff` is the worst validated output of that
+row. Raw samples follow the tables.
+
+| Case | Row | Lokad best | Lokad median | ORT best | ORT median | Median ratio | maxdiff |
+|---|---|---:|---:|---:|---:|---:|---|
+| e5, 8 tokens | defaults | 167.6 ms | 203.0 ms | 3.1 ms | 3.4 ms | 59.7x | 7.28E-007 |
+| e5, 8 tokens | one-thread | 190.5 ms | 232.4 ms | 5.6 ms | 11.6 ms | 20.0x | 9.52E-007 |
+| e5, 8 tokens | mode-threads=1 | 116.8 ms | 126.2 ms | 5.5 ms | 5.8 ms | 21.8x | 7.28E-007 |
+| e5, 30 tokens | defaults | 201.2 ms | 260.6 ms | 4.1 ms | 5.3 ms | 49.2x | 1.15E-006 |
+| e5, 30 tokens | one-thread | 405.2 ms | 430.9 ms | 12.2 ms | 12.8 ms | 33.7x | 1.24E-006 |
+| e5, 30 tokens | mode-threads=1 | 144.5 ms | 154.5 ms | 11.6 ms | 13.1 ms | 11.8x | 1.15E-006 |
+| DINOv3, 224x224 | defaults | 333.0 ms | 445.7 ms | 18.6 ms | 20.4 ms | 21.8x | 5.99E-006 |
+| DINOv3, 224x224 | one-thread | 2193.9 ms | 2281.5 ms | 69.9 ms | 72.8 ms | 31.3x | 4.87E-006 |
+| DINOv3, 224x224 | mode-threads=1 | 335.9 ms | 384.8 ms | 72.0 ms | 80.6 ms | 4.8x | 5.99E-006 |
+| ResNet50, 224x224 | defaults | 303.9 ms | 397.9 ms | 7.3 ms | 8.3 ms | 47.9x | 1.98E-006 |
+| ResNet50, 224x224 | one-thread | 1849.5 ms | 1920.7 ms | 50.6 ms | 57.1 ms | 33.6x | 2.53E-006 |
+| ResNet50, 224x224 | mode-threads=1 | 307.9 ms | 417.6 ms | 51.4 ms | 66.5 ms | 6.3x | 1.98E-006 |
+| GPT-2, 4 tokens | defaults | 745.8 ms | 990.2 ms | 8.3 ms | 9.5 ms | 104.2x | 7.35E-006 |
+| GPT-2, 4 tokens | one-thread | 952.0 ms | 1010.4 ms | 23.1 ms | 27.7 ms | 36.5x | 7.95E-006 |
+| GPT-2, 4 tokens | mode-threads=1 | 783.8 ms | 936.0 ms | 24.6 ms | 30.5 ms | 30.7x | 7.35E-006 |
+
+The gap is real on every row and narrows markedly under matched thread
+budgets with vectorization enabled (for example ResNet50 median ratio 47.9x
+defaults vs 6.3x matched; DINOv3 21.8x vs 4.8x). The Scalar one-thread row
+is much slower than the Auto one-thread row on vision models (ResNet50
+1920.7 ms vs 417.6 ms median; DINOv3 2281.5 ms vs 384.8 ms), which shows the
+mode distinction carries the effect, not just the thread count. No claim is
+made about how much of the remaining gap belongs to threading, matrix
+packing, or per-operator kernels; that attribution needs profiling outside
+final latency timing (see B3).
+
+### Raw samples (ms, n=9 per engine per row)
+
+    e5-8tok defaults:      lok=[210.65,196.39,187.63,208.51,249.59,197.03,203.02,207.92,167.58] ort=[3.07,3.59,3.39,3.44,3.19,4.17,3.58,4.50,3.39]
+    e5-8tok one-thread:    lok=[234.72,232.40,270.13,190.55,238.79,213.15,195.85,246.91,219.87] ort=[15.47,11.81,12.57,6.04,6.65,13.05,11.58,8.88,5.61]
+    e5-8tok matched:       lok=[120.55,116.75,136.72,127.05,118.00,129.66,121.10,128.43,126.23] ort=[6.66,5.80,5.54,5.88,5.84,6.58,5.74,5.83,5.62]
+    e5-30tok defaults:     lok=[260.62,220.43,223.90,284.85,282.43,262.30,279.52,201.18,227.03] ort=[4.75,6.19,4.69,5.71,5.29,5.74,5.00,8.55,4.10]
+    e5-30tok one-thread:   lok=[570.73,553.08,475.02,421.18,419.25,407.91,454.78,430.92,405.25] ort=[27.84,16.45,13.24,12.76,12.40,12.18,13.13,12.33,12.79]
+    e5-30tok matched:      lok=[145.28,148.05,160.54,146.74,144.46,155.81,154.69,163.89,154.52] ort=[13.07,35.92,12.53,12.67,11.66,13.14,11.60,14.21,14.51]
+    dinov3-224 defaults:   lok=[474.40,390.33,539.31,406.05,464.43,347.45,445.66,332.98,462.18] ort=[18.98,36.59,20.41,22.00,20.04,21.29,18.84,28.46,18.63]
+    dinov3-224 one-thread: lok=[2254.65,2254.56,2495.61,2430.75,2193.92,2249.55,2333.49,2281.47,2286.12] ort=[74.72,117.84,93.44,70.64,69.92,78.86,72.76,72.00,71.75]
+    dinov3-224 matched:    lok=[387.11,384.81,411.62,337.38,348.35,395.20,335.89,390.08,357.03] ort=[96.41,73.04,80.70,72.02,80.56,78.83,72.95,99.71,88.74]
+    resnet50 defaults:     lok=[397.94,319.28,421.83,312.90,400.36,340.71,400.10,303.91,460.37] ort=[7.34,18.37,7.44,12.30,7.59,8.04,8.32,15.07,8.38]
+    resnet50 one-thread:   lok=[1912.87,1967.06,1849.52,1920.70,1903.75,1888.98,2000.24,2026.46,2124.25] ort=[65.52,52.29,54.05,52.25,50.64,64.73,58.89,57.11,62.12]
+    resnet50 matched:      lok=[417.59,540.45,312.65,334.00,307.92,434.07,325.98,422.22,440.63] ort=[81.73,60.79,66.47,51.83,51.41,89.94,52.63,112.88,82.81]
+    gpt2-4tok defaults:    lok=[995.01,1060.91,990.17,1363.00,1061.80,988.22,864.71,745.80,941.57] ort=[9.59,9.48,8.64,9.35,10.91,13.20,8.33,10.77,9.10]
+    gpt2-4tok one-thread:  lok=[1090.96,1145.03,1066.73,984.21,1009.41,1069.98,1010.40,986.62,952.05] ort=[26.59,31.09,23.10,24.91,36.88,55.57,27.69,27.90,24.14]
+    gpt2-4tok matched:     lok=[881.01,858.79,783.81,843.33,1053.93,943.16,935.97,1059.81,1376.17] ort=[48.68,37.50,27.22,27.40,24.61,30.45,26.38,38.58,37.08]
+
+Per-row support values from the transcript: `reset` best 0.0 ms on every
+row (in-place reset cost is negligible next to inference); `convert` 0.0 ms
+on e5/GPT-2 rows and 0.1–0.2 ms on vision rows; `validation` 160.8–2350.8 ms
+(one full Lokad execute plus one full ORT run plus comparison per output,
+outside timing); `disposal=outside` throughout.
+
+## Limits of this comparison
+
+- One machine, one process per model set, nine samples per row. Medians are
+  stable enough to show the gap and the mode effect, but not a release
+  performance gate across machines.
+- Running `Bench all` (or naming `dinov2`) still stops at the DINOv2
+  validation throw above by design; publish tables only for validating
+  models and keep the exclusion stated.
+- The Lokad graph is reused across the three rows of a model with `Reset`
+  between executions while ORT sessions are per-row; residual pool/cache
+  effects on the Lokad side across rows are not measured separately.
+- The old latency/microbenchmark tables are available in Git history; they
+  predate substantial kernel and allocation changes and should not be reused
+  as current measurements.
 
 ## Reproduce and extend
 
@@ -95,20 +170,22 @@ From the repository root, using the existing local assets:
 
 ```powershell
 dotnet build Lokad.Onnx.slnx -c Release --tl:off --nologo -v minimal
-dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 resnet50 --mode auto --threads 1 --iters 9
+dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 resnet50 dinov3 gpt2 --mode auto --threads 1 --iters 9
 ```
 
-The runner prints both default and explicit-thread lanes. Once option routing
-and validation are repaired, repeat with a chosen common thread budget
-(`--threads N`) and sufficient samples; equal limits do not imply equal CPU
-utilization. Keep the default, one-thread and equal-budget results distinct.
-Validate every named output's dtype, shape, finite values and numerical
-tolerance outside timing for each actual session.
+The runner prints the host line, one `case` line per row (asset identity,
+input/output shapes, warmup, iterations), one result line per row (best,
+median, p95, max, reset, convert, validation, disposal, maxdiff), and one
+raw-sample line per row. Keep the default, one-thread and equal-budget
+results distinct; equal limits do not imply equal CPU utilization. Validate
+every named output outside timing for each actual session.
 
 For operator benchmarks, the current command is `dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll micro ops`;
 `matmul2d`, `matmul` and `indexing` cover other kernel cases. Pin execution modes and record
 allocations as well as latency; profiler-enabled timings are separate.
 
-`bench.ps1` launches a fresh CLI process for every e5 sample. Its separate
-warmup process cannot warm those subsequent JITs/sessions; interpret it as
-startup-inclusive CLI measurement, not warmed inference throughput.
+`bench.ps1` is a startup-inclusive CLI benchmark by design: it launches a
+fresh CLI process for every e5 sample, so its warmup process cannot warm
+those subsequent JITs/sessions. Read its `graphMs`/`wallMs` series as
+per-process startup plus inference, not warmed inference throughput.
+Persistent-process inference timing lives in the Bench runner above.

@@ -126,8 +126,12 @@ as planned or a known limitation. This is not a release-readiness claim.
 - Normal Debug/Release builds no longer produce packages. Release packing
   includes symbols, SourceLink, README, changelog, license and icon.
 - BenchmarkDotNet microbenchmarks and a CPU Lokad-versus-ORT model harness.
-  `BENCHMARK.md` now distinguishes default and one-thread comparisons, records
-  a fresh e5/ResNet diagnostic, and identifies remaining measurement defects.
+  `BENCHMARK.md` now reports three validated rows per case (defaults,
+  one-thread, explicit thread budget) with per-row isolated sessions,
+  alternated engine order, full environment and asset records, raw samples,
+  and explicit reset/conversion/validation/disposal boundaries across a fresh
+  e5, DINOv3, ResNet50 and GPT-2 run; DINOv2 is excluded with its divergence
+  stated, and `bench.ps1` is labeled a startup-inclusive CLI benchmark.
 
 ### Known limitations before release
 
@@ -138,14 +142,14 @@ as planned or a known limitation. This is not a release-readiness claim.
   Operator capability reporting is not yet fully schema-aware.
 - LayerNormalization supports only stash_type 1 (32-bit float stage-one
   compute) with one to three positional outputs; other precisions and output
-  counts fail explicitly. No speed claim is made for DINOv3 inference.
-- Benchmark validation can miss NaNs and shape mismatches, and does not
-  validate the exact ORT session used for the matched-thread timing.
-  Current diagnostic timings are not a completed release performance gate.
-- Review validation: Release solution build passes with 17 test-analyzer
-  warnings; Debug core build passes without warnings. Release tests report
-  **210 tensor passes and 422 backend passes with no failures** and no
-  skips. Python conformance rerun for the fusion domain, LayerNorm stash,
+  counts fail explicitly. Validated DINOv3 inference timings are reported in BENCHMARK.md.
+- CPU comparisons are a single-machine, nine-sample-per-row diagnostic, not a
+  release performance gate; DINOv2 diverges above the validation gate and is
+  excluded with reason. Equal thread budgets do not imply equal CPU
+  utilization between the engines.
+- Review validation: Release solution build passes with no warnings. Release
+  tests report **228 tensor passes and 427 backend passes with no failures**
+  and no skips. Python conformance rerun for the fusion domain, LayerNorm stash,
   output-binding, options-propagation, preparation-concurrency, and
   operator-schema repairs:
   e5 native lane 9 passed across scalar, SIMD and intrinsics modes;
