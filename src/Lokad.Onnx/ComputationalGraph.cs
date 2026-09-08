@@ -424,6 +424,18 @@ public class ComputationalGraph
 
     public bool Execute(object userInputs, bool useInitializers) => Execute(userInputs, useInitializers, ExecutionProvider.CPU, null);
 
+    /// <summary>
+    /// Prepares the graph if needed, binds <paramref name="userInputs"/> (a positional
+    /// tensor array or a name-to-tensor map), runs every node with the given provider, and
+    /// publishes results on Outputs and IntermediateOutputs. Only one execution may run at
+    /// a time; a concurrent call fails. Null <paramref name="options"/> reuses the graph
+    /// prepared options.
+    /// </summary>
+    /// <param name="userInputs">Caller-owned input tensors; the graph never takes ownership of their storage.</param>
+    /// <param name="useInitializers">Bind stored initializers for graph inputs left unspecified.</param>
+    /// <param name="provider">Execution provider carrying out the operators.</param>
+    /// <param name="options">Execution options, or null for the graph prepared options.</param>
+    /// <returns>True on success; otherwise false with details on LastErrorMessage, LastFailedNodeName, LastFailedNodeOp and LastErrorCause.</returns>
     public virtual bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider, ExecutionOptions? options)
     {
         EnsurePrepared();
@@ -614,6 +626,16 @@ public class ComputationalGraph
 
     public bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers) => ExecuteNode(userInputs, nodeLabel, useInitializers, ExecutionProvider.CPU, null);
 
+    /// <summary>
+    /// Behaves like Execute but runs only the subgraph feeding the node named
+    /// <paramref name="nodeLabel"/>. An unknown label fails like any other execution error.
+    /// </summary>
+    /// <param name="userInputs">Caller-owned input tensors; the graph never takes ownership of their storage.</param>
+    /// <param name="nodeLabel">Name of the node whose subgraph to run.</param>
+    /// <param name="useInitializers">Bind stored initializers for graph inputs left unspecified.</param>
+    /// <param name="provider">Execution provider carrying out the operators.</param>
+    /// <param name="options">Execution options, or null for the graph prepared options.</param>
+    /// <returns>True on success; otherwise false with details on LastErrorMessage, LastFailedNodeName, LastFailedNodeOp and LastErrorCause.</returns>
     public virtual bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider, ExecutionOptions? options)
     {
         EnsurePrepared();

@@ -140,6 +140,10 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
             return ToDenseTensor().Reshape(dims);
     }
    
+    /// <summary>
+    /// As the base contract, except an out-of-range dimension throws
+    /// <see cref="ArgumentException"/> instead of <see cref="IndexOutOfRangeException"/>.
+    /// </summary>
     public override Tensor<T> InsertDim(int dim)
     {
         if (dim >= Rank) throw new ArgumentException(nameof(dim));
@@ -156,6 +160,10 @@ public class BroadcastedTensor<T> : Tensor<T> where T :  unmanaged
         return new BroadcastedTensor<T>(source.InsertDim(dim), dims.ToArray(), bdims);
     }
 
+    /// <summary>
+    /// As the base contract, except an out-of-range dimension throws
+    /// <see cref="ArgumentException"/> instead of <see cref="IndexOutOfRangeException"/>.
+    /// </summary>
     public override Tensor<T> RemoveDim(int dim)
     {
         if (dim >= Rank) throw new ArgumentException(nameof(dim));

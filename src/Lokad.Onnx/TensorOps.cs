@@ -65,6 +65,18 @@ where T : unmanaged
         return output;
     }
 
+    /// <summary>
+    /// Writes op(element) for every element, overwriting the destination, with automatic
+    /// execution options. The destination starts uninitialized and is fully overwritten; it
+    /// may alias this tensor because pairing is by flat index. The vector path runs only
+    /// on directly spannable storage, otherwise the scalar path runs. An empty tensor
+    /// writes nothing but the destination must still match its length.
+    /// </summary>
+    /// <param name="op">Vector operation; must compute the lane-wise image of <paramref name="sop"/>.</param>
+    /// <param name="sop">Scalar fallback operation; must be non-null.</param>
+    /// <param name="destination">Overwrite-only destination holding exactly one slot per element.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="destination"/> is null.</exception>
+    /// <exception cref="ArgumentException">The destination length differs from the source length.</exception>
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>> op, Func<T, T> sop, Tensor<T> destination)
         => VectorizedApply(op, sop, destination, TensorExecutionOptions.Auto);
 
@@ -133,6 +145,19 @@ where T : unmanaged
         return output;
     }
 
+    /// <summary>
+    /// Writes op(left, right) for every element pair, overwriting the destination, with
+    /// automatic execution options. The destination starts uninitialized and is fully
+    /// overwritten; it may alias either source because pairing is by flat index. The vector
+    /// path runs only when all three tensors are directly spannable, otherwise the scalar
+    /// path runs. Empty tensors write nothing but lengths must still match.
+    /// </summary>
+    /// <param name="op">Vector operation; must compute the lane-wise image of <paramref name="sop"/>.</param>
+    /// <param name="sop">Scalar fallback operation; must be non-null.</param>
+    /// <param name="tensor2">Second operand with exactly one element per source element.</param>
+    /// <param name="destination">Overwrite-only destination holding exactly one slot per element.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="tensor2"/> or <paramref name="destination"/> is null.</exception>
+    /// <exception cref="ArgumentException">An operand length differs from the source length.</exception>
     public virtual void VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2, Tensor<T> destination)
         => VectorizedApply(op, sop, tensor2, destination, TensorExecutionOptions.Auto);
 
@@ -167,6 +192,16 @@ where T : unmanaged
         }
     }
 
+    /// <summary>
+    /// Allocates a fresh destination with CloneEmpty and writes op(left, right) for every
+    /// element pair, with automatic execution options. Neither source is modified; the
+    /// destination starts uninitialized and is fully overwritten.
+    /// </summary>
+    /// <param name="op">Vector operation; must compute the lane-wise image of <paramref name="sop"/>.</param>
+    /// <param name="sop">Scalar fallback operation; must be non-null.</param>
+    /// <param name="tensor2">Second operand with exactly one element per source element.</param>
+    /// <returns>A new tensor holding the pairwise results.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="tensor2"/> is null.</exception>
     public virtual Tensor<T> VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2)
     {
         var output = CloneEmpty();
@@ -174,6 +209,17 @@ where T : unmanaged
         return output;
     }
 
+    /// <summary>
+    /// Allocates a fresh destination with CloneEmpty and writes op(left, right) for every
+    /// element pair under the given execution options. Neither source is modified; the
+    /// destination starts uninitialized and is fully overwritten.
+    /// </summary>
+    /// <param name="op">Vector operation; must compute the lane-wise image of <paramref name="sop"/>.</param>
+    /// <param name="sop">Scalar fallback operation; must be non-null.</param>
+    /// <param name="tensor2">Second operand with exactly one element per source element.</param>
+    /// <param name="options">Execution options selecting the SIMD and threading behavior.</param>
+    /// <returns>A new tensor holding the pairwise results.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="tensor2"/> is null.</exception>
     public virtual Tensor<T> VectorizedApply(Func<Vector<T>, Vector<T>, Vector<T>> op, Func<T, T, T> sop, Tensor<T> tensor2, TensorExecutionOptions options)
     {
         var output = CloneEmpty();
@@ -181,6 +227,13 @@ where T : unmanaged
         return output;
     }
 
+    /// <summary>
+    /// Folds op(state, element) left to right in flat index order starting from
+    /// <paramref name="state"/>. An empty tensor returns <paramref name="state"/> unchanged.
+    /// </summary>
+    /// <param name="op">Fold operation; must be non-null.</param>
+    /// <param name="state">Initial accumulator value.</param>
+    /// <returns>The final accumulator value.</returns>
     public virtual T Accumulate(Func<T, T, T> op, T state)
     {
         var result = state;

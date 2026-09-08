@@ -632,7 +632,7 @@ namespace Lokad.Onnx
         #region Cloning
 
         /// <summary>
-        /// Creates a shallow copy of this tensor, with new backing storage.
+        /// Copies every element into new backing storage and returns the copy.
         /// </summary>
         /// <returns>A shallow copy of this tensor.</returns>
         public abstract Tensor<T> Clone();
@@ -1092,6 +1092,14 @@ namespace Lokad.Onnx
         #endregion
 
         #region ITensor support
+        /// <summary>
+        /// Returns this tensor with an added size-1 dimension at <paramref name="dim"/>.
+        /// No data is copied: the result is a reshaped view that may share backing
+        /// storage, so writes through either tensor may be visible in the other.
+        /// </summary>
+        /// <param name="dim">Insertion position from 0 through Rank inclusive.</param>
+        /// <returns>A tensor with rank one higher and identical elements.</returns>
+        /// <exception cref="IndexOutOfRangeException"><paramref name="dim"/> is negative or greater than Rank.</exception>
         public virtual Tensor<T> InsertDim(int dim)
         {
             if (dim < 0 || dim > Rank) throw new IndexOutOfRangeException(nameof(dim));
@@ -1100,6 +1108,14 @@ namespace Lokad.Onnx
             return Reshape(dims.ToArray());
         }
 
+        /// <summary>
+        /// Returns this tensor with the size-1 dimension <paramref name="dim"/> removed.
+        /// No data is copied: the result is a reshaped view that may share backing storage.
+        /// </summary>
+        /// <param name="dim">Index of a size-1 dimension.</param>
+        /// <returns>A tensor with rank one lower and identical elements.</returns>
+        /// <exception cref="IndexOutOfRangeException"><paramref name="dim"/> is outside the rank.</exception>
+        /// <exception cref="ArgumentException">The dimension at <paramref name="dim"/> is not size 1.</exception>
         public virtual Tensor<T> RemoveDim(int dim)
         {
             if (dim >= Rank) throw new IndexOutOfRangeException(nameof(dim));
@@ -1109,6 +1125,15 @@ namespace Lokad.Onnx
             return Reshape(dims.ToArray());
         }
 
+        /// <summary>
+        /// Returns a broadcast view that repeats the size-1 dimension <paramref name="dim"/>
+        /// <paramref name="size"/> times. No data is copied: the view shares the source
+        /// storage, so a write through any broadcast position lands on the shared element.
+        /// </summary>
+        /// <param name="dim">Index of a size-1 dimension.</param>
+        /// <param name="size">Replacement extent for that dimension.</param>
+        /// <returns>A view with the same rank whose dimension <paramref name="dim"/> is <paramref name="size"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="dim"/> is outside the rank or does not index a size-1 dimension.</exception>
         public virtual BroadcastedTensor<T> BroadcastDim(int dim, int size)
         {
             if (dim >= Rank)

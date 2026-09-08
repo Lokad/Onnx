@@ -10,7 +10,17 @@ using System.Numerics;
 /// </summary>
 public interface IBroadcastOperator<T> where T : unmanaged
 {
+    /// <summary>
+    /// Applies the operation to one scalar pair. Must compute the same function as
+    /// <see cref="Vector"/> for the corresponding lane. Implementations must be
+    /// side-effect free: kernels may call either form in any order.
+    /// </summary>
     static abstract T Scalar(T left, T right);
+    /// <summary>
+    /// Applies the operation lane-wise over full hardware vector width.
+    /// Must compute the same function as <see cref="Scalar"/> per lane. Implementations
+    /// must be side-effect free: kernels may call either form in any order.
+    /// </summary>
     static abstract Vector<T> Vector(Vector<T> left, Vector<T> right);
 }
 
