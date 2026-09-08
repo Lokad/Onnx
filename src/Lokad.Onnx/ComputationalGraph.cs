@@ -59,7 +59,8 @@ public class ComputationalGraph
     protected int _executing;
     /// <summary>Whether lifetime analysis is current for <see cref="Nodes"/>.</summary>
     private bool _prepared;
-    private int _preparedNodeCount = -1;
+    private long _preparedFingerprint;
+    private string? _preparationError;
 
     /// <summary>
     /// Freezes the prepared plan after (re)analyzing lifetimes. Called by
@@ -82,17 +83,16 @@ public class ComputationalGraph
         EnsurePrepared();
         var exec = new GraphExecution(this, options);
         exec._prepared = _prepared;
-        exec._preparedNodeCount = _preparedNodeCount;
+        exec._preparedFingerprint = _preparedFingerprint;
+            exec._preparationError = _preparationError;
         return exec;
     }
 
     protected void EnsurePrepared()
     {
-        if (!_prepared || Nodes.Count != _preparedNodeCount)
+        if (!_prepared || ComputeStructureFingerprint() != _preparedFingerprint)
         {
             RefreshLifetimeAnalysis();
-            _prepared = true;
-            _preparedNodeCount = Nodes.Count;
         }
     }
 
@@ -441,13 +441,14 @@ public class ComputationalGraph
         EnsurePrepared();
         if (Interlocked.CompareExchange(ref _executing, 1, 0) != 0)
         {
-            return Fail("Graph is already executing; use a separate execution context for concurrent runs.");
+            return false;
         }
         try
         {
             var exec = new GraphExecution(this, options);
             exec._prepared = _prepared;
-            exec._preparedNodeCount = _preparedNodeCount;
+            exec._preparedFingerprint = _preparedFingerprint;
+            exec._preparationError = _preparationError;
             bool ok = exec.RunCore(userInputs, useInitializers, provider);
             CopyFromExecution(exec);
             return ok;
@@ -470,6 +471,7 @@ public class ComputationalGraph
         {
             return Fail("Invalid execution options: {m}.", ex.Message);
         }
+        if (_preparationError is not null) return Fail(_preparationError);
         SeedDeclaredOutputs();
         if (userInputs is ITensor[] uia)
         {
@@ -672,13 +674,14 @@ public class ComputationalGraph
         EnsurePrepared();
         if (Interlocked.CompareExchange(ref _executing, 1, 0) != 0)
         {
-            return Fail("Graph is already executing; use a separate execution context for concurrent runs.");
+            return false;
         }
         try
         {
             var exec = new GraphExecution(this, options);
             exec._prepared = _prepared;
-            exec._preparedNodeCount = _preparedNodeCount;
+            exec._preparedFingerprint = _preparedFingerprint;
+            exec._preparationError = _preparationError;
             bool ok = exec.RunNodeCore(userInputs, nodeLabel, useInitializers, provider);
             CopyFromExecution(exec);
             return ok;
@@ -836,7 +839,108 @@ public class ComputationalGraph
         }
         LastUseIndex = lastUse;
         _prepared = true;
-        _preparedNodeCount = Nodes.Count;
+        _preparedFingerprint = ComputeStructureFingerprint();
+        _preparationError = ValidatePreparation();
+    }
+
+    static string NodeLabel(Node node, int index) =>
+        string.IsNullOrEmpty(node.Name) ? "#" + index : node.Name;
+
+    long ComputeStructureFingerprint()
+    {
+        unchecked
+        {
+            ulong h = 1469598103934665603UL;
+            void MixUlong(ulong v)
+            {
+                h ^= v;
+                h *= 1099511628211UL;
+            }
+            void MixInt(int v) => MixUlong((ulong)(uint)v);
+            void MixString(string? v)
+            {
+                if (v is null)
+                {
+                    MixUlong(0x9E3779B97F4A7C15UL);
+                    return;
+                }
+                MixInt(v.Length);
+                foreach (char c in v) MixUlong((ulong)c);
+            }
+            MixInt(Nodes.Count);
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                var node = Nodes[i];
+                MixString(node.Name);
+                MixInt((int)node.Op);
+                MixString(node.Domain);
+                MixString(node.OpTypeName);
+                if (node.Inputs is null) MixInt(-1);
+                else
+                {
+                    MixInt(node.Inputs.Length);
+                    foreach (var input in node.Inputs) MixString(input);
+                }
+                if (node.Outputs is null) MixInt(-1);
+                else
+                {
+                    MixInt(node.Outputs.Length);
+                    foreach (var output in node.Outputs) MixString(output);
+                }
+            }
+            MixInt(Inputs.Count);
+            foreach (var key in Inputs.Keys) MixString(key);
+            MixInt(Initializers.Count);
+            foreach (var key in Initializers.Keys) MixString(key);
+            MixInt(InputDescs.Count);
+            foreach (var desc in InputDescs) MixString(desc?.Name);
+            MixInt(OutputDescs.Count);
+            foreach (var desc in OutputDescs) MixString(desc?.Name);
+            return (long)h;
+        }
+    }
+
+    string? ValidatePreparation()
+    {
+        var producer = new Dictionary<string, int>(StringComparer.Ordinal);
+        for (int i = 0; i < Nodes.Count; i++)
+        {
+            var outputs = Nodes[i].Outputs;
+            if (outputs is null) continue;
+            foreach (var output in outputs)
+            {
+                if (string.IsNullOrEmpty(output)) continue;
+                if (producer.TryGetValue(output, out var first))
+                {
+                    return "Tensor " + output + " has duplicate producers "
+                        + NodeLabel(Nodes[first], first) + " and " + NodeLabel(Nodes[i], i) + ".";
+                }
+                producer[output] = i;
+            }
+        }
+        for (int i = 0; i < Nodes.Count; i++)
+        {
+            var inputs = Nodes[i].Inputs;
+            if (inputs is null) continue;
+            foreach (var input in inputs)
+            {
+                if (string.IsNullOrEmpty(input)) continue;
+                if (producer.TryGetValue(input, out var pi) && pi >= i)
+                {
+                    return "Tensor " + input + " is consumed by node " + NodeLabel(Nodes[i], i)
+                        + " before its producer " + NodeLabel(Nodes[pi], pi) + ".";
+                }
+            }
+        }
+        foreach (var desc in OutputDescs)
+        {
+            if (desc is null || string.IsNullOrEmpty(desc.Name)) continue;
+            if (producer.ContainsKey(desc.Name)) continue;
+            if (Inputs.ContainsKey(desc.Name)) continue;
+            if (Initializers.ContainsKey(desc.Name)) continue;
+            return "Graph output " + desc.Name + " has no producer, input, or initializer.";
+        }
+        return null;
     }
 
     readonly struct ExecutionPoolScope : IDisposable

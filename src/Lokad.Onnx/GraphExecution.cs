@@ -34,13 +34,13 @@ public sealed class GraphExecution : ComputationalGraph
 
     public override bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider, ExecutionOptions? options)
     {
-        if (options is not null) Options = options;
         if (System.Threading.Interlocked.CompareExchange(ref _executing, 1, 0) != 0)
         {
-            return Fail("Execution context is already executing; use a separate context per concurrent run.");
+            return false;
         }
         try
         {
+            if (options is not null) Options = options;
             EnsurePrepared();
             return RunCore(userInputs, useInitializers, provider);
         }
@@ -49,13 +49,13 @@ public sealed class GraphExecution : ComputationalGraph
 
     public override bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider, ExecutionOptions? options)
     {
-        if (options is not null) Options = options;
         if (System.Threading.Interlocked.CompareExchange(ref _executing, 1, 0) != 0)
         {
-            return Fail("Execution context is already executing; use a separate context per concurrent run.");
+            return false;
         }
         try
         {
+            if (options is not null) Options = options;
             EnsurePrepared();
             return RunNodeCore(userInputs, nodeLabel, useInitializers, provider);
         }

@@ -63,6 +63,10 @@ as planned or a known limitation. This is not a release-readiness claim.
   Resize validates them at its boundary like every other operator, and runs
   reject invalid options at entry before any work starts, including empty graphs.
   Reset after failures that still publish nothing.
+  Preparation fingerprints analyzed structure so same-count edits re-analyze,
+  validates duplicate producers, producer-before-consumer order, and output
+  roots with named fast failures, and overlapping calls are rejected without
+  touching the active options, outputs, or diagnostics.
   LayerNorm and RoPE fusion now check operand order, exported intermediates,
   standard operator domains, supported schemas and proven float dtypes and
   shapes for every matched node including Constants and the surviving node.
@@ -116,10 +120,11 @@ as planned or a known limitation. This is not a release-readiness claim.
   Current diagnostic timings are not a completed release performance gate.
 - Review validation: Release solution build passes with 17 test-analyzer
   warnings; Debug core build passes without warnings. Release tests report
-  **210 tensor passes and 404 backend passes with no failures** and no
+  **210 tensor passes and 410 backend passes with no failures** and no
   skips. Python conformance rerun for the fusion domain, LayerNorm stash,
-  and output-binding repairs, revalidated after the options-propagation fix:
-  and intrinsics modes; single-op differential lane 115 passed with 1
-  xfailed, including 6 seeded LayerNormalization oracle cases; DINOv3
-  frozen references confirmed against native ORT 1.29 on the full-weight
-  asset (mean drift 1.4e-10, worst spot drift 3.3e-07).
+  output-binding, options-propagation, and preparation-concurrency repairs:
+  e5 native lane 9 passed across scalar, SIMD and intrinsics modes;
+  single-op differential lane 115 passed with 1 xfailed, including 6 seeded
+  LayerNormalization oracle cases; DINOv3 frozen references confirmed
+  against native ORT 1.29 on the full-weight asset (mean drift 1.4e-10,
+  worst spot drift 3.3e-07).
