@@ -72,7 +72,7 @@ public class TensorBroadcastTests
             for (int i = 0; i < n; i++) data[i] = (float)rnd.NextDouble();
             var src = new DenseTensor<float>(data, srcDims);
             var dst = new DenseTensor<float>(dstDims);
-            ITensor.Broadcast(src, dst, out var bA, out var bB);
+            INumericTensor.Broadcast(src, dst, out var bA, out var bB);
             var view = bA as BroadcastedTensor<float> ?? (BroadcastedTensor<float>)bB;
             var fast = view.ToDenseTensor().ToArray();
             for (int i = 0; i < fast.Length; i++) Assert.Equal((float)view.GetValue(i), fast[i]);

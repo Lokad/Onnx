@@ -169,8 +169,5 @@ public class TensorOpsDinoTests
         Assert.NotSame(sequence.Items[0], clone.Items[0]);
         Assert.Equal(9, ((Tensor<int>)clone.Items[0])[0]);
 
-        Assert.Throws<NotSupportedException>(() => sequence.Reshape(2));
-        Assert.Throws<NotSupportedException>(() => sequence.ToDenseTensor());
-        Assert.Throws<NotSupportedException>(() => sequence.CloneEmpty<int>());
     }
 }

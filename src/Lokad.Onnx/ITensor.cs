@@ -22,24 +22,8 @@ namespace Lokad.Onnx
 
         ITensor CloneEmpty();
 
-        ITensor CloneEmpty<U>() where U : unmanaged;
-        
-        ITensor Reshape(params int[] shape);
-
-        ITensor Slice(string indices);
-
-        ITensor InsertDim(int dim);
-
-        ITensor RemoveDim(int dim);
-
-        ITensor BroadcastDim(int dim, int size);
-
-        ITensor ToDenseTensor();
-
         Array ToArray();
 
-        ITensor PadLeft() => InsertDim(0);
-        
         object this[params int[] indices]
         {
             get;
@@ -61,7 +45,7 @@ namespace Lokad.Onnx
             if (tensor.ElementType != tensors[0].ElementType) throw new ArgumentException("All tensors must have the same element type.");
         });
         
-        static ITensor[] Broadcast(ITensor inA, ITensor inB)
+        static ITensor[] Broadcast(INumericTensor inA, INumericTensor inB)
         {
             if (inA.Rank == 0 && inB.Rank != 0)
             {
@@ -118,7 +102,7 @@ namespace Lokad.Onnx
             return new[] { outA, outB };
         }
 
-        static bool Broadcast(ITensor x, ITensor y, out ITensor bx, out ITensor by)
+        static bool Broadcast(INumericTensor x, INumericTensor y, out ITensor bx, out ITensor by)
         {
             var b = Broadcast(x, y);
             if (b.Length == 0)
@@ -178,11 +162,36 @@ namespace Lokad.Onnx
             return output;
         }
 
+}
+
+    /// <summary>
+    /// Numeric shape capability for dense-compatible tensors. Sequences are
+    /// tensors for binding and validation but never implement this
+    /// interface: every member below is meaningless without numeric storage.
+    /// </summary>
+    public interface INumericTensor : ITensor
+    {
+        INumericTensor CloneEmpty<U>() where U : unmanaged;
+
+        INumericTensor Reshape(params int[] shape);
+
+        INumericTensor Slice(string indices);
+
+        INumericTensor InsertDim(int dim);
+
+        INumericTensor RemoveDim(int dim);
+
+        INumericTensor BroadcastDim(int dim, int size);
+
+        INumericTensor ToDenseTensor();
+
+        INumericTensor PadLeft() => InsertDim(0);
+
         /// <summary>
         /// Inserts size-1 dimensions at the given axes.
         /// Axes index the output tensor, so negatives resolve against Rank plus the inserted count.
         /// </summary>
-        ITensor Unsqueeze(int[] axes)
+        INumericTensor Unsqueeze(int[] axes)
         {
             Profiler.StartOpStage(OpStage.ValidateArguments);    
             
@@ -206,8 +215,6 @@ namespace Lokad.Onnx
             }
             return Reshape(newshape.ToArray());
         }
-
-        Tensor<T> AsTensor<T>() where T : unmanaged => (Tensor<T>) this;
     }
 }
 

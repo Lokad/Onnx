@@ -271,10 +271,10 @@ class Program
                 Info("Applying softmax to {n}...", o.TensorNameDesc());
                 Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.Softmax().PrintData(false));
             }
-            else if (ro.Softmax && o.Rank == 2 && o.Dims[0] == 1)
+            else if (ro.Softmax && o is INumericTensor num && num.Rank == 2 && num.Dims[0] == 1)
             {
                 Info("Converting {n} to vector and applying softmax...", o.TensorNameDesc());
-                Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", o.RemoveDim(0).Softmax().PrintData(false));
+                Info("{n}:{v}", o.TensorNameDesc() + "-><softmax>", num.RemoveDim(0).Softmax().PrintData(false));
             }
             else
             {

@@ -11,9 +11,9 @@ namespace Lokad.Onnx;
 /// flow through graph bindings, validation and ownership analysis like other
 /// runtime values: Rank is structurally 1, Dims holds the item count and
 /// ElementType is Sequence, all for validation and logging (copy Dims before
-/// mutating; the array is fresh per call). Numeric tensor operations
-/// (reshape, slice, broadcast, densify, typed clones) are unsupported by
-/// design and throw, exactly like descriptor placeholders; use SequenceAt to
+/// mutating; the array is fresh per call). Indexers, Clone and enumeration
+/// are real per-element operations; numeric shape operations live on
+/// INumericTensor, which sequences never implement. Use SequenceAt to
 /// extract elements and per-element ops to compute on them.
 /// </summary>
 public sealed class TensorSequence : ITensor
@@ -49,20 +49,6 @@ public sealed class TensorSequence : ITensor
     public ITensor Clone() => new TensorSequence(items.Select(i => i.Clone()));
 
     public ITensor CloneEmpty() => new TensorSequence();
-
-    public ITensor CloneEmpty<U>() where U : unmanaged => throw new NotSupportedException("CloneEmpty<U> is not supported for sequences.");
-
-    public ITensor Reshape(params int[] shape) => throw new NotSupportedException("Reshape is not supported for sequences.");
-
-    public ITensor Slice(string indices) => throw new NotSupportedException("Slice is not supported for sequences.");
-
-    public ITensor InsertDim(int dim) => throw new NotSupportedException("InsertDim is not supported for sequences.");
-
-    public ITensor RemoveDim(int dim) => throw new NotSupportedException("RemoveDim is not supported for sequences.");
-
-    public ITensor BroadcastDim(int dim, int size) => throw new NotSupportedException("BroadcastDim is not supported for sequences.");
-
-    public ITensor ToDenseTensor() => throw new NotSupportedException("ToDenseTensor is not supported for sequences.");
 
     public Array ToArray() => items.ToArray();
 

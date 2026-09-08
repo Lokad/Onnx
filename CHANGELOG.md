@@ -48,6 +48,7 @@ as planned or a known limitation. This is not a release-readiness claim.
 - Removed the uncalled identity/diagonal/triangle helpers (`Tensor.CreateIdentity/CreateFromDiagonal/GetDiagonal/GetTriangle`); the TODO guard pin drops from five triaged TODOs to two.
 - Centralized the dtype policy on `TensorBase` (element byte size, dense-tensor factory, element-array factory); model materialization and import size/array tables delegate to it with identical values and errors.
 - Removed the throw-only shape-descriptor tensor: graph input/output slots are null markers in a dedicated binding map whose indexer names unbound reads instead of leaking descriptors. Shape metadata stays on the retained input/output declarations.
+- Separated the numeric tensor capability (`INumericTensor`: reshape, slice, dimension mutation, densify, unsqueeze, broadcast operands) from tensor values (`ITensor`); sequences implement only the value side, node dispatch rejects sequence inputs to non-sequence ops explicitly, and the uncalled `AsTensor` default is removed.
 
 ### Fixed
 

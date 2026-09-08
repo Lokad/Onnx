@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using static Lokad.Onnx.MathOps;
 using static Lokad.Onnx.Profiler;
 
-public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
+public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor, INumericTensor
 where T : unmanaged
 {
     /// <summary>

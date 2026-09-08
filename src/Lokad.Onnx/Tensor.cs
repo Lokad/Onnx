@@ -290,7 +290,7 @@ namespace Lokad.Onnx
     /// </summary>
     /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
     [DebuggerDisplay("{PrintShape()}")]
-    public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
+    public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor, INumericTensor
     where T : unmanaged
     {
         internal static T Zero
@@ -1565,17 +1565,17 @@ namespace Lokad.Onnx
 
         ITensor ITensor.CloneEmpty() => CloneEmpty();
 
-        ITensor ITensor.CloneEmpty<U>() => CloneEmpty<U>();
+        INumericTensor INumericTensor.CloneEmpty<U>() => CloneEmpty<U>();
 
-        ITensor ITensor.Reshape(int[] shape) => this.Reshape(shape);
+        INumericTensor INumericTensor.Reshape(int[] shape) => this.Reshape(shape);
 
-        ITensor ITensor.InsertDim(int dim) => this.InsertDim(dim);
+        INumericTensor INumericTensor.InsertDim(int dim) => this.InsertDim(dim);
 
-        ITensor ITensor.RemoveDim(int dim) => this.RemoveDim(dim);
+        INumericTensor INumericTensor.RemoveDim(int dim) => this.RemoveDim(dim);
 
-        ITensor ITensor.BroadcastDim(int dim, int size) => this.BroadcastDim(dim, size);
+        INumericTensor INumericTensor.BroadcastDim(int dim, int size) => this.BroadcastDim(dim, size);
 
-        ITensor ITensor.ToDenseTensor() => this.ToDenseTensor();
+        INumericTensor INumericTensor.ToDenseTensor() => this.ToDenseTensor();
 
         ITensor  ITensor.this[params object[] indices]
         {
@@ -1597,7 +1597,7 @@ namespace Lokad.Onnx
 
         void ITensor.SetValue(int index, object? value) => this.SetValue(index, value is null ? default(T) : (T)value);
 
-        ITensor ITensor.Slice(string indices) => new TensorSlice<T>(this, ExpandEllipsis(SliceIndex.ParseSlices(indices)));
+        INumericTensor INumericTensor.Slice(string indices) => new TensorSlice<T>(this, ExpandEllipsis(SliceIndex.ParseSlices(indices)));
 
         Array ITensor.ToArray() => this.ToArray();
         /*

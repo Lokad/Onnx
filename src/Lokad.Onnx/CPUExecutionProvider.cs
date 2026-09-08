@@ -299,7 +299,7 @@ public class CPUExecutionProvider
         if (opts.Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
-            X = X.ToDenseTensor();
+            X = ((INumericTensor)X).ToDenseTensor();
         }
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
@@ -388,8 +388,8 @@ public class CPUExecutionProvider
         if (opts.Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
-            A = A.ToDenseTensor();
-            B = B.ToDenseTensor();
+            A = ((INumericTensor)A).ToDenseTensor();
+            B = ((INumericTensor)B).ToDenseTensor();
         }
         switch (A.ElementType)
         {
@@ -506,7 +506,7 @@ public class CPUExecutionProvider
         if (opts.Optimization == OptimizationMode.Speed)
         {
             Profiler.StartOpStage(OpStage.Copy);
-            A = A.ToDenseTensor();
+            A = ((INumericTensor)A).ToDenseTensor();
         }
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
@@ -583,7 +583,7 @@ public class CPUExecutionProvider
             if (sourceType.IsGenericType && sourceType.GetGenericTypeDefinition() == typeof(DenseTensor<>)) return source.Clone();
             try
             {
-                var dense = source.ToDenseTensor();
+                var dense = ((INumericTensor)source).ToDenseTensor();
                 if (!ReferenceEquals(dense, source)) return dense;
             }
             catch
@@ -1104,7 +1104,7 @@ public class CPUExecutionProvider
             axes = ToInt32Saturating(axes);
         }
         var _axes = ((Tensor<int>) axes).ToArray();
-        return Success(op, data.Unsqueeze(_axes));
+        return Success(op, ((INumericTensor)data).Unsqueeze(_axes));
     }
 
     public static OpResult Unsqueeze(ITensor? data, int[] axes, ExecutionOptions? options)
@@ -1113,7 +1113,7 @@ public class CPUExecutionProvider
         if (data is null) return MissingInput(op, nameof(data));
         if (axes is null) return MissingInput(op, nameof(axes));
         (options ?? ExecutionOptions.Default).Validated();
-        return Success(op, data.Unsqueeze(axes));
+        return Success(op, ((INumericTensor)data).Unsqueeze(axes));
     }
 
     public static OpResult ReduceSum(ITensor? data, ITensor? axes, int? _keep_dims, int? noop_with_empty_axes, ExecutionOptions? options)
@@ -1186,7 +1186,7 @@ public class CPUExecutionProvider
         var tensorOptions = opts.Tensor;
         if (opts.Optimization == OptimizationMode.Speed)
         {
-            input = input.ToDenseTensor();
+            input = ((INumericTensor)input).ToDenseTensor();
         }
         switch (input.ElementType)
         {
@@ -1374,7 +1374,7 @@ public class CPUExecutionProvider
             }
             dims = dims.Where((d, i) => !ax.Contains(i)).ToArray();
         }
-        return Success(op, data.Reshape(dims).ToDenseTensor());
+        return Success(op, ((INumericTensor)data).Reshape(dims).ToDenseTensor());
     }
 
     /// <summary>
@@ -1631,7 +1631,7 @@ public class CPUExecutionProvider
                 // Dropping a non-singleton axis cannot preserve the element
                 // count, so the native engine fails there too (ORT 1.29).
                 if (chunk.Dims[ax] != 1) return WrongInputShape(op, nameof(split), input, "Cannot drop a non-singleton split axis with keepdims=0.");
-                chunk = chunk.Reshape(chunk.Dims.Where((d, i) => i != ax).ToArray()).ToDenseTensor();
+                chunk = ((INumericTensor)chunk).Reshape(chunk.Dims.Where((d, i) => i != ax).ToArray()).ToDenseTensor();
             }
             items.Add(chunk);
             start += length;

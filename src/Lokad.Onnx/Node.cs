@@ -172,6 +172,16 @@ public partial struct Node
         {
             return Failure(Op, rejection ?? "The operator " + DescribeOperator() + " is not supported by the backend.");
         }
+        if (Inputs is not null && Op != OpType.SequenceAt && Op != OpType.Identity)
+        {
+            for (int i = 0; i < Inputs.Length; i++)
+            {
+                if (InputTensor(graph, i) is TensorSequence seq)
+                {
+                    return WrongInputType(Op, Inputs[i], "Input must not be a sequence.", seq);
+                }
+            }
+        }
         return Op switch
     {
         OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), GetReshapeAllowZero(), opt),

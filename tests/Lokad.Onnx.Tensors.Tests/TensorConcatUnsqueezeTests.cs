@@ -23,7 +23,7 @@ public class TensorConcatUnsqueezeTests
     [Fact]
     public void CanUnsqueeze()
     {
-        var X = (ITensor) DenseTensor<int>.Ones(3, 4, 5);
+        var X = (INumericTensor) DenseTensor<int>.Ones(3, 4, 5);
         var tX = X.Unsqueeze(new int[] { 1 });
         Assert.Equal(new[] { 3, 1, 4, 5 }, ((Tensor<int>)tX).Dimensions.ToArray());
         Assert.Equal(1, ((Tensor<int>)tX)[2, 0, 3, 4]);
@@ -34,10 +34,10 @@ public class TensorConcatUnsqueezeTests
     {
         var d = DenseTensor<float>.OfShape(2, 3);
         for (int i = 0; i < 2; i++) for (int j = 0; j < 3; j++) d[i, j] = i * 10 + j;
-        var u = (Tensor<float>)((ITensor)d).Unsqueeze(new int[] { -1 });
+        var u = (Tensor<float>)((INumericTensor)d).Unsqueeze(new int[] { -1 });
         Assert.Equal(new[] { 2, 3, 1 }, u.Dimensions.ToArray());
         Assert.Equal(12f, u[1, 2, 0], 5);
-        var u2 = (Tensor<float>)((ITensor)d).Unsqueeze(new int[] { 0, -1 });
+        var u2 = (Tensor<float>)((INumericTensor)d).Unsqueeze(new int[] { 0, -1 });
         Assert.Equal(new[] { 1, 2, 3, 1 }, u2.Dimensions.ToArray());
         Assert.Equal(12f, u2[0, 1, 2, 0], 5);
     }
@@ -77,7 +77,7 @@ public class TensorConcatUnsqueezeTests
     [Fact]
     public void CanUnsqueezeRejectsInvalidAxes()
     {
-        var data = (ITensor)DenseTensor<float>.OfShape(2, 3);
+        var data = (INumericTensor)DenseTensor<float>.OfShape(2, 3);
         Assert.Throws<ArgumentException>(() => data.Unsqueeze(new int[] { -5 }));
         Assert.Throws<ArgumentException>(() => data.Unsqueeze(new int[] { 4 }));
         Assert.Throws<ArgumentException>(() => data.Unsqueeze(new int[] { 2, -2 }));
