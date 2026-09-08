@@ -57,6 +57,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   input routing, and supported Expand/Resize shape handling.
 - Added explicit pool ownership to protect caller inputs, constants and live
   aliases, plus destination validation and dirty-buffer regression coverage.
+  Graph runs re-seed output bindings from the immutable output declarations,
+  fail naming any declared output left unresolved, and keep retrying without
+  Reset after failures that still publish nothing.
   LayerNorm and RoPE fusion now check operand order, exported intermediates,
   standard operator domains, supported schemas and proven float dtypes and
   shapes for every matched node including Constants and the surviving node.
@@ -110,10 +113,10 @@ as planned or a known limitation. This is not a release-readiness claim.
   Current diagnostic timings are not a completed release performance gate.
 - Review validation: Release solution build passes with 17 test-analyzer
   warnings; Debug core build passes without warnings. Release tests report
-  **210 tensor passes and 382 backend passes with no failures** and no
-  skips. Python conformance rerun for the fusion domain repair: e5 native
-  lane 9 passed across scalar, SIMD and intrinsics modes; single-op
-  differential lane 115 passed with 1 xfailed, including 6 seeded
-  LayerNormalization oracle cases; DINOv3 frozen references confirmed
-  against native ORT 1.29 on the full-weight asset (mean drift 1.4e-10,
-  worst spot drift 3.3e-07).
+  **210 tensor passes and 391 backend passes with no failures** and no
+  skips. Python conformance rerun for the fusion domain, LayerNorm stash,
+  and output-binding repairs: e5 native lane 9 passed across scalar, SIMD
+  and intrinsics modes; single-op differential lane 115 passed with 1
+  xfailed, including 6 seeded LayerNormalization oracle cases; DINOv3
+  frozen references confirmed against native ORT 1.29 on the full-weight
+  asset (mean drift 1.4e-10, worst spot drift 3.3e-07).

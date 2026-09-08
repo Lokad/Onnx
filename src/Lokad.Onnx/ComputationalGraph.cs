@@ -462,6 +462,7 @@ public class ComputationalGraph
         LastFailedNodeOp = null;
         LastErrorCause = null;
         LastProfile = null;
+        SeedDeclaredOutputs();
         if (userInputs is ITensor[] uia)
         {
             if (!ResolveInputs(uia, useInitializers))
@@ -573,9 +574,31 @@ public class ComputationalGraph
                 Outputs[name] = init.Clone();
             }
         }
+        foreach (var desc in OutputDescs)
+        {
+            if (string.IsNullOrEmpty(desc.Name)) continue;
+            if (!Outputs.TryGetValue(desc.Name, out var bound) || bound is TensorDesc)
+            {
+                return Fail("Graph output {n} was not resolved by this run.", desc.Name);
+            }
+        }
         LastProfile = profilerScope.Profile;
         op.Complete();
         return true;
+    }
+
+    /// <summary>
+    /// Re-seeds the output bindings from the immutable output declarations so
+    /// every run resolves names even after a failure cleared the map. Declared
+    /// keys get fresh dataless descriptors; anything else is left untouched.
+    /// </summary>
+    void SeedDeclaredOutputs()
+    {
+        foreach (var vp in OutputDescs)
+        {
+            if (string.IsNullOrEmpty(vp.Name)) continue;
+            Outputs[vp.Name] = Model.ToShapeTensor(vp);
+        }
     }
 
     /// <summary>
@@ -741,7 +764,12 @@ public class ComputationalGraph
         {
             IntermediateOutputs[o] = null;
         }
-        Outputs = OutputDescs.ToDictionary(vp => vp.Name, vp => Model.ToShapeTensor(vp));
+        Outputs.Clear();
+        foreach (var vp in OutputDescs)
+        {
+            if (string.IsNullOrEmpty(vp.Name)) continue;
+            Outputs.Add(vp.Name, Model.ToShapeTensor(vp));
+        }
         if (gc)
         {
             GC.Collect(2, GCCollectionMode.Forced, true, true);
