@@ -1908,8 +1908,8 @@ where T : unmanaged
                 throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
             }
             var z = DenseTensor<int>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            var cbx = RequireContiguousInt(bx, nameof(bx));
-            var cby = RequireContiguousInt(by, nameof(by));
+            var cbx = RequireContiguous(bx, nameof(bx));
+            var cby = RequireContiguous(by, nameof(by));
             bx = cbx;
             by = cby;
             var batchDims = bx.Dimensions[0..^2];
@@ -2002,9 +2002,9 @@ where T : unmanaged
 
     static void RunBatchedFloatMatMul(Tensor<float> bx, Tensor<float> by, Tensor<float> z, TensorExecutionOptions options)
     {
-        bx = RequireContiguousFloat(bx, nameof(bx));
-        by = RequireContiguousFloat(by, nameof(by));
-        z = RequireContiguousFloat(z, nameof(z));
+        bx = RequireContiguous(bx, nameof(bx));
+        by = RequireContiguous(by, nameof(by));
+        z = RequireContiguous(z, nameof(z));
         var batchDims = bx.Dimensions[0..^2];
         var m = bx.Dimensions[^2];
         var n = bx.Dimensions[^1];
@@ -2226,8 +2226,8 @@ where T : unmanaged
 
             StartOpStage(OpStage.Math);
             var z = DenseTensor<double>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            var cbx = RequireContiguousDouble(bx, nameof(bx));
-            var cby = RequireContiguousDouble(by, nameof(by));
+            var cbx = RequireContiguous(bx, nameof(bx));
+            var cby = RequireContiguous(by, nameof(by));
             bx = cbx;
             by = cby;
             var batchDims = bx.Dimensions[0..^2];
@@ -3403,29 +3403,9 @@ where T : unmanaged
         return tensor.strides.SequenceEqual(ArrayUtilities.GetStrides(tensor.dimensions));
     }
 
-    static DenseTensor<float> RequireContiguousFloat(Tensor<float> t, string name)
+    static DenseTensor<TElement> RequireContiguous<TElement>(Tensor<TElement> t, string name) where TElement : unmanaged
     {
-        if (t is DenseTensor<float> d && !d.IsReversedStride && HasStandardStrides(d))
-        {
-            if (d.Buffer.Length != (int)d.Length) throw new ArgumentException(name + " backing length does not match shape.");
-            return d;
-        }
-        return t.ToDenseTensor();
-    }
-
-    static DenseTensor<int> RequireContiguousInt(Tensor<int> t, string name)
-    {
-        if (t is DenseTensor<int> d && !d.IsReversedStride && HasStandardStrides(d))
-        {
-            if (d.Buffer.Length != (int)d.Length) throw new ArgumentException(name + " backing length does not match shape.");
-            return d;
-        }
-        return t.ToDenseTensor();
-    }
-
-    static DenseTensor<double> RequireContiguousDouble(Tensor<double> t, string name)
-    {
-        if (t is DenseTensor<double> d && !d.IsReversedStride && HasStandardStrides(d))
+        if (t is DenseTensor<TElement> d && !d.IsReversedStride && HasStandardStrides(d))
         {
             if (d.Buffer.Length != (int)d.Length) throw new ArgumentException(name + " backing length does not match shape.");
             return d;
