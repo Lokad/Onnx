@@ -204,6 +204,76 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
+        /// Fixed storage size in bytes for element types with one, or -1 for
+        /// variable-size (String) and unsupported types. Single home for the
+        /// byte-size table used by import validation and external-data reads.
+        /// </summary>
+        public static int ElementByteSize(TensorElementType elementType) => elementType switch
+        {
+            TensorElementType.Bool => 1,
+            TensorElementType.Int8 => 1,
+            TensorElementType.UInt8 => 1,
+            TensorElementType.Int16 => 2,
+            TensorElementType.UInt16 => 2,
+            TensorElementType.Float16 => 2,
+            TensorElementType.BFloat16 => 2,
+            TensorElementType.Int32 => 4,
+            TensorElementType.UInt32 => 4,
+            TensorElementType.Float => 4,
+            TensorElementType.Int64 => 8,
+            TensorElementType.UInt64 => 8,
+            TensorElementType.Double => 8,
+            TensorElementType.Complex64 => 8,
+            TensorElementType.Complex128 => 16,
+            _ => -1,
+        };
+
+        /// <summary>
+        /// Allocates an empty dense element array for the element type.
+        /// Throws NotSupportedException for types with no dense representation.
+        /// </summary>
+        public static Array CreateElementArray(TensorElementType elementType, int length) => elementType switch
+        {
+            TensorElementType.Bool => new bool[length],
+            TensorElementType.Int8 => new sbyte[length],
+            TensorElementType.UInt8 => new byte[length],
+            TensorElementType.Int16 => new short[length],
+            TensorElementType.UInt16 => new ushort[length],
+            TensorElementType.Float16 => new Float16[length],
+            TensorElementType.BFloat16 => new BFloat16[length],
+            TensorElementType.Int32 => new int[length],
+            TensorElementType.UInt32 => new uint[length],
+            TensorElementType.Float => new float[length],
+            TensorElementType.Int64 => new long[length],
+            TensorElementType.UInt64 => new ulong[length],
+            TensorElementType.Double => new double[length],
+            _ => throw new NotSupportedException($"Unsupported element type {elementType}; no dense array representation."),
+        };
+
+        /// <summary>
+        /// Materializes a dense tensor of the element type over caller-owned
+        /// data. Throws ArgumentException for types with no dense tensor form.
+        /// </summary>
+        public static ITensor CreateDenseTensor(TensorElementType elementType, Array data, int[] dims) => elementType switch
+        {
+            TensorElementType.Bool => new DenseTensor<bool>(memory: (bool[])data, dims),
+            TensorElementType.Int8 => new DenseTensor<sbyte>(memory: (sbyte[])data, dims),
+            TensorElementType.UInt8 => new DenseTensor<byte>(memory: (byte[])data, dims),
+            TensorElementType.Int16 => new DenseTensor<short>(memory: (short[])data, dims),
+            TensorElementType.UInt16 => new DenseTensor<ushort>(memory: (ushort[])data, dims),
+            TensorElementType.Int32 => new DenseTensor<int>(memory: (int[])data, dims),
+            TensorElementType.UInt32 => new DenseTensor<uint>(memory: (uint[])data, dims),
+            TensorElementType.Int64 => new DenseTensor<long>(memory: (long[])data, dims),
+            TensorElementType.UInt64 => new DenseTensor<ulong>(memory: (ulong[])data, dims),
+            TensorElementType.Float => new DenseTensor<float>(memory: (float[])data, dims),
+            TensorElementType.Double => new DenseTensor<double>(memory: (double[])data, dims),
+            TensorElementType.Float16 => new DenseTensor<Float16>(memory: (Float16[])data, dims),
+            TensorElementType.BFloat16 => new DenseTensor<BFloat16>(memory: (BFloat16[])data, dims),
+            TensorElementType.Complex64 => new DenseTensor<Complex>(memory: (Complex[])data, dims),
+            _ => throw new ArgumentException($"Cannot convert model tensor of element type {elementType}."),
+        };
+
+        /// <summary>
         /// Query TensorTypeInfo using this Tensor type
         /// </summary>
         /// <returns></returns>

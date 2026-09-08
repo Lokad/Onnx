@@ -92,25 +92,7 @@ public static class ProtoConversions
         /// </summary>
         ulong? ExpectedByteCount(TensorProto tp)
         {
-            int size = (TensorElementType)tp.DataType switch
-            {
-                TensorElementType.Bool => 1,
-                TensorElementType.Int8 => 1,
-                TensorElementType.UInt8 => 1,
-                TensorElementType.Int16 => 2,
-                TensorElementType.UInt16 => 2,
-                TensorElementType.Float16 => 2,
-                TensorElementType.BFloat16 => 2,
-                TensorElementType.Int32 => 4,
-                TensorElementType.UInt32 => 4,
-                TensorElementType.Float => 4,
-                TensorElementType.Int64 => 8,
-                TensorElementType.UInt64 => 8,
-                TensorElementType.Double => 8,
-                TensorElementType.Complex64 => 8,
-                TensorElementType.Complex128 => 16,
-                _ => -1,
-            };
+            int size = TensorBase.ElementByteSize((TensorElementType)tp.DataType);
             if (size < 0) return null;
             try
             {
@@ -196,23 +178,7 @@ public static class ProtoConversions
             throw new InvalidOperationException($"Tensor {tp.Name} does not reference external data.");
         var segment = GetExternalSegment(tp, baseDirectory);
         var elementType = (TensorElementType)tp.DataType;
-        int size = elementType switch
-        {
-            TensorElementType.Bool => 1,
-            TensorElementType.Int8 => 1,
-            TensorElementType.UInt8 => 1,
-            TensorElementType.Int16 => 2,
-            TensorElementType.UInt16 => 2,
-            TensorElementType.Float16 => 2,
-            TensorElementType.BFloat16 => 2,
-            TensorElementType.Int32 => 4,
-            TensorElementType.UInt32 => 4,
-            TensorElementType.Float => 4,
-            TensorElementType.Int64 => 8,
-            TensorElementType.UInt64 => 8,
-            TensorElementType.Double => 8,
-            _ => -1,
-        };
+        int size = TensorBase.ElementByteSize(elementType);
         ulong count = 0;
         bool direct = size > 0;
         if (direct)
@@ -242,23 +208,7 @@ public static class ProtoConversions
         if (count > int.MaxValue / (ulong)size || count * (ulong)size != segment.Length)
             throw new InvalidOperationException($"Tensor {tp.Name} references {segment.Length} external bytes but its shape needs {count * (ulong)size}.");
         int length = (int)count;
-        Array data = elementType switch
-        {
-            TensorElementType.Bool => new bool[length],
-            TensorElementType.Int8 => new sbyte[length],
-            TensorElementType.UInt8 => new byte[length],
-            TensorElementType.Int16 => new short[length],
-            TensorElementType.UInt16 => new ushort[length],
-            TensorElementType.Float16 => new Lokad.Onnx.Float16[length],
-            TensorElementType.BFloat16 => new Lokad.Onnx.BFloat16[length],
-            TensorElementType.Int32 => new int[length],
-            TensorElementType.UInt32 => new uint[length],
-            TensorElementType.Float => new float[length],
-            TensorElementType.Int64 => new long[length],
-            TensorElementType.UInt64 => new ulong[length],
-            TensorElementType.Double => new double[length],
-            _ => throw new NotSupportedException($"Tensor {tp.Name} has unsupported element type {elementType} and cannot be imported."),
-        };
+        Array data = TensorBase.CreateElementArray(elementType, length);
         using var stream = new System.IO.FileStream(segment.Path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite, 1 << 16, System.IO.FileOptions.SequentialScan);
         System.Span<byte> bytes = data switch
         {

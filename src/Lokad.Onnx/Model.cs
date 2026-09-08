@@ -90,25 +90,9 @@ public class Model
 
     public static ITensor ToTensor(OnnxTensor tp)
     {
-        var dims = tp.Dims.ToArray();
-        switch (tp.ElementType)
-        {
-            case TensorElementType.Bool: return new DenseTensor<bool>(memory: (bool[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.Int8: return new DenseTensor<sbyte>(memory: (sbyte[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.UInt8: return new DenseTensor<byte>(memory: (byte[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.Int16: return new DenseTensor<short>(memory: (short[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.UInt16: return new DenseTensor<ushort>(memory: (ushort[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.Int32: return new DenseTensor<int>(memory: (int[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.UInt32: return new DenseTensor<uint>(memory: (uint[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.Int64: return new DenseTensor<long>(memory: (long[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.UInt64: return new DenseTensor<ulong>(memory: (ulong[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.Float: return new DenseTensor<float>(memory: (float[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.Double: return new DenseTensor<double>(memory: (double[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.Float16: return new DenseTensor<Float16>(memory: (Float16[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.BFloat16: return new DenseTensor<BFloat16>(memory: (BFloat16[])tp.Data, dims) { Name = tp.Name };
-            case TensorElementType.Complex64: return new DenseTensor<Complex>(memory: (Complex[])tp.Data, dims) { Name = tp.Name };
-            default: throw new ArgumentException($"Cannot convert model tensor of element type {tp.ElementType}.");
-        }
+        var tensor = TensorBase.CreateDenseTensor(tp.ElementType, tp.Data, tp.Dims.ToArray());
+        tensor.Name = tp.Name;
+        return tensor;
     }
 
     /// <summary>
