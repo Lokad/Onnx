@@ -10,9 +10,10 @@ for the Lokad-vs-ORT model table below (local models only, nothing downloaded).
 
 ## Model level: Lokad vs Microsoft.ML.OnnxRuntime 1.23.2 (refreshed 2026-09-07)
 
-Host LOKAD-0399, FMA. Bench harness: 3 warmup + 7 timed runs per engine,
-`graph.Reset()` between Lokad runs, first-output cross-check (all match ORT
-to 5 decimals, so the wiring is sound and the gap is pure speed).
+Host LOKAD-0399, FMA. Bench harness (current): interleaved timed runs per engine measuring execution only,
+full-output cross-check outside timing (max rel diff order 1e-6, so the gaps
+below are speed). The table below is the 2026-09-07 snapshot taken with the
+previous first-output harness; treat numbers as historical.
 
 | case | Lokad best | Lokad median | ORT best | ORT median | gap (best) |
 |---|---|---|---|---|---|
@@ -24,20 +25,19 @@ to 5 decimals, so the wiring is sound and the gap is pure speed).
 | gpt2-4tok | 239.3ms | 286.2ms | 9.0ms | 14.5ms | ~27x |
 
 Two systematic handicaps explain most of it, in order: ORT threads every
-MatMul/Softmax across all cores while Lokad runs one thread (R1/R2), and
-ORT packs MatMul panels while Lokad streams B from cache (packing assessed,
-no win on L2 shapes). The remainder is kernel depth (vectorized exp, MLAS
-rational erf) plus per-node framework overhead.
+MatMul/Softmax across all cores while Lokad runs one thread, and ORT packs
+MatMul panels while Lokad streams B from cache (packing assessed, no win on
+L2 shapes). Shipped since: portable ExpVector and MLAS rational erf. The
+remainder is kernel tuning plus per-node framework overhead.
 
-ResNet50 (~199x) is the outlier and the honest Conv story: the Conv kernel
-is a direct loop with no im2col/GEMM lowering, no packing and no threading,
+ResNet50 (~199x) is the outlier and the honest Conv story: Conv lowers
+through im2col into pooled scratch plus GEMM, without packing or threading,
 against ORT's fully tuned kernels. GPT-2 (~27x) rides the same MatMul and
-framework handicaps as the other transformer models. First-output checks
-match ORT to 5 decimals on all six cases, so every gap below is pure speed.
+framework handicaps as the other transformer models. Full-output validation bounds every gap below to numerics; the gaps are speed.
 
 Note: CLI `--profile` runs read 2-4x slower than these numbers (e5-8tok
 127ms) because per-node profiler stages dominate small graphs; that cost is
-instrumentation, not inference, and is R6 material.
+instrumentation, not inference.
 
 ## Op microbenchmarks (`lonnx benchmark ops`, 2026-09-05, R15b rows 2026-09-07)
 
@@ -64,9 +64,15 @@ Shapes follow the model profiles (attention batches, 257x384 DINO rows,
 | Split 4x12x2304 3-way | 33.4us | - | - |
 | GlobalAveragePool 1x256x14x14 | 22.4us | - | - |
 
-Reads: Erf/Gelu barely move with SIMD because scalar `exp` dominates (R4
-covers both); Softmax on DINO-size attention (1.8ms) wants vectorized exp
-(R3); Gather allocates ~2.4MB for a 46KB result, suspicious and queued in
-R6; LayerNorm still accumulates in double.
+Reads (historical, predate the shipped ExpVector/erf work): Erf/Gelu barely
+moved with SIMD while scalar `exp` dominated; Softmax on DINO-size attention
+(1.8ms) has a vectorized exp path now. The 2.4MB Gather figure predates the
+block-copy densify work and needs re-measurement. LayerNorm still accumulates
+in double.
 
-R15b reads (2026-09-07): both Conv shapes cost ~13ms for ~30M MACs (direct loop, no lowering/packing/threading); Gemm allocates 2x its output (MatMul2D temp P plus bias-fold Y, fuse candidate); Tanh is scalar MathF at 55us for 12k elements (ExpVector-based vectorization queued, ~3-4x available); Split/GAP allocate exactly their outputs.
+R15b reads (2026-09-07, historical): both Conv shapes cost ~13ms for ~30M MACs
+(direct loop at the time; im2col lowering shipped since, still no
+packing/threading); the Gemm 2x-output allocation figure predates the
+single-pass Gemm work; Tanh is scalar MathF at 55us for 12k elements
+(ExpVector-based vectorization queued, ~3-4x available); Split/GAP allocate
+exactly their outputs.

@@ -10,7 +10,7 @@
     <RootNamespace>Lokad.Onnx</RootNamespace>
     <PackageId>Lokad.Onnx</PackageId>
     <Title>Lokad.Onnx</Title>
-    <Description>100% managed-code ONNX inference backend for .NET: tensors, CPU execution provider, text and image helpers, and a CLI for inspection, inference, and benchmarks.</Description>
+    <Description>100% managed-code ONNX inference for .NET: tensor types and kernels, file-order graph execution over a CPU provider, and transparent buffer pooling.</Description>
     <Company>Lokad</Company>
     <Authors>Lokad</Authors>
     <AssemblyVersion>0.2.0</AssemblyVersion>
@@ -19,7 +19,7 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>0.2.0 is the breaking .NET 10-only release: net10.0 floor, Satsuma and pythonnet bridge removals, MatMul wrong-answer fixes, offline tokenizer loading, immutable execution options, and the native e5 conformance gate.</PackageReleaseNotes>
+    <PackageReleaseNotes>0.2.0 is the breaking .NET 10-only release: net10.0 floor, dependency-free core assembly, MatMul wrong-answer fixes, immutable execution options, pooled dense-float outputs, and the native e5 conformance gate. See CHANGELOG.md for the full record.</PackageReleaseNotes>
     <PackageTags>onnx;inference;machine-learning;tensors;dotnet</PackageTags>
     <PackageProjectUrl>https://github.com/Lokad/Onnx</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Lokad/Onnx.git</RepositoryUrl>

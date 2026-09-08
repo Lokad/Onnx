@@ -22,11 +22,13 @@ Native e5 conformance: `eng/test-e5.ps1` (see `tests/e5/README.md` once Commit 0
 
 ## Supported ops
 
-`CPUExecutionProvider.SupportedOps` currently holds 28 values: Reshape, Add, Div, Sub, Mul, Pow, Conv, Relu, MaxPool, MatMul, Sqrt, Erf, Transpose, Constant, Cast, Concat, Shape, Gather, Slice, Equal, Where, Expand, Resize, Unsqueeze, ReduceSum, ReduceMean, ReduceMax, Softmax. Every listed op needs at least one assertion-complete C# happy path plus non-happy paths (Commits 09-10).
+`CPUExecutionProvider.SupportedOps` is the supported surface (47 entries at last count; the code list is authoritative). It starts: Reshape, Add, Div, Sub, Mul, Pow, Conv, Relu, MaxPool, MatMul, Sqrt, Erf, Transpose, Constant, Cast, Concat, Shape, Gather, Slice, Equal, Where, Expand, Resize, Unsqueeze, ReduceSum, ReduceMean, ReduceMax, Softmax. Every listed op needs at least one assertion-complete C# happy path plus non-happy paths (Commits 09-10).
 
-## Python migration ledger
+## Python migration ledger (historical)
 
-Legacy suite under `tests/python` exercises .NET through pythonnet and is retired file by file in Commits 08-10. Static inventory below (`pytest --collect-only` capture pending a working Python env). Each row names the C# successor or the commit that owns it.
+Commit numbers below refer to the retired pre-review roadmap; every row has landed and the legacy suite is retired. Kept as provenance for the C# successor of each old Python test.
+
+Legacy suite under `tests/python` exercised .NET through pythonnet and was retired file by file. Static inventory below (`pytest --collect-only` capture pending a working Python env). Each row names the C# successor or the commit that owns it.
 
 ### test_tensors.py -> Commit 08
 
@@ -79,15 +81,16 @@ Grouped by family; cases for ops outside SupportedOps retire with rationale (op 
 
 ## Memory measurement (buffer-reuse track)
 
-GC allocation totals (`GC.GetAllocatedBytesForCurrentThread`) overstate tensor
-traffic by roughly an order of magnitude here: per-op replay attributes ~177 MB
-to a 30-token e5 run whose true output bytes are ~30 MB (max live tensor is
-46 KB). The gap is per-op framework overhead shared by every execution path, so
-GC deltas cannot attribute or verify pooling work. Use true-byte accounting:
+GC allocation bytes are real managed allocations: boxes, temporary arrays and
+orchestration alongside payload. A per-op replay attributes ~177 MB to a 30-token
+e5 run whose true output bytes are ~30 MB (max live tensor 46 KB); the gap is
+per-op framework overhead shared by every execution path, so GC deltas cannot
+attribute pooling work on their own. Report all relevant measures: GC bytes plus
+true-byte accounting:
 
 - True output bytes per op: replay nodes in file order with exact per-node
-  inputs (see the M4 spike notes in PLAN.md for the ExecuteNode semantics:
-  caller dict plus initializers only, exact count match, initializers excluded)
+  inputs through the tracked `ComputationalGraph.ExecuteNode` API (caller dict
+  plus initializers only, exact count match, initializers excluded)
   and sum `Length x element-size` of each produced output. Deterministic and
   immune to framework overhead.
 - Pool service: `ComputationalGraph.LastPoolAllocatedNewBytes` (fresh) and
@@ -95,10 +98,12 @@ GC deltas cannot attribute or verify pooling work. Use true-byte accounting:
   Current 30-token e5 floor: ~29.8 MB true outputs, ~25.3 MB served from pool,
   ~2.9 MB fresh pool arrays, ~1.6 MB from never-pooled ops.
 
-Procedure (throwaway spike, never committed): build
-`C:/Temp/p3m4alloc/run/run.csproj` (ProjectReferences against `src`, Release),
-then run it with the local e5 model plus tokenizer paths. It prints timed-run
+Procedure (tracked pieces only): drive the per-node replay through
+`ComputationalGraph.ExecuteNode` from a small console referencing `src`
+(Release) with the local e5 model plus tokenizer paths. It prints timed-run
 GC totals with pool counters followed by the per-op true-byte census.
+(Historical precedent: a `C:/Temp` throwaway spike produced the floor numbers
+below; it was never committed.)
 
 Rule for future pooled kernels, learned the hard way: float MatMul kernels
 accumulate into their destination and rely on zeroed outputs, so pooled MatMul
@@ -109,8 +114,8 @@ with a dirty-buffer parity test when it accumulates.
 
 ## Model-oracle bisection procedure
 
-All model-level tests share one compact-oracle pattern: exact shape, no NaN/Infinity, mean within 1e-6 plus strided spot values within 1e-4/1e-3 of a frozen native ONNX Runtime reference (MNIST instead asserts exact logits to 4 decimals plus argmax behavior). Reference values are generated with the ORT version recorded in PLAN.md, never checked in as tensors. When an oracle drifts:
+All model-level tests share one compact-oracle pattern: exact shape, no NaN/Infinity, mean within 1e-6 plus strided spot values within 1e-4/1e-3 of a frozen native ONNX Runtime reference (MNIST instead asserts exact logits to 4 decimals plus argmax behavior). Reference values are generated with native ORT 1.29 (see tests/Lokad.Onnx.Backend.Tests/ModelManifest.json for per-model provenance), never checked in as tensors. When an oracle drifts:
 
 - Reproduce with a fixed input (0.5-filled tensor of the model input shape; e5 uses the frozen tests/e5/cases.json).
-- Bisect with node-prefix cuts: run the graph truncated at successive nodes (a cut stack, e.g. the DINOv3 RoPE cut stack) in both Lokad.Onnx and native ONNX Runtime through a dtype-generic probe, comparing intermediate tensors to find the first diverging node. Precedent is a throwaway harness (cutrun2.py plus a dtype-generic probe, onnxruntime 1.29), never committed.
+- Bisect with node-prefix cuts: run the graph truncated at successive nodes (a cut stack, e.g. the DINOv3 RoPE cut stack) in both Lokad.Onnx and native ONNX Runtime through a dtype-generic probe, comparing intermediate tensors to find the first diverging node. Durable equivalents: the tests/opfuzz corpus plus the e5 lane; historical precedent is an uncommitted cut-run harness (onnxruntime 1.29).
 - Root-cause at op level and add a direct op-level regression test alongside the refreshed oracle. Precedent: ITensor.Unsqueeze normalized negative axes against the input rank instead of the output rank, so a downstream Concat read wrong cells (end-to-end mean abs err 0.085); fixed with the output-rank normalization plus CanUnsqueezeNegativeAxis.

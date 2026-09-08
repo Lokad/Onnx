@@ -12,7 +12,16 @@
 
 ## Numeric contracts
 
-- Kernels are correct within float32 accumulation noise; differential gates pin this (see 	ests/README.md, ng/test-e5.ps1, ng/test-opfuzz.ps1).
+- Kernels are correct within float32 accumulation noise; differential gates pin this (see tests/README.md, eng/test-e5.ps1, eng/test-opfuzz.ps1).
 - Bitwise identity is promised only for repeated runs at a fixed mode and thread count (scalar repeats additionally need DOTNET_JitOSR=0, as pinned in the e5 gate). Never assert bitwise identity across modes or degrees of parallelism; tolerances are the bar.
-- The op list in CPUExecutionProvider.SupportedOps is the supported surface; every listed op has assertion-complete C# coverage plus the e5/DINO model oracles.
+- The op list in CPUExecutionProvider.SupportedOps is the supported surface (47 entries; the code list is authoritative). Every listed op has C# happy-path coverage with non-happy paths across the operator families, the opfuzz lane pins 17 single-op shapes differentially against native ORT, and the e5/DINO/ResNet/GPT-2 oracles pin end-to-end numerics.
+
+## Caller contracts
+
+- Operator surface: SupportedOps plus (domain, operator, opset) identity is checked at load and run; anything outside it fails explicitly instead of silently degrading.
+- Outputs: read Outputs and IntermediateOutputs after Execute returns. Re-executing or Reset repopulates them, so copy out anything needed across runs.
+- Concurrency: one execution per graph instance at a time; a concurrent call fails. Run separate execution contexts on separate threads.
+- Inputs: caller-owned. The graph never takes input storage: constants, caller inputs and sequence elements are protected from buffer pooling.
+- Threading: sequential by default. TensorExecutionOptions MaxDegreeOfParallelism opts batch-parallel float MatMul kernels in (default 1).
+- Packaging: only src/Lokad.Onnx ships as Lokad.Onnx.dll (net10.0, dependency-free, via pack.cmd). Import, Data and CLI are separate non-shipped projects.
 

@@ -2,7 +2,7 @@
 
 ## About
 Lokad.Onnx is a 100% managed-code [ONNX backend](https://onnx.ai/onnx/repo-docs/ImplementingAnOnnxBackend.html) implementation for .NET 10.
-It runs transformer and vision models end to end on CPU, with numeric parity against native ONNX Runtime frozen in the test suite for multilingual-e5-small, DINOv2-small, and DINOv3 ViT-S/16.
+It runs transformer and vision models end to end on CPU, with numeric parity against native ONNX Runtime frozen in the test suite for multilingual-e5-small and DINOv2-small. DINOv3 ViT-S/16 structure and RoPE fusion are covered; its inference oracle is blocked on the known LayerNormalization stash_type defect.
 
 ![img](https://ajb.nyc3.cdn.digitaloceanspaces.com/lokadonnx8.gif)
 
@@ -43,7 +43,7 @@ Large model assets live under the git-ignored `models\` directory and are never 
 
 - `models\multilingual-e5-small\model.onnx` plus `sentencepiece.bpe.model` (intfloat multilingual-e5-small ONNX export with matching SentencePiece file).
 - `models\dinov2-small-onnx\model.onnx` (single-file DINOv2-small ONNX export).
-- `models\dinov3-vits16\onnx\model.onnx` plus `model.onnx_data` (DINOv3 ViT-S/16 export using external data, loaded automatically).
+- `models\dinov3-vits16\onnx\model.onnx` (single-file DINOv3 ViT-S/16 export; the current asset carries structure with placeholder-sized initializers, see tests/Lokad.Onnx.Backend.Tests/ModelManifest.json).
 - `models\resnet50-onnx\model.onnx` (Conv-heavy ResNet50 feature export; covered by a model oracle, no dedicated CLI input format).
 - `models\gpt2-onnx\onnx\model.onnx` plus tokenizer files (fp32 GPT-2 with past-key-value inputs; covered by a model oracle, no dedicated CLI input format).
 - MNIST assets are bundled with the backend tests and need no download.
@@ -66,6 +66,4 @@ The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Re
 
 ## Implementation notes
 * The tensors library is pure managed C# adapted from [here](https://github.com/microsoft/onnxruntime/tree/main/csharp/src/Microsoft.ML.OnnxRuntime/Tensors).
-* Current NuGet dependencies for the Backend library are:
-   - System.Memory
-   - OnnxSharp - For parsing ONNX ProtoBuf model files and getting the computational graph structure
+* The shipped `Lokad.Onnx` assembly is dependency-free. ONNX parsing lives in the non-shipped `Lokad.Onnx.Import` project (OnnxSharp); text and image helpers live in `Lokad.Onnx.Data`; the console lives in `Lokad.Onnx.CLI`.
