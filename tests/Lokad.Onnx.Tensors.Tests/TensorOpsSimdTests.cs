@@ -26,7 +26,7 @@ public class TensorOpsSimdTests : IDisposable
     {
         t_384_384_a = SeededRand(384, 384, Seed);
         t_384_384_b = SeededRand(384, 384, Seed + 1);
-        t_384_384_cr = Tensor<float>.MatMul2D_managed(t_384_384_a, t_384_384_b);
+        t_384_384_cr = ReferenceMatMul.Managed(t_384_384_a, t_384_384_b);
         t_384_384_c.Fill(0.0f);
         t_384_384_c2.Fill(0.0f);
         ah = t_384_384_a.ToDenseTensor().Buffer.Pin();
@@ -44,10 +44,10 @@ public class TensorOpsSimdTests : IDisposable
     }
 
     [Fact]
-    public void CanMatMulManaged()
+    public void CanMatMulScalarDispatch()
     {
-        mm_managed(384, 384, 384, t_384_384_a.ToDenseTensor().Buffer, t_384_384_b.ToDenseTensor().Buffer, t_384_384_c.ToDenseTensor().Buffer);
-        Assert.Equal(t_384_384_c, t_384_384_cr);
+        var actual = Tensor<float>.MatMul2D(t_384_384_a, t_384_384_b, TensorExecutionOptions.Scalar);
+        Assert.Equal(t_384_384_cr, actual);
     }
 
     [Fact]

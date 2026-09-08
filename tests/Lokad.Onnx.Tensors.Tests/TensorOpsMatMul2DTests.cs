@@ -60,7 +60,7 @@ public class TensorOpsMatMul2DTests
         var sliceA = a[1, ..];
         var sliceB = b[1, ..];
 
-        var expected = Tensor<int>.MatMul2D_managed(sliceA, sliceB);
+        var expected = ReferenceMatMul.Managed(sliceA, sliceB);
         var actual = Tensor<int>.MatMul2D(sliceA, sliceB);
 
         Assert.Equal(expected, actual);
@@ -72,7 +72,7 @@ public class TensorOpsMatMul2DTests
         var a = DenseTensor<float>.OfValues(new float[,] { { 0.5f, 1.5f, -2f }, { 3f, 0f, 1f } });
         var b = DenseTensor<float>.OfValues(new float[,] { { 2f, 1f }, { -1f, 0.5f }, { 4f, -3f } });
 
-        var expected = Tensor<float>.MatMul2D_managed(a, b);
+        var expected = ReferenceMatMul.Managed(a, b);
         var actual = Tensor<float>.MatMul2D(a, b);
 
         Assert.Equal(expected[0, 0], actual[0, 0], 5);

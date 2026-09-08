@@ -64,7 +64,7 @@ public class MatMul2DBenchmarks
         var xa = FillDeterministic(384, 384, rnd);
         var xb = FillDeterministic(384, 384, rnd);
         var expected = Tensor<float>.Zeros(384, 384).ToDenseTensor();
-        mm_managed(384, 384, 384, xa.Buffer, xb.Buffer, expected.Buffer);
+        ReferenceKernels.mm_managed(384, 384, 384, xa.Buffer, xb.Buffer, expected.Buffer);
         var reference = expected.ToArray();
         var dims = expected.Dimensions.ToArray();
         double tolerance = 1e-3;
@@ -85,7 +85,7 @@ public class MatMul2DBenchmarks
     static float[] RunManagedSimd(DenseTensor<float> xa, DenseTensor<float> xb)
     {
         var dest = Tensor<float>.Zeros(384, 384).ToDenseTensor();
-        mm_vectorized(384, 384, 384, xa.Buffer, xb.Buffer, dest.Buffer);
+        ReferenceKernels.mm_vectorized(384, 384, 384, xa.Buffer, xb.Buffer, dest.Buffer);
         return dest.ToArray();
     }
 
@@ -132,11 +132,11 @@ public class MatMul2DBenchmarks
 
     [Benchmark(Description = "Multiply 2 384x384 matrices - managed")]
     public void MatMul2D_1() =>
-        mm_managed(384, 384, 384, da.Buffer, db.Buffer, dc.Buffer);
+        ReferenceKernels.mm_managed(384, 384, 384, da.Buffer, db.Buffer, dc.Buffer);
 
     [Benchmark(Description = "Multiply 2 384x384 matrices - managed simd")]
     public void MatMul2D_3() =>
-      mm_vectorized(384, 384, 384, da.Buffer, db.Buffer, dc.Buffer);
+      ReferenceKernels.mm_vectorized(384, 384, 384, da.Buffer, db.Buffer, dc.Buffer);
 
     [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe")]
     public unsafe void MatMul2D_2() =>
