@@ -12,9 +12,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   engines, console frameworks, model acquisition and local third-party tools.
   Restore optional .NET test/benchmark tooling through NuGet; document local
   assets and any necessary setup under ignored `models/` or `external/`.
-- Planned: remove CLI dependencies `NLog.Extensions.Logging`,
-  `Spectre.Console` and `CommandLineParser`; move BenchmarkDotNet workloads
-  out of the CLI; remove unused vendored NLog and the empty `.gitmodules`.
+- Removed the CLI parser, logging, and graphics dependencies; moved
+  BenchmarkDotNet workloads out of the CLI; removed the unused vendored
+  NLog tree and the empty `.gitmodules` (no submodules remain).
 - Planned: remove unused APIs, legacy framework scaffolding and duplicated
   execution/kernel preparation. Remove the need for `THIRD-PARTY NOTICES`
   by removing or replacing the relevant third-party source in the distributed

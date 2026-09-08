@@ -26,7 +26,6 @@ The ONNX model at `models\multilingual-e5-small\model.onnx` is already downloade
 - `tests\Lokad.Onnx.Backend.Tests`: xUnit backend tests + MNIST assets.
 - `tests\Lokad.Onnx.Tensors.Tests`: xUnit tensor tests.
 - `tests\e5`: native ONNX Runtime e5 conformance (`eng/test-e5.ps1`); `tests\opfuzz`: single-op differential lane (`eng/test-opfuzz.ps1`).
-- `ext\NLog`: vendored logging source, not referenced by the solution.
 - `ext\satsumagraph`: removed; no submodule or graph-algorithm dependency remains.
 
 ## Build / run / test (repo conventions)
