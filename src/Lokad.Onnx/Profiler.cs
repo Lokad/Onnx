@@ -127,8 +127,6 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StartOpStage(OpStage stage) => Current.StartOpStage(stage);
 
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public static void StopOpStage() => AddTimeIfTimerRunning();
 
         public static string StageDescription(OpStage stage) => stage switch
         {

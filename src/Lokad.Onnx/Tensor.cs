@@ -343,7 +343,6 @@ namespace Lokad.Onnx
     /// </summary>
     /// <typeparam name="T">type contained within the Tensor.  Typically a value type such as int, double, float, etc.</typeparam>
     [DebuggerDisplay("{PrintShape()}")]
-    // When we cross-compile for frameworks that expose ICloneable this must implement ICloneable as well.
     public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor
     where T : unmanaged
     {
@@ -1060,19 +1059,12 @@ namespace Lokad.Onnx
                     }
                 }
             }
-            //var orig_dims = vi.OriginalShape.dimensions;
             offset = 0;
             unchecked
             {
                 for (int i = 0; i < coordCount; i++)
                 {
                     // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
-                    //var coord = coords[i];
-                    //var dim = orig_dims[i];
-                    //if (coord < -dim || coord >= dim)
-                    //    throw new ArgumentException($"index {coord} is out of bounds for axis {i} with a size of {dim}");
-                    //if (coord < 0)
-                    //    coord = dim + coord;
                     if (slices.Length <= i)
                     {
                         offset += orig_strides[i] * coords[i];
@@ -1901,8 +1893,6 @@ namespace Lokad.Onnx
             if (dimensions is null || dimensions.Length == 0)
                 throw new InvalidOperationException("Unable to slice an empty shape.");
 
-            //if (IsBroadcasted)
-            //    throw new NotSupportedException("Unable to slice a shape that is broadcasted.");
             int len = this is TensorSlice<T> _ts ? this.Rank + _ts.parent.Rank : this.Rank;
             // Bounded spans instead of pointer lists: capacities are checked
             // before every write that could previously overflow the buffers.
@@ -1947,16 +1937,8 @@ namespace Lokad.Onnx
             var sliced_axes = new int[kept];
             kept = 0;
             for (int i = 0; i < sliceCount; i++) if (!slices[i].IsIndex) { sliced_axes[kept] = sliced_axes_unreduced[i]; kept++; }
-            // var origin = (this.IsSliced && ViewInfo.Slices != null) ? this.ViewInfo.OriginalShape : this;
-            //var viewInfo = new ViewInfo() { OriginalShape = origin, Slices = slices.ToArray(), UnreducedShape = new Shape(sliced_axes_unreduced.ToArray()), };
 
-            //if (IsRecursive)
-            //  viewInfo.ParentShape = ViewInfo.ParentShape;
 
-            //if (sliced_axes.Length == 0) //is it a scalar
-            //    return NewScalar(viewInfo);
-
-            //return new Shape(sliced_axes) { ViewInfo = viewInfo };
             return sliced_axes;
         }
 
@@ -2006,7 +1988,7 @@ namespace Lokad.Onnx
         /// 0 => [0, 0]
         /// 1 => [0, 1]
         /// ...
-        /// 6 => [1, 2]
+        /// 5 => [1, 2]
         /// </summary>
         /// <param name="offset">the index if you would iterate from 0 to shape.size in row major order</param>
         /// <returns></returns>

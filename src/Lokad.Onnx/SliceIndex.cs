@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 
 /// <summary>                                                                                                                                         <br></br>
-/// NDArray can be indexed using slicing                                                                                                              <br></br>
+/// A tensor can be indexed using slicing                                                                                                              <br></br>
 /// A slice is constructed by start:stop:step notation                                                                                                <br></br>
 ///                                                                                                                                                   <br></br>
 /// Examples:                                                                                                                                         <br></br>
@@ -85,13 +85,6 @@ public class SliceIndex
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static SliceIndex Index(int index) => new SliceIndex(index, index + 1) { IsIndex = true };
 
-    ///// <summary>
-    ///// return multiple elements for this dimension specified by the given index array (or boolean mask array)
-    ///// </summary>
-    ///// <param name="index_array_or_mask"></param>
-    ///// <returns></returns>
-    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-    //public static Slice Select(NDArray index_array_or_mask) => new Slice(null, null) { Selection=index_array_or_mask };
 
     public int? Start;
     public int? Stop;
@@ -100,10 +93,6 @@ public class SliceIndex
     public bool IsEllipsis;
     public bool IsNewAxis;
 
-    ///// <summary>
-    ///// Array of integer indices to select elements by index extraction or boolean values to select by masking the elements of the given dimension.
-    ///// </summary>
-    //public NDArray Selection = null;
 
     /// <summary>
     /// Length of the slice. 
@@ -114,7 +103,7 @@ public class SliceIndex
     public int? Length => Stop - Start;
 
     /// <summary>
-    /// ndarray can be indexed using slicing
+    /// a tensor can be indexed using slicing
     /// slice is constructed by start:stop:step notation
     /// </summary>
     /// <param name="start">Start index of the slice, null means from the start of the array</param>
@@ -360,9 +349,7 @@ public class SliceIndex
             return new SliceIndex(start: FromIndex(range.Start), stop: FromIndex(range.End));
         }
     }
-    //public static implicit operator SliceIndex(Index idx) => new SliceIndex(FromIndex(idx));
 
-    //public static implicit operator Slice(NDArray selection) => Slice.Select(selection);
 
     #endregion
 

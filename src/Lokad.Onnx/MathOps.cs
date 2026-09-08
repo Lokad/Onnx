@@ -117,9 +117,6 @@ public class MathOps
         return new int[] { outputHeight, outputWidth};
     }
 
-    public static int GetConv2DDefaultPad(int[] inputShape, int fieldSize, int stride, int dilation) => 
-        (int) Math.Floor(((float)inputShape[0] * (stride - 1) - stride + GetConv2DEffectiveFilterSize(fieldSize, dilation)) / 2);
-    
     public static int GetConv2DEffectiveFilterSize(int filterSize, int dilation) => dilation <= 1 ? filterSize : filterSize + (filterSize - 1) * (dilation - 1);
 
     /// <summary>

@@ -113,7 +113,6 @@ namespace Lokad.Onnx
                 else
                 {
                     return Array.Empty<ITensor>();
-                    //return OpResult.Failure(OpType.Broadcast, $"Trying to broadcast incompatible shapes: {inA.Dimensions.ToArray()} and {inB.Dimensions.ToArray()}");
                 }
             }
             return new[] { outA, outB };
