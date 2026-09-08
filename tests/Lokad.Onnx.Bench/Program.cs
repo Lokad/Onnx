@@ -128,13 +128,6 @@ static class Bench
     static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters)
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
-        // The tokenizer names its outputs; verify the exact session match instead of
-        // silently falling back to positions.
-        using var probe = new InferenceSession(model);
-        var inNames = probe.InputMetadata.Keys.ToArray();
-        if (inputs.Length != inNames.Length) throw new InvalidOperationException(name + ": tokenized " + inputs.Length + " inputs but the session wants " + inNames.Length + ".");
-        for (int i = 0; i < inputs.Length; i++)
-            if (inputs[i].Name != inNames[i]) throw new InvalidOperationException(name + ": input " + i + " is '" + inputs[i].Name + "', session wants '" + inNames[i] + "'.");
         Compare(name, model, inputs, tensorOpts, threads, iters);
     }
 
@@ -143,8 +136,6 @@ static class Bench
         var flat = new float[1 * 3 * 224 * 224];
         for (int i = 0; i < flat.Length; i++) flat[i] = 0.5f;
         var input = new DenseTensor<float>(flat, new[] { 1, 3, 224, 224 });
-        using var sessionProbe = new InferenceSession(model);
-        input.Name = sessionProbe.InputMetadata.Keys.First();
         Compare(name, model, new ITensor[] { input }, tensorOpts, threads, iters);
     }
 
@@ -175,20 +166,25 @@ static class Bench
         using var ortDefault = new InferenceSession(model);
         var inNames = ortDefault.InputMetadata.Keys.ToArray();
         var outNames = ortDefault.OutputMetadata.Keys.ToArray();
+        if (inputs.Length == 1 && string.IsNullOrEmpty(inputs[0].Name) && inNames.Length == 1) inputs[0].Name = inNames[0];
         var named = ToNamed(name, inputs, inNames);
         Console.WriteLine("case " + name + ": model=" + Path.GetFileName(Path.GetDirectoryName(model)) + "/model.onnx"
             + " bytes=" + new FileInfo(model).Length + " sha12=" + ShortHash(model)
             + " inputs=[" + string.Join(",", named.Select(kv => kv.Key + ":" + string.Join("x", kv.Value.Dims))) + "]"
             + " outputs=[" + string.Join(",", outNames) + "]");
         var valSw = Stopwatch.StartNew();
-        double maxDiff = Validate(name, graph, ortDefault, named, outNames, ExecutionOptions.Default);
+        double worstDefault = Validate(name, graph, ortDefault, named, outNames, ExecutionOptions.Default);
         var matchedOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
-        maxDiff = Math.Max(maxDiff, Validate(name, graph, ortDefault, named, outNames, matchedOpts));
+        using var matchedSo = new SessionOptions();
+        matchedSo.IntraOpNumThreads = threads;
+        matchedSo.InterOpNumThreads = 1;
+        matchedSo.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
+        using var ortMatched = new InferenceSession(model, matchedSo);
+        double worstMatched = Validate(name, graph, ortMatched, named, outNames, matchedOpts);
         valSw.Stop();
         double copyMs = valSw.Elapsed.TotalMilliseconds;
-        TimedRun(name, graph, named, outNames, ExecutionOptions.Default, "defaults", "ort-defaults", iters, copyMs, maxDiff, ortDefault);
-        using var ortMatched = MatchedSession(model, threads);
-        TimedRun(name, graph, named, outNames, matchedOpts, "mode-threads=" + threads, "intraop=" + threads + " interop=1 seq", iters, copyMs, maxDiff, ortMatched);
+        TimedRun(name, graph, named, outNames, ExecutionOptions.Default, "defaults", "ort-defaults", iters, copyMs, worstDefault, ortDefault);
+        TimedRun(name, graph, named, outNames, matchedOpts, "mode-threads=" + threads, "intraop=" + threads + " interop=1 seq", iters, copyMs, worstMatched, ortMatched);
     }
 
     static void TimedRun(string name, ComputationalGraph graph, Dictionary<string, ITensor> named, string[] outNames,
@@ -246,18 +242,17 @@ static class Bench
             {
                 string onm = outNames[oi];
                 var res = outs[oi];
+                var shape = res.GetTensorTypeAndShape();
+                if (shape.ElementDataType != Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Float)
+                    throw new InvalidOperationException(name + ": ort output is not float32: " + onm + ".");
                 if (!graph.Outputs.TryGetValue(onm, out var lt) || lt is not Tensor<float> lf)
                     throw new InvalidOperationException(name + ": lokad output missing or not float32: " + onm);
                 var la = lf.ToArray();
                 var oa = res.GetTensorDataAsSpan<float>().ToArray();
-                if (la.Length != oa.Length) throw new InvalidOperationException(name + ": output length mismatch on " + onm);
-                for (int i = 0; i < la.Length; i++)
-                {
-                    double rel = Math.Abs(la[i] - oa[i]) / (1.0 + Math.Abs(oa[i]));
-                    if (rel > worst) worst = rel;
-                }
+                worst = Math.Max(worst, BenchValidate.RequireAgreement(
+                    name + ":" + onm, lf.Dimensions.ToArray(), la,
+                    shape.Shape.Select(d => checked((int)d)).ToArray(), oa, Tolerance));
             }
-            if (worst > Tolerance) throw new InvalidOperationException(name + ": outputs diverge (max rel diff " + worst.ToString("E2") + ").");
             return worst;
         }
         finally
@@ -283,15 +278,6 @@ static class Bench
             else throw new InvalidOperationException("unsupported input tensor type " + src.GetType().Name);
         }
         return ortInputs;
-    }
-
-    static InferenceSession MatchedSession(string model, int threads)
-    {
-        var so = new SessionOptions();
-        so.IntraOpNumThreads = threads;
-        so.InterOpNumThreads = 1;
-        so.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
-        return new InferenceSession(model, so);
     }
 
     static Dictionary<string, ITensor> ToNamed(string name, ITensor[] inputs, string[] names)

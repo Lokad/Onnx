@@ -74,6 +74,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   fused-versus-imported standing once for support queries, dispatch,
   fusion eligibility, and CLI reporting; imported fused-only operations
   and malformed arities fail naming the reason.
+  Benchmark validation rejects incorrect results: exact names, types,
+  shapes, finite values, and per-element tolerances for every timed pair
+  outside timing, with scoped sessions and element-wise micro checks.
   Acquisition left the distributed core: the obsolete downloader is gone,
   model runs take local files only, and tokenizer setup resolves the
   binary cache or the documented tree before downloading.
