@@ -1,78 +1,115 @@
-# Benchmarks
+# CPU benchmarks
 
-Method, unless stated otherwise: warmed-up runs on the same host, default JIT,
-intrinsics enabled (FMA host), single-threaded Lokad (`MaxDegreeOfParallelism`
-default 1) against ONNX Runtime CPU EP with its default threadpool. Report
-best-of-N and median; treat ~10-20% swings on this contended box as noise.
-Rerun: `lonnx benchmark <id>` for op microbenchmarks, `bench.ps1` for the
-warmed-up e5 + MatMul sweep, `dotnet run --project tests/Lokad.Onnx.Bench`
-for the Lokad-vs-ORT model table below (local models only, nothing downloaded).
+The model harness uses `Microsoft.ML.OnnxRuntime` 1.23.2 and constructs CPU
+sessions without registering a GPU provider. The package is the CPU build;
+GPU execution requires a different package/provider configuration.
+[ORT C# packages](https://onnxruntime.ai/docs/get-started/with-csharp.html)
 
-## Model level: Lokad vs Microsoft.ML.OnnxRuntime 1.23.2 (refreshed 2026-09-07)
+The previous model table compared single-threaded Lokad with ORT's default
+CPU thread pool, using an earlier implementation and a first-output harness.
+It was not an equal-thread comparison. ORT's default intra-op pool uses physical
+CPU cores and enables graph optimizations and worker spinning. This does not
+establish that every operator uses every core, or that threading and matrix
+packing explain most of the observed gap.
+[ORT thread settings](https://onnxruntime.ai/docs/performance/tune-performance/threading.html)
 
-Host LOKAD-0399, FMA. Bench harness (current): interleaved timed runs per engine measuring execution only,
-full-output cross-check outside timing (max rel diff order 1e-6, so the gaps
-below are speed). The table below is the 2026-09-07 snapshot taken with the
-previous first-output harness; treat numbers as historical.
+## Diagnostic run — 2026-09-08
 
-| case | Lokad best | Lokad median | ORT best | ORT median | gap (best) |
-|---|---|---|---|---|---|
-| e5-8tok | 28.5ms | 30.1ms | 2.3ms | 2.5ms | ~12x |
-| e5-30tok | 51.9ms | 59.7ms | 3.8ms | 4.1ms | ~14x |
-| dinov2-224 | 504.0ms | 510.3ms | 49.4ms | 51.3ms | ~10x |
-| dinov3-224 | 318.7ms | 347.8ms | 17.9ms | 19.4ms | ~18x |
-| resnet50-224 | 1710.5ms | 1751.5ms | 8.6ms | 10.3ms | ~199x |
-| gpt2-4tok | 239.3ms | 286.2ms | 9.0ms | 14.5ms | ~27x |
+Source: `a5c7aba7be9a46392625ee69a49db37eeaa07ac1`, Release build.
+Host: LOKAD-0399, Intel Core i7-14700KF, 20 cores / 28 logical processors,
+x86 FMA available; .NET runtime 10.0.11; ORT assembly 1.23.2.0.
+Build SDK: 10.0.300-preview.0.26177.108.
 
-Two systematic handicaps explain most of it, in order: ORT threads every
-MatMul/Softmax across all cores while Lokad runs one thread, and ORT packs
-MatMul panels while Lokad streams B from cache (packing assessed, no win on
-L2 shapes). Shipped since: portable ExpVector and MLAS rational erf. The
-remainder is kernel tuning plus per-node framework overhead.
+Three warmups and nine timed iterations per row, interleaved Lokad then ORT.
+Inputs and models are local; parsing and tokenization occur outside timing.
+The runner measures Execute/Run with all declared outputs requested. Explicit
+Reset, input conversion and ORT output disposal are outside the timed region.
+No process affinity or power configuration was pinned for this run.
 
-ResNet50 (~199x) is the outlier and the honest Conv story: Conv lowers
-through im2col into pooled scratch plus GEMM, without packing or threading,
-against ORT's fully tuned kernels. GPT-2 (~27x) rides the same MatMul and
-framework handicaps as the other transformer models. Full-output validation bounds every gap below to numerics; the gaps are speed.
+Default settings: Lokad Auto, one thread; ORT default session options.
 
-Note: CLI `--profile` runs read 2-4x slower than these numbers (e5-8tok
-127ms) because per-node profiler stages dominate small graphs; that cost is
-instrumentation, not inference.
+| Case | Lokad best | Lokad median | ORT best | ORT median | Median ratio |
+|---|---:|---:|---:|---:|---:|
+| e5, 8 tokens | 155.8 ms | 201.1 ms | 2.9 ms | 3.2 ms | 62.8× |
+| e5, 30 tokens | 207.2 ms | 231.4 ms | 4.1 ms | 4.7 ms | 49.2× |
+| ResNet50, 224×224 | 344.5 ms | 409.0 ms | 8.0 ms | 15.2 ms | 26.9× |
 
-## Op microbenchmarks (`lonnx benchmark ops`, 2026-09-05, R15b rows 2026-09-07)
+Explicit one-thread settings: Lokad Auto with MaxDegreeOfParallelism=1;
+ORT IntraOpNumThreads=1, InterOpNumThreads=1, ORT_SEQUENTIAL.
 
-Shapes follow the model profiles (attention batches, 257x384 DINO rows,
-201x192 RoPE pairs, 1000x384 embedding table). Modes pinned explicitly.
+| Case | Lokad best | Lokad median | ORT best | ORT median | Median ratio |
+|---|---:|---:|---:|---:|---:|
+| e5, 8 tokens | 120.9 ms | 124.2 ms | 5.9 ms | 6.5 ms | 19.1× |
+| e5, 30 tokens | 150.0 ms | 154.7 ms | 11.9 ms | 13.2 ms | 11.7× |
+| ResNet50, 224×224 | 276.1 ms | 286.3 ms | 50.6 ms | 51.6 ms | 5.5× |
 
-| op | scalar | simd | intrinsics |
-|---|---|---|---|
-| Add 257x384 | 140us | 64us | 73us |
-| Mul 257x384 | 263us | 61us | 68us |
-| Div 257x384 | 259us | 60us | 63us |
-| Erf 257x384 | 603us | 124us | 123us |
-| Gelu exact 257x384 | 491us | 134us | 124us |
-| Softmax 12x30x30 | 51us | - | - |
-| Softmax 6x257x257 | 1775us | - | - |
-| LayerNorm 257x384 | 767us | - | - |
-| Gather 30 rows | 529us | - | - |
-| Transpose 12x30x30 | 50us | - | - |
-| Concat 2x201x192 | 24us | - | - |
-| Conv stem 7x7s2 1x3x112x112 | 12.70ms | - | - |
-| Conv 3x3s1 1x64x28x28 | 13.04ms | - | - |
-| Gemm 4x768@768x2304+bias | 329us | - | - |
-| Tanh 4x3072 (scalar MathF) | 55.5us | - | - |
-| Split 4x12x2304 3-way | 33.4us | - | - |
-| GlobalAveragePool 1x256x14x14 | 22.4us | - | - |
+The one-thread rows still show a substantial CPU performance gap. The old
+~199× ResNet figure is not a current equal-thread baseline. These samples also
+show Lokad latency changing between the two lanes despite equivalent Lokad
+settings: session interference, run order, JIT/GC and host activity need to be
+controlled before attributing changes to kernels or thread counts. In
+particular, the slower e5 figures do not establish a regression magnitude
+against the historical table without a controlled before/after run.
 
-Reads (historical, predate the shipped ExpVector/erf work): Erf/Gelu barely
-moved with SIMD while scalar `exp` dominated; Softmax on DINO-size attention
-(1.8ms) has a vectorized exp path now. The 2.4MB Gather figure predates the
-block-copy densify work and needs re-measurement. LayerNorm still accumulates
-in double.
+Assets are identified in
+[ModelManifest.json](tests/Lokad.Onnx.Backend.Tests/ModelManifest.json):
 
-R15b reads (2026-09-07, historical): both Conv shapes cost ~13ms for ~30M MACs
-(direct loop at the time; im2col lowering shipped since, still no
-packing/threading); the Gemm 2x-output allocation figure predates the
-single-pass Gemm work; Tanh is scalar MathF at 55us for 12k elements
-(ExpVector-based vectorization queued, ~3-4x available); Split/GAP allocate
-exactly their outputs.
+| Asset | Model bytes | SHA-256 prefix | Inputs | Output |
+|---|---:|---|---|---|
+| multilingual-e5-small | 470,268,510 | CA456C06B3A9 | three int64 tensors, 1×8 or 1×30 | last_hidden_state |
+| ResNet50 feature export | 93,961,728 | 4F0558B775C8 | float32, 1×3×224×224, filled with 0.5 | output |
+
+The manifest records full hashes, including the e5 tokenizer. This run did
+not refresh DINOv2, DINOv3 or GPT-2 timing. DINOv3 currently fails its
+LayerNormalization gate and its recorded asset contains placeholder-sized
+initializers; it needs a full-weight asset and validated outputs before a
+model-speed claim.
+
+## Limits of the current harness
+
+The source review found issues that must be fixed before treating this as a
+validated performance baseline:
+
+- Validation compares flattened lengths, omits shape equality, and can accept
+  NaN differences. The reported maximum errors (7.28e-7, 1.15e-6 and 1.98e-6)
+  come from that existing check against the default ORT session; the exact
+  matched-thread ORT session is not validated.
+- Graph Conv currently drops explicit execution options. Its Auto/one-thread
+  fallback agrees with the setting requested above, but other mode/thread
+  comparisons cannot rely on that route until corrected.
+- Metadata probe sessions and the default ORT session remain alive during
+  portions of the comparison. Worker spinning can affect nearby Lokad samples.
+  The engine order is always Lokad first.
+- The printed `copy` value includes two full validation executions and comparison
+  work. It is not isolated copy time. The runner reports summary statistics,
+  but does not retain all raw samples or explicit optimization/spinning settings.
+
+Resolve these issues before publishing a release performance baseline. The old
+latency/microbenchmark tables are available in Git history; they predate
+substantial kernel and allocation changes and should not be reused as current
+measurements.
+
+## Reproduce and extend
+
+From the repository root, using the existing local assets:
+
+```powershell
+dotnet build Lokad.Onnx.slnx -c Release --tl:off --nologo -v minimal
+dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 resnet50 --mode auto --threads 1 --iters 9
+```
+
+The runner prints both default and explicit-thread lanes. Once option routing
+and validation are repaired, repeat with a chosen common thread budget
+(`--threads N`) and sufficient samples; equal limits do not imply equal CPU
+utilization. Keep the default, one-thread and equal-budget results distinct.
+Validate every named output's dtype, shape, finite values and numerical
+tolerance outside timing for each actual session.
+
+For operator benchmarks, the current command is `lonnx.cmd benchmark ops`;
+`matmul2d`, `matmul` and `indexing` cover other kernel cases. These workloads
+are scheduled to move out of the CLI. Pin execution modes and record
+allocations as well as latency; profiler-enabled timings are separate.
+
+`bench.ps1` launches a fresh CLI process for every e5 sample. Its separate
+warmup process cannot warm those subsequent JITs/sessions; interpret it as
+startup-inclusive CLI measurement, not warmed inference throughput.

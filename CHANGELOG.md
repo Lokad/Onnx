@@ -1,48 +1,114 @@
 # Changelog
 
-## Unreleased
+## Unreleased — 0.2.0 development
 
-Only 0.1.4 has been published to NuGet. Everything below is unreleased: the breaking .NET 10-only release line gated on native e5 conformance, plus DINO model support and operator-coverage hardening.
+The next release targets modern, managed CPU ONNX inference on .NET 10.
+The changes below are implemented in the working source line unless marked
+as planned or a known limitation. This is not a release-readiness claim.
+
+### Direction
+
+- Keep the distributed `Lokad.Onnx` library independent of native inference
+  engines, console frameworks, model acquisition and local third-party tools.
+  Restore optional .NET test/benchmark tooling through NuGet; document local
+  assets and any necessary setup under ignored `models/` or `external/`.
+- Planned: remove CLI dependencies `NLog.Extensions.Logging`,
+  `Spectre.Console` and `CommandLineParser`; move BenchmarkDotNet workloads
+  out of the CLI; remove unused vendored NLog and the empty `.gitmodules`.
+- Planned: remove unused APIs, legacy framework scaffolding and duplicated
+  execution/kernel preparation. Remove the need for `THIRD-PARTY NOTICES`
+  by removing or replacing the relevant third-party source in the distributed
+  library. Copied implementations still present in the core require a
+  provenance review; removing package references alone does not finish this work.
+- Deliver changes as small, coherent commits with relevant validation.
+  Performance claims require reproducible CPU baselines with explicit settings.
 
 ### Breaking
 
-- All maintained projects target exactly net10.0; legacy target frameworks removed from the solution.
-- Removed Satsuma graph members, metadata, and package content without compatibility shims.
-- Core ships as a single dependency-free `Lokad.Onnx` assembly: `Microsoft.Extensions.Logging.Abstractions` and OnnxSharp are no longer core dependencies (logging uses a tiny in-core sink, ONNX parsing lives in the non-shipped `Lokad.Onnx.Import` project).
-- Removed the pythonnet bridge and the Interop assembly. Python remains only as the out-of-process native ONNX Runtime oracle for e5.
-- Removed the obsolete process-wide execution statics (`HardwareConfig`, `CPUExecutionProvider.OptimizationMode`, `Profiler.Enabled/Profile/Running`). `TensorExecutionOptions.Auto` now probes hardware directly (SIMD on, intrinsics when x86 FMA is present); pass explicit options for pinned behavior.
+- All maintained projects target `net10.0`; legacy target frameworks are removed.
+- The core package is one `Lokad.Onnx` assembly with no runtime NuGet
+  dependencies. Base, Tensors and Backend are consolidated into
+  `src/Lokad.Onnx`, which packs directly. The former package project is removed.
+- ONNX protobuf parsing is separated into the non-shipped
+  `Lokad.Onnx.Import` adapter using OnnxSharp. The core loads plain
+  `OnnxModel` descriptions; Data and CLI remain separate support projects.
+- Removed the Satsuma graph dependency and public graph members, the pythonnet
+  bridge and Interop assembly. Native ORT remains a development oracle and
+  benchmark reference.
+- Removed Runtime inheritance and obsolete process-wide execution controls
+  (`HardwareConfig`, provider OptimizationMode and profiler execution statics).
+  Explicit `ExecutionOptions` and `TensorExecutionOptions` control execution.
+- First-party C# optional parameter defaults have been replaced by overloads
+  or explicit arguments, and nullable contracts have been revised. Callers
+  must account for changed signatures and unsupported-input diagnostics.
 
 ### Fixed
 
-- MatMul intrinsics kernel read the wrong row pointer, and reverse-strided dense matrices reached row-major unsafe kernels without row-major materialization. Both repaired under independent oracles.
-- 0.1.4 with explicitly enabled CPU SIMD intrinsics (`--enable-intrinsics` or `HardwareConfig.UseIntrinsics`) silently corrupted MatMul results on outputs with more than two rows (wrong second-row pointer in the paired-row kernel, e.g. e5 embeddings diverge from ONNX Runtime). 0.1.4 defaulted intrinsics off, so default runs were unaffected; 0.2.0 enables intrinsics by default with the corrected kernel plus an odd-row regression test.
-- Tokenizer multi-space normalization now matches the Hugging Face reference.
-- Unsqueeze normalized negative axes against the input rank instead of the output rank, corrupting downstream Concat reads on the DINOv3 RoPE path.
-- ReduceMean and ReduceMax ignored the axes attribute on opsets 13 through 17, silently reducing over all axes on models such as DINOv2.
-- Conv and MaxPool silently dropped explicit `pads` when `auto_pad` is absent (the standard export form), shrinking padded 3x3 conv outputs (54 wide to 52) and breaking residual adds; absent `auto_pad` now follows NOTSET semantics (found via the ResNet50 oracle).
-- LayerNormalization validation consolidated behind one shared helper; Unsqueeze validation now covers both bounds with a correct message.
+- Corrected the paired-row intrinsic MatMul pointer and materialization before
+  unsafe matrix kernels. **0.1.4 with explicitly enabled intrinsics can silently
+  corrupt MatMul results** on outputs with more than two rows; its default
+  intrinsics-off mode was unaffected. The current Auto preset enables corrected
+  intrinsics when x86 FMA is available.
+- Added checked tensor-size and kernel-boundary validation, shared vector
+  MatMul shape planning, Gemm transpose/bias handling, version-specific Softmax,
+  and padding/ceil-mode handling for supported Conv and MaxPool variants.
+- Corrected imported integer attributes and operator defaults, numeric casts
+  and floating comparisons, reduction axes/no-op behavior, versioned shape
+  input routing, and supported Expand/Resize shape handling.
+- Added explicit pool ownership to protect caller inputs, constants and live
+  aliases, plus destination validation and dirty-buffer regression coverage.
+  LayerNorm fusion now checks operand order and exported intermediates;
+  domain validation still needs the repair listed below.
+- Added graph input-name, fixed/symbolic-dimension and failure diagnostics;
+  tensor descriptions no longer allocate placeholder element buffers.
+- Hardened external tensor-data descriptors and local file ranges, removed
+  escaping temporary coordinate pointers, and corrected empty-shape iteration.
+- Corrected tokenizer whitespace normalization and repeated batch encoding;
+  added offline tokenizer entry points and cache/lifetime controls. Image
+  conversion now disposes resources and avoids intermediate image arrays.
+- CLI failures and input flags have observable exit codes and behavior.
 
-### Added
+### Added and improved
 
-- Explicit offline tokenizer loading with no network access from library or test APIs.
-- Immutable TensorExecutionOptions and backend ExecutionOptions with Scalar, Simd, Intrinsics, and Auto presets for per-execution control.
-- Deterministic .NET e5 reference runner plus native ONNX Runtime conformance pytest suite with frozen hashes, tolerances, and semantic margin.
-- ONNX operators Abs, Cos, Sin, Neg, Gelu, Squeeze, Range, Tile, LayerNormalization, SplitToSequence, and SequenceAt, plus int64 Add, Sub, and Mul and external-data model loading. Validated end-to-end on DINOv3 ViT-S/16 and DINOv2-small against native ONNX Runtime.
-- Direct unit coverage for the new operators, TensorSequence contracts, external-data failure paths, negative-axis Unsqueeze, and opset-13-to-17 attribute-form ReduceMean and ReduceMax routing.
-- Compact mean-plus-spot ONNX Runtime oracles for the DINOv2 and DINOv3 model tests.
-- ResNet50 and GPT-2 (fp32) model support with compact mean-plus-spot ONNX Runtime oracles, via new GlobalAveragePool, Gemm, Tanh, Split, Less, and ConstantOfShape operators.
-- BenchmarkDotNet op microbenchmarks (`lonnx benchmark ops`), a Lokad-vs-ORT model comparison harness, and BENCHMARK.md latency tables.
-- `lonnx run --threads` exposing opt-in batch-parallel MatMul (default stays sequential).
-- One README.md per src project (core, Data, CLI, Import).
-- Per-execution tensor buffer pool driven by file-order last-use analysis: transparent reuse of dense float outputs (Add, Mul, Div, MatMul, Softmax, Erf, Transpose, LayerNormalization, Gelu) with view-pinning alias protection and pool hit counters per execution.
+- Separate graph execution contexts, stable sequential node IDs, retained
+  descriptors and per-execution profiling/error/pool statistics. Prepared
+  collections still have the mutability limitations identified below.
+- ONNX operator coverage for transformer and vision workloads, including
+  Abs, Cos, Sin, Neg, Gelu, Squeeze, Range, Tile, LayerNormalization,
+  SplitToSequence, SequenceAt, GlobalAveragePool, Gemm, Tanh, Split, Less
+  and ConstantOfShape; int64 Add/Sub/Mul and external-data loading.
+- LayerNorm and RoPE graph fusion; scalar, portable SIMD and intrinsic modes;
+  opt-in batch and row parallelism for float MatMul via `--threads`.
+- Shared float matrix dispatch for im2col Conv, single-pass Gemm output,
+  common reduction preparation, broadcast and Gather/block-copy paths,
+  vectorized exp/erf/GELU, and pooled dense-float outputs.
+- Deterministic native e5 conformance and single-op differential lanes;
+  local-model manifest and MNIST, DINOv2, ResNet50 and GPT-2 coverage,
+  including GPT-2 past-state continuation. DINOv3 has structural coverage
+  and an unresolved inference gate.
+- Metadata inspection without typed initializer materialization; direct typed
+  reads for supported external tensor data.
+- Normal Debug/Release builds no longer produce packages. Release packing
+  includes symbols, SourceLink, README, changelog, license and icon.
+- BenchmarkDotNet microbenchmarks and a CPU Lokad-versus-ORT model harness.
+  `BENCHMARK.md` now distinguishes default and one-thread comparisons, records
+  a fresh e5/ResNet diagnostic, and identifies remaining measurement defects.
 
-### Engineering
+### Known limitations before release
 
-- Test lanes codified with deterministic suites, coverage baselines, and file-coherent reviewable commits.
-- Package builds as net10-only Lokad.Onnx with no Satsuma, Interop, or Python content, with symbols, SourceLink, and a packed README, CHANGELOG, and icon.
-- Fused blocked Softmax kernel, Span block copies for Concat and ChunkCopy, and MatMul odd-row tail for the intrinsics kernel.
-- Transparent LayerNorm subgraph fusion at model load (strict matcher, interface-preserving) and opt-in batch-parallel float MatMul via TensorExecutionOptions.
-- Vectorized float erf and exact GELU sharing one SIMD polynomial core (same proven coefficients, FMA contraction only); K-slab B-panel packing assessed against production micro-kernels and deferred (no demonstrable win on L2-resident shapes).
-- Transparent RoPE-subgraph fusion at model load (24 branches to 1 node each on DINOv3, bitwise identical, ~20% end to end), row-split parallelism for large 2D float MatMul, and a portable vectorized exp serving both Softmax loops.
-- Framework-overhead increments: block-copy broadcast densify and Gather fast path plus silent-sink guards on per-node debug sites; buffer-pool liveness machinery measured net-neutral and kept.
-- Source restructure (no API break beyond the above): Base+Tensors+Backend merged into `src/Lokad.Onnx`, `Lokad.Onnx.Package` deleted (the core csproj packs directly), obsolete process-wide statics removed.
+- Fusion can absorb a custom-domain operator into a standard LayerNorm node.
+  A direct-output graph can report success with no outputs on retry after a
+  binding failure. Both were reproduced in the 2026-09-08 review.
+- Graph Conv dispatch discards selected execution options. Prepared graph
+  collections remain mutable, and concurrency rejection can mutate run state.
+  Operator capability reporting is not yet fully schema-aware.
+- LayerNormalization rejects explicit `stash_type=1`. The DINOv3 inference
+  test fails here; the currently recorded local asset also has placeholder-sized
+  initializers and is not adequate evidence for full-weight model performance.
+- Benchmark validation can miss NaNs and shape mismatches, and does not
+  validate the exact ORT session used for the matched-thread timing.
+  Current diagnostic timings are not a completed release performance gate.
+- Review validation: Release solution build passes with 17 test-analyzer
+  warnings; Debug core build passes without warnings. Release tests report
+  **210 tensor passes, 343 backend passes and one DINOv3 failure**, with no
+  skips. Python conformance was not rerun for this documentation review.
