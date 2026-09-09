@@ -181,7 +181,7 @@ where T : unmanaged
         if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException($"The number of columns in the first matrix ({x.Dimensions[1]}) is not equal to the number of rows in the second matrix ({y.Dimensions[0]}).");
         if (destination.Dimensions.Length != 2 || destination.Dimensions[0] != x.Dimensions[0] || destination.Dimensions[1] != y.Dimensions[1]) throw new ArgumentException(nameof(destination), "Destination shape must match the matrix product shape.");
         if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
-        if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input matrices.");
+        if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y) || TensorAlias.SharesBackingMemory(destination, x) || TensorAlias.SharesBackingMemory(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input matrices.");
         if (clearDestination) destination.Buffer.Span.Clear();
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
@@ -267,7 +267,7 @@ where T : unmanaged
         if (x.Dimensions[1] != y.Dimensions[0]) throw new ArgumentException("The number of columns in the first matrix is not equal to the number of rows in the second matrix.");
         if (destination.Dimensions.Length != 2 || destination.Dimensions[0] != x.Dimensions[0] || destination.Dimensions[1] != y.Dimensions[1]) throw new ArgumentException(nameof(destination), "Destination shape must match the matrix product shape.");
         if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
-        if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input matrices.");
+        if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y) || TensorAlias.SharesBackingMemory(destination, x) || TensorAlias.SharesBackingMemory(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input matrices.");
         if (clearDestination) destination.Buffer.Span.Clear();
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
@@ -476,7 +476,7 @@ where T : unmanaged
 
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
-        if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input tensors.");
+        if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y) || TensorAlias.SharesBackingMemory(destination, x) || TensorAlias.SharesBackingMemory(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input tensors.");
         var plan = MatMulShapes.Create(x.Dimensions, y.Dimensions);
         if (!destination.Dimensions.SequenceEqual(plan.OutputShape)) throw new ArgumentException(nameof(destination), "Destination shape must match the matrix product shape.");
         if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");

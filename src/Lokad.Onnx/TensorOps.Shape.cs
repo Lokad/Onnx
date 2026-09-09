@@ -317,7 +317,7 @@ where T : unmanaged
         var p = NormalizeTransposePerm(data.Rank, perm);
         if (!destination.Dimensions.SequenceEqual(TransposedShape(data.Dimensions, p))) throw new ArgumentException(nameof(destination), "Destination shape must match the transposed shape.");
         if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
-        if (ReferenceEquals(destination, data)) throw new ArgumentException(nameof(destination), "Destination must not alias the input tensor: permutation is not an in-place operation.");
+        if (ReferenceEquals(destination, data) || TensorAlias.SharesBackingMemory(destination, data)) throw new ArgumentException(nameof(destination), "Destination must not alias the input tensor: permutation is not an in-place operation.");
         StartOpStage(OpStage.Copy);
         TransposeInto(data, destination, p);
         return destination;

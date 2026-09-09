@@ -80,6 +80,73 @@ public class DestinationContractTests
     }
 
     [Fact]
+    public void AliasedBackingMemory_MatMul2D_ThrowsBeforeMutation()
+    {
+        // C06 reproducer: a distinct destination object over the input array.
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var b = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f }, { 0f, 1f } });
+        var dest = new DenseTensor<float>(a.Buffer, new int[] { 2, 2 });
+        var ex = Assert.Throws<ArgumentException>(() => Tensor<float>.MatMul2D(a, b, dest, TensorExecutionOptions.Scalar));
+        Assert.Contains("alias", ex.Message);
+        Assert.Equal(new float[] { 1f, 2f, 3f, 4f }, a.ToArray());
+    }
+
+    [Fact]
+    public void DisjointWindows_MatMul2D_Works()
+    {
+        var store = new float[] { 1f, 2f, 3f, 4f, 0f, 0f, 0f, 0f };
+        var x = new DenseTensor<float>(store.AsMemory(0, 4), new int[] { 2, 2 });
+        var dest = new DenseTensor<float>(store.AsMemory(4, 4), new int[] { 2, 2 });
+        var id = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f }, { 0f, 1f } });
+        Tensor<float>.MatMul2D(x, id, dest, TensorExecutionOptions.Scalar);
+        Assert.Equal(new float[] { 1f, 2f, 3f, 4f }, dest.ToArray());
+        Assert.Equal(new float[] { 1f, 2f, 3f, 4f }, x.ToArray());
+    }
+
+    [Fact]
+    public void OverlappingWindows_MatMul2D_Throws()
+    {
+        var store = new float[] { 1f, 2f, 3f, 4f, 5f, 6f };
+        var x = new DenseTensor<float>(store.AsMemory(0, 4), new int[] { 2, 2 });
+        var dest = new DenseTensor<float>(store.AsMemory(2, 4), new int[] { 2, 2 });
+        var id = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f }, { 0f, 1f } });
+        Assert.Throws<ArgumentException>(() => Tensor<float>.MatMul2D(x, id, dest, TensorExecutionOptions.Scalar));
+    }
+
+    [Fact]
+    public void SliceView_OverlappingDestination_Throws()
+    {
+        var p = DenseTensor<float>.Ones(4, 4).ToDenseTensor();
+        Tensor<float> rows = p[0..2, ..];
+        var dest = new DenseTensor<float>(p.Buffer.Slice(4, 8), new int[] { 2, 4 });
+        var id = DenseTensor<float>.OfValues(new float[4, 4]
+        {
+            { 1f, 0f, 0f, 0f }, { 0f, 1f, 0f, 0f }, { 0f, 0f, 1f, 0f }, { 0f, 0f, 0f, 1f },
+        });
+        Assert.Throws<ArgumentException>(() => Tensor<float>.MatMul2D(rows, id, dest, TensorExecutionOptions.Scalar));
+    }
+
+    [Fact]
+    public void DisjointWindows_Transpose_Works()
+    {
+        var store = new float[] { 1f, 2f, 3f, 4f, 0f, 0f, 0f, 0f };
+        var x = new DenseTensor<float>(store.AsMemory(0, 4), new int[] { 2, 2 });
+        var dest = new DenseTensor<float>(store.AsMemory(4, 4), new int[] { 2, 2 });
+        Tensor<float>.Transpose(x, dest, new int[] { 1, 0 });
+        Assert.Equal(new float[] { 1f, 3f, 2f, 4f }, dest.ToArray());
+    }
+
+    [Fact]
+    public void AliasedBackingMemory_Transpose_Throws()
+    {
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var dest = new DenseTensor<float>(x.Buffer, new int[] { 2, 2 });
+        var ex = Assert.Throws<ArgumentException>(() => Tensor<float>.Transpose(x, dest, new int[] { 1, 0 }));
+        Assert.Contains("alias", ex.Message);
+        Assert.Equal(new float[] { 1f, 2f, 3f, 4f }, x.ToArray());
+    }
+
+    [Fact]
     public void Apply_DestinationLengthMismatch_Throws()
     {
         var x = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f, 4f, 5f, 6f });
