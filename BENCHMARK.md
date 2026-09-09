@@ -38,11 +38,11 @@ unchanged 1e-4 gate with inputs fingerprinted intact. Machine-readable
 artifacts with embedded raw samples live in
 `tests/Lokad.Onnx.Bench/baseline/summary-20260909.json`, regenerated from
 the per-rep logs by `python eng/parse_baseline.py <rep logs>`.
-Confinement ratios were 0.91, 0.96 and 0.87 (single-threaded 2 s busy
+Confinement ratios were 0.97, 0.98 and 1.00 (single-threaded 2 s busy
 loop; the harness fails above 1.3 and warns below 0.8).
 
-Measured at `ff8f9ad` with only the historical relabels above pending,
-folded into this commit; no code differences. SDK
+Measured at `a008c05` with a clean tree after the P01/P02/P03/P04/P12/P13
+slices landed; no code differences. SDK
 `10.0.300-preview.0.26177.108`, runtime `.NET 10.0.12`, ORT C# `1.23.2.0`,
 Lokad assembly `0.2.0.0`. Asset bytes and hashes per case print in each
 rep header and match `ModelManifest.json`; inputs and outputs print there
@@ -51,19 +51,19 @@ too (e5 token counts, 224x224 pixels, 4-token GPT-2 prefill).
 Cells are Lokad warmed public-Execute median versus ORT warmed-Run median
 per rep in milliseconds; the ratio spans the three within-rep median
 ratios. Absolute medians drifted across reps with machine settling
-(ResNet50 Lokad 342.0 to 307.4 ms), but both engines drift together, so
-within-rep ratios hold to 0.2x on every case: compare revisions
-within shared reps and alternate their order, never absolute medians
-across days. Per-rep best, p95, max, GC, and load/prepare/first-run
+(DINOv3 Lokad 188.1 to 165.9 ms), but both engines drift together, so
+within-rep ratios hold to 0.5x except e5-8tok (6.6-7.7x on small
+absolute medians): compare revisions within shared reps and alternate
+their order, never absolute medians across days. Per-rep best, p95, max, GC, and load/prepare/first-run
 figures live in the summary JSON.
 
 | Case | rep1 L/ORT ms | rep2 L/ORT ms | rep3 L/ORT ms | Lokad / ORT |
 |---|---:|---:|---:|---|
-| e5-8tok | 50.9 / 6.8 | 54.5 / 7.1 | 52.3 / 7.0 | 7.4-7.6x |
-| e5-30tok | 81.7 / 14.2 | 72.3 / 12.8 | 67.8 / 12.0 | 5.7-5.7x |
-| dinov3-224 | 310.7 / 72.8 | 303.1 / 73.8 | 327.4 / 76.0 | 4.1-4.3x |
-| resnet50-224 | 342.0 / 61.2 | 312.6 / 55.8 | 307.4 / 55.0 | 5.6-5.6x |
-| gpt2-4tok | 97.2 / 23.6 | 110.8 / 25.6 | 100.8 / 23.2 | 4.1-4.3x |
+| e5-8tok | 40.4 / 5.8 | 44.0 / 5.7 | 37.5 / 5.7 | 6.6-7.7x |
+| e5-30tok | 58.3 / 13.2 | 58.3 / 12.7 | 64.7 / 14.0 | 4.4-4.6x |
+| dinov3-224 | 188.1 / 83.1 | 165.9 / 73.3 | 176.1 / 78.0 | 2.3-2.3x |
+| resnet50-224 | 262.5 / 55.7 | 245.8 / 53.4 | 260.2 / 58.7 | 4.4-4.7x |
+| gpt2-4tok | 120.1 / 26.1 | 105.8 / 25.1 | 100.5 / 24.3 | 4.1-4.6x |
 
 Reproduce from the repo root after building Release:
 
