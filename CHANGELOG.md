@@ -125,6 +125,7 @@ as planned or a known limitation. This is not a release-readiness claim.
 - Shared float matrix dispatch for im2col Conv, single-pass Gemm output,
   common reduction preparation, broadcast and Gather/block-copy paths,
   vectorized exp/erf/GELU, and pooled dense-float outputs.
+- Operator preparation is shared per concern (contiguity, reduction setup, resize geometry, convolution, pooling, and matmul planning) instead of once per dtype, and the operator and dispatch sources are split by operation family with no public-surface change.
 - Deterministic native e5 conformance and single-op differential lanes;
   local-model manifest and MNIST, DINOv2, DINOv3, ResNet50 and GPT-2 coverage,
   including GPT-2 past-state continuation and the DINOv3 full-weight
