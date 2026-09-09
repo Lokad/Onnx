@@ -52,24 +52,32 @@ Native e5 conformance: `eng/test-e5.ps1` (see `tests/e5/README.md`).
 ## Memory measurement (buffer-reuse track)
 
 GC allocation bytes are real managed allocations: boxes, temporary arrays and
-orchestration alongside payload. A per-op replay attributes ~177 MB to a 30-token
-e5 run whose true output bytes are ~30 MB (max live tensor 46 KB); the gap is
-per-op framework overhead shared by every execution path, so GC deltas cannot
-attribute pooling work on their own. Report all relevant measures: GC bytes plus
-true-byte accounting:
+orchestration alongside payload. A warmed steady-state 30-token e5 run
+allocates about 4.0 MB of calling-thread managed bytes
+(`ComputationalGraph.LastAllocatedBytes`) while the pool adopts 56 fresh
+arrays (2.7 MB via `LastPoolAllocatedNewBytes`), serves 260 rents from
+returned buffers (15.8 MB via `LastPoolReusedBytes`), and returns 267 arrays
+with zero drops; per-run collection deltas (`LastGcCollections`) are typically
+[0-1, 0-1, 0]. Live tensors at run end total 4.3 MB across 97 tensors (max
+live tensor 46 KB). The benchmark `allocMB` figure (about 128 MB over 33
+warmed iterations) is a shared-process total across both engines plus input
+conversion, not per-run attribution. Report all relevant measures: per-run
+bytes plus pool service, and never compare figures across these scopes:
 
-- True output bytes per op: replay nodes in file order with exact per-node
-  inputs through the tracked `ComputationalGraph.ExecuteNode` API (caller dict
-  plus initializers only, exact count match, initializers excluded)
-  and sum `Length x element-size` of each produced output. Deterministic and
-  immune to framework overhead.
+- Per-run bytes: `ComputationalGraph.LastAllocatedBytes` after `Execute`.
+  Thread-local, so exact for single-threaded runs and a lower bound when
+  worker threads allocate.
+- Per-run collections: `ComputationalGraph.LastGcCollections`, a fresh
+  3-length array of per-generation collection deltas. Deltas come from
+  process-wide counters, so concurrent suites can advance them: they bound
+  collections during the run, never attribute them.
 - Pool service: `ComputationalGraph.LastPoolAllocatedNewBytes` (fresh) and
   `LastPoolReusedBytes` (served from returned buffers) after `Execute`.
 
-Procedure (tracked pieces only): drive the per-node replay through
-`ComputationalGraph.ExecuteNode` from a small console referencing `src`
-(Release) with the local e5 model plus tokenizer paths. It prints timed-run
-GC totals with pool counters followed by the per-op true-byte census.
+Procedure (tracked pieces only): run the local e5 model warmed on one CPU,
+then read the three diagnostics above off the graph after `Execute` and
+confirm the live-at-end census (97 tensors, 4.3 MB, 46 KB max) against the
+dumped intermediates.
 
 
 Rule for future pooled kernels, learned the hard way: float MatMul kernels
