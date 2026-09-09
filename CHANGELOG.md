@@ -101,6 +101,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   The ported Float16 struct is deleted in favor of System.Half across core,
   dispatch, import, and tests with identical bit patterns including NaN payloads;
   BFloat16 stays custom.
+  Bulk-added IBM/onnx notice entries with no mapped code are removed after
+  full-tree and full-history searches, and the notices file now ships in the
+  package root; two entries remain against the tensor hierarchy and BFloat16 work.
   Benchmark workloads moved from the CLI to the non-packable benchmark
   project with BenchmarkDotNet; the CLI keeps inspection and inference
   only, and bench.ps1 drives model timings plus the relocated sweep.
