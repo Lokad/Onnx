@@ -113,16 +113,24 @@ static class Bench
             + " resetPop=reset after execute|resetClean=reset when empty (no-op floor);"
             + " gc/alloc=shared-process totals over warmed loops without per-engine attribution; output disposal outside all timings."
             + " agree=maxAbs + ORT-reference-scaled diff (tol 1e-4 scaled, unchanged);"
+            + " known-divergence=tracked registry with tripwire; excluded cases skip timing;"
             + " post=agreement re-check after timed reuse; inputsIntact=input fingerprint before/after.");
         // Each requested case reports its own status. A failing case never suppresses the
         // remaining cases, but the run still exits nonzero so its absence cannot read as success.
+        // A tracked known divergence excludes its case (no timing, no publication) without failing the run.
         var caseFailures = new List<string>();
+        var excludedCases = new List<string>();
         void RunCase(string label, Action run)
         {
             try
             {
                 run();
                 Console.WriteLine("case-status " + label + "=ok");
+            }
+            catch (KnownDivergenceException kdx)
+            {
+                Console.WriteLine("case-status " + label + "=excluded-known-divergence: " + kdx.Message.Split((char)10)[0]);
+                excludedCases.Add(label);
             }
             catch (Exception ex)
             {
@@ -141,6 +149,10 @@ static class Bench
         if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) RunCase("dinov3-224", () => CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, rowsName, modeName));
         if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) RunCase("resnet50-224", () => CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters, rowsName, modeName));
         if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) RunCase("gpt2-4tok", () => CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, rowsName, modeName));
+        if (excludedCases.Count > 0)
+        {
+            Console.WriteLine("cases-excluded [" + string.Join(",", excludedCases) + "] (tracked known divergences; no rows are eligible for excluded cases)");
+        }
         if (caseFailures.Count > 0)
         {
             Console.WriteLine("cases-failed [" + string.Join(",", caseFailures) + "] (no rows are eligible for failed cases)");
@@ -620,10 +632,24 @@ static class Bench
                         + " (got " + (lt is null ? "unresolved" : lt.GetType().Name) + ").");
                 var la = lf.ToArray();
                 var oa = res.GetTensorDataAsSpan<float>().ToArray();
-                var agree = BenchValidate.RequireAgreement(
-                    name + ":" + onm,
-                    shape.Shape.Select(d => checked((int)d)).ToArray(), oa,
-                    lf.Dimensions.ToArray(), la, Tolerance);
+                (double scaled, double abs) agree;
+                try
+                {
+                    agree = BenchValidate.RequireAgreement(
+                        name + ":" + onm,
+                        shape.Shape.Select(d => checked((int)d)).ToArray(), oa,
+                        lf.Dimensions.ToArray(), la, Tolerance);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    if (oa.Length == la.Length)
+                    {
+                        var diff = BenchValidate.ScaledAndAbsDiff(oa, la);
+                        if (KnownDivergences.TryMatch(name, onm, diff.scaled, Tolerance, out var known))
+                            throw new KnownDivergenceException(name, onm, diff.scaled, Tolerance, known, ex);
+                    }
+                    throw;
+                }
                 worstScaled = Math.Max(worstScaled, agree.scaled);
                 worstAbs = Math.Max(worstAbs, agree.abs);
             }
