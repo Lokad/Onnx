@@ -126,6 +126,7 @@ as planned or a known limitation. This is not a release-readiness claim.
   common reduction preparation, broadcast and Gather/block-copy paths,
   vectorized exp/erf/GELU, and pooled dense-float outputs.
 - Operator preparation is shared per concern (contiguity, reduction setup, resize geometry, convolution, pooling, and matmul planning) instead of once per dtype, and the operator and dispatch sources are split by operation family with no public-surface change.
+- Graph runs prepare stable per-run work once with no ownership or numerical change: lossless long integer-array attributes canonicalize at preparation, node dispatch avoids per-run LINQ allocations, dead-value release retries only alias-pinned values instead of rescanning every intermediate per node, and release probes consult a lazily built per-execution snapshot of run-static backing arrays with a legacy-scan fallback. Dispatch-heavy micro graphs allocate about a third less per run; ResNet50 allocates about 0.25% less with identical pool behavior and stays payload-dominated.
 - Deterministic native e5 conformance and single-op differential lanes;
   local-model manifest and MNIST, DINOv2, DINOv3, ResNet50 and GPT-2 coverage,
   including GPT-2 past-state continuation and the DINOv3 full-weight
