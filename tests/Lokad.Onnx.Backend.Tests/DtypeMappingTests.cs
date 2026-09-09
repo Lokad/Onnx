@@ -104,12 +104,15 @@ public class DtypeMappingTests
     public void Import_ReadsBoolAndWidthsAndPackedSmallFloats()
     {
         var b = new TensorProto { Name = "b", DataType = (int)TensorElementType.Bool };
+        b.Dims.Add(2);
         b.Int32Data.Add(new int[] { 0, 1 });
         Assert.Equal(new bool[] { false, true }, (bool[])b.GetTensorData());
         var i16 = new TensorProto { Name = "i16", DataType = (int)TensorElementType.Int16 };
+        i16.Dims.Add(2);
         i16.RawData = ByteString.CopyFrom(BitConverter.GetBytes((short)-300).Concat(BitConverter.GetBytes((short)300)).ToArray());
         Assert.Equal(new short[] { -300, 300 }, (short[])i16.GetTensorData());
         var f16 = new TensorProto { Name = "f16", DataType = (int)TensorElementType.Float16 };
+        f16.Dims.Add(2);
         f16.RawData = ByteString.CopyFrom(new byte[] { 0x00, 0x3C, 0x00, 0xBC });
         var bits = (Half[])f16.GetTensorData();
         Assert.Equal(2, bits.Length);
@@ -124,6 +127,60 @@ public class DtypeMappingTests
         var c = new TensorProto { Name = "c", DataType = (int)TensorElementType.Complex64 };
         var ex = Assert.Throws<NotSupportedException>(() => c.GetTensorData());
         Assert.Contains("c", ex.Message);
+    }
+
+    [Fact]
+    public void Import_ReadsUnsignedExtremaLosslessly()
+    {
+        var u64 = new TensorProto { Name = "u64", DataType = (int)TensorElementType.UInt64 };
+        u64.Dims.Add(2);
+        u64.Uint64Data.Add(new ulong[] { ulong.MaxValue, 0UL });
+        Assert.Equal(new ulong[] { ulong.MaxValue, 0UL }, (ulong[])u64.GetTensorData());
+        var u32 = new TensorProto { Name = "u32", DataType = (int)TensorElementType.UInt32 };
+        u32.Dims.Add(2);
+        u32.Uint64Data.Add(new ulong[] { uint.MaxValue, 0UL });
+        Assert.Equal(new uint[] { uint.MaxValue, 0U }, (uint[])u32.GetTensorData());
+        var raw = new TensorProto { Name = "u64raw", DataType = (int)TensorElementType.UInt64 };
+        raw.Dims.Add(1);
+        raw.RawData = ByteString.CopyFrom(BitConverter.GetBytes(ulong.MaxValue));
+        Assert.Equal(new ulong[] { ulong.MaxValue }, (ulong[])raw.GetTensorData());
+        var legacy = new TensorProto { Name = "u64leg", DataType = (int)TensorElementType.UInt64 };
+        legacy.Dims.Add(2);
+        legacy.Int64Data.Add(new long[] { 7L, 8L });
+        Assert.Equal(new ulong[] { 7UL, 8UL }, (ulong[])legacy.GetTensorData());
+    }
+
+    [Fact]
+    public void Import_RejectsMalformedPayloads()
+    {
+        var shortp = new TensorProto { Name = "shortp", DataType = (int)TensorElementType.Int32 };
+        shortp.Dims.Add(2); shortp.Dims.Add(2);
+        shortp.Int32Data.Add(new int[] { 1, 2, 3 });
+        var ex = Assert.Throws<InvalidOperationException>(() => shortp.GetTensorData());
+        Assert.Contains("shortp", ex.Message);
+        var longp = new TensorProto { Name = "longp", DataType = (int)TensorElementType.Int32 };
+        longp.Dims.Add(2); longp.Dims.Add(2);
+        longp.Int32Data.Add(new int[] { 1, 2, 3, 4, 5 });
+        ex = Assert.Throws<InvalidOperationException>(() => longp.GetTensorData());
+        Assert.Contains("longp", ex.Message);
+        var ragged = new TensorProto { Name = "ragged", DataType = (int)TensorElementType.Float };
+        ragged.Dims.Add(1);
+        ragged.RawData = ByteString.CopyFrom(new byte[] { 0x00, 0x00, 0x80 });
+        ex = Assert.Throws<InvalidOperationException>(() => ragged.GetTensorData());
+        Assert.Contains("ragged", ex.Message);
+        var wide = new TensorProto { Name = "wide", DataType = (int)TensorElementType.UInt32 };
+        wide.Dims.Add(1);
+        wide.Uint64Data.Add(new ulong[] { (ulong)uint.MaxValue + 1UL });
+        Assert.Throws<OverflowException>(() => wide.GetTensorData());
+    }
+
+    [Fact]
+    public void Import_SkipsCountCheckForUnderivableDims()
+    {
+        var sym = new TensorProto { Name = "sym", DataType = (int)TensorElementType.Int32 };
+        sym.Dims.Add(-1);
+        sym.Int32Data.Add(new int[] { 1, 2 });
+        Assert.Equal(new int[] { 1, 2 }, (int[])sym.GetTensorData());
     }
 
     [Fact]

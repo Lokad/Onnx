@@ -10,6 +10,40 @@ public static class ProtoConversions
     public static object GetTensorData(this TensorProto tp)
     {
         var elementType = (TensorElementType)tp.DataType;
+        int size = TensorBase.ElementByteSize(elementType);
+        if (tp.RawData.Length > 0 && size > 0 && tp.RawData.Length % size != 0)
+            throw new InvalidOperationException($"Tensor {tp.Name} holds {tp.RawData.Length} raw bytes, not a multiple of {size} for {elementType}.");
+        var data = (Array)DecodeTensorData(tp, elementType);
+        RequireElementCount(tp, data);
+        return data;
+    }
+
+    static void RequireElementCount(TensorProto tp, Array data)
+    {
+        long expected;
+        try
+        {
+            checked
+            {
+                expected = 1;
+                foreach (var d in tp.Dims)
+                {
+                    if (d < 0) return; // Underivable (symbolic) extents skip the check, matching
+                        // the external-data byte-count policy for such shapes.
+                    expected *= d;
+                }
+            }
+        }
+        catch (OverflowException)
+        {
+            throw new InvalidOperationException($"Tensor {tp.Name} declares a shape whose element count overflows.");
+        }
+        if (data.Length != expected)
+            throw new InvalidOperationException($"Tensor {tp.Name} declares {expected} elements but its payload holds {data.Length}.");
+    }
+
+    static object DecodeTensorData(TensorProto tp, TensorElementType elementType)
+    {
         switch (elementType)
         {
             case TensorElementType.Bool:
@@ -44,6 +78,7 @@ public static class ProtoConversions
             case TensorElementType.UInt32:
                 Runtime.Debug("tensorproto {tpn} has embedded uint32 tensor data.", tp.Name);
                 if (tp.RawData.Length > 0) return MemoryMarshal.Cast<byte, uint>(tp.RawData.Span).ToArray();
+                if (tp.Uint64Data.Count > 0) return tp.Uint64Data.Select(v => checked((uint)v)).ToArray();
                 if (tp.Int64Data.Count > 0) return tp.Int64Data.Select(v => checked((uint)v)).ToArray();
                 return tp.Int32Data.Select(v => checked((uint)v)).ToArray();
             case TensorElementType.Int64:
@@ -54,6 +89,7 @@ public static class ProtoConversions
             case TensorElementType.UInt64:
                 Runtime.Debug("tensorproto {tpn} has embedded uint64 tensor data.", tp.Name);
                 if (tp.RawData.Length > 0) return MemoryMarshal.Cast<byte, ulong>(tp.RawData.Span).ToArray();
+                if (tp.Uint64Data.Count > 0) return tp.Uint64Data.ToArray();
                 if (tp.Int64Data.Count > 0) return tp.Int64Data.Select(v => checked((ulong)v)).ToArray();
                 return tp.Int32Data.Select(v => checked((ulong)v)).ToArray();
             case TensorElementType.Float:
