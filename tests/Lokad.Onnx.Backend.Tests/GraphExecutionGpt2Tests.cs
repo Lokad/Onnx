@@ -215,6 +215,41 @@ public class GraphExecutionGpt2Tests
     }
 
     [SkippableFact]
+    public void Gpt2RetainedPast_SurvivesNextRun()
+    {
+        var graph = ModelFixture.LoadRequiredModel("GPT-2", "models", "gpt2-onnx", "onnx", "model.onnx");
+
+        ModelFixture.AssertExecuted(graph, graph.Execute(FirstStepInputs(), true));
+        // Hold every retained tensor object plus a snapshot array. Inputs are
+        // read-only by contract, so the next run must leave them bitwise
+        // identical even though the same objects feed the decode.
+        var heldTensors = new List<Tensor<float>>();
+        var heldArrays = new List<float[]>();
+        for (int layer = 0; layer < 12; layer++)
+        {
+            foreach (var kind in new string[] { "key", "value" })
+            {
+                var held = (Tensor<float>)graph.Outputs["present." + layer + "." + kind];
+                heldTensors.Add(held);
+                heldArrays.Add(held.ToArray());
+            }
+        }
+        var heldLogits = (Tensor<float>)graph.Outputs["logits"];
+        heldTensors.Add(heldLogits);
+        heldArrays.Add(heldLogits.ToArray());
+        var second = NextStepInputs(graph, 317, 4, 5);
+        graph.Reset();
+        ModelFixture.AssertExecuted(graph, graph.Execute(second, true));
+        Assert.Equal(heldTensors.Count, heldArrays.Count);
+        for (int i = 0; i < heldTensors.Count; i++)
+        {
+            Assert.Equal(heldArrays[i], heldTensors[i].ToArray());
+        }
+        var values = ModelFixture.CheckedOutput(graph, "logits");
+        ModelFixture.AssertMean(values, -83.02188873, 1e-4, "gpt2 retained decode");
+    }
+
+    [SkippableFact]
     public void Gpt2Continuation_ZeroedPast_Diverges()
     {
         var graph = ModelFixture.LoadRequiredModel("GPT-2", "models", "gpt2-onnx", "onnx", "model.onnx");
