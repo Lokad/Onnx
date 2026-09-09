@@ -83,6 +83,8 @@ def test_case_matches_ort_reference(case, tmp_path):
             if ref.shape != new.shape or ref.dtype != new.dtype:
                 breaches.append("%s: %s shape/dtype %s/%s vs %s/%s" % (mode, name, ref.shape, ref.dtype, new.shape, new.dtype))
                 continue
+            if ref.size == 0:
+                continue
             if ref.dtype == np.int64:
                 if not np.array_equal(ref, new):
                     breaches.append("%s: %s int mismatch" % (mode, name))
