@@ -32,6 +32,8 @@ public class ComputationalGraph
 
     internal object FoldLock = new object();
 
+    internal object PrepareLock = new object();
+
     /// <summary>
     /// Retained input descriptions (with symbolic dimension names) for
     /// descriptor-aware validation. Treated as immutable after load; empty for
@@ -79,9 +81,25 @@ public class ComputationalGraph
     /// Execution entries re-analyze automatically when the structure changes,
     /// so an explicit call only warms the analysis up before the first run.
     /// </summary>
+    /// <remarks>
+    /// Legal mutation rule: preparation is refused while the same instance is
+    /// executing. Direct edits to the public <see cref="Nodes"/> list during a
+    /// run remain caller error requiring external synchronization.
+    /// </remarks>
     public void Prepare()
     {
-        RefreshLifetimeAnalysis();
+        if (System.Threading.Volatile.Read(ref _executing) != 0)
+        {
+            throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
+        }
+        lock (PrepareLock)
+        {
+            if (System.Threading.Volatile.Read(ref _executing) != 0)
+            {
+                throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
+            }
+            RefreshLifetimeAnalysis();
+        }
     }
 
     /// <summary>Forgets the analysis so the next execution re-analyzes unconditionally.</summary>
@@ -89,11 +107,22 @@ public class ComputationalGraph
     /// mutation of a folded initializer takes effect after this call.</remarks>
     public void InvalidatePreparation()
     {
-        _prepared = false;
-        lock (FoldLock)
+        if (System.Threading.Volatile.Read(ref _executing) != 0)
         {
-            foreach (var fold in FoldedTransposes.Values) Initializers.Remove(fold.PreparedName);
-            FoldedTransposes.Clear();
+            throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
+        }
+        lock (PrepareLock)
+        {
+            if (System.Threading.Volatile.Read(ref _executing) != 0)
+            {
+                throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
+            }
+            _prepared = false;
+            lock (FoldLock)
+            {
+                foreach (var fold in FoldedTransposes.Values) Initializers.Remove(fold.PreparedName);
+                FoldedTransposes.Clear();
+            }
         }
     }
 
@@ -151,12 +180,23 @@ public class ComputationalGraph
     /// <summary>Creates an isolated execution context sharing this prepared plan.</summary>
     public GraphExecution CreateExecution(ExecutionOptions? options)
     {
-        EnsurePrepared();
-        var exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
-        return exec;
+        lock (PrepareLock)
+        {
+            EnsurePreparedLocked();
+            var exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
+            return exec;
+        }
     }
 
     protected void EnsurePrepared()
+    {
+        lock (PrepareLock)
+        {
+            EnsurePreparedLocked();
+        }
+    }
+
+    void EnsurePreparedLocked()
     {
         if (!_prepared || ComputeStructureFingerprint() != _preparedFingerprint)
         {
@@ -166,21 +206,24 @@ public class ComputationalGraph
 
     void CopyFromExecution(GraphExecution exec)
     {
-        ReplaceMap(Inputs, exec.Inputs);
-        ReplaceMap(Outputs, exec.Outputs);
-        IntermediateOutputs.Clear();
-        foreach (var kv in exec.IntermediateOutputs) IntermediateOutputs.Add(kv.Key, kv.Value);
-        LastErrorMessage = exec.LastErrorMessage;
-        LastFailedNodeName = exec.LastFailedNodeName;
-        LastFailedNodeOp = exec.LastFailedNodeOp;
-        LastErrorCause = exec.LastErrorCause;
-        LastProfile = exec.LastProfile;
-        LastPoolAllocatedNew = exec.LastPoolAllocatedNew;
-        LastPoolReused = exec.LastPoolReused;
-        LastPoolReturned = exec.LastPoolReturned;
-        LastPoolDropped = exec.LastPoolDropped;
-        LastPoolAllocatedNewBytes = exec.LastPoolAllocatedNewBytes;
-        LastPoolReusedBytes = exec.LastPoolReusedBytes;
+        lock (PrepareLock)
+        {
+            ReplaceMap(Inputs, exec.Inputs);
+            ReplaceMap(Outputs, exec.Outputs);
+            IntermediateOutputs.Clear();
+            foreach (var kv in exec.IntermediateOutputs) IntermediateOutputs.Add(kv.Key, kv.Value);
+            LastErrorMessage = exec.LastErrorMessage;
+            LastFailedNodeName = exec.LastFailedNodeName;
+            LastFailedNodeOp = exec.LastFailedNodeOp;
+            LastErrorCause = exec.LastErrorCause;
+            LastProfile = exec.LastProfile;
+            LastPoolAllocatedNew = exec.LastPoolAllocatedNew;
+            LastPoolReused = exec.LastPoolReused;
+            LastPoolReturned = exec.LastPoolReturned;
+            LastPoolDropped = exec.LastPoolDropped;
+            LastPoolAllocatedNewBytes = exec.LastPoolAllocatedNewBytes;
+            LastPoolReusedBytes = exec.LastPoolReusedBytes;
+        }
     }
 
     static void ReplaceMap(Dictionary<string, ITensor?> target, Dictionary<string, ITensor?> source)
@@ -570,14 +613,18 @@ public class ComputationalGraph
     /// <returns>True on success; otherwise false with details on LastErrorMessage, LastFailedNodeName, LastFailedNodeOp and LastErrorCause.</returns>
     public virtual bool Execute(object userInputs, bool useInitializers, ExecutionProvider provider, ExecutionOptions? options)
     {
-        EnsurePrepared();
         if (Interlocked.CompareExchange(ref _executing, 1, 0) != 0)
         {
             return false;
         }
         try
         {
-            var exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
+            GraphExecution exec;
+            lock (PrepareLock)
+            {
+                EnsurePreparedLocked();
+                exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
+            }
             bool ok = exec.RunCore(userInputs, useInitializers, provider);
             CopyFromExecution(exec);
             return ok;
@@ -827,14 +874,18 @@ public class ComputationalGraph
     /// <returns>True on success; otherwise false with details on LastErrorMessage, LastFailedNodeName, LastFailedNodeOp and LastErrorCause.</returns>
     public virtual bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider, ExecutionOptions? options)
     {
-        EnsurePrepared();
         if (Interlocked.CompareExchange(ref _executing, 1, 0) != 0)
         {
             return false;
         }
         try
         {
-            var exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
+            GraphExecution exec;
+            lock (PrepareLock)
+            {
+                EnsurePreparedLocked();
+                exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
+            }
             bool ok = exec.RunNodeCore(userInputs, nodeLabel, useInitializers, provider);
             CopyFromExecution(exec);
             return ok;

@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lokad.Onnx.Backend.Tests;
 
@@ -21,6 +24,18 @@ public class GraphPreparationConcurrencyTests
         g.Nodes.Add(new Node { Name = "b", Op = OpType.Relu, Inputs = new[] { "t" }, Outputs = new[] { "y" } });
         g.IntermediateOutputs["t"] = null;
         g.RefreshLifetimeAnalysis();
+        return g;
+    }
+
+    static ComputationalGraph UnpreparedChainGraph()
+    {
+        var g = new ComputationalGraph();
+        g.Metadata["Name"] = "test";
+        g.Inputs["x"] = DenseTensor<float>.OfShape(2);
+        g.Outputs["y"] = DenseTensor<float>.OfShape(2);
+        g.Nodes.Add(new Node { Name = "a", Op = OpType.Relu, Inputs = new[] { "x" }, Outputs = new[] { "t" } });
+        g.Nodes.Add(new Node { Name = "b", Op = OpType.Relu, Inputs = new[] { "t" }, Outputs = new[] { "y" } });
+        g.IntermediateOutputs["t"] = null;
         return g;
     }
 
@@ -97,6 +112,89 @@ public class GraphPreparationConcurrencyTests
         try
         {
             Assert.False(g.Execute(Good(), false, ExecutionProvider.CPU, ExecutionOptions.Scalar));
+            Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+            Assert.Null(g.LastErrorMessage);
+        }
+        finally
+        {
+            flag.SetValue(g, 0);
+        }
+        Assert.True(g.Execute(Good(), false));
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public async Task ConcurrentFirstCreateExecution_Agrees()
+    {
+        var g = UnpreparedChainGraph();
+        using var barrier = new Barrier(2);
+        System.Func<GraphExecution> create = () =>
+        {
+            barrier.SignalAndWait();
+            return g.CreateExecution(null);
+        };
+        var left = Task.Run(create);
+        var right = Task.Run(create);
+        await Task.WhenAll(left, right);
+        var execLeft = await left;
+        var execRight = await right;
+        Assert.True(execLeft.Execute(Good(), false));
+        Assert.True(execRight.Execute(Good(), false));
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)execLeft.Outputs["y"]).ToArray());
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)execRight.Outputs["y"]).ToArray());
+        Assert.True(g.Execute(Good(), false));
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public async Task ConcurrentFirstPrepare_Agrees()
+    {
+        var g = UnpreparedChainGraph();
+        using var barrier = new Barrier(2);
+        System.Action prepare = () =>
+        {
+            barrier.SignalAndWait();
+            g.Prepare();
+        };
+        await Task.WhenAll(Task.Run(prepare), Task.Run(prepare));
+        Assert.True(g.Execute(Good(), false));
+        Assert.Equal(1, g.LastUseIndex["t"]);
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public void PrepareDuringExecution_ThrowsAndPreservesState()
+    {
+        var g = ChainGraph();
+        Assert.True(g.Execute(Good(), false));
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        var flag = ExecutingFlag();
+        flag.SetValue(g, 1);
+        try
+        {
+            Assert.Throws<InvalidOperationException>(() => g.Prepare());
+            Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+            Assert.Null(g.LastErrorMessage);
+        }
+        finally
+        {
+            flag.SetValue(g, 0);
+        }
+        Assert.True(g.Execute(Good(), false));
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public void InvalidateDuringExecution_ThrowsAndPreservesState()
+    {
+        var g = ChainGraph();
+        Assert.True(g.Execute(Good(), false));
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        var flag = ExecutingFlag();
+        flag.SetValue(g, 1);
+        try
+        {
+            Assert.Throws<InvalidOperationException>(() => g.InvalidatePreparation());
             Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
             Assert.Null(g.LastErrorMessage);
         }

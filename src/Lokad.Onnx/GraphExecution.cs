@@ -24,6 +24,7 @@ public sealed class GraphExecution : ComputationalGraph
         Initializers = prepared.Initializers;
         FoldedTransposes = prepared.FoldedTransposes;
         FoldLock = prepared.FoldLock;
+        PrepareLock = prepared.PrepareLock;
         InputDescs = prepared.InputDescs;
         OutputDescs = prepared.OutputDescs;
         Opset = prepared.Opset;
