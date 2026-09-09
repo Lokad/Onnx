@@ -74,6 +74,114 @@ public class TensorOpsConvPoolTests
         Assert.Equal(5.0, yd[0, 0, 0, 0], 10);
     }
 
+    static float[] NaiveIm2Col(float[] src, int C, int H, int W, int kH, int kW, int dH, int dW, int sH, int sW, int pT, int pL, int pB, int pR)
+    {
+        int effH = (kH - 1) * dH + 1, effW = (kW - 1) * dW + 1;
+        int outH = (H + pT + pB - effH) / sH + 1, outW = (W + pL + pR - effW) / sW + 1;
+        var patch = new float[C * kH * kW * outH * outW];
+        int o = 0;
+        for (int c = 0; c < C; c++)
+            for (int kh = 0; kh < kH; kh++)
+                for (int kw = 0; kw < kW; kw++)
+                    for (int oh = 0; oh < outH; oh++)
+                        for (int ow = 0; ow < outW; ow++)
+                        {
+                            int ih = kh * dH - pT + oh * sH, iw = kw * dW - pL + ow * sW;
+                            patch[o++] = (ih < 0 || ih >= H || iw < 0 || iw >= W) ? 0f : src[(c * H + ih) * W + iw];
+                        }
+        return patch;
+    }
 
+    static double[] NaiveIm2Col(double[] src, int C, int H, int W, int kH, int kW, int dH, int dW, int sH, int sW, int pT, int pL, int pB, int pR)
+    {
+        int effH = (kH - 1) * dH + 1, effW = (kW - 1) * dW + 1;
+        int outH = (H + pT + pB - effH) / sH + 1, outW = (W + pL + pR - effW) / sW + 1;
+        var patch = new double[C * kH * kW * outH * outW];
+        int o = 0;
+        for (int c = 0; c < C; c++)
+            for (int kh = 0; kh < kH; kh++)
+                for (int kw = 0; kw < kW; kw++)
+                    for (int oh = 0; oh < outH; oh++)
+                        for (int ow = 0; ow < outW; ow++)
+                        {
+                            int ih = kh * dH - pT + oh * sH, iw = kw * dW - pL + ow * sW;
+                            patch[o++] = (ih < 0 || ih >= H || iw < 0 || iw >= W) ? 0.0 : src[(c * H + ih) * W + iw];
+                        }
+        return patch;
+    }
+
+    static float[] Im2ColValues(float[] src, int C, int H, int W, int kH, int kW, int dH, int dW, int sH, int sW, int pT, int pL, int pB, int pR)
+    {
+        int effH = (kH - 1) * dH + 1, effW = (kW - 1) * dW + 1;
+        int outH = (H + pT + pB - effH) / sH + 1, outW = (W + pL + pR - effW) / sW + 1;
+        var patch = new float[C * kH * kW * outH * outW];
+        unsafe
+        {
+            fixed (float* s = src)
+            fixed (float* p = patch)
+            {
+                MathOps.Im2col(s, C, H, W, kH, kW, dH, dW, sH, sW, pT, pL, pB, pR, p);
+            }
+        }
+        return patch;
+    }
+
+    static double[] Im2ColValues(double[] src, int C, int H, int W, int kH, int kW, int dH, int dW, int sH, int sW, int pT, int pL, int pB, int pR)
+    {
+        int effH = (kH - 1) * dH + 1, effW = (kW - 1) * dW + 1;
+        int outH = (H + pT + pB - effH) / sH + 1, outW = (W + pL + pR - effW) / sW + 1;
+        var patch = new double[C * kH * kW * outH * outW];
+        unsafe
+        {
+            fixed (double* s = src)
+            fixed (double* p = patch)
+            {
+                MathOps.Im2col(s, C, H, W, kH, kW, dH, dW, sH, sW, pT, pL, pB, pR, p);
+            }
+        }
+        return patch;
+    }
+
+    static float[] SweepValues(int n)
+    {
+        var a = new float[n];
+        for (int i = 0; i < n; i++) a[i] = ((i * 37 + 11) % 17 - 8) * 0.5f;
+        return a;
+    }
+
+    static double[] SweepValuesD(int n)
+    {
+        var a = new double[n];
+        for (int i = 0; i < n; i++) a[i] = ((i * 37 + 11) % 17 - 8) * 0.5;
+        return a;
+    }
+
+    [Fact]
+    public void Im2Col_MatchesNaiveLayout()
+    {
+        var shapes = new[]
+        {
+            (C: 1, H: 4, W: 4, kH: 2, kW: 2, dH: 1, dW: 1, sH: 1, sW: 1, pT: 0, pL: 0, pB: 0, pR: 0),
+            (C: 2, H: 5, W: 4, kH: 3, kW: 2, dH: 1, dW: 1, sH: 2, sW: 1, pT: 1, pL: 0, pB: 1, pR: 0),
+            (C: 3, H: 7, W: 7, kH: 3, kW: 3, dH: 2, dW: 2, sH: 1, sW: 1, pT: 1, pL: 1, pB: 1, pR: 1),
+            (C: 1, H: 3, W: 5, kH: 1, kW: 1, dH: 1, dW: 1, sH: 2, sW: 3, pT: 0, pL: 0, pB: 0, pR: 0),
+            (C: 2, H: 4, W: 6, kH: 2, kW: 3, dH: 1, dW: 1, sH: 1, sW: 2, pT: 0, pL: 1, pB: 0, pR: 2),
+            (C: 1, H: 5, W: 5, kH: 3, kW: 3, dH: 1, dW: 1, sH: 1, sW: 1, pT: 2, pL: 2, pB: 2, pR: 2),
+        };
+        foreach (var g in shapes)
+        {
+            var src = SweepValues(g.C * g.H * g.W);
+            Assert.Equal(
+                NaiveIm2Col(src, g.C, g.H, g.W, g.kH, g.kW, g.dH, g.dW, g.sH, g.sW, g.pT, g.pL, g.pB, g.pR),
+                Im2ColValues(src, g.C, g.H, g.W, g.kH, g.kW, g.dH, g.dW, g.sH, g.sW, g.pT, g.pL, g.pB, g.pR));
+        }
+        var dsrc = SweepValuesD(2 * 4 * 4);
+        Assert.Equal(
+            NaiveIm2Col(dsrc, 2, 4, 4, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1),
+            Im2ColValues(dsrc, 2, 4, 4, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1));
+        var dsrc2 = SweepValuesD(1 * 5 * 6);
+        Assert.Equal(
+            NaiveIm2Col(dsrc2, 1, 5, 6, 3, 2, 2, 1, 1, 2, 0, 1, 2, 0),
+            Im2ColValues(dsrc2, 1, 5, 6, 3, 2, 2, 1, 1, 2, 0, 1, 2, 0));
+    }
 }
-

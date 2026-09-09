@@ -595,36 +595,20 @@ public class MathOps
         int dstW = (srcW + padX + padW - (dilationX * (kernelX - 1) + 1)) / strideX + 1;
         for (int sc = 0; sc < srcC; ++sc)
         {
-            var scsrcH = sc * srcH;
             for (int ky = 0; ky < kernelY; ++ky)
             {
-                int sy_ = ky * dilationY - padY;
+                int row0 = ky * dilationY - padY;
                 for (int kx = 0; kx < kernelX; ++kx)
                 {
-                    int sx_ = kx * dilationX - padX;
+                    int col0 = kx * dilationX - padX;
                     for (int dy = 0; dy < dstH; ++dy)
                     {
-                        int sy = sy_ + dy * strideY;
-                        if ((sy < 0) || (sy >= srcH))
+                        int sy = row0 + dy * strideY;
+                        var line = (uint)sy < (uint)srcH ? src + (sc * srcH + sy) * srcW : null;
+                        for (int dx = 0; dx < dstW; ++dx, ++buf)
                         {
-                            for (int dx = 0; dx < dstW; ++dx)
-                            {
-                                *buf++ = 0;
-                            }
-                            continue;
-                        }
-                        var src1 = src + (scsrcH + sy) * srcW;
-                        for (int dx = 0; dx < dstW; ++dx)
-                        {
-                            int sx = sx_ + dx * strideX;
-                            if ((sx >= 0) && (sx < srcW))
-                            {
-                                *buf++ = src1[sx];
-                            }
-                            else
-                            {
-                                *buf++ = 0;
-                            }
+                            int sx = col0 + dx * strideX;
+                            *buf = (line != null && (uint)sx < (uint)srcW) ? line[sx] : 0;
                         }
                     }
                 }
@@ -652,36 +636,20 @@ public class MathOps
         int dstW = (srcW + padX + padW - (dilationX * (kernelX - 1) + 1)) / strideX + 1;
         for (int sc = 0; sc < srcC; ++sc)
         {
-            var scsrcH = sc * srcH;
             for (int ky = 0; ky < kernelY; ++ky)
             {
-                int sy_ = ky * dilationY - padY;
+                int row0 = ky * dilationY - padY;
                 for (int kx = 0; kx < kernelX; ++kx)
                 {
-                    int sx_ = kx * dilationX - padX;
+                    int col0 = kx * dilationX - padX;
                     for (int dy = 0; dy < dstH; ++dy)
                     {
-                        int sy = sy_ + dy * strideY;
-                        if ((sy < 0) || (sy >= srcH))
+                        int sy = row0 + dy * strideY;
+                        var line = (uint)sy < (uint)srcH ? src + (sc * srcH + sy) * srcW : null;
+                        for (int dx = 0; dx < dstW; ++dx, ++buf)
                         {
-                            for (int dx = 0; dx < dstW; ++dx)
-                            {
-                                *buf++ = 0;
-                            }
-                            continue;
-                        }
-                        var src1 = src + (scsrcH + sy) * srcW;
-                        for (int dx = 0; dx < dstW; ++dx)
-                        {
-                            int sx = sx_ + dx * strideX;
-                            if ((sx >= 0) && (sx < srcW))
-                            {
-                                *buf++ = src1[sx];
-                            }
-                            else
-                            {
-                                *buf++ = 0;
-                            }
+                            int sx = col0 + dx * strideX;
+                            *buf = (line != null && (uint)sx < (uint)srcW) ? line[sx] : 0;
                         }
                     }
                 }
