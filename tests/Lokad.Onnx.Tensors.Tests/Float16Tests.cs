@@ -130,8 +130,9 @@ public class Float16Tests
         Assert.False(nan > posOne);
         Assert.False(nan <= posOne);
         Assert.False(nan >= posOne);
-        Assert.False(nan == nan);
-        Assert.True(nan != nan);
+        var nanCopy = nan;
+        Assert.False(nan == nanCopy);
+        Assert.True(nan != nanCopy);
         var sub = new BFloat16(0x0001);
         var minNormal = new BFloat16(0x0080);
         Assert.True(sub < minNormal);

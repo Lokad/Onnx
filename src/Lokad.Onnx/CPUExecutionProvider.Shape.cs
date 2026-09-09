@@ -468,8 +468,8 @@ public partial class CPUExecutionProvider
         if (targetSizes.Length != 4) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must have one entry per input dimension.");
         if (targetSizes[0] != X.Dims[0] || targetSizes[1] != X.Dims[1]) return WrongInputShape(op, nameof(sizes), X, "Resize currently requires N and C dimensions to remain unchanged.");
         if (targetSizes.Any(z => z < 0)) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must be non-negative.");
-        if (antialias is not null && antialias != 0) return AttributeNotSupported(op, nameof(antialias), antialias.ToString(), "Resize antialiasing is not supported.");
-        if (excludeOutside is not null && excludeOutside != 0) return AttributeNotSupported(op, nameof(excludeOutside), excludeOutside.ToString(), "Resize exclude_outside is not supported.");
+        if (antialias is not null && antialias != 0) return AttributeNotSupported(op, nameof(antialias), antialias.Value.ToString(), "Resize antialiasing is not supported.");
+        if (excludeOutside is not null && excludeOutside != 0) return AttributeNotSupported(op, nameof(excludeOutside), excludeOutside.Value.ToString(), "Resize exclude_outside is not supported.");
         if (keepAspectRatioPolicy is not null && keepAspectRatioPolicy != "stretch") return AttributeNotSupported(op, nameof(keepAspectRatioPolicy), keepAspectRatioPolicy, "Only the default stretch policy is supported.");
         if (axes is not null && !axes.SequenceEqual(Enumerable.Range(0, X.Rank))) return AttributeNotSupported(op, nameof(axes), string.Join(",", axes), "Only resizing all axes is supported.");
 
