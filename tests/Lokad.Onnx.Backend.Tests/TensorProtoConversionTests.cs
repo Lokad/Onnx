@@ -8,12 +8,14 @@ using OnnxSharp::Onnx;
 
 namespace Lokad.Onnx.Backend.Tests;
 
+using Lokad.Onnx.Tests.Support;
+
 public class TensorProtoConversionTests
 {
     [Fact]
     public void CanConvertMnistInitializers()
     {
-        var modelPath = Path.Combine(AppContext.BaseDirectory, "models", "mnist-8.onnx");
+        var modelPath = TestSupport.CommittedModel("mnist-8.onnx");
         byte[] buffer;
         using (var stream = new FileStream(modelPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {

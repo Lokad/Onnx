@@ -1,6 +1,7 @@
 using Lokad.Onnx;
 using System.Collections.Generic;
 using System.Linq;
+using Lokad.Onnx.Tests.Support;
 
 namespace Lokad.Onnx.Backend.Tests
 {
@@ -9,24 +10,24 @@ namespace Lokad.Onnx.Backend.Tests
         [Fact]
         public void CanLoadFromFile()
         {
-            var g = OnnxImport.Load("models\\mnist-8.onnx");
+            var g = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"));
             Assert.Single(g!.Outputs);
         }
 
         [Fact]
         public void CanInferWithMnist()
         {
-            var g = OnnxImport.Load("models\\mnist-8.onnx")!;
-            var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" })!;
+            var g = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
+            var ui = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::mnist" })!;
             Assert.True(g.Execute(ui, true));
             var o = (Tensor<float>)((INumericTensor)g.Outputs.Values.First()!).RemoveDim(0).Softmax();
             Assert.True(o[4] > 0.9);
             g.Reset();
-            Assert.True(g.Execute(Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist2.png::mnist" })!, true));
+            Assert.True(g.Execute(Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist2.png") + "::mnist" })!, true));
             o = (Tensor<float>)((INumericTensor)g.Outputs.Values.First()!).RemoveDim(0).Softmax();
             Assert.True((float)o[2] > 0.9);
             g.Reset();
-            Assert.True(g.Execute(Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist5.png::mnist" })!, true));
+            Assert.True(g.Execute(Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist5.png") + "::mnist" })!, true));
             o = (Tensor<float>)((INumericTensor)g.Outputs.Values.First()!).RemoveDim(0).Softmax();
             Assert.True(o[5] > 0.48);
         }
@@ -46,10 +47,10 @@ namespace Lokad.Onnx.Backend.Tests
         [Fact]
         public void CanInferWithMnist_DictionaryInputs()
         {
-            var g = OnnxImport.Load("models\\mnist-8.onnx")!;
+            var g = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
             var inputName = g.Inputs.Keys.First();
             var outputName = g.Outputs.Keys.First();
-            var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" })!;
+            var ui = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::mnist" })!;
             var inputs = new Dictionary<string, ITensor> { { inputName, ui[0] } };
 
             Assert.True(g.Execute(inputs, true));

@@ -1,5 +1,7 @@
 namespace Lokad.Onnx.Tensors.Tests;
 
+using Lokad.Onnx.Tests.Support;
+
 /// <summary>
 /// Guards the G05 rule: every abstract or virtual method in product code
 /// documents its implementor contract (ownership, layout, empty tensors,
@@ -9,16 +11,6 @@ namespace Lokad.Onnx.Tensors.Tests;
 /// </summary>
 public class ImplementorDocsTests
 {
-    static string RepoRoot()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null)
-        {
-            if (File.Exists(Path.Combine(dir.FullName, "Lokad.Onnx.slnx"))) return dir.FullName;
-            dir = dir.Parent;
-        }
-        throw new DirectoryNotFoundException("Repository root with Lokad.Onnx.slnx not found.");
-    }
 
     internal static bool IsUndocumentedDeclaration(string[] lines, int i)
     {
@@ -50,10 +42,8 @@ public class ImplementorDocsTests
     internal static List<string> FindUndocumented(string root)
     {
         var offenders = new List<string>();
-        foreach (string file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
+        foreach (string file in TestSupport.ProductSources())
         {
-            if (file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar) ||
-                file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar)) continue;
             string[] lines = File.ReadAllLines(file);
             for (int i = 0; i < lines.Length; i++)
             {
@@ -101,7 +91,7 @@ public class ImplementorDocsTests
     [Fact]
     public void SourceTree_DocumentsEveryAbstractOrVirtualMethod()
     {
-        var offenders = FindUndocumented(RepoRoot());
+        var offenders = FindUndocumented(TestSupport.RepoRoot());
         Assert.True(offenders.Count == 0,
             "Abstract/virtual methods without XML docs:\n" + string.Join("\n", offenders.Take(20)));
     }
@@ -109,18 +99,19 @@ public class ImplementorDocsTests
     [Fact]
     public void SourceTree_DeclaresNoFriendAssemblies()
     {
-        string root = RepoRoot();
+        string root = TestSupport.RepoRoot();
         var offenders = new List<string>();
-        foreach (string pattern in new[] { "*.csproj", "*.cs" })
+        foreach (string file in Directory.GetFiles(root, "*.csproj", SearchOption.AllDirectories))
         {
-            string dir = pattern == "*.csproj" ? root : Path.Combine(root, "src");
-            foreach (string file in Directory.GetFiles(dir, pattern, SearchOption.AllDirectories))
-            {
-                if (file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar) ||
-                    file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar)) continue;
-                if (File.ReadAllText(file).Contains("InternalsVisibleTo"))
-                    offenders.Add(Path.GetRelativePath(root, file));
-            }
+            if (file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar) ||
+                file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar)) continue;
+            if (File.ReadAllText(file).Contains("InternalsVisibleTo"))
+                offenders.Add(Path.GetRelativePath(root, file));
+        }
+        foreach (string file in TestSupport.ProductSources())
+        {
+            if (File.ReadAllText(file).Contains("InternalsVisibleTo"))
+                offenders.Add(Path.GetRelativePath(root, file));
         }
         Assert.True(offenders.Count == 0,
             "InternalsVisibleTo found in:\n" + string.Join("\n", offenders));

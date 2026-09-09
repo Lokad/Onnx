@@ -1,6 +1,8 @@
 
 namespace Lokad.Onnx.Tensors.Tests;
 
+using Lokad.Onnx.Tests.Support;
+
 /// <summary>
 /// Guards the G02 rule: product code contains no null-forgiving operators.
 /// Absence is expressed with nullable annotations and narrowing instead; the
@@ -10,16 +12,6 @@ namespace Lokad.Onnx.Tensors.Tests;
 /// </summary>
 public class NoNullForgivingTests
 {
-    static string RepoRoot()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null)
-        {
-            if (File.Exists(Path.Combine(dir.FullName, "Lokad.Onnx.slnx"))) return dir.FullName;
-            dir = dir.Parent;
-        }
-        throw new DirectoryNotFoundException("Repository root with Lokad.Onnx.slnx not found.");
-    }
 
     internal static List<string> FindSuppressions(string code)
     {
@@ -120,12 +112,10 @@ public class NoNullForgivingTests
     [Fact]
     public void SourceTree_HasNoNullForgivingOperators()
     {
-        string root = RepoRoot();
+        string root = TestSupport.RepoRoot();
         var offenders = new List<string>();
-        foreach (string file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
+        foreach (string file in TestSupport.ProductSources())
         {
-            if (file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}") ||
-                file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}")) continue;
             var hits = FindSuppressions(File.ReadAllText(file));
             foreach (string h in hits) offenders.Add(Path.GetRelativePath(root, file) + ": " + h);
         }

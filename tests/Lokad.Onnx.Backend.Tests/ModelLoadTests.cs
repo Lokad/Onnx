@@ -1,18 +1,14 @@
 
 extern alias OnnxSharp;
 using OnnxSharp::Onnx;
+using Lokad.Onnx.Tests.Support;
 
 namespace Lokad.Onnx.Backend.Tests;
 
 [Collection("SequentialLogSink")]
 public class ModelLoadTests
 {
-    static string MnistModel()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        for (int i = 0; i < 5; i++) dir = dir!.Parent!;
-        return Path.Combine(dir!.FullName, "tests", "Lokad.Onnx.Backend.Tests", "models", "mnist-8.onnx");
-    }
+    static string MnistModel() => TestSupport.CommittedModel("mnist-8.onnx");
 
     [Fact]
     public void FileAndBufferParse_AgreeOnMnistStructure()

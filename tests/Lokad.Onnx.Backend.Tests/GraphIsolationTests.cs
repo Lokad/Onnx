@@ -1,4 +1,5 @@
 using System.Threading;
+using Lokad.Onnx.Tests.Support;
 
 namespace Lokad.Onnx.Backend.Tests;
 
@@ -73,14 +74,13 @@ public class GraphIsolationTests
         Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)exec.Outputs["y"]).ToArray());
     }
 
-    static string MnistAsset(string name) => Path.Combine(AppContext.BaseDirectory, name);
 
     [Fact]
     public void ConcurrentContexts_CorrectOutputs()
     {
-        var g = OnnxImport.Load(Path.Combine(MnistAsset("models"), "mnist-8.onnx"))!;
-        var uiA = Data.GetInputTensorsFromFileArgs(new[] { Path.Combine(MnistAsset("images"), "mnist4.png::mnist") })!;
-        var uiB = Data.GetInputTensorsFromFileArgs(new[] { Path.Combine(MnistAsset("images"), "mnist2.png::mnist") })!;
+        var g = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
+        var uiA = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::mnist" })!;
+        var uiB = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist2.png") + "::mnist" })!;
         Assert.True(g.Execute(uiA, true));
         var refA = ((Tensor<float>)g.Outputs.Values.First()!).ToArray();
         Assert.True(g.Execute(uiB, true));
@@ -107,8 +107,8 @@ public class GraphIsolationTests
     [Fact]
     public void ConcurrentFacade_RejectsCleanly_And_Recovers()
     {
-        var g = OnnxImport.Load(Path.Combine(MnistAsset("models"), "mnist-8.onnx"))!;
-        var ui = Data.GetInputTensorsFromFileArgs(new[] { Path.Combine(MnistAsset("images"), "mnist4.png::mnist") })!;
+        var g = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
+        var ui = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::mnist" })!;
         Assert.True(g.Execute(ui, true));
         var reference = ((Tensor<float>)g.Outputs.Values.First()!).ToArray();
         const int rounds = 25;

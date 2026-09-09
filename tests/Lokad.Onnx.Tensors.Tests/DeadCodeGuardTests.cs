@@ -1,5 +1,7 @@
 namespace Lokad.Onnx.Tensors.Tests;
 
+using Lokad.Onnx.Tests.Support;
+
 /// <summary>
 /// Guards the G06 rule: dead implementation files, commented-out code and
 /// stale prehistory identifiers stay out of product sources. The two
@@ -8,32 +10,11 @@ namespace Lokad.Onnx.Tensors.Tests;
 /// </summary>
 public class DeadCodeGuardTests
 {
-    static string RepoRoot()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null)
-        {
-            if (File.Exists(Path.Combine(dir.FullName, "Lokad.Onnx.slnx"))) return dir.FullName;
-            dir = dir.Parent;
-        }
-        throw new DirectoryNotFoundException("Repository root with Lokad.Onnx.slnx not found.");
-    }
-
-    static IEnumerable<string> ProductSources(string root)
-    {
-        foreach (string file in Directory.GetFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories))
-        {
-            if (file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar) ||
-                file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar)) continue;
-            yield return file;
-        }
-    }
-
     internal static List<string> FindBannedIdentifiers(string root)
     {
         string[] banned = { "NDArray", "ViewInfo", "OriginalShape", "IsBroadcasted", "GetConv2DDefaultPad", "class BLAS" };
         var offenders = new List<string>();
-        foreach (string file in ProductSources(root))
+        foreach (string file in TestSupport.ProductSources())
         {
             string[] lines = File.ReadAllLines(file);
             for (int i = 0; i < lines.Length; i++)
@@ -51,7 +32,7 @@ public class DeadCodeGuardTests
     internal static List<string> FindTodos(string root)
     {
         var todos = new List<string>();
-        foreach (string file in ProductSources(root))
+        foreach (string file in TestSupport.ProductSources())
         {
             string[] lines = File.ReadAllLines(file);
             for (int i = 0; i < lines.Length; i++)
@@ -67,7 +48,7 @@ public class DeadCodeGuardTests
     [Fact]
     public void Scanner_FindsBannedIdentifiers()
     {
-        string root = RepoRoot();
+        string root = TestSupport.RepoRoot();
         var offenders = FindBannedIdentifiers(root);
         Assert.True(offenders.Count == 0,
             "Dead identifiers found:\n" + string.Join("\n", offenders.Take(20)));
@@ -76,7 +57,7 @@ public class DeadCodeGuardTests
     [Fact]
     public void DeadFiles_AreAbsent()
     {
-        string root = RepoRoot();
+        string root = TestSupport.RepoRoot();
         var present = new List<string>();
         foreach (string rel in new[] {
             Path.Combine("src", "Lokad.Onnx", "BLAS.cs"),
@@ -90,7 +71,7 @@ public class DeadCodeGuardTests
     [Fact]
     public void Todos_MatchTriagedList()
     {
-        var todos = FindTodos(RepoRoot());
+        var todos = FindTodos(TestSupport.RepoRoot());
         var expected = new HashSet<string>(StringComparer.Ordinal);
         foreach (string t in todos)
         {

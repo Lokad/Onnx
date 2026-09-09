@@ -1,6 +1,7 @@
 extern alias OnnxSharp;
 
 using OnnxSharp::Onnx;
+using Lokad.Onnx.Tests.Support;
 
 namespace Lokad.Onnx.Backend.Tests;
 
@@ -25,8 +26,8 @@ public class NodePreparationTests
     [Fact]
     public void LoadedGraphs_HaveSequentialIds()
     {
-        var g1 = OnnxImport.Load(Path.Combine(AppContext.BaseDirectory, "models", "mnist-8.onnx"))!;
-        var g2 = OnnxImport.Load(Path.Combine(AppContext.BaseDirectory, "models", "mnist-8.onnx"))!;
+        var g1 = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
+        var g2 = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
         var ids1 = g1.Nodes.Select(n => n.ID).ToArray();
         var ids2 = g2.Nodes.Select(n => n.ID).ToArray();
         Assert.Equal(ids1, ids2);

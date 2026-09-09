@@ -2,6 +2,7 @@ using Lokad.Onnx.Backend;
 using System.Runtime.Versioning;
 using System.Xml.Schema;
 using System.IO;
+using Lokad.Onnx.Tests.Support;
 
 namespace Lokad.Onnx.Backend.Tests
 {
@@ -11,7 +12,7 @@ namespace Lokad.Onnx.Backend.Tests
         [Fact]
         public void CanParseFile()
         {
-            var modelPath = Path.Combine(AppContext.BaseDirectory, "models", "mnist-8.onnx");
+            var modelPath = TestSupport.CommittedModel("mnist-8.onnx");
             var buffer = File.ReadAllBytes(modelPath);
             var m = OnnxImport.Parse(buffer);
             Assert.NotNull(m);
@@ -23,7 +24,7 @@ namespace Lokad.Onnx.Backend.Tests
         [Fact]
         public async Task CanParseFileConcurrently()
         {
-            var modelPath = Path.Combine(AppContext.BaseDirectory, "models", "mnist-8.onnx");
+            var modelPath = TestSupport.CommittedModel("mnist-8.onnx");
             const int readers = 8;
             var gate = new ManualResetEventSlim(false);
             var tasks = new Task[readers];

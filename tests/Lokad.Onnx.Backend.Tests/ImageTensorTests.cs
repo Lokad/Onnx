@@ -4,6 +4,8 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Lokad.Onnx.Backend.Tests;
 
+using Lokad.Onnx.Tests.Support;
+
 public class ImageTensorTests
 {
     static Image<Rgba32> RectImage()
@@ -86,7 +88,7 @@ public class ImageTensorTests
         try
         {
             var copy = Path.Combine(dir, "m.png");
-            File.Copy(Path.Combine(AppContext.BaseDirectory, "images", "mnist4.png"), copy);
+            File.Copy(TestSupport.CommittedImage("mnist4.png"), copy);
             float[]? first = null;
             for (int i = 0; i < 3; i++)
             {

@@ -1,4 +1,5 @@
 using System.IO;
+using Lokad.Onnx.Tests.Support;
 
 namespace Lokad.Onnx.Backend.Tests;
 
@@ -58,8 +59,8 @@ public class ExecutionOptionsTests
     [Fact]
     public async Task Graphs_WithDifferentOptions_RunConcurrently()
     {
-        var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "models", "mnist-8.onnx");
-        var imageArg = Path.Combine(Directory.GetCurrentDirectory(), "images", "mnist4.png") + "::mnist";
+        var modelPath = TestSupport.CommittedModel("mnist-8.onnx");
+        var imageArg = TestSupport.CommittedImage("mnist4.png") + "::mnist";
         var baselineGraph = OnnxImport.Load(modelPath)!;
         var ui = Data.GetInputTensorsFromFileArgs(new[] { imageArg })!;
         Assert.True(baselineGraph.Execute(ui, true));

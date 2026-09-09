@@ -1,6 +1,8 @@
 
 namespace Lokad.Onnx.Tensors.Tests;
 
+using Lokad.Onnx.Tests.Support;
+
 /// <summary>
 /// Guards the G01 rule: no first-party method, constructor, record positional
 /// or local function may declare a default parameter value. Callers state
@@ -11,16 +13,6 @@ namespace Lokad.Onnx.Tensors.Tests;
 /// </summary>
 public class NoOptionalParametersTests
 {
-    static string RepoRoot()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null)
-        {
-            if (File.Exists(Path.Combine(dir.FullName, "Lokad.Onnx.slnx"))) return dir.FullName;
-            dir = dir.Parent;
-        }
-        throw new DirectoryNotFoundException("Repository root with Lokad.Onnx.slnx not found.");
-    }
 
     internal static List<string> FindOptionalParameters(string code)
     {
@@ -217,17 +209,12 @@ public class NoOptionalParametersTests
     [Fact]
     public void SourceTree_HasNoOptionalParameters()
     {
-        string root = RepoRoot();
+        string root = TestSupport.RepoRoot();
         var offenders = new List<string>();
-        foreach (string dir in new[] { "src", "tests" })
+        foreach (string file in TestSupport.SourceFiles("src", "tests"))
         {
-            foreach (string file in Directory.GetFiles(Path.Combine(root, dir), "*.cs", SearchOption.AllDirectories))
-            {
-                if (file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}") ||
-                    file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}")) continue;
-                var hits = FindOptionalParameters(File.ReadAllText(file));
-                foreach (string h in hits) offenders.Add(Path.GetRelativePath(root, file) + ": " + h);
-            }
+            var hits = FindOptionalParameters(File.ReadAllText(file));
+            foreach (string h in hits) offenders.Add(Path.GetRelativePath(root, file) + ": " + h);
         }
         Assert.True(offenders.Count == 0, "Optional parameters found:\n" + string.Join("\n", offenders.Take(20)));
     }

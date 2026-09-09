@@ -32,12 +32,7 @@ public class GraphLifetimeTests
     [SkippableFact]
     public void Lifetime_PinsFusedE5Graph()
     {
-        var modelPath = FindE5ModelPath();
-        if (modelPath is null && System.Environment.GetEnvironmentVariable("LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS") == "1")
-        {
-            Assert.Fail("e5 model requested via LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1 but not found at models/multilingual-e5-small/model.onnx.");
-        }
-        Skip.If(modelPath is null, "e5 model not present; set LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1 to require it.");
+        var modelPath = ModelFixture.RequireModelOrSkip("e5", "models", "multilingual-e5-small", "model.onnx");
 
         var graph = OnnxImport.Load(modelPath)!;
         Assert.Equal(25, graph.Nodes.Count(n => n.Op == OpType.LayerNormalization));
@@ -55,18 +50,4 @@ public class GraphLifetimeTests
         }
     }
 
-    static string? FindE5ModelPath()
-    {
-        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
-        while (dir is not null)
-        {
-            var candidate = Path.Combine(dir.FullName, "models", "multilingual-e5-small", "model.onnx");
-            if (File.Exists(candidate))
-            {
-                return candidate;
-            }
-            dir = dir.Parent;
-        }
-        return null;
-    }
 }

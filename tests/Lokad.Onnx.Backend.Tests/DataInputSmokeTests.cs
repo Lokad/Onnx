@@ -1,18 +1,20 @@
 namespace Lokad.Onnx.Backend.Tests
 {
+    using Lokad.Onnx.Tests.Support;
+
     public class DataInputSmokeTests
     {
         [Fact]
         public void CanGetMnistInputTensor()
         {
-            var r = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::mnist" });
+            var r = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::mnist" });
             Assert.NotNull(r);
             Assert.Single(r!);
             Assert.Equal(4, r![0].Rank);
         }        [Fact]
         public void CanGetDinoV3InputTensor()
         {
-            var r = Data.GetInputTensorsFromFileArgs(new[] { "images\\mnist4.png::dinov3" });
+            var r = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::dinov3" });
             Assert.NotNull(r);
             Assert.Single(r!);
             Assert.Equal(new[] { 1, 3, 224, 224 }, r![0].Dims.ToArray());

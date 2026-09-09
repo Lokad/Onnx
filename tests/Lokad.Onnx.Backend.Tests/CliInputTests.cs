@@ -1,5 +1,7 @@
 namespace Lokad.Onnx.Backend.Tests;
 
+using Lokad.Onnx.Tests.Support;
+
 public class CliInputTests
 {
     static void WithTempDirectory(Action<string> exercise)
@@ -16,7 +18,7 @@ public class CliInputTests
         }
     }
 
-    static string MnistPng() => Path.Combine(AppContext.BaseDirectory, "images", "mnist2.png");
+    static string MnistPng() => TestSupport.CommittedImage("mnist2.png");
 
     static string SeedMe5sTokenizer()
     {
@@ -143,19 +145,19 @@ public class CliInputTests
         return proc.ExitCode;
     }
 
-    static string MnistModel() => Path.Combine(AppContext.BaseDirectory, "models", "mnist-8.onnx");
+    static string MnistModel() => TestSupport.CommittedModel("mnist-8.onnx");
 
     [Fact]
     public void Cli_Success_ZeroExit()
     {
-        var code = RunCli("run", MnistModel(), Path.Combine(AppContext.BaseDirectory, "images", "mnist2.png") + "::mnist");
+        var code = RunCli("run", MnistModel(), MnistPng() + "::mnist");
         Assert.Equal(0, code);
     }
 
     [Fact]
     public void Cli_MissingNode_NotFoundExit()
     {
-        var code = RunCli("run", MnistModel(), Path.Combine(AppContext.BaseDirectory, "images", "mnist2.png") + "::mnist", "--node", "nope");
+        var code = RunCli("run", MnistModel(), MnistPng() + "::mnist", "--node", "nope");
         Assert.Equal(4, code);
     }
 
