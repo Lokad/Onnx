@@ -1624,6 +1624,59 @@ where T : unmanaged
         return output;
     }
 
+    // Shared N-D MatMul preparation: validates ranks, builds the broadcast
+    // plan, and promotes vector operands. Batched execution stays per-dtype.
+    static (MatMulShapes.Plan plan, Tensor<TElement> px, Tensor<TElement> py) PlanMatMul<TElement>(Tensor<TElement> x, Tensor<TElement> y) where TElement : unmanaged
+    {
+        if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
+        var plan = MatMulShapes.Create(x.Dimensions, y.Dimensions);
+        var px = plan.PromoteX ? x.InsertDim(0) : x;
+        var py = plan.PromoteY ? y.InsertDim(y.Rank) : y;
+        return (plan, px, py);
+    }
+
+    // Shared N-D batched MatMul preparation for the inline paths: validates
+    // inner dims, plans the broadcast, materializes the destination,
+    // densifies operands, and derives batch geometry. Broadcast order follows
+    // the double path (the int path reported the same message either way).
+    // Pinning, profiler stages, and kernel loops stay with the callers; the
+    // float path already factors this through its batched core.
+    static (Tensor<TElement> bx, Tensor<TElement> by, DenseTensor<TElement> z, int[] batchDims, int[] xSteps, int[] ySteps, int[] zSteps, int batchCount, int m, int n, int k) PlanBatchedMatMul<TElement>(
+        Tensor<TElement> px, Tensor<TElement> py) where TElement : unmanaged
+    {
+        var xdl = px.Dimensions[^2..];
+        var ydl = py.Dimensions[^2..];
+        if (xdl[1] != ydl[0])
+        {
+            throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
+        }
+        if (!BroadcastShape(px.Dimensions[0..^2], py.Dimensions[0..^2], out var bd))
+        {
+            throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+        }
+        var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
+        if (!Tensor<TElement>.Broadcast(px, bdx, out var bx))
+        {
+            throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+        }
+        var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
+        if (!Tensor<TElement>.Broadcast(py, bdy, out var by))
+        {
+            throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+        }
+        var z = DenseTensor<TElement>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
+        var cbx = RequireContiguous(bx, nameof(bx));
+        var cby = RequireContiguous(by, nameof(by));
+        bx = cbx;
+        by = cby;
+        var batchDims = bx.Dimensions[0..^2].ToArray();
+        var xSteps = BatchSteps(batchDims, bx.Dimensions, bx.strides);
+        var ySteps = BatchSteps(batchDims, by.Dimensions, by.strides);
+        var zSteps = BatchSteps(batchDims, z.Dimensions, z.strides);
+        int batchCount = BatchCount(batchDims);
+        return (bx, by, z, batchDims, xSteps, ySteps, zSteps, batchCount, bx.Dimensions[^2], bx.Dimensions[^1], by.Dimensions[^1]);
+    }
+
     public static Tensor<int> MatMul2D(Tensor<int> x, Tensor<int> y) => MatMul2D(x, y, TensorExecutionOptions.Auto);
 
     public static Tensor<int> MatMul2D(Tensor<int> x, Tensor<int> y, TensorExecutionOptions options)
@@ -1868,10 +1921,7 @@ where T : unmanaged
     public static Tensor<int> MatMul(Tensor<int> x, Tensor<int> y, TensorExecutionOptions options)
     
     {
-        if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
-        var plan = MatMulShapes.Create(x.Dimensions, y.Dimensions);
-        var px = plan.PromoteX ? x.InsertDim(0) : x;
-        var py = plan.PromoteY ? y.InsertDim(y.Rank) : y;
+        var (plan, px, py) = PlanMatMul(x, y);
         Tensor<int> core;
         if (px.Rank == 2 && py.Rank == 2)
         {
@@ -1879,43 +1929,10 @@ where T : unmanaged
         }
         else
         {
-            var xdl = px.Dimensions[^2..];
-            var ydl = py.Dimensions[^2..];
-            if (xdl[1] != ydl[0])
-            {
-                throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
-            }
-            StartOpStage(OpStage.Broadcast);
-            if (!BroadcastShape(px.Dimensions[0..^2], py.Dimensions[0..^2], out var bd))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
-            var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
-            var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
-            if (!Tensor<int>.Broadcast(py, bdy, out var by))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
-            if (!Tensor<int>.Broadcast(px, bdx, out var bx))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
-            var z = DenseTensor<int>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            var cbx = RequireContiguous(bx, nameof(bx));
-            var cby = RequireContiguous(by, nameof(by));
-            bx = cbx;
-            by = cby;
-            var batchDims = bx.Dimensions[0..^2];
-            var xSteps = BatchSteps(batchDims, bx.Dimensions, bx.strides);
-            var ySteps = BatchSteps(batchDims, by.Dimensions, by.strides);
-            var zSteps = BatchSteps(batchDims, z.Dimensions, z.strides);
-            int batchCount = BatchCount(batchDims);
+            var (bx, by, z, batchDims, xSteps, ySteps, zSteps, batchCount, m, n, k) = PlanBatchedMatMul(px, py);
             using var xh = bx.Storage.Pin();
             using var yh = by.Storage.Pin();
             using var zh = z.Storage.Pin();
-            var m = bx.Dimensions[^2];
-            var n = bx.Dimensions[^1];
-            var k = by.Dimensions[^1];
             StartOpStage(OpStage.Math);
             unsafe
             {
@@ -1998,7 +2015,7 @@ where T : unmanaged
         bx = RequireContiguous(bx, nameof(bx));
         by = RequireContiguous(by, nameof(by));
         z = RequireContiguous(z, nameof(z));
-        var batchDims = bx.Dimensions[0..^2];
+        var batchDims = bx.Dimensions[0..^2].ToArray();
         var m = bx.Dimensions[^2];
         var n = bx.Dimensions[^1];
         var k = by.Dimensions[^1];
@@ -2132,10 +2149,7 @@ where T : unmanaged
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y, TensorExecutionOptions options)
     
     {
-        if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
-        var plan = MatMulShapes.Create(x.Dimensions, y.Dimensions);
-        var px = plan.PromoteX ? x.InsertDim(0) : x;
-        var py = plan.PromoteY ? y.InsertDim(y.Rank) : y;
+        var (plan, px, py) = PlanMatMul(x, y);
         Tensor<float> core;
         if (px.Rank == 2 && py.Rank == 2)
         {
@@ -2183,10 +2197,7 @@ where T : unmanaged
     public static Tensor<double> MatMul(Tensor<double> x, Tensor<double> y, TensorExecutionOptions options)
     
     {
-        if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
-        var plan = MatMulShapes.Create(x.Dimensions, y.Dimensions);
-        var px = plan.PromoteX ? x.InsertDim(0) : x;
-        var py = plan.PromoteY ? y.InsertDim(y.Rank) : y;
+        var (plan, px, py) = PlanMatMul(x, y);
         Tensor<double> core;
         if (px.Rank == 2 && py.Rank == 2)
         {
@@ -2194,46 +2205,12 @@ where T : unmanaged
         }
         else
         {
-            var xdl = px.Dimensions[^2..];
-            var ydl = py.Dimensions[^2..];
-            if (xdl[1] != ydl[0])
-            {
-                throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
-            }
-            StartOpStage(OpStage.Broadcast);
-            if (!BroadcastShape(px.Dimensions[0..^2], py.Dimensions[0..^2], out var bd))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
-
-            var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
-            if (!Tensor<double>.Broadcast(px, bdx, out var bx))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
-            var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
-            if (!Tensor<double>.Broadcast(py, bdy, out var by))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
+            var (bx, by, z, batchDims, xSteps, ySteps, zSteps, batchCount, m, n, k) = PlanBatchedMatMul(px, py);
 
             StartOpStage(OpStage.Math);
-            var z = DenseTensor<double>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            var cbx = RequireContiguous(bx, nameof(bx));
-            var cby = RequireContiguous(by, nameof(by));
-            bx = cbx;
-            by = cby;
-            var batchDims = bx.Dimensions[0..^2];
-            var xSteps = BatchSteps(batchDims, bx.Dimensions, bx.strides);
-            var ySteps = BatchSteps(batchDims, by.Dimensions, by.strides);
-            var zSteps = BatchSteps(batchDims, z.Dimensions, z.strides);
-            int batchCount = BatchCount(batchDims);
             using var xh = bx.Storage.Pin();
             using var yh = by.Storage.Pin();
             using var zh = z.Storage.Pin();
-            var m = bx.Dimensions[^2];
-            var n = bx.Dimensions[^1];
-            var k = by.Dimensions[^1];
             unsafe
             {
                 var xp = (double*)xh.Pointer;
