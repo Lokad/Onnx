@@ -1,12 +1,81 @@
 # CPU benchmarks
 
+**Review status — 2026-09-09:** the results below are historical and must not
+be used as a single-core performance baseline. The `defaults` rows compare
+Lokad's one-thread default with ORT's default thread pool; their ratios use
+unequal CPU resources. The `one-thread` rows disable Lokad SIMD while ORT
+remains optimized. The Auto `mode-threads=1` rows match inference thread
+counts, but no row enforces CPU affinity.
+
+The `--rows canonical` selection (the default) prints only the matched
+single-CPU row; `--rows all` retains the three-condition setup for diagnostics.
+
+The replacement comparison must give **both engines the same one logical CPU**:
+verified process affinity, one inference thread, Lokad Auto with available
+SIMD/intrinsics, ORT CPU with intra-op 1/inter-op 1 and sequential execution,
+and graph optimizations enabled. Repeat measurements on an identified, quiet
+core with identical inputs, requested outputs and output-lifetime boundaries.
+Scalar diagnostics and multi-core scaling belong in separate, opt-in results.
+Until the harness and measurements meet that contract, retain these tables
+only as dated diagnostic evidence; they cannot gate performance commits.
+
 The model harness (`tests/Lokad.Onnx.Bench`) compares the managed engine
 against native ONNX Runtime (`Microsoft.ML.OnnxRuntime` 1.23.2) sessions on
 CPU only, without registering a GPU provider. The package is the CPU build;
 GPU execution requires a different package/provider configuration.
 [ORT C# packages](https://onnxruntime.ai/docs/get-started/with-csharp.html)
 
-## Methodology
+## Canonical single-CPU baseline — 2026-09-09
+
+Measured under the contract above on LOKAD-0399 (i7-14700KF, 28 logical
+CPUs): verified affinity to logical CPU 0 (efficiency-class 1 SMT pair,
+core-group 0), one inference thread on each side, Lokad Auto with
+SIMD/intrinsics, ORT CPU intra-op 1/inter-op 1 sequential with
+ORT_ENABLE_ALL, High performance power scheme left unchanged. Three
+independent fresh processes, 3 warmups and 33 timed iterations per engine
+per case. Every case validated before and after timed reuse at the
+unchanged 1e-4 gate with inputs fingerprinted intact. Machine-readable
+artifacts with embedded raw samples live in
+`tests/Lokad.Onnx.Bench/baseline/summary-20260909.json`, regenerated from
+the per-rep logs by `python eng/parse_baseline.py <rep logs>`.
+Confinement ratios were 0.91, 0.96 and 0.87 (single-threaded 2 s busy
+loop; the harness fails above 1.3 and warns below 0.8).
+
+Measured at `ff8f9ad` with only the historical relabels above pending,
+folded into this commit; no code differences. SDK
+`10.0.300-preview.0.26177.108`, runtime `.NET 10.0.12`, ORT C# `1.23.2.0`,
+Lokad assembly `0.2.0.0`. Asset bytes and hashes per case print in each
+rep header and match `ModelManifest.json`; inputs and outputs print there
+too (e5 token counts, 224x224 pixels, 4-token GPT-2 prefill).
+
+Cells are Lokad warmed public-Execute median versus ORT warmed-Run median
+per rep in milliseconds; the ratio spans the three within-rep median
+ratios. Absolute medians drifted across reps with machine settling
+(ResNet50 Lokad 342.0 to 307.4 ms), but both engines drift together, so
+within-rep ratios hold to 0.2x on every case: compare revisions
+within shared reps and alternate their order, never absolute medians
+across days. Per-rep best, p95, max, GC, and load/prepare/first-run
+figures live in the summary JSON.
+
+| Case | rep1 L/ORT ms | rep2 L/ORT ms | rep3 L/ORT ms | Lokad / ORT |
+|---|---:|---:|---:|---|
+| e5-8tok | 50.9 / 6.8 | 54.5 / 7.1 | 52.3 / 7.0 | 7.4-7.6x |
+| e5-30tok | 81.7 / 14.2 | 72.3 / 12.8 | 67.8 / 12.0 | 5.7-5.7x |
+| dinov3-224 | 310.7 / 72.8 | 303.1 / 73.8 | 327.4 / 76.0 | 4.1-4.3x |
+| resnet50-224 | 342.0 / 61.2 | 312.6 / 55.8 | 307.4 / 55.0 | 5.6-5.6x |
+| gpt2-4tok | 97.2 / 23.6 | 110.8 / 25.6 | 100.8 / 23.2 | 4.1-4.3x |
+
+Reproduce from the repo root after building Release:
+
+```powershell
+dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 dinov3 resnet50 gpt2 --mode auto --threads 1 --rows canonical --cpu 0 --iters 33
+```
+
+Run it three times in fresh processes and regenerate the table with the
+parser above; a rep with a confinement warning, a failed case, or a
+changed asset hash is discarded and rerun, never averaged in.
+
+## Historical methodology
 
 Each model case reports three validated rows measured in one process:
 
@@ -90,7 +159,7 @@ instead of publishing its rows:
 
     Unhandled exception. System.InvalidOperationException: dinov2-224:last_hidden_state: outputs diverge (max rel diff 1.86E-004).
 
-## Results
+## Historical results — 2026-09-08 methodology
 
 `Bench e5 resnet50 dinov3 gpt2 --mode auto --threads 1 --iters 9`
 (three warmups, nine timed iterations per row). Median ratio is
@@ -115,9 +184,10 @@ row. Raw samples follow the tables.
 | GPT-2, 4 tokens | one-thread | 952.0 ms | 1010.4 ms | 23.1 ms | 27.7 ms | 36.5x | 7.95E-006 |
 | GPT-2, 4 tokens | mode-threads=1 | 783.8 ms | 936.0 ms | 24.6 ms | 30.5 ms | 30.7x | 7.35E-006 |
 
-The gap is real on every row and narrows markedly under matched thread
-budgets with vectorization enabled (for example ResNet50 median ratio 35.2x
-defaults vs 4.8x matched; DINOv3 21.8x vs 4.8x). The Scalar one-thread row
+These historical timings show gaps under each recorded condition, but the
+default ratios do not measure a gap with equal CPU resources. The matched
+Auto rows suggest remaining single-thread work; affinity-controlled repeat
+runs are required to quantify it. The Scalar one-thread row
 is much slower than the Auto one-thread row on vision models (ResNet50
 1788.6 ms vs 243.7 ms median; DINOv3 2281.5 ms vs 384.8 ms), which shows the
 mode distinction carries the effect, not just the thread count. Profiling
@@ -152,9 +222,8 @@ outside timing); `disposal=outside` throughout.
 
 ## Limits of this comparison
 
-- One machine, one process per model set, nine samples per row. Medians are
-  stable enough to show the gap and the mode effect, but not a release
-  performance gate across machines.
+- One machine, one process per model set, nine samples per row. These samples
+  do not establish a stable single-CPU baseline or a release performance gate.
 - Running `Bench all` (or naming `dinov2`) still stops at the DINOv2
   validation throw above by design; publish tables only for validating
   models and keep the exclusion stated.
@@ -165,9 +234,11 @@ outside timing); `disposal=outside` throughout.
   predate substantial kernel and allocation changes and should not be reused
   as current measurements.
 
-## Reproduce and extend
+## Reproduce the historical setup
 
-From the repository root, using the existing local assets:
+From the repository root, using the existing local assets. This command
+reproduces the three-condition setup; it does not enforce the replacement
+single-CPU contract described above:
 
 ```powershell
 dotnet build Lokad.Onnx.slnx -c Release --tl:off --nologo -v minimal
