@@ -301,6 +301,50 @@ public class ComputationalGraph
         return requiredInputs;
     }
 
+    /// <summary>
+    /// Scans one node inputs for the names the caller must supply: absent
+    /// optional slots bind nothing and repeated inputs resolve once, while
+    /// initializer-backed names pre-bind from stored initializers.
+    /// </summary>
+    List<string> NodeRequiredInputs(Node node, bool useInitializers)
+    {
+        var requiredInputs = new List<string>();
+        foreach (var i in node.Inputs)
+        {
+            // Absent optional slots bind nothing; repeated inputs resolve once.
+            if (string.IsNullOrEmpty(i)) continue;
+            if (useInitializers && Initializers.ContainsKey(i))
+            {
+                Inputs[i] = Initializers[i];
+            }
+            else if (!requiredInputs.Contains(i))
+            {
+                requiredInputs.Add(i);
+            }
+        }
+        return requiredInputs;
+    }
+
+    /// <summary>
+    /// Records an input-count rejection with the same wording for graph and
+    /// node binding, describing the supplied values exactly as the callers did.
+    /// </summary>
+    bool FailInputCountMismatch(string kind, int requiredCount, IEnumerable<string> providedDescs, int providedCount) =>
+        Fail("{uic} user input(s) required for " + kind + " execution:{i} but only {c} specified.", requiredCount, providedDescs, providedCount);
+
+    /// <summary>
+    /// Checks one supplied tensor against its retained descriptor when one
+    /// exists, else against the declared placeholder shape and type.
+    /// </summary>
+    bool CheckOneBoundInput(string key, ITensor? declared, ITensor provided, Dictionary<string, int> symbolic, out string? detail)
+    {
+        var desc = FindInputDesc(key);
+        detail = null;
+        return desc is null
+            ? declared is not null && InputDimsCompatible(declared, provided)
+            : CheckDescriptorDims(desc, provided, symbolic, out detail);
+    }
+
     public bool ResolveInputs(ITensor[] userInputs, bool useInitializers)
     {
         using var op = Begin("Resolving {c} graph inputs for execution", Inputs.Count);
@@ -309,18 +353,14 @@ public class ComputationalGraph
         if (userInputs.Length != requiredInputs.Count)
         {
             op.Abandon();
-            return Fail("{uic} user input(s) required for graph execution:{i} but only {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
+            return FailInputCountMismatch("graph", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
         }
         var symbolic = new Dictionary<string, int>(StringComparer.Ordinal);
         for(int i = 0; i < requiredInputs.Keys.Count; i++)
         {
             var key = requiredInputs.Keys.ElementAt(i);
-            var desc = FindInputDesc(key);
-            string? detail = null;
             var declared = requiredInputs[key];
-            bool ok = desc is null
-                ? declared is not null && InputDimsCompatible(declared, userInputs[i])
-                : CheckDescriptorDims(desc, userInputs[i], symbolic, out detail);
+            bool ok = CheckOneBoundInput(key, declared, userInputs[i], symbolic, out string? detail);
             if (!ok)
             {
                 op.Abandon();
@@ -360,11 +400,7 @@ public class ComputationalGraph
                 op.Abandon();
                 return Fail("User inputs do not contain required input {i}.", kv.Key);
             }
-            var desc = FindInputDesc(kv.Key);
-            string? detail = null;
-            bool ok = desc is null
-                ? kv.Value is not null && InputDimsCompatible(kv.Value, userInputs[kv.Key])
-                : CheckDescriptorDims(desc, userInputs[kv.Key], symbolic, out detail);
+            bool ok = CheckOneBoundInput(kv.Key, kv.Value, userInputs[kv.Key], symbolic, out string? detail);
             if (!ok)
             {
                 op.Abandon();
@@ -383,24 +419,11 @@ public class ComputationalGraph
     public bool ResolveNodeExecuteInputs(Node node, ITensor[] userInputs, bool useInitializers)
     {
         using var op = Begin("Resolving {c} node inputs for execution", node.Inputs.Length);
-        var requiredInputs = new List<string>();
-        foreach (var i in node.Inputs)
-        {
-            // Absent optional slots bind nothing; repeated inputs resolve once.
-            if (string.IsNullOrEmpty(i)) continue;
-            if (useInitializers && Initializers.ContainsKey(i))
-            {
-                Inputs[i] = Initializers[i];
-            }
-            else if (!requiredInputs.Contains(i))
-            {
-                requiredInputs.Add(i);
-            }
-        }
+        var requiredInputs = NodeRequiredInputs(node, useInitializers);
         if (userInputs.Length != requiredInputs.Count)
         {
             op.Abandon();
-            return Fail("{uic} user input(s) required for node execution:{i} but {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
+            return FailInputCountMismatch("node", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
         }
         for (int i = 0; i < requiredInputs.Count; i++)
         { 
@@ -414,24 +437,11 @@ public class ComputationalGraph
     public bool ResolveNodeExecuteInputs(Node node, Dictionary<string, ITensor> userInputs, bool useInitializers)
     {
         using var op = Begin("Resolving {c} node inputs for execution", node.Inputs.Length);
-        var requiredInputs = new List<string>();
-        foreach (var i in node.Inputs)
-        {
-            // Absent optional slots bind nothing; repeated inputs resolve once.
-            if (string.IsNullOrEmpty(i)) continue;
-            if (useInitializers && Initializers.ContainsKey(i))
-            {
-                Inputs[i] = Initializers[i];
-            }
-            else if (!requiredInputs.Contains(i))
-            {
-                requiredInputs.Add(i);
-            }
-        }
+        var requiredInputs = NodeRequiredInputs(node, useInitializers);
         if (userInputs.Count != requiredInputs.Count)
         {
             op.Abandon();
-            return Fail("{uic} user input(s) required for node execution:{i} but {c} specified.", requiredInputs.Count, userInputs.Select(ui => ui.Value.TensorNameDesc()), userInputs.Count);
+            return FailInputCountMismatch("node", requiredInputs.Count, userInputs.Select(ui => ui.Value.TensorNameDesc()), userInputs.Count);
         }
         for (int i = 0; i < requiredInputs.Count; i++)
         {
