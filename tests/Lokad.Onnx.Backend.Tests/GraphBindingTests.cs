@@ -56,6 +56,126 @@ public class GraphBindingTests
     }
 
     [Fact]
+    public void ResolveInputs_Positional_BadLaterInput_CommitsNothing()
+    {
+        var g = NewGraph();
+        var pa = DenseTensor<float>.OfShape(2);
+        var pb = DenseTensor<float>.OfShape(2);
+        g.Inputs["a"] = pa;
+        g.Inputs["b"] = pb;
+        var good = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        var bad = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f });
+        Assert.False(g.ResolveInputs(new ITensor[] { good, bad }, false));
+        Assert.Same(pa, g.Inputs["a"]);
+        Assert.Same(pb, g.Inputs["b"]);
+        Assert.True(g.ResolveInputs(new ITensor[] { good, good }, false));
+        Assert.Same(good, g.Inputs["a"]);
+    }
+
+    [Fact]
+    public void ResolveInputs_Dict_BadLaterInput_CommitsNothing()
+    {
+        var g = NewGraph();
+        var pa = DenseTensor<float>.OfShape(2);
+        var pb = DenseTensor<float>.OfShape(2);
+        g.Inputs["a"] = pa;
+        g.Inputs["b"] = pb;
+        var good = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        var bad = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f });
+        var attempt = new Dictionary<string, ITensor> { { "a", good }, { "b", bad } };
+        Assert.False(g.ResolveInputs(attempt, false));
+        Assert.Same(pa, g.Inputs["a"]);
+        Assert.Same(pb, g.Inputs["b"]);
+        var retry = new Dictionary<string, ITensor> { { "a", good }, { "b", good } };
+        Assert.True(g.ResolveInputs(retry, false));
+    }
+
+    [Fact]
+    public void ResolveInputs_Initializer_NotAppliedOnFailure()
+    {
+        var g = NewGraph();
+        var pw = DenseTensor<float>.OfShape(2);
+        var pb = DenseTensor<float>.OfShape(2);
+        g.Inputs["w"] = pw;
+        g.Inputs["b"] = pb;
+        g.Initializers["w"] = DenseTensor<float>.OfValues(new float[] { 9f, 9f });
+        var good = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        var bad = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f });
+        Assert.False(g.ResolveInputs(new Dictionary<string, ITensor> { { "b", bad } }, true));
+        Assert.Same(pw, g.Inputs["w"]);
+        Assert.Same(pb, g.Inputs["b"]);
+        Assert.True(g.ResolveInputs(new Dictionary<string, ITensor> { { "b", good } }, true));
+        Assert.Equal(new float[] { 9f, 9f }, ((Tensor<float>)g.Inputs["w"]).ToArray());
+    }
+
+    static ComputationalGraph NewReluWithDescs(params OnnxValueInfo[] descs)
+    {
+        var g = NewGraph();
+        g.Inputs["x"] = DenseTensor<float>.OfShape(2);
+        g.Outputs["y"] = DenseTensor<float>.OfShape(2);
+        g.Nodes.Add(new Node { Name = "r", Op = OpType.Relu, Inputs = new[] { "x" }, Outputs = new[] { "y" } });
+        foreach (var d in descs) g.OutputDescs.Add(d);
+        g.RefreshLifetimeAnalysis();
+        return g;
+    }
+
+    static OnnxValueInfo OutDesc(string name, TensorElementType type, int[] dims, string?[]? ps)
+    {
+        return new OnnxValueInfo { Name = name, ElementType = type, Dims = dims, DimParams = ps };
+    }
+
+    static Dictionary<string, ITensor> ReluInput()
+    {
+        return new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { 1f, -2f }) } };
+    }
+
+    [Fact]
+    public void Execute_OutputDtypeMismatch_FailsNamingOutput()
+    {
+        var g = NewReluWithDescs(OutDesc("y", TensorElementType.Int32, new int[] { 2 }, null));
+        Assert.False(g.Execute(ReluInput(), true));
+        Assert.Contains("y", g.LastErrorMessage ?? "");
+    }
+
+    [Fact]
+    public void Execute_OutputShapeMismatch_FailsNamingOutput()
+    {
+        var g = NewReluWithDescs(OutDesc("y", TensorElementType.Float, new int[] { 3 }, null));
+        Assert.False(g.Execute(ReluInput(), true));
+        Assert.Contains("y", g.LastErrorMessage ?? "");
+    }
+
+    [Fact]
+    public void Execute_OutputUnknownDim_Accepts()
+    {
+        var g = NewReluWithDescs(OutDesc("y", TensorElementType.Float, new int[] { -1 }, null));
+        Assert.True(g.Execute(ReluInput(), true), g.LastErrorMessage);
+    }
+
+    [Fact]
+    public void Execute_SharedSymbolicOutputs_Enforced()
+    {
+        var g = NewGraph();
+        g.Inputs["a"] = DenseTensor<float>.OfShape(2, 2);
+        g.Inputs["b"] = DenseTensor<float>.OfShape(3, 3);
+        g.Outputs["ya"] = DenseTensor<float>.OfShape(2, 2);
+        g.Outputs["yb"] = DenseTensor<float>.OfShape(3, 3);
+        g.Nodes.Add(new Node { Name = "ra", Op = OpType.Relu, Inputs = new[] { "a" }, Outputs = new[] { "ya" } });
+        g.Nodes.Add(new Node { Name = "rb", Op = OpType.Relu, Inputs = new[] { "b" }, Outputs = new[] { "yb" } });
+        var par = new string?[] { "n", null };
+        g.OutputDescs.Add(OutDesc("ya", TensorElementType.Float, new int[] { 0, 2 }, par));
+        g.OutputDescs.Add(OutDesc("yb", TensorElementType.Float, new int[] { 0, 3 }, par));
+        g.RefreshLifetimeAnalysis();
+        var user = new Dictionary<string, ITensor>
+        {
+            { "a", DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } }) },
+            { "b", DenseTensor<float>.OfValues(new float[3, 3] { { 1f, 2f, 3f }, { 4f, 5f, 6f }, { 7f, 8f, 9f } }) },
+        };
+        Assert.False(g.Execute(user, true));
+        Assert.Contains("n", g.LastErrorMessage ?? "");
+    }
+
+    [Fact]
     public void ExecuteNode_MissingLabel_False()
     {
         var g = NewGraph();

@@ -279,27 +279,44 @@ public class ComputationalGraph
         {
             foreach (var i in Inputs.Keys)
             {
-                if (Initializers.ContainsKey(i))
-                {
-                    var ii = Initializers[i];
-                    var declared = FindInputDesc(i);
-                    Inputs.TryGetValue(i, out var bound);
-                    var dims = bound?.Dims ?? declared?.Dims;
-                    var elementType = bound?.ElementType ?? declared?.ElementType;
-                    if (dims is not null && elementType is not null && ii.Dims.SequenceEqual(dims) && ii.ElementType == elementType)
-                    {
-                        if (Log.IsEnabled(LogLevel.Info)) Info("Using initializer value {n} for graph input {i}.", ii.TensorNameDesc(), DescribeBoundInput(i));
-                        Inputs[i] = Initializers[i];
-                        requiredInputs.Remove(i);
-                    }
-                    else if (Log.IsEnabled(LogLevel.Error))
-                    {
-                        Error("Cannot use initializer value {n} for graph input {i}. Tensor shape or type does not match.", ii.TensorNameDesc(), DescribeBoundInput(i));
-                    }
-                }
+                if (InitializerBacksInput(i)) requiredInputs.Remove(i);
             }
         }
         return requiredInputs;
+    }
+
+    /// <summary>
+    /// Pure check whether the stored initializer can back input <paramref name="i"/>.
+    /// Never mutates bindings; <see cref="ApplyInitializerBindings"/> publishes the
+    /// substitution after successful validation.
+    /// </summary>
+    bool InitializerBacksInput(string i)
+    {
+        if (!Initializers.TryGetValue(i, out var ii)) return false;
+        var declared = FindInputDesc(i);
+        Inputs.TryGetValue(i, out var bound);
+        var dims = bound?.Dims ?? declared?.Dims;
+        var elementType = bound?.ElementType ?? declared?.ElementType;
+        if (dims is not null && elementType is not null && ii.Dims.SequenceEqual(dims) && ii.ElementType == elementType) return true;
+        if (Log.IsEnabled(LogLevel.Error))
+            Error("Cannot use initializer value {n} for graph input {i}. Tensor shape or type does not match.", ii.TensorNameDesc(), DescribeBoundInput(i));
+        return false;
+    }
+
+    /// <summary>
+    /// Publishes every initializer-backed substitution. Call only after input
+    /// validation succeeds so a rejected run leaves bindings untouched.
+    /// </summary>
+    void ApplyInitializerBindings(Dictionary<string, ITensor?> requiredInputs)
+    {
+        foreach (var i in Inputs.Keys.ToArray())
+        {
+            if (!requiredInputs.ContainsKey(i) && Initializers.ContainsKey(i))
+            {
+                Inputs[i] = Initializers[i];
+                if (Log.IsEnabled(LogLevel.Info)) Info("Using initializer value {n} for graph input {i}.", Initializers[i].TensorNameDesc(), DescribeBoundInput(i));
+            }
+        }
     }
 
     /// <summary>
@@ -357,6 +374,7 @@ public class ComputationalGraph
             return FailInputCountMismatch("graph", requiredInputs.Count, userInputs.Select(ui => ui.TensorNameDesc()), userInputs.Length);
         }
         var symbolic = new Dictionary<string, int>(StringComparer.Ordinal);
+        var validated = new List<(string Key, ITensor Value)>();
         for(int i = 0; i < requiredInputs.Keys.Count; i++)
         {
             var key = requiredInputs.Keys.ElementAt(i);
@@ -369,10 +387,15 @@ public class ComputationalGraph
             }
             else
             {
-                Info("Using user input {n} for graph input {i}.", userInputs[i].TensorNameDesc(), DescribeBoundInput(key));
-                Inputs[key] = userInputs[i];
+                validated.Add((key, userInputs[i]));
             }
         }
+        foreach (var (key, value) in validated)
+        {
+            Info("Using user input {n} for graph input {i}.", value.TensorNameDesc(), DescribeBoundInput(key));
+            Inputs[key] = value;
+        }
+        ApplyInitializerBindings(requiredInputs);
         op.Complete();  
         return true;
     }
@@ -413,6 +436,7 @@ public class ComputationalGraph
             Info("Using user input {n} for graph input {i}.", userInputs[kv.Key].TensorNameDesc(), DescribeBoundInput(kv.Key));
             Inputs[kv.Key] = userInputs[kv.Key];
         }
+        ApplyInitializerBindings(requiredInputs);
         op.Complete();
         return true;
     }
@@ -609,12 +633,17 @@ public class ComputationalGraph
                 Outputs[name] = init.Clone();
             }
         }
+        var outputSymbolic = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var desc in OutputDescs)
         {
             if (string.IsNullOrEmpty(desc.Name)) continue;
             if (!Outputs.TryGetValue(desc.Name, out var bound) || bound is null)
             {
                 return Fail("Graph output {n} was not resolved by this run.", desc.Name);
+            }
+            if (!CheckDescriptorDims(desc, bound, outputSymbolic, out var outputDetail))
+            {
+                return Fail("Graph output {n} does not match its descriptor. {d}", desc.Name, outputDetail ?? "");
             }
         }
         LastProfile = profilerScope.Profile;
