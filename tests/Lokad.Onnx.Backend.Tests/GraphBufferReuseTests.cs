@@ -254,6 +254,73 @@ public class GraphBufferReuseTests
     }
 
     [Fact]
+    public void ContextReuse_CallerHeldOutputStaysValid()
+    {
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "test";
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(2);
+        graph.Outputs["y"] = DenseTensor<float>.OfShape(2);
+        graph.Nodes.Add(new Node { Name = "r", Op = OpType.Relu, Inputs = new[] { "x" }, Outputs = new[] { "y" } });
+        graph.RefreshLifetimeAnalysis();
+        var ctx = graph.CreateExecution(null);
+        var first = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
+        Assert.True(ctx.Execute(first, true));
+        var held = ((Tensor<float>)ctx.Outputs["y"]).ToArray();
+        var second = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { 3f, -4f }) } };
+        Assert.True(ctx.Execute(second, true));
+        Assert.Equal(new float[] { 0f, 2f }, held);
+        Assert.Equal(new float[] { 3f, 0f }, ((Tensor<float>)ctx.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public void ContextReuse_AlternatingShapes()
+    {
+        var m = new OnnxModel { Name = "m" };
+        m.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new[] { -1 }, DimParams = new string?[] { null } });
+        m.Outputs.Add(new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Float, Dims = new[] { -1 }, DimParams = new string?[] { null } });
+        m.Nodes.Add(new OnnxNode { Name = "r", OpType = "Relu", Inputs = new[] { "x" }, Outputs = new[] { "y" } });
+        var graph = Model.Load(m);
+        var ctx = graph.CreateExecution(null);
+        foreach (int n in new int[] { 2, 5, 2 })
+        {
+            var data = new float[n];
+            for (int i = 0; i < n; i++) data[i] = (float)i - 1f;
+            var user = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(data) } };
+            Assert.True(ctx.Execute(user, true));
+            var y = ((Tensor<float>)ctx.Outputs["y"]).ToArray();
+            Assert.Equal(n, y.Length);
+            for (int i = 0; i < n; i++) Assert.Equal(Math.Max(0f, data[i]), y[i], 5);
+        }
+    }
+
+    [Fact]
+    public async Task ContextReuse_ConcurrentContexts()
+    {
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "test";
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(2);
+        graph.Outputs["y"] = DenseTensor<float>.OfShape(2);
+        graph.Nodes.Add(new Node { Name = "r", Op = OpType.Relu, Inputs = new[] { "x" }, Outputs = new[] { "y" } });
+        graph.RefreshLifetimeAnalysis();
+        var execA = graph.CreateExecution(null);
+        var execB = graph.CreateExecution(null);
+        using var barrier = new Barrier(2);
+        System.Func<Dictionary<string, ITensor>, GraphExecution, float[]> run = (user, exec) =>
+        {
+            barrier.SignalAndWait();
+            if (!exec.Execute(user, true)) return Array.Empty<float>();
+            return ((Tensor<float>)exec.Outputs["y"]).ToArray();
+        };
+        var userA = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
+        var userB = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { 3f, -4f }) } };
+        var tA = Task.Run(() => run(userA, execA));
+        var tB = Task.Run(() => run(userB, execB));
+        await Task.WhenAll(tA, tB);
+        Assert.Equal(new float[] { 0f, 2f }, await tA);
+        Assert.Equal(new float[] { 3f, 0f }, await tB);
+    }
+
+    [Fact]
     public void DoubleExecute_WithPooling_IsStable()
     {
         var graph = new ComputationalGraph();
