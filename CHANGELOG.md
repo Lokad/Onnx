@@ -114,6 +114,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   The Bylsma/BLAS notice entry is removed as orphaned: its uncalled BLAS.cs DGEMM
   code was deleted, and full-tree plus full-history searches find no surviving
   markers; one onnxruntime entry remains against the tensor hierarchy.
+  The float/double scalar Erf bodies are independently implemented from the Abramowitz-Stegun 7.1.26
+  definition with a Stegun-reference oracle, removing the Cook blog attributions; the vectorized
+  Erf and exp cores are unchanged.
   Benchmark workloads moved from the CLI to the non-packable benchmark
   project with BenchmarkDotNet; the CLI keeps inspection and inference
   only, and bench.ps1 drives model timings plus the relocated sweep.
