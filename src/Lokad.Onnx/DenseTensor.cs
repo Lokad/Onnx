@@ -1,16 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-// This file is copied and adapted from the following git repository -
-// https://github.com/dotnet/corefx
-// Commit ID: bdd0814360d4c3a58860919f292a306242f27da1
-// Path: /src/System.Numerics.Tensors/src/System/Numerics/Tensors/DenseTensor.cs
-// Original license statement below -
-
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
 using System.Runtime.InteropServices;
 using System;
 using System.Buffers;
@@ -22,11 +9,12 @@ using System.Runtime.CompilerServices;
 namespace Lokad.Onnx
 {
     /// <summary>
-    /// Represents a multi-dimensional collection of objects of type T that can be accessed by indices.  
-    /// DenseTensor stores values in a contiguous sequential block of memory where all values are represented.
+    /// A tensor whose logical contents live in one contiguous block of memory in row-major order.
+    /// Independently implemented from the layout contract: flat index is the dot product of
+    /// coordinates and strides, and every element is represented exactly once.
     /// </summary>
     /// <typeparam name="T">
-    /// Type contained within the Tensor. Typically a value type such as int, double, float, etc.
+    /// The element type, always an unmanaged value type in this library.
     /// </typeparam>
     public unsafe class DenseTensor<T> : Tensor<T> where T :  unmanaged
     {
@@ -37,54 +25,54 @@ namespace Lokad.Onnx
 
         #region Properties
         /// <summary>
-        /// Memory storing backing values of this tensor.
+        /// The live backing store viewed with this tensor's dimensions and strides.
         /// </summary>
         public Memory<T> Buffer => memory;
 
+        /// <summary>
+        /// The caller-visible array only when this value densely owns exactly its logical
+        /// contents in one zero-based array; views and slices never qualify, so storage
+        /// owned elsewhere cannot leak out through this probe.
+        /// </summary>
         internal override Array? OwnedBufferArray()
         {
             if (memory.Length != Length) return null;
-            if (!MemoryMarshal.TryGetArray(memory, out ArraySegment<T> segment) || segment.Array is null) return null;
-            if (segment.Offset != 0 || segment.Array.Length != memory.Length) return null;
-            return segment.Array;
+            if (!MemoryMarshal.TryGetArray(memory, out ArraySegment<T> window) || window.Array is null) return null;
+            if (window.Offset != 0 || window.Array.Length != memory.Length) return null;
+            return window.Array;
         }
         #endregion
 
         #region Constructors
         internal DenseTensor(Array fromArray, bool reverseStride) : base(fromArray, reverseStride)
         {
-            // copy initial array
+            // Fill a fresh row-major-scale backing array; the source keeps its contents.
             var backingArray = new T[fromArray.Length];
-            if (!reverseStride && fromArray.GetType().GetElementType() == typeof(T))
+            if (reverseStride)
             {
-                // Exact-type rectangular arrays are contiguous whatever the rank:
-                // one block copy with no per-element boxing, valid for every
-                // unmanaged element type including custom structs.
+                // Incoming arrays always enumerate in row-major order, so each element
+                // is placed through the stride remap into this tensor's layout.
+                var rowMajorStrides = ArrayUtilities.GetStrides(dimensions);
+                int source = 0;
+                foreach (var item in fromArray)
+                {
+                    backingArray[ArrayUtilities.TransformIndexByStrides(source++, rowMajorStrides, false, strides)] = (T)item;
+                }
+            }
+            else if (fromArray.GetType().GetElementType() == typeof(T))
+            {
+                // Same-type rectangular arrays already lie contiguous in memory for any
+                // rank, so one block copy moves them with no per-element boxing.
                 MemoryMarshal.CreateReadOnlySpan(
                     ref Unsafe.As<byte, T>(ref MemoryMarshal.GetArrayDataReference(fromArray)),
                     fromArray.Length).CopyTo(backingArray);
-                arr = backingArray;
-                memory = backingArray;
-                return;
-            }
-
-            int index = 0;
-            if (reverseStride)
-            {
-                // Array is always row-major
-                var sourceStrides = ArrayUtilities.GetStrides(dimensions);
-
-                foreach (var item in fromArray)
-                {
-                    var destIndex = ArrayUtilities.TransformIndexByStrides(index++, sourceStrides, false, strides);
-                    backingArray[destIndex] = (T)item;
-                }
             }
             else
             {
+                int flat = 0;
                 foreach (var item in fromArray)
                 {
-                    backingArray[index++] = (T)item;
+                    backingArray[flat++] = (T)item;
                 }
             }
 
@@ -93,9 +81,9 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Initializes a rank-1 Tensor using the specified <paramref name="length"/>.
+        /// Creates a rank-1 tensor of the given length with default-valued elements.
         /// </summary>
-        /// <param name="length">Size of the 1-dimensional tensor</param>
+        /// <param name="length">Element count of the one-dimensional tensor.</param>
         public DenseTensor(int length) : base(length)
         {
             arr = new T[length];
@@ -103,16 +91,13 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Initializes a rank-n Tensor using the dimensions specified in <paramref name="dimensions"/>.
+        /// Creates a tensor of the given shape with default-valued elements.
         /// </summary>
         /// <param name="dimensions">
-        /// An span of integers that represent the size of each dimension of the DenseTensor to create.
+        /// The extent of every axis; the product is the element count.
         /// </param>
         /// <param name="reverseStride">
-        /// False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension 
-        /// is most minor (closest together): akin to row-major in a rank-2 tensor.  
-        /// True to indicate that the last dimension is most major (farthest apart) and the first dimension is most 
-        /// minor (closest together): akin to column-major in a rank-2 tensor.
+        /// False (default) for row-major strides, true for reversed strides.
         /// </param>
         public DenseTensor(ReadOnlySpan<int> dimensions, bool reverseStride) : base(dimensions, reverseStride)
         {
@@ -121,26 +106,23 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Constructs a new row-major DenseTensor of the specified dimensions.
+        /// Creates a row-major tensor of the specified dimensions.
         /// </summary>
         public DenseTensor(ReadOnlySpan<int> dimensions) : this(dimensions, false)
         {
         }
 
         /// <summary>
-        /// Constructs a new DenseTensor of the specified dimensions, wrapping existing backing memory for the contents.
+        /// Creates a tensor of the specified dimensions over already-owned backing memory.
         /// </summary>
-        /// <param name="memory"></param>
+        /// <param name="memory">Backing store shared with the new tensor.</param>
         /// <param name="dimensions">
-        /// An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
+        /// The extent of every axis; the product is the element count.</param>
         /// <param name="reverseStride">
-        /// False (default) to indicate that the first dimension is most major (farthest apart) and the last dimension 
-        /// is most minor (closest together): akin to row-major in a rank-2 tensor.  
-        /// True to indicate that the last dimension is most major (farthest apart) and the first dimension is most 
-        /// minor (closest together): akin to column-major in a rank-2 tensor.
+        /// False (default) for row-major strides, true for reversed strides.
         /// </param>
         /// <summary>
-        /// Constructs a new row-major DenseTensor wrapping existing backing memory for the contents.
+        /// Creates a row-major tensor over already-owned backing memory.
         /// </summary>
         public DenseTensor(Memory<T> memory, ReadOnlySpan<int> dimensions)
             : this(memory, dimensions, false)
@@ -164,11 +146,10 @@ namespace Lokad.Onnx
 
         #region Overrides
         /// <summary>
-        /// Gets the value at the specified index, where index is a linearized version of n-dimension indices 
-        /// using strides. For a scalar, use index = 0
+        /// Reads the element at a flat index (the stride dot product of coordinates).
         /// </summary>
-        /// <param name="index">An integer index computed as a dot-product of indices.</param>
-        /// <returns>The value at the specified position in this Tensor.</returns>
+        /// <param name="index">Flat position; 0 addresses a scalar.</param>
+        /// <returns>The stored element.</returns>
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override T GetValue(int index)
         {
@@ -176,11 +157,10 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Sets the value at the specified index, where index is a linearized version of n-dimension indices 
-        /// using strides. For a scalar, use index = 0
+        /// Writes the element at a flat index (the stride dot product of coordinates).
         /// </summary>
-        /// <param name="index">An integer index computed as a dot-product of indices.</param>
-        /// <param name="value">The new value to set at the specified position in this Tensor.</param>
+        /// <param name="index">Flat position; 0 addresses a scalar.</param>
+        /// <param name="value">Replacement element.</param>
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public override void SetValue(int index, T value)
         {
@@ -188,11 +168,10 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Overrides Tensor.CopyTo(). Copies the content of the Tensor
-        /// to the specified array starting with arrayIndex
+        /// Copies the logical contents in flat order into the destination array
         /// </summary>
-        /// <param name="array">destination array</param>
-        /// <param name="arrayIndex">start index</param>
+        /// <param name="array">Destination array.</param>
+        /// <param name="arrayIndex">First destination position.</param>
         protected override void CopyTo(T[] array, int arrayIndex)
         {
             if (array == null)
@@ -210,9 +189,9 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Determines the index of a specific item in the Tensor&lt;T&gt;.
+        /// Finds the first flat position holding a specific item.
         /// </summary>
-        /// <param name="item">Object to locate</param>
+        /// <param name="item">Element to locate.</param>
         /// <returns>The index of item if found in the tensor; otherwise, -1</returns>
         protected override int IndexOf(T item)
         {
@@ -234,44 +213,42 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Creates a shallow copy of this tensor, with new backing storage.
+        /// Copies the elements into fresh backing storage with the same shape.
         /// </summary>
-        /// <returns>A shallow copy of this tensor.</returns>
+        /// <returns>A new tensor holding a copy of every element.</returns>
         public override Tensor<T> Clone()
         {
-            // create copy
-            var memory = new T[Length];
-            this.memory.CopyTo(memory);
-            return new DenseTensor<T>(memory, dimensions, IsReversedStride);
+            // Duplicate the elements into fresh storage; the shape travels unchanged.
+            var copy = new T[Length];
+            Buffer.Span.CopyTo(copy);
+            return new DenseTensor<T>(copy.AsMemory(), Dimensions, IsReversedStride);
         }
 
         /// <summary>
-        /// Creates a new Tensor of a different type with the specified dimensions and the same layout as this tensor 
-        /// with elements initialized to their default value.
+        /// Creates an empty tensor of a different element type with the given shape.
         /// </summary>
-        /// <typeparam name="TResult">Type contained in the returned Tensor.</typeparam>
+        /// <typeparam name="TResult">Element type of the new tensor.</typeparam>
         /// <param name="dimensions">
-        /// An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
-        /// <returns>A new tensor with the same layout as this tensor but different type and dimensions.</returns>
+        /// The extent of every axis; the product is the element count.</param>
+        /// <returns>A new empty tensor of the requested type and shape.</returns>
         public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions)
         {
             return new DenseTensor<TResult>(dimensions, IsReversedStride);
         }
         
         /// <summary>
-        /// Reshapes the current tensor to new dimensions, using the same backing storage.
+        /// Reinterprets the same backing storage under new dimensions.
         /// </summary>
         /// <param name="dimensions">
-        /// An span of integers that represent the size of each dimension of the DenseTensor to create.</param>
-        /// <returns>A new tensor that reinterprets backing Buffer of this tensor with different dimensions.</returns>
+        /// The extent of every axis; the product is the element count.</param>
+        /// <returns>A new tensor over the same backing storage.</returns>
         public override Tensor<T> Reshape(ReadOnlySpan<int> dimensions)
         {
- 
-            var newSize = ArrayUtilities.ComputeOffsetForReduction(dimensions, 0);
-
-            if (newSize != Length)
+            // Only the shape changes; the element count must be preserved exactly.
+            int reshaped = ArrayUtilities.ComputeOffsetForReduction(dimensions, 0);
+            if (reshaped != Length)
             {
-                throw new ArgumentException($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {newSize}.", nameof(dimensions));
+                throw new ArgumentException($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {reshaped}.", nameof(dimensions));
             }
 
             return new DenseTensor<T>(Buffer, dimensions, IsReversedStride);
@@ -279,21 +256,12 @@ namespace Lokad.Onnx
 
         protected override void CopyFrom(Tensor<T> from)
         {
-            // Overlapping storage (views, reshapes of shared buffers) snapshots
-            // first so reads observe original values.
+            // A source sharing this backing store is snapshotted first so the
+            // copy observes the original values rather than partially written ones.
             if (SharesStorage(this, from)) from = Snapshot(from);
-            if (from is DenseTensor<T> d)
+            if (from is DenseTensor<T> dense)
             {
-                var handle = memory.Pin();
-                var handle2 = d.memory.Pin();
-                var ptr = (T*) handle.Pointer;
-                var ptr2 = (T*)handle2.Pointer;
-                for (int i = 0; i < from.Length; i++)
-                {
-                    ptr[i] = ptr2[i];
-                }
-                handle.Dispose();   
-                handle2.Dispose();
+                dense.memory.Span.CopyTo(memory.Span);
             }
             else
             {
@@ -306,11 +274,13 @@ namespace Lokad.Onnx
 
         public override DenseTensor<T> ToDenseTensor()
         {
+            // Row-major values already sit in flat order, so the tensor itself qualifies.
             if (!IsReversedStride)
             {
                 return this;
             }
 
+            // Reversed layouts reorder on the way out element by element.
             var rowMajor = new DenseTensor<T>(Dimensions, reverseStride: false);
             foreach (var index in rowMajor.GetDimensionsIterator())
             {
