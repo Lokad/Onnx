@@ -204,6 +204,14 @@ public class TensorMatMulBenchmarks
         t_6_384_384_b = Tensor<float>.Rand(6, 384, 384);
         t_3_4_384_384_a = Tensor<float>.Rand(3,4, 384, 384);
         t_3_4_384_384_b = Tensor<float>.Rand(3, 4, 384, 384);
+        t_8_384_a = Tensor<float>.Rand(8, 384);
+        t_8_384_b = Tensor<float>.Rand(384, 384);
+        t_30_384_a = Tensor<float>.Rand(30, 384);
+        t_30_384_b = Tensor<float>.Rand(384, 384);
+        t_128_384_a = Tensor<float>.Rand(128, 384);
+        t_128_384_b = Tensor<float>.Rand(384, 384);
+        t_512_384_a = Tensor<float>.Rand(512, 384);
+        t_512_384_b = Tensor<float>.Rand(384, 384);
         // Agreement precedes every timing: a breach fails the run before numbers exist.
         VerifyAgreementNow();
     }
@@ -256,6 +264,54 @@ public class TensorMatMulBenchmarks
     [BenchmarkCategory("3x4x384x384")]
     public void MatMul4_simd_intrinsics() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b, TensorExecutionOptions.Intrinsics);
 
+    [Benchmark(Description = "Matrix multiply 8x384 by 384x384 (e5 8-token projection)", Baseline = true)]
+    [BenchmarkCategory("8x384")]
+    public void MatMul5() => Tensor<float>.MatMul(t_8_384_a, t_8_384_b, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Matrix multiply 8x384 by 384x384 (e5 8-token projection) - simd")]
+    [BenchmarkCategory("8x384")]
+    public void MatMul5_simd() => Tensor<float>.MatMul(t_8_384_a, t_8_384_b, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Matrix multiply 8x384 by 384x384 (e5 8-token projection) - simd intrinsics")]
+    [BenchmarkCategory("8x384")]
+    public void MatMul5_simd_intrinsics() => Tensor<float>.MatMul(t_8_384_a, t_8_384_b, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Matrix multiply 30x384 by 384x384 (e5 30-token projection)", Baseline = true)]
+    [BenchmarkCategory("30x384")]
+    public void MatMul6() => Tensor<float>.MatMul(t_30_384_a, t_30_384_b, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Matrix multiply 30x384 by 384x384 (e5 30-token projection) - simd")]
+    [BenchmarkCategory("30x384")]
+    public void MatMul6_simd() => Tensor<float>.MatMul(t_30_384_a, t_30_384_b, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Matrix multiply 30x384 by 384x384 (e5 30-token projection) - simd intrinsics")]
+    [BenchmarkCategory("30x384")]
+    public void MatMul6_simd_intrinsics() => Tensor<float>.MatMul(t_30_384_a, t_30_384_b, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Matrix multiply 128x384 by 384x384 (e5 128-token projection)", Baseline = true)]
+    [BenchmarkCategory("128x384")]
+    public void MatMul7() => Tensor<float>.MatMul(t_128_384_a, t_128_384_b, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Matrix multiply 128x384 by 384x384 (e5 128-token projection) - simd")]
+    [BenchmarkCategory("128x384")]
+    public void MatMul7_simd() => Tensor<float>.MatMul(t_128_384_a, t_128_384_b, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Matrix multiply 128x384 by 384x384 (e5 128-token projection) - simd intrinsics")]
+    [BenchmarkCategory("128x384")]
+    public void MatMul7_simd_intrinsics() => Tensor<float>.MatMul(t_128_384_a, t_128_384_b, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Matrix multiply 512x384 by 384x384 (e5 512-token projection)", Baseline = true)]
+    [BenchmarkCategory("512x384")]
+    public void MatMul8() => Tensor<float>.MatMul(t_512_384_a, t_512_384_b, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Matrix multiply 512x384 by 384x384 (e5 512-token projection) - simd")]
+    [BenchmarkCategory("512x384")]
+    public void MatMul8_simd() => Tensor<float>.MatMul(t_512_384_a, t_512_384_b, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Matrix multiply 512x384 by 384x384 (e5 512-token projection) - simd intrinsics")]
+    [BenchmarkCategory("512x384")]
+    public void MatMul8_simd_intrinsics() => Tensor<float>.MatMul(t_512_384_a, t_512_384_b, TensorExecutionOptions.Intrinsics);
+
     static void VerifyAgreementNow()
     {
         // Every shape and mode recomputed on fresh seeded inputs outside the
@@ -265,6 +321,10 @@ public class TensorMatMulBenchmarks
         CheckShape("384x1536", new[] { 384, 1536 }, new[] { 1536, 384 }, rnd);
         CheckShape("6x384x384", new[] { 6, 384, 384 }, new[] { 6, 384, 384 }, rnd);
         CheckShape("3x4x384x384", new[] { 3, 4, 384, 384 }, new[] { 3, 4, 384, 384 }, rnd);
+        CheckShape("8x384", new[] { 8, 384 }, new[] { 384, 384 }, rnd);
+        CheckShape("30x384", new[] { 30, 384 }, new[] { 384, 384 }, rnd);
+        CheckShape("128x384", new[] { 128, 384 }, new[] { 384, 384 }, rnd);
+        CheckShape("512x384", new[] { 512, 384 }, new[] { 384, 384 }, rnd);
         Console.WriteLine("TensorMatMul agreement: all shapes and modes match element-wise.");
     }
 
@@ -299,6 +359,14 @@ public class TensorMatMulBenchmarks
     Tensor<float> t_6_384_384_b = Tensor<float>.Zeros(0);
     Tensor<float> t_3_4_384_384_a = Tensor<float>.Zeros(0);
     Tensor<float> t_3_4_384_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_8_384_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_8_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_30_384_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_30_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_128_384_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_128_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_512_384_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_512_384_b = Tensor<float>.Zeros(0);
     #endregion
 }
 
