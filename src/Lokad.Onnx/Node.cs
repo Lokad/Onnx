@@ -118,6 +118,20 @@ public partial struct Node
     public ITensor? InputTensor(ComputationalGraph graph, int index) =>
         index < Inputs.Length && !string.IsNullOrEmpty(Inputs[index]) ? graph.GetInputTensor(Inputs[index]) : null;
 
+    /// <summary>
+    /// Version driving version-sensitive dispatch for this node: the resolved
+    /// node version when set, else the graph opset for the node domain with
+    /// the same empty-string fallback the importer uses, else 0 for legacy
+    /// attribute-form behavior on version-unknown hand-built graphs.
+    /// </summary>
+    public int ResolvedOpsetVersion(ComputationalGraph graph)
+    {
+        if (OpsetVersion > 0) return OpsetVersion;
+        if (!string.IsNullOrEmpty(Domain) && graph.Opset.TryGetValue(Domain, out var dv)) return dv;
+        if (graph.Opset.TryGetValue("", out var v)) return v;
+        return 0;
+    }
+
 
     public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider, ExecutionOptions? options)
     {
@@ -233,7 +247,7 @@ public partial struct Node
 
         OpType.Gather => CPU.Gather(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), opt),
 
-        OpType.Slice => graph.OpsetVersion("") switch
+        OpType.Slice => ResolvedOpsetVersion(graph) switch
         {
             int v when v >= 10 => CPU.Slice(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4), opt),
             _ => CPU.Slice(InputTensor(graph, 0), RequiredInts("starts").ToTensor<int>(), RequiredInts("ends").ToTensor<int>(), Ints("axes")?.ToTensor<int>(), null, opt),
@@ -253,27 +267,27 @@ public partial struct Node
             Attr<string>("mode", "nearest"), Attr<string>("coordinate_transformation_mode", "half_pixel"), Attr<string>("nearest_mode", "round_prefer_floor"),
             GetFloat("cubic_coeff_a", -0.75f), GetFloat("extrapolation_value", 0f), opt),
 
-        OpType.Unsqueeze => graph.OpsetVersion("") switch
+        OpType.Unsqueeze => ResolvedOpsetVersion(graph) switch
         {
             int v when v >= 13 => CPU.Unsqueeze(InputTensor(graph, 0), InputTensor(graph, 1), opt),
             _ => CPU.Unsqueeze(InputTensor(graph, 0), RequiredInts("axes"), opt),
         }, 
 
-        OpType.ReduceSum => graph.OpsetVersion("") switch
+        OpType.ReduceSum => ResolvedOpsetVersion(graph) switch
         {
             int v when v >= 13 => CPU.ReduceSum(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),
             _ => CPU.ReduceSum(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),
         },
 
-        OpType.ReduceMean => graph.OpsetVersion("") switch
+        OpType.ReduceMean => ResolvedOpsetVersion(graph) switch
         {
             int v when v >= 18 => CPU.ReduceMean(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),
             _ => CPU.ReduceMean(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),
         },
         
-        OpType.ReduceMax => graph.OpsetVersion("") switch { int v when v >= 18 => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), null, opt), _ => CPU.ReduceMax(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), null, opt), },
+        OpType.ReduceMax => ResolvedOpsetVersion(graph) switch { int v when v >= 18 => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), null, opt), _ => CPU.ReduceMax(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), null, opt), },
 
-        OpType.Softmax => graph.OpsetVersion("") switch
+        OpType.Softmax => ResolvedOpsetVersion(graph) switch
         {
             int v when v >= 13 => CPU.Softmax(InputTensor(graph, 0), Int("axis", null) ?? -1, opt, graph.ActivePool, v),
             int v => CPU.Softmax(InputTensor(graph, 0), Int("axis", null) ?? 1, opt, graph.ActivePool, v),
@@ -291,7 +305,7 @@ public partial struct Node
 
         OpType.Gelu => CPU.Gelu(InputTensor(graph, 0), Attr<string>("approximate", null), opt, graph.ActivePool),
 
-        OpType.Squeeze => graph.OpsetVersion("") switch
+        OpType.Squeeze => ResolvedOpsetVersion(graph) switch
         {
             int v when v >= 13 => CPU.Squeeze(InputTensor(graph, 0), InputTensor(graph, 1), opt),
             _ => CPU.Squeeze(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), opt),

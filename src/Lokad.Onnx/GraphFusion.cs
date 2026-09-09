@@ -53,6 +53,7 @@ namespace Lokad.Onnx
         static int StandardOpset(ComputationalGraph graph)
         {
             if (graph.Opset.TryGetValue("", out var v)) return v;
+            if (graph.Opset.TryGetValue("ai.onnx", out var a)) return a;
             return -1;
         }
 
@@ -314,6 +315,7 @@ namespace Lokad.Onnx
             bool OpsetSupportsAttributeReduceMean()
             {
                 if (graph.Opset.TryGetValue("", out var v)) return v < 18;
+                if (graph.Opset.TryGetValue("ai.onnx", out var a)) return a < 18;
                 return false;
             }
 

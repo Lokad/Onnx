@@ -107,6 +107,121 @@ public class OperatorDomainTests
         Assert.True(CPUExecutionProvider.SupportsNode(graph.Nodes[0]));
     }
 
+    static OnnxModel UnsqueezeModel(string opsetDomain, int opset, string nodeDomain, bool inputForm)
+    {
+        var mp = new OnnxModel { Name = "unsqueeze-domain" };
+        mp.Opset[opsetDomain] = opset;
+        mp.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new[] { 2, 3 } });
+        mp.Outputs.Add(new OnnxValueInfo
+        {
+            Name = "z", ElementType = TensorElementType.Float,
+            Dims = inputForm ? new[] { 2, 1, 3 } : new[] { 1, 2, 3 },
+        });
+        var node = new OnnxNode
+        {
+            Name = "u", OpType = "Unsqueeze", Domain = nodeDomain,
+            Outputs = new[] { "z" }, Attributes = new Dictionary<string, object>(),
+        };
+        if (inputForm)
+        {
+            node.Inputs = new[] { "x", "axes" };
+            mp.Initializers.Add(new OnnxTensor { Name = "axes", ElementType = TensorElementType.Int64, Dims = new[] { 1 }, Data = new long[] { 1L } });
+        }
+        else
+        {
+            node.Inputs = new[] { "x" };
+            node.Attributes["axes"] = new long[] { 0L };
+        }
+        mp.Nodes.Add(node);
+        return mp;
+    }
+
+    static float[] UnsqueezeInputValues() => new float[] { 1f, 2f, 3f, 4f, 5f, 6f };
+
+    [Fact]
+    public void AiOnnxDomain_Unsqueeze_Executes()
+    {
+        var graph = Model.Load(UnsqueezeModel("ai.onnx", 13, "ai.onnx", true))!;
+        Assert.Equal(13, graph.Nodes[0].OpsetVersion);
+        Assert.True(CPUExecutionProvider.SupportsNode(graph.Nodes[0]));
+        var inputs = new Dictionary<string, ITensor>
+        {
+            { "x", DenseTensor<float>.OfValues(new float[2, 3] { { 1f, 2f, 3f }, { 4f, 5f, 6f } }) },
+        };
+        Assert.True(graph.Execute(inputs, true), graph.LastErrorMessage);
+        var z = (Tensor<float>)graph.Outputs["z"];
+        Assert.Equal(new int[] { 2, 1, 3 }, z.Dimensions.ToArray());
+        Assert.Equal(UnsqueezeInputValues(), z.ToArray());
+    }
+
+    [Fact]
+    public void EquivalentDomains_BehaveIdentically()
+    {
+        var std = Model.Load(UnsqueezeModel("", 13, "", true))!;
+        var alt = Model.Load(UnsqueezeModel("ai.onnx", 13, "ai.onnx", true))!;
+        var inputs = new Dictionary<string, ITensor>
+        {
+            { "x", DenseTensor<float>.OfValues(new float[2, 3] { { 1f, 2f, 3f }, { 4f, 5f, 6f } }) },
+        };
+        Assert.True(std.Execute(inputs, true), std.LastErrorMessage);
+        Assert.True(alt.Execute(inputs, true), alt.LastErrorMessage);
+        Assert.Equal(
+            ((Tensor<float>)std.Outputs["z"]).ToArray(),
+            ((Tensor<float>)alt.Outputs["z"]).ToArray());
+    }
+
+    [Fact]
+    public void Unsqueeze_OldForm_Executes()
+    {
+        var graph = Model.Load(UnsqueezeModel("", 11, "", false))!;
+        var inputs = new Dictionary<string, ITensor>
+        {
+            { "x", DenseTensor<float>.OfValues(new float[2, 3] { { 1f, 2f, 3f }, { 4f, 5f, 6f } }) },
+        };
+        Assert.True(graph.Execute(inputs, true), graph.LastErrorMessage);
+        var z = (Tensor<float>)graph.Outputs["z"];
+        Assert.Equal(new int[] { 1, 2, 3 }, z.Dimensions.ToArray());
+        Assert.Equal(UnsqueezeInputValues(), z.ToArray());
+    }
+
+    [Fact]
+    public void MixedDomains_ResolvePerNode()
+    {
+        var mp = new OnnxModel { Name = "mixed-domain" };
+        mp.Opset[""] = 11;
+        mp.Opset["ai.onnx"] = 13;
+        mp.Inputs.Add(new OnnxValueInfo { Name = "x1", ElementType = TensorElementType.Float, Dims = new[] { 2, 3 } });
+        mp.Inputs.Add(new OnnxValueInfo { Name = "x2", ElementType = TensorElementType.Float, Dims = new[] { 2, 3 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y1", ElementType = TensorElementType.Float, Dims = new[] { 1, 2, 3 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y2", ElementType = TensorElementType.Float, Dims = new[] { 2, 3, 1 } });
+        mp.Nodes.Add(new OnnxNode
+        {
+            Name = "u1", OpType = "Unsqueeze", Domain = "",
+            Inputs = new[] { "x1" }, Outputs = new[] { "y1" },
+            Attributes = new Dictionary<string, object> { { "axes", new long[] { 0L } } },
+        });
+        mp.Nodes.Add(new OnnxNode
+        {
+            Name = "u2", OpType = "Unsqueeze", Domain = "ai.onnx",
+            Inputs = new[] { "x2", "axes" }, Outputs = new[] { "y2" },
+            Attributes = new Dictionary<string, object>(),
+        });
+        mp.Initializers.Add(new OnnxTensor { Name = "axes", ElementType = TensorElementType.Int64, Dims = new[] { 1 }, Data = new long[] { 2L } });
+        var graph = Model.Load(mp)!;
+        Assert.Equal(11, graph.Nodes[0].OpsetVersion);
+        Assert.Equal(13, graph.Nodes[1].OpsetVersion);
+        var inputs = new Dictionary<string, ITensor>
+        {
+            { "x1", DenseTensor<float>.OfValues(new float[2, 3] { { 1f, 2f, 3f }, { 4f, 5f, 6f } }) },
+            { "x2", DenseTensor<float>.OfValues(new float[2, 3] { { 1f, 2f, 3f }, { 4f, 5f, 6f } }) },
+        };
+        Assert.True(graph.Execute(inputs, true), graph.LastErrorMessage);
+        Assert.Equal(new int[] { 1, 2, 3 }, ((Tensor<float>)graph.Outputs["y1"]).Dimensions.ToArray());
+        Assert.Equal(new int[] { 2, 3, 1 }, ((Tensor<float>)graph.Outputs["y2"]).Dimensions.ToArray());
+        Assert.Equal(UnsqueezeInputValues(), ((Tensor<float>)graph.Outputs["y1"]).ToArray());
+        Assert.Equal(UnsqueezeInputValues(), ((Tensor<float>)graph.Outputs["y2"]).ToArray());
+    }
+
     [Fact]
     public void SupportPredicate_AgreesWithDispatch()
     {
