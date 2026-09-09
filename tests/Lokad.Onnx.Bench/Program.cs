@@ -111,7 +111,9 @@ static class Bench
             + " lokad=warmed public Execute|ctx=warmed reused-context Execute|ort=warmed ORT Run, alternating order, other side outputs already released;"
             + " convert=one-time managed-to-ORT input build reused by all ORT runs;"
             + " resetPop=reset after execute|resetClean=reset when empty (no-op floor);"
-            + " gc/alloc=shared-process totals over warmed loops without per-engine attribution; output disposal outside all timings.");
+            + " gc/alloc=shared-process totals over warmed loops without per-engine attribution; output disposal outside all timings."
+            + " agree=maxAbs + ORT-reference-scaled diff (tol 1e-4 scaled, unchanged);"
+            + " post=agreement re-check after timed reuse; inputsIntact=input fingerprint before/after.");
         if (selected.Contains("e5", StringComparer.OrdinalIgnoreCase))
         {
             var e5 = assets["e5"];
@@ -454,7 +456,7 @@ static class Bench
             + " load=" + loadMs.ToString("F1") + "ms prepare=" + prepareMs.ToString("F1") + "ms ortLoad=" + ortLoadMs.ToString("F1") + "ms"
             + " firstLokad=" + first.lokadFirstMs.ToString("F1") + "ms firstOrt=" + first.ortFirstMs.ToString("F1") + "ms"
             + " (first-run is process-cold only on the first row; later rows share warmed JIT)");
-        TimedRun(name, graph, named, outNames, lokadOpts, lokDesc, ortDesc, iters, valSw.Elapsed.TotalMilliseconds, first.worst, ortSession);
+        TimedRun(name, graph, named, outNames, lokadOpts, lokDesc, ortDesc, iters, valSw.Elapsed.TotalMilliseconds, first.scaled, first.abs, ortSession);
     }
 
     static string[] OutputShapes(ComputationalGraph graph, string[] outNames)
@@ -470,13 +472,14 @@ static class Bench
     }
 
     static void TimedRun(string name, ComputationalGraph graph, Dictionary<string, ITensor> named, string[] outNames,
-        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, double validationMs, double maxDiff, InferenceSession ortSession)
+        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, double validationMs, double maxScaled, double maxAbs, InferenceSession ortSession)
     {
         // One-time input conversion, reused by every ORT run below; Lokad inputs need no conversion.
         var convSw = Stopwatch.StartNew();
         var ortInputs = BuildOrtInputs(named, ortSession.InputMetadata.Keys.ToArray());
         convSw.Stop();
         double convertMs = convSw.Elapsed.TotalMilliseconds;
+        ulong fpBefore = FingerprintInputs(named);
         try
         {
             using var ro = new RunOptions();
@@ -544,11 +547,18 @@ static class Bench
                 + " allocMB=" + ((allocAfter - allocBefore) / 1000000.0).ToString("F1") + " (shared-process over warmed loops)";
             double[] resetPop = TimePopulatedResets(name, graph, named, lokadOpts, iters);
             double[] resetClean = TimeCleanResets(graph, iters);
+            ulong fpAfter = FingerprintInputs(named);
+            if (fpAfter != fpBefore)
+                throw new InvalidOperationException(name + ": inputs mutated during timed reuse (fingerprint changed).");
+            var post = Validate(name + " post-timed", graph, ortSession, named, outNames, lokadOpts);
+
             Console.WriteLine(name + " [" + lokDesc + " vs " + ortDesc + "]: lokad " + Dist(lok) + " | ctxLokad " + Dist(clok) + " | ort " + Dist(ort)
                 + " | resetPop " + Dist(resetPop) + " | resetClean " + Dist(resetClean) + " | convert=" + convertMs.ToString("F1") + "ms"
                 + " | validation=" + validationMs.ToString("F1") + "ms | disposal=outside"
                 + " | " + gcLine
-                + " | maxdiff=" + maxDiff.ToString("E2"));
+                + " | maxScaled=" + maxScaled.ToString("E2") + " maxAbs=" + maxAbs.ToString("E2")
+                + " | postScaled=" + post.scaled.ToString("E2") + " postAbs=" + post.abs.ToString("E2")
+                + " | inputsIntact=yes");
             Console.WriteLine("raw lok=[" + string.Join(",", lok.Select(v => v.ToString("F2"))) + "]"
                 + " raw ctx=[" + string.Join(",", clok.Select(v => v.ToString("F2"))) + "]"
                 + " raw ort=[" + string.Join(",", ort.Select(v => v.ToString("F2"))) + "]");
@@ -559,13 +569,19 @@ static class Bench
         }
     }
 
-    static (double worst, double lokadFirstMs, double ortFirstMs) Validate(string name, ComputationalGraph graph, InferenceSession session, Dictionary<string, ITensor> named, string[] outNames, ExecutionOptions lokadOpts)
+    static (double scaled, double abs, double lokadFirstMs, double ortFirstMs) Validate(string name, ComputationalGraph graph, InferenceSession session, Dictionary<string, ITensor> named, string[] outNames, ExecutionOptions lokadOpts)
     {
         // First runs on cold state; output disposal stays outside both first-run figures.
+        // The ORT session is the reference in every comparison below.
         graph.Reset();
         var lokSw = Stopwatch.StartNew();
         if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad validation execute failed");
         lokSw.Stop();
+        var declared = graph.OutputDescs.Where(d => !string.IsNullOrEmpty(d.Name)).Select(d => d.Name).OrderBy(n => n, StringComparer.Ordinal).ToArray();
+        var requested = outNames.OrderBy(n => n, StringComparer.Ordinal).ToArray();
+        if (!declared.SequenceEqual(requested, StringComparer.Ordinal))
+            throw new InvalidOperationException(name + ": output-name set mismatch (graph declares ["
+                + string.Join(",", declared) + "], session requested [" + string.Join(",", requested) + "]).");
         var ortInputs = BuildOrtInputs(named, session.InputMetadata.Keys.ToArray());
         try
         {
@@ -575,28 +591,55 @@ static class Bench
             ortSw.Stop();
             var outs = results.ToArray();
             if (outs.Length != outNames.Length) throw new InvalidOperationException(name + ": ort returned " + outs.Length + " outputs for " + outNames.Length + " requested.");
-            double worst = 0;
+            double worstScaled = 0;
+            double worstAbs = 0;
             for (int oi = 0; oi < outNames.Length; oi++)
             {
                 string onm = outNames[oi];
                 var res = outs[oi];
                 var shape = res.GetTensorTypeAndShape();
                 if (shape.ElementDataType != Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Float)
-                    throw new InvalidOperationException(name + ": ort output is not float32: " + onm + ".");
+                    throw new InvalidOperationException(name + ": ort output is not float32: " + onm + " (got " + shape.ElementDataType + ").");
                 if (!graph.Outputs.TryGetValue(onm, out var lt) || lt is not Tensor<float> lf)
-                    throw new InvalidOperationException(name + ": lokad output missing or not float32: " + onm);
+                    throw new InvalidOperationException(name + ": lokad output missing or not float32: " + onm
+                        + " (got " + (lt is null ? "unresolved" : lt.GetType().Name) + ").");
                 var la = lf.ToArray();
                 var oa = res.GetTensorDataAsSpan<float>().ToArray();
-                worst = Math.Max(worst, BenchValidate.RequireAgreement(
-                    name + ":" + onm, lf.Dimensions.ToArray(), la,
-                    shape.Shape.Select(d => checked((int)d)).ToArray(), oa, Tolerance));
+                var agree = BenchValidate.RequireAgreement(
+                    name + ":" + onm,
+                    shape.Shape.Select(d => checked((int)d)).ToArray(), oa,
+                    lf.Dimensions.ToArray(), la, Tolerance);
+                worstScaled = Math.Max(worstScaled, agree.scaled);
+                worstAbs = Math.Max(worstAbs, agree.abs);
             }
-            return (worst, lokSw.Elapsed.TotalMilliseconds, ortSw.Elapsed.TotalMilliseconds);
+            return (worstScaled, worstAbs, lokSw.Elapsed.TotalMilliseconds, ortSw.Elapsed.TotalMilliseconds);
         }
         finally
         {
             foreach (var v in ortInputs.Values) v.Dispose();
         }
+    }
+
+    static ulong FingerprintInputs(Dictionary<string, ITensor> named)
+    {
+        // FNV-1a 64 over sorted names, dims, and raw value bits.
+        ulong h = 1469598103934665603UL;
+        foreach (var key in named.Keys.OrderBy(k => k, StringComparer.Ordinal))
+        {
+            foreach (char ch in key) { h ^= ch; h *= 1099511628211UL; }
+            var t = named[key];
+            foreach (int d in t.Dims) { h ^= (uint)d; h *= 1099511628211UL; }
+            if (t is Tensor<long> li)
+            {
+                for (int i = 0; i < li.Length; i++) { h ^= (ulong)li.GetValue(i); h *= 1099511628211UL; }
+            }
+            else if (t is Tensor<float> fi)
+            {
+                for (int i = 0; i < fi.Length; i++) { h ^= (ulong)(uint)BitConverter.SingleToInt32Bits(fi.GetValue(i)); h *= 1099511628211UL; }
+            }
+            else throw new InvalidOperationException("unsupported input tensor type " + t.GetType().Name);
+        }
+        return h;
     }
 
     static Dictionary<string, OrtValue> BuildOrtInputs(Dictionary<string, ITensor> named, string[] inNames)

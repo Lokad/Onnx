@@ -78,8 +78,8 @@ public class MatMul2DBenchmarks
 
     static void CheckVariant(string name, int[] dims, float[] reference, float[] actual, double tolerance)
     {
-        double worst = BenchValidate.RequireAgreement("MatMul2D " + name, dims, reference, dims, actual, tolerance);
-        Console.WriteLine("MatMul2D " + name + ": worst rel diff " + worst.ToString("E2") + ".");
+        var agree = BenchValidate.RequireAgreement("MatMul2D " + name, dims, reference, dims, actual, tolerance);
+        Console.WriteLine("MatMul2D " + name + ": worst scaled diff " + agree.scaled.ToString("E2") + " (abs " + agree.abs.ToString("E2") + ").");
     }
 
     static float[] RunManagedSimd(DenseTensor<float> xa, DenseTensor<float> xb)
