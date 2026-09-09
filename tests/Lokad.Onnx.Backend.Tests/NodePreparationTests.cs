@@ -45,4 +45,54 @@ public class NodePreparationTests
         var axes = Assert.IsType<int[]>(dto.Attributes["axes"]);
         Assert.Equal(new int[] { 0, 1 }, axes);
     }
+
+    [Fact]
+    public void Prepare_CanonicalizesLosslessLongArrayAttributes()
+    {
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "test";
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(1, 1, 4, 4);
+        graph.Outputs["y"] = DenseTensor<float>.OfShape(1, 1, 2, 2);
+        graph.Nodes.Add(new Node
+        {
+            Name = "pool", Op = OpType.MaxPool, Inputs = new[] { "x" }, Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>
+            {
+                ["kernel_shape"] = new long[] { 2, 2 },
+                ["strides"] = new long[] { 2, 2 },
+            },
+        });
+        graph.RefreshLifetimeAnalysis();
+        Assert.Equal(new int[] { 2, 2 }, Assert.IsType<int[]>(graph.Nodes[0].Attributes!["kernel_shape"]));
+        Assert.Equal(new int[] { 2, 2 }, Assert.IsType<int[]>(graph.Nodes[0].Attributes!["strides"]));
+        var input = DenseTensor<float>.OfValues(new float[1, 1, 4, 4] { { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f }, { 13f, 14f, 15f, 16f } } } });
+        Assert.True(graph.Execute(new Dictionary<string, ITensor> { { "x", input } }, true));
+        Assert.Equal(new float[] { 6f, 8f, 14f, 16f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public void Prepare_LeavesOverflowingLongArrayAttributesUntouched()
+    {
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "test";
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(1, 1, 4, 4);
+        graph.Outputs["y"] = DenseTensor<float>.OfShape(1, 1, 2, 2);
+        graph.Nodes.Add(new Node
+        {
+            Name = "pool", Op = OpType.MaxPool, Inputs = new[] { "x" }, Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object> { ["kernel_shape"] = new long[] { 2, 4294967296L } },
+        });
+        graph.RefreshLifetimeAnalysis();
+        Assert.IsType<long[]>(graph.Nodes[0].Attributes!["kernel_shape"]);
+        Assert.Throws<OverflowException>(() => graph.Nodes[0].Ints("kernel_shape"));
+        var input = DenseTensor<float>.OfValues(new float[1, 1, 4, 4] { { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f }, { 13f, 14f, 15f, 16f } } } });
+        Assert.False(graph.Execute(new Dictionary<string, ITensor> { { "x", input } }, true));
+    }
+
+    [Fact]
+    public void GetInputTensors_Null_ThrowsArgumentNull()
+    {
+        var graph = new ComputationalGraph();
+        Assert.Throws<ArgumentNullException>(() => graph.GetInputTensors(null!));
+    }
 }

@@ -159,8 +159,23 @@ public class ComputationalGraph
     public ITensor? GetInputTensor(string[] Inputs, int index) =>
        index < Inputs.Length ? GetInputTensor(Inputs[index]) : null;    
 
-    public ITensor[] GetInputTensors(string[] names) =>
-        names.Where(n => !string.IsNullOrEmpty(n)).Select(n => GetInputTensor(n)).ToArray();
+    public ITensor[] GetInputTensors(string[]? names)
+    {
+        ArgumentNullException.ThrowIfNull(names);
+        int count = 0;
+        for (int i = 0; i < names.Length; i++)
+        {
+            if (!string.IsNullOrEmpty(names[i])) count++;
+        }
+        var resolved = new ITensor[count];
+        int next = 0;
+        for (int i = 0; i < names.Length; i++)
+        {
+            if (string.IsNullOrEmpty(names[i])) continue;
+            resolved[next++] = GetInputTensor(names[i]);
+        }
+        return resolved;
+    }
 
     /// <summary>
     /// Checks a user tensor against a retained input descriptor. Rank and
@@ -817,6 +832,7 @@ public class ComputationalGraph
         {
             var node = Nodes[i];
             node.ID = i;
+            NormalizeIntArrayAttributes(node.Attributes);
             Nodes[i] = node;
         }
         var lastUse = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -856,6 +872,47 @@ public class ComputationalGraph
         _prepared = true;
         _preparedFingerprint = ComputeStructureFingerprint();
         _preparationError = ValidatePreparation();
+    }
+
+    /// <summary>
+    /// Replaces lossless long integer-array attributes with integer arrays
+    /// so steady-state runs read the stored values without converting.
+    /// Values that would overflow stay untouched, keeping their run-time
+    /// failure behavior. Imported graphs already arrive canonicalized.
+    /// </summary>
+    static void NormalizeIntArrayAttributes(Dictionary<string, object>? attributes)
+    {
+        if (attributes is null) return;
+        foreach (var kv in attributes)
+        {
+            if (kv.Value is long[])
+            {
+                ConvertLongArrayAttributes(attributes);
+                return;
+            }
+        }
+    }
+
+    static void ConvertLongArrayAttributes(Dictionary<string, object> attributes)
+    {
+        foreach (var key in attributes.Keys.ToArray())
+        {
+            if (attributes[key] is long[] source && IsLosslessIntRange(source))
+            {
+                var converted = new int[source.Length];
+                for (int i = 0; i < source.Length; i++) converted[i] = (int)source[i];
+                attributes[key] = converted;
+            }
+        }
+    }
+
+    static bool IsLosslessIntRange(long[] source)
+    {
+        for (int i = 0; i < source.Length; i++)
+        {
+            if (source[i] < int.MinValue || source[i] > int.MaxValue) return false;
+        }
+        return true;
     }
 
     static string NodeLabel(Node node, int index) =>

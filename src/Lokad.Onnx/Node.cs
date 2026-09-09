@@ -3,7 +3,6 @@ namespace Lokad.Onnx;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 using static Lokad.Onnx.OpResult;
 using CPU = CPUExecutionProvider;
@@ -38,8 +37,11 @@ public partial struct Node
     {
         var a = Attributes;
         if (a is null) return null;
-        var name = names.FirstOrDefault(n => a.ContainsKey(n));
-        return name is null ? null : a[name];
+        for (int i = 0; i < names.Length; i++)
+        {
+            if (a.TryGetValue(names[i], out var value)) return value;
+        }
+        return null;
     }
 
     public int? Int(string name, int? d) => GetInt(name, d);
@@ -101,7 +103,12 @@ public partial struct Node
         if (Attributes is null) return null;
         if (!Attributes.TryGetValue(name, out var v) || v is null) return null;
         if (v is int[] ia) return ia;
-        if (v is long[] la) return la.Select(e => checked((int)e)).ToArray();
+        if (v is long[] la)
+        {
+            var converted = new int[la.Length];
+            for (int i = 0; i < la.Length; i++) converted[i] = checked((int)la[i]);
+            return converted;
+        }
         throw new ArgumentException("The attribute " + name + " must be an integer array.");
     }
 
