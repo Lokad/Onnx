@@ -529,10 +529,10 @@ public class MathOps
     /// <remarks>
     /// Same 2-row by 32-column blocking as the unrolled kernel above, but each
     /// tile accumulates in locals across the reduction axis with one load and
-    /// one store per tile instead of per step. Full tiles keep the per-element
-    /// operation order, so they agree bitwise; the vector tail keeps ascending
-    /// order per step and the scalar tail accumulates column by column, so
-    /// tails agree within float tolerance (see kernel agreement tests).
+    /// one store per tile instead of per step. Full tiles and the vector tail
+    /// keep the per-element operation order of the unrolled kernel, and the
+    /// scalar tail uses the same reduction-major order, so results agree with
+    /// it bit-wise on every shape (see kernel agreement tests).
     /// </remarks>
     public unsafe static void mm_unsafe_vectorized_intrinsics_2x4tiled(int M,
                           int N,
@@ -608,18 +608,19 @@ public class MathOps
                     rC1[t] = c1;
                     rC2[t] = c2;
                 }
-                for (int k = blocked + rv * Vector256<float>.Count; k < K; k++)
+                // Scalar tail keeps the reduction-major order of the
+                // unrolled kernel (accumulate into the destination per step)
+                // so results agree with it bit-wise on every shape.
+                for (int j = 0; j < N; ++j)
                 {
-                    float c1 = Cp1[k];
-                    float c2 = Cp2[k];
-                    for (int j = 0; j < N; ++j)
+                    float a1 = Ap1[j];
+                    float a2 = Ap2[j];
+                    var Brow = B + j * K;
+                    for (int k = blocked + rv * Vector256<float>.Count; k < K; k++)
                     {
-                        var Brow = B + j * K;
-                        c1 += Ap1[j] * Brow[k];
-                        c2 += Ap2[j] * Brow[k];
+                        Cp1[k] += a1 * Brow[k];
+                        Cp2[k] += a2 * Brow[k];
                     }
-                    Cp1[k] = c1;
-                    Cp2[k] = c2;
                 }
             }
         }

@@ -101,6 +101,35 @@ public class MatMulKernelAgreementTests
     }
 
     [Fact]
+    public unsafe void TiledMatchesUnrolledBitwiseOnTails()
+    {
+        var rnd = new Random(Seed);
+        BitwiseEqual(6, 24, 20, rnd);
+        BitwiseEqual(4, 24, 40, rnd);
+        BitwiseEqual(4, 24, 44, rnd);
+        BitwiseEqual(8, 40, 588, rnd);
+    }
+
+    static unsafe void BitwiseEqual(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"tiled diverges bitwise from unrolled on {m}x{n}x{k}.");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"tiled diverges bitwise from unrolled on nonzero destination {m}x{n}x{k}.");
+    }
+
+    [Fact]
     public unsafe void TiledKernelAgreesOnTailShapes()
     {
         var rnd = new Random(Seed);
