@@ -53,6 +53,67 @@ public class ExceptionalFloatTests
         Assert.True(float.IsNaN(((Tensor<float>)result.Outputs![0])[0]));
     }
 
+
+    [Fact]
+    public void GeluExceptional_MatchesOrt()
+    {
+        // ORT 1.29: [nan, inf, nan].
+        var result = CPU.Gelu(DenseTensor<float>.OfValues(new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity }), null, null, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<float>)result.Outputs![0]).ToArray();
+        Assert.True(float.IsNaN(values[0]));
+        Assert.Equal(float.PositiveInfinity, values[1]);
+        Assert.True(float.IsNaN(values[2]));
+    }
+
+    [Fact]
+    public void TanhExceptional_MatchesOrt()
+    {
+        // ORT 1.29: [1, -1, nan].
+        var result = CPU.Tanh(DenseTensor<float>.OfValues(new float[] { float.PositiveInfinity, float.NegativeInfinity, float.NaN }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<float>)result.Outputs![0]).ToArray();
+        Assert.Equal(1f, values[0]);
+        Assert.Equal(-1f, values[1]);
+        Assert.True(float.IsNaN(values[2]));
+    }
+
+    [Fact]
+    public void SqrtNegativeInfinity_YieldsNaN()
+    {
+        var result = CPU.Sqrt(DenseTensor<float>.OfValues(new float[] { float.NegativeInfinity }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)result.Outputs![0])[0]));
+    }
+
+    [Fact]
+    public void ReluExceptional_MatchesOrt()
+    {
+        // ORT 1.29: [nan, 0, inf].
+        var result = CPU.Relu(DenseTensor<float>.OfValues(new float[] { float.NaN, float.NegativeInfinity, float.PositiveInfinity }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<float>)result.Outputs![0]).ToArray();
+        Assert.True(float.IsNaN(values[0]));
+        Assert.Equal(0f, values[1]);
+        Assert.Equal(float.PositiveInfinity, values[2]);
+    }
+
+    [Fact]
+    public void PowExceptional_MatchesOrt()
+    {
+        // ORT 1.29: 0^0=1, (-1)^0.5=nan, inf^2=inf, 10^100=inf.
+        Assert.Equal(1f, Pow1(0f, 0f));
+        Assert.True(float.IsNaN(Pow1(-1f, 0.5f)));
+        Assert.Equal(float.PositiveInfinity, Pow1(float.PositiveInfinity, 2f));
+        Assert.Equal(float.PositiveInfinity, Pow1(10f, 100f));
+    }
+
+    static float Pow1(float a, float b)
+    {
+        var result = CPU.Pow(DenseTensor<float>.OfValues(new float[] { a }), DenseTensor<float>.OfValues(new float[] { b }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        return ((Tensor<float>)result.Outputs![0])[0];
+    }
     [Fact]
     public void ErfInfinite_YieldsSignedOne()
     {
