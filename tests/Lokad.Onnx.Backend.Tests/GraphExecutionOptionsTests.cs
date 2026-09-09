@@ -61,7 +61,7 @@ public class GraphExecutionOptionsTests
         Assert.Empty(graph.Outputs);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData("scalar")]
     [InlineData("simd")]
     [InlineData("intrinsics")]
@@ -123,7 +123,7 @@ public class GraphExecutionOptionsTests
         Assert.Empty(graph.Outputs);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData("scalar")]
     [InlineData("simd")]
     [InlineData("intrinsics")]

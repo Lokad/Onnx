@@ -70,7 +70,7 @@ public class DataAcquisitionTests
         return null;
     }
 
-    [Fact]
+    [SkippableFact]
     public void EnsureMe5sTokenizer_UsesLocalAssets()
     {
         Skip.If(FindDocumentedTokenizer() is null, "e5 tokenizer asset not present; acquisition needs it locally.");
@@ -78,7 +78,7 @@ public class DataAcquisitionTests
         Assert.True(File.Exists(Text.Me5sTokenizerPath()));
     }
 
-    [Fact]
+    [SkippableFact]
     public void Me5sTokenizerPath_PrefersAssemblyCopy()
     {
         var documented = FindDocumentedTokenizer();

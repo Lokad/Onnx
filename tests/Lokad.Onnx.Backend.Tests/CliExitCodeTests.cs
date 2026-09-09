@@ -38,25 +38,25 @@ public class CliExitCodeTests
 
     static string Mnist() => TestSupport.CommittedModel("mnist-8.onnx");
 
-    [Fact]
+    [SkippableFact]
     public void InvalidFilter_ExitsInvalidOptions()
     {
         Assert.Equal(2, RunCli("info", Mnist(), "--op-filter", "definitely-not-an-op"));
     }
 
-    [Fact]
+    [SkippableFact]
     public void ValidFilter_ExitsSuccess()
     {
         Assert.Equal(0, RunCli("info", Mnist(), "--op-filter", "MatMul"));
     }
 
-    [Fact]
+    [SkippableFact]
     public void MissingModel_ExitsNotFound()
     {
         Assert.Equal(4, RunCli("info", Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".onnx")));
     }
 
-    [Fact]
+    [SkippableFact]
     public void MalformedModel_ExitsInvalidInput()
     {
         var garbage = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".onnx");
@@ -71,13 +71,13 @@ public class CliExitCodeTests
         }
     }
 
-    [Fact]
+    [SkippableFact]
     public void RunMissingModel_ExitsNotFound()
     {
         Assert.Equal(4, RunCli("run", Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".onnx"), "x.png::mnist"));
     }
 
-    [Fact]
+    [SkippableFact]
     public void ValidMnistRun_ExitsSuccess()
     {
         Assert.Equal(0, RunCli("run", Mnist(), TestSupport.CommittedImage("mnist4.png") + "::mnist"));

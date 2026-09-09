@@ -23,7 +23,7 @@ public class ModelManifestTests
     static string ManifestPath() =>
         Path.Combine(TestSupport.RepoRoot(), "tests", "Lokad.Onnx.Backend.Tests", "ModelManifest.json");
 
-    [Fact]
+    [SkippableFact]
     public void Manifest_IdentifiesPresentAssets()
     {
         using var doc = JsonDocument.Parse(File.ReadAllText(ManifestPath()));
