@@ -171,11 +171,14 @@ public partial class CPUExecutionProvider
         if (data is null) return MissingInput(op, nameof(data));
         if (indices is null) return MissingInput(op, nameof(indices));
         (options ?? ExecutionOptions.Default).Validated();
-        if (indices.Rank > data.Rank) return WrongInputShape(op, nameof(indices), data.Rank, indices);
-        
         if (indices.ElementType == TensorElementType.Int64)
         {
+            // Checked conversion: out-of-range values throw instead of truncating.
             indices = indices.ConvertToInt32();
+        }
+        else if (indices.ElementType != TensorElementType.Int32)
+        {
+            return WrongInputShape(op, nameof(indices), indices, "Gather indices must be int32 or int64.");
         }
         
         switch (data.ElementType)

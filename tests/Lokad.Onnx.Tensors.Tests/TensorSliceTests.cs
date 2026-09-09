@@ -98,6 +98,39 @@ public class TensorSliceTests
     }
 
     [Fact]
+    public void GatherAcceptsHigherRankIndices()
+    {
+        // C02 reproducer: 1-D data gathered with 2-D indices.
+        var data = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f });
+        var indices = DenseTensor<int>.OfValues(new int[2, 2] { { 0, 2 }, { 1, 0 } });
+        var output = Tensor<float>.Gather(data, indices, 0);
+        Assert.Equal(new[] { 2, 2 }, output.Dimensions.ToArray());
+        Assert.Equal(new[] { 10f, 30f, 20f, 10f }, output.ToArray());
+    }
+
+    [Fact]
+    public void GatherAcceptsScalarIndices()
+    {
+        var data = DenseTensor<float>.OfValues(new float[2, 3] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var scalar = new DenseTensor<int>(new int[] { 1 }, Array.Empty<int>());
+        var row = Tensor<float>.Gather(data, scalar, 0);
+        Assert.Equal(new[] { 3 }, row.Dimensions.ToArray());
+        Assert.Equal(new[] { 4f, 5f, 6f }, row.ToArray());
+        var neg = new DenseTensor<int>(new int[] { -1 }, Array.Empty<int>());
+        Assert.Equal(new[] { 4f, 5f, 6f }, Tensor<float>.Gather(data, neg, 0).ToArray());
+    }
+
+    [Fact]
+    public void GatherRejectsOutOfRangeIndices()
+    {
+        var data = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f });
+        var bad = DenseTensor<int>.OfValues(new int[] { 3 });
+        Assert.Throws<ArgumentOutOfRangeException>(() => Tensor<float>.Gather(data, bad, 0));
+        var badNeg = DenseTensor<int>.OfValues(new int[] { -4 });
+        Assert.Throws<ArgumentOutOfRangeException>(() => Tensor<float>.Gather(data, badNeg, 0));
+    }
+
+    [Fact]
     public void CanSliceOp()
     {
         Tensor<int> data = new int[2, 4] { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }.ToTensor<int>();

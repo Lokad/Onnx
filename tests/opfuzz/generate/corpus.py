@@ -353,6 +353,25 @@ def boundary_cases():
     with open(os.path.join(d, "meta.json"), "w") as f:
         json.dump({"case": "gather_negaxis", "seed": SEED, "opset": OPSET, "ir": 8, "env": ENV}, f, indent=1)
 
+def gather_extra_cases():
+    # Higher-rank int64 indices over 1-D data (C02 reproducer).
+    a = np.array([10.0, 20.0, 30.0], dtype=np.float32)
+    idx = np.array([[0, 2], [1, 0]], dtype=np.int64)
+    idx_init = helper.make_tensor("idx", TensorProto.INT64, [2, 2], idx)
+    node = helper.make_node("Gather", ["x", "idx"], ["z"], axis=0)
+    emit("gather_highrank", node, [("x", [3])], [("z", [2, 2])], {"x": a}, inits=[idx_init])
+    # Scalar int64 index.
+    b = np.arange(6, dtype=np.float32).reshape(2, 3)
+    sidx_init = helper.make_tensor("idx", TensorProto.INT64, [], np.array(1, dtype=np.int64))
+    node = helper.make_node("Gather", ["x", "idx"], ["z"], axis=0)
+    emit("gather_scalar", node, [("x", [2, 3])], [("z", [3])], {"x": b}, inits=[sidx_init])
+    # Higher-rank int32 indices.
+    c = np.arange(24, dtype=np.float32).reshape(2, 3, 4)
+    i32 = np.array([[2, 0], [1, 1]], dtype=np.int32)
+    i32_init = helper.make_tensor("idx", TensorProto.INT32, [2, 2], i32)
+    node = helper.make_node("Gather", ["x", "idx"], ["z"], axis=1)
+    emit("gather_int32", node, [("x", [2, 3, 4])], [("z", [2, 2, 2, 4])], {"x": c}, inits=[i32_init])
+
 if __name__ == "__main__":
     for op in ["Add", "Sub", "Mul", "Div"]:
         binary_cases(op)
@@ -362,4 +381,5 @@ if __name__ == "__main__":
     matmul_cases(); reducemean_cases(); unsqueeze_cases(); squeeze_cases(); gather_cases()
     boundary_cases()
     layernorm_cases()
+    gather_extra_cases()
     print("cases:", len([d for d in os.listdir(ROOT) if os.path.isdir(os.path.join(ROOT, d))]))
