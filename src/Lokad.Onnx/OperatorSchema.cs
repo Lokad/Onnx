@@ -10,15 +10,17 @@ using System.Linq;
 /// and the fused marker once; support queries, dispatch, fusion eligibility
 /// and CLI reporting all consult this registry instead of duplicating rules.
 /// </summary>
+// Immutable after construction: the registry answers support queries for the
+// backend, dispatch, fusion, and CLI reporting, so no consumer may rewrite it.
 public sealed class OperatorSchema
 {
-    public OpType Op;
-    public int MinVersion = 1;
-    public int MinInputs;
-    public int MaxInputs;
-    public int MinOutputs = 1;
-    public int MaxOutputs = 1;
-    public bool InternalOnly;
+    public OpType Op { get; init; }
+    public int MinVersion { get; init; } = 1;
+    public int MinInputs { get; init; }
+    public int MaxInputs { get; init; }
+    public int MinOutputs { get; init; } = 1;
+    public int MaxOutputs { get; init; } = 1;
+    public bool InternalOnly { get; init; }
 }
 
 public static class OperatorSchemas

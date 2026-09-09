@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Collections.Generic;
 
 namespace Lokad.Onnx.Backend.Tests;
@@ -146,5 +147,28 @@ public class OperatorSchemaTests
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("outputs", r.Message ?? "");
+    }
+
+    [Fact]
+    public void RegistryEntries_AreImmutable()
+    {
+        // C08: no consumer may rewrite the capability registry after construction.
+        var fields = typeof(OperatorSchema).GetFields(BindingFlags.Public | BindingFlags.Instance);
+        Assert.Empty(fields);
+        var props = typeof(OperatorSchema).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        Assert.NotEmpty(props);
+        foreach (var prop in props)
+        {
+            var set = prop.SetMethod;
+            bool initOnly = false;
+            if (set is not null)
+            {
+                foreach (var mod in set.ReturnParameter.GetRequiredCustomModifiers())
+                    if (mod.FullName == "System.Runtime.CompilerServices.IsExternalInit") initOnly = true;
+            }
+            Assert.True(set is null || initOnly, "settable property " + prop.Name);
+        }
+        Assert.NotEmpty(OperatorSchemas.All);
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.Add));
     }
 }
