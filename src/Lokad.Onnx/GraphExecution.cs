@@ -15,8 +15,11 @@ using static Lokad.Onnx.Runtime;
 /// </remarks>
 public sealed class GraphExecution : ComputationalGraph
 {
-    internal GraphExecution(ComputationalGraph prepared, ExecutionOptions? options)
+    internal GraphExecution(ComputationalGraph prepared, ExecutionOptions? options, bool preparedFlag, long preparedFingerprint, string? preparationError)
     {
+        _prepared = preparedFlag;
+        _preparedFingerprint = preparedFingerprint;
+        _preparationError = preparationError;
         Nodes = prepared.Nodes;
         Initializers = prepared.Initializers;
         InputDescs = prepared.InputDescs;

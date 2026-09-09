@@ -157,6 +157,14 @@ public class GraphExecutionOptionsTests
     }
 
     [Fact]
+    public void EmptyGraph_InvalidOptions_FailsNodeEntry()
+    {
+        var graph = EmptyGraph();
+        Assert.False(graph.ExecuteNode(new Dictionary<string, ITensor>(), "nope", true, ExecutionProvider.CPU, ZeroWorkers()));
+        Assert.Contains("Parallelism", graph.LastErrorMessage ?? "");
+    }
+
+    [Fact]
     public void EmptyGraph_ValidOptions_Succeeds()
     {
         var graph = EmptyGraph();

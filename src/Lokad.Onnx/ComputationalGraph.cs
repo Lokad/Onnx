@@ -58,9 +58,9 @@ public class ComputationalGraph
     /// <summary>Reentrancy guard: at most one execution at a time per graph or context.</summary>
     protected int _executing;
     /// <summary>Whether lifetime analysis is current for <see cref="Nodes"/>.</summary>
-    private bool _prepared;
-    private long _preparedFingerprint;
-    private string? _preparationError;
+    protected bool _prepared;
+    protected long _preparedFingerprint;
+    protected string? _preparationError;
 
     /// <summary>
     /// Freezes the prepared plan after (re)analyzing lifetimes. Called by
@@ -81,10 +81,7 @@ public class ComputationalGraph
     public GraphExecution CreateExecution(ExecutionOptions? options)
     {
         EnsurePrepared();
-        var exec = new GraphExecution(this, options);
-        exec._prepared = _prepared;
-        exec._preparedFingerprint = _preparedFingerprint;
-            exec._preparationError = _preparationError;
+        var exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
         return exec;
     }
 
@@ -475,10 +472,7 @@ public class ComputationalGraph
         }
         try
         {
-            var exec = new GraphExecution(this, options);
-            exec._prepared = _prepared;
-            exec._preparedFingerprint = _preparedFingerprint;
-            exec._preparationError = _preparationError;
+            var exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
             bool ok = exec.RunCore(userInputs, useInitializers, provider);
             CopyFromExecution(exec);
             return ok;
@@ -488,19 +482,8 @@ public class ComputationalGraph
 
     protected bool RunCore(object userInputs, bool useInitializers, ExecutionProvider provider)
     {
-        LastErrorMessage = null;
-        LastFailedNodeName = null;
-        LastFailedNodeOp = null;
-        LastErrorCause = null;
-        LastProfile = null;
-        try
-        {
-            (Options ?? ExecutionOptions.Default).Validated();
-        }
-        catch (Exception ex)
-        {
-            return Fail("Invalid execution options: {m}.", ex.Message);
-        }
+        ResetRunDiagnostics();
+        if (!ValidateRunOptions()) return false;
         if (_preparationError is not null) return Fail(_preparationError);
         SeedDeclaredOutputs();
         if (userInputs is ITensor[] uia)
@@ -648,6 +631,36 @@ public class ComputationalGraph
     /// can correct the inputs and retry.
     /// </summary>
     /// <summary>
+    /// Clears the previous run snapshot so every run body starts without
+    /// stale diagnostics, failures, or profiles.
+    /// </summary>
+    private void ResetRunDiagnostics()
+    {
+        LastErrorMessage = null;
+        LastFailedNodeName = null;
+        LastFailedNodeOp = null;
+        LastErrorCause = null;
+        LastProfile = null;
+    }
+
+    /// <summary>
+    /// Validates the execution options at run entry, recording the cause
+    /// naming the defect like every other entry rejection.
+    /// </summary>
+    private bool ValidateRunOptions()
+    {
+        try
+        {
+            (Options ?? ExecutionOptions.Default).Validated();
+        }
+        catch (Exception ex)
+        {
+            return Fail("Invalid execution options: {m}.", ex.Message);
+        }
+        return true;
+    }
+
+    /// <summary>
     /// Records a binding or lifecycle rejection: logs it, snapshots it as the
     /// current error with no node identity, drops run outputs and returns false.
     /// </summary>
@@ -709,10 +722,7 @@ public class ComputationalGraph
         }
         try
         {
-            var exec = new GraphExecution(this, options);
-            exec._prepared = _prepared;
-            exec._preparedFingerprint = _preparedFingerprint;
-            exec._preparationError = _preparationError;
+            var exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
             bool ok = exec.RunNodeCore(userInputs, nodeLabel, useInitializers, provider);
             CopyFromExecution(exec);
             return ok;
@@ -722,11 +732,8 @@ public class ComputationalGraph
 
     protected bool RunNodeCore(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider)
     {
-        LastErrorMessage = null;
-        LastFailedNodeName = null;
-        LastFailedNodeOp = null;
-        LastErrorCause = null;
-        LastProfile = null;
+        ResetRunDiagnostics();
+        if (!ValidateRunOptions()) return false;
         // Node is a struct, so a miss yields default(Node) with null Name;
         // search by index instead of comparing against an empty name.
         var nodeIndex = Nodes.FindIndex(n => n.Name == nodeLabel);
