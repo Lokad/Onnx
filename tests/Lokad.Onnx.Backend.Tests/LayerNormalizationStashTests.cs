@@ -181,4 +181,56 @@ public class LayerNormalizationStashTests
             new Dictionary<string, object> { ["axis"] = -1L }).Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Failure, r.Status);
     }
+
+    [Fact]
+    public void EmptyNormalizedAxis_FailsCleanly()
+    {
+        var x = DenseTensor<float>.OfShape(2, 0);
+        var scale = DenseTensor<float>.OfShape(0);
+        var ex = Assert.Throws<ArgumentException>(() => Tensor<float>.LayerNormalization(x, scale, null, -1, 1e-5f));
+        Assert.Contains("positive extent", ex.Message);
+        var xd = DenseTensor<double>.OfShape(2, 0);
+        var sd = DenseTensor<double>.OfShape(0);
+        ex = Assert.Throws<ArgumentException>(() => Tensor<double>.LayerNormalization(xd, sd, null, 0, 1e-5));
+        Assert.Contains("positive extent", ex.Message);
+        var graph = Graph(18);
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(2, 0);
+        graph.Inputs["scale"] = DenseTensor<float>.OfShape(0);
+        var r = LnNode(new[] { "x", "scale" }, new[] { "y" },
+            new Dictionary<string, object> { ["axis"] = -1L }).Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("positive extent", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ScalarRank_FailsCleanly()
+    {
+        var x = new DenseTensor<float>(new float[] { 1f }, Array.Empty<int>());
+        var scale = new DenseTensor<float>(new float[] { 1f }, Array.Empty<int>());
+        Assert.Throws<ArgumentException>(() => Tensor<float>.LayerNormalization(x, scale, null, 0, 1e-5f));
+    }
+
+    [Fact]
+    public void EmptyOuterAxis_SucceedsEmpty()
+    {
+        var x = DenseTensor<float>.OfShape(0, 4);
+        var scale = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f, 1f });
+        var y = Tensor<float>.LayerNormalization(x, scale, null, 1, 1e-5f);
+        Assert.Equal(new int[] { 0, 4 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+    }
+
+    [Fact]
+    public void StridedInput_MatchesDense()
+    {
+        var full = DenseTensor<float>.OfValues(new float[2, 4]
+        {
+            { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f },
+        });
+        Tensor<float> slice = full[.., 1..3];
+        var scale = DenseTensor<float>.OfValues(new float[] { 1f, 1f });
+        var y = Tensor<float>.LayerNormalization(slice, scale, null, -1, 1e-5f);
+        Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { -1f, 1f, -1f, 1f }, y.ToArray().Select(v => (float)System.Math.Round(v, 4)).ToArray());
+    }
 }

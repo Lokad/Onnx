@@ -28,6 +28,7 @@ where T : unmanaged
         if (normalizedAxis < 0 || normalizedAxis >= rank) throw new ArgumentException(nameof(axis));
         int block = 1;
         for (int dimension = normalizedAxis; dimension < rank; dimension++) block *= dimensions[dimension];
+        if (block <= 0) throw new ArgumentException("LayerNormalization requires the normalized dimensions to have a positive extent.", nameof(axis));
         if (scaleLength != block) throw new ArgumentException("Scale length must match the normalized dimensions.", "scale");
         if (biasLength.HasValue && biasLength.Value != block) throw new ArgumentException("Bias length must match the normalized dimensions.", "bias");
         return (block, (int)(inputLength / block));
