@@ -1,16 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-// This file is copied and adapted from the following git repository -
-// https://github.com/dotnet/corefx
-// Commit ID: bdd0814360d4c3a58860919f292a306242f27da1
-// Path: /src/System.Numerics.Tensors/src/System/Numerics/Tensors/Tensor.cs
-// Original license statement below -
-
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,30 +41,30 @@ namespace Lokad.Onnx
 
     #region Types
     /// <summary>
-    /// Helps typecasting. Holds Tensor element type traits.
+    /// Maps a .NET element type to its tensor element kind and storage width.
     /// </summary>
     public class TensorTypeInfo
     {
         /// <summary>
-        /// TensorElementType enum
+        /// The tensor element kind.
         /// </summary>
-        /// <value>type enum value</value>
+        /// <value>The tensor element kind.</value>
         public TensorElementType ElementType { get; private set; }
         /// <summary>
-        /// Size of the stored primitive type in bytes
+        /// Storage width of one element in bytes
         /// </summary>
-        /// <value>size in bytes</value>
+        /// <value>Storage width in bytes.</value>
         public int TypeSize { get; private set; }
         /// <summary>
-        /// Is the type is a string
+        /// Whether the element type is string
         /// </summary>
-        /// <value>true if Tensor element type is a string</value>
+        /// <value>True for the string element type.</value>
         public bool IsString { get { return ElementType == TensorElementType.String; } }
         /// <summary>
-        /// Ctor
+        /// Creates a type trait record.
         /// </summary>
-        /// <param name="elementType">TensorElementType value</param>
-        /// <param name="typeSize">size fo the type in bytes</param>
+        /// <param name="elementType">Tensor element kind.</param>
+        /// <param name="typeSize">Storage width in bytes.</param>
         public TensorTypeInfo(TensorElementType elementType, int typeSize)
         {
             ElementType = elementType;
@@ -86,30 +73,30 @@ namespace Lokad.Onnx
     }
 
     /// <summary>
-    /// Holds TensorElement traits
+    /// Maps a tensor element kind back to its .NET type and storage width.
     /// </summary>
     public class TensorElementTypeInfo
     {
         /// <summary>
-        /// Tensor element type
+        /// The .NET element type.
         /// </summary>
-        /// <value>System.Type</value>
+        /// <value>The .NET element type.</value>
         public Type TensorType { get; private set; }
         /// <summary>
-        /// Size of the stored primitive type in bytes
+        /// Storage width of one element in bytes
         /// </summary>
-        /// <value>size in bytes</value>
+        /// <value>Storage width in bytes.</value>
         public int TypeSize { get; private set; }
         /// <summary>
-        /// Is the type is a string
+        /// Whether the element type is string
         /// </summary>
-        /// <value>true if Tensor element type is a string</value>
+        /// <value>True for the string element type.</value>
         public bool IsString { get; private set; }
         /// <summary>
-        /// Ctor
+        /// Creates a type trait record.
         /// </summary>
-        /// <param name="type">Tensor element type</param>
-        /// <param name="typeSize">typesize</param>
+        /// <param name="type">.NET element type.</param>
+        /// <param name="typeSize">Storage width in bytes.</param>
         public TensorElementTypeInfo(Type type, int typeSize)
         {
             TensorType = type;
@@ -119,7 +106,7 @@ namespace Lokad.Onnx
     }
 
     /// <summary>
-    /// This class is a base for all Tensors. It hosts maps with type traits.
+    /// Base of every tensor value. Hosts the element-type trait tables shared by import, export, and dispatch.
     /// </summary>
     public class TensorBase
     {
@@ -164,7 +151,7 @@ namespace Lokad.Onnx
 
         private readonly Type _primitiveType;
         /// <summary>
-        /// Constructs TensorBae
+        /// Records the element type governed by this tensor
         /// </summary>
         /// <param name="primitiveType">primitive type the deriving class is using</param>
         protected TensorBase(Type primitiveType)
@@ -180,7 +167,7 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Query TensorTypeInfo by one of the supported types
+        /// Looks up the trait record for a .NET element type
         /// </summary>
         /// <param name="type"></param>
         /// <returns>TensorTypeInfo or null if not supported</returns>
@@ -192,7 +179,7 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Query TensorElementTypeInfo by enum
+        /// Looks up the trait record for a tensor element kind
         /// </summary>
         /// <param name="elementType">type enum</param>
         /// <returns>instance of TensorElementTypeInfo or null if not found</returns>
@@ -274,7 +261,7 @@ namespace Lokad.Onnx
         };
 
         /// <summary>
-        /// Query TensorTypeInfo using this Tensor type
+        /// Returns the trait record for this tensor's element type
         /// </summary>
         /// <returns></returns>
         public TensorTypeInfo? GetTypeInfo()
@@ -453,7 +440,7 @@ namespace Lokad.Onnx
         private readonly long length;
 
         /// <summary>
-        /// Initialize a 1-dimensional tensor of the specified length
+        /// Creates a rank-1 tensor of the specified length
         /// </summary>
         /// <param name="length">Size of the 1-dimensional tensor</param>
         protected Tensor(int length) : base(typeof(T))
@@ -465,7 +452,7 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Initialize an n-dimensional tensor with the specified dimensions and layout.  
+        /// Creates an n-dimensional tensor with the specified dimensions and layout.
         /// ReverseStride=true gives a stride of 1-element width to the first dimension (0).  
         /// ReverseStride=false gives a stride of 1-element width to the last dimension (n-1).
         /// </summary>
@@ -503,7 +490,7 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Initializes tensor with same dimensions as array, content of array is ignored.  
+        /// Creates a tensor shaped like an array; the array contents are ignored.  
         /// ReverseStride=true gives a stride of 1-element width to the first dimension (0).  
         /// ReverseStride=false gives a stride of 1-element width to the last dimension (n-1).
         /// </summary>
@@ -578,9 +565,9 @@ namespace Lokad.Onnx
         #region Cloning
 
         /// <summary>
-        /// Copies every element into new backing storage and returns the copy.
+        /// Duplicates every element into new backing storage.
         /// </summary>
-        /// <returns>A shallow copy of this tensor.</returns>
+        /// <returns>A copy holding the same values.</returns>
         public abstract Tensor<T> Clone();
 
         /// <summary>
@@ -623,14 +610,14 @@ namespace Lokad.Onnx
         #endregion
 
         /// <summary>
-        /// Reshapes the current tensor to new dimensions, using the same backing storage if possible.
+        /// Reinterprets this tensor under new dimensions, sharing storage when possible.
         /// </summary>
         /// <param name="dimensions">An span of integers that represent the size of each dimension of the Tensor to create.</param>
         /// <returns>A new tensor that reinterprets this tensor with different dimensions.</returns>
         public abstract Tensor<T> Reshape(ReadOnlySpan<int> dimensions);
 
         /// <summary>
-        /// Obtains the value at the specified indices
+        /// Reads the element at the specified indices
         /// </summary>
         /// <param name="indices">A one-dimensional array of integers that represent the indices specifying the position of the element to get.</param>
         /// <returns>The value at the specified position in this Tensor.</returns>
@@ -638,14 +625,14 @@ namespace Lokad.Onnx
         #region Indexing
 
         /// <summary>
-        /// Gets the value at the specied index, where index is a linearized version of n-dimension indices using strides.
+        /// Reads the element at a flat index (the stride dot product of coordinates).
         /// </summary>
         /// <param name="index">An integer index computed as a dot-product of indices.</param>
         /// <returns>The value at the specified position in this Tensor.</returns>
         public abstract T GetValue(int index);
 
         /// <summary>
-        /// Sets the value at the specied index, where index is a linearized version of n-dimension indices using strides.
+        /// Writes the element at a flat index (the stride dot product of coordinates).
         /// </summary>
         /// <param name="index">An integer index computed as a dot-product of indices.</param>
         /// <param name="value">The new value to set at the specified position in this Tensor.</param>
@@ -661,7 +648,7 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Obtains the value at the specified indices
+        /// Reads the element at the specified indices
         /// </summary>
         /// <param name="indices">A span integers that represent the indices specifying the position of the element to get.</param>
         /// <returns>The value at the specified position in this Tensor.</returns>
@@ -680,28 +667,32 @@ namespace Lokad.Onnx
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
             get
             {
-                var _indices = indices.Select((i, n) =>
-                {
-                    if (i.Equals(^0)) return dimensions[n] - 1;
-                    else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
-                    else if (i.IsFromEnd) return dimensions[n] - i.Value;
-                    else return i.Value;
-                }).ToArray();
-                return this[_indices];
+                return this[ResolveIndexes(indices)];
             }
 
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
             set
             {
-                var _indices = indices.Select((i, n) =>
-                {
-                    if (i.Equals(^0)) return dimensions[n] - 1;
-                    else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
-                    else if (i.IsFromEnd) return dimensions[n] - i.Value;
-                    else return i.Value;
-                }).ToArray();
-                this[_indices] = value;
+                this[ResolveIndexes(indices)] = value;
             }
+        }
+
+        /// <summary>
+        /// Converts System Index coordinates (including from-end ^ syntax) into plain
+        /// positions, with the same bounds checks the inline query used to perform.
+        /// </summary>
+        private int[] ResolveIndexes(Index[] indices)
+        {
+            var resolved = new int[indices.Length];
+            for (int n = 0; n < indices.Length; n++)
+            {
+                Index i = indices[n];
+                if (i.Equals(^0)) resolved[n] = dimensions[n] - 1;
+                else if ((i.Value >= dimensions[n]) || (i.IsFromEnd && (dimensions[n] - i.Value >= dimensions[n]))) throw new ArgumentException(n.ToString());
+                else if (i.IsFromEnd) resolved[n] = dimensions[n] - i.Value;
+                else resolved[n] = i.Value;
+            }
+            return resolved;
         }
 
         public Tensor<T> this[params SliceIndex[] indices]
@@ -709,54 +700,27 @@ namespace Lokad.Onnx
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
             get
             {
-                /*
-                var _slices_expanded = ExpandEllipsis(indices);
-                var slices_expanded = new SliceDef[_slices_expanded.Length];
-                for (var i = 0; i < _slices_expanded.Length; i++)
-                {
-                    slices_expanded[i] = _slices_expanded[i].ToSliceDef(dimensions[i]);
-                }
-                var slice_dims = SliceAxes(_slices_expanded);
-                var dense = DenseTensor<T>.OfShape(slice_dims);
-                var it = dense.GetDimensionsIterator();
-
-                foreach (var index in it)
-                {
-                    dense[index] = this.GetValue(GetOffsetUnsafe(strides, slice_dims, slices_expanded, index));
-                }
-                return dense;
-                */
                 return new TensorSlice<T>(this, indices);
             }
             
             [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
             set
-            {           
-                var _slices_expanded = ExpandEllipsis(indices);              
-                var slices_expanded = new SliceDef[_slices_expanded.Length];
-                for (var i = 0; i < _slices_expanded.Length; i++)
+            {
+                var expanded = ExpandEllipsis(indices);
+                var defs = new SliceDef[expanded.Length];
+                for (var i = 0; i < expanded.Length; i++)
                 {
-                    slices_expanded[i] = _slices_expanded[i].ToSliceDef(dimensions[i]);
+                    defs[i] = expanded[i].ToSliceDef(dimensions[i]);
                 }
-                
-                
-                var slice_dims = SliceAxes(_slices_expanded);
+                var sliceDims = SliceAxes(expanded);
 
-                // Overlapping source storage snapshots first so reads observe
-                // original values (memmove semantics for shared buffers).
+                // A source sharing this backing store is snapshotted first so the
+                // copy observes the original values rather than partially written ones.
                 var src = SharesStorage(this, value) ? Snapshot(value) : value;
-                var it = src.GetDimensionsIterator();
-
-                foreach (var index in it)
+                foreach (var index in src.GetDimensionsIterator())
                 {
-
-                    this.SetValue(GetOffsetUnsafe(strides, slice_dims, slices_expanded, index), src[index]);
+                    this.SetValue(GetOffsetUnsafe(strides, sliceDims, defs, index), src[index]);
                 }
-                
-                /*
-                var ts = new TensorSlice<T>(this, ExpandEllipsis(indices));
-                ts.CopyFrom(value);
-                */
             }
         }
 
@@ -764,8 +728,7 @@ namespace Lokad.Onnx
         protected int GetOffsetUnsafe(int[] orig_strides, int[] slice_dims, SliceDef[] slices, ReadOnlySpan<int> indices)
         {
             int offset;
-            // Bounded span instead of a pointer list: capacity is Rank and the
-            // rank is validated before anything is written.
+            // Scratch coordinates live on the stack: capacity is Rank, validated below.
             if (indices.Length > Rank) throw new ArgumentOutOfRangeException(nameof(indices), $"Too many coordinates for tensor rank {Rank}.");
             Span<int> coords = stackalloc int[Rank];
             int coordCount = indices.Length;
@@ -773,7 +736,7 @@ namespace Lokad.Onnx
             var orig_ndim = orig_strides.Length;
             if (orig_ndim > slice_dims.Length && orig_ndim > indices.Length)
             {
-                // fill in reduced dimensions in the provided coordinates
+                // Reduced dimensions are spliced back into the coordinates
                 for (int i = 0; i < Rank; i++)
                 {
                     var slice = slices[i];
@@ -791,7 +754,7 @@ namespace Lokad.Onnx
             {
                 for (int i = 0; i < coordCount; i++)
                 {
-                    // note: we can refrain from bounds checking here, because we should not allow negative indices at all, this should be checked higher up though.
+                    // Bounds were checked by the callers above, so this accumulation stays unchecked.
                     if (slices.Length <= i)
                     {
                         offset += orig_strides[i] * coords[i];
@@ -801,7 +764,7 @@ namespace Lokad.Onnx
                     var slice = slices[i];
                     var start = slice.Start;
                     if (slice.IsIndex)
-                        offset += orig_strides[i] * start; // the coord is irrelevant for index-slices (they are reduced dimensions)
+                        offset += orig_strides[i] * start; // reduced dimensions ignore the coordinate
                     else
                         offset += orig_strides[i] * (start + coords[i] * slice.Step);
                 }
@@ -915,7 +878,7 @@ namespace Lokad.Onnx
 
         bool ICollection.IsSynchronized => false;
 
-        object ICollection.SyncRoot => this; // backingArray.this?
+        object ICollection.SyncRoot => this;
 
         void ICollection.CopyTo(Array array, int index)
         {
