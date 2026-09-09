@@ -114,16 +114,38 @@ static class Bench
             + " gc/alloc=shared-process totals over warmed loops without per-engine attribution; output disposal outside all timings."
             + " agree=maxAbs + ORT-reference-scaled diff (tol 1e-4 scaled, unchanged);"
             + " post=agreement re-check after timed reuse; inputsIntact=input fingerprint before/after.");
+        // Each requested case reports its own status. A failing case never suppresses the
+        // remaining cases, but the run still exits nonzero so its absence cannot read as success.
+        var caseFailures = new List<string>();
+        void RunCase(string label, Action run)
+        {
+            try
+            {
+                run();
+                Console.WriteLine("case-status " + label + "=ok");
+            }
+            catch (Exception ex)
+            {
+                string detail = ex.Message.Split((char)10)[0];
+                Console.WriteLine("case-status " + label + "=FAILED: " + ex.GetType().Name + ": " + detail);
+                caseFailures.Add(label);
+            }
+        }
         if (selected.Contains("e5", StringComparer.OrdinalIgnoreCase))
         {
             var e5 = assets["e5"];
-            CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, rowsName, modeName);
-            CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, rowsName, modeName);
+            RunCase("e5-8tok", () => CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, rowsName, modeName));
+            RunCase("e5-30tok", () => CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, rowsName, modeName));
         }
-        if (selected.Contains("dinov2", StringComparer.OrdinalIgnoreCase)) CompareVision("dinov2-224", assets["dinov2"][0], tensorOpts, threads, iters, rowsName, modeName);
-        if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, rowsName, modeName);
-        if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters, rowsName, modeName);
-        if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, rowsName, modeName);
+        if (selected.Contains("dinov2", StringComparer.OrdinalIgnoreCase)) RunCase("dinov2-224", () => CompareVision("dinov2-224", assets["dinov2"][0], tensorOpts, threads, iters, rowsName, modeName));
+        if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) RunCase("dinov3-224", () => CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, rowsName, modeName));
+        if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) RunCase("resnet50-224", () => CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters, rowsName, modeName));
+        if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) RunCase("gpt2-4tok", () => CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, rowsName, modeName));
+        if (caseFailures.Count > 0)
+        {
+            Console.WriteLine("cases-failed [" + string.Join(",", caseFailures) + "] (no rows are eligible for failed cases)");
+            return 1;
+        }
         return 0;
     }
 
@@ -279,35 +301,25 @@ static class Bench
             Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops> [BenchmarkDotNet options]");
             return 2;
         }
-        try
+        // Micro failures propagate with a nonzero exit; nothing here converts an error into success.
+        switch (args[0])
         {
-            switch (args[0])
-            {
-                case "matmul2d":
-                    MicroBenchmarks.RunMatMul2D(args.Skip(1).ToArray());
-                    return 0;
-                case "matmul":
-                    MicroBenchmarks.RunMatMul(args.Skip(1).ToArray());
-                    return 0;
-                case "indexing":
-                    MicroBenchmarks.RunIndexing(args.Skip(1).ToArray());
-                    return 0;
-                case "ops":
-                    MicroBenchmarks.RunOps(args.Skip(1).ToArray());
-                    return 0;
-                default:
-                    Console.WriteLine("Unknown micro benchmark: " + args[0] + ".");
-                    Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops> [BenchmarkDotNet options]");
-                    return 2;
-            }
-        }
-        catch (InvalidOperationException e)
-        {
-            if (e.Message == "Sequence contains no elements")
-            {
+            case "matmul2d":
+                MicroBenchmarks.RunMatMul2D(args.Skip(1).ToArray());
                 return 0;
-            }
-            throw;
+            case "matmul":
+                MicroBenchmarks.RunMatMul(args.Skip(1).ToArray());
+                return 0;
+            case "indexing":
+                MicroBenchmarks.RunIndexing(args.Skip(1).ToArray());
+                return 0;
+            case "ops":
+                MicroBenchmarks.RunOps(args.Skip(1).ToArray());
+                return 0;
+            default:
+                Console.WriteLine("Unknown micro benchmark: " + args[0] + ".");
+                Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops> [BenchmarkDotNet options]");
+                return 2;
         }
     }
 
