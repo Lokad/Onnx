@@ -120,6 +120,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   DenseTensor storage is independently implemented from the row-major contract with a naive-layout
   oracle covering construction, indexing, clone, reshape, and reversed layouts; the port header
   is gone while every declaration and behavior stays identical.
+  The Tensor front half (trait records, base maps, constructors, indexers) is independently
+  implemented from the layout contracts with loop-based index resolution and dead
+  commented-out paths deleted; declarations and behavior stay identical.
   Benchmark workloads moved from the CLI to the non-packable benchmark
   project with BenchmarkDotNet; the CLI keeps inspection and inference
   only, and bench.ps1 drives model timings plus the relocated sweep.
