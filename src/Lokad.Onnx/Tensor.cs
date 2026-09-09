@@ -844,7 +844,7 @@ namespace Lokad.Onnx
 
         #region Static methods
         /// <summary>
-        /// Performs a value comparison of the content and shape of two tensors.  Two tensors are equal if they have the same shape and same value at every set of indices.  If not equal a tensor is greater or less than another tensor based on the first non-equal element when enumerating in linear order.
+        /// Compares two tensors by shape and then element by element in flat order.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -855,7 +855,7 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Performs a value equality comparison of the content of two tensors. Two tensors are equal if they have the same shape and same value at every set of indices.
+        /// Reports whether two tensors share their shape and every element.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -930,15 +930,15 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Always fixed size Tensor
+        /// Fixed-size collection view.
         /// </summary>
-        /// <value>always true</value>
+        /// <value>Always true.</value>
         public bool IsFixedSize => true;
 
         /// <summary>
-        /// Tensor is not readonly
+        /// Writable collection view.
         /// </summary>
-        /// <value>always false</value>
+        /// <value>Always false.</value>
         public bool IsReadOnly => false;
 
         int IList.Add(object? value)
@@ -1014,7 +1014,7 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Determines whether an element is in the Tensor&lt;T&gt;.
+        /// Reports whether an element occurs in flat order.
         /// </summary>
         /// <param name="item">
         /// The object to locate in the Tensor&lt;T&gt;. The value can be null for reference types.
@@ -1033,7 +1033,7 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Copies the elements of the Tensor&lt;T&gt; to an Array, starting at a particular Array index.
+        /// Copies the elements in flat order into an array at the given position.
         /// </summary>
         /// <param name="array">
         /// The one-dimensional Array that is the destination of the elements copied from Tensor&lt;T&gt;. The Array must have zero-based indexing.
@@ -1133,9 +1133,9 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Determines the index of a specific item in the Tensor&lt;T&gt;.
+        /// Finds the first flat position holding a specific item.
         /// </summary>
-        /// <param name="item">The object to locate in the Tensor&lt;T&gt;.</param>
+        /// <param name="item">Element to locate.</param>
         /// <returns>The index of item if found in the tensor; otherwise, -1.</returns>
         protected virtual int IndexOf(T item)
         {
@@ -1366,8 +1366,8 @@ namespace Lokad.Onnx
         int IStructuralEquatable.GetHashCode(IEqualityComparer comparer)
         {
             int hashCode = 0;
-            // this ignores shape, which is fine  it just means we'll have hash collisions for things 
-            // with the same content and different shape.
+            // Shape is deliberately excluded: equal content hashes equal, and shape
+            // differences merely collide.
             for (int i = 0; i < Length; i++)
             {
                 hashCode ^= comparer.GetHashCode(GetValue(i));
@@ -1380,7 +1380,7 @@ namespace Lokad.Onnx
         #region Translations
 
         /// <summary>
-        /// Creates a copy of this tensor as a DenseTensor&lt;T&gt;.  If this tensor is already a DenseTensor&lt;T&gt; calling this method is equivalent to calling Clone().
+        /// Copies this tensor into dense storage (a Clone when already dense).
         /// </summary>
         /// <returns></returns>
         public virtual DenseTensor<T> ToDenseTensor()
@@ -1397,7 +1397,7 @@ namespace Lokad.Onnx
 
         #region Display and Description
         /// <summary>
-        /// Get a string representation of Tensor
+        /// Renders the tensor contents as nested brackets
         /// </summary>
         /// <param name="includeWhitespace"></param>
         /// <returns></returns>
@@ -1407,96 +1407,96 @@ namespace Lokad.Onnx
             {
                 return ((object?)this.GetValue(0))?.ToString() ?? ""; 
             }
-            var builder = new StringBuilder();
+            var text = new StringBuilder();
 
             var strides = ArrayUtilities.GetStrides(dimensions);
-            var indices = new int[Rank];
-            var innerDimension = Rank - 1;
-            var innerLength = dimensions[innerDimension];
-            var outerLength = Length / innerLength;
+            var coords = new int[Rank];
+            var lastAxis = Rank - 1;
+            var rowLength = dimensions[lastAxis];
+            var rowCount = Length / rowLength;
 
-            int indent = 0;
-            for (int outerIndex = 0; outerIndex < Length; outerIndex += innerLength)
+            int depth = 0;
+            for (int row = 0; row < Length; row += rowLength)
             {
-                ArrayUtilities.GetIndices(strides, false, outerIndex, indices, 0);
+                ArrayUtilities.GetIndices(strides, false, row, coords, 0);
 
-                while ((indent < innerDimension) && (indices[indent] == 0))
+                while ((depth < lastAxis) && (coords[depth] == 0))
                 {
                     // start up
                     if (includeWhitespace)
                     {
-                        Indent(builder, indent, 4);
+                        Pad(text, depth, 4);
                     }
-                    indent++;
-                    builder.Append('[');
+                    depth++;
+                    text.Append('[');
                     if (includeWhitespace)
                     {
-                        builder.AppendLine();
+                        text.AppendLine();
                     }
                 }
 
-                for (int innerIndex = 0; innerIndex < innerLength; innerIndex++)
+                for (int cell = 0; cell < rowLength; cell++)
                 {
-                    indices[innerDimension] = innerIndex;
+                    coords[lastAxis] = cell;
 
-                    if ((innerIndex == 0))
+                    if ((cell == 0))
                     {
                         if (includeWhitespace)
                         {
-                            Indent(builder, indent, 4);
+                            Pad(text, depth, 4);
                         }
-                        builder.Append('[');
+                        text.Append('[');
                     }
                     else
                     {
-                        builder.Append(',');
+                        text.Append(',');
                     }
                     if (ElementType == TensorElementType.Float || ElementType == TensorElementType.Double)
                     {
-                        builder.Append(string.Format("{0:0.00000}", this[indices]));
+                        text.Append(string.Format("{0:0.00000}", this[coords]));
                     }
                     else
                     {
-                        builder.Append(this[indices]);
+                        text.Append(this[coords]);
                     }
                 }
-                builder.Append(']');
+                text.Append(']');
 
                 for (int i = Rank - 2; i >= 0; i--)
                 {
-                    var lastIndex = dimensions[i] - 1;
-                    if (indices[i] == lastIndex)
+                    var final = dimensions[i] - 1;
+                    if (coords[i] == final)
                     {
                         // close out
-                        --indent;
+                        --depth;
                         if (includeWhitespace)
                         {
-                            builder.AppendLine();
-                            Indent(builder, indent, 4);
+                            text.AppendLine();
+                            Pad(text, depth, 4);
                         }
-                        builder.Append(']');
+                        text.Append(']');
                     }
                     else
                     {
-                        builder.Append(',');
+                        text.Append(',');
                         if (includeWhitespace)
                         {
-                            builder.AppendLine();
+                            text.AppendLine();
                         }
                         break;
                     }
                 }
             }
 
-            return builder.ToString();
+            return text.ToString();
 
-            void Indent(StringBuilder builder, int tabs, int spacesPerTab)
+            void Pad(StringBuilder text, int levels, int width)
             {
-                for (int tab = 0; tab < tabs; tab++)
+                for (int level = 0; level < levels; level++)
                 {
-                    for (int space = 0; space < spacesPerTab; space++)
+                    for (int s = 0; s < width; s++)
                     {
-                        builder.Append(' ');
+                        text.Append(' ');
                     }
                 }
             }
@@ -1542,12 +1542,22 @@ namespace Lokad.Onnx
 
         ITensor  ITensor.this[params object[] indices]
         {
-            get => new TensorSlice<T>(this, ExpandEllipsis(indices.Select(i => SliceIndex.FromObj(i)).ToArray()));
+            get => new TensorSlice<T>(this, ExpandEllipsis(ToSliceIndexes(indices)));
             set
             {
-                var ts = new TensorSlice<T>(this, ExpandEllipsis(indices.Select(i => SliceIndex.FromObj(i)).ToArray()));
+                var ts = new TensorSlice<T>(this, ExpandEllipsis(ToSliceIndexes(indices)));
                 ts.CopyFrom((Tensor<T>) value);
             }
+        }
+
+        /// <summary>
+        /// Converts untyped slice coordinates into slice selectors, one per position.
+        /// </summary>
+        private static SliceIndex[] ToSliceIndexes(object[] indices)
+        {
+            var selectors = new SliceIndex[indices.Length];
+            for (int i = 0; i < indices.Length; i++) selectors[i] = SliceIndex.FromObj(indices[i]);
+            return selectors;
         }
 
         object ITensor.this[params int[] indices]
@@ -1563,17 +1573,6 @@ namespace Lokad.Onnx
         INumericTensor INumericTensor.Slice(string indices) => new TensorSlice<T>(this, ExpandEllipsis(SliceIndex.ParseSlices(indices)));
 
         Array ITensor.ToArray() => this.ToArray();
-        /*
-        {
-            var a = Array.CreateInstance(this.PrimitiveType, this.dimensions);
-            
-            for (int i = 0; i < Length; i++)
-            {
-                a.SetValue(this.GetValue(i), i);
-            }
-            return a;
-        }
-        */
         #endregion
 
         #region Slicing
@@ -1583,97 +1582,95 @@ namespace Lokad.Onnx
             if (dimensions is null || dimensions.Length == 0)
                 throw new InvalidOperationException("Unable to slice an empty shape.");
 
-            int len = this is TensorSlice<T> _ts ? this.Rank + _ts.parent.Rank : this.Rank;
-            // Bounded spans instead of pointer lists: capacities are checked
-            // before every write that could previously overflow the buffers.
-            Span<SliceDef> slices = stackalloc SliceDef[len];
-            Span<int> sliced_axes_unreduced = stackalloc int[len];
-            int sliceCount = 0;
+            int len = this is TensorSlice<T> view ? this.Rank + view.parent.Rank : this.Rank;
+            // Scratch spans sized for the merged worst case; every write below is bounds-checked.
+            Span<SliceDef> defs = stackalloc SliceDef[len];
+            Span<int> extents = stackalloc int[len];
+            int ndefs = 0;
             for (int i = 0; i < dimensions.Length; i++)
             {
-                if (sliceCount >= len) throw new ArgumentOutOfRangeException(nameof(input_slices), "Too many slice selectors for this tensor shape.");
+                if (ndefs >= len) throw new ArgumentOutOfRangeException(nameof(input_slices), "Too many slice selectors for this tensor shape.");
                 var dim = dimensions[i];
                 var slice = input_slices.Length > i ? input_slices[i] : SliceIndex.All; //fill missing selectors
-                var slice_def = slice.ToSliceDef(dim);
-                slices[sliceCount] = slice_def;
-                var count = Math.Abs(slices[sliceCount].Count); // for index-slices count would be -1 but we need 1.
-                sliced_axes_unreduced[sliceCount] = count;
-                sliceCount++;
+                var def = slice.ToSliceDef(dim);
+                defs[ndefs] = def;
+                extents[ndefs] = Math.Abs(defs[ndefs].Count); // index selectors report -1 but keep one element.
+                ndefs++;
             }
 
-            if (this is TensorSlice<T> ts)
+            if (this is TensorSlice<T> outer)
             {
-                // merge new slices with existing ones and insert the indices of the parent shape that were previously reduced
-                for (int i = 0; i < ts.parent.Rank; i++)
+                // Fold the new selectors into the existing view, reinserting parent axes
+                // that an earlier index selector had reduced away.
+                for (int i = 0; i < outer.parent.Rank; i++)
                 {
-                    var orig_slice = ts.slices[i];
-                    if (orig_slice.IsIndex)
+                    var prior = outer.slices[i];
+                    if (prior.IsIndex)
                     {
-                        if (sliceCount >= len) throw new ArgumentOutOfRangeException(nameof(input_slices), "Too many slice selectors for this tensor shape.");
-                        for (int j = sliceCount; j > i; j--) { slices[j] = slices[j - 1]; sliced_axes_unreduced[j] = sliced_axes_unreduced[j - 1]; }
-                        slices[i] = orig_slice;
-                        sliced_axes_unreduced[i] = 1;
-                        sliceCount++;
+                        if (ndefs >= len) throw new ArgumentOutOfRangeException(nameof(input_slices), "Too many slice selectors for this tensor shape.");
+                        for (int j = ndefs; j > i; j--) { defs[j] = defs[j - 1]; extents[j] = extents[j - 1]; }
+                        defs[i] = prior;
+                        extents[i] = 1;
+                        ndefs++;
                         continue;
                     }
 
-                    slices[i] = ts.slices[i].Merge(slices[i]);
-                    sliced_axes_unreduced[i] = Math.Abs(slices[i].Count);
+                    defs[i] = outer.slices[i].Merge(defs[i]);
+                    extents[i] = Math.Abs(defs[i].Count);
                 }
             }
 
             int kept = 0;
-            for (int i = 0; i < sliceCount; i++) if (!slices[i].IsIndex) kept++;
-            var sliced_axes = new int[kept];
+            for (int i = 0; i < ndefs; i++) if (!defs[i].IsIndex) kept++;
+            var shape = new int[kept];
             kept = 0;
-            for (int i = 0; i < sliceCount; i++) if (!slices[i].IsIndex) { sliced_axes[kept] = sliced_axes_unreduced[i]; kept++; }
-
-
-            return sliced_axes;
+            for (int i = 0; i < ndefs; i++) if (!defs[i].IsIndex) { shape[kept] = extents[i]; kept++; }
+            return shape;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public SliceIndex[] ExpandEllipsis(SliceIndex[] slices)
         {
-            if (!slices.Any(s => s.IsEllipsis))
+            bool hasEllipsis = false;
+            foreach (var selector in slices)
+            {
+                if (selector.IsEllipsis) { hasEllipsis = true; break; }
+            }
+            if (!hasEllipsis)
             {
                 return slices;
             }
-            else if (slices.Length == 1 && slices[0].IsEllipsis)
+            if (slices.Length == 1)
             {
-                var r = new SliceIndex[Rank];
-                Array.Fill(r, SliceIndex.All);
-                return r;
+                var all = new SliceIndex[Rank];
+                Array.Fill(all, SliceIndex.All);
+                return all;
             }
-            else
+            // Axes already covered without counting ellipsis or new-axis markers.
+            int covered = 0;
+            foreach (var selector in slices)
             {
-                // count dimensions without counting ellipsis or newaxis
-                var count = 0;
-                foreach (var slice in slices)
+                if (selector.IsNewAxis || selector.IsEllipsis)
+                    continue;
+                covered++;
+            }
+            var expanded = new List<SliceIndex>();
+            foreach (var selector in slices)
+            {
+                if (selector.IsEllipsis)
                 {
-                    if (slice.IsNewAxis || slice.IsEllipsis)
-                        continue;
-                    count++;
+                    for (int i = 0; i < dimensions.Length - covered; i++)
+                        expanded.Add(SliceIndex.All);
+                    continue;
                 }
-                List<SliceIndex> ret = new List<SliceIndex>();
-                // expand 
-                foreach (var slice in slices)
-                {
-                    if (slice.IsEllipsis)
-                    {
-                        for (int i = 0; i < dimensions.Length - count; i++)
-                            ret.Add(SliceIndex.All);
-                        continue;
-                    }
 
-                    ret.Add(slice);
-                }
-                return ret.ToArray();
+                expanded.Add(selector);
             }
+            return expanded.ToArray();
         }
 
         /// <summary>
-        ///  Gets coordinates in this shape from index in this shape (slicing is ignored).
+        ///  Converts a flat row-major position back into coordinates (slicing is ignored).
         ///  Example: Shape (2,3)
         /// 0 => [0, 0]
         /// 1 => [0, 1]
@@ -1685,27 +1682,21 @@ namespace Lokad.Onnx
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public int[] GetCoordinates(int offset)
         {
-            int[] coords;
-
-            if (strides.Length == 1)
-                coords = new int[] { offset };
-
-            int counter = offset;
-            coords = new int[strides.Length];
-            int stride;
+            var coords = new int[strides.Length];
+            int rest = offset;
             for (int i = 0; i < strides.Length; i++)
             {
                 unchecked
                 {
-                    stride = strides[i];
-                    if (stride == 0)
+                    int step = strides[i];
+                    if (step == 0)
                     {
                         coords[i] = 0;
                     }
                     else
                     {
-                        coords[i] = counter / stride;
-                        counter -= coords[i] * stride;
+                        coords[i] = rest / step;
+                        rest -= coords[i] * step;
                     }
                 }
             }
@@ -1757,8 +1748,7 @@ namespace Lokad.Onnx
 
         private static bool IsCompatibleObject([NotNullWhen(true)] object? value)
         {
-            // Non-null values are fine.  Only accept nulls if T is a class or Nullable<T>.
-            // Note that default(T) is not equal to null for value types except when T is Nullable<T>.
+            // Only values of exactly T are compatible; null never qualifies for value types.
             return value is T;
         }
 
@@ -1769,40 +1759,38 @@ namespace Lokad.Onnx
             if (step == 0)
                 throw new ArgumentException("step can't be 0", nameof(step));
 
-            bool negativeStep = false;
-            if (step < 0)
+            // Negative steps walk the same span downwards, so normalize to an
+            // ascending span first and mirror the fill below.
+            int lo = start;
+            int hi = stop;
+            int stride = step;
+            bool descending = false;
+            if (stride < 0)
             {
-                negativeStep = true;
-                step = Math.Abs(step);
-                //swap
-                var tmp = start;
-                start = stop;
-                stop = tmp;
+                descending = true;
+                stride = Math.Abs(stride);
+                lo = stop;
+                hi = start;
             }
 
-            if (start > stop)
+            if (lo > hi)
                 throw new Exception("parameters invalid, start is greater than stop.");
 
+            int length = (int)Math.Ceiling((hi - lo + 0.0d) / stride);
+            var sequence = new DenseTensor<int>((ReadOnlySpan<int>)new int[] { length });
 
-            int length = (int)Math.Ceiling((stop - start + 0.0d) / step);
-            var nd = new DenseTensor<int>((ReadOnlySpan<int>) new int[] { length }); //do not fill, we are about to
-
-            if (negativeStep)
+            if (descending)
             {
-                step = Math.Abs(step);
-                    for (int add = length - 1, i = 0; add >= 0; add--, i++)
-                        nd[i] = 1 + start + add * step;
-                
+                for (int add = length - 1, i = 0; add >= 0; add--, i++)
+                    sequence[i] = 1 + lo + add * stride;
             }
             else
             {
-                
-                    for (int i = 0; i < length; i++)
-                        nd[i] = start + i * step;
-                
+                for (int i = 0; i < length; i++)
+                    sequence[i] = lo + i * stride;
             }
 
-            return nd;
+            return sequence;
         }
 
         public static Tensor<float> Arange(float start, float stop) => Arange(start, stop, 1.0f);
@@ -1812,40 +1800,38 @@ namespace Lokad.Onnx
             if (step == 0.0f)
                 throw new ArgumentException("step can't be 0", nameof(step));
 
-            bool negativeStep = false;
-            if (step < 0.0f)
+            // Negative steps walk the same span downwards, so normalize to an
+            // ascending span first and mirror the fill below.
+            float lo = start;
+            float hi = stop;
+            float stride = step;
+            bool descending = false;
+            if (stride < 0.0f)
             {
-                negativeStep = true;
-                step = Math.Abs(step);
-                //swap
-                var tmp = start;
-                start = stop;
-                stop = tmp;
+                descending = true;
+                stride = Math.Abs(stride);
+                lo = stop;
+                hi = start;
             }
 
-            if (start > stop)
+            if (lo > hi)
                 throw new Exception("parameters invalid, start is greater than stop.");
 
+            int length = (int)Math.Ceiling((hi - lo + 0.0d) / stride);
+            var sequence = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { length });
 
-            int length = (int)Math.Ceiling((stop - start + 0.0d) / step);
-            var nd = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { length }); //do not fill, we are about to
-
-            if (negativeStep)
+            if (descending)
             {
-                step = Math.Abs(step);
                 for (int add = length - 1, i = 0; add >= 0; add--, i++)
-                    nd[i] = 1.0f + start + add * step;
-
+                    sequence[i] = 1.0f + lo + add * stride;
             }
             else
             {
-
                 for (int i = 0; i < length; i++)
-                    nd[i] = start + i * step;
-
+                    sequence[i] = lo + i * stride;
             }
 
-            return nd;
+            return sequence;
         }
         public static Tensor<T> Zeros(params int[] dims)
         {
