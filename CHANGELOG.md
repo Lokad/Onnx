@@ -100,7 +100,8 @@ as planned or a known limitation. This is not a release-readiness claim.
   formulas with a hand-computed oracle, retiring the Patch2Vec notice entry.
   The ported Float16 struct is deleted in favor of System.Half across core,
   dispatch, import, and tests with identical bit patterns including NaN payloads;
-  BFloat16 stays custom.
+  BFloat16 stays custom but is independently implemented from the format
+  definition with an exhaustive roundtrip oracle, retiring its ported code.
   Bulk-added IBM/onnx notice entries with no mapped code are removed after
   full-tree and full-history searches, and the notices file now ships in the
   package root; two entries remain against the tensor hierarchy and BFloat16 work.
