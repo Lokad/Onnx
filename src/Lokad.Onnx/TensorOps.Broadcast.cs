@@ -376,7 +376,7 @@ where T : unmanaged
             {
                 dim = paddedInputDims[i];
             }
-            if (dim < 1)
+            if (dim < 0 || (dim == 0 && paddedInputDims[i] != 0))
             {
                 throw new ArgumentException(nameof(targetShape), "Target shape dimensions must be positive or -1.");
             }

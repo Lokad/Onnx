@@ -475,6 +475,11 @@ where T : unmanaged
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options)
 
     {
+        return MatMulInto(x, y, destination, options, clearDestination: true);
+    }
+
+    static Tensor<float> MatMulInto(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)
+    {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y) || TensorAlias.SharesBackingMemory(destination, x) || TensorAlias.SharesBackingMemory(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input tensors.");
         var plan = MatMulShapes.Create(x.Dimensions, y.Dimensions);
@@ -482,43 +487,43 @@ where T : unmanaged
         if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
         var px = plan.PromoteX ? x.InsertDim(0) : x;
         var py = plan.PromoteY ? y.InsertDim(y.Rank) : y;
-        Tensor<float> core;
         if (px.Rank == 2 && py.Rank == 2)
         {
-            core = Tensor<float>.MatMul2D(px, py, options);
+            var dd = destination.dimensions;
+            var destView = dd.Length == 2 && dd[0] == px.dimensions[0] && dd[1] == py.dimensions[1]
+                ? destination
+                : new DenseTensor<float>(destination.Buffer, new int[] { px.dimensions[0], py.dimensions[1] });
+            MatMul2DCore(px, py, destView, options, clearDestination);
+            return destination;
         }
-        else
+        var xdl = px.Dimensions[^2..];
+        var ydl = py.Dimensions[^2..];
+        if (xdl[1] != ydl[0])
         {
-            var xdl = px.Dimensions[^2..];
-            var ydl = py.Dimensions[^2..];
-            if (xdl[1] != ydl[0])
-            {
-                throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
-            }
-            StartOpStage(OpStage.Broadcast);
-            if (!BroadcastShape(px.Dimensions[0..^2], py.Dimensions[0..^2], out var bd))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
-
-            var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
-            if (!Tensor<float>.Broadcast(px, bdx, out var bx))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
-            var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
-            if (!Tensor<float>.Broadcast(py, bdy, out var by))
-            {
-                throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
-            }
-
-            StartOpStage(OpStage.Math);
-            var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            RunBatchedFloatMatMul(bx, by, z, options);
-            core = z;
+            throw new ArgumentException($"The number of columns in the first matrix ({xdl[1]}) is not equal to the number of rows in the second matrix ({ydl[0]}).");
         }
-        var squeezed = MatMulShapes.Squeeze(core, plan);
-        for (int i = 0; i < (int)squeezed.Length; i++) destination.SetValue(i, squeezed.GetValue(i));
+        StartOpStage(OpStage.Broadcast);
+        if (!BroadcastShape(px.Dimensions[0..^2], py.Dimensions[0..^2], out var bd))
+        {
+            throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+        }
+
+        var bdx = bd.Append(xdl[0]).Append(xdl[1]).ToArray();
+        if (!Tensor<float>.Broadcast(px, bdx, out var bx))
+        {
+            throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+        }
+        var bdy = bd.Append(ydl[0]).Append(ydl[1]).ToArray();
+        if (!Tensor<float>.Broadcast(py, bdy, out var by))
+        {
+            throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
+        }
+
+        StartOpStage(OpStage.Math);
+        var coreDims = bd.Append(xdl[0]).Append(ydl[1]).ToArray();
+        var target = coreDims.SequenceEqual(destination.dimensions) ? destination : new DenseTensor<float>(destination.Buffer, coreDims);
+        if (clearDestination) target.Buffer.Span.Clear();
+        RunBatchedFloatMatMul(bx, by, target, options);
         return destination;
     }
 
@@ -535,7 +540,7 @@ where T : unmanaged
         }
         if (length > int.MaxValue) throw new ArgumentException("MatMul output element count exceeds maximum backing-store length.");
         var destination = new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>((int)length)), dims);
-        return MatMul(x, y, destination, options);
+        return MatMulInto(x, y, destination, options, clearDestination: false);
     }
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]  
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y) => MatMul(x, y, TensorExecutionOptions.Auto);
