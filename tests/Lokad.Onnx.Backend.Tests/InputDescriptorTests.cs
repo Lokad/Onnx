@@ -108,4 +108,47 @@ public class InputDescriptorTests
         Assert.NotNull(dto.DimParams);
         Assert.Equal(new string?[] { "batch", null }, dto.DimParams);
     }
+
+    [Fact]
+    public void Import_Marks_AnonymousUnknown_DistinctFromZero()
+    {
+        var vp = new ValueInfoProto { Name = "x" };
+        vp.Type = new TypeProto { TensorType = new TypeProto.Types.Tensor { ElemType = (int)TensorElementType.Float } };
+        vp.Type.TensorType.Shape = new TensorShapeProto();
+        vp.Type.TensorType.Shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimValue = 5 });
+        vp.Type.TensorType.Shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimParam = "batch" });
+        vp.Type.TensorType.Shape.Dim.Add(new TensorShapeProto.Types.Dimension());
+        vp.Type.TensorType.Shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimValue = 0 });
+        var dto = vp.ToValueDto();
+        Assert.Equal(new int[] { 5, 0, -1, 0 }, dto.Dims);
+        Assert.NotNull(dto.DimParams);
+        Assert.Equal(new string?[] { null, "batch", null, null }, dto.DimParams);
+    }
+
+    [Fact]
+    public void AnonymousUnknown_AcceptsDifferentExtents()
+    {
+        var par = new string?[] { null, null };
+        var g = Model.Load(DescribedModel(Vp("x", new int[] { -1, 3 }, par), Vp("x", new int[] { -1, 3 }, par)));
+        foreach (int n in new int[] { 0, 1, 5 })
+        {
+            var user = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[n, 3]) } };
+            Assert.True(g.Execute(user, false), g.LastErrorMessage);
+            Assert.Equal(new int[] { n, 3 }, ((Tensor<float>)g.Outputs["x"]).Dimensions.ToArray());
+            g.Reset();
+        }
+    }
+
+    [Fact]
+    public void AnonymousUnknown_DoesNotCoupleDims()
+    {
+        var par = new string?[] { null, null };
+        var g = Model.Load(DescribedModel(Vp("x", new int[] { -1, -1 }, par), Vp("x", new int[] { -1, -1 }, par)));
+        foreach (var shape in new int[][] { new int[] { 2, 3 }, new int[] { 4, 1 } })
+        {
+            var user = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfShape(shape) } };
+            Assert.True(g.Execute(user, false), g.LastErrorMessage);
+            g.Reset();
+        }
+    }
 }

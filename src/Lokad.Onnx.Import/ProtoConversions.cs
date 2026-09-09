@@ -302,7 +302,13 @@ public static class ProtoConversions
         {
             Name = vp.Name,
             ElementType = (TensorElementType)vp.Type.TensorType.ElemType,
-            Dims = vp.Type.TensorType.Shape.Dim.Select(d => Convert.ToInt32(d.DimValue)).ToArray(),
+            Dims = vp.Type.TensorType.Shape.Dim.Select(d => d.ValueCase switch
+            {
+                TensorShapeProto.Types.Dimension.ValueOneofCase.DimValue => Convert.ToInt32(d.DimValue),
+                TensorShapeProto.Types.Dimension.ValueOneofCase.DimParam => 0,
+                // Anonymous unknown dimension: neither value nor name; distinct from fixed zero.
+                _ => -1,
+            }).ToArray(),
             DimParams = vp.Type.TensorType.Shape.Dim.Select(d => string.IsNullOrEmpty(d.DimParam) ? null : d.DimParam).ToArray(),
         };
     }

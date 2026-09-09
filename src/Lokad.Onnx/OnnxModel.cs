@@ -29,6 +29,11 @@ public class OnnxValueInfo
 {
     public string Name = "";
     public TensorElementType ElementType;
+    /// <summary>
+    /// Per-dimension extents. A negative entry marks an anonymous unknown
+    /// extent: it accepts any non-negative value without coupling to other
+    /// dimensions. Use <see cref="DimParams"/> for shared symbolic extents.
+    /// </summary>
     public int[] Dims = Array.Empty<int>();
     /// <summary>
     /// Optional per-dimension symbolic names, aligned with <see cref="Dims"/>.

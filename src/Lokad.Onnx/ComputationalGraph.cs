@@ -191,8 +191,10 @@ public class ComputationalGraph
     /// <summary>
     /// Validates one user tensor against a retained descriptor: rank and type
     /// must match, fixed dims (no symbolic name) must match exactly including
-    /// real zero extents, and symbolic dims accept any non-negative extent while
-    /// enforcing agreement across inputs sharing a symbolic name.
+    /// real zero extents, anonymous unknown dims (negative sentinel) accept any
+    /// non-negative extent without coupling, and symbolic dims accept any
+    /// non-negative extent while enforcing agreement across inputs sharing a
+    /// symbolic name.
     /// </summary>
     static bool CheckDescriptorDims(OnnxValueInfo desc, ITensor actual, Dictionary<string, int> symbolic, out string? message)
     {
@@ -224,6 +226,7 @@ public class ComputationalGraph
             string? param = (desc.DimParams is not null && i < desc.DimParams.Length) ? desc.DimParams[i] : null;
             if (param is null)
             {
+                if (desc.Dims[i] < 0) continue;
                 if (desc.Dims[i] != ad[i])
                 {
                     message = $"Tensor dimension {ad[i]} does not match declared fixed dimension {desc.Dims[i]} of {desc.Describe()}.";
