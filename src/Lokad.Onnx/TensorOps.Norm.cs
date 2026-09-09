@@ -56,6 +56,63 @@ where T : unmanaged
         var ss = sd.Buffer.Span;
         var bs = bd is null ? new Span<float>() : bd.Buffer.Span;
         var os = destination.Buffer.Span;
+        if (Vector.IsHardwareAccelerated)
+        {
+            // Vectorized twin of the scalar body below: statistics stay in
+            // double vectors and every element keeps the scalar association
+            // ((x - mean) * inv) * scale + bias, so only the reduction order
+            // of the two sums can move results, within float tolerance.
+            int wf = Vector<float>.Count;
+            var vzero = Vector<double>.Zero;
+            for (int o = 0; o < outer; o++)
+            {
+                int off = o * block;
+                int i = 0;
+                int vlen = block - (block % wf);
+                var vsum = Vector<double>.Zero;
+                for (; i < vlen; i += wf)
+                {
+                    Vector.Widen(new Vector<float>(xs.Slice(off + i)), out Vector<double> lo, out Vector<double> hi);
+                    vsum += lo + hi;
+                }
+                double mean = Vector.Sum(vsum);
+                for (; i < block; i++) mean += xs[off + i];
+                mean /= block;
+                var vmean = new Vector<double>(mean);
+                var vvar = Vector<double>.Zero;
+                i = 0;
+                for (; i < vlen; i += wf)
+                {
+                    Vector.Widen(new Vector<float>(xs.Slice(off + i)), out Vector<double> lo, out Vector<double> hi);
+                    var d0 = lo - vmean;
+                    var d1 = hi - vmean;
+                    vvar += d0 * d0 + d1 * d1;
+                }
+                double variance = Vector.Sum(vvar);
+                for (; i < block; i++) { double d = xs[off + i] - mean; variance += d * d; }
+                variance /= block;
+                double inv = 1.0 / Math.Sqrt(variance + epsilon);
+                var vinv = new Vector<double>(inv);
+                i = 0;
+                for (; i < vlen; i += wf)
+                {
+                    Vector.Widen(new Vector<float>(xs.Slice(off + i)), out Vector<double> x0, out Vector<double> x1);
+                    Vector.Widen(new Vector<float>(ss.Slice(i)), out Vector<double> s0, out Vector<double> s1);
+                    Vector<double> b0 = vzero;
+                    Vector<double> b1 = vzero;
+                    if (bd is not null)
+                    {
+                        Vector.Widen(new Vector<float>(bs.Slice(i)), out b0, out b1);
+                    }
+                    var r0 = (x0 - vmean) * vinv * s0 + b0;
+                    var r1 = (x1 - vmean) * vinv * s1 + b1;
+                    var rf = Vector.Narrow(r0, r1);
+                    rf.CopyTo(os.Slice(off + i));
+                }
+                for (; i < block; i++) os[off + i] = (float)((xs[off + i] - mean) * inv * ss[i] + (bd is null ? 0f : bs[i]));
+            }
+            return;
+        }
         for (int o = 0; o < outer; o++)
         {
             double mean = 0.0;
