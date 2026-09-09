@@ -256,7 +256,9 @@ results distinct; equal limits do not imply equal CPU utilization. Validate
 every named output outside timing for each actual session.
 
 For operator benchmarks, the current command is `dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll micro ops`;
-`matmul2d`, `matmul` and `indexing` cover other kernel cases. Pin execution modes and record
+`matmul2d`, `matmul` and `indexing` cover other kernel cases. The `micro oneop` lane compares five frozen one-op models
+(tests/Lokad.Onnx.Bench/oneop) between a Lokad graph and a single-CPU ORT session on identical inputs, gating timing on
+1e-4 agreement. Pin execution modes and record
 allocations as well as latency; profiler-enabled timings are separate.
 
 `bench.ps1` is a startup-inclusive CLI benchmark by design: it launches a

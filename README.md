@@ -17,7 +17,7 @@ It runs transformer and vision models end to end on CPU, with numeric parity aga
 
 - `lonnx info <model.onnx>`: model metadata; supports `--ops`, `--init`, `--op-filter`.
 - `lonnx run <model.onnx> <inputs...>`: image and text inputs, `--softmax`, `--print-input`, profiling, and SIMD toggles.
-- Microbenchmarks live in `tests/Lokad.Onnx.Bench` (`Bench micro <matmul2d|matmul|indexing|ops>`, with BenchmarkDotNet flags); model comparisons run through the Bench model harness (`dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 resnet50 dinov3 gpt2`, see BENCHMARK.md), while `bench.ps1` remains the startup-inclusive CLI benchmark.
+- Microbenchmarks live in `tests/Lokad.Onnx.Bench` (`Bench micro <matmul2d|matmul|indexing|ops|oneop>`, with BenchmarkDotNet flags); the `oneop` lane runs five frozen one-op models through both a Lokad graph and a single-CPU ORT session with agreement before timing; model comparisons run through the Bench model harness (`dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 resnet50 dinov3 gpt2`, see BENCHMARK.md), while `bench.ps1` remains the startup-inclusive CLI benchmark.
 
 ### Mini-tutorial: MNIST (image)
 * Use the bundled MNIST model and sample image:
