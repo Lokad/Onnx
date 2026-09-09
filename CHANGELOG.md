@@ -108,6 +108,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   The float/double Im2col gather loops are rewritten from the layout definition
   with a differential naive-reference oracle; the Bylsma/mm-kernel provenance
   question stays open pending their ruling-or-rewrite.
+  The scalar int/double/float mm kernels are rewritten from the accumulate definition
+  with a differential oracle over zeroed and preloaded outputs; the Bylsma/BLAS
+  entry now maps only to the vectorized/intrinsics mm kernels.
   Benchmark workloads moved from the CLI to the non-packable benchmark
   project with BenchmarkDotNet; the CLI keeps inspection and inference
   only, and bench.ps1 drives model timings plus the relocated sweep.
