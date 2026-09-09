@@ -64,6 +64,22 @@ public class ComputationalGraph
     /// </remarks>
     public TimeSpan LastRunTime { get; private set; }
 
+    /// <summary>Managed bytes allocated on the calling thread during the last run body.</summary>
+    /// <remarks>
+    /// Exact for single-threaded runs; a lower bound when worker threads
+    /// allocate. Covers binding, node execution, and release like LastRunTime,
+    /// but not preparation, which runs before the body.
+    /// </remarks>
+    public long LastAllocatedBytes { get; private set; }
+
+    /// <summary>Per-generation GC collection deltas observed around the last run body.</summary>
+    /// <remarks>
+    /// Fresh 3-length array per stamp; index is the generation. Deltas come
+    /// from process-wide collector counters, so concurrent suites can advance
+    /// them: they bound collections during the run, never attribute them.
+    /// </remarks>
+    public int[] LastGcCollections { get; private set; } = new int[3];
+
     public string? LastErrorMessage { get; private set; }
 
     public string? LastFailedNodeName { get; private set; }
@@ -227,6 +243,8 @@ public class ComputationalGraph
             LastErrorCause = exec.LastErrorCause;
             LastProfile = exec.LastProfile;
             LastRunTime = exec.LastRunTime;
+            LastAllocatedBytes = exec.LastAllocatedBytes;
+            LastGcCollections = (int[])exec.LastGcCollections.Clone();
             LastPoolAllocatedNew = exec.LastPoolAllocatedNew;
             LastPoolReused = exec.LastPoolReused;
             LastPoolReturned = exec.LastPoolReturned;
@@ -646,6 +664,10 @@ public class ComputationalGraph
     {
         ResetRunDiagnostics();
         long start = Stopwatch.GetTimestamp();
+        long allocStart = GC.GetAllocatedBytesForCurrentThread();
+        int gc0 = GC.CollectionCount(0);
+        int gc1 = GC.CollectionCount(1);
+        int gc2 = GC.CollectionCount(2);
         try
         {
             return RunCoreInner(userInputs, useInitializers, provider);
@@ -653,6 +675,8 @@ public class ComputationalGraph
         finally
         {
             LastRunTime = Stopwatch.GetElapsedTime(start);
+            LastAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocStart;
+            LastGcCollections = new int[] { GC.CollectionCount(0) - gc0, GC.CollectionCount(1) - gc1, GC.CollectionCount(2) - gc2 };
         }
     }
 
@@ -822,6 +846,8 @@ public class ComputationalGraph
         LastErrorCause = null;
         LastProfile = null;
         LastRunTime = TimeSpan.Zero;
+        LastAllocatedBytes = 0;
+        LastGcCollections = new int[3];
     }
 
     /// <summary>
@@ -921,6 +947,10 @@ public class ComputationalGraph
     {
         ResetRunDiagnostics();
         long start = Stopwatch.GetTimestamp();
+        long allocStart = GC.GetAllocatedBytesForCurrentThread();
+        int gc0 = GC.CollectionCount(0);
+        int gc1 = GC.CollectionCount(1);
+        int gc2 = GC.CollectionCount(2);
         try
         {
             return RunNodeCoreInner(userInputs, nodeLabel, useInitializers, provider);
@@ -928,6 +958,8 @@ public class ComputationalGraph
         finally
         {
             LastRunTime = Stopwatch.GetElapsedTime(start);
+            LastAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocStart;
+            LastGcCollections = new int[] { GC.CollectionCount(0) - gc0, GC.CollectionCount(1) - gc1, GC.CollectionCount(2) - gc2 };
         }
     }
 

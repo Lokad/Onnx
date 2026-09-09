@@ -237,6 +237,47 @@ public class ExecutionLifecycleTests
     }
 
     [Fact]
+    public void MemoryDiagnostics_StartAtZero()
+    {
+        var g = NewReluGraph();
+        Assert.Equal(0, g.LastAllocatedBytes);
+        Assert.NotNull(g.LastGcCollections);
+        Assert.Equal(3, g.LastGcCollections.Length);
+        Assert.All(g.LastGcCollections, c => Assert.Equal(0, c));
+    }
+
+    [Fact]
+    public void MemoryDiagnostics_RecordsAllocation_AndPublishesBack()
+    {
+        var g = NewReluGraph();
+        var ctx = g.CreateExecution(null);
+        var good = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
+        Assert.True(ctx.Execute(good, false));
+        Assert.True(ctx.LastAllocatedBytes > 0, "Run allocated " + ctx.LastAllocatedBytes + " bytes.");
+        Assert.NotNull(ctx.LastGcCollections);
+        Assert.Equal(3, ctx.LastGcCollections.Length);
+        Assert.All(ctx.LastGcCollections, c => Assert.True(c >= 0));
+        Assert.True(g.Execute(good, false));
+        Assert.True(g.LastAllocatedBytes > 0, "Facade published " + g.LastAllocatedBytes + " bytes.");
+        Assert.Equal(3, g.LastGcCollections.Length);
+    }
+
+    [Fact]
+    public void MemoryDiagnostics_StampsFreshDeltasPerRun()
+    {
+        var g = NewReluGraph();
+        var good = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
+        Assert.True(g.Execute(good, false));
+        var firstBytes = g.LastAllocatedBytes;
+        var firstGc = g.LastGcCollections;
+        Assert.True(firstBytes > 0);
+        Assert.True(g.Execute(good, false));
+        Assert.True(g.LastAllocatedBytes > 0);
+        Assert.False(ReferenceEquals(firstGc, g.LastGcCollections), "Second run must stamp a fresh generation array, not accumulate.");
+        Assert.Equal(3, g.LastGcCollections.Length);
+    }
+
+    [Fact]
     public void ExecuteNode_FailedThenSuccessful_ClearsErrorSnapshot()
     {
         var g = NewReluGraph();
