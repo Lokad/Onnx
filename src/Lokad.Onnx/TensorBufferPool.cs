@@ -44,6 +44,11 @@ public sealed class TensorBufferPool
 
     public long ReusedBytes { get; private set; }
 
+    /// <summary>Memoized run-static alias roots for release probes, built lazily on the first probe so executions without pool-owned releases never pay for the snapshot. Null with StaticRootsBuilt set selects the legacy per-release scan.</summary>
+    internal HashSet<Array>? StaticRoots;
+
+    internal bool StaticRootsBuilt;
+
     public T[] Rent<T>(int length) where T : unmanaged
     {
         if (length < 0) throw new ArgumentOutOfRangeException(nameof(length));

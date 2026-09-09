@@ -1056,7 +1056,7 @@ public class ComputationalGraph
         var arr = (tensor as TensorBase)?.OwnedBufferArray();
         if (arr is not null && pool.IsOwned(arr) && !(returned?.Contains(arr) ?? false))
         {
-            if (HasLiveAlias(arr, name)) return false;
+            if (HasLiveAlias(arr, name, pool)) return false;
             pool.Return(arr);
             returned ??= new HashSet<Array>();
             returned.Add(arr);
@@ -1132,10 +1132,19 @@ public class ComputationalGraph
         }
     }
 
-    bool HasLiveAlias(Array candidate, string dyingName)
+    bool HasLiveAlias(Array candidate, string dyingName, TensorBufferPool pool)
     {
-        foreach (var tensor in Inputs.Values) if (SharesPooledStorage(candidate, tensor)) return true;
-        foreach (var tensor in Initializers.Values) if (SharesPooledStorage(candidate, tensor)) return true;
+        var staticRoots = EnsurePoolRoots(pool);
+        if (staticRoots is not null)
+        {
+            if (staticRoots.Contains(candidate)) return true;
+        }
+        else
+        {
+            foreach (var tensor in Inputs.Values) if (SharesPooledStorage(candidate, tensor)) return true;
+            foreach (var tensor in Initializers.Values) if (SharesPooledStorage(candidate, tensor)) return true;
+            foreach (var attr in EnumerateAttributeTensors()) if (SharesPooledStorage(candidate, attr)) return true;
+        }
         foreach (var kv in IntermediateOutputs)
         {
             if (kv.Key.Equals(dyingName, StringComparison.Ordinal)) continue;
@@ -1143,7 +1152,77 @@ public class ComputationalGraph
             if (SharesPooledStorage(candidate, kv.Value)) return true;
         }
         foreach (var tensor in Outputs.Values) if (SharesPooledStorage(candidate, tensor)) return true;
-        foreach (var attr in EnumerateAttributeTensors()) if (SharesPooledStorage(candidate, attr)) return true;
+        return false;
+    }
+
+    /// <summary>
+    /// Memoizes the run-static alias snapshot on the per-execution pool so
+    /// graphs without pool-owned releases never pay for it. A null snapshot
+    /// selects the legacy per-release scan for every probe of the run.
+    /// </summary>
+    HashSet<Array>? EnsurePoolRoots(TensorBufferPool pool)
+    {
+        if (pool.StaticRootsBuilt) return pool.StaticRoots;
+        pool.StaticRootsBuilt = true;
+        pool.StaticRoots = BuildStaticAliasRoots();
+        return pool.StaticRoots;
+    }
+
+    /// <summary>
+    /// Snapshots the backing arrays of run-static tensors (bound inputs,
+    /// initializers and attribute tensors) so alias probes do one set lookup
+    /// instead of rescanning constants per release. Kernels only read these
+    /// bindings during a run, so the snapshot stays valid; anything that
+    /// cannot be reduced to array roots selects the legacy scan by
+    /// returning null. The structure fingerprint ignores tensor values, so
+    /// this snapshot is per-run rather than per-preparation.
+    /// </summary>
+    HashSet<Array>? BuildStaticAliasRoots()
+    {
+        var roots = new HashSet<Array>(Inputs.Count + Initializers.Count + 2 * Nodes.Count);
+        foreach (var tensor in Inputs.Values)
+        {
+            if (CollectAliasRoot(tensor, roots) == false) return null;
+        }
+        foreach (var tensor in Initializers.Values)
+        {
+            if (CollectAliasRoot(tensor, roots) == false) return null;
+        }
+        foreach (var attr in EnumerateAttributeTensors())
+        {
+            if (CollectAliasRoot(attr, roots) == false) return null;
+        }
+        return roots;
+    }
+
+    /// <summary>
+    /// Adds the ultimate dense backing arrays of one static tensor, mirroring
+    /// SharesPooledStorage traversal. Returns false for non-array dense
+    /// buffers and unknown view kinds, keeping the probe conservative.
+    /// </summary>
+    static bool CollectAliasRoot(ITensor? tensor, HashSet<Array> roots)
+    {
+        if (tensor is null) return true;
+        if (tensor is TensorSequence sequence)
+        {
+            foreach (var item in sequence.Items)
+            {
+                if (CollectAliasRoot(item, roots) == false) return false;
+            }
+            return true;
+        }
+        if (tensor is not Tensor<float> typed) return true;
+        if (typed is DenseTensor<float> dense)
+        {
+            if (MemoryMarshal.TryGetArray(dense.Buffer, out ArraySegment<float> segment) && segment.Array is not null)
+            {
+                roots.Add(segment.Array);
+                return true;
+            }
+            return false;
+        }
+        if (typed is BroadcastedTensor<float> broadcast) return CollectAliasRoot(broadcast.source, roots);
+        if (typed is TensorSlice<float> slice) return CollectAliasRoot(slice.parent, roots);
         return false;
     }
 

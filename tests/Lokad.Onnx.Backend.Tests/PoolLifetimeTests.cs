@@ -107,4 +107,39 @@ public class PoolLifetimeTests
         Assert.Equal(new byte[16], cleared);
     }
 
+    [Fact]
+    public void UnknownStaticTensorKind_FallsBackToLegacyScan()
+    {
+        var g = new ComputationalGraph();
+        g.Metadata["Name"] = "test";
+        g.Inputs["x"] = DenseTensor<float>.OfShape(2);
+        g.Initializers["mystery"] = new OpaqueFloatTensor(new float[] { 7f, 8f });
+        g.Outputs["y"] = DenseTensor<float>.OfShape(2);
+        g.Nodes.Add(new Node { Name = "add", Op = OpType.Add, Inputs = new[] { "x", "x" }, Outputs = new[] { "t" } });
+        g.Nodes.Add(new Node { Name = "add2", Op = OpType.Add, Inputs = new[] { "t", "x" }, Outputs = new[] { "y" } });
+        g.IntermediateOutputs["t"] = null;
+        g.RefreshLifetimeAnalysis();
+        var user = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }) } };
+        Assert.True(g.Execute(user, true));
+        Assert.Equal(new float[] { 3f, 6f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        // The unknown static kind conservatively blocks every pool return,
+        // so the dead value stays readable and pooling stays disabled.
+        Assert.NotNull(g.IntermediateOutputs["t"]);
+        Assert.Equal(0, g.LastPoolReturned);
+    }
+
+    sealed class OpaqueFloatTensor : Tensor<float>
+    {
+        readonly float[] data;
+        public OpaqueFloatTensor(float[] data) : base(data.Length)
+        {
+            this.data = data;
+        }
+        public override Tensor<float> Clone() => new OpaqueFloatTensor((float[])data.Clone());
+        public override Tensor<TResult> CloneEmpty<TResult>(ReadOnlySpan<int> dimensions) => new DenseTensor<TResult>(dimensions);
+        public override Tensor<float> Reshape(ReadOnlySpan<int> dimensions) => throw new NotSupportedException();
+        public override float GetValue(int index) => data[index];
+        public override void SetValue(int index, float value) => data[index] = value;
+    }
+
 }
