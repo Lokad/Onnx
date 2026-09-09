@@ -96,6 +96,8 @@ as planned or a known limitation. This is not a release-readiness claim.
   code, and independently reimplemented index arithmetic and slice-notation
   parsing; tensor, sparse, and half-precision sources stay attributed
   pending their own items, and the package still ships no notices file.
+  Conv output-geometry helpers are independently implemented from the ONNX
+  formulas with a hand-computed oracle, retiring the Patch2Vec notice entry.
   Benchmark workloads moved from the CLI to the non-packable benchmark
   project with BenchmarkDotNet; the CLI keeps inspection and inference
   only, and bench.ps1 drives model timings plus the relocated sweep.
