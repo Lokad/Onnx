@@ -105,6 +105,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   Bulk-added IBM/onnx notice entries with no mapped code are removed after
   full-tree and full-history searches, and the notices file now ships in the
   package root; two entries remain against the tensor hierarchy and BFloat16 work.
+  The float/double Im2col gather loops are rewritten from the layout definition
+  with a differential naive-reference oracle; the Bylsma/mm-kernel provenance
+  question stays open pending their ruling-or-rewrite.
   Benchmark workloads moved from the CLI to the non-packable benchmark
   project with BenchmarkDotNet; the CLI keeps inspection and inference
   only, and bench.ps1 drives model timings plus the relocated sweep.
