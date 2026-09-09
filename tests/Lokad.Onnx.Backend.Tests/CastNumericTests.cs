@@ -102,4 +102,50 @@ public class CastNumericTests
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Equal(new ushort[] { 300, 65236 }, ((Tensor<ushort>)r.Outputs[0]).ToArray());
     }
+
+    static ComputationalGraph SaturateGraph(long? saturate)
+    {
+        // C08: opset 24 Cast threads saturate; only the default is supported.
+        var mp = new OnnxModel { Name = "cast-saturate" };
+        mp.Opset[""] = 24;
+        mp.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new int[] { 2 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Int32, Dims = new int[] { 2 } });
+        var attrs = new Dictionary<string, object> { { "to", (int)TensorElementType.Int32 } };
+        if (saturate.HasValue) attrs["saturate"] = saturate.Value;
+        mp.Nodes.Add(new OnnxNode { Name = "c", OpType = "Cast", Inputs = new string[] { "x" }, Outputs = new string[] { "y" }, Attributes = attrs });
+        return Model.Load(mp)!;
+    }
+
+    static Dictionary<string, ITensor> SaturateFeed()
+    {
+        return new Dictionary<string, ITensor>
+        {
+            ["x"] = DenseTensor<float>.OfValues(new float[] { 1.9f, -1.9f }),
+        };
+    }
+
+    [Fact]
+    public void SaturateAbsent_CastsNormally()
+    {
+        var graph = SaturateGraph(null);
+        Assert.True(graph.Execute(SaturateFeed(), true), graph.LastErrorMessage);
+        Assert.Equal(new int[] { 1, -1 }, ((Tensor<int>)graph.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public void SaturateOne_CastsNormally()
+    {
+        var graph = SaturateGraph(1L);
+        Assert.True(graph.Execute(SaturateFeed(), true), graph.LastErrorMessage);
+        Assert.Equal(new int[] { 1, -1 }, ((Tensor<int>)graph.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public void SaturateZero_FailsNamingAttribute()
+    {
+        // ORT rejects saturate outside float 8 casts at session build.
+        var graph = SaturateGraph(0L);
+        Assert.False(graph.Execute(SaturateFeed(), true));
+        Assert.Contains("saturate", graph.LastErrorMessage ?? "");
+    }
 }

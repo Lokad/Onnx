@@ -194,10 +194,11 @@ public partial struct Node
         }
     }
 
-        static OpResult CastChecked(ITensor? input, int to, ExecutionOptions? opt)
+        static OpResult CastChecked(ITensor? input, int to, int? saturate, ExecutionOptions? opt)
     {
         var op = OpType.Cast;
         if (!Enum.IsDefined(typeof(TensorElementType), to)) return AttributeNotSupported(op, "to", to.ToString(), null);
+        if (saturate.HasValue && saturate.Value != 1) return AttributeNotSupported(op, "saturate", saturate.Value.ToString(), "Only saturating casts are supported.");
         return CPU.Cast(input, (TensorElementType)to, opt);
     }
 
@@ -255,7 +256,7 @@ public partial struct Node
 
         OpType.ConstantOfShape => CPU.ConstantOfShape(InputTensor(graph, 0), OneOfAttr("value") as ITensor, opt),
 
-        OpType.Cast => CastChecked(InputTensor(graph, 0), RequiredInt("to"), opt),
+        OpType.Cast => CastChecked(InputTensor(graph, 0), RequiredInt("to"), GetInt("saturate", null), opt),
 
         OpType.Concat => CPU.Concat(graph.GetInputTensors(Inputs), RequiredInt("axis"), opt),
 
