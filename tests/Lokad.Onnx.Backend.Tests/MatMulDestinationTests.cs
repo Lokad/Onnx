@@ -80,6 +80,77 @@ public class MatMulDestinationTests
         }
     }
 
+    public static IEnumerable<object[]> BroadcastCases()
+    {
+        yield return new object[] { new int[] { 4, 8, 16 }, new int[] { 16, 32 } };
+        yield return new object[] { new int[] { 2, 8, 16 }, new int[] { 1, 16, 32 } };
+        yield return new object[] { new int[] { 3, 5, 7 }, new int[] { 3, 7, 2 } };
+    }
+
+    [Theory]
+    [MemberData(nameof(BroadcastCases))]
+    public void BroadcastSharedWeight_Agrees(int[] xd, int[] yd)
+    {
+        foreach (var mode in Modes())
+        {
+            var rnd = new Random(5150);
+            var x = Rand(xd, rnd);
+            var y = Rand(yd, rnd);
+            var expected = Tensor<float>.MatMul(x, y, mode);
+            var dest = Dirty(expected.Dimensions.ToArray());
+            Tensor<float>.MatMul(x, y, dest, mode);
+            AgreesElementwise(dest.ToArray(), ((Tensor<float>)expected).ToArray(), "broadcast");
+        }
+    }
+
+    [Fact]
+    public void ExplicitBroadcastView_Agrees()
+    {
+        var mode = TensorExecutionOptions.Simd;
+        var rnd = new Random(5151);
+        var x = Rand(new int[] { 4, 8, 16 }, rnd);
+        var y = Rand(new int[] { 16, 32 }, rnd);
+        Assert.True(Tensor<float>.Broadcast(y, new int[] { 4, 16, 32 }, out var yv));
+        var expected = Tensor<float>.MatMul(x, y, mode);
+        var got = Tensor<float>.MatMul(x, yv!, mode);
+        AgreesElementwise(((Tensor<float>)got).ToArray(), ((Tensor<float>)expected).ToArray(), "explicit-view");
+    }
+
+    [Fact]
+    public void BroadcastOverStridedSource_FallsBackCorrectly()
+    {
+        var rnd = new Random(5152);
+        var src = new DenseTensor<float>(new int[] { 16, 32 }, true);
+        for (int i = 0; i < src.Length; i++) src.SetValue(i, (float)rnd.NextDouble());
+        Assert.True(Tensor<float>.Broadcast(src, new int[] { 4, 16, 32 }, out var yv));
+        var x = Rand(new int[] { 4, 8, 16 }, rnd);
+        var expected = Tensor<float>.MatMul(x, src, TensorExecutionOptions.Scalar);
+        var fallback = Tensor<float>.MatMul(x, yv!, TensorExecutionOptions.Scalar);
+        AgreesElementwise(((Tensor<float>)fallback).ToArray(), ((Tensor<float>)expected).ToArray(), "strided-fallback");
+    }
+
+    [Fact]
+    public void PooledBroadcastWeight_SkipsBatchCopy()
+    {
+        var opts = TensorExecutionOptions.Simd;
+        var pool = new TensorBufferPool();
+        var rnd = new Random(5153);
+        var x = Rand(new int[] { 8, 32, 64 }, rnd);
+        var y = Rand(new int[] { 64, 128 }, rnd);
+        long tile = 8L * 64 * 128 * 4;
+        long best = long.MaxValue;
+        Tensor<float>? last = null;
+        for (int i = 0; i < 10; i++)
+        {
+            long before = GC.GetTotalAllocatedBytes(false);
+            last = Tensor<float>.MatMul(x, y, opts, pool);
+            best = Math.Min(best, GC.GetTotalAllocatedBytes(false) - before);
+            ReturnToPool(pool, last);
+        }
+        Assert.Equal(new int[] { 8, 32, 128 }, last!.Dimensions.ToArray());
+        Assert.True(best < tile, "pooled broadcast call allocated " + best + " bytes (>= one weight-tile payload).");
+    }
+
     [Fact]
     public void ZeroInnerDims_Agree()
     {

@@ -404,17 +404,51 @@ where T : unmanaged
         }
     }
 
+    static int[] BatchStrides(Tensor<float> t) =>
+        t is BroadcastedTensor<float> b && b.effectiveStrides is not null ? b.effectiveStrides : t.strides;
+
+    /// <summary>
+    /// Batch-operand preparation: dense tensors pass through as before, and
+    /// broadcast views over dense row-major matrix storage pass through with
+    /// zero batch strides instead of being materialized per batch entry.
+    /// Every other layout takes the exact previous copy path.
+    /// </summary>
+    static Tensor<float> RequireBatchOperand(Tensor<float> t, string name)
+    {
+        if (t is BroadcastedTensor<float> b && HasDenseMatrixCore(b)) return t;
+        return RequireContiguous(t, name);
+    }
+
+    static bool HasDenseMatrixCore(BroadcastedTensor<float> b)
+    {
+        int r = b.Rank;
+        if (r < 2) return false;
+        var dims = b.Dimensions;
+        var eff = b.effectiveStrides;
+        if (eff is null || eff.Length != r) return false;
+        if (eff[r - 1] != 1 || eff[r - 2] != dims[r - 1]) return false;
+        try
+        {
+            var unused = b.Storage;
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     static void RunBatchedFloatMatMul(Tensor<float> bx, Tensor<float> by, Tensor<float> z, TensorExecutionOptions options)
     {
-        bx = RequireContiguous(bx, nameof(bx));
-        by = RequireContiguous(by, nameof(by));
+        bx = RequireBatchOperand(bx, nameof(bx));
+        by = RequireBatchOperand(by, nameof(by));
         z = RequireContiguous(z, nameof(z));
         var batchDims = bx.Dimensions[0..^2].ToArray();
         var m = bx.Dimensions[^2];
         var n = bx.Dimensions[^1];
         var k = by.Dimensions[^1];
-        var xSteps = BatchSteps(batchDims, bx.Dimensions, bx.strides);
-        var ySteps = BatchSteps(batchDims, by.Dimensions, by.strides);
+        var xSteps = BatchSteps(batchDims, bx.Dimensions, BatchStrides(bx));
+        var ySteps = BatchSteps(batchDims, by.Dimensions, BatchStrides(by));
         var zSteps = BatchSteps(batchDims, z.Dimensions, z.strides);
         int batchCount = BatchCount(batchDims);
         int dop = options.MaxDegreeOfParallelism < 2 || batchCount < 2
