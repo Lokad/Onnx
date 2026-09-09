@@ -94,6 +94,21 @@ public class ComputationalGraph
 
     internal TensorBufferPool? ActivePool { get; private set; }
 
+    /// <summary>
+    /// Live reference counts per backing array over the variable bindings
+    /// (intermediates plus outputs), null until the first release probe of a
+    /// run seeds them. Missing counts mean no live user, never the reverse.
+    /// </summary>
+    Dictionary<Array, int>? liveArrayUsers;
+
+    /// <summary>
+    /// Live tensors whose roots escape traversal, held by reference. Any
+    /// member forces the conservative answer until it is dropped.
+    /// </summary>
+    HashSet<ITensor>? liveUnknownTensors;
+
+    bool liveIndexSeeded;
+
     /// <summary>Reentrancy guard: at most one execution at a time per graph or context.</summary>
     protected int _executing;
     /// <summary>Whether lifetime analysis is current for <see cref="Nodes"/>.</summary>
@@ -764,12 +779,12 @@ public class ComputationalGraph
                     if (Log.IsEnabled(LogLevel.Debug)) Debug("Assigning node {n} output {c} to graph tensor {o}.", node.Name, i, node.Outputs[i]);
                     if (IntermediateOutputs.ContainsKey(node.Outputs[i]))
                     {
-                        IntermediateOutputs[node.Outputs[i]] = r.Outputs[i];
+                        TrackBind(IntermediateOutputs, node.Outputs[i], r.Outputs[i]);
                         r.Outputs[i].Name = node.Outputs[i];
                     }
                     else
                     {
-                        Outputs[node.Outputs[i]] = r.Outputs[i];
+                        TrackBind(Outputs, node.Outputs[i], r.Outputs[i]);
                         r.Outputs[i].Name = node.Outputs[i];
                         boundThisRun.Add(node.Outputs[i]);
                     }
@@ -786,15 +801,15 @@ public class ComputationalGraph
             if (string.IsNullOrEmpty(name) || boundThisRun.Contains(name)) continue;
             if (IntermediateOutputs.TryGetValue(name, out var mid) && mid is not null)
             {
-                Outputs[name] = mid;
+                TrackBind(Outputs, name, mid);
             }
             else if (Inputs.TryGetValue(name, out var inp) && inp is not null)
             {
-                Outputs[name] = inp.Clone();
+                TrackBind(Outputs, name, inp.Clone());
             }
             else if (Initializers.TryGetValue(name, out var init))
             {
-                Outputs[name] = init.Clone();
+                TrackBind(Outputs, name, init.Clone());
             }
         }
         var outputSymbolic = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -848,6 +863,9 @@ public class ComputationalGraph
         LastRunTime = TimeSpan.Zero;
         LastAllocatedBytes = 0;
         LastGcCollections = new int[3];
+        liveArrayUsers = null;
+        liveUnknownTensors = null;
+        liveIndexSeeded = false;
     }
 
     /// <summary>
@@ -1028,12 +1046,13 @@ public class ComputationalGraph
         else
         {
             Debug("Execution of node {n} with op {op} returned {s} with {c} output(s).", node.Name, node.Op.ToString(), r.Status.ToString(), r.Outputs.Length);
+            foreach (var kv in Outputs) RemoveLiveRefs(kv.Value);
             Outputs.Clear();
             for (int i = 0; i < node.Outputs.Length; i++)
             {
                 if (string.IsNullOrEmpty(node.Outputs[i])) continue;
                 Debug("Assigning node {n} output {c} to graph tensor {o}.", node.Name, i, node.Outputs[i]);
-                Outputs[node.Outputs[i]] = r.Outputs[i];
+                TrackBind(Outputs, node.Outputs[i], r.Outputs[i]);
             }
         }
         op.Complete();
@@ -1298,11 +1317,20 @@ public class ComputationalGraph
         var arr = (tensor as TensorBase)?.OwnedBufferArray();
         if (arr is not null && pool.IsOwned(arr) && !(returned?.Contains(arr) ?? false))
         {
-            if (HasLiveAlias(arr, name, pool)) return false;
-            pool.Return(arr);
-            returned ??= new HashSet<Array>();
-            returned.Add(arr);
+            EnsureLiveIndexSeeded();
+            RemoveLiveRefs(tensor);
+            if (!HasLiveAliasIndexed(arr, pool))
+            {
+                pool.Return(arr);
+                returned ??= new HashSet<Array>();
+                returned.Add(arr);
+                IntermediateOutputs[name] = null;
+                return true;
+            }
+            AddLiveRefs(tensor);
+            return false;
         }
+        RemoveLiveRefs(tensor);
         IntermediateOutputs[name] = null;
         return true;
     }
@@ -1374,7 +1402,13 @@ public class ComputationalGraph
         }
     }
 
-    bool HasLiveAlias(Array candidate, string dyingName, TensorBufferPool pool)
+    /// <summary>
+    /// Whether any live binding besides the already-uncounted dying tensor
+    /// shares the candidate array. Static bindings use the memoized roots;
+    /// the variable maps use the reverse index, falling back to conservative
+    /// true while unknown-kind tensors are live.
+    /// </summary>
+    bool HasLiveAliasIndexed(Array candidate, TensorBufferPool pool)
     {
         var staticRoots = EnsurePoolRoots(pool);
         if (staticRoots is not null)
@@ -1387,14 +1421,50 @@ public class ComputationalGraph
             foreach (var tensor in Initializers.Values) if (SharesPooledStorage(candidate, tensor)) return true;
             foreach (var attr in EnumerateAttributeTensors()) if (SharesPooledStorage(candidate, attr)) return true;
         }
-        foreach (var kv in IntermediateOutputs)
+        if (liveUnknownTensors is not null && liveUnknownTensors.Count > 0) return true;
+        return liveArrayUsers is not null && liveArrayUsers.TryGetValue(candidate, out int users) && users > 0;
+    }
+
+    void EnsureLiveIndexSeeded()
+    {
+        if (liveIndexSeeded) return;
+        liveIndexSeeded = true;
+        liveArrayUsers = new Dictionary<Array, int>();
+        liveUnknownTensors = new HashSet<ITensor>(ReferenceEqualityComparer.Instance);
+        foreach (var kv in IntermediateOutputs) AddLiveRefs(kv.Value);
+        foreach (var kv in Outputs) AddLiveRefs(kv.Value);
+    }
+
+    void TrackBind(IDictionary<string, ITensor?> map, string name, ITensor? value)
+    {
+        if (map.TryGetValue(name, out var old) && !ReferenceEquals(old, value)) RemoveLiveRefs(old);
+        map[name] = value;
+        AddLiveRefs(value);
+    }
+
+    void AddLiveRefs(ITensor? tensor)
+    {
+        if (tensor is null || liveArrayUsers is null || liveUnknownTensors is null) return;
+        var roots = new HashSet<Array>();
+        if (CollectAliasRoot(tensor, roots))
         {
-            if (kv.Key.Equals(dyingName, StringComparison.Ordinal)) continue;
-            if (kv.Value is null) continue;
-            if (SharesPooledStorage(candidate, kv.Value)) return true;
+            foreach (var r in roots) liveArrayUsers[r] = liveArrayUsers.TryGetValue(r, out int c) ? c + 1 : 1;
         }
-        foreach (var tensor in Outputs.Values) if (SharesPooledStorage(candidate, tensor)) return true;
-        return false;
+        else liveUnknownTensors.Add(tensor);
+    }
+
+    void RemoveLiveRefs(ITensor? tensor)
+    {
+        if (tensor is null || liveArrayUsers is null || liveUnknownTensors is null) return;
+        if (liveUnknownTensors.Remove(tensor)) return;
+        var roots = new HashSet<Array>();
+        if (CollectAliasRoot(tensor, roots))
+        {
+            foreach (var r in roots)
+            {
+                if (liveArrayUsers.TryGetValue(r, out int c)) liveArrayUsers[r] = c - 1;
+            }
+        }
     }
 
     /// <summary>

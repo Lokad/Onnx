@@ -128,6 +128,67 @@ public class PoolLifetimeTests
         Assert.Equal(0, g.LastPoolReturned);
     }
 
+    static ComputationalGraph AliasGraph(bool keepView)
+    {
+        // MatMul output t is pool-rented; Reshape views it as v. The follow-up
+        // Add rents the same 8-float shape, so a missed alias would observably
+        // corrupt v through reuse.
+        var g = new ComputationalGraph();
+        g.Metadata["Name"] = "test";
+        g.Inputs["x"] = DenseTensor<float>.OfShape(2, 4);
+        g.Initializers["w"] = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f, 0f, 0f }, { 0f, 1f, 0f, 0f }, { 0f, 0f, 1f, 0f }, { 0f, 0f, 0f, 1f } });
+        g.Initializers["xb"] = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f });
+        g.Initializers["shape"] = DenseTensor<long>.OfValues(new long[] { 8 });
+        g.Outputs["y"] = DenseTensor<float>.OfShape(8);
+        if (keepView) g.Outputs["v"] = DenseTensor<float>.OfShape(8);
+        g.Nodes.Add(new Node { Name = "mm", Op = OpType.MatMul, Inputs = new[] { "x", "w" }, Outputs = new[] { "t" } });
+        g.Nodes.Add(new Node { Name = "rs", Op = OpType.Reshape, Inputs = new[] { "t", "shape" }, Outputs = new[] { "v" } });
+        g.Nodes.Add(new Node { Name = "add", Op = OpType.Add, Inputs = new[] { "v", "xb" }, Outputs = new[] { "u" } });
+        g.Nodes.Add(new Node { Name = "neg", Op = OpType.Neg, Inputs = new[] { "u" }, Outputs = new[] { "y" } });
+        g.IntermediateOutputs["t"] = null;
+        if (!keepView) g.IntermediateOutputs["v"] = null;
+        g.IntermediateOutputs["u"] = null;
+        g.RefreshLifetimeAnalysis();
+        return g;
+    }
+
+    [Fact]
+    public void LiveViewAlias_BlocksReturn_ResultsStayCorrect()
+    {
+        var g = AliasGraph(true);
+        var user = new System.Collections.Generic.Dictionary<string, ITensor>
+        {
+            { "x", DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } }) },
+        };
+        Assert.True(g.Execute(user, true));
+        Assert.Equal(new float[] { -2f, -3f, -4f, -5f, -6f, -7f, -8f, -9f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        Assert.Equal(new float[] { 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f }, ((Tensor<float>)g.Outputs["v"]).ToArray());
+        // Exactly one return: the unaliased Add output. The MatMul output
+        // stays out of the pool while its reshape view is live.
+        Assert.Equal(1, g.LastPoolReturned);
+    }
+
+    [Fact]
+    public void NoAlias_ReturnsStorage()
+    {
+        var g = new ComputationalGraph();
+        g.Metadata["Name"] = "test";
+        g.Inputs["x"] = DenseTensor<float>.OfShape(2, 4);
+        g.Initializers["w"] = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f, 0f, 0f }, { 0f, 1f, 0f, 0f }, { 0f, 0f, 1f, 0f }, { 0f, 0f, 0f, 1f } });
+        g.Outputs["y"] = DenseTensor<float>.OfShape(2, 4);
+        g.Nodes.Add(new Node { Name = "mm", Op = OpType.MatMul, Inputs = new[] { "x", "w" }, Outputs = new[] { "t" } });
+        g.Nodes.Add(new Node { Name = "add", Op = OpType.Add, Inputs = new[] { "t", "x" }, Outputs = new[] { "y" } });
+        g.IntermediateOutputs["t"] = null;
+        g.RefreshLifetimeAnalysis();
+        var user = new System.Collections.Generic.Dictionary<string, ITensor>
+        {
+            { "x", DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } }) },
+        };
+        Assert.True(g.Execute(user, true));
+        Assert.Equal(new float[] { 2f, 4f, 6f, 8f, 10f, 12f, 14f, 16f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        Assert.True(g.LastPoolReturned >= 1);
+    }
+
     sealed class OpaqueFloatTensor : Tensor<float>
     {
         readonly float[] data;
