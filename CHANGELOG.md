@@ -16,10 +16,7 @@ as planned or a known limitation. This is not a release-readiness claim.
   BenchmarkDotNet workloads out of the CLI; removed the unused vendored
   NLog tree and the empty `.gitmodules` (no submodules remain).
 - Planned: remove unused APIs, legacy framework scaffolding and duplicated
-  execution/kernel preparation. Remove the need for `THIRD-PARTY NOTICES`
-  by removing or replacing the relevant third-party source in the distributed
-  library. Copied implementations still present in the core require a
-  provenance review; removing package references alone does not finish this work.
+  execution/kernel preparation.
 - Deliver changes as small, coherent commits with relevant validation.
   Performance claims require reproducible CPU baselines with explicit settings.
 
@@ -126,6 +123,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   The Tensor back half (structural compare, slicing helpers, printing, factories) is
   independently implemented from the contracts with dead commented-out blocks deleted;
   declarations and behavior stay identical.
+  With no ported source left, the last notices entry goes with the file itself:
+  THIRD-PARTY NOTICES is deleted and no longer ships in either package; the core
+  carries no third-party code and needs no attribution file.
   Benchmark workloads moved from the CLI to the non-packable benchmark
   project with BenchmarkDotNet; the CLI keeps inspection and inference
   only, and bench.ps1 drives model timings plus the relocated sweep.
