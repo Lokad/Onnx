@@ -74,6 +74,9 @@ internal static class CastOps
     static uint ToUInt32(double v)
     {
         if (double.IsNaN(v) || double.IsInfinity(v)) return 0u;
+        // Outside int64 range the reference yields zero instead of fmod
+        // garbage (ORT 1.29); truncation cannot cross these bounds.
+        if (v >= 9223372036854775808.0 || v <= -9223372036854775808.0) return 0u;
         double m = Math.Truncate(v) % 4294967296.0;
         if (m < 0.0) m += 4294967296.0;
         if (!(m < 4294967296.0)) return 0u;
@@ -85,6 +88,10 @@ internal static class CastOps
     static ulong ToUInt64(double v)
     {
         if (double.IsNaN(v) || double.IsInfinity(v)) return 9223372036854775808UL;
+        // Finite values at or beyond 2^64 saturate like the x86 conversion
+        // (ORT 1.29); the negative bound is stated explicitly instead of
+        // relying on overflow conversion.
+        if (v >= 18446744073709551616.0 || v <= -9223372036854775808.0) return 9223372036854775808UL;
         double t = Math.Truncate(v);
         if (t < 9223372036854775808.0) return unchecked((ulong)unchecked((long)t));
         if (t < 18446744073709551616.0) return unchecked((ulong)unchecked((long)(t - 9223372036854775808.0))) + 9223372036854775808UL;
@@ -94,13 +101,15 @@ internal static class CastOps
         return (ulong)m;
     }
 
-    static int ToInt32(float v) => !(v <= 2147483647f) ? int.MinValue : unchecked((int)v);
+    // The bound is 2^31, not (float)int.MaxValue which rounds up to 2^31: exactly 2^31
+    // must saturate (ORT 1.29) instead of falling into platform overflow conversion.
+    static int ToInt32(float v) => !(v < 2147483648f) || v < -2147483648f ? int.MinValue : unchecked((int)v);
 
-    static int ToInt32(double v) => !(v <= 2147483647.0) ? int.MinValue : unchecked((int)v);
+    static int ToInt32(double v) => !(v < 2147483648.0) || v < -2147483648.0 ? int.MinValue : unchecked((int)v);
 
-    static long ToInt64(float v) => !(v <= 9223372036854775807f) ? long.MinValue : unchecked((long)v);
+    static long ToInt64(float v) => !(v < 9223372036854775808f) || v < -9223372036854775808f ? long.MinValue : unchecked((long)v);
 
-    static long ToInt64(double v) => !(v <= 9223372036854775807.0) ? long.MinValue : unchecked((long)v);
+    static long ToInt64(double v) => !(v < 9223372036854775808.0) || v < -9223372036854775808.0 ? long.MinValue : unchecked((long)v);
 
     static NotSupportedException NoTarget(TensorElementType target) =>
         new NotSupportedException($"Cast to {target} is not supported.");

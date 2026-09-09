@@ -1,0 +1,74 @@
+using CPU = Lokad.Onnx.CPUExecutionProvider;
+
+namespace Lokad.Onnx.Backend.Tests;
+
+/// <summary>
+/// Pins the documented CastOps policy against ORT 1.29 probe values:
+/// fractional floats truncate toward zero, integer narrowing wraps modulo
+/// the target width, float to signed-integer overflow and NaN saturate to
+/// the minimum value, out-of-int64-range floats saturate unsigned targets,
+/// and bools convert by nonzero testing.
+/// </summary>
+public class CastBoundaryTests
+{
+    static ITensor CastTo(ITensor input, TensorElementType target)
+    {
+        var result = CPU.Cast(input, target, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        return result.Outputs![0];
+    }
+
+    [Fact]
+    public void Float_TruncatesTowardZero()
+    {
+        var output = (Tensor<int>)CastTo(DenseTensor<float>.OfValues(new float[] { 1.9f, -1.9f, 2.5f, -2.5f, 0f, -0.0f }), TensorElementType.Int32);
+        Assert.Equal(new int[] { 1, -1, 2, -2, 0, 0 }, output.ToArray());
+    }
+
+    [Fact]
+    public void FloatOverflowAndNaN_SaturateSignedMin()
+    {
+        var i32 = (Tensor<int>)CastTo(DenseTensor<float>.OfValues(new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, 1e20f, -1e20f, 2147483648f, -2147483649f }), TensorElementType.Int32);
+        Assert.Equal(new int[] { int.MinValue, int.MinValue, int.MinValue, int.MinValue, int.MinValue, int.MinValue, int.MinValue }, i32.ToArray());
+        var i64 = (Tensor<long>)CastTo(DenseTensor<double>.OfValues(new double[] { double.NaN, double.PositiveInfinity, 9.3e18, -9.3e18 }), TensorElementType.Int64);
+        Assert.Equal(new long[] { long.MinValue, long.MinValue, long.MinValue, long.MinValue }, i64.ToArray());
+        var i64edge = (Tensor<long>)CastTo(DenseTensor<double>.OfValues(new double[] { 9223372036854775808.0, -9223372036854775808.0, 9223372036854774784.0 }), TensorElementType.Int64);
+        Assert.Equal(new long[] { long.MinValue, long.MinValue, 9223372036854774784L }, i64edge.ToArray());
+        var i32edge = (Tensor<int>)CastTo(DenseTensor<double>.OfValues(new double[] { 2147483648.0, 2147483647.5 }), TensorElementType.Int32);
+        Assert.Equal(new int[] { int.MinValue, 2147483647 }, i32edge.ToArray());
+    }
+
+    [Fact]
+    public void FloatOutsideInt64Range_SaturatesUnsigned()
+    {
+        var u32 = (Tensor<uint>)CastTo(DenseTensor<float>.OfValues(new float[] { float.NaN, float.PositiveInfinity, 1e20f, -1e20f, 9223372036854775808f, -9223372036854775808f }), TensorElementType.UInt32);
+        Assert.Equal(new uint[] { 0u, 0u, 0u, 0u, 0u, 0u }, u32.ToArray());
+        var u64out = (Tensor<ulong>)CastTo(DenseTensor<float>.OfValues(new float[] { float.NaN, float.PositiveInfinity, 1e20f, -1e20f }), TensorElementType.UInt64);
+        Assert.Equal(new ulong[] { 9223372036854775808UL, 9223372036854775808UL, 9223372036854775808UL, 9223372036854775808UL }, u64out.ToArray());
+        var u64big = (Tensor<ulong>)CastTo(DenseTensor<double>.OfValues(new double[] { 18446744073709551616.0 }), TensorElementType.UInt64);
+        Assert.Equal(new ulong[] { 9223372036854775808UL }, u64big.ToArray());
+    }
+
+    [Fact]
+    public void FloatInsideInt64Range_WrapsUnsigned()
+    {
+        var u32 = (Tensor<uint>)CastTo(DenseTensor<float>.OfValues(new float[] { -1.5f, 1.9f, 5000000000f, -5000000000f, 4294967296f, -0.5f }), TensorElementType.UInt32);
+        Assert.Equal(new uint[] { 4294967295u, 1u, 705032704u, 3589934592u, 0u, 0u }, u32.ToArray());
+        var u64 = (Tensor<ulong>)CastTo(DenseTensor<float>.OfValues(new float[] { -1.5f, 1.9f, -2.0f }), TensorElementType.UInt64);
+        Assert.Equal(new ulong[] { 18446744073709551615UL, 1UL, 18446744073709551614UL }, u64.ToArray());
+    }
+
+    [Fact]
+    public void Float_ConvertsBoolByNonzeroTest()
+    {
+        var output = (Tensor<bool>)CastTo(DenseTensor<float>.OfValues(new float[] { 0f, -0.0f, 1.5f, -2.5f, float.NaN }), TensorElementType.Bool);
+        Assert.Equal(new bool[] { false, false, true, true, true }, output.ToArray());
+    }
+
+    [Fact]
+    public void Int64ToInt32_WrapsModuloWidth()
+    {
+        var output = (Tensor<int>)CastTo(DenseTensor<long>.OfValues(new long[] { 2147483647L, 2147483648L, -2147483649L, 4294967297L }), TensorElementType.Int32);
+        Assert.Equal(new int[] { 2147483647, -2147483648, 2147483647, 1 }, output.ToArray());
+    }
+}
