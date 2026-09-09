@@ -108,22 +108,23 @@ row. Raw samples follow the tables.
 | DINOv3, 224x224 | defaults | 333.0 ms | 445.7 ms | 18.6 ms | 20.4 ms | 21.8x | 5.99E-006 |
 | DINOv3, 224x224 | one-thread | 2193.9 ms | 2281.5 ms | 69.9 ms | 72.8 ms | 31.3x | 4.87E-006 |
 | DINOv3, 224x224 | mode-threads=1 | 335.9 ms | 384.8 ms | 72.0 ms | 80.6 ms | 4.8x | 5.99E-006 |
-| ResNet50, 224x224 | defaults | 303.9 ms | 397.9 ms | 7.3 ms | 8.3 ms | 47.9x | 1.98E-006 |
-| ResNet50, 224x224 | one-thread | 1849.5 ms | 1920.7 ms | 50.6 ms | 57.1 ms | 33.6x | 2.53E-006 |
-| ResNet50, 224x224 | mode-threads=1 | 307.9 ms | 417.6 ms | 51.4 ms | 66.5 ms | 6.3x | 1.98E-006 |
+| ResNet50, 224x224 | defaults | 245.5 ms | 281.9 ms | 7.2 ms | 8.0 ms | 35.2x | 1.98E-006 |
+| ResNet50, 224x224 | one-thread | 1776.8 ms | 1788.6 ms | 50.3 ms | 51.0 ms | 35.1x | 2.53E-006 |
+| ResNet50, 224x224 | mode-threads=1 | 239.0 ms | 243.7 ms | 50.5 ms | 51.0 ms | 4.8x | 1.98E-006 |
 | GPT-2, 4 tokens | defaults | 745.8 ms | 990.2 ms | 8.3 ms | 9.5 ms | 104.2x | 7.35E-006 |
 | GPT-2, 4 tokens | one-thread | 952.0 ms | 1010.4 ms | 23.1 ms | 27.7 ms | 36.5x | 7.95E-006 |
 | GPT-2, 4 tokens | mode-threads=1 | 783.8 ms | 936.0 ms | 24.6 ms | 30.5 ms | 30.7x | 7.35E-006 |
 
 The gap is real on every row and narrows markedly under matched thread
-budgets with vectorization enabled (for example ResNet50 median ratio 47.9x
-defaults vs 6.3x matched; DINOv3 21.8x vs 4.8x). The Scalar one-thread row
+budgets with vectorization enabled (for example ResNet50 median ratio 35.2x
+defaults vs 4.8x matched; DINOv3 21.8x vs 4.8x). The Scalar one-thread row
 is much slower than the Auto one-thread row on vision models (ResNet50
-1920.7 ms vs 417.6 ms median; DINOv3 2281.5 ms vs 384.8 ms), which shows the
-mode distinction carries the effect, not just the thread count. No claim is
-made about how much of the remaining gap belongs to threading, matrix
-packing, or per-operator kernels; that attribution needs profiling outside
-final latency timing (see B3).
+1788.6 ms vs 243.7 ms median; DINOv3 2281.5 ms vs 384.8 ms), which shows the
+mode distinction carries the effect, not just the thread count. Profiling
+attributes ResNet50 to Conv at 90.8% (lowered through the shared GEMM
+dispatcher) and e5-small to MatMul at 76.0%; generalizing the unrolled FMA
+kernel to K%32 != 0 shapes moved the ResNet50 matched row from 417.6 ms to
+243.7 ms with identical validation diffs.
 
 ### Raw samples (ms, n=9 per engine per row)
 
@@ -136,9 +137,9 @@ final latency timing (see B3).
     dinov3-224 defaults:   lok=[474.40,390.33,539.31,406.05,464.43,347.45,445.66,332.98,462.18] ort=[18.98,36.59,20.41,22.00,20.04,21.29,18.84,28.46,18.63]
     dinov3-224 one-thread: lok=[2254.65,2254.56,2495.61,2430.75,2193.92,2249.55,2333.49,2281.47,2286.12] ort=[74.72,117.84,93.44,70.64,69.92,78.86,72.76,72.00,71.75]
     dinov3-224 matched:    lok=[387.11,384.81,411.62,337.38,348.35,395.20,335.89,390.08,357.03] ort=[96.41,73.04,80.70,72.02,80.56,78.83,72.95,99.71,88.74]
-    resnet50 defaults:     lok=[397.94,319.28,421.83,312.90,400.36,340.71,400.10,303.91,460.37] ort=[7.34,18.37,7.44,12.30,7.59,8.04,8.32,15.07,8.38]
-    resnet50 one-thread:   lok=[1912.87,1967.06,1849.52,1920.70,1903.75,1888.98,2000.24,2026.46,2124.25] ort=[65.52,52.29,54.05,52.25,50.64,64.73,58.89,57.11,62.12]
-    resnet50 matched:      lok=[417.59,540.45,312.65,334.00,307.92,434.07,325.98,422.22,440.63] ort=[81.73,60.79,66.47,51.83,51.41,89.94,52.63,112.88,82.81]
+    resnet50 defaults:     lok=[281.87,270.54,289.81,245.50,290.84,257.56,342.69,248.34,359.53] ort=[7.22,21.58,7.43,23.46,7.50,11.27,8.01,8.11,7.69]
+    resnet50 one-thread:   lok=[1793.93,1827.50,1798.57,1776.91,1814.86,1776.76,1785.98,1778.50,1788.61] ort=[51.08,50.69,50.33,51.04,51.38,50.63,51.09,51.08,50.75]
+    resnet50 matched:      lok=[243.70,248.59,242.20,242.75,240.80,245.79,267.52,261.21,239.03] ort=[50.81,50.84,51.04,54.32,51.15,51.43,50.88,51.49,50.51]
     gpt2-4tok defaults:    lok=[995.01,1060.91,990.17,1363.00,1061.80,988.22,864.71,745.80,941.57] ort=[9.59,9.48,8.64,9.35,10.91,13.20,8.33,10.77,9.10]
     gpt2-4tok one-thread:  lok=[1090.96,1145.03,1066.73,984.21,1009.41,1069.98,1010.40,986.62,952.05] ort=[26.59,31.09,23.10,24.91,36.88,55.57,27.69,27.90,24.14]
     gpt2-4tok matched:     lok=[881.01,858.79,783.81,843.33,1053.93,943.16,935.97,1059.81,1376.17] ort=[48.68,37.50,27.22,27.40,24.61,30.45,26.38,38.58,37.08]
