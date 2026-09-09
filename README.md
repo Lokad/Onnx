@@ -2,7 +2,7 @@
 
 ## About
 Lokad.Onnx is a 100% managed-code [ONNX backend](https://onnx.ai/onnx/repo-docs/ImplementingAnOnnxBackend.html) implementation for .NET 10.
-It runs transformer and vision models end to end on CPU, with numeric parity against native ONNX Runtime frozen in the test suite for multilingual-e5-small, DINOv3 ViT-S/16 (full weights), ResNet50, and GPT-2. DINOv2-small is excluded: it diverges above the validation gate (see BENCHMARK.md).
+It runs transformer and vision models end to end on CPU, with numeric parity against native ONNX Runtime frozen in the test suite for multilingual-e5-small, DINOv3 ViT-S/16 (full weights), ResNet50, and GPT-2. DINOv2-small is excluded from the benchmark full-output gate: it diverges above the validation gate (see BENCHMARK.md); its compact C# oracle runs in the test suite.
 
 ![img](https://ajb.nyc3.cdn.digitaloceanspaces.com/lokadonnx8.gif)
 
@@ -45,7 +45,7 @@ Large model assets live under the git-ignored `models\` directory and are never 
 - `models\dinov2-small-onnx\model.onnx` (single-file DINOv2-small ONNX export).
 - `models\dinov3-vits16\onnx\model.onnx` plus `model.onnx_data` (full-weight DINOv3 ViT-S/16 export, see tests/Lokad.Onnx.Backend.Tests/ModelManifest.json).
 - `models\resnet50-onnx\model.onnx` (Conv-heavy ResNet50 feature export; covered by a model oracle, no dedicated CLI input format).
-- `models\gpt2-onnx\onnx\model.onnx` plus tokenizer files (fp32 GPT-2 with past-key-value inputs; covered by a model oracle, no dedicated CLI input format).
+- `models\gpt2-onnx\onnx\model.onnx` (fp32 GPT-2 with past-key-value inputs and fixed token ids, so no tokenizer asset is needed; covered by a model oracle, no dedicated CLI input format).
 - MNIST assets are bundled with the backend tests and need no download.
 
 Model tests follow the local-model convention: they run when the asset is present, report an explicit skip otherwise, and fail when `LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1` requests an asset that is absent.
@@ -55,7 +55,7 @@ Five lanes, from fastest to strongest:
 
 - Offline unit tests: `dotnet test --tl:off --nologo -v minimal Lokad.Onnx.slnx`.
 - Integration tests using committed assets such as MNIST (same command, no extra setup).
-- Local-model conformance (DINOv3, ResNet50, GPT-2): same command with assets present; compact mean-plus-spot oracles pin numeric parity with native ONNX Runtime. DINOv2 is excluded with reason (see BENCHMARK.md).
+- Local-model conformance (DINOv3, ResNet50, GPT-2, and the compact DINOv2 oracle): same command with assets present; frozen oracles pin numeric parity with native ONNX Runtime. DINOv2 is excluded from the benchmark full-output gate with reason (see BENCHMARK.md).
 - Single-op differential lane: `.\eng\test-opfuzz.ps1` replays the frozen corpus against native ONNX Runtime references in scalar, SIMD, and intrinsics modes. Needs Python with the packages in `tests\opfuzz\python\requirements.txt`.
 - Native e5 gate: `.\eng\test-e5.ps1 -RequireIntrinsics` verifies asset hashes, exact tokenizer inputs, full hidden states, normalized embeddings, determinism across scalar, SIMD, and intrinsic modes, and the semantic ranking margin. Needs Python with the packages in `tests\e5\python\requirements.txt`.
 
@@ -66,5 +66,5 @@ Run `pack.cmd` from the repo root to produce the `Lokad.Onnx` NuGet package (net
 The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Release history lives in `CHANGELOG.md`.
 
 ## Implementation notes
-* The tensors library is pure managed C# adapted from [here](https://github.com/microsoft/onnxruntime/tree/main/csharp/src/Microsoft.ML.OnnxRuntime/Tensors).
+* The tensors library is pure managed C# implemented from the layout contracts. It was originally ported from [the ORT C# tensors](https://github.com/microsoft/onnxruntime/tree/main/csharp/src/Microsoft.ML.OnnxRuntime/Tensors) and has since been reimplemented from those contracts piece by piece (see CHANGELOG.md); no third-party notices ship.
 * The shipped `Lokad.Onnx` assembly is dependency-free. ONNX parsing lives in the non-shipped `Lokad.Onnx.Import` project (OnnxSharp); text and image helpers live in `Lokad.Onnx.Data`; the console lives in `Lokad.Onnx.CLI`.
