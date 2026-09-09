@@ -1,5 +1,5 @@
 {
-  "$schemaNote": "Model oracle manifest: exact asset identity, oracle provenance and tolerances for every local-model test. Verified by ModelManifestTests.",
+  "$schemaNote": "Model oracle manifest: exact asset identity, download source, oracle provenance and tolerances for every local-model test. Verified by ModelManifestTests.",
   "ortOracle": "1.29",
   "models": [
     {
@@ -11,7 +11,11 @@
       "generator": "tests/e5/python/test_e5_conformance.py over tests/e5/cases.json (native ORT oracle, tokenizer framed independently)",
       "test": "eng/test-e5.ps1 lane; GraphLifetimeTests.Lifetime_PinsFusedE5Graph and GraphFusionRopeTests.E5HasNoRopePatterns (structure only)",
       "inputs": "tokenized query/passage triples: input_ids, attention_mask, token_type_ids",
-      "oracle": "exact tokenizer inputs, full hidden states, pooled embeddings, ranking margin >= 0.10"
+      "oracle": "exact tokenizer inputs, full hidden states, pooled embeddings, ranking margin >= 0.10",
+      "source": {
+        "repo": "intfloat/multilingual-e5-small",
+        "path": "onnx/model.onnx"
+      }
     },
     {
       "key": "e5-tokenizer",
@@ -22,7 +26,11 @@
       "generator": "intfloat/multilingual-e5-small Hugging Face repo file (see tests/e5/README.md)",
       "test": "TokenizerTests, TokenizerBatchTests, TokenizerLifetimeTests",
       "inputs": "literal strings (Hello world -> 0,35378,8999,2)",
-      "oracle": "exact token id sequences"
+      "oracle": "exact token id sequences",
+      "source": {
+        "repo": "intfloat/multilingual-e5-small",
+        "path": "sentencepiece.bpe.model"
+      }
     },
     {
       "key": "dinov2",
@@ -33,7 +41,11 @@
       "generator": "tests/README.md bisection procedure (dtype-generic probe, native ORT oracle)",
       "test": "GraphExecutionDinoV2Tests.CanInferWithDinoV2Small",
       "inputs": "0.5-filled 1x3x224x224",
-      "oracle": "shape 1x257x384, finite, mean 1e-6, spots 1e-3"
+      "oracle": "shape 1x257x384, finite, mean 1e-6, spots 1e-3",
+      "source": {
+        "repo": "onnx-community/dinov2-small-ONNX",
+        "path": "onnx/model.onnx"
+      }
     },
     {
       "key": "dinov3",
@@ -45,7 +57,12 @@
       "test": "GraphExecutionDinoV3Tests.CanInferWithDinoV3Small",
       "inputs": "0.5-filled 1x3x224x224",
       "oracle": "shape 1x201x384, finite, mean 1e-6, spots 1e-4",
-      "note": "Full-weight asset: model.onnx (graph structure and small initializers) plus model.onnx_data (86,347,776-byte external weights, see dinov3-weights). Frozen references confirmed 2026-09-08 by running native ORT 1.29 on the full asset with the fixed input: mean drift 1.4e-10 (tol 1e-6), worst spot drift 3.3e-07 (tol 1e-4)."
+      "note": "Full-weight asset: model.onnx (graph structure and small initializers) plus model.onnx_data (86,347,776-byte external weights, see dinov3-weights). Frozen references confirmed 2026-09-08 by running native ORT 1.29 on the full asset with the fixed input: mean drift 1.4e-10 (tol 1e-6), worst spot drift 3.3e-07 (tol 1e-4).",
+      "source": {
+        "repo": "onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX",
+        "revision": "48988dfe73065df8d6f5ccc0edc7c8bcf307de41",
+        "path": "onnx/model.onnx"
+      }
     },
     {
       "key": "dinov3-weights",
@@ -56,7 +73,12 @@
       "generator": "Upstream DINOv3 ViT-S/16 ONNX export accompanying model.onnx (Hugging Face cache tree record, lfs sha256 1eff0bb9f4fdef83)",
       "test": "External-data resolution for GraphExecutionDinoV3Tests.CanInferWithDinoV3Small",
       "inputs": "external tensor data referenced by model.onnx",
-      "oracle": "exact hash and byte match; inference oracle lives on the dinov3 entry"
+      "oracle": "exact hash and byte match; inference oracle lives on the dinov3 entry",
+      "source": {
+        "repo": "onnx-community/dinov3-vits16-pretrain-lvd1689m-ONNX",
+        "revision": "48988dfe73065df8d6f5ccc0edc7c8bcf307de41",
+        "path": "onnx/model.onnx_data"
+      }
     },
     {
       "key": "resnet50",
@@ -67,7 +89,12 @@
       "generator": "tests/README.md bisection procedure (dtype-generic probe, native ORT oracle)",
       "test": "GraphExecutionResNetTests.CanInferWithResNet50",
       "inputs": "0.5-filled 1x3x224x224",
-      "oracle": "shape 1x2048, finite, mean 1e-6, spots 1e-4"
+      "oracle": "shape 1x2048, finite, mean 1e-6, spots 1e-4",
+      "source": {
+        "repo": "Qdrant/resnet50-onnx",
+        "revision": "43b3ed7997b4b0fc59cf2402b12f31a4ec769743",
+        "path": "model.onnx"
+      }
     },
     {
       "key": "gpt2",
@@ -78,7 +105,12 @@
       "generator": "tests/README.md bisection procedure (dtype-generic probe, native ORT oracle)",
       "test": "GraphExecutionGpt2Tests (logits oracle plus past-state continuation)",
       "inputs": "ids [15496,11,314,716], ones mask, positions 0..3, empty past per layer",
-      "oracle": "logits 1x4x50257, finite, mean 1e-4 (large-magnitude logits), spots 1e-3; continuation: 1x1x50257 logits plus 1x12x1x64 pasts, finite"
+      "oracle": "logits 1x4x50257, finite, mean 1e-4 (large-magnitude logits), spots 1e-3; continuation: 1x1x50257 logits plus 1x12x1x64 pasts, finite",
+      "source": {
+        "repo": "onnx-community/gpt2-ONNX",
+        "revision": "1975fb9b4a2a92bd99f457407337ee25ab6cfde0",
+        "path": "onnx/model.onnx"
+      }
     }
   ]
 }
