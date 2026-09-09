@@ -93,7 +93,7 @@ namespace Lokad.Onnx
             if (pn.IsFused)
             {
                 if (!Node.IsStandardDomain(pn.Domain)) return false;
-                if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding) return false;
+                if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu) return false;
                 if (pn.Inputs.Length < 1) return false;
                 return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo);
             }
@@ -420,6 +420,190 @@ namespace Lokad.Onnx
             ln.Inputs = new[] { xPos, gamma, beta };
             ln.Attributes = new Dictionary<string, object> { { "axis", -1 }, { "epsilon", eps.Value } };
             graph.Nodes[ab] = ln;
+            return true;
+        }
+
+        /// <summary>
+        /// Fuses exact-GELU erf chains (Div by sqrt(2), Erf, plus one, times
+        /// x, times one half) into native exact Gelu nodes. ORT fuses the same
+        /// pattern, so the unfused float chain accumulates a few ulps per
+        /// application against the fused reference; the native kernel matches
+        /// ORT bit-identically.
+        /// </summary>
+        public static int FuseGeluPatterns(ComputationalGraph graph)
+        {
+            var idx = BuildIndex(graph);
+            var producer = idx.Producer;
+            var consumers = idx.Consumers;
+            var outputs = idx.Outputs;
+
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.Erf) continue;
+                if (!IsFusableParticipant(graph.Nodes[i])) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchGelu(graph, producer, consumers, outputs, drop, i, out var dead, out var constNodes, out var survivor))
+                {
+                    foreach (var d in dead) drop.Add(d);
+                    foreach (var cn in constNodes)
+                    {
+                        // The surviving fused node still names its half
+                        // constant, which no longer needs a producer.
+                        bool ConstOnlyFeedsDead(string output) =>
+                            !outputs.Contains(output) && (!consumers.TryGetValue(output, out var uses) || uses.All(u => u == survivor || drop.Contains(u)));
+                        var cnode = graph.Nodes[cn];
+                        if (cnode.Outputs.All(ConstOnlyFeedsDead)) drop.Add(cn);
+                    }
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        static bool TryMatchGelu(
+            ComputationalGraph graph,
+            Dictionary<string, int> producer,
+            Dictionary<string, List<int>> consumers,
+            HashSet<string> outputs,
+            HashSet<int> drop,
+            int erfIndex,
+            out List<int> dead,
+            out List<int> constNodes,
+            out int survivor)
+        {
+            dead = new List<int>();
+            constNodes = new List<int>();
+            survivor = -1;
+            var erf = graph.Nodes[erfIndex];
+            if (!IsFusableParticipant(erf)) return false;
+            if (erf.Inputs.Length != 1) return false;
+            if (erf.Outputs.Length != 1) return false;
+            int OnlyConsumer(string output, OpType op)
+            {
+                if (outputs.Contains(output)) return -1;
+                if (!consumers.TryGetValue(output, out var uses)) return -1;
+                var live = new List<int>();
+                foreach (var u in uses) if (!drop.Contains(u)) live.Add(u);
+                if (live.Count != 1) return -1;
+                var cand = graph.Nodes[live[0]];
+                if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
+                return live[0];
+            }
+            int ProducerOf(string input, OpType op)
+            {
+                if (string.IsNullOrEmpty(input) || !producer.TryGetValue(input, out var pi)) return -1;
+                if (drop.Contains(pi)) return -1;
+                var cand = graph.Nodes[pi];
+                if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
+                return pi;
+            }
+            float? ScalarFloatOf(string input, out int constNode)
+            {
+                constNode = -1;
+                if (string.IsNullOrEmpty(input)) return null;
+                if (graph.Initializers.TryGetValue(input, out var init))
+                {
+                    if (init.ElementType != TensorElementType.Float) return null;
+                    var arr = init.ToArray();
+                    if (arr.Length != 1) return null;
+                    float v = Convert.ToSingle(arr.GetValue(0));
+                    if (!float.IsFinite(v)) return null;
+                    return v;
+                }
+                int pi = ProducerOf(input, OpType.Constant);
+                if (pi < 0) return null;
+                var cnode = graph.Nodes[pi];
+                if (cnode.Outputs.Length != 1) return null;
+                var tensor = ConstantValue(cnode);
+                if (tensor is null) return null;
+                if (tensor.ElementType != TensorElementType.Float) return null;
+                var vals = tensor.ToArray();
+                if (vals.Length != 1) return null;
+                float fv = Convert.ToSingle(vals.GetValue(0));
+                if (!float.IsFinite(fv)) return null;
+                constNode = pi;
+                return fv;
+            }
+            int div = ProducerOf(erf.Inputs[0], OpType.Div);
+            if (div < 0) return false;
+            var divNode = graph.Nodes[div];
+            if (divNode.Inputs.Length != 2) return false;
+            if (divNode.Outputs.Length != 1) return false;
+            // Division is not commutative: the activated value divides first.
+            string xPos = divNode.Inputs[0];
+            if (!IsProvenFloat(graph, producer, xPos)) return false;
+            float? c0 = ScalarFloatOf(divNode.Inputs[1], out int c0n);
+            if (!c0.HasValue || c0.Value != 1.4142135f) return false;
+            int add = OnlyConsumer(erf.Outputs[0], OpType.Add);
+            if (add < 0) return false;
+            var addNode = graph.Nodes[add];
+            if (addNode.Inputs.Length != 2) return false;
+            if (addNode.Outputs.Length != 1) return false;
+            string addOther = addNode.Inputs[0] == erf.Outputs[0] ? addNode.Inputs[1] : addNode.Inputs[0];
+            if (addOther == erf.Outputs[0]) return false;
+            float? c1 = ScalarFloatOf(addOther, out int c1n);
+            if (!c1.HasValue || c1.Value != 1f) return false;
+            int mul = OnlyConsumer(addNode.Outputs[0], OpType.Mul);
+            if (mul < 0) return false;
+            var mulNode = graph.Nodes[mul];
+            if (mulNode.Inputs.Length != 2) return false;
+            if (mulNode.Outputs.Length != 1) return false;
+            if (!mulNode.Inputs.Contains(addNode.Outputs[0])) return false;
+            string mulOther = mulNode.Inputs[0] == addNode.Outputs[0] ? mulNode.Inputs[1] : mulNode.Inputs[0];
+            if (mulOther != xPos) return false;
+            int mul1 = OnlyConsumer(mulNode.Outputs[0], OpType.Mul);
+            if (mul1 < 0) return false;
+            var mul1Node = graph.Nodes[mul1];
+            if (mul1Node.Inputs.Length != 2) return false;
+            if (mul1Node.Outputs.Length != 1) return false;
+            if (!mul1Node.Inputs.Contains(mulNode.Outputs[0])) return false;
+            string mul1Other = mul1Node.Inputs[0] == mulNode.Outputs[0] ? mul1Node.Inputs[1] : mul1Node.Inputs[0];
+            if (mul1Other == mulNode.Outputs[0]) return false;
+            float? c2 = ScalarFloatOf(mul1Other, out int c2n);
+            if (!c2.HasValue || c2.Value != 0.5f) return false;
+            if (drop.Contains(mul1)) return false;
+            var deadSet = new HashSet<int> { div, erfIndex, add, mul };
+            foreach (var dd in deadSet) if (drop.Contains(dd)) return false;
+            foreach (var d in deadSet)
+            {
+                foreach (var o in graph.Nodes[d].Outputs)
+                {
+                    if (string.IsNullOrEmpty(o)) continue;
+                    if (o == mul1Node.Outputs[0]) continue;
+                    if (outputs.Contains(o)) return false;
+                    if (consumers.TryGetValue(o, out var uses) && uses.Any(u => !deadSet.Contains(u) && u != mul1 && !drop.Contains(u))) return false;
+                }
+            }
+            if (!IsFusableParticipant(mul1Node)) return false;
+            dead.AddRange(deadSet);
+            survivor = mul1;
+            if (c0n >= 0) constNodes.Add(c0n);
+            if (c1n >= 0) constNodes.Add(c1n);
+            if (c2n >= 0) constNodes.Add(c2n);
+            var gelu = mul1Node;
+            gelu.Op = OpType.Gelu;
+            gelu.OpTypeName = OpType.Gelu.ToString();
+            gelu.Domain = "";
+            int stdv = StandardOpset(graph);
+            if (stdv >= 0) gelu.OpsetVersion = stdv;
+            gelu.IsFused = true;
+            gelu.Inputs = new[] { xPos };
+            gelu.Attributes = new Dictionary<string, object>();
+            graph.Nodes[mul1] = gelu;
             return true;
         }
 

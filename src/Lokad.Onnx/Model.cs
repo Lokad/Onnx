@@ -50,6 +50,8 @@ public class Model
         if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
         int rope = GraphFusion.FuseRopePatterns(graph);
         if (rope > 0) Info("Fused {c} rotary-embedding patterns into native nodes.", rope);
+        int gelu = GraphFusion.FuseGeluPatterns(graph);
+        if (gelu > 0) Info("Fused {c} exact-GELU patterns into native nodes.", gelu);
         graph.Prepare();
         cop.Complete();
         return graph;
