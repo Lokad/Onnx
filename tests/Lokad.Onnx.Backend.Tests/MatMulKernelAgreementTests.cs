@@ -146,6 +146,8 @@ public class MatMulKernelAgreementTests
         PackedEqual(8, 24, 44, rnd);
         PackedEqual(8, 24, 96, rnd);
         PackedEqual(64, 24, 44, rnd);
+        PackedEqual(64, 48, 3100, rnd);
+        PackedEqual(64, 64, 3136, rnd);
     }
 
     static unsafe void PackedEqual(int m, int n, int k, Random rnd)
@@ -175,6 +177,7 @@ public class MatMulKernelAgreementTests
         var rnd = new Random(Seed);
         DispatchedAgrees(30, 48, 80, rnd);
         DispatchedAgrees(64, 48, 80, rnd);
+        DispatchedAgrees(64, 48, 3100, rnd);
     }
 
     static void DispatchedAgrees(int m, int n, int k, Random rnd)

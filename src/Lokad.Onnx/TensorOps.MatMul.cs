@@ -136,33 +136,34 @@ where T : unmanaged
         // Panel packing pays off once the M/2 row-group re-reads amortize the
         // single pack pass: a shape probe loses below M=48 and wins from M=64
         // (-22 to -38 percent with pack cost included), so smaller blocks keep
-        // the unpacked tiled kernel bit-identically.
+        // the unpacked tiled kernel bit-identically. At 64 rows and above the
+        // packed kernel also beats the old kernel at any width (the old output
+        // traffic dominates once panels fix the strided reads), so wide axes
+        // route packed too; the pool-size guard keeps rental sane.
         const int TiledPackMinRows = 64;
+        const long TiledPackMaxElements = 67108864;
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
             int blocked = m - (m % 2);
-            if (n < TiledMatMulAxisLimit && k < TiledMatMulAxisLimit)
+            if (blocked >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
             {
-                if (blocked >= TiledPackMinRows)
+                float[] packed = ArrayPool<float>.Shared.Rent(n * k);
+                try
                 {
-                    float[] packed = ArrayPool<float>.Shared.Rent(n * k);
-                    try
+                    fixed (float* pp = packed)
                     {
-                        fixed (float* pp = packed)
-                        {
-                            PackPanelsB(n, k, y, pp);
-                            mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output);
-                        }
-                    }
-                    finally
-                    {
-                        ArrayPool<float>.Shared.Return(packed);
+                        PackPanelsB(n, k, y, pp);
+                        mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output);
                     }
                 }
-                else
+                finally
                 {
-                    mm_unsafe_vectorized_intrinsics_2x4tiled(blocked, n, k, x, y, output);
+                    ArrayPool<float>.Shared.Return(packed);
                 }
+            }
+            else if (n < TiledMatMulAxisLimit && k < TiledMatMulAxisLimit)
+            {
+                mm_unsafe_vectorized_intrinsics_2x4tiled(blocked, n, k, x, y, output);
             }
             else
             {
