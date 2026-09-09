@@ -66,6 +66,56 @@ public class TokenizerLifetimeTests
         foreach (var t in tasks) Assert.Equal(expected, t.Result);
     }
 
+    static string TempCopyOfAsset()
+    {
+        var tmp = Path.Combine(Path.GetTempPath(), "lokad-tok-" + Guid.NewGuid().ToString("N") + ".bpe.model");
+        File.Copy(AssetPath(), tmp);
+        return tmp;
+    }
+
+    [SkippableFact]
+    public void TouchedAsset_ReloadsWithStableResults()
+    {
+        string tmp = TempCopyOfAsset();
+        try
+        {
+            var first = Text.GetOrLoadRobertaTokenizer(tmp);
+            var baseline = Text.RobertaTokenizeFromFile("Hello world", tmp);
+            Assert.NotNull(baseline);
+            File.SetLastWriteTimeUtc(tmp, File.GetLastWriteTimeUtc(tmp).AddHours(1));
+            var second = Text.GetOrLoadRobertaTokenizer(tmp);
+            Assert.NotSame(first, second);
+            var again = Text.RobertaTokenizeFromFile("Hello world", tmp);
+            Assert.NotNull(again);
+            Assert.Equal(
+                ((Tensor<long>)baseline![0]).ToArray(),
+                ((Tensor<long>)again![0]).ToArray());
+        }
+        finally
+        {
+            File.Delete(tmp);
+        }
+    }
+
+    [SkippableFact]
+    public void DeletedAsset_EvictsInsteadOfServingStale()
+    {
+        string tmp = TempCopyOfAsset();
+        try
+        {
+            var first = Text.GetOrLoadRobertaTokenizer(tmp);
+            File.Delete(tmp);
+            Assert.Throws<FileNotFoundException>(() => Text.GetOrLoadRobertaTokenizer(tmp));
+            File.Copy(AssetPath(), tmp);
+            var second = Text.GetOrLoadRobertaTokenizer(tmp);
+            Assert.NotSame(first, second);
+        }
+        finally
+        {
+            if (File.Exists(tmp)) File.Delete(tmp);
+        }
+    }
+
     [SkippableFact]
     public void GetOrLoad_IdentityAndMissingPath()
     {

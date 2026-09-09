@@ -156,14 +156,35 @@ public class Text
         };
     }
 
-    /// <summary>Loaded Roberta tokenizer plus its encode gate.</summary>
+    /// <summary>Loaded Roberta tokenizer plus its encode gate and observed file identity.</summary>
     sealed class SharedRobertaTokenizer
     {
         public XLMRobertaTokenizer Tokenizer;
         public readonly object Sync = new object();
-        public SharedRobertaTokenizer(XLMRobertaTokenizer tokenizer) { Tokenizer = tokenizer; }
+        public readonly long FileLength;
+        public readonly DateTime FileModifiedUtc;
+        public SharedRobertaTokenizer(XLMRobertaTokenizer tokenizer, long fileLength, DateTime fileModifiedUtc)
+        {
+            Tokenizer = tokenizer;
+            FileLength = fileLength;
+            FileModifiedUtc = fileModifiedUtc;
+        }
     }
 
+    /// <summary>Process-wide Roberta tokenizer cache keyed by model path.</summary>
+    /// <remarks>
+    /// Lifetime: an entry lives until the file identity (length plus
+    /// last-write time) observed at load disagrees with the file on disk,
+    /// or the file disappears; there is no time-based eviction. A
+    /// disagreed file reloads under the gate, so replaced assets are
+    /// never silently stale. A missing file evicts its entry and throws
+    /// like a never-loaded path. Concurrency: lookup, load, and reload
+    /// serialize on the gate, which is never held during encoding;
+    /// encodes serialize on the per-instance gate instead. Ownership:
+    /// instances are shared. Encoding through the Text methods is
+    /// synchronized; calling Encode on a returned instance directly from
+    /// several threads is not.
+    /// </remarks>
     static readonly Dictionary<string, SharedRobertaTokenizer> RobertaCache = new Dictionary<string, SharedRobertaTokenizer>();
     static readonly object RobertaCacheGate = new object();
 
@@ -300,26 +321,51 @@ public class Text
     /// <summary>Returns the shared cached holder, loading it on first use.</summary>
     /// <remarks>Only the dictionary membership is gated; the load itself runs
     /// inside the same gate so two threads never load the same path twice.
-    /// The gate is never held during encoding.</remarks>
+    /// A cached entry whose file identity disagrees reloads here, and a
+    /// deleted file evicts its entry and throws. The gate is never held
+    /// during encoding.</remarks>
     static SharedRobertaTokenizer GetOrLoadRobertaTokenizerLocked(string tokenizerModelPath)
     {
         lock (RobertaCacheGate)
         {
-            if (!RobertaCache.TryGetValue(tokenizerModelPath, out var cached))
+            var identity = RobertaFileIdentity(tokenizerModelPath);
+            if (identity is null)
             {
-                cached = new SharedRobertaTokenizer(LoadRobertaTokenizerFromFile(tokenizerModelPath));
+                RobertaCache.Remove(tokenizerModelPath);
+                throw new FileNotFoundException($"Tokenizer model file does not exist: {tokenizerModelPath}.", tokenizerModelPath);
+            }
+            if (!RobertaCache.TryGetValue(tokenizerModelPath, out var cached)
+                || cached.FileLength != identity.Value.Length
+                || cached.FileModifiedUtc != identity.Value.ModifiedUtc)
+            {
+                cached = new SharedRobertaTokenizer(
+                    LoadRobertaTokenizerFromFile(tokenizerModelPath),
+                    identity.Value.Length,
+                    identity.Value.ModifiedUtc);
                 RobertaCache[tokenizerModelPath] = cached;
             }
             return cached;
         }
     }
 
+    /// <summary>Reads the reload identity of a tokenizer model file.</summary>
+    /// <remarks>Null means absent, which the caller reports exactly like a
+    /// never-loaded missing path instead of serving a stale instance.</remarks>
+    static (long Length, DateTime ModifiedUtc)? RobertaFileIdentity(string tokenizerModelPath)
+    {
+        if (string.IsNullOrEmpty(tokenizerModelPath)) return null;
+        var info = new FileInfo(tokenizerModelPath);
+        if (!info.Exists) return null;
+        return (info.Length, info.LastWriteTimeUtc);
+    }
+
     /// <summary>Returns the shared cached Roberta tokenizer for a model path.</summary>
-    /// <remarks>Shared process-wide with no eviction. Encodes through the
-    /// returned instance are only safe via the Text encode methods, which
-    /// serialize on the instance gate; calling Encode on the instance
-    /// directly from several threads is not synchronized. A path that was
-    /// never loaded throws FileNotFoundException without touching the cache.</remarks>
+    /// <remarks>Shared process-wide; entries reload when the file identity
+    /// changes and evict when the file disappears (see the cache remarks).
+    /// Encodes through the returned instance are only safe via the Text
+    /// encode methods, which serialize on the instance gate; calling Encode
+    /// on the instance directly from several threads is not synchronized.
+    /// A missing path throws FileNotFoundException and evicts any entry.</remarks>
     public static XLMRobertaTokenizer GetOrLoadRobertaTokenizer(string tokenizerModelPath)
     {
         return GetOrLoadRobertaTokenizerLocked(tokenizerModelPath).Tokenizer;
