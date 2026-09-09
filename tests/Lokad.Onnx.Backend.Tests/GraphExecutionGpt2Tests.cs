@@ -108,6 +108,65 @@ public class GraphExecutionGpt2Tests
         Assert.True(moved, "Continuation logits match the first-step last position exactly; past state had no effect.");
     }
 
+    static Dictionary<string, ITensor> NextStepInputs(ComputationalGraph graph, long tokenId, int positionId, int maskLength)
+    {
+        var next = new Dictionary<string, ITensor>();
+        var ids = DenseTensor<long>.OfShape(1, 1);
+        ids[0, 0] = tokenId;
+        next["input_ids"] = ids;
+        var mask = DenseTensor<long>.OfShape(1, maskLength);
+        mask.Fill(1);
+        next["attention_mask"] = mask;
+        var pos = DenseTensor<long>.OfShape(1, 1);
+        pos[0, 0] = positionId;
+        next["position_ids"] = pos;
+        for (int layer = 0; layer < 12; layer++)
+        {
+            next["past_key_values." + layer + ".key"] = (Tensor<float>)graph.Outputs["present." + layer + ".key"];
+            next["past_key_values." + layer + ".value"] = (Tensor<float>)graph.Outputs["present." + layer + ".value"];
+        }
+        return next;
+    }
+
+    [SkippableFact]
+    public void Gpt2SecondDecode_MatchesReference()
+    {
+        var graph = ModelFixture.LoadRequiredModel("GPT-2", "models", "gpt2-onnx", "onnx", "model.onnx");
+
+        ModelFixture.AssertExecuted(graph, graph.Execute(FirstStepInputs(), true));
+        var second = NextStepInputs(graph, 317, 4, 5);
+        graph.Reset();
+        ModelFixture.AssertExecuted(graph, graph.Execute(second, true));
+        var third = NextStepInputs(graph, 13, 5, 6);
+        graph.Reset();
+        ModelFixture.AssertExecuted(graph, graph.Execute(third, true));
+        var logits = (Tensor<float>)graph.Outputs["logits"];
+        Assert.Equal(new[] { 1, 1, 50257 }, logits.Dimensions.ToArray());
+        var values = ModelFixture.CheckedOutput(graph, "logits");
+        // Reference: python onnxruntime 1.29.0, CPU only, sequential execution,
+        // intra-op 1, inter-op 1, ORT_ENABLE_ALL, chaining this exact sequence.
+        // Token 13 is the reference first-decode argmax on both sides, and the
+        // probe reproduces the frozen second-decode oracle exactly.
+        ModelFixture.AssertMean(values, -100.34924316, 1e-4, "gpt2 second decode");
+        ModelFixture.AssertSpots(values,
+            new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 100, 384, 385, 1000, 10000, 50000 },
+            new float[] { -95.06102753f, -96.20240021f, -96.85228729f, -96.95389557f, -96.41825104f, -94.26221466f, -96.64118195f, -95.47057343f, -100.24946594f, -98.96081543f, -95.80052185f, -99.97512054f, -101.98978424f, -104.86552429f },
+            1e-3, "gpt2 second decode");
+        var expectedKeyMeans = new double[] { 0.04939841, -0.01536002, -0.02439982, 0.07019597, -0.10968190, -0.01138363, -0.00584086, -0.03299505, -0.04796230, -0.01823102, 0.00574899, -0.01341769 };
+        var expectedValueMeans = new double[] { 0.00882331, 0.00262872, -0.00606723, 0.01956192, -0.00578579, 0.02334877, 0.01860573, -0.00232594, 0.00356014, 0.00725605, -0.01373047, 0.00984911 };
+        for (int layer = 0; layer < 12; layer++)
+        {
+            var pastKey = (Tensor<float>)graph.Outputs["present." + layer + ".key"];
+            var pastValue = (Tensor<float>)graph.Outputs["present." + layer + ".value"];
+            Assert.Equal(new[] { 1, 12, 6, 64 }, pastKey.Dimensions.ToArray());
+            Assert.Equal(new[] { 1, 12, 6, 64 }, pastValue.Dimensions.ToArray());
+            var keyValues = ModelFixture.CheckedOutput(graph, "present." + layer + ".key");
+            var valueValues = ModelFixture.CheckedOutput(graph, "present." + layer + ".value");
+            ModelFixture.AssertMean(keyValues, expectedKeyMeans[layer], 1e-4, "gpt2 decode2 key " + layer);
+            ModelFixture.AssertMean(valueValues, expectedValueMeans[layer], 1e-4, "gpt2 decode2 value " + layer);
+        }
+    }
+
     [SkippableFact]
     public void Gpt2Continuation_ZeroedPast_Diverges()
     {
