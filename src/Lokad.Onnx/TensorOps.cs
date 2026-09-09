@@ -2556,7 +2556,11 @@ where T : unmanaged
         }
     }
 
-    public static Tensor<float> MaxPool2D(Tensor<float> input, int[] kernelshape, PadType padtype, int? padvalue, int[]? strides, int[]? dilations, bool ceilMode)
+    // Shared MaxPool preparation for PadType padding: validates the kernel
+    // and ranks, fills default strides and dilations, resolves dims, and
+    // computes the padded output geometry. The typed cores stay per-dtype.
+    static (int N, int C, int H, int W, int KH, int KW, int SH, int SW, int DH, int DW, PadInfo Pad, int OutH, int OutW) PlanPoolPadType(
+        ITensor input, int[] kernelshape, PadType padtype, int? padvalue, int[]? strides, int[]? dilations)
     {
         if (kernelshape is null)
         {
@@ -2570,7 +2574,6 @@ where T : unmanaged
         {
             throw new ArgumentException("The kernel must have shape m x n.");
         }
-
         if (strides == null)
         {
             strides = kernelshape;
@@ -2579,24 +2582,22 @@ where T : unmanaged
         {
             dilations = new int[] { 1, 1 };
         }
-
-        var N = input.Dimensions[0];
-        var C = input.Dimensions[1];
-        var H = input.Dimensions[2];
-        var W = input.Dimensions[3];
-        var kH = kernelshape[0];
-        var kW = kernelshape[1];
-        var strideHeight = strides[0];
-        var strideWidth = strides[1];
+        int N = input.Dims[0];
+        int C = input.Dims[1];
+        int H = input.Dims[2];
+        int W = input.Dims[3];
+        int kH = kernelshape[0];
+        int kW = kernelshape[1];
         var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
-        if (!ceilMode) return MaxPoolFloatCore(input, N, C, H, W, kH, kW, strideHeight, strideWidth, dilations[0], dilations[1], info.PadInfo, info.Shape[0], info.Shape[1]);
-        int effKH = GetConv2DEffectiveFilterSize(kH, dilations[0]);
-        int effKW = GetConv2DEffectiveFilterSize(kW, dilations[1]);
-        var ceilShape = MaxPoolOutputShape(H, W, effKH, effKW, strideHeight, strideWidth, info.PadInfo.top + info.PadInfo.bottom, info.PadInfo.left + info.PadInfo.right, true);
-        return MaxPoolFloatCore(input, N, C, H, W, kH, kW, strideHeight, strideWidth, dilations[0], dilations[1], info.PadInfo, ceilShape[0], ceilShape[1]);
+        return (N, C, H, W, kH, kW, strides[0], strides[1], dilations[0], dilations[1], info.PadInfo, info.Shape[0], info.Shape[1]);
     }
 
-    public static Tensor<float> MaxPool2D(Tensor<float> input, int[] kernelshape, int[] pads, int[]? strides, int[]? dilations, bool ceilMode)
+    // Shared MaxPool preparation for explicit pads: validates the kernel,
+    // ranks, and pads, fills defaults, resolves dims, and computes the
+    // explicit output geometry with the caller ceil mode. The typed cores
+    // stay per-dtype.
+    static (int N, int C, int H, int W, int KH, int KW, int SH, int SW, int DH, int DW, PadInfo Pad, int OutH, int OutW) PlanPoolExplicit(
+        ITensor input, int[] kernelshape, int[] pads, int[]? strides, int[]? dilations, bool ceilMode)
     {
         if (kernelshape is null)
         {
@@ -2614,7 +2615,6 @@ where T : unmanaged
         {
             throw new ArgumentException(nameof(pads), "Explicit pads must have four values [begin_h, begin_w, end_h, end_w].");
         }
-
         if (strides == null)
         {
             strides = kernelshape;
@@ -2623,19 +2623,34 @@ where T : unmanaged
         {
             dilations = new int[] { 1, 1 };
         }
-
-        var N = input.Dimensions[0];
-        var C = input.Dimensions[1];
-        var H = input.Dimensions[2];
-        var W = input.Dimensions[3];
-        var kH = kernelshape[0];
-        var kW = kernelshape[1];
+        int N = input.Dims[0];
+        int C = input.Dims[1];
+        int H = input.Dims[2];
+        int W = input.Dims[3];
+        int kH = kernelshape[0];
+        int kW = kernelshape[1];
         int effKH = GetConv2DEffectiveFilterSize(kH, dilations[0]);
         int effKW = GetConv2DEffectiveFilterSize(kW, dilations[1]);
         var outShape = MaxPoolOutputShape(H, W, effKH, effKW, strides[0], strides[1], pads[0] + pads[2], pads[1] + pads[3], ceilMode);
         if (outShape[0] <= 0 || outShape[1] <= 0) throw new ArgumentException("MaxPool output spatial dims must be positive.");
         var pad = new PadInfo { top = pads[0], left = pads[1], bottom = pads[2], right = pads[3], h = pads[0] + pads[2], w = pads[1] + pads[3] };
-        return MaxPoolFloatCore(input, N, C, H, W, kH, kW, strides[0], strides[1], dilations[0], dilations[1], pad, outShape[0], outShape[1]);
+        return (N, C, H, W, kH, kW, strides[0], strides[1], dilations[0], dilations[1], pad, outShape[0], outShape[1]);
+    }
+
+    public static Tensor<float> MaxPool2D(Tensor<float> input, int[] kernelshape, PadType padtype, int? padvalue, int[]? strides, int[]? dilations, bool ceilMode)
+    {
+        var (N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW) = PlanPoolPadType(input, kernelshape, padtype, padvalue, strides, dilations);
+        if (!ceilMode) return MaxPoolFloatCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW);
+        int effKH = GetConv2DEffectiveFilterSize(kH, dH);
+        int effKW = GetConv2DEffectiveFilterSize(kW, dW);
+        var ceilShape = MaxPoolOutputShape(H, W, effKH, effKW, sH, sW, pad.top + pad.bottom, pad.left + pad.right, true);
+        return MaxPoolFloatCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, ceilShape[0], ceilShape[1]);
+    }
+
+    public static Tensor<float> MaxPool2D(Tensor<float> input, int[] kernelshape, int[] pads, int[]? strides, int[]? dilations, bool ceilMode)
+    {
+        var (N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW) = PlanPoolExplicit(input, kernelshape, pads, strides, dilations, ceilMode);
+        return MaxPoolFloatCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW);
     }
 
     static int[] MaxPoolOutputShape(int H, int W, int effKH, int effKW, int sH, int sW, int padH, int padW, bool ceilMode)
@@ -2692,84 +2707,18 @@ where T : unmanaged
 
     public static Tensor<double> MaxPool2D(Tensor<double> input, int[] kernelshape, PadType padtype, int? padvalue, int[]? strides, int[]? dilations, bool ceilMode)
     {
-        if (kernelshape is null)
-        {
-            throw new ArgumentNullException("kernelshape");
-        }
-        if (input.Rank != 4)
-        {
-            throw new ArgumentException("Input tensors must be of rank 4 with the layout NxCxHxW.");
-        }
-        if (kernelshape.Rank != 1 || kernelshape.Length != 2)
-        {
-            throw new ArgumentException("The kernel must have shape m x n.");
-        }
-
-        if (strides is null)
-        {
-            strides = kernelshape;
-        }
-        if (dilations is null)
-        {
-            dilations = new int[] { 1, 1 };
-        }
-
-        var N = input.Dimensions[0];
-        var C = input.Dimensions[1];
-        var H = input.Dimensions[2];
-        var W = input.Dimensions[3];
-        var kH = kernelshape[0];
-        var kW = kernelshape[1];
-        var strideHeight = strides[0];
-        var strideWidth = strides[1];
-        var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
-        if (!ceilMode) return MaxPoolDoubleCore(input, N, C, H, W, kH, kW, strideHeight, strideWidth, dilations[0], dilations[1], info.PadInfo, info.Shape[0], info.Shape[1]);
-        int effKH = GetConv2DEffectiveFilterSize(kH, dilations[0]);
-        int effKW = GetConv2DEffectiveFilterSize(kW, dilations[1]);
-        var ceilShape = MaxPoolOutputShape(H, W, effKH, effKW, strideHeight, strideWidth, info.PadInfo.top + info.PadInfo.bottom, info.PadInfo.left + info.PadInfo.right, true);
-        return MaxPoolDoubleCore(input, N, C, H, W, kH, kW, strideHeight, strideWidth, dilations[0], dilations[1], info.PadInfo, ceilShape[0], ceilShape[1]);
+        var (N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW) = PlanPoolPadType(input, kernelshape, padtype, padvalue, strides, dilations);
+        if (!ceilMode) return MaxPoolDoubleCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW);
+        int effKH = GetConv2DEffectiveFilterSize(kH, dH);
+        int effKW = GetConv2DEffectiveFilterSize(kW, dW);
+        var ceilShape = MaxPoolOutputShape(H, W, effKH, effKW, sH, sW, pad.top + pad.bottom, pad.left + pad.right, true);
+        return MaxPoolDoubleCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, ceilShape[0], ceilShape[1]);
     }
 
     public static Tensor<double> MaxPool2D(Tensor<double> input, int[] kernelshape, int[] pads, int[]? strides, int[]? dilations, bool ceilMode)
     {
-        if (kernelshape is null)
-        {
-            throw new ArgumentNullException("kernelshape");
-        }
-        if (input.Rank != 4)
-        {
-            throw new ArgumentException("Input tensors must be of rank 4 with the layout NxCxHxW.");
-        }
-        if (kernelshape.Rank != 1 || kernelshape.Length != 2)
-        {
-            throw new ArgumentException("The kernel must have shape m x n.");
-        }
-        if (pads is null || pads.Length != 4)
-        {
-            throw new ArgumentException(nameof(pads), "Explicit pads must have four values [begin_h, begin_w, end_h, end_w].");
-        }
-
-        if (strides == null)
-        {
-            strides = kernelshape;
-        }
-        if (dilations == null)
-        {
-            dilations = new int[] { 1, 1 };
-        }
-
-        var N = input.Dimensions[0];
-        var C = input.Dimensions[1];
-        var H = input.Dimensions[2];
-        var W = input.Dimensions[3];
-        var kH = kernelshape[0];
-        var kW = kernelshape[1];
-        int effKH = GetConv2DEffectiveFilterSize(kH, dilations[0]);
-        int effKW = GetConv2DEffectiveFilterSize(kW, dilations[1]);
-        var outShape = MaxPoolOutputShape(H, W, effKH, effKW, strides[0], strides[1], pads[0] + pads[2], pads[1] + pads[3], ceilMode);
-        if (outShape[0] <= 0 || outShape[1] <= 0) throw new ArgumentException("MaxPool output spatial dims must be positive.");
-        var pad = new PadInfo { top = pads[0], left = pads[1], bottom = pads[2], right = pads[3], h = pads[0] + pads[2], w = pads[1] + pads[3] };
-        return MaxPoolDoubleCore(input, N, C, H, W, kH, kW, strides[0], strides[1], dilations[0], dilations[1], pad, outShape[0], outShape[1]);
+        var (N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW) = PlanPoolExplicit(input, kernelshape, pads, strides, dilations, ceilMode);
+        return MaxPoolDoubleCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW);
     }
 
     static Tensor<double> MaxPoolDoubleCore(Tensor<double> input, int N, int C, int H, int W, int kH, int kW, int strideHeight, int strideWidth, int dilationHeight, int dilationWidth, PadInfo pad, int outH, int outW)
@@ -2819,38 +2768,8 @@ where T : unmanaged
 
     public static Tensor<int> MaxPool2D(Tensor<int> input, int[] kernelshape, PadType padtype, int? padvalue, int[]? strides, int[]? dilations)
     {
-        if (kernelshape == null)
-        {
-            throw new ArgumentNullException("kernelshape");
-        }
-        if (input.Rank != 4)
-        {
-            throw new ArgumentException("Input tensors must be of rank 4 with the layout NxCxHxW.");
-        }
-        if (kernelshape.Rank != 1 || kernelshape.Length != 2)
-        {
-            throw new ArgumentException("The kernel must have shape m x n.");
-        }
-
-        if (strides == null)
-        {
-            strides = kernelshape;
-        }
-        if (dilations == null)
-        {
-            dilations = new int[] { 1, 1 };
-        }
-
-        var N = input.Dimensions[0];
-        var C = input.Dimensions[1];
-        var H = input.Dimensions[2];
-        var W = input.Dimensions[3];
-        var kH = kernelshape[0];
-        var kW = kernelshape[1];
-        var strideHeight = strides[0];
-        var strideWidth = strides[1];
-        var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
-        return MaxPoolIntCore(input, N, C, H, W, kH, kW, strideHeight, strideWidth, dilations[0], dilations[1], info.PadInfo, info.Shape[0], info.Shape[1]);
+        var (N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW) = PlanPoolPadType(input, kernelshape, padtype, padvalue, strides, dilations);
+        return MaxPoolIntCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW);
     }
 
     static Tensor<int> MaxPoolIntCore(Tensor<int> input, int N, int C, int H, int W, int kH, int kW, int strideHeight, int strideWidth, int dilationHeight, int dilationWidth, PadInfo pad, int outH, int outW)
