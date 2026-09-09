@@ -128,10 +128,22 @@ where T : unmanaged
 
     static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
     {
+        // Register-tiled accumulation wins while both the reduction axis (n)
+        // and the output width (k) fit the fast caches: a 25-shape old-vs-new
+        // probe wins every shape with n and k below 2560 and loses every shape
+        // with n or k at or above 3072, so wider shapes keep the proven kernel.
+        const int TiledMatMulAxisLimit = 2560;
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
             int blocked = m - (m % 2);
-            mm_unsafe_vectorized_intrinsics_2x4(blocked, n, k, x, y, output);
+            if (n < TiledMatMulAxisLimit && k < TiledMatMulAxisLimit)
+            {
+                mm_unsafe_vectorized_intrinsics_2x4tiled(blocked, n, k, x, y, output);
+            }
+            else
+            {
+                mm_unsafe_vectorized_intrinsics_2x4(blocked, n, k, x, y, output);
+            }
             if (blocked != m)
             {
                 mm_unsafe_vectorized_intrinsics(1, n, k, x + blocked * n, y, output + blocked * k);

@@ -76,6 +76,9 @@ public class MatMulKernelAgreementTests
         var c3 = Tensor<float>.Zeros(N, N).ToDenseTensor();
         RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics(N, N, N, (float*)pa, (float*)pb, (float*)pc), a, b, c3);
         Agrees(Sum(c3), expected, "intrinsics");
+        var c4 = Tensor<float>.Zeros(N, N).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(N, N, N, (float*)pa, (float*)pb, (float*)pc), a, b, c4);
+        Agrees(Sum(c4), expected, "intrinsics-2x4tiled");
     }
 
     [Fact]
@@ -91,5 +94,57 @@ public class MatMulKernelAgreementTests
 
         RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics(N, N, N, (float*)pa, (float*)pb, (float*)pc), a, b, c2);
         Agrees(Sum(c2), expected, "intrinsics-accumulate");
+        var c3 = Tensor<float>.Zeros(N, N).ToDenseTensor();
+        c1.Buffer.Span.CopyTo(c3.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(N, N, N, (float*)pa, (float*)pb, (float*)pc), a, b, c3);
+        Agrees(Sum(c3), expected, "intrinsics-2x4tiled-accumulate");
+    }
+
+    [Fact]
+    public unsafe void TiledKernelAgreesOnTailShapes()
+    {
+        var rnd = new Random(Seed);
+        TailAgrees(6, 24, 20, rnd);
+        TailAgrees(4, 24, 40, rnd);
+        TailAgrees(4, 24, 44, rnd);
+    }
+
+    static DenseTensor<float> FillRect(int rows, int cols, Random rnd)
+    {
+        var t = Tensor<float>.Zeros(rows, cols).ToDenseTensor();
+        for (int i = 0; i < t.Length; i++) t.SetValue(i, rnd.NextSingle());
+        return t;
+    }
+
+    static float ReferenceRectSum(DenseTensor<float> a, DenseTensor<float> b, DenseTensor<float> c, int m, int n, int k)
+    {
+        float total = 0f;
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < k; j++)
+            {
+                float acc = c.GetValue(i * k + j);
+                for (int l = 0; l < n; l++) acc += a.GetValue(i * n + l) * b.GetValue(l * k + j);
+                total += acc;
+            }
+        return total;
+    }
+
+    static float SumRect(DenseTensor<float> t)
+    {
+        float s = 0f;
+        for (int i = 0; i < t.Length; i++) s += t.GetValue(i);
+        return s;
+    }
+
+    static unsafe void TailAgrees(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var zero = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        float expected = ReferenceRectSum(a, b, zero, m, n, k);
+
+        var c = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c);
+        Agrees(SumRect(c), expected, "intrinsics-2x4tiled-tail-" + m + "x" + n + "x" + k);
     }
 }

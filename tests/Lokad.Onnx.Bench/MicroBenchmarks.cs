@@ -70,6 +70,7 @@ public class MatMul2DBenchmarks
         CheckVariant("unsafe-simd", dims, reference, RunUnsafeSimd(xa, xb), tolerance);
         CheckVariant("unsafe-simd-intrinsics", dims, reference, RunUnsafeIntrinsics(xa, xb), tolerance);
         CheckVariant("unsafe-simd-intrinsics-2x4", dims, reference, RunUnsafeIntrinsics2x4(xa, xb), tolerance);
+        CheckVariant("unsafe-simd-intrinsics-2x4tiled", dims, reference, RunUnsafeIntrinsics2x4Tiled(xa, xb), tolerance);
         Console.WriteLine("MatMul2D agreement: all 6 variants match element-wise.");
     }
 
@@ -126,6 +127,16 @@ public class MatMul2DBenchmarks
         return dest.ToArray();
     }
 
+    static unsafe float[] RunUnsafeIntrinsics2x4Tiled(DenseTensor<float> xa, DenseTensor<float> xb)
+    {
+        var dest = Tensor<float>.Zeros(384, 384).ToDenseTensor();
+        using var pa = xa.Buffer.Pin();
+        using var pb = xb.Buffer.Pin();
+        using var pc = dest.Buffer.Pin();
+        mm_unsafe_vectorized_intrinsics_2x4tiled(384, 384, 384, (float*)pa.Pointer, (float*)pb.Pointer, (float*)pc.Pointer);
+        return dest.ToArray();
+    }
+
 
     [Benchmark(Description = "Multiply 2 384x384 matrices - managed")]
     public void MatMul2D_1() =>
@@ -150,6 +161,9 @@ public class MatMul2DBenchmarks
     [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe simd intrinsics pointers 2x4")]
     public unsafe void MatMul2D_6() =>
       mm_unsafe_vectorized_intrinsics_2x4(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
+    [Benchmark(Description = "Multiply 2 384x384 matrices - unsafe simd intrinsics pointers 2x4 tiled")]
+    public unsafe void MatMul2D_7() =>
+      mm_unsafe_vectorized_intrinsics_2x4tiled(384, 384, 384, (float*)ah_1.Pointer, (float*)bh_1.Pointer, (float*)ch.Pointer);
     static DenseTensor<float> FillDeterministic(int rows, int cols, Random rnd)
     {
         var t = Tensor<float>.Zeros(rows, cols).ToDenseTensor();
