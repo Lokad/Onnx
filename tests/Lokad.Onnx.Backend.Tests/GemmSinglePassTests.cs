@@ -19,7 +19,7 @@ public class GemmSinglePassTests
                 {
                     if (c.Length == 1) cb = c[0];
                     else if (cdims.Length == 1) cb = c[j];
-                    else cb = c[i * n + j];
+                    else cb = c[(cdims[0] == 1 ? 0 : i) * cdims[1] + (cdims[1] == 1 ? 0 : j)];
                 }
                 y[i * n + j] = alpha * p + beta * cb;
             }
@@ -54,6 +54,59 @@ public class GemmSinglePassTests
                     var expected = NaiveGemm(ad, bd, data, dims, m, k, n, alpha, beta);
                     Assert.Equal(expected, ((Tensor<float>)r.Outputs[0]).ToArray());
                 }
+    }
+
+    [Fact]
+    public void NonDenseBiasViews_MatchNaiveExactly()
+    {
+        var rnd = new System.Random(37);
+        int m = 2, k = 3, n = 6;
+        var ad = new float[m * k];
+        var bd = new float[k * n];
+        for (int i = 0; i < ad.Length; i++) ad[i] = (float)rnd.NextDouble() - 0.5f;
+        for (int i = 0; i < bd.Length; i++) bd[i] = (float)rnd.NextDouble() - 0.5f;
+        var a = new DenseTensor<float>(ad.ToArray(), new[] { m, k });
+        var b = new DenseTensor<float>(bd.ToArray(), new[] { k, n });
+        float alpha = 0.5f, beta = 2f;
+        var big2 = new DenseTensor<float>(Enumerable.Range(0, 12).Select(i => 0.25f * i).ToArray(), new[] { 2, 6 });
+        Tensor<float> rowView = big2.Slice(new SliceIndex(1, 2));
+        var rr = CPUExecutionProvider.Gemm(a, b, rowView, alpha, beta, null, 0, 0);
+        Assert.Equal(OpStatus.Success, rr.Status);
+        var rowVals = new float[6];
+        for (int j = 0; j < 6; j++) rowVals[j] = 0.25f * (6 + j);
+        Assert.Equal(NaiveGemm(ad, bd, rowVals, new[] { 1, 6 }, m, k, n, alpha, beta), ((Tensor<float>)rr.Outputs[0]).ToArray());
+        var big1 = new DenseTensor<float>(Enumerable.Range(0, 12).Select(i => 0.5f * i).ToArray(), new[] { 12 });
+        Tensor<float> vecView = big1.Slice(new SliceIndex(3, 9));
+        var rv = CPUExecutionProvider.Gemm(a, b, vecView, 2f, 0.5f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, rv.Status);
+        var vecVals = new float[6];
+        for (int j = 0; j < 6; j++) vecVals[j] = 0.5f * (3 + j);
+        Assert.Equal(NaiveGemm(ad, bd, vecVals, new[] { 6 }, m, k, n, 2f, 0.5f), ((Tensor<float>)rv.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void DoubleEpilogue_MatchesNaiveExactly()
+    {
+        var rnd = new System.Random(39);
+        int m = 3, k = 4, n = 5;
+        var ad = new double[m * k];
+        var bd = new double[k * n];
+        var cd = new double[n];
+        for (int j = 0; j < n; j++) cd[j] = rnd.NextDouble();
+        var a = new DenseTensor<double>(ad.ToArray(), new[] { m, k });
+        var b = new DenseTensor<double>(bd.ToArray(), new[] { k, n });
+        var c = new DenseTensor<double>(cd.ToArray(), new[] { n });
+        var r = CPUExecutionProvider.Gemm(a, b, c, 0.5f, 2f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, r.Status);
+        // Zero products isolate the epilogue bit-wise: any summation order
+        // accumulates exact zeros, so only the scale/bias pass can differ.
+        var expected = new double[m * n];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+            {
+                expected[i * n + j] = 0.5 * 0.0 + 2.0 * cd[j];
+            }
+        Assert.Equal(expected, ((Tensor<double>)r.Outputs[0]).ToArray());
     }
 
     [Fact]

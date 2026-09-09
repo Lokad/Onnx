@@ -67,19 +67,32 @@ public partial class CPUExecutionProvider
             Tensor<float>.MatMul2D(a, b, y, tensorOptions);
             if (alpha == 1f && (c is null || beta == 0f)) return y;
             var ys = y.Buffer.Span;
+            if (c is null || beta == 0f)
+            {
+                for (int i = 0; i < ys.Length; i++) ys[i] = alpha * ys[i] + beta * 0f;
+                return y;
+            }
+            var cbias = c.ToArray();
+            if (c.Length == 1)
+            {
+                float cb = cbias[0];
+                for (int i = 0; i < ys.Length; i++) ys[i] = alpha * ys[i] + beta * cb;
+                return y;
+            }
+            if (c.Rank == 1)
+            {
+                for (int i = 0; i < m; i++)
+                {
+                    for (int j = 0; j < n; j++) ys[i * n + j] = alpha * ys[i * n + j] + beta * cbias[j];
+                }
+                return y;
+            }
+            int crows = c.Dimensions[0];
+            int ccols = c.Dimensions[1];
             for (int i = 0; i < m; i++)
             {
-                for (int j = 0; j < n; j++)
-                {
-                    float cb = 0f;
-                    if (c is not null && beta != 0f)
-                    {
-                        if (c.Length == 1) cb = c.GetValue(0);
-                        else if (c.Rank == 1) cb = c.GetValue(j);
-                        else cb = c.GetValue((c.Dimensions[0] == 1 ? 0 : i) * c.Dimensions[1] + (c.Dimensions[1] == 1 ? 0 : j));
-                    }
-                    ys[i * n + j] = alpha * ys[i * n + j] + beta * cb;
-                }
+                int r = (crows == 1 ? 0 : i) * ccols;
+                for (int j = 0; j < n; j++) ys[i * n + j] = alpha * ys[i * n + j] + beta * cbias[r + (ccols == 1 ? 0 : j)];
             }
             return y;
         }
@@ -95,19 +108,32 @@ public partial class CPUExecutionProvider
             Tensor<double>.MatMul2D(a, b, y, tensorOptions);
             if (alpha == 1f && (c is null || beta == 0f)) return y;
             var ys = y.Buffer.Span;
+            if (c is null || beta == 0f)
+            {
+                for (int i = 0; i < ys.Length; i++) ys[i] = alpha * ys[i] + beta * 0.0;
+                return y;
+            }
+            var cbias = c.ToArray();
+            if (c.Length == 1)
+            {
+                double cb = cbias[0];
+                for (int i = 0; i < ys.Length; i++) ys[i] = alpha * ys[i] + beta * cb;
+                return y;
+            }
+            if (c.Rank == 1)
+            {
+                for (int i = 0; i < m; i++)
+                {
+                    for (int j = 0; j < n; j++) ys[i * n + j] = alpha * ys[i * n + j] + beta * cbias[j];
+                }
+                return y;
+            }
+            int crows = c.Dimensions[0];
+            int ccols = c.Dimensions[1];
             for (int i = 0; i < m; i++)
             {
-                for (int j = 0; j < n; j++)
-                {
-                    double cb = 0.0;
-                    if (c is not null && beta != 0f)
-                    {
-                        if (c.Length == 1) cb = c.GetValue(0);
-                        else if (c.Rank == 1) cb = c.GetValue(j);
-                        else cb = c.GetValue((c.Dimensions[0] == 1 ? 0 : i) * c.Dimensions[1] + (c.Dimensions[1] == 1 ? 0 : j));
-                    }
-                    ys[i * n + j] = alpha * ys[i * n + j] + beta * cb;
-                }
+                int r = (crows == 1 ? 0 : i) * ccols;
+                for (int j = 0; j < n; j++) ys[i * n + j] = alpha * ys[i * n + j] + beta * cbias[r + (ccols == 1 ? 0 : j)];
             }
             return y;
         }
