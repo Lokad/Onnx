@@ -95,6 +95,37 @@ public class ConvPoolPaddingTests
     }
 
     [Fact]
+    public void MaxPool_Values_MatchHandComputation()
+    {
+        var x = F4(new float[1, 1, 3, 3] { { { { 1f, 2f, 3f }, { 4f, 5f, 6f }, { 7f, 8f, 9f } } } });
+        var r = CPUExecutionProvider.MaxPool(x, "VALID", 0, null, new[] { 2, 2 }, null, 0, new[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs[0];
+        Assert.Equal(new[] { 1, 1, 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 5f, 6f, 8f, 9f }, y.ToArray());
+    }
+
+    [Fact]
+    public void MaxPool_NaNWindows_YieldNegativeFloatMax()
+    {
+        // Probed ORT 1.29 behavior for scalar windows; multi-NaN full-vector
+        // windows differ on the native side by SIMD width, which no
+        // deterministic contract can match, so ours stays stable instead.
+        var all = F4(new float[1, 1, 2, 2] { { { { float.NaN, float.NaN }, { float.NaN, float.NaN } } } });
+        var rall = CPUExecutionProvider.MaxPool(all, "VALID", 0, null, new[] { 2, 2 }, null, 0, new[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, rall.Status);
+        Assert.Equal(new float[] { -float.MaxValue }, ((Tensor<float>)rall.Outputs[0]).ToArray());
+        var mixed = F4(new float[1, 1, 2, 2] { { { { float.NaN, 2f }, { 3f, 4f } } } });
+        var rmixed = CPUExecutionProvider.MaxPool(mixed, "VALID", 0, null, new[] { 2, 2 }, null, 0, new[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, rmixed.Status);
+        Assert.Equal(new float[] { 4f }, ((Tensor<float>)rmixed.Outputs[0]).ToArray());
+        var single = F4(new float[1, 1, 1, 1] { { { { float.NegativeInfinity } } } });
+        var rsingle = CPUExecutionProvider.MaxPool(single, "VALID", 0, null, new[] { 1, 1 }, null, 0, new[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, rsingle.Status);
+        Assert.Equal(new float[] { -float.MaxValue }, ((Tensor<float>)rsingle.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void MaxPool_UnsupportedVariants_FailExplicitly()
     {
         var x = F4(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });

@@ -426,7 +426,12 @@ where T : unmanaged
                     {
                         var xCCorner = yC * strideWidth - pad.left;
 
-                        var maxValue = float.NegativeInfinity;
+                        // Negative float max like the native reference: windows
+                        // with no finite value stay there, and NaN never wins a
+                        // comparison. (Multi-NaN full-vector windows differ on
+                        // the native side by SIMD width, which no deterministic
+                        // contract can match; ours is stable.)
+                        var maxValue = -float.MaxValue;
 
                         for (var tR = 0; tR < kH; ++tR)
                         {
