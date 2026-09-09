@@ -1305,25 +1305,33 @@ where T : unmanaged
     public static Tensor<double> Sqrt(Tensor<double> x) => Sqrt(x, TensorExecutionOptions.Auto);
     public static Tensor<double> Sqrt(Tensor<double> x, TensorExecutionOptions options) => x.VectorizedApply(Vector.SquareRoot, Math.Sqrt, options);
 
+    // Shared Resize preparation: validates the 4D NCHW contract and splits
+    // declared and input extents. Parameter names in the throws below are
+    // contractual (callers pass rank for input). Scales, coordinates, and
+    // rounding stay per-type where precision differs.
+    static (int NOut, int COut, int HOut, int WOut, int NIn, int CIn, int HIn, int WIn) ResizeGeometry(int rank, int[] sizes, ReadOnlySpan<int> inputDims)
+    {
+        if (rank != 4) throw new ArgumentException("input", "Resize currently supports only 4D tensors (NCHW).");
+        if (sizes is null || sizes.Length != 4) throw new ArgumentException("sizes", "Resize sizes must be a 1D array of length 4.");
+        int nOut = sizes[0];
+        int cOut = sizes[1];
+        int hOut = sizes[2];
+        int wOut = sizes[3];
+        int nIn = inputDims[0];
+        int cIn = inputDims[1];
+        int hIn = inputDims[2];
+        int wIn = inputDims[3];
+        if (nOut != nIn || cOut != cIn)
+        {
+            throw new ArgumentException("sizes", "Resize currently requires N and C dimensions to remain unchanged.");
+        }
+        return (nOut, cOut, hOut, wOut, nIn, cIn, hIn, wIn);
+    }
+
     public static Tensor<float> Resize(Tensor<float> input, int[] sizes, MathOps.ResizeMode mode, MathOps.ResizeCoordinateTransformation coordinateTransformationMode, MathOps.ResizeNearestMode nearestMode, float cubicCoeffA, double[]? scales)
     {
         StartOpStage(OpStage.ValidateArguments);
-        if (input.Rank != 4) throw new ArgumentException(nameof(input), "Resize currently supports only 4D tensors (NCHW).");
-        if (sizes is null || sizes.Length != 4) throw new ArgumentException(nameof(sizes), "Resize sizes must be a 1D array of length 4.");
-
-        var nOut = sizes[0];
-        var cOut = sizes[1];
-        var hOut = sizes[2];
-        var wOut = sizes[3];
-        var nIn = input.Dimensions[0];
-        var cIn = input.Dimensions[1];
-        var hIn = input.Dimensions[2];
-        var wIn = input.Dimensions[3];
-
-        if (nOut != nIn || cOut != cIn)
-        {
-            throw new ArgumentException(nameof(sizes), "Resize currently requires N and C dimensions to remain unchanged.");
-        }
+        var (nOut, cOut, hOut, wOut, nIn, cIn, hIn, wIn) = ResizeGeometry(input.Rank, sizes, input.Dimensions);
 
         var output = DenseTensor<float>.OfShape(sizes);
         var xd = input.ToDenseTensor();
@@ -1474,22 +1482,7 @@ where T : unmanaged
     public static Tensor<double> Resize(Tensor<double> input, int[] sizes, MathOps.ResizeMode mode, MathOps.ResizeCoordinateTransformation coordinateTransformationMode, MathOps.ResizeNearestMode nearestMode, double cubicCoeffA, double[]? scales)
     {
         StartOpStage(OpStage.ValidateArguments);
-        if (input.Rank != 4) throw new ArgumentException(nameof(input), "Resize currently supports only 4D tensors (NCHW).");
-        if (sizes is null || sizes.Length != 4) throw new ArgumentException(nameof(sizes), "Resize sizes must be a 1D array of length 4.");
-
-        var nOut = sizes[0];
-        var cOut = sizes[1];
-        var hOut = sizes[2];
-        var wOut = sizes[3];
-        var nIn = input.Dimensions[0];
-        var cIn = input.Dimensions[1];
-        var hIn = input.Dimensions[2];
-        var wIn = input.Dimensions[3];
-
-        if (nOut != nIn || cOut != cIn)
-        {
-            throw new ArgumentException(nameof(sizes), "Resize currently requires N and C dimensions to remain unchanged.");
-        }
+        var (nOut, cOut, hOut, wOut, nIn, cIn, hIn, wIn) = ResizeGeometry(input.Rank, sizes, input.Dimensions);
 
         var output = DenseTensor<double>.OfShape(sizes);
         var xd = input.ToDenseTensor();
