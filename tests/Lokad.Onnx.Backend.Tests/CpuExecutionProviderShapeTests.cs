@@ -81,5 +81,38 @@ namespace Lokad.Onnx.Backend.Tests
             Assert.Equal(new[] { 2, 2 }, output.Dimensions.ToArray());
             Assert.Equal(new[] { 10f, 30f, 20f, 10f }, output.ToArray());
         }
+
+        static Tensor<long> ShapeOf(float[,,] values, int? start, int? end)
+        {
+            var data = DenseTensor<float>.OfValues(values);
+            var r = CPU.Shape(data, start, end, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            return (Tensor<long>)r.Outputs![0];
+        }
+
+        [Fact]
+        public void ShapeReversedSlice_ReturnsEmpty()
+        {
+            var output = ShapeOf(new float[2, 3, 4], 2, 1);
+            Assert.Equal(new[] { 0 }, output.Dimensions.ToArray());
+            Assert.Empty(output.ToArray());
+        }
+
+        [Fact]
+        public void ShapeEqualBounds_ReturnsEmpty()
+        {
+            Assert.Empty(ShapeOf(new float[2, 3, 4], 1, 1).ToArray());
+            Assert.Empty(ShapeOf(new float[2, 3, 4], 0, 0).ToArray());
+            Assert.Empty(ShapeOf(new float[2, 3, 4], 3, 3).ToArray());
+        }
+
+        [Fact]
+        public void ShapeNegativeAndClampedBounds_MatchSpec()
+        {
+            Assert.Equal(new long[] { 3 }, ShapeOf(new float[2, 3, 4], -2, -1).ToArray());
+            Assert.Equal(new long[] { 2, 3, 4 }, ShapeOf(new float[2, 3, 4], -10, 10).ToArray());
+            Assert.Equal(new long[] { 2, 3 }, ShapeOf(new float[2, 3, 4], 0, -1).ToArray());
+            Assert.Equal(new long[] { 2, 3, 4 }, ShapeOf(new float[2, 3, 4], null, null).ToArray());
+        }
     }
 }

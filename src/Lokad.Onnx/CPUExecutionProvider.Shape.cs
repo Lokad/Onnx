@@ -161,7 +161,9 @@ public partial class CPUExecutionProvider
         var end = ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, _end.HasValue ? _end.Value : data.Rank);
         start = ArrayUtilities.Clamp(start, 0, data.Rank);
         end = ArrayUtilities.Clamp(end, 0, data.Rank);  
-        var _shape = data.Dims.Convert<int, long>()[start..end];
+        var full = data.Dims.Convert<int, long>();
+        // Reversed slices yield an empty shape vector per the ONNX Shape contract.
+        var _shape = start >= end ? Array.Empty<long>() : full[start..end];
         return Success(op, DenseTensor<long>.OfValues(_shape));
     }
 

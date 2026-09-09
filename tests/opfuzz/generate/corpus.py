@@ -372,6 +372,18 @@ def gather_extra_cases():
     node = helper.make_node("Gather", ["x", "idx"], ["z"], axis=1)
     emit("gather_int32", node, [("x", [2, 3, 4])], [("z", [2, 2, 2, 4])], {"x": c}, inits=[i32_init])
 
+def shape_extra_cases():
+    # Reversed slice yields an empty shape vector (C03).
+    a = np.zeros((2, 3, 4), dtype=np.float32)
+    node = helper.make_node("Shape", ["x"], ["z"], start=2, end=1)
+    emit("shape_empty", node, [("x", [2, 3, 4])], [("z", [0])], {"x": a}, dtypes={"z": TensorProto.INT64}, opset=15)
+    # Negative sliced bounds.
+    node = helper.make_node("Shape", ["x"], ["z"], start=-2, end=-1)
+    emit("shape_negative", node, [("x", [2, 3, 4])], [("z", [1])], {"x": a}, dtypes={"z": TensorProto.INT64}, opset=15)
+    # No slice: full shape on the current opset.
+    node = helper.make_node("Shape", ["x"], ["z"])
+    emit("shape_full", node, [("x", [2, 3, 4])], [("z", [3])], {"x": a}, dtypes={"z": TensorProto.INT64}, opset=15)
+
 if __name__ == "__main__":
     for op in ["Add", "Sub", "Mul", "Div"]:
         binary_cases(op)
@@ -382,4 +394,5 @@ if __name__ == "__main__":
     boundary_cases()
     layernorm_cases()
     gather_extra_cases()
+    shape_extra_cases()
     print("cases:", len([d for d in os.listdir(ROOT) if os.path.isdir(os.path.join(ROOT, d))]))

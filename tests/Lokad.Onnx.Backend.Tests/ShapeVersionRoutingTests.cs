@@ -277,4 +277,33 @@ public class ShapeVersionRoutingTests
         Assert.False(g.Outputs.ContainsKey(""));
         Assert.False(g.IntermediateOutputs.ContainsKey(""));
     }
+
+    [Fact]
+    public void Shape_ReversedSlice_NewOpset_ReturnsEmpty()
+    {
+        var g = NewGraph(15);
+        g.Outputs["z"] = DenseTensor<long>.OfShape(0);
+        g.Nodes.Add(new Node
+        {
+            Name = "sh", Op = OpType.Shape,
+            Inputs = new[] { "x" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object> { { "start", 2L }, { "end", 1L } },
+        });
+        g.RefreshLifetimeAnalysis();
+        Run(g, new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfShape(2, 3, 4) } });
+        var z = (Tensor<long>)g.Outputs["z"];
+        Assert.Equal(new int[] { 0 }, z.Dimensions.ToArray());
+        Assert.Empty(z.ToArray());
+    }
+
+    [Fact]
+    public void Shape_NoSlice_OldOpset_ReturnsFullShape()
+    {
+        var g = NewGraph(13);
+        g.Outputs["z"] = DenseTensor<long>.OfShape(3);
+        g.Nodes.Add(new Node { Name = "sh", Op = OpType.Shape, Inputs = new[] { "x" }, Outputs = new[] { "z" } });
+        g.RefreshLifetimeAnalysis();
+        Run(g, new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfShape(2, 3, 4) } });
+        Assert.Equal(new long[] { 2L, 3L, 4L }, ((Tensor<long>)g.Outputs["z"]).ToArray());
+    }
 }

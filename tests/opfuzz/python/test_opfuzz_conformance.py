@@ -35,7 +35,10 @@ def read_txt(path):
         head = f.readline().split()
         dtype, rank = head[0], int(head[1])
         shape = tuple(int(x) for x in head[2:2 + rank])
-        vals = np.fromstring(f.read(), sep=" ")
+        text = f.read().strip()
+    if not text:
+        return np.empty(shape, dtype=DTYPES[dtype])
+    vals = np.fromstring(text, sep=" ")
     return vals.astype(DTYPES[dtype]).reshape(shape)
 
 
