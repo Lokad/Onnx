@@ -27,11 +27,15 @@ try {
 }
 finally { $zip.Dispose() }
 Write-Host "PASS contents"
-$work = Join-Path $root "artifacts/smoke-pack/app"
-$feed = Join-Path $root "artifacts/nuget"
-if (Test-Path $work) { Fail "stale smoke workdir present, remove artifacts/smoke-pack first" }
+$stamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
+$work = Join-Path $root ("artifacts/smoke-pack/app-" + $stamp)
+$feed = Join-Path $work "feed"
 New-Item -ItemType Directory -Force $work | Out-Null
+New-Item -ItemType Directory -Force $feed | Out-Null
+Copy-Item $nupkg.FullName $feed
 Set-Content (Join-Path $work "nuget.config") "<configuration><packageSources><clear /></packageSources></configuration>"
+$cacheDir = Join-Path ([System.Environment]::GetFolderPath("UserProfile")) ".nuget/packages/lokad.onnx/$version"
+if (Test-Path $cacheDir) { Remove-Item $cacheDir -Recurse -Force }
 Push-Location $work
 try {
     & dotnet new console -f net10.0 --no-restore | Out-Null
@@ -59,5 +63,6 @@ try {
     if (-not ($out -match "SMOKE-OK True 0,2")) { Fail "unexpected scratch output" }
 }
 finally { Pop-Location }
+Remove-Item $work -Recurse -Force
 Write-Host "PASS consume"
 Write-Host "PASS smoke-pack"

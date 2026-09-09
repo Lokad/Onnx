@@ -8,3 +8,11 @@ Demo, inspection and benchmarking console over the core library. lonnx.cmd wraps
 - lonnx run <model.onnx> <inputs...>: run inference. Inputs are path::format file args (see src/Lokad.Onnx.Data/README.md) or --text <props> <quoted text> for text. Useful flags: --softmax, --print-input, --save-input, --node <label> (single node), --disable-simd, --enable-intrinsics, --profile (per-op timing chart), --optimize-memory, --threads <n> (batch-parallel kernels, default 1).
 - Use bench.ps1 (local model, warmed-up e5 runs plus the MatMul sweep into artifacts/bench) for before/after comparisons; microbenchmarks live in tests/Lokad.Onnx.Bench (`Bench micro <id>`).
 
+## Distribution boundary
+
+The `Lokad.Onnx` NuGet package ships the dependency-free core engine only:
+tensors, graph execution, and the `OnnxModel` description API. File import
+(`OnnxImport`), tokenizers, image helpers, and this CLI live outside the
+package and need their own dependencies (notably OnnxSharp for parsing).
+`eng/smoke-pack.ps1` proves the boundary by executing a fresh consumer
+against the packed core with no source references.
