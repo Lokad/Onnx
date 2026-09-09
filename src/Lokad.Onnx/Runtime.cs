@@ -29,7 +29,11 @@ namespace Lokad.Onnx
         public static void Error(string messageTemplate, params object?[] args) => Log.Write(LogLevel.Error, messageTemplate, args);
 
         [DebuggerStepThrough]
-        public static void Error(Exception ex, string messageTemplate, params object?[] args) => Log.Write(LogLevel.Error, messageTemplate + " | " + ex.ToString(), args);
+        public static void Error(Exception ex, string messageTemplate, params object?[] args)
+        {
+            if (!Log.IsEnabled(LogLevel.Error)) return;
+            Log.Write(LogLevel.Error, messageTemplate + " | " + ex.ToString(), args);
+        }
 
         [DebuggerStepThrough]
         public static void Warn(string messageTemplate, params object?[] args) => Log.Write(LogLevel.Warn, messageTemplate, args);

@@ -118,6 +118,32 @@ public class ExecutionLifecycleTests
     }
 
     [Fact]
+    public void InstrumentedRun_EmitsBindingNodeAndModelLines()
+    {
+        var modelLines = CaptureLog(() =>
+        {
+            var mp = new OnnxModel { Name = "logged" };
+            mp.Opset[""] = 11;
+            Model.Load(mp);
+        });
+        Assert.Contains(modelLines, l => l.Contains("Model details:"));
+        var g = NewReluGraph();
+        g.Initializers["x"] = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        var bindLines = CaptureLog(() =>
+        {
+            Assert.True(g.Execute(new Dictionary<string, ITensor>(), true));
+        });
+        Assert.Contains(bindLines, l => l.Contains("Using initializer value"));
+        Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        var nodeLines = CaptureLog(() =>
+        {
+            var user = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
+            Assert.True(g.ExecuteNode(user, "r", false));
+        });
+        Assert.Contains(nodeLines, l => l.Contains("Executing node r"));
+    }
+
+    [Fact]
     public void LoadFailure_RecordsCause_AccessibleWithoutSink()
     {
         var previous = Log.Sink;

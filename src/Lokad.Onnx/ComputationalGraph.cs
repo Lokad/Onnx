@@ -287,11 +287,11 @@ public class ComputationalGraph
                     var elementType = bound?.ElementType ?? declared?.ElementType;
                     if (dims is not null && elementType is not null && ii.Dims.SequenceEqual(dims) && ii.ElementType == elementType)
                     {
-                        Info("Using initializer value {n} for graph input {i}.", ii.TensorNameDesc(), DescribeBoundInput(i));
+                        if (Log.IsEnabled(LogLevel.Info)) Info("Using initializer value {n} for graph input {i}.", ii.TensorNameDesc(), DescribeBoundInput(i));
                         Inputs[i] = Initializers[i];
                         requiredInputs.Remove(i);
                     }
-                    else
+                    else if (Log.IsEnabled(LogLevel.Error))
                     {
                         Error("Cannot use initializer value {n} for graph input {i}. Tensor shape or type does not match.", ii.TensorNameDesc(), DescribeBoundInput(i));
                     }
@@ -772,17 +772,20 @@ public class ComputationalGraph
         }
 
         using var op = Begin("Executing node {node} in graph {n} from {f}", nodeLabel, Metadata["Name"], ModelFile);
-        Debug("Executing node {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
-            + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
-            node.Name, node.Op.ToString(),
-            GetInputTensors(node.Inputs).Select(t => t.TensorNameDesc()),
-            node.Outputs
-        );
-        if (node.Attributes is not null && node.Attributes.Count > 0)
+        if (Log.IsEnabled(LogLevel.Debug))
         {
-            foreach (var kv in node.Attributes)
+            Debug("Executing node {node} with op: {op}, inputs: {inputs}, outputs: {outputs} and "
+                + ((node.Attributes is not null && node.Attributes.Count > 0) ? "the following attributes:" : "no attributes."),
+                node.Name, node.Op.ToString(),
+                GetInputTensors(node.Inputs).Select(t => t.TensorNameDesc()),
+                node.Outputs
+            );
+            if (node.Attributes is not null && node.Attributes.Count > 0)
             {
-                Debug("  {n}: {v}", kv.Key, kv.Value);
+                foreach (var kv in node.Attributes)
+                {
+                    Debug("  {n}: {v}", kv.Key, kv.Value);
+                }
             }
         }
         OpResult r;
