@@ -24,6 +24,37 @@ public class Text
     static readonly Dictionary<string, SharedBertTokenizer> BertCache = new Dictionary<string, SharedBertTokenizer>();
     static readonly object BertCacheGate = new object();
 
+    /// <summary>Loaded file-backed BERT tokenizer plus its encode gate and observed file identity.</summary>
+    sealed class SharedBertFileTokenizer
+    {
+        public BertTokenizer Tokenizer;
+        public readonly object Sync = new object();
+        public readonly long FileLength;
+        public readonly DateTime FileModifiedUtc;
+        public SharedBertFileTokenizer(BertTokenizer tokenizer, long fileLength, DateTime fileModifiedUtc)
+        {
+            Tokenizer = tokenizer;
+            FileLength = fileLength;
+            FileModifiedUtc = fileModifiedUtc;
+        }
+    }
+
+    /// <summary>Process-wide file-backed BERT tokenizer cache keyed by vocab path.</summary>
+    /// <remarks>
+    /// Lifetime: an entry lives until the file identity (length plus
+    /// last-write time) observed at load disagrees with the file on disk,
+    /// or the file disappears; there is no time-based eviction. A
+    /// disagreed file reloads under the gate, so replaced assets are
+    /// never silently stale. A missing file evicts its entry and throws
+    /// like a never-loaded path. Fully offline: no entry here ever
+    /// fetches. Concurrency and ownership match the Roberta cache:
+    /// lookup, load, and reload serialize on the gate, which is never
+    /// held during encoding, and encodes serialize on the per-instance
+    /// gate through the Text methods.
+    /// </remarks>
+    static readonly Dictionary<string, SharedBertFileTokenizer> BertFileCache = new Dictionary<string, SharedBertFileTokenizer>();
+    static readonly object BertFileCacheGate = new object();
+
     /// <summary>Loads (downloading when absent) and caches the named BERT tokenizer.</summary>
     /// <remarks>Shared process-wide like the Roberta cache. The async load runs
     /// on a worker thread so waiting for it cannot deadlock a captured
@@ -59,6 +90,79 @@ public class Text
             }
             shared = cached;
         }
+        ITensor[] result;
+        lock (shared.Sync)
+        {
+            var (eInputIds, eAttentionMask, eTokenTypeIds) = shared.Tokenizer.Encode(text, 512);
+            result = new ITensor[3] {
+                DenseTensor<long>.OfValues(eInputIds.ToArray()).PadLeft().WithName("input_ids"),
+                DenseTensor<long>.OfValues(eAttentionMask.ToArray()).PadLeft().WithName("attention_mask"),
+                DenseTensor<long>.OfValues(eTokenTypeIds.ToArray()).PadLeft().WithName("token_type_ids"),
+            };
+        }
+        op.Complete();
+        return result;
+    }
+
+    /// <summary>Loads a BERT tokenizer from a local WordPiece vocab file without network access.</summary>
+    /// <remarks>Input is not lowercased; the vocab file decides casing. Throws
+    /// FileNotFoundException for a missing path.</remarks>
+    public static BertTokenizer LoadBertTokenizerFromFile(string vocabPath)
+    {
+        if (!File.Exists(vocabPath))
+        {
+            throw new FileNotFoundException($"Tokenizer vocab file does not exist: {vocabPath}.", vocabPath);
+        }
+        var tok = new BertTokenizer();
+        using var reader = new StreamReader(vocabPath);
+        tok.LoadVocabulary(reader, false, "[UNK]", "[CLS]", "[SEP]", "[PAD]", System.Text.NormalizationForm.FormC);
+        return tok;
+    }
+
+    /// <summary>Returns the shared cached holder for a vocab file, loading it on first use.</summary>
+    /// <remarks>A cached entry whose file identity disagrees reloads here, and a
+    /// deleted file evicts its entry and throws. The gate is never held
+    /// during encoding.</remarks>
+    static SharedBertFileTokenizer GetOrLoadBertFileTokenizerLocked(string vocabPath)
+    {
+        lock (BertFileCacheGate)
+        {
+            var identity = TokenizerFileIdentity(vocabPath);
+            if (identity is null)
+            {
+                BertFileCache.Remove(vocabPath);
+                throw new FileNotFoundException($"Tokenizer vocab file does not exist: {vocabPath}.", vocabPath);
+            }
+            if (!BertFileCache.TryGetValue(vocabPath, out var cached)
+                || cached.FileLength != identity.Value.Length
+                || cached.FileModifiedUtc != identity.Value.ModifiedUtc)
+            {
+                cached = new SharedBertFileTokenizer(
+                    LoadBertTokenizerFromFile(vocabPath),
+                    identity.Value.Length,
+                    identity.Value.ModifiedUtc);
+                BertFileCache[vocabPath] = cached;
+            }
+            return cached;
+        }
+    }
+
+    /// <summary>Returns the shared cached file-backed BERT tokenizer for a vocab path.</summary>
+    /// <remarks>Fully offline. Encodes through the returned instance are only
+    /// safe via the Text encode methods, which serialize on the instance
+    /// gate. A missing path throws FileNotFoundException and evicts any entry.</remarks>
+    public static BertTokenizer GetOrLoadBertFileTokenizer(string vocabPath)
+    {
+        return GetOrLoadBertFileTokenizerLocked(vocabPath).Tokenizer;
+    }
+
+    /// <summary>Tokenizes one text with the shared cached file-backed BERT tokenizer.</summary>
+    /// <remarks>Fully offline: reuses the cached instance and never downloads.
+    /// Encodes serialize on the instance gate.</remarks>
+    public static ITensor[]? BertTokenizeFromFile(string text, string vocabPath)
+    {
+        var op = Begin("Tokenizing {len} characters using BERT vocab file {f}", text.Length, vocabPath);
+        var shared = GetOrLoadBertFileTokenizerLocked(vocabPath);
         ITensor[] result;
         lock (shared.Sync)
         {
@@ -328,7 +432,7 @@ public class Text
     {
         lock (RobertaCacheGate)
         {
-            var identity = RobertaFileIdentity(tokenizerModelPath);
+            var identity = TokenizerFileIdentity(tokenizerModelPath);
             if (identity is null)
             {
                 RobertaCache.Remove(tokenizerModelPath);
@@ -351,7 +455,7 @@ public class Text
     /// <summary>Reads the reload identity of a tokenizer model file.</summary>
     /// <remarks>Null means absent, which the caller reports exactly like a
     /// never-loaded missing path instead of serving a stale instance.</remarks>
-    static (long Length, DateTime ModifiedUtc)? RobertaFileIdentity(string tokenizerModelPath)
+    static (long Length, DateTime ModifiedUtc)? TokenizerFileIdentity(string tokenizerModelPath)
     {
         if (string.IsNullOrEmpty(tokenizerModelPath)) return null;
         var info = new FileInfo(tokenizerModelPath);
