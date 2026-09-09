@@ -21,6 +21,18 @@ public class ComputationalGraph
     public Dictionary<string, ITensor> Initializers = new Dictionary<string, ITensor>();
 
     /// <summary>
+    /// A constant-only Transpose folded into a prepared initializer. The
+    /// transposed payload is owned immutably by the prepared plan: replacing
+    /// the source initializer is detected per run and refolds on demand,
+    /// while in-place content mutation requires <see cref="InvalidatePreparation"/>.
+    /// </summary>
+    internal sealed record FoldedTranspose(string SourceName, ITensor SourceRef, long SourceLength, string PreparedName);
+
+    internal Dictionary<string, FoldedTranspose> FoldedTransposes = new Dictionary<string, FoldedTranspose>(StringComparer.Ordinal);
+
+    internal object FoldLock = new object();
+
+    /// <summary>
     /// Retained input descriptions (with symbolic dimension names) for
     /// descriptor-aware validation. Treated as immutable after load; empty for
     /// hand-built graphs, which validate against placeholder shapes instead.
@@ -73,9 +85,67 @@ public class ComputationalGraph
     }
 
     /// <summary>Forgets the analysis so the next execution re-analyzes unconditionally.</summary>
+    /// <remarks>Drops folded constant transposes as well, so in-place content
+    /// mutation of a folded initializer takes effect after this call.</remarks>
     public void InvalidatePreparation()
     {
         _prepared = false;
+        lock (FoldLock)
+        {
+            foreach (var fold in FoldedTransposes.Values) Initializers.Remove(fold.PreparedName);
+            FoldedTransposes.Clear();
+        }
+    }
+
+    /// <summary>
+    /// Returns the prepared transposition for a constant-only Transpose node
+    /// when the source initializer is unchanged since the fold. Any doubt
+    /// falls through to normal computation.
+    /// </summary>
+    internal bool TryGetFoldedTranspose(string nodeName, string[]? nodeInputs, ITensor? current, out ITensor? prepared)
+    {
+        prepared = null;
+        if (string.IsNullOrEmpty(nodeName) || nodeInputs is null || nodeInputs.Length != 1
+            || string.IsNullOrEmpty(nodeInputs[0]) || current is null) return false;
+        lock (FoldLock)
+        {
+            if (!FoldedTransposes.TryGetValue(nodeName, out var fold)) return false;
+            if (fold.SourceName != nodeInputs[0]) return false;
+            if (!Initializers.TryGetValue(fold.SourceName, out var src)
+                || !ReferenceEquals(src, fold.SourceRef) || src.Length != fold.SourceLength) return false;
+            if (!ReferenceEquals(current, src)) return false;
+            if (!Initializers.TryGetValue(fold.PreparedName, out prepared) || prepared is null) return false;
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Folds a freshly computed constant-only transposition into a prepared
+    /// initializer owned by the plan. The stored payload is an independent
+    /// copy, never pool-rented storage.
+    /// </summary>
+    internal void FoldTranspose(string nodeName, string[]? nodeInputs, ITensor? input, ITensor result)
+    {
+        if (string.IsNullOrEmpty(nodeName) || nodeInputs is null || nodeInputs.Length != 1
+            || string.IsNullOrEmpty(nodeInputs[0]) || input is null) return;
+        string sourceName = nodeInputs[0];
+        lock (FoldLock)
+        {
+            if (FoldedTransposes.TryGetValue(nodeName, out var existing))
+            {
+                if (Initializers.TryGetValue(existing.SourceName, out var cur)
+                    && ReferenceEquals(cur, existing.SourceRef) && cur.Length == existing.SourceLength) return;
+                Initializers.Remove(existing.PreparedName);
+                FoldedTransposes.Remove(nodeName);
+            }
+            if (!Initializers.TryGetValue(sourceName, out var src) || !ReferenceEquals(input, src)) return;
+            string preparedName = "folded:" + nodeName;
+            if (Initializers.ContainsKey(preparedName) || Inputs.ContainsKey(preparedName)) return;
+            var stored = result.Clone();
+            stored.Name = preparedName;
+            Initializers[preparedName] = stored;
+            FoldedTransposes[nodeName] = new FoldedTranspose(sourceName, src, src.Length, preparedName);
+        }
     }
 
     /// <summary>Creates an isolated execution context sharing this prepared plan.</summary>

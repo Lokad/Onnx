@@ -119,6 +119,22 @@ public partial struct Node
         index < Inputs.Length && !string.IsNullOrEmpty(Inputs[index]) ? graph.GetInputTensor(Inputs[index]) : null;
 
     /// <summary>
+    /// Transpose with a prepared-plan shortcut: constant-only transpositions
+    /// are computed once, stored as plan-owned initializers, and reused while
+    /// the source initializer is unchanged. Anything else computes normally.
+    /// </summary>
+    OpResult TransposePrepared(ComputationalGraph graph, ExecutionOptions? opt)
+    {
+        var input = InputTensor(graph, 0);
+        if (graph.TryGetFoldedTranspose(Name, Inputs, input, out var prepared) && prepared is not null)
+            return Success(OpType.Transpose, prepared);
+        var r = CPU.Transpose(input, Ints("perm"), opt, graph.ActivePool);
+        if (r.Status == OpStatus.Success && r.Outputs.Length == 1 && r.Outputs[0] is not null)
+            graph.FoldTranspose(Name, Inputs, input, r.Outputs[0]);
+        return r;
+    }
+
+    /// <summary>
     /// Version driving version-sensitive dispatch for this node: the resolved
     /// node version when set, else the graph opset for the node domain with
     /// the same empty-string fallback the importer uses, else 0 for legacy
@@ -233,7 +249,7 @@ public partial struct Node
 
         OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0),
 
-        OpType.Transpose => CPU.Transpose(InputTensor(graph, 0), Ints("perm"), opt, graph.ActivePool),
+        OpType.Transpose => TransposePrepared(graph, opt),
 
         OpType.Constant => CPU.Constant(OneOfAttr("sparse_value", "value", "value_float", "value_floats", "value_int", "value_ints", "value_string", "value_strings"), opt),
 
