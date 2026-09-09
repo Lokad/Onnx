@@ -38,6 +38,36 @@ public class ExecutionLifecycleTests
     }
 
     [Fact]
+    public void RunTime_ReconcilesNodeProfiles()
+    {
+        var g = NewReluGraph();
+        Assert.Equal(TimeSpan.Zero, g.LastRunTime);
+        var good = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
+        Assert.True(g.Execute(good, false));
+        Assert.NotNull(g.LastProfile);
+        Assert.True(g.LastRunTime > TimeSpan.Zero);
+        var nodes = TimeSpan.Zero;
+        foreach (var node in g.LastProfile!)
+        {
+            foreach (var stage in node.OpsProfile) nodes += stage.Time;
+        }
+        Assert.True(nodes <= g.LastRunTime, "Node time " + nodes + " exceeds run time " + g.LastRunTime + ".");
+        Assert.True(g.LastRunTime - nodes >= TimeSpan.Zero);
+    }
+
+    [Fact]
+    public void RunTime_PublishedBackToFacade()
+    {
+        var g = NewReluGraph();
+        var ctx = g.CreateExecution(null);
+        var good = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
+        Assert.True(ctx.Execute(good, false));
+        Assert.True(ctx.LastRunTime > TimeSpan.Zero);
+        Assert.True(g.Execute(good, false));
+        Assert.True(g.LastRunTime > TimeSpan.Zero);
+    }
+
+    [Fact]
     public void MissingInput_FailsClean_AndRetrySucceeds()
     {
         var g = NewReluGraph();

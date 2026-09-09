@@ -55,6 +55,15 @@ public class ComputationalGraph
 
     public Stack<NodeProfile>? LastProfile { get; private set; }
 
+    /// <summary>Wall time of the last run body on this instance.</summary>
+    /// <remarks>
+    /// Covers binding, node execution, and release, but not preparation,
+    /// which runs before the body. Partial runs record time-to-exit with a
+    /// null profile, matching the existing null-profile-on-early-failure
+    /// behavior. Published back to the facade like every run diagnostic.
+    /// </remarks>
+    public TimeSpan LastRunTime { get; private set; }
+
     public string? LastErrorMessage { get; private set; }
 
     public string? LastFailedNodeName { get; private set; }
@@ -217,6 +226,7 @@ public class ComputationalGraph
             LastFailedNodeOp = exec.LastFailedNodeOp;
             LastErrorCause = exec.LastErrorCause;
             LastProfile = exec.LastProfile;
+            LastRunTime = exec.LastRunTime;
             LastPoolAllocatedNew = exec.LastPoolAllocatedNew;
             LastPoolReused = exec.LastPoolReused;
             LastPoolReturned = exec.LastPoolReturned;
@@ -635,6 +645,19 @@ public class ComputationalGraph
     protected bool RunCore(object userInputs, bool useInitializers, ExecutionProvider provider)
     {
         ResetRunDiagnostics();
+        long start = Stopwatch.GetTimestamp();
+        try
+        {
+            return RunCoreInner(userInputs, useInitializers, provider);
+        }
+        finally
+        {
+            LastRunTime = Stopwatch.GetElapsedTime(start);
+        }
+    }
+
+    bool RunCoreInner(object userInputs, bool useInitializers, ExecutionProvider provider)
+    {
         if (!ValidateRunOptions()) return false;
         if (_preparationError is not null) return Fail(_preparationError);
         SeedDeclaredOutputs();
@@ -798,6 +821,7 @@ public class ComputationalGraph
         LastFailedNodeOp = null;
         LastErrorCause = null;
         LastProfile = null;
+        LastRunTime = TimeSpan.Zero;
     }
 
     /// <summary>
@@ -896,6 +920,19 @@ public class ComputationalGraph
     protected bool RunNodeCore(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider)
     {
         ResetRunDiagnostics();
+        long start = Stopwatch.GetTimestamp();
+        try
+        {
+            return RunNodeCoreInner(userInputs, nodeLabel, useInitializers, provider);
+        }
+        finally
+        {
+            LastRunTime = Stopwatch.GetElapsedTime(start);
+        }
+    }
+
+    bool RunNodeCoreInner(object userInputs, string nodeLabel, bool useInitializers, ExecutionProvider provider)
+    {
         if (!ValidateRunOptions()) return false;
         // Node is a struct, so a miss yields default(Node) with null Name;
         // search by index instead of comparing against an empty name.
