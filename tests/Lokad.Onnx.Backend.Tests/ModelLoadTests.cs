@@ -1,5 +1,6 @@
 
 extern alias OnnxSharp;
+using Google.Protobuf;
 using OnnxSharp::Onnx;
 using Lokad.Onnx.Tests.Support;
 
@@ -54,6 +55,33 @@ public class ModelLoadTests
         static System.Collections.Generic.IEnumerable<string> Ops(OnnxModel m) =>
             m.Nodes.Select(n => (n.Domain ?? "") + ":" + (n.OpType ?? "")).Distinct().OrderBy(o => o);
         Assert.Equal(Ops(full), Ops(meta));
+    }
+
+    [Fact]
+    public void ParseMetadata_SkipsSidecarReads()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        Directory.CreateDirectory(dir);
+        try
+        {
+            var model = new ModelProto { Graph = new GraphProto() };
+            var init = new TensorProto { Name = "w", DataType = (int)TensorElementType.Float };
+            init.Dims.Add(2);
+            init.DataLocation = TensorProto.Types.DataLocation.External;
+            init.ExternalData.Add(new StringStringEntryProto { Key = "location", Value = "w.bin" });
+            model.Graph.Initializer.Add(init);
+            var path = Path.Combine(dir, "m.onnx");
+            File.WriteAllBytes(path, model.ToByteArray());
+            var meta = OnnxImport.ParseMetadata(path);
+            var described = Assert.Single(meta.Initializers);
+            Assert.Equal("w", described.Name);
+            Assert.Empty(described.Data);
+            Assert.Throws<System.IO.FileNotFoundException>(() => OnnxImport.Parse(path));
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
     }
 
     [Fact]

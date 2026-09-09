@@ -28,6 +28,11 @@ public static class OnnxImport
     /// Initializer descriptions report element types and dimensions with empty
     /// payloads; attribute tensors still materialize as small constants.
     /// </summary>
+    /// <remarks>
+    /// Cost contract: the complete protobuf still parses, including embedded
+    /// weights, so metadata inspection is not a cheap header read; only the
+    /// typed payload materialization and every sidecar read are skipped.
+    /// </remarks>
     public static OnnxModel ParseMetadata(string onnxInputFilePath)
     {
         using var op = Runtime.Begin("Parsing ONNX model metadata {f}", onnxInputFilePath);
