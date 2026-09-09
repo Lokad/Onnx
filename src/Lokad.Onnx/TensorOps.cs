@@ -3607,6 +3607,19 @@ where T : unmanaged
         }
         return data.Reshape(newshape);
     }
+    // Shared reduction setup: resolves keepdims and builds the validated plan.
+    // The keepdims default differs by operation (ReduceMax-18 keeps by default).
+    // One validated plan owns absent/empty axes, normalization, dedupe and
+    // keepdims (ORT 1.29: absent/empty + noop is a no-op; dupes reduce once).
+    static ReductionPlan PlanReduction(int rank, Tensor<int>? axes, bool? keepDims, bool defaultKeepDims, bool? noopWithEmptyAxes, out bool resolvedKeepDims)
+    {
+        resolvedKeepDims = keepDims.HasValue ? keepDims.Value : defaultKeepDims;
+        return ReductionPlan.Create(rank, axes, resolvedKeepDims, noopWithEmptyAxes.HasValue && noopWithEmptyAxes.Value);
+    }
+
+    static Tensor<TElement> ApplyKeepDims<TElement>(Tensor<TElement> output, ReductionPlan plan, bool keepDims) where TElement : unmanaged
+        => keepDims ? Tensor<TElement>.Unsqueeze(output, plan.Axes) : output;
+
     /// <summary>
     /// Shared reduction orchestration: optional transpose to innermost axes,
     /// densified standard input, output shape and inner extent. Typed kernels
@@ -3643,10 +3656,7 @@ where T : unmanaged
         public static Tensor<int> ReduceSum(Tensor<int> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)
     {
         StartOpStage(OpStage.ValidateArguments);
-        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
-        // One validated plan owns absent/empty axes, normalization, dedupe and
-        // keepdims (ORT 1.29: absent/empty + noop is a no-op; dupes reduce once).
-        var plan = ReductionPlan.Create(data.Rank, axes, keepDims, _noOpWithEmptyAxes.HasValue && _noOpWithEmptyAxes.Value);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
         StartOpStage(OpStage.CalculateIndices);
@@ -3663,14 +3673,7 @@ where T : unmanaged
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
             os[i] = sum;
         }
-        if (keepDims)
-        {
-            return Tensor<int>.Unsqueeze(output, plan.Axes);
-        }
-        else
-        {
-            return output;
-        }
+        return ApplyKeepDims(output, plan, keepDims);
     }
 
     public static Tensor<float> ReduceSum(Tensor<float> data, Tensor<int>? axes) => ReduceSum(data, axes, null, null);
@@ -3678,10 +3681,7 @@ where T : unmanaged
         public static Tensor<float> ReduceSum(Tensor<float> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)
     {
         StartOpStage(OpStage.ValidateArguments);
-        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
-        // One validated plan owns absent/empty axes, normalization, dedupe and
-        // keepdims (ORT 1.29: absent/empty + noop is a no-op; dupes reduce once).
-        var plan = ReductionPlan.Create(data.Rank, axes, keepDims, _noOpWithEmptyAxes.HasValue && _noOpWithEmptyAxes.Value);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
         StartOpStage(OpStage.CalculateIndices);
@@ -3698,14 +3698,7 @@ where T : unmanaged
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
             os[i] = sum;
         }
-        if (keepDims)
-        {
-            return Tensor<float>.Unsqueeze(output, plan.Axes);
-        }
-        else
-        {
-            return output;
-        }
+        return ApplyKeepDims(output, plan, keepDims);
     }
 
     public static Tensor<double> ReduceSum(Tensor<double> data, Tensor<int>? axes) => ReduceSum(data, axes, null, null);
@@ -3713,10 +3706,7 @@ where T : unmanaged
         public static Tensor<double> ReduceSum(Tensor<double> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)
     {
         StartOpStage(OpStage.ValidateArguments);
-        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
-        // One validated plan owns absent/empty axes, normalization, dedupe and
-        // keepdims (ORT 1.29: absent/empty + noop is a no-op; dupes reduce once).
-        var plan = ReductionPlan.Create(data.Rank, axes, keepDims, _noOpWithEmptyAxes.HasValue && _noOpWithEmptyAxes.Value);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
         StartOpStage(OpStage.CalculateIndices);
@@ -3733,14 +3723,7 @@ where T : unmanaged
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
             os[i] = sum;
         }
-        if (keepDims)
-        {
-            return Tensor<double>.Unsqueeze(output, plan.Axes);
-        }
-        else
-        {
-            return output;
-        }
+        return ApplyKeepDims(output, plan, keepDims);
     }
 
     public static Tensor<int> ReduceMean(Tensor<int> data, Tensor<int>? axes) => ReduceMean(data, axes, null, null);
@@ -3751,10 +3734,7 @@ where T : unmanaged
     public static Tensor<int> ReduceMean(Tensor<int> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes, TensorExecutionOptions options)
     {
         StartOpStage(OpStage.ValidateArguments);
-        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
-        // One validated plan owns absent/empty axes, normalization, dedupe and
-        // keepdims (ORT 1.29: absent/empty + noop is a no-op; dupes reduce once).
-        var plan = ReductionPlan.Create(data.Rank, axes, keepDims, _noOpWithEmptyAxes.HasValue && _noOpWithEmptyAxes.Value);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
         StartOpStage(OpStage.CalculateIndices);
@@ -3771,14 +3751,7 @@ where T : unmanaged
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
             os[i] = sum / r;
         }
-        if (keepDims)
-        {
-            return Tensor<int>.Unsqueeze(output, plan.Axes);
-        }
-        else
-        {
-            return output;
-        }
+        return ApplyKeepDims(output, plan, keepDims);
     }
 
     public static Tensor<float> ReduceMean(Tensor<float> data, Tensor<int>? axes) => ReduceMean(data, axes, null, null);
@@ -3790,10 +3763,7 @@ where T : unmanaged
     {
         options.Validate();
         StartOpStage(OpStage.ValidateArguments);
-        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
-        // One validated plan owns absent/empty axes, normalization, dedupe and
-        // keepdims (ORT 1.29: absent/empty + noop is a no-op; dupes reduce once).
-        var plan = ReductionPlan.Create(data.Rank, axes, keepDims, _noOpWithEmptyAxes.HasValue && _noOpWithEmptyAxes.Value);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
         StartOpStage(OpStage.CalculateIndices);
@@ -3810,14 +3780,7 @@ where T : unmanaged
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
             os[i] = sum / r;
         }
-        if (keepDims)
-        {
-            return Tensor<float>.Unsqueeze(output, plan.Axes);
-        }
-        else
-        {
-            return output;
-        }
+        return ApplyKeepDims(output, plan, keepDims);
     }
 
     public static Tensor<double> ReduceMean(Tensor<double> data, Tensor<int>? axes) => ReduceMean(data, axes, null, null);
@@ -3829,10 +3792,7 @@ where T : unmanaged
     {
         options.Validate();
         StartOpStage(OpStage.ValidateArguments);
-        var keepDims = _keepDims.HasValue ? _keepDims.Value : false;
-        // One validated plan owns absent/empty axes, normalization, dedupe and
-        // keepdims (ORT 1.29: absent/empty + noop is a no-op; dupes reduce once).
-        var plan = ReductionPlan.Create(data.Rank, axes, keepDims, _noOpWithEmptyAxes.HasValue && _noOpWithEmptyAxes.Value);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
         StartOpStage(OpStage.CalculateIndices);
@@ -3849,14 +3809,7 @@ where T : unmanaged
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
             os[i] = sum / r;
         }
-        if (keepDims)
-        {
-            return Tensor<double>.Unsqueeze(output, plan.Axes);
-        }
-        else
-        {
-            return output;
-        }
+        return ApplyKeepDims(output, plan, keepDims);
     }
 
     public static Tensor<float> ReduceMax(Tensor<float> data, Tensor<int>? axes) => ReduceMax(data, axes, null, null);
@@ -3864,10 +3817,7 @@ where T : unmanaged
         public static Tensor<float> ReduceMax(Tensor<float> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)
     {
         StartOpStage(OpStage.ValidateArguments);
-        var keepDims = _keepDims.HasValue ? _keepDims.Value : true;
-        // One validated plan owns absent/empty axes, normalization, dedupe and
-        // keepdims (ORT 1.29: absent/empty + noop is a no-op; dupes reduce once).
-        var plan = ReductionPlan.Create(data.Rank, axes, keepDims, _noOpWithEmptyAxes.HasValue && _noOpWithEmptyAxes.Value);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, true, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
         StartOpStage(OpStage.CalculateIndices);
@@ -3895,14 +3845,7 @@ where T : unmanaged
             }
             os[i] = max;
         }
-        if (keepDims)
-        {
-            return Tensor<float>.Unsqueeze(output, plan.Axes);
-        }
-        else
-        {
-            return output;
-        }
+        return ApplyKeepDims(output, plan, keepDims);
     }
 
     public static Tensor<double> ReduceMax(Tensor<double> data, Tensor<int>? axes) => ReduceMax(data, axes, null, null);
@@ -3910,10 +3853,7 @@ where T : unmanaged
         public static Tensor<double> ReduceMax(Tensor<double> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)
     {
         StartOpStage(OpStage.ValidateArguments);
-        var keepDims = _keepDims.HasValue ? _keepDims.Value : true;
-        // One validated plan owns absent/empty axes, normalization, dedupe and
-        // keepdims (ORT 1.29: absent/empty + noop is a no-op; dupes reduce once).
-        var plan = ReductionPlan.Create(data.Rank, axes, keepDims, _noOpWithEmptyAxes.HasValue && _noOpWithEmptyAxes.Value);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, true, _noOpWithEmptyAxes, out var keepDims);
         if (plan.IsNoOp) return data.Clone();
 
         StartOpStage(OpStage.CalculateIndices);
@@ -3939,14 +3879,7 @@ where T : unmanaged
             }
             os[i] = max;
         }
-        if (keepDims)
-        {
-            return Tensor<double>.Unsqueeze(output, plan.Axes);
-        }
-        else
-        {
-            return output;
-        }
+        return ApplyKeepDims(output, plan, keepDims);
     }
 }
 
