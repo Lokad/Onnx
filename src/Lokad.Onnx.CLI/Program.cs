@@ -292,11 +292,10 @@ class Program
             if (!Enum.TryParse<OpType>(_opfilter, true, out var op))
             {
                 Error("The specified operation type {op} is not valid.", _opfilter);
+                Exit(ExitResult.INVALID_OPTIONS);
+                return;
             }
-            else
-            {
-                opfilter = op;  
-            }
+            opfilter = op;
         }
         OnnxModel m;
         try
