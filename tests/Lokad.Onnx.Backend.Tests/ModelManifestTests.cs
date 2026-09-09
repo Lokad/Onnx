@@ -4,6 +4,8 @@ using Xunit.Abstractions;
 
 namespace Lokad.Onnx.Backend.Tests;
 
+using Lokad.Onnx.Tests.Support;
+
 /// <summary>
 /// Guards the T04 manifest rule: every model oracle asset is identified by a
 /// recorded hash and size, and present assets must match. Absent assets skip
@@ -18,17 +20,8 @@ public class ModelManifestTests
         this.output = output;
     }
 
-    static string ManifestPath()
-    {
-        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
-        while (dir is not null)
-        {
-            var candidate = Path.Combine(dir.FullName, "tests", "Lokad.Onnx.Backend.Tests", "ModelManifest.json");
-            if (File.Exists(candidate)) return candidate;
-            dir = dir.Parent;
-        }
-        throw new FileNotFoundException("ModelManifest.json not found.");
-    }
+    static string ManifestPath() =>
+        Path.Combine(TestSupport.RepoRoot(), "tests", "Lokad.Onnx.Backend.Tests", "ModelManifest.json");
 
     [Fact]
     public void Manifest_IdentifiesPresentAssets()
