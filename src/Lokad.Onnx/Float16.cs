@@ -1,114 +1,15 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-// Portions of this code are from System.Half struct dotnet runtime.
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
 using System;
 using System.Diagnostics;
-using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Lokad.Onnx
 {
-    // Bit-level helpers for the half-precision conversions below that the base
-    // class library does not provide (float NaN constructors, bfloat16 shifts)
-    // plus shared single-precision bit constants. Plain reinterpretation and
-    // leading-zero counts use BitConverter and BitOperations directly.
-    internal class BitOpsUtils
-    {
-        // Lifted from .NET source code internal code
-        // Constants for Single precision format
-        // https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/Single.cs,dda909df0f8d2fd0
-        internal const uint SingleBiasedExponentMask = 0x7F80_0000;
-        internal const int SingleBiasedExponentShift = 23;
-
-        internal const uint SingleSignMask = 0x8000_0000;
-        internal const int SingleSignShift = 31;
-
-        // Most significant significand bit
-        internal const uint SingleMostSignificantSigBit = 0x400000;
-        internal const uint SingleTrailingSignificandMask = 0x007F_FFFF;
-
-        /// <summary>
-        /// Converts single precision bits representation which can be obtained using
-        /// BitConverter.SingleToUInt32Bits() or manually constructed according to IEEE 754 standard.
-        /// 
-        /// </summary>
-        /// <param name="singleBits">bits representation of a single precision number (float)</param>
-        /// <returns></returns>
-        internal static ushort SingleBitsToBFloat16Bits(uint singleBits)
-        {
-            if (!BitConverter.IsLittleEndian)
-            {
-                return (ushort)(singleBits & 0xFFFF);
-            }
-            else
-            {
-                return (ushort)(singleBits >> 16);
-            }
-        }
-
-        /// <summary>
-        /// Converts bfloat16 ushort bits representation to single precision bits which then in turn can be
-        /// manipulated or converted to float using BitConverter.UInt32BitsToSingle()
-        /// </summary>
-        /// <param name="bfloatBits">ushort bits representation of bfloat16</param>
-        /// <returns></returns>
-        internal static uint BFloat16BitsToSingleBits(ushort bfloatBits)
-        {
-            if (!BitConverter.IsLittleEndian)
-            {
-                return bfloatBits;
-            }
-            else
-            {
-                return (uint)bfloatBits << 16;
-            }
-        }
-
-        /// <summary>
-        /// Creates float NaN with the given sign and fp16 significand shifted << 54
-        /// </summary>
-        /// <param name="sign">true for negative</param>
-        /// <param name="significand">should be shifted 54 bits left before calling the function
-        /// so only 8 bits of signidicand remains</param>
-        /// <returns></returns>
-        internal static float CreateSingleNaN(bool sign, ulong significand)
-        {
-            // We need to set at least on bit in NaN significant
-            const uint NaNBits = SingleBiasedExponentMask | SingleMostSignificantSigBit;
-
-            uint signInt = (sign ? 1U : 0U) << SingleSignShift;
-            uint sigInt = (uint)(significand >> 41);
-            uint singleBits = signInt | NaNBits | sigInt;
-
-            return BitConverter.UInt32BitsToSingle(singleBits);
-        }
-
-        /// <summary>
-        /// Creates float from sign, exponent and significand
-        /// </summary>
-        /// <param name="sign">true if negative</param>
-        /// <param name="exponent">exponent</param>
-        /// <param name="significand">significand</param>
-        /// <returns></returns>
-        internal static float CreateSingle(bool sign, byte exponent, uint significand)
-        {
-            uint signInt = (sign ? 1U : 0U) << SingleSignShift;
-            uint expInt = ((uint)exponent << SingleBiasedExponentShift) + significand;
-            uint singleBits = signInt + expInt;
-
-            return BitConverter.UInt32BitsToSingle(singleBits);
-        }
-    }
 
     /// <summary>
-    /// This value type represents A BFloat16 value.
-    /// See https://cloud.google.com/blog/products/ai-machine-learning/bfloat16-the-secret-to-high-performance-on-cloud-tpus
-    /// for details; it is a sequential-layout struct over the bfloat16 bit pattern,
-    /// bit-compatible with ushort storage and kept distinct for overload dispatch.
+    /// Brain floating-point value: one sign bit, eight exponent bits biased like
+    /// float32, and seven mantissa bits. Every value widens to float32 exactly;
+    /// narrowing rounds to nearest with ties to even, and NaN canonicalizes.
+    /// Implemented from the format definition; no external source.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public readonly struct BFloat16 :
@@ -117,25 +18,10 @@ namespace Lokad.Onnx
         IEquatable<BFloat16>
     {
         internal const ushort SignMask = 0x8000;
-        internal const int SignShift = 15;
-        internal const byte ShiftedSignMask = SignMask >> SignShift;
-
-        internal const ushort BiasedExponentMask = 0x7F80; // 0b_0111_1111_1000_0000;
+        internal const ushort BiasedExponentMask = 0x7F80;
         internal const int BiasedExponentShift = 7;
-        internal const byte ShiftedBiasedExponentMask = BiasedExponentMask >> BiasedExponentShift;
-
-        internal const ushort TrailingSignificandMask = 0x007F; // 0b_0000_0000_0111_1111;
-
-        internal const byte MinSign = 0;
-        internal const byte MaxSign = 1;
-
-        internal const byte MinBiasedExponent = 0x00;
+        internal const ushort TrailingSignificandMask = 0x007F;
         internal const byte MaxBiasedExponent = 0xFF;
-
-        internal const byte ExponentBias = 127;
-
-        internal const sbyte MinExponent = -126;
-        internal const sbyte MaxExponent = +127;
 
         // Constants representing the private bit-representation for various default values
 
@@ -228,35 +114,13 @@ namespace Lokad.Onnx
             value = v;
         }
 
-        // Extracts biased exponent bits
-        internal byte BiasedExponent
-        {
-            get
-            {
-                ushort bits = value;
-                return ExtractBiasedExponentFromBits(bits);
-            }
-        }
+        static bool HasSign(BFloat16 v) => (v.value & SignMask) != 0;
 
-        // Extracts all the Significand bits
-        internal ushort TrailingSignificand
-        {
-            get
-            {
-                ushort bits = value;
-                return ExtractTrailingSignificandFromBits(bits);
-            }
-        }
+        static int Exponent(BFloat16 v) => (v.value & BiasedExponentMask) >> BiasedExponentShift;
 
-        internal static byte ExtractBiasedExponentFromBits(ushort bits)
-        {
-            return (byte)((bits >> BiasedExponentShift) & ShiftedBiasedExponentMask);
-        }
+        static uint Mantissa(BFloat16 v) => (uint)(v.value & TrailingSignificandMask);
 
-        internal static ushort ExtractTrailingSignificandFromBits(ushort bits)
-        {
-            return (ushort)(bits & TrailingSignificandMask);
-        }
+        static bool IsZero(BFloat16 v) => (v.value & ~SignMask) == 0;
 
         /// <summary>
         /// Compares two BFloat16 instances.
@@ -266,23 +130,10 @@ namespace Lokad.Onnx
         /// <returns>true if the left is less than right according to IEEE</returns>
         public static bool operator <(BFloat16 left, BFloat16 right)
         {
-            if (IsNaN(left) || IsNaN(right))
-            {
-                // IEEE defines that NaN is unordered with respect to everything, including itself.
-                return false;
-            }
-
-            bool leftIsNegative = IsNegative(left);
-
-            if (leftIsNegative != IsNegative(right))
-            {
-                // When the signs of left and right differ, we know that left is less than right if it is
-                // the negative value. The exception to this is if both values are zero, in which case IEEE
-                // says they should be equal, even if the signs differ.
-                return leftIsNegative && !AreZero(left, right);
-            }
-
-            return (left.value != right.value) && ((left.value < right.value) ^ leftIsNegative);
+            // NaN is unordered with respect to everything, including itself.
+            if (IsNaN(left) || IsNaN(right)) return false;
+            // Exact widening preserves order, including signed zero.
+            return (float)left < (float)right;
         }
 
         /// <summary>
@@ -304,23 +155,8 @@ namespace Lokad.Onnx
         /// <returns>true if the left is less or equal than right according to IEEE</returns>
         public static bool operator <=(BFloat16 left, BFloat16 right)
         {
-            if (IsNaN(left) || IsNaN(right))
-            {
-                // IEEE defines that NaN is unordered with respect to everything, including itself.
-                return false;
-            }
-
-            bool leftIsNegative = IsNegative(left);
-
-            if (leftIsNegative != IsNegative(right))
-            {
-                // When the signs of left and right differ, we know that left is less than right if it is
-                // the negative value. The exception to this is if both values are zero, in which case IEEE
-                // says they should be equal, even if the signs differ.
-                return leftIsNegative || AreZero(left, right);
-            }
-
-            return (left.value == right.value) || ((left.value < right.value) ^ leftIsNegative);
+            if (IsNaN(left) || IsNaN(right)) return false;
+            return (float)left <= (float)right;
         }
 
         /// <summary>
@@ -335,31 +171,16 @@ namespace Lokad.Onnx
         }
 
         /// <summary>
-        /// Compares values of two BFloat16 for binary equality.
-        /// If either of the values is NaN, this will return false.
-        /// 
+        /// Binary equality: same bits, except NaN never equals, even itself.
+        /// Note signed zeros differ here, unlike ordered comparison.
         /// </summary>
-        /// <param name="left">left hand side</param>
-        /// <param name="right">right hand side</param>
-        /// <returns>result of value comparisons</returns>
         public static bool operator ==(BFloat16 left, BFloat16 right)
         {
-            if (IsNaN(left) || IsNaN(right))
-            {
-                // IEEE defines that NaN is not equal to anything, including itself.
-                return false;
-            }
-
+            if (IsNaN(left) || IsNaN(right)) return false;
             return left.value == right.value;
         }
 
-        /// <summary>
-        /// Compares values of two BFloat16 for binary inequality
-        /// If either of the values is NaN it would return true.
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns>result of value comparisons</returns>
+        /// <summary>Negation of binary equality.</summary>
         public static bool operator !=(BFloat16 left, BFloat16 right)
         {
             return !(left == right);
@@ -372,7 +193,7 @@ namespace Lokad.Onnx
         /// <returns>true if the value is finite</returns>
         public static bool IsFinite(BFloat16 value)
         {
-            return StripSign(value) < PositiveInfinityBits;
+            return Exponent(value) != MaxBiasedExponent;
         }
 
         /// <summary>
@@ -382,7 +203,7 @@ namespace Lokad.Onnx
         /// <returns>true if the value is infinite</returns>
         public static bool IsInfinity(BFloat16 value)
         {
-            return StripSign(value) == PositiveInfinityBits;
+            return Exponent(value) == MaxBiasedExponent && Mantissa(value) == 0;
         }
 
         /// <summary>
@@ -393,7 +214,7 @@ namespace Lokad.Onnx
         /// <returns>true if the value is not a number</returns>
         public static bool IsNaN(BFloat16 value)
         {
-            return StripSign(value) > PositiveInfinityBits;
+            return Exponent(value) == MaxBiasedExponent && Mantissa(value) != 0;
         }
 
         /// <summary>
@@ -403,7 +224,7 @@ namespace Lokad.Onnx
         /// <returns>true if the value is negative</returns></returns>
         public static bool IsNegative(BFloat16 value)
         {
-            return (short)(value.value) < 0;
+            return HasSign(value);
         }
 
         /// <summary>
@@ -424,10 +245,8 @@ namespace Lokad.Onnx
         /// <returns>true or false</returns>
         public static bool IsNormal(BFloat16 value)
         {
-            uint absValue = StripSign(value);
-            return (absValue < PositiveInfinityBits)    // is finite
-                && (absValue != 0)                      // is not zero
-                && ((absValue & BiasedExponentMask) != 0);    // is not subnormal (has a non-zero exponent)
+            int exponent = Exponent(value);
+            return exponent != 0 && exponent != MaxBiasedExponent;
         }
 
         /// <summary>
@@ -447,10 +266,7 @@ namespace Lokad.Onnx
         /// <returns>true if the value is subnormal</returns>
         public static bool IsSubnormal(BFloat16 value)
         {
-            uint absValue = StripSign(value);
-            return (absValue < PositiveInfinityBits)    // is finite
-                && (absValue != 0)                      // is not zero
-                && ((absValue & BiasedExponentMask) == 0);    // is subnormal (has a zero exponent)
+            return Exponent(value) == 0 && Mantissa(value) != 0;
         }
 
         /// <summary>
@@ -513,7 +329,7 @@ namespace Lokad.Onnx
         public bool Equals(BFloat16 other)
         {
             return value == other.value
-                || AreZero(this, other)
+                || (IsZero(this) && IsZero(other))
                 || (IsNaN(this) && IsNaN(other));
         }
 
@@ -534,9 +350,9 @@ namespace Lokad.Onnx
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            if (IsNaNOrZero(this))
+            if (IsNaN(this) || IsZero(this))
             {
-                // All NaNs should have the same hash code, as should both Zeros.
+                // All NaNs share a hash code, as do both zeros, matching Equals.
                 return value & PositiveInfinityBits;
             }
             return value;
@@ -565,20 +381,14 @@ namespace Lokad.Onnx
         /// <returns><paramref name="value" /> converted to its nearest representable half-precision floating-point value.</returns>
         public static explicit operator BFloat16(float value)
         {
-            if (float.IsNaN(value))
-            {
-                return NaN;
-            }
-
-            uint singleBits = BitConverter.SingleToUInt32Bits(value);
-            ushort bfloatBits = BitOpsUtils.SingleBitsToBFloat16Bits(singleBits);
-
-            // Round this up. Implement the same logic pytorch uses for rounding.
-            // We use RoundingBase that is 0x7FFF + (1), so we carry the 1 to the next bit.
-            // either the last bfloat bit is 1 or singleBits have some bits set.
-            singleBits += ((uint)bfloatBits & 1) + RoundingBase;
-            bfloatBits = BitOpsUtils.SingleBitsToBFloat16Bits(singleBits);
-            return new BFloat16(bfloatBits);
+            // NaN canonicalizes: payloads do not survive narrowing.
+            if (float.IsNaN(value)) return NaN;
+            // Round to nearest, ties to even: bias by half a unit plus the kept
+            // lowest bit, then truncate. Infinities and overflow to infinity
+            // fall out of the same addition with no special case.
+            uint bits = BitConverter.SingleToUInt32Bits(value);
+            uint rounded = bits + 0x7FFFu + ((bits >> 16) & 1u);
+            return new BFloat16((ushort)(rounded >> 16));
         }
 
         /// <summary>
@@ -588,70 +398,20 @@ namespace Lokad.Onnx
         /// <returns><paramref name="value" /> converted to its nearest representable <see cref="float" /> value.</returns>
         public static explicit operator float(BFloat16 value)
         {
-            bool sign = IsNegative(value);
-            int exp = value.BiasedExponent;
-            uint sig = value.TrailingSignificand;
-
-            if (exp == MaxBiasedExponent)
+            uint bits = value.value;
+            bool sign = (bits & SignMask) != 0;
+            uint exponent = (bits & BiasedExponentMask) >> BiasedExponentShift;
+            uint mantissa = bits & TrailingSignificandMask;
+            if (exponent == MaxBiasedExponent)
             {
-                if (sig != 0)
-                {
-                    // Shift sig left 54 bits to get a 64-bit integer
-                    // to cut off all but 8 bits of the significant
-                    return BitOpsUtils.CreateSingleNaN(sign, (ulong)sig << 56);
-                }
-                return sign ? float.NegativeInfinity : float.PositiveInfinity;
+                if (mantissa == 0) return sign ? float.NegativeInfinity : float.PositiveInfinity;
+                // Quiet bit set plus the payload shifted into place.
+                return BitConverter.UInt32BitsToSingle(((sign ? 1u : 0u) << 31) | 0x7FC00000u | (mantissa << 15));
             }
-
-            if (exp == 0 && sig == 0)
-            {
-                // Positive / Negative zero
-                return (sign) ? -0.0f : 0.0f;
-            }
-
-            // All subnormal numbers in BFloat16 would be also subnormal in FP32 because they
-            // share the exponent.
-            uint singleBits = BitOpsUtils.BFloat16BitsToSingleBits(value.value);
-            return BitConverter.UInt32BitsToSingle(singleBits);
+            if (bits == PositiveZeroBits || bits == NegativeZeroBits) return sign ? -0.0f : 0.0f;
+            // Shared exponent bias makes widening an exact left shift.
+            if (!BitConverter.IsLittleEndian) return BitConverter.UInt32BitsToSingle(bits);
+            return BitConverter.UInt32BitsToSingle(bits << 16);
         }
-
-        /// <summary>
-        /// Flips the sign. NaNs are not affected.
-        /// IEEE 754 specifies NaNs to be propagated
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static BFloat16 Negate(BFloat16 value)
-        {
-            return IsNaN(value) ? value : new BFloat16((ushort)(value.value ^ SignMask));
-        }
-
-        /// <summary>
-        /// The function returns true if the value is either NaN or zero.
-        /// </summary>
-        /// <param name="value">instance of BFloat16</param>
-        /// <returns>true if NaN or zero.</returns>
-        public static bool IsNaNOrZero(BFloat16 value)
-        {
-            uint abs = StripSign(value);
-            return (abs == 0 || abs > PositiveInfinityBits);
-        }
-
-        #region Utilities
-
-        private static bool AreZero(BFloat16 left, BFloat16 right)
-        {
-            // IEEE defines that positive and negative zero are equal, this gives us a quick equality check
-            // for two values by or'ing the private bits together and stripping the sign. They are both zero,
-            // and therefore equivalent, if the resulting value is still zero.
-            return (ushort)((left.value | right.value) & ~SignMask) == 0;
-        }
-
-        private static uint StripSign(BFloat16 value)
-        {
-            return (ushort)(value.value & ~SignMask);
-        }
-
-        #endregion
     }
 }

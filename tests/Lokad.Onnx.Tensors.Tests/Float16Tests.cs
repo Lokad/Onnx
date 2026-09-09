@@ -89,4 +89,55 @@ public class Float16Tests
         Assert.True(BFloat16.IsNaN((BFloat16)float.NaN));
         Assert.Equal(0x4060, ((BFloat16)3.5f).value);
     }
+
+    [Fact]
+    public void BFloat16_Roundtrip_PreservesAllNonNaNBits()
+    {
+        for (int bits = 0; bits < 65536; bits++)
+        {
+            ushort b = (ushort)bits;
+            var back = (BFloat16)(float)new BFloat16(b);
+            if ((b & 0x7F80) == 0x7F80 && (b & 0x007F) != 0)
+                Assert.Equal((ushort)0xFFC1, back.value);
+            else
+                Assert.Equal(b, back.value);
+        }
+    }
+
+    [Fact]
+    public void BFloat16_Comparisons_FollowIeeeOrder()
+    {
+        var neg = (BFloat16)(-2f);
+        var negOne = (BFloat16)(-1f);
+        var negZero = (BFloat16)(-0f);
+        var posZero = (BFloat16)0f;
+        var posOne = (BFloat16)1f;
+        var pos = (BFloat16)2f;
+        var nan = (BFloat16)float.NaN;
+        Assert.True(neg < negOne);
+        Assert.True(negOne > neg);
+        Assert.True(neg <= negOne);
+        Assert.True(negOne >= neg);
+        Assert.False(pos < posOne);
+        Assert.True(posOne == (BFloat16)1f);
+        Assert.False(negZero < posZero);
+        Assert.False(negZero > posZero);
+        Assert.True(negZero <= posZero);
+        Assert.True(negZero >= posZero);
+        Assert.False(negZero == posZero);
+        Assert.True(negZero != posZero);
+        Assert.False(nan < posOne);
+        Assert.False(nan > posOne);
+        Assert.False(nan <= posOne);
+        Assert.False(nan >= posOne);
+        Assert.False(nan == nan);
+        Assert.True(nan != nan);
+        var sub = new BFloat16(0x0001);
+        var minNormal = new BFloat16(0x0080);
+        Assert.True(sub < minNormal);
+        Assert.True(minNormal > sub);
+        Assert.True(sub <= minNormal);
+        Assert.True(posZero.Equals(negZero));
+        Assert.True(nan.Equals(nan));
+    }
 }
