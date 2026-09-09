@@ -153,4 +153,45 @@ public class ReductionPlanTests
         Assert.Equal(OpStatus.Success, m.Status);
         Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)m.Outputs[0]).ToArray());
     }
+
+    static ComputationalGraph NoopMaxGraph(bool noop)
+    {
+        // C08: version 18 ReduceMax must observe noop_with_empty_axes.
+        var mp = new OnnxModel { Name = "reducemax-noop" };
+        mp.Opset[""] = 18;
+        mp.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new int[] { 1, 2 } });
+        mp.Inputs.Add(new OnnxValueInfo { Name = "axes", ElementType = TensorElementType.Int64, Dims = new int[] { 0 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Float, Dims = noop ? new int[] { 1, 2 } : new int[] { 1, 1 } });
+        var attrs = new Dictionary<string, object> { { "keepdims", 1L } };
+        if (noop) attrs["noop_with_empty_axes"] = 1L;
+        mp.Nodes.Add(new OnnxNode { Name = "r", OpType = "ReduceMax", Inputs = new string[] { "x", "axes" }, Outputs = new string[] { "y" }, Attributes = attrs });
+        return Model.Load(mp)!;
+    }
+
+    static Dictionary<string, ITensor> NoopMaxFeed()
+    {
+        return new Dictionary<string, ITensor>
+        {
+            ["x"] = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } }),
+            ["axes"] = DenseTensor<long>.OfValues(new long[0]),
+        };
+    }
+
+    [Fact]
+    public void DispatchV18_ReduceMax_NoopReturnsInput()
+    {
+        // ORT 1.29: noop=1 with empty axes returns [[1, 2]] unchanged.
+        var graph = NoopMaxGraph(true);
+        Assert.True(graph.Execute(NoopMaxFeed(), true), graph.LastErrorMessage);
+        Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public void DispatchV18_ReduceMax_WithoutNoopReducesAll()
+    {
+        // ORT 1.29: noop=0 with empty axes reduces to [[2]] (keepdims).
+        var graph = NoopMaxGraph(false);
+        Assert.True(graph.Execute(NoopMaxFeed(), true), graph.LastErrorMessage);
+        Assert.Equal(new float[] { 2f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+    }
 }

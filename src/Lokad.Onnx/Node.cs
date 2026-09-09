@@ -302,7 +302,7 @@ public partial struct Node
             _ => CPU.ReduceMean(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),
         },
         
-        OpType.ReduceMax => ResolvedOpsetVersion(graph) switch { int v when v >= 18 => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), null, opt), _ => CPU.ReduceMax(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), null, opt), },
+        OpType.ReduceMax => ResolvedOpsetVersion(graph) switch { int v when v >= 18 => CPU.ReduceMax(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), Int("noop_with_empty_axes", null), opt), _ => CPU.ReduceMax(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), Int("noop_with_empty_axes", null), opt), },
 
         OpType.Softmax => ResolvedOpsetVersion(graph) switch
         {
