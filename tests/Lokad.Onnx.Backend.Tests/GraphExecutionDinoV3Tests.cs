@@ -77,4 +77,33 @@ public class GraphExecutionDinoV3Tests
         for (int i = 0; i < span.Length; i++) span[i] = (i % 256) / 256.0f;
         return input;
     }
+
+    [SkippableFact]
+    public void DinoV3Outputs_MatchFrozenBitHash()
+    {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "Bit-exact hash requires x86 FMA.");
+        var graph = ModelFixture.LoadRequiredModel("DINOv3", "models", "dinov3-vits16", "onnx", "model.onnx");
+        var input = DenseTensor<float>.OfShape(1, 3, 224, 224);
+        input.Fill(0.5f);
+        ModelFixture.AssertExecuted(graph, graph.Execute(new ITensor[] { input }, true));
+        // The mean binds this run to the ORT 1.29 reference above; the hash
+        // then freezes every output bit, so a defect in any unsampled element fails.
+        var values = ModelFixture.CheckedOutput(graph, "last_hidden_state");
+        ModelFixture.AssertMean(values, -0.0071360121, 1e-6, "dinov3");
+        Assert.Equal(12817401401985241232UL, HashBits(values));
+        var poolerValues = ModelFixture.CheckedOutput(graph, "pooler_output");
+        ModelFixture.AssertMean(poolerValues, 0.00842788, 1e-6, "dinov3 pooler");
+        Assert.Equal(10054835216499477894UL, HashBits(poolerValues));
+    }
+
+    static ulong HashBits(float[] values)
+    {
+        ulong h = 1469598103934665603UL;
+        foreach (var v in values)
+        {
+            h ^= (ulong)(uint)System.BitConverter.SingleToInt32Bits(v);
+            h *= 1099511628211UL;
+        }
+        return h;
+    }
 }
