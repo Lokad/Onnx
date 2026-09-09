@@ -524,6 +524,7 @@ public class ComputationalGraph
 
         int count = 0;
         var boundThisRun = new HashSet<string>(StringComparer.Ordinal);
+        List<string>? pendingRelease = null;
         using var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
 
         using var profilerScope = Profiler.BeginExecution();
@@ -591,7 +592,7 @@ public class ComputationalGraph
                         boundThisRun.Add(node.Outputs[i]);
                     }
                 }
-                ReleaseDeadTensors(node, count - 1);
+                ReleaseDeadTensors(node, count - 1, ref pendingRelease);
             }
         }
         // Resolve graph outputs independently of producers: outputs routed
@@ -1064,7 +1065,7 @@ public class ComputationalGraph
         return true;
     }
 
-    void ReleaseDeadTensors(Node node, int index)
+    void ReleaseDeadTensors(Node node, int index, ref List<string>? pending)
     {
         var pool = ActivePool;
         if (pool is null || node.Inputs is null) return;
@@ -1073,8 +1074,12 @@ public class ComputationalGraph
         {
             if (string.IsNullOrEmpty(name)) continue;
             if (!LastUseIndex.TryGetValue(name, out var last) || last != index) continue;
-            if (node.Outputs is not null && node.Outputs.Contains(name)) continue;
-            TryReleaseValue(name, ref returned);
+            if (node.Outputs is not null && Array.IndexOf(node.Outputs, name) >= 0)
+            {
+                DeferRelease(name, ref pending);
+                continue;
+            }
+            if (TryReleaseValue(name, ref returned) == false) DeferRelease(name, ref pending);
         }
         // Reclaiming after the final node serves no later rent, so only
         // earlier nodes retry values that died behind a live alias plus
@@ -1086,15 +1091,44 @@ public class ComputationalGraph
             {
                 if (string.IsNullOrEmpty(name)) continue;
                 if (!LastUseIndex.TryGetValue(name, out var last) || last != index) continue;
-                TryReleaseValue(name, ref returned);
+                if (TryReleaseValue(name, ref returned) == false) DeferRelease(name, ref pending);
             }
         }
-        foreach (var name in IntermediateOutputs.Keys.ToArray())
+        RetryPendingReleases(ref pending, ref returned);
+    }
+
+    /// <summary>
+    /// Parks a still-live intermediate for a later retry instead of rescanning
+    /// every intermediate after every node. Released slots and graph outputs
+    /// never park: the former stay dead, the latter stay live to the end.
+    /// </summary>
+    void DeferRelease(string name, ref List<string>? pending)
+    {
+        if (Outputs.ContainsKey(name)) return;
+        if (!IntermediateOutputs.TryGetValue(name, out var tensor) || tensor is null) return;
+        pending ??= new List<string>();
+        if (pending.Contains(name) == false) pending.Add(name);
+    }
+
+    /// <summary>
+    /// Retries intermediates whose storage stayed pinned by a live alias when
+    /// they died. Reclaimed names leave the pending set; names that became
+    /// graph outputs drop out without touching their bindings.
+    /// </summary>
+    void RetryPendingReleases(ref List<string>? pending, ref HashSet<Array>? returned)
+    {
+        if (pending is null || pending.Count == 0) return;
+        for (int i = pending.Count - 1; i >= 0; i--)
         {
-            if (string.IsNullOrEmpty(name)) continue;
-            if (Outputs.ContainsKey(name)) continue;
-            if (!LastUseIndex.TryGetValue(name, out var last) || last >= index) continue;
-            TryReleaseValue(name, ref returned);
+            var name = pending[i];
+            if (Outputs.ContainsKey(name))
+            {
+                pending.RemoveAt(i);
+            }
+            else if (TryReleaseValue(name, ref returned))
+            {
+                pending.RemoveAt(i);
+            }
         }
     }
 
