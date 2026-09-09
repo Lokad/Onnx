@@ -251,4 +251,131 @@ public class TensorOpsMatMulIndependentTests
             RunAllModes(left, right, actual => AssertMatMulMatchesIndependent(left, right, actual, 1e-4f));
         }
     }
+
+    static int[] SweepI(int n)
+    {
+        var a = new int[n];
+        for (int i = 0; i < n; i++) a[i] = (i * 37 + 11) % 17 - 8;
+        return a;
+    }
+
+    static float[] SweepF(int n)
+    {
+        var a = new float[n];
+        for (int i = 0; i < n; i++) a[i] = ((i * 37 + 11) % 17 - 8) * 0.5f;
+        return a;
+    }
+
+    static double[] SweepD(int n)
+    {
+        var a = new double[n];
+        for (int i = 0; i < n; i++) a[i] = ((i * 37 + 11) % 17 - 8) * 0.5;
+        return a;
+    }
+
+    static int[] NaiveMmAccumulate(int[] a, int[] b, int[] c0, int m, int n, int k)
+    {
+        var c = (int[])c0.Clone();
+        for (int i = 0; i < m; i++)
+            for (int kk = 0; kk < k; kk++)
+                for (int j = 0; j < n; j++)
+                    c[i * k + kk] += a[i * n + j] * b[j * k + kk];
+        return c;
+    }
+
+    static float[] NaiveMmAccumulate(float[] a, float[] b, float[] c0, int m, int n, int k)
+    {
+        var c = (float[])c0.Clone();
+        for (int i = 0; i < m; i++)
+            for (int kk = 0; kk < k; kk++)
+            {
+                float total = c[i * k + kk];
+                for (int j = 0; j < n; j++)
+                    total += a[i * n + j] * b[j * k + kk];
+                c[i * k + kk] = total;
+            }
+        return c;
+    }
+
+    static double[] NaiveMmAccumulate(double[] a, double[] b, double[] c0, int m, int n, int k)
+    {
+        var c = (double[])c0.Clone();
+        for (int i = 0; i < m; i++)
+            for (int kk = 0; kk < k; kk++)
+            {
+                double total = c[i * k + kk];
+                for (int j = 0; j < n; j++)
+                    total += a[i * n + j] * b[j * k + kk];
+                c[i * k + kk] = total;
+            }
+        return c;
+    }
+
+    static int[] RunMm(int[] a, int[] b, int[] c, int m, int n, int k)
+    {
+        unsafe
+        {
+            fixed (int* pa = a)
+            fixed (int* pb = b)
+            fixed (int* pc = c)
+            {
+                MathOps.mm(m, n, k, pa, pb, pc);
+            }
+        }
+        return c;
+    }
+
+    static float[] RunMm(float[] a, float[] b, float[] c, int m, int n, int k)
+    {
+        unsafe
+        {
+            fixed (float* pa = a)
+            fixed (float* pb = b)
+            fixed (float* pc = c)
+            {
+                MathOps.mm(m, n, k, pa, pb, pc);
+            }
+        }
+        return c;
+    }
+
+    static double[] RunMm(double[] a, double[] b, double[] c, int m, int n, int k)
+    {
+        unsafe
+        {
+            fixed (double* pa = a)
+            fixed (double* pb = b)
+            fixed (double* pc = c)
+            {
+                MathOps.mm(m, n, k, pa, pb, pc);
+            }
+        }
+        return c;
+    }
+
+    [Fact]
+    public void ScalarMm_MatchesNaiveAccumulate()
+    {
+        var shapes = new[] { (m: 1, n: 1, k: 1), (m: 2, n: 3, k: 4), (m: 4, n: 4, k: 4), (m: 3, n: 7, k: 2), (m: 5, n: 1, k: 6) };
+        foreach (var (m, n, k) in shapes)
+        {
+            foreach (bool preload in new[] { false, true })
+            {
+                var ia = SweepI(m * n);
+                var ib = SweepI(n * k);
+                var ic = preload ? SweepI(m * k) : new int[m * k];
+                Assert.Equal(NaiveMmAccumulate(ia, ib, ic, m, n, k), RunMm(ia, ib, (int[])ic.Clone(), m, n, k));
+
+                var fa = SweepF(m * n);
+                var fb = SweepF(n * k);
+                var fc = preload ? SweepF(m * k) : new float[m * k];
+                Assert.Equal(NaiveMmAccumulate(fa, fb, fc, m, n, k), RunMm(fa, fb, (float[])fc.Clone(), m, n, k));
+
+                var da = SweepD(m * n);
+                var db = SweepD(n * k);
+                var dc = preload ? SweepD(m * k) : new double[m * k];
+                Assert.Equal(NaiveMmAccumulate(da, db, dc, m, n, k), RunMm(da, db, (double[])dc.Clone(), m, n, k));
+            }
+        }
+    }
 }

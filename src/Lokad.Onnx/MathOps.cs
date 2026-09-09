@@ -149,18 +149,18 @@ public class MathOps
                           int* B,
                           int* C)
     {
-        for (int i = 0; i < M; i++)
+        for (int i = 0; i < M; ++i)
         {
-            var Ap = A + i * N;
-            var Cp = C + i * K;
-            for (int j = 0; j < N; ++j)
+            var rowA = A + i * N;
+            var rowC = C + i * K;
+            for (int k = 0; k < K; ++k)
             {
-                var a = Ap[j];
-                var Bp = B + j * K;
-                for (int k = 0; k < K; ++k)
+                var total = rowC[k];
+                for (int j = 0; j < N; ++j)
                 {
-                    Cp[k] += a * Bp[k];
+                    total += rowA[j] * B[j * K + k];
                 }
+                rowC[k] = total;
             }
         }
     }
@@ -181,18 +181,18 @@ public class MathOps
                           double* B,
                           double* C)
     {
-        for (int i = 0; i < M; i++)
+        for (int i = 0; i < M; ++i)
         {
-            var Ap = A + i * N;
-            var Cp = C + i * K;
-            for (int j = 0; j < N; ++j)
+            var rowA = A + i * N;
+            var rowC = C + i * K;
+            for (int k = 0; k < K; ++k)
             {
-                var a = Ap[j];
-                var Bp = B + j * K;
-                for (int k = 0; k < K; ++k)
+                var total = rowC[k];
+                for (int j = 0; j < N; ++j)
                 {
-                    Cp[k] += a * Bp[k];
+                    total += rowA[j] * B[j * K + k];
                 }
+                rowC[k] = total;
             }
         }
     }
@@ -213,18 +213,18 @@ public class MathOps
                           float* B,
                           float* C)
     {
-        for (int i = 0; i < M; i++)
+        for (int i = 0; i < M; ++i)
         {
-            var Ap = A + i * N;
-            var Cp = C + i * K;
-            for (int j = 0; j < N; ++j)
+            var rowA = A + i * N;
+            var rowC = C + i * K;
+            for (int k = 0; k < K; ++k)
             {
-                var a = Ap[j];
-                var Bp = B + j * K;
-                for (int k = 0; k < K; ++k)
+                var total = rowC[k];
+                for (int j = 0; j < N; ++j)
                 {
-                    Cp[k] += a * Bp[k];
+                    total += rowA[j] * B[j * K + k];
                 }
+                rowC[k] = total;
             }
         }
     }
