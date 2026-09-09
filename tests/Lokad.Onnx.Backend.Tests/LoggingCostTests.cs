@@ -99,7 +99,7 @@ public class LoggingCostTests
             Profiler.StartNodeProfile(7, OpType.Relu);
             Profiler.StartOpStage(OpStage.Math);
             Profiler.StopNodeProfile();
-            Assert.Equal(1, enabled.Profile.Count);
+            Assert.Single(enabled.Profile);
             Assert.True(enabled.Profile.Peek().OpsProfile.Count >= 2);
         }
         using (var after = Profiler.BeginExecution(false))

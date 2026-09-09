@@ -76,7 +76,7 @@ public class GraphIsolationTests
 
 
     [Fact]
-    public void ConcurrentContexts_CorrectOutputs()
+    public async Task ConcurrentContexts_CorrectOutputs()
     {
         var g = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
         var uiA = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::mnist" })!;
@@ -97,15 +97,17 @@ public class GraphIsolationTests
         };
         var tA = Task.Run(() => run(execA, uiA));
         var tB = Task.Run(() => run(execB, uiB));
-        Task.WaitAll(tA, tB);
-        Assert.True(tA.Result.Item1);
-        Assert.True(tB.Result.Item1);
-        Assert.Equal(refA, tA.Result.Item2);
-        Assert.Equal(refB, tB.Result.Item2);
+        await Task.WhenAll(tA, tB);
+        var (okA, arrA) = await tA;
+        var (okB, arrB) = await tB;
+        Assert.True(okA);
+        Assert.True(okB);
+        Assert.Equal(refA, arrA);
+        Assert.Equal(refB, arrB);
     }
 
     [Fact]
-    public void ConcurrentFacade_RejectsCleanly_And_Recovers()
+    public async Task ConcurrentFacade_RejectsCleanly_And_Recovers()
     {
         var g = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
         var ui = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::mnist" })!;
@@ -117,7 +119,7 @@ public class GraphIsolationTests
         using var barrier = new Barrier(2);
         var tA = Task.Run(() => { for (int i = 0; i < rounds; i++) { barrier.SignalAndWait(); resultsA[i] = g.Execute(ui, true); } });
         var tB = Task.Run(() => { for (int i = 0; i < rounds; i++) { barrier.SignalAndWait(); resultsB[i] = g.Execute(ui, true); } });
-        Task.WaitAll(tA, tB);
+        await Task.WhenAll(tA, tB);
         int rejected = resultsA.Count(r => !r) + resultsB.Count(r => !r);
         int succeeded = resultsA.Count(r => r) + resultsB.Count(r => r);
         Assert.True(rejected >= 1, "expected at least one clean rejection under hammer");

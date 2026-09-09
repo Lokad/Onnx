@@ -68,9 +68,9 @@ public class TensorOpsReductionTests
         var values = new float[2048];
         for (int i = 0; i < values.Length; i++) values[i] = (float)(rnd.NextDouble() * 200.0 - 100.0);
         int width = System.Numerics.Vector<float>.Count;
+        Span<float> buf = stackalloc float[System.Numerics.Vector<float>.Count];
         for (int i = 0; i + width <= values.Length; i += width)
         {
-            Span<float> buf = stackalloc float[width];
             MathOps.ExpVector(new System.Numerics.Vector<float>(values, i)).CopyTo(buf);
             var got = buf;
             for (int j = 0; j < width; j++)

@@ -32,7 +32,7 @@ public class SequenceValueTests
         var seq = new TensorSequence(new ITensor[] { DenseTensor<float>.OfValues(new float[] { 1f, 2f }) });
         var good = new Dictionary<string, ITensor> { { "s", seq } };
         Assert.True(g.Execute(good, false));
-        Assert.Equal(1, ((TensorSequence)g.Outputs["s"]).Items.Count);
+        Assert.Single(((TensorSequence)g.Outputs["s"]).Items);
         var bad = new Dictionary<string, ITensor> { { "s", DenseTensor<float>.OfValues(new float[] { 1f, 2f }) } };
         Assert.False(g.Execute(bad, false));
     }

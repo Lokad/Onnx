@@ -15,7 +15,7 @@ public class GraphFusionRopeTests
         foreach (var node in graph.Nodes.Where(n => n.Op == OpType.RotaryEmbedding))
         {
             Assert.Equal(3, node.Inputs.Length);
-            Assert.Equal(1, node.Outputs.Length);
+            Assert.Single(node.Outputs);
             Assert.True(node.RequiredInt("half") > 0);
         }
     }
