@@ -118,4 +118,43 @@ public class ConvPoolPaddingTests
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("Indices", r.Message ?? "");
     }
+
+    [Fact]
+    public void ConvGeometry_MatchesSpecFormula()
+    {
+        // Explicit pads: floor((input + pad - kernel) / stride) + 1 per axis.
+        Assert.Equal(new[] { 5, 5 }, MathOps.GetConv2DOutputShape(new[] { 5, 5 }, 3, 3, 1, 1, 2, 2));
+        Assert.Equal(new[] { 4, 7 }, MathOps.GetConv2DOutputShape(new[] { 7, 8 }, 3, 2, 2, 1, 2, 0));
+        Assert.Equal(new[] { 6, 6 }, MathOps.GetConv2DOutputShape(new[] { 10, 10 }, 5, 5, 1, 1, 0, 0));
+        Assert.Equal(new[] { 0, 0 }, MathOps.GetConv2DOutputShape(new[] { 2, 2 }, 3, 3, 2, 2, 0, 0));
+        // Effective kernel spans include dilation gaps.
+        Assert.Equal(3, MathOps.GetConv2DEffectiveFilterSize(3, 1));
+        Assert.Equal(5, MathOps.GetConv2DEffectiveFilterSize(3, 2));
+        Assert.Equal(4, MathOps.GetConv2DEffectiveFilterSize(2, 3));
+        Assert.Equal(5, MathOps.GetConv2DEffectiveFilterSize(5, 1));
+        // VALID pads nothing.
+        var valid = MathOps.GetConv2DOutputInfo(MathOps.PadType.Valid, 5, 5, 1, 1, 3, 3, null);
+        Assert.Equal(new[] { 3, 3 }, valid.Shape);
+        Assert.Equal(new[] { 0, 0, 0, 0 }, new[] { valid.PadInfo.top, valid.PadInfo.bottom, valid.PadInfo.left, valid.PadInfo.right });
+        var validStrided = MathOps.GetConv2DOutputInfo(MathOps.PadType.Valid, 7, 8, 2, 1, 3, 2, null);
+        Assert.Equal(new[] { 3, 7 }, validStrided.Shape);
+        // SAME_UPPER keeps ceil(input/stride) outputs with the odd cell at the end.
+        var upper = MathOps.GetConv2DOutputInfo(MathOps.PadType.SameUpper, 5, 5, 1, 1, 3, 3, null);
+        Assert.Equal(new[] { 5, 5 }, upper.Shape);
+        Assert.Equal(new[] { 1, 1, 1, 1 }, new[] { upper.PadInfo.top, upper.PadInfo.bottom, upper.PadInfo.left, upper.PadInfo.right });
+        Assert.Equal(2, upper.PadInfo.h);
+        var upperStrided = MathOps.GetConv2DOutputInfo(MathOps.PadType.SameUpper, 7, 8, 2, 2, 3, 2, null);
+        Assert.Equal(new[] { 4, 4 }, upperStrided.Shape);
+        Assert.Equal(new[] { 1, 1, 0, 0 }, new[] { upperStrided.PadInfo.top, upperStrided.PadInfo.bottom, upperStrided.PadInfo.left, upperStrided.PadInfo.right });
+        // SAME_LOWER puts the odd cell at the start.
+        var lower = MathOps.GetConv2DOutputInfo(MathOps.PadType.SameLower, 6, 6, 1, 1, 4, 4, null);
+        Assert.Equal(new[] { 6, 6 }, lower.Shape);
+        Assert.Equal(new[] { 2, 1, 2, 1 }, new[] { lower.PadInfo.top, lower.PadInfo.bottom, lower.PadInfo.left, lower.PadInfo.right });
+        // VALUE pads uniformly and sizes explicitly.
+        var valued = MathOps.GetConv2DOutputInfo(MathOps.PadType.Value, 5, 5, 1, 1, 3, 3, 2);
+        Assert.Equal(new[] { 7, 7 }, valued.Shape);
+        Assert.Equal(new[] { 2, 2, 2, 2 }, new[] { valued.PadInfo.top, valued.PadInfo.bottom, valued.PadInfo.left, valued.PadInfo.right });
+        Assert.Equal(4, valued.PadInfo.h);
+        Assert.Throws<System.ArgumentNullException>(() => MathOps.GetConv2DOutputInfo(MathOps.PadType.Value, 5, 5, 1, 1, 3, 3, null));
+    }
 }

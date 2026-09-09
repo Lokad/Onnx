@@ -55,54 +55,64 @@ public class MathOps
         public int[] Shape;
     }
 
+    // Integer division for output geometry. Validated callers pass positive
+    // strides; both helpers stay exact for every numerator, including
+    // shrunken dims, where truncating division alone would round the wrong way.
+    static int CeilDivPositive(int numerator, int stride)
+    {
+        int quotient = numerator / stride;
+        int remainder = numerator % stride;
+        if (remainder == 0) return quotient;
+        return numerator > 0 ? quotient + 1 : quotient;
+    }
+
+    static int FloorDivPositive(int numerator, int stride)
+    {
+        int quotient = numerator / stride;
+        int remainder = numerator % stride;
+        if (remainder == 0 || numerator > 0) return quotient;
+        return quotient - 1;
+    }
+
+    // Splits total padding around one axis: the odd cell goes to the end,
+    // except for SAME_LOWER where it goes to the start (ONNX auto_pad).
+    static (int start, int end) SplitPad(int total, bool extraAtStart)
+    {
+        int start = extraAtStart ? (total + 1) / 2 : total / 2;
+        return (start, total - start);
+    }
+
+    // Output geometry per ONNX auto_pad mode: VALID pads nothing, SAME modes
+    // preserve ceil(input/stride) outputs distributing the deficit, and VALUE
+    // pads uniformly, delegating to the explicit formula below.
     public static Conv2DOutputInfo GetConv2DOutputInfo(PadType pad, int inHeight, int inWidth, int strideHeight, int strideWidth, int filterHeight, int filterWidth, int? padValue)
     {
         var padInfo = new PadInfo();
-        var outHeight = 0;
-        var outWidth = 0;
+        int outHeight = 0;
+        int outWidth = 0;
         switch (pad)
         {
             case PadType.Valid:
-                padInfo.bottom = 0;
-                padInfo.left = 0;
-                padInfo.right = 0;
-                padInfo.top = 0;
-                outHeight = (int)Math.Ceiling((inHeight - filterHeight + 1d) / strideHeight);
-                outWidth = (int)Math.Ceiling((inWidth - filterWidth + 1d) / strideWidth);
-                padInfo.h = 0;
-                padInfo.w = 0;
+                outHeight = CeilDivPositive(inHeight - filterHeight + 1, strideHeight);
+                outWidth = CeilDivPositive(inWidth - filterWidth + 1, strideWidth);
                 break;
 
             case PadType.SameUpper:
             case PadType.SameLower:
-                outHeight = (int)Math.Ceiling(inHeight / (float)strideHeight);
-                outWidth = (int)Math.Ceiling(inWidth / (float)strideWidth);
-
-                var padAlongHeight = Math.Max(0, (outHeight - 1) * strideHeight + filterHeight - inHeight);
-                var padAlongWidth = Math.Max(0, (outWidth - 1) * strideWidth + filterWidth - inWidth);
-                var top = pad == PadType.SameLower ? (int)Math.Ceiling(padAlongHeight / 2f) : (int)Math.Floor(padAlongHeight / 2f);
-                var bottom = (int)padAlongHeight - top;
-                var left = pad == PadType.SameLower ? (int)Math.Ceiling(padAlongWidth / 2f) : (int)Math.Floor(padAlongWidth / 2f);
-                var right = (int)padAlongWidth - left;
-
-                padInfo.bottom = bottom;
-                padInfo.left = left;
-                padInfo.right = right;
-                padInfo.top = top;
-
-                padInfo.h = padAlongHeight;
-                padInfo.w = padAlongWidth;
+                bool extraAtStart = pad == PadType.SameLower;
+                outHeight = CeilDivPositive(inHeight, strideHeight);
+                outWidth = CeilDivPositive(inWidth, strideWidth);
+                int padH = Math.Max(0, (outHeight - 1) * strideHeight + filterHeight - inHeight);
+                int padW = Math.Max(0, (outWidth - 1) * strideWidth + filterWidth - inWidth);
+                var (top, bottom) = SplitPad(padH, extraAtStart);
+                var (left, right) = SplitPad(padW, extraAtStart);
+                padInfo = new PadInfo { top = top, bottom = bottom, left = left, right = right, h = padH, w = padW };
                 break;
 
             case PadType.Value:
                 if (padValue == null) throw new ArgumentNullException(nameof(padValue));
-                padInfo.bottom = padValue.Value;
-                padInfo.left = padValue.Value;
-                padInfo.right = padValue.Value;
-                padInfo.top = padValue.Value;
-                padInfo.h = padInfo.top + padInfo.bottom;
-                padInfo.w = padInfo.right + padInfo.left;
-                var outShape = GetConv2DOutputShape(new int[] { inHeight, inWidth}, filterHeight, filterWidth, strideHeight, strideWidth, padInfo.h, padInfo.w);
+                padInfo = new PadInfo { top = padValue.Value, bottom = padValue.Value, left = padValue.Value, right = padValue.Value, h = 2 * padValue.Value, w = 2 * padValue.Value };
+                var outShape = GetConv2DOutputShape(new int[] { inHeight, inWidth }, filterHeight, filterWidth, strideHeight, strideWidth, padInfo.h, padInfo.w);
                 outHeight = outShape[0];
                 outWidth = outShape[1];
                 break;
@@ -110,11 +120,15 @@ public class MathOps
         return new Conv2DOutputInfo { PadInfo = padInfo, Shape = new int[] { outHeight, outWidth } };
     }
 
+    // Explicit-pads output geometry per the ONNX formula
+    // floor((input + pad_total - kernel) / stride) + 1 per axis.
     public static int[] GetConv2DOutputShape(int[] inputShape, int kernelHeight, int kernelWidth, int strideY, int strideX, int padY, int padX)
     {
-        var outputHeight = (int) Math.Floor((inputShape[0] - kernelHeight + padY * 1.0f) / strideY) + 1;
-        var outputWidth = (int) Math.Floor((inputShape[1] - kernelWidth + padX * 1.0f) / strideX) + 1;
-        return new int[] { outputHeight, outputWidth};
+        return new int[]
+        {
+            FloorDivPositive(inputShape[0] - kernelHeight + padY, strideY) + 1,
+            FloorDivPositive(inputShape[1] - kernelWidth + padX, strideX) + 1,
+        };
     }
 
     public static int GetConv2DEffectiveFilterSize(int filterSize, int dilation) => dilation <= 1 ? filterSize : filterSize + (filterSize - 1) * (dilation - 1);
