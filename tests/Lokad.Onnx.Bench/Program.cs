@@ -13,6 +13,11 @@ static class Bench
 {
     const int Warm = 3;
     const double Tolerance = 1e-4;
+    const double ConfinementRatioLimit = 1.3;
+    const int ConfinementDurationMs = 2000;
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    static extern bool GetLogicalProcessorInformationEx(int relationshipType, IntPtr buffer, ref int returnedLength);
 
     static int Main(string[] args)
     {
@@ -27,20 +32,30 @@ static class Bench
         };
         if (args.Length > 0 && args[0] == "micro")
         {
-            return RunMicro(args.Skip(1).ToArray());
+            int microCpu = 0;
+            var microArgs = StripCpuSelector(args.Skip(1).ToArray(), ref microCpu);
+            long microMask = EnforceSingleCpuAffinity(microCpu).ToInt64();
+            Console.WriteLine("bench-micro affinity=0x" + microMask.ToString("X") + " logical-cpu=" + microCpu + " (child jobs inherit process affinity on Windows)");
+            return RunMicro(microArgs);
         }
         var selected = new List<string>();
         string modeName = "auto";
-        int threads = Environment.ProcessorCount;
+        string rowsName = "canonical";
+        int threads = 1;
+        int cpu = 0;
         int iters = 7;
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] == "--mode" && i + 1 < args.Length) modeName = args[++i];
+            else if (args[i] == "--rows" && i + 1 < args.Length) rowsName = args[++i];
+            else if (args[i] == "--cpu" && i + 1 < args.Length && int.TryParse(args[i + 1], out var c)) { cpu = c; i++; }
             else if (args[i] == "--threads" && i + 1 < args.Length && int.TryParse(args[i + 1], out var t) && t >= 1) { threads = t; i++; }
             else if (args[i] == "--iters" && i + 1 < args.Length && int.TryParse(args[i + 1], out var k) && k >= 1) { iters = k; i++; }
             else if (args[i] == "all" || assets.ContainsKey(args[i])) { if (args[i] != "all" && !selected.Contains(args[i], StringComparer.OrdinalIgnoreCase)) selected.Add(args[i]); }
-            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N]"); return 2; }
+            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all] [--cpu N]"); return 2; }
         }
+        if (rowsName != "canonical" && rowsName != "all") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all)"); return 2; }
+        if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount) { Console.WriteLine("invalid --cpu " + cpu + " (expected 0.." + (Environment.ProcessorCount - 1) + ")"); return 2; }
         if (selected.Count == 0) selected.AddRange(assets.Keys);
         TensorExecutionOptions tensorOpts = modeName.ToLowerInvariant() switch
         {
@@ -57,28 +72,196 @@ static class Bench
                 if (!File.Exists(f)) { Console.WriteLine("missing asset for " + key + ": " + f); return 1; }
             }
         }
-        string cpu = Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER") ?? "unknown";
-        string ortOpt;
-        using (var probeOpts = new SessionOptions()) ortOpt = probeOpts.GraphOptimizationLevel.ToString();
-        Console.WriteLine("host=" + Environment.MachineName + " cpu=" + cpu
-            + " procs=" + Environment.ProcessorCount + " (logical, no affinity pinning)"
+        long affinityMask = EnforceSingleCpuAffinity(cpu).ToInt64();
+        string cpuId = Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER") ?? "unknown";
+        string vec = System.Numerics.Vector.IsHardwareAccelerated
+            ? "Vector" + (System.Numerics.Vector<byte>.Count * 8)
+            : "Vector-none";
+        Console.WriteLine("host=" + Environment.MachineName + " cpu=" + cpuId
+            + " procs=" + Environment.ProcessorCount + " (logical)"
+            + " affinity=0x" + affinityMask.ToString("X") + " (verified single-CPU, logical-cpu=" + cpu + ")"
+            + " " + DescribeCpuTopology(cpu)
+            + " vector=" + vec + " isa=" + HardwareIntrinsics.GetFullInfo()
             + " fma=" + System.Runtime.Intrinsics.X86.Fma.IsSupported
             + " runtime=" + RuntimeInformation.FrameworkDescription
             + " lokad=" + typeof(ComputationalGraph).Assembly.GetName().Version
             + " ort=" + typeof(InferenceSession).Assembly.GetName().Version
-            + " ort-provider=cpu-only ort-optimizations=" + ortOpt
-            + " mode=" + modeName + " threads=" + threads + " iters=" + iters + " warmup=" + Warm);
+            + " ort-provider=cpu-only ort-optimizations=ORT_ENABLE_ALL nospin intraop=" + threads + " interop=1 seq"
+            + " mode=" + modeName + " threads=" + threads + " rows=" + rowsName + " iters=" + iters + " warmup=" + Warm);
+        var confinement = MeasureSingleCpuConfinement(ConfinementDurationMs);
+        Console.WriteLine("confinement wallMs=" + confinement.wallMs.ToString("F0")
+            + " cpuMs=" + confinement.cpuMs.ToString("F0")
+            + " ratio=" + confinement.ratio.ToString("F2")
+            + " (single-threaded " + ConfinementDurationMs + "ms busy loop; expect ~1.0, limit " + ConfinementRatioLimit.ToString("F1") + ")");
+        if (confinement.ratio < 0.8)
+            Console.WriteLine("confinement warning: cpu/wall ratio " + confinement.ratio.ToString("F2")
+                + " is well below 1.0; the pinned CPU was starved by concurrent load."
+                + " Treat these timings as diagnostic and rerun on a quiet core.");
+        if (confinement.ratio > ConfinementRatioLimit)
+            throw new InvalidOperationException("single-CPU confinement failed: cpu/wall ratio "
+                + confinement.ratio.ToString("F2") + " exceeds " + ConfinementRatioLimit.ToString("F1")
+                + "; parallel workers escaped the pinned CPU.");
+        using (var verifyProc = Process.GetCurrentProcess())
+        {
+            if (AffinitySupported && verifyProc.ProcessorAffinity != (IntPtr)(1L << cpu))
+                throw new InvalidOperationException("single-CPU confinement failed: affinity changed during the confinement check.");
+        }
         if (selected.Contains("e5", StringComparer.OrdinalIgnoreCase))
         {
             var e5 = assets["e5"];
-            CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters);
-            CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters);
+            CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, rowsName, modeName);
+            CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, rowsName, modeName);
         }
-        if (selected.Contains("dinov2", StringComparer.OrdinalIgnoreCase)) CompareVision("dinov2-224", assets["dinov2"][0], tensorOpts, threads, iters);
-        if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters);
-        if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters);
-        if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters);
+        if (selected.Contains("dinov2", StringComparer.OrdinalIgnoreCase)) CompareVision("dinov2-224", assets["dinov2"][0], tensorOpts, threads, iters, rowsName, modeName);
+        if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, rowsName, modeName);
+        if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters, rowsName, modeName);
+        if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, rowsName, modeName);
         return 0;
+    }
+
+    static string[] StripCpuSelector(string[] args, ref int cpu)
+    {
+        var rest = new List<string>();
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "--cpu" && i + 1 < args.Length && int.TryParse(args[i + 1], out var c)) { cpu = c; i++; }
+            else rest.Add(args[i]);
+        }
+        if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount)
+            throw new InvalidOperationException("invalid --cpu " + cpu + " (expected 0.." + (Environment.ProcessorCount - 1) + ").");
+        return rest.ToArray();
+    }
+
+    [System.Runtime.Versioning.SupportedOSPlatformGuard("windows")]
+    [System.Runtime.Versioning.SupportedOSPlatformGuard("linux")]
+    static bool AffinitySupported => OperatingSystem.IsWindows() || OperatingSystem.IsLinux();
+
+    static IntPtr EnforceSingleCpuAffinity(int cpu)
+    {
+        if (!AffinitySupported)
+            throw new InvalidOperationException("single-CPU confinement failed: process affinity is not supported on "
+                + RuntimeInformation.OSDescription + "; refusing to time without confinement.");
+        long mask = 1L << cpu;
+        IntPtr requested = (IntPtr)mask;
+        IntPtr actual;
+        try
+        {
+            using var proc = Process.GetCurrentProcess();
+            if (AffinitySupported)
+            {
+                proc.ProcessorAffinity = requested;
+                actual = proc.ProcessorAffinity;
+            }
+            else
+            {
+                throw new PlatformNotSupportedException("process affinity is not supported on this platform.");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("single-CPU confinement failed: cannot pin process affinity to 0x"
+                + mask.ToString("X") + " (logical CPU " + cpu + "): " + ex.Message + ".", ex);
+        }
+        if (actual != requested)
+            throw new InvalidOperationException("single-CPU confinement failed: requested affinity=0x"
+                + mask.ToString("X") + " but verified 0x" + actual.ToInt64().ToString("X") + ".");
+        return actual;
+    }
+
+    static (double wallMs, double cpuMs, double ratio) MeasureSingleCpuConfinement(int durationMs)
+    {
+        using var proc = Process.GetCurrentProcess();
+        TimeSpan before = proc.TotalProcessorTime;
+        var sw = Stopwatch.StartNew();
+        double sink = 0;
+        while (sw.Elapsed.TotalMilliseconds < durationMs)
+        {
+            for (int i = 1; i <= 20000; i++) sink += Math.Sqrt(i);
+        }
+        sw.Stop();
+        GC.KeepAlive(sink);
+        TimeSpan after = proc.TotalProcessorTime;
+        double wallMs = sw.Elapsed.TotalMilliseconds;
+        double cpuMs = (after - before).TotalMilliseconds;
+        return (wallMs, cpuMs, cpuMs / Math.Max(wallMs, 1e-9));
+    }
+
+    static string DescribeCpuTopology(int cpu)
+    {
+        try
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return "topology=non-windows-unknown";
+            if (!Environment.Is64BitProcess) return "topology=32bit-unknown";
+            if (cpu < 0 || cpu >= 64) return "topology=cpu-out-of-range";
+            const int RelationProcessorCore = 0;
+            int length = 0;
+            GetLogicalProcessorInformationEx(RelationProcessorCore, IntPtr.Zero, ref length);
+            if (length <= 0) return "topology=query-unavailable";
+            IntPtr buffer = Marshal.AllocHGlobal(length);
+            try
+            {
+                if (!GetLogicalProcessorInformationEx(RelationProcessorCore, buffer, ref length))
+                    return "topology=query-failed";
+                string? hit = null;
+                int offset = 0;
+                while (offset < length)
+                {
+                    int relationship = Marshal.ReadInt32(buffer, offset);
+                    int size = Marshal.ReadInt32(buffer, offset + 4);
+                    if (size <= 0) break;
+                    if (relationship == RelationProcessorCore)
+                    {
+                        byte flags = Marshal.ReadByte(buffer, offset + 8);
+                        byte efficiency = Marshal.ReadByte(buffer, offset + 9);
+                        ushort groupCount = (ushort)Marshal.ReadInt16(buffer, offset + 30);
+                        for (int g = 0; g < groupCount; g++)
+                        {
+                            int groupOffset = offset + 32 + g * 16;
+                            if (groupOffset + 16 > offset + size) break;
+                            long mask = Marshal.ReadInt64(buffer, groupOffset);
+                            ushort group = (ushort)Marshal.ReadInt16(buffer, groupOffset + 8);
+                            if (group == 0 && ((mask >> cpu) & 1L) != 0)
+                            {
+                                int siblings = System.Numerics.BitOperations.PopCount((ulong)mask);
+                                hit = "core-group=0 core-mask=0x" + mask.ToString("X")
+                                    + " efficiency-class=" + efficiency
+                                    + " smt-siblings=" + siblings
+                                    + " smt=" + (((flags & 1) != 0) ? "yes" : "no");
+                            }
+                        }
+                    }
+                    offset += size;
+                }
+                return hit is null ? "topology=core-not-found" : "topology=(" + hit + ")";
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(buffer);
+            }
+        }
+        catch (Exception ex)
+        {
+            return "topology=unavailable(" + ex.GetType().Name + ")";
+        }
+    }
+
+    static SessionOptions CreateSingleCpuSessionOptions(int threads)
+    {
+        var so = new SessionOptions();
+        so.GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL;
+        so.AddSessionConfigEntry("session.intra_op.allow_spinning", "0");
+        so.AddSessionConfigEntry("session.inter_op.allow_spinning", "0");
+        so.IntraOpNumThreads = threads;
+        so.InterOpNumThreads = 1;
+        so.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
+        return so;
+    }
+
+    static string CanonicalLokDesc(string modeName, int threads)
+    {
+        if (modeName.Equals("auto", StringComparison.OrdinalIgnoreCase) && threads == 1)
+            return "single-cpu-auto-1 (canonical)";
+        return "single-cpu-" + modeName.ToLowerInvariant() + "-" + threads + " (diagnostic)";
     }
 
     static int RunMicro(string[] args)
@@ -131,22 +314,22 @@ static class Bench
         throw new InvalidOperationException("repo root not found");
     }
 
-    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters)
+    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
         Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + ShortHash(tokenizer));
-        Compare(name, model, inputs, tensorOpts, threads, iters);
+        Compare(name, model, inputs, tensorOpts, threads, iters, rowsName, modeName);
     }
 
-    static void CompareVision(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters)
+    static void CompareVision(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
     {
         var flat = new float[1 * 3 * 224 * 224];
         for (int i = 0; i < flat.Length; i++) flat[i] = 0.5f;
         var input = new DenseTensor<float>(flat, new[] { 1, 3, 224, 224 });
-        Compare(name, model, new ITensor[] { input }, tensorOpts, threads, iters);
+        Compare(name, model, new ITensor[] { input }, tensorOpts, threads, iters, rowsName, modeName);
     }
 
-    static void CompareGpt2(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters)
+    static void CompareGpt2(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
     {
         var ids = new DenseTensor<long>(new long[] { 15496, 11, 314, 716 }, new[] { 1, 4 });
         ids.Name = "input_ids";
@@ -164,40 +347,45 @@ static class Bench
             inputs.Add(k);
             inputs.Add(v);
         }
-        Compare(name, model, inputs.ToArray(), tensorOpts, threads, iters);
+        Compare(name, model, inputs.ToArray(), tensorOpts, threads, iters, rowsName, modeName);
     }
 
-    static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters)
+    static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
     {
         var graph = OnnxImport.Load(model)!;
         var sidecar = Path.ChangeExtension(model, ".onnx_data");
         string sidecarInfo = File.Exists(sidecar)
             ? " sidecar=" + Path.GetFileName(sidecar) + " bytes=" + new FileInfo(sidecar).Length + " sha12=" + ShortHash(sidecar)
             : "";
+        if (rowsName == "canonical")
+        {
+            var matchedOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
+            using (var matchedSo = CreateSingleCpuSessionOptions(threads))
+            {
+                using var ortMatched = new InferenceSession(model, matchedSo);
+                TimedRow(name, model, graph, inputs, ortMatched, matchedOpts,
+                    CanonicalLokDesc(modeName, threads), "intraop=" + threads + " interop=1 seq opt=ALL nospin", iters, sidecarInfo);
+            }
+            return;
+        }
         using (var ortDefault = new InferenceSession(model))
         {
             TimedRow(name, model, graph, inputs, ortDefault, ExecutionOptions.Default,
-                "defaults", "ort-defaults", iters, sidecarInfo);
+                "defaults (archival unequal-CPU: lokad-auto-1-thread vs ort-default-pool; do-not-gate)", "ort-defaults", iters, sidecarInfo);
         }
         var oneOpts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Scalar);
-        using (var oneSo = new SessionOptions())
+        using (var oneSo = CreateSingleCpuSessionOptions(1))
         {
-            oneSo.IntraOpNumThreads = 1;
-            oneSo.InterOpNumThreads = 1;
-            oneSo.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
             using var ortOne = new InferenceSession(model, oneSo);
             TimedRow(name, model, graph, inputs, ortOne, oneOpts,
-                "one-thread", "intraop=1 interop=1 seq", iters, sidecarInfo);
+                "scalar-1-thread (SIMD-disabled diagnostic)", "intraop=1 interop=1 seq opt=ALL nospin", iters, sidecarInfo);
         }
-        var matchedOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
-        using (var matchedSo = new SessionOptions())
+        var legacyMatchedOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
+        using (var legacyMatchedSo = CreateSingleCpuSessionOptions(threads))
         {
-            matchedSo.IntraOpNumThreads = threads;
-            matchedSo.InterOpNumThreads = 1;
-            matchedSo.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
-            using var ortMatched = new InferenceSession(model, matchedSo);
-            TimedRow(name, model, graph, inputs, ortMatched, matchedOpts,
-                "mode-threads=" + threads, "intraop=" + threads + " interop=1 seq", iters, sidecarInfo);
+            using var ortMatched = new InferenceSession(model, legacyMatchedSo);
+            TimedRow(name, model, graph, inputs, ortMatched, legacyMatchedOpts,
+                CanonicalLokDesc(modeName, threads), "intraop=" + threads + " interop=1 seq opt=ALL nospin", iters, sidecarInfo);
         }
     }
 
