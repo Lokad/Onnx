@@ -64,8 +64,8 @@ public static class ProtoConversions
                 return tp.DoubleData.Count == 0 && tp.RawData.Length > 0 ? MemoryMarshal.Cast<byte, double>(tp.RawData.Span).ToArray() : tp.DoubleData.ToArray();
             case TensorElementType.Float16:
                 Runtime.Debug("tensorproto {tpn} has embedded float16 tensor data.", tp.Name);
-                if (tp.RawData.Length > 0) return MemoryMarshal.Cast<ushort, Lokad.Onnx.Float16>(MemoryMarshal.Cast<byte, ushort>(tp.RawData.Span)).ToArray();
-                return tp.Int32Data.Select(v => new Lokad.Onnx.Float16(checked((ushort)v))).ToArray();
+                if (tp.RawData.Length > 0) return MemoryMarshal.Cast<ushort, Half>(MemoryMarshal.Cast<byte, ushort>(tp.RawData.Span)).ToArray();
+                return tp.Int32Data.Select(v => BitConverter.UInt16BitsToHalf(checked((ushort)v))).ToArray();
             case TensorElementType.BFloat16:
                 Runtime.Debug("tensorproto {tpn} has embedded bfloat16 tensor data.", tp.Name);
                 if (tp.RawData.Length > 0) return MemoryMarshal.Cast<ushort, Lokad.Onnx.BFloat16>(MemoryMarshal.Cast<byte, ushort>(tp.RawData.Span)).ToArray();
@@ -217,7 +217,7 @@ public static class ProtoConversions
             byte[] ub => ub.AsSpan(),
             short[] s => MemoryMarshal.Cast<short, byte>(s.AsSpan()),
             ushort[] us => MemoryMarshal.Cast<ushort, byte>(us.AsSpan()),
-            Lokad.Onnx.Float16[] h => MemoryMarshal.Cast<Lokad.Onnx.Float16, byte>(h.AsSpan()),
+            Half[] h => MemoryMarshal.Cast<Half, byte>(h.AsSpan()),
             Lokad.Onnx.BFloat16[] bh => MemoryMarshal.Cast<Lokad.Onnx.BFloat16, byte>(bh.AsSpan()),
             int[] i => MemoryMarshal.Cast<int, byte>(i.AsSpan()),
             uint[] ui => MemoryMarshal.Cast<uint, byte>(ui.AsSpan()),

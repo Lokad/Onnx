@@ -147,7 +147,7 @@ namespace Lokad.Onnx
                 { typeof(long), new TensorTypeInfo( TensorElementType.Int64, sizeof(long)) },
                 { typeof(string), new TensorTypeInfo( TensorElementType.String, -1) },
                 { typeof(bool), new TensorTypeInfo( TensorElementType.Bool, sizeof(bool)) },
-                { typeof(Float16), new TensorTypeInfo( TensorElementType.Float16, sizeof(ushort)) },
+                { typeof(Half), new TensorTypeInfo( TensorElementType.Float16, sizeof(ushort)) },
                 { typeof(double), new TensorTypeInfo( TensorElementType.Double, sizeof(double)) },
                 { typeof(uint), new TensorTypeInfo( TensorElementType.UInt32, sizeof(uint)) },
                 { typeof(ulong), new TensorTypeInfo( TensorElementType.UInt64, sizeof(ulong)) },
@@ -173,7 +173,7 @@ namespace Lokad.Onnx
             // types to native code
             unsafe
             {
-                Debug.Assert(sizeof(ushort) == sizeof(Float16));
+                Debug.Assert(sizeof(ushort) == sizeof(Half));
                 Debug.Assert(sizeof(ushort) == sizeof(BFloat16));
             }
             _primitiveType = primitiveType;
@@ -239,7 +239,7 @@ namespace Lokad.Onnx
             TensorElementType.UInt8 => new byte[length],
             TensorElementType.Int16 => new short[length],
             TensorElementType.UInt16 => new ushort[length],
-            TensorElementType.Float16 => new Float16[length],
+            TensorElementType.Float16 => new Half[length],
             TensorElementType.BFloat16 => new BFloat16[length],
             TensorElementType.Int32 => new int[length],
             TensorElementType.UInt32 => new uint[length],
@@ -267,7 +267,7 @@ namespace Lokad.Onnx
             TensorElementType.UInt64 => new DenseTensor<ulong>(memory: (ulong[])data, dims),
             TensorElementType.Float => new DenseTensor<float>(memory: (float[])data, dims),
             TensorElementType.Double => new DenseTensor<double>(memory: (double[])data, dims),
-            TensorElementType.Float16 => new DenseTensor<Float16>(memory: (Float16[])data, dims),
+            TensorElementType.Float16 => new DenseTensor<Half>(memory: (Half[])data, dims),
             TensorElementType.BFloat16 => new DenseTensor<BFloat16>(memory: (BFloat16[])data, dims),
             TensorElementType.Complex64 => new DenseTensor<Complex>(memory: (Complex[])data, dims),
             _ => throw new ArgumentException($"Cannot convert model tensor of element type {elementType}."),
@@ -349,9 +349,9 @@ namespace Lokad.Onnx
                 {
                     return (T)(object)(ushort)(0);
                 }
-                else if (typeof(T) == typeof(Float16))
+                else if (typeof(T) == typeof(Half))
                 {
-                    return (T)(object)Float16.Zero;
+                    return (T)(object)Half.Zero;
                 }
                 else if (typeof(T) == typeof(BFloat16))
                 {
@@ -425,9 +425,9 @@ namespace Lokad.Onnx
                 {
                     return (T)(object)(ushort)(1);
                 }
-                else if (typeof(T) == typeof(Float16))
+                else if (typeof(T) == typeof(Half))
                 {
-                    return (T)(object)Float16.One;
+                    return (T)(object)Half.One;
                 }
                 else if (typeof(T) == typeof(BFloat16))
                 {

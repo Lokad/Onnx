@@ -30,7 +30,7 @@ public class DtypeMappingTests
             (TensorElementType.UInt64, new ulong[] { 18000000000000000000ul, 9ul }),
             (TensorElementType.Float, new float[] { 1.5f, -2.5f }),
             (TensorElementType.Double, new double[] { 1.25, -2.5 }),
-            (TensorElementType.Float16, new Float16[] { Float16.One, Float16.Zero }),
+            (TensorElementType.Float16, new Half[] { Half.One, Half.Zero }),
             (TensorElementType.BFloat16, new BFloat16[] { BFloat16.One, BFloat16.Zero }),
             (TensorElementType.Complex64, new Complex[] { new Complex(1, 2), new Complex(3, 4) }),
         };
@@ -70,14 +70,14 @@ public class DtypeMappingTests
     public void Float16_ShapeOps_Succeed()
     {
         var f16 = Model.ToTensor(Dto("f", TensorElementType.Float16, new[] { 2, 2 },
-            new Float16[] { Float16.One, Float16.Zero, Float16.One, Float16.Zero }));
+            new Half[] { Half.One, Half.Zero, Half.One, Half.Zero }));
         var shape = DenseTensor<long>.OfValues(new long[] { 4 });
         Assert.Equal(OpStatus.Success, CPUExecutionProvider.Reshape(f16, shape, false, null).Status);
         Assert.Equal(OpStatus.Success, CPUExecutionProvider.Transpose(f16, new[] { 1, 0 }, null, null).Status);
         var idx = DenseTensor<int>.OfValues(new int[] { 1, 0 });
         Assert.Equal(OpStatus.Success, CPUExecutionProvider.Gather(f16, idx, 0, null).Status);
         var second = Model.ToTensor(Dto("g", TensorElementType.Float16, new[] { 2, 2 },
-            new Float16[] { Float16.Zero, Float16.One, Float16.Zero, Float16.One }));
+            new Half[] { Half.Zero, Half.One, Half.Zero, Half.One }));
         Assert.Equal(OpStatus.Success, CPUExecutionProvider.Concat(new ITensor[] { f16, second }, 0, null).Status);
     }
 
@@ -111,8 +111,9 @@ public class DtypeMappingTests
         Assert.Equal(new short[] { -300, 300 }, (short[])i16.GetTensorData());
         var f16 = new TensorProto { Name = "f16", DataType = (int)TensorElementType.Float16 };
         f16.RawData = ByteString.CopyFrom(new byte[] { 0x00, 0x3C, 0x00, 0xBC });
-        var bits = (Float16[])f16.GetTensorData();
+        var bits = (Half[])f16.GetTensorData();
         Assert.Equal(2, bits.Length);
+        Assert.Equal(new Half[] { (Half)1f, (Half)(-1f) }, bits);
     }
 
     [Fact]
@@ -128,8 +129,8 @@ public class DtypeMappingTests
     [Fact]
     public void ZerosAndOnes_WorkForSmallFloats()
     {
-        Assert.Equal(Float16.One, Tensor<Float16>.Ones(2).GetValue(1));
-        Assert.Equal(Float16.Zero, Tensor<Float16>.Zeros(2).GetValue(0));
+        Assert.Equal(Half.One, Tensor<Half>.Ones(2).GetValue(1));
+        Assert.Equal(Half.Zero, Tensor<Half>.Zeros(2).GetValue(0));
         Assert.Equal(BFloat16.One, Tensor<BFloat16>.Ones(2).GetValue(1));
         Assert.Equal(BFloat16.Zero, Tensor<BFloat16>.Zeros(2).GetValue(0));
     }

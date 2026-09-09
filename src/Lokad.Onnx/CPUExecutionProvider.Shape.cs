@@ -34,7 +34,7 @@ public partial class CPUExecutionProvider
                 return Success(op, Tensor<float>.Transpose(fx, rented, perm));
             }
             case TensorElementType.Double: return Success(op, Tensor<double>.Transpose((Tensor<double>)data, perm));
-            case TensorElementType.Float16: return Success(op, Tensor<Float16>.Transpose((Tensor<Float16>)data, perm));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Transpose((Tensor<Half>)data, perm));
             case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Transpose((Tensor<BFloat16>)data, perm));
             case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Transpose((Tensor<System.Numerics.Complex>)data, perm));
             default: return NotSupported(op);
@@ -117,7 +117,7 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt64: return Success(op, input.Cast<ulong>());
             case TensorElementType.Float: return Success(op, input.Cast<float>());
             case TensorElementType.Double: return Success(op, input.Cast<double>());
-            //case TensorElementType.Float16: return Success(op, input.Cast<Float16>());
+            //case TensorElementType.Float16: return Success(op, input.Cast<Half>());
             //case TensorElementType.BFloat16: return Success(op, input.Cast<BFloat16>());
             //case TensorElementType.Complex64: return Success(op, input.Cast<System.Numerics.Complex>());
             default: return AttributeNotSupported(op, "to", to.ToString(), null);
@@ -144,7 +144,7 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Concat(inputs.CastA<Tensor<ulong>>(), axis));
             case TensorElementType.Float: return Success(op, Tensor<float>.Concat(inputs.CastA<Tensor<float>>(), axis));
             case TensorElementType.Double: return Success(op, Tensor<double>.Concat(inputs.CastA<Tensor<double>>(), axis));
-            case TensorElementType.Float16: return Success(op, Tensor<Float16>.Concat(inputs.CastA<Tensor<Float16>>(), axis));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Concat(inputs.CastA<Tensor<Half>>(), axis));
             case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Concat(inputs.CastA<Tensor<BFloat16>>(), axis));
             case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Concat(inputs.CastA<Tensor<System.Numerics.Complex>>(), axis));
             default: return InputTypeNotSupported(op, "inputs", inputs[0]);
@@ -191,7 +191,7 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Gather((Tensor<ulong>)data, (Tensor<int>)  indices, axis));
             case TensorElementType.Float: return Success(op, Tensor<float>.Gather((Tensor<float>)data, (Tensor<int>)  indices, axis));
             case TensorElementType.Double: return Success(op, Tensor<double>.Gather((Tensor<double>)data, (Tensor<int>)  indices, axis));
-            case TensorElementType.Float16: return Success(op, Tensor<Float16>.Gather((Tensor<Float16>)data, (Tensor<int>)  indices, axis));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Gather((Tensor<Half>)data, (Tensor<int>)  indices, axis));
             case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Gather((Tensor<BFloat16>)data, (Tensor<int>)  indices, axis));
             case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Gather((Tensor<System.Numerics.Complex>)data, (Tensor<int>)  indices, axis));
             default: return NotSupported(op);
@@ -246,7 +246,7 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Slice((Tensor<ulong>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
             case TensorElementType.Float: return Success(op, Tensor<float>.Slice((Tensor<float>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
             case TensorElementType.Double: return Success(op, Tensor<double>.Slice((Tensor<double>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
-            case TensorElementType.Float16: return Success(op, Tensor<Float16>.Slice((Tensor<Float16>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Slice((Tensor<Half>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
             case TensorElementType.BFloat16: return Success(op, Tensor<BFloat16>.Slice((Tensor<BFloat16>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
             case TensorElementType.Complex64: return Success(op, Tensor<System.Numerics.Complex>.Slice((Tensor<System.Numerics.Complex>)data, (Tensor<int>) starts, (Tensor<int>) ends, (Tensor<int>?) axes, (Tensor<int>?) steps));
             default: return NotSupported(op);
