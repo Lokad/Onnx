@@ -94,6 +94,45 @@ public class ReductionPlanTests
     }
 
     [Fact]
+    public void EmptyExtent_Mean_YieldsZero()
+    {
+        // ORT 1.29 yields zero for every dtype; without the kernel guard
+        // float and double produce NaN and int throws DivideByZero.
+        var axes = new int[] { 1 }.ToTensor<int>();
+        var f = Tensor<float>.ReduceMean(DenseTensor<float>.OfShape(2, 0), axes, false, false);
+        Assert.Equal(new int[] { 2 }, f.Dimensions.ToArray());
+        Assert.Equal(new float[] { 0f, 0f }, f.ToArray());
+        var fk = Tensor<float>.ReduceMean(DenseTensor<float>.OfShape(2, 0), axes, true, false);
+        Assert.Equal(new int[] { 2, 1 }, fk.Dimensions.ToArray());
+        Assert.Equal(new float[] { 0f, 0f }, fk.ToArray());
+        var d = Tensor<double>.ReduceMean(DenseTensor<double>.OfShape(2, 0), axes, false, false);
+        Assert.Equal(new double[] { 0.0, 0.0 }, d.ToArray());
+        var i = Tensor<int>.ReduceMean(DenseTensor<int>.OfShape(2, 0), axes, false, false);
+        Assert.Equal(new int[] { 0, 0 }, i.ToArray());
+    }
+
+    [Fact]
+    public void EmptyExtent_MaxSum_Pinned()
+    {
+        var axes = new int[] { 1 }.ToTensor<int>();
+        var max = Tensor<float>.ReduceMax(DenseTensor<float>.OfShape(2, 0), axes, false, false);
+        Assert.Equal(new float[] { float.NegativeInfinity, float.NegativeInfinity }, max.ToArray());
+        var sum = Tensor<float>.ReduceSum(DenseTensor<float>.OfShape(2, 0), axes, false, false);
+        Assert.Equal(new float[] { 0f, 0f }, sum.ToArray());
+        var isum = Tensor<int>.ReduceSum(DenseTensor<int>.OfShape(2, 0), axes, false, false);
+        Assert.Equal(new int[] { 0, 0 }, isum.ToArray());
+    }
+
+    [Fact]
+    public void CpuRouting_EmptyMean_YieldsZero()
+    {
+        var axes = new int[] { 1 }.ToTensor<int>();
+        var r = CPUExecutionProvider.ReduceMean(DenseTensor<float>.OfShape(2, 0), axes, 0, 0, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 0f, 0f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void ReduceMax_Noop_ReturnsInputUnchanged()
     {
         var r = Tensor<float>.ReduceMax(Data(), new int[0].ToTensor<int>(), true, true);

@@ -52,8 +52,9 @@ public class ReductionEngineTests
         Assert.Equal(new float[] { 0f, 0f, 0f }, sum.ToArray(), new FloatArrayComparer());
         var max = Tensor<float>.ReduceMax(empty, new int[] { 0 }.ToTensor<int>());
         Assert.Equal(new float[] { float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity }, max.ToArray(), new FloatArrayComparer());
+        // Empty means yield zero per the ORT 1.29 differential probe, not NaN.
         var mean = Tensor<float>.ReduceMean(empty, new int[] { 0 }.ToTensor<int>());
-        foreach (var v in mean.ToArray()) Assert.True(float.IsNaN(v));
+        Assert.Equal(new float[] { 0f, 0f, 0f }, mean.ToArray(), new FloatArrayComparer());
     }
 
     [Fact]

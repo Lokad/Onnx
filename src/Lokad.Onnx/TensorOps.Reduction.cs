@@ -158,6 +158,13 @@ where T : unmanaged
         for (int i = 0; i < os.Length; ++i)
         {
             int offset = i * r;
+            // Empty reductions yield zero; without the guard the quotient
+            // below divides by zero (ORT 1.29 agrees on 0 for every dtype).
+            if (r == 0)
+            {
+                os[i] = 0;
+                continue;
+            }
             int sum = 0;
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
             os[i] = sum / r;
@@ -187,6 +194,12 @@ where T : unmanaged
         for (int i = 0; i < os.Length; ++i)
         {
             int offset = i * r;
+            // Empty reductions yield zero instead of NaN (ORT 1.29).
+            if (r == 0)
+            {
+                os[i] = 0f;
+                continue;
+            }
             float sum = 0f;
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
             os[i] = sum / r;
@@ -216,6 +229,12 @@ where T : unmanaged
         for (int i = 0; i < os.Length; ++i)
         {
             int offset = i * r;
+            // Empty reductions yield zero instead of NaN (ORT 1.29).
+            if (r == 0)
+            {
+                os[i] = 0.0;
+                continue;
+            }
             double sum = 0.0;
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
             os[i] = sum / r;
