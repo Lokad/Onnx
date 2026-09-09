@@ -412,8 +412,10 @@ public class MathOps
         if (M % 2 != 0)
             throw new ArgumentException(nameof(M));
 
-        if (K % (4 * Vector256<float>.Count) != 0)
-            throw new ArgumentException(nameof(K));
+        // The unrolled body covers the largest multiple of 32 columns; the
+        // vector-then-scalar tail below covers the remainder in the same
+        // ascending order, so results match the non-unrolled kernel bitwise.
+        int blocked = K - (K % (4 * Vector256<float>.Count));
 
 #if DEBUG
         var Aend = A + M * N;
@@ -443,7 +445,7 @@ public class MathOps
                 var Bpv = (Vector256<float>*)Bp;
                 var Cpv1 = (Vector256<float>*)Cp1;
                 var Cpv2 = (Vector256<float>*)Cp2;
-                var Bepv = (Vector256<float>*)(Bp + K);
+                var Bepv = (Vector256<float>*)(Bp + blocked);
 
 #if DEBUG
                 Debug.Assert(Bepv <= Bend);
@@ -476,6 +478,26 @@ public class MathOps
                     Bpv += 4;
                     Cpv1 += 4;
                     Cpv2 += 4;
+                }
+                int rem = K - blocked;
+                if (rem > 0)
+                {
+                    float a1 = Ap1[j];
+                    float a2 = Ap2[j];
+                    var rB = (Vector256<float>*)(Bp + blocked);
+                    var rC1 = (Vector256<float>*)(Cp1 + blocked);
+                    var rC2 = (Vector256<float>*)(Cp2 + blocked);
+                    int rv = rem / Vector256<float>.Count;
+                    for (int t = 0; t < rv; t++)
+                    {
+                        rC1[t] = Fma.MultiplyAdd(rB[t], av1, rC1[t]);
+                        rC2[t] = Fma.MultiplyAdd(rB[t], av2, rC2[t]);
+                    }
+                    for (int k = blocked + rv * Vector256<float>.Count; k < K; k++)
+                    {
+                        Cp1[k] += a1 * Bp[k];
+                        Cp2[k] += a2 * Bp[k];
+                    }
                 }
             }
         }

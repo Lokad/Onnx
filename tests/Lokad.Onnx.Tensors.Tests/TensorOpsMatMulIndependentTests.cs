@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx.Tensors.Tests;
@@ -78,6 +79,69 @@ public class TensorOpsMatMulIndependentTests
         {
             var a = SeqFloat(4, 3, 1);
             var b = SeqFloat(3, k, 1);
+            RunAllModes(a, b, actual => AssertMatMulMatchesIndependent(a, b, actual, 1e-4f));
+        }
+    }
+
+    static DenseTensor<float> RandDense(int rows, int cols, Random rnd)
+    {
+        var t = new DenseTensor<float>(new[] { rows, cols });
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                t[i, j] = (float)rnd.NextDouble() - 0.5f;
+        return t;
+    }
+
+    static float FmaScalar(float x, float y, float z) =>
+        Fma.MultiplyAddScalar(Vector128.Create(x), Vector128.Create(y), Vector128.Create(z)).GetElement(0);
+
+    static DenseTensor<float> FmaReference(Tensor<float> a, Tensor<float> b)
+    {
+        // Mirrors the kernel split exactly: FMA axpy below the 8-wide ceiling,
+        // plain multiply-add at and above it, all ascending, so agreement is bitwise.
+        int m = a.Dimensions[0], n = a.Dimensions[1], k = b.Dimensions[1];
+        int ceiling = (k / Vector256<float>.Count) * Vector256<float>.Count;
+        var c = new DenseTensor<float>(new[] { m, k });
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+            {
+                float aij = a[i, j];
+                for (int p = 0; p < ceiling; p++)
+                    c[i, p] = FmaScalar(aij, b[j, p], c[i, p]);
+                for (int p = ceiling; p < k; p++)
+                    c[i, p] += aij * b[j, p];
+            }
+        return c;
+    }
+
+    static void AssertBitwiseEqual(DenseTensor<float> expected, Tensor<float> actual)
+    {
+        var ea = expected.ToArray();
+        var aa = actual.ToArray();
+        Assert.Equal(ea.Length, aa.Length);
+        for (int i = 0; i < ea.Length; i++)
+            Assert.True(BitConverter.SingleToUInt32Bits(ea[i]) == BitConverter.SingleToUInt32Bits(aa[i]), "bit mismatch at " + i);
+    }
+
+    [Fact]
+    public void MatMul2DKRemainder_MatchesFmaOrderBitwise()
+    {
+        // k%32 != 0 exercises the 2x4 remainder tail (plus the odd-row tail for
+        // odd m). The per-element operation order matches the non-unrolled kernel
+        // exactly (FMA below the 8-wide ceiling, scalar above), so intrinsics
+        // results agree with the split reference bitwise.
+        var rnd = new Random(20260909);
+        var shapes = new[] { (m: 4, n: 17, k: 49), (m: 5, n: 65, k: 100), (m: 2, n: 9, k: 8) };
+        foreach (var (m, n, k) in shapes)
+        {
+            var a = RandDense(m, n, rnd);
+            var b = RandDense(n, k, rnd);
+            if (Fma.IsSupported)
+            {
+                var expected = FmaReference(a, b);
+                AssertBitwiseEqual(expected, Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics));
+                AssertBitwiseEqual(expected, Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Auto));
+            }
             RunAllModes(a, b, actual => AssertMatMulMatchesIndependent(a, b, actual, 1e-4f));
         }
     }

@@ -128,7 +128,7 @@ where T : unmanaged
 
     static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
     {
-        if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && k % 32 == 0 && m >= 2)
+        if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
             int blocked = m - (m % 2);
             mm_unsafe_vectorized_intrinsics_2x4(blocked, n, k, x, y, output);
