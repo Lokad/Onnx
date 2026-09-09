@@ -24,6 +24,8 @@ public class MatMul2DBenchmarks
     [GlobalSetup]
     public void Setup()
     {
+        // Agreement precedes every timing: a breach fails the run before numbers exist.
+        VerifyAgreementNow();
     }
 
     [IterationSetup]
@@ -51,13 +53,8 @@ public class MatMul2DBenchmarks
         ch.Dispose();
     }
 
-    static bool agreementChecked;
-
-    [GlobalCleanup]
-    public void VerifyAgreement()
+    static void VerifyAgreementNow()
     {
-        if (agreementChecked) return;
-        agreementChecked = true;
         // Recompute every variant on fresh destinations outside the timed loop
         // and require element-wise agreement with the managed reference.
         var rnd = new Random(Seed);
@@ -193,6 +190,8 @@ public class TensorMatMulBenchmarks
         t_6_384_384_b = Tensor<float>.Rand(6, 384, 384);
         t_3_4_384_384_a = Tensor<float>.Rand(3,4, 384, 384);
         t_3_4_384_384_b = Tensor<float>.Rand(3, 4, 384, 384);
+        // Agreement precedes every timing: a breach fails the run before numbers exist.
+        VerifyAgreementNow();
     }
 
     [Benchmark(Description = "Matrix multiply 2 384x384 tensors", Baseline = true)]
@@ -243,13 +242,8 @@ public class TensorMatMulBenchmarks
     [BenchmarkCategory("3x4x384x384")]
     public void MatMul4_simd_intrinsics() => Tensor<float>.MatMul(t_3_4_384_384_a, t_3_4_384_384_b, TensorExecutionOptions.Intrinsics);
 
-    static bool agreementChecked;
-
-    [GlobalCleanup]
-    public void VerifyAgreement()
+    static void VerifyAgreementNow()
     {
-        if (agreementChecked) return;
-        agreementChecked = true;
         // Every shape and mode recomputed on fresh seeded inputs outside the
         // timed loop, with simd and intrinsics agreeing element-wise with scalar.
         var rnd = new Random(12345);
@@ -301,6 +295,13 @@ public class TensorMatMulBenchmarks
 [Orderer(methodOrderPolicy: BenchmarkDotNet.Order.MethodOrderPolicy.Declared)]
 public class TensorIndexingBenchmarks
 {
+    [GlobalSetup]
+    public void VerifySetup()
+    {
+        // Agreement precedes every timing: a breach fails the run before numbers exist.
+        VerifyAgreementNow();
+    }
+
     [IterationSetup]
     public void Setup()
     {
@@ -415,13 +416,8 @@ public class TensorIndexingBenchmarks
         }
     }
 
-    static bool agreementChecked;
-
-    [GlobalCleanup]
-    public void VerifyAgreement()
+    static void VerifyAgreementNow()
     {
-        if (agreementChecked) return;
-        agreementChecked = true;
         // One small deterministic tensor viewed three ways: slice reads must
         // equal dense reads element-wise, broadcast channels must repeat the
         // dense values, and scalar reads must total the iterator reads.
@@ -500,6 +496,8 @@ public class TensorOpBenchmarks
         sp_x = Tensor<float>.Rand(4, 12, 2304);
         sp_sizes = DenseTensor<long>.OfValues(new long[] { 768L, 768L, 768L });
         gap_x = Tensor<float>.Rand(1, 256, 14, 14);
+        // Agreement precedes every timing: a breach fails the run before numbers exist.
+        VerifyAgreementNow();
     }
 
     [Benchmark(Description = "Softmax over 12x30x30 attention scores")]
@@ -626,13 +624,8 @@ public class TensorOpBenchmarks
     [BenchmarkCategory("gap")]
     public void GlobalAvgPool() => CPUExecutionProvider.GlobalAveragePool(gap_x, null);
 
-    static bool agreementChecked;
-
-    [GlobalCleanup]
-    public void VerifyAgreement()
+    static void VerifyAgreementNow()
     {
-        if (agreementChecked) return;
-        agreementChecked = true;
         var rnd = new Random(12345);
         CheckSoftmax("e5", new[] { 2, 30 }, rnd);
         CheckUnary("erf", rnd);
