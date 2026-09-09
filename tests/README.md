@@ -79,6 +79,30 @@ Erf, LayerNorm, Transpose and Concat/ChunkCopy assign every element and take
 plain `Rent`. Any new pooled kernel must state its contract beside the call,
 with a dirty-buffer parity test when it accumulates.
 
+## Reference versions
+
+Two different ONNX Runtime versions answer two different questions; never
+mix their evidence:
+
+- Timing comparator only: `Microsoft.ML.OnnxRuntime` 1.23.2 (C#, exact pin
+  in `tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj`, printed in every
+  benchmark row). It measures the native side of speed comparisons and is
+  never an oracle.
+- Frozen oracles: Python `onnxruntime==1.29.0` with `onnx==1.22.0` and
+  `numpy==2.2.4` (exact pins in `tests/e5/python/requirements.txt` and
+  `tests/opfuzz/generate/requirements-generator.txt`). These generate the
+  e5 expectations at lane time and the frozen `tests/opfuzz/corpus` references
+  (each `meta.json` records its generating environment), plus the
+  `ModelManifest.json` oracles (`ortOracle 1.29` with per-model generators).
+
+Policy: a difference between the 1.23.2 and 1.29.0 references is a version
+difference, never kernel evidence. Upgrading any oracle is its own commit
+with regenerated references and hashes, never bundled with a performance
+implementation commit.
+
+Replay: `eng/test-e5.ps1` (add `-RequireIntrinsics` where supported) and
+`eng/test-opfuzz.ps1` from the repo root; both verify asset hashes first.
+
 ## Model-oracle bisection procedure
 
 All model-level tests share one compact-oracle pattern: exact shape, no NaN/Infinity, mean within 1e-6 plus strided spot values within 1e-4/1e-3 of a frozen native ONNX Runtime reference (MNIST instead asserts exact logits to 4 decimals plus argmax behavior). Reference values are generated with native ORT 1.29 (see tests/Lokad.Onnx.Backend.Tests/ModelManifest.json for per-model provenance), never checked in as tensors. When an oracle drifts:
