@@ -61,6 +61,46 @@ public class ExternalDescriptorTests
     }
 
     [Fact]
+    public void DuplicateLocation_ThrowsBeforeTouchingFiles()
+    {
+        WithTempDirectory(directory =>
+        {
+            var proto = ExternalProto("w.bin");
+            proto.ExternalData.Add(new StringStringEntryProto { Key = "location", Value = "w.bin" });
+            var ex = Assert.Throws<InvalidOperationException>(() => proto.ResolveExternalData(directory));
+            Assert.Contains("weight", ex.Message);
+        });
+    }
+
+    [Fact]
+    public void DuplicateOffset_Throws()
+    {
+        WithTempDirectory(directory =>
+        {
+            File.WriteAllBytes(Path.Combine(directory, "w.bin"), new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            var proto = ExternalProto("w.bin");
+            proto.ExternalData.Add(new StringStringEntryProto { Key = "offset", Value = "0" });
+            proto.ExternalData.Add(new StringStringEntryProto { Key = "offset", Value = "0" });
+            var ex = Assert.Throws<InvalidOperationException>(() => proto.ResolveExternalData(directory));
+            Assert.Contains("weight", ex.Message);
+        });
+    }
+
+    [Fact]
+    public void DuplicateLength_Throws()
+    {
+        WithTempDirectory(directory =>
+        {
+            File.WriteAllBytes(Path.Combine(directory, "w.bin"), new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            var proto = ExternalProto("w.bin");
+            proto.ExternalData.Add(new StringStringEntryProto { Key = "length", Value = "8" });
+            proto.ExternalData.Add(new StringStringEntryProto { Key = "length", Value = "8" });
+            var ex = Assert.Throws<InvalidOperationException>(() => proto.ResolveExternalData(directory));
+            Assert.Contains("weight", ex.Message);
+        });
+    }
+
+    [Fact]
     public void OffsetPastEnd_Throws()
     {
         WithTempDirectory(directory =>

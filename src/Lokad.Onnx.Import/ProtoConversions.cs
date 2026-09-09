@@ -153,15 +153,27 @@ public static class ProtoConversions
         ulong offset = 0;
         ulong length = 0;
         bool hasLength = false;
+        bool hasLocation = false;
+        bool hasOffset = false;
+        bool hasLengthEntry = false;
         foreach (var entry in tp.ExternalData)
         {
-            if (entry.Key == "location") location = entry.Value;
+            if (entry.Key == "location")
+            {
+                if (hasLocation) throw new InvalidOperationException($"Tensor {tp.Name} has a duplicate external-data location entry.");
+                hasLocation = true;
+                location = entry.Value;
+            }
             else if (entry.Key == "offset")
             {
+                if (hasOffset) throw new InvalidOperationException($"Tensor {tp.Name} has a duplicate external-data offset entry.");
+                hasOffset = true;
                 if (!ulong.TryParse(entry.Value, out offset)) throw new InvalidOperationException($"Tensor {tp.Name} has an invalid external-data offset {entry.Value}.");
             }
             else if (entry.Key == "length")
             {
+                if (hasLengthEntry) throw new InvalidOperationException($"Tensor {tp.Name} has a duplicate external-data length entry.");
+                hasLengthEntry = true;
                 if (!ulong.TryParse(entry.Value, out length)) throw new InvalidOperationException($"Tensor {tp.Name} has an invalid external-data length {entry.Value}.");
                 hasLength = true;
             }
