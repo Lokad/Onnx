@@ -13,7 +13,7 @@ Text and image input helpers. File-explicit entry points are offline: they only 
 - File args use the path::format convention via Data.GetInputTensorsFromFileArgs (also the CLI run input path). Supported formats:
   - mnist: grayscale, 28x28, single channel, values in [0, 1].
   - dinov2: 224x224 RGB, channels-first, values in [0, 1], no mean/std normalization.
-  - dinov3: 224x224 RGB, channels-first, rescale to [0, 1] then ImageNet mean (0.485, 0.456, 0.406) / std (0.229, 0.224, 0.225) normalization, matching models/dinov3-vits16/preprocessor_config.json. Resize uses the Triangle sampler, which approximates the reference bilinear resample within 1 uint8 LSB (verified against a PIL reference; see PLAN.md).
+  - dinov3: 224x224 RGB, channels-first, rescale to [0, 1] then ImageNet mean (0.485, 0.456, 0.406) / std (0.229, 0.224, 0.225) normalization, matching models/dinov3-vits16/preprocessor_config.json. Resize uses the Triangle sampler, which approximates the reference bilinear resample (ImageSharp 3 removed Bilinear).
   - WxH (e.g. file.png::224:224): stretch-resize to the given dimensions, single channel like mnist.
 - With --save-input the (possibly resized) input image is written next to the source file for inspection.
 

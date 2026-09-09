@@ -5,7 +5,7 @@ ONNX protobuf loading for tooling: parses .onnx files and buffers (OnnxSharp) in
 ## Entry points (OnnxImport)
 
 - Parse(path) / Parse(bytes): protobuf parse plus external-data resolution against the model file directory (missing location/file or out-of-range offset throws).
-- Load(path) / Load(bytes): parse plus Model.Load, with the real ModelFile stamped on the graph; returns null with an error log when parsing fails.
+- Load(path) / Load(bytes): parse plus Model.Load, with the real ModelFile stamped on the graph; returns null on nonfatal failures with the cause on LastErrorMessage/LastErrorCause plus the error log, while fatal runtime failures propagate.
 
 ## Conversions (ProtoConversions)
 

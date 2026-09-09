@@ -2,7 +2,7 @@
 
 ## About
 Lokad.Onnx is a 100% managed-code [ONNX backend](https://onnx.ai/onnx/repo-docs/ImplementingAnOnnxBackend.html) implementation for .NET 10.
-It runs transformer and vision models end to end on CPU, with numeric parity against native ONNX Runtime frozen in the test suite for multilingual-e5-small and DINOv2-small. DINOv3 ViT-S/16 structure and RoPE fusion are covered; its inference oracle is blocked on the known LayerNormalization stash_type defect.
+It runs transformer and vision models end to end on CPU, with numeric parity against native ONNX Runtime frozen in the test suite for multilingual-e5-small, DINOv3 ViT-S/16 (full weights), ResNet50, and GPT-2. DINOv2-small is excluded: it diverges above the validation gate (see BENCHMARK.md).
 
 ![img](https://ajb.nyc3.cdn.digitaloceanspaces.com/lokadonnx8.gif)
 
@@ -17,7 +17,7 @@ It runs transformer and vision models end to end on CPU, with numeric parity aga
 
 - `lonnx info <model.onnx>`: model metadata; supports `--ops`, `--init`, `--op-filter`.
 - `lonnx run <model.onnx> <inputs...>`: image and text inputs, `--softmax`, `--print-input`, profiling, and SIMD toggles.
-- Microbenchmarks live in `tests/Lokad.Onnx.Bench` (`Bench micro <matmul2d|matmul|indexing|ops>`, with BenchmarkDotNet flags); model comparisons via `bench.ps1` (see BENCHMARK.md).
+- Microbenchmarks live in `tests/Lokad.Onnx.Bench` (`Bench micro <matmul2d|matmul|indexing|ops>`, with BenchmarkDotNet flags); model comparisons run through the Bench model harness (`dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 resnet50 dinov3 gpt2`, see BENCHMARK.md), while `bench.ps1` remains the startup-inclusive CLI benchmark.
 
 ### Mini-tutorial: MNIST (image)
 * Use the bundled MNIST model and sample image:
@@ -43,7 +43,7 @@ Large model assets live under the git-ignored `models\` directory and are never 
 
 - `models\multilingual-e5-small\model.onnx` plus `sentencepiece.bpe.model` (intfloat multilingual-e5-small ONNX export with matching SentencePiece file).
 - `models\dinov2-small-onnx\model.onnx` (single-file DINOv2-small ONNX export).
-- `models\dinov3-vits16\onnx\model.onnx` (single-file DINOv3 ViT-S/16 export; the current asset carries structure with placeholder-sized initializers, see tests/Lokad.Onnx.Backend.Tests/ModelManifest.json).
+- `models\dinov3-vits16\onnx\model.onnx` plus `model.onnx_data` (full-weight DINOv3 ViT-S/16 export, see tests/Lokad.Onnx.Backend.Tests/ModelManifest.json).
 - `models\resnet50-onnx\model.onnx` (Conv-heavy ResNet50 feature export; covered by a model oracle, no dedicated CLI input format).
 - `models\gpt2-onnx\onnx\model.onnx` plus tokenizer files (fp32 GPT-2 with past-key-value inputs; covered by a model oracle, no dedicated CLI input format).
 - MNIST assets are bundled with the backend tests and need no download.
@@ -51,11 +51,12 @@ Large model assets live under the git-ignored `models\` directory and are never 
 Model tests follow the local-model convention: they run when the asset is present, report an explicit skip otherwise, and fail when `LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1` requests an asset that is absent.
 
 ## Testing
-Four lanes, from fastest to strongest:
+Five lanes, from fastest to strongest:
 
 - Offline unit tests: `dotnet test --tl:off --nologo -v minimal Lokad.Onnx.slnx`.
 - Integration tests using committed assets such as MNIST (same command, no extra setup).
-- Local-model conformance (DINOv2, DINOv3, ResNet50, GPT-2): same command with assets present; compact mean-plus-spot oracles pin numeric parity with native ONNX Runtime.
+- Local-model conformance (DINOv3, ResNet50, GPT-2): same command with assets present; compact mean-plus-spot oracles pin numeric parity with native ONNX Runtime. DINOv2 is excluded with reason (see BENCHMARK.md).
+- Single-op differential lane: `.\eng\test-opfuzz.ps1` replays the frozen corpus against native ONNX Runtime references in scalar, SIMD, and intrinsics modes. Needs Python with the packages in `tests\opfuzz\python\requirements.txt`.
 - Native e5 gate: `.\eng\test-e5.ps1 -RequireIntrinsics` verifies asset hashes, exact tokenizer inputs, full hidden states, normalized embeddings, determinism across scalar, SIMD, and intrinsic modes, and the semantic ranking margin. Needs Python with the packages in `tests\e5\python\requirements.txt`.
 
 See `tests\README.md` for the lane definitions.

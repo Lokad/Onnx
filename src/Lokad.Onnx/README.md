@@ -14,7 +14,7 @@
 
 - Kernels are correct within float32 accumulation noise; differential gates pin this (see tests/README.md, eng/test-e5.ps1, eng/test-opfuzz.ps1).
 - Bitwise identity is promised only for repeated runs at a fixed mode and thread count (scalar repeats additionally need DOTNET_JitOSR=0, as pinned in the e5 gate). Never assert bitwise identity across modes or degrees of parallelism; tolerances are the bar.
-- The op list in CPUExecutionProvider.SupportedOps is the supported surface (44 entries; the code list is authoritative). Every listed op has C# happy-path coverage with non-happy paths across the operator families, the opfuzz lane pins 17 single-op shapes differentially against native ORT, and the e5/DINO/ResNet/GPT-2 oracles pin end-to-end numerics.
+- The op list in CPUExecutionProvider.SupportedOps is the supported surface (46 entries; the code list is authoritative). Every listed op has C# happy-path coverage with non-happy paths across the operator families, the opfuzz lane pins the frozen single-op corpus differentially against native ORT, and the e5/DINO/ResNet/GPT-2 oracles pin end-to-end numerics.
 
 ## Caller contracts
 
