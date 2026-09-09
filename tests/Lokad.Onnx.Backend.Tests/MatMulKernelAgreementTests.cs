@@ -129,6 +129,66 @@ public class MatMulKernelAgreementTests
             $"tiled diverges bitwise from unrolled on nonzero destination {m}x{n}x{k}.");
     }
 
+    static unsafe void RunPacked(Action<IntPtr, IntPtr, IntPtr, IntPtr> kernel, DenseTensor<float> a, DenseTensor<float> b, DenseTensor<float> p, DenseTensor<float> c)
+    {
+        using var pa = a.Buffer.Pin();
+        using var pb = b.Buffer.Pin();
+        using var pp = p.Buffer.Pin();
+        using var pc = c.Buffer.Pin();
+        kernel((IntPtr)pa.Pointer, (IntPtr)pb.Pointer, (IntPtr)pp.Pointer, (IntPtr)pc.Pointer);
+    }
+
+    [Fact]
+    public unsafe void PackedMatchesTiledBitwise()
+    {
+        var rnd = new Random(Seed);
+        PackedEqual(8, 24, 20, rnd);
+        PackedEqual(8, 24, 44, rnd);
+        PackedEqual(8, 24, 96, rnd);
+        PackedEqual(64, 24, 44, rnd);
+    }
+
+    static unsafe void PackedEqual(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"packed diverges bitwise from tiled on {m}x{n}x{k}.");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, q, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
+    }
+
+    [Fact]
+    public void DispatchedMatMulAgreesWithReference()
+    {
+        var rnd = new Random(Seed);
+        DispatchedAgrees(30, 48, 80, rnd);
+        DispatchedAgrees(64, 48, 80, rnd);
+    }
+
+    static void DispatchedAgrees(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var zero = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        float expected = ReferenceRectSum(a, b, zero, m, n, k);
+        var got = Tensor<float>.MatMul2D(a, b);
+        Assert.Equal(m, got.Dimensions[0]);
+        Assert.Equal(k, got.Dimensions[1]);
+        Agrees(SumRect(got.ToDenseTensor()), expected, "dispatched-" + m + "x" + n + "x" + k);
+    }
+
     [Fact]
     public unsafe void TiledKernelAgreesOnTailShapes()
     {

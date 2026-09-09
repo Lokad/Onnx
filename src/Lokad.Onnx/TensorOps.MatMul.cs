@@ -133,12 +133,36 @@ where T : unmanaged
         // probe wins every shape with n and k below 2560 and loses every shape
         // with n or k at or above 3072, so wider shapes keep the proven kernel.
         const int TiledMatMulAxisLimit = 2560;
+        // Panel packing pays off once the M/2 row-group re-reads amortize the
+        // single pack pass: a shape probe loses below M=48 and wins from M=64
+        // (-22 to -38 percent with pack cost included), so smaller blocks keep
+        // the unpacked tiled kernel bit-identically.
+        const int TiledPackMinRows = 64;
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
             int blocked = m - (m % 2);
             if (n < TiledMatMulAxisLimit && k < TiledMatMulAxisLimit)
             {
-                mm_unsafe_vectorized_intrinsics_2x4tiled(blocked, n, k, x, y, output);
+                if (blocked >= TiledPackMinRows)
+                {
+                    float[] packed = ArrayPool<float>.Shared.Rent(n * k);
+                    try
+                    {
+                        fixed (float* pp = packed)
+                        {
+                            PackPanelsB(n, k, y, pp);
+                            mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output);
+                        }
+                    }
+                    finally
+                    {
+                        ArrayPool<float>.Shared.Return(packed);
+                    }
+                }
+                else
+                {
+                    mm_unsafe_vectorized_intrinsics_2x4tiled(blocked, n, k, x, y, output);
+                }
             }
             else
             {
