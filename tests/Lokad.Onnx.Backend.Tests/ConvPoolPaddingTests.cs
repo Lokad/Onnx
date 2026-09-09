@@ -188,4 +188,14 @@ public class ConvPoolPaddingTests
         Assert.Equal(4, valued.PadInfo.h);
         Assert.Throws<System.ArgumentNullException>(() => MathOps.GetConv2DOutputInfo(MathOps.PadType.Value, 5, 5, 1, 1, 3, 3, null));
     }
+
+    [Fact]
+    public void MaxPool_StorageOrder_RejectsNonzero()
+    {
+        // Only row-major is supported because the optional Indices output is not.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });
+        var r = CPUExecutionProvider.MaxPool(x, "VALID", 0, null, new int[] { 2, 2 }, null, 1, new int[] { 2, 2 }, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("storage_order", r.Message ?? "");
+    }
 }

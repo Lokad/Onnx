@@ -86,4 +86,26 @@ public class SplitDensifyTests
         Assert.Equal(42f, ((Tensor<float>)r.Outputs[42]).GetValue(0), 5);
     }
 
+    [Fact]
+    public void NumOutputs_SplitsEvenly_MatchingOrt()
+    {
+        // ORT 1.29: [[1,2],[5,6]] and [[3,4],[7,8]] along axis 1.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } });
+        var r = CPU.Split(x, null, 1, null, 2, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(2, r.Outputs!.Length);
+        Assert.Equal(new float[] { 1f, 2f, 5f, 6f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+        Assert.Equal(new float[] { 3f, 4f, 7f, 8f }, ((Tensor<float>)r.Outputs[1]).ToArray());
+    }
+
+    [Fact]
+    public void NumOutputs_WithSplitInput_Fails()
+    {
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } });
+        var sizes = DenseTensor<long>.OfValues(new long[] { 2, 2 });
+        var r = CPU.Split(x, sizes, 1, null, 2, null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("num_outputs", r.Message ?? "");
+    }
+
 }
