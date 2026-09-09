@@ -375,3 +375,8 @@ external/
 
 # The core project directory matches *.onnx above; re-include it (model files stay ignored).
 !/src/Lokad.Onnx/
+
+# Frozen opfuzz corpus models are tiny single-op graphs tracked with their
+# references; re-include them (regeneration is not byte-stable, so the lane
+# cannot rebuild them on fresh clones).
+!tests/opfuzz/corpus/*/model.onnx

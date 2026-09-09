@@ -1,6 +1,8 @@
 """Seeded single-op differential corpus generator (explicit maintenance action).
 
 Reads nothing, writes tests/opfuzz/corpus/<case>/{model.onnx,in_*.txt,ref_*.txt,meta.json}.
+Corpus models are tracked in git through a scoped .gitignore exception; keep
+them committed alongside any new case instead of relying on regeneration.
 Run with the generator env (tests/opfuzz/generate/requirements-generator.txt).
 Deterministic for a fixed env: same seed, same files. Review regenerations with git diff.
 """
