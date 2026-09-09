@@ -396,7 +396,12 @@ public partial class CPUExecutionProvider
     }
 
     public static OpResult Resize(ITensor? X, ITensor? roi, ITensor? scales, ITensor? sizes,
-        string? mode, string? coordinateTransformationMode, string? nearestMode, float? cubicCoeffA, float? extrapolationValue, ExecutionOptions? options)
+        string? mode, string? coordinateTransformationMode, string? nearestMode, float? cubicCoeffA, float? extrapolationValue, ExecutionOptions? options) =>
+        Resize(X, roi, scales, sizes, mode, coordinateTransformationMode, nearestMode, cubicCoeffA, extrapolationValue, options, null, null, null, null);
+
+    public static OpResult Resize(ITensor? X, ITensor? roi, ITensor? scales, ITensor? sizes,
+        string? mode, string? coordinateTransformationMode, string? nearestMode, float? cubicCoeffA, float? extrapolationValue, ExecutionOptions? options,
+        int? antialias, int[]? axes, int? excludeOutside, string? keepAspectRatioPolicy)
     {
         var op = OpType.Resize;
 
@@ -463,6 +468,10 @@ public partial class CPUExecutionProvider
         if (targetSizes.Length != 4) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must have one entry per input dimension.");
         if (targetSizes[0] != X.Dims[0] || targetSizes[1] != X.Dims[1]) return WrongInputShape(op, nameof(sizes), X, "Resize currently requires N and C dimensions to remain unchanged.");
         if (targetSizes.Any(z => z < 0)) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must be non-negative.");
+        if (antialias is not null && antialias != 0) return AttributeNotSupported(op, nameof(antialias), antialias.ToString(), "Resize antialiasing is not supported.");
+        if (excludeOutside is not null && excludeOutside != 0) return AttributeNotSupported(op, nameof(excludeOutside), excludeOutside.ToString(), "Resize exclude_outside is not supported.");
+        if (keepAspectRatioPolicy is not null && keepAspectRatioPolicy != "stretch") return AttributeNotSupported(op, nameof(keepAspectRatioPolicy), keepAspectRatioPolicy, "Only the default stretch policy is supported.");
+        if (axes is not null && !axes.SequenceEqual(Enumerable.Range(0, X.Rank))) return AttributeNotSupported(op, nameof(axes), string.Join(",", axes), "Only resizing all axes is supported.");
 
         MathOps.ResizeMode resizeMode;
         switch (mode ?? "nearest")

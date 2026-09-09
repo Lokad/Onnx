@@ -265,7 +265,8 @@ public partial struct Node
 
         OpType.Resize => CPU.Resize(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3),
             Attr<string>("mode", "nearest"), Attr<string>("coordinate_transformation_mode", "half_pixel"), Attr<string>("nearest_mode", "round_prefer_floor"),
-            GetFloat("cubic_coeff_a", -0.75f), GetFloat("extrapolation_value", 0f), opt),
+            GetFloat("cubic_coeff_a", -0.75f), GetFloat("extrapolation_value", 0f), opt,
+            GetInt("antialias", null), Ints("axes"), GetInt("exclude_outside", null), Attr<string>("keep_aspect_ratio_policy", null)),
 
         OpType.Unsqueeze => ResolvedOpsetVersion(graph) switch
         {

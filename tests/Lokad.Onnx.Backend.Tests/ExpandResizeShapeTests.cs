@@ -169,4 +169,52 @@ public class ExpandResizeShapeTests
         var x = Img2x2();
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Resize(x, null, Scales(2f, 1f, 1f, 1f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null).Status);
     }
+
+    [Fact]
+    public void Resize_UnsupportedAttributes_FailLoudly()
+    {
+        var x = Img2x2();
+        var aa = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null, 1, null, null, null);
+        Assert.Equal(OpStatus.Failure, aa.Status);
+        Assert.Contains("antialias", aa.Message ?? "");
+        var eo = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null, null, null, 1, null);
+        Assert.Equal(OpStatus.Failure, eo.Status);
+        Assert.Contains("excludeOutside", eo.Message ?? "");
+        var kar = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null, null, null, null, "not_larger");
+        Assert.Equal(OpStatus.Failure, kar.Status);
+        Assert.Contains("keepAspectRatioPolicy", kar.Message ?? "");
+        var ax = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null, null, new int[] { 2, 3 }, null, null);
+        Assert.Equal(OpStatus.Failure, ax.Status);
+        Assert.Contains("axes", ax.Message ?? "");
+    }
+
+    [Fact]
+    public void Resize_DefaultAttributes_BehaveAsBefore()
+    {
+        var x = Img2x2();
+        var plain = (Tensor<float>)CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null).Outputs[0];
+        var full = (Tensor<float>)CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null, 0, new int[] { 0, 1, 2, 3 }, 0, "stretch").Outputs[0];
+        Assert.Equal(plain.ToArray(), full.ToArray());
+        Assert.Equal(new int[] { 1, 1, 4, 4 }, full.Dimensions.ToArray());
+    }
+
+    [Fact]
+    public void Resize_AntialiasAttribute_FailsThroughDispatch()
+    {
+        var mp = new OnnxModel { Name = "resize-aa" };
+        mp.Opset[""] = 18;
+        mp.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new[] { 1, 1, 2, 2 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "z", ElementType = TensorElementType.Float, Dims = new[] { 1, 1, 4, 4 } });
+        mp.Initializers.Add(new OnnxTensor { Name = "scales", ElementType = TensorElementType.Float, Dims = new[] { 4 }, Data = new float[] { 1f, 1f, 2f, 2f } });
+        mp.Nodes.Add(new OnnxNode
+        {
+            Name = "r", OpType = "Resize", Domain = "",
+            Inputs = new[] { "x", "", "scales" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object> { { "antialias", 1L } },
+        });
+        var graph = Model.Load(mp)!;
+        var inputs = new Dictionary<string, ITensor> { { "x", Img2x2() } };
+        Assert.False(graph.Execute(inputs, true));
+        Assert.Contains("antialias", graph.LastErrorMessage ?? "");
+    }
 }
