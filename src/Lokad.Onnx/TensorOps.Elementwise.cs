@@ -550,6 +550,7 @@ where T : unmanaged
         if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be a dimension of the tensor.");
         var denseInput = x.ToDenseTensor();
         var output = new DenseTensor<float>(denseInput.Dimensions);
+        StartOpStage(OpStage.Math);
         SoftmaxFloatInto(denseInput, output, axis, options ?? TensorExecutionOptions.Auto, opsetVersion);
         return output;
     }
@@ -647,6 +648,7 @@ where T : unmanaged
         var denseInput = x.ToDenseTensor();
         if (!destination.Dimensions.SequenceEqual(denseInput.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
         if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        StartOpStage(OpStage.Math);
         SoftmaxFloatInto(denseInput, destination, axis, options ?? TensorExecutionOptions.Auto, opsetVersion);
         return destination;
     }
@@ -659,6 +661,7 @@ where T : unmanaged
         if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be a dimension of the tensor.");
         var denseInput = x.ToDenseTensor();
         var output = new DenseTensor<double>(denseInput.Dimensions);
+        StartOpStage(OpStage.Math);
         SoftmaxDoubleInto(denseInput, output, axis, opsetVersion);
         return output;
     }

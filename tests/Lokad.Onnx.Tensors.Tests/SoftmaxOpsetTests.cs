@@ -39,6 +39,40 @@ public class SoftmaxOpsetTests
     }
 
     [Fact]
+    public void Arithmetic_ChargedToMathStage()
+    {
+        using var enabled = Profiler.BeginExecution(true);
+        var x = new DenseTensor<float>(Zeros(1, 2, 2), new int[] { 1, 2, 2 });
+        Profiler.StartNodeProfile(1, OpType.Softmax);
+        var y = Tensor<float>.Softmax(x, -1, null, 13);
+        Profiler.StopNodeProfile();
+        AssertAll(y.ToArray(), 0.5f);
+        AssertStages(enabled, OpType.Softmax);
+        var destination = new DenseTensor<float>(new int[] { 1, 2, 2 });
+        Profiler.StartNodeProfile(2, OpType.Softmax);
+        Tensor<float>.Softmax(x, destination, -1, null, 13);
+        Profiler.StopNodeProfile();
+        AssertAll(destination.ToArray(), 0.5f);
+        AssertStages(enabled, OpType.Softmax);
+        var xd = new DenseTensor<double>(new double[] { 0.0, 0.0, 0.0, 0.0 }, new int[] { 1, 2, 2 });
+        Profiler.StartNodeProfile(3, OpType.Softmax);
+        var yd = Tensor<double>.Softmax(xd, -1, null, 13);
+        Profiler.StopNodeProfile();
+        foreach (var v in yd.ToArray()) Assert.Equal(0.5, v, 5);
+        AssertStages(enabled, OpType.Softmax);
+    }
+
+    static void AssertStages(ProfilerContext enabled, OpType op)
+    {
+        var node = enabled.Profile.Peek();
+        Assert.Equal(op, node.Op);
+        var stages = new List<OpStage>();
+        foreach (var profile in node.OpsProfile) stages.Add(profile.Stage);
+        Assert.Contains(OpStage.ValidateArguments, stages);
+        Assert.Contains(OpStage.Math, stages);
+    }
+
+    [Fact]
     public void OldOpset_DefaultAxis_IsOne()
     {
         var graph = new ComputationalGraph
