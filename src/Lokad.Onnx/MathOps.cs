@@ -885,28 +885,31 @@ public class MathOps
         finally { Marshal.FreeCoTaskMem((IntPtr)buf); }
     }
 
-    // From: https://www.johndcook.com/blog/2009/01/19/stand-alone-error-function-erf/
+    // Independently implemented from Abramowitz and Stegun, Handbook of Mathematical
+    // Functions, formula 7.1.26 (public-domain U.S. government work): for x >= 0,
+    // erf(x) = 1 - (a1*t + a2*t^2 + ... + a5*t^5) * exp(-x^2) with t = 1/(1+p*x),
+    // and erf is odd, so erf(-x) = -erf(x). The coefficients below are the published
+    // mathematical constants of that formula; the descending table plus Horner loop
+    // and the early-return odd symmetry are this implementation's own expression.
+    private const float ErfStegunP = 0.3275911f;
+    private static readonly float[] ErfStegunTableDesc = new float[] { 1.061405429f, -1.453152027f, 1.421413741f, -0.284496736f, 0.254829592f };
     public static float Erf(float x)
     {
-        // constants
-        float a1 = 0.254829592f;
-        float a2 = -0.284496736f;
-        float a3 = 1.421413741f;
-        float a4 = -1.453152027f;
-        float a5 = 1.061405429f;
-        float p = 0.3275911f;
-
-        // Save the sign of x
-        int sign = 1;
         if (x < 0)
-            sign = -1;
-        x = Math.Abs(x);
-
-        // A&S formula 7.1.26
-        float t = 1.0f / (1.0f + p * x);
-        float y = 1.0f - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * MathF.Exp(-x * x);
-
-        return sign * y;
+        {
+            return -ErfMagnitude(-x);
+        }
+        return ErfMagnitude(Math.Abs(x));
+    }
+    private static float ErfMagnitude(float ax)
+    {
+        float t = 1.0f / (1.0f + ErfStegunP * ax);
+        float poly = ErfStegunTableDesc[0];
+        for (int i = 1; i < ErfStegunTableDesc.Length; i++)
+        {
+            poly = poly * t + ErfStegunTableDesc[i];
+        }
+        return 1.0f - poly * t * MathF.Exp(-ax * ax);
     }
 
     /// <summary>Vectorized error function; MLAS rational approximation (split polynomial plus embedded exponential), FMA evaluation.</summary>
@@ -984,28 +987,27 @@ public class MathOps
         y = Vector.ConditionalSelect(Vector.LessThan(v, new Vector<float>(-88.722839f)), Vector<float>.Zero, y);
         return Vector.ConditionalSelect(isFinite, y, new Vector<float>(float.NaN));
     }
-    // From: https://www.johndcook.com/blog/2009/01/19/stand-alone-error-function-erf/
+    // Same Abramowitz and Stegun 7.1.26 derivation as the float overload above,
+    // in double precision with its own table and magnitude helper.
+    private const double ErfStegunPDouble = 0.3275911;
+    private static readonly double[] ErfStegunTableDescDouble = new double[] { 1.061405429, -1.453152027, 1.421413741, -0.284496736, 0.254829592 };
     public static double Erf(double x)
     {
-        // constants
-        double a1 = 0.254829592;
-        double a2 = -0.284496736;
-        double a3 = 1.421413741;
-        double a4 = -1.453152027;
-        double a5 = 1.061405429;
-        double p = 0.3275911;
-
-        // Save the sign of x
-        int sign = 1;
         if (x < 0)
-            sign = -1;
-        x = Math.Abs(x);
-
-        // A&S formula 7.1.26
-        double t = 1.0 / (1.0 + p * x);
-        double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.Exp(-x * x);
-
-        return sign * y;
+        {
+            return -ErfMagnitudeDouble(-x);
+        }
+        return ErfMagnitudeDouble(Math.Abs(x));
+    }
+    private static double ErfMagnitudeDouble(double ax)
+    {
+        double t = 1.0 / (1.0 + ErfStegunPDouble * ax);
+        double poly = ErfStegunTableDescDouble[0];
+        for (int i = 1; i < ErfStegunTableDescDouble.Length; i++)
+        {
+            poly = poly * t + ErfStegunTableDescDouble[i];
+        }
+        return 1.0 - poly * t * Math.Exp(-ax * ax);
     }
 
 
