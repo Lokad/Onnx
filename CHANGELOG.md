@@ -117,6 +117,9 @@ as planned or a known limitation. This is not a release-readiness claim.
   The float/double scalar Erf bodies are independently implemented from the Abramowitz-Stegun 7.1.26
   definition with a Stegun-reference oracle, removing the Cook blog attributions; the vectorized
   Erf and exp cores are unchanged.
+  DenseTensor storage is independently implemented from the row-major contract with a naive-layout
+  oracle covering construction, indexing, clone, reshape, and reversed layouts; the port header
+  is gone while every declaration and behavior stays identical.
   Benchmark workloads moved from the CLI to the non-packable benchmark
   project with BenchmarkDotNet; the CLI keeps inspection and inference
   only, and bench.ps1 drives model timings plus the relocated sweep.
