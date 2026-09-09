@@ -2271,20 +2271,20 @@ where T : unmanaged
         return MatMulShapes.Squeeze(core, plan);
     }
 
-
-    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations) =>
-        Conv2D(input, weight, group, padtype, padvalue, bias, kernelshape, strides, dilations, TensorExecutionOptions.Auto);
-
-    /// <summary>Two-dimensional convolution with explicit execution options.</summary>
-    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
+    // Shared Conv2D preparation for PadType padding: validates ranks, fills
+    // default strides and dilations, resolves dims and kernel extents, and
+    // computes the padded output geometry. Exception parameter names below
+    // are contractual. The typed cores stay per-dtype.
+    static (int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW) PlanConvPadType(
+        ITensor input, ITensor weight, int group, PadType padtype, int? padvalue, int[]? kernelshape, int[]? strides, int[]? dilations, int biasLength)
     {
         if (input.Rank != 4)
         {
-            throw new ArgumentException(nameof(input), "Input tensors must be of rank 4 with the layout NxCxHxW.");
+            throw new ArgumentException("input", "Input tensors must be of rank 4 with the layout NxCxHxW.");
         }
         if (weight.Rank != 4)
         {
-            throw new ArgumentException(nameof(weight), "Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
+            throw new ArgumentException("weight", "Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
         }
         if (strides == null)
         {
@@ -2294,33 +2294,32 @@ where T : unmanaged
         {
             dilations = new int[2] { 1, 1 };
         }
-        var N = input.Dimensions[0];
-        var C = input.Dimensions[1];
-        var H = input.Dimensions[2];
-        var W = input.Dimensions[3];
-        var M = weight.Dimensions[0];
-        var kH = kernelshape == null ? weight.Dimensions[2] : kernelshape[0];
-        var kW = kernelshape == null ? weight.Dimensions[3] : kernelshape[1];
-        ValidateConv2D(N, C, H, W, M, weight.Dimensions[1], kH, kW, group, strides, dilations, kernelshape, weight.Dimensions.ToArray(), input.Length, weight.Length, bias is null ? -1 : (int)bias.Length);
+        int N = input.Dims[0];
+        int C = input.Dims[1];
+        int H = input.Dims[2];
+        int W = input.Dims[3];
+        int M = weight.Dims[0];
+        int kH = kernelshape == null ? weight.Dims[2] : kernelshape[0];
+        int kW = kernelshape == null ? weight.Dims[3] : kernelshape[1];
+        ValidateConv2D(N, C, H, W, M, weight.Dims[1], kH, kW, group, strides, dilations, kernelshape, weight.Dims.ToArray(), input.Length, weight.Length, biasLength);
         var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
         if (info.Shape[0] <= 0 || info.Shape[1] <= 0) throw new ArgumentException("Conv output spatial dims must be positive.");
-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo, info.Shape[0], info.Shape[1], bias, options);
-
+        return (N, C, H, W, M, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo, info.Shape[0], info.Shape[1]);
     }
 
-    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations) =>
-        Conv2D(input, weight, group, pads, bias, kernelshape, strides, dilations, TensorExecutionOptions.Auto);
-
-    /// <summary>Two-dimensional convolution with explicit execution options.</summary>
-    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
+    // Shared Conv2D preparation for explicit pads: validates ranks and pads,
+    // fills defaults, resolves dims and kernel extents, and computes the
+    // explicit output geometry. The typed cores stay per-dtype.
+    static (int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW) PlanConvExplicit(
+        ITensor input, ITensor weight, int group, int[] pads, int[]? kernelshape, int[]? strides, int[]? dilations, int biasLength)
     {
         if (input.Rank != 4)
         {
-            throw new ArgumentException(nameof(input), "Input tensors must be of rank 4 with the layout NxCxHxW.");
+            throw new ArgumentException("input", "Input tensors must be of rank 4 with the layout NxCxHxW.");
         }
         if (weight.Rank != 4)
         {
-            throw new ArgumentException(nameof(weight), "Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
+            throw new ArgumentException("weight", "Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
         }
         if (pads is null || pads.Length != 4)
         {
@@ -2334,20 +2333,42 @@ where T : unmanaged
         {
             dilations = new int[2] { 1, 1 };
         }
-        var N = input.Dimensions[0];
-        var C = input.Dimensions[1];
-        var H = input.Dimensions[2];
-        var W = input.Dimensions[3];
-        var M = weight.Dimensions[0];
-        var kH = kernelshape == null ? weight.Dimensions[2] : kernelshape[0];
-        var kW = kernelshape == null ? weight.Dimensions[3] : kernelshape[1];
-        ValidateConv2D(N, C, H, W, M, weight.Dimensions[1], kH, kW, group, strides, dilations, kernelshape, weight.Dimensions.ToArray(), input.Length, weight.Length, bias is null ? -1 : (int)bias.Length);
+        int N = input.Dims[0];
+        int C = input.Dims[1];
+        int H = input.Dims[2];
+        int W = input.Dims[3];
+        int M = weight.Dims[0];
+        int kH = kernelshape == null ? weight.Dims[2] : kernelshape[0];
+        int kW = kernelshape == null ? weight.Dims[3] : kernelshape[1];
+        ValidateConv2D(N, C, H, W, M, weight.Dims[1], kH, kW, group, strides, dilations, kernelshape, weight.Dims.ToArray(), input.Length, weight.Length, biasLength);
         int effKH = GetConv2DEffectiveFilterSize(kH, dilations[0]);
         int effKW = GetConv2DEffectiveFilterSize(kW, dilations[1]);
         var outShape = GetConv2DOutputShape(new int[] { H, W }, effKH, effKW, strides[0], strides[1], pads[0] + pads[2], pads[1] + pads[3]);
         if (outShape[0] <= 0 || outShape[1] <= 0) throw new ArgumentException("Conv output spatial dims must be positive.");
         var pad = new PadInfo { top = pads[0], left = pads[1], bottom = pads[2], right = pads[3], h = pads[0] + pads[2], w = pads[1] + pads[3] };
-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dilations[0], dilations[1], strides[0], strides[1], pad, outShape[0], outShape[1], bias, options);
+        return (N, C, H, W, M, kH, kW, dilations[0], dilations[1], strides[0], strides[1], pad, outShape[0], outShape[1]);
+    }
+
+
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations) =>
+        Conv2D(input, weight, group, padtype, padvalue, bias, kernelshape, strides, dilations, TensorExecutionOptions.Auto);
+
+    /// <summary>Two-dimensional convolution with explicit execution options.</summary>
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
+    {
+        var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
+
+    }
+
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations) =>
+        Conv2D(input, weight, group, pads, bias, kernelshape, strides, dilations, TensorExecutionOptions.Auto);
+
+    /// <summary>Two-dimensional convolution with explicit execution options.</summary>
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
+    {
+        var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
 
     }
 
@@ -2438,33 +2459,8 @@ where T : unmanaged
     /// <summary>Two-dimensional convolution with explicit execution options.</summary>
     public static Tensor<double> Conv2D(Tensor<double> input, Tensor<double> weight, int group, PadType padtype, int? padvalue, Tensor<double>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
-        if (input.Rank != 4)
-        {
-            throw new ArgumentException(nameof(input), "Input tensors must be of rank 4 with the layout NxCxHxW.");
-        }
-        if (weight.Rank != 4)
-        {
-            throw new ArgumentException(nameof(weight), "Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
-        }
-        if (strides == null)
-        {
-            strides = new int[2] { 1, 1 };
-        }
-        if (dilations == null)
-        {
-            dilations = new int[2] { 1, 1 };
-        }
-        var N = input.Dimensions[0];
-        var C = input.Dimensions[1];
-        var H = input.Dimensions[2];
-        var W = input.Dimensions[3];
-        var M = weight.Dimensions[0];
-        var kH = kernelshape == null ? weight.Dimensions[2] : kernelshape[0];
-        var kW = kernelshape == null ? weight.Dimensions[3] : kernelshape[1];
-        ValidateConv2D(N, C, H, W, M, weight.Dimensions[1], kH, kW, group, strides, dilations, kernelshape, weight.Dimensions.ToArray(), input.Length, weight.Length, bias is null ? -1 : (int)bias.Length);
-        var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
-        if (info.Shape[0] <= 0 || info.Shape[1] <= 0) throw new ArgumentException("Conv output spatial dims must be positive.");
-        return Conv2DDoubleCore(input, weight, group, N, C, H, W, M, kH, kW, dilations[0], dilations[1], strides[0], strides[1], info.PadInfo, info.Shape[0], info.Shape[1], bias, options);
+        var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+        return Conv2DDoubleCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
 
     }
 
@@ -2474,40 +2470,8 @@ where T : unmanaged
     /// <summary>Two-dimensional convolution with explicit execution options.</summary>
     public static Tensor<double> Conv2D(Tensor<double> input, Tensor<double> weight, int group, int[] pads, Tensor<double>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
-        if (input.Rank != 4)
-        {
-            throw new ArgumentException(nameof(input), "Input tensors must be of rank 4 with the layout NxCxHxW.");
-        }
-        if (weight.Rank != 4)
-        {
-            throw new ArgumentException(nameof(weight), "Weight tensors must be of rank 4 with the layout M x C/group x kH x kW.");
-        }
-        if (pads is null || pads.Length != 4)
-        {
-            throw new ArgumentException(nameof(pads), "Explicit pads must have four values [begin_h, begin_w, end_h, end_w].");
-        }
-        if (strides == null)
-        {
-            strides = new int[2] { 1, 1 };
-        }
-        if (dilations == null)
-        {
-            dilations = new int[2] { 1, 1 };
-        }
-        var N = input.Dimensions[0];
-        var C = input.Dimensions[1];
-        var H = input.Dimensions[2];
-        var W = input.Dimensions[3];
-        var M = weight.Dimensions[0];
-        var kH = kernelshape == null ? weight.Dimensions[2] : kernelshape[0];
-        var kW = kernelshape == null ? weight.Dimensions[3] : kernelshape[1];
-        ValidateConv2D(N, C, H, W, M, weight.Dimensions[1], kH, kW, group, strides, dilations, kernelshape, weight.Dimensions.ToArray(), input.Length, weight.Length, bias is null ? -1 : (int)bias.Length);
-        int effKH = GetConv2DEffectiveFilterSize(kH, dilations[0]);
-        int effKW = GetConv2DEffectiveFilterSize(kW, dilations[1]);
-        var outShape = GetConv2DOutputShape(new int[] { H, W }, effKH, effKW, strides[0], strides[1], pads[0] + pads[2], pads[1] + pads[3]);
-        if (outShape[0] <= 0 || outShape[1] <= 0) throw new ArgumentException("Conv output spatial dims must be positive.");
-        var pad = new PadInfo { top = pads[0], left = pads[1], bottom = pads[2], right = pads[3], h = pads[0] + pads[2], w = pads[1] + pads[3] };
-        return Conv2DDoubleCore(input, weight, group, N, C, H, W, M, kH, kW, dilations[0], dilations[1], strides[0], strides[1], pad, outShape[0], outShape[1], bias, options);
+        var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+        return Conv2DDoubleCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
 
     }
 
