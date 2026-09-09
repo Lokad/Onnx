@@ -118,6 +118,24 @@ public class ExecutionLifecycleTests
     }
 
     [Fact]
+    public void LoadFailure_RecordsCause_AccessibleWithoutSink()
+    {
+        var previous = Log.Sink;
+        Log.Sink = null;
+        try
+        {
+            Assert.Null(OnnxImport.Load(new byte[] { 1, 2, 3, 4 }));
+            Assert.NotNull(OnnxImport.LastErrorMessage);
+            Assert.NotNull(OnnxImport.LastErrorCause);
+            var missing = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".onnx");
+            Assert.Null(OnnxImport.Load(missing));
+            Assert.Contains(".onnx", OnnxImport.LastErrorMessage ?? "");
+            Assert.NotNull(OnnxImport.LastErrorCause);
+        }
+        finally { Log.Sink = previous; }
+    }
+
+    [Fact]
     public void OperatorException_PreservesCause_AndRetrySucceeds()
     {
         var g = new ComputationalGraph();

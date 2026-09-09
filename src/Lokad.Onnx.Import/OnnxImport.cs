@@ -46,52 +46,62 @@ public static class OnnxImport
         return m.ToModelDto(null, true);
     }
 
-    public static ComputationalGraph? Load(string onnxInputFilePath)
+    /// <summary>Rendered template of the last import failure, without exception text; null when the last load succeeded or none ran. Last write wins under concurrent loads.</summary>
+    public static string? LastErrorMessage { get; private set; }
+
+    /// <summary>Original exception behind the last import failure, when one was captured; fatal runtime failures propagate instead and record nothing. Last write wins under concurrent loads.</summary>
+    public static Exception? LastErrorCause { get; private set; }
+
+    public static ComputationalGraph? Load(string onnxInputFilePath) =>
+        LoadCore(() => Parse(onnxInputFilePath), "Could not parse {f} as ONNX model file.", "Could not load {f} as ONNX model.", onnxInputFilePath);
+
+    public static ComputationalGraph? Load(byte[] buffer) =>
+        LoadCore(() => Parse(buffer), "Could not parse buffer as ONNX model.", "Could not load buffer as ONNX model.", null);
+
+    static ComputationalGraph? LoadCore(Func<OnnxModel> parse, string parseTemplate, string loadTemplate, string? path)
     {
+        LastErrorMessage = null;
+        LastErrorCause = null;
         OnnxModel mp;
         try
         {
-            mp = Parse(onnxInputFilePath);
+            mp = parse();
         }
-        catch (Exception ex)
+        catch (Exception ex) when (!Runtime.IsFatal(ex))
         {
-            Runtime.Error(ex, "Could not parse {f} as ONNX model file.", onnxInputFilePath);
-            return null;
+            return FailImport(ex, parseTemplate, path);
         }
         try
         {
             var g = Model.Load(mp);
-            g.ModelFile = onnxInputFilePath;
+            if (path is not null) g.ModelFile = path;
             return g;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (!Runtime.IsFatal(ex))
         {
-            Runtime.Error(ex, "Could not load {f} as ONNX model.", onnxInputFilePath);
-            return null;
+            return FailImport(ex, loadTemplate, path);
         }
     }
 
-    public static ComputationalGraph? Load(byte[] buffer)
+    /// <summary>
+    /// Records a nonfatal import failure: snapshots the rendered message and
+    /// the original cause for readers without a log sink, keeps the log line,
+    /// and returns null like every other load rejection.
+    /// </summary>
+    static ComputationalGraph? FailImport(Exception ex, string messageTemplate, string? path)
     {
-        OnnxModel mp;
-        try
+        LastErrorCause = ex;
+        if (path is null)
         {
-            mp = Parse(buffer);
+            LastErrorMessage = Log.Render(messageTemplate, Array.Empty<object?>());
+            Runtime.Error(ex, messageTemplate);
         }
-        catch (Exception ex)
+        else
         {
-            Runtime.Error(ex, "Could not parse buffer as ONNX model.");
-            return null;
+            LastErrorMessage = Log.Render(messageTemplate, new object?[] { path });
+            Runtime.Error(ex, messageTemplate, path);
         }
-        try
-        {
-            return Model.Load(mp);
-        }
-        catch (Exception ex)
-        {
-            Runtime.Error(ex, "Could not load buffer as ONNX model.");
-            return null;
-        }
+        return null;
     }
 
     static OnnxModel ToModelDto(this ModelProto mp, string? baseDirectory, bool materializeInitializers)

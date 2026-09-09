@@ -118,7 +118,6 @@ public partial struct Node
     public ITensor? InputTensor(ComputationalGraph graph, int index) =>
         index < Inputs.Length && !string.IsNullOrEmpty(Inputs[index]) ? graph.GetInputTensor(Inputs[index]) : null;
 
-    static bool IsFatal(Exception e) => e is OutOfMemoryException or StackOverflowException;
 
     public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider, ExecutionOptions? options)
     {
@@ -159,7 +158,7 @@ public partial struct Node
             r.Cause = tise;
             return r;
         }
-        catch (Exception e) when (!IsFatal(e))
+        catch (Exception e) when (!Runtime.IsFatal(e))
         {
             return Failure(Op, e.Message, e);
         }

@@ -40,5 +40,12 @@ namespace Lokad.Onnx
         [DebuggerStepThrough]
         public static LoggerOp Begin(string messageTemplate, params object?[] args) =>
             Log.Sink is null ? LoggerOp.Silent : new LoggerOp(messageTemplate, args);
+
+    /// <summary>
+    /// True for runtime failures no caller can handle (out of memory, stack
+    /// exhaustion): these propagate instead of converting into ordinary
+    /// operation or parse failures.
+    /// </summary>
+    public static bool IsFatal(Exception ex) => ex is OutOfMemoryException or StackOverflowException;
     }
 }
