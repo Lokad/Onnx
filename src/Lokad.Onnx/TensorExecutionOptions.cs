@@ -3,7 +3,7 @@ using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx;
 
-/// <summary>MaxDegreeOfParallelism caps worker threads for batch-parallel and row-split kernels (1 keeps the historical sequential path). Values above the available splits are clamped by the kernel; only explicit values above 1 opt in.</summary>
+/// <summary>Selects the kernel paths execution may use. SIMD enables portable-vectorized elementwise, reduction, and softmax paths with scalar fallback; intrinsics additionally enables x86-intrinsic paths and requires SIMD with x86 FMA (see Validate). MaxDegreeOfParallelism caps worker threads for batch-parallel and row-split kernels (1 keeps the sequential path). Values above the available splits are clamped by the kernel; only explicit values above 1 opt in.</summary>
 public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntrinsics, int MaxDegreeOfParallelism)
 {
     public static TensorExecutionOptions Scalar => new TensorExecutionOptions(false, false, 1);

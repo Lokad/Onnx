@@ -1,4 +1,4 @@
-﻿namespace Lokad.Onnx;
+namespace Lokad.Onnx;
 
 using System.Collections.Generic;
 
@@ -39,7 +39,7 @@ public static class HardwareIntrinsics
         else if (IsArmBaseSupported)
             return "ArmBase";
         else
-            return GetVectorSize(); // Runtimes prior to .NET Core 3.0 (APIs did not exist so we print non-exact Vector info)
+            return GetVectorSize(); // No accelerated set matched: report the portable vector width, if any.
     }
 
     public static string GetFullInfo()

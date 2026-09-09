@@ -22,7 +22,7 @@ where T : unmanaged
     // plan, and promotes vector operands. Batched execution stays per-dtype.
     static (MatMulShapes.Plan plan, Tensor<TElement> px, Tensor<TElement> py) PlanMatMul<TElement>(Tensor<TElement> x, Tensor<TElement> y) where TElement : unmanaged
     {
-        if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
+        if (x.Rank == 0 || y.Rank == 0) throw new ArgumentException("The rank of each tensor in matrix multiplication must be at least 1; rank-1 vectors are promoted.");
         var plan = MatMulShapes.Create(x.Dimensions, y.Dimensions);
         var px = plan.PromoteX ? x.InsertDim(0) : x;
         var py = plan.PromoteY ? y.InsertDim(y.Rank) : y;
@@ -690,7 +690,7 @@ internal static class MatMulShapes
 
     public static Plan Create(System.ReadOnlySpan<int> xd, System.ReadOnlySpan<int> yd)
     {
-        if (xd.Length == 0 || yd.Length == 0) throw new System.ArgumentException("The rank of each tensor in matrix multiplication must be greater than 1.");
+        if (xd.Length == 0 || yd.Length == 0) throw new System.ArgumentException("The rank of each tensor in matrix multiplication must be at least 1; rank-1 vectors are promoted.");
         bool promoteX = xd.Length == 1;
         bool promoteY = yd.Length == 1;
         int[] px = promoteX ? new int[] { 1, xd[0] } : xd.ToArray();

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 // Portions of this code are from System.Half struct dotnet runtime.
@@ -106,12 +106,10 @@ namespace Lokad.Onnx
 
 
     /// <summary>
-    /// This value type represents A Float16 value
-    /// it is blittable as defined in https://docs.microsoft.com/en-us/dotnet/framework/interop/blittable-and-non-blittable-types
-    /// and as such, represented the same way in managed and native memories. This means that arrays of this type
-    /// do not have to be copied to be passed to native memory but simply pinned and read by native code. Thus,
-    /// one can create a Tensor on top of an array of these structures and feed it directly to Onnxruntime library.
-    /// Binary wise, it is the same as ushort[] (uint16_t in C++). However, we would like a separate type for type dispatching.
+    /// This value type represents a half-precision floating-point value: a sequential-layout
+    /// struct over the IEEE 754 binary16 bit pattern, bit-compatible with ushort storage and
+    /// kept distinct for overload dispatch. Conversions use the base-library bit primitives
+    /// with unchanged ONNX bit patterns.
     /// 
     /// The implementation is derived from 
     /// https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/Half.cs,7895d5942d33f974
@@ -753,12 +751,8 @@ namespace Lokad.Onnx
     /// <summary>
     /// This value type represents A BFloat16 value.
     /// See https://cloud.google.com/blog/products/ai-machine-learning/bfloat16-the-secret-to-high-performance-on-cloud-tpus
-    /// for details.
-    /// it is blittable as defined in https://docs.microsoft.com/en-us/dotnet/framework/interop/blittable-and-non-blittable-types
-    /// and as such, represented the same way in managed and native memories. This means that arrays of this type
-    /// do not have to be copied to be passed to native memory but simply pinnned and read by native code. Thus,
-    /// one can create a Tensor on top of an array of these structures and feed it directly to Onnxruntime library.
-    /// Binary wise, it is the same as ushort[] (uint16_t in C++). However, we would like a separate type for type dispatching.
+    /// for details; it is a sequential-layout struct over the bfloat16 bit pattern,
+    /// bit-compatible with ushort storage and kept distinct for overload dispatch.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public readonly struct BFloat16 :

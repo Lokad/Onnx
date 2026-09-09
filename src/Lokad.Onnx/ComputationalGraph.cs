@@ -63,15 +63,16 @@ public class ComputationalGraph
     protected string? _preparationError;
 
     /// <summary>
-    /// Freezes the prepared plan after (re)analyzing lifetimes. Called by
-    /// Model.Load; call it again after editing Nodes or descriptors.
+    /// Recomputes lifetime analysis for the current <see cref="Nodes"/> order.
+    /// Execution entries re-analyze automatically when the structure changes,
+    /// so an explicit call only warms the analysis up before the first run.
     /// </summary>
     public void Prepare()
     {
         RefreshLifetimeAnalysis();
     }
 
-    /// <summary>Clears the frozen state so the next execution re-prepares.</summary>
+    /// <summary>Forgets the analysis so the next execution re-analyzes unconditionally.</summary>
     public void InvalidatePreparation()
     {
         _prepared = false;
@@ -175,11 +176,8 @@ public class ComputationalGraph
     }
 
     /// <summary>
-    /// Checks a user tensor against a retained input descriptor. Rank and
-    /// element type must match; fixed descriptor dims (positive) must match
-    /// exactly, while symbolic descriptor dims (zero or negative, which is
-    /// also what the importer produces for dim_params) accept any
-    /// non-negative extent.
+    /// Returns the retained input descriptor for a graph input name, or null
+    /// for hand-built graphs, which validate against placeholder shapes instead.
     /// </summary>
     OnnxValueInfo? FindInputDesc(string name)
     {
@@ -714,11 +712,13 @@ public class ComputationalGraph
     public bool ExecuteNode(object userInputs, string nodeLabel, bool useInitializers) => ExecuteNode(userInputs, nodeLabel, useInitializers, ExecutionProvider.CPU, null);
 
     /// <summary>
-    /// Behaves like Execute but runs only the subgraph feeding the node named
-    /// <paramref name="nodeLabel"/>. An unknown label fails like any other execution error.
+    /// Runs only the single node named <paramref name="nodeLabel"/> with explicitly
+    /// supplied inputs; upstream nodes do not run, so every node input must come
+    /// from the caller or from initializers. On success the graph outputs hold
+    /// exactly this node outputs. An unknown label fails like any other execution error.
     /// </summary>
     /// <param name="userInputs">Caller-owned input tensors; the graph never takes ownership of their storage.</param>
-    /// <param name="nodeLabel">Name of the node whose subgraph to run.</param>
+    /// <param name="nodeLabel">Name of the node to run.</param>
     /// <param name="useInitializers">Bind stored initializers for graph inputs left unspecified.</param>
     /// <param name="provider">Execution provider carrying out the operators.</param>
     /// <param name="options">Execution options, or null for the graph prepared options.</param>
