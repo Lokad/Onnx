@@ -82,6 +82,28 @@ namespace Lokad.Onnx.Backend.Tests
             Assert.Equal(new[] { 10f, 30f, 20f, 10f }, output.ToArray());
         }
 
+        [Fact]
+        public void GatherNodeExecutesThroughImport()
+        {
+            // C02 import-path pin: higher-rank int64 indices through Model.Load.
+            var mp = new OnnxModel { Name = "gather" };
+            mp.Opset[""] = 13;
+            mp.Inputs.Add(new OnnxValueInfo { Name = "d", ElementType = TensorElementType.Float, Dims = new int[] { 4, 3 } });
+            mp.Inputs.Add(new OnnxValueInfo { Name = "i", ElementType = TensorElementType.Int64, Dims = new int[] { 2, 2 } });
+            mp.Outputs.Add(new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Float, Dims = new int[] { 2, 2, 3 } });
+            mp.Nodes.Add(new OnnxNode { Name = "g", OpType = "Gather", Inputs = new string[] { "d", "i" }, Outputs = new string[] { "y" }, Attributes = new Dictionary<string, object>() });
+            var graph = Model.Load(mp)!;
+            var feed = new Dictionary<string, ITensor>
+            {
+                ["d"] = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f }, { 7f, 8f, 9f }, { 10f, 11f, 12f } }),
+                ["i"] = DenseTensor<long>.OfValues(new long[,] { { 0L, 2L }, { 3L, 1L } }),
+            };
+            Assert.True(graph.Execute(feed, true), graph.LastErrorMessage + " / node=" + graph.LastFailedNodeName);
+            var output = (Tensor<float>)graph.Outputs["y"];
+            Assert.Equal(new[] { 2, 2, 3 }, output.Dimensions.ToArray());
+            Assert.Equal(new float[] { 1f, 2f, 3f, 7f, 8f, 9f, 10f, 11f, 12f, 4f, 5f, 6f }, output.ToArray());
+        }
+
         static Tensor<long> ShapeOf(float[,,] values, int? start, int? end)
         {
             var data = DenseTensor<float>.OfValues(values);
