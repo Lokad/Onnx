@@ -275,7 +275,7 @@ static class Bench
         }
     }
 
-    static SessionOptions CreateSingleCpuSessionOptions(int threads)
+    internal static SessionOptions CreateSingleCpuSessionOptions(int threads)
     {
         var so = new SessionOptions();
         so.GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL;
@@ -298,7 +298,7 @@ static class Bench
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops> [BenchmarkDotNet options]");
+            Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops|oneop> [BenchmarkDotNet options]");
             return 2;
         }
         // Micro failures propagate with a nonzero exit; nothing here converts an error into success.
@@ -316,14 +316,17 @@ static class Bench
             case "ops":
                 MicroBenchmarks.RunOps(args.Skip(1).ToArray());
                 return 0;
+            case "oneop":
+                OneOpMicro.RunOneOp(args.Skip(1).ToArray());
+                return 0;
             default:
                 Console.WriteLine("Unknown micro benchmark: " + args[0] + ".");
-                Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops> [BenchmarkDotNet options]");
+                Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops|oneop> [BenchmarkDotNet options]");
                 return 2;
         }
     }
 
-    static string FindRoot()
+    internal static string FindRoot()
     {
         var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
         while (dir is not null)

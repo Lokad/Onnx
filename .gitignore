@@ -380,3 +380,7 @@ external/
 # references; re-include them (regeneration is not byte-stable, so the lane
 # cannot rebuild them on fresh clones).
 !tests/opfuzz/corpus/*/model.onnx
+
+# One-op session-comparison models are tiny single-op graphs tracked for the
+# micro oneop lane; re-include them like the opfuzz corpus.
+!tests/Lokad.Onnx.Bench/oneop/*/model.onnx
