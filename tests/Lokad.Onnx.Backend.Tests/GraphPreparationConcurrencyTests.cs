@@ -163,6 +163,27 @@ public class GraphPreparationConcurrencyTests
     }
 
     [Fact]
+    public async Task ConcurrentFirstExecute_Agrees()
+    {
+        // C09: a genuine four-way race of first executions; losers return false
+        // without touching state, so end state holds spec outputs either way.
+        var g = UnpreparedChainGraph();
+        using var barrier = new Barrier(4);
+        var tasks = new Task<bool>[4];
+        for (int i = 0; i < tasks.Length; i++)
+            tasks[i] = Task.Run(() =>
+            {
+                barrier.SignalAndWait();
+                return g.Execute(Good(), false);
+            });
+        bool[] results = await Task.WhenAll(tasks);
+        Assert.Contains(true, results);
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        Assert.True(g.Execute(Good(), false));
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
     public void PrepareDuringExecution_ThrowsAndPreservesState()
     {
         var g = ChainGraph();
