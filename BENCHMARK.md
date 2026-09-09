@@ -48,6 +48,13 @@ Lokad assembly `0.2.0.0`. Asset bytes and hashes per case print in each
 rep header and match `ModelManifest.json`; inputs and outputs print there
 too (e5 token counts, 224x224 pixels, 4-token GPT-2 prefill).
 
+Two latency-moving slices landed after this baseline and are not reflected above:
+`732c44e` (P10 live-index reuse: e5-8tok −56.4%, e5-30tok −40.6%, gpt2-4tok −43.3%
+median-of-medians) and `7dff8a6` (P07 wide-axis dispatch: resnet50-224 −8.8%
+median-of-medians). Do not read the table as HEAD performance and do not gate a commit
+on it; a re-baseline needs the full three-rep protocol at a newer revision. Per-slice
+alternating-rep evidence lives in the cited commit messages.
+
 Cells are Lokad warmed public-Execute median versus ORT warmed-Run median
 per rep in milliseconds; the ratio spans the three within-rep median
 ratios. Absolute medians drifted across reps with machine settling
