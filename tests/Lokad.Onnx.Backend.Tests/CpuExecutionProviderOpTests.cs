@@ -680,6 +680,64 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void Float16Compute_RefusedCleanly()
+    {
+        // Parity gap, not parity: ORT 1.29 ACCEPTS float16 ReduceSum,
+        // Softmax, LayerNorm, MatMul, Conv and Gemm (all probed), but no
+        // half compute kernels exist here, so every form fails
+        // descriptively. Shapes below are valid, isolating the dtype gate.
+        var h = DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)2f, (Half)3f, (Half)4f }, new int[] { 2, 2 });
+        var axes = DenseTensor<long>.OfValues(new long[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.ReduceSum(h, axes, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(h, -1, null, null, 13).Status);
+        var sc = DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)1f });
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(h, sc, null, -1, 1e-5f, null, 1, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.MatMul(h, h, null, null).Status);
+        var x = DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f, (Half)1f }, new int[] { 1, 1, 4, 4 });
+        var w = DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)1f, (Half)1f, (Half)1f }, new int[] { 1, 1, 2, 2 });
+        Assert.Equal(OpStatus.Failure, CPU.Conv(x, w, null, auto_pad: null, dilations: null, group: null, kernel_shape: new int[] { 2, 2 }, pads: null, strides: null, options: null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Gemm(h, h, null, 1f, 1f, null, 0, 0).Status);
+    }
+
+    [Fact]
+    public void BFloat16Compute_RefusedCleanly()
+    {
+        // ORT 1.29 has no CPU kernel for any of these on bfloat16
+        // (all probed NOT_IMPLEMENTED); shapes below are valid,
+        // isolating the dtype gate.
+        var b = DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)1f, (BFloat16)2f, (BFloat16)3f, (BFloat16)4f }, new int[] { 2, 2 });
+        var axes = DenseTensor<long>.OfValues(new long[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.ReduceSum(b, axes, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(b, -1, null, null, 13).Status);
+        var sc = DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)1f, (BFloat16)1f });
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(b, sc, null, -1, 1e-5f, null, 1, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.MatMul(b, b, null, null).Status);
+        var x = DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f }, new int[] { 1, 1, 4, 4 });
+        var w = DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)1f, (BFloat16)1f, (BFloat16)1f, (BFloat16)1f }, new int[] { 1, 1, 2, 2 });
+        Assert.Equal(OpStatus.Failure, CPU.Conv(x, w, null, auto_pad: null, dilations: null, group: null, kernel_shape: new int[] { 2, 2 }, pads: null, strides: null, options: null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Gemm(b, b, null, 1f, 1f, null, 0, 0).Status);
+    }
+
+    [Fact]
+    public void ComplexCompute_RefusedCleanly()
+    {
+        // ORT rejects complex64 compute at schema level (ReduceSum,
+        // Softmax, MatMul, Gemm all probed refused); shapes below are
+        // valid, isolating the dtype gate.
+        var c = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[] { new System.Numerics.Complex(1, 1), new System.Numerics.Complex(2, 2), new System.Numerics.Complex(3, 3), new System.Numerics.Complex(4, 4) }, new int[] { 2, 2 });
+        var axes = DenseTensor<long>.OfValues(new long[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.ReduceSum(c, axes, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(c, -1, null, null, 13).Status);
+        var sc = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[] { new System.Numerics.Complex(1, 0), new System.Numerics.Complex(1, 0) });
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(c, sc, null, -1, 1e-5f, null, 1, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.MatMul(c, c, null, null).Status);
+        var x = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[16], new int[] { 1, 1, 4, 4 });
+        var w = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[4], new int[] { 1, 1, 2, 2 });
+        Assert.Equal(OpStatus.Failure, CPU.Conv(x, w, null, auto_pad: null, dilations: null, group: null, kernel_shape: new int[] { 2, 2 }, pads: null, strides: null, options: null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Gemm(c, c, null, 1f, 1f, null, 0, 0).Status);
+    }
+
+    [Fact]
     public void UnsupportedDtypePairs_FailCleanlyOnBothSides()
     {
         // Every pair below was probed refused on ORT 1.29 (load or run) and
