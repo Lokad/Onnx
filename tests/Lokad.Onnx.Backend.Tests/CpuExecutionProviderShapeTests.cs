@@ -92,6 +92,20 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void ReshapeScalarToVector_Succeeds()
+        {
+            // ORT 1.29: scalar 7 reshaped to [1] is [7] (the reverse of the
+            // scalar-producing reshape above).
+            var s = DenseTensor<float>.OfShape();
+            s.SetValue(0, 7f);
+            var r = CPU.Reshape(s, DenseTensor<long>.OfValues(new long[] { 1L }), null, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new int[] { 1 }, y.Dimensions.ToArray());
+            Assert.Equal(new float[] { 7f }, y.ToArray());
+        }
+
+        [Fact]
         public void SqueezeToScalar_Succeeds()
         {
             // ORT 1.29: squeezing [1,1] on both axes is scalar 7.
@@ -493,6 +507,16 @@ namespace Lokad.Onnx.Backend.Tests
         // inserted axes) fail the same way (probed against ORT 1.29).
         var v = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
         Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(v, DenseTensor<long>.OfValues(new long[] { 2L, -1L }), null));
+    }
+
+    [Fact]
+    public void SqueezeUnsqueezeAxisOutOfRange_FailsCleanly()
+    {
+        // ORT 1.29 refuses out-of-range axes at load (verified
+        // differentially via OpDump, including the rank-0 instances).
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        Assert.Equal(OpStatus.Failure, CPU.Squeeze(x, DenseTensor<long>.OfValues(new long[] { 5L }), null).Status);
+        Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(x, DenseTensor<long>.OfValues(new long[] { 5L }), null));
     }
 
     [Fact]
