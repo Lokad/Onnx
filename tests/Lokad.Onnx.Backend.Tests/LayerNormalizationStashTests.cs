@@ -45,6 +45,18 @@ public class LayerNormalizationStashTests
     }
 
     [Fact]
+    public void MismatchedScaleBiasDtypes_RejectedCleanly()
+    {
+        // ORT 1.29 refuses mismatched scale/bias at load (single type
+        // parameter); the guards already exist, this pins them.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } });
+        var ds = DenseTensor<double>.OfValues(new double[] { 1.0, 1.0 });
+        var fs = DenseTensor<float>.OfValues(new float[] { 1f, 1f });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.LayerNormalization(x, ds, null, -1, null, null, 1, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.LayerNormalization(x, fs, ds, -1, null, null, 1, null, null).Status);
+    }
+
+    [Fact]
     public void OmittedStash_MatchesExplicitDefault_Float()
     {
         var x = new float[,] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } };
