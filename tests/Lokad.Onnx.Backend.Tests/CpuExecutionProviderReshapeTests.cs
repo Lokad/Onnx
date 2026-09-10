@@ -62,5 +62,23 @@ namespace Lokad.Onnx.Backend.Tests
         Assert.Equal(new int[] { 1, 2 }, uy.Dimensions.ToArray());
         Assert.Equal(new byte[] { 7, 8 }, uy.ToArray());
     }
+
+    [Fact]
+    public void SqueezeUnsqueezeEmpty_Roundtrip()
+    {
+        // ORT 1.29: squeezing [1,0] on axis 0 yields [0], and unsqueezing
+        // [0] on axis 0 yields [1,0]; empties flow through, not fail.
+        var ax = DenseTensor<long>.OfValues(new long[] { 0L });
+        var sq = CPU.Squeeze(DenseTensor<float>.OfShape(1, 0), ax, null);
+        Assert.Equal(OpStatus.Success, sq.Status);
+        var sy = (Tensor<float>)sq.Outputs![0];
+        Assert.Equal(new int[] { 0 }, sy.Dimensions.ToArray());
+        Assert.Empty(sy.ToArray());
+        var un = CPU.Unsqueeze(DenseTensor<float>.OfShape(0), ax, null);
+        Assert.Equal(OpStatus.Success, un.Status);
+        var uy = (Tensor<float>)un.Outputs![0];
+        Assert.Equal(new int[] { 1, 0 }, uy.Dimensions.ToArray());
+        Assert.Empty(uy.ToArray());
+    }
     }
 }
