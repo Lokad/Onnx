@@ -470,4 +470,38 @@ public class MatMulKernelAgreementTests
             for (int j = 0; j < 4; j++) Assert.Equal((float)(i + j), y[i * 4 + j]);
         }
     }
+
+    [Fact]
+    public void VectorInputs_PromoteLikeOrt()
+    {
+        // ORT 1.29 runs rank-1 MatMul with promotion ([3]@[3] is scalar
+        // 32, [2,2]@[2] is [17,39]); the engine promotes identically.
+        var v = Tensor<float>.MatMul(
+            DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f }),
+            DenseTensor<float>.OfValues(new float[] { 4f, 5f, 6f }),
+            TensorExecutionOptions.Scalar);
+        Assert.Equal(new int[0], v.Dimensions.ToArray());
+        Assert.Equal(new float[] { 32f }, v.ToArray());
+        var m = Tensor<float>.MatMul(
+            DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } }),
+            DenseTensor<float>.OfValues(new float[] { 5f, 6f }),
+            TensorExecutionOptions.Scalar);
+        Assert.Equal(new int[] { 2 }, m.Dimensions.ToArray());
+        Assert.Equal(new float[] { 17f, 39f }, m.ToArray());
+    }
+
+    [Fact]
+    public void ScalarBlasInputs_FailCleanly()
+    {
+        // ORT 1.29 refuses scalar Gemm/MatMul/Conv at load; the engine
+        // fails descriptively instead (kernel throws, providers refuse).
+        var sx = DenseTensor<float>.OfShape();
+        sx.SetValue(0, 2f);
+        var sy = DenseTensor<float>.OfShape();
+        sy.SetValue(0, 3f);
+        Assert.Throws<System.ArgumentException>(() => Tensor<float>.MatMul(sx, sy, TensorExecutionOptions.Scalar));
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(sx, sy, null, 1f, 1f, null, 0, 0).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Conv(sx, sy, null, null, null, null, null, null, null, null).Status);
+    }
+
 }
