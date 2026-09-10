@@ -72,6 +72,10 @@ where T : unmanaged
         {
             throw new ArgumentException(nameof(pads), "Explicit pads must have four values [begin_h, begin_w, end_h, end_w].");
         }
+        if (pads.Any(p => p < 0))
+        {
+            throw new ArgumentException(nameof(pads), "Explicit pads must be non-negative.");
+        }
         if (strides == null)
         {
             strides = new int[2] { 1, 1 };
@@ -361,6 +365,10 @@ where T : unmanaged
         if (pads is null || pads.Length != 4)
         {
             throw new ArgumentException(nameof(pads), "Explicit pads must have four values [begin_h, begin_w, end_h, end_w].");
+        }
+        if (pads.Any(p => p < 0))
+        {
+            throw new ArgumentException(nameof(pads), "Explicit pads must be non-negative.");
         }
         if (strides == null)
         {

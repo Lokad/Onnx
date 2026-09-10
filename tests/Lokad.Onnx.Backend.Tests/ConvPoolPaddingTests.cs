@@ -323,4 +323,14 @@ public class ConvPoolPaddingTests
         }
     }
 
+    [Fact]
+    public void NegativePads_FailCleanly()
+    {
+        // ORT 1.29 refuses negative pads at load (shape inference); the
+        // planners must fail descriptively instead of computing garbage.
+        var x = F4(new float[1, 1, 3, 3] { { { { 1f, 2f, 3f }, { 4f, 5f, 6f }, { 7f, 8f, 9f } } } });
+        var w = F4(new float[1, 1, 2, 2] { { { { 1f, 1f }, { 1f, 1f } } } });
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w, null, null, null, null, null, new int[] { -1, 0, 0, 0 }, null, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 2, 2 }, new int[] { -1, 0, 0, 0 }, null, new int[] { 1, 1 }, null));
+    }
 }
