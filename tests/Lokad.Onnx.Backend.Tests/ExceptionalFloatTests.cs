@@ -1227,4 +1227,147 @@ public class ExceptionalFloatTests
         if (double.IsNaN(expected)) Assert.True(double.IsNaN(actual));
         else Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void NegWideBody_MatchesOrt()
+    {
+        // ORT 1.29 float and double values (pinned narrow in
+        // NegSqrtAbsNaN and NegDoubleExceptional): the 43-wide rows span
+        // the SIMD body and scalar tail of the vectorized negate,
+        // freezing sign bits through the vector path.
+        var fz = new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, 0f, -0f, 1.5f };
+        var f = new float[43];
+        for (int i = 0; i < f.Length; i++) f[i] = fz[i % fz.Length];
+        var r = CPU.Neg(DenseTensor<float>.OfValues(f), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs![0]).ToArray();
+        for (int i = 0; i < y.Length; i++)
+        {
+            switch (i % fz.Length)
+            {
+                case 0: Assert.True(float.IsNaN(y[i])); break;
+                case 1: Assert.Equal(float.NegativeInfinity, y[i]); break;
+                case 2: Assert.Equal(float.PositiveInfinity, y[i]); break;
+                case 3: Assert.Equal(int.MinValue, System.BitConverter.SingleToInt32Bits(y[i])); break;
+                case 4: Assert.Equal(0, System.BitConverter.SingleToInt32Bits(y[i])); break;
+                default: Assert.Equal(-1.5f, y[i]); break;
+            }
+        }
+        var dz = new double[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity, 0.0, -0.0, 1.5 };
+        var d = new double[43];
+        for (int i = 0; i < d.Length; i++) d[i] = dz[i % dz.Length];
+        var rd = CPU.Neg(DenseTensor<double>.OfValues(d), null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        var yd = ((Tensor<double>)rd.Outputs![0]).ToArray();
+        for (int i = 0; i < yd.Length; i++)
+        {
+            switch (i % dz.Length)
+            {
+                case 0: Assert.True(double.IsNaN(yd[i])); break;
+                case 1: Assert.Equal(double.NegativeInfinity, yd[i]); break;
+                case 2: Assert.Equal(double.PositiveInfinity, yd[i]); break;
+                case 3: Assert.Equal(long.MinValue, System.BitConverter.DoubleToInt64Bits(yd[i])); break;
+                case 4: Assert.Equal(0L, System.BitConverter.DoubleToInt64Bits(yd[i])); break;
+                default: Assert.Equal(-1.5, yd[i]); break;
+            }
+        }
+    }
+
+    [Fact]
+    public void CosSinWideBody_MatchesOrt()
+    {
+        // ORT 1.29 float and double values (pinned narrow in CosExceptional
+        // and SinExceptional): the 43-wide rows span the hardware
+        // transcendental vector body and scalar tail (1.5 lanes at
+        // precision 4, where vector and scalar libm may differ by ulps).
+        var fz = new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, 0f, -0f, 1.5f };
+        var f = new float[43];
+        for (int i = 0; i < f.Length; i++) f[i] = fz[i % fz.Length];
+        var rc = CPU.Cos(DenseTensor<float>.OfValues(f), null);
+        Assert.Equal(OpStatus.Success, rc.Status);
+        var yc = ((Tensor<float>)rc.Outputs![0]).ToArray();
+        var rs = CPU.Sin(DenseTensor<float>.OfValues(f), null);
+        Assert.Equal(OpStatus.Success, rs.Status);
+        var ys = ((Tensor<float>)rs.Outputs![0]).ToArray();
+        for (int i = 0; i < 43; i++)
+        {
+            switch (i % fz.Length)
+            {
+                case 0: Assert.True(float.IsNaN(yc[i])); Assert.True(float.IsNaN(ys[i])); break;
+                case 1: Assert.True(float.IsNaN(yc[i])); Assert.True(float.IsNaN(ys[i])); break;
+                case 2: Assert.True(float.IsNaN(yc[i])); Assert.True(float.IsNaN(ys[i])); break;
+                case 3: Assert.Equal(1f, yc[i]); Assert.Equal(0, System.BitConverter.SingleToInt32Bits(ys[i])); break;
+                case 4: Assert.Equal(1f, yc[i]); Assert.Equal(int.MinValue, System.BitConverter.SingleToInt32Bits(ys[i])); break;
+                default: Assert.Equal(0.0707f, yc[i], 4); Assert.Equal(0.9975f, ys[i], 4); break;
+            }
+        }
+        var dz = new double[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity, 0.0, -0.0, 1.5 };
+        var d = new double[43];
+        for (int i = 0; i < d.Length; i++) d[i] = dz[i % dz.Length];
+        var rcd = CPU.Cos(DenseTensor<double>.OfValues(d), null);
+        Assert.Equal(OpStatus.Success, rcd.Status);
+        var ycd = ((Tensor<double>)rcd.Outputs![0]).ToArray();
+        var rsd = CPU.Sin(DenseTensor<double>.OfValues(d), null);
+        Assert.Equal(OpStatus.Success, rsd.Status);
+        var ysd = ((Tensor<double>)rsd.Outputs![0]).ToArray();
+        for (int i = 0; i < 43; i++)
+        {
+            switch (i % dz.Length)
+            {
+                case 0: Assert.True(double.IsNaN(ycd[i])); Assert.True(double.IsNaN(ysd[i])); break;
+                case 1: Assert.True(double.IsNaN(ycd[i])); Assert.True(double.IsNaN(ysd[i])); break;
+                case 2: Assert.True(double.IsNaN(ycd[i])); Assert.True(double.IsNaN(ysd[i])); break;
+                case 3: Assert.Equal(1.0, ycd[i]); Assert.Equal(0L, System.BitConverter.DoubleToInt64Bits(ysd[i])); break;
+                case 4: Assert.Equal(1.0, ycd[i]); Assert.Equal(long.MinValue, System.BitConverter.DoubleToInt64Bits(ysd[i])); break;
+                default: Assert.Equal(0.0707, ycd[i], 4); Assert.Equal(0.9975, ysd[i], 4); break;
+            }
+        }
+    }
+
+    [Fact]
+    public void SqrtWideBody_MatchesOrt()
+    {
+        // ORT 1.29 float and double values (pinned narrow in SqrtNegative,
+        // SqrtNegativeInfinity and SqrtDoubleExceptional): the 43-wide rows
+        // span the vector square-root body and scalar tail, freezing -0
+        // bits through the vector path.
+        var fz = new float[] { float.NaN, -1f, float.NegativeInfinity, 0f, -0f, 4f, float.PositiveInfinity };
+        var f = new float[43];
+        for (int i = 0; i < f.Length; i++) f[i] = fz[i % fz.Length];
+        var r = CPU.Sqrt(DenseTensor<float>.OfValues(f), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs![0]).ToArray();
+        for (int i = 0; i < y.Length; i++)
+        {
+            switch (i % fz.Length)
+            {
+                case 0: Assert.True(float.IsNaN(y[i])); break;
+                case 1: Assert.True(float.IsNaN(y[i])); break;
+                case 2: Assert.True(float.IsNaN(y[i])); break;
+                case 3: Assert.Equal(0, System.BitConverter.SingleToInt32Bits(y[i])); break;
+                case 4: Assert.Equal(int.MinValue, System.BitConverter.SingleToInt32Bits(y[i])); break;
+                case 5: Assert.Equal(2f, y[i]); break;
+                default: Assert.Equal(float.PositiveInfinity, y[i]); break;
+            }
+        }
+        var dz = new double[] { double.NaN, -1.0, double.NegativeInfinity, 0.0, -0.0, 4.0, double.PositiveInfinity };
+        var d = new double[43];
+        for (int i = 0; i < d.Length; i++) d[i] = dz[i % dz.Length];
+        var rd = CPU.Sqrt(DenseTensor<double>.OfValues(d), null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        var yd = ((Tensor<double>)rd.Outputs![0]).ToArray();
+        for (int i = 0; i < yd.Length; i++)
+        {
+            switch (i % dz.Length)
+            {
+                case 0: Assert.True(double.IsNaN(yd[i])); break;
+                case 1: Assert.True(double.IsNaN(yd[i])); break;
+                case 2: Assert.True(double.IsNaN(yd[i])); break;
+                case 3: Assert.Equal(0L, System.BitConverter.DoubleToInt64Bits(yd[i])); break;
+                case 4: Assert.Equal(long.MinValue, System.BitConverter.DoubleToInt64Bits(yd[i])); break;
+                case 5: Assert.Equal(2.0, yd[i]); break;
+                default: Assert.Equal(double.PositiveInfinity, yd[i]); break;
+            }
+        }
+    }
 }
