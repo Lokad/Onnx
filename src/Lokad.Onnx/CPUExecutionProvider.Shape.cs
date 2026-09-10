@@ -571,9 +571,9 @@ public partial class CPUExecutionProvider
         }
         if (X is null) return MissingInput(op, nameof(X));
         // ORT 1.29 load-fails when both sizes and scales are provided, and
-        // treats empty tensors as omitted; normalize empties to null so the
-        // same graphs behave the same here.
-        if (sizes is not null && sizes.Length == 0) sizes = null;
+        // counts even an empty sizes tensor as provided; an empty scales
+        // tensor, however, is treated as omitted. Normalize only the
+        // latter so the same graphs behave the same here.
         if (scales is not null && scales.Length == 0) scales = null;
         if (sizes is null && scales is null) return MissingInput(op, nameof(sizes));
         if (sizes is not null && scales is not null) return WrongInputShape(op, nameof(sizes), scales, "Resize sizes and scales must not both be provided.");

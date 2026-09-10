@@ -281,8 +281,10 @@ public class ExpandResizeShapeTests
         // Empty tensors count as omitted (ORT treats them as not provided).
         var emptyScales = CPUExecutionProvider.Resize(x, null, DenseTensor<float>.OfValues(new float[0]), DenseTensor<long>.OfValues(new long[] { 1L, 1L, 4L, 4L }), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
         Assert.Equal(OpStatus.Success, emptyScales.Status);
+        // An empty sizes tensor still counts as provided (ORT 1.29
+        // load-fails scales+empty-sizes as dual provision).
         var emptySizes = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 2f, 2f), DenseTensor<long>.OfValues(new long[0]), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
-        Assert.Equal(OpStatus.Success, emptySizes.Status);
+        Assert.Equal(OpStatus.Failure, emptySizes.Status);
     }
 
     [Fact]
