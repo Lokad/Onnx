@@ -37,6 +37,13 @@ def main():
     node = helper.make_node("MaxPool", ["x"], ["z"], kernel_shape=[3, 3],
                             strides=[2, 2], ceil_mode=1)
     emit("maxpool_ceil", node, [("x", [1, 1, 4, 4])], [("z", [1, 1, 2, 2])], {"x": x})
+    # Ceil drops trailing windows starting in post-padding: [1,2,1,7] k2 s2
+    # pads1 ceil runs (1,2,1,4), not the naive ceiling (1,2,2,5) (ORT 1.29
+    # runtime; its shape inference still spells the naive ceiling and warns).
+    x = np.arange(1, 15, dtype=np.float32).reshape(1, 2, 1, 7)
+    node = helper.make_node("MaxPool", ["x"], ["z"], kernel_shape=[2, 2],
+                            strides=[2, 2], pads=[1, 1, 1, 1], ceil_mode=1)
+    emit("maxpool_ceil_drop", node, [("x", [1, 2, 1, 7])], [("z", [1, 2, 1, 4])], {"x": x})
 
 
 if __name__ == "__main__":
