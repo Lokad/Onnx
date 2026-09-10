@@ -19,6 +19,16 @@ public class SplitDensifyTests
     }
 
     [Fact]
+    public void FloatSplit_RejectedCleanly()
+    {
+        // ORT 1.29 refuses float split sizes at load (int32/int64 only);
+        // the provider fails descriptively instead.
+        var x = DenseTensor<float>.OfShape(2, 4);
+        var s = DenseTensor<float>.OfValues(new float[] { 1f, 3f });
+        Assert.Equal(OpStatus.Failure, CPU.Split(x, s, 1, null, null, null, null).Status);
+    }
+
+    [Fact]
     public void NegativeAxis_Normalizes()
     {
         // ORT 1.29: axis=-1 splits axis 1.
