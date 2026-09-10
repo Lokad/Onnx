@@ -13,6 +13,10 @@ public class ReductionPlanTests
         Assert.Equal(new int[] { 2147483647 }, hi.ToArray());
         var lo = Tensor<int>.ReduceSum(DenseTensor<int>.OfValues(new int[] { -2147483648, -1 }), null, false, false);
         Assert.Equal(new int[] { -2147483648 }, lo.ToArray());
+        // Discriminating case: exact total clamped (-2), not running
+        // saturation (which would give min). ORT 1.29 agrees.
+        var mixed = Tensor<int>.ReduceSum(DenseTensor<int>.OfValues(new int[] { 2147483647, 2147483647, -2147483648, -2147483648 }), null, false, false);
+        Assert.Equal(new int[] { -2 }, mixed.ToArray());
     }
 
     [Fact]
