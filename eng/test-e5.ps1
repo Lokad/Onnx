@@ -53,6 +53,9 @@ foreach ($m in $modes) {
     if ($LASTEXITCODE -ne 0) {
         if ($m -eq "intrinsics" -and !$RequireIntrinsics) {
             Write-Host "UNSUPPORTED intrinsics: x86 FMA not available on this machine (rerun with -RequireIntrinsics to enforce)"
+            Remove-Item $first -Force -ErrorAction SilentlyContinue
+            Remove-Item $repeat -Force -ErrorAction SilentlyContinue
+            '{"schemaVersion": 1, "unsupported": "x86 FMA not available on this machine"}' | Set-Content -NoNewline -Encoding utf8NoBOM $first
             continue
         }
         Fail "E5Runner failed for mode $m"

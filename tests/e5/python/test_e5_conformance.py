@@ -43,7 +43,13 @@ def load_dotnet(mode):
     if not os.path.exists(path):
         pytest.fail("missing .NET artifact for mode %s: %s" % (mode, path))
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    # The lane script records unavailable intrinsics as a sentinel artifact
+    # (instead of leaving a stale success file behind); skip those tests
+    # rather than failing them. A missing file still fails loudly above.
+    if isinstance(data, dict) and data.get("unsupported"):
+        pytest.skip("unavailable engine mode %s: %s" % (mode, data["unsupported"]))
+    return data
 
 
 def tensors_by_name(case_entry):

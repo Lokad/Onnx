@@ -23,7 +23,9 @@ French accents, Japanese, punctuation plus tab and NBSP, 512-token truncation).
 
 The script verifies hashes, builds `tests/Lokad.Onnx.E5Runner`, runs the
 scalar, SIMD, and intrinsic modes twice each (byte-identical artifacts
-required), then runs `tests/e5/python/test_e5_conformance.py`, which checks
+required; without x86 FMA the intrinsics run records an unsupported-marker
+artifact and its three conformance tests skip instead of failing), then runs
+`tests/e5/python/test_e5_conformance.py`, which checks
 exact tokenizer inputs, full hidden states, pooled embeddings, and the
 semantic ranking margin (>= 0.10, measured 0.18).
 
