@@ -346,6 +346,19 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void DivDoubleNaN_Passthrough()
+    {
+        // ORT 1.29 double: NaN on either side yields NaN, mirroring the
+        // float Div/Pow set above.
+        var a = CPU.Div(DenseTensor<double>.OfValues(new double[] { double.NaN }), DenseTensor<double>.OfValues(new double[] { 1.0 }), null, null);
+        Assert.Equal(OpStatus.Success, a.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)a.Outputs![0])[0]));
+        var b = CPU.Div(DenseTensor<double>.OfValues(new double[] { 1.0 }), DenseTensor<double>.OfValues(new double[] { double.NaN }), null, null);
+        Assert.Equal(OpStatus.Success, b.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)b.Outputs![0])[0]));
+    }
+
+    [Fact]
     public void Div_Sqrt_DoubleBasics_MatchOrt()
     {
         // ORT 1.29 double: [7/2, -9/3, 1/4] and sqrt([2, 0.25]).
