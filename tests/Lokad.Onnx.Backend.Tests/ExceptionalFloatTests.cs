@@ -1510,4 +1510,47 @@ public class ExceptionalFloatTests
     {
         for (int i = 0; i < actual.Length; i++) AssertBinLaneDouble(pattern[i % pattern.Length], actual[i]);
     }
+
+    [Fact]
+    public void LayerNormZeroEpsilon_MatchesOrt()
+    {
+        // ORT 1.29 float and double with epsilon 0: a constant row divides
+        // 0/0 and yields NaN, while a varying row needs no epsilon.
+        // Guards against a future epsilon floor that would turn the NaN
+        // into zeros and break parity.
+        var r = CPU.LayerNormalization(
+            DenseTensor<float>.OfValues(new float[,] { { 2f, 2f, 2f } }),
+            DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f }),
+            DenseTensor<float>.OfValues(new float[] { 0f, 0f, 0f }),
+            -1, 0f, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        foreach (var v in ((Tensor<float>)r.Outputs![0]).ToArray()) Assert.True(float.IsNaN(v));
+        var rv = CPU.LayerNormalization(
+            DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f } }),
+            DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f }),
+            DenseTensor<float>.OfValues(new float[] { 0f, 0f, 0f }),
+            -1, 0f, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, rv.Status);
+        var yv = ((Tensor<float>)rv.Outputs![0]).ToArray();
+        Assert.Equal(-1.2247449f, yv[0], 6);
+        Assert.Equal(0f, yv[1]);
+        Assert.Equal(1.2247449f, yv[2], 6);
+        var rd = CPU.LayerNormalization(
+            DenseTensor<double>.OfValues(new double[,] { { 2.0, 2.0, 2.0 } }),
+            DenseTensor<double>.OfValues(new double[] { 1.0, 1.0, 1.0 }),
+            DenseTensor<double>.OfValues(new double[] { 0.0, 0.0, 0.0 }),
+            -1, 0f, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        foreach (var v in ((Tensor<double>)rd.Outputs![0]).ToArray()) Assert.True(double.IsNaN(v));
+        var rvd = CPU.LayerNormalization(
+            DenseTensor<double>.OfValues(new double[,] { { 1.0, 2.0, 3.0 } }),
+            DenseTensor<double>.OfValues(new double[] { 1.0, 1.0, 1.0 }),
+            DenseTensor<double>.OfValues(new double[] { 0.0, 0.0, 0.0 }),
+            -1, 0f, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, rvd.Status);
+        var yvd = ((Tensor<double>)rvd.Outputs![0]).ToArray();
+        Assert.Equal(-1.224744871392, yvd[0], 12);
+        Assert.Equal(0.0, yvd[1]);
+        Assert.Equal(1.224744871392, yvd[2], 12);
+    }
 }
