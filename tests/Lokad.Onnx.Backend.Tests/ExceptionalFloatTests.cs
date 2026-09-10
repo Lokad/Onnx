@@ -107,6 +107,19 @@ public class ExceptionalFloatTests
         Assert.True(float.IsNaN(values[3]));
     }
 
+    [Fact]
+    public void DivByZero_DoubleSignedInfinities()
+    {
+        // ORT 1.29 double: [1/0, -1/0, 1/-0, 0/0] -> [inf, -inf, -inf, nan].
+        var result = CPU.Div(DenseTensor<double>.OfValues(new double[] { 1.0, -1.0, 1.0, 0.0 }), DenseTensor<double>.OfValues(new double[] { 0.0, 0.0, -0.0, 0.0 }), null, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.Equal(double.PositiveInfinity, values[0]);
+        Assert.Equal(double.NegativeInfinity, values[1]);
+        Assert.Equal(double.NegativeInfinity, values[2]);
+        Assert.True(double.IsNaN(values[3]));
+    }
+
 
     [Fact]
     public void GeluExceptional_MatchesOrt()
