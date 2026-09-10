@@ -456,7 +456,8 @@ where T : unmanaged
     public static Tensor<T> Concat(Tensor<T>[] inputs, int axis)
     {
         StartOpStage(OpStage.ValidateArguments);
-        if (inputs.Length < 2) throw new ArgumentException(nameof(inputs), "At least two tensors must be specified for the concat operation.");
+        // A single input is the identity (ORT 1.29); only the empty list is rejected.
+        if (inputs.Length < 1) throw new ArgumentException(nameof(inputs), "At least one tensor must be specified for the concat operation.");
         if (!inputs.All(i => i.Rank == inputs[0].Rank)) throw new ArgumentException(nameof(inputs), $"Each input tensor in a concat operation must be of the same rank.");
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(inputs[0].Rank, axis);
         if (axis < 0 || axis >= inputs[0].Rank) throw new ArgumentException(nameof(axis), "The concat axis is out of range.");

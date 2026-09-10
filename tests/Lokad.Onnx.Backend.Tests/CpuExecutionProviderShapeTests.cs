@@ -85,6 +85,16 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void GatherScalarData_FailsCleanly()
+        {
+            // ORT 1.29 refuses scalar data at load (rank >= 1 required).
+            var s = DenseTensor<float>.OfShape();
+            s.SetValue(0, 7f);
+            var idx = DenseTensor<long>.OfValues(new long[] { 0L });
+            Assert.Throws<System.ArgumentException>(() => CPU.Gather(s, idx, 0, null));
+        }
+
+        [Fact]
         public void GatherOutOfRangeAxis_FailsCleanly()
         {
             // ORT 1.29 refuses axis=5 on rank 1 at load.

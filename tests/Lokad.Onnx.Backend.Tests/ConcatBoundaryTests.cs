@@ -9,6 +9,20 @@ namespace Lokad.Onnx.Backend.Tests;
 public class ConcatBoundaryTests
 {
     [Fact]
+    public void SingleInput_IsIdentity()
+    {
+        // ORT 1.29: concat of one input returns it unchanged.
+        var result = CPU.Concat(new ITensor[]
+        {
+            DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } }),
+        }, 0, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var z = (Tensor<float>)result.Outputs![0];
+        Assert.Equal(new int[] { 2, 2 }, z.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 2f, 3f, 4f }, z.ToArray());
+    }
+
+    [Fact]
     public void OutOfRangeAxis_FailsCleanly()
     {
         var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
