@@ -95,6 +95,23 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void ShapeStartEnd_MatchOrt()
+        {
+            // ORT 1.29 (Shape-15) on [3, 4, 5]: negatives count from the
+            // end, oversized ends clamp, and start > end yields empty.
+            var t = DenseTensor<float>.OfShape(3, 4, 5);
+            var neg = CPU.Shape(t, -2, -1, null);
+            Assert.Equal(OpStatus.Success, neg.Status);
+            Assert.Equal(new long[] { 4 }, ((Tensor<long>)neg.Outputs![0]).ToArray());
+            var clamp = CPU.Shape(t, -3, 100, null);
+            Assert.Equal(OpStatus.Success, clamp.Status);
+            Assert.Equal(new long[] { 3, 4, 5 }, ((Tensor<long>)clamp.Outputs![0]).ToArray());
+            var empty = CPU.Shape(t, 2, 1, null);
+            Assert.Equal(OpStatus.Success, empty.Status);
+            Assert.Empty(((Tensor<long>)empty.Outputs![0]).ToArray());
+        }
+
+        [Fact]
         public void ReshapeInt32Shape_Rejected()
         {
             // ORT 1.29 refuses int32 shape at load (spec mandates int64);
