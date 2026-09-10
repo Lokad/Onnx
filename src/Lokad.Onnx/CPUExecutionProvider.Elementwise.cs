@@ -61,6 +61,8 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<AddBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
             case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<AddBroadcast<int>>((Tensor<int>)B, opts.Tensor));
             case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<AddBroadcast<long>>((Tensor<long>)B, opts.Tensor));
+            case TensorElementType.UInt32: return Success(op, ((Tensor<uint>)A).BroadcastApply<AddBroadcast<uint>>((Tensor<uint>)B, opts.Tensor));
+            case TensorElementType.UInt64: return Success(op, ((Tensor<ulong>)A).BroadcastApply<AddBroadcast<ulong>>((Tensor<ulong>)B, opts.Tensor));
             case TensorElementType.Float:
             {
                 var fa = (Tensor<float>)A;
@@ -101,6 +103,8 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<SubtractBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
             case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<SubtractBroadcast<int>>((Tensor<int>)B, opts.Tensor));
             case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<SubtractBroadcast<long>>((Tensor<long>)B, opts.Tensor));
+            case TensorElementType.UInt32: return Success(op, ((Tensor<uint>)A).BroadcastApply<SubtractBroadcast<uint>>((Tensor<uint>)B, opts.Tensor));
+            case TensorElementType.UInt64: return Success(op, ((Tensor<ulong>)A).BroadcastApply<SubtractBroadcast<ulong>>((Tensor<ulong>)B, opts.Tensor));
             case TensorElementType.Float: return Success(op, ((Tensor<float>)A).BroadcastApply<SubtractBroadcast<float>>((Tensor<float>)B, opts.Tensor));
             case TensorElementType.Double: return Success(op, ((Tensor<double>)A).BroadcastApply<SubtractBroadcast<double>>((Tensor<double>)B, opts.Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
@@ -131,6 +135,8 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<MultiplyBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
             case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<MultiplyBroadcast<int>>((Tensor<int>)B, opts.Tensor));
             case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<MultiplyBroadcast<long>>((Tensor<long>)B, opts.Tensor));
+            case TensorElementType.UInt32: return Success(op, ((Tensor<uint>)A).BroadcastApply<MultiplyBroadcast<uint>>((Tensor<uint>)B, opts.Tensor));
+            case TensorElementType.UInt64: return Success(op, ((Tensor<ulong>)A).BroadcastApply<MultiplyBroadcast<ulong>>((Tensor<ulong>)B, opts.Tensor));
             case TensorElementType.Float:
             {
                 var fa = (Tensor<float>)A;
@@ -171,6 +177,8 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<DivideBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
             case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<DivideBroadcast<int>>((Tensor<int>)B, opts.Tensor));
             case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<DivideBroadcast<long>>((Tensor<long>)B, opts.Tensor));
+            case TensorElementType.UInt32: return Success(op, ((Tensor<uint>)A).BroadcastApply<DivideBroadcast<uint>>((Tensor<uint>)B, opts.Tensor));
+            case TensorElementType.UInt64: return Success(op, ((Tensor<ulong>)A).BroadcastApply<DivideBroadcast<ulong>>((Tensor<ulong>)B, opts.Tensor));
             case TensorElementType.Float:
             {
                 var fa = (Tensor<float>)A;

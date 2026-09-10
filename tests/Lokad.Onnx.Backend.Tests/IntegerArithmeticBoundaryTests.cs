@@ -53,6 +53,31 @@ public class IntegerArithmeticBoundaryTests
         Assert.Equal(new long[] { -9223372036709301616L }, mul64.ToArray());
     }
 
+    [Fact]
+    public void UnsignedOverflow_WrapsModuloWidth()
+    {
+        // ORT 1.29: uint32/uint64 are schema-valid arithmetic types and wrap
+        // modulo their width, exactly like the signed widths.
+        var add32 = (Tensor<uint>)Apply(OpType.Add, DenseTensor<uint>.OfValues(new uint[] { 4294967295u }), DenseTensor<uint>.OfValues(new uint[] { 1u }));
+        Assert.Equal(new uint[] { 0u }, add32.ToArray());
+        var sub32 = (Tensor<uint>)Apply(OpType.Sub, DenseTensor<uint>.OfValues(new uint[] { 0u }), DenseTensor<uint>.OfValues(new uint[] { 1u }));
+        Assert.Equal(new uint[] { 4294967295u }, sub32.ToArray());
+        var mul32 = (Tensor<uint>)Apply(OpType.Mul, DenseTensor<uint>.OfValues(new uint[] { 65536u }), DenseTensor<uint>.OfValues(new uint[] { 65536u }));
+        Assert.Equal(new uint[] { 0u }, mul32.ToArray());
+        var div32 = CPU.Div(DenseTensor<uint>.OfValues(new uint[] { 7u, 8u }), DenseTensor<uint>.OfValues(new uint[] { 2u, 3u }), null, null);
+        Assert.Equal(OpStatus.Success, div32.Status);
+        Assert.Equal(new uint[] { 3u, 2u }, ((Tensor<uint>)div32.Outputs![0]).ToArray());
+        var add64 = (Tensor<ulong>)Apply(OpType.Add, DenseTensor<ulong>.OfValues(new ulong[] { 18446744073709551615ul }), DenseTensor<ulong>.OfValues(new ulong[] { 1ul }));
+        Assert.Equal(new ulong[] { 0ul }, add64.ToArray());
+        var sub64 = (Tensor<ulong>)Apply(OpType.Sub, DenseTensor<ulong>.OfValues(new ulong[] { 0ul }), DenseTensor<ulong>.OfValues(new ulong[] { 1ul }));
+        Assert.Equal(new ulong[] { 18446744073709551615ul }, sub64.ToArray());
+        var mul64 = (Tensor<ulong>)Apply(OpType.Mul, DenseTensor<ulong>.OfValues(new ulong[] { 4294967296ul }), DenseTensor<ulong>.OfValues(new ulong[] { 4294967296ul }));
+        Assert.Equal(new ulong[] { 0ul }, mul64.ToArray());
+        var div64 = CPU.Div(DenseTensor<ulong>.OfValues(new ulong[] { 7ul }), DenseTensor<ulong>.OfValues(new ulong[] { 2ul }), null, null);
+        Assert.Equal(OpStatus.Success, div64.Status);
+        Assert.Equal(new ulong[] { 3ul }, ((Tensor<ulong>)div64.Outputs![0]).ToArray());
+    }
+
     static void AssertDivFails(ComputationalGraph g, Dictionary<string, ITensor> inputs, Type cause)
     {
         Assert.False(g.Execute(inputs, false));
