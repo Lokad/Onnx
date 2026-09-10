@@ -102,4 +102,16 @@ public class WhereBoundaryTests
         Assert.Equal(OpStatus.Success, r64.Status);
         Assert.Equal(new ulong[] { 10ul, 18446744073709551615ul }, ((Tensor<ulong>)r64.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void MismatchedInputs_RejectedCleanly()
+    {
+        // ORT refuses both at load; the provider fails descriptively instead.
+        var cond = DenseTensor<bool>.OfValues(new bool[] { true });
+        var xf = DenseTensor<float>.OfValues(new float[] { 1f });
+        var xi = DenseTensor<int>.OfValues(new int[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.Where(cond, xf, xi, null).Status);
+        var badCond = DenseTensor<int>.OfValues(new int[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.Where(badCond, xf, xf, null).Status);
+    }
 }
