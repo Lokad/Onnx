@@ -79,6 +79,29 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void SqrtDoubleExceptional_MatchesOrt()
+    {
+        // ORT 1.29 double: [-1, 0, 4] -> [nan, 0, 2].
+        var result = CPU.Sqrt(DenseTensor<double>.OfValues(new double[] { -1, 0, 4 }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.True(double.IsNaN(values[0]));
+        Assert.Equal(0.0, values[1]);
+        Assert.Equal(2.0, values[2]);
+    }
+
+    [Fact]
+    public void DivDoubleZeroByZero_MatchesOrt()
+    {
+        // ORT 1.29 double: [0/0, 1/0] -> [nan, inf].
+        var result = CPU.Div(DenseTensor<double>.OfValues(new double[] { 0, 1 }), DenseTensor<double>.OfValues(new double[] { 0, 0 }), null, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.True(double.IsNaN(values[0]));
+        Assert.Equal(double.PositiveInfinity, values[1]);
+    }
+
+    [Fact]
     public void SqrtNegativeInfinity_YieldsNaN()
     {
         var result = CPU.Sqrt(DenseTensor<float>.OfValues(new float[] { float.NegativeInfinity }), null);
