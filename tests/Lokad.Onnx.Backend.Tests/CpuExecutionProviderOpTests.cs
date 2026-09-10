@@ -550,6 +550,19 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Failure, CPU.Cos(i32, null).Status);
     }
     [Fact]
+    public void Pow_RejectsSub32Widths()
+    {
+        // ORT 1.29 load-fails sub-32 Pow at every opset (int8/bool pinned
+        // in BinaryOps_Sub32NeedsOpset14; int16/uint16 probed refused this
+        // turn); the provider fails descriptively instead.
+        var u8 = DenseTensor<byte>.OfValues(new byte[] { 2 });
+        Assert.Equal(OpStatus.Failure, CPU.Pow(u8, u8, null).Status);
+        var s16 = DenseTensor<short>.OfValues(new short[] { 2 });
+        Assert.Equal(OpStatus.Failure, CPU.Pow(s16, s16, null).Status);
+        var u16 = DenseTensor<ushort>.OfValues(new ushort[] { 2 });
+        Assert.Equal(OpStatus.Failure, CPU.Pow(u16, u16, null).Status);
+    }
+    [Fact]
     public void BinaryOps_EmptyInputs_YieldEmpty()
     {
         // ORT 1.29: elementwise kernels over zero elements yield empty
