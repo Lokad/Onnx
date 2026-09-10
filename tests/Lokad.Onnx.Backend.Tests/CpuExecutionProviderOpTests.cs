@@ -390,6 +390,18 @@ public class CpuExecutionProviderOpTests
         var neg = CPU.Neg(e, null);
         Assert.Equal(OpStatus.Success, neg.Status);
         Assert.Empty(((Tensor<float>)neg.Outputs![0]).ToArray());
+        var erf = CPU.Erf(e, null, null);
+        Assert.Equal(OpStatus.Success, erf.Status);
+        Assert.Empty(((Tensor<float>)erf.Outputs![0]).ToArray());
+        var sin = CPU.Sin(e, null);
+        Assert.Equal(OpStatus.Success, sin.Status);
+        Assert.Empty(((Tensor<float>)sin.Outputs![0]).ToArray());
+        var cos = CPU.Cos(e, null);
+        Assert.Equal(OpStatus.Success, cos.Status);
+        Assert.Empty(((Tensor<float>)cos.Outputs![0]).ToArray());
+        var gelu = CPU.Gelu(e, null, null, null);
+        Assert.Equal(OpStatus.Success, gelu.Status);
+        Assert.Empty(((Tensor<float>)gelu.Outputs![0]).ToArray());
     }
 }
 
