@@ -152,4 +152,17 @@ public class GemmSinglePassTests
         Assert.True(allocated < 500000L, $"gemm allocated {allocated} bytes for 20x16KB products");
     }
 
+    [Fact]
+    public void BetaZero_NaNBias_Ignored()
+    {
+        // ORT 1.29: with beta=0 a NaN bias is ignored (A@B), pinning the
+        // scale/bias-skip branch with a non-null C.
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var b = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f }, { 0f, 1f } });
+        var c = DenseTensor<float>.OfValues(new float[,] { { float.NaN } });
+        var r = CPUExecutionProvider.Gemm(a, b, c, 1f, 0f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 1f, 2f, 3f, 4f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
 }
