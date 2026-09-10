@@ -142,14 +142,20 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
-        public void ReshapeInt32Shape_Rejected()
+        public void ReshapeInt32Shape_Accepted()
         {
-            // ORT 1.29 refuses int32 shape at load (spec mandates int64);
-            // Lokad returns a descriptive Failure instead.
+            // Index inputs accept int32 or int64 engine-wide (Unsqueeze,
+            // Squeeze, Expand, Tile, Split, Resize sizes and reduction axes
+            // share the tolerance with identical values); ORT 1.29 refuses
+            // int32 Reshape shapes at load, but widening is lossless so the
+            // engine deliberately runs them.
             var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
-            var s = DenseTensor<int>.OfValues(new int[] { 3, 2 });
-            var r = CPU.Reshape(x, s, null, null);
-            Assert.Equal(OpStatus.Failure, r.Status);
+            var r32 = CPU.Reshape(x, DenseTensor<int>.OfValues(new int[] { 3, 2 }), null, null);
+            Assert.Equal(OpStatus.Success, r32.Status);
+            var r64 = CPU.Reshape(x, DenseTensor<long>.OfValues(new long[] { 3L, 2L }), null, null);
+            Assert.Equal(OpStatus.Success, r64.Status);
+            Assert.Equal(((Tensor<float>)r64.Outputs![0]).ToArray(), ((Tensor<float>)r32.Outputs![0]).ToArray());
+            Assert.Equal(new float[] { 1f, 2f, 3f, 4f, 5f, 6f }, ((Tensor<float>)r32.Outputs![0]).ToArray());
         }
 
         [Fact]

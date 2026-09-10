@@ -40,13 +40,17 @@ public class NodeRunTests
     }
 
     [Fact]
-    public void Reshape_NonInt64Shape_Fails()
+    public void Reshape_Int32Shape_Accepted()
     {
+        // Index inputs accept int32 or int64 engine-wide; int32 Reshape
+        // shapes widen losslessly (see CpuExecutionProviderShapeTests).
         var x = Tensor<float>.Ones(2, 2);
-        var shape = Tensor<int>.Ones(2);
+        var shape = DenseTensor<int>.OfValues(new int[] { 4 });
         var r = CPUExecutionProvider.Reshape(x, shape, null, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.NotNull(r.Message);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 4 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 1f, 1f, 1f }, y.ToArray());
     }
 
     [Fact]
