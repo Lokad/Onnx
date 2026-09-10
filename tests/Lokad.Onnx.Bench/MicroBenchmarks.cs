@@ -212,6 +212,10 @@ public class TensorMatMulBenchmarks
         t_128_384_b = Tensor<float>.Rand(384, 384);
         t_512_384_a = Tensor<float>.Rand(512, 384);
         t_512_384_b = Tensor<float>.Rand(384, 384);
+        t_196_256_a = Tensor<float>.Rand(196, 256);
+        t_196_256_b = Tensor<float>.Rand(256, 1024);
+        t_49_512_a = Tensor<float>.Rand(49, 512);
+        t_49_512_b = Tensor<float>.Rand(512, 2048);
         // Agreement precedes every timing: a breach fails the run before numbers exist.
         VerifyAgreementNow();
     }
@@ -312,6 +316,30 @@ public class TensorMatMulBenchmarks
     [BenchmarkCategory("512x384")]
     public void MatMul8_simd_intrinsics() => Tensor<float>.MatMul(t_512_384_a, t_512_384_b, TensorExecutionOptions.Intrinsics);
 
+    [Benchmark(Description = "Matrix multiply 196x256 by 256x1024 (ResNet stage3 1x1)", Baseline = true)]
+    [BenchmarkCategory("196x256")]
+    public void MatMul9() => Tensor<float>.MatMul(t_196_256_a, t_196_256_b, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Matrix multiply 196x256 by 256x1024 (ResNet stage3 1x1) - simd")]
+    [BenchmarkCategory("196x256")]
+    public void MatMul9_simd() => Tensor<float>.MatMul(t_196_256_a, t_196_256_b, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Matrix multiply 196x256 by 256x1024 (ResNet stage3 1x1) - simd intrinsics")]
+    [BenchmarkCategory("196x256")]
+    public void MatMul9_simd_intrinsics() => Tensor<float>.MatMul(t_196_256_a, t_196_256_b, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Matrix multiply 49x512 by 512x2048 (ResNet stage4 1x1)", Baseline = true)]
+    [BenchmarkCategory("49x512")]
+    public void MatMul10() => Tensor<float>.MatMul(t_49_512_a, t_49_512_b, TensorExecutionOptions.Scalar);
+
+    [Benchmark(Description = "Matrix multiply 49x512 by 512x2048 (ResNet stage4 1x1) - simd")]
+    [BenchmarkCategory("49x512")]
+    public void MatMul10_simd() => Tensor<float>.MatMul(t_49_512_a, t_49_512_b, TensorExecutionOptions.Simd);
+
+    [Benchmark(Description = "Matrix multiply 49x512 by 512x2048 (ResNet stage4 1x1) - simd intrinsics")]
+    [BenchmarkCategory("49x512")]
+    public void MatMul10_simd_intrinsics() => Tensor<float>.MatMul(t_49_512_a, t_49_512_b, TensorExecutionOptions.Intrinsics);
+
     static void VerifyAgreementNow()
     {
         // Every shape and mode recomputed on fresh seeded inputs outside the
@@ -325,6 +353,8 @@ public class TensorMatMulBenchmarks
         CheckShape("30x384", new[] { 30, 384 }, new[] { 384, 384 }, rnd);
         CheckShape("128x384", new[] { 128, 384 }, new[] { 384, 384 }, rnd);
         CheckShape("512x384", new[] { 512, 384 }, new[] { 384, 384 }, rnd);
+        CheckShape("196x256", new[] { 196, 256 }, new[] { 256, 1024 }, rnd);
+        CheckShape("49x512", new[] { 49, 512 }, new[] { 512, 2048 }, rnd);
         Console.WriteLine("TensorMatMul agreement: all shapes and modes match element-wise.");
     }
 
@@ -367,6 +397,10 @@ public class TensorMatMulBenchmarks
     Tensor<float> t_128_384_b = Tensor<float>.Zeros(0);
     Tensor<float> t_512_384_a = Tensor<float>.Zeros(0);
     Tensor<float> t_512_384_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_196_256_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_196_256_b = Tensor<float>.Zeros(0);
+    Tensor<float> t_49_512_a = Tensor<float>.Zeros(0);
+    Tensor<float> t_49_512_b = Tensor<float>.Zeros(0);
     #endregion
 }
 
