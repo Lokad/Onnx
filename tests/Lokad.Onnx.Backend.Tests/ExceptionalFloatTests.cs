@@ -179,6 +179,18 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void TanhLargeFinite_Saturates()
+    {
+        // ORT 1.29 float and double: [1000,-1000] -> [1,-1] exactly.
+        var f = CPU.Tanh(DenseTensor<float>.OfValues(new float[] { 1000f, -1000f }), null);
+        Assert.Equal(OpStatus.Success, f.Status);
+        Assert.Equal(new float[] { 1f, -1f }, ((Tensor<float>)f.Outputs![0]).ToArray());
+        var d = CPU.Tanh(DenseTensor<double>.OfValues(new double[] { 1000.0, -1000.0 }), null);
+        Assert.Equal(OpStatus.Success, d.Status);
+        Assert.Equal(new double[] { 1.0, -1.0 }, ((Tensor<double>)d.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void TanhDoubleExceptional_MatchesOrt()
     {
         // ORT 1.29 double: [1, -1, nan].
