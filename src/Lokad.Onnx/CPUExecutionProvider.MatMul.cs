@@ -47,7 +47,6 @@ public partial class CPUExecutionProvider
         var opts = (options ?? ExecutionOptions.Default).Validated();
         if (transA != 0 && transA != 1) return AttributeNotSupported(op, "transA", transA.ToString(), "transA must be 0 or 1.");
         if (transB != 0 && transB != 1) return AttributeNotSupported(op, "transB", transB.ToString(), "transB must be 0 or 1.");
-        if (A.ElementType != B.ElementType) return WrongInputType(op, nameof(B), A.ElementType, B, "Gemm inputs A and B must have the same element type.");
         if (A.Rank != 2) return WrongInputShape(op, nameof(A), 2, A);
         if (B.Rank != 2) return WrongInputShape(op, nameof(B), 2, B);
         if (C is not null && C.ElementType != A.ElementType) return WrongInputType(op, nameof(C), A.ElementType, C, "Gemm input C must have the same element type as A and B.");
