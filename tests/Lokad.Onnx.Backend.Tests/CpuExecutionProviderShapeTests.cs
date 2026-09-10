@@ -288,6 +288,19 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void GatherBoolData_MatchesDense()
+        {
+            // ORT 1.29: gathering bool rows works (verified differentially).
+            var data = DenseTensor<bool>.OfValues(new bool[,] { { true, false }, { false, true }, { true, true } });
+            var idx = DenseTensor<long>.OfValues(new long[] { 2L, 0L });
+            var r = CPU.Gather(data, idx, 0, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<bool>)r.Outputs![0];
+            Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
+            Assert.Equal(new bool[] { true, true, true, false }, y.ToArray());
+        }
+
+        [Fact]
         public void GatherEmptyIndices_YieldsEmpty()
         {
             // ORT 1.29: gathering with zero indices yields a zero-extent

@@ -100,6 +100,22 @@ public class SliceStepTests
     }
 
     [Fact]
+    public void BoolData_Slices()
+    {
+        // ORT 1.29: bool slicing works (verified differentially).
+        var x = DenseTensor<bool>.OfValues(new bool[,] { { true, false, true }, { false, true, false } });
+        var r = CPU.Slice(x,
+            DenseTensor<long>.OfValues(new long[] { 0L, 0L }),
+            DenseTensor<long>.OfValues(new long[] { 1L, 2L }),
+            DenseTensor<long>.OfValues(new long[] { 0L, 1L }),
+            DenseTensor<long>.OfValues(new long[] { 1L, 1L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<bool>)r.Outputs![0];
+        Assert.Equal(new int[] { 1, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new bool[] { true, false }, y.ToArray());
+    }
+
+    [Fact]
     public void DuplicateAxes_FailsCleanly()
     {
         // ORT 1.29 fails the run (axes must be distinct).

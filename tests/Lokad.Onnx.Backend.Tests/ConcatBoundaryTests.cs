@@ -125,6 +125,19 @@ public class ConcatBoundaryTests
     }
 
     [Fact]
+    public void BoolInputs_Concatenate()
+    {
+        // ORT 1.29: bool concatenation works (verified differentially).
+        var x = DenseTensor<bool>.OfValues(new bool[,] { { true, false, true } });
+        var y = DenseTensor<bool>.OfValues(new bool[,] { { false, true, false } });
+        var r = CPU.Concat(new ITensor[] { x, y }, 0, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var z = (Tensor<bool>)r.Outputs![0];
+        Assert.Equal(new int[] { 2, 3 }, z.Dimensions.ToArray());
+        Assert.Equal(new bool[] { true, false, true, false, true, false }, z.ToArray());
+    }
+
+    [Fact]
     public void EmptyInput_ContributesNothing()
     {
         // ORT 1.29: a [2,0] input concatenated on axis 1 yields the

@@ -50,6 +50,19 @@ public class WhereBoundaryTests
     }
 
     [Fact]
+    public void BoolSelection_MatchesHandComputed()
+    {
+        // Deliberate ORT-superset: ORT 1.29 has no bool-selection Where
+        // kernel (NOT_IMPLEMENTED at 9 and 16); selection itself is exact.
+        var c = DenseTensor<bool>.OfValues(new bool[] { true, false, true });
+        var x = DenseTensor<bool>.OfValues(new bool[] { true, true, false });
+        var y = DenseTensor<bool>.OfValues(new bool[] { false, false, true });
+        var result = CPU.Where(c, x, y, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        Assert.Equal(new bool[] { true, false, false }, ((Tensor<bool>)result.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void ScalarCondition_Broadcasts()
     {
         var c = DenseTensor<bool>.OfShape();
