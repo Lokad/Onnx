@@ -601,6 +601,24 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void GlobalMaxPoolHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: GlobalMaxPool has an enum entry but no schema, provider,
+        // kernel, or dispatch arm anywhere in src (unlike
+        // GlobalAveragePool); same honest contract (verified end to end
+        // via OpDump: clean load refusal).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.GlobalMaxPool));
+        var node = Nod(OpType.GlobalMaxPool, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("GlobalMaxPool", r.Message ?? "");
+    }
+
+    [Fact]
     public void BitShiftHonestlyUnsupported_FailsCleanly()
     {
         // C11: no BitShift schema, provider, kernel, or dispatch arm exists

@@ -381,6 +381,24 @@ public class ConvPoolPaddingTests
     }
 
     [Fact]
+    public void ConvIntegerDtypesFailCleanly()
+    {
+        // Documented scope boundary like MaxPool: the Conv and global-pool
+        // cores are float/double only while ORT 1.29 refuses int32 inputs
+        // at load, so integer inputs fail descriptively (verified end to
+        // end via OpDump).
+        var x = DenseTensor<int>.OfValues(new int[1, 1, 2, 2] { { { { 1, 2 }, { 3, 4 } } } });
+        var w = DenseTensor<int>.OfValues(new int[1, 1, 2, 2] { { { { 1, 0 }, { 0, 1 } } } });
+        var rc = CPUExecutionProvider.Conv(x, w, null, null, null, null, null, null, null, null);
+        Assert.Equal(OpStatus.Failure, rc.Status);
+        Assert.Contains("Int32", rc.Message ?? "");
+        var xg = DenseTensor<int>.OfValues(new int[1, 2, 2, 2] { { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } } });
+        var rg = CPUExecutionProvider.GlobalAveragePool(xg, null);
+        Assert.Equal(OpStatus.Failure, rg.Status);
+        Assert.Contains("Int32", rg.Message ?? "");
+    }
+
+    [Fact]
     public void ConvZeroPadsWithAutoPad_FailsCleanly()
     {
         // ORT 1.29 load-fails a Conv carrying both pads and auto_pad, even
