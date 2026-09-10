@@ -259,6 +259,21 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void NegSqrtAbsNaN_Passthrough()
+    {
+        // ORT 1.29 float: [nan] each (Neg-double already pins its own).
+        var n = CPU.Neg(DenseTensor<float>.OfValues(new float[] { float.NaN }), null);
+        Assert.Equal(OpStatus.Success, n.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)n.Outputs![0])[0]));
+        var s = CPU.Sqrt(DenseTensor<float>.OfValues(new float[] { float.NaN }), null);
+        Assert.Equal(OpStatus.Success, s.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)s.Outputs![0])[0]));
+        var a = CPU.Abs(DenseTensor<float>.OfValues(new float[] { float.NaN }), null);
+        Assert.Equal(OpStatus.Success, a.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)a.Outputs![0])[0]));
+    }
+
+    [Fact]
     public void NegDoubleExceptional_MatchesOrt()
     {
         // ORT 1.29 double: [nan, -inf, inf, -0].
