@@ -149,6 +149,35 @@ public class ViewConsistencyTests
     }
 
     [Fact]
+    public void Transpose_Tile_MatchesDense()
+    {
+        // Tiling a transposed view replicates logical values across the
+        // permuted strides (verified differentially tri-mode via OpDump).
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var t = Tensor<float>.Transpose(a, new int[] { 1, 0 });
+        var got = Tensor<float>.Tile(t, new int[] { 2, 1 });
+        Assert.Equal(new int[] { 6, 2 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 4f, 2f, 5f, 3f, 6f, 1f, 4f, 2f, 5f, 3f, 6f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 1f, 4f }, { 2f, 5f }, { 3f, 6f } });
+        Assert.Equal(Tensor<float>.Tile(dense, new int[] { 2, 1 }).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void Transpose_Concat_MatchesDense()
+    {
+        // Concatenating a transposed view with a dense tensor walks the
+        // generic iterator over permuted strides.
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f }, { 5f, 6f } });
+        var t = Tensor<float>.Transpose(a, new int[] { 1, 0 });
+        var b = DenseTensor<float>.OfValues(new float[,] { { 7f }, { 8f } });
+        var got = Tensor<float>.Concat(t, b, 1);
+        Assert.Equal(new int[] { 2, 4 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 3f, 5f, 7f, 2f, 4f, 6f, 8f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 1f, 3f, 5f }, { 2f, 4f, 6f } });
+        Assert.Equal(Tensor<float>.Concat(dense, b, 1).ToArray(), got.ToArray());
+    }
+
+    [Fact]
     public void NestedSlice_MatchesDense()
     {
         // A slice of a slice chains two indirections; values must match
