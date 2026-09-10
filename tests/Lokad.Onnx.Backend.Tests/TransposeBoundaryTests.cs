@@ -32,4 +32,13 @@ public class TransposeBoundaryTests
         var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
         Assert.Throws<System.ArgumentException>(() => Tensor<float>.Transpose(x, new int[] { 0, -2 }));
     }
+
+    [Fact]
+    public void EmptyInput_PermutesShape()
+    {
+        // ORT 1.29: transposing [0,3] with perm=[1,0] yields [3,0], empty.
+        var y = Tensor<float>.Transpose(DenseTensor<float>.OfShape(0, 3), new int[] { 1, 0 });
+        Assert.Equal(new int[] { 3, 0 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+    }
 }
