@@ -10,6 +10,16 @@ public class TensorBoundaryTests
     }
 
     [Fact]
+    public void EmptyPrintData_ReturnsBrackets()
+    {
+        // PrintData divided element count by the last extent: 0/0 on any
+        // tensor with a zero last dim. Empties render as [] instead.
+        Assert.Equal("[]", DenseTensor<float>.OfShape(2, 0).PrintData(false));
+        Assert.Equal("[]", DenseTensor<float>.OfShape(0).PrintData(true));
+        Assert.Equal("[1.00000,2.00000]", DenseTensor<float>.OfValues(new float[] { 1f, 2f }).PrintData(false));
+    }
+
+    [Fact]
     public void NegativeDimension_ThrowsBeforeUnsafe()
     {
         AssertThrowsArg(() => new DenseTensor<float>(new int[] { -1, 4 }));

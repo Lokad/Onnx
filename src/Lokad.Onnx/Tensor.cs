@@ -1407,6 +1407,12 @@ namespace Lokad.Onnx
             {
                 return ((object?)this.GetValue(0))?.ToString() ?? ""; 
             }
+            if (Length == 0)
+            {
+                // Empty tensors have a zero last extent; the row math below
+                // would divide by zero. There is nothing to render.
+                return "[]";
+            }
             var text = new StringBuilder();
 
             var strides = ArrayUtilities.GetStrides(dimensions);
