@@ -100,6 +100,25 @@ public class IntegerArithmeticBoundaryTests
         Assert.Equal(new long[] { -9223372036854775808L, 1L, 0L, 1L }, ((Tensor<long>)a64.Outputs![0]).ToArray());
     }
 
+    static DenseTensor<int> Scalar32(int value)
+    {
+        var s = DenseTensor<int>.OfShape();
+        s.SetValue(0, value);
+        return s;
+    }
+
+    [Fact]
+    public void ScalarNegAbsMin_WrapsToMin()
+    {
+        // ORT 1.29 rank-0: Neg(int32_min)=int32_min, Abs(int32_min)=int32_min (wraps, no fault).
+        var neg = CPU.Neg(Scalar32(-2147483648), null);
+        Assert.Equal(OpStatus.Success, neg.Status);
+        Assert.Equal(new int[] { -2147483648 }, ((Tensor<int>)neg.Outputs![0]).ToArray());
+        var abs = CPU.Abs(Scalar32(-2147483648), null);
+        Assert.Equal(OpStatus.Success, abs.Status);
+        Assert.Equal(new int[] { -2147483648 }, ((Tensor<int>)abs.Outputs![0]).ToArray());
+    }
+
     [Fact]
     public void MinDividedByNegOne_FailsCleanlyWithoutFault()
     {
