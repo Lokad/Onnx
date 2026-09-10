@@ -80,6 +80,26 @@ def main():
          {"x": np.array([[[[0, 1], [2, 3]]]], dtype=np.int32)}, inits=[roi, sc2],
          dtypes=d32, feed_dtypes=f32)
 
+    # Fractional scales: sizes derive from dim*scale in the scale native
+    # precision before flooring (6 by float32(7/6) is exactly 7.0f, so the
+    # output has 7 rows; verified bit-identical tri-mode before freezing).
+    scf = helper.make_tensor("s", TensorProto.FLOAT, [4], np.array([1.0, 1.0, 7.0 / 6.0, 1.0], dtype=np.float32))
+    node = helper.make_node("Resize", ["x", "r", "s"], ["z"], mode="nearest",
+                            coordinate_transformation_mode="half_pixel",
+                            nearest_mode="round_prefer_floor")
+    emit("resize_frac_nearest", node, [("x", [1, 1, 6, 1])], [("z", [1, 1, 7, 1])],
+         {"x": np.array([[[[1.0], [2.0], [3.0], [4.0], [5.0], [6.0]]]], dtype=np.float32)}, inits=[roi, scf])
+    node = helper.make_node("Resize", ["x", "r", "s"], ["z"], mode="linear",
+                            coordinate_transformation_mode="half_pixel")
+    emit("resize_frac_linear", node, [("x", [1, 1, 6, 1])], [("z", [1, 1, 7, 1])],
+         {"x": np.array([[[[1.0], [2.0], [3.0], [4.0], [5.0], [6.0]]]], dtype=np.float32)}, inits=[roi, scf])
+    node = helper.make_node("Resize", ["x", "r", "s"], ["z"], mode="nearest",
+                            coordinate_transformation_mode="half_pixel",
+                            nearest_mode="round_prefer_floor")
+    emit("resize_frac_nearest_uint8", node, [("x", [1, 1, 6, 1])], [("z", [1, 1, 7, 1])],
+         {"x": np.array([[[[0], [1], [2], [3], [4], [5]]]], dtype=np.uint8)}, inits=[roi, scf],
+         dtypes=du8, feed_dtypes=fu8)
+
 
 if __name__ == "__main__":
     main()

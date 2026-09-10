@@ -147,6 +147,26 @@ public class ExpandResizeShapeTests
     }
 
     [Fact]
+    public void Resize_ScalesFloor_NativePrecision()
+    {
+        // ORT 1.29 multiplies dim by scale in the scale native precision
+        // before flooring: 6 by float32(7/6) is exactly 7.0f (midpoint
+        // round-even), so the output has 7 rows, while widening the scale
+        // to double first gives 6.99999976 and floors to 6 (probed).
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 6, 1] { { { { 1f }, { 2f }, { 3f }, { 4f }, { 5f }, { 6f } } } });
+        var r = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 7f / 6f, 1f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs[0];
+        Assert.Equal(new int[] { 1, 1, 7, 1 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 2f, 3f, 3f, 4f, 5f, 6f }, y.ToArray());
+        // Double scales keep double arithmetic on both sides (6 by 7/6 in
+        // double is 7.000000000000001, floor 7).
+        var rd = CPUExecutionProvider.Resize(x, null, DenseTensor<double>.OfValues(new double[] { 1.0, 1.0, 7.0 / 6.0, 1.0 }), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        Assert.Equal(new int[] { 1, 1, 7, 1 }, ((Tensor<float>)rd.Outputs[0]).Dimensions.ToArray());
+    }
+
+    [Fact]
     public void Resize_Nearest_RoundHalvesDown()
     {
         var x = DenseTensor<float>.OfValues(new float[1, 1, 4, 1] { { { { 1f }, { 2f }, { 3f }, { 4f } } } });

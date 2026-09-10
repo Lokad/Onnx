@@ -569,6 +569,23 @@ public partial class CPUExecutionProvider
             }
             return sizes;
         }
+        int[]? ResizeSizesFromFloatScales(int[] dims, float[] scales)
+        {
+            var sizes = new int[dims.Length];
+            for (int i = 0; i < dims.Length; i++)
+            {
+                // The multiply stays in float32: widening the scale to
+                // double first changes the product (verified against ORT
+                // 1.29: 6 by float32(7/6) is exactly 7.0f and floors to 7,
+                // while the widened product is 6.99999976 and floors to 6).
+                float v = dims[i] * scales[i];
+                if (float.IsNaN(v) || float.IsInfinity(v) || v < 0f) return null;
+                float f = MathF.Floor(v);
+                if (f > int.MaxValue) return null;
+                sizes[i] = (int)f;
+            }
+            return sizes;
+        }
         if (X is null) return MissingInput(op, nameof(X));
         // ORT 1.29 load-fails when both sizes and scales are provided, and
         // counts even an empty sizes tensor as provided; an empty scales
@@ -612,7 +629,9 @@ public partial class CPUExecutionProvider
             // scale fails even on empty input); scales that merely floor to
             // zero still yield empty outputs below.
             if (scaleArray.Any(s => !(s > 0.0))) return WrongInputShape(op, nameof(scales), scales, "Resize scales must be positive.");
-            targetSizes = ResizeSizesFromScales(dims.ToArray(), scaleArray);
+            targetSizes = scales.ElementType == TensorElementType.Float
+                ? ResizeSizesFromFloatScales(dims.ToArray(), ((Tensor<float>)scales).ToArray())
+                : ResizeSizesFromScales(dims.ToArray(), scaleArray);
             if (targetSizes is null) return WrongInputShape(op, nameof(scales), scales, "Resize scales must be finite and produce non-negative output sizes.");
             trueScales = scaleArray;
         }
