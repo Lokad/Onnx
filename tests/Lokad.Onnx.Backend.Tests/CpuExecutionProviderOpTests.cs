@@ -811,4 +811,49 @@ public class CpuExecutionProviderOpTests
             DenseTensor<byte>.OfValues(new byte[] { 1, 2, 3, 4 }),
             DenseTensor<long>.OfValues(new long[] { 2, 2 }), 0, null, null).Status);
     }
+
+    [Fact]
+    public void WhereUnsupportedDtypes_RefusedCleanly()
+    {
+        // ORT 1.29 refuses every one of these (int8/int16/uint16
+        // NOT_IMPLEMENTED; bfloat16 schema; complex64 not registered;
+        // all probed); the Where switch stops at uint64/float/double.
+        var cond = DenseTensor<bool>.OfValues(new bool[,] { { true, false }, { false, true } });
+        Assert.Equal(OpStatus.Failure, CPU.Where(cond, DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, 2 }, { 3, 4 } }), DenseTensor<sbyte>.OfValues(new sbyte[,] { { 5, 6 }, { 7, 8 } }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Where(cond, DenseTensor<short>.OfValues(new short[,] { { 1, 2 }, { 3, 4 } }), DenseTensor<short>.OfValues(new short[,] { { 5, 6 }, { 7, 8 } }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Where(cond, DenseTensor<ushort>.OfValues(new ushort[,] { { 1, 2 }, { 3, 4 } }), DenseTensor<ushort>.OfValues(new ushort[,] { { 5, 6 }, { 7, 8 } }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Where(cond, DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)1f, (BFloat16)2f, (BFloat16)3f, (BFloat16)4f }, new int[] { 2, 2 }), DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)5f, (BFloat16)6f, (BFloat16)7f, (BFloat16)8f }, new int[] { 2, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Where(cond, DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[,] { { new System.Numerics.Complex(1, 0), new System.Numerics.Complex(2, 0) }, { new System.Numerics.Complex(3, 0), new System.Numerics.Complex(4, 0) } }), DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[,] { { new System.Numerics.Complex(5, 0), new System.Numerics.Complex(6, 0) }, { new System.Numerics.Complex(7, 0), new System.Numerics.Complex(8, 0) } }), null).Status);
+    }
+
+    [Fact]
+    public void ReduceSub32_RefusedCleanly()
+    {
+        // ORT refuses sub-32 and wide-uint reductions (schema or
+        // NOT_IMPLEMENTED, all probed); only int8 ReduceSum was pinned
+        // before, so the rest of the row joins it here.
+        var ax = DenseTensor<long>.OfValues(new long[] { 0 });
+        Assert.Equal(OpStatus.Failure, CPU.ReduceSum(DenseTensor<byte>.OfValues(new byte[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceSum(DenseTensor<short>.OfValues(new short[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceSum(DenseTensor<ushort>.OfValues(new ushort[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceSum(DenseTensor<uint>.OfValues(new uint[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceSum(DenseTensor<ulong>.OfValues(new ulong[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceMean(DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceMean(DenseTensor<byte>.OfValues(new byte[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceMean(DenseTensor<short>.OfValues(new short[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceMean(DenseTensor<ushort>.OfValues(new ushort[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceMean(DenseTensor<uint>.OfValues(new uint[] { 1, 2 }), ax, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceMean(DenseTensor<ulong>.OfValues(new ulong[] { 1, 2 }), ax, 0, 0, null).Status);
+    }
+
+    [Fact]
+    public void NegUnsigned_RefusedCleanly()
+    {
+        // ORT rejects unsigned Neg at schema level (all four probed);
+        // the Neg switch stops at signed sub-32 widths.
+        Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<byte>.OfValues(new byte[] { 1, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<ushort>.OfValues(new ushort[] { 1, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<uint>.OfValues(new uint[] { 1, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<ulong>.OfValues(new ulong[] { 1, 2 }), null).Status);
+    }
 }
