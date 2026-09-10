@@ -30,6 +30,7 @@ public partial class CPUExecutionProvider
         // keeps the axis regardless of keepdims.
         int[] sizes;
         bool squeezePieces = false;
+        if (split is not null && split.ElementType != TensorElementType.Int32 && split.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(split), "The split tensor must be int32 or int64.", split);
         if (split is null || split.Rank == 0)
         {
             long chunk = split is null ? 1L : ToInt64Scalar(split, nameof(split));
