@@ -574,10 +574,10 @@ where T : unmanaged
         int group, int[] strides, int[] dilations, int[]? kernelshape,
         int[] weightDims, long inputLength, long weightLength, int biasLength)
     {
-        if (N <= 0) throw new ArgumentException("Conv input batch must be positive.", nameof(N));
-        if (C <= 0) throw new ArgumentException("Conv input channels must be positive.", nameof(C));
+        if (N < 0) throw new ArgumentException("Conv input batch must be non-negative.", nameof(N));
+        if (C < 0) throw new ArgumentException("Conv input channels must be non-negative.", nameof(C));
         if (H <= 0 || W <= 0) throw new ArgumentException("Conv spatial dims must be positive.");
-        if (M <= 0) throw new ArgumentException("Conv output channels must be positive.", nameof(M));
+        if (M < 0) throw new ArgumentException("Conv output channels must be non-negative.", nameof(M));
         if (group <= 0) throw new ArgumentException("Conv group must be positive.", nameof(group));
         if (C % group != 0) throw new ArgumentException("Conv input channels must be divisible by group.");
         if (M % group != 0) throw new ArgumentException("Conv output channels must be divisible by group.");

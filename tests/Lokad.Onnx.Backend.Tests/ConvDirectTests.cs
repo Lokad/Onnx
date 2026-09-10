@@ -64,4 +64,26 @@ public class ConvDirectTests
         Assert.Equal(new int[] { 1, 1, 2, 1 }, y.Dimensions.ToArray());
         Assert.Equal(new float[] { 0f, 21f }, y.ToArray());
     }
+
+    [Fact]
+    public void EmptyBatch_ReturnsEmpty()
+    {
+        // ORT 1.29: shape (0, 2, 3, 3).
+        var x = DenseTensor<float>.OfShape(0, 2, 5, 5);
+        var w = DenseTensor<float>.OfValues(new float[2, 2, 3, 3]);
+        var y = Tensor<float>.Conv2D(x, w, 1, new int[] { 0, 0, 0, 0 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(new int[] { 0, 2, 3, 3 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+    }
+
+    [Fact]
+    public void EmptyChannels_ReturnsZeros()
+    {
+        // ORT 1.29: shape (1, 2, 3, 3); empty reduction sums to zero.
+        var x = DenseTensor<float>.OfShape(1, 0, 5, 5);
+        var w = DenseTensor<float>.OfShape(2, 0, 3, 3);
+        var y = Tensor<float>.Conv2D(x, w, 1, new int[] { 0, 0, 0, 0 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(new int[] { 1, 2, 3, 3 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[18], y.ToArray());
+    }
 }
