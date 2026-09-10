@@ -309,6 +309,16 @@ public class LayerNormalizationStashTests
     }
 
     [Fact]
+    public void IntInput_RejectedCleanly()
+    {
+        // ORT 1.29 refuses int LayerNormalization at load (float-only);
+        // the provider fails descriptively instead.
+        var x = DenseTensor<int>.OfValues(new int[,] { { 1, 2 }, { 3, 4 } });
+        var s = DenseTensor<int>.OfValues(new int[] { 1, 1 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.LayerNormalization(x, s, null, -1, null, null, 1, null, null).Status);
+    }
+
+    [Fact]
     public void NullAxis_MatchesMinusOne()
     {
         // ORT 1.29: omitted axis normalizes the last axis, row-wise
