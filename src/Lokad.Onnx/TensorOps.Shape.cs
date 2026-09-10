@@ -632,12 +632,23 @@ where T : unmanaged
         }
        
         start = start.Select((s, i) => ArrayUtilities.Clamp(ArrayUtilities.HandleNegativeAxisOrIndex(data.Dimensions[axes[i]], s), 0, data.Dimensions[axes[i]])).ToArray().ToTensor<int>();
-        ends = ends.Select((s, i) => ArrayUtilities.Clamp(ArrayUtilities.HandleNegativeAxisOrIndex(data.Dimensions[axes[i]], s), 0, data.Dimensions[axes[i]])).ToArray().ToTensor<int>();
-
+        var stepsArr = steps.ToArray();
+        var endsRaw = ends.ToArray();
+        // Negative steps: an end below -dim (after axis normalization) means
+        // "run past index 0" (verified against ORT 1.29: [8,-100,-2] yields
+        // [8,6,4,2,0]); clamping it to 0 would drop the final element, so it
+        // is omitted and the -1 default applies downstream.
+        int?[] endStops = new int?[length];
+        for (int k = 0; k < length; k++)
+        {
+            int dim = data.Dimensions[axes[k]];
+            int n = ArrayUtilities.HandleNegativeAxisOrIndex(dim, endsRaw[k]);
+            endStops[k] = stepsArr[k] < 0 && n < 0 ? null : (int?)ArrayUtilities.Clamp(n, 0, dim);
+        }
         SliceIndex[] indices = new SliceIndex[data.Rank];
         for (int i = 0; i < data.Rank; i++) 
         {
-            indices[i] = axes.Contains(i) ? new SliceIndex(start[axes.IndexOf(i)], ends[axes.IndexOf(i)], steps[axes.IndexOf(i)]) : new SliceIndex(0, data.dimensions[i]);
+            indices[i] = axes.Contains(i) ? new SliceIndex(start[axes.IndexOf(i)], endStops[axes.IndexOf(i)], steps[axes.IndexOf(i)]) : new SliceIndex(0, data.dimensions[i]);
         }
         return data.Slice(indices); 
     }

@@ -48,6 +48,37 @@ public class SliceStepTests
     }
 
     [Fact]
+    public void NegativeStepFarNegativeEnd_IncludesZero()
+    {
+        // ORT 1.29: with a negative step, an end below -dim means "run past
+        // index 0" (the -1 sentinel); clamping it to 0 drops the final
+        // element. Found by differential fuzz ([100,-100,-3] gave 3
+        // elements instead of [9,6,3,0]).
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f });
+        foreach (var end in new long[] { -11L, -100L })
+        {
+            var r = Tensor<float>.Slice(x,
+                DenseTensor<int>.OfValues(new int[] { 8 }),
+                DenseTensor<int>.OfValues(new int[] { (int)end }),
+                DenseTensor<int>.OfValues(new int[] { 0 }),
+                DenseTensor<int>.OfValues(new int[] { -2 }));
+            Assert.Equal(new float[] { 8f, 6f, 4f, 2f, 0f }, r.ToArray());
+        }
+        var full = Tensor<float>.Slice(x,
+            DenseTensor<int>.OfValues(new int[] { 100 }),
+            DenseTensor<int>.OfValues(new int[] { -100 }),
+            DenseTensor<int>.OfValues(new int[] { 0 }),
+            DenseTensor<int>.OfValues(new int[] { -3 }));
+        Assert.Equal(new float[] { 9f, 6f, 3f, 0f }, full.ToArray());
+        var single = Tensor<float>.Slice(x,
+            DenseTensor<int>.OfValues(new int[] { -100 }),
+            DenseTensor<int>.OfValues(new int[] { -100 }),
+            DenseTensor<int>.OfValues(new int[] { 0 }),
+            DenseTensor<int>.OfValues(new int[] { -2 }));
+        Assert.Equal(new float[] { 0f }, single.ToArray());
+    }
+
+    [Fact]
     public void DuplicateAxes_FailsCleanly()
     {
         // ORT 1.29 fails the run (axes must be distinct).
