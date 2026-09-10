@@ -641,6 +641,15 @@ public class ExceptionalFloatTests
         Assert.Equal(1.0, Pow1Double(-1.0, double.PositiveInfinity));
     }
     [Fact]
+    public void ErfLargeFinite_Saturates()
+    {
+        // ORT 1.29 float: erf(+/-6) is exactly +/-1.
+        var r = CPU.Erf(DenseTensor<float>.OfValues(new float[] { 6f, -6f }), null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 1f, -1f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void ErfNaN_YieldsNaN()
     {
         // ORT 1.29 float: [nan]. Double Erf has no ORT CPU kernel
