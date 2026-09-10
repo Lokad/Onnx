@@ -24,6 +24,21 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void ScalarAxes_SqueezeFailsUnsqueezeWorks()
+        {
+            // ORT 1.29 is asymmetric here: scalar Squeeze axes fail the run
+            // (must be a vector) while scalar Unsqueeze axes behave as [0].
+            var x = DenseTensor<float>.OfValues(new float[,] { { 7f, 8f } });
+            var scalar = new DenseTensor<long>(new long[] { 0L }, Array.Empty<int>());
+            Assert.Equal(OpStatus.Failure, CPU.Squeeze(x, scalar, null).Status);
+            var u = CPU.Unsqueeze(DenseTensor<float>.OfValues(new float[] { 7f, 8f }), scalar, null);
+            Assert.Equal(OpStatus.Success, u.Status);
+            var y = (Tensor<float>)u.Outputs![0];
+            Assert.Equal(new int[] { 1, 2 }, y.Dimensions.ToArray());
+            Assert.Equal(new float[] { 7f, 8f }, y.ToArray());
+        }
+
+        [Fact]
         public void SqueezeAbsentAxes_RemovesAllSingletons()
         {
             // Null axes take the same squeeze-all branch as empty axes.
