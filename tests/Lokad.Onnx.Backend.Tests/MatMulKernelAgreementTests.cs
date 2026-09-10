@@ -275,4 +275,20 @@ public class MatMulKernelAgreementTests
         RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c);
         Agrees(SumRect(c), expected, "intrinsics-2x4tiled-tail-" + m + "x" + n + "x" + k);
     }
+
+    [Fact]
+    public void NanInput_Propagates()
+    {
+        // ORT 1.29: [[nan,1],[1,1]] @ I -> [[nan,nan],[1,1]]. Guards the
+        // blocked/SIMD FMA kernels against NaN-dropping rewrites.
+        var a = DenseTensor<float>.OfValues(new float[,] { { float.NaN, 1f }, { 1f, 1f } });
+        var b = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f }, { 0f, 1f } });
+        var r = CPUExecutionProvider.MatMul(a, b, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs[0]).ToArray();
+        Assert.True(float.IsNaN(y[0]));
+        Assert.True(float.IsNaN(y[1]));
+        Assert.Equal(1f, y[2]);
+        Assert.Equal(1f, y[3]);
+    }
 }
