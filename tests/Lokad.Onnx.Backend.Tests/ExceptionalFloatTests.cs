@@ -63,6 +63,15 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void SoftmaxSingleElementRow_YieldsOne()
+    {
+        // ORT 1.29: softmax over one element is exactly 1 regardless of
+        // the input value (exp(x - x) / exp(x - x)).
+        var y = RunSoftmax(new float[,] { { 5f }, { -3f } });
+        Assert.Equal(new float[] { 1f, 1f }, y.ToArray());
+    }
+
+    [Fact]
     public void SoftmaxLargeFinite_StaysStable()
     {
         // ORT 1.29: max-subtraction makes [1000, 1001] identical to [0, 1];
