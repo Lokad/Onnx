@@ -79,6 +79,27 @@ public class SliceStepTests
     }
 
     [Fact]
+    public void HugeInt64Bounds_SaturateAndClamp()
+    {
+        // ORT 1.29: int64 bounds saturate-narrow then clamp (ends 2^40 ->
+        // dim, starts 2^40 -> empty, starts -2^40 -> full); verified
+        // differentially via OpDump (huge steps ride the corpus case).
+        const long H = 1099511627776L;
+        var x = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f }, { 3f, 4f, 5f } });
+        var ax = DenseTensor<long>.OfValues(new long[] { 0L, 1L });
+        var one = DenseTensor<long>.OfValues(new long[] { 1L, 1L });
+        var full = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { 0L, 0L }), DenseTensor<long>.OfValues(new long[] { H, 3L }), ax, one, null);
+        Assert.Equal(OpStatus.Success, full.Status);
+        Assert.Equal(new int[] { 2, 3 }, ((Tensor<float>)full.Outputs![0]).Dimensions.ToArray());
+        var empty = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { H, 0L }), DenseTensor<long>.OfValues(new long[] { 2L, 3L }), ax, one, null);
+        Assert.Equal(OpStatus.Success, empty.Status);
+        Assert.Equal(new int[] { 0, 3 }, ((Tensor<float>)empty.Outputs![0]).Dimensions.ToArray());
+        var negfull = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { -H, 0L }), DenseTensor<long>.OfValues(new long[] { 2L, 3L }), ax, one, null);
+        Assert.Equal(OpStatus.Success, negfull.Status);
+        Assert.Equal(new int[] { 2, 3 }, ((Tensor<float>)negfull.Outputs![0]).Dimensions.ToArray());
+    }
+
+    [Fact]
     public void DuplicateAxes_FailsCleanly()
     {
         // ORT 1.29 fails the run (axes must be distinct).
