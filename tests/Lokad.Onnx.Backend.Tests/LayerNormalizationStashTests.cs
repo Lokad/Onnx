@@ -307,4 +307,23 @@ public class LayerNormalizationStashTests
         Assert.Equal(-1f, hy[0], 5);
         Assert.Equal(1f, hy[1], 5);
     }
+
+    [Fact]
+    public void ConstantRow_YieldsBias()
+    {
+        // ORT 1.29 float and double: a constant row has zero variance,
+        // so (x - mean) / sqrt(eps) is exactly 0 and Y equals the bias.
+        var xf = DenseTensor<float>.OfValues(new float[,] { { 2f, 2f, 2f, 2f } });
+        var sf = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f, 1f });
+        var bf = DenseTensor<float>.OfValues(new float[] { 0.5f, 0.5f, 0.5f, 0.5f });
+        var rf = CPUExecutionProvider.LayerNormalization(xf, sf, bf, -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, rf.Status);
+        Assert.Equal(new float[] { 0.5f, 0.5f, 0.5f, 0.5f }, ((Tensor<float>)rf.Outputs[0]).ToArray());
+        var xd = DenseTensor<double>.OfValues(new double[,] { { 2.0, 2.0, 2.0, 2.0 } });
+        var sd = DenseTensor<double>.OfValues(new double[] { 1.0, 1.0, 1.0, 1.0 });
+        var bd = DenseTensor<double>.OfValues(new double[] { 0.5, 0.5, 0.5, 0.5 });
+        var rd = CPUExecutionProvider.LayerNormalization(xd, sd, bd, -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        Assert.Equal(new double[] { 0.5, 0.5, 0.5, 0.5 }, ((Tensor<double>)rd.Outputs[0]).ToArray());
+    }
 }
