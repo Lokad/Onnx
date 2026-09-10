@@ -169,6 +169,28 @@ public class NodeAttributeMappingTests
     }
 
     [Fact]
+    public void Transpose_OmittedPerm_ReversesThroughDispatch()
+    {
+        // ORT 1.29: transpose without perm reverses dimensions; the node
+        // passes the missing perm straight to the pinned provider path.
+        var graph = CreateGraph(13);
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var node = new Node
+        {
+            Name = "transpose",
+            Op = OpType.Transpose,
+            Inputs = new[] { "x" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>()
+        };
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var y = (Tensor<float>)result.Outputs[0];
+        Assert.Equal(new[] { 3, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 4f, 2f, 5f, 3f, 6f }, y.ToArray());
+    }
+
+    [Fact]
     public void Reshape_AllowZeroAttribute_Maps()
     {
         // ORT 1.29: allowzero=1 keeps literal zeros ([2,0,3] @ [0,-1,0]
