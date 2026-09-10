@@ -346,6 +346,22 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void AddSubMulDoubleNaN_Passthrough()
+    {
+        // ORT 1.29 double: NaN on either side of Add/Sub/Mul yields NaN,
+        // mirroring the float set and the Div double twin.
+        var a = CPU.Add(DenseTensor<double>.OfValues(new double[] { double.NaN }), DenseTensor<double>.OfValues(new double[] { 1.0 }), null, null);
+        Assert.Equal(OpStatus.Success, a.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)a.Outputs![0])[0]));
+        var s = CPU.Sub(DenseTensor<double>.OfValues(new double[] { 1.0 }), DenseTensor<double>.OfValues(new double[] { double.NaN }), null);
+        Assert.Equal(OpStatus.Success, s.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)s.Outputs![0])[0]));
+        var m = CPU.Mul(DenseTensor<double>.OfValues(new double[] { double.NaN }), DenseTensor<double>.OfValues(new double[] { 2.0 }), null, null);
+        Assert.Equal(OpStatus.Success, m.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)m.Outputs![0])[0]));
+    }
+
+    [Fact]
     public void DivDoubleNaN_Passthrough()
     {
         // ORT 1.29 double: NaN on either side yields NaN, mirroring the
