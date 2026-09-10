@@ -368,6 +368,29 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Success, less.Status);
         Assert.Empty(((Tensor<bool>)less.Outputs![0]).ToArray());
     }
+
+    [Fact]
+    public void UnaryMath_EmptyInputs_YieldEmpty()
+    {
+        // ORT 1.29: unary math kernels over zero elements yield empty
+        // outputs, mirroring the binary empty batch above.
+        var e = DenseTensor<float>.OfShape(0);
+        var sqrt = CPU.Sqrt(e, null);
+        Assert.Equal(OpStatus.Success, sqrt.Status);
+        Assert.Empty(((Tensor<float>)sqrt.Outputs![0]).ToArray());
+        var relu = CPU.Relu(e, null);
+        Assert.Equal(OpStatus.Success, relu.Status);
+        Assert.Empty(((Tensor<float>)relu.Outputs![0]).ToArray());
+        var tanh = CPU.Tanh(e, null);
+        Assert.Equal(OpStatus.Success, tanh.Status);
+        Assert.Empty(((Tensor<float>)tanh.Outputs![0]).ToArray());
+        var abs = CPU.Abs(e, null);
+        Assert.Equal(OpStatus.Success, abs.Status);
+        Assert.Empty(((Tensor<float>)abs.Outputs![0]).ToArray());
+        var neg = CPU.Neg(e, null);
+        Assert.Equal(OpStatus.Success, neg.Status);
+        Assert.Empty(((Tensor<float>)neg.Outputs![0]).ToArray());
+    }
 }
 
 
