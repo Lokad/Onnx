@@ -59,6 +59,42 @@ public class SequenceValueTests
     }
 
     [Fact]
+    public void SplitSequenceAt_ReluChain_MatchesOrt()
+    {
+        // SplitToSequence along axis 0 with keepdims plus indexed pick
+        // plus Relu, verified differentially tri-mode vs ORT 1.29 (probe
+        // c11seq2, all six axis/index/keepdims combinations green).
+        // Batch 0 is all non-positive ([-11..0]), so index 0 yields zeros
+        // while index -1 yields batch 1 unchanged ([1..12]).
+        foreach (var (index, expected) in new[] { (0L, new float[12]), (1L, new float[] { 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f, 11f, 12f }), (-1L, new float[] { 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f, 11f, 12f }) })
+        {
+            var g = new ComputationalGraph();
+            g.Metadata["Name"] = "test";
+            g.Opset[""] = 18;
+            var baseInput = DenseTensor<float>.OfValues(new float[2, 3, 4]
+            {
+                { { -11f, -10f, -9f, -8f }, { -7f, -6f, -5f, -4f }, { -3f, -2f, -1f, 0f } },
+                { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f } },
+            });
+            g.Inputs["x"] = baseInput;
+            g.Initializers["s"] = DenseTensor<long>.OfValues(new long[] { 1L, 1L });
+            var idx = DenseTensor<long>.OfShape();
+            idx.SetValue(0, index);
+            g.Initializers["i"] = idx;
+            g.Outputs["z"] = DenseTensor<float>.OfShape(1, 3, 4);
+            g.Nodes.Add(new Node { Name = "sp", Op = OpType.SplitToSequence, Inputs = new[] { "x", "s" }, Outputs = new[] { "q" }, Attributes = new Dictionary<string, object> { { "axis", 0 }, { "keepdims", 1 } } });
+            g.Nodes.Add(new Node { Name = "at", Op = OpType.SequenceAt, Inputs = new[] { "q", "i" }, Outputs = new[] { "t" } });
+            g.Nodes.Add(new Node { Name = "r", Op = OpType.Relu, Inputs = new[] { "t" }, Outputs = new[] { "z" } });
+            g.IntermediateOutputs["q"] = null;
+            g.IntermediateOutputs["t"] = null;
+            g.RefreshLifetimeAnalysis();
+            var user = new Dictionary<string, ITensor> { { "x", baseInput } };
+            Assert.True(g.Execute(user, true), g.LastErrorMessage + " / node=" + g.LastFailedNodeName);
+            Assert.Equal(expected, ((Tensor<float>)g.Outputs["z"]).ToArray());
+        }
+    }
+
+    [Fact]
     public void SequenceAt_NegativeIndex_CountsFromEnd()
     {
         // ORT 1.29: position -1 yields the last part.
