@@ -59,4 +59,46 @@ public class EmptyShapeTests
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Empty(((Tensor<float>)r.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void LayerNormEmptyNormalizedAxis_ThrowsDescriptive()
+    {
+        // ORT 1.29 fails the run (the normalized span must be at least 1);
+        // the planner rejects a zero normalized extent up front, mirroring
+        // the Conv zero-spatial refusal, instead of dividing the stats by
+        // a zero extent product.
+        foreach (var axis in new int[] { -1, 1 })
+        {
+            Assert.Throws<System.ArgumentException>(() => CPU.LayerNormalization(
+                DenseTensor<float>.OfShape(2, 0), DenseTensor<float>.OfShape(0),
+                null, axis, null, null, 1, null, null));
+            Assert.Throws<System.ArgumentException>(() => CPU.LayerNormalization(
+                DenseTensor<double>.OfShape(2, 0), DenseTensor<double>.OfShape(0),
+                null, axis, null, null, 1, null, null));
+        }
+    }
+
+    [Fact]
+    public void LayerNormEmptyOuter_FlowsEmpty()
+    {
+        // ORT 1.29 float and double: an empty outer axis normalizes zero
+        // rows and succeeds with the exact empty shape.
+        var r = CPU.LayerNormalization(
+            DenseTensor<float>.OfShape(0, 3),
+            DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f }),
+            null, -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs[0];
+        Assert.Equal(new int[] { 0, 3 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+        var rd = CPU.LayerNormalization(
+            DenseTensor<double>.OfShape(0, 3),
+            DenseTensor<double>.OfValues(new double[] { 1.0, 1.0, 1.0 }),
+            null, -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        var yd = (Tensor<double>)rd.Outputs[0];
+        Assert.Equal(new int[] { 0, 3 }, yd.Dimensions.ToArray());
+        Assert.Empty(yd.ToArray());
+    }
+
 }
