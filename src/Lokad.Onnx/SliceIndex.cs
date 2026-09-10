@@ -220,7 +220,11 @@ namespace Lokad.Onnx
                 return new SliceDef(index);
             }
             if (Step == 0) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
-            int magnitude = Math.Abs(Step);
+            // Long magnitude and count arithmetic: extreme steps (int.MinValue
+            // saturates in from int64 bounds) must not overflow Abs or the
+            // round-up division (verified against ORT 1.29: huge steps take
+            // one element, or none when walking away).
+            long magnitude = Math.Abs((long)Step);
             if (Step > 0)
             {
                 int start = Start ?? 0;
@@ -230,7 +234,7 @@ namespace Lokad.Onnx
                 if (stop > dim) stop = dim;
                 if (stop < 0) stop = Math.Abs(stop) <= dim ? dim + stop : 0;
                 if (start >= stop) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
-                return new SliceDef() { Start = start, Step = Step, Count = (Math.Abs(start - stop) + magnitude - 1) / magnitude };
+                return new SliceDef() { Start = start, Step = Step, Count = (int)(((long)Math.Abs(start - stop) + magnitude - 1) / magnitude) };
             }
             // Negative steps walk downward. A start below -dim clamps to 0
             // rather than yielding empty; kept deliberately for parity.
@@ -240,7 +244,7 @@ namespace Lokad.Onnx
             if (downStart >= dim) downStart = dim - 1;
             if (Stop < 0) downStop = Math.Abs(downStop) <= dim ? dim + downStop : -1;
             if (downStart <= downStop) return new SliceDef() { Count = 0, Start = 0, Step = 0 };
-            return new SliceDef() { Start = downStart, Step = Step, Count = (Math.Abs(downStart - downStop) + magnitude - 1) / magnitude };
+            return new SliceDef() { Start = downStart, Step = Step, Count = (int)(((long)Math.Abs(downStart - downStop) + magnitude - 1) / magnitude) };
         }
 
         public static SliceIndex operator ++(SliceIndex a)

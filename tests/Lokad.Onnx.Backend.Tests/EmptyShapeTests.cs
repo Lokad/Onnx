@@ -111,5 +111,24 @@ public class EmptyShapeTests
         Assert.Empty(((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
+    [Fact]
+    public void SliceHugeStep_YieldsFirst()
+    {
+        // ORT 1.29: [0] (a step beyond the dimension takes one element).
+        // The saturating conversion already routes the huge step here.
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f });
+        var r = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { 0L }), DenseTensor<long>.OfValues(new long[] { 5L }), DenseTensor<long>.OfValues(new long[] { 0L }), DenseTensor<long>.OfValues(new long[] { 1099511627776L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 0f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+        // A huge negative step likewise takes one element when walking
+        // toward the data, and none when walking away from it.
+        var rn = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { 4L }), DenseTensor<long>.OfValues(new long[] { -6L }), DenseTensor<long>.OfValues(new long[] { 0L }), DenseTensor<long>.OfValues(new long[] { -1099511627776L }), null);
+        Assert.Equal(OpStatus.Success, rn.Status);
+        Assert.Equal(new float[] { 4f }, ((Tensor<float>)rn.Outputs[0]).ToArray());
+        var re = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { 0L }), DenseTensor<long>.OfValues(new long[] { 5L }), DenseTensor<long>.OfValues(new long[] { 0L }), DenseTensor<long>.OfValues(new long[] { -1099511627776L }), null);
+        Assert.Equal(OpStatus.Success, re.Status);
+        Assert.Empty(((Tensor<float>)re.Outputs[0]).ToArray());
+    }
+
 
 }

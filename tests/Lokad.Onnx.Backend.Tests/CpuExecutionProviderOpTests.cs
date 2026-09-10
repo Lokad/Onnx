@@ -340,6 +340,16 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void SoftmaxAxisOutOfRange_Throws()
+    {
+        // ORT 1.29 refuses out-of-range axes at load (shape inference);
+        // the kernel throws the same descriptive ArgumentException.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        Assert.Throws<System.ArgumentException>(() => CPU.Softmax(x, 5, null, null, 13));
+        Assert.Throws<System.ArgumentException>(() => CPU.Softmax(x, -3, null, null, 13));
+    }
+
+    [Fact]
     public void UnaryMath_RejectSub32()
     {
         // Documented gap, not agreement: ORT accepts int8 Abs (probed

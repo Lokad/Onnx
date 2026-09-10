@@ -227,6 +227,18 @@ public class LayerNormalizationStashTests
     }
 
     [Fact]
+    public void PositiveOverflowAxis_Throws()
+    {
+        // ORT 1.29 refuses axis 5 on rank 2 at load; the shared planner
+        // throws the same descriptive ArgumentException as the negative
+        // side, at both tensor and provider level.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var scale = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f });
+        Assert.Throws<ArgumentException>(() => Tensor<float>.LayerNormalization(x, scale, null, 5, 1e-5f));
+        Assert.Throws<ArgumentException>(() => CPUExecutionProvider.LayerNormalization(x, scale, null, 5, null, null, 1, null, null));
+    }
+
+    [Fact]
     public void ScalarRank_FailsCleanly()
     {
         var x = new DenseTensor<float>(new float[] { 1f }, Array.Empty<int>());

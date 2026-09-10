@@ -419,6 +419,29 @@ namespace Lokad.Onnx.Backend.Tests
     }
 
     [Fact]
+    public void UnsqueezeDuplicateAxes_FailsCleanly()
+    {
+        // ORT 1.29 fails the run on duplicate axes; the kernel rejects
+        // repeated dimensions descriptively.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(x, DenseTensor<long>.OfValues(new long[] { 0L, 0L }), null));
+        Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(x, DenseTensor<long>.OfValues(new long[] { 1L, 1L }), null));
+    }
+
+    [Fact]
+    public void SqueezeDuplicateAxes_Dedupes()
+    {
+        // ORT 1.29: [1,2,1] squeezed on [0,0] is [2,1] - duplicate axes
+        // apply once (the removal is a simultaneous mask, so the second
+        // mention never sees a shifted size-2 dimension).
+        var x = DenseTensor<float>.OfValues(new float[1, 2, 1] { { { 1f }, { 2f } } });
+        var r = CPU.Squeeze(x, DenseTensor<long>.OfValues(new long[] { 0L, 0L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 2, 1 }, ((Tensor<float>)r.Outputs![0]).Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void GatherHugeInt64Indices_Throws()
     {
         // ORT 1.29 fails the run; the checked conversion already throws
