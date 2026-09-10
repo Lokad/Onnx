@@ -263,6 +263,29 @@ public class ExecutionLifecycleTests
     }
 
     [Fact]
+    public void PoolPeakOutstanding_PublishesBack()
+    {
+        // MatMul destinations rent cleared pool storage, so the 2x2 float
+        // output alone keeps at least 16 bytes outstanding at run end.
+        var g = new ComputationalGraph();
+        g.Metadata["Name"] = "test";
+        g.Inputs["a"] = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        g.Inputs["b"] = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f }, { 7f, 8f } });
+        g.Outputs["y"] = DenseTensor<float>.OfShape(2, 2);
+        g.Nodes.Add(new Node { Name = "m", Op = OpType.MatMul, Inputs = new[] { "a", "b" }, Outputs = new[] { "y" } });
+        g.RefreshLifetimeAnalysis();
+        var ctx = g.CreateExecution(null);
+        var good = new Dictionary<string, ITensor>
+        {
+            { "a", DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } }) },
+            { "b", DenseTensor<float>.OfValues(new float[,] { { 5f, 6f }, { 7f, 8f } }) },
+        };
+        Assert.True(ctx.Execute(good, false));
+        Assert.True(ctx.LastPoolPeakOutstandingBytes >= 16, "Run peaked at " + ctx.LastPoolPeakOutstandingBytes + " bytes.");
+        Assert.True(g.Execute(good, false));
+        Assert.True(g.LastPoolPeakOutstandingBytes >= 16, "Facade published " + g.LastPoolPeakOutstandingBytes + " bytes.");
+    }
+    [Fact]
     public void MemoryDiagnostics_StampsFreshDeltasPerRun()
     {
         var g = NewReluGraph();

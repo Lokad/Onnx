@@ -71,8 +71,10 @@ bytes plus pool service, and never compare figures across these scopes:
   3-length array of per-generation collection deltas. Deltas come from
   process-wide counters, so concurrent suites can advance them: they bound
   collections during the run, never attribute them.
-- Pool service: `ComputationalGraph.LastPoolAllocatedNewBytes` (fresh) and
-  `LastPoolReusedBytes` (served from returned buffers) after `Execute`.
+- Pool service: `ComputationalGraph.LastPoolAllocatedNewBytes` (fresh),
+  `LastPoolReusedBytes` (served from returned buffers), and
+  `LastPoolPeakOutstandingBytes` (high-water mark of checked-out bytes,
+  ArrayPool scratch excluded) after `Execute`.
 
 Procedure (tracked pieces only): run the local e5 model warmed on one CPU,
 then read the three diagnostics above off the graph after `Execute` and

@@ -266,6 +266,7 @@ public class ComputationalGraph
             LastPoolDropped = exec.LastPoolDropped;
             LastPoolAllocatedNewBytes = exec.LastPoolAllocatedNewBytes;
             LastPoolReusedBytes = exec.LastPoolReusedBytes;
+            LastPoolPeakOutstandingBytes = exec.LastPoolPeakOutstandingBytes;
         }
     }
 
@@ -296,6 +297,9 @@ public class ComputationalGraph
     /// <summary>Pooled output bytes served from previously returned arrays during the last execution.</summary>
     /// <remarks>Pool-served bytes avoid new GC allocation; they are not live payload or scratch memory.</remarks>
     public long LastPoolReusedBytes { get; private set; }
+    /// <summary>High-water mark of pool bytes checked out during the last execution.</summary>
+    /// <remarks>Pool outputs and live intermediates raise it; returns lower it. ArrayPool scratch is not counted.</remarks>
+    public long LastPoolPeakOutstandingBytes { get; private set; }
     #endregion
 
     #region Methods
@@ -1295,6 +1299,7 @@ public class ComputationalGraph
                 graph.LastPoolDropped = graph.ActivePool.Dropped;
                 graph.LastPoolAllocatedNewBytes = graph.ActivePool.AllocatedNewBytes;
                 graph.LastPoolReusedBytes = graph.ActivePool.ReusedBytes;
+                graph.LastPoolPeakOutstandingBytes = graph.ActivePool.PeakOutstandingBytes;
             }
             graph.ActivePool = null;
         }

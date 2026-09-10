@@ -33,6 +33,26 @@ public class GraphBufferReuseTests
     }
 
     [Fact]
+    public void PoolPeakOutstanding_TracksHighWater()
+    {
+        var pool = new TensorBufferPool();
+        Assert.Equal(0, pool.PeakOutstandingBytes);
+        var a = pool.Rent<byte>(100);
+        var b = pool.Rent<byte>(200);
+        Assert.Equal(300, pool.PeakOutstandingBytes);
+        pool.Return(a);
+        var c = pool.Rent<byte>(50);
+        Assert.Equal(300, pool.PeakOutstandingBytes);
+        pool.Return(b);
+        pool.Return(c);
+        var d = pool.Rent<byte>(100);
+        Assert.Same(a, d);
+        Assert.Equal(300, pool.PeakOutstandingBytes);
+        pool.Return(new byte[1000]);
+        Assert.Equal(300, pool.PeakOutstandingBytes);
+        pool.Return(d);
+    }
+    [Fact]
     public void PooledAddMulDiv_MatchAllocating_Bitwise()
     {
         var options = ExecutionOptions.Default;

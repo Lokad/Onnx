@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 /// must only return arrays for which IsOwned reports true, so caller inputs, model constants,
 /// attribute tensors and unrelated fresh buffers are never adopted. See C01.
 /// Metrics: AllocatedNew/AllocatedNewBytes count fresh rents (GC allocation); Reused/ReusedBytes count
-/// rents served from previously returned storage (pool-served bytes, not new GC bytes); Returned counts
+/// rents served from previously returned storage (pool-served bytes, not new GC bytes); PeakOutstandingBytes tracks the high-water mark of checked-out bytes (adoptions excluded, drops released); Returned counts
 /// dead buffers adopted into the pool; Dropped counts returns discarded by the per-shape cap. None is a
 /// substitute for the others: GC bytes come from the collector, live payload from tensor shapes, scratch
 /// from temporary kernel buffers, and pool-served bytes from these counters.
@@ -44,6 +44,15 @@ public sealed class TensorBufferPool
 
     public long ReusedBytes { get; private set; }
 
+    /// <summary>High-water mark of pool bytes checked out during this execution.</summary>
+    /// <remarks>Rents raise the current outstanding total and returns lower it;
+    /// adopted foreign storage was never checked out, so it never moves the gauge.</remarks>
+    public long PeakOutstandingBytes { get; private set; }
+
+    readonly Dictionary<Array, long> outstanding = new();
+
+    long outstandingBytes;
+
     /// <summary>Memoized run-static alias roots for release probes, built lazily on the first probe so executions without pool-owned releases never pay for the snapshot. Null with StaticRootsBuilt set selects the legacy per-release scan.</summary>
     internal HashSet<Array>? StaticRoots;
 
@@ -61,12 +70,14 @@ public sealed class TensorBufferPool
             var reused = (T[])stack.Pop();
             buffered.Remove(reused);
             owned.Add(reused);
+            TrackRent(reused, bytes);
             return reused;
         }
         AllocatedNew++;
         AllocatedNewBytes += bytes;
         var fresh = new T[length];
         owned.Add(fresh);
+        TrackRent(fresh, bytes);
         return fresh;
     }
 
@@ -91,6 +102,7 @@ public sealed class TensorBufferPool
         var element = array.GetType().GetElementType();
         if (element is null) throw new ArgumentException("Only single-dimensional arrays can be pooled.", nameof(array));
         if (buffered.Contains(array)) throw new ArgumentException("Array was already returned to the pool.", nameof(array));
+        if (owned.Contains(array)) TrackReturn(array);
         var key = (element, array.Length);
         if (!free.TryGetValue(key, out var stack))
         {
@@ -107,5 +119,17 @@ public sealed class TensorBufferPool
         {
             Dropped++;
         }
+    }
+
+    void TrackRent(Array array, long bytes)
+    {
+        outstanding[array] = bytes;
+        outstandingBytes += bytes;
+        if (outstandingBytes > PeakOutstandingBytes) PeakOutstandingBytes = outstandingBytes;
+    }
+
+    void TrackReturn(Array array)
+    {
+        if (outstanding.Remove(array, out var bytes)) outstandingBytes -= bytes;
     }
 }
