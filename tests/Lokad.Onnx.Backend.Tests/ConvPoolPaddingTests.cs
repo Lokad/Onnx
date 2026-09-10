@@ -226,4 +226,18 @@ public class ConvPoolPaddingTests
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Equal(new int[] { 0, 2, 3, 3 }, ((Tensor<float>)r.Outputs[0]).Dimensions.ToArray());
     }
+
+    [Fact]
+    public void GroupedDilated_MatchesOrt()
+    {
+        // ORT 1.29: group 2, dilation 2, pads 1 over arange inputs.
+        var x = DenseTensor<float>.OfShape(1, 4, 6, 6);
+        for (int i = 0; i < 144; i++) x.Buffer.Span[i] = (i % 7) - 3f;
+        var w = DenseTensor<float>.OfShape(4, 2, 3, 3);
+        for (int i = 0; i < 72; i++) w.Buffer.Span[i] = (i % 5) - 2f;
+        var y = Tensor<float>.Conv2D(x, w, 2, new int[] { 1, 1, 1, 1 }, null, null, new int[] { 1, 1 }, new int[] { 2, 2 });
+        Assert.Equal(new int[] { 1, 4, 4, 4 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { -12f, -4f, -10f, 3f, 9f, -11f, -7f, -14f, 17f, -1f, -11f, -4f, -4f, 18f, -3f, -3f, 10f, 0f, 18f, 8f, 3f, 0f, 1f, 19f, -18f, -1f, 0f, -5f, 6f, -12f, -4f, -11f, -8f, -9f, 8f, 4f, -1f, -17f, -17f, -1f, -2f, 4f, -17f, -7f, -7f, 18f, 8f, -7f, 10f, -1f, 5f, 1f, -3f, 17f, 9f, -4f, -14f, -3f, 17f, -4f, -2f, -19f, -9f, 1f }, y.ToArray());
+    }
+
 }
