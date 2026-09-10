@@ -170,4 +170,19 @@ public class GemmTransposeBiasTests
         var cInt = DenseTensor<int>.OfValues(new int[] { 1, 2 });
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(a, b, cInt, 1f, 1f, null, 0, 0).Status);
     }
+
+    [Fact]
+    public void EmptyExtents_MatchOrt()
+    {
+        // ORT 1.29: zero-M yields [0,2] empty, zero-K yields [2,3]
+        // zeros (the MatMul empty matrix has no Gemm twin until now).
+        var zm = CPUExecutionProvider.Gemm(DenseTensor<float>.OfShape(0, 3), F(new float[,] { { 1f, 2f }, { 3f, 4f }, { 5f, 6f } }), null, 1f, 0f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, zm.Status);
+        var ym = (Tensor<float>)zm.Outputs![0];
+        Assert.Equal(new int[] { 0, 2 }, ym.Dimensions.ToArray());
+        Assert.Empty(ym.ToArray());
+        var zk = CPUExecutionProvider.Gemm(DenseTensor<float>.OfShape(2, 0), DenseTensor<float>.OfShape(0, 3), null, 1f, 0f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, zk.Status);
+        Assert.Equal(new float[] { 0f, 0f, 0f, 0f, 0f, 0f }, ((Tensor<float>)zk.Outputs![0]).ToArray());
+    }
 }
