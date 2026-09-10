@@ -379,4 +379,36 @@ public class ConvPoolPaddingTests
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Failure, r.Status);
     }
+
+    [Fact]
+    public void MaxPoolIntegerDtypesFailCleanly()
+    {
+        // Documented scope boundary, not parity: ORT 1.29 runs int8/uint8
+        // MaxPool (probed; int16/int32 stay refused on both sides), but the
+        // pooling cores are float/double only here â€” the unreachable int
+        // core below seeds max at 0, wrong for all-negative windows â€” so
+        // integer inputs fail descriptively (verified end to end via OpDump).
+        var u8 = DenseTensor<byte>.OfValues(new byte[1, 1, 2, 2] { { { { 1, 5 }, { 3, 2 } } } });
+        var bad8 = CPUExecutionProvider.MaxPool(u8, null, null, null, new int[] { 2, 2 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Failure, bad8.Status);
+        Assert.Contains("UInt8", bad8.Message ?? "");
+        var s8 = DenseTensor<sbyte>.OfValues(new sbyte[1, 1, 2, 2] { { { { 1, 5 }, { 3, 2 } } } });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.MaxPool(s8, null, null, null, new int[] { 2, 2 }, null, null, new int[] { 1, 1 }, null).Status);
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 14 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = u8;
+        var node = new Node
+        {
+            Name = "n", Op = OpType.MaxPool, OpTypeName = OpType.MaxPool.ToString(), Domain = "",
+            OpsetVersion = 14, IsFused = false,
+            Inputs = new[] { "x" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object> { ["kernel_shape"] = new long[] { 2L, 2L } },
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("UInt8", r.Message ?? "");
+    }
 }
