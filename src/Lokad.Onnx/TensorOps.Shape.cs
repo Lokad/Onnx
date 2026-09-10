@@ -413,6 +413,7 @@ where T : unmanaged
         StartOpStage(OpStage.ValidateArguments);
         if (x.Rank != y.Rank) throw new ArgumentException(nameof(y), "The rank of each tensor in a concat operation must be the same.");
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
+        if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The concat axis is out of range.");
         for (int i = 0; i < x.Rank; i++)
         {
             if (i == axis) continue;
@@ -458,6 +459,7 @@ where T : unmanaged
         if (inputs.Length < 2) throw new ArgumentException(nameof(inputs), "At least two tensors must be specified for the concat operation.");
         if (!inputs.All(i => i.Rank == inputs[0].Rank)) throw new ArgumentException(nameof(inputs), $"Each input tensor in a concat operation must be of the same rank.");
         axis = ArrayUtilities.HandleNegativeAxisOrIndex(inputs[0].Rank, axis);
+        if (axis < 0 || axis >= inputs[0].Rank) throw new ArgumentException(nameof(axis), "The concat axis is out of range.");
         if (!inputs.All(i => i.dimensions.Select((d, n) => n == axis ? 0 : d - inputs[0].dimensions[n]).All(s => s == 0)))
             throw new ArgumentException(nameof(inputs), "The dimensions of each tensor in a concat operation must be the same, with the exception of the axis dimension.");
         var shape = inputs[0].dimensions.Copy();
