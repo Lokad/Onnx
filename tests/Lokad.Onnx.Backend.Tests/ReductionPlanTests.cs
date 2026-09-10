@@ -287,4 +287,32 @@ public class ReductionPlanTests
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.True(float.IsNaN(((Tensor<float>)r.Outputs[0])[0]));
     }
+
+    [Fact]
+    public void DoubleSum_BasicsMatchOrt()
+    {
+        // ORT 1.29: rows sum to [6, 15]; columns sum to [5, 7, 9].
+        var x = DenseTensor<double>.OfValues(new double[,] { { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 } });
+        var rows = CPUExecutionProvider.ReduceSum(x, DenseTensor<long>.OfValues(new long[] { 1L }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, rows.Status);
+        Assert.Equal(new double[] { 6.0, 15.0 }, ((Tensor<double>)rows.Outputs[0]).ToArray());
+        var cols = CPUExecutionProvider.ReduceSum(x, DenseTensor<long>.OfValues(new long[] { 0L }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, cols.Status);
+        Assert.Equal(new double[] { 5.0, 7.0, 9.0 }, ((Tensor<double>)cols.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void DoubleMean_BasicsMatchOrt()
+    {
+        // ORT 1.29 (opset 18): rows mean to [2, 5]; kept column means [[2.5, 3.5, 4.5]].
+        var x = DenseTensor<double>.OfValues(new double[,] { { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 } });
+        var rows = CPUExecutionProvider.ReduceMean(x, DenseTensor<long>.OfValues(new long[] { 1L }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, rows.Status);
+        Assert.Equal(new double[] { 2.0, 5.0 }, ((Tensor<double>)rows.Outputs[0]).ToArray());
+        var cols = CPUExecutionProvider.ReduceMean(x, DenseTensor<long>.OfValues(new long[] { 0L }), 1, 0, null);
+        Assert.Equal(OpStatus.Success, cols.Status);
+        var y = (Tensor<double>)cols.Outputs[0];
+        Assert.Equal(new int[] { 1, 3 }, y.Dimensions.ToArray());
+        Assert.Equal(new double[] { 2.5, 3.5, 4.5 }, y.ToArray());
+    }
 }
