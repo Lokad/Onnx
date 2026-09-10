@@ -663,6 +663,23 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void BFloat16Arithmetic_RefusedCleanly()
+    {
+        // Same scope boundary as float16 arithmetic, and ORT 1.29
+        // likewise has no CPU kernel for any of them (Sub/Mul/Div/
+        // Neg/Abs probed NOT_IMPLEMENTED here; Add probed refused
+        // with the float16 set): every form fails descriptively.
+        var a = DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)1f, (BFloat16)2f });
+        var b = DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)3f, (BFloat16)4f });
+        Assert.Equal(OpStatus.Failure, CPU.Add(a, b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sub(a, b, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Mul(a, b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Div(a, b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Neg(a, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Abs(a, null).Status);
+    }
+
+    [Fact]
     public void UnsupportedDtypePairs_FailCleanlyOnBothSides()
     {
         // Every pair below was probed refused on ORT 1.29 (load or run) and
