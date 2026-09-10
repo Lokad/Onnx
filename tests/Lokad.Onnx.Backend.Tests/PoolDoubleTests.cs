@@ -23,6 +23,21 @@ public class PoolDoubleTests
     }
 
     [Fact]
+    public void MaxPoolDoubleNaN_Propagates()
+    {
+        // ORT 1.29 double: NaN wins even in mixed windows ([NaN,2,3,4]
+        // and all-NaN both yield NaN), unlike the float core.
+        var mixed = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { double.NaN, 2.0 }, { 3.0, 4.0 } } } });
+        var rm = CPU.MaxPool(mixed, null, null, null, new int[] { 2, 2 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, rm.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)rm.Outputs[0])[0, 0, 0, 0]));
+        var all = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { double.NaN, double.NaN }, { double.NaN, double.NaN } } } });
+        var ra = CPU.MaxPool(all, null, null, null, new int[] { 2, 2 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, ra.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)ra.Outputs[0])[0, 0, 0, 0]));
+    }
+
+    [Fact]
     public void GlobalAveragePoolDouble_IsExactMean()
     {
         // No ORT reference exists (NOT_IMPLEMENTED); (1+2+3+4)/4 = 2.5.

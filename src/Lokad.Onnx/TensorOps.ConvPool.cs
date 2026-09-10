@@ -488,6 +488,9 @@ where T : unmanaged
                     {
                         var xCCorner = yC * strideWidth - pad.left;
 
+                        // Unlike the float core (which skips NaN like ORT
+                        // float), ORT double propagates NaN, so a NaN value
+                        // always wins here.
                         var maxValue = double.NegativeInfinity;
 
                         for (var tR = 0; tR < kH; ++tR)
@@ -500,7 +503,7 @@ where T : unmanaged
                                 if (xC < 0 || xC >= W) continue;
                                 var v = input[n, d, xR, xC];
 
-                                if (v > maxValue)
+                                if (v > maxValue || double.IsNaN(v))
                                 {
                                     maxValue = v;
                                 }
