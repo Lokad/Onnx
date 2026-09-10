@@ -426,6 +426,10 @@ namespace Lokad.Onnx.Backend.Tests
         var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
         Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(x, DenseTensor<long>.OfValues(new long[] { 0L, 0L }), null));
         Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(x, DenseTensor<long>.OfValues(new long[] { 1L, 1L }), null));
+        // Post-normalization duplicates ([2,-1] both land on 2 with two
+        // inserted axes) fail the same way (probed against ORT 1.29).
+        var v = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(v, DenseTensor<long>.OfValues(new long[] { 2L, -1L }), null));
     }
 
     [Fact]
