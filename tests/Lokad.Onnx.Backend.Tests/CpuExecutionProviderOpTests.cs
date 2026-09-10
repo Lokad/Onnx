@@ -340,6 +340,18 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void UnaryMath_RejectSub32()
+    {
+        // Documented gap, not agreement: ORT accepts int8 Abs (probed
+        // [1]), but sub-32 kernels are out of scope, so these fail
+        // descriptively instead of reaching a kernel cast.
+        var s8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.Abs(s8, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Neg(s8, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sqrt(s8, null).Status);
+    }
+
+    [Fact]
     public void BinaryOps_RejectSub32AndBool()
     {
         // ORT 1.29 refuses int8/bool arithmetic at load (Add-13 admits
