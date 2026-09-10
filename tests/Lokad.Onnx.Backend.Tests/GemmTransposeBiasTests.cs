@@ -102,6 +102,28 @@ public class GemmTransposeBiasTests
     }
 
     [Fact]
+    public void NoAttributes_DefaultToPlainProduct()
+    {
+        // ORT 1.29: omitted alpha/beta/trans attrs default to 1/1/0/0, so
+        // a bare two-input node yields A@B ([[19,22],[43,50]]).
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 13 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["a"] = F(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        graph.Inputs["b"] = F(new float[,] { { 5f, 6f }, { 7f, 8f } });
+        var node = new Node
+        {
+            Name = "gemm", Op = OpType.Gemm, Inputs = new[] { "a", "b" }, Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 19f, 22f, 43f, 50f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void AlphaBetaEdges_BehaveExplicitly()
     {
         var a = F(new float[,] { { 1f, 2f }, { 3f, 4f } });
