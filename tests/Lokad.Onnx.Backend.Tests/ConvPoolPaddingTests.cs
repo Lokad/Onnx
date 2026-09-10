@@ -216,4 +216,14 @@ public class ConvPoolPaddingTests
         Assert.Equal(OpStatus.Success, d3.Status);
         Assert.Equal(new float[] { 24f, 25f, 26f, 27f, 31f, 32f, 33f, 34f, 38f, 39f, 40f, 41f, 45f, 46f, 47f, 48f }, ((Tensor<float>)d3.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void MaxPool_EmptyBatch_ReturnsEmpty()
+    {
+        // ORT 1.29: shape (0, 2, 3, 3).
+        var x = DenseTensor<float>.OfShape(0, 2, 4, 4);
+        var r = CPUExecutionProvider.MaxPool(x, "NOTSET", 0, null, new int[] { 2, 2 }, new int[] { 0, 0, 0, 0 }, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 0, 2, 3, 3 }, ((Tensor<float>)r.Outputs[0]).Dimensions.ToArray());
+    }
 }
