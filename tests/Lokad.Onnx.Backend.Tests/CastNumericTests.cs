@@ -55,6 +55,16 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void LongToFloat_RoundsAtPrecisionBoundary()
+    {
+        // ORT 1.29: longs beyond 2^24 round like ints ([2^24+1,
+        // -(2^24+1), 100] -> [2^24, -2^24, 100]).
+        var r = CPUExecutionProvider.Cast(DenseTensor<long>.OfValues(new long[] { 16777217L, -16777217L, 100L }), TensorElementType.Float, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 16777216f, -16777216f, 100f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void NegativeIntToUlong_Wraps()
     {
         // ORT 1.29: [-1, min] int32 casts to [2^64-1, 2^64-2^31],
