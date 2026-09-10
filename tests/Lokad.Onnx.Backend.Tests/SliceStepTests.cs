@@ -12,16 +12,18 @@ public class SliceStepTests
     [Fact]
     public void ZeroStep_FailsCleanly()
     {
+        // ORT 1.29 fails the run; the view layer would silently yield
+        // empty, so the op kernel rejects up front.
         var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f });
-        var starts = DenseTensor<long>.OfValues(new long[] { 0L });
-        var ends = DenseTensor<long>.OfValues(new long[] { 6L });
-        var axes = DenseTensor<long>.OfValues(new long[] { 0L });
-        var steps = DenseTensor<long>.OfValues(new long[] { 0L });
         var istarts = DenseTensor<int>.OfValues(new int[] { 0 });
         var iends = DenseTensor<int>.OfValues(new int[] { 6 });
         var iaxes = DenseTensor<int>.OfValues(new int[] { 0 });
         var isteps = DenseTensor<int>.OfValues(new int[] { 0 });
         Assert.Throws<System.ArgumentException>(() => Tensor<float>.Slice(x, istarts, iends, iaxes, isteps));
+        var starts = DenseTensor<long>.OfValues(new long[] { 0L });
+        var ends = DenseTensor<long>.OfValues(new long[] { 6L });
+        var axes = DenseTensor<long>.OfValues(new long[] { 0L });
+        var steps = DenseTensor<long>.OfValues(new long[] { 0L });
         Assert.Throws<System.ArgumentException>(() => CPU.Slice(x, starts, ends, axes, steps, null));
         var graph = new ComputationalGraph
         {
@@ -43,5 +45,17 @@ public class SliceStepTests
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("non-zero", r.Message ?? "");
+    }
+
+    [Fact]
+    public void OutOfRangeAxis_FailsCleanly()
+    {
+        // ORT 1.29 fails the run (axis 3 outside rank 1).
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f });
+        Assert.Throws<System.ArgumentException>(() => CPU.Slice(x,
+            DenseTensor<long>.OfValues(new long[] { 0L }),
+            DenseTensor<long>.OfValues(new long[] { 6L }),
+            DenseTensor<long>.OfValues(new long[] { 3L }),
+            DenseTensor<long>.OfValues(new long[] { 1L }), null));
     }
 }

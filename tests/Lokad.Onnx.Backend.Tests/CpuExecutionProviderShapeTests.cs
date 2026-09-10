@@ -48,6 +48,15 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void GatherOutOfRangeAxis_FailsCleanly()
+        {
+            // ORT 1.29 refuses axis=5 on rank 1 at load.
+            var data = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f });
+            var idx = DenseTensor<long>.OfValues(new long[] { 0L });
+            Assert.Throws<System.ArgumentException>(() => CPU.Gather(data, idx, 5, null));
+        }
+
+        [Fact]
         public void GatherAcceptsHigherRankInt64Indices()
         {
             // C02 reproducer at the provider level: 1-D data, 2-D int64 indices.
