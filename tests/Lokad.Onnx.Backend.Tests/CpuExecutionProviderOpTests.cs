@@ -898,4 +898,37 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Failure, CPU.Erf(DenseTensor<int>.OfValues(new int[] { 0, 1 }), null, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, 2 }, { 3, 4 } }), DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 1 }), null, -1, 1e-5f, null, 1, null, null).Status);
     }
+
+    [Fact]
+    public void Float16EqualLess_RefusedCleanly()
+    {
+        // Parity gap, not parity: ORT 1.29 ACCEPTS float16 Equal/Less
+        // (both probed), but no half comparison kernels exist here.
+        var x = DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)2f });
+        var y = DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)3f });
+        Assert.Equal(OpStatus.Failure, CPU.Equal(x, y, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Less(x, y, null).Status);
+    }
+
+    [Fact]
+    public void BFloat16EqualLess_RefusedCleanly()
+    {
+        // ORT 1.29 has no CPU kernel for bfloat16 Equal/Less
+        // (NOT_IMPLEMENTED, both probed); refused here too.
+        var x = DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)1f, (BFloat16)2f });
+        var y = DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)1f, (BFloat16)3f });
+        Assert.Equal(OpStatus.Failure, CPU.Equal(x, y, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Less(x, y, null).Status);
+    }
+
+    [Fact]
+    public void ComplexEqualLess_RefusedCleanly()
+    {
+        // ORT rejects complex64 Equal/Less at schema level (both
+        // probed); the provider has no arms.
+        var x = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[] { new System.Numerics.Complex(1, 0), new System.Numerics.Complex(2, 0) });
+        var y = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[] { new System.Numerics.Complex(1, 0), new System.Numerics.Complex(3, 0) });
+        Assert.Equal(OpStatus.Failure, CPU.Equal(x, y, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Less(x, y, null).Status);
+    }
 }
