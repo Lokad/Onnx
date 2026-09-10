@@ -144,4 +144,51 @@ public class ViewConsistencyTests
         var dense = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f } });
         Assert.Equal(dense.ToArray(), nested.ToArray());
     }
+
+    [Fact]
+    public void Slice_ReduceMax_MatchesDense()
+    {
+        // Row-wise maxima over a strided view must read through the
+        // view, not the parent rows.
+        var axes = new int[] { 1 }.ToTensor<int>();
+        var got = Tensor<float>.ReduceMax(MiddleCols(), axes, false, false);
+        Assert.Equal(new float[] { 3f, 6f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 2f, 3f }, { 5f, 6f } });
+        Assert.Equal(Tensor<float>.ReduceMax(dense, axes, false, false).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void Slice_ReduceSum_MatchesDense()
+    {
+        // Column-wise sums over a strided view skip the sliced-off column.
+        var axes = new int[] { 0 }.ToTensor<int>();
+        var got = Tensor<float>.ReduceSum(MiddleCols(), axes, false, false);
+        Assert.Equal(new float[] { 7f, 9f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 2f, 3f }, { 5f, 6f } });
+        Assert.Equal(Tensor<float>.ReduceSum(dense, axes, false, false).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void Broadcast_Tile_MatchesDense()
+    {
+        // Tiling a broadcast view replicates the logical values, not the
+        // single stored row.
+        var got = Tensor<float>.Tile(BroadcastRow(), new int[] { 1, 2 });
+        Assert.Equal(new int[] { 2, 4 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 5f, 6f, 5f, 6f, 5f, 6f, 5f, 6f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f }, { 5f, 6f } });
+        Assert.Equal(Tensor<float>.Tile(dense, new int[] { 1, 2 }).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void Slice_Expand_MatchesDense()
+    {
+        // Expanding a strided view with a new leading axis replicates the
+        // logical window on both planes.
+        var got = Tensor<float>.Expand(MiddleCols(), new int[] { 2, 2, 2 });
+        Assert.Equal(new int[] { 2, 2, 2 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 2f, 3f, 5f, 6f, 2f, 3f, 5f, 6f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 2f, 3f }, { 5f, 6f } });
+        Assert.Equal(Tensor<float>.Expand(dense, new int[] { 2, 2, 2 }).ToArray(), got.ToArray());
+    }
 }
