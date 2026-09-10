@@ -57,4 +57,31 @@ public class SequenceValueTests
         Assert.True(g.Execute(user, true));
         Assert.Equal(new float[] { 2f, 3f }, ((Tensor<float>)g.Outputs["z"]).ToArray());
     }
+
+    [Fact]
+    public void SequenceAt_NegativeIndex_CountsFromEnd()
+    {
+        // ORT 1.29: position -1 yields the last part.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f, 3f, 4f, 5f }, { 6f, 7f, 8f, 9f, 10f, 11f } });
+        var sp = CPUExecutionProvider.SplitToSequence(x, DenseTensor<int>.OfValues(new int[] { 2, 4 }), 1, 0, null);
+        Assert.Equal(OpStatus.Success, sp.Status);
+        var idx = DenseTensor<long>.OfShape();
+        idx.SetValue(0, -1L);
+        var r = CPUExecutionProvider.SequenceAt((TensorSequence)sp.Outputs[0], idx, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 2f, 3f, 4f, 5f, 8f, 9f, 10f, 11f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void SequenceAt_OutOfRange_Fails()
+    {
+        var x = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f, 3f, 4f, 5f }, { 6f, 7f, 8f, 9f, 10f, 11f } });
+        var sp = CPUExecutionProvider.SplitToSequence(x, DenseTensor<int>.OfValues(new int[] { 2, 4 }), 1, 0, null);
+        Assert.Equal(OpStatus.Success, sp.Status);
+        var idx = DenseTensor<long>.OfShape();
+        idx.SetValue(0, 5L);
+        var r = CPUExecutionProvider.SequenceAt((TensorSequence)sp.Outputs[0], idx, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
 }
