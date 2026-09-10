@@ -557,5 +557,59 @@ namespace Lokad.Onnx.Backend.Tests
     }
 
 
+    [Fact]
+    public void OldFormVersions_MatchOrt()
+    {
+        // Old opset forms run through dedicated dispatch arms with no
+        // other unit coverage: Slice-10 (starts/ends inputs only),
+        // Unsqueeze-11/Squeeze-11 (axes attribute), ReduceSum-11 (axes
+        // attribute), Resize-10 (scales second input, asymmetric).
+        // Every value below verified bit-identical tri-mode vs ORT 1.29.
+        static Tensor<float> Run(int opset, OpType op, string[] inputs, Dictionary<string, ITensor> feed, Dictionary<string, object> attrs)
+        {
+            var graph = new ComputationalGraph
+            {
+                Opset = new Dictionary<string, int> { [""] = opset },
+                Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+            };
+            foreach (var kv in feed) graph.Inputs[kv.Key] = kv.Value;
+            var node = new Node
+            {
+                Name = "n", Op = op, OpTypeName = op.ToString(), Domain = "",
+                OpsetVersion = opset, IsFused = false,
+                Inputs = inputs, Outputs = new[] { "z" },
+                Attributes = attrs,
+            };
+            var r = node.Execute(graph, ExecutionProvider.CPU, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            return (Tensor<float>)r.Outputs![0];
+        }
+        var x12 = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f, 3f }, { 4f, 5f, 6f, 7f } });
+        var s10 = Run(10, OpType.Slice, new[] { "x", "s", "e" }, new Dictionary<string, ITensor>
+        {
+            ["x"] = x12,
+            ["s"] = DenseTensor<long>.OfValues(new long[] { 0L, 1L }),
+            ["e"] = DenseTensor<long>.OfValues(new long[] { 2L, -1L }),
+        }, new Dictionary<string, object>());
+        Assert.Equal(new float[] { 1f, 2f, 5f, 6f }, s10.ToArray());
+        var x23 = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f }, { 3f, 4f, 5f } });
+        var u11 = Run(11, OpType.Unsqueeze, new[] { "x" }, new Dictionary<string, ITensor> { ["x"] = x23 },
+            new Dictionary<string, object> { ["axes"] = new long[] { 0L, -1L } });
+        Assert.Equal(new int[] { 1, 2, 3, 1 }, u11.Dimensions.ToArray());
+        var x213 = DenseTensor<float>.OfValues(new float[2, 1, 3] { { { -2f, -1f, 0f } }, { { 1f, 2f, 3f } } });
+        var q11 = Run(11, OpType.Squeeze, new[] { "x" }, new Dictionary<string, ITensor> { ["x"] = x213 },
+            new Dictionary<string, object> { ["axes"] = new long[] { 1L } });
+        Assert.Equal(new int[] { 2, 3 }, q11.Dimensions.ToArray());
+        Assert.Equal(new float[] { -2f, -1f, 0f, 1f, 2f, 3f }, q11.ToArray());
+        var r11 = Run(11, OpType.ReduceSum, new[] { "x" }, new Dictionary<string, ITensor> { ["x"] = x23 },
+            new Dictionary<string, object> { ["axes"] = new long[] { 1L }, ["keepdims"] = 0L });
+        Assert.Equal(new float[] { 3f, 12f }, r11.ToArray());
+        var r10 = Run(10, OpType.Resize, new[] { "x", "sc" }, new Dictionary<string, ITensor>
+        {
+            ["x"] = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } }),
+            ["sc"] = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 2f, 2f }),
+        }, new Dictionary<string, object>());
+        Assert.Equal(new float[] { 1f, 1f, 2f, 2f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 3f, 3f, 4f, 4f }, r10.ToArray());
+    }
     }
 }
