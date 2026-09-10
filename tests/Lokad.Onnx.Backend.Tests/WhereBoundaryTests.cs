@@ -128,4 +128,75 @@ public class WhereBoundaryTests
         Assert.Equal(new int[] { 0 }, z.Dimensions.ToArray());
         Assert.Empty(z.ToArray());
     }
+
+    [Fact]
+    public void ExceptionalPayload_MatchesOrt()
+    {
+        // ORT 1.29: selection is pure - a NaN or infinity in the unselected
+        // lane never leaks, and a selected exceptional value propagates
+        // verbatim, including under a broadcasting condition.
+        static float[] RunWhere(bool[] c, float[] x, float[] y)
+        {
+            var r = CPU.Where(DenseTensor<bool>.OfValues(c), DenseTensor<float>.OfValues(x), DenseTensor<float>.OfValues(y), null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            return ((Tensor<float>)r.Outputs![0]).ToArray();
+        }
+        var y = RunWhere(new bool[] { true, false }, new float[] { float.NaN, 1f }, new float[] { 2f, float.NaN });
+        Assert.True(float.IsNaN(y[0]));
+        Assert.True(float.IsNaN(y[1]));
+        y = RunWhere(new bool[] { true, false }, new float[] { float.PositiveInfinity, 1f }, new float[] { 2f, 3f });
+        Assert.Equal(float.PositiveInfinity, y[0]);
+        Assert.Equal(3f, y[1]);
+        y = RunWhere(new bool[] { true, false }, new float[] { 1f, 2f }, new float[] { float.PositiveInfinity, float.NaN });
+        Assert.Equal(1f, y[0]);
+        Assert.True(float.IsNaN(y[1]));
+        y = RunWhere(new bool[] { false, true }, new float[] { 1f, 2f }, new float[] { float.NegativeInfinity, float.NegativeInfinity });
+        Assert.Equal(float.NegativeInfinity, y[0]);
+        Assert.Equal(2f, y[1]);
+        var rb = CPU.Where(
+            DenseTensor<bool>.OfValues(new bool[2, 1] { { true }, { false } }),
+            DenseTensor<float>.OfValues(new float[2, 2] { { 1f, 2f }, { 3f, 4f } }),
+            DenseTensor<float>.OfValues(new float[2, 2] { { float.NaN, float.NaN }, { float.NaN, float.NaN } }), null);
+        Assert.Equal(OpStatus.Success, rb.Status);
+        var yb = ((Tensor<float>)rb.Outputs![0]).ToArray();
+        Assert.Equal(1f, yb[0]);
+        Assert.Equal(2f, yb[1]);
+        Assert.True(float.IsNaN(yb[2]));
+        Assert.True(float.IsNaN(yb[3]));
+    }
+
+    [Fact]
+    public void ExceptionalPayloadDouble_MatchesOrt()
+    {
+        // ORT 1.29 double: same pure-selection table as the float guard.
+        static double[] RunWhereDouble(bool[] c, double[] x, double[] y)
+        {
+            var r = CPU.Where(DenseTensor<bool>.OfValues(c), DenseTensor<double>.OfValues(x), DenseTensor<double>.OfValues(y), null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            return ((Tensor<double>)r.Outputs![0]).ToArray();
+        }
+        var y = RunWhereDouble(new bool[] { true, false }, new double[] { double.NaN, 1.0 }, new double[] { 2.0, double.NaN });
+        Assert.True(double.IsNaN(y[0]));
+        Assert.True(double.IsNaN(y[1]));
+        y = RunWhereDouble(new bool[] { true, false }, new double[] { double.PositiveInfinity, 1.0 }, new double[] { 2.0, 3.0 });
+        Assert.Equal(double.PositiveInfinity, y[0]);
+        Assert.Equal(3.0, y[1]);
+        y = RunWhereDouble(new bool[] { true, false }, new double[] { 1.0, 2.0 }, new double[] { double.PositiveInfinity, double.NaN });
+        Assert.Equal(1.0, y[0]);
+        Assert.True(double.IsNaN(y[1]));
+        y = RunWhereDouble(new bool[] { false, true }, new double[] { 1.0, 2.0 }, new double[] { double.NegativeInfinity, double.NegativeInfinity });
+        Assert.Equal(double.NegativeInfinity, y[0]);
+        Assert.Equal(2.0, y[1]);
+        var rb = CPU.Where(
+            DenseTensor<bool>.OfValues(new bool[2, 1] { { true }, { false } }),
+            DenseTensor<double>.OfValues(new double[2, 2] { { 1.0, 2.0 }, { 3.0, 4.0 } }),
+            DenseTensor<double>.OfValues(new double[2, 2] { { double.NaN, double.NaN }, { double.NaN, double.NaN } }), null);
+        Assert.Equal(OpStatus.Success, rb.Status);
+        var yb = ((Tensor<double>)rb.Outputs![0]).ToArray();
+        Assert.Equal(1.0, yb[0]);
+        Assert.Equal(2.0, yb[1]);
+        Assert.True(double.IsNaN(yb[2]));
+        Assert.True(double.IsNaN(yb[3]));
+    }
+
 }
