@@ -66,6 +66,15 @@ static class OpDump
             t.Name = name;
             return t;
         }
+        if (dtype == "int32")
+        {
+            var t = new DenseTensor<int>(dims);
+            var sp = t.Buffer.Span;
+            for (int i = 0; i < vals.Length; i++) sp[i] = int.Parse(vals[i], CultureInfo.InvariantCulture);
+            t.Name = name;
+            return t;
+        }
+
         if (dtype == "bool")
         {
             var t = new DenseTensor<bool>(dims);
@@ -101,6 +110,14 @@ static class OpDump
             sb.AppendLine();
             sb.AppendLine(string.Join(" ", tl.ToArray().Select(v => v.ToString(CultureInfo.InvariantCulture))));
         }
+        else if (t is Tensor<int> ti)
+        {
+            sb.Append("int32 ").Append(ti.Dimensions.Length);
+            foreach (var d in ti.Dimensions) sb.Append(' ').Append(d);
+            sb.AppendLine();
+            sb.AppendLine(string.Join(" ", ti.ToArray().Select(v => v.ToString(CultureInfo.InvariantCulture))));
+        }
+
         else if (t is Tensor<bool> tb)
         {
             sb.Append("bool ").Append(tb.Dimensions.Length);
