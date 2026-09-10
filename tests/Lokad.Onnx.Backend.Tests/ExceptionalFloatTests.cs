@@ -680,4 +680,40 @@ public class ExceptionalFloatTests
         Assert.Equal(OpStatus.Success, result.Status);
         Assert.Equal(new float[] { 1f, -1f, 0f }, ((Tensor<float>)result.Outputs![0]).ToArray());
     }
+
+    [Fact]
+    public void EqualExceptional_MatchesOrt()
+    {
+        // ORT 1.29 float and double: NaN equals nothing, not even itself;
+        // same-signed infinities are equal; +0 == -0 is true. Guarded
+        // because a future bitwise/SIMD Equal could treat NaN as equal.
+        var af = DenseTensor<float>.OfValues(new float[] { float.NaN, float.NaN, 1f, float.PositiveInfinity, float.NegativeInfinity, float.PositiveInfinity, 0f, 1f });
+        var bf = DenseTensor<float>.OfValues(new float[] { float.NaN, 1f, float.NaN, float.PositiveInfinity, float.NegativeInfinity, float.NegativeInfinity, -0f, 2f });
+        var rf = CPU.Equal(af, bf, null);
+        Assert.Equal(OpStatus.Success, rf.Status);
+        Assert.Equal(new bool[] { false, false, false, true, true, false, true, false }, ((Tensor<bool>)rf.Outputs![0]).ToArray());
+        var ad = DenseTensor<double>.OfValues(new double[] { double.NaN, double.NaN, 1.0, double.PositiveInfinity, double.NegativeInfinity, double.PositiveInfinity, 0.0, 1.0 });
+        var bd = DenseTensor<double>.OfValues(new double[] { double.NaN, 1.0, double.NaN, double.PositiveInfinity, double.NegativeInfinity, double.NegativeInfinity, -0.0, 2.0 });
+        var rd = CPU.Equal(ad, bd, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        Assert.Equal(new bool[] { false, false, false, true, true, false, true, false }, ((Tensor<bool>)rd.Outputs![0]).ToArray());
+    }
+
+    [Fact]
+    public void LessExceptional_MatchesOrt()
+    {
+        // ORT 1.29 float and double: any NaN side is false; infinities keep
+        // their order; +0 and -0 compare equal (both directions false).
+        // Guarded because Comparer<float> sorts NaN below every value.
+        var af = DenseTensor<float>.OfValues(new float[] { float.NaN, 1f, float.NaN, float.PositiveInfinity, float.NegativeInfinity, float.NegativeInfinity, float.PositiveInfinity, float.PositiveInfinity, float.NegativeInfinity, 1f, 1f, 1f, 2f, 1f, 0f, -0f });
+        var bf = DenseTensor<float>.OfValues(new float[] { 1f, float.NaN, float.NaN, float.PositiveInfinity, float.NegativeInfinity, float.PositiveInfinity, float.NegativeInfinity, 1f, 1f, float.PositiveInfinity, float.NegativeInfinity, 2f, 1f, 1f, -0f, 0f });
+        var rf = CPU.Less(af, bf, null);
+        Assert.Equal(OpStatus.Success, rf.Status);
+        Assert.Equal(new bool[] { false, false, false, false, false, true, false, false, true, true, false, true, false, false, false, false }, ((Tensor<bool>)rf.Outputs![0]).ToArray());
+        var ad = DenseTensor<double>.OfValues(new double[] { double.NaN, 1.0, double.NaN, double.PositiveInfinity, double.NegativeInfinity, double.NegativeInfinity, double.PositiveInfinity, double.PositiveInfinity, double.NegativeInfinity, 1.0, 1.0, 1.0, 2.0, 1.0, 0.0, -0.0 });
+        var bd = DenseTensor<double>.OfValues(new double[] { 1.0, double.NaN, double.NaN, double.PositiveInfinity, double.NegativeInfinity, double.PositiveInfinity, double.NegativeInfinity, 1.0, 1.0, double.PositiveInfinity, double.NegativeInfinity, 2.0, 1.0, 1.0, -0.0, 0.0 });
+        var rd = CPU.Less(ad, bd, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        Assert.Equal(new bool[] { false, false, false, false, false, true, false, false, true, true, false, true, false, false, false, false }, ((Tensor<bool>)rd.Outputs![0]).ToArray());
+    }
 }
