@@ -452,6 +452,15 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void PowDoubleNaN_Passthrough()
+    {
+        // ORT 1.29 double: NaN base or exponent (away from the pinned
+        // x^0/1^y identities) yields NaN, mirroring the float set.
+        Assert.True(double.IsNaN(Pow1Double(double.NaN, 1.0)));
+        Assert.True(double.IsNaN(Pow1Double(2.0, double.NaN)));
+    }
+
+    [Fact]
     public void PowZeroNegativeExponentDouble_MatchOrt()
     {
         // ORT 1.29 double: 0^-1=inf, (-0)^-1=-inf, mirroring the float
