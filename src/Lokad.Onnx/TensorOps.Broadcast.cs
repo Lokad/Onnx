@@ -376,7 +376,10 @@ where T : unmanaged
             {
                 dim = paddedInputDims[i];
             }
-            if (dim < 0 || (dim == 0 && paddedInputDims[i] != 0))
+            // Zero extents broadcast from 0/1 extents to empty views (NumPy/ONNX:
+            // e.g. MatMul batch [] over [0] yields empty, not an error). Other
+            // mismatches still throw below in the per-dimension loop.
+            if (dim < 0 || (dim == 0 && paddedInputDims[i] != 0 && paddedInputDims[i] != 1))
             {
                 throw new ArgumentException(nameof(targetShape), "Target shape dimensions must be positive or -1.");
             }
