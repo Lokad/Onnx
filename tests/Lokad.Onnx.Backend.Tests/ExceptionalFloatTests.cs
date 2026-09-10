@@ -118,6 +118,58 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void CosExceptional_MatchesOrt()
+    {
+        // ORT 1.29: [nan, nan, nan, 1].
+        var result = CPU.Cos(DenseTensor<float>.OfValues(new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, 0f }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<float>)result.Outputs![0]).ToArray();
+        Assert.True(float.IsNaN(values[0]));
+        Assert.True(float.IsNaN(values[1]));
+        Assert.True(float.IsNaN(values[2]));
+        Assert.Equal(1f, values[3]);
+    }
+
+    [Fact]
+    public void SinExceptional_MatchesOrt()
+    {
+        // ORT 1.29: [nan, nan, nan, 0].
+        var result = CPU.Sin(DenseTensor<float>.OfValues(new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, 0f }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<float>)result.Outputs![0]).ToArray();
+        Assert.True(float.IsNaN(values[0]));
+        Assert.True(float.IsNaN(values[1]));
+        Assert.True(float.IsNaN(values[2]));
+        Assert.Equal(0f, values[3]);
+    }
+
+    [Fact]
+    public void CosDoubleExceptional_MatchesOrt()
+    {
+        // ORT 1.29 double: [nan, nan, nan, 1].
+        var result = CPU.Cos(DenseTensor<double>.OfValues(new double[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity, 0.0 }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.True(double.IsNaN(values[0]));
+        Assert.True(double.IsNaN(values[1]));
+        Assert.True(double.IsNaN(values[2]));
+        Assert.Equal(1.0, values[3]);
+    }
+
+    [Fact]
+    public void SinDoubleExceptional_MatchesOrt()
+    {
+        // ORT 1.29 double: [nan, nan, nan, 0].
+        var result = CPU.Sin(DenseTensor<double>.OfValues(new double[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity, 0.0 }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.True(double.IsNaN(values[0]));
+        Assert.True(double.IsNaN(values[1]));
+        Assert.True(double.IsNaN(values[2]));
+        Assert.Equal(0.0, values[3]);
+    }
+
+    [Fact]
     public void ReluDoubleExceptional_MatchesOrt()
     {
         // ORT 1.29 double: [nan, 0, inf].
