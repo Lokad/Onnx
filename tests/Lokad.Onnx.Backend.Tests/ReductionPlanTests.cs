@@ -5,6 +5,18 @@ public class ReductionPlanTests
     static DenseTensor<float> Data() => DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } });
 
     [Fact]
+    public void FloatAxes_RejectedCleanly()
+    {
+        // ORT 1.29 refuses float axes at load; reductions must fail
+        // descriptively instead of falling through to InvalidCast.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } });
+        var a = DenseTensor<float>.OfValues(new float[] { 1f });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(x, a, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(x, a, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(x, a, 0, 0, null).Status);
+    }
+
+    [Fact]
     public void IntSum_OverflowsSaturate()
     {
         // ORT 1.29 saturates integer sums (unlike elementwise Add/Sub/Mul,

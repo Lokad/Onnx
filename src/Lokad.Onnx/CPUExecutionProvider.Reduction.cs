@@ -18,6 +18,7 @@ public partial class CPUExecutionProvider
         {
             axes = axes.Cast<int>();
         }
+        if (axes is not null && axes.ElementType != TensorElementType.Int32 && axes.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
         var keepDims = _keep_dims.HasValue ? Convert.ToBoolean(_keep_dims.Value) : true;
         var noopWithEmptyAxes = noop_with_empty_axes.HasValue ? Convert.ToBoolean(noop_with_empty_axes.Value) : false;
         switch (data.ElementType)
@@ -38,6 +39,7 @@ public partial class CPUExecutionProvider
         {
             axes = axes.Cast<int>();
         }
+        if (axes is not null && axes.ElementType != TensorElementType.Int32 && axes.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
         var keepDims = _keep_dims.HasValue ? Convert.ToBoolean(_keep_dims.Value) : true;
         var noopWithEmptyAxes = noop_with_empty_axes.HasValue ? Convert.ToBoolean(noop_with_empty_axes.Value) : false;
         var opts = (options ?? ExecutionOptions.Default).Validated();
@@ -60,6 +62,7 @@ public partial class CPUExecutionProvider
         {
             axes = axes.Cast<int>();
         }
+        if (axes is not null && axes.ElementType != TensorElementType.Int32 && axes.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
         var keepDims = _keep_dims.HasValue ? Convert.ToBoolean(_keep_dims.Value) : true;
         var noopWithEmptyAxes = noop_with_empty_axes.HasValue ? Convert.ToBoolean(noop_with_empty_axes.Value) : false;
         switch (data.ElementType)
