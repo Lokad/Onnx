@@ -179,6 +179,18 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void GeluLargeFinite_Saturates()
+    {
+        // ORT 1.29 float: [10,-10] -> [10,-0] exactly (erf saturates).
+        // (Double Gelu has no ORT CPU kernel, so no twin exists.)
+        var r = CPU.Gelu(DenseTensor<float>.OfValues(new float[] { 10f, -10f }), null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs![0]).ToArray();
+        Assert.Equal(10f, y[0]);
+        Assert.Equal(unchecked((int)0x80000000), System.BitConverter.SingleToInt32Bits(y[1]));
+    }
+
+    [Fact]
     public void TanhLargeFinite_Saturates()
     {
         // ORT 1.29 float and double: [1000,-1000] -> [1,-1] exactly.
