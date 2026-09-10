@@ -916,4 +916,67 @@ public class ExceptionalFloatTests
             else Assert.Equal(dexpected[i], y);
         }
     }
+
+    [Fact]
+    public void LayerNormScaleBiasExceptional_MatchesOrt()
+    {
+        // ORT 1.29 float and double: an infinite scale multiplies the
+        // normalized row, so the exact-zero middle element becomes NaN
+        // (0*inf) while the sides stay signed infinities; a NaN scale or
+        // bias poisons, an infinite bias wins, and a constant row yields
+        // exact zeros. Guards the kernel evaluation order: any mean
+        // reassociation that makes the middle element merely tiny would
+        // turn its NaN into an infinity here.
+        static float[] RunLn(float[] xv, float[] gv, float[] bv)
+        {
+            var r = CPU.LayerNormalization(
+                DenseTensor<float>.OfValues(new float[,] { { xv[0], xv[1], xv[2] } }),
+                DenseTensor<float>.OfValues(gv), DenseTensor<float>.OfValues(bv),
+                -1, null, null, 1, null, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            return ((Tensor<float>)r.Outputs![0]).ToArray();
+        }
+        static double[] RunLnDouble(double[] xv, double[] gv, double[] bv)
+        {
+            var r = CPU.LayerNormalization(
+                DenseTensor<double>.OfValues(new double[,] { { xv[0], xv[1], xv[2] } }),
+                DenseTensor<double>.OfValues(gv), DenseTensor<double>.OfValues(bv),
+                -1, null, null, 1, null, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            return ((Tensor<double>)r.Outputs![0]).ToArray();
+        }
+        var y = RunLn(new float[] { 1f, 2f, 3f }, new float[] { float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity }, new float[] { 0f, 0f, 0f });
+        Assert.Equal(float.NegativeInfinity, y[0]);
+        Assert.True(float.IsNaN(y[1]));
+        Assert.Equal(float.PositiveInfinity, y[2]);
+        y = RunLn(new float[] { 1f, 2f, 3f }, new float[] { float.NaN, float.NaN, float.NaN }, new float[] { 0f, 0f, 0f });
+        foreach (var v in y) Assert.True(float.IsNaN(v));
+        y = RunLn(new float[] { 1f, 2f, 3f }, new float[] { float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity }, new float[] { 0f, 0f, 0f });
+        Assert.Equal(float.PositiveInfinity, y[0]);
+        Assert.True(float.IsNaN(y[1]));
+        Assert.Equal(float.NegativeInfinity, y[2]);
+        y = RunLn(new float[] { 1f, 2f, 3f }, new float[] { 1f, 1f, 1f }, new float[] { float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity });
+        foreach (var v in y) Assert.Equal(float.PositiveInfinity, v);
+        y = RunLn(new float[] { 1f, 2f, 3f }, new float[] { 1f, 1f, 1f }, new float[] { float.NaN, float.NaN, float.NaN });
+        foreach (var v in y) Assert.True(float.IsNaN(v));
+        y = RunLn(new float[] { 2f, 2f, 2f }, new float[] { 1f, 1f, 1f }, new float[] { 0f, 0f, 0f });
+        Assert.Equal(new float[] { 0f, 0f, 0f }, y);
+        var yd = RunLnDouble(new double[] { 1.0, 2.0, 3.0 }, new double[] { double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity }, new double[] { 0.0, 0.0, 0.0 });
+        Assert.Equal(double.NegativeInfinity, yd[0]);
+        Assert.True(double.IsNaN(yd[1]));
+        Assert.Equal(double.PositiveInfinity, yd[2]);
+        yd = RunLnDouble(new double[] { 1.0, 2.0, 3.0 }, new double[] { double.NaN, double.NaN, double.NaN }, new double[] { 0.0, 0.0, 0.0 });
+        foreach (var v in yd) Assert.True(double.IsNaN(v));
+        yd = RunLnDouble(new double[] { 1.0, 2.0, 3.0 }, new double[] { double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity }, new double[] { 0.0, 0.0, 0.0 });
+        Assert.Equal(double.PositiveInfinity, yd[0]);
+        Assert.True(double.IsNaN(yd[1]));
+        Assert.Equal(double.NegativeInfinity, yd[2]);
+        yd = RunLnDouble(new double[] { 1.0, 2.0, 3.0 }, new double[] { 1.0, 1.0, 1.0 }, new double[] { double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity });
+        foreach (var v in yd) Assert.Equal(double.PositiveInfinity, v);
+        yd = RunLnDouble(new double[] { 1.0, 2.0, 3.0 }, new double[] { 1.0, 1.0, 1.0 }, new double[] { double.NaN, double.NaN, double.NaN });
+        foreach (var v in yd) Assert.True(double.IsNaN(v));
+        yd = RunLnDouble(new double[] { 2.0, 2.0, 2.0 }, new double[] { 1.0, 1.0, 1.0 }, new double[] { 0.0, 0.0, 0.0 });
+        Assert.Equal(new double[] { 0.0, 0.0, 0.0 }, yd);
+    }
+
 }
