@@ -84,4 +84,14 @@ public class SequenceValueTests
         Assert.Equal(OpStatus.Failure, r.Status);
     }
 
+    [Fact]
+    public void SequenceAt_NonSequence_FailsCleanly()
+    {
+        // ORT refuses a non-sequence SequenceAt input at load; the
+        // provider must fail descriptively instead of throwing.
+        var t = DenseTensor<float>.OfValues(new float[] { 1f });
+        var idx = DenseTensor<long>.OfValues(new long[] { 0L });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.SequenceAt(t, idx, null).Status);
+    }
+
 }
