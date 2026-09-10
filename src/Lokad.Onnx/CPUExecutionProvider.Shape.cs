@@ -136,7 +136,7 @@ public partial class CPUExecutionProvider
         var op = OpType.Concat;
         if (inputs is null) return MissingInput(op, nameof(inputs));
         (options ?? ExecutionOptions.Default).Validated();
-        if (!inputs.All(i => i.ElementType == inputs[0].ElementType)) return WrongInputType(op, nameof(inputs), inputs[0].ElementType, inputs.First(i => i.ElementType == inputs[0].ElementType), "All tensors in a concat operation must have the same type.");
+        if (!inputs.All(i => i.ElementType == inputs[0].ElementType)) return WrongInputType(op, nameof(inputs), inputs[0].ElementType, inputs.First(i => i.ElementType != inputs[0].ElementType), "All tensors in a concat operation must have the same type.");
         var axis = _axis.HasValue ? _axis.Value :  0;
         switch (inputs[0].ElementType) 
         {

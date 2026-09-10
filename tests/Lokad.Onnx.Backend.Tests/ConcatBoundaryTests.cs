@@ -60,4 +60,16 @@ public class ConcatBoundaryTests
         Assert.Equal(new int[] { 1, 4 }, z.Dimensions.ToArray());
         Assert.Equal(new float[] { 1f, 2f, 3f, 4f }, z.ToArray());
     }
+
+    [Fact]
+    public void MixedDtypes_NameOffender()
+    {
+        // ORT refuses mixed-dtype Concat at load; the failure must name the
+        // offending type (Int32 here), not echo a conforming one.
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } });
+        var b = DenseTensor<int>.OfValues(new int[,] { { 1, 2 } });
+        var r = CPU.Concat(new ITensor[] { a, b }, 0, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Int32", r.Message ?? "");
+    }
 }
