@@ -39,6 +39,18 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void SqueezeUnsqueezeFloatAxes_RejectedCleanly()
+        {
+            // ORT 1.29 refuses float axes at load (Tind is exclusive);
+            // the provider fails descriptively (verified differentially
+            // via OpDump).
+            var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+            var f = DenseTensor<float>.OfValues(new float[] { 1f });
+            Assert.Equal(OpStatus.Failure, CPU.Squeeze(x, f, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Unsqueeze(x, f, null).Status);
+        }
+
+        [Fact]
         public void SqueezeAbsentAxes_RemovesAllSingletons()
         {
             // Null axes take the same squeeze-all branch as empty axes.
