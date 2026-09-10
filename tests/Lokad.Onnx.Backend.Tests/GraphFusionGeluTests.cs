@@ -79,6 +79,28 @@ public class GraphFusionGeluTests
     }
 
     [Fact]
+    public void FusedMatchesUnfused_ExceptionalInputs()
+    {
+        // Same twin construction as BlockedTwin, but the feed carries NaN
+        // and infinities: every fused model routes all values through the
+        // fused kernel, so one-sided exceptional handling would diverge.
+        float[,] vals = new float[,] { { float.NaN, float.PositiveInfinity, float.NegativeInfinity, 1f }, { 2f, 3f, 4f, 5f } };
+        var fused = Model.Load(TinyGeluModel(Sqrt2, 1f, 0.5f))!;
+        Assert.True(fused.Execute(new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(vals) } }, true), fused.LastErrorMessage);
+        var fz = ((Tensor<float>)fused.Outputs["z"]).ToArray();
+        var mp2 = TinyGeluModel(Sqrt2, 1f, 0.5f);
+        mp2.Outputs.Add(NamedIO("e", 2, 4));
+        var unfused = Model.Load(mp2)!;
+        Assert.True(unfused.Execute(new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(vals) } }, true), unfused.LastErrorMessage);
+        var uz = ((Tensor<float>)unfused.Outputs["z"]).ToArray();
+        Assert.Equal(fz.Length, uz.Length);
+        foreach (int i in new int[] { 0, 2 }) Assert.True(float.IsNaN(fz[i]) && float.IsNaN(uz[i]), "index " + i);
+        Assert.Equal(fz[1], uz[1], 5);
+        Assert.True(float.IsPositiveInfinity(fz[1]) && float.IsPositiveInfinity(uz[1]));
+        for (int i = 3; i < fz.Length; i++) Assert.Equal(fz[i], uz[i], 5);
+    }
+
+    [Fact]
     public void TwoChainedBlocks_BothFuse()
     {
         // dinov2 miniature: two GELU blocks in series sharing one constant
