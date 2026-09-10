@@ -47,6 +47,21 @@ public class ReshapeAllowZeroTests
     }
 
     [Fact]
+    public void CopyZeroNonempty_InfersLikeOrt()
+    {
+        // ORT 1.29 with allowzero=0: a copied zero on a nonempty input
+        // behaves like its extent, so -1 infers against it ([2,6]@[-1,0],
+        // [0,-1] and [2,0] all yield [2,6]; verified differentially).
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f, 5f, 6f }, { 7f, 8f, 9f, 10f, 11f, 12f } });
+        foreach (var shape in new long[][] { new long[] { -1L, 0L }, new long[] { 0L, -1L }, new long[] { 2L, 0L } })
+        {
+            var y = Tensor<float>.Reshape(x, DenseTensor<long>.OfValues(shape), false);
+            Assert.Equal(new int[] { 2, 6 }, y.Dimensions.ToArray());
+            Assert.Equal(Enumerable.Range(1, 12).Select(v => (float)v).ToArray(), y.ToArray());
+        }
+    }
+
+    [Fact]
     public void CopyZeroInfersSameRule()
     {
         // allowzero=0 copies the zero, then the same nonzero inference applies.
