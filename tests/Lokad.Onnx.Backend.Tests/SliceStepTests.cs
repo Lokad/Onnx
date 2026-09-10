@@ -76,4 +76,22 @@ public class SliceStepTests
             DenseTensor<long>.OfValues(new long[] { 3L }),
             DenseTensor<long>.OfValues(new long[] { 1L }), null));
     }
+
+    [Fact]
+    public void FloatIndexDtypes_FailCleanly()
+    {
+        // ORT 1.29 constrains Slice starts/ends/axes/steps to int32/int64
+        // at load; without guards the provider fell through to an
+        // InvalidCast instead of a descriptive Failure.
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f });
+        var e = DenseTensor<int>.OfValues(new int[] { 6 });
+        var a = DenseTensor<int>.OfValues(new int[] { 0 });
+        var t = DenseTensor<int>.OfValues(new int[] { 1 });
+        var f = DenseTensor<float>.OfValues(new float[] { 0f });
+        var fe = DenseTensor<float>.OfValues(new float[] { 6f });
+        Assert.Equal(OpStatus.Failure, CPU.Slice(x, f, e, a, t, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Slice(x, DenseTensor<int>.OfValues(new int[] { 0 }), fe, a, t, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Slice(x, DenseTensor<int>.OfValues(new int[] { 0 }), e, f, t, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Slice(x, DenseTensor<int>.OfValues(new int[] { 0 }), e, a, f, null).Status);
+    }
 }

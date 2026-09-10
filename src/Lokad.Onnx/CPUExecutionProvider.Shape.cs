@@ -229,21 +229,25 @@ public partial class CPUExecutionProvider
         {
             starts = ToInt32Saturating(starts);
         }
+        if (starts.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(starts), "The starts tensor must be int32 or int64.", starts);
 
         if (ends.ElementType == TensorElementType.Int64)
         {
             ends = ToInt32Saturating(ends);
         }
+        if (ends.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(ends), "The ends tensor must be int32 or int64.", ends);
 
         if (axes is not null && axes.ElementType == TensorElementType.Int64)
         {
             axes = ToInt32Saturating(axes);
         }
+        if (axes is not null && axes.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
 
         if (steps is not null && steps.ElementType == TensorElementType.Int64)
         {
             steps = ToInt32Saturating(steps);
         }
+        if (steps is not null && steps.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(steps), "The steps tensor must be int32 or int64.", steps);
 
         switch (data.ElementType)
         {
