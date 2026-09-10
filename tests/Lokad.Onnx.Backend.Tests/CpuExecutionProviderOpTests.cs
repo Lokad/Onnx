@@ -303,6 +303,22 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Equal(new Half[] { (Half)1f, (Half)2f, (Half)1f, (Half)2f }, ((Tensor<Half>)r.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void BinaryOps_RejectMixedDtypes()
+    {
+        // ORT refuses mixed-dtype binary inputs at load; all seven ops share
+        // one identical same-dtype guard returning descriptive Failure.
+        var f = DenseTensor<float>.OfValues(new float[] { 1f });
+        var i = DenseTensor<int>.OfValues(new int[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.Add(f, i, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sub(f, i, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Mul(f, i, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Div(f, i, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Pow(f, i, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Equal(f, i, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Less(f, i, null).Status);
+    }
 }
 
 
