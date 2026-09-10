@@ -94,4 +94,54 @@ public class ViewConsistencyTests
         var dense = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 5f, 6f, 7f } });
         Assert.Equal(Tensor<float>.LayerNormalization(dense, scale, bias, -1, 1e-5f).ToArray(), got.ToArray());
     }
+
+    [Fact]
+    public void Slice_Gather_MatchesDense()
+    {
+        // Gathering rows out of a strided view exercises the generic
+        // index path (the span fast path requires standard strides).
+        var idx = DenseTensor<int>.OfValues(new int[] { 1, 0 });
+        var got = Tensor<float>.Gather(MiddleCols(), idx, 0);
+        Assert.Equal(new int[] { 2, 2 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 5f, 6f, 2f, 3f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 2f, 3f }, { 5f, 6f } });
+        Assert.Equal(Tensor<float>.Gather(dense, idx, 0).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void Slice_Concat_MatchesDense()
+    {
+        // Concatenating two views stacked on the same storage walks the
+        // generic iterator (the chunk copier needs dense inputs).
+        var view = MiddleCols();
+        var got = Tensor<float>.Concat(view, view, 0);
+        Assert.Equal(new int[] { 4, 2 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 2f, 3f, 5f, 6f, 2f, 3f, 5f, 6f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 2f, 3f }, { 5f, 6f } });
+        Assert.Equal(Tensor<float>.Concat(dense, dense, 0).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void Slice_Transpose_MatchesDense()
+    {
+        // Permuting a strided view must read through the view strides,
+        // not the parent storage order.
+        var got = Tensor<float>.Transpose(MiddleCols(), new int[] { 1, 0 });
+        Assert.Equal(new int[] { 2, 2 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 2f, 5f, 3f, 6f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 2f, 3f }, { 5f, 6f } });
+        Assert.Equal(Tensor<float>.Transpose(dense, new int[] { 1, 0 }).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void NestedSlice_MatchesDense()
+    {
+        // A slice of a slice chains two indirections; values must match
+        // the equivalent dense window.
+        var nested = MiddleCols().Slice(new SliceIndex(1, 2), new SliceIndex(0, 2));
+        Assert.Equal(new int[] { 1, 2 }, nested.Dimensions.ToArray());
+        Assert.Equal(new float[] { 5f, 6f }, nested.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f } });
+        Assert.Equal(dense.ToArray(), nested.ToArray());
+    }
 }
