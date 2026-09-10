@@ -408,6 +408,44 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void BinaryOps_Sub32GateHoldsThroughImport()
+    {
+        // Imported nodes carry no per-node version, so the gate must fire
+        // off the graph opset: an opset-13 int8 Add model fails at run time
+        // while the opset-14 twin computes wrapped values (both probed end
+        // to end via OpDump).
+        foreach (var opset in new int[] { 13, 14 })
+        {
+            var mp = new OnnxModel { Name = "add-i8" };
+            mp.Opset[""] = opset;
+            mp.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Int8, Dims = new[] { 4 } });
+            mp.Inputs.Add(new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Int8, Dims = new[] { 4 } });
+            mp.Outputs.Add(new OnnxValueInfo { Name = "z", ElementType = TensorElementType.Int8, Dims = new[] { 4 } });
+            mp.Nodes.Add(new OnnxNode
+            {
+                Name = "n", OpType = "Add", Domain = "",
+                Inputs = new[] { "x", "y" }, Outputs = new[] { "z" },
+                Attributes = new Dictionary<string, object>(),
+            });
+            var graph = Model.Load(mp)!;
+            var inputs = new Dictionary<string, ITensor>
+            {
+                { "x", DenseTensor<sbyte>.OfValues(new sbyte[] { 100, -100, 50, -128 }) },
+                { "y", DenseTensor<sbyte>.OfValues(new sbyte[] { 100, -100, 3, -1 }) },
+            };
+            if (opset >= 14)
+            {
+                Assert.True(graph.Execute(inputs, true));
+                Assert.Equal(new sbyte[] { -56, 56, 53, 127 }, ((Tensor<sbyte>)graph.Outputs["z"]).ToArray());
+            }
+            else
+            {
+                Assert.False(graph.Execute(inputs, true));
+                Assert.Contains("Int8", graph.LastErrorMessage ?? "");
+            }
+        }
+    }
+    [Fact]
     public void UnaryMath_RejectUnsupportedDtypes()
     {
         // ORT constrains these math kernels to float types at load (Cos-int
