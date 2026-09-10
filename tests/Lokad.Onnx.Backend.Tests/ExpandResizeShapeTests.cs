@@ -81,6 +81,25 @@ public class ExpandResizeShapeTests
     static ITensor Scales(params float[] s) => DenseTensor<float>.OfValues(s);
 
     [Fact]
+    public void Expand_EmptyInput_PreservesEmpty()
+    {
+        // ORT 1.29: [2,0] expanded to [2,0], and [7] expanded to [0],
+        // both yield empties rather than failing.
+        var x = DenseTensor<float>.OfShape(2, 0);
+        var r = CPUExecutionProvider.Expand(x, DenseTensor<long>.OfValues(new long[] { 2L, 0L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs[0];
+        Assert.Equal(new int[] { 2, 0 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+        var s = DenseTensor<float>.OfValues(new float[] { 7f });
+        var r2 = CPUExecutionProvider.Expand(s, DenseTensor<long>.OfValues(new long[] { 0L }), null);
+        Assert.Equal(OpStatus.Success, r2.Status);
+        var y2 = (Tensor<float>)r2.Outputs[0];
+        Assert.Equal(new int[] { 0 }, y2.Dimensions.ToArray());
+        Assert.Empty(y2.ToArray());
+    }
+
+    [Fact]
     public void Resize_EmptyInput_PreservesEmpty()
     {
         // ORT 1.29: unit scales over [1,1,0,3] yield [1,1,0,3], empty.
