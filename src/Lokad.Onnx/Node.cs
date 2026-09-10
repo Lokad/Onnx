@@ -202,6 +202,22 @@ public partial struct Node
         return CPU.Cast(input, (TensorElementType)to, opt);
     }
 
+    /// <summary>
+    /// Sub-32-bit integer arithmetic (int8/uint8/int16/uint16) joined the
+    /// Add/Sub/Mul/Div kernels at opset 14 (verified against ORT 1.29:
+    /// opset-13 refuses all four widths); older or version-unknown graphs
+    /// keep the descriptive provider refusal.
+    /// </summary>
+    OpResult? Sub32Gate(ComputationalGraph graph, OpType op)
+    {
+        int v = ResolvedOpsetVersion(graph);
+        if (v >= 14) return null;
+        var t = Inputs.Length > 0 ? InputTensor(graph, 0) : null;
+        if (t is not null && (t.ElementType is TensorElementType.Int8 or TensorElementType.UInt8 or TensorElementType.Int16 or TensorElementType.UInt16))
+            return InputTypeNotSupported(op, "A", t, null);
+        return null;
+    }
+
     public OpResult ExecuteCPU(ComputationalGraph graph, ExecutionOptions? options)
     {
         var opt = options ?? graph.Options;
@@ -223,13 +239,13 @@ public partial struct Node
     {
         OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), GetReshapeAllowZero(), opt),
 
-        OpType.Add => CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+        OpType.Add => Sub32Gate(graph, OpType.Add) ?? CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
-        OpType.Sub => CPU.Sub(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+        OpType.Sub => Sub32Gate(graph, OpType.Sub) ?? CPU.Sub(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Mul => CPU.Mul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+        OpType.Mul => Sub32Gate(graph, OpType.Mul) ?? CPU.Mul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
-        OpType.Div => CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+        OpType.Div => Sub32Gate(graph, OpType.Div) ?? CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
         OpType.Pow => CPU.Pow(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 

@@ -362,23 +362,49 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
-    public void BinaryOps_RejectSub32AndBool()
+    public void BinaryOps_Sub32NeedsOpset14()
     {
-        // ORT 1.29 refuses int8/bool arithmetic at load (Add-13 admits
-        // neither; sub-32 arithmetic is out of scope); every op fails
-        // descriptively instead of reaching a kernel cast.
+        // ORT 1.29 refuses sub-32 arithmetic at opset 13 (all four widths,
+        // probed) but runs it at opset 14 with wraparound; bool is refused
+        // at both. The provider entry is version-blind (opset-14 semantics,
+        // values pinned in IntegerArithmeticBoundaryTests); the node
+        // boundary restores the opset-13 refusal. Pow stays refused: ORT
+        // load-fails sub-32 Pow at every opset.
         var s8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
         var b = DenseTensor<bool>.OfValues(new bool[] { true });
-        Assert.Equal(OpStatus.Failure, CPU.Add(s8, s8, null, null).Status);
-        Assert.Equal(OpStatus.Failure, CPU.Sub(s8, s8, null).Status);
-        Assert.Equal(OpStatus.Failure, CPU.Mul(s8, s8, null, null).Status);
-        Assert.Equal(OpStatus.Failure, CPU.Div(s8, s8, null, null).Status);
+        Assert.Equal(OpStatus.Success, CPU.Add(s8, s8, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Pow(s8, s8, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Add(b, b, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Sub(b, b, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Mul(b, b, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Div(b, b, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Pow(b, b, null).Status);
+        foreach (var opset in new int[] { 13, 14 })
+        {
+            var graph = new ComputationalGraph
+            {
+                Opset = new Dictionary<string, int> { [""] = opset },
+                Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+            };
+            graph.Inputs["x"] = s8;
+            graph.Inputs["y"] = s8;
+            OpResult Run(OpType op)
+            {
+                var node = new Node
+                {
+                    Name = "n", Op = op, OpTypeName = op.ToString(), Domain = "",
+                    OpsetVersion = opset, IsFused = false,
+                    Inputs = new[] { "x", "y" }, Outputs = new[] { "z" },
+                    Attributes = new Dictionary<string, object>(),
+                };
+                return node.Execute(graph, ExecutionProvider.CPU, null);
+            }
+            var expected = opset >= 14 ? OpStatus.Success : OpStatus.Failure;
+            Assert.Equal(expected, Run(OpType.Add).Status);
+            Assert.Equal(expected, Run(OpType.Sub).Status);
+            Assert.Equal(expected, Run(OpType.Mul).Status);
+            Assert.Equal(expected, Run(OpType.Div).Status);
+        }
     }
 
     [Fact]

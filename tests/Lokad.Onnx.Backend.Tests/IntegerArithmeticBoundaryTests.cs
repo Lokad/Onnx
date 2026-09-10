@@ -192,4 +192,73 @@ public class IntegerArithmeticBoundaryTests
         var y64 = DenseTensor<long>.OfValues(new long[] { -1L });
         AssertDivFails(BinaryGraph(OpType.Div, x64, y64, DenseTensor<long>.OfShape(1)), Pair(x64, y64), typeof(OverflowException));
     }
+
+    [Fact]
+    public void Sub32Arithmetic_MatchesOrtWrap()
+    {
+        // ORT 1.29 runs Add/Sub/Mul/Div on int8/int16/uint16 with wraparound
+        // (all values below probed); Pow stays load-refused for all three,
+        // so no Pow arm is added.
+        var a8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 100, -100, 50, -128 });
+        var b8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 100, -100, 3, -1 });
+        Assert.Equal(new sbyte[] { -56, 56, 53, 127 }, ((Tensor<sbyte>)Apply(OpType.Add, a8, b8)).ToArray());
+        Assert.Equal(new sbyte[] { 0, 0, 47, -127 }, ((Tensor<sbyte>)Apply(OpType.Sub, a8, b8)).ToArray());
+        Assert.Equal(new sbyte[] { 16, 16, -106, -128 }, ((Tensor<sbyte>)Apply(OpType.Mul, a8, b8)).ToArray());
+        var d8 = CPU.Div(a8, b8, null, null);
+        Assert.Equal(OpStatus.Success, d8.Status);
+        Assert.Equal(new sbyte[] { 1, 1, 16, -128 }, ((Tensor<sbyte>)d8.Outputs![0]).ToArray());
+        var a16 = DenseTensor<short>.OfValues(new short[] { 30000, -30000, 50, -32768 });
+        var b16 = DenseTensor<short>.OfValues(new short[] { 30000, -30000, 3, -1 });
+        Assert.Equal(new short[] { -5536, 5536, 53, 32767 }, ((Tensor<short>)Apply(OpType.Add, a16, b16)).ToArray());
+        Assert.Equal(new short[] { 0, 0, 47, -32767 }, ((Tensor<short>)Apply(OpType.Sub, a16, b16)).ToArray());
+        var m16 = DenseTensor<short>.OfValues(new short[] { 30000, -30000, 50, -32768 });
+        var n16 = DenseTensor<short>.OfValues(new short[] { 300, -300, 3, -1 });
+        Assert.Equal(new short[] { 21568, 21568, 150, -32768 }, ((Tensor<short>)Apply(OpType.Mul, m16, n16)).ToArray());
+        var d16 = CPU.Div(
+            DenseTensor<short>.OfValues(new short[] { 30000, -30000, 50, -32768 }),
+            DenseTensor<short>.OfValues(new short[] { 300, -300, 3, -1 }), null, null);
+        Assert.Equal(OpStatus.Success, d16.Status);
+        Assert.Equal(new short[] { 100, 100, 16, -32768 }, ((Tensor<short>)d16.Outputs![0]).ToArray());
+        var au = DenseTensor<ushort>.OfValues(new ushort[] { 60000, 100, 5 });
+        var bu = DenseTensor<ushort>.OfValues(new ushort[] { 60000, 200, 3 });
+        Assert.Equal(new ushort[] { 54464, 300, 8 }, ((Tensor<ushort>)Apply(OpType.Add, au, bu)).ToArray());
+        var su = DenseTensor<ushort>.OfValues(new ushort[] { 5, 100, 60000 });
+        var tu = DenseTensor<ushort>.OfValues(new ushort[] { 10, 200, 1 });
+        Assert.Equal(new ushort[] { 65531, 65436, 59999 }, ((Tensor<ushort>)Apply(OpType.Sub, su, tu)).ToArray());
+        var mu = DenseTensor<ushort>.OfValues(new ushort[] { 700, 256, 3 });
+        var nu = DenseTensor<ushort>.OfValues(new ushort[] { 700, 256, 5 });
+        Assert.Equal(new ushort[] { 31248, 0, 15 }, ((Tensor<ushort>)Apply(OpType.Mul, mu, nu)).ToArray());
+        var du = CPU.Div(
+            DenseTensor<ushort>.OfValues(new ushort[] { 7, 60000, 9 }),
+            DenseTensor<ushort>.OfValues(new ushort[] { 2, 3, 4 }), null, null);
+        Assert.Equal(OpStatus.Success, du.Status);
+        Assert.Equal(new ushort[] { 3, 20000, 2 }, ((Tensor<ushort>)du.Outputs![0]).ToArray());
+    }
+
+    [Fact]
+    public void Sub32DivByZero_FailsCleanly()
+    {
+        // ORT 1.29 run-fails sub-32 integer division by zero like the
+        // wider widths; the managed divide throws before any fault.
+        // Versioned graphs (the shared helper is version-unknown, which
+        // keeps the legacy sub-32 refusal): opset 14 reaches the kernel.
+        var one8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
+        var zero8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 0 });
+        AssertDivFails(DivGraph14(one8, zero8, DenseTensor<sbyte>.OfShape(1)), Pair(one8, zero8), typeof(DivideByZeroException));
+        var one16 = DenseTensor<ushort>.OfValues(new ushort[] { 1 });
+        var zero16 = DenseTensor<ushort>.OfValues(new ushort[] { 0 });
+        AssertDivFails(DivGraph14(one16, zero16, DenseTensor<ushort>.OfShape(1)), Pair(one16, zero16), typeof(DivideByZeroException));
+    }
+
+    static ComputationalGraph DivGraph14(ITensor x, ITensor y, ITensor z)
+    {
+        var g = new ComputationalGraph();
+        g.Opset[""] = 14;
+        g.Metadata["Name"] = "test";
+        g.Inputs["x"] = x;
+        g.Inputs["y"] = y;
+        g.Outputs["z"] = z;
+        g.Nodes.Add(new Node { Name = "n", Op = OpType.Div, OpsetVersion = 14, Inputs = new[] { "x", "y" }, Outputs = new[] { "z" } });
+        return g;
+    }
 }

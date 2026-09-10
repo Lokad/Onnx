@@ -58,6 +58,9 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
+            case TensorElementType.Int8: return Success(op, ((Tensor<sbyte>)A).BroadcastApply<AddBroadcast<sbyte>>((Tensor<sbyte>)B, opts.Tensor));
+            case TensorElementType.Int16: return Success(op, ((Tensor<short>)A).BroadcastApply<AddBroadcast<short>>((Tensor<short>)B, opts.Tensor));
+            case TensorElementType.UInt16: return Success(op, ((Tensor<ushort>)A).BroadcastApply<AddBroadcast<ushort>>((Tensor<ushort>)B, opts.Tensor));
             case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<AddBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
             case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<AddBroadcast<int>>((Tensor<int>)B, opts.Tensor));
             case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<AddBroadcast<long>>((Tensor<long>)B, opts.Tensor));
@@ -100,6 +103,9 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
+            case TensorElementType.Int8: return Success(op, ((Tensor<sbyte>)A).BroadcastApply<SubtractBroadcast<sbyte>>((Tensor<sbyte>)B, opts.Tensor));
+            case TensorElementType.Int16: return Success(op, ((Tensor<short>)A).BroadcastApply<SubtractBroadcast<short>>((Tensor<short>)B, opts.Tensor));
+            case TensorElementType.UInt16: return Success(op, ((Tensor<ushort>)A).BroadcastApply<SubtractBroadcast<ushort>>((Tensor<ushort>)B, opts.Tensor));
             case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<SubtractBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
             case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<SubtractBroadcast<int>>((Tensor<int>)B, opts.Tensor));
             case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<SubtractBroadcast<long>>((Tensor<long>)B, opts.Tensor));
@@ -132,6 +138,9 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
+            case TensorElementType.Int8: return Success(op, ((Tensor<sbyte>)A).BroadcastApply<MultiplyBroadcast<sbyte>>((Tensor<sbyte>)B, opts.Tensor));
+            case TensorElementType.Int16: return Success(op, ((Tensor<short>)A).BroadcastApply<MultiplyBroadcast<short>>((Tensor<short>)B, opts.Tensor));
+            case TensorElementType.UInt16: return Success(op, ((Tensor<ushort>)A).BroadcastApply<MultiplyBroadcast<ushort>>((Tensor<ushort>)B, opts.Tensor));
             case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<MultiplyBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
             case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<MultiplyBroadcast<int>>((Tensor<int>)B, opts.Tensor));
             case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<MultiplyBroadcast<long>>((Tensor<long>)B, opts.Tensor));
@@ -174,6 +183,9 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         switch (A.ElementType)
         {
+            case TensorElementType.Int8: return Success(op, ((Tensor<sbyte>)A).BroadcastApply<DivideBroadcast<sbyte>>((Tensor<sbyte>)B, opts.Tensor));
+            case TensorElementType.Int16: return Success(op, ((Tensor<short>)A).BroadcastApply<DivideBroadcast<short>>((Tensor<short>)B, opts.Tensor));
+            case TensorElementType.UInt16: return Success(op, ((Tensor<ushort>)A).BroadcastApply<DivideBroadcast<ushort>>((Tensor<ushort>)B, opts.Tensor));
             case TensorElementType.UInt8: return Success(op, ((Tensor<byte>)A).BroadcastApply<DivideBroadcast<byte>>((Tensor<byte>)B, opts.Tensor));
             case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply<DivideBroadcast<int>>((Tensor<int>)B, opts.Tensor));
             case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply<DivideBroadcast<long>>((Tensor<long>)B, opts.Tensor));
