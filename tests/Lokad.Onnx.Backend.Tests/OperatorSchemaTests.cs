@@ -601,6 +601,135 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void BitShiftHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no BitShift schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract (verified end to end via
+        // OpDump: ORT 1.29 runs uint8 shifts, Lokad fails cleanly).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.BitShift));
+        var node = Nod(OpType.BitShift, "", 11,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(11);
+        Bind(graph, "x", DenseTensor<byte>.OfValues(new byte[] { 1, 2, 3 }));
+        Bind(graph, "y", DenseTensor<byte>.OfValues(new byte[] { 1, 1, 1 }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("BitShift", r.Message ?? "");
+    }
+
+    [Fact]
+    public void IsNaNHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no IsNaN schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (unlike the pinned IsInf); same honest contract
+        // (verified end to end via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.IsNaN));
+        var node = Nod(OpType.IsNaN, "", 20,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(20);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("IsNaN", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SequenceEmptyHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no SequenceEmpty schema, provider, kernel, or dispatch arm
+        // exists anywhere in src (SplitToSequence/SequenceAt are supported,
+        // the construction family is not); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.SequenceEmpty));
+        var node = Nod(OpType.SequenceEmpty, "", 11,
+            new string[0], new[] { "s" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(11);
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("SequenceEmpty", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SequenceConstructHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no SequenceConstruct schema, provider, kernel, or dispatch
+        // arm exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.SequenceConstruct));
+        var node = Nod(OpType.SequenceConstruct, "", 11,
+            new[] { "a", "b" }, new[] { "s" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(11);
+        Bind(graph, "a", DenseTensor<float>.OfValues(new float[] { 1f }));
+        Bind(graph, "b", DenseTensor<float>.OfValues(new float[] { 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("SequenceConstruct", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SequenceInsertHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no SequenceInsert schema, provider, kernel, or dispatch arm
+        // exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.SequenceInsert));
+        var node = Nod(OpType.SequenceInsert, "", 11,
+            new[] { "s", "t" }, new[] { "o" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(11);
+        Bind(graph, "t", DenseTensor<float>.OfValues(new float[] { 1f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("SequenceInsert", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SequenceEraseHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no SequenceErase schema, provider, kernel, or dispatch arm
+        // exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.SequenceErase));
+        var node = Nod(OpType.SequenceErase, "", 11,
+            new[] { "s" }, new[] { "o" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(11);
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("SequenceErase", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SequenceLengthHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no SequenceLength schema, provider, kernel, or dispatch arm
+        // exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.SequenceLength));
+        var node = Nod(OpType.SequenceLength, "", 11,
+            new[] { "s" }, new[] { "n" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(11);
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("SequenceLength", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ConcatFromSequenceHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no ConcatFromSequence schema, provider, kernel, or dispatch
+        // arm exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.ConcatFromSequence));
+        var node = Nod(OpType.ConcatFromSequence, "", 11,
+            new[] { "s" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(11);
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("ConcatFromSequence", r.Message ?? "");
+    }
+
+    [Fact]
     public void EluHonestlyUnsupported_FailsCleanly()
     {
         // C11: no Elu schema, provider, kernel, or dispatch arm exists
