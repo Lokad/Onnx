@@ -134,6 +134,21 @@ public class ViewConsistencyTests
     }
 
     [Fact]
+    public void Transpose_MatMul_MatchesDense()
+    {
+        // A transposed view fed to MatMul must read through the view
+        // strides on every kernel path (odd 3x2 exercises tails).
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f }, { 5f, 6f } });
+        var t = Tensor<float>.Transpose(a, new int[] { 1, 0 });
+        var b = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f }, { 0f, 1f }, { 1f, 1f } });
+        var got = Tensor<float>.MatMul(t, b, TensorExecutionOptions.Scalar);
+        Assert.Equal(new int[] { 2, 2 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 6f, 8f, 8f, 10f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 1f, 3f, 5f }, { 2f, 4f, 6f } });
+        Assert.Equal(Tensor<float>.MatMul(dense, b, TensorExecutionOptions.Scalar).ToArray(), got.ToArray());
+    }
+
+    [Fact]
     public void NestedSlice_MatchesDense()
     {
         // A slice of a slice chains two indirections; values must match
