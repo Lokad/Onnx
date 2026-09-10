@@ -109,6 +109,33 @@ public class SliceStepTests
     }
 
     [Fact]
+    public void OutOfRangeBounds_ClampLikeOrt()
+    {
+        // ORT 1.29 clamps far out-of-range bounds instead of failing: end
+        // past the dim yields the full range, a very negative start clamps
+        // to zero, and a start past the dim yields an empty result (all
+        // verified bit-identical tri-mode via OpDump).
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f });
+        var ax = DenseTensor<long>.OfValues(new long[] { 0L });
+        var st = DenseTensor<long>.OfValues(new long[] { 1L });
+        var full = CPU.Slice(x,
+            DenseTensor<long>.OfValues(new long[] { 0L }),
+            DenseTensor<long>.OfValues(new long[] { 100L }), ax, st, null);
+        Assert.Equal(OpStatus.Success, full.Status);
+        Assert.Equal(new float[] { 0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f }, ((Tensor<float>)full.Outputs![0]).ToArray());
+        var neg = CPU.Slice(x,
+            DenseTensor<long>.OfValues(new long[] { -100L }),
+            DenseTensor<long>.OfValues(new long[] { 5L }), ax, st, null);
+        Assert.Equal(OpStatus.Success, neg.Status);
+        Assert.Equal(new float[] { 0f, 1f, 2f, 3f, 4f }, ((Tensor<float>)neg.Outputs![0]).ToArray());
+        var past = CPU.Slice(x,
+            DenseTensor<long>.OfValues(new long[] { 50L }),
+            DenseTensor<long>.OfValues(new long[] { 60L }), ax, st, null);
+        Assert.Equal(OpStatus.Success, past.Status);
+        Assert.Equal(new int[] { 0 }, ((Tensor<float>)past.Outputs![0]).Dimensions.ToArray());
+    }
+
+    [Fact]
     public void EmptyResult_YieldsEmpty()
     {
         // ORT 1.29: start == end and start > end (positive step) both
