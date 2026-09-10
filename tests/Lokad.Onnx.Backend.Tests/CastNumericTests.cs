@@ -65,6 +65,17 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void LongToDouble_RoundsAtPrecisionBoundary()
+    {
+        // ORT 1.29: longs beyond 2^53 round to nearest double ([max,
+        // 2^53+1, 100] -> [2^63, 2^53, 100]), mirroring the int/float
+        // boundary pinned above.
+        var r = CPUExecutionProvider.Cast(DenseTensor<long>.OfValues(new long[] { 9223372036854775807L, 9007199254740993L, 100L }), TensorElementType.Double, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new double[] { 9223372036854775808.0, 9007199254740992.0, 100.0 }, ((Tensor<double>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void UnsignedExtremes_MatchOracle()
     {
         var x = DenseTensor<float>.OfValues(new float[] { 5e9f, 3e9f });
