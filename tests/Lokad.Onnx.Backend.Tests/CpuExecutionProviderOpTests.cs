@@ -352,6 +352,15 @@ public class CpuExecutionProviderOpTests
         var mul = CPU.Mul(e, e, null, null);
         Assert.Equal(OpStatus.Success, mul.Status);
         Assert.Empty(((Tensor<float>)mul.Outputs![0]).ToArray());
+        var sub = CPU.Sub(e, e, null);
+        Assert.Equal(OpStatus.Success, sub.Status);
+        Assert.Empty(((Tensor<float>)sub.Outputs![0]).ToArray());
+        var div = CPU.Div(e, e, null, null);
+        Assert.Equal(OpStatus.Success, div.Status);
+        Assert.Empty(((Tensor<float>)div.Outputs![0]).ToArray());
+        var pow = CPU.Pow(e, e, null);
+        Assert.Equal(OpStatus.Success, pow.Status);
+        Assert.Empty(((Tensor<float>)pow.Outputs![0]).ToArray());
         var eq = CPU.Equal(e, e, null);
         Assert.Equal(OpStatus.Success, eq.Status);
         Assert.Empty(((Tensor<bool>)eq.Outputs![0]).ToArray());
