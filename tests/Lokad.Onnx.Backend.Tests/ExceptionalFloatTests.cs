@@ -72,6 +72,21 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void SoftmaxDoubleDegenerateRows_YieldExpected()
+    {
+        // ORT 1.29 double: single-element rows yield 1, empty rows yield
+        // empty, mirroring the float degenerate set.
+        var one = CPU.Softmax(DenseTensor<double>.OfValues(new double[,] { { 5.0 }, { -3.0 } }), -1, null, null, 13);
+        Assert.Equal(OpStatus.Success, one.Status);
+        Assert.Equal(new double[] { 1.0, 1.0 }, ((Tensor<double>)one.Outputs![0]).ToArray());
+        var empty = CPU.Softmax(DenseTensor<double>.OfShape(2, 0), -1, null, null, 13);
+        Assert.Equal(OpStatus.Success, empty.Status);
+        var y = (Tensor<double>)empty.Outputs![0];
+        Assert.Equal(new int[] { 2, 0 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+    }
+
+    [Fact]
     public void SoftmaxEmptyRows_YieldEmpty()
     {
         // ORT 1.29: softmax over zero-element rows yields [2,0], empty.
