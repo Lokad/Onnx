@@ -310,6 +310,25 @@ public class ExceptionalFloatTests
         Assert.Equal(-0.125, values[3]);
     }
 
+    [Fact]
+    public void IntPow_MatchesOrt()
+    {
+        // ORT 1.29 computes integer Pow float-mediated: fractions truncate,
+        // overflow and 0^-1 yield min via conversion (not integer wrap).
+        var i32 = CPU.Pow(DenseTensor<int>.OfValues(new int[] { 2, 10, 2, 0, 3 }), DenseTensor<int>.OfValues(new int[] { 10, 9, -1, 0, 3 }), null);
+        Assert.Equal(OpStatus.Success, i32.Status);
+        Assert.Equal(new int[] { 1024, 1000000000, 0, 1, 27 }, ((Tensor<int>)i32.Outputs![0]).ToArray());
+        var ovf32 = CPU.Pow(DenseTensor<int>.OfValues(new int[] { 2, -2, 0, -3 }), DenseTensor<int>.OfValues(new int[] { 31, 31, -1, 3 }), null);
+        Assert.Equal(OpStatus.Success, ovf32.Status);
+        Assert.Equal(new int[] { -2147483648, -2147483648, -2147483648, -27 }, ((Tensor<int>)ovf32.Outputs![0]).ToArray());
+        var i64 = CPU.Pow(DenseTensor<long>.OfValues(new long[] { 2L, 10L, 0L }), DenseTensor<long>.OfValues(new long[] { 62L, 18L, -1L }), null);
+        Assert.Equal(OpStatus.Success, i64.Status);
+        Assert.Equal(new long[] { 4611686018427387904L, 1000000000000000000L, -9223372036854775808L }, ((Tensor<long>)i64.Outputs![0]).ToArray());
+        var ovf64 = CPU.Pow(DenseTensor<long>.OfValues(new long[] { 10L }), DenseTensor<long>.OfValues(new long[] { 19L }), null);
+        Assert.Equal(OpStatus.Success, ovf64.Status);
+        Assert.Equal(new long[] { -9223372036854775808L }, ((Tensor<long>)ovf64.Outputs![0]).ToArray());
+    }
+
     static float Pow1(float a, float b)
     {
         var result = CPU.Pow(DenseTensor<float>.OfValues(new float[] { a }), DenseTensor<float>.OfValues(new float[] { b }), null);

@@ -195,6 +195,30 @@ public partial class CPUExecutionProvider
         }
     }
 
+    /// <summary>
+    /// Integer Pow matching ORT 1.29: computed float-mediated as (int)pow((double)a, (double)b).
+    /// Fractional results truncate; NaN, out-of-range, and infinite results yield
+    /// int.MinValue like the native conversion (unlike .NET saturating casts).
+    /// </summary>
+    static int IntPow(int a, int b)
+    {
+        double d = System.Math.Pow(a, b);
+        if (double.IsNaN(d) || d >= 2147483648.0 || d < -2147483648.0) return int.MinValue;
+        return (int)d;
+    }
+
+    /// <summary>
+    /// Integer Pow matching ORT 1.29: computed float-mediated as (long)pow((double)a, (double)b).
+    /// Fractional results truncate; NaN, out-of-range, and infinite results yield
+    /// long.MinValue like the native conversion (unlike .NET saturating casts).
+    /// </summary>
+    static long LongPow(long a, long b)
+    {
+        double d = System.Math.Pow(a, b);
+        if (double.IsNaN(d) || d >= 9223372036854775808.0 || d < -9223372036854775808.0) return long.MinValue;
+        return (long)d;
+    }
+
     public static OpResult Pow(ITensor? A, ITensor? B, ExecutionOptions? options)
     {
         var op = OpType.Pow;
@@ -218,6 +242,8 @@ public partial class CPUExecutionProvider
         {
             case TensorElementType.Float: return Success(op, ((Tensor<float>)A).BroadcastApply((Tensor<float>)B, MathF.Pow, opts.Tensor));
             case TensorElementType.Double: return Success(op, ((Tensor<double>)A).BroadcastApply((Tensor<double>)B, Math.Pow, opts.Tensor));
+            case TensorElementType.Int32: return Success(op, ((Tensor<int>)A).BroadcastApply((Tensor<int>)B, IntPow, opts.Tensor));
+            case TensorElementType.Int64: return Success(op, ((Tensor<long>)A).BroadcastApply((Tensor<long>)B, LongPow, opts.Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
