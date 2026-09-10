@@ -222,6 +222,19 @@ public class GemmTransposeBiasTests
     }
 
     [Fact]
+    public void ZeroM_ReturnsEmpty()
+    {
+        // ORT 1.29: [0,4] x [4,3] + [1,3] bias is an empty [0,3] (verified
+        // differentially tri-mode via OpDump, including alpha=beta=0).
+        var a = DenseTensor<float>.OfShape(0, 4);
+        var b = F(new float[,] { { 1f, 1f, 1f }, { 1f, 1f, 1f }, { 1f, 1f, 1f }, { 1f, 1f, 1f } });
+        var c = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f });
+        var r = CPUExecutionProvider.Gemm(a, b, c, 1f, 1f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 0, 3 }, ((Tensor<float>)r.Outputs![0]).Dimensions.ToArray());
+    }
+
+    [Fact]
     public void BadBiasShape_FailsCleanly()
     {
         // ORT 1.29 run-fails unbroadcastable Gemm biases ("Invalid bias
