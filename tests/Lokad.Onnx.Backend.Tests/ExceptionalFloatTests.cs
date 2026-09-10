@@ -406,6 +406,30 @@ public class ExceptionalFloatTests
         Assert.Equal(OpStatus.Success, result.Status);
         return ((Tensor<float>)result.Outputs![0])[0];
     }
+
+    static double Pow1Double(double a, double b)
+    {
+        var result = CPU.Pow(DenseTensor<double>.OfValues(new double[] { a }), DenseTensor<double>.OfValues(new double[] { b }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        return ((Tensor<double>)result.Outputs![0])[0];
+    }
+
+    [Fact]
+    public void PowIdentities_MatchOrt()
+    {
+        // ORT 1.29 (probed float and double): IEEE identities hold for
+        // infinities and NaN - pow(1, y) = 1, pow(x, 0) = 1, pow(-1, inf) = 1.
+        Assert.Equal(1f, Pow1(1f, float.PositiveInfinity));
+        Assert.Equal(1f, Pow1(1f, float.NegativeInfinity));
+        Assert.Equal(1f, Pow1(float.NaN, 0f));
+        Assert.Equal(1f, Pow1(float.PositiveInfinity, 0f));
+        Assert.Equal(1f, Pow1(float.NegativeInfinity, 0f));
+        Assert.Equal(1f, Pow1(-1f, float.PositiveInfinity));
+        Assert.Equal(1.0, Pow1Double(1.0, double.PositiveInfinity));
+        Assert.Equal(1.0, Pow1Double(double.NaN, 0.0));
+        Assert.Equal(1.0, Pow1Double(double.NegativeInfinity, 0.0));
+        Assert.Equal(1.0, Pow1Double(-1.0, double.PositiveInfinity));
+    }
     [Fact]
     public void ErfInfinite_YieldsSignedOne()
     {
