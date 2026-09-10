@@ -151,6 +151,21 @@ public class CpuExecutionProviderExtendedOpTests
     }
 
     [Fact]
+    public void GlobalAveragePool_Double_MatchesReduceMean()
+    {
+        // Deliberate superset: ORT 1.29 has no double GlobalAveragePool
+        // CPU kernel (probed REFUSES; the corpus generator notes the same),
+        // so no differential reference can exist; the mean itself is hand-
+        // exact (0+1+2+3)/4, shared with the ReduceMean lowering.
+        var x = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { 0.0, 1.0 }, { 2.0, 3.0 } } } });
+        var r = CPU.GlobalAveragePool(x, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<double>)r.Outputs![0];
+        Assert.Equal(new int[] { 1, 1, 1, 1 }, y.Dimensions.ToArray());
+        Assert.Equal(1.5, y[0, 0, 0, 0]);
+    }
+
+    [Fact]
     public void GlobalAveragePool_EmptyBatch_Succeeds()
     {
         // ORT 1.29: only N may be zero; shape (0, 2, 1, 1).
