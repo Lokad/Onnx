@@ -83,4 +83,23 @@ public class WhereBoundaryTests
             DenseTensor<float>.OfValues(new float[] { 1f, 2f }),
             DenseTensor<float>.OfValues(new float[] { 10f, 20f })));
     }
+
+    [Fact]
+    public void Unsigned_SelectsVerbatim()
+    {
+        // No ORT reference exists (uint32 Where is NOT_IMPLEMENTED in ORT
+        // CPU); selection copies inputs verbatim, so hand-exact values need
+        // no reference. uint32/uint64 are schema-valid Where types.
+        var cond = DenseTensor<bool>.OfValues(new bool[] { true, false, true });
+        var x32 = DenseTensor<uint>.OfValues(new uint[] { 1u, 2u, 4294967295u });
+        var y32 = DenseTensor<uint>.OfValues(new uint[] { 10u, 20u, 30u });
+        var r32 = CPU.Where(cond, x32, y32, null);
+        Assert.Equal(OpStatus.Success, r32.Status);
+        Assert.Equal(new uint[] { 1u, 20u, 4294967295u }, ((Tensor<uint>)r32.Outputs[0]).ToArray());
+        var x64 = DenseTensor<ulong>.OfValues(new ulong[] { 1ul, 18446744073709551615ul });
+        var y64 = DenseTensor<ulong>.OfValues(new ulong[] { 10ul, 20ul });
+        var r64 = CPU.Where(DenseTensor<bool>.OfValues(new bool[] { false, true }), x64, y64, null);
+        Assert.Equal(OpStatus.Success, r64.Status);
+        Assert.Equal(new ulong[] { 10ul, 18446744073709551615ul }, ((Tensor<ulong>)r64.Outputs[0]).ToArray());
+    }
 }
