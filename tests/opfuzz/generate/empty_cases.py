@@ -30,6 +30,15 @@ def main():
     emit("matmul_zero_k", node, [("x", [2, 0]), ("y", [0, 3])], [("z", [2, 3])],
          {"x": zeros20, "y": np.zeros((0, 3), dtype=np.float32)})
 
+    wones = helper.make_tensor("w", TensorProto.FLOAT, [2, 2, 3, 3], np.ones((2, 2, 3, 3), dtype=np.float32))
+    node = helper.make_node("Conv", ["x", "w"], ["z"], kernel_shape=[3, 3])
+    emit("conv_empty_batch", node, [("x", [0, 2, 5, 5])], [("z", [0, 2, 3, 3])],
+         {"x": np.zeros((0, 2, 5, 5), dtype=np.float32)}, inits=[wones])
+    wzero = helper.make_tensor("w", TensorProto.FLOAT, [2, 0, 3, 3], np.zeros((2, 0, 3, 3), dtype=np.float32))
+    node = helper.make_node("Conv", ["x", "w"], ["z"], kernel_shape=[3, 3])
+    emit("conv_empty_channel", node, [("x", [1, 0, 5, 5])], [("z", [1, 2, 3, 3])],
+         {"x": np.zeros((1, 0, 5, 5), dtype=np.float32)}, inits=[wzero])
+
 
 if __name__ == "__main__":
     main()
