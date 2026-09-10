@@ -222,6 +222,23 @@ public class GemmTransposeBiasTests
     }
 
     [Fact]
+    public void TransposedView_MatchesDense()
+    {
+        // A transposed view into Gemm must read through the view strides
+        // (companion to the ViewConsistency MatMul pin; values verified
+        // differentially tri-mode via OpDump on bigger strided chains).
+        var a = F(new float[,] { { 1f, 2f }, { 3f, 4f }, { 5f, 6f } });
+        var t = Tensor<float>.Transpose(a, new int[] { 1, 0 });
+        var b = F(new float[,] { { 1f, 0f }, { 0f, 1f }, { 1f, 1f } });
+        var c = DenseTensor<float>.OfValues(new float[] { 10f, 20f });
+        var r = CPUExecutionProvider.Gemm(t, b, c, 1f, 1f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 16f, 28f, 18f, 30f }, y.ToArray());
+    }
+
+    [Fact]
     public void ZeroM_ReturnsEmpty()
     {
         // ORT 1.29: [0,4] x [4,3] + [1,3] bias is an empty [0,3] (verified
