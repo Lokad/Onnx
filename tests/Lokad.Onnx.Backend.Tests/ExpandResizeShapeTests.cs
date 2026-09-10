@@ -581,4 +581,39 @@ public class ExpandResizeShapeTests
         };
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Failure, r.Status);
-    }}
+    }
+
+    [Fact]
+    public void Resize_IntegerDtypesFailCleanly()
+    {
+        // Documented scope boundary, not parity: ORT 1.29 runs nearest
+        // Resize on uint8/int8/int32 (probed), but the resampling kernels
+        // are float/double only here, so integer inputs fail descriptively
+        // instead of reaching a kernel cast (verified end to end via OpDump).
+        var u8 = DenseTensor<byte>.OfShape(1, 1, 2, 2);
+        var bad8 = CPUExecutionProvider.Resize(u8, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Failure, bad8.Status);
+        Assert.Contains("UInt8", bad8.Message ?? "");
+        var s8 = DenseTensor<sbyte>.OfShape(1, 1, 2, 2);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Resize(s8, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null).Status);
+        var i32 = DenseTensor<int>.OfShape(1, 1, 2, 2);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Resize(i32, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null).Status);
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 18 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = u8;
+        graph.Inputs["sc"] = Scales(1f, 1f, 2f, 2f);
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Resize, OpTypeName = OpType.Resize.ToString(), Domain = "",
+            OpsetVersion = 18, IsFused = false,
+            Inputs = new[] { "x", "", "sc" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object> { ["mode"] = "nearest" },
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("UInt8", r.Message ?? "");
+    }
+}
