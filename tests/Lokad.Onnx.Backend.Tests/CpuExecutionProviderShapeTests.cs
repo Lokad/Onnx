@@ -88,6 +88,21 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void SqueezeUnsqueezeNegativeAxes_Normalize()
+        {
+            // ORT 1.29: negative axes count from the rank end (verified
+            // differentially tri-mode via OpDump).
+            var x = DenseTensor<float>.OfValues(new float[,] { { 1f }, { 2f } });
+            var sq = CPU.Squeeze(x, DenseTensor<long>.OfValues(new long[] { -1L }), null);
+            Assert.Equal(OpStatus.Success, sq.Status);
+            Assert.Equal(new int[] { 2 }, ((Tensor<float>)sq.Outputs![0]).Dimensions.ToArray());
+            var u = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+            var un = CPU.Unsqueeze(u, DenseTensor<long>.OfValues(new long[] { -2L }), null);
+            Assert.Equal(OpStatus.Success, un.Status);
+            Assert.Equal(new int[] { 2, 1, 3 }, ((Tensor<float>)un.Outputs![0]).Dimensions.ToArray());
+        }
+
+        [Fact]
         public void SqueezeEmptyAxes_RemovesAllSingletons()
         {
             // ORT 1.29: empty axes squeeze [1,3,1] to [3].
