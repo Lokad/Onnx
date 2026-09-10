@@ -398,6 +398,107 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void ArgMaxHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no ArgMax schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract as the earlier batches.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.ArgMax));
+        var node = Nod(OpType.ArgMax, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 3f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("ArgMax", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ArgMinHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no ArgMin schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.ArgMin));
+        var node = Nod(OpType.ArgMin, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 3f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("ArgMin", r.Message ?? "");
+    }
+
+    [Fact]
+    public void AveragePoolHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no AveragePool schema, provider, kernel, or dispatch arm
+        // exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.AveragePool));
+        var node = Nod(OpType.AveragePool, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("AveragePool", r.Message ?? "");
+    }
+
+    [Fact]
+    public void BatchNormalizationHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no BatchNormalization schema, provider, kernel, or dispatch
+        // arm exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.BatchNormalization));
+        var node = Nod(OpType.BatchNormalization, "", 13,
+            new[] { "x", "scale", "bias", "mean", "var" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
+        Bind(graph, "scale", DenseTensor<float>.OfValues(new float[] { 1f }));
+        Bind(graph, "bias", DenseTensor<float>.OfValues(new float[] { 0f }));
+        Bind(graph, "mean", DenseTensor<float>.OfValues(new float[] { 0f }));
+        Bind(graph, "var", DenseTensor<float>.OfValues(new float[] { 1f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("BatchNormalization", r.Message ?? "");
+    }
+
+    [Fact]
+    public void DropoutHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Dropout schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Dropout));
+        var node = Nod(OpType.Dropout, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Dropout", r.Message ?? "");
+    }
+
+    [Fact]
+    public void TopKHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no TopK schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.TopK));
+        var node = Nod(OpType.TopK, "", 13,
+            new[] { "x", "k" }, new[] { "values", "indices" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 3f, 2f }));
+        Bind(graph, "k", DenseTensor<long>.OfValues(new long[] { 2L }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("TopK", r.Message ?? "");
+    }
+
+    [Fact]
     public void RegistryEntries_AreImmutable()
     {
         // C08: no consumer may rewrite the capability registry after construction.
