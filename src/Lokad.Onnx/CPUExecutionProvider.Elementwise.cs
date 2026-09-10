@@ -405,6 +405,7 @@ public partial class CPUExecutionProvider
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Where((Tensor<bool>)condition, (Tensor<ulong>)X, (Tensor<ulong>)Y));
             case TensorElementType.Float: return Success(op, Tensor<float>.Where((Tensor<bool>)condition, (Tensor<float>)X, (Tensor<float>)Y));
             case TensorElementType.Double: return Success(op, Tensor<double>.Where((Tensor<bool>)condition, (Tensor<double>)X, (Tensor<double>)Y));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Where((Tensor<bool>)condition, (Tensor<Half>)X, (Tensor<Half>)Y));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }

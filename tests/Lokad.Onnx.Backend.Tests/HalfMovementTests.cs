@@ -131,4 +131,17 @@ public class HalfMovementTests
         Assert.Equal(OpStatus.Failure, CPU.Tile(x, DenseTensor<long>.OfValues(new long[] { 1L, 2L }), null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Expand(x, DenseTensor<long>.OfValues(new long[] { 2L, 2L }), null).Status);
     }
+
+    [Fact]
+    public void HalfWhere_MatchesOrt()
+    {
+        // ORT 1.29 runs float16 Where (probed); int8/int16/uint16 and
+        // bfloat16 stay refused on both sides, so only this arm was missing.
+        var cond = DenseTensor<bool>.OfValues(new bool[,] { { true, false }, { false, true } });
+        var x = DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)2f, (Half)3f, (Half)4f }, new int[] { 2, 2 });
+        var y = DenseTensor<Half>.OfValues(new Half[] { (Half)5f, (Half)6f, (Half)7f, (Half)8f }, new int[] { 2, 2 });
+        var r = CPU.Where(cond, x, y, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new Half[] { (Half)1f, (Half)6f, (Half)7f, (Half)4f }, ((Tensor<Half>)r.Outputs![0]).ToArray());
+    }
 }
