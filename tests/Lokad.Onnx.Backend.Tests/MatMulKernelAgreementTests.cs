@@ -375,4 +375,65 @@ public class MatMulKernelAgreementTests
             else Assert.Equal(expected.Value, y);
         }
     }
+
+    [Fact]
+    public void TiledInfInput_Propagates()
+    {
+        // ORT 1.29 float: the 4x4 shape routes the 2x4-tiled FMA kernel
+        // (not the m=1 row kernel of the NaN pins). inf*0 poisons every
+        // off-diagonal touch; the finite rows stay exact.
+        var a = DenseTensor<float>.OfValues(new float[4, 4]
+        {
+            { float.PositiveInfinity, 0f, 0f, 0f },
+            { 0f, float.PositiveInfinity, 0f, 0f },
+            { 0f, 0f, 1f, 2f },
+            { 5f, 6f, 7f, 8f },
+        });
+        var b = DenseTensor<float>.OfValues(new float[4, 4]
+        {
+            { 1f, 0f, 0f, 0f },
+            { 0f, 1f, 0f, 0f },
+            { 0f, 0f, 1f, 0f },
+            { 0f, 0f, 0f, 1f },
+        });
+        var r = CPUExecutionProvider.MatMul(a, b, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs[0]).ToArray();
+        Assert.Equal(float.PositiveInfinity, y[0]);
+        Assert.Equal(float.PositiveInfinity, y[5]);
+        Assert.Equal(new float[] { 0f, 0f, 1f, 2f, 5f, 6f, 7f, 8f }, new float[] { y[8], y[9], y[10], y[11], y[12], y[13], y[14], y[15] });
+        foreach (var i in new int[] { 1, 2, 3, 4, 6, 7 })
+            Assert.True(float.IsNaN(y[i]));
+    }
+
+    [Fact]
+    public void PackedInfInput_Propagates()
+    {
+        // ORT 1.29 float: 65 rows route the panel-packed kernel plus the
+        // odd-row tail kernel on FMA hardware (other kernels elsewhere);
+        // expectations are path-independent. Rows 3 (packed body), 63
+        // (last packed row) and 64 (tail) carry the exceptional payloads;
+        // every other row is an exact identity passthrough.
+        var ad = new float[65, 4];
+        for (int i = 0; i < 65; i++) for (int j = 0; j < 4; j++) ad[i, j] = i + j;
+        ad[3, 0] = float.PositiveInfinity; ad[3, 1] = 0f; ad[3, 2] = 0f; ad[3, 3] = 0f;
+        ad[63, 0] = 0f; ad[63, 1] = 0f; ad[63, 2] = float.NaN; ad[63, 3] = 0f;
+        ad[64, 0] = 1f; ad[64, 1] = 2f; ad[64, 2] = float.PositiveInfinity; ad[64, 3] = 4f;
+        var bd = new float[4, 4];
+        for (int i = 0; i < 4; i++) bd[i, i] = 1f;
+        var r = CPUExecutionProvider.MatMul(DenseTensor<float>.OfValues(ad), DenseTensor<float>.OfValues(bd), null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs[0]).ToArray();
+        Assert.Equal(65 * 4, y.Length);
+        Assert.Equal(float.PositiveInfinity, y[3 * 4]);
+        foreach (var j in new int[] { 1, 2, 3 }) Assert.True(float.IsNaN(y[3 * 4 + j]));
+        foreach (var j in new int[] { 0, 1, 2, 3 }) Assert.True(float.IsNaN(y[63 * 4 + j]));
+        Assert.Equal(float.PositiveInfinity, y[64 * 4 + 2]);
+        foreach (var j in new int[] { 0, 1, 3 }) Assert.True(float.IsNaN(y[64 * 4 + j]));
+        for (int i = 0; i < 65; i++)
+        {
+            if (i == 3 || i == 63 || i == 64) continue;
+            for (int j = 0; j < 4; j++) Assert.Equal((float)(i + j), y[i * 4 + j]);
+        }
+    }
 }
