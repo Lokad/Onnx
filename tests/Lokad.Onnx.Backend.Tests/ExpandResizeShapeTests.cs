@@ -405,4 +405,102 @@ public class ExpandResizeShapeTests
         for (int i = 0; i < 8; i++) Assert.Equal(expected[i], yf[i], 4);
     }
 
+    [Fact]
+    public void ResizeNearestTieDouble_RoundsHalvesDown()
+    {
+        // No ORT CPU double Resize kernel exists (NOT_IMPLEMENTED), so no
+        // differential reference exists; hand-exact like the double Conv
+        // pins. The index math is precision-independent (exact halves),
+        // mirroring the probed float table: round_prefer_floor rounds
+        // halves down, round_prefer_ceil rounds them up.
+        var r = CPUExecutionProvider.Resize(
+            DenseTensor<double>.OfValues(new double[1, 1, 1, 2] { { { { 10.0, 20.0 } } } }),
+            null, Scales(1f, 1f, 1f, 4f), null, "nearest", "asymmetric", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new double[] { 10.0, 10.0, 10.0, 20.0, 20.0, 20.0, 20.0, 20.0 }, ((Tensor<double>)r.Outputs[0]).ToArray());
+        var rc = CPUExecutionProvider.Resize(
+            DenseTensor<double>.OfValues(new double[1, 1, 1, 2] { { { { 10.0, 20.0 } } } }),
+            null, Scales(1f, 1f, 1f, 4f), null, "nearest", "asymmetric", "round_prefer_ceil", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, rc.Status);
+        Assert.Equal(new double[] { 10.0, 10.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0 }, ((Tensor<double>)rc.Outputs[0]).ToArray());
+        var sizes5 = DenseTensor<int>.OfValues(new int[] { 1, 1, 1, 5 });
+        var ra = CPUExecutionProvider.Resize(
+            DenseTensor<double>.OfValues(new double[1, 1, 1, 3] { { { { 10.0, 20.0, 30.0 } } } }),
+            null, null, sizes5, "nearest", "align_corners", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, ra.Status);
+        Assert.Equal(new double[] { 10.0, 10.0, 20.0, 20.0, 30.0 }, ((Tensor<double>)ra.Outputs[0]).ToArray());
+        var rac = CPUExecutionProvider.Resize(
+            DenseTensor<double>.OfValues(new double[1, 1, 1, 3] { { { { 10.0, 20.0, 30.0 } } } }),
+            null, null, sizes5, "nearest", "align_corners", "round_prefer_ceil", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, rac.Status);
+        Assert.Equal(new double[] { 10.0, 20.0, 20.0, 30.0, 30.0 }, ((Tensor<double>)rac.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void ResizeLinearExceptionalDouble_MatchesExact()
+    {
+        // No ORT CPU double Resize kernel exists (NOT_IMPLEMENTED); exact
+        // IEEE like the probed float battery - precision plays no role in
+        // 0*inf = NaN or the degenerate-tap collapse, so the table carries
+        // over unchanged (interior blends, edge NaN, full-row cancel, NaN).
+        var rows = new (double[] x, double?[] expected)[]
+        {
+            (new double[] { double.PositiveInfinity, 1.0 },
+             new double?[] { double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity, 1.0, 1.0, 1.0, 1.0 }),
+            (new double[] { 1.0, double.PositiveInfinity },
+             new double?[] { null, double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity }),
+            (new double[] { double.PositiveInfinity, double.NegativeInfinity },
+             new double?[] { null, null, null, null, double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity }),
+            (new double[] { double.NaN, 1.0 },
+             new double?[] { null, null, null, null, 1.0, 1.0, 1.0, 1.0 }),
+        };
+        foreach (var (x, expected) in rows)
+        {
+            var r = CPUExecutionProvider.Resize(
+                DenseTensor<double>.OfValues(new double[1, 1, 1, 2] { { { { x[0], x[1] } } } }),
+                null, Scales(1f, 1f, 1f, 4f), null, "linear", "asymmetric", null, null, 0f, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = ((Tensor<double>)r.Outputs[0]).ToArray();
+            Assert.Equal(8, y.Length);
+            for (int i = 0; i < 8; i++)
+            {
+                if (expected[i] is null) Assert.True(double.IsNaN(y[i]));
+                else Assert.Equal(expected[i]!.Value, y[i]);
+            }
+        }
+    }
+
+    [Fact]
+    public void ResizeCubicExceptionalDouble_MatchesExact()
+    {
+        // No ORT CPU double Resize kernel exists (NOT_IMPLEMENTED). Any
+        // infinite or NaN input poisons the whole row, like the probed
+        // float battery (negative cubic weights mix infinities of both
+        // signs at every position). The finite anchor agrees with the
+        // float ORT values at precision 5.
+        var rows = new double[][]
+        {
+            new double[] { double.PositiveInfinity, 1.0 },
+            new double[] { 1.0, double.PositiveInfinity },
+            new double[] { double.PositiveInfinity, double.NegativeInfinity },
+            new double[] { double.NaN, 1.0 },
+        };
+        foreach (var x in rows)
+        {
+            var r = CPUExecutionProvider.Resize(
+                DenseTensor<double>.OfValues(new double[1, 1, 1, 2] { { { { x[0], x[1] } } } }),
+                null, Scales(1f, 1f, 1f, 4f), null, "cubic", "asymmetric", null, null, 0f, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = ((Tensor<double>)r.Outputs[0]).ToArray();
+            Assert.Equal(8, y.Length);
+            foreach (var v in y) Assert.True(double.IsNaN(v));
+        }
+        var rf = CPUExecutionProvider.Resize(
+            DenseTensor<double>.OfValues(new double[1, 1, 1, 2] { { { { 1.0, 2.0 } } } }),
+            null, Scales(1f, 1f, 1f, 4f), null, "cubic", "asymmetric", null, null, 0f, null);
+        Assert.Equal(OpStatus.Success, rf.Status);
+        var yf = ((Tensor<double>)rf.Outputs[0]).ToArray();
+        var expected = new double[] { 1.0, 1.2265625, 1.5, 1.7734375, 2.0, 2.10546875, 2.09375, 2.03515625 };
+        for (int i = 0; i < 8; i++) Assert.Equal(expected[i], yf[i], 5);
+    }
 }
