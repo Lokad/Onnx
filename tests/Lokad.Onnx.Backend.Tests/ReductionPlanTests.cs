@@ -315,4 +315,23 @@ public class ReductionPlanTests
         Assert.Equal(new int[] { 1, 3 }, y.Dimensions.ToArray());
         Assert.Equal(new double[] { 2.5, 3.5, 4.5 }, y.ToArray());
     }
+
+    [Fact]
+    public void DoubleMax_BasicsMatchOrt()
+    {
+        // ORT 1.29 (opset 18): row maxes [5, 6], kept column maxes
+        // [[4, 5, 6]], and axis -2 identical to axis 0.
+        var x = DenseTensor<double>.OfValues(new double[,] { { 1.0, 5.0, 3.0 }, { 4.0, 2.0, 6.0 } });
+        var rows = CPUExecutionProvider.ReduceMax(x, DenseTensor<long>.OfValues(new long[] { 1L }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, rows.Status);
+        Assert.Equal(new double[] { 5.0, 6.0 }, ((Tensor<double>)rows.Outputs[0]).ToArray());
+        var cols = CPUExecutionProvider.ReduceMax(x, DenseTensor<long>.OfValues(new long[] { 0L }), 1, 0, null);
+        Assert.Equal(OpStatus.Success, cols.Status);
+        var y = (Tensor<double>)cols.Outputs[0];
+        Assert.Equal(new int[] { 1, 3 }, y.Dimensions.ToArray());
+        Assert.Equal(new double[] { 4.0, 5.0, 6.0 }, y.ToArray());
+        var neg = CPUExecutionProvider.ReduceMax(x, DenseTensor<long>.OfValues(new long[] { -2L }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, neg.Status);
+        Assert.Equal(new double[] { 4.0, 5.0, 6.0 }, ((Tensor<double>)neg.Outputs[0]).ToArray());
+    }
 }
