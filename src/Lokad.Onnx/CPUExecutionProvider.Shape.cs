@@ -95,6 +95,10 @@ public partial class CPUExecutionProvider
             case TensorElementType.Int64: { var y = DenseTensor<long>.OfShape(dims); y.Fill(((Tensor<long>)value).GetValue(0)); return Success(op, y); }
             case TensorElementType.UInt32: { var y = DenseTensor<uint>.OfShape(dims); y.Fill(((Tensor<uint>)value).GetValue(0)); return Success(op, y); }
             case TensorElementType.UInt64: { var y = DenseTensor<ulong>.OfShape(dims); y.Fill(((Tensor<ulong>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.Int8: { var y = DenseTensor<sbyte>.OfShape(dims); y.Fill(((Tensor<sbyte>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.UInt8: { var y = DenseTensor<byte>.OfShape(dims); y.Fill(((Tensor<byte>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.Int16: { var y = DenseTensor<short>.OfShape(dims); y.Fill(((Tensor<short>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.UInt16: { var y = DenseTensor<ushort>.OfShape(dims); y.Fill(((Tensor<ushort>)value).GetValue(0)); return Success(op, y); }
             case TensorElementType.Bool: { var y = DenseTensor<bool>.OfShape(dims); y.Fill(((Tensor<bool>)value).GetValue(0)); return Success(op, y); }
             default: return InputTypeNotSupported(op, nameof(value), value);
         }

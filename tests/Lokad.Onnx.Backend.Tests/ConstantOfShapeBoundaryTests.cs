@@ -106,4 +106,23 @@ public class ConstantOfShapeBoundaryTests
         Assert.Equal(OpStatus.Success, rb.Status);
         Assert.Equal(new bool[] { true, true }, ((Tensor<bool>)rb.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void Sub32Values_FillConstant()
+    {
+        // ORT 1.29: [2] of int8 -5, uint8 200, int16 -30000 and [1, 2] of uint16 60000.
+        var sh2 = DenseTensor<long>.OfValues(new long[] { 2L });
+        var i8 = CPU.ConstantOfShape(sh2, DenseTensor<sbyte>.OfValues(new sbyte[] { -5 }), null);
+        Assert.Equal(OpStatus.Success, i8.Status);
+        Assert.Equal(new sbyte[] { -5, -5 }, ((Tensor<sbyte>)i8.Outputs[0]).ToArray());
+        var u8 = CPU.ConstantOfShape(sh2, DenseTensor<byte>.OfValues(new byte[] { 200 }), null);
+        Assert.Equal(OpStatus.Success, u8.Status);
+        Assert.Equal(new byte[] { 200, 200 }, ((Tensor<byte>)u8.Outputs[0]).ToArray());
+        var i16 = CPU.ConstantOfShape(sh2, DenseTensor<short>.OfValues(new short[] { -30000 }), null);
+        Assert.Equal(OpStatus.Success, i16.Status);
+        Assert.Equal(new short[] { -30000, -30000 }, ((Tensor<short>)i16.Outputs[0]).ToArray());
+        var u16 = CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 1L, 2L }), DenseTensor<ushort>.OfValues(new ushort[] { 60000 }), null);
+        Assert.Equal(OpStatus.Success, u16.Status);
+        Assert.Equal(new ushort[] { 60000, 60000 }, ((Tensor<ushort>)u16.Outputs[0]).ToArray());
+    }
 }
