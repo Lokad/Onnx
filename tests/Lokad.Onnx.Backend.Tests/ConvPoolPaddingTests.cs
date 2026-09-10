@@ -411,4 +411,48 @@ public class ConvPoolPaddingTests
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("UInt8", r.Message ?? "");
     }
+
+    [Fact]
+    public void MaxPoolDegenerate_MatchesOrt()
+    {
+        // ORT 1.29: a zero computed extent yields an empty output while a
+        // negative one fails; the floor formula uses truncating division
+        // ((2-3)/2+1 is 1, verified across explicit, padded, VALID and ceil
+        // geometries). Conv with an oversized kernel fails on both sides.
+        var x = F4(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });
+        var e0 = CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 3, 3 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, e0.Status);
+        Assert.Equal(new int[] { 1, 1, 0, 0 }, ((Tensor<float>)e0.Outputs![0]).Dimensions.ToArray());
+        var e1 = CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 3, 3 }, null, null, new int[] { 2, 2 }, null);
+        Assert.Equal(OpStatus.Success, e1.Status);
+        Assert.Equal(new float[] { 4f }, ((Tensor<float>)e1.Outputs![0]).ToArray());
+        var ep = CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 4, 4 }, new int[] { 1, 1, 1, 1 }, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, ep.Status);
+        Assert.Equal(new float[] { 4f }, ((Tensor<float>)ep.Outputs![0]).ToArray());
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 4, 4 }, null, null, new int[] { 1, 1 }, null));
+        var v0 = CPUExecutionProvider.MaxPool(x, "VALID", null, null, new int[] { 3, 3 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, v0.Status);
+        Assert.Equal(new int[] { 1, 1, 0, 0 }, ((Tensor<float>)v0.Outputs![0]).Dimensions.ToArray());
+        var v1 = CPUExecutionProvider.MaxPool(x, "VALID", null, null, new int[] { 3, 3 }, null, null, new int[] { 2, 2 }, null);
+        Assert.Equal(OpStatus.Success, v1.Status);
+        Assert.Equal(new float[] { 4f }, ((Tensor<float>)v1.Outputs![0]).ToArray());
+        var x1 = F4(new float[1, 1, 1, 1] { { { { 7f } } } });
+        var v2 = CPUExecutionProvider.MaxPool(x1, "VALID", null, null, new int[] { 4, 4 }, null, null, new int[] { 2, 2 }, null);
+        Assert.Equal(OpStatus.Success, v2.Status);
+        Assert.Equal(new int[] { 1, 1, 0, 0 }, ((Tensor<float>)v2.Outputs![0]).Dimensions.ToArray());
+        var c0 = CPUExecutionProvider.MaxPool(x, null, 1, null, new int[] { 3, 3 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, c0.Status);
+        Assert.Equal(new int[] { 1, 1, 0, 0 }, ((Tensor<float>)c0.Outputs![0]).Dimensions.ToArray());
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, 1, null, new int[] { 4, 4 }, null, null, new int[] { 1, 1 }, null));
+        var xd = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { 1.0, 2.0 }, { 3.0, 4.0 } } } });
+        var d0 = CPUExecutionProvider.MaxPool(xd, null, null, null, new int[] { 3, 3 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, d0.Status);
+        Assert.Equal(new int[] { 1, 1, 0, 0 }, ((Tensor<double>)d0.Outputs![0]).Dimensions.ToArray());
+        var w = F4(new float[1, 1, 3, 3] { { { { 1f, 1f, 1f }, { 1f, 1f, 1f }, { 1f, 1f, 1f } } } });
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w, null, null, null, 1, new int[] { 3, 3 }, null, null, null));
+        var zc = DenseTensor<float>.OfShape(1, 0, 2, 2);
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(zc, null, null, null, new int[] { 1, 1 }, null, null, new int[] { 1, 1 }, null));
+        var zw = DenseTensor<float>.OfShape(1, 1, 2, 0);
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(zw, "VALID", null, null, new int[] { 1, 1 }, null, null, new int[] { 1, 1 }, null));
+    }
 }

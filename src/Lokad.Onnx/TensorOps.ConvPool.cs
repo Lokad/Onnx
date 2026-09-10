@@ -341,14 +341,33 @@ where T : unmanaged
         {
             throw new ArgumentException("MaxPool dilations must be positive.", nameof(dilations));
         }
+        if (strides[0] <= 0 || strides[1] <= 0)
+        {
+            throw new ArgumentException("MaxPool strides must be positive.", nameof(strides));
+        }
         int N = input.Dims[0];
         int C = input.Dims[1];
         int H = input.Dims[2];
         int W = input.Dims[3];
+        // Only the batch dimension may be zero (verified against ORT 1.29);
+        // zero computed extents below still flow to empty outputs.
+        if (C == 0 || H == 0 || W == 0)
+        {
+            throw new ArgumentException("MaxPool input channels and spatial dims must be non-zero; only the batch dimension may be zero.", nameof(input));
+        }
         int kH = kernelshape[0];
         int kW = kernelshape[1];
         var info = GetConv2DOutputInfo(padtype, H, W, strides[0], strides[1], GetConv2DEffectiveFilterSize(kH, dilations[0]), GetConv2DEffectiveFilterSize(kW, dilations[1]), padvalue);
-        return (N, C, H, W, kH, kW, strides[0], strides[1], dilations[0], dilations[1], info.PadInfo, info.Shape[0], info.Shape[1]);
+        // VALID sizes use the same truncating division as the explicit path
+        // (verified against ORT 1.29; identical to the ceiling form except
+        // for degenerate geometries, where zero flows to empty outputs).
+        int validH = info.Shape[0], validW = info.Shape[1];
+        if (padtype == PadType.Valid)
+        {
+            validH = (H - GetConv2DEffectiveFilterSize(kH, dilations[0])) / strides[0] + 1;
+            validW = (W - GetConv2DEffectiveFilterSize(kW, dilations[1])) / strides[1] + 1;
+        }
+        return (N, C, H, W, kH, kW, strides[0], strides[1], dilations[0], dilations[1], info.PadInfo, validH, validW);
     }
 
     // Shared MaxPool preparation for explicit pads: validates the kernel,
@@ -394,16 +413,26 @@ where T : unmanaged
         {
             throw new ArgumentException("MaxPool dilations must be positive.", nameof(dilations));
         }
+        if (strides[0] <= 0 || strides[1] <= 0)
+        {
+            throw new ArgumentException("MaxPool strides must be positive.", nameof(strides));
+        }
         int N = input.Dims[0];
         int C = input.Dims[1];
         int H = input.Dims[2];
         int W = input.Dims[3];
+        // Only the batch dimension may be zero (verified against ORT 1.29);
+        // zero computed extents below still flow to empty outputs.
+        if (C == 0 || H == 0 || W == 0)
+        {
+            throw new ArgumentException("MaxPool input channels and spatial dims must be non-zero; only the batch dimension may be zero.", nameof(input));
+        }
         int kH = kernelshape[0];
         int kW = kernelshape[1];
         int effKH = GetConv2DEffectiveFilterSize(kH, dilations[0]);
         int effKW = GetConv2DEffectiveFilterSize(kW, dilations[1]);
         var outShape = MaxPoolOutputShape(H, W, effKH, effKW, strides[0], strides[1], pads[0] + pads[2], pads[1] + pads[3], ceilMode);
-        if (outShape[0] <= 0 || outShape[1] <= 0) throw new ArgumentException("MaxPool output spatial dims must be positive.");
+        if (outShape[0] < 0 || outShape[1] < 0) throw new ArgumentException("MaxPool output spatial dims must be non-negative.");
         var pad = new PadInfo { top = pads[0], left = pads[1], bottom = pads[2], right = pads[3], h = pads[0] + pads[2], w = pads[1] + pads[3] };
         return (N, C, H, W, kH, kW, strides[0], strides[1], dilations[0], dilations[1], pad, outShape[0], outShape[1]);
     }
@@ -426,12 +455,15 @@ where T : unmanaged
 
     static int[] MaxPoolOutputShape(int H, int W, int effKH, int effKW, int sH, int sW, int padH, int padW, bool ceilMode)
     {
+        // Truncating integer division, not floor: verified against ORT 1.29
+        // (degenerate (2-3)/2+1 is 1, not 0); identical to floor whenever the
+        // numerator is non-negative. Ceil mode keeps the ceiling spelling.
         int outH = ceilMode
             ? (int)Math.Ceiling((H + padH - effKH) / (float)sH) + 1
-            : (int)Math.Floor((H + padH - effKH) / (float)sH) + 1;
+            : (H + padH - effKH) / sH + 1;
         int outW = ceilMode
             ? (int)Math.Ceiling((W + padW - effKW) / (float)sW) + 1
-            : (int)Math.Floor((W + padW - effKW) / (float)sW) + 1;
+            : (W + padW - effKW) / sW + 1;
         return new int[] { outH, outW };
     }
 
