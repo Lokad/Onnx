@@ -57,6 +57,13 @@ def main():
          dtypes={"x": TensorProto.UINT32, "a": TensorProto.UINT32, "b": TensorProto.UINT32},
          feed_dtypes={"x": np.uint32})
 
+    # Zero-size leading chunk: ORT 1.29 yields an empty [1,0] head and the
+    # intact [1,4] tail (verified differentially tri-mode).
+    node = helper.make_node("Split", ["x", "s"], ["a", "b"], axis=1)
+    emit("split_empty_chunk", node, [("x", [1, 4])], [("a", [1, 0]), ("b", [1, 4])],
+         {"x": np.array([[1.0, 2.0, 3.0, 4.0]], dtype=np.float32)},
+         inits=[i64("s", [0, 4])])
+
 
 if __name__ == "__main__":
     main()
