@@ -150,6 +150,23 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void ModHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Mod kernel exists; the dead OpType.Mod enum member must stay
+        // honestly unsupported with a clean reason-naming failure, never a throw.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Mod));
+        var node = Nod(OpType.Mod, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 7f, -7f }));
+        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 3f, 3f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Mod", r.Message ?? "");
+    }
+
+    [Fact]
     public void RegistryEntries_AreImmutable()
     {
         // C08: no consumer may rewrite the capability registry after construction.
