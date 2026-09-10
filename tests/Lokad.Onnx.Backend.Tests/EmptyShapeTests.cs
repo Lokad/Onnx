@@ -100,5 +100,16 @@ public class EmptyShapeTests
         Assert.Equal(new int[] { 0, 3 }, yd.Dimensions.ToArray());
         Assert.Empty(yd.ToArray());
     }
+    [Fact]
+    public void SliceHugeBounds_ClampsToEmpty()
+    {
+        // ORT 1.29: [] (bounds clamp to the dimension). The saturating
+        // conversion already routes huge int64 bounds into clamping.
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f });
+        var r = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { 1099511627776L }), DenseTensor<long>.OfValues(new long[] { 1099511627779L }), DenseTensor<long>.OfValues(new long[] { 0L }), DenseTensor<long>.OfValues(new long[] { 1L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Empty(((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
 
 }

@@ -702,6 +702,11 @@ public partial class CPUExecutionProvider
         {
             if (axes.Rank != 1) return WrongInputShape(op, nameof(axes), axes, "The axes tensor must be a rank-1 vector tensor.");
             if (axes.ElementType != TensorElementType.Int32 && axes.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
+            if (axes.ElementType == TensorElementType.Int64)
+            {
+                // Saturate before narrowing: unchecked conversion turned 2^40 into 0.
+                axes = ToInt32Saturating(axes);
+            }
             ax = ToIntArray(axes, nameof(axes)).Select(a => a < 0 ? a + data.Rank : a).ToArray();
         }
         if (ax is null || ax.Length == 0)
@@ -758,6 +763,19 @@ public partial class CPUExecutionProvider
         (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
         if (repeats.ElementType != TensorElementType.Int32 && repeats.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(repeats), "The repeats tensor must be int32 or int64.", repeats);
+        if (repeats.ElementType == TensorElementType.Int64)
+        {
+            // Beyond int32 range, repeats must fail like ORT instead of
+            // wrapping ToIntArray narrowing (2^32+1 became 1); zero-size
+            // dimensions still tile to empty.
+            var rl = ((Tensor<long>)repeats).ToArray();
+            var dd = data.Dims.ToArray();
+            for (int i = 0; i < rl.Length && i < dd.Length; i++)
+            {
+                if (rl[i] < 0L) throw new ArgumentException("Repeats must be non-negative.", nameof(repeats));
+                if ((long)dd[i] * rl[i] > int.MaxValue) throw new ArgumentException("Repeats exceeds the maximum tensor dimension.", nameof(repeats));
+            }
+        }
         var reps = ToIntArray(repeats, nameof(repeats));
         switch (data.ElementType)
         {

@@ -16,7 +16,9 @@ public partial class CPUExecutionProvider
         (options ?? ExecutionOptions.Default).Validated();
         if (axes is not null && axes.ElementType == TensorElementType.Int64)
         {
-            axes = axes.Cast<int>();
+            // Saturate before narrowing: Cast<int> wrapped 2^40 into a valid
+            // axis; the plan range-check below then fails descriptively.
+            axes = ToInt32Saturating(axes);
         }
         if (axes is not null && axes.ElementType != TensorElementType.Int32 && axes.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
         var keepDims = _keep_dims.HasValue ? Convert.ToBoolean(_keep_dims.Value) : true;
@@ -37,7 +39,9 @@ public partial class CPUExecutionProvider
         if (axes is not null && axes.Rank != 1) return WrongInputShape(op, nameof(axes), 1, axes);
         if (axes is not null && axes.ElementType == TensorElementType.Int64)
         {
-            axes = axes.Cast<int>();
+            // Saturate before narrowing: Cast<int> wrapped 2^40 into a valid
+            // axis; the plan range-check below then fails descriptively.
+            axes = ToInt32Saturating(axes);
         }
         if (axes is not null && axes.ElementType != TensorElementType.Int32 && axes.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
         var keepDims = _keep_dims.HasValue ? Convert.ToBoolean(_keep_dims.Value) : true;
@@ -60,7 +64,9 @@ public partial class CPUExecutionProvider
         (options ?? ExecutionOptions.Default).Validated();
         if (axes is not null && axes.ElementType == TensorElementType.Int64)
         {
-            axes = axes.Cast<int>();
+            // Saturate before narrowing: Cast<int> wrapped 2^40 into a valid
+            // axis; the plan range-check below then fails descriptively.
+            axes = ToInt32Saturating(axes);
         }
         if (axes is not null && axes.ElementType != TensorElementType.Int32 && axes.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
         var keepDims = _keep_dims.HasValue ? Convert.ToBoolean(_keep_dims.Value) : true;

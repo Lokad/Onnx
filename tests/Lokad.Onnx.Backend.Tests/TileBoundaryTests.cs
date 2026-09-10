@@ -191,4 +191,25 @@ public class TileBoundaryTests
         var f = DenseTensor<float>.OfValues(new float[] { 2f });
         Assert.Equal(OpStatus.Failure, CPU.Tile(x, f, null).Status);
     }
+    [Fact]
+    public void HugeRepeats_FailsCleanly()
+    {
+        // ORT 1.29 fails the run (the output would exceed 4GB); unchecked
+        // narrowing turned 2^32+1 repeats into 1 (silently succeeding).
+        Assert.Throws<System.ArgumentException>(() => CPU.Tile(
+            DenseTensor<float>.OfValues(new float[] { 7f }),
+            DenseTensor<long>.OfValues(new long[] { 4294967297L }), null));
+    }
+
+    [Fact]
+    public void HugeRepeatsOnEmptyDim_YieldsEmpty()
+    {
+        // Zero-size dimensions still tile to empty: no elements are needed.
+        var r = CPU.Tile(
+            DenseTensor<float>.OfShape(0),
+            DenseTensor<long>.OfValues(new long[] { 1099511627776L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 0 }, ((Tensor<float>)r.Outputs![0]).Dimensions.ToArray());
+    }
+
 }

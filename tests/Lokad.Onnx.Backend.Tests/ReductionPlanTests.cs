@@ -407,4 +407,17 @@ public class ReductionPlanTests
         Assert.Equal(OpStatus.Success, neg.Status);
         Assert.Equal(new double[] { 4.0, 5.0, 6.0 }, ((Tensor<double>)neg.Outputs[0]).ToArray());
     }
+    [Fact]
+    public void HugeInt64Axes_ThrowDescriptively()
+    {
+        // ORT 1.29 fails the run; Cast<int> wrapping turned 2^40 into axis
+        // 0 (silently reducing). The saturating conversion routes huge axes
+        // into the plan range-check instead.
+        var x = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f });
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceSum(x, DenseTensor<long>.OfValues(new long[] { 1099511627776L }), 0, 0, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceMean(x, DenseTensor<long>.OfValues(new long[] { 1099511627776L }), 0, 0, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceMax(x, DenseTensor<long>.OfValues(new long[] { 1099511627776L }), 0, null, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceSum(x, DenseTensor<long>.OfValues(new long[] { -1099511627776L }), 0, 0, null));
+    }
+
 }

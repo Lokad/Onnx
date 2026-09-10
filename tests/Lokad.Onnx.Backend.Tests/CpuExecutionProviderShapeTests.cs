@@ -395,6 +395,28 @@ namespace Lokad.Onnx.Backend.Tests
         Assert.Equal(OpStatus.Failure, CPU.Unsqueeze(x, f, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Squeeze(x, f, null).Status);
     }
+    [Fact]
+    public void SqueezeHugeInt64Axes_FailsCleanly()
+    {
+        // ORT 1.29 fails the run for out-of-range axes; unchecked narrowing
+        // turned 2^40 into axis 0 (silently succeeding on size-1 dims).
+        var x = DenseTensor<float>.OfShape(1, 1, 3);
+        Assert.Equal(OpStatus.Failure, CPU.Squeeze(x, DenseTensor<long>.OfValues(new long[] { 1099511627776L }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Squeeze(x, DenseTensor<long>.OfValues(new long[] { 4294967297L }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Squeeze(x, DenseTensor<long>.OfValues(new long[] { -1099511627776L }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Squeeze(x, DenseTensor<int>.OfValues(new int[] { 5 }), null).Status);
+    }
+
+    [Fact]
+    public void UnsqueezeHugeInt64Axis_FailsCleanly()
+    {
+        // ORT 1.29 fails the run; the saturating conversion already routes
+        // huge axes into the kernel out-of-range throw below (the Reduction
+        // out-of-range test cites this same Unsqueeze precedent).
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(x, DenseTensor<long>.OfValues(new long[] { 1099511627776L }), null));
+    }
+
 
     }
 }
