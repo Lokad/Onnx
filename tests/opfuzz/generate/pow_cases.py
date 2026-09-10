@@ -45,7 +45,21 @@ def main():
          {"x": np.array([2, 10], dtype=np.int64),
           "y": np.array([62, 18], dtype=np.int64)},
          dtypes=dt64, feed_dtypes=fd64)
-
+    # Unit base absorbs NaN and infinite exponents: all ones.
+    node = helper.make_node("Pow", ["x", "y"], ["z"])
+    emit("pow_one_base", node, [("x", [5]), ("y", [5])], [("z", [5])],
+         {"x": np.array([1.0, 1.0, 1.0, 1.0, 1.0], dtype=np.float32),
+          "y": np.array([float("nan"), float("inf"), float("-inf"), 0.0, 5.0], dtype=np.float32)})
+    # Zero exponent absorbs every base, including infinities and NaN.
+    node = helper.make_node("Pow", ["x", "y"], ["z"])
+    emit("pow_zero_exp", node, [("x", [6]), ("y", [6])], [("z", [6])],
+         {"x": np.array([2.0, -3.0, float("inf"), 0.0, -0.0, float("nan")], dtype=np.float32),
+          "y": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)})
+    # Infinite bases with negative integer exponents collapse to signed zero.
+    node = helper.make_node("Pow", ["x", "y"], ["z"])
+    emit("pow_infbase_negexp", node, [("x", [4]), ("y", [4])], [("z", [4])],
+         {"x": np.array([float("inf"), float("-inf"), float("inf"), float("-inf")], dtype=np.float32),
+          "y": np.array([-2.0, -2.0, -3.0, -3.0], dtype=np.float32)})
 
 if __name__ == "__main__":
     main()
