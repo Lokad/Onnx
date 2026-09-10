@@ -41,6 +41,14 @@ def main():
                         dtype=np.float32)},
          dtypes={"x": TensorProto.FLOAT, "z": TensorProto.INT32},
          feed_dtypes={"x": np.float32})
+    # double to int32 edges mirror the unit-pinned i32edge values.
+    node = helper.make_node("Cast", ["x"], ["z"], to=TensorProto.INT32)
+    emit("cast_double_sat_int32", node, [("x", [6])], [("z", [6])],
+         {"x": np.array([float("nan"), float("inf"), 2147483648.0,
+                         2147483647.5, -2147483649.0, 42.9],
+                        dtype=np.float64)},
+         dtypes={"x": TensorProto.DOUBLE, "z": TensorProto.INT32},
+         feed_dtypes={"x": np.float64})
     # Fractions truncate toward zero.
     node = helper.make_node("Cast", ["x"], ["z"], to=TensorProto.INT64)
     emit("cast_double_trunc_int64", node, [("x", [5])], [("z", [5])],
