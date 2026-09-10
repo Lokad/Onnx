@@ -98,6 +98,17 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void DoubleOverflowAndNaN_SaturateSignedMin()
+    {
+        // ORT 1.29: out-of-range doubles and NaN saturate int64 to the
+        // minimum ([1e300, -1e300, nan, 1.9] -> [min, min, min, 1]),
+        // mirroring the float saturation pin.
+        var r = CPUExecutionProvider.Cast(DenseTensor<double>.OfValues(new double[] { 1e300, -1e300, double.NaN, 1.9 }), TensorElementType.Int64, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new long[] { -9223372036854775808L, -9223372036854775808L, -9223372036854775808L, 1L }, ((Tensor<long>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void UlongToDouble_RoundsAtPrecisionBoundary()
     {
         // ORT 1.29: ulongs beyond 2^53 round ([max, 2^53+1, 100] ->
