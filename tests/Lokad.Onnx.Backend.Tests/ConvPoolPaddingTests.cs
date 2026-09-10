@@ -198,4 +198,22 @@ public class ConvPoolPaddingTests
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("storage_order", r.Message ?? "");
     }
+
+    [Fact]
+    public void MaxPool_CeilDilation_PaddedCombos()
+    {
+        // ORT 1.29: combined ceil, dilation, and asymmetric-pad geometries.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 7, 7]);
+        for (int i = 0; i < 49; i++) x.Buffer.Span[i] = i;
+        var cd = CPUExecutionProvider.MaxPool(x, "NOTSET", 1, new int[] { 2, 2 }, new int[] { 3, 3 }, new int[] { 1, 1, 1, 1 }, null, new int[] { 2, 2 }, null);
+        Assert.Equal(OpStatus.Success, cd.Status);
+        Assert.Equal(new float[] { 24f, 26f, 26f, 38f, 40f, 40f, 38f, 40f, 40f }, ((Tensor<float>)cd.Outputs[0]).ToArray());
+        var ac = CPUExecutionProvider.MaxPool(x, "NOTSET", 1, null, new int[] { 3, 3 }, new int[] { 0, 1, 0, 0 }, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, ac.Status);
+        Assert.Equal(new int[] { 1, 1, 5, 6 }, ((Tensor<float>)ac.Outputs[0]).Dimensions.ToArray());
+        Assert.Equal(new float[] { 15f, 16f, 17f, 18f, 19f, 20f, 22f, 23f, 24f, 25f, 26f, 27f, 29f, 30f, 31f, 32f, 33f, 34f, 36f, 37f, 38f, 39f, 40f, 41f, 43f, 44f, 45f, 46f, 47f, 48f }, ((Tensor<float>)ac.Outputs[0]).ToArray());
+        var d3 = CPUExecutionProvider.MaxPool(x, "NOTSET", 0, new int[] { 3, 3 }, new int[] { 2, 2 }, new int[] { 0, 0, 0, 0 }, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, d3.Status);
+        Assert.Equal(new float[] { 24f, 25f, 26f, 27f, 31f, 32f, 33f, 34f, 38f, 39f, 40f, 41f, 45f, 46f, 47f, 48f }, ((Tensor<float>)d3.Outputs[0]).ToArray());
+    }
 }
