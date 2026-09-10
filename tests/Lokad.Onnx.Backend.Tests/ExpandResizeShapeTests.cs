@@ -525,4 +525,59 @@ public class ExpandResizeShapeTests
         var bad = CPUExecutionProvider.Resize(x, DenseTensor<long>.OfValues(new long[8]), Scales(1f, 1f, 1f, 4f), null, "nearest", "asymmetric", "round_prefer_floor", -0.75f, 0f, null);
         Assert.Equal(OpStatus.Failure, bad.Status);
     }
-}
+    [Fact]
+    public void ExpandHugeInt64Shape_FailsCleanly()
+    {
+        // ORT 1.29 fails the run with "invalid expand shape" for
+        // out-of-int32-range int64 extents; Convert.ToInt32 throws
+        // OverflowException instead of wrapping (2^32+1 became 1),
+        // and the node boundary turns the throw into a Failure.
+        var x = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        Assert.Throws<System.OverflowException>(() => CPUExecutionProvider.Expand(x, DenseTensor<long>.OfValues(new long[] { 1099511627776L }), null));
+        Assert.Throws<System.OverflowException>(() => CPUExecutionProvider.Expand(x, DenseTensor<long>.OfValues(new long[] { -1099511627776L }), null));
+        Assert.Throws<System.OverflowException>(() => CPUExecutionProvider.Expand(x, DenseTensor<long>.OfValues(new long[] { 4294967297L }), null));
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 13 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = x;
+        graph.Inputs["s"] = DenseTensor<long>.OfValues(new long[] { 1099511627776L });
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Expand, OpTypeName = OpType.Expand.ToString(), Domain = "",
+            OpsetVersion = 13, IsFused = false,
+            Inputs = new[] { "x", "s" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
+    public void ResizeHugeInt64Sizes_FailsCleanly()
+    {
+        // ORT 1.29 fails the run (an 8TB allocation is refused) for
+        // out-of-int32-range int64 sizes; the narrowing throws
+        // OverflowException before any allocation is attempted here,
+        // and the node boundary turns the throw into a Failure.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });
+        var huge = DenseTensor<long>.OfValues(new long[] { 1L, 1L, 1099511627776L, 2L });
+        Assert.Throws<System.OverflowException>(() => CPUExecutionProvider.Resize(x, null, null, huge, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null));
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 18 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = x;
+        graph.Inputs["s"] = huge;
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Resize, OpTypeName = OpType.Resize.ToString(), Domain = "",
+            OpsetVersion = 18, IsFused = false,
+            Inputs = new[] { "x", "", "", "s" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }}
