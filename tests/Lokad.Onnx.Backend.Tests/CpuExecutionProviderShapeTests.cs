@@ -37,6 +37,17 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void ReshapeInt32Shape_Rejected()
+        {
+            // ORT 1.29 refuses int32 shape at load (spec mandates int64);
+            // Lokad returns a descriptive Failure instead.
+            var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+            var s = DenseTensor<int>.OfValues(new int[] { 3, 2 });
+            var r = CPU.Reshape(x, s, null, null);
+            Assert.Equal(OpStatus.Failure, r.Status);
+        }
+
+        [Fact]
         public void GatherAcceptsHigherRankInt64Indices()
         {
             // C02 reproducer at the provider level: 1-D data, 2-D int64 indices.
