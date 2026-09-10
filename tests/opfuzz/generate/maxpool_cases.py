@@ -54,5 +54,16 @@ def main():
     emit("maxpool_dilation", node, [("x", [1, 1, 4, 4])], [("z", [1, 1, 2, 2])], {"x": x})
 
 
+    # SAME_UPPER with stride 2 over 6x6: out 3x3, total pad 1 goes to
+    # the end ([0,0,1,1]); SAME_LOWER mirrors it to the begin.
+    x = np.arange(36, dtype=np.float32).reshape(1, 1, 6, 6)
+    node = helper.make_node("MaxPool", ["x"], ["z"], kernel_shape=[3, 3],
+                            strides=[2, 2], auto_pad="SAME_UPPER")
+    emit("maxpool_same_upper", node, [("x", [1, 1, 6, 6])], [("z", [1, 1, 3, 3])], {"x": x})
+    node = helper.make_node("MaxPool", ["x"], ["z"], kernel_shape=[3, 3],
+                            strides=[2, 2], auto_pad="SAME_LOWER")
+    emit("maxpool_same_lower", node, [("x", [1, 1, 6, 6])], [("z", [1, 1, 3, 3])], {"x": x})
+
+
 if __name__ == "__main__":
     main()
