@@ -86,6 +86,43 @@ public class NodeAttributeMappingTests
     }
 
     [Fact]
+    public void Softmax_OmittedAxis_ResolvesByOpset()
+    {
+        // ORT 1.29 on arange(6) shaped [1,2,3]: opset 11 omits to axis 1,
+        // opset 13 omits to axis -1 (provider defaults pinned separately).
+        var g13 = CreateGraph(13);
+        g13.Inputs["x"] = DenseTensor<float>.OfValues(new float[1, 2, 3] { { { 0f, 1f, 2f }, { 3f, 4f, 5f } } });
+        var n13 = new Node
+        {
+            Name = "softmax",
+            Op = OpType.Softmax,
+            Inputs = new[] { "x" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>()
+        };
+        var r13 = n13.Execute(g13, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r13.Status);
+        var y13 = ((Tensor<float>)r13.Outputs[0]).ToArray();
+        Assert.Equal(0.09003f, y13[0], 5);
+        Assert.Equal(0.66524f, y13[2], 5);
+        var g11 = CreateGraph(11);
+        g11.Inputs["x"] = DenseTensor<float>.OfValues(new float[1, 2, 3] { { { 0f, 1f, 2f }, { 3f, 4f, 5f } } });
+        var n11 = new Node
+        {
+            Name = "softmax",
+            Op = OpType.Softmax,
+            Inputs = new[] { "x" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>()
+        };
+        var r11 = n11.Execute(g11, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r11.Status);
+        var y11 = ((Tensor<float>)r11.Outputs[0]).ToArray();
+        Assert.Equal(0.00427f, y11[0], 5);
+        Assert.Equal(0.63369f, y11[5], 5);
+    }
+
+    [Fact]
     public void Conv_UsesPadsStridesKernelShapeAttributes()
     {
         var graph = CreateGraph(13);
