@@ -162,4 +162,26 @@ public class SequenceValueTests
         Assert.Empty(((Tensor<float>)items[0]).ToArray());
         Assert.Equal(new float[] { 0f, 1f, 2f, 3f, 4f }, ((Tensor<float>)items[1]).ToArray());
     }
+
+    [Fact]
+    public void NegativeIndexAndAxis_MatchOrt()
+    {
+        // ORT 1.29: SequenceAt index -1 wraps to the last element (OOB
+        // still fails); SplitToSequence axis -1 normalizes like other axes.
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f });
+        var sp = CPUExecutionProvider.SplitToSequence(x, DenseTensor<int>.OfValues(new int[] { 2, 4 }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, sp.Status);
+        var seq = (TensorSequence)sp.Outputs[0];
+        var idx = DenseTensor<long>.OfShape();
+        idx.SetValue(0, -1L);
+        var r = CPUExecutionProvider.SequenceAt(seq, idx, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 2f, 3f, 4f, 5f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+        var spn = CPUExecutionProvider.SplitToSequence(x, DenseTensor<int>.OfValues(new int[] { 2, 4 }), -1, 0, null);
+        Assert.Equal(OpStatus.Success, spn.Status);
+        var seqn = (TensorSequence)spn.Outputs[0];
+        Assert.Equal(2, seqn.Items.Count);
+        Assert.Equal(new float[] { 0f, 1f }, ((Tensor<float>)seqn.Items[0]).ToArray());
+        Assert.Equal(new float[] { 2f, 3f, 4f, 5f }, ((Tensor<float>)seqn.Items[1]).ToArray());
+    }
 }
