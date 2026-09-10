@@ -386,6 +386,22 @@ public class CpuExecutionProviderOpTests
         Assert.Throws<System.ArgumentException>(() => CPU.Softmax(x, 5, null, null, 13));
         Assert.Throws<System.ArgumentException>(() => CPU.Softmax(x, -3, null, null, 13));
     }
+    [Fact]
+    public void Softmax_RejectsIntegerInputs()
+    {
+        // ORT 1.29 refuses integer and bool Softmax at load (all of
+        // int8/uint8/int16/uint16/int32/uint32/int64/uint64/bool probed
+        // refused at opset 13); the provider fails descriptively instead.
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(DenseTensor<sbyte>.OfValues(new sbyte[] { 1 }), -1, null, null, 13).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(DenseTensor<byte>.OfValues(new byte[] { 1 }), -1, null, null, 13).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(DenseTensor<short>.OfValues(new short[] { 1 }), -1, null, null, 13).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(DenseTensor<ushort>.OfValues(new ushort[] { 1 }), -1, null, null, 13).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(DenseTensor<int>.OfValues(new int[] { 1 }), -1, null, null, 13).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(DenseTensor<uint>.OfValues(new uint[] { 1 }), -1, null, null, 13).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(DenseTensor<long>.OfValues(new long[] { 1 }), -1, null, null, 13).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(DenseTensor<ulong>.OfValues(new ulong[] { 1 }), -1, null, null, 13).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(DenseTensor<bool>.OfValues(new bool[] { true }), -1, null, null, 13).Status);
+    }
 
     [Fact]
     public void UnaryMath_RejectUnsupportedSub32()
