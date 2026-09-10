@@ -25,57 +25,56 @@ CPU only, without registering a GPU provider. The package is the CPU build;
 GPU execution requires a different package/provider configuration.
 [ORT C# packages](https://onnxruntime.ai/docs/get-started/with-csharp.html)
 
-## Canonical single-CPU baseline — 2026-09-09
+## Canonical single-CPU baseline — 2026-09-11
 
 Measured under the contract above on LOKAD-0399 (i7-14700KF, 28 logical
-CPUs): verified affinity to logical CPU 0 (efficiency-class 1 SMT pair,
-core-group 0), one inference thread on each side, Lokad Auto with
+CPUs): verified affinity to logical CPU 4 (efficiency-class 1,
+core mask 0x30, core-group 0), one inference thread on each side, Lokad Auto with
 SIMD/intrinsics, ORT CPU intra-op 1/inter-op 1 sequential with
 ORT_ENABLE_ALL, High performance power scheme left unchanged. Three
 independent fresh processes, 3 warmups and 33 timed iterations per engine
 per case. Every case validated before and after timed reuse at the
 unchanged 1e-4 gate with inputs fingerprinted intact. Machine-readable
 artifacts with embedded raw samples live in
-`tests/Lokad.Onnx.Bench/baseline/summary-20260909.json`, regenerated from
+`tests/Lokad.Onnx.Bench/baseline/summary-20260911.json`, regenerated from
 the per-rep logs by `python eng/parse_baseline.py <rep logs>`.
-Confinement ratios were 0.97, 0.98 and 1.00 (single-threaded 2 s busy
-loop; the harness fails above 1.3 and warns below 0.8).
+Confinement ratios were 0.93, 0.91 and 0.91 (single-threaded 2 s busy
+loop; the harness fails above 1.3 and warns below 0.8): no warnings, but a
+stable sub-1.00 band from box background load, so the discard rule below
+still applies per session.
 
-Measured at `a008c05` with a clean tree after the P01/P02/P03/P04/P12/P13
-slices landed; no code differences. SDK
+Measured at `ceb70d4` with a clean tracked tree (untracked PLAN.md and
+.agent scratch only); no code differences. SDK
 `10.0.300-preview.0.26177.108`, runtime `.NET 10.0.12`, ORT C# `1.23.2.0`,
 Lokad assembly `0.2.0.0`. Asset bytes and hashes per case print in each
 rep header and match `ModelManifest.json`; inputs and outputs print there
 too (e5 token counts, 224x224 pixels, 4-token GPT-2 prefill).
 
-Two latency-moving slices landed after this baseline and are not reflected above:
-`732c44e` (P10 live-index reuse: e5-8tok −56.4%, e5-30tok −40.6%, gpt2-4tok −43.3%
-median-of-medians) and `7dff8a6` (P07 wide-axis dispatch: resnet50-224 −8.8%
-median-of-medians). Do not read the table as HEAD performance and do not gate a commit
-on it; a re-baseline needs the full three-rep protocol at a newer revision. Per-slice
-alternating-rep evidence lives in the cited commit messages.
+This refresh replaces the 2026-09-09 CPU-0 table after the P07 wide-axis
+dispatch and P10 live-index reuse slices landed; the old table and its
+summary survive in git history (`summary-20260909.json` stays in
+`tests/Lokad.Onnx.Bench/baseline/`).
 
 Cells are Lokad warmed public-Execute median versus ORT warmed-Run median
 per rep in milliseconds; the ratio spans the three within-rep median
-ratios. Absolute medians drifted across reps with machine settling
-(DINOv3 Lokad 188.1 to 165.9 ms), but both engines drift together, so
-within-rep ratios hold to 0.5x except e5-8tok (6.6-7.7x on small
-absolute medians): compare revisions within shared reps and alternate
-their order, never absolute medians across days. Per-rep best, p95, max, GC, and load/prepare/first-run
+ratios. Absolute medians still drift with machine settling (e5-8tok Lokad
+20.1 to 25.7 ms), but both engines drift together, so cross-rep ratio
+spreads hold to 0.2x on every case: compare revisions within shared reps
+and alternate their order, never absolute medians across days. Per-rep best, p95, max, GC, and load/prepare/first-run
 figures live in the summary JSON.
 
 | Case | rep1 L/ORT ms | rep2 L/ORT ms | rep3 L/ORT ms | Lokad / ORT |
 |---|---:|---:|---:|---|
-| e5-8tok | 40.4 / 5.8 | 44.0 / 5.7 | 37.5 / 5.7 | 6.6-7.7x |
-| e5-30tok | 58.3 / 13.2 | 58.3 / 12.7 | 64.7 / 14.0 | 4.4-4.6x |
-| dinov3-224 | 188.1 / 83.1 | 165.9 / 73.3 | 176.1 / 78.0 | 2.3-2.3x |
-| resnet50-224 | 262.5 / 55.7 | 245.8 / 53.4 | 260.2 / 58.7 | 4.4-4.7x |
-| gpt2-4tok | 120.1 / 26.1 | 105.8 / 25.1 | 100.5 / 24.3 | 4.1-4.6x |
+| e5-8tok | 20.2 / 5.8 | 25.7 / 7.5 | 20.1 / 5.7 | 3.4-3.5x |
+| e5-30tok | 38.1 / 12.6 | 34.9 / 12.0 | 34.4 / 12.1 | 2.9-3.0x |
+| dinov3-224 | 158.6 / 74.2 | 161.7 / 74.0 | 145.5 / 70.6 | 2.1-2.2x |
+| resnet50-224 | 216.6 / 60.9 | 209.1 / 54.5 | 191.9 / 52.3 | 3.6-3.8x |
+| gpt2-4tok | 76.6 / 28.3 | 64.3 / 23.0 | 65.5 / 24.8 | 2.6-2.8x |
 
 Reproduce from the repo root after building Release:
 
 ```powershell
-dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 dinov3 resnet50 gpt2 --mode auto --threads 1 --rows canonical --cpu 0 --iters 33
+dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 dinov3 resnet50 gpt2 --mode auto --threads 1 --rows canonical --cpu 4 --iters 33
 ```
 
 Run it three times in fresh processes and regenerate the table with the
