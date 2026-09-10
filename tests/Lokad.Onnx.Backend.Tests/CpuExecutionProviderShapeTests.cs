@@ -5,6 +5,28 @@ namespace Lokad.Onnx.Backend.Tests
     public class CpuExecutionProviderShapeTests
     {
         [Fact]
+        public void UnsqueezeEmptyAxes_IsIdentity()
+        {
+            // ORT 1.29: empty axes leave [2,3] unchanged.
+            var data = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+            var r = CPU.Unsqueeze(data, DenseTensor<long>.OfShape(0), null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            Assert.Equal(new int[] { 2, 3 }, ((Tensor<float>)r.Outputs![0]).Dimensions.ToArray());
+        }
+
+        [Fact]
+        public void SqueezeEmptyAxes_RemovesAllSingletons()
+        {
+            // ORT 1.29: empty axes squeeze [1,3,1] to [3].
+            var data = DenseTensor<float>.OfValues(new float[1, 3, 1] { { { 1f }, { 2f }, { 3f } } });
+            var r = CPU.Squeeze(data, DenseTensor<long>.OfShape(0), null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new int[] { 3 }, y.Dimensions.ToArray());
+            Assert.Equal(new float[] { 1f, 2f, 3f }, y.ToArray());
+        }
+
+        [Fact]
         public void CanGetShape()
         {
             var t = DenseTensor<float>.OfShape(3, 4, 5);
