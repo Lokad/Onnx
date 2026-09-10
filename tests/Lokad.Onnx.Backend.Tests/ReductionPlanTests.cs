@@ -285,6 +285,19 @@ public class ReductionPlanTests
     }
 
     [Fact]
+    public void NullKeepDims_KeepsDims()
+    {
+        // ORT 1.29: omitted keepdims defaults to 1; [[1,2]] summed over
+        // axis 0 stays [[1,2]] ([1,2]), not [1,2].
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } });
+        var r = CPUExecutionProvider.ReduceSum(x, DenseTensor<int>.OfValues(new int[] { 0 }), null, 0, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 1, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 2f }, y.ToArray());
+    }
+
+    [Fact]
     public void ReduceMax_AllNaN_YieldsNaN()
     {
         // ORT 1.29: [nan] (the skip-NaN kernel inits from the first
