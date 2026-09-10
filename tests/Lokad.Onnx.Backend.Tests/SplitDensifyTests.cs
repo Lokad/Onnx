@@ -306,4 +306,30 @@ public class SplitDensifyTests
         Assert.Equal(new Half[] { (Half)1f, (Half)2f }, ((Tensor<Half>)r.Outputs[0]).ToArray());
         Assert.Equal(new Half[] { (Half)3f, (Half)4f }, ((Tensor<Half>)r.Outputs[1]).ToArray());
     }
+
+    [Fact]
+    public void NumOutputsBeyondDim_FailsCleanly()
+    {
+        // ORT 1.29 run-fails num_outputs=5 over a dim of 2 ("Invalid
+        // num_outputs value"); the ceil distribution cannot cover the
+        // axis here, so the sum check fails descriptively instead.
+        var x = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        var r = CPU.Split(x, null, 0, null, 5, null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 18 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = x;
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Split, OpTypeName = OpType.Split.ToString(), Domain = "",
+            OpsetVersion = 18, IsFused = false,
+            Inputs = new[] { "x" }, Outputs = new[] { "a", "b", "c", "d", "e" },
+            Attributes = new Dictionary<string, object> { ["num_outputs"] = 5L },
+        };
+        var rn = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, rn.Status);
+    }
 }
