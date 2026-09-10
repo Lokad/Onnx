@@ -271,4 +271,18 @@ public class LayerNormalizationStashTests
         Assert.Equal(expected.Length, y.Length);
         for (int i = 0; i < expected.Length; i++) Assert.Equal(expected[i], y[i], 6);
     }
+
+    [Fact]
+    public void DoubleAxisZero_MatchesOrt()
+    {
+        // ORT 1.29: axis 0 normalizes the whole [[1,2],[3,4]] block at once.
+        var x = DenseTensor<double>.OfValues(new double[,] { { 1.0, 2.0 }, { 3.0, 4.0 } });
+        var scale = DenseTensor<double>.OfValues(new double[,] { { 1.0, 1.0 }, { 1.0, 1.0 } });
+        var r = CPUExecutionProvider.LayerNormalization(x, scale, null, 0, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<double>)r.Outputs[0]).ToArray();
+        double[] expected = new double[] { -1.34163542, -0.44721181, 0.44721181, 1.34163542 };
+        Assert.Equal(expected.Length, y.Length);
+        for (int i = 0; i < expected.Length; i++) Assert.Equal(expected[i], y[i], 6);
+    }
 }
