@@ -63,6 +63,20 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void SoftmaxLargeFinite_StaysStable()
+    {
+        // ORT 1.29: max-subtraction makes [1000, 1001] identical to [0, 1];
+        // without it exp overflows to inf/inf = NaN. The only pin covering
+        // the stabilization path.
+        var f = RunSoftmax(new float[,] { { 1000f, 1001f } }).ToArray();
+        Assert.Equal(0.26894143f, f[0], 5);
+        Assert.Equal(0.73105860f, f[1], 5);
+        var d = RunSoftmaxDouble(new double[,] { { 1000.0, 1001.0 } }).ToArray();
+        Assert.Equal(0.26894142137, d[0], 12);
+        Assert.Equal(0.73105857863, d[1], 12);
+    }
+
+    [Fact]
     public void SqrtNegative_YieldsNaN()
     {
         var result = CPU.Sqrt(DenseTensor<float>.OfValues(new float[] { -1f, 0f }), null);
