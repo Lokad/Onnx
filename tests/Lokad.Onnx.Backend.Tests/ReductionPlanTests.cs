@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Lokad.Onnx.Backend.Tests;
 
 public class ReductionPlanTests
@@ -16,6 +18,30 @@ public class ReductionPlanTests
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(x, a, 0, 0, null).Status);
     }
 
+    [Fact]
+    public void OutOfRangeAxis_Throws()
+    {
+        // ORT 1.29 fails the run (axis 5 outside rank 2); the provider
+        // surfaces the same refusal as a descriptive ArgumentException,
+        // matching the Unsqueeze out-of-range precedent. Node execution
+        // converts it to OpStatus.Failure, as for LayerNormalization.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var axes = DenseTensor<long>.OfValues(new long[] { 5L });
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceMean(x, axes, 0, 0, null));
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 18 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = x;
+        graph.Inputs["axes"] = axes;
+        var r = new Node
+        {
+            Name = "r", Op = OpType.ReduceMean, Inputs = new[] { "x", "axes" }, Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>(),
+        }.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
     [Fact]
     public void IntSum_OverflowsSaturate()
     {
