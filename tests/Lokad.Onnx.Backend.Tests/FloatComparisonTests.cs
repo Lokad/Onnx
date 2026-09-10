@@ -147,4 +147,23 @@ public class FloatComparisonTests
         Assert.Equal(1f, Tensor<float>.ReduceMax(DenseTensor<float>.OfValues(new float[] { 1f, float.NaN }), null, null, null).ToArray()[0]);
         Assert.Equal(float.NegativeInfinity, Tensor<float>.ReduceMax(DenseTensor<float>.OfValues(new float[0]), null, null, null).ToArray()[0]);
     }
+
+    [Fact]
+    public void Unsigned_EqualLessMatchOrt()
+    {
+        // ORT 1.29: uint32/uint64 are schema-valid comparison types. The
+        // max-vs-small Less case pins unsigned (not signed) ordering.
+        var eq32 = CPUExecutionProvider.Equal(DenseTensor<uint>.OfValues(new uint[] { 1u, 2u, 4294967295u }), DenseTensor<uint>.OfValues(new uint[] { 1u, 0u, 4294967295u }), null);
+        Assert.Equal(OpStatus.Success, eq32.Status);
+        Assert.Equal(new bool[] { true, false, true }, ((Tensor<bool>)eq32.Outputs[0]).ToArray());
+        var lt32 = CPUExecutionProvider.Less(DenseTensor<uint>.OfValues(new uint[] { 1u, 2u, 4294967295u }), DenseTensor<uint>.OfValues(new uint[] { 1u, 3u, 2u }), null);
+        Assert.Equal(OpStatus.Success, lt32.Status);
+        Assert.Equal(new bool[] { false, true, false }, ((Tensor<bool>)lt32.Outputs[0]).ToArray());
+        var eq64 = CPUExecutionProvider.Equal(DenseTensor<ulong>.OfValues(new ulong[] { 5ul, 6ul }), DenseTensor<ulong>.OfValues(new ulong[] { 5ul, 7ul }), null);
+        Assert.Equal(OpStatus.Success, eq64.Status);
+        Assert.Equal(new bool[] { true, false }, ((Tensor<bool>)eq64.Outputs[0]).ToArray());
+        var lt64 = CPUExecutionProvider.Less(DenseTensor<ulong>.OfValues(new ulong[] { 5ul, 6ul }), DenseTensor<ulong>.OfValues(new ulong[] { 6ul, 6ul }), null);
+        Assert.Equal(OpStatus.Success, lt64.Status);
+        Assert.Equal(new bool[] { true, false }, ((Tensor<bool>)lt64.Outputs[0]).ToArray());
+    }
 }
