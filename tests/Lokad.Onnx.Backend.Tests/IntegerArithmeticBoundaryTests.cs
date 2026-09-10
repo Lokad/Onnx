@@ -107,6 +107,13 @@ public class IntegerArithmeticBoundaryTests
         return s;
     }
 
+    static DenseTensor<long> Scalar64(long value)
+    {
+        var s = DenseTensor<long>.OfShape();
+        s.SetValue(0, value);
+        return s;
+    }
+
     [Fact]
     public void ScalarNegAbsMin_WrapsToMin()
     {
@@ -117,6 +124,13 @@ public class IntegerArithmeticBoundaryTests
         var abs = CPU.Abs(Scalar32(-2147483648), null);
         Assert.Equal(OpStatus.Success, abs.Status);
         Assert.Equal(new int[] { -2147483648 }, ((Tensor<int>)abs.Outputs![0]).ToArray());
+        // ORT 1.29 rank-0: Neg(int64_min)=int64_min, Abs(int64_min)=int64_min.
+        var neg64 = CPU.Neg(Scalar64(-9223372036854775808L), null);
+        Assert.Equal(OpStatus.Success, neg64.Status);
+        Assert.Equal(new long[] { -9223372036854775808L }, ((Tensor<long>)neg64.Outputs![0]).ToArray());
+        var abs64 = CPU.Abs(Scalar64(-9223372036854775808L), null);
+        Assert.Equal(OpStatus.Success, abs64.Status);
+        Assert.Equal(new long[] { -9223372036854775808L }, ((Tensor<long>)abs64.Outputs![0]).ToArray());
     }
 
     [Fact]
