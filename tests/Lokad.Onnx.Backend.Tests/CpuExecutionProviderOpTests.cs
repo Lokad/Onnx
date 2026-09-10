@@ -319,6 +319,26 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Failure, CPU.Equal(f, i, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Less(f, i, null).Status);
     }
+
+    [Fact]
+    public void UnaryMath_RejectUnsupportedDtypes()
+    {
+        // ORT constrains these math kernels to float types at load (Cos-int
+        // and Neg-bool already pin theirs); every other unsupported dtype
+        // must fail descriptively instead of reaching a kernel cast.
+        var i = DenseTensor<int>.OfValues(new int[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.Sqrt(i, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(i, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Tanh(i, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Erf(i, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sin(i, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Gelu(i, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(i, null, null, null, 13).Status);
+        var u = DenseTensor<uint>.OfValues(new uint[] { 1u });
+        Assert.Equal(OpStatus.Failure, CPU.Neg(u, null).Status);
+        var b = DenseTensor<bool>.OfValues(new bool[] { true });
+        Assert.Equal(OpStatus.Failure, CPU.Abs(b, null).Status);
+    }
 }
 
 
