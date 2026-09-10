@@ -157,4 +157,17 @@ public class GemmTransposeBiasTests
         Assert.Equal(OpStatus.Success, col.Status);
         Assert.Equal(new float[] { 29f, 32f, 63f, 70f }, ((Tensor<float>)col.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void MixedDtypes_RejectedCleanly()
+    {
+        // ORT refuses mixed-dtype Gemm at load (MatMul A/B already pins
+        // its guard); Gemm A/B and C must fail descriptively instead.
+        var a = F(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var bInt = DenseTensor<int>.OfValues(new int[,] { { 1, 0 }, { 0, 1 } });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(a, bInt, null, 1f, 0f, null, 0, 0).Status);
+        var b = F(new float[,] { { 5f, 6f }, { 7f, 8f } });
+        var cInt = DenseTensor<int>.OfValues(new int[] { 1, 2 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(a, b, cInt, 1f, 1f, null, 0, 0).Status);
+    }
 }

@@ -98,4 +98,15 @@ public class ConvDirectTests
         Assert.Equal(new int[] { 1, 2, 3, 3 }, y.Dimensions.ToArray());
         Assert.Equal(new float[18], y.ToArray());
     }
+
+    [Fact]
+    public void MismatchedWeightsDtype_RejectedCleanly()
+    {
+        // Mismatched bias already pins its guard; ORT refuses mismatched
+        // weights at load too, so the provider must fail descriptively.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });
+        var w = DenseTensor<int>.OfValues(new int[1, 1, 1, 1] { { { { 1 } } } });
+        var r = CPUExecutionProvider.Conv(x, w, null, null, null, null, null, null, null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
 }
