@@ -738,6 +738,51 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void Float16Unary_RefusedCleanly()
+    {
+        // Parity gap, not parity: ORT 1.29 ACCEPTS float16 Sqrt, Relu,
+        // Tanh, Erf and Pow (all probed) but refuses float16 Gelu at
+        // schema level; no half unary kernels exist here, so every form
+        // fails descriptively. Owner scope decision, like the compute row.
+        var h = DenseTensor<Half>.OfValues(new Half[] { (Half)0.5f, (Half)1.5f });
+        Assert.Equal(OpStatus.Failure, CPU.Pow(h, h, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sqrt(h, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(h, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Tanh(h, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Erf(h, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Gelu(h, null, null, null).Status);
+    }
+
+    [Fact]
+    public void BFloat16Unary_RefusedCleanly()
+    {
+        // ORT 1.29 refuses every one of these on bfloat16 (Sqrt, Relu,
+        // Tanh, Erf NOT_IMPLEMENTED; Gelu and Pow schema-refused; all
+        // probed), matching the provider refusal below.
+        var b = DenseTensor<BFloat16>.OfValues(new BFloat16[] { (BFloat16)0.5f, (BFloat16)1.5f });
+        Assert.Equal(OpStatus.Failure, CPU.Pow(b, b, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sqrt(b, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(b, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Tanh(b, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Erf(b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Gelu(b, null, null, null).Status);
+    }
+
+    [Fact]
+    public void ComplexUnary_RefusedCleanly()
+    {
+        // ORT rejects complex64 unary at schema level (Pow, Sqrt, Relu,
+        // Tanh, Erf, Gelu all probed refused); the provider has no arms.
+        var c = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[] { new System.Numerics.Complex(0.5, 0), new System.Numerics.Complex(1.5, 1) });
+        Assert.Equal(OpStatus.Failure, CPU.Pow(c, c, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sqrt(c, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(c, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Tanh(c, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Erf(c, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Gelu(c, null, null, null).Status);
+    }
+
+    [Fact]
     public void UnsupportedDtypePairs_FailCleanlyOnBothSides()
     {
         // Every pair below was probed refused on ORT 1.29 (load or run) and
