@@ -309,6 +309,22 @@ public class LayerNormalizationStashTests
     }
 
     [Fact]
+    public void NullAxis_MatchesMinusOne()
+    {
+        // ORT 1.29: omitted axis normalizes the last axis, row-wise
+        // [-1.2247356, 0, 1.2247356] twice.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var s = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f });
+        var r = CPUExecutionProvider.LayerNormalization(x, s, null, null, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs[0]).ToArray();
+        Assert.Equal(-1.2247356f, y[0], 5);
+        Assert.Equal(0f, y[1], 5);
+        Assert.Equal(1.2247356f, y[2], 5);
+        Assert.Equal(-1.2247356f, y[3], 5);
+    }
+
+    [Fact]
     public void NaNRow_YieldsNaN()
     {
         // ORT 1.29: a NaN element poisons mean and variance, so the whole
