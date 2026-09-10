@@ -310,6 +310,29 @@ public class ReductionPlanTests
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(i64, null, null, null, null).Status);
         var i8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(i8, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(i8, null, null, null, null).Status);
+        // (int8 ReduceMax computes since the sub-32 Max slice; uint8 too.)
+        // uint32/uint64/uint16/int16/uint8 Sum/Mean/Max are refused at load
+        // on both sides too (verified by battery).
+        var u32 = DenseTensor<uint>.OfValues(new uint[] { 1u, 2u });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(u32, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(u32, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(u32, null, null, null, null).Status);
+        var u64 = DenseTensor<ulong>.OfValues(new ulong[] { 1ul, 2ul });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(u64, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(u64, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(u64, null, null, null, null).Status);
+        var u16 = DenseTensor<ushort>.OfValues(new ushort[] { 1, 2 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(u16, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(u16, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(u16, null, null, null, null).Status);
+        var i16 = DenseTensor<short>.OfValues(new short[] { 1, 2 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(i16, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(i16, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(i16, null, null, null, null).Status);
+        var u8 = DenseTensor<byte>.OfValues(new byte[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(u8, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(u8, null, null, null, null).Status);
     }
 
     [Fact]
