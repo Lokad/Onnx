@@ -285,6 +285,23 @@ public class ReductionPlanTests
     }
 
     [Fact]
+    public void OutOfScopeDtypes_RejectedCleanly()
+    {
+        // int8 ReduceSum is refused at load on both sides (agreement),
+        // while int64 Sum/Mean/Max and int32 Max compute in ORT
+        // (documented gaps: int64/uint Reduce kernels are out of scope);
+        // all fail descriptively here instead of reaching a kernel cast.
+        var i64 = DenseTensor<long>.OfValues(new long[] { 1L, 2L });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(i64, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(i64, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(i64, null, null, null, null).Status);
+        var i32 = DenseTensor<int>.OfValues(new int[] { 1, 2 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(i32, null, null, null, null).Status);
+        var i8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(i8, null, null, null, null).Status);
+    }
+
+    [Fact]
     public void NullKeepDims_KeepsDims()
     {
         // ORT 1.29: omitted keepdims defaults to 1; [[1,2]] summed over
