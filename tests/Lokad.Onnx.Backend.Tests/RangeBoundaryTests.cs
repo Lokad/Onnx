@@ -196,4 +196,33 @@ public class RangeBoundaryTests
     }
 
 
+
+    [Fact]
+    public void HugeCount_FailsCleanly()
+    {
+        // ORT 1.29 fails huge-count ranges at allocation (8TB refused);
+        // counts beyond int.MaxValue are unrepresentable in int32 dims, so
+        // they must throw instead of collapsing to empty (the float kernel
+        // already guards this way).
+        Assert.Throws<System.ArgumentException>(() => Tensor<double>.Range(0.0, 1099511627776.0, 1.0));
+        Assert.Throws<System.ArgumentException>(() => Tensor<long>.Range(0L, 1099511627776L, 1L));
+        Assert.Throws<System.ArgumentException>(() => Tensor<int>.Range(-2147483648, 2147483647, 1));
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 13 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = ScalarD(0.0);
+        graph.Inputs["y"] = ScalarD(1099511627776.0);
+        graph.Inputs["d"] = ScalarD(1.0);
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Range, OpTypeName = OpType.Range.ToString(), Domain = "",
+            OpsetVersion = 13, IsFused = false,
+            Inputs = new[] { "x", "y", "d" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
 }

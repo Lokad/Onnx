@@ -67,7 +67,13 @@ where T : unmanaged
     public static Tensor<long> Range(long start, long limit, long delta)
     {
         if (delta == 0L) throw new ArgumentException(nameof(delta));
-        int count = Math.Max((int)Math.Ceiling(((double)limit - start) / delta), 0);
+        // Counts beyond int.MaxValue are unrepresentable in int32 dims: fail
+        // here instead of overflowing the narrowing cast below (which throws
+        // OutOfMemoryException on huge allocates, a fatal error the node
+        // boundary cannot convert).
+        double longQuotient = ((double)limit - start) / delta;
+        if (longQuotient > int.MaxValue) throw new ArgumentException("Range count exceeds the maximum tensor length.", nameof(limit));
+        int count = Math.Max((int)Math.Ceiling(longQuotient), 0);
         var output = new DenseTensor<long>(count);
         var span = output.Buffer.Span;
         for (int i = 0; i < count; i++) span[i] = start + i * delta;
@@ -80,7 +86,10 @@ where T : unmanaged
     public static Tensor<int> Range(int start, int limit, int delta)
     {
         if (delta == 0) throw new ArgumentException(nameof(delta));
-        int count = Math.Max((int)Math.Ceiling(((double)limit - start) / delta), 0);
+        // Same unrepresentable-count guard as the long kernel above.
+        double intQuotient = ((double)limit - start) / delta;
+        if (intQuotient > int.MaxValue) throw new ArgumentException("Range count exceeds the maximum tensor length.", nameof(limit));
+        int count = Math.Max((int)Math.Ceiling(intQuotient), 0);
         var output = new DenseTensor<int>(count);
         var span = output.Buffer.Span;
         for (int i = 0; i < count; i++) span[i] = start + i * delta;
