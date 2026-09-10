@@ -325,4 +325,54 @@ public class MatMulKernelAgreementTests
         Assert.Equal(1.0, y[2]);
         Assert.Equal(1.0, y[3]);
     }
+
+    [Fact]
+    public void InfInput_Propagates()
+    {
+        // ORT 1.29 float: inf*0 is NaN and opposing infinities cancel to
+        // NaN inside the dot product; same-signed infinities survive.
+        // Guards the blocked/SIMD kernels against zero-skipping rewrites
+        // (which would turn inf*0 into 0) and reassociation.
+        var rows = new (float[] a, int[] adims, float[] b, int[] bdims, float? expected)[]
+        {
+            (new float[] { 1f, 2f }, new[] { 1, 2 }, new float[] { float.PositiveInfinity, 1f }, new[] { 2, 1 }, float.PositiveInfinity),
+            (new float[] { float.PositiveInfinity }, new[] { 1, 1 }, new float[] { 0f }, new[] { 1, 1 }, null),
+            (new float[] { float.PositiveInfinity }, new[] { 1, 1 }, new float[] { 2f }, new[] { 1, 1 }, float.PositiveInfinity),
+            (new float[] { float.PositiveInfinity, float.NegativeInfinity }, new[] { 1, 2 }, new float[] { 1f, 1f }, new[] { 2, 1 }, null),
+            (new float[] { float.NegativeInfinity }, new[] { 1, 1 }, new float[] { -3f }, new[] { 1, 1 }, float.PositiveInfinity),
+            (new float[] { 1f, float.NaN }, new[] { 1, 2 }, new float[] { 1f, 1f }, new[] { 2, 1 }, null),
+        };
+        foreach (var (a, adims, b, bdims, expected) in rows)
+        {
+            var r = CPUExecutionProvider.MatMul(new DenseTensor<float>(a, adims), new DenseTensor<float>(b, bdims), null, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            float y = ((Tensor<float>)r.Outputs[0]).ToArray()[0];
+            if (expected is null) Assert.True(float.IsNaN(y));
+            else Assert.Equal(expected.Value, y);
+        }
+    }
+
+    [Fact]
+    public void InfInputDouble_Propagates()
+    {
+        // ORT 1.29 double: same exceptional table as the float guard
+        // above through the double kernel.
+        var rows = new (double[] a, int[] adims, double[] b, int[] bdims, double? expected)[]
+        {
+            (new double[] { 1.0, 2.0 }, new[] { 1, 2 }, new double[] { double.PositiveInfinity, 1.0 }, new[] { 2, 1 }, double.PositiveInfinity),
+            (new double[] { double.PositiveInfinity }, new[] { 1, 1 }, new double[] { 0.0 }, new[] { 1, 1 }, null),
+            (new double[] { double.PositiveInfinity }, new[] { 1, 1 }, new double[] { 2.0 }, new[] { 1, 1 }, double.PositiveInfinity),
+            (new double[] { double.PositiveInfinity, double.NegativeInfinity }, new[] { 1, 2 }, new double[] { 1.0, 1.0 }, new[] { 2, 1 }, null),
+            (new double[] { double.NegativeInfinity }, new[] { 1, 1 }, new double[] { -3.0 }, new[] { 1, 1 }, double.PositiveInfinity),
+            (new double[] { 1.0, double.NaN }, new[] { 1, 2 }, new double[] { 1.0, 1.0 }, new[] { 2, 1 }, null),
+        };
+        foreach (var (a, adims, b, bdims, expected) in rows)
+        {
+            var r = CPUExecutionProvider.MatMul(new DenseTensor<double>(a, adims), new DenseTensor<double>(b, bdims), null, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            double y = ((Tensor<double>)r.Outputs[0]).ToArray()[0];
+            if (expected is null) Assert.True(double.IsNaN(y));
+            else Assert.Equal(expected.Value, y);
+        }
+    }
 }
