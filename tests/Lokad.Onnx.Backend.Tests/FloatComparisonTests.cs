@@ -166,4 +166,40 @@ public class FloatComparisonTests
         Assert.Equal(OpStatus.Success, lt64.Status);
         Assert.Equal(new bool[] { true, false }, ((Tensor<bool>)lt64.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void Sub32_EqualMatchOrt()
+    {
+        // ORT 1.29 across int8/uint8/int16/uint16.
+        var eq8 = CPUExecutionProvider.Equal(DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 2, -3 }), DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 0, -3 }), null);
+        Assert.Equal(OpStatus.Success, eq8.Status);
+        Assert.Equal(new bool[] { true, false, true }, ((Tensor<bool>)eq8.Outputs[0]).ToArray());
+        var equ8 = CPUExecutionProvider.Equal(DenseTensor<byte>.OfValues(new byte[] { 1, 2, 200 }), DenseTensor<byte>.OfValues(new byte[] { 1, 0, 200 }), null);
+        Assert.Equal(OpStatus.Success, equ8.Status);
+        Assert.Equal(new bool[] { true, false, true }, ((Tensor<bool>)equ8.Outputs[0]).ToArray());
+        var eq16 = CPUExecutionProvider.Equal(DenseTensor<short>.OfValues(new short[] { 1, -2, 30000 }), DenseTensor<short>.OfValues(new short[] { 1, 0, 30000 }), null);
+        Assert.Equal(OpStatus.Success, eq16.Status);
+        Assert.Equal(new bool[] { true, false, true }, ((Tensor<bool>)eq16.Outputs[0]).ToArray());
+        var equ16 = CPUExecutionProvider.Equal(DenseTensor<ushort>.OfValues(new ushort[] { 1, 2, 60000 }), DenseTensor<ushort>.OfValues(new ushort[] { 1, 0, 60000 }), null);
+        Assert.Equal(OpStatus.Success, equ16.Status);
+        Assert.Equal(new bool[] { true, false, true }, ((Tensor<bool>)equ16.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void Sub32_LessMatchOrt()
+    {
+        // ORT 1.29; the uint16 case pins unsigned ordering (60000 < 2 is false).
+        var lt8 = CPUExecutionProvider.Less(DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 2, -3 }), DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 0, -3 }), null);
+        Assert.Equal(OpStatus.Success, lt8.Status);
+        Assert.Equal(new bool[] { false, false, false }, ((Tensor<bool>)lt8.Outputs[0]).ToArray());
+        var ltu8 = CPUExecutionProvider.Less(DenseTensor<byte>.OfValues(new byte[] { 1, 2, 200 }), DenseTensor<byte>.OfValues(new byte[] { 1, 3, 2 }), null);
+        Assert.Equal(OpStatus.Success, ltu8.Status);
+        Assert.Equal(new bool[] { false, true, false }, ((Tensor<bool>)ltu8.Outputs[0]).ToArray());
+        var lt16 = CPUExecutionProvider.Less(DenseTensor<short>.OfValues(new short[] { 1, -2, 30000 }), DenseTensor<short>.OfValues(new short[] { 1, -1, 2 }), null);
+        Assert.Equal(OpStatus.Success, lt16.Status);
+        Assert.Equal(new bool[] { false, true, false }, ((Tensor<bool>)lt16.Outputs[0]).ToArray());
+        var ltu16 = CPUExecutionProvider.Less(DenseTensor<ushort>.OfValues(new ushort[] { 1, 2, 60000 }), DenseTensor<ushort>.OfValues(new ushort[] { 1, 3, 2 }), null);
+        Assert.Equal(OpStatus.Success, ltu16.Status);
+        Assert.Equal(new bool[] { false, true, false }, ((Tensor<bool>)ltu16.Outputs[0]).ToArray());
+    }
 }

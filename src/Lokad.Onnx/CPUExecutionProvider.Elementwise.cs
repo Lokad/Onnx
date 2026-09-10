@@ -321,6 +321,10 @@ public partial class CPUExecutionProvider
         {
             case TensorElementType.Bool: return Success(op, Tensor<bool>.Equal((Tensor<bool>)A, (Tensor<bool>)B));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Equal((Tensor<int>)A, (Tensor<int>)B));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Equal((Tensor<sbyte>)A, (Tensor<sbyte>)B));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Equal((Tensor<byte>)A, (Tensor<byte>)B));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Equal((Tensor<short>)A, (Tensor<short>)B));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Equal((Tensor<ushort>)A, (Tensor<ushort>)B));
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Equal((Tensor<uint>)A, (Tensor<uint>)B));
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Equal((Tensor<ulong>)A, (Tensor<ulong>)B));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Equal((Tensor<long>)A, (Tensor<long>)B));
@@ -343,6 +347,10 @@ public partial class CPUExecutionProvider
         switch (A.ElementType)
         {
             case TensorElementType.Int32: return Success(op, Tensor<int>.Less((Tensor<int>)A, (Tensor<int>)B));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Less((Tensor<sbyte>)A, (Tensor<sbyte>)B));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Less((Tensor<byte>)A, (Tensor<byte>)B));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Less((Tensor<short>)A, (Tensor<short>)B));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Less((Tensor<ushort>)A, (Tensor<ushort>)B));
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Less((Tensor<uint>)A, (Tensor<uint>)B));
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Less((Tensor<ulong>)A, (Tensor<ulong>)B));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Less((Tensor<long>)A, (Tensor<long>)B));
