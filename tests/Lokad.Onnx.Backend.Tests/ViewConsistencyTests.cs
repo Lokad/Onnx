@@ -278,6 +278,33 @@ public class ViewConsistencyTests
         Assert.Equal(Tensor<float>.Where(cond, dense, zeros).ToArray(), got.ToArray());
     }
     [Fact]
+    public void ReversedSlice_MatMul_MatchesDense()
+    {
+        // A backwards-walking MatMul operand multiplies logical rows:
+        // [[4,5,6],[1,2,3]] times [[1,0],[0,1],[1,1]] is [[10,11],[4,5]].
+        var rev = Base().Slice(new SliceIndex(null, null, -1), new SliceIndex(0, 3));
+        Assert.IsType<TensorSlice<float>>(rev);
+        var b = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f }, { 0f, 1f }, { 1f, 1f } });
+        var got = Tensor<float>.MatMul(rev, b, TensorExecutionOptions.Scalar);
+        Assert.Equal(new int[] { 2, 2 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 10f, 11f, 4f, 5f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 4f, 5f, 6f }, { 1f, 2f, 3f } });
+        Assert.Equal(Tensor<float>.MatMul(dense, b, TensorExecutionOptions.Scalar).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void ReversedSlice_ReduceSum_MatchesDense()
+    {
+        // Row-wise sums follow the logical order [[4,5,6],[1,2,3]]: 15 and 6.
+        var rev = Base().Slice(new SliceIndex(null, null, -1), new SliceIndex(0, 3));
+        Assert.IsType<TensorSlice<float>>(rev);
+        var axes = new int[] { 1 }.ToTensor<int>();
+        var got = Tensor<float>.ReduceSum(rev, axes, false, false);
+        Assert.Equal(new float[] { 15f, 6f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 4f, 5f, 6f }, { 1f, 2f, 3f } });
+        Assert.Equal(Tensor<float>.ReduceSum(dense, axes, false, false).ToArray(), got.ToArray());
+    }
+    [Fact]
     public void BroadcastAddView_MatchesDense()
     {
         // A broadcast row view plus a sliced view add exactly like dense.
