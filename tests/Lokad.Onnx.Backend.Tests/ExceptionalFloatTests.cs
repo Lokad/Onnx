@@ -35,6 +35,33 @@ public class ExceptionalFloatTests
         foreach (var v in y.ToArray()) Assert.True(float.IsNaN(v));
     }
 
+    static Tensor<double> RunSoftmaxDouble(double[,] values)
+    {
+        var result = CPU.Softmax(DenseTensor<double>.OfValues(values), -1, null, null, 13);
+        Assert.Equal(OpStatus.Success, result.Status);
+        return (Tensor<double>)result.Outputs![0];
+    }
+
+    [Fact]
+    public void SoftmaxDoubleNaNRow_PropagatesAcrossRow()
+    {
+        // ORT 1.29 double: NaN row -> [nan, nan]; [1, 2] -> [0.26894..., 0.73105...].
+        var y = RunSoftmaxDouble(new double[,] { { double.NaN, 1.0 }, { 1.0, 2.0 } });
+        var values = y.ToArray();
+        Assert.True(double.IsNaN(values[0]));
+        Assert.True(double.IsNaN(values[1]));
+        Assert.Equal(0.26894142137, values[2], 12);
+        Assert.Equal(0.73105857863, values[3], 12);
+    }
+
+    [Fact]
+    public void SoftmaxDoubleInfiniteRows_YieldNaN()
+    {
+        // ORT 1.29 double: all-infinite rows -> [nan, nan] each.
+        var y = RunSoftmaxDouble(new double[,] { { double.NegativeInfinity, double.NegativeInfinity }, { double.PositiveInfinity, double.PositiveInfinity } });
+        foreach (var v in y.ToArray()) Assert.True(double.IsNaN(v));
+    }
+
     [Fact]
     public void SqrtNegative_YieldsNaN()
     {
