@@ -269,6 +269,7 @@ public class ComputationalGraph
             LastPoolAllocatedNewBytes = exec.LastPoolAllocatedNewBytes;
             LastPoolReusedBytes = exec.LastPoolReusedBytes;
             LastScratchBytes = exec.LastScratchBytes;
+            LastPeakLiveBytes = exec.LastPeakLiveBytes;
             LastPoolPeakOutstandingBytes = exec.LastPoolPeakOutstandingBytes;
         }
     }
@@ -305,6 +306,11 @@ public class ComputationalGraph
     /// counted at rent time on full graph runs (single-node runs do not count).
     /// Distinct from GC allocation, live payload, and pool-served bytes.</remarks>
     public long LastScratchBytes { get; private set; }
+    /// <summary>High-water mark of live logical tensor bytes during the last execution.</summary>
+    /// <remarks>Sampled over run bindings (inputs, outputs, live intermediates) before the run,
+    /// after every node, and at completion; aliased storage counts per binding, matching the
+    /// manual census. Single-node runs do not sample.</remarks>
+    public long LastPeakLiveBytes { get; private set; }
     /// <summary>High-water mark of pool bytes checked out during the last execution.</summary>
     /// <remarks>Pool outputs and live intermediates raise it; returns lower it. ArrayPool scratch is not counted.</remarks>
     public long LastPoolPeakOutstandingBytes { get; private set; }
@@ -739,6 +745,7 @@ public class ComputationalGraph
         using var profilerScope = Profiler.BeginExecution();
         using var poolScope = new ExecutionPoolScope(this);
         var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch } };
+        NoteLivePeak();
         foreach (var node in Nodes)
         {
             count++;
@@ -803,6 +810,7 @@ public class ComputationalGraph
                     }
                 }
                 ReleaseDeadTensors(node, count - 1, ref pendingRelease);
+                NoteLivePeak();
             }
         }
         // Resolve graph outputs independently of producers: outputs routed
@@ -838,6 +846,7 @@ public class ComputationalGraph
                 return Fail("Graph output {n} does not match its descriptor. {d}", desc.Name, outputDetail ?? "");
             }
         }
+        NoteLivePeak();
         LastProfile = profilerScope.Profile;
         op.Complete();
         return true;
@@ -875,6 +884,8 @@ public class ComputationalGraph
         LastProfile = null;
         LastRunTime = TimeSpan.Zero;
         LastAllocatedBytes = 0;
+        LastScratchBytes = 0;
+        LastPeakLiveBytes = 0;
         LastGcCollections = new int[3];
         liveArrayUsers = null;
         liveUnknownTensors = null;
@@ -1428,6 +1439,35 @@ public class ComputationalGraph
     /// the variable maps use the reverse index, falling back to conservative
     /// true while unknown-kind tensors are live.
     /// </summary>
+    static int ElementByteSize(TensorElementType element) => element switch
+    {
+        TensorElementType.Bool or TensorElementType.Int8 or TensorElementType.UInt8 => 1,
+        TensorElementType.Int16 or TensorElementType.UInt16 or TensorElementType.Float16 or TensorElementType.BFloat16 => 2,
+        TensorElementType.Int32 or TensorElementType.UInt32 or TensorElementType.Float => 4,
+        TensorElementType.Int64 or TensorElementType.UInt64 or TensorElementType.Double or TensorElementType.Complex64 => 8,
+        TensorElementType.Complex128 => 16,
+        _ => 0,
+    };
+
+    /// <summary>Sums logical payload bytes over the run bindings (inputs, outputs, live intermediates).</summary>
+    /// <remarks>Counts per binding without deduplicating aliased storage, matching the manual
+    /// live-at-end census; initializers are static model data, not run pressure, and stay out.
+    /// Allocation-free: struct enumerators plus integer arithmetic only.</remarks>
+    long LivePayloadBytes()
+    {
+        long total = 0;
+        foreach (var kv in Inputs) if (kv.Value is ITensor t) total += t.Length * ElementByteSize(t.ElementType);
+        foreach (var kv in Outputs) if (kv.Value is ITensor t) total += t.Length * ElementByteSize(t.ElementType);
+        foreach (var kv in IntermediateOutputs) if (kv.Value is ITensor t) total += t.Length * ElementByteSize(t.ElementType);
+        return total;
+    }
+
+    void NoteLivePeak()
+    {
+        long live = LivePayloadBytes();
+        if (live > LastPeakLiveBytes) LastPeakLiveBytes = live;
+    }
+
     bool HasLiveAliasIndexed(Array candidate, TensorBufferPool pool)
     {
         var staticRoots = EnsurePoolRoots(pool);

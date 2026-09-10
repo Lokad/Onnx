@@ -364,7 +364,59 @@ public class ExecutionLifecycleTests
         Assert.Equal(36 * 4, ctx.LastScratchBytes);
         Assert.True(g.Execute(good, false));
         Assert.Equal(36 * 4, g.LastScratchBytes);
-    }    [Fact]
+    }
+
+    [Fact]
+    public void LivePeakBytes_CoversBoundTensors()
+    {
+        // The 2x2 float output alone keeps 16 bytes bound through the run,
+        // however aliasing resolves; inputs only add to the peak.
+        var g = NewMatMulGraph(2);
+        var ctx = g.CreateExecution(null);
+        var good = MatMulInputs(2);
+        Assert.True(ctx.Execute(good, false));
+        Assert.True(ctx.LastPeakLiveBytes >= 16, "Run peaked at " + ctx.LastPeakLiveBytes + " bytes.");
+        Assert.True(g.Execute(good, false));
+        Assert.True(g.LastPeakLiveBytes >= 16, "Facade published " + g.LastPeakLiveBytes + " bytes.");
+    }
+
+    [Fact]
+    public void LivePeakBytes_GrowsWithWorkloadAndRepeatsExactly()
+    {
+        var small = NewMatMulGraph(2);
+        Assert.True(small.Execute(MatMulInputs(2), false));
+        var big = NewMatMulGraph(4);
+        Assert.True(big.Execute(MatMulInputs(4), false));
+        Assert.True(big.LastPeakLiveBytes > small.LastPeakLiveBytes,
+            "4x4 peak " + big.LastPeakLiveBytes + " vs 2x2 peak " + small.LastPeakLiveBytes + ".");
+        Assert.True(small.Execute(MatMulInputs(2), false));
+        var rerun = NewMatMulGraph(2);
+        Assert.True(rerun.Execute(MatMulInputs(2), false));
+        Assert.Equal(small.LastPeakLiveBytes, rerun.LastPeakLiveBytes);
+    }
+
+    static ComputationalGraph NewMatMulGraph(int n)
+    {
+        var g = new ComputationalGraph();
+        g.Metadata["Name"] = "test";
+        g.Inputs["a"] = DenseTensor<float>.OfShape(n, n);
+        g.Inputs["b"] = DenseTensor<float>.OfShape(n, n);
+        g.Outputs["y"] = DenseTensor<float>.OfShape(n, n);
+        g.Nodes.Add(new Node { Name = "m", Op = OpType.MatMul, Inputs = new[] { "a", "b" }, Outputs = new[] { "y" } });
+        g.RefreshLifetimeAnalysis();
+        return g;
+    }
+
+    static Dictionary<string, ITensor> MatMulInputs(int n)
+    {
+        var a = DenseTensor<float>.OfShape(n, n);
+        a.Fill(1f);
+        var b = DenseTensor<float>.OfShape(n, n);
+        b.Fill(1f);
+        return new Dictionary<string, ITensor> { { "a", a }, { "b", b } };
+    }
+
+    [Fact]
     public void MemoryDiagnostics_StampsFreshDeltasPerRun()
     {
         var g = NewReluGraph();
