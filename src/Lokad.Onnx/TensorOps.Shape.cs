@@ -530,6 +530,7 @@ where T : unmanaged
         {
             axes = axes.Select(a => ArrayUtilities.HandleNegativeAxisOrIndex(data.Rank, a)).ToArray().ToTensor<int>();
         }
+        if (!ArrayUtilities.CheckNoRepeatedDims(axes.ToArray())) throw new ArgumentException(nameof(axes), "Slice axes must be distinct.");
         if (axes.Any(a => a < 0 || a >= data.Rank)) throw new ArgumentException(nameof(axes), "Slice axes must index dimensions of the data tensor.");
         if (steps is null)
         {

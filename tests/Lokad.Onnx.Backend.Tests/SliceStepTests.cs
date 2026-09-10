@@ -48,6 +48,24 @@ public class SliceStepTests
     }
 
     [Fact]
+    public void DuplicateAxes_FailsCleanly()
+    {
+        // ORT 1.29 fails the run (axes must be distinct).
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        Assert.Throws<System.ArgumentException>(() => CPU.Slice(x,
+            DenseTensor<long>.OfValues(new long[] { 0L, 0L }),
+            DenseTensor<long>.OfValues(new long[] { 2L, 3L }),
+            DenseTensor<long>.OfValues(new long[] { 0L, 0L }),
+            DenseTensor<long>.OfValues(new long[] { 1L, 1L }), null));
+        // Normalized duplicates ([0,-2] on rank 2) fail the same way.
+        Assert.Throws<System.ArgumentException>(() => CPU.Slice(x,
+            DenseTensor<long>.OfValues(new long[] { 0L, 0L }),
+            DenseTensor<long>.OfValues(new long[] { 2L, 3L }),
+            DenseTensor<long>.OfValues(new long[] { 0L, -2L }),
+            DenseTensor<long>.OfValues(new long[] { 1L, 1L }), null));
+    }
+
+    [Fact]
     public void OutOfRangeAxis_FailsCleanly()
     {
         // ORT 1.29 fails the run (axis 3 outside rank 1).
