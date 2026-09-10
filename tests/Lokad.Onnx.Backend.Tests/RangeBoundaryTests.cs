@@ -82,6 +82,15 @@ public class RangeBoundaryTests
     }
 
     [Fact]
+    public void BoolInputs_RejectedCleanly()
+    {
+        // ORT 1.29 refuses bool Range at load (not in Range types);
+        // the provider fails descriptively instead.
+        var t = DenseTensor<bool>.OfValues(new bool[] { true });
+        Assert.Equal(OpStatus.Failure, CPU.Range(t, t, t, null).Status);
+    }
+
+    [Fact]
     public void ZeroDelta_FailsCleanly()
     {
         Assert.Throws<System.ArgumentException>(() => Tensor<long>.Range(0L, 5L, 0L));
