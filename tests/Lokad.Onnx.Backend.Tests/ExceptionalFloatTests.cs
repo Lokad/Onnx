@@ -1145,4 +1145,86 @@ public class ExceptionalFloatTests
         Assert.Equal(new float[] { 0f }, ((Tensor<float>)rd.Outputs[2]).ToArray());
     }
 
+    [Fact]
+    public void BinaryWideBody_MatchesOrt()
+    {
+        // ORT 1.29 float values: the 50-wide rows span the SIMD body and
+        // scalar tail of the struct-op broadcast kernels (Add/Sub/Mul/Div
+        // vectorize; Pow and the comparisons stay scalar). All four
+        // inf/inf division lanes are NaN here: this machine returns QNaN
+        // for every inf/inf division in ALL runtimes (dotnet, python,
+        // ORT-native, gcc -O0 -ffp-contract=off; plain divss/divsd per
+        // objdump), so both engines share the anomaly and agree. IEEE
+        // would give -/+inf for lanes 3, 4 and 8; frozen as probed.
+        var av = new float[] { float.NaN, 1f, float.PositiveInfinity, float.PositiveInfinity, float.NegativeInfinity, 0f, 2f, 1f, float.NegativeInfinity };
+        var bv = new float[] { 1f, float.NaN, float.PositiveInfinity, float.NegativeInfinity, float.NegativeInfinity, float.PositiveInfinity, 3f, 0f, float.PositiveInfinity };
+        var a = new float[50];
+        var b = new float[50];
+        for (int i = 0; i < 50; i++) { a[i] = av[i % 9]; b[i] = bv[i % 9]; }
+        var adds = new float[] { float.NaN, float.NaN, float.PositiveInfinity, float.NaN, float.NegativeInfinity, float.PositiveInfinity, 5f, 1f, float.NaN };
+        var subs = new float[] { float.NaN, float.NaN, float.NaN, float.PositiveInfinity, float.NaN, float.NegativeInfinity, -1f, 1f, float.NegativeInfinity };
+        var muls = new float[] { float.NaN, float.NaN, float.PositiveInfinity, float.NegativeInfinity, float.PositiveInfinity, float.NaN, 6f, 0f, float.NegativeInfinity };
+        var divs = new float[] { float.NaN, float.NaN, float.NaN, float.NaN, float.NaN, 0f, 2f / 3f, float.PositiveInfinity, float.NaN };
+        var ra = CPU.Add(DenseTensor<float>.OfValues(a), DenseTensor<float>.OfValues(b), null, null);
+        Assert.Equal(OpStatus.Success, ra.Status);
+        var rs = CPU.Sub(DenseTensor<float>.OfValues(a), DenseTensor<float>.OfValues(b), null);
+        Assert.Equal(OpStatus.Success, rs.Status);
+        var rm = CPU.Mul(DenseTensor<float>.OfValues(a), DenseTensor<float>.OfValues(b), null, null);
+        Assert.Equal(OpStatus.Success, rm.Status);
+        var rd = CPU.Div(DenseTensor<float>.OfValues(a), DenseTensor<float>.OfValues(b), null, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        var ya = ((Tensor<float>)ra.Outputs![0]).ToArray();
+        var ys = ((Tensor<float>)rs.Outputs![0]).ToArray();
+        var ym = ((Tensor<float>)rm.Outputs![0]).ToArray();
+        var yd = ((Tensor<float>)rd.Outputs![0]).ToArray();
+        Assert.Equal(50, ya.Length);
+        for (int i = 0; i < 50; i++)
+        {
+            AssertBinLane(adds[i % 9], ya[i]);
+            AssertBinLane(subs[i % 9], ys[i]);
+            AssertBinLane(muls[i % 9], ym[i]);
+            AssertBinLane(divs[i % 9], yd[i]);
+        }
+        var avd = new double[] { double.NaN, 1.0, double.PositiveInfinity, double.PositiveInfinity, double.NegativeInfinity, 0.0, 2.0, 1.0, double.NegativeInfinity };
+        var bvd = new double[] { 1.0, double.NaN, double.PositiveInfinity, double.NegativeInfinity, double.NegativeInfinity, double.PositiveInfinity, 3.0, 0.0, double.PositiveInfinity };
+        var ad = new double[50];
+        var bd = new double[50];
+        for (int i = 0; i < 50; i++) { ad[i] = avd[i % 9]; bd[i] = bvd[i % 9]; }
+        var addd = new double[] { double.NaN, double.NaN, double.PositiveInfinity, double.NaN, double.NegativeInfinity, double.PositiveInfinity, 5.0, 1.0, double.NaN };
+        var subd = new double[] { double.NaN, double.NaN, double.NaN, double.PositiveInfinity, double.NaN, double.NegativeInfinity, -1.0, 1.0, double.NegativeInfinity };
+        var muld = new double[] { double.NaN, double.NaN, double.PositiveInfinity, double.NegativeInfinity, double.PositiveInfinity, double.NaN, 6.0, 0.0, double.NegativeInfinity };
+        var divd = new double[] { double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, 0.0, 2.0 / 3.0, double.PositiveInfinity, double.NaN };
+        var rda = CPU.Add(DenseTensor<double>.OfValues(ad), DenseTensor<double>.OfValues(bd), null, null);
+        Assert.Equal(OpStatus.Success, rda.Status);
+        var rds = CPU.Sub(DenseTensor<double>.OfValues(ad), DenseTensor<double>.OfValues(bd), null);
+        Assert.Equal(OpStatus.Success, rds.Status);
+        var rdm = CPU.Mul(DenseTensor<double>.OfValues(ad), DenseTensor<double>.OfValues(bd), null, null);
+        Assert.Equal(OpStatus.Success, rdm.Status);
+        var rdd = CPU.Div(DenseTensor<double>.OfValues(ad), DenseTensor<double>.OfValues(bd), null, null);
+        Assert.Equal(OpStatus.Success, rdd.Status);
+        var yda = ((Tensor<double>)rda.Outputs![0]).ToArray();
+        var yds = ((Tensor<double>)rds.Outputs![0]).ToArray();
+        var ydm = ((Tensor<double>)rdm.Outputs![0]).ToArray();
+        var ydd = ((Tensor<double>)rdd.Outputs![0]).ToArray();
+        Assert.Equal(50, yda.Length);
+        for (int i = 0; i < 50; i++)
+        {
+            AssertBinLaneDouble(addd[i % 9], yda[i]);
+            AssertBinLaneDouble(subd[i % 9], yds[i]);
+            AssertBinLaneDouble(muld[i % 9], ydm[i]);
+            AssertBinLaneDouble(divd[i % 9], ydd[i]);
+        }
+    }
+
+    static void AssertBinLane(float expected, float actual)
+    {
+        if (float.IsNaN(expected)) Assert.True(float.IsNaN(actual));
+        else Assert.Equal(expected, actual);
+    }
+
+    static void AssertBinLaneDouble(double expected, double actual)
+    {
+        if (double.IsNaN(expected)) Assert.True(double.IsNaN(actual));
+        else Assert.Equal(expected, actual);
+    }
 }
