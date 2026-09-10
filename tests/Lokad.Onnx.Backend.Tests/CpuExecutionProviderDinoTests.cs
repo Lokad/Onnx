@@ -57,6 +57,24 @@ public class CpuExecutionProviderDinoTests
     }
 
     [Fact]
+    public void Unsqueeze_DuplicateAxes_Throws()
+    {
+        // ORT 1.29 rejects duplicate axes at session build.
+        var data = DenseTensor<float>.OfValues(new float[,] { { 1f }, { 2f } });
+        Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(data, DenseTensor<long>.OfValues(new long[] { 0, 0 }), null));
+    }
+
+    [Fact]
+    public void Unsqueeze_NegativeAxes_Normalize()
+    {
+        // ORT 1.29: [1, 1, 2, 1].
+        var data = DenseTensor<float>.OfValues(new float[,] { { 1f }, { 2f } });
+        var result = CPU.Unsqueeze(data, DenseTensor<long>.OfValues(new long[] { 0, -3 }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        Assert.Equal(new int[] { 1, 1, 2, 1 }, ((Tensor<float>)result.Outputs[0]).Dimensions.ToArray());
+    }
+
+    [Fact]
     public void Squeeze_Axes_Variants()
     {
         var threeDim = DenseTensor<int>.OfShape(1, 2, 1);
