@@ -93,6 +93,17 @@ public class CpuExecutionProviderExtendedOpTests
     }
 
     [Fact]
+    public void ConstantOfShape_ZeroDim_YieldsEmpty()
+    {
+        // ORT 1.29: a zero in the shape yields a zero-extent output, empty.
+        var r = CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 0L, 3L }), null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 0, 3 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+    }
+
+    [Fact]
     public void GlobalAveragePool_ReducesSpatial()
     {
         var x = DenseTensor<float>.OfShape(1, 2, 2, 2);
