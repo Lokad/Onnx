@@ -52,6 +52,13 @@ def main():
     node = helper.make_node("Gemm", ["a", "b", "c"], ["z"], alpha=1.0, beta=1.0, transA=1)
     emit("gemm_transpose_a", node, [("a", [3, 2]), ("b", [3, 2])], [("z", [2, 2])],
          {"a": a, "b": b}, inits=[finit("c", [2, 1], c)])
+    # Transposed A and B together: A [3,2] reads as [2,3], B [4,3]
+    # reads as [3,4]; spot z[0,0] is 1*1+3*2+5*3+0.5 = 22.5.
+    a = np.array([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]], dtype=np.float32)
+    b = np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0], [10.0, 11.0, 12.0]], dtype=np.float32)
+    node = helper.make_node("Gemm", ["a", "b", "c"], ["z"], alpha=1.0, beta=1.0, transA=1, transB=1)
+    emit("gemm_transpose_ab", node, [("a", [3, 2]), ("b", [4, 3])], [("z", [2, 4])],
+         {"a": a, "b": b}, inits=[finit("c", [], np.float32(0.5))])
     # Missing C entirely: beta is ignored on both engines.
     a = np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32)
     b = np.array([[5.0, 6.0], [7.0, 8.0]], dtype=np.float32)

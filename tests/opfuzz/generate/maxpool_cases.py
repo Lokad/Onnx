@@ -46,5 +46,13 @@ def main():
     emit("maxpool_ceil_drop", node, [("x", [1, 2, 1, 7])], [("z", [1, 2, 1, 4])], {"x": x})
 
 
+    # Dilation 2 spreads 2x2 windows over a 3x3 footprint: arange
+    # frame yields [[10, 11], [14, 15]] (hand-computed ORT-agreeing).
+    x = np.arange(16, dtype=np.float32).reshape(1, 1, 4, 4)
+    node = helper.make_node("MaxPool", ["x"], ["z"], kernel_shape=[2, 2],
+                            strides=[1, 1], dilations=[2, 2])
+    emit("maxpool_dilation", node, [("x", [1, 1, 4, 4])], [("z", [1, 1, 2, 2])], {"x": x})
+
+
 if __name__ == "__main__":
     main()
