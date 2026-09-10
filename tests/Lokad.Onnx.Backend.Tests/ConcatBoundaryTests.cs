@@ -9,6 +9,15 @@ namespace Lokad.Onnx.Backend.Tests;
 public class ConcatBoundaryTests
 {
     [Fact]
+    public void EmptyInputs_RejectedCleanly()
+    {
+        // ORT 1.29 refuses input-less Concat at load (min one input);
+        // the provider used to index inputs[0] and throw instead.
+        var r = CPU.Concat(Array.Empty<ITensor>(), 0, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
     public void SingleInput_IsIdentity()
     {
         // ORT 1.29: concat of one input returns it unchanged.
