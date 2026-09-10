@@ -445,11 +445,10 @@ where T : unmanaged
         {
             var inputDim = result.Dimensions[i];
             var targetDim = targetShape[i];
-            if (targetDim == -1)
-            {
-                targetDim = inputDim;
-            }
-            else if (targetDim == 1 && inputDim > 1)
+            // Negative dims fail like the native engine (ORT 1.29); -1 is not
+            // a keep marker here, unlike Reshape.
+            if (targetDim < 0) throw new ArgumentException(nameof(targetShape), "Expand shape dimensions must be non-negative.");
+            if (targetDim == 1 && inputDim > 1)
             {
                 // Keep-dim on target 1: variable-size models (verified on the DINOv2 position-embedding interpolation path at 224 and 518 pixels) emit shape masks that collapse to 1 for dimensions that must be preserved, so 1 means keep here rather than broadcast.
                 targetDim = inputDim;

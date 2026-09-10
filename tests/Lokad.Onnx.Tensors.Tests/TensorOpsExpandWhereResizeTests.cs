@@ -5,15 +5,12 @@ namespace Lokad.Onnx.Tensors.Tests;
 public class TensorOpsExpandWhereResizeTests
 {
     [Fact]
-    public void Expand_BroadcastsAndHandlesMinusOne()
+    public void Expand_RejectsMinusOne()
     {
+        // ORT 1.29 fails Expand with -1 dims ("invalid expand shape");
+        // unlike Reshape, -1 is not a keep marker here.
         var data = DenseTensor<int>.OfValues(new int[1, 1, 3] { { { 1, 2, 3 } } });
-        var expanded = Tensor<int>.Expand(data, new[] { 2, 1, -1 });
-
-        Assert.Equal(new[] { 2, 1, 3 }, expanded.Dimensions.ToArray());
-        Assert.Equal(1, expanded[0, 0, 0]);
-        Assert.Equal(2, expanded[1, 0, 1]);
-        Assert.Equal(3, expanded[1, 0, 2]);
+        Assert.Throws<System.ArgumentException>(() => Tensor<int>.Expand(data, new[] { 2, 1, -1 }));
     }
 
     [Fact]

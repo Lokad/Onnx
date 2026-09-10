@@ -43,6 +43,31 @@ public class ExpandResizeShapeTests
     }
 
     [Fact]
+    public void Expand_NegativeDim_FailsCleanly()
+    {
+        // ORT 1.29 fails the run (-1 is not a keep marker in Expand,
+        // unlike Reshape); previously Lokad silently kept the dim.
+        var x = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        Assert.Throws<System.ArgumentException>(() => Tensor<float>.Expand(x, new int[] { -1, 2 }));
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 13 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = x;
+        graph.Inputs["s"] = DenseTensor<long>.OfValues(new long[] { -1L, 2L });
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Expand, OpTypeName = OpType.Expand.ToString(), Domain = "",
+            OpsetVersion = 13, IsFused = false,
+            Inputs = new[] { "x", "s" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
     public void Expand_MismatchedShape_Fails()
     {
         var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
