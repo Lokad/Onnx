@@ -21,6 +21,15 @@ public class FloatComparisonTests
     }
 
     [Fact]
+    public void Less_BoolRejectedCleanly()
+    {
+        // ORT 1.29 refuses bool Less at load (bool is in neither Less-13
+        // nor Abs-13); the provider fails descriptively instead.
+        var b = DenseTensor<bool>.OfValues(new bool[] { true });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Less(b, b, null).Status);
+    }
+
+    [Fact]
     public void Less_NanAlwaysFalse()
     {
         var x = DenseTensor<float>.OfValues(new float[] { float.NaN, 0f, float.NaN });
