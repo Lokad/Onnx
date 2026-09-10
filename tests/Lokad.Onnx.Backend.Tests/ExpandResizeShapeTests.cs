@@ -24,6 +24,17 @@ public class ExpandResizeShapeTests
     }
 
     [Fact]
+    public void Expand_ScalarData_Broadcasts()
+    {
+        // ORT 1.29: scalar 7 expanded to [3] is [7,7,7].
+        var s = DenseTensor<float>.OfShape();
+        s.SetValue(0, 7f);
+        var r = CPUExecutionProvider.Expand(s, DenseTensor<long>.OfValues(new long[] { 3L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 7f, 7f, 7f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void Expand_ZeroExtents()
     {
         var x = DenseTensor<float>.OfValues(new float[0]);

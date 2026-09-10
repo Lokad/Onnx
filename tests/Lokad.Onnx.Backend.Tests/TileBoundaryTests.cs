@@ -50,6 +50,19 @@ public class TileBoundaryTests
     }
 
     [Fact]
+    public void ScalarRepeats_IsIdentity()
+    {
+        // ORT 1.29: scalar tiled by empty repeats is itself.
+        var s = DenseTensor<float>.OfShape();
+        s.SetValue(0, 7f);
+        var result = CPU.Tile(s, DenseTensor<long>.OfShape(0), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var output = (Tensor<float>)result.Outputs![0];
+        Assert.Equal(new int[0], output.Dimensions.ToArray());
+        Assert.Equal(new float[] { 7f }, output.ToArray());
+    }
+
+    [Fact]
     public void ZeroRepeats_ReturnEmpty()
     {
         // ORT 1.29: shape [0], no elements.

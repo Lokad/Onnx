@@ -132,6 +132,19 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void SqueezeScalar_IsIdentity()
+        {
+            // ORT 1.29: squeezing a scalar (empty axes) is itself.
+            var s = DenseTensor<float>.OfShape();
+            s.SetValue(0, 7f);
+            var r = CPU.Squeeze(s, DenseTensor<long>.OfShape(0), null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new int[0], y.Dimensions.ToArray());
+            Assert.Equal(new float[] { 7f }, y.ToArray());
+        }
+
+        [Fact]
         public void SqueezeEmptyAxes_RemovesAllSingletons()
         {
             // ORT 1.29: empty axes squeeze [1,3,1] to [3].
