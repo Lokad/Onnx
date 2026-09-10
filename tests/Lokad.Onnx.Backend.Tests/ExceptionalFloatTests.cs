@@ -29,6 +29,17 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void SoftmaxSingleExceptionalElement_YieldsNaN()
+    {
+        // ORT 1.29: a lone -inf/inf/NaN normalizes against itself (0/0).
+        foreach (var v in new float[] { float.NegativeInfinity, float.PositiveInfinity, float.NaN })
+        {
+            var y = RunSoftmax(new float[,] { { v } });
+            Assert.True(float.IsNaN(y.ToArray()[0]));
+        }
+    }
+
+    [Fact]
     public void SoftmaxInfiniteRows_YieldNaN()
     {
         var y = RunSoftmax(new float[,] { { float.NegativeInfinity, float.NegativeInfinity }, { float.PositiveInfinity, float.PositiveInfinity } });
