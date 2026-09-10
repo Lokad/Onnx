@@ -23,6 +23,17 @@ public class PoolDoubleTests
     }
 
     [Fact]
+    public void GlobalAveragePoolDoubleNaN_YieldsNaN()
+    {
+        // No ORT reference exists (NOT_IMPLEMENTED); hand-exact like its
+        // float twin: NaN poisons the spatial mean.
+        var x = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { 1.0, double.NaN }, { 3.0, 4.0 } } } });
+        var r = CPU.GlobalAveragePool(x, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)r.Outputs[0])[0, 0, 0, 0]));
+    }
+
+    [Fact]
     public void MaxPoolDoubleNaN_Propagates()
     {
         // ORT 1.29 double: NaN wins even in mixed windows ([NaN,2,3,4]
