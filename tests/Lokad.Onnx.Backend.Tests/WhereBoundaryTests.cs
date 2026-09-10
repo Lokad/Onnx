@@ -114,4 +114,18 @@ public class WhereBoundaryTests
         var badCond = DenseTensor<int>.OfValues(new int[] { 1 });
         Assert.Equal(OpStatus.Failure, CPU.Where(badCond, xf, xf, null).Status);
     }
+
+    [Fact]
+    public void EmptyInputs_YieldEmpty()
+    {
+        // ORT 1.29: all-empty inputs select to an empty output, not a failure.
+        var cond = DenseTensor<bool>.OfShape(0);
+        var xf = DenseTensor<float>.OfShape(0);
+        var yf = DenseTensor<float>.OfShape(0);
+        var r = CPU.Where(cond, xf, yf, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var z = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 0 }, z.Dimensions.ToArray());
+        Assert.Empty(z.ToArray());
+    }
 }
