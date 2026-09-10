@@ -856,4 +856,46 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<uint>.OfValues(new uint[] { 1, 2 }), null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<ulong>.OfValues(new ulong[] { 1, 2 }), null).Status);
     }
+
+    [Fact]
+    public void UintMatMul_RefusedCleanly()
+    {
+        // Split verdict: ORT 1.29 ACCEPTS uint32/uint64 MatMul (probed)
+        // but refuses uint32 Gemm (NOT_IMPLEMENTED, probed). The MatMul
+        // gap needs uint GEMM kernels (owner scope, cf. the int32
+        // imatmul path); shapes below are valid, isolating dtype gates.
+        var a32 = DenseTensor<uint>.OfValues(new uint[,] { { 1u, 2u }, { 3u, 4u } });
+        var b32 = DenseTensor<uint>.OfValues(new uint[,] { { 1u, 0u }, { 0u, 1u } });
+        Assert.Equal(OpStatus.Failure, CPU.MatMul(a32, b32, null, null).Status);
+        var a64 = DenseTensor<ulong>.OfValues(new ulong[,] { { 1ul, 2ul }, { 3ul, 4ul } });
+        var b64 = DenseTensor<ulong>.OfValues(new ulong[,] { { 1ul, 0ul }, { 0ul, 1ul } });
+        Assert.Equal(OpStatus.Failure, CPU.MatMul(a64, b64, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Gemm(a32, b32, null, 1f, 1f, null, 0, 0).Status);
+    }
+
+    [Fact]
+    public void ReluUint_RefusedCleanly()
+    {
+        // ORT refuses int16 and all unsigned Relu (NOT_IMPLEMENTED or
+        // schema, all probed); int8/int32 Relu stay supported elsewhere.
+        Assert.Equal(OpStatus.Failure, CPU.Relu(DenseTensor<short>.OfValues(new short[] { -1, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(DenseTensor<byte>.OfValues(new byte[] { 1, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(DenseTensor<ushort>.OfValues(new ushort[] { 1, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(DenseTensor<uint>.OfValues(new uint[] { 1, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(DenseTensor<ulong>.OfValues(new ulong[] { 1, 2 }), null).Status);
+    }
+
+    [Fact]
+    public void IntScalarMath_RefusedCleanly()
+    {
+        // ORT schema-refuses every form below (all probed); the float
+        // kernels have no integer arms.
+        Assert.Equal(OpStatus.Failure, CPU.Sqrt(DenseTensor<int>.OfValues(new int[] { 1, 4 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sqrt(DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 4 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Pow(DenseTensor<sbyte>.OfValues(new sbyte[] { 2, 3 }), DenseTensor<sbyte>.OfValues(new sbyte[] { 2, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Cos(DenseTensor<int>.OfValues(new int[] { 0, 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Tanh(DenseTensor<int>.OfValues(new int[] { 0, 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Erf(DenseTensor<int>.OfValues(new int[] { 0, 1 }), null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, 2 }, { 3, 4 } }), DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 1 }), null, -1, 1e-5f, null, 1, null, null).Status);
+    }
 }
