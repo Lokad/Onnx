@@ -52,6 +52,28 @@ def main():
     emit("range_int16", node, [("x", []), ("y", []), ("d", [])], [("z", [3])],
          {"x": np.int16(0), "y": np.int16(5), "d": np.int16(2)},
          dtypes=dt16, feed_dtypes=fd16)
+    fdt = {"x": TensorProto.FLOAT, "y": TensorProto.FLOAT,
+           "d": TensorProto.FLOAT, "z": TensorProto.FLOAT}
+    ffd = {"x": np.float32, "y": np.float32, "d": np.float32}
+    node = helper.make_node("Range", ["x", "y", "d"], ["z"])
+    emit("range_float", node, [("x", []), ("y", []), ("d", [])], [("z", [4])],
+         {"x": np.float32(0.0), "y": np.float32(0.3), "d": np.float32(0.1)},
+         dtypes=fdt, feed_dtypes=ffd)
+    node = helper.make_node("Range", ["x", "y", "d"], ["z"])
+    emit("range_float_long", node, [("x", []), ("y", []), ("d", [])], [("z", [100])],
+         {"x": np.float32(0.0), "y": np.float32(10.0), "d": np.float32(0.1)},
+         dtypes=fdt, feed_dtypes=ffd)
+    node = helper.make_node("Range", ["x", "y", "d"], ["z"])
+    emit("range_float_third", node, [("x", []), ("y", []), ("d", [])], [("z", [3])],
+         {"x": np.float32(0.0), "y": np.float32(1.0), "d": np.float32(1.0 / 3.0)},
+         dtypes=fdt, feed_dtypes=ffd)
+    ddt = {"x": TensorProto.DOUBLE, "y": TensorProto.DOUBLE,
+           "d": TensorProto.DOUBLE, "z": TensorProto.DOUBLE}
+    dfd = {"x": np.float64, "y": np.float64, "d": np.float64}
+    node = helper.make_node("Range", ["x", "y", "d"], ["z"])
+    emit("range_double", node, [("x", []), ("y", []), ("d", [])], [("z", [100])],
+         {"x": np.float64(0.0), "y": np.float64(10.0), "d": np.float64(0.1)},
+         dtypes=ddt, feed_dtypes=dfd)
 
 
 if __name__ == "__main__":
