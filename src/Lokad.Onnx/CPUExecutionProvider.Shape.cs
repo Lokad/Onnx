@@ -670,12 +670,22 @@ public partial class CPUExecutionProvider
         }
         var cubicA = cubicCoeffA ?? -0.75f;
 
+        // ORT 1.29 runs nearest/linear Resize on uint8/int8/int32 but
+        // refuses cubic there; the int cores below cover nearest/linear.
+        if (resizeMode == MathOps.ResizeMode.Cubic && (X.ElementType is TensorElementType.UInt8 or TensorElementType.Int8 or TensorElementType.Int32))
+            return Failure(op, "Resize mode cubic is not supported for integer inputs.");
         switch (X.ElementType)
         {
             case TensorElementType.Float:
                 return Success(op, Tensor<float>.Resize((Tensor<float>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
             case TensorElementType.Double:
                 return Success(op, Tensor<double>.Resize((Tensor<double>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
+            case TensorElementType.UInt8:
+                return Success(op, Tensor<byte>.Resize((Tensor<byte>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
+            case TensorElementType.Int8:
+                return Success(op, Tensor<sbyte>.Resize((Tensor<sbyte>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
+            case TensorElementType.Int32:
+                return Success(op, Tensor<int>.Resize((Tensor<int>)X, targetSizes, resizeMode, ctm, nm, cubicA, trueScales));
             default:
                 return InputTypeNotSupported(op, nameof(X), X);
         }

@@ -298,6 +298,29 @@ public class ExpandResizeShapeTests
     }
 
     [Fact]
+    public void ResizeInt_MatchesOrt()
+    {
+        // ORT 1.29 runs nearest/linear Resize on uint8/int8/int32 (cubic
+        // stays refused there); linear truncates toward zero (probed
+        // negatives: -3.75 -> -3, -3.5 -> -3).
+        var u8 = DenseTensor<byte>.OfValues(new byte[1, 1, 2, 2] { { { { 0, 1 }, { 2, 3 } } } });
+        var ru8 = CPUExecutionProvider.Resize(u8, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, ru8.Status);
+        Assert.Equal(new byte[] { 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 3, 3 }, ((Tensor<byte>)ru8.Outputs![0]).ToArray());
+        var s8 = DenseTensor<sbyte>.OfValues(new sbyte[1, 1, 2, 2] { { { { -4, -3 }, { -2, -1 } } } });
+        var rs8 = CPUExecutionProvider.Resize(s8, null, Scales(1f, 1f, 2f, 2f), null, "linear", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, rs8.Status);
+        Assert.Equal(new sbyte[] { -4, -3, -3, -3, -3, -3, -2, -2, -2, -2, -1, -1, -2, -1, -1, -1 }, ((Tensor<sbyte>)rs8.Outputs![0]).ToArray());
+        var i32 = DenseTensor<int>.OfValues(new int[1, 1, 2, 2] { { { { 0, 1 }, { 2, 3 } } } });
+        var ri32 = CPUExecutionProvider.Resize(i32, null, Scales(1f, 1f, 2f, 2f), null, "linear", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, ri32.Status);
+        Assert.Equal(new int[] { 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3 }, ((Tensor<int>)ri32.Outputs![0]).ToArray());
+        var rc = CPUExecutionProvider.Resize(u8, null, Scales(1f, 1f, 2f, 2f), null, "cubic", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Failure, rc.Status);
+        Assert.Contains("cubic", rc.Message ?? "");
+    }
+
+    [Fact]
     public void Resize_AntialiasAttribute_FailsThroughDispatch()
     {
         var mp = new OnnxModel { Name = "resize-aa" };
@@ -666,20 +689,22 @@ public class ExpandResizeShapeTests
     }
 
     [Fact]
-    public void Resize_IntegerDtypesFailCleanly()
+    public void Resize_IntegerDtypes_MatchOrt()
     {
-        // Documented scope boundary, not parity: ORT 1.29 runs nearest
-        // Resize on uint8/int8/int32 (probed), but the resampling kernels
-        // are float/double only here, so integer inputs fail descriptively
-        // instead of reaching a kernel cast (verified end to end via OpDump).
+        // Reversal of the former scope boundary: ORT 1.29 runs
+        // nearest/linear Resize on uint8/int8/int32, so the engine does too
+        // (kernels added; cubic stays refused on both sides). Detailed
+        // values ride the ResizeInt pin.
         var u8 = DenseTensor<byte>.OfShape(1, 1, 2, 2);
-        var bad8 = CPUExecutionProvider.Resize(u8, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
-        Assert.Equal(OpStatus.Failure, bad8.Status);
-        Assert.Contains("UInt8", bad8.Message ?? "");
+        var ru8 = CPUExecutionProvider.Resize(u8, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, ru8.Status);
+        Assert.Equal(new int[] { 1, 1, 4, 4 }, ((Tensor<byte>)ru8.Outputs![0]).Dimensions.ToArray());
         var s8 = DenseTensor<sbyte>.OfShape(1, 1, 2, 2);
-        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Resize(s8, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null).Status);
+        var rs8 = CPUExecutionProvider.Resize(s8, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, rs8.Status);
         var i32 = DenseTensor<int>.OfShape(1, 1, 2, 2);
-        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Resize(i32, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null).Status);
+        var ri32 = CPUExecutionProvider.Resize(i32, null, Scales(1f, 1f, 2f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, ri32.Status);
         var graph = new ComputationalGraph
         {
             Opset = new Dictionary<string, int> { [""] = 18 },
@@ -695,8 +720,8 @@ public class ExpandResizeShapeTests
             Attributes = new Dictionary<string, object> { ["mode"] = "nearest" },
         };
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("UInt8", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 1, 1, 4, 4 }, ((Tensor<byte>)r.Outputs![0]).Dimensions.ToArray());
     }
 
     [Fact]

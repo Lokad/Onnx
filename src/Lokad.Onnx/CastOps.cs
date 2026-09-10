@@ -103,7 +103,7 @@ internal static class CastOps
 
     // The bound is 2^31, not (float)int.MaxValue which rounds up to 2^31: exactly 2^31
     // must saturate (ORT 1.29) instead of falling into platform overflow conversion.
-    static int ToInt32(float v) => !(v < 2147483648f) || v < -2147483648f ? int.MinValue : unchecked((int)v);
+    internal static int ToInt32(float v) => !(v < 2147483648f) || v < -2147483648f ? int.MinValue : unchecked((int)v);
 
     static int ToInt32(double v) => !(v < 2147483648.0) || v < -2147483648.0 ? int.MinValue : unchecked((int)v);
 
