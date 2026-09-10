@@ -418,6 +418,21 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Failure, CPU.Sqrt(s8, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Cos(s8, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Relu(u8, null).Status);
+        var s16 = DenseTensor<short>.OfValues(new short[] { 1 });
+        foreach (var x in new ITensor[] { u8, s16, u16 })
+        {
+            Assert.Equal(OpStatus.Failure, CPU.Sqrt(x, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Cos(x, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Sin(x, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Tanh(x, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Erf(x, null, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Gelu(x, null, null, null).Status);
+        }
+        Assert.Equal(OpStatus.Failure, CPU.Sin(s8, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Tanh(s8, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Erf(s8, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Gelu(s8, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(u16, null).Status);
     }
 
     [Fact]
@@ -520,6 +535,8 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Failure, CPU.Softmax(i, null, null, null, 13).Status);
         var u = DenseTensor<uint>.OfValues(new uint[] { 1u });
         Assert.Equal(OpStatus.Failure, CPU.Neg(u, null).Status);
+        var u64 = DenseTensor<ulong>.OfValues(new ulong[] { 1ul });
+        Assert.Equal(OpStatus.Failure, CPU.Neg(u64, null).Status);
         var b = DenseTensor<bool>.OfValues(new bool[] { true });
         Assert.Equal(OpStatus.Failure, CPU.Abs(b, null).Status);
     }
