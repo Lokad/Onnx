@@ -108,6 +108,19 @@ public class ExceptionalFloatTests
         Assert.Equal(float.PositiveInfinity, Pow1(10f, 100f));
     }
 
+    [Fact]
+    public void PowNegativeBaseIntegerExponents_MatchesOrt()
+    {
+        // ORT 1.29: [-512, nan, 1024, -0.125] for [-8,-4,2,-2] ^ [3,0.5,10,-3].
+        var result = CPU.Pow(DenseTensor<float>.OfValues(new float[] { -8f, -4f, 2f, -2f }), DenseTensor<float>.OfValues(new float[] { 3f, 0.5f, 10f, -3f }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<float>)result.Outputs![0]).ToArray();
+        Assert.Equal(-512f, values[0]);
+        Assert.True(float.IsNaN(values[1]));
+        Assert.Equal(1024f, values[2]);
+        Assert.Equal(-0.125f, values[3]);
+    }
+
     static float Pow1(float a, float b)
     {
         var result = CPU.Pow(DenseTensor<float>.OfValues(new float[] { a }), DenseTensor<float>.OfValues(new float[] { b }), null);
