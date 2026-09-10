@@ -582,6 +582,283 @@ public class OperatorSchemaTests
         Assert.Contains("Sum", r.Message ?? "");
     }
 
+    [Fact]
+    public void EluHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Elu schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract as Sigmoid/Log.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Elu));
+        var node = Nod(OpType.Elu, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Elu", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SeluHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Selu schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Selu));
+        var node = Nod(OpType.Selu, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Selu", r.Message ?? "");
+    }
+
+    [Fact]
+    public void CeluHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Celu schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Celu));
+        var node = Nod(OpType.Celu, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Celu", r.Message ?? "");
+    }
+
+    [Fact]
+    public void LeakyReluHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no LeakyRelu schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract (verified end to end via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.LeakyRelu));
+        var node = Nod(OpType.LeakyRelu, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("LeakyRelu", r.Message ?? "");
+    }
+
+    [Fact]
+    public void PReluHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no PRelu schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.PRelu));
+        var node = Nod(OpType.PRelu, "", 13,
+            new[] { "x", "slope" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        Bind(graph, "slope", DenseTensor<float>.OfValues(new float[] { 0.25f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("PRelu", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ThresholdedReluHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no ThresholdedRelu schema, provider, kernel, or dispatch arm
+        // exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.ThresholdedRelu));
+        var node = Nod(OpType.ThresholdedRelu, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("ThresholdedRelu", r.Message ?? "");
+    }
+
+    [Fact]
+    public void HardSigmoidHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no HardSigmoid schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.HardSigmoid));
+        var node = Nod(OpType.HardSigmoid, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("HardSigmoid", r.Message ?? "");
+    }
+
+    [Fact]
+    public void HardSwishHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no HardSwish schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.HardSwish));
+        var node = Nod(OpType.HardSwish, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("HardSwish", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SoftplusHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Softplus schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Softplus));
+        var node = Nod(OpType.Softplus, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Softplus", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SoftsignHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Softsign schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Softsign));
+        var node = Nod(OpType.Softsign, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Softsign", r.Message ?? "");
+    }
+
+    [Fact]
+    public void MishHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Mish schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Mish));
+        var node = Nod(OpType.Mish, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Mish", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ReduceMinHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no ReduceMin schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (unlike ReduceMean/Sum/Max); same honest contract
+        // (verified end to end via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.ReduceMin));
+        var node = Nod(OpType.ReduceMin, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 3f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("ReduceMin", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ReduceProdHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no ReduceProd schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (unlike ReduceMean/Sum/Max); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.ReduceProd));
+        var node = Nod(OpType.ReduceProd, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 3f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("ReduceProd", r.Message ?? "");
+    }
+
+    [Fact]
+    public void UpsampleHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Upsample schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (deprecated Resize alias); same honest contract
+        // (verified end to end via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Upsample));
+        var node = Nod(OpType.Upsample, "", 9,
+            new[] { "x", "scales" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(9);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        Bind(graph, "scales", DenseTensor<float>.OfValues(new float[] { 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Upsample", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SignHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Sign schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract (verified end to end via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Sign));
+        var node = Nod(OpType.Sign, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Sign", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ShrinkHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Shrink schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract (verified end to end via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Shrink));
+        var node = Nod(OpType.Shrink, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Shrink", r.Message ?? "");
+    }
+
+    [Fact]
+    public void IsInfHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no IsInf schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract (verified end to end via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.IsInf));
+        var node = Nod(OpType.IsInf, "", 20,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(20);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("IsInf", r.Message ?? "");
+    }
+
+
 
     [Fact]
     public void RegistryEntries_AreImmutable()
