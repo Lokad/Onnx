@@ -63,6 +63,23 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void SqueezeNoSingletons_IsIdentity()
+        {
+            // ORT 1.29: squeezing with no size-1 dims present is a no-op,
+            // whether axes are absent or explicitly empty (verified
+            // differentially via OpDump).
+            var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+            foreach (var axes in new ITensor?[] { null, DenseTensor<long>.OfShape(0) })
+            {
+                var r = CPU.Squeeze(x, axes, null);
+                Assert.Equal(OpStatus.Success, r.Status);
+                var y = (Tensor<float>)r.Outputs![0];
+                Assert.Equal(new int[] { 2, 3 }, y.Dimensions.ToArray());
+                Assert.Equal(new float[] { 1f, 2f, 3f, 4f, 5f, 6f }, y.ToArray());
+            }
+        }
+
+        [Fact]
         public void ReshapeToScalar_Succeeds()
         {
             // ORT 1.29: [1,1] reshaped to [] is scalar 7.
