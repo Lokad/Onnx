@@ -284,6 +284,8 @@ public partial class CPUExecutionProvider
         {
             case TensorElementType.Float: return Success(op, Tensor<float>.Relu((Tensor<float>)X));
             case TensorElementType.Double: return Success(op, Tensor<double>.Relu((Tensor<double>)X));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Relu((Tensor<sbyte>)X));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Relu((Tensor<int>)X));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }

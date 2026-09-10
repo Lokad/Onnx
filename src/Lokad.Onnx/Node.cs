@@ -222,6 +222,20 @@ public partial struct Node
     /// versions refuse int32 inputs); older or version-unknown graphs keep
     /// the descriptive provider refusal.
     /// </summary>
+    /// <summary>
+    /// int8/int32 Relu joined at opset 14 (verified against ORT 1.29:
+    /// opset-13 refuses both); older or version-unknown graphs keep the
+    /// descriptive provider refusal.
+    /// </summary>
+    OpResult? ReluIntGate(ComputationalGraph graph)
+    {
+        int v = ResolvedOpsetVersion(graph);
+        if (v >= 14) return null;
+        var t = Inputs.Length > 0 ? InputTensor(graph, 0) : null;
+        if (t is not null && (t.ElementType is TensorElementType.Int8 or TensorElementType.Int32))
+            return InputTypeNotSupported(OpType.Relu, "X", t, null);
+        return null;
+    }
     OpResult? MatMulIntGate(ComputationalGraph graph)
     {
         int v = ResolvedOpsetVersion(graph);
@@ -268,7 +282,7 @@ public partial struct Node
         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt),
 
-        OpType.Relu => CPU.Relu(InputTensor(graph, 0), opt),
+        OpType.Relu => ReluIntGate(graph) ?? CPU.Relu(InputTensor(graph, 0), opt),
 
         OpType.Erf => CPU.Erf(InputTensor(graph, 0), opt, graph.ActivePool),
 

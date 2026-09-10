@@ -305,6 +305,44 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void ReluInt_MatchesOrtWithVersionGate()
+    {
+        // ORT 1.29 runs int8/int32 Relu at opset 14 (probed) but refuses
+        // both at 13; the kernels clamp negatives to zero while the node
+        // boundary restores the opset-13 refusal.
+        var r8 = CPU.Relu(DenseTensor<sbyte>.OfValues(new sbyte[] { -128, -1, 0, 1, 127 }), null);
+        Assert.Equal(OpStatus.Success, r8.Status);
+        Assert.Equal(new sbyte[] { 0, 0, 0, 1, 127 }, ((Tensor<sbyte>)r8.Outputs![0]).ToArray());
+        var r32 = CPU.Relu(DenseTensor<int>.OfValues(new int[] { -5, 0, 7 }), null);
+        Assert.Equal(OpStatus.Success, r32.Status);
+        Assert.Equal(new int[] { 0, 0, 7 }, ((Tensor<int>)r32.Outputs![0]).ToArray());
+        foreach (var opset in new int[] { 13, 14 })
+        {
+            var graph = new ComputationalGraph
+            {
+                Opset = new Dictionary<string, int> { [""] = opset },
+                Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+            };
+            graph.Inputs["x"] = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
+            var node = new Node
+            {
+                Name = "r", Op = OpType.Relu, Inputs = new[] { "x" }, Outputs = new[] { "y" },
+                Attributes = new Dictionary<string, object>(),
+            };
+            var r = node.Execute(graph, ExecutionProvider.CPU, null);
+            if (opset < 14)
+            {
+                Assert.Equal(OpStatus.Failure, r.Status);
+                Assert.Contains("Int8", r.Message ?? "");
+            }
+            else
+            {
+                Assert.Equal(OpStatus.Success, r.Status);
+            }
+        }
+    }
+
+    [Fact]
     public void BinaryOps_RejectMixedDtypes()
     {
         // ORT refuses mixed-dtype binary inputs at load; all seven ops share
@@ -456,9 +494,9 @@ public class CpuExecutionProviderOpTests
         // ORT constrains these math kernels to float types at load (Cos-int
         // and Neg-bool already pin theirs); every other unsupported dtype
         // must fail descriptively instead of reaching a kernel cast.
+        // (int8/int32 Relu joined at opset 14 instead; see ReluInt test.)
         var i = DenseTensor<int>.OfValues(new int[] { 1 });
         Assert.Equal(OpStatus.Failure, CPU.Sqrt(i, null).Status);
-        Assert.Equal(OpStatus.Failure, CPU.Relu(i, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Tanh(i, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Erf(i, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Sin(i, null).Status);
