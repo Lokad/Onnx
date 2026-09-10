@@ -164,6 +164,30 @@ public class ExpandResizeShapeTests
     }
 
     [Fact]
+    public void ResizeDouble_MatchesFloat()
+    {
+        // Deliberate superset: ORT 1.29 has no double Resize CPU kernel
+        // (NOT_IMPLEMENTED, probed), so no differential reference can
+        // exist; nearest is exact on ints in both precisions, while linear
+        // blends may differ in the last ulp across precisions.
+        var x = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { 1.0, 2.0 }, { 3.0, 4.0 } } } });
+        var sc = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 2f, 2f });
+        var n = CPUExecutionProvider.Resize(x, null, sc, null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, n.Status);
+        Assert.Equal(new double[] { 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0, 3.0, 3.0, 4.0, 4.0 },
+            ((Tensor<double>)n.Outputs![0]).ToArray());
+        var l = CPUExecutionProvider.Resize(x, null, sc, null, "linear", "asymmetric", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, l.Status);
+        var lv = ((Tensor<double>)l.Outputs![0]).ToArray();
+        var f = CPUExecutionProvider.Resize(
+            DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } }),
+            null, sc, null, "linear", "asymmetric", "round_prefer_floor", -0.75f, 0f, null);
+        var fv = ((Tensor<float>)f.Outputs![0]).ToArray();
+        Assert.Equal(16, lv.Length);
+        for (int i = 0; i < lv.Length; i++) Assert.Equal(fv[i], lv[i], 6);
+    }
+
+    [Fact]
     public void Resize_ScalesFloor_NativePrecision()
     {
         // ORT 1.29 multiplies dim by scale in the scale native precision

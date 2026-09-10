@@ -13,6 +13,24 @@ public class ConvDirectTests
         DenseTensor<float>.OfValues(new float[,,,] { { { { 1f } }, { { 0f } } }, { { { 0f } }, { { 1f } } } });
 
     [Fact]
+    public void DoubleConv_MatchesFloatOnExactInts()
+    {
+        // Deliberate superset: ORT 1.29 has no double Conv CPU kernel
+        // (NOT_IMPLEMENTED at opsets 11 and 14, probed), so no differential
+        // reference can exist; on exactly-representable small ints both
+        // precisions compute exactly and must agree bit for bit.
+        var xd = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { 1.0, 2.0 }, { 3.0, 4.0 } } } });
+        var wd = DenseTensor<double>.OfValues(new double[1, 1, 1, 1] { { { { 2.0 } } } });
+        var yd = Tensor<double>.Conv2D(xd, wd, 1, new int[] { 0, 0, 0, 0 }, null, null, new int[] { 1, 1 }, null);
+        var yf = Tensor<float>.Conv2D(
+            DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } }),
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 2f } } } }),
+            1, new int[] { 0, 0, 0, 0 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(new double[] { 2.0, 4.0, 6.0, 8.0 }, yd.ToArray());
+        Assert.Equal(yf.ToArray(), yd.ToArray().Select(v => (float)v).ToArray());
+    }
+
+    [Fact]
     public void MismatchedBiasDtype_RejectedCleanly()
     {
         // ORT 1.29 refuses mismatched bias at load; every other
