@@ -40,6 +40,39 @@ public class ScalarBoundaryTests
         Assert.Equal(new float[] { float.PositiveInfinity }, Apply(OpType.Div, 1f, 0f));
     }
 
+    static DenseTensor<double> ScalarDouble(double value)
+    {
+        var s = DenseTensor<double>.OfShape();
+        s.SetValue(0, value);
+        return s;
+    }
+
+    static double[] ApplyDouble(OpType op, double x, double y)
+    {
+        var result = op switch
+        {
+            OpType.Add => CPU.Add(ScalarDouble(x), ScalarDouble(y), null, null),
+            OpType.Sub => CPU.Sub(ScalarDouble(x), ScalarDouble(y), null),
+            OpType.Mul => CPU.Mul(ScalarDouble(x), ScalarDouble(y), null, null),
+            OpType.Div => CPU.Div(ScalarDouble(x), ScalarDouble(y), null, null),
+            OpType.Pow => CPU.Pow(ScalarDouble(x), ScalarDouble(y), null),
+            _ => throw new ArgumentOutOfRangeException(nameof(op)),
+        };
+        Assert.Equal(OpStatus.Success, result.Status);
+        return ((Tensor<double>)result.Outputs![0]).ToArray();
+    }
+
+    [Fact]
+    public void ScalarDoubleElementwise_MatchesReference()
+    {
+        // ORT 1.29 rank-0 double: 5, 1, 6, 1.5, 9.
+        Assert.Equal(new double[] { 5.0 }, ApplyDouble(OpType.Add, 3.0, 2.0));
+        Assert.Equal(new double[] { 1.0 }, ApplyDouble(OpType.Sub, 3.0, 2.0));
+        Assert.Equal(new double[] { 6.0 }, ApplyDouble(OpType.Mul, 3.0, 2.0));
+        Assert.Equal(new double[] { 1.5 }, ApplyDouble(OpType.Div, 3.0, 2.0));
+        Assert.Equal(new double[] { 9.0 }, ApplyDouble(OpType.Pow, 3.0, 2.0));
+    }
+
     [Fact]
     public void ScalarPow_MatchesReference()
     {
