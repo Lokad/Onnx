@@ -389,6 +389,16 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void PowZeroNegativeExponent_SignedInfinity()
+    {
+        // ORT 1.29: 0^-1=inf, 0^-2=inf, (-0)^-1=-inf (signed zero flows
+        // through the reciprocal).
+        Assert.Equal(float.PositiveInfinity, Pow1(0f, -1f));
+        Assert.Equal(float.PositiveInfinity, Pow1(0f, -2f));
+        Assert.Equal(float.NegativeInfinity, Pow1(-0f, -1f));
+    }
+
+    [Fact]
     public void PowNegativeBaseIntegerExponents_MatchesOrt()
     {
         // ORT 1.29: [-512, nan, 1024, -0.125] for [-8,-4,2,-2] ^ [3,0.5,10,-3].
