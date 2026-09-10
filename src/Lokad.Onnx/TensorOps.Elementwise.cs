@@ -513,6 +513,10 @@ where T : unmanaged
 
     public static Tensor<long> Abs(Tensor<long> x) => x.Apply(l => l >= 0L ? l : -l);
 
+    public static Tensor<uint> Abs(Tensor<uint> x) => x.Apply(v => v);
+
+    public static Tensor<ulong> Abs(Tensor<ulong> x) => x.Apply(v => v);
+
     /// <summary>
     /// Exact Gaussian error linear unit: 0.5 * x * (1 + erf(x / sqrt(2))).
     /// </summary>

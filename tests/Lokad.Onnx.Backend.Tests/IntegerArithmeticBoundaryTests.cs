@@ -125,6 +125,18 @@ public class IntegerArithmeticBoundaryTests
         Assert.Equal(new long[] { -9223372036854775808L, 1L, 0L, 1L }, ((Tensor<long>)a64.Outputs![0]).ToArray());
     }
 
+    [Fact]
+    public void Abs_UnsignedIsIdentity()
+    {
+        // ORT 1.29: Abs over unsigned is the identity (no min edge exists).
+        var a32 = CPU.Abs(DenseTensor<uint>.OfValues(new uint[] { 0u, 5u, 4294967295u }), null);
+        Assert.Equal(OpStatus.Success, a32.Status);
+        Assert.Equal(new uint[] { 0u, 5u, 4294967295u }, ((Tensor<uint>)a32.Outputs![0]).ToArray());
+        var a64 = CPU.Abs(DenseTensor<ulong>.OfValues(new ulong[] { 0ul, 5ul, 18446744073709551615ul }), null);
+        Assert.Equal(OpStatus.Success, a64.Status);
+        Assert.Equal(new ulong[] { 0ul, 5ul, 18446744073709551615ul }, ((Tensor<ulong>)a64.Outputs![0]).ToArray());
+    }
+
     static DenseTensor<int> Scalar32(int value)
     {
         var s = DenseTensor<int>.OfShape();

@@ -388,6 +388,8 @@ public partial class CPUExecutionProvider
             case TensorElementType.Double: return Success(op, Tensor<double>.Abs((Tensor<double>)X));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Abs((Tensor<int>)X));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Abs((Tensor<long>)X));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Abs((Tensor<uint>)X));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Abs((Tensor<ulong>)X));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
