@@ -607,9 +607,11 @@ public partial class CPUExecutionProvider
             trueScales = scaleArray;
         }
         // Boundary validation: only the resamplers 4D-NCHW scope is supported,
-        // with N/C unchanged (N/C tiling is out of scope); ROI is accepted and
-        // ignored for the supported coordinate modes and extrapolation_value is
-        // unused in range (both verified against ORT 1.29).
+        // with N/C unchanged (N/C tiling is out of scope); ROI values are
+        // ignored like ORT 1.29 CPU (zeros, full and partial crops upsample
+        // identically), but a non-float ROI fails load there, so it fails here;
+        // extrapolation_value is unused in range (both verified against ORT 1.29).
+        if (roi is not null && roi.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(roi), TensorElementType.Float, roi);
         if (X.Rank != 4) return WrongInputShape(op, nameof(X), X, "Resize currently supports only 4D tensors (NCHW).");
         if (targetSizes.Length != 4) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must have one entry per input dimension.");
         if (targetSizes[0] != X.Dims[0] || targetSizes[1] != X.Dims[1]) return WrongInputShape(op, nameof(sizes), X, "Resize currently requires N and C dimensions to remain unchanged.");

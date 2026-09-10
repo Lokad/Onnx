@@ -503,4 +503,26 @@ public class ExpandResizeShapeTests
         var expected = new double[] { 1.0, 1.2265625, 1.5, 1.7734375, 2.0, 2.10546875, 2.09375, 2.03515625 };
         for (int i = 0; i < 8; i++) Assert.Equal(expected[i], yf[i], 5);
     }
+
+    [Fact]
+    public void ResizeRoiContract_MatchesOrt()
+    {
+        // ORT 1.29 CPU ignores ROI values entirely (zeros, full and partial
+        // crops upsample identically) but requires float dtype at load.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { 10f, 20f } } } });
+        var expected = new float[] { 10f, 10f, 10f, 20f, 20f, 20f, 20f, 20f };
+        foreach (var roi in new float[][]
+        {
+            new float[8],
+            new float[] { 0f, 0f, 0f, 0f, 1f, 1f, 1f, 1f },
+            new float[] { 0f, 0f, 0f, 0.5f, 1f, 1f, 1f, 1f },
+        })
+        {
+            var r = CPUExecutionProvider.Resize(x, DenseTensor<float>.OfValues(roi), Scales(1f, 1f, 1f, 4f), null, "nearest", "asymmetric", "round_prefer_floor", -0.75f, 0f, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            Assert.Equal(expected, ((Tensor<float>)r.Outputs[0]).ToArray());
+        }
+        var bad = CPUExecutionProvider.Resize(x, DenseTensor<long>.OfValues(new long[8]), Scales(1f, 1f, 1f, 4f), null, "nearest", "asymmetric", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Failure, bad.Status);
+    }
 }
