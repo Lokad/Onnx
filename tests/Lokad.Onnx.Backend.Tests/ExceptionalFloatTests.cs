@@ -170,6 +170,37 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void CosSin_BasicsMatchOrt()
+    {
+        // ORT 1.29 over [0, pi/3, pi/2, pi]: cos rows and sin rows below.
+        // (ORT signed zeros assert-safe via IEEE equality.)
+        var cf = CPU.Cos(DenseTensor<float>.OfValues(new float[] { 0f, (float)(System.Math.PI / 3.0), (float)(System.Math.PI / 2.0), (float)System.Math.PI }), null);
+        Assert.Equal(OpStatus.Success, cf.Status);
+        Assert.Equal(1f, ((Tensor<float>)cf.Outputs![0])[0], 5);
+        Assert.Equal(0.5f, ((Tensor<float>)cf.Outputs![0])[1], 5);
+        Assert.Equal(0f, ((Tensor<float>)cf.Outputs![0])[2], 5);
+        Assert.Equal(-1f, ((Tensor<float>)cf.Outputs![0])[3], 5);
+        var sf = CPU.Sin(DenseTensor<float>.OfValues(new float[] { 0f, (float)(System.Math.PI / 3.0), (float)(System.Math.PI / 2.0), (float)System.Math.PI }), null);
+        Assert.Equal(OpStatus.Success, sf.Status);
+        Assert.Equal(0f, ((Tensor<float>)sf.Outputs![0])[0], 5);
+        Assert.Equal(0.8660254f, ((Tensor<float>)sf.Outputs![0])[1], 6);
+        Assert.Equal(1f, ((Tensor<float>)sf.Outputs![0])[2], 5);
+        Assert.Equal(0f, ((Tensor<float>)sf.Outputs![0])[3], 5);
+        var cd = CPU.Cos(DenseTensor<double>.OfValues(new double[] { 0.0, System.Math.PI / 3.0, System.Math.PI / 2.0, System.Math.PI }), null);
+        Assert.Equal(OpStatus.Success, cd.Status);
+        Assert.Equal(1.0, ((Tensor<double>)cd.Outputs![0])[0], 6);
+        Assert.Equal(0.5, ((Tensor<double>)cd.Outputs![0])[1], 6);
+        Assert.Equal(0.0, ((Tensor<double>)cd.Outputs![0])[2], 6);
+        Assert.Equal(-1.0, ((Tensor<double>)cd.Outputs![0])[3], 6);
+        var sd = CPU.Sin(DenseTensor<double>.OfValues(new double[] { 0.0, System.Math.PI / 3.0, System.Math.PI / 2.0, System.Math.PI }), null);
+        Assert.Equal(OpStatus.Success, sd.Status);
+        Assert.Equal(0.0, ((Tensor<double>)sd.Outputs![0])[0], 6);
+        Assert.Equal(0.8660254038, ((Tensor<double>)sd.Outputs![0])[1], 6);
+        Assert.Equal(1.0, ((Tensor<double>)sd.Outputs![0])[2], 6);
+        Assert.Equal(0.0, ((Tensor<double>)sd.Outputs![0])[3], 6);
+    }
+
+    [Fact]
     public void NegDoubleExceptional_MatchesOrt()
     {
         // ORT 1.29 double: [nan, -inf, inf, -0].
