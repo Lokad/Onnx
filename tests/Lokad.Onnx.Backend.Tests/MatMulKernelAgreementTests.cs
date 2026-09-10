@@ -109,9 +109,10 @@ public class MatMulKernelAgreementTests
         Assert.Equal(new int[] { -2 }, ((Tensor<int>)r.Outputs![0]).ToArray());
     }
 
-    [Fact]
+    [SkippableFact]
     public unsafe void KernelsComputeABAgainstReference()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var rnd = new Random(Seed);
         var a = Fill(N, N, rnd);
         var b = Fill(N, N, rnd);
@@ -135,9 +136,10 @@ public class MatMulKernelAgreementTests
         Agrees(Sum(c4), expected, "intrinsics-2x4tiled");
     }
 
-    [Fact]
+    [SkippableFact]
     public unsafe void KernelsAccumulateOntoNonzeroDestination()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var rnd = new Random(Seed);
         var a = Fill(N, N, rnd);
         var b = Fill(N, N, rnd);
@@ -154,9 +156,10 @@ public class MatMulKernelAgreementTests
         Agrees(Sum(c3), expected, "intrinsics-2x4tiled-accumulate");
     }
 
-    [Fact]
+    [SkippableFact]
     public unsafe void TiledMatchesUnrolledBitwiseOnTails()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var rnd = new Random(Seed);
         BitwiseEqual(6, 24, 20, rnd);
         BitwiseEqual(4, 24, 40, rnd);
@@ -192,9 +195,10 @@ public class MatMulKernelAgreementTests
         kernel((IntPtr)pa.Pointer, (IntPtr)pb.Pointer, (IntPtr)pp.Pointer, (IntPtr)pc.Pointer);
     }
 
-    [Fact]
+    [SkippableFact]
     public unsafe void PackedMatchesTiledBitwise()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var rnd = new Random(Seed);
         PackedEqual(8, 24, 20, rnd);
         PackedEqual(8, 24, 44, rnd);
@@ -246,9 +250,10 @@ public class MatMulKernelAgreementTests
         Agrees(SumRect(got.ToDenseTensor()), expected, "dispatched-" + m + "x" + n + "x" + k);
     }
 
-    [Fact]
+    [SkippableFact]
     public unsafe void TiledKernelAgreesOnTailShapes()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var rnd = new Random(Seed);
         TailAgrees(6, 24, 20, rnd);
         TailAgrees(4, 24, 40, rnd);

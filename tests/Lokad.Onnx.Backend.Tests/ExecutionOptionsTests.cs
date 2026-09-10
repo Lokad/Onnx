@@ -56,9 +56,10 @@ public class ExecutionOptionsTests
         Assert.Contains(OpType.MatMul, CPUExecutionProvider.SupportedOps);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task Graphs_WithDifferentOptions_RunConcurrently()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var modelPath = TestSupport.CommittedModel("mnist-8.onnx");
         var imageArg = TestSupport.CommittedImage("mnist4.png") + "::mnist";
         var baselineGraph = OnnxImport.Load(modelPath)!;
@@ -92,9 +93,10 @@ public class ExecutionOptionsTests
         }
     }
 
-    [Fact]
+    [SkippableFact]
     public void BatchedMatMul_Parallel_MatchesSequential_AndRepeatsBitwise()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         static ComputationalGraph TinyBatchedMatMul()
         {
             var graph = new ComputationalGraph();
@@ -133,15 +135,13 @@ public class ExecutionOptionsTests
     }
 
     [Fact]
-    public void Validate_AcceptsPresets_RejectsBadConfigurations()
+    public void Validate_AcceptsPortablePresets_RejectsBadConfigurations()
     {
         foreach (var valid in new[]
         {
             TensorExecutionOptions.Scalar,
             TensorExecutionOptions.Simd,
-            TensorExecutionOptions.Intrinsics,
             TensorExecutionOptions.Auto,
-            TensorExecutionOptions.Parallel(4),
         })
         {
             valid.Validate();
@@ -149,6 +149,14 @@ public class ExecutionOptionsTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new TensorExecutionOptions(true, true, 0).Validate());
         Assert.Throws<ArgumentOutOfRangeException>(() => new TensorExecutionOptions(true, false, -2).Validate());
         Assert.Throws<ArgumentException>(() => new TensorExecutionOptions(false, true, 1).Validate());
+    }
+
+    [SkippableFact]
+    public void Validate_AcceptsIntrinsicsPresets()
+    {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        TensorExecutionOptions.Intrinsics.Validate();
+        TensorExecutionOptions.Parallel(4).Validate();
     }
 
     [Fact]
@@ -184,9 +192,10 @@ public class ExecutionOptionsTests
         Assert.Equal(tanhAuto.ToArray(), tanhScalar.ToArray());
     }
 
-    [Fact]
+    [SkippableFact]
     public void Gemm_Threading_MatchesSequential()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var ad = new float[64 * 8];
         var bd = new float[8 * 4];
         for (int i = 0; i < ad.Length; i++) ad[i] = 0.1f * (i % 7) - 0.3f;

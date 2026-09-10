@@ -28,18 +28,20 @@ public class TensorParallelMatMulTests
             AssertTensorsBitwiseEqual(expected, Tensor<float>.MatMul(a, b, TensorExecutionOptions.Parallel(dop)));
     }
 
-    [Fact]
+    [SkippableFact]
     public void UnbatchedIgnoresParallelism()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var a = Seq(new[] { 8, 8 }, 1);
         var b = Seq(new[] { 8, 8 }, 100);
         var expected = Tensor<float>.MatMul(a, b);
         AssertTensorsBitwiseEqual(expected, Tensor<float>.MatMul(a, b, TensorExecutionOptions.Parallel(8)));
     }
 
-    [Fact]
+    [SkippableFact]
     public void RowSplitMatchesSequentialBitwise()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var a = Seq(new[] { 257, 128 }, 1);
         var b = Seq(new[] { 128, 64 }, 100);
         var expected = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics);
@@ -59,9 +61,10 @@ public class TensorParallelMatMulTests
         }
     }
 
-    [Fact]
+    [SkippableFact]
     public void BelowRowThresholdIgnoresParallelism()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var a = Seq(new[] { 30, 32 }, 1);
         var b = Seq(new[] { 32, 16 }, 100);
         var expected = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics);

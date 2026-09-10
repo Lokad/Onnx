@@ -57,9 +57,10 @@ public class TensorOpsSimdTests : IDisposable
         Assert.Equal(t_384_384_c2, t_384_384_cr);
     }
 
-    [Fact]
+    [SkippableFact]
     public unsafe void CanMatMulVectorizedIntrinsics()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         mm_unsafe_vectorized_intrinsics(384, 384, 384, (float*)ah.Pointer, (float*)bh.Pointer, (float*)c2h.Pointer);
         Assert.Equal(t_384_384_c2[0,1], t_384_384_cr[0,1], .0002f);
     }

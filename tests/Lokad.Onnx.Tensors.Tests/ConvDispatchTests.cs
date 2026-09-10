@@ -53,9 +53,10 @@ public class ConvDispatchTests
         FindConvOptions(true, true);
     }
 
-    [Fact]
+    [SkippableFact]
     public void Conv_ParallelMatchesSequential_Float()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var m = FindConvOptions(false, false);
         var rnd = new System.Random(21);
         Tensor<float> Rand(params int[] dims)
@@ -113,9 +114,10 @@ public class ConvDispatchTests
         Assert.Equal(new double[] { 19.0, 22.0, 43.0, 50.0 }, r.ToArray());
     }
 
-    [Fact]
+    [SkippableFact]
     public void Conv_ParallelMatchesSequential_Double_NoBias()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var m = FindConvOptions(true, true);
         var x = DenseTensor<double>.OfValues(new double[1, 1, 4, 4]
         { {

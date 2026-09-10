@@ -13,9 +13,10 @@ public class ExecutionIsolationTests
         return output.ToArray();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task ScalarVsIntrinsics_MatchSerialReferences()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var gScalar = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
         var gIntrinsics = OnnxImport.Load(TestSupport.CommittedModel("mnist-8.onnx"))!;
         var serialScalar = RunToArray(gScalar, "mnist4.png", ExecutionOptions.Scalar);

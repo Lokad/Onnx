@@ -33,9 +33,10 @@ public class DestinationContractTests
         AssertMatMul2x2(dest);
     }
 
-    [Fact]
+    [SkippableFact]
     public void DirtyDestination_MatMul2D_Overwrites_Parallel()
     {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
         var x = DenseTensor<float>.Ones(64, 8);
         var y = DenseTensor<float>.Ones(8, 4);
         var dest = DenseTensor<float>.OfValues(Enumerable.Repeat(3.25f, 64 * 4).ToArray()).ToDenseTensor();
