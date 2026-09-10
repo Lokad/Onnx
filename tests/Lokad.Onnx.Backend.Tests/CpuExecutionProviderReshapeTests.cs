@@ -31,6 +31,8 @@ namespace Lokad.Onnx.Backend.Tests
         Assert.Equal(new int[] { 2, 0 }, DimsOf(DenseTensor<float>.OfShape(2, 0), new long[] { 0, -1 }));
         Assert.Equal(new int[] { 0 }, DimsOf(DenseTensor<float>.OfShape(2, 0), new long[] { -1 }));
         Assert.Equal(new int[] { 0 }, DimsOf(DenseTensor<float>.OfShape(0), new long[] { 0 }));
+        Assert.Equal(new int[] { 0, 3 }, DimsOf(DenseTensor<float>.OfShape(2, 0, 3), new long[] { -1, 3 }));
+        Assert.Equal(new int[] { 2, 0 }, DimsOf(DenseTensor<float>.OfShape(2, 0, 3), new long[] { 0, -1 }));
     }
 
     [Fact]
