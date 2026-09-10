@@ -79,6 +79,54 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void TanhDoubleExceptional_MatchesOrt()
+    {
+        // ORT 1.29 double: [1, -1, nan].
+        var result = CPU.Tanh(DenseTensor<double>.OfValues(new double[] { double.PositiveInfinity, double.NegativeInfinity, double.NaN }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.Equal(1.0, values[0]);
+        Assert.Equal(-1.0, values[1]);
+        Assert.True(double.IsNaN(values[2]));
+    }
+
+    [Fact]
+    public void ReluDoubleExceptional_MatchesOrt()
+    {
+        // ORT 1.29 double: [nan, 0, inf].
+        var result = CPU.Relu(DenseTensor<double>.OfValues(new double[] { double.NaN, double.NegativeInfinity, double.PositiveInfinity }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.True(double.IsNaN(values[0]));
+        Assert.Equal(0.0, values[1]);
+        Assert.Equal(double.PositiveInfinity, values[2]);
+    }
+
+    [Fact]
+    public void GeluDoubleExceptional_MatchesExactFormula()
+    {
+        // No ORT CPU reference exists: double Gelu decomposes to double Erf,
+        // which ORT 1.29 CPU rejects as NOT_IMPLEMENTED. Values follow the
+        // exact formula 0.5*x*(1+erf(x/sqrt(2))), matching the float pattern.
+        var result = CPU.Gelu(DenseTensor<double>.OfValues(new double[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity }), null, null, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.True(double.IsNaN(values[0]));
+        Assert.Equal(double.PositiveInfinity, values[1]);
+        Assert.True(double.IsNaN(values[2]));
+    }
+
+    [Fact]
+    public void ErfDoubleInfinite_MatchesExactFormula()
+    {
+        // No ORT CPU reference exists: ORT 1.29 CPU rejects double Erf as
+        // NOT_IMPLEMENTED. erf(+/-inf) = +/-1 is mathematically forced.
+        var result = CPU.Erf(DenseTensor<double>.OfValues(new double[] { double.PositiveInfinity, double.NegativeInfinity, 0.0 }), null, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        Assert.Equal(new double[] { 1.0, -1.0, 0.0 }, ((Tensor<double>)result.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void SqrtDoubleExceptional_MatchesOrt()
     {
         // ORT 1.29 double: [-1, 0, 4] -> [nan, 0, 2].

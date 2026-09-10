@@ -1147,6 +1147,9 @@ public class MathOps
     private static readonly float[] ErfStegunTableDesc = new float[] { 1.061405429f, -1.453152027f, 1.421413741f, -0.284496736f, 0.254829592f };
     public static float Erf(float x)
     {
+        // A&S 7.1.26 coefficients sum to 0.999999999, leaving residue at the
+        // origin in wider arithmetic; erf(0) is exactly 0 by definition.
+        if (x == 0) return 0;
         if (x < 0)
         {
             return -ErfMagnitude(-x);
@@ -1245,6 +1248,8 @@ public class MathOps
     private static readonly double[] ErfStegunTableDescDouble = new double[] { 1.061405429, -1.453152027, 1.421413741, -0.284496736, 0.254829592 };
     public static double Erf(double x)
     {
+        // Same exact-zero origin guard as the float overload above.
+        if (x == 0) return 0;
         if (x < 0)
         {
             return -ErfMagnitudeDouble(-x);
