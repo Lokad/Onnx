@@ -71,6 +71,21 @@ def main():
          {"x": np.array([4294967296, 3], dtype=np.uint64),
           "y": np.array([4294967296, 7], dtype=np.uint64)},
          dtypes=du64, feed_dtypes=fu64)
+    # int32 MatMul wraps like the scalar lanes on every kernel path
+    # (verified tri-mode identical including packed geometries): 2e9 lanes
+    # overflow each product, the packed case overflows the accumulation.
+    dmm = {"x": TensorProto.INT32, "y": TensorProto.INT32, "z": TensorProto.INT32}
+    fmm = {"x": np.int32, "y": np.int32}
+    node = helper.make_node("MatMul", ["x", "y"], ["z"])
+    emit("imatmul_overflow", node, [("x", [3, 4]), ("y", [4, 3])], [("z", [3, 3])],
+         {"x": np.full((3, 4), 2000000000, dtype=np.int32),
+          "y": np.full((4, 3), 2, dtype=np.int32)},
+         dtypes=dmm, feed_dtypes=fmm)
+    node = helper.make_node("MatMul", ["x", "y"], ["z"])
+    emit("imatmul_overflow_packed", node, [("x", [32, 17]), ("y", [17, 32])], [("z", [32, 32])],
+         {"x": np.full((32, 17), 100000, dtype=np.int32),
+          "y": np.full((17, 32), 2, dtype=np.int32)},
+         dtypes=dmm, feed_dtypes=fmm)
 
 if __name__ == "__main__":
     main()
