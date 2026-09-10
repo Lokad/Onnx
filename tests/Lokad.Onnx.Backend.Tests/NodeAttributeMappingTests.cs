@@ -169,6 +169,27 @@ public class NodeAttributeMappingTests
     }
 
     [Fact]
+    public void Reshape_AllowZeroAttribute_Maps()
+    {
+        // ORT 1.29: allowzero=1 keeps literal zeros ([2,0,3] @ [0,-1,0]
+        // -> [0,6,0]); the node fill maps the attribute through.
+        var graph = CreateGraph(14);
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(2, 0, 3);
+        graph.Inputs["s"] = DenseTensor<long>.OfValues(new long[] { 0L, -1L, 0L });
+        var node = new Node
+        {
+            Name = "reshape",
+            Op = OpType.Reshape,
+            Inputs = new[] { "x", "s" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object> { ["allowzero"] = 1L }
+        };
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        Assert.Equal(new[] { 0, 6, 0 }, ((Tensor<float>)result.Outputs[0]).Dimensions.ToArray());
+    }
+
+    [Fact]
     public void Conv_UsesPadsStridesKernelShapeAttributes()
     {
         var graph = CreateGraph(13);
