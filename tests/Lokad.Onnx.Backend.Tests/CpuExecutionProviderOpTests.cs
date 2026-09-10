@@ -340,6 +340,26 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void BinaryOps_RejectSub32AndBool()
+    {
+        // ORT 1.29 refuses int8/bool arithmetic at load (Add-13 admits
+        // neither; sub-32 arithmetic is out of scope); every op fails
+        // descriptively instead of reaching a kernel cast.
+        var s8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
+        var b = DenseTensor<bool>.OfValues(new bool[] { true });
+        Assert.Equal(OpStatus.Failure, CPU.Add(s8, s8, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sub(s8, s8, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Mul(s8, s8, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Div(s8, s8, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Pow(s8, s8, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Add(b, b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sub(b, b, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Mul(b, b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Div(b, b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Pow(b, b, null).Status);
+    }
+
+    [Fact]
     public void UnaryMath_RejectUnsupportedDtypes()
     {
         // ORT constrains these math kernels to float types at load (Cos-int
