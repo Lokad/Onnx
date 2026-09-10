@@ -88,6 +88,18 @@ public class IntegerArithmeticBoundaryTests
     }
 
     [Fact]
+    public void IntegerDiv_TruncatesTowardZero()
+    {
+        // ORT 1.29: C-style truncation ([-7,7,-7,7] / [2,-2,-2,2] ->
+        // [-3,-3,3,3]), matching C# semantics.
+        var r = CPU.Div(
+            DenseTensor<int>.OfValues(new int[] { -7, 7, -7, 7 }),
+            DenseTensor<int>.OfValues(new int[] { 2, -2, -2, 2 }), null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { -3, -3, 3, 3 }, ((Tensor<int>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void IntegerDivByZero_FailsCleanlyWithNodeIdentity()
     {
         var zero32 = DenseTensor<int>.OfValues(new int[] { 0 });
