@@ -716,4 +716,77 @@ public class ExceptionalFloatTests
         Assert.Equal(OpStatus.Success, rd.Status);
         Assert.Equal(new bool[] { false, false, false, false, false, true, false, false, true, true, false, true, false, false, false, false }, ((Tensor<bool>)rd.Outputs![0]).ToArray());
     }
+
+    [Fact]
+    public void ErfSignedZero_MatchesOrt()
+    {
+        // ORT 1.29 float bits: erf(+0)=+0, erf(-0)=-0. The 40-element
+        // alternating input spans the SIMD body and scalar tail on any
+        // Vector<float>.Count (4, 8 or 16); both paths must keep the sign.
+        var input = new float[40];
+        for (int i = 0; i < input.Length; i++) input[i] = (i & 1) == 0 ? 0f : -0f;
+        var rf = CPU.Erf(DenseTensor<float>.OfValues(input), null, null);
+        Assert.Equal(OpStatus.Success, rf.Status);
+        var yf = ((Tensor<float>)rf.Outputs![0]).ToArray();
+        for (int i = 0; i < yf.Length; i++)
+            Assert.Equal((i & 1) == 0 ? 0 : int.MinValue, System.BitConverter.SingleToInt32Bits(yf[i]));
+        // No ORT double kernel (NOT_IMPLEMENTED); erf is odd, so erf(-0)
+        // is -0 by the exact-formula idiom. Double Erf is scalar-only.
+        var rd = CPU.Erf(DenseTensor<double>.OfValues(new double[] { 0.0, -0.0 }), null, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        var yd = ((Tensor<double>)rd.Outputs![0]).ToArray();
+        Assert.Equal(0L, System.BitConverter.DoubleToInt64Bits(yd[0]));
+        Assert.Equal(long.MinValue, System.BitConverter.DoubleToInt64Bits(yd[1]));
+    }
+
+    [Fact]
+    public void UnarySignedZeroBits_MatchesOrt()
+    {
+        // ORT 1.29 float and double bits for [+0, -0]: Neg flips, Sqrt/Relu/
+        // Tanh/Sin preserve, Abs clears. Guards scalar and SIMD spellings
+        // (e.g. a future Max(x, 0) Relu would turn -0 into +0).
+        static int[] FloatBits(string op, float[] v)
+        {
+            var r = op switch
+            {
+                nameof(CPU.Neg) => CPU.Neg(DenseTensor<float>.OfValues(v), null),
+                nameof(CPU.Sqrt) => CPU.Sqrt(DenseTensor<float>.OfValues(v), null),
+                nameof(CPU.Abs) => CPU.Abs(DenseTensor<float>.OfValues(v), null),
+                nameof(CPU.Relu) => CPU.Relu(DenseTensor<float>.OfValues(v), null),
+                nameof(CPU.Tanh) => CPU.Tanh(DenseTensor<float>.OfValues(v), null),
+                _ => CPU.Sin(DenseTensor<float>.OfValues(v), null),
+            };
+            Assert.Equal(OpStatus.Success, r.Status);
+            return Array.ConvertAll(((Tensor<float>)r.Outputs![0]).ToArray(), System.BitConverter.SingleToInt32Bits);
+        }
+        static long[] DoubleBits(string op, double[] v)
+        {
+            var r = op switch
+            {
+                nameof(CPU.Neg) => CPU.Neg(DenseTensor<double>.OfValues(v), null),
+                nameof(CPU.Sqrt) => CPU.Sqrt(DenseTensor<double>.OfValues(v), null),
+                nameof(CPU.Abs) => CPU.Abs(DenseTensor<double>.OfValues(v), null),
+                nameof(CPU.Relu) => CPU.Relu(DenseTensor<double>.OfValues(v), null),
+                nameof(CPU.Tanh) => CPU.Tanh(DenseTensor<double>.OfValues(v), null),
+                _ => CPU.Sin(DenseTensor<double>.OfValues(v), null),
+            };
+            Assert.Equal(OpStatus.Success, r.Status);
+            return Array.ConvertAll(((Tensor<double>)r.Outputs![0]).ToArray(), System.BitConverter.DoubleToInt64Bits);
+        }
+        var fz = new float[] { 0f, -0f };
+        var dz = new double[] { 0.0, -0.0 };
+        const int NZero = int.MinValue;
+        Assert.Equal(new int[] { NZero, 0 }, FloatBits(nameof(CPU.Neg), fz));
+        Assert.Equal(new int[] { 0, NZero }, FloatBits(nameof(CPU.Sqrt), fz));
+        Assert.Equal(new int[] { 0, 0 }, FloatBits(nameof(CPU.Abs), fz));
+        Assert.Equal(new int[] { 0, NZero }, FloatBits(nameof(CPU.Relu), fz));
+        Assert.Equal(new int[] { 0, NZero }, FloatBits(nameof(CPU.Tanh), fz));
+        Assert.Equal(new int[] { 0, NZero }, FloatBits(nameof(CPU.Sin), fz));
+        Assert.Equal(new long[] { long.MinValue, 0L }, DoubleBits(nameof(CPU.Neg), dz));
+        Assert.Equal(new long[] { 0L, long.MinValue }, DoubleBits(nameof(CPU.Sqrt), dz));
+        Assert.Equal(new long[] { 0L, 0L }, DoubleBits(nameof(CPU.Abs), dz));
+        Assert.Equal(new long[] { 0L, long.MinValue }, DoubleBits(nameof(CPU.Relu), dz));
+        Assert.Equal(new long[] { 0L, long.MinValue }, DoubleBits(nameof(CPU.Tanh), dz));
+        Assert.Equal(new long[] { 0L, long.MinValue }, DoubleBits(nameof(CPU.Sin), dz));
+    }
 }
