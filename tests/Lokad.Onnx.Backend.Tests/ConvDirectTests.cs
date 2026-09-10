@@ -100,6 +100,17 @@ public class ConvDirectTests
     }
 
     [Fact]
+    public void ZeroSpatial_Throws()
+    {
+        // ORT 1.29 fails the run for zero spatial extents (batch-0 is
+        // already pinned flowing to empty); the planner rejects
+        // non-positive output dims up front, mirroring MaxPool.
+        var x = DenseTensor<float>.OfShape(1, 1, 0, 3);
+        var w = DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 1f } } } });
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w, null, null, null, null, null, null, null, null));
+    }
+
+    [Fact]
     public void MismatchedWeightsDtype_RejectedCleanly()
     {
         // Mismatched bias already pins its guard; ORT refuses mismatched
