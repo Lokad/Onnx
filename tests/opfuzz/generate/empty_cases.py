@@ -38,6 +38,13 @@ def main():
     node = helper.make_node("Conv", ["x", "w"], ["z"], kernel_shape=[3, 3])
     emit("conv_empty_channel", node, [("x", [1, 0, 5, 5])], [("z", [1, 2, 3, 3])],
          {"x": np.zeros((1, 0, 5, 5), dtype=np.float32)}, inits=[wzero])
+    node = helper.make_node("Concat", ["x", "y"], ["z"], axis=1)
+    emit("concat_empty_lead", node, [("x", [2, 0]), ("y", [2, 2])], [("z", [2, 2])],
+         {"x": np.zeros((2, 0), dtype=np.float32), "y": np.array([[1, 2], [3, 4]], dtype=np.float32)})
+    node = helper.make_node("Concat", ["x", "y", "w"], ["z"], axis=1)
+    emit("concat_empty_3way", node, [("x", [2, 0]), ("y", [2, 2]), ("w", [2, 0])], [("z", [2, 2])],
+         {"x": np.zeros((2, 0), dtype=np.float32), "y": np.array([[1, 2], [3, 4]], dtype=np.float32),
+          "w": np.zeros((2, 0), dtype=np.float32)})
 
 
 if __name__ == "__main__":
