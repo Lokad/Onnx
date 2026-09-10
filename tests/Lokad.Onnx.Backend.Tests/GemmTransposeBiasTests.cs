@@ -36,6 +36,20 @@ public class GemmTransposeBiasTests
     }
 
     [Fact]
+    public void VectorInputs_Rejected()
+    {
+        // ORT 1.29 refuses 1-D Gemm inputs at load (rank 2 required);
+        // Lokad returns a descriptive Failure instead of promoting.
+        var a = F(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var b = F(new float[,] { { 5f, 6f }, { 7f, 8f } });
+        var vec = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        var ra = CPUExecutionProvider.Gemm(vec, b, null, 1f, 0f, null, 0, 0);
+        Assert.Equal(OpStatus.Failure, ra.Status);
+        var rb = CPUExecutionProvider.Gemm(a, vec, null, 1f, 0f, null, 0, 0);
+        Assert.Equal(OpStatus.Failure, rb.Status);
+    }
+
+    [Fact]
     public void SquareTransposed_IsNotSilentUntransposed()
     {
         var a = F(new float[,] { { 1f, 2f }, { 3f, 4f } });
