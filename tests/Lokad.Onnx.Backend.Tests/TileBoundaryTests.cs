@@ -149,4 +149,15 @@ public class TileBoundaryTests
         Assert.Equal(OpStatus.Success, tu16.Status);
         Assert.Equal(new ushort[] { 1, 60000, 1, 60000 }, ((Tensor<ushort>)tu16.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void Tile_Half_MatchesOrt()
+    {
+        // ORT 1.29 float16: repeats [2, 1] over [[1, 2]].
+        var r = CPU.Tile(DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)2f }, new int[] { 1, 2 }), DenseTensor<long>.OfValues(new long[] { 2L, 1L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<Half>)r.Outputs[0];
+        Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new Half[] { (Half)1f, (Half)2f, (Half)1f, (Half)2f }, y.ToArray());
+    }
 }

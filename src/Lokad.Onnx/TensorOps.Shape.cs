@@ -172,6 +172,12 @@ where T : unmanaged
     public static Tensor<ushort> Tile(Tensor<ushort> x, int[] repeats) => TileCore(x, repeats);
 
     /// <summary>
+    /// Repeats the input repeats[i] times along each dimension.
+    /// The repeats rank must match the input rank and every repeat must be non-negative.
+    /// </summary>
+    public static Tensor<Half> Tile(Tensor<Half> x, int[] repeats) => TileCore(x, repeats);
+
+    /// <summary>
     /// Copies the length elements starting at start along the axis.
     /// Negative axes resolve against the input rank; out-of-range chunks throw.
     /// </summary>

@@ -237,4 +237,14 @@ public class SplitDensifyTests
         Assert.Equal(new ushort[] { 1, 60000 }, ((Tensor<ushort>)su16.Outputs[0]).ToArray());
         Assert.Equal(new ushort[] { 1, 60000 }, ((Tensor<ushort>)su16.Outputs[1]).ToArray());
     }
+
+    [Fact]
+    public void Split_Half_MatchesOrt()
+    {
+        // ORT 1.29 float16: axis 1 sizes [2, 2] over [[1, 2, 3, 4]].
+        var r = CPU.Split(DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)2f, (Half)3f, (Half)4f }, new int[] { 1, 4 }), DenseTensor<long>.OfValues(new long[] { 2L, 2L }), 1, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new Half[] { (Half)1f, (Half)2f }, ((Tensor<Half>)r.Outputs[0]).ToArray());
+        Assert.Equal(new Half[] { (Half)3f, (Half)4f }, ((Tensor<Half>)r.Outputs[1]).ToArray());
+    }
 }

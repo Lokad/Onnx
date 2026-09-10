@@ -294,6 +294,15 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Success, eu16.Status);
         Assert.Equal(new ushort[] { 1, 60000, 1, 60000 }, ((Tensor<ushort>)eu16.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void Expand_Half_MatchesOrt()
+    {
+        // ORT 1.29 float16: [[1, 2]] to [2, 2].
+        var r = CPU.Expand(DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)2f }, new int[] { 1, 2 }), DenseTensor<long>.OfValues(new long[] { 2L, 2L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new Half[] { (Half)1f, (Half)2f, (Half)1f, (Half)2f }, ((Tensor<Half>)r.Outputs[0]).ToArray());
+    }
 }
 
 

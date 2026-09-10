@@ -125,4 +125,13 @@ public class ConstantOfShapeBoundaryTests
         Assert.Equal(OpStatus.Success, u16.Status);
         Assert.Equal(new ushort[] { 60000, 60000 }, ((Tensor<ushort>)u16.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void HalfValue_FillsConstant()
+    {
+        // ORT 1.29 float16: [2, 2] of 2.5.
+        var r = CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 2L, 2L }), DenseTensor<Half>.OfValues(new Half[] { (Half)2.5f }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new Half[] { (Half)2.5f, (Half)2.5f, (Half)2.5f, (Half)2.5f }, ((Tensor<Half>)r.Outputs[0]).ToArray());
+    }
 }
