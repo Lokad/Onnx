@@ -323,6 +323,18 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void SqrtAbsDoubleNaN_Passthrough()
+    {
+        // ORT 1.29 double: NaN stays NaN through Sqrt and Abs.
+        var s = CPU.Sqrt(DenseTensor<double>.OfValues(new double[] { double.NaN }), null);
+        Assert.Equal(OpStatus.Success, s.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)s.Outputs![0])[0]));
+        var a = CPU.Abs(DenseTensor<double>.OfValues(new double[] { double.NaN }), null);
+        Assert.Equal(OpStatus.Success, a.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)a.Outputs![0])[0]));
+    }
+
+    [Fact]
     public void SqrtDoubleExceptional_MatchesOrt()
     {
         // ORT 1.29 double: [-1, 0, 4] -> [nan, 0, 2].
