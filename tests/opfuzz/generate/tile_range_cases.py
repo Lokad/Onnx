@@ -74,6 +74,10 @@ def main():
     emit("range_double", node, [("x", []), ("y", []), ("d", [])], [("z", [100])],
          {"x": np.float64(0.0), "y": np.float64(10.0), "d": np.float64(0.1)},
          dtypes=ddt, feed_dtypes=dfd)
+    node = helper.make_node("Range", ["x", "y", "d"], ["z"])
+    emit("range_inf_delta", node, [("x", []), ("y", []), ("d", [])], [("z", [0])],
+         {"x": np.float32(0.0), "y": np.float32(1.0), "d": np.float32(np.inf)},
+         dtypes=fdt, feed_dtypes=ffd)
 
 
 if __name__ == "__main__":

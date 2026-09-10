@@ -33,6 +33,9 @@ def main():
     node = helper.make_node("Slice", ["x", "s", "e", "a", "t"], ["z"])
     emit("slice_negstep", node, [("x", [10])], [("z", [3])], {"x": x},
          inits=[i64("s", [8]), i64("e", [2]), i64("a", [0]), i64("t", [-2])])
+    node = helper.make_node("Slice", ["x", "s", "e", "a", "t"], ["z"])
+    emit("slice_hugestep", node, [("x", [5])], [("z", [1])], {"x": np.arange(5, dtype=np.float32)},
+         inits=[i64("s", [0]), i64("e", [5]), i64("a", [0]), i64("t", [1099511627776])])
     node = helper.make_node("Expand", ["x", "shape"], ["z"])
     emit("expand_basic", node, [("x", [3, 1])], [("z", [3, 4])],
          {"x": np.array([[1.0], [2.0], [3.0]], dtype=np.float32)},

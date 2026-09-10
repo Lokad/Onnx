@@ -167,6 +167,13 @@ def softmax_cases(n=5):
         node = helper.make_node("Softmax", ["x"], ["z"], axis=ax)
         emit("softmax_%d" % i, node, [("x", list(s))], [("z", list(s))], {"x": rarray(s, -5, 5)})
 
+def softmax_large_cases():
+    # Fixed values only (no RNG draws): large-magnitude rows exercise the
+    # max-subtraction stability path differentially.
+    a = np.array([[1000.0, 1001.0]], dtype=np.float32)
+    node = helper.make_node("Softmax", ["x"], ["z"], axis=-1)
+    emit("softmax_large", node, [("x", [1, 2])], [("z", [1, 2])], {"x": a})
+
 def matmul_cases():
     cfgs = [(1, 1, 1), (1, 5, 1), (2, 3, 4), (3, 3, 32), (4, 3, 32), (5, 31, 7),
             (2, 32, 2), (4, 33, 5), (3, 8, 8), (6, 16, 16), (1, 64, 1)]
@@ -408,7 +415,7 @@ if __name__ == "__main__":
         binary_cases(op)
     for op in ["Relu", "Sqrt", "Neg", "Abs"]:
         unary_cases(op, lo=(0.01 if op == "Sqrt" else -3.0))
-    transpose_cases(); reshape_cases(); concat_cases(); softmax_cases()
+    transpose_cases(); reshape_cases(); concat_cases(); softmax_cases(); softmax_large_cases()
     matmul_cases(); reducemean_cases(); unsqueeze_cases(); squeeze_cases(); gather_cases()
     boundary_cases()
     layernorm_cases()
