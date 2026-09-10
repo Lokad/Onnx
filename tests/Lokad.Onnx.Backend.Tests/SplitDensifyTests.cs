@@ -5,6 +5,30 @@ namespace Lokad.Onnx.Backend.Tests;
 public class SplitDensifyTests
 {
     [Fact]
+    public void MismatchedSplitSizes_FailsCleanly()
+    {
+        // ORT 1.29 fails the run (sizes [2,1] sum to 3 on dim 4).
+        var x = DenseTensor<float>.OfValues(Enumerable.Range(0, 8).Select(v => (float)v).ToArray(), new[] { 2, 4 });
+        var r = CPU.Split(x, DenseTensor<long>.OfValues(new long[] { 2L, 1L }), 1, null, null, null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
+    public void UnevenNumOutputs_DistributesRemainderLast()
+    {
+        // ORT 1.29: 5/2 -> [3,2], 5/3 -> [2,2,1] (ceil-sized leading).
+        var x = DenseTensor<float>.OfValues(Enumerable.Range(0, 5).Select(v => (float)v).ToArray());
+        var r2 = CPU.Split(x, null, 0, null, 2, null, null);
+        Assert.Equal(OpStatus.Success, r2.Status);
+        Assert.Equal(new float[] { 0f, 1f, 2f }, ((Tensor<float>)r2.Outputs![0]).ToArray());
+        Assert.Equal(new float[] { 3f, 4f }, ((Tensor<float>)r2.Outputs![1]).ToArray());
+        var r3 = CPU.Split(x, null, 0, null, 3, null, null);
+        Assert.Equal(OpStatus.Success, r3.Status);
+        Assert.Equal(3, r3.Outputs!.Length);
+        Assert.Equal(new float[] { 4f }, ((Tensor<float>)r3.Outputs![2]).ToArray());
+    }
+
+    [Fact]
     public void SplitViewInput_Values_And_Allocation()
     {
         var view = new TensorSlice<float>(
