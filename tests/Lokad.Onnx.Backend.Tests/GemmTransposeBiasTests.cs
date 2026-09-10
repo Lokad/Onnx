@@ -142,4 +142,19 @@ public class GemmTransposeBiasTests
         Assert.Equal(2f, ny[2]);
         Assert.Equal(2f, ny[3]);
     }
+
+    [Fact]
+    public void RowColumnBias_MatchesOrt()
+    {
+        // ORT 1.29 on A=[[1,2],[3,4]], B=[[5,6],[7,8]]: 2-D [1,2] row and
+        // [2,1] column biases take the matrix-broadcast epilogue branch.
+        var a = F(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var b = F(new float[,] { { 5f, 6f }, { 7f, 8f } });
+        var row = CPUExecutionProvider.Gemm(a, b, F(new float[,] { { 10f, 20f } }), 1f, 1f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, row.Status);
+        Assert.Equal(new float[] { 29f, 42f, 53f, 70f }, ((Tensor<float>)row.Outputs[0]).ToArray());
+        var col = CPUExecutionProvider.Gemm(a, b, F(new float[,] { { 10f }, { 20f } }), 1f, 1f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, col.Status);
+        Assert.Equal(new float[] { 29f, 32f, 63f, 70f }, ((Tensor<float>)col.Outputs[0]).ToArray());
+    }
 }
