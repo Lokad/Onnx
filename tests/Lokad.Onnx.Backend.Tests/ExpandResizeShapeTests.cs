@@ -616,4 +616,43 @@ public class ExpandResizeShapeTests
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("UInt8", r.Message ?? "");
     }
+
+    [Fact]
+    public void ResizeZeroExtents_MatchOrt()
+    {
+        // ORT 1.29: raw scales must be positive (0.0 fails even on empty
+        // input), while explicit sizes may hit zero only on empty input
+        // dims; scales that floor to zero still yield empty outputs.
+        var x = Img2x2();
+        var r = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 0.4f, 0.4f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 1, 1, 0, 0 }, ((Tensor<float>)r.Outputs![0]).Dimensions.ToArray());
+        Assert.Empty(((Tensor<float>)r.Outputs![0]).ToArray());
+        var badSizes = CPUExecutionProvider.Resize(x, null, null, DenseTensor<int>.OfValues(new int[] { 1, 1, 0, 0 }), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Failure, badSizes.Status);
+        var badPartial = CPUExecutionProvider.Resize(x, null, null, DenseTensor<int>.OfValues(new int[] { 1, 1, 2, 0 }), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Failure, badPartial.Status);
+        var badScale = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 0f, 2f), null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Failure, badScale.Status);
+        var xe = DenseTensor<float>.OfShape(1, 1, 0, 2);
+        var re = CPUExecutionProvider.Resize(xe, null, null, DenseTensor<int>.OfValues(new int[] { 1, 1, 0, 4 }), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, re.Status);
+        Assert.Equal(new int[] { 1, 1, 0, 4 }, ((Tensor<float>)re.Outputs![0]).Dimensions.ToArray());
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 18 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = x;
+        graph.Inputs["s"] = DenseTensor<long>.OfValues(new long[] { 1L, 1L, 0L, 0L });
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Resize, OpTypeName = OpType.Resize.ToString(), Domain = "",
+            OpsetVersion = 18, IsFused = false,
+            Inputs = new[] { "x", "", "", "s" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var rn = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, rn.Status);
+    }
 }

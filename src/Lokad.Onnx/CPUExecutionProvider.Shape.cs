@@ -602,6 +602,10 @@ public partial class CPUExecutionProvider
             {
                 return WrongInputShape(op, nameof(scales), dims.Length, scales);
             }
+            // Raw scales must be positive (verified against ORT 1.29: a zero
+            // scale fails even on empty input); scales that merely floor to
+            // zero still yield empty outputs below.
+            if (scaleArray.Any(s => !(s > 0.0))) return WrongInputShape(op, nameof(scales), scales, "Resize scales must be positive.");
             targetSizes = ResizeSizesFromScales(dims.ToArray(), scaleArray);
             if (targetSizes is null) return WrongInputShape(op, nameof(scales), scales, "Resize scales must be finite and produce non-negative output sizes.");
             trueScales = scaleArray;
@@ -616,6 +620,15 @@ public partial class CPUExecutionProvider
         if (targetSizes.Length != 4) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must have one entry per input dimension.");
         if (targetSizes[0] != X.Dims[0] || targetSizes[1] != X.Dims[1]) return WrongInputShape(op, nameof(sizes), X, "Resize currently requires N and C dimensions to remain unchanged.");
         if (targetSizes.Any(z => z < 0)) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must be non-negative.");
+        // Explicit sizes may hit zero only on empty input dims (verified
+        // against ORT 1.29, which derives scales and requires them positive);
+        // scales-derived zeros above are unaffected.
+        if (sizes is not null)
+        {
+            var dd = X.Dims.ToArray();
+            for (int i = 0; i < dd.Length && i < targetSizes.Length; i++)
+                if (dd[i] > 0 && targetSizes[i] == 0) return WrongInputShape(op, nameof(sizes), X, "Resize sizes must be positive on non-empty input dimensions.");
+        }
         if (antialias is not null && antialias != 0) return AttributeNotSupported(op, nameof(antialias), antialias.Value.ToString(), "Resize antialiasing is not supported.");
         if (excludeOutside is not null && excludeOutside != 0) return AttributeNotSupported(op, nameof(excludeOutside), excludeOutside.Value.ToString(), "Resize exclude_outside is not supported.");
         if (keepAspectRatioPolicy is not null && keepAspectRatioPolicy != "stretch") return AttributeNotSupported(op, nameof(keepAspectRatioPolicy), keepAspectRatioPolicy, "Only the default stretch policy is supported.");
