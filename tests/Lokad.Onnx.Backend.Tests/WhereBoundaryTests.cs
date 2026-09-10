@@ -62,6 +62,24 @@ public class WhereBoundaryTests
     }
 
     [Fact]
+    public void AllScalar_SelectsBranch()
+    {
+        // ORT 1.29: scalar cond/branches yield the selected scalar.
+        foreach (var (cond, expected) in new[] { (true, 5f), (false, 7f) })
+        {
+            var c = DenseTensor<bool>.OfShape();
+            c.SetValue(0, cond);
+            var x = DenseTensor<float>.OfShape();
+            x.SetValue(0, 5f);
+            var y = DenseTensor<float>.OfShape();
+            y.SetValue(0, 7f);
+            var result = CPU.Where(c, x, y, null);
+            Assert.Equal(OpStatus.Success, result.Status);
+            Assert.Equal(new float[] { expected }, ((Tensor<float>)result.Outputs![0]).ToArray());
+        }
+    }
+
+    [Fact]
     public void ScalarBranches_Broadcast()
     {
         var x = DenseTensor<float>.OfShape();
