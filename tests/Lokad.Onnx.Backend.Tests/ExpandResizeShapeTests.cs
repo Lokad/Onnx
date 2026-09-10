@@ -370,4 +370,39 @@ public class ExpandResizeShapeTests
         Assert.Equal(new float[] { float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, 1f, 1f, 1f, 1f, 1f }, y);
     }
 
+    [Fact]
+    public void ResizeCubicExceptional_MatchesOrt()
+    {
+        // ORT 1.29 asymmetric cubic x4: any infinite or NaN input poisons
+        // the whole row (negative cubic weights mix infinities of both
+        // signs at every position). Guards the cubic tap/weight order.
+        var rows = new float[][]
+        {
+            new float[] { float.PositiveInfinity, 1f },
+            new float[] { 1f, float.PositiveInfinity },
+            new float[] { float.PositiveInfinity, float.NegativeInfinity },
+            new float[] { float.NaN, 1f },
+        };
+        foreach (var x in rows)
+        {
+            var r = CPUExecutionProvider.Resize(
+                DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { x[0], x[1] } } } }),
+                null, Scales(1f, 1f, 1f, 4f), null, "cubic", "asymmetric", null, null, 0f, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = ((Tensor<float>)r.Outputs[0]).ToArray();
+            Assert.Equal(8, y.Length);
+            foreach (var v in y) Assert.True(float.IsNaN(v));
+        }
+        // Finite anchor for the same geometry (ORT values, precision 4
+        // like the half_pixel cubic pins): proves the poison above comes
+        // from the infinities, not a broken kernel.
+        var rf = CPUExecutionProvider.Resize(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { 1f, 2f } } } }),
+            null, Scales(1f, 1f, 1f, 4f), null, "cubic", "asymmetric", null, null, 0f, null);
+        Assert.Equal(OpStatus.Success, rf.Status);
+        var yf = ((Tensor<float>)rf.Outputs[0]).ToArray();
+        var expected = new float[] { 1f, 1.2265625f, 1.5f, 1.7734375f, 2f, 2.10546875f, 2.09375f, 2.03515625f };
+        for (int i = 0; i < 8; i++) Assert.Equal(expected[i], yf[i], 4);
+    }
+
 }
