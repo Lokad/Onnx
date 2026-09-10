@@ -399,6 +399,18 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void PowInfiniteBases_MatchOrt()
+    {
+        // ORT 1.29: inf^2=inf, (-inf)^2=inf, (-inf)^3=-inf,
+        // (-inf)^0.5=inf (non-odd positive exponent), inf^-1=0.
+        Assert.Equal(float.PositiveInfinity, Pow1(float.PositiveInfinity, 2f));
+        Assert.Equal(float.PositiveInfinity, Pow1(float.NegativeInfinity, 2f));
+        Assert.Equal(float.NegativeInfinity, Pow1(float.NegativeInfinity, 3f));
+        Assert.Equal(float.PositiveInfinity, Pow1(float.NegativeInfinity, 0.5f));
+        Assert.Equal(0f, Pow1(float.PositiveInfinity, -1f));
+    }
+
+    [Fact]
     public void PowNegativeBaseIntegerExponents_MatchesOrt()
     {
         // ORT 1.29: [-512, nan, 1024, -0.125] for [-8,-4,2,-2] ^ [3,0.5,10,-3].
