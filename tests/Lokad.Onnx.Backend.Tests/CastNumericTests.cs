@@ -44,6 +44,17 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void NegativeIntToUint_Wraps()
+    {
+        // ORT 1.29: int-to-uint casts reinterpret bits ([-1, min] ->
+        // [max, 2^31]); narrowing wrap is pinned above, this is the
+        // same-width signed-to-unsigned twin.
+        var r = CPUExecutionProvider.Cast(DenseTensor<int>.OfValues(new int[] { -1, -2147483648 }), TensorElementType.UInt32, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new uint[] { 4294967295u, 2147483648u }, ((Tensor<uint>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void UnsignedExtremes_MatchOracle()
     {
         var x = DenseTensor<float>.OfValues(new float[] { 5e9f, 3e9f });
