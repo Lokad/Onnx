@@ -56,6 +56,18 @@ public class MatMulKernelAgreementTests
     }
 
     [Fact]
+    public void Int32Overflow_WrapsLikeOrt()
+    {
+        // ORT 1.29 wraps int32 MatMul (unlike integer reductions, which
+        // saturate): [max] x [2] -> [-2].
+        var a = DenseTensor<int>.OfValues(new int[,] { { 2147483647 } });
+        var b = DenseTensor<int>.OfValues(new int[,] { { 2 } });
+        var r = CPUExecutionProvider.MatMul(a, b, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { -2 }, ((Tensor<int>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public unsafe void KernelsComputeABAgainstReference()
     {
         var rnd = new Random(Seed);
