@@ -374,6 +374,20 @@ def gather_extra_cases():
     node = helper.make_node("Gather", ["x", "idx"], ["z"], axis=1)
     emit("gather_int32", node, [("x", [2, 3, 4])], [("z", [2, 2, 2, 4])], {"x": c}, inits=[i32_init])
 
+def conv_basic_cases():
+    # Fixed values only: no shared RNG draws, so existing cases are unaffected.
+    x = np.arange(50, dtype=np.float32).reshape(1, 2, 5, 5)
+    w = (np.arange(36, dtype=np.float32).reshape(2, 2, 3, 3) % 5) - 2.0
+    w_init = helper.make_tensor("w", TensorProto.FLOAT, [2, 2, 3, 3], w.astype(np.float32))
+    node = helper.make_node("Conv", ["x", "w"], ["z"], kernel_shape=[3, 3])
+    emit("conv_basic_3x3", node, [("x", [1, 2, 5, 5])], [("z", [1, 2, 3, 3])], {"x": x}, inits=[w_init])
+    x1 = np.arange(48, dtype=np.float32).reshape(1, 3, 4, 4)
+    w1 = (np.arange(6, dtype=np.float32).reshape(2, 3, 1, 1) % 5) - 2.0
+    w1_init = helper.make_tensor("w", TensorProto.FLOAT, [2, 3, 1, 1], w1.astype(np.float32))
+    node = helper.make_node("Conv", ["x", "w"], ["z"], kernel_shape=[1, 1])
+    emit("conv_1x1", node, [("x", [1, 3, 4, 4])], [("z", [1, 2, 4, 4])], {"x": x1}, inits=[w1_init])
+
+
 def shape_extra_cases():
     # Reversed slice yields an empty shape vector (C03).
     a = np.zeros((2, 3, 4), dtype=np.float32)
@@ -397,4 +411,5 @@ if __name__ == "__main__":
     layernorm_cases()
     gather_extra_cases()
     shape_extra_cases()
+    conv_basic_cases()
     print("cases:", len([d for d in os.listdir(ROOT) if os.path.isdir(os.path.join(ROOT, d))]))
