@@ -755,6 +755,10 @@ public partial class CPUExecutionProvider
         if (start is null) return MissingInput(op, nameof(start));
         if (limit is null) return MissingInput(op, nameof(limit));
         if (delta is null) return MissingInput(op, nameof(delta));
+        // ORT 1.29 refuses mixed Range dtypes at load (single type T);
+        // converting here would silently truncate float limits toward int.
+        if (limit.ElementType != start.ElementType) return WrongInputType(op, nameof(limit), "Range inputs must share a single dtype.", limit);
+        if (delta.ElementType != start.ElementType) return WrongInputType(op, nameof(delta), "Range inputs must share a single dtype.", delta);
         (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
         switch (start.ElementType)

@@ -100,6 +100,16 @@ public class RangeBoundaryTests
     }
 
     [Fact]
+    public void MixedDtypes_RejectedCleanly()
+    {
+        // ORT 1.29 refuses mixed Range dtypes at load (single type T);
+        // the provider must fail descriptively instead of converting
+        // (float limits would truncate silently toward int).
+        Assert.Equal(OpStatus.Failure, CPU.Range(Scalar64(0L), ScalarF(3f), ScalarF(1f), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Range(ScalarF(0f), Scalar64(3L), Scalar64(1L), null).Status);
+    }
+
+    [Fact]
     public void ZeroDelta_FailsCleanly()
     {
         Assert.Throws<System.ArgumentException>(() => Tensor<long>.Range(0L, 5L, 0L));
