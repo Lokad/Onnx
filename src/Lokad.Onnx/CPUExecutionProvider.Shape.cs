@@ -505,6 +505,20 @@ public partial class CPUExecutionProvider
                 }
                 break;
             }
+            case TensorElementType.BFloat16:
+            {
+                var dd = ((Tensor<BFloat16>)data).ToDenseTensor();
+                var span = dd.Buffer.Span;
+                int start = 0;
+                for (int p = 0; p < sizes.Length; p++)
+                {
+                    var partDims = (int[])inDims.Clone();
+                    partDims[axis] = sizes[p];
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    start += sizes[p];
+                }
+                break;
+            }
             default: return InputTypeNotSupported(op, nameof(data), data);
         }
         return Success(op, outputs);
