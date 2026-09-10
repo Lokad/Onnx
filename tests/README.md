@@ -7,6 +7,7 @@
 - Local-model conformance: ignored large assets under `models/` (e5, DINOv3, ResNet50, GPT-2, DINOv2). These tests run whenever their asset files exist and skip with a reason when absent; setting `LOKAD_ONNX_RUN_LOCAL_MODEL_TESTS=1` turns a missing requested asset into a failure instead of a skip. DINOv2 is excluded only from the benchmark full-output gate (see BENCHMARK.md); its compact C# oracle (`GraphExecutionDinoV2Tests`) runs like the other model tests.
 - Benchmarks: never correctness tests. See `Bench micro` and `bench.ps1`.
 - Single-op differential conformance: frozen seeded corpus under `tests/opfuzz/corpus` compared in scalar, SIMD, and intrinsics modes against frozen ONNX Runtime references. Selected explicitly via `eng/test-opfuzz.ps1`, never part of the default run. See `tests/opfuzz/README.md`.
+- Fallback without hardware intrinsics: the same unit gate with `DOTNET_EnableHWIntrinsic=0`; tests that require x86 FMA skip by design with a reason, everything else must pass. The `fallback-tests` CI job runs exactly this.
 
 ## Commands
 

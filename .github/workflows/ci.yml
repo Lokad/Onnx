@@ -19,6 +19,22 @@ jobs:
         run: dotnet build --tl:off --nologo -v minimal -c Release Lokad.Onnx.slnx --no-restore
       - name: Test Release
         run: dotnet test --tl:off --nologo -v minimal -c Release --no-build Lokad.Onnx.slnx
+  fallback-tests:
+    runs-on: windows-latest
+    env:
+      DOTNET_EnableHWIntrinsic: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.300-preview.0.26177.108
+      - name: Restore
+        run: dotnet restore --tl:off -v minimal Lokad.Onnx.slnx
+      - name: Build Release
+        run: dotnet build --tl:off --nologo -v minimal -c Release Lokad.Onnx.slnx --no-restore
+      - name: Test Release without hardware intrinsics
+        run: dotnet test --tl:off --nologo -v minimal -c Release --no-build Lokad.Onnx.slnx
   opfuzz:
     runs-on: windows-latest
     steps:
