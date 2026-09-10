@@ -1370,4 +1370,29 @@ public class ExceptionalFloatTests
             }
         }
     }
+
+    [Fact]
+    public void SoftmaxWideBody_MatchesOrt()
+    {
+        // ORT 1.29 float: NaN poisons its row and any +inf makes its row
+        // NaN; a uniform huge row stays uniform via max-subtraction. The
+        // 43-wide rows span the SIMD body (index 5) and scalar tail (index
+        // 41) of the vectorized float Softmax (double Softmax is scalar),
+        // freezing vector max-search, ExpVector and summation on the
+        // exceptional lanes. Narrow rows only reach the scalar fallback.
+        var x = new float[3, 43];
+        for (int j = 0; j < 43; j++) { x[0, j] = 1f; x[1, j] = 1f; x[2, j] = 1000f; }
+        x[0, 5] = float.NaN;
+        x[0, 41] = float.NaN;
+        x[1, 5] = float.PositiveInfinity;
+        x[1, 41] = float.PositiveInfinity;
+        var y = RunSoftmax(x).ToArray();
+        Assert.Equal(3 * 43, y.Length);
+        for (int j = 0; j < 43; j++)
+        {
+            Assert.True(float.IsNaN(y[j]));
+            Assert.True(float.IsNaN(y[43 + j]));
+            Assert.Equal(1f / 43f, y[86 + j], 5);
+        }
+    }
 }
