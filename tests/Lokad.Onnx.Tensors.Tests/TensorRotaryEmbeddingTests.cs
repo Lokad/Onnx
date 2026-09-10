@@ -110,4 +110,47 @@ public class TensorRotaryEmbeddingTests
         Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, cos, sin, 9, -1, -1));
         Assert.Throws<ArgumentException>(() => Tensor<float>.RotaryEmbedding(x, cos, sin, 4, 3, -1));
     }
+
+    [Fact]
+    public void ExceptionalPropagates_HandExact()
+    {
+        // No ORT reference exists (custom op); hand-exact IEEE through
+        // y = x*cos + rotated*sin with half = 2: lane 0 couples with
+        // -x[2] and lane 2 couples back with +x[0], so an infinity in
+        // lane 0 poisons both lanes. A zero weight still multiplies:
+        // 0*inf is NaN, while 1*inf is inf. Guards SIMD/FMA rewrites
+        // of the two-term blend.
+        static float[] RunRope(float[] xv, float[] cv, float[] sv)
+        {
+            var x = new DenseTensor<float>(xv, new[] { 4 });
+            var cos = new DenseTensor<float>(cv, new[] { 4 });
+            var sin = new DenseTensor<float>(sv, new[] { 4 });
+            return Tensor<float>.RotaryEmbedding(x, cos, sin, 2, 0, -1).ToArray();
+        }
+        var zeros = new float[] { 0f, 0f, 0f, 0f };
+        var ones = new float[] { 1f, 1f, 1f, 1f };
+        var y = RunRope(new float[] { 0f, 2f, 3f, 4f },
+            new float[] { float.PositiveInfinity, 1f, 1f, 1f }, zeros);
+        Assert.True(float.IsNaN(y[0]));
+        Assert.Equal(new float[] { 2f, 3f, 4f }, new float[] { y[1], y[2], y[3] });
+        y = RunRope(new float[] { 1f, 2f, 3f, 4f },
+            new float[] { float.PositiveInfinity, 1f, 1f, 1f }, zeros);
+        Assert.Equal(float.PositiveInfinity, y[0]);
+        Assert.Equal(new float[] { 2f, 3f, 4f }, new float[] { y[1], y[2], y[3] });
+        y = RunRope(new float[] { 1f, 2f, 3f, 4f }, ones,
+            new float[] { float.NaN, 0f, 0f, 0f });
+        Assert.True(float.IsNaN(y[0]));
+        Assert.Equal(new float[] { 2f, 3f, 4f }, new float[] { y[1], y[2], y[3] });
+        y = RunRope(new float[] { float.PositiveInfinity, 2f, 3f, 4f }, zeros, zeros);
+        Assert.True(float.IsNaN(y[0]));
+        Assert.Equal(0f, y[1]);
+        Assert.True(float.IsNaN(y[2]));
+        Assert.Equal(0f, y[3]);
+        y = RunRope(new float[] { float.PositiveInfinity, 2f, 3f, 4f }, ones, zeros);
+        Assert.Equal(float.PositiveInfinity, y[0]);
+        Assert.Equal(2f, y[1]);
+        Assert.True(float.IsNaN(y[2]));
+        Assert.Equal(4f, y[3]);
+    }
+
 }
