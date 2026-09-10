@@ -74,6 +74,33 @@ public class IntegerArithmeticBoundaryTests
     }
 
     [Fact]
+    public void NegMin_WrapsToMin()
+    {
+        // ORT 1.29: Neg(int32_min)=int32_min, Neg(int64_min)=int64_min (wraps, no fault).
+        foreach (var opts in new ExecutionOptions[] { ExecutionOptions.Default, ExecutionOptions.Scalar })
+        {
+            var n32 = CPU.Neg(DenseTensor<int>.OfValues(new int[] { -2147483648, -1, 0, 1 }), opts);
+            Assert.Equal(OpStatus.Success, n32.Status);
+            Assert.Equal(new int[] { -2147483648, 1, 0, -1 }, ((Tensor<int>)n32.Outputs![0]).ToArray());
+            var n64 = CPU.Neg(DenseTensor<long>.OfValues(new long[] { -9223372036854775808L, -1L, 0L, 1L }), opts);
+            Assert.Equal(OpStatus.Success, n64.Status);
+            Assert.Equal(new long[] { -9223372036854775808L, 1L, 0L, -1L }, ((Tensor<long>)n64.Outputs![0]).ToArray());
+        }
+    }
+
+    [Fact]
+    public void AbsMin_WrapsToMin()
+    {
+        // ORT 1.29: Abs(int32_min)=int32_min, Abs(int64_min)=int64_min (wraps, no throw).
+        var a32 = CPU.Abs(DenseTensor<int>.OfValues(new int[] { -2147483648, -1, 0, 1 }), null);
+        Assert.Equal(OpStatus.Success, a32.Status);
+        Assert.Equal(new int[] { -2147483648, 1, 0, 1 }, ((Tensor<int>)a32.Outputs![0]).ToArray());
+        var a64 = CPU.Abs(DenseTensor<long>.OfValues(new long[] { -9223372036854775808L, -1L, 0L, 1L }), null);
+        Assert.Equal(OpStatus.Success, a64.Status);
+        Assert.Equal(new long[] { -9223372036854775808L, 1L, 0L, 1L }, ((Tensor<long>)a64.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void MinDividedByNegOne_FailsCleanlyWithoutFault()
     {
         var x32 = DenseTensor<int>.OfValues(new int[] { -2147483648 });
