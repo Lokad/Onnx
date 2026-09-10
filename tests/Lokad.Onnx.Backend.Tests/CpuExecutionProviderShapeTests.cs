@@ -278,6 +278,18 @@ namespace Lokad.Onnx.Backend.Tests
     }
 
     [Fact]
+    public void SliceNegativeAxis_Normalizes()
+    {
+        // ORT 1.29: axes=[-1] slices axis 1 -> [[1,2],[4,5]].
+        var x = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f }, { 3f, 4f, 5f } });
+        var r = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { 1L }), DenseTensor<long>.OfValues(new long[] { 3L }), DenseTensor<long>.OfValues(new long[] { -1L }), DenseTensor<long>.OfValues(new long[] { 1L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 2f, 4f, 5f }, y.ToArray());
+    }
+
+    [Fact]
     public void SliceNegativeStart_Clamps()
     {
         // ORT 1.29: [2, 3, 4].
