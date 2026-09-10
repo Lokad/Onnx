@@ -210,6 +210,18 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void GatherRejectsInt8BoolIndices()
+        {
+            // ORT 1.29 refuses non-int32/int64 indices at load (Tind is
+            // exclusive); the provider fails descriptively instead.
+            var data = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f });
+            var s8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 0 });
+            Assert.Equal(OpStatus.Failure, CPU.Gather(data, s8, 0, null).Status);
+            var b = DenseTensor<bool>.OfValues(new bool[] { true });
+            Assert.Equal(OpStatus.Failure, CPU.Gather(data, b, 0, null).Status);
+        }
+
+        [Fact]
         public void GatherRejectsBadIndices()
         {
             var data = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f });
