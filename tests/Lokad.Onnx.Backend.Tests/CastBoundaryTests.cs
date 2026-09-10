@@ -19,6 +19,15 @@ public class CastBoundaryTests
     }
 
     [Fact]
+    public void EmptyInput_YieldsEmpty()
+    {
+        // ORT 1.29: casting zero elements yields zero elements, typed.
+        var y = (Tensor<int>)CastTo(DenseTensor<float>.OfShape(0), TensorElementType.Int32);
+        Assert.Equal(new int[] { 0 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+    }
+
+    [Fact]
     public void Float_TruncatesTowardZero()
     {
         var output = (Tensor<int>)CastTo(DenseTensor<float>.OfValues(new float[] { 1.9f, -1.9f, 2.5f, -2.5f, 0f, -0.0f }), TensorElementType.Int32);
