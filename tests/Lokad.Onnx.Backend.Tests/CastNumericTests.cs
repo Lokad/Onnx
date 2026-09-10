@@ -131,6 +131,19 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void UnsignedToFloat_RoundsAtPrecisionBoundary()
+    {
+        // ORT 1.29: unsigned ints beyond 2^24 round ([max64, 2^53+1] ->
+        // [2^64, 2^53]; [max32, 100] -> [2^32, 100]).
+        var ru = CPUExecutionProvider.Cast(DenseTensor<ulong>.OfValues(new ulong[] { 18446744073709551615ul, 9007199254740993ul }), TensorElementType.Float, null);
+        Assert.Equal(OpStatus.Success, ru.Status);
+        Assert.Equal(new float[] { 18446744073709551616f, 9007199254740992f }, ((Tensor<float>)ru.Outputs[0]).ToArray());
+        var ru32 = CPUExecutionProvider.Cast(DenseTensor<uint>.OfValues(new uint[] { 4294967295u, 100u }), TensorElementType.Float, null);
+        Assert.Equal(OpStatus.Success, ru32.Status);
+        Assert.Equal(new float[] { 4294967296f, 100f }, ((Tensor<float>)ru32.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void UlongToDouble_RoundsAtPrecisionBoundary()
     {
         // ORT 1.29: ulongs beyond 2^53 round ([max, 2^53+1, 100] ->
