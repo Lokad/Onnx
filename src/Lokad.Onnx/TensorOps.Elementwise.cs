@@ -327,11 +327,22 @@ where T : unmanaged
         {
             throw new ArgumentException("Inputs are not broadcastable.");
         }
-        var bcond = Tensor<bool>.BroadcastTo(condition, bx.Dimensions.ToArray());
-        var output = bx.CloneEmpty();
+        // ONNX broadcasts all three inputs multidirectionally: the condition
+        // may outrank x/y (e.g. [2,2] over [2]), which the two-way broadcast
+        // above cannot see.
+        if (!BroadcastShape(bx.Dimensions.ToArray(), condition.Dimensions.ToArray(), out var shape))
+        {
+            throw new ArgumentException("Inputs are not broadcastable.");
+        }
+        if (!Broadcast(bx, shape, out var fx) || !Broadcast(by, shape, out var fy))
+        {
+            throw new ArgumentException("Inputs are not broadcastable.");
+        }
+        var bcond = Tensor<bool>.BroadcastTo(condition, shape);
+        var output = fx.CloneEmpty();
         for (int i = 0; i < output.Length; i++)
         {
-            output.SetValue(i, bcond.GetValue(i) ? bx.GetValue(i) : by.GetValue(i));
+            output.SetValue(i, bcond.GetValue(i) ? fx.GetValue(i) : fy.GetValue(i));
         }
         return output;
     }
