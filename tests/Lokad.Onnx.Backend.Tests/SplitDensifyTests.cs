@@ -5,6 +5,16 @@ namespace Lokad.Onnx.Backend.Tests;
 public class SplitDensifyTests
 {
     [Fact]
+    public void OutOfRangeAxis_FailsCleanly()
+    {
+        // ORT 1.29 refuses axis=5 on rank 2 at load.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } });
+        var sizes = DenseTensor<long>.OfValues(new long[] { 2L, 2L });
+        Assert.Equal(OpStatus.Failure, CPU.Split(x, sizes, 5, null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Split(x, sizes, -3, null, null, null, null).Status);
+    }
+
+    [Fact]
     public void SequenceMismatchedSizes_FailsCleanly()
     {
         // ORT 1.29 fails the run (sizes [2,1] sum to 3 on dim 4).
