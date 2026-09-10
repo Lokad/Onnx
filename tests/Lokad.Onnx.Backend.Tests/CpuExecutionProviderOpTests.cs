@@ -552,4 +552,27 @@ public class CpuExecutionProviderOpTests
         var bf = Tensor<BFloat16>.Ones(2);
         Assert.Equal(OpStatus.Failure, CPU.Add(bf, bf, null, null).Status);
     }
+
+    [Fact]
+    public void UnsupportedDtypePairs_FailCleanlyOnBothSides()
+    {
+        // Every pair below was probed refused on ORT 1.29 (load or run) and
+        // fails descriptively here: Pow is float/double/int32/int64 only,
+        // ReduceSum has no sub-32 arm, and Softmax/LayerNorm are float-types
+        // only (Gemm-int already pins in IntDtypes_RejectedCleanly).
+        Assert.Equal(OpStatus.Failure, CPU.Pow(
+            DenseTensor<uint>.OfValues(new uint[] { 2u, 3u }),
+            DenseTensor<uint>.OfValues(new uint[] { 2u, 2u }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Pow(
+            DenseTensor<ulong>.OfValues(new ulong[] { 2ul }),
+            DenseTensor<ulong>.OfValues(new ulong[] { 2ul }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.ReduceSum(
+            DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 2 }), null, null, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Softmax(
+            DenseTensor<int>.OfValues(new int[,] { { 1, 2 }, { 3, 4 } }), null, null, null, 14).Status);
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(
+            DenseTensor<int>.OfValues(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }),
+            DenseTensor<int>.OfValues(new int[] { 1, 1, 1 }),
+            DenseTensor<int>.OfValues(new int[] { 0, 0, 0 }), -1, null, null, 1, null, null).Status);
+    }
 }
