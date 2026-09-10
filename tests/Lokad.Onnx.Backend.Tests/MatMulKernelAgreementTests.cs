@@ -56,6 +56,17 @@ public class MatMulKernelAgreementTests
     }
 
     [Fact]
+    public void MixedDtype_InputsRejectedCleanly()
+    {
+        // ORT 1.29 refuses mixed-dtype MatMul at load; every other
+        // binary kernel already fails descriptively - MatMul must too.
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var b = DenseTensor<int>.OfValues(new int[,] { { 1, 0 }, { 0, 1 } });
+        var r = CPUExecutionProvider.MatMul(a, b, null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
     public void Int32Overflow_WrapsLikeOrt()
     {
         // ORT 1.29 wraps int32 MatMul (unlike integer reductions, which

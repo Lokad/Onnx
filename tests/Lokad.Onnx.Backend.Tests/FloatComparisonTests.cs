@@ -92,6 +92,15 @@ public class FloatComparisonTests
     }
 
     [Fact]
+    public void MixedDtype_AddRejectedCleanly()
+    {
+        // ORT 1.29 refuses mixed-dtype elementwise ops at load.
+        var a = DenseTensor<float>.OfValues(new float[] { 1f });
+        var b = DenseTensor<int>.OfValues(new int[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Add(a, b, null, null).Status);
+    }
+
+    [Fact]
     public void Relu_NanPropagatesAndPreservesSignedZero()
     {
         var x = DenseTensor<float>.OfValues(new float[] { float.NaN, -1f, -0f, 0f, 2.5f, float.NegativeInfinity, float.PositiveInfinity });

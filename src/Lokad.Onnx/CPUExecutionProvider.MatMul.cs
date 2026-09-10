@@ -14,6 +14,10 @@ public partial class CPUExecutionProvider
         var op = OpType.MatMul;
         if (A is null) return MissingInput(op, nameof(A));
         if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
 
         var opts = (options ?? ExecutionOptions.Default).Validated();
         if (opts.Optimization == OptimizationMode.Speed)
@@ -36,6 +40,10 @@ public partial class CPUExecutionProvider
         var op = OpType.Gemm;
         if (A is null) return MissingInput(op, nameof(A));
         if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
         var opts = (options ?? ExecutionOptions.Default).Validated();
         if (transA != 0 && transA != 1) return AttributeNotSupported(op, "transA", transA.ToString(), "transA must be 0 or 1.");
         if (transB != 0 && transB != 1) return AttributeNotSupported(op, "transB", transB.ToString(), "transB must be 0 or 1.");
