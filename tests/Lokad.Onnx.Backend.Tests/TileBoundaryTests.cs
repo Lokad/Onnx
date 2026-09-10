@@ -107,6 +107,15 @@ public class TileBoundaryTests
     }
 
     [Fact]
+    public void EmptyRepeats_FailsCleanly()
+    {
+        // ORT 1.29 fails the run when repeats length != input rank (either
+        // side); the kernel rejects the mismatch up front, as above.
+        Assert.Throws<System.ArgumentException>(() => Tensor<float>.Tile(
+            DenseTensor<float>.OfValues(new float[] { 1f, 2f }), new int[0]));
+    }
+
+    [Fact]
     public void Tile_UInt_MatchesOrt()
     {
         // ORT 1.29: repeats [2, 1] over [[1, 2], [3, max]] (u32) and [2] over [max, 7] (u64).
