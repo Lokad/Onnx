@@ -98,6 +98,35 @@ public class MatMulKernelAgreementTests
     }
 
     [Fact]
+    public void Int32RequiresOpset9()
+    {
+        // ORT 1.29 refuses int32 MatMul inputs below opset 9; the node gate
+        // keeps the descriptive refusal there while 9+ computes [19,22,43,50].
+        static OpResult RunAt(int opset)
+        {
+            var graph = new ComputationalGraph
+            {
+                Opset = new Dictionary<string, int> { [""] = opset },
+                Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+            };
+            graph.Inputs["x"] = DenseTensor<int>.OfValues(new int[,] { { 1, 2 }, { 3, 4 } });
+            graph.Inputs["y"] = DenseTensor<int>.OfValues(new int[,] { { 5, 6 }, { 7, 8 } });
+            var node = new Node
+            {
+                Name = "m", Op = OpType.MatMul, Inputs = new[] { "x", "y" }, Outputs = new[] { "z" },
+                Attributes = new Dictionary<string, object>(),
+            };
+            return node.Execute(graph, ExecutionProvider.CPU, null);
+        }
+        var old = RunAt(1);
+        Assert.Equal(OpStatus.Failure, old.Status);
+        Assert.Contains("Int32", old.Message ?? "");
+        var cur = RunAt(9);
+        Assert.Equal(OpStatus.Success, cur.Status);
+        Assert.Equal(new int[] { 19, 22, 43, 50 }, ((Tensor<int>)cur.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void Int32Overflow_WrapsLikeOrt()
     {
         // ORT 1.29 wraps int32 MatMul (unlike integer reductions, which

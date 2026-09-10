@@ -217,6 +217,20 @@ public partial struct Node
             return InputTypeNotSupported(op, "A", t, null);
         return null;
     }
+    /// <summary>
+    /// int32 MatMul joined at opset 9 (verified against ORT 1.29: older
+    /// versions refuse int32 inputs); older or version-unknown graphs keep
+    /// the descriptive provider refusal.
+    /// </summary>
+    OpResult? MatMulIntGate(ComputationalGraph graph)
+    {
+        int v = ResolvedOpsetVersion(graph);
+        if (v >= 9) return null;
+        var t = Inputs.Length > 0 ? InputTensor(graph, 0) : null;
+        if (t is not null && t.ElementType == TensorElementType.Int32)
+            return InputTypeNotSupported(OpType.MatMul, "A", t, null);
+        return null;
+    }
 
     public OpResult ExecuteCPU(ComputationalGraph graph, ExecutionOptions? options)
     {
@@ -262,7 +276,7 @@ public partial struct Node
 
         OpType.GlobalAveragePool => CPU.GlobalAveragePool(InputTensor(graph, 0), opt),
 
-        OpType.MatMul => CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+        OpType.MatMul => MatMulIntGate(graph) ?? CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
         OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0),
 
