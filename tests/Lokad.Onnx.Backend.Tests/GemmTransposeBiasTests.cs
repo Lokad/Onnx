@@ -194,6 +194,19 @@ public class GemmTransposeBiasTests
     }
 
     [Fact]
+    public void IntDtypes_RejectedCleanly()
+    {
+        // ORT 1.29 CPU refuses int Gemm at load (float-only kernels);
+        // the provider fails descriptively instead.
+        var a32 = DenseTensor<int>.OfValues(new int[,] { { 1, 2 }, { 3, 4 } });
+        var b32 = DenseTensor<int>.OfValues(new int[,] { { 1, 0 }, { 0, 1 } });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(a32, b32, null, 1f, 0f, null, 0, 0).Status);
+        var a64 = DenseTensor<long>.OfValues(new long[,] { { 1L, 2L }, { 3L, 4L } });
+        var b64 = DenseTensor<long>.OfValues(new long[,] { { 1L, 0L }, { 0L, 1L } });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(a64, b64, null, 1f, 0f, null, 0, 0).Status);
+    }
+
+    [Fact]
     public void EmptyExtents_MatchOrt()
     {
         // ORT 1.29: zero-M yields [0,2] empty, zero-K yields [2,3]
