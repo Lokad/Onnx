@@ -74,6 +74,20 @@ public class ConcatBoundaryTests
     }
 
     [Fact]
+    public void NullAxis_DefaultsToZero()
+    {
+        // Deliberate leniency: ORT refuses an axis-less Concat at load,
+        // while the provider defaults to 0.
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var b = DenseTensor<float>.OfValues(new float[,] { { 5f, 6f }, { 7f, 8f } });
+        var r = CPU.Concat(new ITensor[] { a, b }, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var z = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 4, 2 }, z.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f }, z.ToArray());
+    }
+
+    [Fact]
     public void EmptyInput_ContributesNothing()
     {
         // ORT 1.29: a [2,0] input concatenated on axis 1 yields the
