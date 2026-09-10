@@ -325,6 +325,10 @@ where T : unmanaged
         {
             throw new ArgumentException("The kernel must have shape m x n.");
         }
+        if (kernelshape[0] <= 0 || kernelshape[1] <= 0)
+        {
+            throw new ArgumentException("MaxPool kernel dims must be positive.", nameof(kernelshape));
+        }
         if (strides == null)
         {
             strides = new int[] { 1, 1 };
@@ -332,6 +336,10 @@ where T : unmanaged
         if (dilations == null)
         {
             dilations = new int[] { 1, 1 };
+        }
+        if (dilations[0] <= 0 || dilations[1] <= 0)
+        {
+            throw new ArgumentException("MaxPool dilations must be positive.", nameof(dilations));
         }
         int N = input.Dims[0];
         int C = input.Dims[1];
@@ -362,6 +370,10 @@ where T : unmanaged
         {
             throw new ArgumentException("The kernel must have shape m x n.");
         }
+        if (kernelshape[0] <= 0 || kernelshape[1] <= 0)
+        {
+            throw new ArgumentException("MaxPool kernel dims must be positive.", nameof(kernelshape));
+        }
         if (pads is null || pads.Length != 4)
         {
             throw new ArgumentException(nameof(pads), "Explicit pads must have four values [begin_h, begin_w, end_h, end_w].");
@@ -377,6 +389,10 @@ where T : unmanaged
         if (dilations == null)
         {
             dilations = new int[] { 1, 1 };
+        }
+        if (dilations[0] <= 0 || dilations[1] <= 0)
+        {
+            throw new ArgumentException("MaxPool dilations must be positive.", nameof(dilations));
         }
         int N = input.Dims[0];
         int C = input.Dims[1];

@@ -288,6 +288,18 @@ public class ConvPoolPaddingTests
     }
 
     [Fact]
+    public void NonPositiveKernelDilationsStrides_FailsCleanly()
+    {
+        // ORT 1.29 refuses zero/negative kernels, dilations and strides at
+        // load (shape inference); the planner must fail descriptively.
+        var x = F4(new float[1, 1, 3, 3] { { { { 1f, 2f, 3f }, { 4f, 5f, 6f }, { 7f, 8f, 9f } } } });
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 0, 2 }, null, null, new int[] { 1, 1 }, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, null, new int[] { 0, 1 }, new int[] { 2, 2 }, null, null, new int[] { 1, 1 }, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 2, 2 }, null, null, new int[] { 0, 1 }, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 2, 2 }, null, null, new int[] { -1, 1 }, null));
+    }
+
+    [Fact]
     public void MaxPoolInf_MatchesOrt()
     {
         // ORT 1.29 float: infinity wins its window; an all -inf window
@@ -324,7 +336,7 @@ public class ConvPoolPaddingTests
     }
 
     [Fact]
-    public void NegativePads_FailCleanly()
+    public void NegativePads_FailsCleanly()
     {
         // ORT 1.29 refuses negative pads at load (shape inference); the
         // planners must fail descriptively instead of computing garbage.
