@@ -439,7 +439,7 @@ where T : unmanaged
         int kW = kernelshape[1];
         int effKH = GetConv2DEffectiveFilterSize(kH, dilations[0]);
         int effKW = GetConv2DEffectiveFilterSize(kW, dilations[1]);
-        var outShape = MaxPoolOutputShape(H, W, effKH, effKW, strides[0], strides[1], pads[0] + pads[2], pads[1] + pads[3], ceilMode);
+        var outShape = MaxPoolOutputShape(H, W, effKH, effKW, strides[0], strides[1], pads[0], pads[1], pads[0] + pads[2], pads[1] + pads[3], ceilMode);
         if (outShape[0] < 0 || outShape[1] < 0) throw new ArgumentException("MaxPool output spatial dims must be non-negative.");
         var pad = new PadInfo { top = pads[0], left = pads[1], bottom = pads[2], right = pads[3], h = pads[0] + pads[2], w = pads[1] + pads[3] };
         return (N, C, H, W, kH, kW, strides[0], strides[1], dilations[0], dilations[1], pad, outShape[0], outShape[1]);
@@ -451,7 +451,7 @@ where T : unmanaged
         if (!ceilMode) return MaxPoolFloatCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW);
         int effKH = GetConv2DEffectiveFilterSize(kH, dH);
         int effKW = GetConv2DEffectiveFilterSize(kW, dW);
-        var ceilShape = MaxPoolOutputShape(H, W, effKH, effKW, sH, sW, pad.top + pad.bottom, pad.left + pad.right, true);
+        var ceilShape = MaxPoolOutputShape(H, W, effKH, effKW, sH, sW, pad.top, pad.left, pad.top + pad.bottom, pad.left + pad.right, true);
         return MaxPoolFloatCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, ceilShape[0], ceilShape[1]);
     }
 
@@ -461,17 +461,28 @@ where T : unmanaged
         return MaxPoolFloatCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW);
     }
 
-    static int[] MaxPoolOutputShape(int H, int W, int effKH, int effKW, int sH, int sW, int padH, int padW, bool ceilMode)
+    static int[] MaxPoolOutputShape(int H, int W, int effKH, int effKW, int sH, int sW, int padBeginH, int padBeginW, int padH, int padW, bool ceilMode)
     {
         // Truncating integer division, not floor: verified against ORT 1.29
         // (degenerate (2-3)/2+1 is 1, not 0); identical to floor whenever the
-        // numerator is non-negative. Ceil mode keeps the ceiling spelling.
+        // numerator is non-negative. Ceil mode keeps the ceiling spelling,
+        // then drops trailing windows that start in post-padding: the last
+        // window must start strictly inside input plus begin-pad
+        // ((out-1)*stride < dim+padBegin), verified across 11 ORT 1.29
+        // geometries including asymmetric pads (begin-pad only), VALID trim,
+        // dilations, and negative numerators (flow to empty, never below 0:
+        // the loop condition is already false at out 0).
         int outH = ceilMode
             ? (int)Math.Ceiling((H + padH - effKH) / (float)sH) + 1
             : (H + padH - effKH) / sH + 1;
         int outW = ceilMode
             ? (int)Math.Ceiling((W + padW - effKW) / (float)sW) + 1
             : (W + padW - effKW) / sW + 1;
+        if (ceilMode)
+        {
+            while (outH > 0 && ((long)outH - 1) * sH >= (long)H + padBeginH) outH--;
+            while (outW > 0 && ((long)outW - 1) * sW >= (long)W + padBeginW) outW--;
+        }
         return new int[] { outH, outW };
     }
 
@@ -527,7 +538,7 @@ where T : unmanaged
         if (!ceilMode) return MaxPoolDoubleCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, outH, outW);
         int effKH = GetConv2DEffectiveFilterSize(kH, dH);
         int effKW = GetConv2DEffectiveFilterSize(kW, dW);
-        var ceilShape = MaxPoolOutputShape(H, W, effKH, effKW, sH, sW, pad.top + pad.bottom, pad.left + pad.right, true);
+        var ceilShape = MaxPoolOutputShape(H, W, effKH, effKW, sH, sW, pad.top, pad.left, pad.top + pad.bottom, pad.left + pad.right, true);
         return MaxPoolDoubleCore(input, N, C, H, W, kH, kW, sH, sW, dH, dW, pad, ceilShape[0], ceilShape[1]);
     }
 

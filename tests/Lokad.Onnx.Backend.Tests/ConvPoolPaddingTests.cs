@@ -406,6 +406,35 @@ public class ConvPoolPaddingTests
     }
 
     [Fact]
+    public void MaxPoolCeilDropsWindowsStartingInPostPadding()
+    {
+        // ORT 1.29 ceil rule: after the ceiling size, drop trailing windows
+        // whose start reaches input extent plus begin-pad
+        // ((out-1)*stride >= dim+padBegin). Found by differential fuzz
+        // (maxpoolA_0): [1,2,1,7] k2 s2 pads1 ceil is (1,2,1,4) on ORT,
+        // not the naive ceiling (1,2,2,5).
+        var x = F4(new float[1, 2, 1, 7] { { { { 1f, 2f, 3f, 4f, 5f, 6f, 7f } }, { { 8f, 9f, 10f, 11f, 12f, 13f, 14f } } } });
+        var r = CPUExecutionProvider.MaxPool(x, null, 1, null, new int[] { 2, 2 }, new int[] { 1, 1, 1, 1 }, null, new int[] { 2, 2 }, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 1, 2, 1, 4 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 3f, 5f, 7f, 8f, 10f, 12f, 14f }, y.ToArray());
+        // Asymmetric pads use the begin pad only: end-heavy pads still drop
+        // (ORT (1,1,2,2) [11,12,15,16] for k3 s2 over 1..16).
+        var q = F4(new float[1, 1, 4, 4] { { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f }, { 13f, 14f, 15f, 16f } } } });
+        var rq = CPUExecutionProvider.MaxPool(q, null, 1, null, new int[] { 3, 3 }, new int[] { 0, 0, 2, 2 }, null, new int[] { 2, 2 }, null);
+        Assert.Equal(OpStatus.Success, rq.Status);
+        Assert.Equal(new int[] { 1, 1, 2, 2 }, ((Tensor<float>)rq.Outputs![0]).Dimensions.ToArray());
+        Assert.Equal(new float[] { 11f, 12f, 15f, 16f }, ((Tensor<float>)rq.Outputs![0]).ToArray());
+        // VALID auto_pad trims the same way (ORT (1,1,1,1) [5] for k2 s3).
+        var v = F4(new float[1, 1, 3, 3] { { { { 1f, 2f, 3f }, { 4f, 5f, 6f }, { 7f, 8f, 9f } } } });
+        var rv = CPUExecutionProvider.MaxPool(v, "VALID", 1, null, new int[] { 2, 2 }, null, null, new int[] { 3, 3 }, null);
+        Assert.Equal(OpStatus.Success, rv.Status);
+        Assert.Equal(new int[] { 1, 1, 1, 1 }, ((Tensor<float>)rv.Outputs![0]).Dimensions.ToArray());
+        Assert.Equal(new float[] { 5f }, ((Tensor<float>)rv.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void MaxPoolIntegerDtypesFailCleanly()
     {
         // Documented scope boundary, not parity: ORT 1.29 runs int8/uint8
