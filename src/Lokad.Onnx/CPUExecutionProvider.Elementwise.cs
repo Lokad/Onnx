@@ -387,6 +387,7 @@ public partial class CPUExecutionProvider
         switch (X.ElementType)
         {
             case TensorElementType.Bool: return Success(op, Tensor<bool>.Where((Tensor<bool>)condition, (Tensor<bool>)X, (Tensor<bool>)Y));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Where((Tensor<bool>)condition, (Tensor<byte>)X, (Tensor<byte>)Y));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Where((Tensor<bool>)condition, (Tensor<int>)X, (Tensor<int>)Y));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Where((Tensor<bool>)condition, (Tensor<long>)X, (Tensor<long>)Y));
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Where((Tensor<bool>)condition, (Tensor<uint>)X, (Tensor<uint>)Y));

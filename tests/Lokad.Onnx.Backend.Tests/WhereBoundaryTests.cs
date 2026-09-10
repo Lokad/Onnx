@@ -199,4 +199,28 @@ public class WhereBoundaryTests
         Assert.True(double.IsNaN(yb[3]));
     }
 
+
+    [Fact]
+    public void UInt8Select_MatchesOrt()
+    {
+        // ORT 1.29 runs uint8 Where at opsets 13 and 14 (probed [1,20,3],
+        // no version gate); int8/int16/uint16 stay NOT_IMPLEMENTED there,
+        // so they keep failing descriptively here.
+        var result = CPU.Where(
+            DenseTensor<bool>.OfValues(new bool[] { true, false, true }),
+            DenseTensor<byte>.OfValues(new byte[] { 1, 2, 3 }),
+            DenseTensor<byte>.OfValues(new byte[] { 10, 20, 30 }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        Assert.Equal(new byte[] { 1, 20, 3 }, ((Tensor<byte>)result.Outputs![0]).ToArray());
+        var c = DenseTensor<bool>.OfValues(new bool[] { true });
+        Assert.Equal(OpStatus.Failure, CPU.Where(c,
+            DenseTensor<sbyte>.OfValues(new sbyte[] { 1 }),
+            DenseTensor<sbyte>.OfValues(new sbyte[] { 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Where(c,
+            DenseTensor<short>.OfValues(new short[] { 1 }),
+            DenseTensor<short>.OfValues(new short[] { 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Where(c,
+            DenseTensor<ushort>.OfValues(new ushort[] { 1 }),
+            DenseTensor<ushort>.OfValues(new ushort[] { 2 }), null).Status);
+    }
 }
