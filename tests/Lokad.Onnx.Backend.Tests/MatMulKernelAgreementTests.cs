@@ -80,6 +80,24 @@ public class MatMulKernelAgreementTests
     }
 
     [Fact]
+    public void OutOfScopeDtypes_RejectedCleanly()
+    {
+        // int8: ORT refuses int8 MatMul at load (not in MatMul-13), so both
+        // sides reject. int64/uint32: ORT computes them, but int64/uint
+        // MatMul kernels are out of scope, so these fail descriptively
+        // instead of reaching a kernel cast.
+        var a8 = DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, 2 }, { 3, 4 } });
+        var b8 = DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, 0 }, { 0, 1 } });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.MatMul(a8, b8, null, null).Status);
+        var a64 = DenseTensor<long>.OfValues(new long[,] { { 1L, 2L }, { 3L, 4L } });
+        var b64 = DenseTensor<long>.OfValues(new long[,] { { 1L, 0L }, { 0L, 1L } });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.MatMul(a64, b64, null, null).Status);
+        var au = DenseTensor<uint>.OfValues(new uint[,] { { 1u, 2u }, { 3u, 4u } });
+        var bu = DenseTensor<uint>.OfValues(new uint[,] { { 1u, 0u }, { 0u, 1u } });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.MatMul(au, bu, null, null).Status);
+    }
+
+    [Fact]
     public void Int32Overflow_WrapsLikeOrt()
     {
         // ORT 1.29 wraps int32 MatMul (unlike integer reductions, which
