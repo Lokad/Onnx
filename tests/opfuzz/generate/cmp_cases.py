@@ -32,5 +32,13 @@ def main():
          {"x": x, "y": y}, dtypes=DT)
 
 
+    # NaN inputs compare false; the lane carries the non-finite inputs since
+    # the format extension, the bool output compares exactly.
+    node = helper.make_node("Equal", ["x", "y"], ["z"])
+    emit("equal_nan", node, [("x", [3]), ("y", [3])], [("z", [3])],
+         {"x": np.array([float("nan"), float("nan"), 1.0], dtype=np.float32),
+          "y": np.array([float("nan"), 1.0, float("nan")], dtype=np.float32)},
+         dtypes=DT)
+
 if __name__ == "__main__":
     main()

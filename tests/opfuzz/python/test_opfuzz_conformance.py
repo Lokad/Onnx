@@ -92,7 +92,7 @@ def test_case_matches_ort_reference(case, tmp_path):
             denom = np.maximum(np.abs(ref), 1e-12)
             worst_a = float(np.max(np.abs(ref - new)))
             worst_r = float(np.max(np.abs(ref - new) / denom))
-            if not np.allclose(new, ref, rtol=RTOL, atol=ATOL):
+            if not np.allclose(new, ref, rtol=RTOL, atol=ATOL, equal_nan=True):
                 breaches.append("%s: %s max_abs=%.3e max_rel=%.3e" % (mode, name, worst_a, worst_r))
     divergence = meta.get("known_divergence")
     if breaches and divergence:

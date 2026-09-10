@@ -17,6 +17,22 @@ static class OpDump
         return sb.ToString();
     }
 
+    static float ParseFloatToken(string s) => s switch
+    {
+        "inf" or "+inf" or "Infinity" or "+Infinity" => float.PositiveInfinity,
+        "-inf" or "-Infinity" => float.NegativeInfinity,
+        "nan" or "NaN" => float.NaN,
+        _ => float.Parse(s, CultureInfo.InvariantCulture),
+    };
+
+    static double ParseDoubleToken(string s) => s switch
+    {
+        "inf" or "+inf" or "Infinity" or "+Infinity" => double.PositiveInfinity,
+        "-inf" or "-Infinity" => double.NegativeInfinity,
+        "nan" or "NaN" => double.NaN,
+        _ => double.Parse(s, CultureInfo.InvariantCulture),
+    };
+
     static ITensor ReadTensor(string name, string path)
     {
         var lines = File.ReadAllText(path).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -30,7 +46,7 @@ static class OpDump
         {
             var t = new DenseTensor<float>(dims);
             var sp = t.Buffer.Span;
-            for (int i = 0; i < vals.Length; i++) sp[i] = float.Parse(vals[i], CultureInfo.InvariantCulture);
+            for (int i = 0; i < vals.Length; i++) sp[i] = ParseFloatToken(vals[i]);
             t.Name = name;
             return t;
         }
@@ -38,7 +54,7 @@ static class OpDump
         {
             var t = new DenseTensor<double>(dims);
             var sp = t.Buffer.Span;
-            for (int i = 0; i < vals.Length; i++) sp[i] = double.Parse(vals[i], CultureInfo.InvariantCulture);
+            for (int i = 0; i < vals.Length; i++) sp[i] = ParseDoubleToken(vals[i]);
             t.Name = name;
             return t;
         }

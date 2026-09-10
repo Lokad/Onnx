@@ -6,12 +6,9 @@ git diff (new directories only), then re-pin tests/opfuzz/corpus/SHA256SUMS
 beside the add/concat neighbors (first cast cases in the corpus).
 Fixed values only, no shared RNG draws, so existing cases are unaffected
 by construction. int64 output: the text tensor format and the lane compare
-int64 exactly.
-Deliberately truncation-only: a saturation sibling with NaN/inf inputs was
-generated and then dropped because the lane text format cannot carry
-non-finite inputs (OpDump double.Parse('inf') throws). Saturation stays
-pinned in unit tests (CastBoundaryTests), which is the right home for
-non-finite inputs.
+int64 exactly. NaN and infinities are inputs only (the lane text format
+carries them since the non-finite-input extension); outputs are finite
+int64, which the generator requires.
 """
 import os
 import sys
@@ -27,6 +24,15 @@ FD = {"x": np.float64}
 
 
 def main():
+    # Overflow, NaN and infinities saturate; exact powers of two at the
+    # int64 boundary behave per the pinned policy.
+    node = helper.make_node("Cast", ["x"], ["z"], to=TensorProto.INT64)
+    emit("cast_double_sat_int64", node, [("x", [8])], [("z", [8])],
+         {"x": np.array([float("nan"), float("inf"), float("-inf"),
+                         9.3e18, -9.3e18, 9223372036854775808.0,
+                         -9223372036854775808.0, 9223372036854774784.0],
+                        dtype=np.float64)},
+         dtypes=DT, feed_dtypes=FD)
     # Fractions truncate toward zero.
     node = helper.make_node("Cast", ["x"], ["z"], to=TensorProto.INT64)
     emit("cast_double_trunc_int64", node, [("x", [5])], [("z", [5])],
