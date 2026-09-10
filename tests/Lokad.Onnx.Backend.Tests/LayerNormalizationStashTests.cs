@@ -349,6 +349,21 @@ public class LayerNormalizationStashTests
     }
 
     [Fact]
+    public void LargeDouble_ShiftStable()
+    {
+        // ORT 1.29 double: [1000,1001,1002] normalizes exactly like
+        // [0,1,2] (no float-variance overflow at this magnitude).
+        var x = DenseTensor<double>.OfValues(new double[,] { { 1000.0, 1001.0, 1002.0 } });
+        var s = DenseTensor<double>.OfValues(new double[] { 1.0, 1.0, 1.0 });
+        var r = CPUExecutionProvider.LayerNormalization(x, s, null, -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<double>)r.Outputs[0]).ToArray();
+        Assert.Equal(-1.2247356859, y[0], 10);
+        Assert.Equal(0.0, y[1], 10);
+        Assert.Equal(1.2247356859, y[2], 10);
+    }
+
+    [Fact]
     public void InfiniteDouble_YieldsNaN()
     {
         // ORT 1.29 double: inf poisons mean and variance ([inf,1,2]
