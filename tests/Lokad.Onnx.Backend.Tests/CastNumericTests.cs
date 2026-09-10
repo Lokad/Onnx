@@ -98,6 +98,17 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void FloatOverflowAndNaN_SaturateSignedMin64()
+    {
+        // ORT 1.29: like the double twin, out-of-range floats and NaN
+        // saturate int64 to the minimum ([1e30, -1e30, nan, 1.9] ->
+        // [min, min, min, 1]).
+        var r = CPUExecutionProvider.Cast(DenseTensor<float>.OfValues(new float[] { 1e30f, -1e30f, float.NaN, 1.9f }), TensorElementType.Int64, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new long[] { -9223372036854775808L, -9223372036854775808L, -9223372036854775808L, 1L }, ((Tensor<long>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void DoubleOverflowAndNaN_SaturateSignedMin()
     {
         // ORT 1.29: out-of-range doubles and NaN saturate int64 to the
