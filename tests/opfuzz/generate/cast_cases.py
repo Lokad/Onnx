@@ -33,6 +33,14 @@ def main():
                          -9223372036854775808.0, 9223372036854774784.0],
                         dtype=np.float64)},
          dtypes=DT, feed_dtypes=FD)
+    # float32 to int32 saturation mirrors the double/int64 sibling.
+    node = helper.make_node("Cast", ["x"], ["z"], to=TensorProto.INT32)
+    emit("cast_float_sat_int32", node, [("x", [7])], [("z", [7])],
+         {"x": np.array([float("nan"), float("inf"), float("-inf"),
+                         1e20, -1e20, 2147483648.0, -2147483649.0],
+                        dtype=np.float32)},
+         dtypes={"x": TensorProto.FLOAT, "z": TensorProto.INT32},
+         feed_dtypes={"x": np.float32})
     # Fractions truncate toward zero.
     node = helper.make_node("Cast", ["x"], ["z"], to=TensorProto.INT64)
     emit("cast_double_trunc_int64", node, [("x", [5])], [("z", [5])],
