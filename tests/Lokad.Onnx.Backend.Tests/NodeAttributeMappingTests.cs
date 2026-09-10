@@ -123,6 +123,29 @@ public class NodeAttributeMappingTests
     }
 
     [Fact]
+    public void Conv_OmittedAttributes_UseDefaults()
+    {
+        // ORT 1.29: a bare two-input Conv infers the kernel from weights
+        // with VALID pads and unit stride/dilation ([[1,2],[3,4]] x 2).
+        var graph = CreateGraph(13);
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });
+        graph.Inputs["w"] = DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 2f } } } });
+        var node = new Node
+        {
+            Name = "conv",
+            Op = OpType.Conv,
+            Inputs = new[] { "x", "w" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>()
+        };
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var y = (Tensor<float>)result.Outputs[0];
+        Assert.Equal(new[] { 1, 1, 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 2f, 4f, 6f, 8f }, y.ToArray());
+    }
+
+    [Fact]
     public void MaxPool_OmittedStrides_DefaultToOne()
     {
         // ORT 1.29: omitted strides default to 1; [1,1,3,3] with kernel 2
