@@ -558,6 +558,7 @@ public class CpuExecutionProviderOpTests
     {
         // Every pair below was probed refused on ORT 1.29 (load or run) and
         // fails descriptively here: Pow is float/double/int32/int64 only,
+        // sequences exclude sub-32 payloads,
         // ReduceSum has no sub-32 arm, and Softmax/LayerNorm are float-types
         // only (Gemm-int already pins in IntDtypes_RejectedCleanly).
         Assert.Equal(OpStatus.Failure, CPU.Pow(
@@ -574,5 +575,11 @@ public class CpuExecutionProviderOpTests
             DenseTensor<int>.OfValues(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }),
             DenseTensor<int>.OfValues(new int[] { 1, 1, 1 }),
             DenseTensor<int>.OfValues(new int[] { 0, 0, 0 }), -1, null, null, 1, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.SplitToSequence(
+            DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 2, 3, 4 }),
+            DenseTensor<long>.OfValues(new long[] { 2, 2 }), 0, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.SplitToSequence(
+            DenseTensor<byte>.OfValues(new byte[] { 1, 2, 3, 4 }),
+            DenseTensor<long>.OfValues(new long[] { 2, 2 }), 0, null, null).Status);
     }
 }
