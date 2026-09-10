@@ -58,4 +58,20 @@ public class GemmDoubleTests
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Equal(new double[] { 20.0, 24.0, 46.0, 54.0 }, ((Tensor<double>)r.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void NaNInput_Propagates()
+    {
+        // ORT 1.29: [[nan,2],[3,4]] @ I -> [[nan,nan],[3,4]].
+        var r = CPUExecutionProvider.Gemm(
+            D(new double[,] { { double.NaN, 2.0 }, { 3.0, 4.0 } }),
+            D(new double[,] { { 1.0, 0.0 }, { 0.0, 1.0 } }),
+            null, 1f, 1f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<double>)r.Outputs[0]).ToArray();
+        Assert.True(double.IsNaN(y[0]));
+        Assert.True(double.IsNaN(y[1]));
+        Assert.Equal(3.0, y[2]);
+        Assert.Equal(4.0, y[3]);
+    }
 }
