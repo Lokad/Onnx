@@ -103,6 +103,7 @@ public partial class CPUExecutionProvider
         (options ?? ExecutionOptions.Default).Validated();
         if (sequence is not TensorSequence seq) return WrongInputType(op, nameof(sequence), "Input must be a sequence.", sequence);
         Profiler.StartOpStage(OpStage.Math);
+        if (index.ElementType != TensorElementType.Int32 && index.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(index), "The index tensor must be int32 or int64.", index);
         long position = ToInt64Scalar(index, nameof(index));
         if (position < 0) position += seq.Items.Count;
         if (position < 0 || position >= seq.Items.Count) return WrongInputShape(op, nameof(index), index, "Sequence index is out of range.");

@@ -85,6 +85,18 @@ public class SequenceValueTests
     }
 
     [Fact]
+    public void SequenceAt_FloatIndex_FailsCleanly()
+    {
+        // ORT refuses a non-int SequenceAt index at load; the provider
+        // must fail descriptively instead of throwing from ToInt64Scalar.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f, 3f, 4f, 5f }, { 6f, 7f, 8f, 9f, 10f, 11f } });
+        var sp = CPUExecutionProvider.SplitToSequence(x, DenseTensor<int>.OfValues(new int[] { 2, 4 }), 1, 0, null);
+        Assert.Equal(OpStatus.Success, sp.Status);
+        var f = DenseTensor<float>.OfValues(new float[] { 0f });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.SequenceAt((TensorSequence)sp.Outputs[0], f, null).Status);
+    }
+
+    [Fact]
     public void SequenceAt_NonSequence_FailsCleanly()
     {
         // ORT refuses a non-sequence SequenceAt input at load; the
