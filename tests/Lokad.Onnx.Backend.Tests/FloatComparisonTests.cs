@@ -62,6 +62,36 @@ public class FloatComparisonTests
     }
 
     [Fact]
+    public void Broadcast_DoubleComparisonsFollowBroadcastShape()
+    {
+        // ORT 1.29: same broadcast geometry as the float pin.
+        var x = DenseTensor<double>.OfValues(new double[,] { { 1.0 }, { 2.0 } });
+        var y = DenseTensor<double>.OfValues(new double[,] { { 10.0, 20.0 } });
+        var eq = CPUExecutionProvider.Equal(x, y, null);
+        Assert.Equal(OpStatus.Success, eq.Status);
+        Assert.Equal(new int[] { 2, 2 }, ((Tensor<bool>)eq.Outputs[0]).Dimensions.ToArray());
+        Assert.Equal(new bool[] { false, false, false, false }, ((Tensor<bool>)eq.Outputs[0]).ToArray());
+        var lt = CPUExecutionProvider.Less(x, y, null);
+        Assert.Equal(OpStatus.Success, lt.Status);
+        Assert.Equal(new bool[] { true, true, true, true }, ((Tensor<bool>)lt.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void Broadcast_Int64ComparisonsFollowBroadcastShape()
+    {
+        // ORT 1.29: integer comparisons broadcast identically.
+        var x = DenseTensor<long>.OfValues(new long[,] { { 1L }, { 2L } });
+        var y = DenseTensor<long>.OfValues(new long[,] { { 10L, 20L } });
+        var eq = CPUExecutionProvider.Equal(x, y, null);
+        Assert.Equal(OpStatus.Success, eq.Status);
+        Assert.Equal(new int[] { 2, 2 }, ((Tensor<bool>)eq.Outputs[0]).Dimensions.ToArray());
+        Assert.Equal(new bool[] { false, false, false, false }, ((Tensor<bool>)eq.Outputs[0]).ToArray());
+        var lt = CPUExecutionProvider.Less(x, y, null);
+        Assert.Equal(OpStatus.Success, lt.Status);
+        Assert.Equal(new bool[] { true, true, true, true }, ((Tensor<bool>)lt.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void Relu_NanPropagatesAndPreservesSignedZero()
     {
         var x = DenseTensor<float>.OfValues(new float[] { float.NaN, -1f, -0f, 0f, 2.5f, float.NegativeInfinity, float.PositiveInfinity });
