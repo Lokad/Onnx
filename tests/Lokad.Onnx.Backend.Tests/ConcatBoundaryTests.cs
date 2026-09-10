@@ -138,6 +138,22 @@ public class ConcatBoundaryTests
     }
 
     [Fact]
+    public void Sub32Inputs_Concatenate()
+    {
+        // ORT 1.29: sub-32 concatenation works (verified differentially).
+        var x8 = DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, 2 } });
+        var y8 = DenseTensor<sbyte>.OfValues(new sbyte[,] { { 3, 4 } });
+        var r8 = CPU.Concat(new ITensor[] { x8, y8 }, 0, null);
+        Assert.Equal(OpStatus.Success, r8.Status);
+        Assert.Equal(new sbyte[] { 1, 2, 3, 4 }, ((Tensor<sbyte>)r8.Outputs![0]).ToArray());
+        var x16 = DenseTensor<ushort>.OfValues(new ushort[,] { { 1, 2 } });
+        var y16 = DenseTensor<ushort>.OfValues(new ushort[,] { { 3, 4 } });
+        var r16 = CPU.Concat(new ITensor[] { x16, y16 }, 0, null);
+        Assert.Equal(OpStatus.Success, r16.Status);
+        Assert.Equal(new ushort[] { 1, 2, 3, 4 }, ((Tensor<ushort>)r16.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void EmptyInput_ContributesNothing()
     {
         // ORT 1.29: a [2,0] input concatenated on axis 1 yields the

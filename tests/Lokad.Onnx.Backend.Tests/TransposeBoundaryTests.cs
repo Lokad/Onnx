@@ -58,6 +58,19 @@ public class TransposeBoundaryTests
     }
 
     [Fact]
+    public void Sub32Inputs_Transpose()
+    {
+        // ORT 1.29: sub-32 transposition works (verified differentially).
+        var x8 = DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, 2 }, { 3, 4 } });
+        var t8 = Tensor<sbyte>.Transpose(x8, new int[] { 1, 0 });
+        Assert.Equal(new int[] { 2, 2 }, t8.Dimensions.ToArray());
+        Assert.Equal(new sbyte[] { 1, 3, 2, 4 }, t8.ToArray());
+        var x16 = DenseTensor<ushort>.OfValues(new ushort[,] { { 1, 2 }, { 3, 4 } });
+        var t16 = Tensor<ushort>.Transpose(x16, new int[] { 1, 0 });
+        Assert.Equal(new ushort[] { 1, 3, 2, 4 }, t16.ToArray());
+    }
+
+    [Fact]
     public void EmptyInput_PermutesShape()
     {
         // ORT 1.29: transposing [0,3] with perm=[1,0] yields [3,0], empty.
