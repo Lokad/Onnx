@@ -525,6 +525,7 @@ public class ExpandResizeShapeTests
         var bad = CPUExecutionProvider.Resize(x, DenseTensor<long>.OfValues(new long[8]), Scales(1f, 1f, 1f, 4f), null, "nearest", "asymmetric", "round_prefer_floor", -0.75f, 0f, null);
         Assert.Equal(OpStatus.Failure, bad.Status);
     }
+
     [Fact]
     public void ExpandHugeInt64Shape_FailsCleanly()
     {
