@@ -94,4 +94,16 @@ public class ConstantOfShapeBoundaryTests
         Assert.Equal(OpStatus.Success, r64.Status);
         Assert.Equal(new ulong[] { 18446744073709551615ul, 18446744073709551615ul }, ((Tensor<ulong>)r64.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void IntBoolValues_FillConstant()
+    {
+        // ORT 1.29: [2] of int64 7 and [1, 2] of true.
+        var ri = CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 2L }), DenseTensor<long>.OfValues(new long[] { 7L }), null);
+        Assert.Equal(OpStatus.Success, ri.Status);
+        Assert.Equal(new long[] { 7L, 7L }, ((Tensor<long>)ri.Outputs[0]).ToArray());
+        var rb = CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 1L, 2L }), DenseTensor<bool>.OfValues(new bool[] { true }), null);
+        Assert.Equal(OpStatus.Success, rb.Status);
+        Assert.Equal(new bool[] { true, true }, ((Tensor<bool>)rb.Outputs[0]).ToArray());
+    }
 }
