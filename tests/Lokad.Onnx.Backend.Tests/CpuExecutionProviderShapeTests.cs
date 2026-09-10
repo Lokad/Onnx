@@ -15,6 +15,27 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void ReshapeMultipleInfer_Throws()
+        {
+            // ORT 1.29 fails the run (at most one -1 allowed).
+            var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+            var s = DenseTensor<long>.OfValues(new long[] { 2L, -1L, -1L });
+            Assert.Throws<System.ArgumentException>(() => Tensor<float>.Reshape(x, s, false));
+        }
+
+        [Fact]
+        public void SqueezeAbsentAxes_RemovesAllSingletons()
+        {
+            // Null axes take the same squeeze-all branch as empty axes.
+            var x = DenseTensor<float>.OfValues(new float[1, 3, 1] { { { 1f }, { 2f }, { 3f } } });
+            var r = CPU.Squeeze(x, null, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new int[] { 3 }, y.Dimensions.ToArray());
+            Assert.Equal(new float[] { 1f, 2f, 3f }, y.ToArray());
+        }
+
+        [Fact]
         public void ReshapeToScalar_Succeeds()
         {
             // ORT 1.29: [1,1] reshaped to [] is scalar 7.
