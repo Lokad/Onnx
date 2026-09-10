@@ -54,6 +54,16 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void GatherRejectsNegativeOverflow()
+        {
+            // ORT 1.29 fails the run (idx=-4 outside [-3,2] on dim 3);
+            // Lokad must throw rather than wrap to a negative offset.
+            var data = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f });
+            var negOob = DenseTensor<long>.OfValues(new long[] { -4L, -1L });
+            Assert.Throws<ArgumentOutOfRangeException>(() => CPU.Gather(data, negOob, 0, null));
+        }
+
+        [Fact]
         public void GatherNodeExecutesThroughDispatch()
         {
             var graph = new ComputationalGraph();
