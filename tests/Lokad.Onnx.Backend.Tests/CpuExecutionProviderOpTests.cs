@@ -321,6 +321,25 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void SoftmaxDefaultAxis_FollowsOpset()
+    {
+        // ORT 1.29 on arange(6) shaped [1,2,3]: opset 11 defaults to
+        // axis 1, opset 13 to axis -1.
+        var x = DenseTensor<float>.OfValues(new float[1, 2, 3] { { { 0f, 1f, 2f }, { 3f, 4f, 5f } } });
+        var r11 = CPU.Softmax(x, null, null, null, 11);
+        Assert.Equal(OpStatus.Success, r11.Status);
+        var y11 = ((Tensor<float>)r11.Outputs![0]).ToArray();
+        Assert.Equal(0.00427f, y11[0], 5);
+        Assert.Equal(0.63369f, y11[5], 5);
+        var r13 = CPU.Softmax(x, null, null, null, 13);
+        Assert.Equal(OpStatus.Success, r13.Status);
+        var y13 = ((Tensor<float>)r13.Outputs![0]).ToArray();
+        Assert.Equal(0.09003f, y13[0], 5);
+        Assert.Equal(0.66524f, y13[2], 5);
+        Assert.Equal(0.09003f, y13[3], 5);
+    }
+
+    [Fact]
     public void UnaryMath_RejectUnsupportedDtypes()
     {
         // ORT constrains these math kernels to float types at load (Cos-int
