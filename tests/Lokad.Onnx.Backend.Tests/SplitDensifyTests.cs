@@ -5,6 +5,44 @@ namespace Lokad.Onnx.Backend.Tests;
 public class SplitDensifyTests
 {
     [Fact]
+    public void SequenceMismatchedSizes_FailsCleanly()
+    {
+        // ORT 1.29 fails the run (sizes [2,1] sum to 3 on dim 4).
+        var x = DenseTensor<float>.OfValues(Enumerable.Range(0, 8).Select(v => (float)v).ToArray(), new[] { 2, 4 });
+        var r = CPU.SplitToSequence(x, DenseTensor<long>.OfValues(new long[] { 2L, 1L }), 1, 1, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
+    public void SequenceScalarChunk_PartialLast()
+    {
+        // ORT 1.29: chunk 2 over dim 5 -> [(2,),(2,),(1,)].
+        var x = DenseTensor<float>.OfValues(Enumerable.Range(0, 5).Select(v => (float)v).ToArray());
+        var chunk = new DenseTensor<long>(new long[] { 2L }, Array.Empty<int>());
+        var r = CPU.SplitToSequence(x, chunk, 0, 1, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var items = ((TensorSequence)r.Outputs![0]).Items;
+        Assert.Equal(3, items.Count);
+        Assert.Equal(new float[] { 4f }, ((Tensor<float>)items[2]).ToArray());
+    }
+
+    [Fact]
+    public void SequenceKeepdimsZero_DropsSingletons()
+    {
+        // ORT 1.29: chunk 1 over [2,2] axis 0 keepdims=0 -> [(2,),(2,)].
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var one = new DenseTensor<long>(new long[] { 1L }, Array.Empty<int>());
+        var r = CPU.SplitToSequence(x, one, 0, 0, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var items = ((TensorSequence)r.Outputs![0]).Items;
+        Assert.Equal(new int[] { 2 }, ((Tensor<float>)items[0]).Dimensions.ToArray());
+        Assert.Equal(new float[] { 3f, 4f }, ((Tensor<float>)items[1]).ToArray());
+        // Non-singleton chunks cannot drop the axis: ORT fails the run too.
+        var two = new DenseTensor<long>(new long[] { 2L }, Array.Empty<int>());
+        Assert.Equal(OpStatus.Failure, CPU.SplitToSequence(x, two, 0, 0, null).Status);
+    }
+
+    [Fact]
     public void MismatchedSplitSizes_FailsCleanly()
     {
         // ORT 1.29 fails the run (sizes [2,1] sum to 3 on dim 4).
