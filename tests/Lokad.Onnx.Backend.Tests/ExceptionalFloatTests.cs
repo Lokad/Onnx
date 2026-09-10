@@ -170,6 +170,19 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void NegDoubleExceptional_MatchesOrt()
+    {
+        // ORT 1.29 double: [nan, -inf, inf, -0].
+        var result = CPU.Neg(DenseTensor<double>.OfValues(new double[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity, 0.0 }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.True(double.IsNaN(values[0]));
+        Assert.Equal(double.NegativeInfinity, values[1]);
+        Assert.Equal(double.PositiveInfinity, values[2]);
+        Assert.Equal(System.BitConverter.DoubleToInt64Bits(-0.0), System.BitConverter.DoubleToInt64Bits(values[3]));
+    }
+
+    [Fact]
     public void ReluDoubleExceptional_MatchesOrt()
     {
         // ORT 1.29 double: [nan, 0, inf].

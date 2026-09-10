@@ -10,6 +10,18 @@ namespace Lokad.Onnx.Backend.Tests;
 public class WhereBoundaryTests
 {
     [Fact]
+    public void DoubleBasic_MatchesOrt()
+    {
+        // ORT 1.29 double: [1.5, 20.5].
+        var result = CPU.Where(
+            DenseTensor<bool>.OfValues(new bool[] { true, false }),
+            DenseTensor<double>.OfValues(new double[] { 1.5, 2.5 }),
+            DenseTensor<double>.OfValues(new double[] { 10.5, 20.5 }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        Assert.Equal(new double[] { 1.5, 20.5 }, ((Tensor<double>)result.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void BasicSelect_MatchesOrt()
     {
         // ORT 1.29: [1, 20].
