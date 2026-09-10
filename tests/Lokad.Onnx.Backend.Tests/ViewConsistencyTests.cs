@@ -191,4 +191,44 @@ public class ViewConsistencyTests
         var dense = DenseTensor<float>.OfValues(new float[,] { { 2f, 3f }, { 5f, 6f } });
         Assert.Equal(Tensor<float>.Expand(dense, new int[] { 2, 2, 2 }).ToArray(), got.ToArray());
     }
+
+    [Fact]
+    public void ReversedSlice_ReduceMax_MatchesDense()
+    {
+        // A negative-step slice walks storage backwards; row-wise maxima
+        // must follow the logical order [[4,5,6],[1,2,3]].
+        var rev = Base().Slice(new SliceIndex(null, null, -1), new SliceIndex(0, 3));
+        Assert.IsType<TensorSlice<float>>(rev);
+        var axes = new int[] { 1 }.ToTensor<int>();
+        var got = Tensor<float>.ReduceMax(rev, axes, false, false);
+        Assert.Equal(new float[] { 6f, 3f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 4f, 5f, 6f }, { 1f, 2f, 3f } });
+        Assert.Equal(Tensor<float>.ReduceMax(dense, axes, false, false).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void ReversedSlice_Transpose_MatchesDense()
+    {
+        // Permuting a backwards-walking view must transpose logical
+        // values, not storage order.
+        var rev = Base().Slice(new SliceIndex(null, null, -1), new SliceIndex(0, 3));
+        var got = Tensor<float>.Transpose(rev, new int[] { 1, 0 });
+        Assert.Equal(new int[] { 3, 2 }, got.Dimensions.ToArray());
+        Assert.Equal(new float[] { 4f, 1f, 5f, 2f, 6f, 3f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 4f, 5f, 6f }, { 1f, 2f, 3f } });
+        Assert.Equal(Tensor<float>.Transpose(dense, new int[] { 1, 0 }).ToArray(), got.ToArray());
+    }
+
+    [Fact]
+    public void ReversedSlice_Where_MatchesDense()
+    {
+        // Selection from a backwards-walking payload follows logical rows.
+        var rev = Base().Slice(new SliceIndex(null, null, -1), new SliceIndex(0, 3));
+        var cond = DenseTensor<bool>.OfValues(new bool[,] { { true }, { false } });
+        var zeros = DenseTensor<float>.OfValues(new float[,] { { 0f, 0f, 0f }, { 0f, 0f, 0f } });
+        var got = Tensor<float>.Where(cond, rev, zeros);
+        Assert.Equal(new float[] { 4f, 5f, 6f, 0f, 0f, 0f }, got.ToArray());
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 4f, 5f, 6f }, { 1f, 2f, 3f } });
+        Assert.Equal(Tensor<float>.Where(cond, dense, zeros).ToArray(), got.ToArray());
+    }
 }
