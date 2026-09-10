@@ -218,6 +218,52 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void SigmoidHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Sigmoid kernel exists anywhere in src; same honest contract
+        // as Mod/Pad/Identity/Clip.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Sigmoid));
+        var node = Nod(OpType.Sigmoid, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 0f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Sigmoid", r.Message ?? "");
+    }
+
+    [Fact]
+    public void LogHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Log kernel exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Log));
+        var node = Nod(OpType.Log, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Log", r.Message ?? "");
+    }
+
+    [Fact]
+    public void FlattenHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Flatten kernel exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Flatten));
+        var node = Nod(OpType.Flatten, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Flatten", r.Message ?? "");
+    }
+
+    [Fact]
     public void RegistryEntries_AreImmutable()
     {
         // C08: no consumer may rewrite the capability registry after construction.
