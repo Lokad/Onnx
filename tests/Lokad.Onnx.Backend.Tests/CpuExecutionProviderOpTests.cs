@@ -339,6 +339,26 @@ public class CpuExecutionProviderOpTests
         var b = DenseTensor<bool>.OfValues(new bool[] { true });
         Assert.Equal(OpStatus.Failure, CPU.Abs(b, null).Status);
     }
+
+    [Fact]
+    public void BinaryOps_EmptyInputs_YieldEmpty()
+    {
+        // ORT 1.29: elementwise kernels over zero elements yield empty
+        // outputs (arithmetic and comparison alike), not failures.
+        var e = DenseTensor<float>.OfShape(0);
+        var add = CPU.Add(e, e, null, null);
+        Assert.Equal(OpStatus.Success, add.Status);
+        Assert.Empty(((Tensor<float>)add.Outputs![0]).ToArray());
+        var mul = CPU.Mul(e, e, null, null);
+        Assert.Equal(OpStatus.Success, mul.Status);
+        Assert.Empty(((Tensor<float>)mul.Outputs![0]).ToArray());
+        var eq = CPU.Equal(e, e, null);
+        Assert.Equal(OpStatus.Success, eq.Status);
+        Assert.Empty(((Tensor<bool>)eq.Outputs![0]).ToArray());
+        var less = CPU.Less(e, e, null);
+        Assert.Equal(OpStatus.Success, less.Status);
+        Assert.Empty(((Tensor<bool>)less.Outputs![0]).ToArray());
+    }
 }
 
 
