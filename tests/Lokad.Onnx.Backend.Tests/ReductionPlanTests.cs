@@ -315,6 +315,22 @@ public class ReductionPlanTests
     }
 
     [Fact]
+    public void DoubleNaN_BehaviorMatchesOrt()
+    {
+        // ORT 1.29 double: Sum/Mean propagate NaN, Max skips to 3.0.
+        var x = DenseTensor<double>.OfValues(new double[] { 1.0, double.NaN, 3.0 });
+        var s = CPUExecutionProvider.ReduceSum(x, null, null, null, null);
+        Assert.Equal(OpStatus.Success, s.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)s.Outputs![0])[0]));
+        var m = CPUExecutionProvider.ReduceMean(x, null, null, null, null);
+        Assert.Equal(OpStatus.Success, m.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)m.Outputs![0])[0]));
+        var mx = CPUExecutionProvider.ReduceMax(x, null, null, null, null);
+        Assert.Equal(OpStatus.Success, mx.Status);
+        Assert.Equal(3.0, ((Tensor<double>)mx.Outputs![0])[0]);
+    }
+
+    [Fact]
     public void ReduceMax_AllNaN_YieldsNaN()
     {
         // ORT 1.29: [nan] (the skip-NaN kernel inits from the first
