@@ -979,4 +979,65 @@ public class ExceptionalFloatTests
         Assert.Equal(new double[] { 0.0, 0.0, 0.0 }, yd);
     }
 
+    [Fact]
+    public void LayerNormHugeRow_DocumentsDoubleAccumulation()
+    {
+        // Deliberate ORT 1.29 divergences, documented rather than matched:
+        // statistics accumulate in double, while ORT's float/online
+        // accumulation overflows. Double accumulation is the more accurate
+        // result wherever the true statistics are finite, so matching ORT
+        // here would mean emulating overflow. Pinned to freeze the design.
+        // Uniform huge float row: exact zeros with mean 3.4e38 and
+        // invstd 1/sqrt(eps), matching ORT (differential pin).
+        var r = CPU.LayerNormalization(
+            DenseTensor<float>.OfValues(new float[,] { { 3.4e38f, 3.4e38f, 3.4e38f } }),
+            DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f }),
+            DenseTensor<float>.OfValues(new float[] { 0f, 0f, 0f }),
+            -1, null, null, 3, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 0f, 0f, 0f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+        Assert.Equal(new float[] { 3.4e38f }, ((Tensor<float>)r.Outputs[1]).ToArray());
+        Assert.Equal(new float[] { 316.22778f }, ((Tensor<float>)r.Outputs[2]).ToArray());
+        // Huge mixed float row: ORT reports Y = [0,0,0] with invstd 0 via
+        // float-variance overflow. Double accumulation preserves scale
+        // invariance instead: [3.4e38,1,2] normalizes exactly like [3,1,2],
+        // with a finite subnormal invstd.
+        var rm = CPU.LayerNormalization(
+            DenseTensor<float>.OfValues(new float[,] { { 3.4e38f, 1f, 2f } }),
+            DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f }),
+            DenseTensor<float>.OfValues(new float[] { 0f, 0f, 0f }),
+            -1, null, null, 3, null, null);
+        Assert.Equal(OpStatus.Success, rm.Status);
+        Assert.Equal(new float[] { 1.4142135f, -0.70710677f, -0.70710677f }, ((Tensor<float>)rm.Outputs[0]).ToArray());
+        Assert.Equal(new float[] { 1.1333333e38f }, ((Tensor<float>)rm.Outputs[1]).ToArray());
+        Assert.Equal(new float[] { 6.239178e-39f }, ((Tensor<float>)rm.Outputs[2]).ToArray());
+        // Infinite float row: Y and InvStd agree with ORT (all NaN), but the
+        // naive double sum keeps Mean at inf while ORT's online mean reports
+        // NaN. Extended-real inf is the limiting value; frozen as designed.
+        var ri = CPU.LayerNormalization(
+            DenseTensor<float>.OfValues(new float[,] { { float.PositiveInfinity, 1f, 2f } }),
+            DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f }),
+            DenseTensor<float>.OfValues(new float[] { 0f, 0f, 0f }),
+            -1, null, null, 3, null, null);
+        Assert.Equal(OpStatus.Success, ri.Status);
+        var yi = ((Tensor<float>)ri.Outputs[0]).ToArray();
+        foreach (var v in yi) Assert.True(float.IsNaN(v));
+        Assert.Equal(new float[] { float.PositiveInfinity }, ((Tensor<float>)ri.Outputs[1]).ToArray());
+        var si = ((Tensor<float>)ri.Outputs[2]).ToArray();
+        Assert.True(float.IsNaN(si[0]));
+        // Huge double row: double sums overflow near DBL_MAX, so Y is NaN
+        // where ORT reports 0 (Mean inf, InvStd 0). Accuracy limit of the
+        // double path, frozen against silent change.
+        var rd = CPU.LayerNormalization(
+            DenseTensor<double>.OfValues(new double[,] { { 1.7e308, 1.7e308, 1.7e308 } }),
+            DenseTensor<double>.OfValues(new double[] { 1.0, 1.0, 1.0 }),
+            DenseTensor<double>.OfValues(new double[] { 0.0, 0.0, 0.0 }),
+            -1, null, null, 3, null, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        var yd = ((Tensor<double>)rd.Outputs[0]).ToArray();
+        foreach (var v in yd) Assert.True(double.IsNaN(v));
+        Assert.Equal(new float[] { float.PositiveInfinity }, ((Tensor<float>)rd.Outputs[1]).ToArray());
+        Assert.Equal(new float[] { 0f }, ((Tensor<float>)rd.Outputs[2]).ToArray());
+    }
+
 }
