@@ -120,6 +120,7 @@ public partial class CPUExecutionProvider
         var op = OpType.GlobalAveragePool;
         if (X is null) return MissingInput(op, nameof(X));
         if (X.Rank < 3) return WrongInputShape(op, nameof(X), X, "GlobalAveragePool requires an input of rank 3 or more (NxCxD1..Dn).");
+        if (X.Dims.Contains(0) && X.Dims[0] != 0) return WrongInputShape(op, nameof(X), X, "GlobalAveragePool supports an empty batch only; other zero extents are not supported.");
         var axes = new int[X.Rank - 2];
         for (int i = 0; i < axes.Length; i++) axes[i] = i + 2;
         var axesTensor = DenseTensor<int>.OfValues(axes);

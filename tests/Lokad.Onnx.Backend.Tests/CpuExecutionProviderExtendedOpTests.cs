@@ -104,4 +104,29 @@ public class CpuExecutionProviderExtendedOpTests
         Assert.Equal(1.5f, y[0, 0, 0, 0], 5);
         Assert.Equal(5.5f, y[0, 1, 0, 0], 5);
     }
+
+    [Fact]
+    public void GlobalAveragePool_EmptyBatch_Succeeds()
+    {
+        // ORT 1.29: only N may be zero; shape (0, 2, 1, 1).
+        var r = CPU.GlobalAveragePool(DenseTensor<float>.OfShape(0, 2, 3, 3), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 0, 2, 1, 1 }, ((Tensor<float>)r.Outputs[0]).Dimensions.ToArray());
+    }
+
+    [Fact]
+    public void GlobalAveragePool_EmptyChannel_Rejects()
+    {
+        var r = CPU.GlobalAveragePool(DenseTensor<float>.OfShape(1, 0, 3, 3), null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("empty batch", r.Message ?? "");
+    }
+
+    [Fact]
+    public void GlobalAveragePool_EmptySpatial_Rejects()
+    {
+        var r = CPU.GlobalAveragePool(DenseTensor<float>.OfShape(1, 2, 0, 3), null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("empty batch", r.Message ?? "");
+    }
 }
