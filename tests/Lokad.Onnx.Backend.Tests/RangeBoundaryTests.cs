@@ -91,6 +91,15 @@ public class RangeBoundaryTests
     }
 
     [Fact]
+    public void UintInputs_RejectedCleanly()
+    {
+        // ORT 1.29 refuses uint Range at load (not in Range types);
+        // the provider fails descriptively instead.
+        var t = DenseTensor<uint>.OfValues(new uint[] { 1u });
+        Assert.Equal(OpStatus.Failure, CPU.Range(t, t, t, null).Status);
+    }
+
+    [Fact]
     public void ZeroDelta_FailsCleanly()
     {
         Assert.Throws<System.ArgumentException>(() => Tensor<long>.Range(0L, 5L, 0L));
