@@ -75,6 +75,10 @@ def test_case_matches_ort_reference(case, tmp_path):
              "--mode", mode] + inputs + ["--outdir", od],
             capture_output=True, text=True)
         if r.returncode == 3 and mode == "intrinsics":
+            # Skip only a clean fallback: breaches recorded in the scalar
+            # or simd modes above must fail instead of being discarded.
+            if breaches:
+                break
             pytest.skip("x86 FMA not available on this machine")
         assert r.returncode == 0, "runner failed for %s/%s: %s" % (case, mode, r.stderr.strip().splitlines()[-1:])
         for rp in refs:
