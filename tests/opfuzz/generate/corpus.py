@@ -184,6 +184,16 @@ def matmul_cases():
     a = rarray([2, 3, 4], -1, 1); b = rarray([2, 4, 5], -1, 1)
     node = helper.make_node("MatMul", ["x", "y"], ["z"])
     emit("matmul_batched", node, [("x", [2, 3, 4]), ("y", [2, 4, 5])], [("z", [2, 3, 5])], {"x": a, "y": b})
+    # Fixed values only (no RNG draws): 64+ row counts route the
+    # panel-packed kernel (and the odd-row tail at 65), which no sized
+    # random case reaches deterministically.
+    pa = (np.arange(64 * 8, dtype=np.float32).reshape(64, 8) % 7) - 3
+    pb = (np.arange(8 * 8, dtype=np.float32).reshape(8, 8) % 5) - 2
+    node = helper.make_node("MatMul", ["x", "y"], ["z"])
+    emit("matmul_packed", node, [("x", [64, 8]), ("y", [8, 8])], [("z", [64, 8])], {"x": pa, "y": pb})
+    qa = (np.arange(65 * 8, dtype=np.float32).reshape(65, 8) % 7) - 3
+    node = helper.make_node("MatMul", ["x", "y"], ["z"])
+    emit("matmul_packed_tail", node, [("x", [65, 8]), ("y", [8, 8])], [("z", [65, 8])], {"x": qa, "y": pb})
 
 def reducemean_cases(n=5):
     for i in range(n):

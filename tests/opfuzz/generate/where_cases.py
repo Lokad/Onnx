@@ -37,5 +37,18 @@ def main():
          dtypes=DT, feed_dtypes=FD)
 
 
+    node = helper.make_node("Where", ["c", "x", "y"], ["z"])
+    emit("where_inf_unselected", node, [("c", [3]), ("x", [3]), ("y", [3])], [("z", [3])],
+         {"c": np.array([True, True, True]),
+          "x": np.array([1.0, 2.0, 3.0], dtype=np.float32),
+          "y": np.array([float("inf"), float("-inf"), float("nan")], dtype=np.float32)},
+         dtypes=DT, feed_dtypes=FD)
+    node = helper.make_node("Where", ["c", "x", "y"], ["z"])
+    emit("where_inf_unselected2", node, [("c", [3]), ("x", [3]), ("y", [3])], [("z", [3])],
+         {"c": np.array([False, False, False]),
+          "x": np.array([float("inf"), float("-inf"), float("nan")], dtype=np.float32),
+          "y": np.array([4.0, 5.0, 6.0], dtype=np.float32)},
+         dtypes=DT, feed_dtypes=FD)
+
 if __name__ == "__main__":
     main()

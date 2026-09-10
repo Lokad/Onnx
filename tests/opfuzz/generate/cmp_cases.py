@@ -79,5 +79,16 @@ def main():
          dtypes={"x": TensorProto.UINT32, "y": TensorProto.UINT32, "z": TensorProto.BOOL},
          feed_dtypes={"x": np.uint32, "y": np.uint32})
 
+    node = helper.make_node("Equal", ["x", "y"], ["z"])
+    emit("equal_inf", node, [("x", [4]), ("y", [4])], [("z", [4])],
+         {"x": np.array([float("inf"), float("-inf"), 1.0, 2.0], dtype=np.float32),
+          "y": np.array([float("inf"), float("-inf"), 1.0, float("-inf")], dtype=np.float32)},
+         dtypes=DT)
+    node = helper.make_node("Less", ["x", "y"], ["z"])
+    emit("less_inf", node, [("x", [4]), ("y", [4])], [("z", [4])],
+         {"x": np.array([float("inf"), float("-inf"), 1.0, 2.0], dtype=np.float32),
+          "y": np.array([float("inf"), float("-inf"), 1.0, float("-inf")], dtype=np.float32)},
+         dtypes=DT)
+
 if __name__ == "__main__":
     main()
