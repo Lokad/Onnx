@@ -292,6 +292,45 @@ public class ExpandResizeShapeTests
     }
 
     [Fact]
+    public void ResizeOpset10_ScalesInput_RoutesCorrectly()
+    {
+        // Resize-10 carries scales as the second input (no roi/sizes slots);
+        // dispatch must route it to scales, not roi (ORT 1.29 runs (1,1,4,8)).
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 10 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[1, 1, 2, 4] { { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } } } });
+        graph.Inputs["scales"] = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 2f, 2f });
+        var node = new Node
+        {
+            Name = "r", Op = OpType.Resize, Inputs = new[] { "x", "scales" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object> { ["mode"] = "nearest" },
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 5f, 5f, 6f, 6f, 7f, 7f, 8f, 8f, 5f, 5f, 6f, 6f, 7f, 7f, 8f, 8f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+        // v10 linear/cubic sample asymmetrically too (ORT 1.29 values).
+        var lin = new Node
+        {
+            Name = "rl", Op = OpType.Resize, Inputs = new[] { "x", "scales" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object> { ["mode"] = "linear" },
+        };
+        var rl = lin.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, rl.Status);
+        Assert.Equal(new float[] { 1f, 1.5f, 2f, 2.5f, 3f, 3.5f, 4f, 4f, 3f, 3.5f, 4f, 4.5f, 5f, 5.5f, 6f, 6f, 5f, 5.5f, 6f, 6.5f, 7f, 7.5f, 8f, 8f, 5f, 5.5f, 6f, 6.5f, 7f, 7.5f, 8f, 8f }, ((Tensor<float>)rl.Outputs![0]).ToArray());
+        var cub = new Node
+        {
+            Name = "rc", Op = OpType.Resize, Inputs = new[] { "x", "scales" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object> { ["mode"] = "cubic" },
+        };
+        var rc = cub.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, rc.Status);
+        Assert.Equal(new float[] { 1f, 1.40625f, 2f, 2.5f, 3f, 3.59375f, 4f, 4.09375f, 3f, 3.40625f, 4f, 4.5f, 5f, 5.59375f, 6f, 6.09375f, 5f, 5.40625f, 6f, 6.5f, 7f, 7.59375f, 8f, 8.09375f, 5.375f, 5.78125f, 6.375f, 6.875f, 7.375f, 7.96875f, 8.375f, 8.46875f }, ((Tensor<float>)rc.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void IndexDtypeGuards_RejectWrongTypes()
     {
         // ORT refuses wrong index/scale dtypes at load (the reduction

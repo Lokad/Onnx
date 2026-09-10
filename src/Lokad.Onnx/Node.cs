@@ -296,10 +296,21 @@ public partial struct Node
 
         OpType.Expand => CPU.Expand(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Resize => CPU.Resize(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3),
-            Attr<string>("mode", "nearest"), Attr<string>("coordinate_transformation_mode", "half_pixel"), Attr<string>("nearest_mode", "round_prefer_floor"),
-            GetFloat("cubic_coeff_a", -0.75f), GetFloat("extrapolation_value", 0f), opt,
-            GetInt("antialias", null), Ints("axes"), GetInt("exclude_outside", null), Attr<string>("keep_aspect_ratio_policy", null)),
+        OpType.Resize => ResolvedOpsetVersion(graph) switch
+        {
+            // Resize-10 carries scales as the second input (no roi/sizes
+            // slots) and samples asymmetrically (verified against ORT 1.29:
+            // v10 linear/cubic match v11 asymmetric bit-identically);
+            // 11+ uses roi/scales/sizes positions.
+            int v when v >= 11 => CPU.Resize(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3),
+                Attr<string>("mode", "nearest"), Attr<string>("coordinate_transformation_mode", "half_pixel"), Attr<string>("nearest_mode", "round_prefer_floor"),
+                GetFloat("cubic_coeff_a", -0.75f), GetFloat("extrapolation_value", 0f), opt,
+                GetInt("antialias", null), Ints("axes"), GetInt("exclude_outside", null), Attr<string>("keep_aspect_ratio_policy", null)),
+            _ => CPU.Resize(InputTensor(graph, 0), null, InputTensor(graph, 1), null,
+                Attr<string>("mode", "nearest"), "asymmetric", Attr<string>("nearest_mode", "round_prefer_floor"),
+                GetFloat("cubic_coeff_a", -0.75f), GetFloat("extrapolation_value", 0f), opt,
+                GetInt("antialias", null), Ints("axes"), GetInt("exclude_outside", null), Attr<string>("keep_aspect_ratio_policy", null)),
+        },
 
         OpType.Unsqueeze => ResolvedOpsetVersion(graph) switch
         {
