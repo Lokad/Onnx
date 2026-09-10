@@ -315,6 +315,89 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void ReciprocalHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Reciprocal schema, provider, kernel, or dispatch arm
+        // exists anywhere in src; same honest contract as Greater/And/Or.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Reciprocal));
+        var node = Nod(OpType.Reciprocal, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Reciprocal", r.Message ?? "");
+    }
+
+    [Fact]
+    public void XorHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Xor schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Xor));
+        var node = Nod(OpType.Xor, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<bool>.OfValues(new bool[] { true }));
+        Bind(graph, "y", DenseTensor<bool>.OfValues(new bool[] { false }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Xor", r.Message ?? "");
+    }
+
+    [Fact]
+    public void NotHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Not schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Not));
+        var node = Nod(OpType.Not, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<bool>.OfValues(new bool[] { true }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Not", r.Message ?? "");
+    }
+
+    [Fact]
+    public void GreaterOrEqualHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no GreaterOrEqual schema, provider, kernel, or dispatch arm
+        // exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.GreaterOrEqual));
+        var node = Nod(OpType.GreaterOrEqual, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 2f }));
+        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 1f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("GreaterOrEqual", r.Message ?? "");
+    }
+
+    [Fact]
+    public void LessOrEqualHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no LessOrEqual schema, provider, kernel, or dispatch arm
+        // exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.LessOrEqual));
+        var node = Nod(OpType.LessOrEqual, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
+        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("LessOrEqual", r.Message ?? "");
+    }
+
+    [Fact]
     public void RegistryEntries_AreImmutable()
     {
         // C08: no consumer may rewrite the capability registry after construction.
