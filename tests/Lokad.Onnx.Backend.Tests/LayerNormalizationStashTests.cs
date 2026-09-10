@@ -285,4 +285,26 @@ public class LayerNormalizationStashTests
         Assert.Equal(expected.Length, y.Length);
         for (int i = 0; i < expected.Length; i++) Assert.Equal(expected[i], y[i], 6);
     }
+
+    [Fact]
+    public void LargeFinite_ShiftStableWithOverflowDivergence()
+    {
+        // ORT 1.29 float: [1000,1001,1002] shift-matches [0,1,2].
+        var s = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 1f });
+        var k = CPUExecutionProvider.LayerNormalization(DenseTensor<float>.OfValues(new float[,] { { 1000f, 1001f, 1002f } }), s, null, -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, k.Status);
+        var ky = ((Tensor<float>)k.Outputs[0]).ToArray();
+        Assert.Equal(-1.2247356f, ky[0], 5);
+        Assert.Equal(0f, ky[1], 5);
+        Assert.Equal(1.2247356f, ky[2], 5);
+        // Documented divergence: [1e20,2e20] overflows float variance, so
+        // ORT 1.29 yields [0, 0]; the double-accumulating kernel stays finite
+        // and returns the mathematically correct [-1, 1] (TensorOps.Norm.cs).
+        var h2 = DenseTensor<float>.OfValues(new float[] { 1f, 1f });
+        var h = CPUExecutionProvider.LayerNormalization(DenseTensor<float>.OfValues(new float[] { 1e20f, 2e20f }), h2, null, -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, h.Status);
+        var hy = ((Tensor<float>)h.Outputs[0]).ToArray();
+        Assert.Equal(-1f, hy[0], 5);
+        Assert.Equal(1f, hy[1], 5);
+    }
 }
