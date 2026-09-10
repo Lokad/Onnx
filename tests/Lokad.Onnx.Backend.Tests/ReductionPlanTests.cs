@@ -462,4 +462,22 @@ public class ReductionPlanTests
         var rn = node.Execute(graph, ExecutionProvider.CPU, null);
         Assert.Equal(OpStatus.Failure, rn.Status);
     }
+
+    [Fact]
+    public void ReduceMaxSub32_MatchesOrt()
+    {
+        // ORT 1.29 runs int8/uint8 ReduceMax (int16/uint16 stay refused on
+        // both sides); like int32, empty extents fail the run (no integer
+        // identity), so the kernel throws instead of writing a seed.
+        var axes = new int[] { 0 }.ToTensor<int>();
+        var s8 = CPUExecutionProvider.ReduceMax(DenseTensor<sbyte>.OfValues(new sbyte[] { -128, 127, 1, 2 }), axes, 0, null, null);
+        Assert.Equal(OpStatus.Success, s8.Status);
+        Assert.Equal(new sbyte[] { 127 }, ((Tensor<sbyte>)s8.Outputs![0]).ToArray());
+        var u8 = CPUExecutionProvider.ReduceMax(DenseTensor<byte>.OfValues(new byte[] { 0, 255, 1, 2 }), axes, 0, null, null);
+        Assert.Equal(OpStatus.Success, u8.Status);
+        Assert.Equal(new byte[] { 255 }, ((Tensor<byte>)u8.Outputs![0]).ToArray());
+        var e = DenseTensor<sbyte>.OfShape(2, 0);
+        var ax1 = new int[] { 1 }.ToTensor<int>();
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceMax(e, ax1, 0, null, null));
+    }
 }
