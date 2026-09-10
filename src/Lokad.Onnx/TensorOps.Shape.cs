@@ -182,6 +182,7 @@ where T : unmanaged
             else if (shape[i] == 0 && allowZero)
             {
                 newShapeDims.Add(0);
+                newSize *= 0;
             }
             else
             {
@@ -191,8 +192,29 @@ where T : unmanaged
         }
         if (unknownDim != -1)
         {
-            newShapeDims[unknownDim] = Convert.ToInt32(input.Length / newSize);
+            if (newSize == 0)
+            {
+                // Zero-size -1 inference: a literal zero (or a copied zero)
+                // makes the known product zero. ORT 1.29 resolves from nonzero
+                // extents on both sides for empty inputs and rejects otherwise.
+                if (input.Length != 0)
+                {
+                    throw new ArgumentException(nameof(shape), $"The input tensor cannot be reshaped to the requested shape. Input shape:{input.PrintShape()}, requested shape:{newShapeDims.Print()}");
+                }
+                newShapeDims[unknownDim] = NonZeroVolume(input.Dimensions.ToArray()) / NonZeroVolume(newShapeDims);
+            }
+            else
+            {
+                newShapeDims[unknownDim] = Convert.ToInt32(input.Length / newSize);
+            }
             newSize *= newShapeDims[unknownDim];
+        }
+
+        static int NonZeroVolume(System.Collections.Generic.IEnumerable<int> dims)
+        {
+            int volume = 1;
+            foreach (var d in dims) if (d != 0 && d != -1) volume *= d;
+            return volume;
         }
 
         if (newSize != input.Length)
