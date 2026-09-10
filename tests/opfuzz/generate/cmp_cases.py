@@ -47,5 +47,19 @@ def main():
           "y": np.array([float("nan"), 1.0, float("nan")], dtype=np.float32)},
          dtypes=DT)
 
+    xb = np.array([[1], [2]])
+    yb = np.array([10, 20])
+    for suffix, dt_in, cast in (("int64", TensorProto.INT64, lambda a: a.astype(np.int64)),
+                                ("double", TensorProto.DOUBLE, lambda a: a.astype(np.float64))):
+        dtb = {"x": dt_in, "y": dt_in, "z": TensorProto.BOOL}
+        fdb = {"x": np.int64 if suffix == "int64" else np.float64,
+               "y": np.int64 if suffix == "int64" else np.float64}
+        node = helper.make_node("Equal", ["x", "y"], ["z"])
+        emit("equal_broadcast_" + suffix, node, [("x", [2, 1]), ("y", [2])], [("z", [2, 2])],
+             {"x": cast(xb), "y": cast(yb)}, dtypes=dtb, feed_dtypes=fdb)
+        node = helper.make_node("Less", ["x", "y"], ["z"])
+        emit("less_broadcast_" + suffix, node, [("x", [2, 1]), ("y", [2])], [("z", [2, 2])],
+             {"x": cast(xb), "y": cast(yb)}, dtypes=dtb, feed_dtypes=fdb)
+
 if __name__ == "__main__":
     main()
