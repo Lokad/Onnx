@@ -70,6 +70,21 @@ where T : unmanaged
         return output;
     }
 
+    /// <summary>
+    /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws.
+    /// Emitted values always fit int16 for valid inputs (count derives from limit),
+    /// so the narrowing cast is exact, not a wrap decision.
+    /// </summary>
+    public static Tensor<short> Range(short start, short limit, short delta)
+    {
+        if (delta == 0) throw new ArgumentException(nameof(delta));
+        int count = Math.Max((int)Math.Ceiling(((double)limit - start) / delta), 0);
+        var output = new DenseTensor<short>(count);
+        var span = output.Buffer.Span;
+        for (int i = 0; i < count; i++) span[i] = unchecked((short)(start + i * delta));
+        return output;
+    }
+
     static DenseTensor<U> TileCore<U>(Tensor<U> x, int[] repeats) where U : unmanaged
     {
         if (repeats.Length != x.Rank) throw new ArgumentException("Repeats rank must match input rank.", nameof(repeats));

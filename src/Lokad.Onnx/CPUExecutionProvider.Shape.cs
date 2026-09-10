@@ -699,6 +699,8 @@ public partial class CPUExecutionProvider
                 return Success(op, Tensor<long>.Range(Convert.ToInt64(start.GetValue(0)), Convert.ToInt64(limit.GetValue(0)), Convert.ToInt64(delta.GetValue(0))));
             case TensorElementType.Int32:
                 return Success(op, Tensor<int>.Range(Convert.ToInt32(start.GetValue(0)), Convert.ToInt32(limit.GetValue(0)), Convert.ToInt32(delta.GetValue(0))));
+            case TensorElementType.Int16:
+                return Success(op, Tensor<short>.Range(Convert.ToInt16(start.GetValue(0)), Convert.ToInt16(limit.GetValue(0)), Convert.ToInt16(delta.GetValue(0))));
             default: return InputTypeNotSupported(op, nameof(start), start);
         }
     }

@@ -104,4 +104,23 @@ public class RangeBoundaryTests
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("delta", r.Message ?? "");
     }
+
+    [Fact]
+    public void Int16Range_MatchesOrt()
+    {
+        // ORT 1.29 int16: (0,5,2) -> [0,2,4]; (5,0,-2) -> [5,3,1].
+        var up = CPU.Range(Scalar16(0), Scalar16(5), Scalar16(2), null);
+        Assert.Equal(OpStatus.Success, up.Status);
+        Assert.Equal(new short[] { 0, 2, 4 }, ((Tensor<short>)up.Outputs[0]).ToArray());
+        var down = CPU.Range(Scalar16(5), Scalar16(0), Scalar16(-2), null);
+        Assert.Equal(OpStatus.Success, down.Status);
+        Assert.Equal(new short[] { 5, 3, 1 }, ((Tensor<short>)down.Outputs[0]).ToArray());
+    }
+
+    static DenseTensor<short> Scalar16(short value)
+    {
+        var s = DenseTensor<short>.OfShape();
+        s.SetValue(0, value);
+        return s;
+    }
 }
