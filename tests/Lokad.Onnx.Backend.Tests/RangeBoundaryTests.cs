@@ -58,6 +58,22 @@ public class RangeBoundaryTests
         Assert.Empty(((Tensor<float>)back.Outputs![0]).ToArray());
     }
 
+    [Fact]
+    public void DoubleRange_MatchesOrt()
+    {
+        // ORT 1.29: [0.5, 1.0, 1.5].
+        var r = CPU.Range(ScalarD(0.5), ScalarD(2.0), ScalarD(0.5), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new double[] { 0.5, 1.0, 1.5 }, ((Tensor<double>)r.Outputs![0]).ToArray());
+    }
+
+    static DenseTensor<double> ScalarD(double value)
+    {
+        var s = DenseTensor<double>.OfShape();
+        s.SetValue(0, value);
+        return s;
+    }
+
     static DenseTensor<float> ScalarF(float value)
     {
         var s = DenseTensor<float>.OfShape();

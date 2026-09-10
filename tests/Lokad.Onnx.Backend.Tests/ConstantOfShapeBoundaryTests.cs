@@ -34,6 +34,17 @@ public class ConstantOfShapeBoundaryTests
     }
 
     [Fact]
+    public void DoubleValue_FillsConstant()
+    {
+        // ORT 1.29: 2x2 of 3.25.
+        var result = CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 2L, 2L }), DenseTensor<double>.OfValues(new double[] { 3.25 }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var y = (Tensor<double>)result.Outputs![0];
+        Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new double[] { 3.25, 3.25, 3.25, 3.25 }, y.ToArray());
+    }
+
+    [Fact]
     public void ZeroDim_ReturnsEmpty()
     {
         // ORT 1.29: shape (2, 0), no elements.
