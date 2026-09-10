@@ -682,6 +682,111 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void GeluWideBody_MatchesOrt()
+    {
+        // ORT 1.29 float values (pinned narrow in GeluExceptional and
+        // GeluLargeFinite_Saturates): the 43-wide row spans the SIMD body
+        // and scalar tail on any Vector<float>.Count, freezing the vector
+        // ErfVector path on the committed edges, including -0 bits.
+        var pattern = new float[] { 10f, -10f, float.NaN, float.PositiveInfinity, float.NegativeInfinity, 0f, -0f, 2f };
+        var input = new float[43];
+        for (int i = 0; i < input.Length; i++) input[i] = pattern[i % pattern.Length];
+        var r = CPU.Gelu(DenseTensor<float>.OfValues(input), null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs![0]).ToArray();
+        Assert.Equal(43, y.Length);
+        for (int i = 0; i < y.Length; i++)
+        {
+            switch (i % pattern.Length)
+            {
+                case 0: Assert.Equal(10f, y[i]); break;
+                case 1: Assert.Equal(int.MinValue, System.BitConverter.SingleToInt32Bits(y[i])); break;
+                case 2: Assert.True(float.IsNaN(y[i])); break;
+                case 3: Assert.Equal(float.PositiveInfinity, y[i]); break;
+                case 4: Assert.True(float.IsNaN(y[i])); break;
+                case 5: Assert.Equal(0, System.BitConverter.SingleToInt32Bits(y[i])); break;
+                case 6: Assert.Equal(int.MinValue, System.BitConverter.SingleToInt32Bits(y[i])); break;
+                default: Assert.Equal(1.9545f, y[i], 4); break;
+            }
+        }
+    }
+
+    [Fact]
+    public void ErfWideBody_MatchesOrt()
+    {
+        // ORT 1.29 float saturation with a moderate lane: the 43-wide row
+        // spans the SIMD body and scalar tail, freezing ErfVector ±1
+        // saturation beside the scalar A&S path (1.5 lane at precision 5,
+        // where the two approximations may differ by ~1e-7).
+        var pattern = new float[] { 6f, -6f, float.NaN, float.PositiveInfinity, float.NegativeInfinity, 0f, -0f, 1.5f };
+        var input = new float[43];
+        for (int i = 0; i < input.Length; i++) input[i] = pattern[i % pattern.Length];
+        var r = CPU.Erf(DenseTensor<float>.OfValues(input), null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs![0]).ToArray();
+        Assert.Equal(43, y.Length);
+        for (int i = 0; i < y.Length; i++)
+        {
+            switch (i % pattern.Length)
+            {
+                case 0: Assert.Equal(1f, y[i]); break;
+                case 1: Assert.Equal(-1f, y[i]); break;
+                case 2: Assert.True(float.IsNaN(y[i])); break;
+                case 3: Assert.Equal(1f, y[i]); break;
+                case 4: Assert.Equal(-1f, y[i]); break;
+                case 5: Assert.Equal(0, System.BitConverter.SingleToInt32Bits(y[i])); break;
+                case 6: Assert.Equal(int.MinValue, System.BitConverter.SingleToInt32Bits(y[i])); break;
+                default: Assert.Equal(0.96611f, y[i], 5); break;
+            }
+        }
+    }
+
+    [Fact]
+    public void LayerNormWideInfGamma_MatchesOrt()
+    {
+        // ORT 1.29 float and double: an infinite scale multiplies the
+        // normalized row, so lanes with safely-nonzero normalized values
+        // become signed infinities. The 43-wide row spans the SIMD body
+        // (index 5) and scalar tail (index 41) on any vector width, which
+        // narrow rows cannot observe: shared mean/variance poison whole
+        // rows, so only per-lane scale reaches individual lanes.
+        var x = new float[43];
+        for (int i = 0; i < x.Length; i++) x[i] = i + 1f;
+        var g = new float[43];
+        for (int i = 0; i < g.Length; i++) g[i] = 1f;
+        g[5] = float.PositiveInfinity;
+        g[41] = float.PositiveInfinity;
+        var r = CPU.LayerNormalization(
+            DenseTensor<float>.OfValues(x), DenseTensor<float>.OfValues(g),
+            DenseTensor<float>.OfValues(new float[43]), -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs![0]).ToArray();
+        Assert.Equal(float.NegativeInfinity, y[5]);
+        Assert.Equal(float.PositiveInfinity, y[41]);
+        for (int i = 0; i < y.Length; i++)
+        {
+            if (i != 5 && i != 41) Assert.True(float.IsFinite(y[i]));
+        }
+        var xd = new double[43];
+        for (int i = 0; i < xd.Length; i++) xd[i] = i + 1.0;
+        var gd = new double[43];
+        for (int i = 0; i < gd.Length; i++) gd[i] = 1.0;
+        gd[5] = double.PositiveInfinity;
+        gd[41] = double.PositiveInfinity;
+        var rd = CPU.LayerNormalization(
+            DenseTensor<double>.OfValues(xd), DenseTensor<double>.OfValues(gd),
+            DenseTensor<double>.OfValues(new double[43]), -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        var yd = ((Tensor<double>)rd.Outputs![0]).ToArray();
+        Assert.Equal(double.NegativeInfinity, yd[5]);
+        Assert.Equal(double.PositiveInfinity, yd[41]);
+        for (int i = 0; i < yd.Length; i++)
+        {
+            if (i != 5 && i != 41) Assert.True(double.IsFinite(yd[i]));
+        }
+    }
+
+    [Fact]
     public void EqualExceptional_MatchesOrt()
     {
         // ORT 1.29 float and double: NaN equals nothing, not even itself;
