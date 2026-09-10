@@ -19,6 +19,30 @@ public class SplitDensifyTests
     }
 
     [Fact]
+    public void EmptySplitVector_FallsBackToEvenSplit()
+    {
+        // ORT 1.29: an empty split vector behaves as absent; with two
+        // outputs [1,2,3,4] splits evenly through dispatch.
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 13 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f, 4f });
+        graph.Inputs["s"] = DenseTensor<long>.OfShape(0);
+        var node = new Node
+        {
+            Name = "sp", Op = OpType.Split, Inputs = new[] { "x", "s" }, Outputs = new[] { "a", "b" },
+            Attributes = new Dictionary<string, object> { ["axis"] = 0L },
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(2, r.Outputs!.Length);
+        Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+        Assert.Equal(new float[] { 3f, 4f }, ((Tensor<float>)r.Outputs[1]).ToArray());
+    }
+
+    [Fact]
     public void ScalarSplit_RejectedCleanly()
     {
         // ORT 1.29 fails the run (split must be a vector); the provider
