@@ -583,6 +583,24 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void CastLikeHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no CastLike schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (unlike Cast); same honest contract (verified end
+        // to end via OpDump: ORT 1.29 runs float->int64, Lokad fails cleanly).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.CastLike));
+        var node = Nod(OpType.CastLike, "", 19,
+            new[] { "x", "like" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(19);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1.5f, 2.5f }));
+        Bind(graph, "like", DenseTensor<long>.OfValues(new long[] { 1L }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("CastLike", r.Message ?? "");
+    }
+
+    [Fact]
     public void EluHonestlyUnsupported_FailsCleanly()
     {
         // C11: no Elu schema, provider, kernel, or dispatch arm exists
