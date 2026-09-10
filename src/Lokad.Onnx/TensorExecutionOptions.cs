@@ -22,10 +22,30 @@ public sealed class ScratchAccountant : IScratchAccountant
     public void AddScratchBytes(long bytes) => Interlocked.Add(ref total, bytes);
 }
 
+/// <summary>Collects tensor-copy bytes (view materialization) for one execution.</summary>
+/// <remarks>Implementations must be thread-safe: parallel kernel workers report concurrently.
+/// A null reporter (the default) disables accounting with a single branch per copy.</remarks>
+public interface ICopyAccountant
+{
+    void AddCopyBytes(long bytes);
+    long TotalCopyBytes { get; }
+}
+
+/// <summary>Thread-safe copy-byte accumulator for one execution.</summary>
+public sealed class CopyAccountant : ICopyAccountant
+{
+    long total;
+    public long TotalCopyBytes => Interlocked.Read(ref total);
+    public void AddCopyBytes(long bytes) => Interlocked.Add(ref total, bytes);
+}
+
 public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntrinsics, int MaxDegreeOfParallelism)
 {
     /// <summary>Optional per-run scratch-byte sink; null disables accounting.</summary>
     public IScratchAccountant? ScratchReporter { get; init; }
+
+    /// <summary>Optional per-run copy-byte sink; null disables accounting.</summary>
+    public ICopyAccountant? CopyReporter { get; init; }
 
     public static TensorExecutionOptions Scalar => new TensorExecutionOptions(false, false, 1);
 

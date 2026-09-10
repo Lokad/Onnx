@@ -447,6 +447,77 @@ public class ExecutionLifecycleTests
     }
 
     [Fact]
+    public void CopyAccount_ParallelAdds_Exact()
+    {
+        var acc = new CopyAccountant();
+        System.Threading.Tasks.Parallel.For(0, 8, _ => acc.AddCopyBytes(1000));
+        Assert.Equal(8000, acc.TotalCopyBytes);
+    }
+
+    [Fact]
+    public void SlicedViewMatMul_ReportsCopyBytes()
+    {
+        // A sliced 2x2 view (shared storage, exotic strides) densifies to
+        // 16 payload bytes on the way into the float MatMul kernel; dense
+        // operands copy nothing. (Tensor.Transpose eagerly materializes,
+        // so views here come from Slice, as in ViewConsistencyTests.)
+        var v = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(1, 3));
+        var b = DenseTensor<float>.OfValues(new float[,] { { 1f, 0f }, { 0f, 1f } });
+        var acc = new CopyAccountant();
+        var options = TensorExecutionOptions.Scalar with { CopyReporter = acc };
+        var got = Tensor<float>.MatMul(v, b, options);
+        Assert.Equal(new float[] { 2f, 3f, 5f, 6f }, got.ToArray());
+        Assert.Equal(4 * 4, acc.TotalCopyBytes);
+        var acc2 = new CopyAccountant();
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 2f, 3f }, { 5f, 6f } });
+        var options2 = TensorExecutionOptions.Scalar with { CopyReporter = acc2 };
+        Tensor<float>.MatMul(dense, b, options2);
+        Assert.Equal(0, acc2.TotalCopyBytes);
+    }
+
+    [Fact]
+    public void CopyBytes_PublishThroughExecution()
+    {
+        // Slice emits a view intermediate; MatMul densifies it through
+        // dispatch, published to the context and back to the facade graph.
+        // Payload: one 2x2 float view, 16 bytes; nothing else copies.
+        var g = new ComputationalGraph();
+        g.Metadata["Name"] = "test";
+        g.Inputs["x"] = DenseTensor<float>.OfShape(2, 3);
+        g.Inputs["b"] = DenseTensor<float>.OfShape(2, 2);
+        g.Inputs["st"] = DenseTensor<long>.OfShape(2);
+        g.Inputs["e"] = DenseTensor<long>.OfShape(2);
+        g.Inputs["ax"] = DenseTensor<long>.OfShape(2);
+        g.Inputs["sp"] = DenseTensor<long>.OfShape(2);
+        g.Outputs["z"] = DenseTensor<float>.OfShape(2, 2);
+        g.Nodes.Add(new Node
+        {
+            Name = "s", Op = OpType.Slice, OpTypeName = OpType.Slice.ToString(), Domain = "",
+            OpsetVersion = 13, IsFused = false,
+            Inputs = new[] { "x", "st", "e", "ax", "sp" }, Outputs = new[] { "v" },
+            Attributes = new Dictionary<string, object>(),
+        });
+        g.Nodes.Add(new Node { Name = "m", Op = OpType.MatMul, Inputs = new[] { "v", "b" }, Outputs = new[] { "z" } });
+        g.RefreshLifetimeAnalysis();
+        var good = new Dictionary<string, ITensor>
+        {
+            { "x", DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } }) },
+            { "b", DenseTensor<float>.OfValues(new float[,] { { 1f, 0f }, { 0f, 1f } }) },
+            { "st", DenseTensor<long>.OfValues(new long[] { 0L, 1L }) },
+            { "e", DenseTensor<long>.OfValues(new long[] { 2L, 3L }) },
+            { "ax", DenseTensor<long>.OfValues(new long[] { 0L, 1L }) },
+            { "sp", DenseTensor<long>.OfValues(new long[] { 1L, 1L }) },
+        };
+        var ctx = g.CreateExecution(null);
+        Assert.True(ctx.Execute(good, false), ctx.LastErrorMessage);
+        Assert.Equal(new float[] { 2f, 3f, 5f, 6f }, ((Tensor<float>)ctx.Outputs["z"]).ToArray());
+        Assert.Equal(16, ctx.LastCopyBytes);
+        Assert.True(g.Execute(good, false), g.LastErrorMessage);
+        Assert.Equal(16, g.LastCopyBytes);
+    }
+
+    [Fact]
     public void ExecuteNode_FailedThenSuccessful_ClearsErrorSnapshot()
     {
         var g = NewReluGraph();

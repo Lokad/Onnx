@@ -36,7 +36,7 @@ where T : unmanaged
     // Pinning, profiler stages, and kernel loops stay with the callers; the
     // float path already factors this through its batched core.
     static (Tensor<TElement> bx, Tensor<TElement> by, DenseTensor<TElement> z, int[] batchDims, int[] xSteps, int[] ySteps, int[] zSteps, int batchCount, int m, int n, int k) PlanBatchedMatMul<TElement>(
-        Tensor<TElement> px, Tensor<TElement> py) where TElement : unmanaged
+        Tensor<TElement> px, Tensor<TElement> py, ICopyAccountant? copy) where TElement : unmanaged
     {
         var xdl = px.Dimensions[^2..];
         var ydl = py.Dimensions[^2..];
@@ -59,8 +59,8 @@ where T : unmanaged
             throw new ArgumentException("The tensor shapes are not compatible for broadcasting.");
         }
         var z = DenseTensor<TElement>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-        var cbx = RequireContiguous(bx, nameof(bx));
-        var cby = RequireContiguous(by, nameof(by));
+        var cbx = RequireContiguous(bx, nameof(bx), copy);
+        var cby = RequireContiguous(by, nameof(by), copy);
         bx = cbx;
         by = cby;
         var batchDims = bx.Dimensions[0..^2].ToArray();
@@ -85,8 +85,8 @@ where T : unmanaged
 
         var dx = x as DenseTensor<int>;
         var dy = y as DenseTensor<int>;
-        var _x = dx is not null && !dx.IsReversedStride ? dx : x.ToDenseTensor();
-        var _y = dy is not null && !dy.IsReversedStride ? dy : y.ToDenseTensor();
+        var _x = dx is not null && !dx.IsReversedStride ? dx : CountedCopy(x.ToDenseTensor(), options.CopyReporter);
+        var _y = dy is not null && !dy.IsReversedStride ? dy : CountedCopy(y.ToDenseTensor(), options.CopyReporter);
         var output = DenseTensor<int>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] });
 
         var xh = _x.Buffer.Pin();
@@ -113,7 +113,7 @@ where T : unmanaged
         return output;
     }
 
-    static (DenseTensor<float> x, DenseTensor<float> y) DensifyFloatOperands(Tensor<float> x, Tensor<float> y)
+    static (DenseTensor<float> x, DenseTensor<float> y) DensifyFloatOperands(Tensor<float> x, Tensor<float> y, ICopyAccountant? copy)
     {
         var dx = x as DenseTensor<float>;
         var dy = y as DenseTensor<float>;
@@ -121,8 +121,8 @@ where T : unmanaged
         {
             StartOpStage(OpStage.Copy);
         }
-        DenseTensor<float> ddx = dx is { IsReversedStride: false } ownX ? ownX : x.ToDenseTensor();
-        DenseTensor<float> ddy = dy is { IsReversedStride: false } ownY ? ownY : y.ToDenseTensor();
+        DenseTensor<float> ddx = dx is { IsReversedStride: false } ownX ? ownX : CountedCopy(x.ToDenseTensor(), copy);
+        DenseTensor<float> ddy = dy is { IsReversedStride: false } ownY ? ownY : CountedCopy(y.ToDenseTensor(), copy);
         return (ddx, ddy);
     }
 
@@ -224,7 +224,7 @@ where T : unmanaged
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
 
-        var (_x, _y) = DensifyFloatOperands(x, y);
+        var (_x, _y) = DensifyFloatOperands(x, y, options.CopyReporter);
 
         StartOpStage(OpStage.Math);
         int rowDop = options.MaxDegreeOfParallelism < 2 || m < 64
@@ -313,8 +313,8 @@ where T : unmanaged
 
         var dx = x as DenseTensor<double>;
         var dy = y as DenseTensor<double>;
-        var _x = dx is not null && !dx.IsReversedStride ? dx : x.ToDenseTensor();
-        var _y = dy is not null && !dy.IsReversedStride ? dy : y.ToDenseTensor();
+        var _x = dx is not null && !dx.IsReversedStride ? dx : CountedCopy(x.ToDenseTensor(), options.CopyReporter);
+        var _y = dy is not null && !dy.IsReversedStride ? dy : CountedCopy(y.ToDenseTensor(), options.CopyReporter);
         var output = destination;
 
         var xh = _x.Buffer.Pin();
@@ -360,7 +360,7 @@ where T : unmanaged
         }
         else
         {
-            var (bx, by, z, batchDims, xSteps, ySteps, zSteps, batchCount, m, n, k) = PlanBatchedMatMul(px, py);
+            var (bx, by, z, batchDims, xSteps, ySteps, zSteps, batchCount, m, n, k) = PlanBatchedMatMul(px, py, options.CopyReporter);
             using var xh = bx.Storage.Pin();
             using var yh = by.Storage.Pin();
             using var zh = z.Storage.Pin();
@@ -450,10 +450,10 @@ where T : unmanaged
     /// zero batch strides instead of being materialized per batch entry.
     /// Every other layout takes the exact previous copy path.
     /// </summary>
-    static Tensor<float> RequireBatchOperand(Tensor<float> t, string name)
+    static Tensor<float> RequireBatchOperand(Tensor<float> t, string name, ICopyAccountant? copy)
     {
         if (t is BroadcastedTensor<float> b && HasDenseMatrixCore(b)) return t;
-        return RequireContiguous(t, name);
+        return RequireContiguous(t, name, copy);
     }
 
     static bool HasDenseMatrixCore(BroadcastedTensor<float> b)
@@ -477,9 +477,9 @@ where T : unmanaged
 
     static void RunBatchedFloatMatMul(Tensor<float> bx, Tensor<float> by, Tensor<float> z, TensorExecutionOptions options)
     {
-        bx = RequireBatchOperand(bx, nameof(bx));
-        by = RequireBatchOperand(by, nameof(by));
-        z = RequireContiguous(z, nameof(z));
+        bx = RequireBatchOperand(bx, nameof(bx), options.CopyReporter);
+        by = RequireBatchOperand(by, nameof(by), options.CopyReporter);
+        z = RequireContiguous(z, nameof(z), options.CopyReporter);
         var batchDims = bx.Dimensions[0..^2].ToArray();
         var m = bx.Dimensions[^2];
         var n = bx.Dimensions[^1];
@@ -675,7 +675,7 @@ where T : unmanaged
         }
         else
         {
-            var (bx, by, z, batchDims, xSteps, ySteps, zSteps, batchCount, m, n, k) = PlanBatchedMatMul(px, py);
+            var (bx, by, z, batchDims, xSteps, ySteps, zSteps, batchCount, m, n, k) = PlanBatchedMatMul(px, py, options.CopyReporter);
 
             StartOpStage(OpStage.Math);
             using var xh = bx.Storage.Pin();
@@ -724,14 +724,20 @@ where T : unmanaged
         return tensor.strides.SequenceEqual(ArrayUtilities.GetStrides(tensor.dimensions));
     }
 
-    static DenseTensor<TElement> RequireContiguous<TElement>(Tensor<TElement> t, string name) where TElement : unmanaged
+    internal static DenseTensor<TElement> RequireContiguous<TElement>(Tensor<TElement> t, string name, ICopyAccountant? copy) where TElement : unmanaged
     {
         if (t is DenseTensor<TElement> d && !d.IsReversedStride && HasStandardStrides(d))
         {
             if (d.Buffer.Length != (int)d.Length) throw new ArgumentException(name + " backing length does not match shape.");
             return d;
         }
-        return t.ToDenseTensor();
+        return CountedCopy(t.ToDenseTensor(), copy);
+    }
+
+    internal static DenseTensor<TElement> CountedCopy<TElement>(DenseTensor<TElement> dense, ICopyAccountant? copy) where TElement : unmanaged
+    {
+        copy?.AddCopyBytes((long)dense.Length * Unsafe.SizeOf<TElement>());
+        return dense;
     }
 }
 

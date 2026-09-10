@@ -79,6 +79,9 @@ bytes plus pool service, and never compare figures across these scopes:
 - Scratch traffic: `ComputationalGraph.LastScratchBytes` (transient im2col
   patches and GEMM panel packing rented from ArrayPool, counted at rent
   time on full graph runs) after `Execute`.
+- Copied bytes: `ComputationalGraph.LastCopyBytes` (MatMul-family view
+  materialization: provider Speed-mode densify plus kernel RequireContiguous
+  and MatMul2D densify paths, counted on full graph runs) after `Execute`.
 - Retained peak: `ComputationalGraph.LastPeakLiveBytes` (high-water mark of
   live logical tensor bytes over run bindings, single-node runs excluded)
   after `Execute`.

@@ -96,6 +96,8 @@ public class ComputationalGraph
 
     internal IScratchAccountant? ActiveScratch { get; private set; }
 
+    internal ICopyAccountant? ActiveCopy { get; private set; }
+
     /// <summary>
     /// Live reference counts per backing array over the variable bindings
     /// (intermediates plus outputs), null until the first release probe of a
@@ -269,6 +271,7 @@ public class ComputationalGraph
             LastPoolAllocatedNewBytes = exec.LastPoolAllocatedNewBytes;
             LastPoolReusedBytes = exec.LastPoolReusedBytes;
             LastScratchBytes = exec.LastScratchBytes;
+            LastCopyBytes = exec.LastCopyBytes;
             LastPeakLiveBytes = exec.LastPeakLiveBytes;
             LastPoolPeakOutstandingBytes = exec.LastPoolPeakOutstandingBytes;
         }
@@ -301,6 +304,11 @@ public class ComputationalGraph
     /// <summary>Pooled output bytes served from previously returned arrays during the last execution.</summary>
     /// <remarks>Pool-served bytes avoid new GC allocation; they are not live payload or scratch memory.</remarks>
     public long LastPoolReusedBytes { get; private set; }
+    /// <summary>Tensor-copy bytes materialized during the last execution.</summary>
+    /// <remarks>RequireContiguous view materialization (MatMul operand and destination
+    /// preparation). Distinct from kernel arithmetic writes, concat assembly, GC allocation,
+    /// live payload, pool-served bytes, and scratch rents. Single-node runs do not count.</remarks>
+    public long LastCopyBytes { get; private set; }
     /// <summary>Kernel scratch bytes rented during the last execution.</summary>
     /// <remarks>Transient im2col patches and GEMM panel packing rented from ArrayPool,
     /// counted at rent time on full graph runs (single-node runs do not count).
@@ -744,7 +752,7 @@ public class ComputationalGraph
 
         using var profilerScope = Profiler.BeginExecution();
         using var poolScope = new ExecutionPoolScope(this);
-        var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch } };
+        var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy } };
         NoteLivePeak();
         foreach (var node in Nodes)
         {
@@ -885,6 +893,7 @@ public class ComputationalGraph
         LastRunTime = TimeSpan.Zero;
         LastAllocatedBytes = 0;
         LastScratchBytes = 0;
+        LastCopyBytes = 0;
         LastPeakLiveBytes = 0;
         LastGcCollections = new int[3];
         liveArrayUsers = null;
@@ -1309,6 +1318,7 @@ public class ComputationalGraph
             this.graph = graph;
             graph.ActivePool = new TensorBufferPool();
             graph.ActiveScratch = new ScratchAccountant();
+            graph.ActiveCopy = new CopyAccountant();
         }
         public void Dispose()
         {
@@ -1326,7 +1336,12 @@ public class ComputationalGraph
             {
                 graph.LastScratchBytes = graph.ActiveScratch.TotalScratchBytes;
             }
+            if (graph.ActiveCopy is not null)
+            {
+                graph.LastCopyBytes = graph.ActiveCopy.TotalCopyBytes;
+            }
             graph.ActiveScratch = null;
+            graph.ActiveCopy = null;
             graph.ActivePool = null;
         }
     }

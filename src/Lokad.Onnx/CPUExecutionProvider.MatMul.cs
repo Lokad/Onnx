@@ -20,19 +20,23 @@ public partial class CPUExecutionProvider
         }
 
         var opts = (options ?? ExecutionOptions.Default).Validated();
-        if (opts.Optimization == OptimizationMode.Speed)
-        {
-            Profiler.StartOpStage(OpStage.Copy);
-            A = ((INumericTensor)A).ToDenseTensor();
-            B = ((INumericTensor)B).ToDenseTensor();
-        }
         switch (A.ElementType)
         {
-            case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul((Tensor<int>)A, (Tensor<int>)B, opts.Tensor));
-            case TensorElementType.Float: return Success(op, Tensor<float>.MatMul((Tensor<float>)A, (Tensor<float>)B, opts.Tensor, pool));
-            case TensorElementType.Double: return Success(op, Tensor<double>.MatMul((Tensor<double>)A, (Tensor<double>)B, opts.Tensor));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul(SpeedDensify((Tensor<int>)A, opts), SpeedDensify((Tensor<int>)B, opts), opts.Tensor));
+            case TensorElementType.Float: return Success(op, Tensor<float>.MatMul(SpeedDensify((Tensor<float>)A, opts), SpeedDensify((Tensor<float>)B, opts), opts.Tensor, pool));
+            case TensorElementType.Double: return Success(op, Tensor<double>.MatMul(SpeedDensify((Tensor<double>)A, opts), SpeedDensify((Tensor<double>)B, opts), opts.Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
+    }
+
+    static Tensor<T> SpeedDensify<T>(Tensor<T> t, ExecutionOptions opts) where T : unmanaged
+    {
+        // Speed mode densifies operands up front (views materialize here,
+        // counted); other modes leave views for the kernels, which densify
+        // defensively and count through the same choke point.
+        if (opts.Optimization != OptimizationMode.Speed) return t;
+        Profiler.StartOpStage(OpStage.Copy);
+        return Tensor<T>.RequireContiguous(t, nameof(t), opts.Tensor.CopyReporter);
     }
 
     public static OpResult Gemm(ITensor? A, ITensor? B, ITensor? C, float alpha, float beta, ExecutionOptions? options, int transA, int transB)
