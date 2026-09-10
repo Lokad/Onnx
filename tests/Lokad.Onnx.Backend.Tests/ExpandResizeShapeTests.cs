@@ -242,4 +242,20 @@ public class ExpandResizeShapeTests
         Assert.False(graph.Execute(inputs, true));
         Assert.Contains("antialias", graph.LastErrorMessage ?? "");
     }
+
+    [Fact]
+    public void IndexDtypeGuards_RejectWrongTypes()
+    {
+        // ORT refuses wrong index/scale dtypes at load (the reduction
+        // axes batch pins the same contract); the provider must fail
+        // descriptively instead of falling through to InvalidCast.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } });
+        var fShape = DenseTensor<float>.OfValues(new float[] { 2f, 2f });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Expand(x, fShape, null).Status);
+        var xr = Img2x2();
+        var fSizes = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 4f, 4f });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Resize(xr, null, null, fSizes, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null).Status);
+        var iScales = DenseTensor<int>.OfValues(new int[] { 1, 1, 2, 2 });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Resize(xr, null, iScales, null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null).Status);
+    }
 }
