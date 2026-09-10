@@ -289,4 +289,85 @@ public class ExpandResizeShapeTests
         var iScales = DenseTensor<int>.OfValues(new int[] { 1, 1, 2, 2 });
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Resize(xr, null, iScales, null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null).Status);
     }
+
+    [Fact]
+    public void ResizeLinearExceptional_MatchesOrt()
+    {
+        // ORT 1.29 asymmetric linear x4 on a width-2 row: interior blends
+        // keep any infinite endpoint; the left-edge extrapolation is NaN
+        // for a finite-left/infinite-right edge but inf for the mirror;
+        // opposing infinities cancel across the whole row. Guards the
+        // interpolation evaluation order and edge-tap selection.
+        var rows = new (float[] x, float[] expected)[]
+        {
+            (new float[] { float.PositiveInfinity, 1f },
+             new float[] { float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, 1f, 1f, 1f, 1f }),
+            (new float[] { 1f, float.PositiveInfinity },
+             new float[] { float.NaN, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity }),
+            (new float[] { float.PositiveInfinity, float.NegativeInfinity },
+             new float[] { float.NaN, float.NaN, float.NaN, float.NaN, float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity }),
+            (new float[] { float.NaN, 1f },
+             new float[] { float.NaN, float.NaN, float.NaN, float.NaN, 1f, 1f, 1f, 1f }),
+        };
+        foreach (var (x, expected) in rows)
+        {
+            var r = CPUExecutionProvider.Resize(
+                DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { x[0], x[1] } } } }),
+                null, Scales(1f, 1f, 1f, 4f), null, "linear", "asymmetric", null, null, 0f, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = ((Tensor<float>)r.Outputs[0]).ToArray();
+            Assert.Equal(8, y.Length);
+            for (int i = 0; i < 8; i++)
+            {
+                if (float.IsNaN(expected[i])) Assert.True(float.IsNaN(y[i]));
+                else Assert.Equal(expected[i], y[i]);
+            }
+        }
+    }
+
+    [Fact]
+    public void ResizeNearestTie_MatchesOrt()
+    {
+        // ORT 1.29 with explicit nearest_mode: round_prefer_floor rounds
+        // exact halves down and round_prefer_ceil rounds them up, under
+        // both asymmetric ([10,20] x4: 0.5 -> 0/1) and align_corners
+        // ([10,20,30] x5/3: 0.5/1.5 -> 0/1 and 1/2). Finite regression for
+        // the earlier half-up spelling under non-half_pixel modes.
+        var r = CPUExecutionProvider.Resize(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { 10f, 20f } } } }),
+            null, Scales(1f, 1f, 1f, 4f), null, "nearest", "asymmetric", "round_prefer_floor", null, 0f, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 10f, 10f, 10f, 20f, 20f, 20f, 20f, 20f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+        var rc = CPUExecutionProvider.Resize(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { 10f, 20f } } } }),
+            null, Scales(1f, 1f, 1f, 4f), null, "nearest", "asymmetric", "round_prefer_ceil", null, 0f, null);
+        Assert.Equal(OpStatus.Success, rc.Status);
+        Assert.Equal(new float[] { 10f, 10f, 20f, 20f, 20f, 20f, 20f, 20f }, ((Tensor<float>)rc.Outputs[0]).ToArray());
+        var sizes5 = DenseTensor<int>.OfValues(new int[] { 1, 1, 1, 5 });
+        var ra = CPUExecutionProvider.Resize(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 3] { { { { 10f, 20f, 30f } } } }),
+            null, null, sizes5, "nearest", "align_corners", "round_prefer_floor", null, 0f, null);
+        Assert.Equal(OpStatus.Success, ra.Status);
+        Assert.Equal(new float[] { 10f, 10f, 20f, 20f, 30f }, ((Tensor<float>)ra.Outputs[0]).ToArray());
+        var rac = CPUExecutionProvider.Resize(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 3] { { { { 10f, 20f, 30f } } } }),
+            null, null, sizes5, "nearest", "align_corners", "round_prefer_ceil", null, 0f, null);
+        Assert.Equal(OpStatus.Success, rac.Status);
+        Assert.Equal(new float[] { 10f, 20f, 20f, 30f, 30f }, ((Tensor<float>)rac.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void ResizeNearestExceptional_MatchesOrt()
+    {
+        // ORT 1.29 asymmetric round_prefer_floor x4: pure replication with
+        // no arithmetic, so infinities copy verbatim (exact halves round
+        // down: o=2 samples index 0).
+        var r = CPUExecutionProvider.Resize(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { float.PositiveInfinity, 1f } } } }),
+            null, Scales(1f, 1f, 1f, 4f), null, "nearest", "asymmetric", "round_prefer_floor", null, 0f, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs[0]).ToArray();
+        Assert.Equal(new float[] { float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, 1f, 1f, 1f, 1f, 1f }, y);
+    }
+
 }

@@ -67,19 +67,19 @@ where T : unmanaged
             };
         }
 
-        // round_prefer_floor under half_pixel rounds exact halves down, i.e.
-        // ceil(coord - 0.5), while asymmetric/align_corners use floor(coord + 0.5)
-        // (verified against ORT 1.29: the coordinate must be the TRUE scale, and
-        // mixing scales with floored sizes creates phantom contradictions).
+        // round_prefer_floor rounds exact halves down under every coordinate
+        // mode: ceil(coord - 0.5) (ORT 1.29 with explicit nearest_mode:
+        // asymmetric 0.5 -> 0, align_corners 0.5/1.5 -> 0/1). Integer-scale
+        // half_pixel never lands on an exact half, which is why the earlier
+        // half-up spelling survived half_pixel tests while asymmetric
+        // upscales (which hit halves routinely) diverged.
         int NearestIndex(float coord, int inSize)
         {
             var value = nearestMode switch
             {
                 MathOps.ResizeNearestMode.Floor => (int)MathF.Floor(coord),
                 MathOps.ResizeNearestMode.Ceil => (int)MathF.Ceiling(coord),
-                MathOps.ResizeNearestMode.RoundPreferFloor => coordinateTransformationMode == MathOps.ResizeCoordinateTransformation.HalfPixel
-                    ? (int)MathF.Ceiling(coord - 0.5f)
-                    : (int)MathF.Floor(coord + 0.5f),
+                MathOps.ResizeNearestMode.RoundPreferFloor => (int)MathF.Ceiling(coord - 0.5f),
                 MathOps.ResizeNearestMode.RoundPreferCeil => (int)MathF.Floor(coord + 0.5f),
                 _ => throw new NotSupportedException($"nearest_mode {nearestMode} is not supported."),
             };
@@ -139,11 +139,23 @@ where T : unmanaged
                             int y0Row = (((n * cIn) + c) * hIn + y0i) * wIn;
                             int y1Row = (((n * cIn) + c) * hIn + y1i) * wIn;
                             int dstIdx = (((n * cIn) + c) * hOut + oy) * wOut + ox;
-                            var v00 = xs[y0Row + x0i];
-                            var v01 = xs[y0Row + x1i];
-                            var v10 = xs[y1Row + x0i];
-                            var v11 = xs[y1Row + x1i];
-                            os[dstIdx] = (v00 * wy0 * wx0) + (v01 * wy0 * wx1) + (v10 * wy1 * wx0) + (v11 * wy1 * wx1);
+                            // Degenerate taps (same index after clamping) read
+                            // their single element with no blend: blending
+                            // would multiply it by a zero weight, and 0 * inf
+                            // is NaN (ORT 1.29: an exact coordinate hit yields
+                            // the hit element). Non-degenerate pixels keep the
+                            // exact four-term order.
+                            if (x0i == x1i && y0i == y1i) os[dstIdx] = xs[y0Row + x0i];
+                            else if (x0i == x1i) os[dstIdx] = xs[y0Row + x0i] * wy0 + xs[y1Row + x0i] * wy1;
+                            else if (y0i == y1i) os[dstIdx] = xs[y0Row + x0i] * wx0 + xs[y0Row + x1i] * wx1;
+                            else
+                            {
+                                var v00 = xs[y0Row + x0i];
+                                var v01 = xs[y0Row + x1i];
+                                var v10 = xs[y1Row + x0i];
+                                var v11 = xs[y1Row + x1i];
+                                os[dstIdx] = (v00 * wy0 * wx0) + (v01 * wy0 * wx1) + (v10 * wy1 * wx0) + (v11 * wy1 * wx1);
+                            }
                         }
                     }
                     else if (mode == MathOps.ResizeMode.Cubic)
@@ -215,16 +227,14 @@ where T : unmanaged
             };
         }
 
-        // See the float copy: half_pixel round_prefer_floor rounds halves down.
+        // See the float copy: round_prefer_floor rounds halves down in every mode.
         int NearestIndex(double coord, int inSize)
         {
             var value = nearestMode switch
             {
                 MathOps.ResizeNearestMode.Floor => (int)Math.Floor(coord),
                 MathOps.ResizeNearestMode.Ceil => (int)Math.Ceiling(coord),
-                MathOps.ResizeNearestMode.RoundPreferFloor => coordinateTransformationMode == MathOps.ResizeCoordinateTransformation.HalfPixel
-                    ? (int)Math.Ceiling(coord - 0.5)
-                    : (int)Math.Floor(coord + 0.5),
+                MathOps.ResizeNearestMode.RoundPreferFloor => (int)Math.Ceiling(coord - 0.5),
                 MathOps.ResizeNearestMode.RoundPreferCeil => (int)Math.Floor(coord + 0.5),
                 _ => throw new NotSupportedException($"nearest_mode {nearestMode} is not supported."),
             };
@@ -284,11 +294,23 @@ where T : unmanaged
                             int y0Row = (((n * cIn) + c) * hIn + y0i) * wIn;
                             int y1Row = (((n * cIn) + c) * hIn + y1i) * wIn;
                             int dstIdx = (((n * cIn) + c) * hOut + oy) * wOut + ox;
-                            var v00 = xs[y0Row + x0i];
-                            var v01 = xs[y0Row + x1i];
-                            var v10 = xs[y1Row + x0i];
-                            var v11 = xs[y1Row + x1i];
-                            os[dstIdx] = (v00 * wy0 * wx0) + (v01 * wy0 * wx1) + (v10 * wy1 * wx0) + (v11 * wy1 * wx1);
+                            // Degenerate taps (same index after clamping) read
+                            // their single element with no blend: blending
+                            // would multiply it by a zero weight, and 0 * inf
+                            // is NaN (ORT 1.29: an exact coordinate hit yields
+                            // the hit element). Non-degenerate pixels keep the
+                            // exact four-term order.
+                            if (x0i == x1i && y0i == y1i) os[dstIdx] = xs[y0Row + x0i];
+                            else if (x0i == x1i) os[dstIdx] = xs[y0Row + x0i] * wy0 + xs[y1Row + x0i] * wy1;
+                            else if (y0i == y1i) os[dstIdx] = xs[y0Row + x0i] * wx0 + xs[y0Row + x1i] * wx1;
+                            else
+                            {
+                                var v00 = xs[y0Row + x0i];
+                                var v01 = xs[y0Row + x1i];
+                                var v10 = xs[y1Row + x0i];
+                                var v11 = xs[y1Row + x1i];
+                                os[dstIdx] = (v00 * wy0 * wx0) + (v01 * wy0 * wx1) + (v10 * wy1 * wx0) + (v11 * wy1 * wx1);
+                            }
                         }
                     }
                     else if (mode == MathOps.ResizeMode.Cubic)
