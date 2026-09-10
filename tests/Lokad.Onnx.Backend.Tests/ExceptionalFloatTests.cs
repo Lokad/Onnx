@@ -242,6 +242,19 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void Div_Sqrt_DoubleBasics_MatchOrt()
+    {
+        // ORT 1.29 double: [7/2, -9/3, 1/4] and sqrt([2, 0.25]).
+        var div = CPU.Div(DenseTensor<double>.OfValues(new double[] { 7.0, -9.0, 1.0 }), DenseTensor<double>.OfValues(new double[] { 2.0, 3.0, 4.0 }), null, null);
+        Assert.Equal(OpStatus.Success, div.Status);
+        Assert.Equal(new double[] { 3.5, -3.0, 0.25 }, ((Tensor<double>)div.Outputs![0]).ToArray());
+        var sqrt = CPU.Sqrt(DenseTensor<double>.OfValues(new double[] { 2.0, 0.25 }), null);
+        Assert.Equal(OpStatus.Success, sqrt.Status);
+        Assert.Equal(1.4142135624, ((Tensor<double>)sqrt.Outputs![0])[0], 6);
+        Assert.Equal(0.5, ((Tensor<double>)sqrt.Outputs![0])[1], 6);
+    }
+
+    [Fact]
     public void SqrtNegativeInfinity_YieldsNaN()
     {
         var result = CPU.Sqrt(DenseTensor<float>.OfValues(new float[] { float.NegativeInfinity }), null);
