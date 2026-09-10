@@ -98,6 +98,16 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void UlongToDouble_RoundsAtPrecisionBoundary()
+    {
+        // ORT 1.29: ulongs beyond 2^53 round ([max, 2^53+1, 100] ->
+        // [2^64, 2^53, 100]), the unsigned twin of the long boundary.
+        var r = CPUExecutionProvider.Cast(DenseTensor<ulong>.OfValues(new ulong[] { 18446744073709551615ul, 9007199254740993ul, 100ul }), TensorElementType.Double, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new double[] { 18446744073709551616.0, 9007199254740992.0, 100.0 }, ((Tensor<double>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void LongToDouble_RoundsAtPrecisionBoundary()
     {
         // ORT 1.29: longs beyond 2^53 round to nearest double ([max,
