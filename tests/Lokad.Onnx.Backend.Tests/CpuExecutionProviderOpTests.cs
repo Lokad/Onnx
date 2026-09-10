@@ -80,6 +80,23 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void Tanh_Softmax_Double()
+    {
+        // ORT 1.29: tanh([0, 0.5, 1, -1]) and softmax rows [0.0900305732, 0.2447284711, 0.6652409558].
+        var tanh = CPU.Tanh(DenseTensor<double>.OfValues(new double[] { 0.0, 0.5, 1.0, -1.0 }), null);
+        Assert.Equal(OpStatus.Success, tanh.Status);
+        Assert.Equal(0.0, ((Tensor<double>)tanh.Outputs![0])[0], 6);
+        Assert.Equal(0.4621171573, ((Tensor<double>)tanh.Outputs![0])[1], 6);
+        Assert.Equal(0.7615941560, ((Tensor<double>)tanh.Outputs![0])[2], 6);
+        Assert.Equal(-0.7615941560, ((Tensor<double>)tanh.Outputs![0])[3], 6);
+        var sm = CPU.Softmax(DenseTensor<double>.OfValues(new double[,] { { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 } }), -1, null, null, 13);
+        Assert.Equal(OpStatus.Success, sm.Status);
+        var y = ((Tensor<double>)sm.Outputs![0]).ToArray();
+        double[] row = new double[] { 0.0900305732, 0.2447284711, 0.6652409558 };
+        for (int i = 0; i < 6; i++) Assert.Equal(row[i % 3], y[i], 6);
+    }
+
+    [Fact]
     public void MatMul_Transpose_Softmax()
     {
         var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
