@@ -27,7 +27,7 @@ RUNNER = os.environ.get(
         HERE, "..", "..", "Lokad.Onnx.OpDump", "bin", "Release", "net10.0", "Lokad.Onnx.OpDump.dll")),
 )
 
-DTYPES = {"float32": np.float32, "float64": np.float64, "int64": np.int64}
+DTYPES = {"float32": np.float32, "float64": np.float64, "int64": np.int64, "bool": np.bool_}
 
 
 def read_txt(path):
@@ -85,7 +85,7 @@ def test_case_matches_ort_reference(case, tmp_path):
                 continue
             if ref.size == 0:
                 continue
-            if ref.dtype == np.int64:
+            if ref.dtype == np.int64 or ref.dtype == np.bool_:
                 if not np.array_equal(ref, new):
                     breaches.append("%s: %s int mismatch" % (mode, name))
                 continue

@@ -50,6 +50,14 @@ static class OpDump
             t.Name = name;
             return t;
         }
+        if (dtype == "bool")
+        {
+            var t = new DenseTensor<bool>(dims);
+            var sp = t.Buffer.Span;
+            for (int i = 0; i < vals.Length; i++) sp[i] = vals[i] == "1";
+            t.Name = name;
+            return t;
+        }
         throw new InvalidOperationException("unsupported dtype: " + dtype);
     }
 
@@ -76,6 +84,13 @@ static class OpDump
             foreach (var d in tl.Dimensions) sb.Append(' ').Append(d);
             sb.AppendLine();
             sb.AppendLine(string.Join(" ", tl.ToArray().Select(v => v.ToString(CultureInfo.InvariantCulture))));
+        }
+        else if (t is Tensor<bool> tb)
+        {
+            sb.Append("bool ").Append(tb.Dimensions.Length);
+            foreach (var d in tb.Dimensions) sb.Append(' ').Append(d);
+            sb.AppendLine();
+            sb.AppendLine(string.Join(" ", tb.ToArray().Select(v => v ? "1" : "0")));
         }
         else
         {

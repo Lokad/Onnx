@@ -30,10 +30,13 @@ ENV = {"onnx": onnx.__version__, "onnxruntime": ort.__version__, "numpy": np.__v
 
 def txt_save(path, arr):
     arr = np.asarray(arr)
-    dtype = {np.dtype("float32"): "float32", np.dtype("float64"): "float64", np.dtype("int64"): "int64"}[arr.dtype]
+    dtype = {np.dtype("float32"): "float32", np.dtype("float64"): "float64", np.dtype("int64"): "int64", np.dtype("bool"): "bool"}[arr.dtype]
     with open(path, "w") as f:
         f.write("%s %d %s\n" % (dtype, arr.ndim, " ".join(str(d) for d in arr.shape)))
-        f.write(" ".join(repr(float(v)) if arr.dtype != np.dtype("int64") else str(int(v)) for v in arr.ravel()))
+        if arr.dtype == np.dtype("bool"):
+            f.write(" ".join("1" if v else "0" for v in arr.ravel()))
+        else:
+            f.write(" ".join(repr(float(v)) if arr.dtype != np.dtype("int64") else str(int(v)) for v in arr.ravel()))
         f.write("\n")
 
 def eshape(rank, max_dim=6):
