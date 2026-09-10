@@ -264,6 +264,57 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void GreaterHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Greater schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract as Sigmoid/Log/Flatten.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Greater));
+        var node = Nod(OpType.Greater, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 2f }));
+        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 1f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Greater", r.Message ?? "");
+    }
+
+    [Fact]
+    public void AndHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no And schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.And));
+        var node = Nod(OpType.And, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<bool>.OfValues(new bool[] { true }));
+        Bind(graph, "y", DenseTensor<bool>.OfValues(new bool[] { false }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("And", r.Message ?? "");
+    }
+
+    [Fact]
+    public void OrHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Or schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Or));
+        var node = Nod(OpType.Or, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<bool>.OfValues(new bool[] { true }));
+        Bind(graph, "y", DenseTensor<bool>.OfValues(new bool[] { false }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Or", r.Message ?? "");
+    }
+
+    [Fact]
     public void RegistryEntries_AreImmutable()
     {
         // C08: no consumer may rewrite the capability registry after construction.
