@@ -38,6 +38,11 @@ def read_txt(path):
         text = f.read().strip()
     if not text:
         return np.empty(shape, dtype=DTYPES[dtype])
+    if DTYPES[dtype] in (np.int64, np.int32):
+        # Integer refs must parse exactly: the float64 intermediate rounds
+        # values beyond 2**53 (INT64_MAX collapsed to INT64_MIN, passing
+        # exact comparison vacuously).
+        return np.fromstring(text, dtype=DTYPES[dtype], sep=" ").reshape(shape)
     vals = np.fromstring(text, sep=" ")
     return vals.astype(DTYPES[dtype]).reshape(shape)
 

@@ -40,5 +40,23 @@ def main():
          dtypes=DT, feed_dtypes=FD)
 
 
+    dt64 = {"x": TensorProto.INT64, "y": TensorProto.INT64, "z": TensorProto.INT64}
+    fd64 = {"x": np.int64, "y": np.int64}
+    node = helper.make_node("Add", ["x", "y"], ["z"])
+    emit("add_wrap_int64", node, [("x", [2]), ("y", [2])], [("z", [2])],
+         {"x": np.array([9223372036854775807, 3037000500], dtype=np.int64),
+          "y": np.array([1, 3037000500], dtype=np.int64)},
+         dtypes=dt64, feed_dtypes=fd64)
+    node = helper.make_node("Sub", ["x", "y"], ["z"])
+    emit("sub_wrap_int64", node, [("x", [2]), ("y", [2])], [("z", [2])],
+         {"x": np.array([-9223372036854775808, -3037000500], dtype=np.int64),
+          "y": np.array([1, 3037000500], dtype=np.int64)},
+         dtypes=dt64, feed_dtypes=fd64)
+    node = helper.make_node("Mul", ["x", "y"], ["z"])
+    emit("mul_wrap_int64", node, [("x", [2]), ("y", [2])], [("z", [2])],
+         {"x": np.array([3037000500, -9223372036854775808], dtype=np.int64),
+          "y": np.array([3037000500, 2], dtype=np.int64)},
+         dtypes=dt64, feed_dtypes=fd64)
+
 if __name__ == "__main__":
     main()
