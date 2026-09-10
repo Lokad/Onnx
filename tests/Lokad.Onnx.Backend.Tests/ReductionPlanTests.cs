@@ -194,4 +194,34 @@ public class ReductionPlanTests
         Assert.True(graph.Execute(NoopMaxFeed(), true), graph.LastErrorMessage);
         Assert.Equal(new float[] { 2f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
     }
+
+    [Fact]
+    public void ReduceMax_SkipsNaN()
+    {
+        // ORT 1.29: [3].
+        var x = DenseTensor<float>.OfValues(new float[] { 1f, float.NaN, 3f });
+        var r = CPUExecutionProvider.ReduceMax(x, DenseTensor<int>.OfValues(new int[] { 0 }), 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 3f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void ReduceSum_PropagatesNaN()
+    {
+        // ORT 1.29: [nan].
+        var x = DenseTensor<float>.OfValues(new float[] { 1f, float.NaN, 3f });
+        var r = CPUExecutionProvider.ReduceSum(x, DenseTensor<int>.OfValues(new int[] { 0 }), 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)r.Outputs[0])[0]));
+    }
+
+    [Fact]
+    public void ReduceMean_PropagatesNaN()
+    {
+        // ORT 1.29: [nan].
+        var x = DenseTensor<float>.OfValues(new float[] { 1f, float.NaN, 3f });
+        var r = CPUExecutionProvider.ReduceMean(x, DenseTensor<int>.OfValues(new int[] { 0 }), 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)r.Outputs[0])[0]));
+    }
 }
