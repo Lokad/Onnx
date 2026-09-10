@@ -1553,4 +1553,36 @@ public class ExceptionalFloatTests
         Assert.Equal(0.0, yvd[1]);
         Assert.Equal(1.224744871392, yvd[2], 12);
     }
+
+    [Fact]
+    public void SoftmaxStridedExceptional_MatchesOrt()
+    {
+        // ORT 1.29 float and double, axis 0 over [2,3]: the strided
+        // (non-contiguous-axis) loop nest poisons only the affected
+        // column; finite columns keep exact softmax values. Narrow
+        // axis=-1 pins never reach this loop.
+        var n = CPU.Softmax(DenseTensor<float>.OfValues(new float[,] { { float.NaN, 2f, 3f }, { 4f, 5f, 6f } }), 0, null, null, 13);
+        Assert.Equal(OpStatus.Success, n.Status);
+        var y = ((Tensor<float>)n.Outputs![0]).ToArray();
+        Assert.True(float.IsNaN(y[0]));
+        Assert.True(float.IsNaN(y[3]));
+        Assert.Equal(0.04743f, y[1], 5);
+        Assert.Equal(0.95257f, y[4], 5);
+        Assert.Equal(0.04743f, y[2], 5);
+        Assert.Equal(0.95257f, y[5], 5);
+        var f = CPU.Softmax(DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, float.PositiveInfinity }, { 4f, 5f, 6f } }), 0, null, null, 13);
+        Assert.Equal(OpStatus.Success, f.Status);
+        var yf = ((Tensor<float>)f.Outputs![0]).ToArray();
+        Assert.Equal(0.04743f, yf[0], 5);
+        Assert.Equal(0.95257f, yf[3], 5);
+        Assert.True(float.IsNaN(yf[2]));
+        Assert.True(float.IsNaN(yf[5]));
+        var nd = CPU.Softmax(DenseTensor<double>.OfValues(new double[,] { { double.NaN, 2.0, 3.0 }, { 4.0, 5.0, 6.0 } }), 0, null, null, 13);
+        Assert.Equal(OpStatus.Success, nd.Status);
+        var yd = ((Tensor<double>)nd.Outputs![0]).ToArray();
+        Assert.True(double.IsNaN(yd[0]));
+        Assert.True(double.IsNaN(yd[3]));
+        Assert.Equal(0.047425873178, yd[1], 12);
+        Assert.Equal(0.952574126822, yd[4], 12);
+    }
 }
