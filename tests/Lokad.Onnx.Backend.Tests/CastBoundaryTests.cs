@@ -71,4 +71,24 @@ public class CastBoundaryTests
         var output = (Tensor<int>)CastTo(DenseTensor<long>.OfValues(new long[] { 2147483647L, 2147483648L, -2147483649L, 4294967297L }), TensorElementType.Int32);
         Assert.Equal(new int[] { 2147483647, -2147483648, 2147483647, 1 }, output.ToArray());
     }
+
+    [Fact]
+    public void UnsignedSource_Converts()
+    {
+        // ORT 1.29: max-u32 rounds up to 2^32 in float, same-width
+        // uint-to-signed casts wrap (not saturate), nonzero tests true,
+        // max-u64 is exactly 2^64 in double, and u32 widens to u64.
+        var f32 = (Tensor<float>)CastTo(DenseTensor<uint>.OfValues(new uint[] { 4294967295u, 7u }), TensorElementType.Float);
+        Assert.Equal(new float[] { 4294967296f, 7f }, f32.ToArray());
+        var i32 = (Tensor<int>)CastTo(DenseTensor<uint>.OfValues(new uint[] { 4294967295u, 7u }), TensorElementType.Int32);
+        Assert.Equal(new int[] { -1, 7 }, i32.ToArray());
+        var b32 = (Tensor<bool>)CastTo(DenseTensor<uint>.OfValues(new uint[] { 0u, 5u }), TensorElementType.Bool);
+        Assert.Equal(new bool[] { false, true }, b32.ToArray());
+        var f64 = (Tensor<double>)CastTo(DenseTensor<ulong>.OfValues(new ulong[] { 18446744073709551615ul, 7ul }), TensorElementType.Double);
+        Assert.Equal(new double[] { 1.8446744073709552e19, 7.0 }, f64.ToArray());
+        var i64 = (Tensor<long>)CastTo(DenseTensor<ulong>.OfValues(new ulong[] { 18446744073709551615ul, 7ul }), TensorElementType.Int64);
+        Assert.Equal(new long[] { -1L, 7L }, i64.ToArray());
+        var w64 = (Tensor<ulong>)CastTo(DenseTensor<uint>.OfValues(new uint[] { 4294967295u }), TensorElementType.UInt64);
+        Assert.Equal(new ulong[] { 4294967295ul }, w64.ToArray());
+    }
 }
