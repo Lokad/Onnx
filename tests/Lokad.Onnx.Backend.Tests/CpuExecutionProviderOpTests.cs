@@ -61,6 +61,25 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void Erf_Gelu_Double()
+    {
+        // No ORT CPU reference exists (double Erf/Gelu are NOT_IMPLEMENTED);
+        // expected values are math.erf facts, and the A&S 7.1.26 kernel stays
+        // within 6-decimal agreement (verified against a formula replica).
+        var erf = CPU.Erf(DenseTensor<double>.OfValues(new double[] { 0.0, 0.5, 1.0 }), null, null);
+        Assert.Equal(OpStatus.Success, erf.Status);
+        Assert.Equal(0.0, ((Tensor<double>)erf.Outputs![0])[0], 6);
+        Assert.Equal(0.5204998778, ((Tensor<double>)erf.Outputs![0])[1], 6);
+        Assert.Equal(0.8427007929, ((Tensor<double>)erf.Outputs![0])[2], 6);
+        var gelu = CPU.Gelu(DenseTensor<double>.OfValues(new double[] { 0.0, 0.5, 1.0, -1.0 }), null, null, null);
+        Assert.Equal(OpStatus.Success, gelu.Status);
+        Assert.Equal(0.0, ((Tensor<double>)gelu.Outputs![0])[0], 6);
+        Assert.Equal(0.3457312306, ((Tensor<double>)gelu.Outputs![0])[1], 6);
+        Assert.Equal(0.8413447461, ((Tensor<double>)gelu.Outputs![0])[2], 6);
+        Assert.Equal(-0.1586552539, ((Tensor<double>)gelu.Outputs![0])[3], 6);
+    }
+
+    [Fact]
     public void MatMul_Transpose_Softmax()
     {
         var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
