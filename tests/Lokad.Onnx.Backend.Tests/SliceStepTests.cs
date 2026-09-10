@@ -94,4 +94,24 @@ public class SliceStepTests
         Assert.Equal(OpStatus.Failure, CPU.Slice(x, DenseTensor<int>.OfValues(new int[] { 0 }), e, f, t, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Slice(x, DenseTensor<int>.OfValues(new int[] { 0 }), e, a, f, null).Status);
     }
+
+    [Fact]
+    public void EmptyResult_YieldsEmpty()
+    {
+        // ORT 1.29: start == end and start > end (positive step) both
+        // yield a zero-extent result rather than failing.
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f });
+        foreach (var (s, e) in new[] { (3, 3), (4, 2) })
+        {
+            var r = CPU.Slice(x,
+                DenseTensor<long>.OfValues(new long[] { s }),
+                DenseTensor<long>.OfValues(new long[] { e }),
+                DenseTensor<long>.OfValues(new long[] { 0L }),
+                DenseTensor<long>.OfValues(new long[] { 1L }), null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new int[] { 0 }, y.Dimensions.ToArray());
+            Assert.Empty(y.ToArray());
+        }
+    }
 }
