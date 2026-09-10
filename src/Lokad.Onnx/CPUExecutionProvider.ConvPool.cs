@@ -16,6 +16,7 @@ public partial class CPUExecutionProvider
         if (X is null) return MissingInput(op, nameof(X));
         if (W is null) return MissingInput(op, nameof(W));
         if (W.ElementType != X.ElementType) return WrongInputType(op, nameof(W), X.ElementType, W, "The weights tensor must be the same type as the input tensor.");
+        if (B is not null && B.ElementType != X.ElementType) return WrongInputType(op, nameof(B), X.ElementType, B, "The bias tensor must be the same type as the input tensor.");
         if (X.Rank != 4)
         {
             return WrongInputShape(op, nameof(X), 4, X);

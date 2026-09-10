@@ -13,6 +13,18 @@ public class ConvDirectTests
         DenseTensor<float>.OfValues(new float[,,,] { { { { 1f } }, { { 0f } } }, { { { 0f } }, { { 1f } } } });
 
     [Fact]
+    public void MismatchedBiasDtype_RejectedCleanly()
+    {
+        // ORT 1.29 refuses mismatched bias at load; every other
+        // Conv input is dtype-checked, bias must be too.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });
+        var w = DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 1f } } } });
+        var b = DenseTensor<long>.OfValues(new long[] { 1L });
+        var r = CPUExecutionProvider.Conv(x, w, b, null, null, null, null, null, null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
     public void PadTypeEntry_MapsChannels()
     {
         var y = Tensor<float>.Conv2D(Input(), ChannelPicker(), 1, MathOps.PadType.Valid, null, null, null, new int[] { 1, 1 }, null);
