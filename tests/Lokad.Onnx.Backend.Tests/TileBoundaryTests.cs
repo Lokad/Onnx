@@ -119,4 +119,15 @@ public class TileBoundaryTests
         Assert.Equal(OpStatus.Success, t64.Status);
         Assert.Equal(new ulong[] { 18446744073709551615ul, 7ul, 18446744073709551615ul, 7ul }, ((Tensor<ulong>)t64.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void Tile_Bool_MatchesOrt()
+    {
+        // ORT 1.29: repeats [2, 1] over [[T, F]].
+        var r = CPU.Tile(DenseTensor<bool>.OfValues(new bool[,] { { true, false } }), DenseTensor<long>.OfValues(new long[] { 2L, 1L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<bool>)r.Outputs[0];
+        Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new bool[] { true, false, true, false }, y.ToArray());
+    }
 }

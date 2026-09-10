@@ -205,4 +205,13 @@ public class SplitDensifyTests
         Assert.Equal(new ulong[] { 18446744073709551615ul }, ((Tensor<ulong>)s64.Outputs[1]).ToArray());
     }
 
+    [Fact]
+    public void Split_Bool_MatchesOrt()
+    {
+        // ORT 1.29: axis 1 sizes [2, 2] over [[T, F, T, F]].
+        var r = CPU.Split(DenseTensor<bool>.OfValues(new bool[,] { { true, false, true, false } }), DenseTensor<long>.OfValues(new long[] { 2L, 2L }), 1, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new bool[] { true, false }, ((Tensor<bool>)r.Outputs[0]).ToArray());
+        Assert.Equal(new bool[] { true, false }, ((Tensor<bool>)r.Outputs[1]).ToArray());
+    }
 }

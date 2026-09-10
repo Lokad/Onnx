@@ -396,6 +396,20 @@ public partial class CPUExecutionProvider
                 }
                 break;
             }
+            case TensorElementType.Bool:
+            {
+                var dd = ((Tensor<bool>)data).ToDenseTensor();
+                var span = dd.Buffer.Span;
+                int start = 0;
+                for (int p = 0; p < sizes.Length; p++)
+                {
+                    var partDims = (int[])inDims.Clone();
+                    partDims[axis] = sizes[p];
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    start += sizes[p];
+                }
+                break;
+            }
             default: return InputTypeNotSupported(op, nameof(data), data);
         }
         return Success(op, outputs);
@@ -648,6 +662,7 @@ public partial class CPUExecutionProvider
             case TensorElementType.Int64: return Success(op, Tensor<long>.Tile((Tensor<long>)data, reps));
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Tile((Tensor<uint>)data, reps));
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Tile((Tensor<ulong>)data, reps));
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Tile((Tensor<bool>)data, reps));
             default: return InputTypeNotSupported(op, nameof(data), data);
         }
     }
