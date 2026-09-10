@@ -382,6 +382,62 @@ public partial class CPUExecutionProvider
                 }
                 break;
             }
+            case TensorElementType.Int8:
+            {
+                var dd = ((Tensor<sbyte>)data).ToDenseTensor();
+                var span = dd.Buffer.Span;
+                int start = 0;
+                for (int p = 0; p < sizes.Length; p++)
+                {
+                    var partDims = (int[])inDims.Clone();
+                    partDims[axis] = sizes[p];
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    start += sizes[p];
+                }
+                break;
+            }
+            case TensorElementType.UInt8:
+            {
+                var dd = ((Tensor<byte>)data).ToDenseTensor();
+                var span = dd.Buffer.Span;
+                int start = 0;
+                for (int p = 0; p < sizes.Length; p++)
+                {
+                    var partDims = (int[])inDims.Clone();
+                    partDims[axis] = sizes[p];
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    start += sizes[p];
+                }
+                break;
+            }
+            case TensorElementType.Int16:
+            {
+                var dd = ((Tensor<short>)data).ToDenseTensor();
+                var span = dd.Buffer.Span;
+                int start = 0;
+                for (int p = 0; p < sizes.Length; p++)
+                {
+                    var partDims = (int[])inDims.Clone();
+                    partDims[axis] = sizes[p];
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    start += sizes[p];
+                }
+                break;
+            }
+            case TensorElementType.UInt16:
+            {
+                var dd = ((Tensor<ushort>)data).ToDenseTensor();
+                var span = dd.Buffer.Span;
+                int start = 0;
+                for (int p = 0; p < sizes.Length; p++)
+                {
+                    var partDims = (int[])inDims.Clone();
+                    partDims[axis] = sizes[p];
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    start += sizes[p];
+                }
+                break;
+            }
             case TensorElementType.UInt64:
             {
                 var dd = ((Tensor<ulong>)data).ToDenseTensor();
@@ -435,6 +491,10 @@ public partial class CPUExecutionProvider
             case TensorElementType.Int64: return Success(op, Tensor<long>.Expand((Tensor<long>)data, targetShape));
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Expand((Tensor<uint>)data, targetShape));
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Expand((Tensor<ulong>)data, targetShape));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Expand((Tensor<sbyte>)data, targetShape));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Expand((Tensor<byte>)data, targetShape));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Expand((Tensor<short>)data, targetShape));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Expand((Tensor<ushort>)data, targetShape));
             case TensorElementType.Float: return Success(op, Tensor<float>.Expand((Tensor<float>)data, targetShape));
             case TensorElementType.Double: return Success(op, Tensor<double>.Expand((Tensor<double>)data, targetShape));
             default: return InputTypeNotSupported(op, nameof(data), data);
@@ -662,6 +722,10 @@ public partial class CPUExecutionProvider
             case TensorElementType.Int64: return Success(op, Tensor<long>.Tile((Tensor<long>)data, reps));
             case TensorElementType.UInt32: return Success(op, Tensor<uint>.Tile((Tensor<uint>)data, reps));
             case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Tile((Tensor<ulong>)data, reps));
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Tile((Tensor<sbyte>)data, reps));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Tile((Tensor<byte>)data, reps));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Tile((Tensor<short>)data, reps));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Tile((Tensor<ushort>)data, reps));
             case TensorElementType.Bool: return Success(op, Tensor<bool>.Tile((Tensor<bool>)data, reps));
             default: return InputTypeNotSupported(op, nameof(data), data);
         }

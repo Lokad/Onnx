@@ -214,4 +214,27 @@ public class SplitDensifyTests
         Assert.Equal(new bool[] { true, false }, ((Tensor<bool>)r.Outputs[0]).ToArray());
         Assert.Equal(new bool[] { true, false }, ((Tensor<bool>)r.Outputs[1]).ToArray());
     }
+
+    [Fact]
+    public void Split_Sub32_MatchesOrt()
+    {
+        // ORT 1.29: axis 1 sizes [2, 2] over [[v0, v1, v0, v1]] across int8/uint8/int16/uint16.
+        var sizes = DenseTensor<long>.OfValues(new long[] { 2L, 2L });
+        var s8 = CPU.Split(DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, -2, 1, -2 } }), sizes, 1, null, null, null, null);
+        Assert.Equal(OpStatus.Success, s8.Status);
+        Assert.Equal(new sbyte[] { 1, -2 }, ((Tensor<sbyte>)s8.Outputs[0]).ToArray());
+        Assert.Equal(new sbyte[] { 1, -2 }, ((Tensor<sbyte>)s8.Outputs[1]).ToArray());
+        var su8 = CPU.Split(DenseTensor<byte>.OfValues(new byte[,] { { 1, 200, 1, 200 } }), sizes, 1, null, null, null, null);
+        Assert.Equal(OpStatus.Success, su8.Status);
+        Assert.Equal(new byte[] { 1, 200 }, ((Tensor<byte>)su8.Outputs[0]).ToArray());
+        Assert.Equal(new byte[] { 1, 200 }, ((Tensor<byte>)su8.Outputs[1]).ToArray());
+        var s16 = CPU.Split(DenseTensor<short>.OfValues(new short[,] { { 1, -2000, 1, -2000 } }), sizes, 1, null, null, null, null);
+        Assert.Equal(OpStatus.Success, s16.Status);
+        Assert.Equal(new short[] { 1, -2000 }, ((Tensor<short>)s16.Outputs[0]).ToArray());
+        Assert.Equal(new short[] { 1, -2000 }, ((Tensor<short>)s16.Outputs[1]).ToArray());
+        var su16 = CPU.Split(DenseTensor<ushort>.OfValues(new ushort[,] { { 1, 60000, 1, 60000 } }), sizes, 1, null, null, null, null);
+        Assert.Equal(OpStatus.Success, su16.Status);
+        Assert.Equal(new ushort[] { 1, 60000 }, ((Tensor<ushort>)su16.Outputs[0]).ToArray());
+        Assert.Equal(new ushort[] { 1, 60000 }, ((Tensor<ushort>)su16.Outputs[1]).ToArray());
+    }
 }

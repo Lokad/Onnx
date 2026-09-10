@@ -275,6 +275,25 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Success, e64.Status);
         Assert.Equal(new ulong[] { 5ul, 5ul, 5ul }, ((Tensor<ulong>)e64.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void Expand_Sub32_MatchesOrt()
+    {
+        // ORT 1.29: [[v0, v1]] to [2, 2] across int8/uint8/int16/uint16.
+        var sh = DenseTensor<long>.OfValues(new long[] { 2L, 2L });
+        var e8 = CPU.Expand(DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, -2 } }), sh, null);
+        Assert.Equal(OpStatus.Success, e8.Status);
+        Assert.Equal(new sbyte[] { 1, -2, 1, -2 }, ((Tensor<sbyte>)e8.Outputs[0]).ToArray());
+        var eu8 = CPU.Expand(DenseTensor<byte>.OfValues(new byte[,] { { 1, 200 } }), sh, null);
+        Assert.Equal(OpStatus.Success, eu8.Status);
+        Assert.Equal(new byte[] { 1, 200, 1, 200 }, ((Tensor<byte>)eu8.Outputs[0]).ToArray());
+        var e16 = CPU.Expand(DenseTensor<short>.OfValues(new short[,] { { 1, -2000 } }), sh, null);
+        Assert.Equal(OpStatus.Success, e16.Status);
+        Assert.Equal(new short[] { 1, -2000, 1, -2000 }, ((Tensor<short>)e16.Outputs[0]).ToArray());
+        var eu16 = CPU.Expand(DenseTensor<ushort>.OfValues(new ushort[,] { { 1, 60000 } }), sh, null);
+        Assert.Equal(OpStatus.Success, eu16.Status);
+        Assert.Equal(new ushort[] { 1, 60000, 1, 60000 }, ((Tensor<ushort>)eu16.Outputs[0]).ToArray());
+    }
 }
 
 

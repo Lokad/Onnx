@@ -130,4 +130,23 @@ public class TileBoundaryTests
         Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
         Assert.Equal(new bool[] { true, false, true, false }, y.ToArray());
     }
+
+    [Fact]
+    public void Tile_Sub32_MatchesOrt()
+    {
+        // ORT 1.29: repeats [2, 1] over [[v0, v1]] across int8/uint8/int16/uint16.
+        var reps = DenseTensor<long>.OfValues(new long[] { 2L, 1L });
+        var t8 = CPU.Tile(DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, -2 } }), reps, null);
+        Assert.Equal(OpStatus.Success, t8.Status);
+        Assert.Equal(new sbyte[] { 1, -2, 1, -2 }, ((Tensor<sbyte>)t8.Outputs[0]).ToArray());
+        var tu8 = CPU.Tile(DenseTensor<byte>.OfValues(new byte[,] { { 1, 200 } }), reps, null);
+        Assert.Equal(OpStatus.Success, tu8.Status);
+        Assert.Equal(new byte[] { 1, 200, 1, 200 }, ((Tensor<byte>)tu8.Outputs[0]).ToArray());
+        var t16 = CPU.Tile(DenseTensor<short>.OfValues(new short[,] { { 1, -2000 } }), reps, null);
+        Assert.Equal(OpStatus.Success, t16.Status);
+        Assert.Equal(new short[] { 1, -2000, 1, -2000 }, ((Tensor<short>)t16.Outputs[0]).ToArray());
+        var tu16 = CPU.Tile(DenseTensor<ushort>.OfValues(new ushort[,] { { 1, 60000 } }), reps, null);
+        Assert.Equal(OpStatus.Success, tu16.Status);
+        Assert.Equal(new ushort[] { 1, 60000, 1, 60000 }, ((Tensor<ushort>)tu16.Outputs[0]).ToArray());
+    }
 }
