@@ -127,6 +127,15 @@ public class CpuExecutionProviderExtendedOpTests
     }
 
     [Fact]
+    public void GlobalAveragePool_Int_RejectedCleanly()
+    {
+        // ORT 1.29 refuses int GlobalAveragePool at load (float-only);
+        // the provider fails descriptively instead.
+        var x = DenseTensor<int>.OfShape(1, 1, 2, 2);
+        Assert.Equal(OpStatus.Failure, CPU.GlobalAveragePool(x, null).Status);
+    }
+
+    [Fact]
     public void GlobalAveragePool_EmptyBatch_Succeeds()
     {
         // ORT 1.29: only N may be zero; shape (0, 2, 1, 1).
