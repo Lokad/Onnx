@@ -79,6 +79,16 @@ public class CastBoundaryTests
     }
 
     [Fact]
+    public void DoubleOutsideRange_SaturatesUnsigned64()
+    {
+        // ORT 1.29: like the float/uint32 twins, out-of-range doubles and
+        // NaN saturate uint64 to 2^63 ([nan, inf, 1e300, -1e300, 1.9] ->
+        // [2^63 x4, 1]).
+        var u64 = (Tensor<ulong>)CastTo(DenseTensor<double>.OfValues(new double[] { double.NaN, double.PositiveInfinity, 1e300, -1e300, 1.9 }), TensorElementType.UInt64);
+        Assert.Equal(new ulong[] { 9223372036854775808UL, 9223372036854775808UL, 9223372036854775808UL, 9223372036854775808UL, 1UL }, u64.ToArray());
+    }
+
+    [Fact]
     public void FloatInsideInt64Range_WrapsUnsigned()
     {
         var u32 = (Tensor<uint>)CastTo(DenseTensor<float>.OfValues(new float[] { -1.5f, 1.9f, 5000000000f, -5000000000f, 4294967296f, -0.5f }), TensorElementType.UInt32);
