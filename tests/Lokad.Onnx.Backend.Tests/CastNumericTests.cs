@@ -65,6 +65,19 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void DoubleToFloat_OverflowsToInfinity()
+    {
+        // ORT 1.29: out-of-float-range doubles become signed infinities
+        // ([1e300, -1e300, 1.5] -> [inf, -inf, 1.5]).
+        var r = CPUExecutionProvider.Cast(DenseTensor<double>.OfValues(new double[] { 1e300, -1e300, 1.5 }), TensorElementType.Float, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<float>)r.Outputs[0]).ToArray();
+        Assert.Equal(float.PositiveInfinity, y[0]);
+        Assert.Equal(float.NegativeInfinity, y[1]);
+        Assert.Equal(1.5f, y[2]);
+    }
+
+    [Fact]
     public void LongToDouble_RoundsAtPrecisionBoundary()
     {
         // ORT 1.29: longs beyond 2^53 round to nearest double ([max,
