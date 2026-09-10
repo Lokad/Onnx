@@ -517,6 +517,7 @@ where T : unmanaged
         if (start.Length != ends.Length) throw new ArgumentException(nameof(ends), "The end tensor must be the same length as the start tensor.");
         if (axes is not null && (axes.Rank != 1 || axes.Length != start.Length)) throw new ArgumentException(nameof(axes), "The axes tensor must be a rank 1 tensor with the same length as the start tensor.");
         if (steps is not null && (steps.Rank != 1 || steps.Length != start.Length)) throw new ArgumentException(nameof(steps), "The steps tensor must be a rank 1 tensor with the same length as the start tensor.");
+        if (steps is not null && steps.Any(s => s == 0)) throw new ArgumentException(nameof(steps), "Slice steps must be non-zero.");
         
         StartOpStage(OpStage.CalculateIndices);
         int length = Convert.ToInt32(start.Length);
