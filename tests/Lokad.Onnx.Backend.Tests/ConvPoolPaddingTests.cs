@@ -240,4 +240,25 @@ public class ConvPoolPaddingTests
         Assert.Equal(new float[] { -12f, -4f, -10f, 3f, 9f, -11f, -7f, -14f, 17f, -1f, -11f, -4f, -4f, 18f, -3f, -3f, 10f, 0f, 18f, 8f, 3f, 0f, 1f, 19f, -18f, -1f, 0f, -5f, 6f, -12f, -4f, -11f, -8f, -9f, 8f, 4f, -1f, -17f, -17f, -1f, -2f, 4f, -17f, -7f, -7f, 18f, 8f, -7f, 10f, -1f, 5f, 1f, -3f, 17f, 9f, -4f, -14f, -3f, 17f, -4f, -2f, -19f, -9f, 1f }, y.ToArray());
     }
 
+    [Fact]
+    public void MaxPoolEmptyBatch_YieldsEmpty()
+    {
+        // ORT 1.29 allows batch-0 MaxPool (only N may be zero): [0,1,2,2]
+        // with kernel 1 yields [0,1,2,2], no elements.
+        var x = DenseTensor<float>.OfShape(0, 1, 2, 2);
+        var r = CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 1, 1 }, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 0, 1, 2, 2 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+    }
+
+    [Fact]
+    public void MaxPoolZeroSpatial_Throws()
+    {
+        // ORT 1.29 fails the run for zero spatial extents (only N may be
+        // zero); the kernel rejects non-positive output dims up front.
+        var x = DenseTensor<float>.OfShape(1, 1, 0, 3);
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 1, 1 }, null, null, null, null));
+    }
 }
