@@ -74,6 +74,15 @@ public class ConstantOfShapeBoundaryTests
     }
 
     [Fact]
+    public void BoolShape_RejectedCleanly()
+    {
+        // ORT 1.29 refuses non-int64 shapes at load (T1 is exclusive);
+        // the provider fails descriptively instead.
+        var r = CPU.ConstantOfShape(DenseTensor<bool>.OfValues(new bool[] { true, true }), null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
     public void MultiElementValue_FailsCleanly()
     {
         var r = CPU.ConstantOfShape(
