@@ -100,6 +100,17 @@ public class ConvDirectTests
     }
 
     [Fact]
+    public void NaNInput_YieldsNaN()
+    {
+        // ORT 1.29: NaN poisons the multiply-accumulate, 1x1 or otherwise.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { float.NaN } } } });
+        var w = DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 1f } } } });
+        var r = CPUExecutionProvider.Conv(x, w, null, null, null, null, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)r.Outputs[0])[0, 0, 0, 0]));
+    }
+
+    [Fact]
     public void ZeroSpatial_Throws()
     {
         // ORT 1.29 fails the run for zero spatial extents (batch-0 is

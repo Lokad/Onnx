@@ -117,6 +117,16 @@ public class CpuExecutionProviderExtendedOpTests
     }
 
     [Fact]
+    public void GlobalAveragePool_NaN_YieldsNaN()
+    {
+        // ORT 1.29: a NaN element poisons the spatial mean.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, float.NaN }, { 3f, 4f } } } });
+        var r = CPU.GlobalAveragePool(x, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)r.Outputs[0])[0, 0, 0, 0]));
+    }
+
+    [Fact]
     public void GlobalAveragePool_EmptyBatch_Succeeds()
     {
         // ORT 1.29: only N may be zero; shape (0, 2, 1, 1).
