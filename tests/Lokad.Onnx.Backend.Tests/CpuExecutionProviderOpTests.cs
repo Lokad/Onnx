@@ -525,6 +525,31 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void UnaryMath_RejectUnsupportedWideInts()
+    {
+        // ORT 1.29 refuses these float-only kernels on every wide integer
+        // and bool width at load (uint32/int64/uint64/bool probed refused
+        // for Cos/Sin/Tanh/Erf/Sqrt/Relu/Gelu, plus int32 for Cos); the
+        // provider fails descriptively instead. (Double Erf/Gelu/Sqrt run
+        // on both sides and are pinned separately.)
+        var u32 = DenseTensor<uint>.OfValues(new uint[] { 1u });
+        var i64 = DenseTensor<long>.OfValues(new long[] { 1L });
+        var u64 = DenseTensor<ulong>.OfValues(new ulong[] { 1UL });
+        var b = DenseTensor<bool>.OfValues(new bool[] { true });
+        foreach (var x in new ITensor[] { u32, i64, u64, b })
+        {
+            Assert.Equal(OpStatus.Failure, CPU.Cos(x, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Sin(x, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Tanh(x, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Erf(x, null, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Sqrt(x, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Relu(x, null).Status);
+            Assert.Equal(OpStatus.Failure, CPU.Gelu(x, null, null, null).Status);
+        }
+        var i32 = DenseTensor<int>.OfValues(new int[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.Cos(i32, null).Status);
+    }
+    [Fact]
     public void BinaryOps_EmptyInputs_YieldEmpty()
     {
         // ORT 1.29: elementwise kernels over zero elements yield empty
