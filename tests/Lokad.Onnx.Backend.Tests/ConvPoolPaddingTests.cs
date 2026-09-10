@@ -241,6 +241,18 @@ public class ConvPoolPaddingTests
     }
 
     [Fact]
+    public void MaxPoolIntDtypes_RejectedCleanly()
+    {
+        // ORT 1.29 refuses int32 MaxPool at load (agreement), while int8
+        // computes there (documented gap: sub-32 kernels are out of scope);
+        // both fail descriptively here instead of reaching a kernel cast.
+        var i32 = DenseTensor<int>.OfShape(1, 1, 2, 2);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.MaxPool(i32, null, null, null, new int[] { 1, 1 }, null, null, null, null).Status);
+        var i8 = DenseTensor<sbyte>.OfShape(1, 1, 2, 2);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.MaxPool(i8, null, null, null, new int[] { 1, 1 }, null, null, null, null).Status);
+    }
+
+    [Fact]
     public void MaxPoolNullStrides_DefaultToOne()
     {
         // ORT 1.29: omitted strides default to 1 along each axis (not the

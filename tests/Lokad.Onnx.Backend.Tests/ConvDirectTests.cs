@@ -111,6 +111,16 @@ public class ConvDirectTests
     }
 
     [Fact]
+    public void Int32_RejectedCleanly()
+    {
+        // ORT 1.29 refuses int32 Conv at load (Conv-13 is float-only);
+        // the provider fails descriptively instead.
+        var x = DenseTensor<int>.OfShape(1, 1, 2, 2);
+        var w = DenseTensor<int>.OfValues(new int[1, 1, 1, 1] { { { { 1 } } } });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Conv(x, w, null, null, null, null, null, null, null, null).Status);
+    }
+
+    [Fact]
     public void ZeroSpatial_Throws()
     {
         // ORT 1.29 fails the run for zero spatial extents (batch-0 is
