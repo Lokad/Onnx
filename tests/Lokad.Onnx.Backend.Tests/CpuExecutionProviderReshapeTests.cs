@@ -48,5 +48,19 @@ namespace Lokad.Onnx.Backend.Tests
         return ((Tensor<float>)r.Outputs[0]).Dimensions.ToArray();
     }
 
+    [Fact]
+    public void SqueezeUnsqueeze_Sub32Data()
+    {
+        // The INumericTensor view path is dtype-generic; pin sub-32 data.
+        var x = DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, -2 } });
+        var sq = CPU.Squeeze(x, DenseTensor<long>.OfValues(new long[] { 0L }), null);
+        Assert.Equal(OpStatus.Success, sq.Status);
+        Assert.Equal(new sbyte[] { 1, -2 }, ((Tensor<sbyte>)sq.Outputs[0]).ToArray());
+        var un = CPU.Unsqueeze(DenseTensor<byte>.OfValues(new byte[] { 7, 8 }), DenseTensor<long>.OfValues(new long[] { 0L }), null);
+        Assert.Equal(OpStatus.Success, un.Status);
+        var uy = (Tensor<byte>)un.Outputs[0];
+        Assert.Equal(new int[] { 1, 2 }, uy.Dimensions.ToArray());
+        Assert.Equal(new byte[] { 7, 8 }, uy.ToArray());
+    }
     }
 }
