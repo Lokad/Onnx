@@ -19,6 +19,17 @@ public class SplitDensifyTests
     }
 
     [Fact]
+    public void ScalarSplit_RejectedCleanly()
+    {
+        // ORT 1.29 fails the run (split must be a vector); the provider
+        // fails descriptively instead (unlike SplitToSequence, where a
+        // scalar is a chunk size).
+        var x = DenseTensor<float>.OfShape(2, 4);
+        var s = new DenseTensor<long>(new long[] { 2L }, Array.Empty<int>());
+        Assert.Equal(OpStatus.Failure, CPU.Split(x, s, 1, null, null, null, null).Status);
+    }
+
+    [Fact]
     public void FloatSplit_RejectedCleanly()
     {
         // ORT 1.29 refuses float split sizes at load (int32/int64 only);
