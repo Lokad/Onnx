@@ -121,6 +121,19 @@ public class ExceptionalFloatTests
         Assert.Equal(-0.125f, values[3]);
     }
 
+    [Fact]
+    public void PowNegativeBaseDouble_MatchesOrt()
+    {
+        // ORT 1.29 double: [-512, nan, 1024, -0.125] for [-8,-4,2,-2] ^ [3,0.5,10,-3].
+        var result = CPU.Pow(DenseTensor<double>.OfValues(new double[] { -8, -4, 2, -2 }), DenseTensor<double>.OfValues(new double[] { 3, 0.5, 10, -3 }), null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var values = ((Tensor<double>)result.Outputs![0]).ToArray();
+        Assert.Equal(-512.0, values[0]);
+        Assert.True(double.IsNaN(values[1]));
+        Assert.Equal(1024.0, values[2]);
+        Assert.Equal(-0.125, values[3]);
+    }
+
     static float Pow1(float a, float b)
     {
         var result = CPU.Pow(DenseTensor<float>.OfValues(new float[] { a }), DenseTensor<float>.OfValues(new float[] { b }), null);
