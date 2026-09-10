@@ -15,6 +15,43 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void ReshapeToScalar_Succeeds()
+        {
+            // ORT 1.29: [1,1] reshaped to [] is scalar 7.
+            var x = DenseTensor<float>.OfValues(new float[,] { { 7f } });
+            var r = CPU.Reshape(x, DenseTensor<long>.OfShape(0), null, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new int[0], y.Dimensions.ToArray());
+            Assert.Equal(new float[] { 7f }, y.ToArray());
+        }
+
+        [Fact]
+        public void SqueezeToScalar_Succeeds()
+        {
+            // ORT 1.29: squeezing [1,1] on both axes is scalar 7.
+            var x = DenseTensor<float>.OfValues(new float[,] { { 7f } });
+            var r = CPU.Squeeze(x, DenseTensor<long>.OfValues(new long[] { 0L, 1L }), null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new int[0], y.Dimensions.ToArray());
+            Assert.Equal(new float[] { 7f }, y.ToArray());
+        }
+
+        [Fact]
+        public void UnsqueezeFromScalar_Succeeds()
+        {
+            // ORT 1.29: scalar unsqueezed on axis 0 is [7].
+            var s = DenseTensor<float>.OfShape();
+            s.SetValue(0, 7f);
+            var r = CPU.Unsqueeze(s, DenseTensor<long>.OfValues(new long[] { 0L }), null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new int[] { 1 }, y.Dimensions.ToArray());
+            Assert.Equal(new float[] { 7f }, y.ToArray());
+        }
+
+        [Fact]
         public void SqueezeEmptyAxes_RemovesAllSingletons()
         {
             // ORT 1.29: empty axes squeeze [1,3,1] to [3].
