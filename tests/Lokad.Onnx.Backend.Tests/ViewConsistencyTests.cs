@@ -1,3 +1,5 @@
+using CPU = Lokad.Onnx.CPUExecutionProvider;
+
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
@@ -275,4 +277,146 @@ public class ViewConsistencyTests
         var dense = DenseTensor<float>.OfValues(new float[,] { { 4f, 5f, 6f }, { 1f, 2f, 3f } });
         Assert.Equal(Tensor<float>.Where(cond, dense, zeros).ToArray(), got.ToArray());
     }
+    [Fact]
+    public void BroadcastAddView_MatchesDense()
+    {
+        // A broadcast row view plus a sliced view add exactly like dense.
+        var v = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(1, 3));
+        var brow = DenseTensor<float>.OfValues(new float[] { 10f, 20f }).PadLeft().BroadcastDim(0, 2);
+        var got = Tensor<float>.Add(v, brow);
+        Assert.Equal(new float[] { 12f, 23f, 15f, 26f }, got.ToArray());
+    }
+
+    [Fact]
+    public void SliceOfSlice_MatchesDense()
+    {
+        // Nested views compose: slicing a slice reads the right elements.
+        var outer = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f } })
+            .Slice(new SliceIndex(0, 3), new SliceIndex(1, 4));
+        var inner = outer.Slice(new SliceIndex(1, 3), new SliceIndex(0, 2));
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 6f, 7f }, { 10f, 11f } });
+        Assert.Equal(dense.ToArray(), ((Tensor<float>)inner).ToArray());
+    }
+
+    [Fact]
+    public void GatherViewData_MatchesDense()
+    {
+        // Gathering from a strided view reads logical values, not storage order.
+        var v = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(1, 3));
+        var r = CPU.Gather(v, DenseTensor<long>.OfValues(new long[] { 1L, 0L }), 0, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 5f, 6f, 2f, 3f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
+    public void WhereViewCond_MatchesDense()
+    {
+        // A sliced bool condition selects exactly like its dense twin.
+        var c = DenseTensor<bool>.OfValues(new bool[,] { { true, false, true }, { false, true, false } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(0, 2));
+        var x = DenseTensor<float>.OfValues(new float[,] { { 2f, 3f }, { 5f, 6f } });
+        var z = DenseTensor<float>.OfValues(new float[,] { { 0f, 0f }, { 0f, 0f } });
+        var r = CPU.Where(c, x, z, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 2f, 0f, 0f, 6f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
+    public void ConvViewData_MatchesDense()
+    {
+        // Conv reads strided view inputs logically (1x2 kernel over the
+        // middle columns).
+        var v = DenseTensor<float>.OfValues(new float[1, 1, 2, 4] { { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } } } })
+            .Slice(new SliceIndex(0, 1), new SliceIndex(0, 1), new SliceIndex(0, 2), new SliceIndex(1, 4));
+        var w = DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { 1f, 1f } } } });
+        var y = Tensor<float>.Conv2D(v, w, 1, new int[] { 0, 0, 0, 0 }, null, null, new int[] { 1, 1 }, null);
+        Assert.Equal(new int[] { 1, 1, 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 5f, 7f, 13f, 15f }, y.ToArray());
+    }
+
+    [Fact]
+    public void ResizeNearestView_MatchesDense()
+    {
+        // Nearest resampling of a strided view doubles each logical element.
+        var v = DenseTensor<float>.OfValues(new float[1, 1, 2, 4] { { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f } } } })
+            .Slice(new SliceIndex(0, 1), new SliceIndex(0, 1), new SliceIndex(0, 2), new SliceIndex(1, 3));
+        var sc = DenseTensor<float>.OfValues(new float[] { 1f, 1f, 2f, 2f });
+        var r = CPU.Resize(v, null, sc, null, "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 2f, 2f, 3f, 3f, 2f, 2f, 3f, 3f, 6f, 6f, 7f, 7f, 6f, 6f, 7f, 7f },
+            ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
+    public void ReduceSumView_MatchesDense()
+    {
+        // Row sums over a strided view equal dense row sums.
+        var v = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(1, 3));
+        var r = CPU.ReduceSum(v, DenseTensor<int>.OfValues(new int[] { 1 }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 5f, 11f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
+    public void ExpandViewData_MatchesDense()
+    {
+        // Expanding a strided single-column view broadcasts logical values.
+        var v = DenseTensor<float>.OfValues(new float[,] { { 1f, 9f }, { 2f, 9f } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(0, 1));
+        var r = CPU.Expand(v, DenseTensor<long>.OfValues(new long[] { 2L, 3L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 1f, 1f, 1f, 2f, 2f, 2f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
+    public void TileViewData_MatchesDense()
+    {
+        // Tiling a strided view replicates logical values.
+        var v = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 9f }, { 3f, 4f, 9f } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(0, 2));
+        var r = CPU.Tile(v, DenseTensor<long>.OfValues(new long[] { 1L, 2L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 1f, 2f, 1f, 2f, 3f, 4f, 3f, 4f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
+    public void SplitViewData_MatchesDense()
+    {
+        // Splitting a strided view partitions logical values.
+        var v = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(1, 3));
+        var r = CPU.Split(v, DenseTensor<long>.OfValues(new long[] { 1L, 1L }), 1, null, null, null, 2);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 2f, 5f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+        Assert.Equal(new float[] { 3f, 6f }, ((Tensor<float>)r.Outputs![1]).ToArray());
+    }
+
+    [Fact]
+    public void TransposeView_MatchesDense()
+    {
+        // Transposing a strided view permutes logical values.
+        var v = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(1, 3));
+        Assert.Equal(new float[] { 2f, 5f, 3f, 6f }, Tensor<float>.Transpose(v, new int[] { 1, 0 }).ToArray());
+    }
+
+    [Fact]
+    public void ErfView_StaysInApproximationClass()
+    {
+        // Strided inputs take the scalar Erf path while contiguous inputs
+        // vectorize, so views may differ by the documented scalar-versus-
+        // vector approximation (bounded 4.8e-07), never more.
+        var v = DenseTensor<float>.OfValues(new float[,] { { 0.5f, 1f, 1.5f }, { 2f, 2.5f, 3f } })
+            .Slice(new SliceIndex(0, 2), new SliceIndex(0, 3));
+        var dense = DenseTensor<float>.OfValues(new float[,] { { 0.5f, 1f, 1.5f }, { 2f, 2.5f, 3f } });
+        var a = Tensor<float>.Erf(v).ToArray();
+        var b = Tensor<float>.Erf(dense).ToArray();
+        double worst = 0;
+        for (int i = 0; i < a.Length; i++) worst = Math.Max(worst, Math.Abs((double)a[i] - b[i]));
+        Assert.True(worst <= 4.8e-07, $"erf view drift {worst:E3} exceeds the documented class");
+    }
+
 }
