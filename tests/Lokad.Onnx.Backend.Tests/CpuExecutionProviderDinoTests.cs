@@ -231,4 +231,25 @@ public class CpuExecutionProviderDinoTests
         Assert.Equal(OpStatus.Failure, CPU.SequenceAt(sequence, DenseTensor<long>.OfValues(new long[] { 5 }), null).Status);
         Assert.Equal(OpStatus.Failure, CPU.SequenceAt(input, DenseTensor<long>.OfValues(new long[] { 0 }), null).Status);
     }
+
+    [Fact]
+    public void SplitToSequence_UIntBool_ScalarChunkSqueezes()
+    {
+        // Scalar chunk size with keepdims=0 squeezes each piece through the
+        // INumericTensor reshape path; hand-exact (no ORT uint kernel exists).
+        var one = DenseTensor<int>.OfShape();
+        one.SetValue(0, 1);
+        var u = CPU.SplitToSequence(DenseTensor<uint>.OfValues(new uint[,] { { 1u, 2u } }), one, 1, 0, null);
+        Assert.Equal(OpStatus.Success, u.Status);
+        var useq = Assert.IsType<TensorSequence>(u.Outputs[0]);
+        Assert.Equal(2, useq.Length);
+        Assert.Equal(new int[] { 1 }, ((Tensor<uint>)useq.Items[0]).Dimensions.ToArray());
+        Assert.Equal(new uint[] { 1u }, ((Tensor<uint>)useq.Items[0]).ToArray());
+        Assert.Equal(new uint[] { 2u }, ((Tensor<uint>)useq.Items[1]).ToArray());
+        var b = CPU.SplitToSequence(DenseTensor<bool>.OfValues(new bool[,] { { true, false } }), one, 1, 0, null);
+        Assert.Equal(OpStatus.Success, b.Status);
+        var bseq = Assert.IsType<TensorSequence>(b.Outputs[0]);
+        Assert.Equal(new bool[] { true }, ((Tensor<bool>)bseq.Items[0]).ToArray());
+        Assert.Equal(new bool[] { false }, ((Tensor<bool>)bseq.Items[1]).ToArray());
+    }
 }
