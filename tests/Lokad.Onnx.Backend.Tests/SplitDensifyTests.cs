@@ -43,6 +43,34 @@ public class SplitDensifyTests
     }
 
     [Fact]
+    public void AbsentSplitEvenOutputs_FallsBackToEvenSplit()
+    {
+        // ORT 1.29 (opset 18) requires split or num_outputs, but an evenly
+        // divisible output count falls back to an even split here (like the
+        // empty-split-vector precedent); values verified differentially via
+        // OpDump. Deliberate ORT-superset: the fallback computes the ORT-13
+        // answer for graphs ORT-18 refuses.
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 18 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f } });
+        var node = new Node
+        {
+            Name = "sp", Op = OpType.Split, Inputs = new[] { "x" }, Outputs = new[] { "a", "b" },
+            Attributes = new Dictionary<string, object> { ["axis"] = 1L },
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+        Assert.Equal(new float[] { 3f, 4f }, ((Tensor<float>)r.Outputs![1]).ToArray());
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f } });
+        var ro = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, ro.Status);
+    }
+
+    [Fact]
     public void ScalarSplit_RejectedCleanly()
     {
         // ORT 1.29 fails the run (split must be a vector); the provider
