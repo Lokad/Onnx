@@ -127,6 +127,21 @@ public class CpuExecutionProviderExtendedOpTests
     }
 
     [Fact]
+    public void GlobalAveragePoolInf_MatchesOrt()
+    {
+        // ORT 1.29: an infinite element survives the spatial mean, while
+        // opposing infinities cancel to NaN.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { float.PositiveInfinity, 1f }, { 2f, 3f } } } });
+        var r = CPU.GlobalAveragePool(x, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(float.PositiveInfinity, ((Tensor<float>)r.Outputs[0])[0, 0, 0, 0]);
+        var xc = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { float.PositiveInfinity, float.NegativeInfinity }, { 1f, 2f } } } });
+        var rc = CPU.GlobalAveragePool(xc, null);
+        Assert.Equal(OpStatus.Success, rc.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)rc.Outputs[0])[0, 0, 0, 0]));
+    }
+
+    [Fact]
     public void GlobalAveragePool_Int_RejectedCleanly()
     {
         // ORT 1.29 refuses int GlobalAveragePool at load (float-only);

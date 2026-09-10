@@ -73,4 +73,55 @@ public class PoolDoubleTests
         Assert.Equal(new int[] { 1, 1, 3, 3 }, y.Dimensions.ToArray());
         Assert.Equal(new double[] { 24.0, 26.0, 26.0, 38.0, 40.0, 40.0, 38.0, 40.0, 40.0 }, y.ToArray());
     }
+
+    [Fact]
+    public void MaxPoolDoubleInf_MatchesOrt()
+    {
+        // ORT 1.29 double: unlike the float -FLT_MAX seed, the double core
+        // seeds -inf, so an all -inf window (padded or not) stays -inf.
+        var k = new[] { 2, 2 };
+        var s = new[] { 1, 1 };
+        var plain = new (double[] v, double expected)[]
+        {
+            (new double[] { double.PositiveInfinity, 1.0, 2.0, 3.0 }, double.PositiveInfinity),
+            (new double[] { double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity }, double.NegativeInfinity),
+            (new double[] { double.NegativeInfinity, 5.0, 6.0, 7.0 }, 7.0),
+        };
+        foreach (var (v, expected) in plain)
+        {
+            var x = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { v[0], v[1] }, { v[2], v[3] } } } });
+            var r = CPU.MaxPool(x, null, null, null, k, null, null, s, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            Assert.Equal(expected, ((Tensor<double>)r.Outputs[0]).ToArray()[0]);
+        }
+        var padded = new (double v, double expected)[]
+        {
+            (double.NegativeInfinity, double.NegativeInfinity),
+            (double.PositiveInfinity, double.PositiveInfinity),
+            (5.0, 5.0),
+        };
+        foreach (var (v, expected) in padded)
+        {
+            var x = DenseTensor<double>.OfValues(new double[1, 1, 1, 1] { { { { v } } } });
+            var r = CPU.MaxPool(x, null, null, null, k, new[] { 0, 0, 1, 1 }, null, s, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            Assert.Equal(expected, ((Tensor<double>)r.Outputs[0]).ToArray()[0]);
+        }
+    }
+
+    [Fact]
+    public void GlobalAveragePoolDoubleInf_IsExact()
+    {
+        // No ORT reference exists (NOT_IMPLEMENTED); hand-exact like the
+        // float twin: inf/4 is inf, while (inf - inf + 1 + 2)/4 is NaN.
+        var x = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { double.PositiveInfinity, 1.0 }, { 2.0, 3.0 } } } });
+        var r = CPU.GlobalAveragePool(x, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(double.PositiveInfinity, ((Tensor<double>)r.Outputs[0])[0, 0, 0, 0]);
+        var xc = DenseTensor<double>.OfValues(new double[1, 1, 2, 2] { { { { double.PositiveInfinity, double.NegativeInfinity }, { 1.0, 2.0 } } } });
+        var rc = CPU.GlobalAveragePool(xc, null);
+        Assert.Equal(OpStatus.Success, rc.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)rc.Outputs[0])[0, 0, 0, 0]));
+    }
+
 }

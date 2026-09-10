@@ -286,4 +286,41 @@ public class ConvPoolPaddingTests
         var x = DenseTensor<float>.OfShape(1, 1, 0, 3);
         Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 1, 1 }, null, null, null, null));
     }
+
+    [Fact]
+    public void MaxPoolInf_MatchesOrt()
+    {
+        // ORT 1.29 float: infinity wins its window; an all -inf window
+        // stays at the -FLT_MAX seed (NOT -inf); pads contribute nothing,
+        // so a padded -inf input also yields the seed.
+        var k = new[] { 2, 2 };
+        var s = new[] { 1, 1 };
+        var plain = new (float[] v, float expected)[]
+        {
+            (new float[] { float.PositiveInfinity, 1f, 2f, 3f }, float.PositiveInfinity),
+            (new float[] { float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity }, -float.MaxValue),
+            (new float[] { float.NegativeInfinity, 5f, 6f, 7f }, 7f),
+        };
+        foreach (var (v, expected) in plain)
+        {
+            var x = F4(new float[1, 1, 2, 2] { { { { v[0], v[1] }, { v[2], v[3] } } } });
+            var r = CPUExecutionProvider.MaxPool(x, null, null, null, k, null, null, s, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            Assert.Equal(expected, ((Tensor<float>)r.Outputs[0]).ToArray()[0]);
+        }
+        var padded = new (float v, float expected)[]
+        {
+            (float.NegativeInfinity, -float.MaxValue),
+            (float.PositiveInfinity, float.PositiveInfinity),
+            (5f, 5f),
+        };
+        foreach (var (v, expected) in padded)
+        {
+            var x = F4(new float[1, 1, 1, 1] { { { { v } } } });
+            var r = CPUExecutionProvider.MaxPool(x, null, null, null, k, new[] { 0, 0, 1, 1 }, null, s, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            Assert.Equal(expected, ((Tensor<float>)r.Outputs[0]).ToArray()[0]);
+        }
+    }
+
 }
