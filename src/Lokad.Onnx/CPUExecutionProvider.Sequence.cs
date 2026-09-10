@@ -56,6 +56,9 @@ public partial class CPUExecutionProvider
             TensorElementType.Double => ((Tensor<double>)input).ToDenseTensor(),
             TensorElementType.Int32 => ((Tensor<int>)input).ToDenseTensor(),
             TensorElementType.Int64 => ((Tensor<long>)input).ToDenseTensor(),
+            TensorElementType.UInt32 => ((Tensor<uint>)input).ToDenseTensor(),
+            TensorElementType.UInt64 => ((Tensor<ulong>)input).ToDenseTensor(),
+            TensorElementType.Bool => ((Tensor<bool>)input).ToDenseTensor(),
             _ => null,
         };
         if (dense is null) return InputTypeNotSupported(op, nameof(input), input);
@@ -70,6 +73,9 @@ public partial class CPUExecutionProvider
                 TensorElementType.Double => Tensor<double>.ChunkCopy((Tensor<double>)dense, ax, start, length),
                 TensorElementType.Int32 => Tensor<int>.ChunkCopy((Tensor<int>)dense, ax, start, length),
                 TensorElementType.Int64 => Tensor<long>.ChunkCopy((Tensor<long>)dense, ax, start, length),
+                TensorElementType.UInt32 => Tensor<uint>.ChunkCopy((Tensor<uint>)dense, ax, start, length),
+                TensorElementType.UInt64 => Tensor<ulong>.ChunkCopy((Tensor<ulong>)dense, ax, start, length),
+                TensorElementType.Bool => Tensor<bool>.ChunkCopy((Tensor<bool>)dense, ax, start, length),
                 _ => null,
             };
             if (chunk is null) return InputTypeNotSupported(op, nameof(input), input);

@@ -198,6 +198,27 @@ public class CpuExecutionProviderDinoTests
     }
 
     [Fact]
+    public void SplitToSequence_UIntBool_ChunksVerbatim()
+    {
+        // No ORT reference exists (uint32 SplitToSequence is NOT_IMPLEMENTED
+        // in ORT CPU); chunks copy inputs verbatim like Split, so hand-exact.
+        var u = CPU.SplitToSequence(DenseTensor<uint>.OfValues(new uint[,] { { 1u, 2u, 3u, 4294967295u } }), DenseTensor<int>.OfValues(new int[] { 2, 2 }), 1, 1, null);
+        Assert.Equal(OpStatus.Success, u.Status);
+        var useq = Assert.IsType<TensorSequence>(u.Outputs[0]);
+        Assert.Equal(2, useq.Length);
+        Assert.Equal(new uint[] { 1u, 2u }, ((Tensor<uint>)useq.Items[0]).ToArray());
+        Assert.Equal(new uint[] { 3u, 4294967295u }, ((Tensor<uint>)useq.Items[1]).ToArray());
+        var u64 = CPU.SplitToSequence(DenseTensor<ulong>.OfValues(new ulong[] { 18446744073709551615ul, 7ul }), DenseTensor<int>.OfValues(new int[] { 1, 1 }), 0, 1, null);
+        Assert.Equal(OpStatus.Success, u64.Status);
+        Assert.Equal(2, ((TensorSequence)u64.Outputs[0]).Length);
+        var b = CPU.SplitToSequence(DenseTensor<bool>.OfValues(new bool[,] { { true, false } }), DenseTensor<int>.OfValues(new int[] { 1, 1 }), 1, 1, null);
+        Assert.Equal(OpStatus.Success, b.Status);
+        var bseq = Assert.IsType<TensorSequence>(b.Outputs[0]);
+        Assert.Equal(new bool[] { true }, ((Tensor<bool>)bseq.Items[0]).ToArray());
+        Assert.Equal(new bool[] { false }, ((Tensor<bool>)bseq.Items[1]).ToArray());
+    }
+
+    [Fact]
     public void SplitToSequence_SequenceAt_Rejects_Bad_Arguments()
     {
         var input = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
