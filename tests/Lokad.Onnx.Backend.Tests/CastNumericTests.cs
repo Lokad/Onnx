@@ -55,6 +55,16 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void IntToFloat_RoundsAtPrecisionBoundary()
+    {
+        // ORT 1.29: ints beyond 2^24 round to nearest float ([2^24,
+        // 2^24+1, -(2^24+1), 100] -> [2^24, 2^24, -2^24, 100]).
+        var r = CPUExecutionProvider.Cast(DenseTensor<int>.OfValues(new int[] { 16777216, 16777217, -16777217, 100 }), TensorElementType.Float, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 16777216f, 16777216f, -16777216f, 100f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void UnsignedExtremes_MatchOracle()
     {
         var x = DenseTensor<float>.OfValues(new float[] { 5e9f, 3e9f });
