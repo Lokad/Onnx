@@ -285,6 +285,17 @@ public class ReductionPlanTests
     }
 
     [Fact]
+    public void ReduceMax_AllNaN_YieldsNaN()
+    {
+        // ORT 1.29: [nan] (the skip-NaN kernel inits from the first
+        // element, so a leading NaN persists, as pinned mixed above).
+        var x = DenseTensor<float>.OfValues(new float[] { float.NaN, float.NaN });
+        var r = CPUExecutionProvider.ReduceMax(x, DenseTensor<int>.OfValues(new int[] { 0 }), 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)r.Outputs[0])[0]));
+    }
+
+    [Fact]
     public void ReduceSum_PropagatesNaN()
     {
         // ORT 1.29: [nan].
