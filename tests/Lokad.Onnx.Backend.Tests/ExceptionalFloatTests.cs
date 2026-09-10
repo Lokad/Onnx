@@ -72,6 +72,15 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void SoftmaxEmptyRows_YieldEmpty()
+    {
+        // ORT 1.29: softmax over zero-element rows yields [2,0], empty.
+        var y = RunSoftmax(new float[2, 0]);
+        Assert.Equal(new int[] { 2, 0 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+    }
+
+    [Fact]
     public void SoftmaxLargeFinite_StaysStable()
     {
         // ORT 1.29: max-subtraction makes [1000, 1001] identical to [0, 1];
