@@ -18,6 +18,17 @@ public class MatMulEmptyTests
     }
 
     [Fact]
+    public void BoolInputs_RejectedCleanly()
+    {
+        // ORT 1.29 refuses bool MatMul inputs at load; the provider must
+        // fail descriptively (verified differentially via OpDump).
+        var a = DenseTensor<bool>.OfValues(new bool[,] { { true, false }, { false, true } });
+        var b = DenseTensor<bool>.OfValues(new bool[,] { { true, true }, { false, false } });
+        var r = CPU.MatMul(a, b, null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
     public void ZeroM_ReturnsEmpty()
     {
         // ORT 1.29: [0,3] x [3,2] -> [0,2], no elements.

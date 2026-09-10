@@ -19,6 +19,18 @@ public class ReductionPlanTests
     }
 
     [Fact]
+    public void BoolInputs_RejectedCleanly()
+    {
+        // ORT 1.29 refuses bool reduction inputs at load; reductions must
+        // fail descriptively (verified differentially via OpDump).
+        var x = DenseTensor<bool>.OfValues(new bool[,] { { true, false }, { false, true } });
+        var a = DenseTensor<long>.OfValues(new long[] { 0L, 1L });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(x, a, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(x, a, 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(x, a, 0, 0, null).Status);
+    }
+
+    [Fact]
     public void OutOfRangeAxis_Throws()
     {
         // ORT 1.29 fails the run (axis 5 outside rank 2); the provider
