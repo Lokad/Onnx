@@ -143,4 +143,33 @@ public class ConstantOfShapeBoundaryTests
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Equal(new Half[] { (Half)2.5f, (Half)2.5f, (Half)2.5f, (Half)2.5f }, ((Tensor<Half>)r.Outputs[0]).ToArray());
     }
+
+    [Fact]
+    public void HugeDims_FailsCleanly()
+    {
+        // ORT 1.29 fails the 2^40 run (terabyte allocation refused) and the
+        // checked narrowing throws OverflowException here before any
+        // allocation; the node boundary turns the throw into a Failure.
+        // Documented scope boundary, not parity: ORT 1.29 materializes
+        // shape [2^32+1] (16GB of zeros) while int32 dims cannot represent
+        // it here, so that refusal is deliberate.
+        Assert.Throws<System.OverflowException>(() => CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 1099511627776L }), null, null));
+        Assert.Throws<System.OverflowException>(() => CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { -1099511627776L }), null, null));
+        Assert.Throws<System.OverflowException>(() => CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 4294967297L }), null, null));
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 14 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["s"] = DenseTensor<long>.OfValues(new long[] { 1099511627776L });
+        var node = new Node
+        {
+            Name = "n", Op = OpType.ConstantOfShape, OpTypeName = OpType.ConstantOfShape.ToString(), Domain = "",
+            OpsetVersion = 14, IsFused = false,
+            Inputs = new[] { "s" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
 }
