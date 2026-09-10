@@ -381,6 +381,31 @@ public class ConvPoolPaddingTests
     }
 
     [Fact]
+    public void ConvZeroPadsWithAutoPad_FailsCleanly()
+    {
+        // ORT 1.29 load-fails a Conv carrying both pads and auto_pad, even
+        // when every pad is zero (conv_attributes.h); the planner must fail
+        // descriptively instead of running the auto_pad path.
+        var x = F4(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });
+        var w = F4(new float[1, 1, 2, 2] { { { { 1f, 0f }, { 0f, 1f } } } });
+        var r = CPUExecutionProvider.Conv(x, w, null, "SAME_UPPER", null, 1, new int[] { 2, 2 }, new int[] { 0, 0, 0, 0 }, null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("pads", r.Message ?? "");
+    }
+
+    [Fact]
+    public void MaxPoolAutoPadIgnoresPads_MatchesOrt()
+    {
+        // ORT 1.29 ignores explicit pads when auto_pad is set on MaxPool:
+        // pads [1,1,0,0] + SAME_UPPER over [[1,2],[3,4]] yields [4,4,4,4],
+        // identical to auto_pad alone (probed values).
+        var x = F4(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });
+        var r = CPUExecutionProvider.MaxPool(x, "SAME_UPPER", null, null, new int[] { 2, 2 }, new int[] { 1, 1, 0, 0 }, null, new int[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 4f, 4f, 4f, 4f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void MaxPoolIntegerDtypesFailCleanly()
     {
         // Documented scope boundary, not parity: ORT 1.29 runs int8/uint8

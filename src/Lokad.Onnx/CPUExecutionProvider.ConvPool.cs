@@ -31,7 +31,9 @@ public partial class CPUExecutionProvider
         else if (auto_pad == "SAME_UPPER") padmode = MathOps.PadType.SameUpper;
         else if (auto_pad == "SAME_LOWER") padmode = MathOps.PadType.SameLower;
         else return AttributeNotSupported(op, "auto_pad", auto_pad, "auto_pad must be NOTSET, VALID, SAME_UPPER, or SAME_LOWER.");
-        if (!string.IsNullOrEmpty(auto_pad) && auto_pad != "NOTSET" && pads is not null && pads.Any(p => p != 0))
+        // ORT 1.29 load-fails a Conv carrying both pads and auto_pad, even
+        // when every pad is zero; refuse the combination descriptively.
+        if (!string.IsNullOrEmpty(auto_pad) && auto_pad != "NOTSET" && pads is not null)
         {
             return AttributeNotSupported(op, "pads", pads.Print(), "pads must not be specified together with an automatic padding mode.");
         }
@@ -80,10 +82,8 @@ public partial class CPUExecutionProvider
         else if (auto_pad == "SAME_UPPER") padmode = MathOps.PadType.SameUpper;
         else if (auto_pad == "SAME_LOWER") padmode = MathOps.PadType.SameLower;
         else return AttributeNotSupported(op, "auto_pad", auto_pad, "auto_pad must be NOTSET, VALID, SAME_UPPER, or SAME_LOWER.");
-        if (!string.IsNullOrEmpty(auto_pad) && auto_pad != "NOTSET" && pads is not null && pads.Any(p => p != 0))
-        {
-            return AttributeNotSupported(op, "pads", pads.Print(), "pads must not be specified together with an automatic padding mode.");
-        }
+        // ORT 1.29 ignores explicit pads when auto_pad is set on MaxPool
+        // (probed values match auto_pad alone), so only validate their shape.
         if (pads is not null && pads.Length != 4)
         {
             return AttributeNotSupported(op, "pads", pads.Print(), "Explicit pads must have four values [begin_h, begin_w, end_h, end_w].");
