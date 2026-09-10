@@ -147,4 +147,19 @@ public class SequenceValueTests
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.SequenceAt(t, idx, null).Status);
     }
 
+    [Fact]
+    public void SplitToSequenceHugeSizes_FailsCleanly()
+    {
+        // ORT 1.29 fails the run (split_size_sum uses 64-bit, no wrap);
+        // unchecked narrowing turned [2^32+2, 3] into a valid [2, 3].
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.SplitToSequence(x, DenseTensor<long>.OfValues(new long[] { 4294967298L, 3L }), 0, 0, null).Status);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.SplitToSequence(x, DenseTensor<long>.OfValues(new long[] { 1099511627776L }), 0, 0, null).Status);
+        var ok = CPUExecutionProvider.SplitToSequence(x, DenseTensor<long>.OfValues(new long[] { 0L, 5L }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, ok.Status);
+        var items = ((TensorSequence)ok.Outputs[0]).Items;
+        Assert.Equal(2, items.Count);
+        Assert.Empty(((Tensor<float>)items[0]).ToArray());
+        Assert.Equal(new float[] { 0f, 1f, 2f, 3f, 4f }, ((Tensor<float>)items[1]).ToArray());
+    }
 }

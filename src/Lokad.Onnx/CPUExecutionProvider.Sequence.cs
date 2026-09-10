@@ -44,9 +44,16 @@ public partial class CPUExecutionProvider
         }
         else if (split.Rank == 1)
         {
+            if (split.ElementType == TensorElementType.Int64)
+            {
+                // Saturate before narrowing: unchecked conversion turned
+                // [2^32+2, 3] into a valid [2, 3]; the sum and per-chunk
+                // checks below then fail descriptively.
+                split = ToInt32Saturating(split);
+            }
             sizes = ToIntArray(split, nameof(split));
             if (sizes.Any(z => z < 0)) return WrongInputShape(op, nameof(split), input, "Split sizes must be non-negative.");
-            if (sizes.Sum() != dim) return WrongInputShape(op, nameof(split), input, "Split sizes must sum to the split dimension.");
+            if (sizes.Select(z => (long)z).Sum() != dim) return WrongInputShape(op, nameof(split), input, "Split sizes must sum to the split dimension.");
         }
         else return WrongInputShape(op, nameof(split), split, "The split tensor must be a scalar or a rank-1 vector tensor.");
         // Densify once up front: every chunk below then shares this input
