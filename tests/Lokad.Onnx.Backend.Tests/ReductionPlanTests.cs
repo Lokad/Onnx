@@ -5,6 +5,27 @@ public class ReductionPlanTests
     static DenseTensor<float> Data() => DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } });
 
     [Fact]
+    public void IntSum_OverflowsSaturate()
+    {
+        // ORT 1.29 saturates integer sums (unlike elementwise Add/Sub/Mul,
+        // which wrap): [max,1] -> max, [min,-1] -> min.
+        var hi = Tensor<int>.ReduceSum(DenseTensor<int>.OfValues(new int[] { 2147483647, 1 }), null, false, false);
+        Assert.Equal(new int[] { 2147483647 }, hi.ToArray());
+        var lo = Tensor<int>.ReduceSum(DenseTensor<int>.OfValues(new int[] { -2147483648, -1 }), null, false, false);
+        Assert.Equal(new int[] { -2147483648 }, lo.ToArray());
+    }
+
+    [Fact]
+    public void IntMean_OverflowsSaturate()
+    {
+        // ORT 1.29: [max,max] -> max, [min,min] -> min.
+        var hi = Tensor<int>.ReduceMean(DenseTensor<int>.OfValues(new int[] { 2147483647, 2147483647 }), null, false, false);
+        Assert.Equal(new int[] { 2147483647 }, hi.ToArray());
+        var lo = Tensor<int>.ReduceMean(DenseTensor<int>.OfValues(new int[] { -2147483648, -2147483648 }), null, false, false);
+        Assert.Equal(new int[] { -2147483648 }, lo.ToArray());
+    }
+
+    [Fact]
     public void EmptyAxes_Noop_ReturnsInputUnchanged()
     {
         var empty = new int[0].ToTensor<int>();

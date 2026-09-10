@@ -80,9 +80,11 @@ where T : unmanaged
         for (int i = 0; i < os.Length; ++i)
         {
             int offset = i * r;
-            int sum = 0;
+            // Integer sums saturate (ORT 1.29), unlike elementwise
+            // arithmetic which wraps: accumulate wide, then clamp.
+            long sum = 0L;
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
-            os[i] = sum;
+            os[i] = sum > int.MaxValue ? int.MaxValue : sum < int.MinValue ? int.MinValue : (int)sum;
         }
         return ApplyKeepDims(output, plan, keepDims);
     }
@@ -165,9 +167,10 @@ where T : unmanaged
                 os[i] = 0;
                 continue;
             }
-            int sum = 0;
+            long sum = 0L;
             for (int j = 0; j < r; ++j) sum += xs[offset + j];
-            os[i] = sum / r;
+            // The quotient always fits: |mean| <= max|x|. No clamp needed.
+            os[i] = (int)(sum / r);
         }
         return ApplyKeepDims(output, plan, keepDims);
     }
