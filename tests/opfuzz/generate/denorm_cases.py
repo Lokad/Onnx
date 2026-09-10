@@ -31,6 +31,19 @@ def main():
          {"x": SUB, "y": np.full((4,), 2.0, dtype=np.float32)})
     node = helper.make_node("Sqrt", ["y"], ["z"])
     emit("denorm_sqrt", node, [("y", [4])], [("z", [4])], {"y": POS})
+    axes = helper.make_tensor("axes", TensorProto.INT64, [1], np.array([0], dtype=np.int64))
+    node = helper.make_node("ReduceSum", ["x", "axes"], ["z"], keepdims=1)
+    emit("denorm_reducesum", node, [("x", [4])], [("z", [1])], {"x": SUB}, inits=[axes])
+    node = helper.make_node("ReduceMean", ["x"], ["z"], axes=[0], keepdims=1)
+    emit("denorm_reducemean", node, [("x", [4])], [("z", [1])], {"x": POS})
+    node = helper.make_node("ReduceMax", ["x"], ["z"], axes=[0], keepdims=1)
+    emit("denorm_reducemax", node, [("x", [4])], [("z", [1])], {"x": SUB})
+    # Subnormal-magnitude MatMul accumulation: the [0,0] cell differs
+    # from ORT by 1 ulp (summation-order class, inside lane tolerance).
+    node = helper.make_node("MatMul", ["x", "y"], ["z"])
+    emit("denorm_matmul", node, [("x", [2, 2]), ("y", [2, 2])], [("z", [2, 2])],
+         {"x": np.array([[1e-38, 2e-38], [3e-38, 0.0]], dtype=np.float32),
+          "y": np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32)})
 
 
 if __name__ == "__main__":
