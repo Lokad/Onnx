@@ -116,6 +116,19 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void GatherNegativeAxis_Normalizes()
+        {
+            // ORT 1.29: axis=-1 gathers axis 1.
+            var data = DenseTensor<float>.OfValues(new float[,] { { 10f, 20f, 30f }, { 40f, 50f, 60f } });
+            var idx = DenseTensor<long>.OfValues(new long[] { 2L, 0L });
+            var r = CPU.Gather(data, idx, -1, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
+            Assert.Equal(new float[] { 30f, 10f, 60f, 40f }, y.ToArray());
+        }
+
+        [Fact]
         public void GatherOutOfRangeAxis_FailsCleanly()
         {
             // ORT 1.29 refuses axis=5 on rank 1 at load.
