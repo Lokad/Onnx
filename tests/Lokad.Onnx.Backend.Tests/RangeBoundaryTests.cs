@@ -141,4 +141,59 @@ public class RangeBoundaryTests
         s.SetValue(0, value);
         return s;
     }
+
+    [Fact]
+    public void FloatFractionalCountAndValues_MatchOrt()
+    {
+        // ORT 1.29: the count walks start + i*delta against the limit in
+        // double precision, so Range(0, 0.3, 0.1f) keeps its 4th element
+        // (a float ceil-quotient miscounts it as 3); emitted values iterate
+        // v += delta, which drifts from start + i*delta by ulps on long
+        // spans (Range(0, 10, 0.1f) ends at 9.90000152, not the
+        // multiplied 9.90000057...).
+        var r = CPU.Range(ScalarF(0f), ScalarF(0.3f), ScalarF(0.1f), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 0f, 0.1f, 0.2f, 0.3f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+        var rlong = CPU.Range(ScalarF(0f), ScalarF(10f), ScalarF(0.1f), null);
+        Assert.Equal(OpStatus.Success, rlong.Status);
+        var ylong = ((Tensor<float>)rlong.Outputs![0]).ToArray();
+        Assert.Equal(100, ylong.Length);
+        Assert.Equal(9.900001525878906f, ylong[99]);
+        var r3 = CPU.Range(ScalarF(0f), ScalarF(1f), ScalarF(1f / 3f), null);
+        Assert.Equal(OpStatus.Success, r3.Status);
+        Assert.Equal(3, ((Tensor<float>)r3.Outputs![0]).ToArray().Length);
+    }
+
+    [Fact]
+    public void DoubleFractionalValues_MatchOrt()
+    {
+        // ORT 1.29 double: the count stays a ceil-quotient, but emitted
+        // values iterate v += delta like float (Range(0, 10, 0.1) ends at
+        // 9.89999999999998, not the multiplied 9.9000000000000004).
+        var r = CPU.Range(ScalarD(0.0), ScalarD(10.0), ScalarD(0.1), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<double>)r.Outputs![0]).ToArray();
+        Assert.Equal(100, y.Length);
+        Assert.Equal(9.89999999999998, y[99]);
+        var r3 = CPU.Range(ScalarD(0.0), ScalarD(1.0), ScalarD(1.0 / 3.0), null);
+        Assert.Equal(OpStatus.Success, r3.Status);
+        Assert.Equal(3, ((Tensor<double>)r3.Outputs![0]).ToArray().Length);
+    }
+
+    [Fact]
+    public void NonFiniteRange_BehavesLikeOrt()
+    {
+        // ORT 1.29 fails ranges with no finite count (NaN anywhere, an
+        // infinite start/limit); an infinite delta yields an empty range.
+        // The provider surfaces the failures as descriptive throws, like
+        // zero delta at tensor level and graph Failure through dispatch.
+        var empty = CPU.Range(ScalarF(0f), ScalarF(1f), ScalarF(float.PositiveInfinity), null);
+        Assert.Equal(OpStatus.Success, empty.Status);
+        Assert.Empty(((Tensor<float>)empty.Outputs![0]).ToArray());
+        Assert.Throws<System.ArgumentException>(() => CPU.Range(ScalarF(0f), ScalarF(1f), ScalarF(float.NaN), null));
+        Assert.Throws<System.ArgumentException>(() => CPU.Range(ScalarF(0f), ScalarF(float.PositiveInfinity), ScalarF(1f), null));
+        Assert.Throws<System.ArgumentException>(() => CPU.Range(ScalarD(0.0), ScalarD(1.0), ScalarD(double.NaN), null));
+    }
+
+
 }

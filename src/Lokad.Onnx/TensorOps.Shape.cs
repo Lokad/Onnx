@@ -19,28 +19,45 @@ public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnly
 where T : unmanaged
 {
     /// <summary>
-    /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws.
+    /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws,
+    /// as do ranges with no finite count (NaN anywhere, infinite start/limit, or a count
+    /// beyond the maximum tensor length); an infinite delta yields an empty range.
     /// </summary>
     public static Tensor<float> Range(float start, float limit, float delta)
     {
         if (delta == 0f) throw new ArgumentException(nameof(delta));
-        int count = Math.Max((int)Math.Ceiling((limit - start) / delta), 0);
-        var output = new DenseTensor<float>(count);
+        double quotient = ((double)limit - start) / delta;
+        if (double.IsNaN(quotient)) throw new ArgumentException("Range start, limit and delta must be finite or yield a finite count.", nameof(limit));
+        if (!(quotient > 0.0)) return new DenseTensor<float>(0);
+        if (quotient > int.MaxValue) throw new ArgumentException("Range count exceeds the maximum tensor length.", nameof(limit));
+        long count = 0;
+        if (delta > 0f) { while (count <= int.MaxValue && (double)start + count * (double)delta < limit) count++; }
+        else { while (count <= int.MaxValue && (double)start + count * (double)delta > limit) count++; }
+        if (count > int.MaxValue) throw new ArgumentException("Range count exceeds the maximum tensor length.", nameof(limit));
+        var output = new DenseTensor<float>((int)count);
         var span = output.Buffer.Span;
-        for (int i = 0; i < count; i++) span[i] = start + i * delta;
+        float value = start;
+        for (int i = 0; i < (int)count; i++) { span[i] = value; value += delta; }
         return output;
     }
 
     /// <summary>
-    /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws.
+    /// Generates start, start plus delta, and so on, stopping before limit. Zero delta throws,
+    /// as do ranges with no finite count (NaN anywhere, infinite start/limit, or a count
+    /// beyond the maximum tensor length); an infinite delta yields an empty range.
     /// </summary>
     public static Tensor<double> Range(double start, double limit, double delta)
     {
         if (delta == 0.0) throw new ArgumentException(nameof(delta));
-        int count = Math.Max((int)Math.Ceiling((limit - start) / delta), 0);
+        double quotient = (limit - start) / delta;
+        if (double.IsNaN(quotient)) throw new ArgumentException("Range start, limit and delta must be finite or yield a finite count.", nameof(limit));
+        if (!(quotient > 0.0)) return new DenseTensor<double>(0);
+        if (quotient > int.MaxValue) throw new ArgumentException("Range count exceeds the maximum tensor length.", nameof(limit));
+        int count = Math.Max((int)Math.Ceiling(quotient), 0);
         var output = new DenseTensor<double>(count);
         var span = output.Buffer.Span;
-        for (int i = 0; i < count; i++) span[i] = start + i * delta;
+        double value = start;
+        for (int i = 0; i < count; i++) { span[i] = value; value += delta; }
         return output;
     }
 
