@@ -96,6 +96,19 @@ public class SliceStepTests
     }
 
     [Fact]
+    public void NullAxesSteps_DefaultAll()
+    {
+        // ORT 1.29: omitted axes/steps slice every listed axis with step 1.
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f });
+        var r = CPU.Slice(x,
+            DenseTensor<long>.OfValues(new long[] { 1L }),
+            DenseTensor<long>.OfValues(new long[] { 4L }),
+            null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 1f, 2f, 3f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void EmptyResult_YieldsEmpty()
     {
         // ORT 1.29: start == end and start > end (positive step) both
