@@ -18,7 +18,7 @@ Layout:
 
 Run: `eng/test-opfuzz.ps1 [-Python <python>]` from the repo root. The script
 verifies hashes, builds `tests/Lokad.Onnx.OpDump` (Release), and runs pytest.
-Tolerances are `rtol=1e-5`, `atol=1e-6` (float), exact for int32/int64 and bool (`1`/`0`-encoded), `equal_nan=True` on float compares, strict on
+Tolerances are `rtol=1e-5`, `atol=1e-6` (float), exact for int32/int64/uint32/uint64/int8/uint8/int16/uint16 and bool (`1`/`0`-encoded), `equal_nan=True` on float compares, strict on
 shape and dtype. Intrinsics cases skip cleanly without x86 FMA.
 
 One frozen case carries a `known_divergence` flag in its `meta.json`

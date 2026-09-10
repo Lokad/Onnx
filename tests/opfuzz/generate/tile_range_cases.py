@@ -38,6 +38,20 @@ def main():
     emit("range_down", node, [("x", []), ("y", []), ("d", [])], [("z", [5])],
          {"x": np.int64(5), "y": np.int64(0), "d": np.int64(-1)},
          dtypes=dt, feed_dtypes=fd)
+    repb = helper.make_tensor("r", TensorProto.INT64, [2], np.array([2, 1], dtype=np.int64))
+    node = helper.make_node("Tile", ["x", "r"], ["z"])
+    emit("tile_bool", node, [("x", [1, 2])], [("z", [2, 2])],
+         {"x": np.array([[True, False]])},
+         inits=[repb],
+         dtypes={"x": TensorProto.BOOL, "z": TensorProto.BOOL},
+         feed_dtypes={"x": np.bool_})
+    dt16 = {"x": TensorProto.INT16, "y": TensorProto.INT16,
+            "d": TensorProto.INT16, "z": TensorProto.INT16}
+    fd16 = {"x": np.int16, "y": np.int16, "d": np.int16}
+    node = helper.make_node("Range", ["x", "y", "d"], ["z"])
+    emit("range_int16", node, [("x", []), ("y", []), ("d", [])], [("z", [3])],
+         {"x": np.int16(0), "y": np.int16(5), "d": np.int16(2)},
+         dtypes=dt16, feed_dtypes=fd16)
 
 
 if __name__ == "__main__":

@@ -41,6 +41,18 @@ def main():
     emit("expand_zero", node, [("x", [2, 1])], [("z", [2, 0])],
          {"x": np.array([[1.0], [2.0]], dtype=np.float32)},
          inits=[i64("shape", [2, 0])])
+    node = helper.make_node("Split", ["x", "s"], ["a", "b"], axis=1)
+    emit("split_bool", node, [("x", [1, 4])], [("a", [1, 2]), ("b", [1, 2])],
+         {"x": np.array([[True, False, True, False]])},
+         inits=[i64("s", [2, 2])],
+         dtypes={"x": TensorProto.BOOL, "a": TensorProto.BOOL, "b": TensorProto.BOOL},
+         feed_dtypes={"x": np.bool_})
+    node = helper.make_node("Split", ["x", "s"], ["a", "b"], axis=1)
+    emit("split_uint32", node, [("x", [1, 4])], [("a", [1, 2]), ("b", [1, 2])],
+         {"x": np.array([[1, 2, 3, 4294967295]], dtype=np.uint32)},
+         inits=[i64("s", [2, 2])],
+         dtypes={"x": TensorProto.UINT32, "a": TensorProto.UINT32, "b": TensorProto.UINT32},
+         feed_dtypes={"x": np.uint32})
 
 
 if __name__ == "__main__":

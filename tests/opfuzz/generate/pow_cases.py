@@ -12,6 +12,7 @@ import os
 import sys
 
 import numpy as np
+from onnx import TensorProto
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from corpus import emit, helper
@@ -30,6 +31,20 @@ def main():
     emit("pow_broadcast", node, [("x", [2, 2]), ("y", [2])], [("z", [2, 2])],
          {"x": np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32),
           "y": np.array([2.0, 0.5], dtype=np.float32)})
+    dt32 = {"x": TensorProto.INT32, "y": TensorProto.INT32, "z": TensorProto.INT32}
+    fd32 = {"x": np.int32, "y": np.int32}
+    node = helper.make_node("Pow", ["x", "y"], ["z"])
+    emit("pow_int32", node, [("x", [4]), ("y", [4])], [("z", [4])],
+         {"x": np.array([2, 10, 2, 0], dtype=np.int32),
+          "y": np.array([10, 9, -1, 0], dtype=np.int32)},
+         dtypes=dt32, feed_dtypes=fd32)
+    dt64 = {"x": TensorProto.INT64, "y": TensorProto.INT64, "z": TensorProto.INT64}
+    fd64 = {"x": np.int64, "y": np.int64}
+    node = helper.make_node("Pow", ["x", "y"], ["z"])
+    emit("pow_int64", node, [("x", [2]), ("y", [2])], [("z", [2])],
+         {"x": np.array([2, 10], dtype=np.int64),
+          "y": np.array([62, 18], dtype=np.int64)},
+         dtypes=dt64, feed_dtypes=fd64)
 
 
 if __name__ == "__main__":

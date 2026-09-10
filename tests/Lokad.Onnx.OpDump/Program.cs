@@ -75,6 +75,60 @@ static class OpDump
             return t;
         }
 
+        if (dtype == "uint32")
+        {
+            var t = new DenseTensor<uint>(dims);
+            var sp = t.Buffer.Span;
+            for (int i = 0; i < vals.Length; i++) sp[i] = uint.Parse(vals[i], CultureInfo.InvariantCulture);
+            t.Name = name;
+            return t;
+        }
+
+        if (dtype == "uint64")
+        {
+            var t = new DenseTensor<ulong>(dims);
+            var sp = t.Buffer.Span;
+            for (int i = 0; i < vals.Length; i++) sp[i] = ulong.Parse(vals[i], CultureInfo.InvariantCulture);
+            t.Name = name;
+            return t;
+        }
+
+        if (dtype == "int8")
+        {
+            var t = new DenseTensor<sbyte>(dims);
+            var sp = t.Buffer.Span;
+            for (int i = 0; i < vals.Length; i++) sp[i] = sbyte.Parse(vals[i], CultureInfo.InvariantCulture);
+            t.Name = name;
+            return t;
+        }
+
+        if (dtype == "uint8")
+        {
+            var t = new DenseTensor<byte>(dims);
+            var sp = t.Buffer.Span;
+            for (int i = 0; i < vals.Length; i++) sp[i] = byte.Parse(vals[i], CultureInfo.InvariantCulture);
+            t.Name = name;
+            return t;
+        }
+
+        if (dtype == "int16")
+        {
+            var t = new DenseTensor<short>(dims);
+            var sp = t.Buffer.Span;
+            for (int i = 0; i < vals.Length; i++) sp[i] = short.Parse(vals[i], CultureInfo.InvariantCulture);
+            t.Name = name;
+            return t;
+        }
+
+        if (dtype == "uint16")
+        {
+            var t = new DenseTensor<ushort>(dims);
+            var sp = t.Buffer.Span;
+            for (int i = 0; i < vals.Length; i++) sp[i] = ushort.Parse(vals[i], CultureInfo.InvariantCulture);
+            t.Name = name;
+            return t;
+        }
+
         if (dtype == "bool")
         {
             var t = new DenseTensor<bool>(dims);
@@ -116,6 +170,54 @@ static class OpDump
             foreach (var d in ti.Dimensions) sb.Append(' ').Append(d);
             sb.AppendLine();
             sb.AppendLine(string.Join(" ", ti.ToArray().Select(v => v.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        else if (t is Tensor<uint> tu32)
+        {
+            sb.Append("uint32 ").Append(tu32.Dimensions.Length);
+            foreach (var d in tu32.Dimensions) sb.Append(' ').Append(d);
+            sb.AppendLine();
+            sb.AppendLine(string.Join(" ", tu32.ToArray().Select(x => x.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        else if (t is Tensor<ulong> tu64)
+        {
+            sb.Append("uint64 ").Append(tu64.Dimensions.Length);
+            foreach (var d in tu64.Dimensions) sb.Append(' ').Append(d);
+            sb.AppendLine();
+            sb.AppendLine(string.Join(" ", tu64.ToArray().Select(x => x.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        else if (t is Tensor<sbyte> ti8)
+        {
+            sb.Append("int8 ").Append(ti8.Dimensions.Length);
+            foreach (var d in ti8.Dimensions) sb.Append(' ').Append(d);
+            sb.AppendLine();
+            sb.AppendLine(string.Join(" ", ti8.ToArray().Select(x => x.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        else if (t is Tensor<byte> tu8)
+        {
+            sb.Append("uint8 ").Append(tu8.Dimensions.Length);
+            foreach (var d in tu8.Dimensions) sb.Append(' ').Append(d);
+            sb.AppendLine();
+            sb.AppendLine(string.Join(" ", tu8.ToArray().Select(x => x.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        else if (t is Tensor<short> ti16)
+        {
+            sb.Append("int16 ").Append(ti16.Dimensions.Length);
+            foreach (var d in ti16.Dimensions) sb.Append(' ').Append(d);
+            sb.AppendLine();
+            sb.AppendLine(string.Join(" ", ti16.ToArray().Select(x => x.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        else if (t is Tensor<ushort> tu16)
+        {
+            sb.Append("uint16 ").Append(tu16.Dimensions.Length);
+            foreach (var d in tu16.Dimensions) sb.Append(' ').Append(d);
+            sb.AppendLine();
+            sb.AppendLine(string.Join(" ", tu16.ToArray().Select(x => x.ToString(CultureInfo.InvariantCulture))));
         }
 
         else if (t is Tensor<bool> tb)

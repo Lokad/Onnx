@@ -27,7 +27,7 @@ RUNNER = os.environ.get(
         HERE, "..", "..", "Lokad.Onnx.OpDump", "bin", "Release", "net10.0", "Lokad.Onnx.OpDump.dll")),
 )
 
-DTYPES = {"float32": np.float32, "float64": np.float64, "int64": np.int64, "int32": np.int32, "bool": np.bool_}
+DTYPES = {"float32": np.float32, "float64": np.float64, "int64": np.int64, "int32": np.int32, "bool": np.bool_, "uint32": np.uint32, "uint64": np.uint64, "int8": np.int8, "uint8": np.uint8, "int16": np.int16, "uint16": np.uint16}
 
 
 def read_txt(path):
@@ -38,7 +38,7 @@ def read_txt(path):
         text = f.read().strip()
     if not text:
         return np.empty(shape, dtype=DTYPES[dtype])
-    if DTYPES[dtype] in (np.int64, np.int32):
+    if DTYPES[dtype] in (np.int64, np.int32, np.uint32, np.uint64, np.int8, np.uint8, np.int16, np.uint16):
         # Integer refs must parse exactly: the float64 intermediate rounds
         # values beyond 2**53 (INT64_MAX collapsed to INT64_MIN, passing
         # exact comparison vacuously).
@@ -90,7 +90,7 @@ def test_case_matches_ort_reference(case, tmp_path):
                 continue
             if ref.size == 0:
                 continue
-            if ref.dtype in (np.int64, np.int32, np.bool_):
+            if ref.dtype in (np.int64, np.int32, np.uint32, np.uint64, np.int8, np.uint8, np.int16, np.uint16, np.bool_):
                 if not np.array_equal(ref, new):
                     breaches.append("%s: %s int mismatch" % (mode, name))
                 continue

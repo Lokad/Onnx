@@ -57,6 +57,20 @@ def main():
          {"x": np.array([3037000500, -9223372036854775808], dtype=np.int64),
           "y": np.array([3037000500, 2], dtype=np.int64)},
          dtypes=dt64, feed_dtypes=fd64)
+    du32 = {"x": TensorProto.UINT32, "y": TensorProto.UINT32, "z": TensorProto.UINT32}
+    fu32 = {"x": np.uint32, "y": np.uint32}
+    node = helper.make_node("Add", ["x", "y"], ["z"])
+    emit("add_wrap_uint32", node, [("x", [2]), ("y", [2])], [("z", [2])],
+         {"x": np.array([4294967295, 1000000], dtype=np.uint32),
+          "y": np.array([1, 1000000], dtype=np.uint32)},
+         dtypes=du32, feed_dtypes=fu32)
+    du64 = {"x": TensorProto.UINT64, "y": TensorProto.UINT64, "z": TensorProto.UINT64}
+    fu64 = {"x": np.uint64, "y": np.uint64}
+    node = helper.make_node("Mul", ["x", "y"], ["z"])
+    emit("mul_wrap_uint64", node, [("x", [2]), ("y", [2])], [("z", [2])],
+         {"x": np.array([4294967296, 3], dtype=np.uint64),
+          "y": np.array([4294967296, 7], dtype=np.uint64)},
+         dtypes=du64, feed_dtypes=fu64)
 
 if __name__ == "__main__":
     main()
