@@ -136,5 +136,36 @@ namespace Lokad.Onnx.Backend.Tests
             Assert.Equal(new long[] { 2, 3 }, ShapeOf(new float[2, 3, 4], 0, -1).ToArray());
             Assert.Equal(new long[] { 2, 3, 4 }, ShapeOf(new float[2, 3, 4], null, null).ToArray());
         }
+
+    [Fact]
+    public void SliceNegativeStep_Reverses()
+    {
+        // ORT 1.29: [5, 4, 3, 2].
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f });
+        var r = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { 5 }), DenseTensor<long>.OfValues(new long[] { 1 }), DenseTensor<long>.OfValues(new long[] { 0 }), DenseTensor<long>.OfValues(new long[] { -1 }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 5f, 4f, 3f, 2f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void SliceMixedSteps_EmptyAxes()
+    {
+        // ORT 1.29: empty [0, 0].
+        var x = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f, 3f }, { 4f, 5f, 6f, 7f } });
+        var r = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { 1, 3 }), DenseTensor<long>.OfValues(new long[] { -1, -1 }), DenseTensor<long>.OfValues(new long[] { 0, 1 }), DenseTensor<long>.OfValues(new long[] { 1, -1 }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new[] { 0, 0 }, ((Tensor<float>)r.Outputs[0]).Dimensions.ToArray());
+    }
+
+    [Fact]
+    public void SliceNegativeStart_Clamps()
+    {
+        // ORT 1.29: [2, 3, 4].
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f });
+        var r = CPU.Slice(x, DenseTensor<long>.OfValues(new long[] { -4 }), DenseTensor<long>.OfValues(new long[] { 5 }), DenseTensor<long>.OfValues(new long[] { 0 }), DenseTensor<long>.OfValues(new long[] { 1 }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 2f, 3f, 4f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
     }
 }
