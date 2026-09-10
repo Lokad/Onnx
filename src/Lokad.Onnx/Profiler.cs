@@ -19,7 +19,7 @@ namespace Lokad.Onnx
     
     public record struct OpProfile { public OpStage Stage; public TimeSpan Time; }
 
-    public record NodeProfile { public long NodeId; public OpType Op; public Stack<OpProfile> OpsProfile = new Stack<OpProfile>(); }
+    public record NodeProfile { public long NodeId; public OpType Op; public string Detail = ""; public Stack<OpProfile> OpsProfile = new Stack<OpProfile>(); }
 
     public sealed class ProfilerContext : IDisposable
     {
@@ -62,14 +62,17 @@ namespace Lokad.Onnx
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void StartNodeProfile(long id, OpType op)
+        public void StartNodeProfile(long id, OpType op) => StartNodeProfile(id, op, null);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void StartNodeProfile(long id, OpType op, Func<string>? detail)
         {
             if (!Enabled) return;
 
             lock (sync)
             {
                 AddTimeLocked();
-                Profile.Push(new NodeProfile() { NodeId = id, Op = op });
+                Profile.Push(new NodeProfile() { NodeId = id, Op = op, Detail = detail is null ? "" : detail() });
                 CurrentNodeProfile.OpsProfile.Push(new OpProfile() { Stage = OpStage.GraphOrchestration, Time = TimeSpan.Zero });
                 timer.Start();
             }
@@ -119,7 +122,9 @@ namespace Lokad.Onnx
 
         #region Methods
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void StartNodeProfile(long id, OpType op) => Current.StartNodeProfile(id, op);
+        public static void StartNodeProfile(long id, OpType op) => Current.StartNodeProfile(id, op, null);
+
+        public static void StartNodeProfile(long id, OpType op, Func<string>? detail) => Current.StartNodeProfile(id, op, detail);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StopNodeProfile() => Current.StopNodeProfile();

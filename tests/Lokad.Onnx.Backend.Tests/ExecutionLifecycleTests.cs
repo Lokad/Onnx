@@ -395,6 +395,21 @@ public class ExecutionLifecycleTests
         Assert.Equal(small.LastPeakLiveBytes, rerun.LastPeakLiveBytes);
     }
 
+    [Fact]
+    public void NodeProfiles_CarryInputShapesAndDtypes()
+    {
+        var g = NewMatMulGraph(2);
+        var good = MatMulInputs(2);
+        using (Profiler.BeginExecution(true))
+        {
+            Assert.True(g.Execute(good, false));
+        }
+        Assert.NotNull(g.LastProfile);
+        var node = g.LastProfile!.Peek();
+        Assert.Equal(OpType.MatMul, node.Op);
+        Assert.Contains("float", node.Detail);
+        Assert.Contains("2x2", node.Detail);
+    }
     static ComputationalGraph NewMatMulGraph(int n)
     {
         var g = new ComputationalGraph();

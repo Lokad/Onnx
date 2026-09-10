@@ -766,7 +766,7 @@ public class ComputationalGraph
             OpResult r;
             try
             {
-                Profiler.StartNodeProfile(node.ID, node.Op);
+                Profiler.StartNodeProfile(node.ID, node.Op, () => string.Join(",", GetInputTensors(node.Inputs).Select(t => t.TensorNameDesc())));
                 try
                 {
                     r = node.Execute(this, provider, nodeOptions);
