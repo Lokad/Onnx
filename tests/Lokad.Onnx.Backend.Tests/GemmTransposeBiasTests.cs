@@ -220,4 +220,36 @@ public class GemmTransposeBiasTests
         Assert.Equal(OpStatus.Success, zk.Status);
         Assert.Equal(new float[] { 0f, 0f, 0f, 0f, 0f, 0f }, ((Tensor<float>)zk.Outputs![0]).ToArray());
     }
+
+    [Fact]
+    public void BadBiasShape_FailsCleanly()
+    {
+        // ORT 1.29 run-fails unbroadcastable Gemm biases ("Invalid bias
+        // shape for broadcast"); the provider rejects them descriptively.
+        var a = F(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var b = F(new float[,] { { 1f, 0f }, { 0f, 1f }, { 1f, 1f } });
+        var c3 = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(a, b, c3, 1f, 1f, null, 0, 0).Status);
+        var c2x3 = F(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(a, b, c2x3, 1f, 1f, null, 0, 0).Status);
+        var c3d = DenseTensor<float>.OfShape(2, 2, 1);
+        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(a, b, c3d, 1f, 1f, null, 0, 0).Status);
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 14 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["a"] = a;
+        graph.Inputs["b"] = b;
+        graph.Inputs["c"] = c3;
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Gemm, OpTypeName = OpType.Gemm.ToString(), Domain = "",
+            OpsetVersion = 14, IsFused = false,
+            Inputs = new[] { "a", "b", "c" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
 }
