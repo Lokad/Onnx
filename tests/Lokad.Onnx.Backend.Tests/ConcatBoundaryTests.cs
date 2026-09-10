@@ -88,6 +88,34 @@ public class ConcatBoundaryTests
     }
 
     [Fact]
+    public void ScalarInputs_FailCleanly()
+    {
+        // ORT 1.29 refuses scalar Concat at load; axis 0 is out of range
+        // for rank 0 here (provider throws, node fails instead).
+        var a = DenseTensor<float>.OfShape();
+        a.SetValue(0, 1f);
+        var b = DenseTensor<float>.OfShape();
+        b.SetValue(0, 2f);
+        Assert.Throws<System.ArgumentException>(() => CPU.Concat(new ITensor[] { a, b }, 0, null));
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 13 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["a"] = a;
+        graph.Inputs["b"] = b;
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Concat, OpTypeName = OpType.Concat.ToString(), Domain = "",
+            OpsetVersion = 13, IsFused = false,
+            Inputs = new[] { "a", "b" }, Outputs = new[] { "c" },
+            Attributes = new Dictionary<string, object> { ["axis"] = 0L },
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
     public void EmptyInput_ContributesNothing()
     {
         // ORT 1.29: a [2,0] input concatenated on axis 1 yields the

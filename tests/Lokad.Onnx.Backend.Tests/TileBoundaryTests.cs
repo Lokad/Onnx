@@ -107,6 +107,18 @@ public class TileBoundaryTests
     }
 
     [Fact]
+    public void PartialZeroRepeats_YieldsEmpty()
+    {
+        // ORT 1.29: [1,2] tiled [2,0] yields [2,0], empty.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } });
+        var r = CPU.Tile(x, DenseTensor<long>.OfValues(new long[] { 2L, 0L }), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 2, 0 }, y.Dimensions.ToArray());
+        Assert.Empty(y.ToArray());
+    }
+
+    [Fact]
     public void EmptyRepeats_FailsCleanly()
     {
         // ORT 1.29 fails the run when repeats length != input rank (either
