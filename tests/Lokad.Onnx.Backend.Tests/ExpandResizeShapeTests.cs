@@ -245,6 +245,23 @@ public class ExpandResizeShapeTests
     }
 
     [Fact]
+    public void Resize_ScalesAndSizesTogether_FailsCleanly()
+    {
+        // ORT 1.29 load-fails when both sizes and scales are provided
+        // (ShapeInferenceError); the provider must fail descriptively
+        // instead of silently honoring sizes.
+        var x = Img2x2();
+        var both = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 2f, 2f), DenseTensor<long>.OfValues(new long[] { 1L, 1L, 4L, 4L }), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Failure, both.Status);
+        Assert.Contains("scales", both.Message ?? "");
+        // Empty tensors count as omitted (ORT treats them as not provided).
+        var emptyScales = CPUExecutionProvider.Resize(x, null, DenseTensor<float>.OfValues(new float[0]), DenseTensor<long>.OfValues(new long[] { 1L, 1L, 4L, 4L }), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, emptyScales.Status);
+        var emptySizes = CPUExecutionProvider.Resize(x, null, Scales(1f, 1f, 2f, 2f), DenseTensor<long>.OfValues(new long[0]), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, emptySizes.Status);
+    }
+
+    [Fact]
     public void Resize_DefaultAttributes_BehaveAsBefore()
     {
         var x = Img2x2();
