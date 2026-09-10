@@ -236,6 +236,24 @@ public class IntegerArithmeticBoundaryTests
     }
 
     [Fact]
+    public void PowUint_RefusedCleanly()
+    {
+        // ORT 1.29 refuses uint32/uint64 Pow at opsets 13 and 14 (probed);
+        // the provider has float/double/int32/int64 arms only, so unsigned
+        // bases fail descriptively (verified differentially via OpDump).
+        var u32 = CPU.Pow(
+            DenseTensor<uint>.OfValues(new uint[] { 2u, 3u }),
+            DenseTensor<uint>.OfValues(new uint[] { 3u, 2u }), null);
+        Assert.Equal(OpStatus.Failure, u32.Status);
+        Assert.Contains("UInt32", u32.Message ?? "");
+        var u64 = CPU.Pow(
+            DenseTensor<ulong>.OfValues(new ulong[] { 2ul }),
+            DenseTensor<ulong>.OfValues(new ulong[] { 3ul }), null);
+        Assert.Equal(OpStatus.Failure, u64.Status);
+        Assert.Contains("UInt64", u64.Message ?? "");
+    }
+
+    [Fact]
     public void Sub32DivByZero_FailsCleanly()
     {
         // ORT 1.29 run-fails sub-32 integer division by zero like the
