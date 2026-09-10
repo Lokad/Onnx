@@ -19,6 +19,18 @@ public class ConvDoubleTests
     }
 
     [Fact]
+    public void NaNInput_YieldsNaN()
+    {
+        // No ORT CPU double Conv kernel exists (NOT_IMPLEMENTED), so
+        // this is hand-exact like its neighbors: NaN poisons the
+        // multiply-accumulate.
+        var x = DenseTensor<double>.OfValues(new double[1, 1, 1, 1] { { { { double.NaN } } } });
+        var w = DenseTensor<double>.OfValues(new double[1, 1, 1, 1] { { { { 1.0 } } } });
+        var y = Tensor<double>.Conv2D(x, w, 1, new int[] { 0, 0, 0, 0 }, null, null, new int[] { 1, 1 }, null);
+        Assert.True(double.IsNaN(y.ToArray()[0]));
+    }
+
+    [Fact]
     public void ChannelPicker_MapsChannels()
     {
         var x = DenseTensor<double>.OfValues(new double[1, 2, 2, 2]
