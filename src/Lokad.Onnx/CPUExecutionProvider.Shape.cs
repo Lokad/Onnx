@@ -93,6 +93,8 @@ public partial class CPUExecutionProvider
             case TensorElementType.Double: { var y = DenseTensor<double>.OfShape(dims); y.Fill(((Tensor<double>)value).GetValue(0)); return Success(op, y); }
             case TensorElementType.Int32: { var y = DenseTensor<int>.OfShape(dims); y.Fill(((Tensor<int>)value).GetValue(0)); return Success(op, y); }
             case TensorElementType.Int64: { var y = DenseTensor<long>.OfShape(dims); y.Fill(((Tensor<long>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.UInt32: { var y = DenseTensor<uint>.OfShape(dims); y.Fill(((Tensor<uint>)value).GetValue(0)); return Success(op, y); }
+            case TensorElementType.UInt64: { var y = DenseTensor<ulong>.OfShape(dims); y.Fill(((Tensor<ulong>)value).GetValue(0)); return Success(op, y); }
             case TensorElementType.Bool: { var y = DenseTensor<bool>.OfShape(dims); y.Fill(((Tensor<bool>)value).GetValue(0)); return Success(op, y); }
             default: return InputTypeNotSupported(op, nameof(value), value);
         }
@@ -366,6 +368,34 @@ public partial class CPUExecutionProvider
                 }
                 break;
             }
+            case TensorElementType.UInt32:
+            {
+                var dd = ((Tensor<uint>)data).ToDenseTensor();
+                var span = dd.Buffer.Span;
+                int start = 0;
+                for (int p = 0; p < sizes.Length; p++)
+                {
+                    var partDims = (int[])inDims.Clone();
+                    partDims[axis] = sizes[p];
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    start += sizes[p];
+                }
+                break;
+            }
+            case TensorElementType.UInt64:
+            {
+                var dd = ((Tensor<ulong>)data).ToDenseTensor();
+                var span = dd.Buffer.Span;
+                int start = 0;
+                for (int p = 0; p < sizes.Length; p++)
+                {
+                    var partDims = (int[])inDims.Clone();
+                    partDims[axis] = sizes[p];
+                    outputs[p] = SplitPart(span, partDims, outer, inner, dim, start, sizes[p]);
+                    start += sizes[p];
+                }
+                break;
+            }
             default: return InputTypeNotSupported(op, nameof(data), data);
         }
         return Success(op, outputs);
@@ -389,6 +419,8 @@ public partial class CPUExecutionProvider
             case TensorElementType.Bool: return Success(op, Tensor<bool>.Expand((Tensor<bool>)data, targetShape));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Expand((Tensor<int>)data, targetShape));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Expand((Tensor<long>)data, targetShape));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Expand((Tensor<uint>)data, targetShape));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Expand((Tensor<ulong>)data, targetShape));
             case TensorElementType.Float: return Success(op, Tensor<float>.Expand((Tensor<float>)data, targetShape));
             case TensorElementType.Double: return Success(op, Tensor<double>.Expand((Tensor<double>)data, targetShape));
             default: return InputTypeNotSupported(op, nameof(data), data);
@@ -614,6 +646,8 @@ public partial class CPUExecutionProvider
             case TensorElementType.Double: return Success(op, Tensor<double>.Tile((Tensor<double>)data, reps));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Tile((Tensor<int>)data, reps));
             case TensorElementType.Int64: return Success(op, Tensor<long>.Tile((Tensor<long>)data, reps));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Tile((Tensor<uint>)data, reps));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Tile((Tensor<ulong>)data, reps));
             default: return InputTypeNotSupported(op, nameof(data), data);
         }
     }

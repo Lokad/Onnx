@@ -82,4 +82,16 @@ public class ConstantOfShapeBoundaryTests
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("single element", r.Message ?? "");
     }
+
+    [Fact]
+    public void UnsignedValues_FillConstant()
+    {
+        // ORT 1.29: 2x2 of max-u32 and 1x2 of max-u64.
+        var r32 = CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 2L, 2L }), DenseTensor<uint>.OfValues(new uint[] { 4294967295u }), null);
+        Assert.Equal(OpStatus.Success, r32.Status);
+        Assert.Equal(new uint[] { 4294967295u, 4294967295u, 4294967295u, 4294967295u }, ((Tensor<uint>)r32.Outputs[0]).ToArray());
+        var r64 = CPU.ConstantOfShape(DenseTensor<long>.OfValues(new long[] { 1L, 2L }), DenseTensor<ulong>.OfValues(new ulong[] { 18446744073709551615ul }), null);
+        Assert.Equal(OpStatus.Success, r64.Status);
+        Assert.Equal(new ulong[] { 18446744073709551615ul, 18446744073709551615ul }, ((Tensor<ulong>)r64.Outputs[0]).ToArray());
+    }
 }

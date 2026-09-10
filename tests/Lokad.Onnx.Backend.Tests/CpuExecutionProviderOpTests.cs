@@ -263,6 +263,18 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(new[] { 1, 1, 3, 3 }, resizeOut.Dimensions.ToArray());
         Assert.Equal(2f, resizeOut[0, 0, 1, 1], 5);
     }
+
+    [Fact]
+    public void Expand_UInt_MatchesOrt()
+    {
+        // ORT 1.29: [[1, 2]] to [2, 2] (u32) and [[5]] to [1, 3] (u64).
+        var e32 = CPU.Expand(DenseTensor<uint>.OfValues(new uint[,] { { 1u, 2u } }), DenseTensor<long>.OfValues(new long[] { 2L, 2L }), null);
+        Assert.Equal(OpStatus.Success, e32.Status);
+        Assert.Equal(new uint[] { 1u, 2u, 1u, 2u }, ((Tensor<uint>)e32.Outputs[0]).ToArray());
+        var e64 = CPU.Expand(DenseTensor<ulong>.OfValues(new ulong[,] { { 5ul } }), DenseTensor<long>.OfValues(new long[] { 1L, 3L }), null);
+        Assert.Equal(OpStatus.Success, e64.Status);
+        Assert.Equal(new ulong[] { 5ul, 5ul, 5ul }, ((Tensor<ulong>)e64.Outputs[0]).ToArray());
+    }
 }
 
 

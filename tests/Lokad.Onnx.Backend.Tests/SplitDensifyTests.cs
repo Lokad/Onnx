@@ -191,4 +191,18 @@ public class SplitDensifyTests
         Assert.Contains("num_outputs", r.Message ?? "");
     }
 
+    [Fact]
+    public void Split_UInt_MatchesOrt()
+    {
+        // ORT 1.29: axis 1 sizes [2, 2] over [[1, 2, 3, max]] (u32); sizes [1, 1] over [[9, max]] (u64).
+        var s32 = CPU.Split(DenseTensor<uint>.OfValues(new uint[,] { { 1u, 2u, 3u, 4294967295u } }), DenseTensor<long>.OfValues(new long[] { 2L, 2L }), 1, null, null, null, null);
+        Assert.Equal(OpStatus.Success, s32.Status);
+        Assert.Equal(new uint[] { 1u, 2u }, ((Tensor<uint>)s32.Outputs[0]).ToArray());
+        Assert.Equal(new uint[] { 3u, 4294967295u }, ((Tensor<uint>)s32.Outputs[1]).ToArray());
+        var s64 = CPU.Split(DenseTensor<ulong>.OfValues(new ulong[,] { { 9ul, 18446744073709551615ul } }), DenseTensor<long>.OfValues(new long[] { 1L, 1L }), 1, null, null, null, null);
+        Assert.Equal(OpStatus.Success, s64.Status);
+        Assert.Equal(new ulong[] { 9ul }, ((Tensor<ulong>)s64.Outputs[0]).ToArray());
+        Assert.Equal(new ulong[] { 18446744073709551615ul }, ((Tensor<ulong>)s64.Outputs[1]).ToArray());
+    }
+
 }

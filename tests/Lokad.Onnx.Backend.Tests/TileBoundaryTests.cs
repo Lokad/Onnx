@@ -105,4 +105,18 @@ public class TileBoundaryTests
         Assert.Throws<System.ArgumentException>(() => Tensor<float>.Tile(
             DenseTensor<float>.OfValues(new float[,] { { 1f, 2f } }), new int[] { 2, 1, 1 }));
     }
+
+    [Fact]
+    public void Tile_UInt_MatchesOrt()
+    {
+        // ORT 1.29: repeats [2, 1] over [[1, 2], [3, max]] (u32) and [2] over [max, 7] (u64).
+        var t32 = CPU.Tile(DenseTensor<uint>.OfValues(new uint[,] { { 1u, 2u }, { 3u, 4294967295u } }), DenseTensor<long>.OfValues(new long[] { 2L, 1L }), null);
+        Assert.Equal(OpStatus.Success, t32.Status);
+        var y32 = (Tensor<uint>)t32.Outputs[0];
+        Assert.Equal(new int[] { 4, 2 }, y32.Dimensions.ToArray());
+        Assert.Equal(new uint[] { 1u, 2u, 3u, 4294967295u, 1u, 2u, 3u, 4294967295u }, y32.ToArray());
+        var t64 = CPU.Tile(DenseTensor<ulong>.OfValues(new ulong[] { 18446744073709551615ul, 7ul }), DenseTensor<long>.OfValues(new long[] { 2L }), null);
+        Assert.Equal(OpStatus.Success, t64.Status);
+        Assert.Equal(new ulong[] { 18446744073709551615ul, 7ul, 18446744073709551615ul, 7ul }, ((Tensor<ulong>)t64.Outputs[0]).ToArray());
+    }
 }
