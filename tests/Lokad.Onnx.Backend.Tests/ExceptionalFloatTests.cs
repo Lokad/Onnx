@@ -448,6 +448,22 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void AddSubMulNaN_Passthrough()
+    {
+        // ORT 1.29: NaN on either side of Add/Sub/Mul yields NaN,
+        // completing the Div/Pow passthrough set below.
+        var a = CPU.Add(DenseTensor<float>.OfValues(new float[] { float.NaN }), DenseTensor<float>.OfValues(new float[] { 1f }), null, null);
+        Assert.Equal(OpStatus.Success, a.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)a.Outputs![0])[0]));
+        var s = CPU.Sub(DenseTensor<float>.OfValues(new float[] { 1f }), DenseTensor<float>.OfValues(new float[] { float.NaN }), null);
+        Assert.Equal(OpStatus.Success, s.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)s.Outputs![0])[0]));
+        var m = CPU.Mul(DenseTensor<float>.OfValues(new float[] { float.NaN }), DenseTensor<float>.OfValues(new float[] { 2f }), null, null);
+        Assert.Equal(OpStatus.Success, m.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)m.Outputs![0])[0]));
+    }
+
+    [Fact]
     public void DivPowNaN_Passthrough()
     {
         // ORT 1.29: NaN on either side of Div, and NaN base or exponent
