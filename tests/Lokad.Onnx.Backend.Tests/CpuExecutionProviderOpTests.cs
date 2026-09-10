@@ -97,6 +97,26 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
+    public void Add_Sub_Mul_Double()
+    {
+        // ORT 1.29 on [[1,2],[3,4]] and [[5,6],[7,8]], plus row broadcast.
+        var a = DenseTensor<double>.OfValues(new double[,] { { 1.0, 2.0 }, { 3.0, 4.0 } });
+        var b = DenseTensor<double>.OfValues(new double[,] { { 5.0, 6.0 }, { 7.0, 8.0 } });
+        var add = CPU.Add(a, b, null, null);
+        Assert.Equal(OpStatus.Success, add.Status);
+        Assert.Equal(new double[] { 6.0, 8.0, 10.0, 12.0 }, ((Tensor<double>)add.Outputs![0]).ToArray());
+        var sub = CPU.Sub(a, b, null);
+        Assert.Equal(OpStatus.Success, sub.Status);
+        Assert.Equal(new double[] { -4.0, -4.0, -4.0, -4.0 }, ((Tensor<double>)sub.Outputs![0]).ToArray());
+        var mul = CPU.Mul(a, b, null, null);
+        Assert.Equal(OpStatus.Success, mul.Status);
+        Assert.Equal(new double[] { 5.0, 12.0, 21.0, 32.0 }, ((Tensor<double>)mul.Outputs![0]).ToArray());
+        var bc = CPU.Add(a, DenseTensor<double>.OfValues(new double[] { 10.0, 20.0 }), null, null);
+        Assert.Equal(OpStatus.Success, bc.Status);
+        Assert.Equal(new double[] { 11.0, 22.0, 13.0, 24.0 }, ((Tensor<double>)bc.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void MatMul_Transpose_Softmax()
     {
         var a = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
