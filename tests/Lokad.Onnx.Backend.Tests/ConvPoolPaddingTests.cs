@@ -345,4 +345,38 @@ public class ConvPoolPaddingTests
         Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w, null, null, null, null, null, new int[] { -1, 0, 0, 0 }, null, null));
         Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 2, 2 }, new int[] { -1, 0, 0, 0 }, null, new int[] { 1, 1 }, null));
     }
+
+    [Fact]
+    public void ConvBadGeometry_FailsCleanly()
+    {
+        // ORT 1.29 refuses degenerate Conv geometry at load (zero kernel,
+        // strides and dilations) and group/weight/bias mismatches at run;
+        // the planner throws descriptively instead of miscomputing.
+        var x = F4(new float[1, 1, 4, 4] { { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f }, { 13f, 14f, 15f, 16f } } } });
+        var w = F4(new float[1, 1, 3, 3] { { { { 1f, 0f, 0f }, { 0f, 1f, 0f }, { 0f, 0f, 1f } } } });
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w, null, null, null, 1, new int[] { 0, 3 }, null, null, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w, null, null, null, 1, null, null, new int[] { 0, 1 }, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w, null, null, new int[] { -1, 1 }, 1, null, null, null, null));
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w, null, null, null, 3, null, null, null, null));
+        var w2 = F4(new float[1, 1, 2, 2] { { { { 1f, 1f }, { 1f, 1f } } } });
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w2, null, null, null, 1, new int[] { 3, 3 }, null, null, null));
+        var b2 = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.Conv(x, w, b2, null, null, 1, null, null, null, null));
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 14 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = x;
+        graph.Inputs["w"] = w;
+        var node = new Node
+        {
+            Name = "n", Op = OpType.Conv, OpTypeName = OpType.Conv.ToString(), Domain = "",
+            OpsetVersion = 14, IsFused = false,
+            Inputs = new[] { "x", "w" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object> { ["strides"] = new long[] { 0L, 1L } },
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
 }
