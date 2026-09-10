@@ -115,4 +115,31 @@ public class GemmTransposeBiasTests
         Assert.Equal(19f, ((Tensor<float>)r1.Outputs[0])[0, 0], 4);
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(a, b, null, 1f, 1f, null, 2, 0).Status);
     }
+
+    [Fact]
+    public void ExceptionalAlphaBeta_MatchOrt()
+    {
+        // ORT 1.29 on A=[[0,0],[1,2]], B=I, C=ones: inf alpha/beta and NaN
+        // inputs propagate through the scale/bias epilogue as below.
+        var a = F(new float[,] { { 0f, 0f }, { 1f, 2f } });
+        var b = F(new float[,] { { 1f, 0f }, { 0f, 1f } });
+        var c = F(new float[,] { { 1f, 1f }, { 1f, 1f } });
+        var ai = CPUExecutionProvider.Gemm(a, b, c, float.PositiveInfinity, 1f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, ai.Status);
+        var ay = ((Tensor<float>)ai.Outputs[0]).ToArray();
+        Assert.True(float.IsNaN(ay[0]));
+        Assert.True(float.IsNaN(ay[1]));
+        Assert.Equal(float.PositiveInfinity, ay[2]);
+        Assert.Equal(float.PositiveInfinity, ay[3]);
+        var bi = CPUExecutionProvider.Gemm(a, b, c, 1f, float.PositiveInfinity, null, 0, 0);
+        Assert.Equal(OpStatus.Success, bi.Status);
+        foreach (var v in ((Tensor<float>)bi.Outputs[0]).ToArray()) Assert.Equal(float.PositiveInfinity, v);
+        var ni = CPUExecutionProvider.Gemm(DenseTensor<float>.OfValues(new float[,] { { float.NaN, 1f }, { 1f, 1f } }), b, c, 1f, 1f, null, 0, 0);
+        Assert.Equal(OpStatus.Success, ni.Status);
+        var ny = ((Tensor<float>)ni.Outputs[0]).ToArray();
+        Assert.True(float.IsNaN(ny[0]));
+        Assert.True(float.IsNaN(ny[1]));
+        Assert.Equal(2f, ny[2]);
+        Assert.Equal(2f, ny[3]);
+    }
 }
