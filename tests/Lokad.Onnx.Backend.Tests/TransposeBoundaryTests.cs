@@ -34,6 +34,18 @@ public class TransposeBoundaryTests
     }
 
     [Fact]
+    public void NullPerm_ReversesDims()
+    {
+        // ORT 1.29: transpose without perm reverses dimensions.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var r = CPUExecutionProvider.Transpose(x, null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 3, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 4f, 2f, 5f, 3f, 6f }, y.ToArray());
+    }
+
+    [Fact]
     public void EmptyInput_PermutesShape()
     {
         // ORT 1.29: transposing [0,3] with perm=[1,0] yields [3,0], empty.
