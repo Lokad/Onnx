@@ -349,6 +349,20 @@ public class LayerNormalizationStashTests
     }
 
     [Fact]
+    public void NaNRowDouble_YieldsNaN()
+    {
+        // ORT 1.29 double: like the float twin, a NaN element poisons
+        // the whole row.
+        var x = DenseTensor<double>.OfValues(new double[,] { { 1.0, double.NaN, 3.0 } });
+        var s = DenseTensor<double>.OfValues(new double[] { 1.0, 1.0, 1.0 });
+        var r = CPUExecutionProvider.LayerNormalization(x, s, null, -1, null, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<double>)r.Outputs[0]).ToArray();
+        Assert.Equal(3, y.Length);
+        foreach (var v in y) Assert.True(double.IsNaN(v));
+    }
+
+    [Fact]
     public void ConstantRow_YieldsBias()
     {
         // ORT 1.29 float and double: a constant row has zero variance,
