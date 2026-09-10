@@ -167,6 +167,23 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void PadHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Pad kernel exists; like OpType.Mod it must stay honestly
+        // unsupported with a clean reason-naming failure, never a throw.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Pad));
+        var node = Nod(OpType.Pad, "", 13,
+            new[] { "x", "pads" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        Bind(graph, "pads", DenseTensor<long>.OfValues(new long[] { 1L, 1L }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Pad", r.Message ?? "");
+    }
+
+    [Fact]
     public void RegistryEntries_AreImmutable()
     {
         // C08: no consumer may rewrite the capability registry after construction.
