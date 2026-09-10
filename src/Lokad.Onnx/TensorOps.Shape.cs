@@ -323,6 +323,10 @@ where T : unmanaged
             {
                 throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(q => q >= rank)} exceeds the number of dimensions in the tensor.");
             }
+            if (perm.Any(q => q < 0))
+            {
+                throw new ArgumentException(nameof(perm), "The permutation axes must be non-negative.");
+            }
             if (!ArrayUtilities.CheckNoRepeatedDims(perm))
             {
                 throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
@@ -401,6 +405,7 @@ where T : unmanaged
         {
             if (perm.Length != rank) throw new ArgumentException(nameof(perm), $"The size of the permutation array must be the rank of the tensor: {rank}.");
             if (!perm.All(q => q < rank)) throw new ArgumentException(nameof(perm), $"The permuted dimension {perm.First(q => q >= rank)} exceeds the number of dimensions in the tensor.");
+            if (perm.Any(q => q < 0)) throw new ArgumentException(nameof(perm), "The permutation axes must be non-negative.");
             if (!ArrayUtilities.CheckNoRepeatedDims(perm)) throw new ArgumentException(nameof(perm), "The permutation array has a repeated dimension.");
             p = (int[])perm.Clone();
             for (int i = 0; i < p.Length; i++) p[i] = ArrayUtilities.HandleNegativeAxisOrIndex(rank, p[i]);

@@ -34,6 +34,18 @@ public class TransposeBoundaryTests
     }
 
     [Fact]
+    public void NegativePerm_Throws()
+    {
+        // ORT 1.29 refuses negative perms at load (only 0..rank-1); the
+        // normalizer previously accepted them silently via negative-axis
+        // handling meant for Gather-style axes.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        Assert.Throws<System.ArgumentException>(() => Tensor<float>.Transpose(x, new int[] { -1, 0 }));
+        Assert.Throws<System.ArgumentException>(() => Tensor<float>.Transpose(x, new int[] { 0, -1 }));
+        Assert.Throws<System.ArgumentException>(() => Tensor<float>.Transpose(x, new int[] { -2, -1 }));
+    }
+
+    [Fact]
     public void NullPerm_ReversesDims()
     {
         // ORT 1.29: transpose without perm reverses dimensions.
