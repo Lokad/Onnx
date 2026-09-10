@@ -19,6 +19,16 @@ public class CastBoundaryTests
     }
 
     [Fact]
+    public void HalfSource_RejectedCleanly()
+    {
+        // ORT computes half casts, but half kernels are out of scope, so
+        // the provider fails descriptively instead of throwing from
+        // CastOps (which has no half source handler).
+        var h = DenseTensor<Half>.OfValues(new Half[] { (Half)1.5f });
+        Assert.Equal(OpStatus.Failure, CPU.Cast(h, TensorElementType.Float, null).Status);
+    }
+
+    [Fact]
     public void EmptyInput_YieldsEmpty()
     {
         // ORT 1.29: casting zero elements yields zero elements, typed.

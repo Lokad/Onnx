@@ -111,6 +111,22 @@ public partial class CPUExecutionProvider
         if (input is null) return MissingInput(op, nameof(input));
         (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Copy);
+        switch (input.ElementType)
+        {
+            case TensorElementType.Bool:
+            case TensorElementType.Int8:
+            case TensorElementType.UInt8:
+            case TensorElementType.Int16:
+            case TensorElementType.UInt16:
+            case TensorElementType.Int32:
+            case TensorElementType.UInt32:
+            case TensorElementType.Int64:
+            case TensorElementType.UInt64:
+            case TensorElementType.Float:
+            case TensorElementType.Double:
+                break;
+            default: return InputTypeNotSupported(op, nameof(input), input);
+        }
         switch (to)
         {
             case TensorElementType.Bool: return Success(op, input.Cast<bool>());
