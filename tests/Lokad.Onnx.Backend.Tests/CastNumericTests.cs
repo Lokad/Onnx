@@ -55,6 +55,16 @@ public class CastNumericTests
     }
 
     [Fact]
+    public void NegativeIntToUlong_Wraps()
+    {
+        // ORT 1.29: [-1, min] int32 casts to [2^64-1, 2^64-2^31],
+        // exercising the explicit 64-bit truncate-and-wrap helper.
+        var r = CPUExecutionProvider.Cast(DenseTensor<int>.OfValues(new int[] { -1, -2147483648 }), TensorElementType.UInt64, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new ulong[] { 18446744073709551615ul, 18446744071562067968ul }, ((Tensor<ulong>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void IntToFloat_RoundsAtPrecisionBoundary()
     {
         // ORT 1.29: ints beyond 2^24 round to nearest float ([2^24,
