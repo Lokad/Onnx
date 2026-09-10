@@ -125,4 +125,32 @@ public class TensorOpsReductionTests
         Assert.Equal(1f, output[0, 0] + output[0, 1], 5);
         Assert.Equal(1f, output[1, 0] + output[1, 1], 5);
     }
+
+    [Fact]
+    public void Softmax_NonLastAxis_MatchesOrt()
+    {
+        // ORT 1.29 on arange(24) shaped [2, 3, 4]: strided reduction paths.
+        var data = new float[2, 3, 4];
+        for (int i = 0; i < 2; i++) for (int j = 0; j < 3; j++) for (int k = 0; k < 4; k++) data[i, j, k] = i * 12 + j * 4 + k;
+        var x = DenseTensor<float>.OfValues(data);
+        var e0 = new float[24];
+        for (int i = 0; i < 12; i++) e0[i] = 6.1441742E-06f;
+        for (int i = 12; i < 24; i++) e0[i] = 0.9999938f;
+        AssertStage(Tensor<float>.Softmax(x, 0, null, 13).ToArray(), e0);
+        var e1 = new float[24];
+        for (int b = 0; b < 2; b++)
+        {
+            for (int j = 0; j < 4; j++) e1[b * 12 + j] = 3.2932041E-04f;
+            for (int j = 4; j < 8; j++) e1[b * 12 + j] = 0.017980287f;
+            for (int j = 8; j < 12; j++) e1[b * 12 + j] = 0.98169035f;
+        }
+        AssertStage(Tensor<float>.Softmax(x, 1, null, 13).ToArray(), e1);
+        AssertStage(Tensor<float>.Softmax(x, -2, null, 13).ToArray(), e1);
+    }
+
+    static void AssertStage(float[] got, float[] expected)
+    {
+        Assert.Equal(expected.Length, got.Length);
+        for (int i = 0; i < expected.Length; i++) Assert.Equal(expected[i], got[i], 6);
+    }
 }
