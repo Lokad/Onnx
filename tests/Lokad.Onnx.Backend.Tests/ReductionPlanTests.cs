@@ -104,6 +104,22 @@ public class ReductionPlanTests
     }
 
     [Fact]
+    public void AbsentAxes_WithoutNoopKeepdims_ReducesToScalar()
+    {
+        // The one absent-axes combination without a pin: null axes with
+        // keepdims=false reduces everything to a rank-0 scalar (1+2=3).
+        // Exact small-integer arithmetic needs no ORT reference.
+        var s = CPUExecutionProvider.ReduceSum(Data(), null, 0, 0, null);
+        Assert.Equal(OpStatus.Success, s.Status);
+        var ys = (Tensor<float>)s.Outputs[0];
+        Assert.Equal(new int[0], ys.Dimensions.ToArray());
+        Assert.Equal(new float[] { 3f }, ys.ToArray());
+        var m = CPUExecutionProvider.ReduceMean(Data(), null, 0, 0, null);
+        Assert.Equal(OpStatus.Success, m.Status);
+        Assert.Equal(new float[] { 1.5f }, ((Tensor<float>)m.Outputs[0]).ToArray());
+    }
+
+    [Fact]
     public void NegativeAxes_EquivalentToPositive()
     {
         var pos = Tensor<float>.ReduceSum(Data(), new int[] { 1 }.ToTensor<int>(), false, false);
