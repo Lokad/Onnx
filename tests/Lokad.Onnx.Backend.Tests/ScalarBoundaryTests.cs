@@ -41,6 +41,18 @@ public class ScalarBoundaryTests
     }
 
     [Fact]
+    public void ScalarPow_MatchesReference()
+    {
+        // ORT 1.29 rank-0: Pow(-8,3)=-512, Pow(3,2)=9.
+        var neg = CPU.Pow(Scalar(-8f), Scalar(3f), null);
+        Assert.Equal(OpStatus.Success, neg.Status);
+        Assert.Equal(new float[] { -512f }, ((Tensor<float>)neg.Outputs![0]).ToArray());
+        var sq = CPU.Pow(Scalar(3f), Scalar(2f), null);
+        Assert.Equal(OpStatus.Success, sq.Status);
+        Assert.Equal(new float[] { 9f }, ((Tensor<float>)sq.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void ScalarReduction_IsIdentity()
     {
         var mean = Tensor<float>.ReduceMean(Scalar(5f), null, false, false);
