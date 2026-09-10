@@ -80,5 +80,29 @@ namespace Lokad.Onnx.Backend.Tests
         Assert.Equal(new int[] { 1, 0 }, uy.Dimensions.ToArray());
         Assert.Empty(uy.ToArray());
     }
+
+    [Fact]
+    public void SqueezeNodeSingleInput_SqueezesAll()
+    {
+        // ORT 1.29 (opset 13): a one-input Squeeze drops every size-1
+        // dim; the node passes the missing axes straight through to the
+        // provider null path pinned above.
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 13 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[1, 3, 1] { { { 1f }, { 2f }, { 3f } } });
+        var node = new Node
+        {
+            Name = "sq", Op = OpType.Squeeze, Inputs = new[] { "x" }, Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs[0];
+        Assert.Equal(new int[] { 3 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 2f, 3f }, y.ToArray());
+    }
     }
 }
