@@ -415,6 +415,18 @@ namespace Lokad.Onnx.Backend.Tests
         // out-of-range test cites this same Unsqueeze precedent).
         var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
         Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(x, DenseTensor<long>.OfValues(new long[] { 1099511627776L }), null));
+        Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(x, DenseTensor<long>.OfValues(new long[] { -1099511627776L }), null));
+    }
+
+    [Fact]
+    public void GatherHugeInt64Indices_Throws()
+    {
+        // ORT 1.29 fails the run; the checked conversion already throws
+        // instead of truncating (the negative-overflow sibling test pins
+        // the bounds-check throw for in-range-but-OOB indices).
+        var data = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f });
+        var huge = DenseTensor<long>.OfValues(new long[] { 1099511627776L });
+        Assert.Throws<System.OverflowException>(() => CPU.Gather(data, huge, 0, null));
     }
 
 
