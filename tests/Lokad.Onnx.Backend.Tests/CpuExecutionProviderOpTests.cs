@@ -162,8 +162,8 @@ public class CpuExecutionProviderOpTests
         var pool = CPU.MaxPool(x, auto_pad: "VALID", kernel_shape: new[] { 2, 2 }, ceil_mode: null, dilations: null, pads: null, storage_order: null, strides: null, options: null);
         Assert.Equal(OpStatus.Success, pool.Status);
         var poolOut = (Tensor<float>)pool.Outputs![0];
-        Assert.Equal(new[] { 1, 1, 1, 1 }, poolOut.Dimensions.ToArray());
-        Assert.Equal(5f, poolOut[0, 0, 0, 0], 5);
+        Assert.Equal(new[] { 1, 1, 2, 2 }, poolOut.Dimensions.ToArray());
+        Assert.Equal(new float[] { 5f, 6f, 8f, 9f }, poolOut.ToArray());
 
         var data = DenseTensor<float>.OfValues(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
         var axes = DenseTensor<int>.OfValues(new int[] { 1 });

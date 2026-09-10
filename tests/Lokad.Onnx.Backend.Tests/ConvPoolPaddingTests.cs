@@ -241,6 +241,19 @@ public class ConvPoolPaddingTests
     }
 
     [Fact]
+    public void MaxPoolNullStrides_DefaultToOne()
+    {
+        // ORT 1.29: omitted strides default to 1 along each axis (not the
+        // kernel); [1,1,3,3] with kernel 2 yields [1,1,2,2].
+        var x = F4(new float[1, 1, 3, 3] { { { { 1f, 2f, 3f }, { 4f, 5f, 6f }, { 7f, 8f, 9f } } } });
+        var r = CPUExecutionProvider.MaxPool(x, null, null, null, new int[] { 2, 2 }, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new[] { 1, 1, 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 5f, 6f, 8f, 9f }, y.ToArray());
+    }
+
+    [Fact]
     public void MaxPoolEmptyBatch_YieldsEmpty()
     {
         // ORT 1.29 allows batch-0 MaxPool (only N may be zero): [0,1,2,2]

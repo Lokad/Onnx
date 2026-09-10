@@ -64,14 +64,14 @@ public class TensorOpsConvPoolTests
             { { 1, 1, 2, 4 }, { 5, 6, 7, 8 }, { 3, 2, 1, 0 }, { 1, 2, 3, 4 } }
         } });
         var y2 = Tensor<int>.MaxPool2D(n, new int[] { 2, 2 }, MathOps.PadType.Valid, null, null, null);
-        Assert.Equal(DenseTensor<int>.OfValues(new int[2, 2] { { 6, 8 }, { 3, 4 } }), y2);
+        Assert.Equal(DenseTensor<int>.OfValues(new int[3, 3] { { 6, 7, 8 }, { 6, 7, 8 }, { 3, 3, 4 } }), y2);
 
         var d = DenseTensor<double>.OfValues(new double[1, 1, 3, 3] { { {
             { 1.0, 5.0, 2.0 }, { 4.0, 3.0, 6.0 }, { 7.0, 0.0, 8.0 }
         } } });
         var yd = Tensor<double>.MaxPool2D(d, new int[] { 2, 2 }, MathOps.PadType.Valid, null, null, null, false);
-        Assert.Equal(new[] { 1, 1, 1, 1 }, yd.Dimensions.ToArray());
-        Assert.Equal(5.0, yd[0, 0, 0, 0], 10);
+        Assert.Equal(new[] { 1, 1, 2, 2 }, yd.Dimensions.ToArray());
+        Assert.Equal(new double[] { 5.0, 6.0, 7.0, 8.0 }, yd.ToArray());
     }
 
     static float[] NaiveIm2Col(float[] src, int C, int H, int W, int kH, int kW, int dH, int dW, int sH, int sW, int pT, int pL, int pB, int pR)

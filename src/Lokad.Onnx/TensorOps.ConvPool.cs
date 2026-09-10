@@ -323,7 +323,7 @@ where T : unmanaged
         }
         if (strides == null)
         {
-            strides = kernelshape;
+            strides = new int[] { 1, 1 };
         }
         if (dilations == null)
         {
@@ -364,7 +364,7 @@ where T : unmanaged
         }
         if (strides == null)
         {
-            strides = kernelshape;
+            strides = new int[] { 1, 1 };
         }
         if (dilations == null)
         {
