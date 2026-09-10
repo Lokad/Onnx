@@ -184,6 +184,40 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void IdentityHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: Identity has no schema, provider, or import folding; like
+        // Mod/Pad it must stay honestly unsupported with a clean
+        // reason-naming failure, never a throw.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Identity));
+        var node = Nod(OpType.Identity, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Identity", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ClipHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Clip kernel exists anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Clip));
+        var node = Nod(OpType.Clip, "", 13,
+            new[] { "x", "lo", "hi" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f, 2f }));
+        Bind(graph, "lo", DenseTensor<float>.OfValues(new float[] { 0f }));
+        Bind(graph, "hi", DenseTensor<float>.OfValues(new float[] { 1f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Clip", r.Message ?? "");
+    }
+
+    [Fact]
     public void RegistryEntries_AreImmutable()
     {
         // C08: no consumer may rewrite the capability registry after construction.
