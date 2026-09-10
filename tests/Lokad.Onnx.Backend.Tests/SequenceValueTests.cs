@@ -85,6 +85,20 @@ public class SequenceValueTests
     }
 
     [Fact]
+    public void SplitToSequence_NullAxis_DefaultsToZero()
+    {
+        // ORT 1.29: omitted axis splits axis 0 ([[1,2],[3,4]] with sizes
+        // [1,1] yields [(1,2),(1,2)]).
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+        var r = CPUExecutionProvider.SplitToSequence(x, DenseTensor<long>.OfValues(new long[] { 1L, 1L }), null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var items = ((TensorSequence)r.Outputs![0]).Items;
+        Assert.Equal(2, items.Count);
+        Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)items[0]).ToArray());
+        Assert.Equal(new float[] { 3f, 4f }, ((Tensor<float>)items[1]).ToArray());
+    }
+
+    [Fact]
     public void SplitToSequence_FloatSplit_FailsCleanly()
     {
         // ORT refuses scalar and vector float splits at load; the
