@@ -91,4 +91,22 @@ public class CastBoundaryTests
         var w64 = (Tensor<ulong>)CastTo(DenseTensor<uint>.OfValues(new uint[] { 4294967295u }), TensorElementType.UInt64);
         Assert.Equal(new ulong[] { 4294967295ul }, w64.ToArray());
     }
+
+    [Fact]
+    public void Sub32BoolSources_Widen()
+    {
+        // ORT 1.29: sub-32 and bool sources widen exactly (no rounding).
+        var i8 = (Tensor<int>)CastTo(DenseTensor<sbyte>.OfValues(new sbyte[] { -128, -1, 0, 127 }), TensorElementType.Int32);
+        Assert.Equal(new int[] { -128, -1, 0, 127 }, i8.ToArray());
+        var u8 = (Tensor<int>)CastTo(DenseTensor<byte>.OfValues(new byte[] { 0, 255 }), TensorElementType.Int32);
+        Assert.Equal(new int[] { 0, 255 }, u8.ToArray());
+        var i16 = (Tensor<int>)CastTo(DenseTensor<short>.OfValues(new short[] { -32768, 30000 }), TensorElementType.Int32);
+        Assert.Equal(new int[] { -32768, 30000 }, i16.ToArray());
+        var u16 = (Tensor<int>)CastTo(DenseTensor<ushort>.OfValues(new ushort[] { 0, 65535 }), TensorElementType.Int32);
+        Assert.Equal(new int[] { 0, 65535 }, u16.ToArray());
+        var b = (Tensor<int>)CastTo(DenseTensor<bool>.OfValues(new bool[] { false, true }), TensorElementType.Int32);
+        Assert.Equal(new int[] { 0, 1 }, b.ToArray());
+        var f = (Tensor<float>)CastTo(DenseTensor<sbyte>.OfValues(new sbyte[] { -128, 100 }), TensorElementType.Float);
+        Assert.Equal(new float[] { -128f, 100f }, f.ToArray());
+    }
 }
