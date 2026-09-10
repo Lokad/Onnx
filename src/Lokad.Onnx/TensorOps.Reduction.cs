@@ -281,6 +281,39 @@ where T : unmanaged
         return ApplyKeepDims(output, plan, keepDims);
     }
 
+    public static Tensor<int> ReduceMax(Tensor<int> data, Tensor<int>? axes) => ReduceMax(data, axes, null, null);
+
+        public static Tensor<int> ReduceMax(Tensor<int> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)
+    {
+        StartOpStage(OpStage.ValidateArguments);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, true, _noOpWithEmptyAxes, out var keepDims);
+        if (plan.IsNoOp) return data.Clone();
+
+        StartOpStage(OpStage.CalculateIndices);
+        var (pdata, oshape, r) = PrepareReduction(data, plan.Axes);
+        var output = DenseTensor<int>.OfShape(oshape);
+
+        StartOpStage(OpStage.Math);
+        var xs = pdata.Buffer.Span;
+        var os = output.Buffer.Span;
+        for (int i = 0; i < os.Length; ++i)
+        {
+            int offset = i * r;
+            // No integer identity exists: ORT 1.29 fails empty int
+            // reductions, unlike float which yields -Infinity, so an empty
+            // extent throws instead of writing a seed.
+            if (r == 0) throw new ArgumentException(nameof(axes), "ReduceMax over an empty extent has no result for integer types.");
+            int max = xs[offset];
+            for (int j = 1; j < r; ++j)
+            {
+                int v = xs[offset + j];
+                if (v > max) max = v;
+            }
+            os[i] = max;
+        }
+        return ApplyKeepDims(output, plan, keepDims);
+    }
+
     public static Tensor<double> ReduceMax(Tensor<double> data, Tensor<int>? axes) => ReduceMax(data, axes, null, null);
 
         public static Tensor<double> ReduceMax(Tensor<double> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)

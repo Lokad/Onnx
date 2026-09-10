@@ -350,15 +350,20 @@ public class CpuExecutionProviderOpTests
     }
 
     [Fact]
-    public void UnaryMath_RejectSub32()
+    public void UnaryMath_RejectUnsupportedSub32()
     {
-        // Documented gap, not agreement: ORT accepts int8 Abs (probed
-        // [1]), but sub-32 kernels are out of scope, so these fail
-        // descriptively instead of reaching a kernel cast.
+        // Signed sub-32 Neg/Abs moved to supported (values pinned in
+        // IntegerArithmeticBoundaryTests); unsigned Neg has no ORT kernel
+        // and float-only kernels stay closed to every sub-32 width
+        // (all four probed refused at opset 14).
+        var u8 = DenseTensor<byte>.OfValues(new byte[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.Neg(u8, null).Status);
+        var u16 = DenseTensor<ushort>.OfValues(new ushort[] { 1 });
+        Assert.Equal(OpStatus.Failure, CPU.Neg(u16, null).Status);
         var s8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
-        Assert.Equal(OpStatus.Failure, CPU.Abs(s8, null).Status);
-        Assert.Equal(OpStatus.Failure, CPU.Neg(s8, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Sqrt(s8, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Cos(s8, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Relu(u8, null).Status);
     }
 
     [Fact]

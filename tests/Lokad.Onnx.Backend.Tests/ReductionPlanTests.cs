@@ -288,15 +288,14 @@ public class ReductionPlanTests
     public void OutOfScopeDtypes_RejectedCleanly()
     {
         // int8 ReduceSum is refused at load on both sides (agreement),
-        // while int64 Sum/Mean/Max and int32 Max compute in ORT
-        // (documented gaps: int64/uint Reduce kernels are out of scope);
-        // all fail descriptively here instead of reaching a kernel cast.
+        // while int64 Sum/Mean/Max compute in ORT (documented gaps:
+        // int64/uint Reduce kernels are out of scope); int32 Max moved to
+        // supported (values pinned in ReduceMaxInt32_MatchesOrt). The rest
+        // fail descriptively here instead of reaching a kernel cast.
         var i64 = DenseTensor<long>.OfValues(new long[] { 1L, 2L });
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(i64, null, null, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(i64, null, null, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(i64, null, null, null, null).Status);
-        var i32 = DenseTensor<int>.OfValues(new int[] { 1, 2 });
-        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(i32, null, null, null, null).Status);
         var i8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(i8, null, null, null, null).Status);
     }
@@ -420,4 +419,35 @@ public class ReductionPlanTests
         Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceSum(x, DenseTensor<long>.OfValues(new long[] { -1099511627776L }), 0, 0, null));
     }
 
+    [Fact]
+    public void ReduceMaxInt32_MatchesOrt()
+    {
+        // ORT 1.29 runs int32 ReduceMax (axes attribute at 14, axes input
+        // at 18, both probed); empty reduction extents fail the run there
+        // (no integer identity), so the kernel throws instead of writing
+        // a seed like the float -inf path.
+        var x = DenseTensor<int>.OfValues(new int[,] { { 3, 1 }, { 2, 5 } });
+        var axes = new int[] { 1 }.ToTensor<int>();
+        var r = CPUExecutionProvider.ReduceMax(x, axes, 0, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new int[] { 3, 5 }, ((Tensor<int>)r.Outputs![0]).ToArray());
+        var e = DenseTensor<int>.OfShape(2, 0);
+        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceMax(e, axes, 0, null, null));
+        var graph = new ComputationalGraph
+        {
+            Opset = new Dictionary<string, int> { [""] = 18 },
+            Metadata = new Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = e;
+        graph.Inputs["a"] = axes;
+        var node = new Node
+        {
+            Name = "n", Op = OpType.ReduceMax, OpTypeName = OpType.ReduceMax.ToString(), Domain = "",
+            OpsetVersion = 18, IsFused = false,
+            Inputs = new[] { "x", "a" }, Outputs = new[] { "z" },
+            Attributes = new Dictionary<string, object>(),
+        };
+        var rn = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, rn.Status);
+    }
 }

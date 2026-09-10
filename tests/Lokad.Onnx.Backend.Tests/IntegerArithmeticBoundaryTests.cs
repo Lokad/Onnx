@@ -261,4 +261,32 @@ public class IntegerArithmeticBoundaryTests
         g.Nodes.Add(new Node { Name = "n", Op = OpType.Div, OpsetVersion = 14, Inputs = new[] { "x", "y" }, Outputs = new[] { "z" } });
         return g;
     }
+
+    [Fact]
+    public void Sub32NegAbs_MatchesOrtWrap()
+    {
+        // ORT 1.29 runs Neg on signed sub-32 and Abs on all four sub-32
+        // widths with wraparound (all values below probed at opsets 11/13/14,
+        // so no version gate); unsigned Neg stays refused on both sides.
+        var n8 = CPU.Neg(DenseTensor<sbyte>.OfValues(new sbyte[] { -100, 3, -128 }), null);
+        Assert.Equal(OpStatus.Success, n8.Status);
+        Assert.Equal(new sbyte[] { 100, -3, -128 }, ((Tensor<sbyte>)n8.Outputs![0]).ToArray());
+        var n16 = CPU.Neg(DenseTensor<short>.OfValues(new short[] { -30000, 3, -32768 }), null);
+        Assert.Equal(OpStatus.Success, n16.Status);
+        Assert.Equal(new short[] { 30000, -3, -32768 }, ((Tensor<short>)n16.Outputs![0]).ToArray());
+        var a8 = CPU.Abs(DenseTensor<sbyte>.OfValues(new sbyte[] { -100, 3, -128 }), null);
+        Assert.Equal(OpStatus.Success, a8.Status);
+        Assert.Equal(new sbyte[] { 100, 3, -128 }, ((Tensor<sbyte>)a8.Outputs![0]).ToArray());
+        var au8 = CPU.Abs(DenseTensor<byte>.OfValues(new byte[] { 200, 3, 0 }), null);
+        Assert.Equal(OpStatus.Success, au8.Status);
+        Assert.Equal(new byte[] { 200, 3, 0 }, ((Tensor<byte>)au8.Outputs![0]).ToArray());
+        var a16 = CPU.Abs(DenseTensor<short>.OfValues(new short[] { -30000, 3, -32768 }), null);
+        Assert.Equal(OpStatus.Success, a16.Status);
+        Assert.Equal(new short[] { 30000, 3, -32768 }, ((Tensor<short>)a16.Outputs![0]).ToArray());
+        var au16 = CPU.Abs(DenseTensor<ushort>.OfValues(new ushort[] { 60000, 3, 0 }), null);
+        Assert.Equal(OpStatus.Success, au16.Status);
+        Assert.Equal(new ushort[] { 60000, 3, 0 }, ((Tensor<ushort>)au16.Outputs![0]).ToArray());
+        Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<byte>.OfValues(new byte[] { 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<ushort>.OfValues(new ushort[] { 1 }), null).Status);
+    }
 }

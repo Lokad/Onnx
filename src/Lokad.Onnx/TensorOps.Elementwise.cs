@@ -516,6 +516,16 @@ where T : unmanaged
     public static Tensor<uint> Abs(Tensor<uint> x) => x.Apply(v => v);
 
     public static Tensor<ulong> Abs(Tensor<ulong> x) => x.Apply(v => v);
+    public static Tensor<sbyte> Negate(Tensor<sbyte> x) => Negate(x, TensorExecutionOptions.Auto);
+    public static Tensor<sbyte> Negate(Tensor<sbyte> x, TensorExecutionOptions options) =>
+        x.VectorizedApply(Vector.Negate, l => (sbyte)-l, options);
+    public static Tensor<short> Negate(Tensor<short> x) => Negate(x, TensorExecutionOptions.Auto);
+    public static Tensor<short> Negate(Tensor<short> x, TensorExecutionOptions options) =>
+        x.VectorizedApply(Vector.Negate, l => (short)-l, options);
+    public static Tensor<sbyte> Abs(Tensor<sbyte> x) => x.Apply(l => l >= 0 ? l : (sbyte)-l);
+    public static Tensor<byte> Abs(Tensor<byte> x) => x.Apply(v => v);
+    public static Tensor<short> Abs(Tensor<short> x) => x.Apply(l => l >= 0 ? l : (short)-l);
+    public static Tensor<ushort> Abs(Tensor<ushort> x) => x.Apply(v => v);
 
     /// <summary>
     /// Exact Gaussian error linear unit: 0.5 * x * (1 + erf(x / sqrt(2))).

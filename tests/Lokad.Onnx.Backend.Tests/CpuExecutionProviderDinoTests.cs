@@ -25,7 +25,7 @@ public class CpuExecutionProviderDinoTests
         Assert.Equal(0d, ((Tensor<double>)sin.Outputs[0])[0], 10);
 
         Assert.Equal(OpStatus.Failure, CPU.Cos(DenseTensor<int>.OfValues(new int[] { 0 }), null).Status);
-        Assert.Equal(OpStatus.Failure, CPU.Abs(DenseTensor<byte>.OfValues(new byte[] { 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Abs(DenseTensor<bool>.OfValues(new bool[] { true }), null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Neg(DenseTensor<bool>.OfValues(new bool[] { true }), null).Status);
     }
 

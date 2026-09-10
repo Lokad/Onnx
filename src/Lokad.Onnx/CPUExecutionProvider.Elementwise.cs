@@ -430,6 +430,10 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Abs((Tensor<sbyte>)X));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Abs((Tensor<byte>)X));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Abs((Tensor<short>)X));
+            case TensorElementType.UInt16: return Success(op, Tensor<ushort>.Abs((Tensor<ushort>)X));
             case TensorElementType.Float: return Success(op, Tensor<float>.Abs((Tensor<float>)X));
             case TensorElementType.Double: return Success(op, Tensor<double>.Abs((Tensor<double>)X));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Abs((Tensor<int>)X));
@@ -506,6 +510,8 @@ public partial class CPUExecutionProvider
         var opts = (options ?? ExecutionOptions.Default).Validated();
         switch (X.ElementType)
         {
+            case TensorElementType.Int8: return Success(op, Tensor<sbyte>.Negate((Tensor<sbyte>)X, opts.Tensor));
+            case TensorElementType.Int16: return Success(op, Tensor<short>.Negate((Tensor<short>)X, opts.Tensor));
             case TensorElementType.Float: return Success(op, Tensor<float>.Negate((Tensor<float>)X, opts.Tensor));
             case TensorElementType.Double: return Success(op, Tensor<double>.Negate((Tensor<double>)X, opts.Tensor));
             case TensorElementType.Int32: return Success(op, Tensor<int>.Negate((Tensor<int>)X, opts.Tensor));
