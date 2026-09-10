@@ -75,6 +75,23 @@ public class CpuExecutionProviderDinoTests
     }
 
     [Fact]
+    public void Unsqueeze_OutOfRangeAxis_Throws()
+    {
+        // ORT 1.29 refuses axis 5 on rank 1 (valid [-2,1]) at build.
+        var data = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        Assert.Throws<System.ArgumentException>(() => CPU.Unsqueeze(data, DenseTensor<long>.OfValues(new long[] { 5L }), null));
+    }
+
+    [Fact]
+    public void Squeeze_NonSingletonAxis_Fails()
+    {
+        // ORT 1.29 fails the run (dim 0 has size 2, not 1).
+        var data = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var r = CPU.Squeeze(data, DenseTensor<long>.OfValues(new long[] { 0L }), null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
     public void Squeeze_Axes_Variants()
     {
         var threeDim = DenseTensor<int>.OfShape(1, 2, 1);
