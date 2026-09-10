@@ -85,6 +85,20 @@ public class SequenceValueTests
     }
 
     [Fact]
+    public void SplitToSequence_NullSplit_ChunksOnes()
+    {
+        // ORT 1.29: absent split chunks size 1 ([[1,2,3,4]] on axis 1
+        // yields four (1,1) pieces).
+        var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f } });
+        var r = CPUExecutionProvider.SplitToSequence(x, null, 1, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var items = ((TensorSequence)r.Outputs![0]).Items;
+        Assert.Equal(4, items.Count);
+        Assert.Equal(new float[] { 1f }, ((Tensor<float>)items[0]).ToArray());
+        Assert.Equal(new float[] { 4f }, ((Tensor<float>)items[3]).ToArray());
+    }
+
+    [Fact]
     public void SplitToSequence_NullAxis_DefaultsToZero()
     {
         // ORT 1.29: omitted axis splits axis 0 ([[1,2],[3,4]] with sizes
