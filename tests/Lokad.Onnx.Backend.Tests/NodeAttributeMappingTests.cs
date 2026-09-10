@@ -123,6 +123,29 @@ public class NodeAttributeMappingTests
     }
 
     [Fact]
+    public void MaxPool_OmittedStrides_DefaultToOne()
+    {
+        // ORT 1.29: omitted strides default to 1; [1,1,3,3] with kernel 2
+        // yields [1,1,2,2] [[5,6],[8,9]] (provider default pinned
+        // separately, this covers the node fill path).
+        var graph = CreateGraph(13);
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[1, 1, 3, 3] { { { { 1f, 2f, 3f }, { 4f, 5f, 6f }, { 7f, 8f, 9f } } } });
+        var node = new Node
+        {
+            Name = "pool",
+            Op = OpType.MaxPool,
+            Inputs = new[] { "x" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object> { ["kernel_shape"] = new long[] { 2L, 2L } }
+        };
+        var result = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        var y = (Tensor<float>)result.Outputs[0];
+        Assert.Equal(new[] { 1, 1, 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 5f, 6f, 8f, 9f }, y.ToArray());
+    }
+
+    [Fact]
     public void Conv_UsesPadsStridesKernelShapeAttributes()
     {
         var graph = CreateGraph(13);
