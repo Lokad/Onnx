@@ -1395,4 +1395,119 @@ public class ExceptionalFloatTests
             Assert.Equal(1f / 43f, y[86 + j], 5);
         }
     }
+
+    [Fact]
+    public void ScalarBroadcastExceptional_MatchesOrt()
+    {
+        // ORT 1.29 float and double: rank-0 scalars take dedicated vector
+        // blend paths (array OP scalar and scalar OP array), never pinned
+        // before - all prior exceptional pins used same-shape operands.
+        // The 50-wide arrays span their SIMD bodies and scalar tails.
+        var av = new float[] { float.NaN, 1f, float.PositiveInfinity, float.PositiveInfinity, float.NegativeInfinity, 0f, 2f, 1f, float.NegativeInfinity };
+        var a = new float[50];
+        for (int i = 0; i < a.Length; i++) a[i] = av[i % av.Length];
+        var ta = DenseTensor<float>.OfValues(a);
+        AssertBinLanes(Rep(float.NaN, 9), OutF(CPU.Add(ta, ScalarF(float.NaN), null, null)));
+        AssertBinLanes(Rep(float.NaN, 9), OutF(CPU.Add(ScalarF(float.NaN), ta, null, null)));
+        var mul = new float[] { float.NaN, float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity, float.NegativeInfinity, float.NaN, float.PositiveInfinity, float.PositiveInfinity, float.NegativeInfinity };
+        AssertBinLanes(mul, OutF(CPU.Mul(ta, ScalarF(float.PositiveInfinity), null, null)));
+        AssertBinLanes(mul, OutF(CPU.Mul(ScalarF(float.PositiveInfinity), ta, null, null)));
+        AssertBinLanes(new float[] { float.NaN, float.NegativeInfinity, float.NaN, float.NaN, float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity }, OutF(CPU.Sub(ta, ScalarF(float.PositiveInfinity), null)));
+        AssertBinLanes(new float[] { float.NaN, 9f, float.NegativeInfinity, float.NegativeInfinity, float.PositiveInfinity, 10f, 8f, 9f, float.PositiveInfinity }, OutF(CPU.Sub(ScalarF(10f), ta, null)));
+        AssertBinLanes(mul, OutF(CPU.Div(ta, ScalarF(0f), null, null)));
+        var d1 = OutF(CPU.Div(ScalarF(1f), ta, null, null));
+        for (int i = 0; i < d1.Length; i++)
+        {
+            switch (i % av.Length)
+            {
+                case 0: Assert.True(float.IsNaN(d1[i])); break;
+                case 1: Assert.Equal(1f, d1[i]); break;
+                case 2: Assert.Equal(0f, d1[i]); break;
+                case 3: Assert.Equal(0f, d1[i]); break;
+                case 4: Assert.Equal(int.MinValue, System.BitConverter.SingleToInt32Bits(d1[i])); break;
+                case 5: Assert.Equal(float.PositiveInfinity, d1[i]); break;
+                case 6: Assert.Equal(0.5f, d1[i]); break;
+                case 7: Assert.Equal(1f, d1[i]); break;
+                default: Assert.Equal(int.MinValue, System.BitConverter.SingleToInt32Bits(d1[i])); break;
+            }
+        }
+        var avd = new double[] { double.NaN, 1.0, double.PositiveInfinity, double.PositiveInfinity, double.NegativeInfinity, 0.0, 2.0, 1.0, double.NegativeInfinity };
+        var ad = new double[50];
+        for (int i = 0; i < ad.Length; i++) ad[i] = avd[i % avd.Length];
+        var tad = DenseTensor<double>.OfValues(ad);
+        AssertBinLanesDouble(RepD(double.NaN, 9), OutD(CPU.Add(tad, ScalarD(double.NaN), null, null)));
+        AssertBinLanesDouble(RepD(double.NaN, 9), OutD(CPU.Add(ScalarD(double.NaN), tad, null, null)));
+        var muld = new double[] { double.NaN, double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity, double.NegativeInfinity, double.NaN, double.PositiveInfinity, double.PositiveInfinity, double.NegativeInfinity };
+        AssertBinLanesDouble(muld, OutD(CPU.Mul(tad, ScalarD(double.PositiveInfinity), null, null)));
+        AssertBinLanesDouble(muld, OutD(CPU.Mul(ScalarD(double.PositiveInfinity), tad, null, null)));
+        AssertBinLanesDouble(new double[] { double.NaN, double.NegativeInfinity, double.NaN, double.NaN, double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity }, OutD(CPU.Sub(tad, ScalarD(double.PositiveInfinity), null)));
+        AssertBinLanesDouble(new double[] { double.NaN, 9.0, double.NegativeInfinity, double.NegativeInfinity, double.PositiveInfinity, 10.0, 8.0, 9.0, double.PositiveInfinity }, OutD(CPU.Sub(ScalarD(10.0), tad, null)));
+        AssertBinLanesDouble(muld, OutD(CPU.Div(tad, ScalarD(0.0), null, null)));
+        var dd1 = OutD(CPU.Div(ScalarD(1.0), tad, null, null));
+        for (int i = 0; i < dd1.Length; i++)
+        {
+            switch (i % avd.Length)
+            {
+                case 0: Assert.True(double.IsNaN(dd1[i])); break;
+                case 1: Assert.Equal(1.0, dd1[i]); break;
+                case 2: Assert.Equal(0.0, dd1[i]); break;
+                case 3: Assert.Equal(0.0, dd1[i]); break;
+                case 4: Assert.Equal(long.MinValue, System.BitConverter.DoubleToInt64Bits(dd1[i])); break;
+                case 5: Assert.Equal(double.PositiveInfinity, dd1[i]); break;
+                case 6: Assert.Equal(0.5, dd1[i]); break;
+                case 7: Assert.Equal(1.0, dd1[i]); break;
+                default: Assert.Equal(long.MinValue, System.BitConverter.DoubleToInt64Bits(dd1[i])); break;
+            }
+        }
+    }
+
+    static DenseTensor<float> ScalarF(float v)
+    {
+        var t = DenseTensor<float>.OfShape();
+        t.SetValue(0, v);
+        return t;
+    }
+
+    static DenseTensor<double> ScalarD(double v)
+    {
+        var t = DenseTensor<double>.OfShape();
+        t.SetValue(0, v);
+        return t;
+    }
+
+    static float[] OutF(OpResult r)
+    {
+        Assert.Equal(OpStatus.Success, r.Status);
+        return ((Tensor<float>)r.Outputs![0]).ToArray();
+    }
+
+    static double[] OutD(OpResult r)
+    {
+        Assert.Equal(OpStatus.Success, r.Status);
+        return ((Tensor<double>)r.Outputs![0]).ToArray();
+    }
+
+    static float[] Rep(float v, int n)
+    {
+        var a = new float[n];
+        for (int i = 0; i < n; i++) a[i] = v;
+        return a;
+    }
+
+    static double[] RepD(double v, int n)
+    {
+        var a = new double[n];
+        for (int i = 0; i < n; i++) a[i] = v;
+        return a;
+    }
+
+    static void AssertBinLanes(float[] pattern, float[] actual)
+    {
+        for (int i = 0; i < actual.Length; i++) AssertBinLane(pattern[i % pattern.Length], actual[i]);
+    }
+
+    static void AssertBinLanesDouble(double[] pattern, double[] actual)
+    {
+        for (int i = 0; i < actual.Length; i++) AssertBinLaneDouble(pattern[i % pattern.Length], actual[i]);
+    }
 }
