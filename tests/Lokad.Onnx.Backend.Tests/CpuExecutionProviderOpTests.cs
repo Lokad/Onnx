@@ -533,8 +533,23 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Success, gelu.Status);
         Assert.Empty(((Tensor<float>)gelu.Outputs![0]).ToArray());
     }
+
+    [Fact]
+    public void HalfArithmetic_RefusedCleanly()
+    {
+        // Documented scope boundary, not parity: ORT 1.29 runs float16
+        // Add/Sub/Mul/Div/Neg/Abs (all probed) and refuses bfloat16 Add
+        // (probed); half kernels do not exist here, so every form fails
+        // descriptively instead of reaching a kernel cast.
+        var a = DenseTensor<Half>.OfValues(new Half[] { (Half)1f, (Half)2f });
+        var b = DenseTensor<Half>.OfValues(new Half[] { (Half)3f, (Half)4f });
+        Assert.Equal(OpStatus.Failure, CPU.Add(a, b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sub(a, b, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Mul(a, b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Div(a, b, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Neg(a, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Abs(a, null).Status);
+        var bf = Tensor<BFloat16>.Ones(2);
+        Assert.Equal(OpStatus.Failure, CPU.Add(bf, bf, null, null).Status);
+    }
 }
-
-
-
-
