@@ -464,6 +464,19 @@ public class ExceptionalFloatTests
     }
 
     [Fact]
+    public void IndeterminateForms_YieldNaN()
+    {
+        // ORT 1.29: 0*inf, inf/inf, and inf-inf are all NaN (IEEE).
+        var m = CPU.Mul(DenseTensor<float>.OfValues(new float[] { 0f }), DenseTensor<float>.OfValues(new float[] { float.PositiveInfinity }), null, null);
+        Assert.Equal(OpStatus.Success, m.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)m.Outputs![0])[0]));
+        Assert.True(float.IsNaN(Div1(float.PositiveInfinity, float.PositiveInfinity)));
+        var s = CPU.Sub(DenseTensor<float>.OfValues(new float[] { float.PositiveInfinity }), DenseTensor<float>.OfValues(new float[] { float.PositiveInfinity }), null);
+        Assert.Equal(OpStatus.Success, s.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)s.Outputs![0])[0]));
+    }
+
+    [Fact]
     public void DivPowNaN_Passthrough()
     {
         // ORT 1.29: NaN on either side of Div, and NaN base or exponent
