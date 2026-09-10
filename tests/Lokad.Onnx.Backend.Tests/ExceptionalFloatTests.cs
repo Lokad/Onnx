@@ -789,4 +789,131 @@ public class ExceptionalFloatTests
         Assert.Equal(new long[] { 0L, long.MinValue }, DoubleBits(nameof(CPU.Tanh), dz));
         Assert.Equal(new long[] { 0L, long.MinValue }, DoubleBits(nameof(CPU.Sin), dz));
     }
+
+    static readonly int[] Axis0 = new int[] { 0 };
+
+    [Fact]
+    public void ReduceSumExceptional_MatchesOrt()
+    {
+        // ORT 1.29 float and double: NaN poisons the sum; same-signed
+        // infinities survive; opposing infinities cancel to NaN.
+        var rows = new float[][]
+        {
+            new float[] { 1f, float.NaN, 3f }, new float[] { float.PositiveInfinity, 1f, 2f },
+            new float[] { float.NegativeInfinity, 1f, 2f }, new float[] { float.PositiveInfinity, float.NegativeInfinity, 1f },
+            new float[] { float.PositiveInfinity, float.PositiveInfinity, 1f }, new float[] { float.NegativeInfinity, float.NegativeInfinity, 1f },
+            new float[] { 1f, 2f, 3f },
+        };
+        var axes = DenseTensor<int>.OfValues(Axis0);
+        var fsumExpected = new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, float.NaN, float.PositiveInfinity, float.NegativeInfinity, 6f };
+        for (int i = 0; i < rows.Length; i++)
+        {
+            var r = CPU.ReduceSum(DenseTensor<float>.OfValues(rows[i]), axes, 0, 0, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            float y = ((Tensor<float>)r.Outputs![0]).ToArray()[0];
+            if (float.IsNaN(fsumExpected[i])) Assert.True(float.IsNaN(y));
+            else Assert.Equal(fsumExpected[i], y);
+        }
+        var drows = new double[][]
+        {
+            new double[] { 1.0, double.NaN, 3.0 }, new double[] { double.PositiveInfinity, 1.0, 2.0 },
+            new double[] { double.NegativeInfinity, 1.0, 2.0 }, new double[] { double.PositiveInfinity, double.NegativeInfinity, 1.0 },
+            new double[] { double.PositiveInfinity, double.PositiveInfinity, 1.0 }, new double[] { double.NegativeInfinity, double.NegativeInfinity, 1.0 },
+            new double[] { 1.0, 2.0, 3.0 },
+        };
+        var dsumExpected = new double[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity, double.NaN, double.PositiveInfinity, double.NegativeInfinity, 6.0 };
+        for (int i = 0; i < drows.Length; i++)
+        {
+            var r = CPU.ReduceSum(DenseTensor<double>.OfValues(drows[i]), axes, 0, 0, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            double y = ((Tensor<double>)r.Outputs![0]).ToArray()[0];
+            if (double.IsNaN(dsumExpected[i])) Assert.True(double.IsNaN(y));
+            else Assert.Equal(dsumExpected[i], y);
+        }
+    }
+
+    [Fact]
+    public void ReduceMeanExceptional_MatchesOrt()
+    {
+        // ORT 1.29 float and double: same exceptional table as the sum
+        // (mean is sum/count); the finite row checks the quotient.
+        var axes = DenseTensor<int>.OfValues(Axis0);
+        var rows = new float[][]
+        {
+            new float[] { 1f, float.NaN, 3f }, new float[] { float.PositiveInfinity, 1f, 2f },
+            new float[] { float.NegativeInfinity, 1f, 2f }, new float[] { float.PositiveInfinity, float.NegativeInfinity, 1f },
+            new float[] { float.PositiveInfinity, float.PositiveInfinity, 1f }, new float[] { float.NegativeInfinity, float.NegativeInfinity, 1f },
+            new float[] { 1f, 2f, 3f },
+        };
+        var fmeanExpected = new float[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, float.NaN, float.PositiveInfinity, float.NegativeInfinity, 2f };
+        for (int i = 0; i < rows.Length; i++)
+        {
+            var r = CPU.ReduceMean(DenseTensor<float>.OfValues(rows[i]), axes, 0, 0, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            float y = ((Tensor<float>)r.Outputs![0]).ToArray()[0];
+            if (float.IsNaN(fmeanExpected[i])) Assert.True(float.IsNaN(y));
+            else Assert.Equal(fmeanExpected[i], y);
+        }
+        var drows = new double[][]
+        {
+            new double[] { 1.0, double.NaN, 3.0 }, new double[] { double.PositiveInfinity, 1.0, 2.0 },
+            new double[] { double.NegativeInfinity, 1.0, 2.0 }, new double[] { double.PositiveInfinity, double.NegativeInfinity, 1.0 },
+            new double[] { double.PositiveInfinity, double.PositiveInfinity, 1.0 }, new double[] { double.NegativeInfinity, double.NegativeInfinity, 1.0 },
+            new double[] { 1.0, 2.0, 3.0 },
+        };
+        var dmeanExpected = new double[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity, double.NaN, double.PositiveInfinity, double.NegativeInfinity, 2.0 };
+        for (int i = 0; i < drows.Length; i++)
+        {
+            var r = CPU.ReduceMean(DenseTensor<double>.OfValues(drows[i]), axes, 0, 0, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            double y = ((Tensor<double>)r.Outputs![0]).ToArray()[0];
+            if (double.IsNaN(dmeanExpected[i])) Assert.True(double.IsNaN(y));
+            else Assert.Equal(dmeanExpected[i], y);
+        }
+    }
+
+    [Fact]
+    public void ReduceMaxExceptional_MatchesOrt()
+    {
+        // ORT 1.29 float and double: a leading NaN poisons (seed), but a
+        // later NaN never wins a comparison, so [1,nan,3] is 3. Guarded
+        // because a Math.Max fold would propagate every NaN instead.
+        var axes = DenseTensor<int>.OfValues(Axis0);
+        var rows = new float[][]
+        {
+            new float[] { 1f, float.NaN, 3f }, new float[] { float.PositiveInfinity, 1f, 2f },
+            new float[] { float.NegativeInfinity, 1f, 2f }, new float[] { float.PositiveInfinity, float.NegativeInfinity, 1f },
+            new float[] { float.PositiveInfinity, float.PositiveInfinity, 1f }, new float[] { float.NegativeInfinity, float.NegativeInfinity, 1f },
+            new float[] { 1f, 2f, 3f }, new float[] { float.NaN, 1f, 3f },
+            new float[] { 1f, 3f, float.NaN }, new float[] { float.NaN, float.NaN, float.NaN },
+            new float[] { float.NegativeInfinity, float.NaN, 1f }, new float[] { 1f, float.NaN, float.NegativeInfinity },
+        };
+        var expected = new float[] { 3f, float.PositiveInfinity, 2f, float.PositiveInfinity, float.PositiveInfinity, 1f, 3f, float.NaN, 3f, float.NaN, 1f, 1f };
+        for (int i = 0; i < rows.Length; i++)
+        {
+            var r = CPU.ReduceMax(DenseTensor<float>.OfValues(rows[i]), axes, 0, null, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            float y = ((Tensor<float>)r.Outputs![0]).ToArray()[0];
+            if (float.IsNaN(expected[i])) Assert.True(float.IsNaN(y));
+            else Assert.Equal(expected[i], y);
+        }
+        var drows = new double[][]
+        {
+            new double[] { 1.0, double.NaN, 3.0 }, new double[] { double.PositiveInfinity, 1.0, 2.0 },
+            new double[] { double.NegativeInfinity, 1.0, 2.0 }, new double[] { double.PositiveInfinity, double.NegativeInfinity, 1.0 },
+            new double[] { double.PositiveInfinity, double.PositiveInfinity, 1.0 }, new double[] { double.NegativeInfinity, double.NegativeInfinity, 1.0 },
+            new double[] { 1.0, 2.0, 3.0 }, new double[] { double.NaN, 1.0, 3.0 },
+            new double[] { 1.0, 3.0, double.NaN }, new double[] { double.NaN, double.NaN, double.NaN },
+            new double[] { double.NegativeInfinity, double.NaN, 1.0 }, new double[] { 1.0, double.NaN, double.NegativeInfinity },
+        };
+        var dexpected = new double[] { 3.0, double.PositiveInfinity, 2.0, double.PositiveInfinity, double.PositiveInfinity, 1.0, 3.0, double.NaN, 3.0, double.NaN, 1.0, 1.0 };
+        for (int i = 0; i < drows.Length; i++)
+        {
+            var r = CPU.ReduceMax(DenseTensor<double>.OfValues(drows[i]), axes, 0, null, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            double y = ((Tensor<double>)r.Outputs![0]).ToArray()[0];
+            if (double.IsNaN(dexpected[i])) Assert.True(double.IsNaN(y));
+            else Assert.Equal(dexpected[i], y);
+        }
+    }
 }
