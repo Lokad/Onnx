@@ -111,6 +111,50 @@ public class ConvDirectTests
     }
 
     [Fact]
+    public void InfInput_Propagates()
+    {
+        // ORT 1.29: inf*0 is NaN on both the eligible-1x1 direct path and
+        // the padded fallback (padding zeros times an infinite weight are
+        // NaN, not 0); opposing infinities cancel across the accumulation,
+        // and an infinite bias propagates through the epilogue.
+        var r1 = CPUExecutionProvider.Conv(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { float.PositiveInfinity } } } }),
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 0f } } } }),
+            null, null, null, null, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r1.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)r1.Outputs[0])[0, 0, 0, 0]));
+        var r2 = CPUExecutionProvider.Conv(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { float.PositiveInfinity } } } }),
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 2f } } } }),
+            null, null, null, null, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r2.Status);
+        Assert.Equal(float.PositiveInfinity, ((Tensor<float>)r2.Outputs[0])[0, 0, 0, 0]);
+        var r3 = CPUExecutionProvider.Conv(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { float.PositiveInfinity, 5f } } } }),
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 2] { { { { 1f, float.NegativeInfinity } } } }),
+            null, null, null, null, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r3.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)r3.Outputs[0])[0, 0, 0, 0]));
+        var r4 = CPUExecutionProvider.Conv(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 1f } } } }),
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { float.PositiveInfinity } } } }),
+            null, null, null, null, null, new[] { 0, 0, 1, 1 }, null, null);
+        Assert.Equal(OpStatus.Success, r4.Status);
+        var y4 = ((Tensor<float>)r4.Outputs[0]).ToArray();
+        Assert.Equal(float.PositiveInfinity, y4[0]);
+        Assert.True(float.IsNaN(y4[1]));
+        Assert.True(float.IsNaN(y4[2]));
+        Assert.True(float.IsNaN(y4[3]));
+        var r5 = CPUExecutionProvider.Conv(
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { float.PositiveInfinity } } } }),
+            DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 1f } } } }),
+            DenseTensor<float>.OfValues(new float[] { float.NegativeInfinity }),
+            null, null, null, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r5.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)r5.Outputs[0])[0, 0, 0, 0]));
+    }
+
+    [Fact]
     public void Int32_RejectedCleanly()
     {
         // ORT 1.29 refuses int32 Conv at load (Conv-13 is float-only);
