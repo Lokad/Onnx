@@ -499,6 +499,91 @@ public class OperatorSchemaTests
     }
 
     [Fact]
+    public void ExpHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Exp schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (only MathF.Exp call sites); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Exp));
+        var node = Nod(OpType.Exp, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 0f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Exp", r.Message ?? "");
+    }
+
+    [Fact]
+    public void MaxHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Max schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (only Math.Max call sites); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Max));
+        var node = Nod(OpType.Max, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
+        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Max", r.Message ?? "");
+    }
+
+    [Fact]
+    public void MinHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Min schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (only Math.Min call sites); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Min));
+        var node = Nod(OpType.Min, "", 13,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
+        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Min", r.Message ?? "");
+    }
+
+    [Fact]
+    public void MeanHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Mean schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Mean));
+        var node = Nod(OpType.Mean, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
+        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Mean", r.Message ?? "");
+    }
+
+    [Fact]
+    public void SumHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Sum schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (only LINQ/Vector call sites); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Sum));
+        var node = Nod(OpType.Sum, "", 13,
+            new[] { "x", "y" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(13);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
+        Bind(graph, "y", DenseTensor<float>.OfValues(new float[] { 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Sum", r.Message ?? "");
+    }
+
+
+    [Fact]
     public void RegistryEntries_AreImmutable()
     {
         // C08: no consumer may rewrite the capability registry after construction.
