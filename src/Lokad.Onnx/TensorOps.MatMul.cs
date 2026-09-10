@@ -147,7 +147,7 @@ where T : unmanaged
             int blocked = m - (m % 2);
             if (blocked >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
             {
-                float[] packed = ArrayPool<float>.Shared.Rent(n * k);
+                float[] packed = RentScratch<float>(n * k, options);
                 try
                 {
                     fixed (float* pp = packed)

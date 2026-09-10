@@ -94,6 +94,8 @@ public class ComputationalGraph
 
     internal TensorBufferPool? ActivePool { get; private set; }
 
+    internal IScratchAccountant? ActiveScratch { get; private set; }
+
     /// <summary>
     /// Live reference counts per backing array over the variable bindings
     /// (intermediates plus outputs), null until the first release probe of a
@@ -266,6 +268,7 @@ public class ComputationalGraph
             LastPoolDropped = exec.LastPoolDropped;
             LastPoolAllocatedNewBytes = exec.LastPoolAllocatedNewBytes;
             LastPoolReusedBytes = exec.LastPoolReusedBytes;
+            LastScratchBytes = exec.LastScratchBytes;
             LastPoolPeakOutstandingBytes = exec.LastPoolPeakOutstandingBytes;
         }
     }
@@ -297,6 +300,11 @@ public class ComputationalGraph
     /// <summary>Pooled output bytes served from previously returned arrays during the last execution.</summary>
     /// <remarks>Pool-served bytes avoid new GC allocation; they are not live payload or scratch memory.</remarks>
     public long LastPoolReusedBytes { get; private set; }
+    /// <summary>Kernel scratch bytes rented during the last execution.</summary>
+    /// <remarks>Transient im2col patches and GEMM panel packing rented from ArrayPool,
+    /// counted at rent time on full graph runs (single-node runs do not count).
+    /// Distinct from GC allocation, live payload, and pool-served bytes.</remarks>
+    public long LastScratchBytes { get; private set; }
     /// <summary>High-water mark of pool bytes checked out during the last execution.</summary>
     /// <remarks>Pool outputs and live intermediates raise it; returns lower it. ArrayPool scratch is not counted.</remarks>
     public long LastPoolPeakOutstandingBytes { get; private set; }
@@ -730,6 +738,7 @@ public class ComputationalGraph
 
         using var profilerScope = Profiler.BeginExecution();
         using var poolScope = new ExecutionPoolScope(this);
+        var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch } };
         foreach (var node in Nodes)
         {
             count++;
@@ -753,7 +762,7 @@ public class ComputationalGraph
                 Profiler.StartNodeProfile(node.ID, node.Op);
                 try
                 {
-                    r = node.Execute(this, provider, Options);
+                    r = node.Execute(this, provider, nodeOptions);
                 }
                 finally
                 {
@@ -1288,6 +1297,7 @@ public class ComputationalGraph
         {
             this.graph = graph;
             graph.ActivePool = new TensorBufferPool();
+            graph.ActiveScratch = new ScratchAccountant();
         }
         public void Dispose()
         {
@@ -1301,6 +1311,11 @@ public class ComputationalGraph
                 graph.LastPoolReusedBytes = graph.ActivePool.ReusedBytes;
                 graph.LastPoolPeakOutstandingBytes = graph.ActivePool.PeakOutstandingBytes;
             }
+            if (graph.ActiveScratch is not null)
+            {
+                graph.LastScratchBytes = graph.ActiveScratch.TotalScratchBytes;
+            }
+            graph.ActiveScratch = null;
             graph.ActivePool = null;
         }
     }

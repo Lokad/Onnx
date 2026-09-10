@@ -18,6 +18,14 @@ using static Lokad.Onnx.Profiler;
 public abstract partial class Tensor<T> : TensorBase, IList, IList<T>, IReadOnlyList<T>, IStructuralComparable, IStructuralEquatable, ITensor, INumericTensor
 where T : unmanaged
 {
+    /// <summary>Rents ArrayPool scratch and reports the requested bytes to the run accountant, if any.</summary>
+    static U[] RentScratch<U>(int length, TensorExecutionOptions options) where U : unmanaged
+    {
+        var rented = ArrayPool<U>.Shared.Rent(length);
+        options.ScratchReporter?.AddScratchBytes((long)length * Unsafe.SizeOf<U>());
+        return rented;
+    }
+
     // Shared Conv2D preparation for PadType padding: validates ranks, fills
     // default strides and dilations, resolves dims and kernel extents, and
     // computes the padded output geometry. Exception parameter names below
@@ -142,7 +150,7 @@ where T : unmanaged
         if (dop > 1)
         {
             Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
-                () => ArrayPool<float>.Shared.Rent(patchSize),
+                () => RentScratch<float>(patchSize, options),
                 (b, state, scratch) =>
                 {
                     RunConvBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options);
@@ -152,7 +160,7 @@ where T : unmanaged
         }
         else
         {
-            var scratch = ArrayPool<float>.Shared.Rent(patchSize);
+            var scratch = RentScratch<float>(patchSize, options);
             try
             {
                 for (int b = 0; b < N; b++)
@@ -245,7 +253,7 @@ where T : unmanaged
         if (dop > 1)
         {
             Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
-                () => ArrayPool<double>.Shared.Rent(patchSize),
+                () => RentScratch<double>(patchSize, options),
                 (b, state, scratch) =>
                 {
                     RunConvBatchDouble(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options);
@@ -255,7 +263,7 @@ where T : unmanaged
         }
         else
         {
-            var scratch = ArrayPool<double>.Shared.Rent(patchSize);
+            var scratch = RentScratch<double>(patchSize, options);
             try
             {
                 for (int b = 0; b < N; b++)

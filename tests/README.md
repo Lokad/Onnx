@@ -75,6 +75,9 @@ bytes plus pool service, and never compare figures across these scopes:
   `LastPoolReusedBytes` (served from returned buffers), and
   `LastPoolPeakOutstandingBytes` (high-water mark of checked-out bytes,
   ArrayPool scratch excluded) after `Execute`.
+- Scratch traffic: `ComputationalGraph.LastScratchBytes` (transient im2col
+  patches and GEMM panel packing rented from ArrayPool, counted at rent
+  time on full graph runs) after `Execute`.
 
 Procedure (tracked pieces only): run the local e5 model warmed on one CPU,
 then read the three diagnostics above off the graph after `Execute` and
