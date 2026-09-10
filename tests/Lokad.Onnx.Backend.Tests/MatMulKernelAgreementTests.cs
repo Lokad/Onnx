@@ -309,4 +309,20 @@ public class MatMulKernelAgreementTests
         Assert.Equal(1f, y[2]);
         Assert.Equal(1f, y[3]);
     }
+
+    [Fact]
+    public void NanInputDouble_Propagates()
+    {
+        // ORT 1.29 double: [[nan,1],[1,1]] @ I -> [[nan,nan],[1,1]],
+        // mirroring the float guard above through the double kernel.
+        var a = DenseTensor<double>.OfValues(new double[,] { { double.NaN, 1.0 }, { 1.0, 1.0 } });
+        var b = DenseTensor<double>.OfValues(new double[,] { { 1.0, 0.0 }, { 0.0, 1.0 } });
+        var r = CPUExecutionProvider.MatMul(a, b, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = ((Tensor<double>)r.Outputs[0]).ToArray();
+        Assert.True(double.IsNaN(y[0]));
+        Assert.True(double.IsNaN(y[1]));
+        Assert.Equal(1.0, y[2]);
+        Assert.Equal(1.0, y[3]);
+    }
 }
