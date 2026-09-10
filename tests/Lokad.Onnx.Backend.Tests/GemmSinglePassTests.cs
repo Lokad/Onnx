@@ -165,4 +165,31 @@ public class GemmSinglePassTests
         Assert.Equal(new float[] { 1f, 2f, 3f, 4f }, ((Tensor<float>)r.Outputs![0]).ToArray());
     }
 
+    [Fact]
+    public void InfInput_Propagates()
+    {
+        // ORT 1.29 float: inf*0 is NaN (alpha=0 still multiplies, since
+        // 0*inf is NaN), while beta=0 skips even an infinite bias. Guards
+        // the single-pass epilogue against NaN-only bias skips and any
+        // zero-skipping product rewrite.
+        var rows = new (float alpha, float beta, float[,] a, float[,] b, float[,] c, float? expected)[]
+        {
+            (1f, 1f, new float[,] { { float.PositiveInfinity } }, new float[,] { { 0f } }, new float[,] { { 5f } }, null),
+            (0f, 1f, new float[,] { { float.PositiveInfinity } }, new float[,] { { 2f } }, new float[,] { { 5f } }, null),
+            (0f, 1f, new float[,] { { 3f } }, new float[,] { { 4f } }, new float[,] { { 5f } }, 5f),
+            (1f, 0f, new float[,] { { 1f } }, new float[,] { { 2f } }, new float[,] { { float.PositiveInfinity } }, 2f),
+            (2f, 0f, new float[,] { { float.PositiveInfinity } }, new float[,] { { 3f } }, new float[,] { { 7f } }, float.PositiveInfinity),
+            (1f, 2f, new float[,] { { float.PositiveInfinity } }, new float[,] { { 3f } }, new float[,] { { 4f } }, float.PositiveInfinity),
+            (1f, 1f, new float[,] { { 1f, 2f } }, new float[,] { { 3f }, { 4f } }, new float[,] { { float.NaN } }, null),
+        };
+        foreach (var (alpha, beta, a, b, c, expected) in rows)
+        {
+            var r = CPUExecutionProvider.Gemm(DenseTensor<float>.OfValues(a), DenseTensor<float>.OfValues(b), DenseTensor<float>.OfValues(c), alpha, beta, null, 0, 0);
+            Assert.Equal(OpStatus.Success, r.Status);
+            float y = ((Tensor<float>)r.Outputs![0]).ToArray()[0];
+            if (expected is null) Assert.True(float.IsNaN(y));
+            else Assert.Equal(expected.Value, y);
+        }
+    }
+
 }

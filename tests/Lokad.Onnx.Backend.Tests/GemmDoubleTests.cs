@@ -74,4 +74,31 @@ public class GemmDoubleTests
         Assert.Equal(3.0, y[2]);
         Assert.Equal(4.0, y[3]);
     }
+
+    [Fact]
+    public void InfInput_Propagates()
+    {
+        // ORT 1.29 double: same alpha/beta exceptional table as the float
+        // guard - 0*inf is NaN even with alpha=0, while beta=0 skips any
+        // bias through the double epilogue.
+        var rows = new (float alpha, float beta, double[,] a, double[,] b, double[,] c, double? expected)[]
+        {
+            (1f, 1f, new double[,] { { double.PositiveInfinity } }, new double[,] { { 0.0 } }, new double[,] { { 5.0 } }, null),
+            (0f, 1f, new double[,] { { double.PositiveInfinity } }, new double[,] { { 2.0 } }, new double[,] { { 5.0 } }, null),
+            (0f, 1f, new double[,] { { 3.0 } }, new double[,] { { 4.0 } }, new double[,] { { 5.0 } }, 5.0),
+            (1f, 0f, new double[,] { { 1.0 } }, new double[,] { { 2.0 } }, new double[,] { { double.PositiveInfinity } }, 2.0),
+            (2f, 0f, new double[,] { { double.PositiveInfinity } }, new double[,] { { 3.0 } }, new double[,] { { 7.0 } }, double.PositiveInfinity),
+            (1f, 2f, new double[,] { { double.PositiveInfinity } }, new double[,] { { 3.0 } }, new double[,] { { 4.0 } }, double.PositiveInfinity),
+            (1f, 1f, new double[,] { { 1.0, 2.0 } }, new double[,] { { 3.0 }, { 4.0 } }, new double[,] { { double.NaN } }, null),
+        };
+        foreach (var (alpha, beta, a, b, c, expected) in rows)
+        {
+            var r = CPUExecutionProvider.Gemm(D(a), D(b), D(c), alpha, beta, null, 0, 0);
+            Assert.Equal(OpStatus.Success, r.Status);
+            double y = ((Tensor<double>)r.Outputs[0]).ToArray()[0];
+            if (expected is null) Assert.True(double.IsNaN(y));
+            else Assert.Equal(expected.Value, y);
+        }
+    }
+
 }
