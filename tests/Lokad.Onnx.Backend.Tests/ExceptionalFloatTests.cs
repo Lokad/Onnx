@@ -449,6 +449,20 @@ public class ExceptionalFloatTests
         Assert.Equal(1.0, Pow1Double(-1.0, double.PositiveInfinity));
     }
     [Fact]
+    public void ErfNaN_YieldsNaN()
+    {
+        // ORT 1.29 float: [nan]. Double Erf has no ORT CPU kernel
+        // (NOT_IMPLEMENTED), so the double half is pinned exact instead:
+        // math.erf(nan) is nan.
+        var rf = CPU.Erf(DenseTensor<float>.OfValues(new float[] { float.NaN }), null, null);
+        Assert.Equal(OpStatus.Success, rf.Status);
+        Assert.True(float.IsNaN(((Tensor<float>)rf.Outputs![0])[0]));
+        var rd = CPU.Erf(DenseTensor<double>.OfValues(new double[] { double.NaN }), null, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        Assert.True(double.IsNaN(((Tensor<double>)rd.Outputs![0])[0]));
+    }
+
+    [Fact]
     public void ErfInfinite_YieldsSignedOne()
     {
         var result = CPU.Erf(DenseTensor<float>.OfValues(new float[] { float.PositiveInfinity, float.NegativeInfinity, 0f }), null, null);
