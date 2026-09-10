@@ -182,6 +182,20 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void GatherEmptyIndices_YieldsEmpty()
+        {
+            // ORT 1.29: gathering with zero indices yields a zero-extent
+            // output rather than failing.
+            var data = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f });
+            var empty = DenseTensor<long>.OfShape(0);
+            var r = CPU.Gather(data, empty, 0, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            Assert.Equal(new[] { 0 }, y.Dimensions.ToArray());
+            Assert.Empty(y.ToArray());
+        }
+
+        [Fact]
         public void GatherRejectsBadIndices()
         {
             var data = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f });
