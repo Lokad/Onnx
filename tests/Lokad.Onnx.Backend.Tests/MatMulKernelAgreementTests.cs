@@ -56,6 +56,19 @@ public class MatMulKernelAgreementTests
     }
 
     [Fact]
+    public void DoubleBasic_MatchesOrt()
+    {
+        // ORT 1.29 double: [[19,22],[43,50]]. First double MatMul pin.
+        var a = DenseTensor<double>.OfValues(new double[,] { { 1.0, 2.0 }, { 3.0, 4.0 } });
+        var b = DenseTensor<double>.OfValues(new double[,] { { 5.0, 6.0 }, { 7.0, 8.0 } });
+        var r = CPUExecutionProvider.MatMul(a, b, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<double>)r.Outputs![0];
+        Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new double[] { 19.0, 22.0, 43.0, 50.0 }, y.ToArray());
+    }
+
+    [Fact]
     public void MixedDtype_InputsRejectedCleanly()
     {
         // ORT 1.29 refuses mixed-dtype MatMul at load; every other
