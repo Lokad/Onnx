@@ -72,4 +72,18 @@ public class ConcatBoundaryTests
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("Int32", r.Message ?? "");
     }
+
+    [Fact]
+    public void EmptyInput_ContributesNothing()
+    {
+        // ORT 1.29: a [2,0] input concatenated on axis 1 yields the
+        // other input unchanged ([[1,2,3],[4,5,6]]).
+        var e = DenseTensor<float>.OfShape(2, 0);
+        var b = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        var r = CPU.Concat(new ITensor[] { e, b }, 1, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var z = (Tensor<float>)r.Outputs![0];
+        Assert.Equal(new int[] { 2, 3 }, z.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 2f, 3f, 4f, 5f, 6f }, z.ToArray());
+    }
 }
