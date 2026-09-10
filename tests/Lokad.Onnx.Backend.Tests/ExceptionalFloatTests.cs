@@ -440,6 +440,24 @@ public class ExceptionalFloatTests
         return ((Tensor<float>)result.Outputs![0])[0];
     }
 
+    static float Div1(float a, float b)
+    {
+        var result = CPU.Div(DenseTensor<float>.OfValues(new float[] { a }), DenseTensor<float>.OfValues(new float[] { b }), null, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        return ((Tensor<float>)result.Outputs![0])[0];
+    }
+
+    [Fact]
+    public void DivPowNaN_Passthrough()
+    {
+        // ORT 1.29: NaN on either side of Div, and NaN base or exponent
+        // of Pow (away from the pinned x^0/1^y identities), yields NaN.
+        Assert.True(float.IsNaN(Div1(float.NaN, 1f)));
+        Assert.True(float.IsNaN(Div1(1f, float.NaN)));
+        Assert.True(float.IsNaN(Pow1(float.NaN, 1f)));
+        Assert.True(float.IsNaN(Pow1(2f, float.NaN)));
+    }
+
     static double Pow1Double(double a, double b)
     {
         var result = CPU.Pow(DenseTensor<double>.OfValues(new double[] { a }), DenseTensor<double>.OfValues(new double[] { b }), null);
