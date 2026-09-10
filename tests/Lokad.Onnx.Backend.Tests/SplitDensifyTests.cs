@@ -5,6 +5,17 @@ namespace Lokad.Onnx.Backend.Tests;
 public class SplitDensifyTests
 {
     [Fact]
+    public void NegativeAxis_Normalizes()
+    {
+        // ORT 1.29: axis=-1 splits axis 1.
+        var x = DenseTensor<float>.OfValues(Enumerable.Range(0, 8).Select(v => (float)v).ToArray(), new[] { 2, 4 });
+        var r = CPU.Split(x, DenseTensor<long>.OfValues(new long[] { 2L, 2L }), -1, null, null, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 0f, 1f, 4f, 5f }, ((Tensor<float>)r.Outputs![0]).ToArray());
+        Assert.Equal(new float[] { 2f, 3f, 6f, 7f }, ((Tensor<float>)r.Outputs![1]).ToArray());
+    }
+
+    [Fact]
     public void OutOfRangeAxis_FailsCleanly()
     {
         // ORT 1.29 refuses axis=5 on rank 2 at load.
