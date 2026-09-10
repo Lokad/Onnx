@@ -160,4 +160,14 @@ public class TileBoundaryTests
         Assert.Equal(new int[] { 2, 2 }, y.Dimensions.ToArray());
         Assert.Equal(new Half[] { (Half)1f, (Half)2f, (Half)1f, (Half)2f }, y.ToArray());
     }
+
+    [Fact]
+    public void FloatRepeats_RejectedCleanly()
+    {
+        // ORT refuses non-int repeats at load; the provider threw a bare
+        // ArgumentException from ToIntArray instead of a Failure.
+        var x = DenseTensor<float>.OfValues(new float[] { 1f, 2f });
+        var f = DenseTensor<float>.OfValues(new float[] { 2f });
+        Assert.Equal(OpStatus.Failure, CPU.Tile(x, f, null).Status);
+    }
 }

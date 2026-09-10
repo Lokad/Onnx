@@ -654,6 +654,7 @@ public partial class CPUExecutionProvider
         {
             axes = ToInt32Saturating(axes);
         }
+        if (axes.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
         var _axes = ((Tensor<int>) axes).ToArray();
         return Success(op, ((INumericTensor)data).Unsqueeze(_axes));
     }
@@ -684,6 +685,7 @@ public partial class CPUExecutionProvider
         if (axes is not null)
         {
             if (axes.Rank != 1) return WrongInputShape(op, nameof(axes), axes, "The axes tensor must be a rank-1 vector tensor.");
+            if (axes.ElementType != TensorElementType.Int32 && axes.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(axes), "The axes tensor must be int32 or int64.", axes);
             ax = ToIntArray(axes, nameof(axes)).Select(a => a < 0 ? a + data.Rank : a).ToArray();
         }
         if (ax is null || ax.Length == 0)
@@ -739,6 +741,7 @@ public partial class CPUExecutionProvider
         if (repeats is null) return MissingInput(op, nameof(repeats));
         (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
+        if (repeats.ElementType != TensorElementType.Int32 && repeats.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(repeats), "The repeats tensor must be int32 or int64.", repeats);
         var reps = ToIntArray(repeats, nameof(repeats));
         switch (data.ElementType)
         {

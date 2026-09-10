@@ -329,5 +329,17 @@ namespace Lokad.Onnx.Backend.Tests
         Assert.Equal(new float[] { 2f, 3f, 4f }, ((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
+    [Fact]
+    public void SqueezeUnsqueezeIndexDtype_RejectWrongTypes()
+    {
+        // ORT refuses non-int64/int32 Squeeze/Unsqueeze axes at load;
+        // Unsqueeze fell through to an InvalidCast and Squeeze to a
+        // bare ArgumentException instead of a descriptive Failure.
+        var x = DenseTensor<float>.OfValues(new float[1, 3] { { 1f, 2f, 3f } });
+        var f = DenseTensor<float>.OfValues(new float[] { 0f });
+        Assert.Equal(OpStatus.Failure, CPU.Unsqueeze(x, f, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Squeeze(x, f, null).Status);
+    }
+
     }
 }
