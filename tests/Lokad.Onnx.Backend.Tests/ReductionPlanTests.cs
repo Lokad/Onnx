@@ -455,6 +455,22 @@ public class ReductionPlanTests
     }
 
     [Fact]
+    public void ReduceSumInt32Axes_Accepted()
+    {
+        // ORT 1.29 refuses int32 ReduceSum axes at load (probed); widening
+        // is lossless so the engine deliberately runs them with int64-
+        // identical values.
+        var x = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f }, { 3f, 4f, 5f } });
+        var r32 = CPUExecutionProvider.ReduceSum(x, DenseTensor<int>.OfValues(new int[] { 1 }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, r32.Status);
+        var r64 = CPUExecutionProvider.ReduceSum(x, DenseTensor<long>.OfValues(new long[] { 1L }), 0, 0, null);
+        Assert.Equal(OpStatus.Success, r64.Status);
+        var y32 = (Tensor<float>)r32.Outputs![0];
+        Assert.Equal(new float[] { 3f, 12f }, y32.ToArray());
+        Assert.Equal(((Tensor<float>)r64.Outputs![0]).ToArray(), y32.ToArray());
+    }
+
+    [Fact]
     public void ReduceMaxInt32_MatchesOrt()
     {
         // ORT 1.29 runs int32 ReduceMax (axes attribute at 14, axes input

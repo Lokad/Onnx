@@ -222,4 +222,28 @@ public class SliceStepTests
             Assert.Empty(y.ToArray());
         }
     }
+
+    [Fact]
+    public void SliceInt32Inputs_Accepted()
+    {
+        // Spec parity, not superset: Slice Tind admits int32 on both
+        // engines (probed RUNS on ORT 1.29), so int32 starts/ends/axes/
+        // steps must succeed with int64-identical values.
+        var x = DenseTensor<float>.OfValues(new float[] { 0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f });
+        var r32 = CPU.Slice(x,
+            DenseTensor<int>.OfValues(new int[] { 2 }),
+            DenseTensor<int>.OfValues(new int[] { 7 }),
+            DenseTensor<int>.OfValues(new int[] { 0 }),
+            DenseTensor<int>.OfValues(new int[] { 1 }), null);
+        Assert.Equal(OpStatus.Success, r32.Status);
+        var r64 = CPU.Slice(x,
+            DenseTensor<long>.OfValues(new long[] { 2L }),
+            DenseTensor<long>.OfValues(new long[] { 7L }),
+            DenseTensor<long>.OfValues(new long[] { 0L }),
+            DenseTensor<long>.OfValues(new long[] { 1L }), null);
+        Assert.Equal(OpStatus.Success, r64.Status);
+        var y32 = (Tensor<float>)r32.Outputs![0];
+        Assert.Equal(new float[] { 2f, 3f, 4f, 5f, 6f }, y32.ToArray());
+        Assert.Equal(((Tensor<float>)r64.Outputs![0]).ToArray(), y32.ToArray());
+    }
 }

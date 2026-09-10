@@ -147,6 +147,23 @@ public class ExpandResizeShapeTests
     }
 
     [Fact]
+    public void ResizeInt32Sizes_Accepted()
+    {
+        // ORT 1.29 refuses int32 Resize sizes at load (probed RUNS for
+        // int64); widening is lossless so the engine deliberately runs
+        // them with int64-identical values.
+        var x = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 2f }, { 3f, 4f } } } });
+        var r32 = CPUExecutionProvider.Resize(x, null, null, DenseTensor<int>.OfValues(new int[] { 1, 1, 4, 4 }), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, r32.Status);
+        var r64 = CPUExecutionProvider.Resize(x, null, null, DenseTensor<long>.OfValues(new long[] { 1L, 1L, 4L, 4L }), "nearest", "half_pixel", "round_prefer_floor", -0.75f, 0f, null);
+        Assert.Equal(OpStatus.Success, r64.Status);
+        var y32 = (Tensor<float>)r32.Outputs![0];
+        Assert.Equal(new int[] { 1, 1, 4, 4 }, y32.Dimensions.ToArray());
+        Assert.Equal(new float[] { 1f, 1f, 2f, 2f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 3f, 3f, 4f, 4f }, y32.ToArray());
+        Assert.Equal(((Tensor<float>)r64.Outputs![0]).ToArray(), y32.ToArray());
+    }
+
+    [Fact]
     public void Resize_ScalesFloor_NativePrecision()
     {
         // ORT 1.29 multiplies dim by scale in the scale native precision

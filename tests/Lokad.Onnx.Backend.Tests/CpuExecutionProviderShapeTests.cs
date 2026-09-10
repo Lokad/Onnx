@@ -215,6 +215,89 @@ namespace Lokad.Onnx.Backend.Tests
         }
 
         [Fact]
+        public void UnsqueezeInt32Axes_Accepted()
+        {
+            // ORT 1.29 refuses int32 Unsqueeze axes at load; widening is
+            // lossless so the engine deliberately runs them with int64-
+            // identical values.
+            var x = DenseTensor<float>.OfValues(new float[,] { { 0f, 1f, 2f }, { 3f, 4f, 5f } });
+            var r32 = CPU.Unsqueeze(x, DenseTensor<int>.OfValues(new int[] { 0, 2 }), null);
+            Assert.Equal(OpStatus.Success, r32.Status);
+            var r64 = CPU.Unsqueeze(x, DenseTensor<long>.OfValues(new long[] { 0L, 2L }), null);
+            Assert.Equal(OpStatus.Success, r64.Status);
+            var y32 = (Tensor<float>)r32.Outputs![0];
+            Assert.Equal(new int[] { 1, 2, 1, 3 }, y32.Dimensions.ToArray());
+            Assert.Equal(((Tensor<float>)r64.Outputs![0]).ToArray(), y32.ToArray());
+            Assert.Equal(new float[] { 0f, 1f, 2f, 3f, 4f, 5f }, y32.ToArray());
+        }
+
+        [Fact]
+        public void SqueezeInt32Axes_Accepted()
+        {
+            // ORT 1.29 refuses int32 Squeeze axes at load; widening is
+            // lossless so the engine deliberately runs them with int64-
+            // identical values.
+            var x = DenseTensor<float>.OfValues(new float[2, 1, 3] { { { -2f, -1f, 0f } }, { { 1f, 2f, 3f } } });
+            var r32 = CPU.Squeeze(x, DenseTensor<int>.OfValues(new int[] { 1 }), null);
+            Assert.Equal(OpStatus.Success, r32.Status);
+            var r64 = CPU.Squeeze(x, DenseTensor<long>.OfValues(new long[] { 1L }), null);
+            Assert.Equal(OpStatus.Success, r64.Status);
+            var y32 = (Tensor<float>)r32.Outputs![0];
+            Assert.Equal(new int[] { 2, 3 }, y32.Dimensions.ToArray());
+            Assert.Equal(((Tensor<float>)r64.Outputs![0]).ToArray(), y32.ToArray());
+        }
+
+        [Fact]
+        public void ExpandInt32Shape_Accepted()
+        {
+            // ORT 1.29 refuses int32 Expand shapes at load; widening is
+            // lossless so the engine deliberately runs them with int64-
+            // identical values.
+            var x = DenseTensor<float>.OfValues(new float[,] { { 1f }, { 2f } });
+            var r32 = CPU.Expand(x, DenseTensor<int>.OfValues(new int[] { 2, 3 }), null);
+            Assert.Equal(OpStatus.Success, r32.Status);
+            var r64 = CPU.Expand(x, DenseTensor<long>.OfValues(new long[] { 2L, 3L }), null);
+            Assert.Equal(OpStatus.Success, r64.Status);
+            var y32 = (Tensor<float>)r32.Outputs![0];
+            Assert.Equal(((Tensor<float>)r64.Outputs![0]).ToArray(), y32.ToArray());
+            Assert.Equal(new float[] { 1f, 1f, 1f, 2f, 2f, 2f }, y32.ToArray());
+        }
+
+        [Fact]
+        public void TileInt32Repeats_Accepted()
+        {
+            // ORT 1.29 refuses int32 Tile repeats at load; widening is
+            // lossless so the engine deliberately runs them with int64-
+            // identical values.
+            var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f }, { 3f, 4f } });
+            var r32 = CPU.Tile(x, DenseTensor<int>.OfValues(new int[] { 1, 2 }), null);
+            Assert.Equal(OpStatus.Success, r32.Status);
+            var r64 = CPU.Tile(x, DenseTensor<long>.OfValues(new long[] { 1L, 2L }), null);
+            Assert.Equal(OpStatus.Success, r64.Status);
+            var y32 = (Tensor<float>)r32.Outputs![0];
+            Assert.Equal(new int[] { 2, 4 }, y32.Dimensions.ToArray());
+            Assert.Equal(((Tensor<float>)r64.Outputs![0]).ToArray(), y32.ToArray());
+            Assert.Equal(new float[] { 1f, 2f, 1f, 2f, 3f, 4f, 3f, 4f }, y32.ToArray());
+        }
+
+        [Fact]
+        public void SplitInt32Split_Accepted()
+        {
+            // ORT 1.29 refuses int32 Split splits at load; widening is
+            // lossless so the engine deliberately runs them with int64-
+            // identical values.
+            var x = DenseTensor<float>.OfValues(new float[,] { { 1f, 2f, 3f, 4f } });
+            var r32 = CPU.Split(x, DenseTensor<int>.OfValues(new int[] { 2, 2 }), 1, null, null, null, 2);
+            Assert.Equal(OpStatus.Success, r32.Status);
+            var r64 = CPU.Split(x, DenseTensor<long>.OfValues(new long[] { 2L, 2L }), 1, null, null, null, 2);
+            Assert.Equal(OpStatus.Success, r64.Status);
+            Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)r32.Outputs![0]).ToArray());
+            Assert.Equal(new float[] { 3f, 4f }, ((Tensor<float>)r32.Outputs![1]).ToArray());
+            Assert.Equal(((Tensor<float>)r64.Outputs![0]).ToArray(), ((Tensor<float>)r32.Outputs![0]).ToArray());
+            Assert.Equal(((Tensor<float>)r64.Outputs![1]).ToArray(), ((Tensor<float>)r32.Outputs![1]).ToArray());
+        }
+
+        [Fact]
         public void GatherScalarData_FailsCleanly()
         {
             // ORT 1.29 refuses scalar data at load (rank >= 1 required).
