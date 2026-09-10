@@ -641,6 +641,16 @@ public class ExceptionalFloatTests
         Assert.Equal(1.0, Pow1Double(-1.0, double.PositiveInfinity));
     }
     [Fact]
+    public void ErfLargeFiniteDouble_MatchesExactFormula()
+    {
+        // No ORT CPU reference exists (NOT_IMPLEMENTED); math.erf(+/-6)
+        // rounds to exactly +/-1.0 in double, like the float saturation.
+        var r = CPU.Erf(DenseTensor<double>.OfValues(new double[] { 6.0, -6.0 }), null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new double[] { 1.0, -1.0 }, ((Tensor<double>)r.Outputs![0]).ToArray());
+    }
+
+    [Fact]
     public void ErfLargeFinite_Saturates()
     {
         // ORT 1.29 float: erf(+/-6) is exactly +/-1.
