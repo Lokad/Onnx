@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -565,7 +566,73 @@ where T : unmanaged
     // NaN propagates and signed zero is preserved (ORT: Relu(NaN)=NaN, Relu(-0)=-0); negatives map to +0.
     public static Tensor<float> Relu(Tensor<float> x) => x.Apply(l => l <= 0.0f ? (l == 0.0f ? l : 0.0f) : l);
 
+    /// <summary>Float Relu honoring execution options: dense standard inputs run the span fast path on AVX hardware, everything else keeps the scalar contract.</summary>
+    public static Tensor<float> Relu(Tensor<float> x, TensorExecutionOptions? options)
+    {
+        var dx = x.ToDenseTensor();
+        if ((options?.UseSimd ?? true) && Avx.IsSupported
+            && dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
+        {
+            var output = DenseTensor<float>.OfShape(own.Dimensions.ToArray());
+            ReluSpanFloat(own.Buffer.Span, output.Buffer.Span);
+            return output;
+        }
+        return Relu(x);
+    }
+
+    /// <summary>Vectorized float Relu with exact edge semantics: keep where positive, keep signed zero, keep NaN, zero the rest.</summary>
+    static unsafe void ReluSpanFloat(System.Span<float> xs, System.Span<float> ys)
+    {
+        int n = xs.Length;
+        int w = Vector256<float>.Count;
+        var zero = Vector256<float>.Zero;
+        fixed (float* s = xs, d = ys)
+        {
+            int i = 0;
+            for (; i <= n - w; i += w)
+            {
+                var v = *(Vector256<float>*)(s + i);
+                var keep = Vector256.GreaterThan(v, zero) | Vector256.Equals(v, zero) | ~Vector256.Equals(v, v);
+                *(Vector256<float>*)(d + i) = Vector256.ConditionalSelect(keep, v, zero);
+            }
+            for (; i < n; i++) d[i] = s[i] <= 0.0f ? (s[i] == 0.0f ? s[i] : 0.0f) : s[i];
+        }
+    }
+
     public static Tensor<double> Relu(Tensor<double> x) => x.Apply(l => l <= 0.0 ? (l == 0.0 ? l : 0.0) : l);
+
+    /// <summary>Double Relu honoring execution options, mirroring the float fast path.</summary>
+    public static Tensor<double> Relu(Tensor<double> x, TensorExecutionOptions? options)
+    {
+        var dx = x.ToDenseTensor();
+        if ((options?.UseSimd ?? true) && Avx.IsSupported
+            && dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
+        {
+            var output = DenseTensor<double>.OfShape(own.Dimensions.ToArray());
+            ReluSpanDouble(own.Buffer.Span, output.Buffer.Span);
+            return output;
+        }
+        return Relu(x);
+    }
+
+    /// <summary>Vectorized double Relu with exact edge semantics.</summary>
+    static unsafe void ReluSpanDouble(System.Span<double> xs, System.Span<double> ys)
+    {
+        int n = xs.Length;
+        int w = Vector256<double>.Count;
+        var zero = Vector256<double>.Zero;
+        fixed (double* s = xs, d = ys)
+        {
+            int i = 0;
+            for (; i <= n - w; i += w)
+            {
+                var v = *(Vector256<double>*)(s + i);
+                var keep = Vector256.GreaterThan(v, zero) | Vector256.Equals(v, zero) | ~Vector256.Equals(v, v);
+                *(Vector256<double>*)(d + i) = Vector256.ConditionalSelect(keep, v, zero);
+            }
+            for (; i < n; i++) d[i] = s[i] <= 0.0 ? (s[i] == 0.0 ? s[i] : 0.0) : s[i];
+        }
+    }
     public static Tensor<sbyte> Relu(Tensor<sbyte> x) => x.Apply(l => l >= 0 ? l : (sbyte)0);
     public static Tensor<int> Relu(Tensor<int> x) => x.Apply(l => l >= 0 ? l : 0);
 
