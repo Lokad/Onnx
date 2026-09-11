@@ -1527,9 +1527,39 @@ public class ComputationalGraph
         AddLiveRefs(value);
     }
 
+    /// <summary>
+    /// Fast single-root alias probe avoiding a HashSet allocation for the common
+    /// one-buffer case. Returns false exactly when CollectAliasRoot would need
+    /// the set path (sequences) or report an unknown kind, so counting stays identical.
+    /// </summary>
+    static bool TryCollectSingleRoot(ITensor? tensor, out Array? root)
+    {
+        root = null;
+        if (tensor is null) return true;
+        if (tensor is TensorSequence) return false;
+        if (tensor is not Tensor<float> typed) return true;
+        if (typed is DenseTensor<float> dense)
+        {
+            if (System.Runtime.InteropServices.MemoryMarshal.TryGetArray(dense.Buffer, out System.ArraySegment<float> segment) && segment.Array is not null)
+            {
+                root = segment.Array;
+                return true;
+            }
+            return false;
+        }
+        if (typed is BroadcastedTensor<float> broadcast) return TryCollectSingleRoot(broadcast.source, out root);
+        if (typed is TensorSlice<float> slice) return TryCollectSingleRoot(slice.parent, out root);
+        return false;
+    }
+
     void AddLiveRefs(ITensor? tensor)
     {
         if (tensor is null || liveArrayUsers is null || liveUnknownTensors is null) return;
+        if (TryCollectSingleRoot(tensor, out Array? root))
+        {
+            if (root is not null) liveArrayUsers[root] = liveArrayUsers.TryGetValue(root, out int c) ? c + 1 : 1;
+            return;
+        }
         var roots = new HashSet<Array>();
         if (CollectAliasRoot(tensor, roots))
         {
@@ -1542,6 +1572,11 @@ public class ComputationalGraph
     {
         if (tensor is null || liveArrayUsers is null || liveUnknownTensors is null) return;
         if (liveUnknownTensors.Remove(tensor)) return;
+        if (TryCollectSingleRoot(tensor, out Array? root))
+        {
+            if (root is not null && liveArrayUsers.TryGetValue(root, out int c)) liveArrayUsers[root] = c - 1;
+            return;
+        }
         var roots = new HashSet<Array>();
         if (CollectAliasRoot(tensor, roots))
         {
