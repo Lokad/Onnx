@@ -384,3 +384,7 @@ external/
 # One-op session-comparison models are tiny single-op graphs tracked for the
 # micro oneop lane; re-include them like the opfuzz corpus.
 !tests/Lokad.Onnx.Bench/oneop/*/model.onnx
+
+# Local working backlog and agent scratch plans (never commit).
+/PLAN.md
+/.agent/
