@@ -147,6 +147,13 @@ where T : unmanaged
         var oMem = output.Buffer;
         var bMem = bd is null ? default : bd.Buffer;
         bool hasBias = bd is not null;
+        if (kH == 1 && kW == 1 && sH == 1 && sW == 1 && dH == 1 && dW == 1
+            && pad.top == 0 && pad.left == 0 && pad.bottom == 0 && pad.right == 0
+            && outH == H && outW == W)
+        {
+            RunPointwiseBatchesFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, outH, outW, inBatch, outBatch, options);
+            return output;
+        }
         if (dop > 1)
         {
             Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
@@ -208,6 +215,41 @@ where T : unmanaged
                 float bi = bs[i];
                 int row = b * outBatch + i * tileN;
                 for (int j = 0; j < tileN; j++) os[row + j] += bi;
+            }
+        }
+    }
+    /// <summary>
+    /// Runs 1x1 stride-1 no-pad batches with no patch matrix: the input slice
+    /// already lays out as the GEMM right-hand side, so each group multiplies
+    /// directly through the shared dispatcher with the same bias epilogue.
+    /// </summary>
+    static void RunPointwiseBatchesFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, int N, int group, int C, int H, int W, int M, int outH, int outW, int inBatch, int outBatch, TensorExecutionOptions options)
+    {
+        int tileN = outH * outW;
+        int tileM = M / group;
+        int tileK = C / group;
+        for (int b = 0; b < N; b++)
+        {
+            for (int g = 0; g < group; g++)
+            {
+                var wView = new DenseTensor<float>(wMem.Slice(g * tileM * tileK, tileM * tileK), new int[] { tileM, tileK });
+                var pView = new DenseTensor<float>(xMem.Slice(b * inBatch + g * tileK * tileN, tileK * tileN), new int[] { tileK, tileN });
+                var dView = new DenseTensor<float>(oMem.Slice(b * outBatch + g * tileM * tileN, tileM * tileN), new int[] { tileM, tileN });
+                Tensor<float>.MatMul2D(wView, pView, dView, options);
+            }
+        }
+        if (hasBias)
+        {
+            var bs = bMem.Span;
+            var os = oMem.Span;
+            for (int i = 0; i < M; i++)
+            {
+                float bi = bs[i];
+                for (int n = 0; n < N; n++)
+                {
+                    int row = n * outBatch + i * tileN;
+                    for (int j = 0; j < tileN; j++) os[row + j] += bi;
+                }
             }
         }
     }
@@ -314,6 +356,7 @@ where T : unmanaged
             }
         }
     }
+
 
     // Shared MaxPool preparation for PadType padding: validates the kernel
     // and ranks, fills default strides and dilations, resolves dims, and

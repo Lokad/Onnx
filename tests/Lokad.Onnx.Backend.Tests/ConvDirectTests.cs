@@ -183,6 +183,18 @@ public class ConvDirectTests
     }
 
     [Fact]
+    public void BatchedPointwise_MatchesHandValues()
+    {
+        // N=2 exercises the per-batch loop of the no-patch path.
+        var x = DenseTensor<float>.OfValues(new float[2, 1, 1, 2] { { { { 1f, 2f } } }, { { { 3f, 4f } } } });
+        var w = DenseTensor<float>.OfValues(new float[1, 1, 1, 1] { { { { 2f } } } });
+        var b = DenseTensor<float>.OfValues(new float[] { 1f });
+        var y = Tensor<float>.Conv2D(x, w, 1, new int[] { 0, 0, 0, 0 }, b, null, new int[] { 1, 1 }, null);
+        Assert.Equal(new int[] { 2, 1, 1, 2 }, y.Dimensions.ToArray());
+        Assert.Equal(new float[] { 3f, 5f, 7f, 9f }, y.ToArray());
+    }
+
+    [Fact]
     public void ZeroSpatial_Throws()
     {
         // ORT 1.29 fails the run for zero spatial extents (batch-0 is
