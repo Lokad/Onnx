@@ -93,8 +93,12 @@ public class OneOpBenchmarks
         Add("softmax_6x201x201", "x", new int[] { 6, 201, 201 });
         Add("gelu_1x201x1536", "x", new int[] { 1, 201, 1536 });
         Add("transpose_1x201x6x64", "x", new int[] { 1, 201, 6, 64 });
+        Add("matmul_1x128x384x1536", "a", new int[] { 1, 128, 384 });
+        Add("matmul_1x128x1536x384", "a", new int[] { 1, 128, 1536 });
+        Add("matmul_1x512x384x1536", "a", new int[] { 1, 512, 384 });
+        Add("matmul_1x512x1536x384", "a", new int[] { 1, 512, 1536 });
         foreach (var c in cases) VerifyAgreement(c);
-        Console.WriteLine("OneOp agreement: all 22 cases match element-wise.");
+        Console.WriteLine("OneOp agreement: all 26 cases match element-wise.");
     }
 
     void Add(string kase, string inputName, int[] dims)
@@ -324,4 +328,36 @@ public class OneOpBenchmarks
     [Benchmark(Description = "Transpose 1x201x6x64 - ORT session")]
     [BenchmarkCategory("tr201")]
     public void OrtTr201() => RunOrt(cases[21]);
+
+    [Benchmark(Description = "MatMul 1x128x384 @ 384x1536 - Lokad session")]
+    [BenchmarkCategory("mm128up")]
+    public void LokadMm128Up() => RunLokad(cases[22]);
+
+    [Benchmark(Description = "MatMul 1x128x384 @ 384x1536 - ORT session")]
+    [BenchmarkCategory("mm128up")]
+    public void OrtMm128Up() => RunOrt(cases[22]);
+
+    [Benchmark(Description = "MatMul 1x128x1536 @ 1536x384 - Lokad session")]
+    [BenchmarkCategory("mm128down")]
+    public void LokadMm128Down() => RunLokad(cases[23]);
+
+    [Benchmark(Description = "MatMul 1x128x1536 @ 1536x384 - ORT session")]
+    [BenchmarkCategory("mm128down")]
+    public void OrtMm128Down() => RunOrt(cases[23]);
+
+    [Benchmark(Description = "MatMul 1x512x384 @ 384x1536 - Lokad session")]
+    [BenchmarkCategory("mm512up")]
+    public void LokadMm512Up() => RunLokad(cases[24]);
+
+    [Benchmark(Description = "MatMul 1x512x384 @ 384x1536 - ORT session")]
+    [BenchmarkCategory("mm512up")]
+    public void OrtMm512Up() => RunOrt(cases[24]);
+
+    [Benchmark(Description = "MatMul 1x512x1536 @ 1536x384 - Lokad session")]
+    [BenchmarkCategory("mm512down")]
+    public void LokadMm512Down() => RunLokad(cases[25]);
+
+    [Benchmark(Description = "MatMul 1x512x1536 @ 1536x384 - ORT session")]
+    [BenchmarkCategory("mm512down")]
+    public void OrtMm512Down() => RunOrt(cases[25]);
 }

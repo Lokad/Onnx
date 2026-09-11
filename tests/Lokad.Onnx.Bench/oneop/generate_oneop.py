@@ -138,3 +138,31 @@ save("tests/Lokad.Onnx.Bench/oneop/transpose_1x201x6x64",
      helper.make_node("Transpose", ["x"], ["y"], perm=[0, 2, 1, 3]),
      [tinfo("x", [1, 201, 6, 64])], [tinfo("y", [1, 6, 201, 64])],
      [])
+
+# 18. e5 128-token MLP up tile (batched 3D): 1x128x384 @ 384x1536
+b = (rng.random([384, 1536]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_1x128x384x1536",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 128, 384])], [tinfo("y", [1, 128, 1536])],
+     [finit("b", b)])
+
+# 19. e5 128-token MLP down tile (batched 3D): 1x128x1536 @ 1536x384
+b = (rng.random([1536, 384]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_1x128x1536x384",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 128, 1536])], [tinfo("y", [1, 128, 384])],
+     [finit("b", b)])
+
+# 20. e5 512-token MLP up tile (batched 3D): 1x512x384 @ 384x1536
+b = (rng.random([384, 1536]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_1x512x384x1536",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 512, 384])], [tinfo("y", [1, 512, 1536])],
+     [finit("b", b)])
+
+# 21. e5 512-token MLP down tile (batched 3D): 1x512x1536 @ 1536x384
+b = (rng.random([1536, 384]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_1x512x1536x384",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 512, 1536])], [tinfo("y", [1, 512, 384])],
+     [finit("b", b)])
