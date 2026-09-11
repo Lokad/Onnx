@@ -26,6 +26,7 @@ public partial class CPUExecutionProvider
         switch (data.ElementType)
         {
             case TensorElementType.Int32: return Success(op, Tensor<int>.ReduceSum((Tensor<int>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.ReduceSum((Tensor<long>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             case TensorElementType.Float: return Success(op, Tensor<float>.ReduceSum((Tensor<float>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             case TensorElementType.Double: return Success(op, Tensor<double>.ReduceSum((Tensor<double>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             default: return NotSupported(op);

@@ -89,6 +89,36 @@ where T : unmanaged
         return ApplyKeepDims(output, plan, keepDims);
     }
 
+    public static Tensor<long> ReduceSum(Tensor<long> data, Tensor<int>? axes) => ReduceSum(data, axes, null, null);
+
+        public static Tensor<long> ReduceSum(Tensor<long> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)
+    {
+        StartOpStage(OpStage.ValidateArguments);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
+        if (plan.IsNoOp) return data.Clone();
+
+        StartOpStage(OpStage.CalculateIndices);
+        var (pdata, oshape, r) = PrepareReduction(data, plan.Axes);
+        var output = DenseTensor<long>.OfShape(oshape);
+
+        StartOpStage(OpStage.Math);
+        var xs = pdata.Buffer.Span;
+        var os = output.Buffer.Span;
+        for (int i = 0; i < os.Length; ++i)
+        {
+            int offset = i * r;
+            // Integer sums saturate (ORT 1.29), and int64 probes show the
+            // accumulation itself runs in double: extreme vectors like
+            // [Max, Max, Min, Min] yield 0, impossible for running
+            // saturation (Min) or wide-then-clamp (-2). In-range double
+            // sums of integers are exact, so only the final cast saturates.
+            double sum = 0.0;
+            for (int j = 0; j < r; ++j) sum += xs[offset + j];
+            os[i] = sum >= 9223372036854775808.0 ? long.MaxValue : sum <= -9223372036854775808.0 ? long.MinValue : (long)sum;
+        }
+        return ApplyKeepDims(output, plan, keepDims);
+    }
+
     public static Tensor<float> ReduceSum(Tensor<float> data, Tensor<int>? axes) => ReduceSum(data, axes, null, null);
 
         public static Tensor<float> ReduceSum(Tensor<float> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)

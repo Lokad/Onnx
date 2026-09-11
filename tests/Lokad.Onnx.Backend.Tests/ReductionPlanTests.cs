@@ -299,13 +299,14 @@ public class ReductionPlanTests
     [Fact]
     public void OutOfScopeDtypes_RejectedCleanly()
     {
-        // int8 ReduceSum is refused at load on both sides (agreement),
-        // while int64 Sum/Mean/Max compute in ORT (documented gaps:
-        // int64/uint Reduce kernels are out of scope); int32 Max moved to
-        // supported (values pinned in ReduceMaxInt32_MatchesOrt). The rest
-        // fail descriptively here instead of reaching a kernel cast.
+        // int8 ReduceSum is refused at load on both sides (agreement);
+        // int64 Sum moved to supported (double accumulation with
+        // saturation, values pinned in ReduceSumInt64Tests); int64 Mean
+        // needs divide-semantics probing and int64 Max needs version
+        // gating (ORT accepts Max only through opset 13), so both stay
+        // refused with uint (NOT_IMPLEMENTED there) for now. int32 Max
+        // moved to supported earlier (ReduceMaxInt32_MatchesOrt).
         var i64 = DenseTensor<long>.OfValues(new long[] { 1L, 2L });
-        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(i64, null, null, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(i64, null, null, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(i64, null, null, null, null).Status);
         var i8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
