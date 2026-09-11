@@ -543,4 +543,19 @@ public class ExecutionLifecycleTests
         Assert.True(h.Execute(MatMulInputs(3), false));
         Assert.False(h.Execute(MatMulInputs(2), false));
     }
+
+    [Fact]
+    public void MismatchThenRetry_RecoversWithValues()
+    {
+        // A shape-mismatch failure must not poison the graph: the next
+        // good run recomputes exact values and clears diagnostics.
+        var g = NewMatMulGraph(2);
+        Assert.True(g.Execute(MatMulInputs(2), false));
+        Assert.False(g.Execute(MatMulInputs(3), false));
+        Assert.True(g.Execute(MatMulInputs(2), false));
+        var y = (Tensor<float>)g.Outputs["y"];
+        Assert.Equal(new float[] { 2f, 2f, 2f, 2f }, y.ToArray());
+        Assert.Null(g.LastErrorMessage);
+        Assert.Null(g.LastFailedNodeName);
+    }
 }
