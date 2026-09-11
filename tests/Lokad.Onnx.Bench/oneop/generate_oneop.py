@@ -166,3 +166,17 @@ save("tests/Lokad.Onnx.Bench/oneop/matmul_1x512x1536x384",
      helper.make_node("MatMul", ["a", "b"], ["y"]),
      [tinfo("a", [1, 512, 1536])], [tinfo("y", [1, 512, 384])],
      [finit("b", b)])
+
+# 22. DINOv3 attention scores (batched): 1x6x201x64 @ 1x6x64x201
+b = (rng.random([64, 201]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/attn_1x6x201x64",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 6, 201, 64])], [tinfo("y", [1, 6, 201, 201])],
+     [finit("b", b)])
+
+# 23. DINOv3 attention context (batched): 1x6x201x201 @ 1x6x201x64
+b = (rng.random([201, 64]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/attn_1x6x201x201",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 6, 201, 201])], [tinfo("y", [1, 6, 201, 64])],
+     [finit("b", b)])
