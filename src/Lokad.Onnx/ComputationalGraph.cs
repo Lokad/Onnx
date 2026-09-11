@@ -29,6 +29,8 @@ public class ComputationalGraph
     internal sealed record FoldedTranspose(string SourceName, ITensor SourceRef, long SourceLength, string PreparedName);
 
     internal Dictionary<string, FoldedTranspose> FoldedTransposes = new Dictionary<string, FoldedTranspose>(StringComparer.Ordinal);
+    /// <summary>Panel-packed MatMul weight clones by source initializer name.</summary>
+    internal Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
 
     internal object FoldLock = new object();
 
@@ -166,6 +168,12 @@ public class ComputationalGraph
             {
                 foreach (var fold in FoldedTransposes.Values) Initializers.Remove(fold.PreparedName);
                 FoldedTransposes.Clear();
+                foreach (var packed in PackedWeights.Values)
+                {
+                    if (Initializers.TryGetValue(packed.PackedName, out var held) && ReferenceEquals(held, packed.Packed))
+                        Initializers.Remove(packed.PackedName);
+                }
+                PackedWeights.Clear();
             }
         }
     }
@@ -753,6 +761,7 @@ public class ComputationalGraph
         using var profilerScope = Profiler.BeginExecution();
         using var poolScope = new ExecutionPoolScope(this);
         var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy } };
+        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights } };
         NoteLivePeak();
         foreach (var node in Nodes)
         {
@@ -1114,12 +1123,13 @@ public class ComputationalGraph
         Info("Reset graph state.");
     }
 
-    /// <summary>Recomputes <see cref="LastUseIndex"/> from the current <see cref="Nodes"/> order.</summary>
+    /// <summary>Recomputes <see cref="LastUseIndex"/> from the current <see cref="Nodes"/> order and rebuilds panel-packed MatMul weight clones.</summary>
     /// <remarks>Graph outputs map to <see cref="Nodes"/>.Count (live to the end); graph inputs and
     /// initializers map to <see cref="int.MaxValue"/> (live forever); produced-but-unconsumed
     /// intermediates map to their producer index. Inert: no execution state changes.</remarks>
     public void RefreshLifetimeAnalysis()
     {
+        GraphPacking.PackMatMulWeights(this);
         // Preparation assigns stable sequential identities by file-order
         // position: unlike name hashes they are distinct for duplicate or
         // anonymous names and identical across processes.

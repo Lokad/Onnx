@@ -126,6 +126,23 @@ where T : unmanaged
         return (ddx, ddy);
     }
 
+    /// <summary>
+    /// Selects the panel-packed kernel for a B-side operand resolving to a
+    /// fresh packed clone. Every unmet condition falls back to the unpacked
+    /// path, so Scalar and Simd modes, missing FMA, odd row counts and stale
+    /// mappings keep reading original row-major bytes by construction.
+    /// </summary>
+    static DenseTensor<float>? ResolvePackedKernel(TensorExecutionOptions options, Tensor<float> y, int m)
+    {
+        if (!options.UseSimd || !options.UseIntrinsics || !Fma.IsSupported) return null;
+        if ((m & 1) != 0) return null;
+        var found = GraphPacking.ResolvePacked(options.PackedMatMulWeights, y);
+        if (found is null || found.Dimensions.Length != 2) return null;
+        int n = found.Dimensions[0], k = found.Dimensions[1];
+        if (n < 1 || k < 1 || n >= GraphPacking.MaxPackedAxis || k >= GraphPacking.MaxPackedAxis) return null;
+        return found;
+    }
+
     static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
     {
         // Register-tiled accumulation wins while both the reduction axis (n)
@@ -223,6 +240,20 @@ where T : unmanaged
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
+
+        if (ResolvePackedKernel(options, y, m) is { } packedB)
+        {
+            var dx = RequireContiguous(x, nameof(x), options.CopyReporter);
+            StartOpStage(OpStage.Math);
+            using var xh = dx.Buffer.Pin();
+            using var ph = packedB.Buffer.Pin();
+            using var oh = destination.Buffer.Pin();
+            unsafe
+            {
+                mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
+            }
+            return destination;
+        }
 
         var (_x, _y) = DensifyFloatOperands(x, y, options.CopyReporter);
 
@@ -491,6 +522,11 @@ where T : unmanaged
         int dop = options.MaxDegreeOfParallelism < 2 || batchCount < 2
             ? 1
             : Math.Min(options.MaxDegreeOfParallelism, batchCount);
+        if (ResolvePackedKernel(options, by, m) is { } packedB && (batchCount == 1 || ySteps.All(s => s == 0)))
+        {
+            RunPackedBatches(bx, z, batchDims, xSteps, zSteps, batchCount, dop, m, n, k, packedB);
+            return;
+        }
         using var xh = bx.Storage.Pin();
         using var yh = by.Storage.Pin();
         using var zh = z.Storage.Pin();
@@ -539,6 +575,59 @@ where T : unmanaged
         }
     }
 
+    /// <summary>
+    /// Batched float MatMul reading B from a panel-packed clone shared by
+    /// every batch. Mirrors RunBatchedFloatMatMul loop-for-loop with the
+    /// packed kernel; the shared buffer pins once outside the loops.
+    /// </summary>
+    static void RunPackedBatches(Tensor<float> bx, Tensor<float> z, int[] batchDims, int[] xSteps, int[] zSteps, int batchCount, int dop, int m, int n, int k, DenseTensor<float> packed)
+    {
+        using var xh = bx.Storage.Pin();
+        using var ph = packed.Buffer.Pin();
+        using var zh = z.Storage.Pin();
+        IntPtr xp0, zp0;
+        unsafe { xp0 = (IntPtr)xh.Pointer; zp0 = (IntPtr)zh.Pointer; }
+        unsafe
+        {
+            float* pp = (float*)ph.Pointer;
+            if (dop > 1)
+            {
+                var xOff = new int[batchCount];
+                var zOff = new int[batchCount];
+                FillBatchOffsets(batchDims, xSteps, zSteps, zSteps, xOff, new int[batchCount], zOff);
+                Parallel.For(0, batchCount, new ParallelOptions { MaxDegreeOfParallelism = dop }, bi =>
+                {
+                    unsafe
+                    {
+                        mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k,
+                            (float*)xp0 + xOff[bi],
+                            pp,
+                            (float*)zp0 + zOff[bi]);
+                    }
+                });
+            }
+            else
+            {
+                var xp = (float*)xp0;
+                var zp = (float*)zp0;
+                int r = batchDims.Length;
+                var coords = new int[r];
+                int ox = 0, oz = 0;
+                for (int b = 0; b < batchCount; b++)
+                {
+                    mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, xp + ox, pp, zp + oz);
+                    for (int d = r - 1; d >= 0; d--)
+                    {
+                        coords[d]++;
+                        ox += xSteps[d]; oz += zSteps[d];
+                        if (coords[d] < batchDims[d]) break;
+                        coords[d] = 0;
+                        ox -= xSteps[d] * batchDims[d]; oz -= zSteps[d] * batchDims[d];
+                    }
+                }
+            }
+        }
+    }
     /// <summary>
     /// Writes the float matrix product into an existing dense destination,
     /// overwriting it. The destination must not alias either input.

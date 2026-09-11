@@ -46,6 +46,8 @@ public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntri
 
     /// <summary>Optional per-run copy-byte sink; null disables accounting.</summary>
     public ICopyAccountant? CopyReporter { get; init; }
+    /// <summary>Optional prepared packed-MatMul map; null disables packed routing.</summary>
+    internal IReadOnlyDictionary<float[], PackedMatMulWeight>? PackedMatMulWeights { get; init; }
 
     public static TensorExecutionOptions Scalar => new TensorExecutionOptions(false, false, 1);
 

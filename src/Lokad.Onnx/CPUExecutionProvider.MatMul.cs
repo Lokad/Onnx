@@ -35,6 +35,12 @@ public partial class CPUExecutionProvider
         // counted); other modes leave views for the kernels, which densify
         // defensively and count through the same choke point.
         if (opts.Optimization != OptimizationMode.Speed) return t;
+        // A view over a fresh packed clone must reach the packed kernel
+        // intact: materializing it would freeze scrambled bytes row-major.
+        if (typeof(T) == typeof(float) && t is Tensor<float> tf
+            && opts.Tensor.PackedMatMulWeights is not null
+            && GraphPacking.ResolvePacked(opts.Tensor.PackedMatMulWeights, tf) is not null)
+            return t;
         Profiler.StartOpStage(OpStage.Copy);
         return Tensor<T>.RequireContiguous(t, nameof(t), opts.Tensor.CopyReporter);
     }
