@@ -1143,4 +1143,196 @@ public class OperatorSchemaTests
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("Scan", r.Message ?? "");
     }
+
+    [Fact]
+    public void GRUHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no GRU schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (recurrent architectures are out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.GRU));
+        var node = Nod(OpType.GRU, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("GRU", r.Message ?? "");
+    }
+
+    [Fact]
+    public void LSTMHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no LSTM schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (recurrent architectures are out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.LSTM));
+        var node = Nod(OpType.LSTM, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("LSTM", r.Message ?? "");
+    }
+
+    [Fact]
+    public void RNNHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no RNN schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (recurrent architectures are out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.RNN));
+        var node = Nod(OpType.RNN, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("RNN", r.Message ?? "");
+    }
+
+    [Fact]
+    public void QuantizeLinearHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no QuantizeLinear schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (quantized compute is out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.QuantizeLinear));
+        var node = Nod(OpType.QuantizeLinear, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("QuantizeLinear", r.Message ?? "");
+    }
+
+    [Fact]
+    public void DequantizeLinearHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no DequantizeLinear schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (quantized compute is out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.DequantizeLinear));
+        var node = Nod(OpType.DequantizeLinear, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("DequantizeLinear", r.Message ?? "");
+    }
+
+    [Fact]
+    public void QLinearConvHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no QLinearConv schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (quantized compute is out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.QLinearConv));
+        var node = Nod(OpType.QLinearConv, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("QLinearConv", r.Message ?? "");
+    }
+
+    [Fact]
+    public void QLinearMatMulHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no QLinearMatMul schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (quantized compute is out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.QLinearMatMul));
+        var node = Nod(OpType.QLinearMatMul, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("QLinearMatMul", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ConvIntegerHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no ConvInteger schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (quantized compute is out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.ConvInteger));
+        var node = Nod(OpType.ConvInteger, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("ConvInteger", r.Message ?? "");
+    }
+
+    [Fact]
+    public void MatMulIntegerHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no MatMulInteger schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (quantized compute is out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.MatMulInteger));
+        var node = Nod(OpType.MatMulInteger, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("MatMulInteger", r.Message ?? "");
+    }
+
+    [Fact]
+    public void DynamicQuantizeLinearHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no DynamicQuantizeLinear schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (quantized compute is out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.DynamicQuantizeLinear));
+        var node = Nod(OpType.DynamicQuantizeLinear, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("DynamicQuantizeLinear", r.Message ?? "");
+    }
+
+    [Fact]
+    public void LogSoftmaxHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no LogSoftmax schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (no log-softmax kernel exists (Softmax only)); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.LogSoftmax));
+        var node = Nod(OpType.LogSoftmax, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("LogSoftmax", r.Message ?? "");
+    }
+
+    [Fact]
+    public void GroupNormalizationHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no GroupNormalization schema, provider, kernel, or dispatch arm exists
+        // anywhere in src (only LayerNormalization is supported); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.GroupNormalization));
+        var node = Nod(OpType.GroupNormalization, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("GroupNormalization", r.Message ?? "");
+    }
 }
