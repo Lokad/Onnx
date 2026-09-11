@@ -558,4 +558,26 @@ public class ExecutionLifecycleTests
         Assert.Null(g.LastErrorMessage);
         Assert.Null(g.LastFailedNodeName);
     }
+
+    [Fact]
+    public void SymbolicDims_ExecuteVaryingShapes()
+    {
+        // A 0 extent marks a symbolic dimension: it accepts the first
+        // concrete shape, then that binding wins and a later shape fails
+        // descriptively with diagnostics (hand-built graphs carry no
+        // retained InputDescs; imported graphs keep symbolic descs and
+        // re-execute at new shapes, e5 does this live).
+        var g = new ComputationalGraph();
+        g.Metadata["Name"] = "test";
+        g.Inputs["x"] = DenseTensor<float>.OfShape(0);
+        g.Outputs["y"] = DenseTensor<float>.OfShape(0);
+        g.Nodes.Add(new Node { Name = "r", Op = OpType.Relu, Inputs = new[] { "x" }, Outputs = new[] { "y" } });
+        g.RefreshLifetimeAnalysis();
+        var two = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
+        Assert.True(g.Execute(two, false));
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        var three = new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f, -3f }) } };
+        Assert.False(g.Execute(three, false));
+        Assert.NotNull(g.LastErrorMessage);
+    }
 }
