@@ -29,8 +29,8 @@ internal static class GraphPacking
 {
     internal const string PackedPrefix = "packed:";
 
-    /// <summary>Upper axis bound of measured packed-kernel territory.</summary>
-    internal const int MaxPackedAxis = 2560;
+    /// <summary>Upper axis bound of measured packed-kernel territory (P46: 4096, covering GPT-2 c_proj at n=3072; census shows no other model edge in range).</summary>
+    internal const int MaxPackedAxis = 4096;
 
     /// <summary>Upper packed-clone size in bytes (P34).</summary>
     /// <remarks>The reduction axis stays bounded while the panel axis scales linearly (proven to 1570 panels), so total bytes bound residency instead.</remarks>

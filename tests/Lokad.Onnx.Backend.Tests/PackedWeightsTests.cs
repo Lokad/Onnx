@@ -111,7 +111,7 @@ public class PackedWeightsTests
         var shared = BuildGraphWithConsumer(FillRect(8, 24, rnd), FillRect(24, 44, rnd), "w", true);
         shared.RefreshLifetimeAnalysis();
         Assert.False(shared.Initializers.ContainsKey("packed:w"), "shared weight must not pack.");
-        var wide = BuildGraph(FillRect(8, 2560, rnd), FillRect(2560, 8, rnd), "w");
+        var wide = BuildGraph(FillRect(8, 5000, rnd), FillRect(5000, 8, rnd), "w");
         wide.RefreshLifetimeAnalysis();
         Assert.False(wide.Initializers.ContainsKey("packed:w"), "wide-axis weight must not pack.");
         var dbl = new ComputationalGraph();
@@ -378,5 +378,18 @@ public class PackedWeightsTests
         Assert.True(graph.Execute(user, true), graph.LastErrorMessage + " / node=" + graph.LastFailedNodeName);
         AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z"], "shared-mm");
         AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z2"], "shared-gm");
+    }
+    [Fact]
+    public void PackPass_PacksWideGemmWeightUnderCap()
+    {
+        var rnd = new Random(Seed);
+        var x = FillRect(4, 3072, rnd);
+        var w = FillRect(3072, 768, rnd);
+        var graph = BuildGemmGraph(x, w, "w", 0);
+        graph.RefreshLifetimeAnalysis();
+        Assert.True(graph.Initializers.ContainsKey("packed:w"), "n=3072 Gemm weight must pack under the 4096 cap.");
+        var user = new Dictionary<string, ITensor> { ["x"] = x };
+        Assert.True(graph.Execute(user, true), graph.LastErrorMessage + " / node=" + graph.LastFailedNodeName);
+        AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z"], "wide-gemm");
     }
 }
