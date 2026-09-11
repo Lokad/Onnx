@@ -529,9 +529,48 @@ where T : unmanaged
         return new int[] { outH, outW };
     }
 
+    /// <summary>
+    /// MaxPool over dense standard-stride spans with precomputed row offsets.
+    /// Matches the indexer loop bit for bit (negative-maximum start, NaN never
+    /// wins, padded cells skipped) with no per-element allocation.
+    /// </summary>
+    static void MaxPoolSpanFloat(System.Span<float> xs, System.Span<float> ys, int N, int C, int H, int W, int kH, int kW, int strideHeight, int strideWidth, int dilationHeight, int dilationWidth, PadInfo pad, int outH, int outW)
+    {
+        for (int n = 0; n < N; n++)
+            for (int d = 0; d < C; d++)
+                for (int yR = 0; yR < outH; yR++)
+                {
+                    int xCorner = yR * strideHeight - pad.top;
+                    for (int yC = 0; yC < outW; yC++)
+                    {
+                        int xCCorner = yC * strideWidth - pad.left;
+                        float best = -float.MaxValue;
+                        for (int tR = 0; tR < kH; tR++)
+                        {
+                            int xR = xCorner + tR * dilationHeight;
+                            if ((uint)xR >= (uint)H) continue;
+                            int rowBase = ((n * C + d) * H + xR) * W;
+                            for (int tC = 0; tC < kW; tC++)
+                            {
+                                int xC = xCCorner + tC * dilationWidth;
+                                if ((uint)xC >= (uint)W) continue;
+                                float v = xs[rowBase + xC];
+                                if (v > best) best = v;
+                            }
+                        }
+                        ys[((n * C + d) * outH + yR) * outW + yC] = best;
+                    }
+                }
+    }
     static Tensor<float> MaxPoolFloatCore(Tensor<float> input, int N, int C, int H, int W, int kH, int kW, int strideHeight, int strideWidth, int dilationHeight, int dilationWidth, PadInfo pad, int outH, int outW)
     {
         var Y = DenseTensor<float>.OfShape(N, C, outH, outW);
+        if (input is DenseTensor<float> dense && !dense.IsReversedStride && HasStandardStrides(dense) && dense.Buffer.Length == (int)dense.Length
+            && Y.Buffer.Length == (int)Y.Length)
+        {
+            MaxPoolSpanFloat(dense.Buffer.Span, Y.Buffer.Span, N, C, H, W, kH, kW, strideHeight, strideWidth, dilationHeight, dilationWidth, pad, outH, outW);
+            return Y;
+        }
 
         for (var n = 0; n < N; ++n)
         {
