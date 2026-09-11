@@ -129,13 +129,16 @@ where T : unmanaged
     /// <summary>
     /// Selects the panel-packed kernel for a B-side operand resolving to a
     /// fresh packed clone. Every unmet condition falls back to the unpacked
-    /// path, so Scalar and Simd modes, missing FMA, odd row counts and stale
-    /// mappings keep reading original row-major bytes by construction.
+    /// path, so Scalar and Simd modes, missing FMA, odd row counts outside exact
+    /// 3-row groups, and stale mappings keep reading original row-major bytes
+    /// by construction. Three-row groups (P65) cover odd multiples of 3 exactly.
     /// </summary>
     static DenseTensor<float>? ResolvePackedKernel(TensorExecutionOptions options, Tensor<float> y, int m)
     {
         if (!options.UseSimd || !options.UseIntrinsics || !Fma.IsSupported) return null;
-        if ((m & 1) != 0) return null;
+        // The 2-row kernel needs even rows; odd counts route packed only when exact
+        // 3-row groups cover them (P65).
+        if ((m & 1) != 0 && (m % 3) != 0) return null;
         var found = GraphPacking.ResolvePacked(options.PackedMatMulWeights, y);
         if (found is null || found.Dimensions.Length != 2) return null;
         int n = found.Dimensions[0], k = found.Dimensions[1];
@@ -162,7 +165,24 @@ where T : unmanaged
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
             int blocked = m - (m % 2);
-            if (blocked >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
+            if ((m % 3) == 0 && m >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
+            {
+                // P65: exact 3-row groups cover every row, so no scalar fixup follows.
+                float[] packed = RentScratch<float>(n * k, options);
+                try
+                {
+                    fixed (float* pp = packed)
+                    {
+                        PackPanelsB(n, k, y, pp);
+                        mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
+                    }
+                }
+                finally
+                {
+                    ArrayPool<float>.Shared.Return(packed);
+                }
+            }
+            else if (blocked >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
             {
                 float[] packed = RentScratch<float>(n * k, options);
                 try
@@ -186,7 +206,10 @@ where T : unmanaged
             {
                 mm_unsafe_vectorized_intrinsics_2x4(blocked, n, k, x, y, output);
             }
-            if (blocked != m)
+            // The P65 3-row branch above already covers every row exactly, so the 2-row
+            // remainder fixup must not re-accumulate the last row.
+            bool threeRowCovered = (m % 3) == 0 && m >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements;
+            if (blocked != m && !threeRowCovered)
             {
                 mm_unsafe_vectorized_intrinsics(1, n, k, x + blocked * n, y, output + blocked * k);
             }
@@ -250,7 +273,12 @@ where T : unmanaged
             using var oh = destination.Buffer.Pin();
             unsafe
             {
-                mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
+                // Three-row groups share each B vector at the same broadcast rate (P65);
+                // every other packed shape keeps the proven 2-row nest.
+                if ((m % 3) == 0)
+                    mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
+                else
+                    mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
             }
             return destination;
         }
@@ -599,10 +627,19 @@ where T : unmanaged
                 {
                     unsafe
                     {
-                        mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k,
-                            (float*)xp0 + xOff[bi],
-                            pp,
-                            (float*)zp0 + zOff[bi]);
+                        // P65: exact 3-row groups cover every row at the same broadcast rate;
+                        // other batch shapes keep the proven 2-row nest (odd counts only arrive
+                        // here in exact 3-row groups via the relaxed packed gate).
+                        if ((m % 3) == 0)
+                            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k,
+                                (float*)xp0 + xOff[bi],
+                                pp,
+                                (float*)zp0 + zOff[bi]);
+                        else
+                            mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k,
+                                (float*)xp0 + xOff[bi],
+                                pp,
+                                (float*)zp0 + zOff[bi]);
                     }
                 });
             }
@@ -615,7 +652,10 @@ where T : unmanaged
                 int ox = 0, oz = 0;
                 for (int b = 0; b < batchCount; b++)
                 {
-                    mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, xp + ox, pp, zp + oz);
+                    if ((m % 3) == 0)
+                        mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, xp + ox, pp, zp + oz);
+                    else
+                        mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, xp + ox, pp, zp + oz);
                     for (int d = r - 1; d >= 0; d--)
                     {
                         coords[d]++;

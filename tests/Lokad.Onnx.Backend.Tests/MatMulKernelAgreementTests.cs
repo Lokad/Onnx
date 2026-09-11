@@ -260,6 +260,91 @@ public class MatMulKernelAgreementTests
             $"packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
     }
 
+    [SkippableFact]
+    public unsafe void Packed3MatchesTiledBitwise()
+    {
+        // P65: the 3-row packed nest keeps the exact per-element j-ascending
+        // order of the 2-row nest, so it must agree with the tiled kernel
+        // bit-wise on exact, vector-tail and scalar-tail widths.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        Packed3Equal(6, 16, 96, rnd);
+        Packed3Equal(6, 16, 44, rnd);
+        Packed3Equal(12, 16, 40, rnd);
+        Packed3Equal(12, 24, 20, rnd);
+        Packed3Equal(30, 24, 68, rnd);
+    }
+
+    static unsafe void Packed3Equal(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"3-row packed diverges bitwise from tiled on {m}x{n}x{k}.");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, q, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"3-row packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
+    }
+
+    [SkippableFact]
+    public unsafe void Packed3OddMatchesDispatchedBitwise()
+    {
+        // P65: odd multiples of 3 (e.g. DINO M=201) run the 3-row nest over all
+        // rows where dispatch used to run 2-row packed plus a scalar row; the
+        // per-element chains match, so agreement must be bit-wise.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        Packed3OddEqual(9, 16, 44, rnd);
+        Packed3OddEqual(9, 24, 96, rnd);
+    }
+
+    static unsafe void Packed3OddEqual(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics).ToDenseTensor();
+        var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"3-row packed diverges bitwise from dispatched on odd {m}x{n}x{k}.");
+    }
+    [SkippableFact]
+    public void Packed3BatchMatchesRank2Bitwise()
+    {
+        // P65: rank-3 MatMul with a rank-2 weight (the e5/DINO in-model shape
+        // family) routes the packed-batch path; on exact 3-row groups it must
+        // agree bit-wise with the rank-2 dispatcher computing the same product.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        Packed3BatchEqual(9, 16, 44, rnd);
+        Packed3BatchEqual(6, 16, 40, rnd);
+    }
+
+    static void Packed3BatchEqual(int m, int n, int k, Random rnd)
+    {
+        var a2 = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var flat = new float[m * n];
+        a2.Buffer.Span.CopyTo(flat);
+        var a3 = new DenseTensor<float>(flat, new int[] { 1, m, n });
+        var got3 = Tensor<float>.MatMul(a3, b, TensorExecutionOptions.Intrinsics).ToDenseTensor();
+        var got2 = Tensor<float>.MatMul2D(a2, b, TensorExecutionOptions.Intrinsics).ToDenseTensor();
+        Assert.True(got3.Buffer.Span.SequenceEqual(got2.Buffer.Span),
+            $"rank-3 batch diverges bitwise from rank-2 on 1x{m}x{n}x{k}.");
+    }
+
+
     [Fact]
     public void DispatchedMatMulAgreesWithReference()
     {
