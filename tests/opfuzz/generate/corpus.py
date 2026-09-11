@@ -1,4 +1,4 @@
-"""Seeded single-op differential corpus generator (explicit maintenance action).
+"""Seeded differential corpus generator (explicit maintenance action).
 
 Reads nothing, writes tests/opfuzz/corpus/<case>/{model.onnx,in_*.txt,ref_*.txt,meta.json}.
 Corpus models are tracked in git through a scoped .gitignore exception; keep
@@ -63,7 +63,8 @@ def write_model(d, case_id, node, inputs, out_shapes, inits, dtypes=None, opset=
     opset = OPSET if opset is None else opset
     vin = [helper.make_tensor_value_info(n, dtypes.get(n, TensorProto.FLOAT), list(s)) for n, s in inputs]
     vout = [helper.make_tensor_value_info(n, dtypes.get(n, TensorProto.FLOAT), list(s)) for n, s in out_shapes]
-    g = helper.make_graph([node], "g_" + case_id, vin, vout, initializer=list(inits))
+    nodes = node if isinstance(node, list) else [node]
+    g = helper.make_graph(nodes, "g_" + case_id, vin, vout, initializer=list(inits))
     m = helper.make_model(g, opset_imports=[helper.make_opsetid("", opset)], producer_name="opfuzz")
     m.ir_version = 8
     mp = os.path.join(d, "model.onnx")
