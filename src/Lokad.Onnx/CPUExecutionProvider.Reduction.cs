@@ -51,6 +51,7 @@ public partial class CPUExecutionProvider
         switch (data.ElementType)
         {
             case TensorElementType.Int32: return Success(op, Tensor<int>.ReduceMean((Tensor<int>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes, opts.Tensor));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.ReduceMean((Tensor<long>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes, opts.Tensor));
             case TensorElementType.Float: return Success(op, Tensor<float>.ReduceMean((Tensor<float>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes, opts.Tensor));
             case TensorElementType.Double: return Success(op, Tensor<double>.ReduceMean((Tensor<double>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes, opts.Tensor));
             default: return NotSupported(op);

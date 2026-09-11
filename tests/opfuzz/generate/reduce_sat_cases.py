@@ -46,6 +46,21 @@ def main():
          {"x": np.array([9223372036854775807, 9223372036854775807,
                         -9223372036854775808, -9223372036854775808], dtype=np.int64)},
          dtypes=DT64, feed_dtypes=FD64)
+    node = helper.make_node("ReduceMean", ["x"], ["z"], keepdims=0)
+    emit("reducemean_basic_int64", node, [("x", [4])], [("z", [])],
+         {"x": np.array([1, 2, 3, 4], dtype=np.int64)},
+         dtypes=DT64, feed_dtypes=FD64)
+    # Truncation toward zero discriminates against half-up, half-even
+    # (positive) and floor (negative); both frozen values are order-robust.
+    node = helper.make_node("ReduceMean", ["x"], ["z"], keepdims=0)
+    emit("reducemean_truncpos_int64", node, [("x", [2])], [("z", [])],
+         {"x": np.array([1, 2], dtype=np.int64)},
+         dtypes=DT64, feed_dtypes=FD64)
+    node = helper.make_node("ReduceMean", ["x"], ["z"], keepdims=0)
+    emit("reducemean_truncneg_int64", node, [("x", [2])], [("z", [])],
+         {"x": np.array([-1, -2], dtype=np.int64)},
+         dtypes=DT64, feed_dtypes=FD64)
+
 
 
 if __name__ == "__main__":

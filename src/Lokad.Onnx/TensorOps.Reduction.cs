@@ -205,6 +205,44 @@ where T : unmanaged
         return ApplyKeepDims(output, plan, keepDims);
     }
 
+    public static Tensor<long> ReduceMean(Tensor<long> data, Tensor<int>? axes) => ReduceMean(data, axes, null, null);
+
+        public static Tensor<long> ReduceMean(Tensor<long> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)
+        => ReduceMean(data, axes, _keepDims, _noOpWithEmptyAxes, TensorExecutionOptions.Auto);
+
+        public static Tensor<long> ReduceMean(Tensor<long> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes, TensorExecutionOptions options)
+    {
+        StartOpStage(OpStage.ValidateArguments);
+        var plan = PlanReduction(data.Rank, axes, _keepDims, false, _noOpWithEmptyAxes, out var keepDims);
+        if (plan.IsNoOp) return data.Clone();
+
+        StartOpStage(OpStage.CalculateIndices);
+        var (pdata, oshape, r) = PrepareReduction(data, plan.Axes);
+        var output = DenseTensor<long>.OfShape(oshape);
+
+        StartOpStage(OpStage.Math);
+        var xs = pdata.Buffer.Span;
+        var os = output.Buffer.Span;
+        for (int i = 0; i < os.Length; ++i)
+        {
+            int offset = i * r;
+            // Empty reductions yield zero; without the guard the quotient
+            // below divides by zero (ORT 1.29 agrees on 0 for every dtype).
+            if (r == 0)
+            {
+                os[i] = 0;
+                continue;
+            }
+            // ORT 1.29 divides the double accumulation and truncates toward
+            // zero ([1,2] gives 1, [-1,-2] gives -1, [2^53+1,1] gives 2^53).
+            double mean = 0.0;
+            for (int j = 0; j < r; ++j) mean += xs[offset + j];
+            mean /= r;
+            os[i] = mean >= 9223372036854775808.0 ? long.MaxValue : mean <= -9223372036854775808.0 ? long.MinValue : (long)mean;
+        }
+        return ApplyKeepDims(output, plan, keepDims);
+    }
+
     public static Tensor<float> ReduceMean(Tensor<float> data, Tensor<int>? axes) => ReduceMean(data, axes, null, null);
 
         public static Tensor<float> ReduceMean(Tensor<float> data, Tensor<int>? axes, bool? _keepDims, bool? _noOpWithEmptyAxes)
