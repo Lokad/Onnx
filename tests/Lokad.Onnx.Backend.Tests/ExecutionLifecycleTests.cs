@@ -528,4 +528,19 @@ public class ExecutionLifecycleTests
         Assert.Null(g.LastErrorMessage);
         Assert.Null(g.LastFailedNodeName);
     }
+
+    [Fact]
+    public void ReshapeMismatch_FailsCleanlySecondRun()
+    {
+        // ORT refuses mismatched feed shapes at run; a second Execute
+        // with different shapes must fail descriptively, not corrupt
+        // the first run or throw.
+        var g = NewMatMulGraph(2);
+        Assert.True(g.Execute(MatMulInputs(2), false));
+        Assert.False(g.Execute(MatMulInputs(3), false));
+        Assert.NotNull(g.LastErrorMessage);
+        var h = NewMatMulGraph(3);
+        Assert.True(h.Execute(MatMulInputs(3), false));
+        Assert.False(h.Execute(MatMulInputs(2), false));
+    }
 }
