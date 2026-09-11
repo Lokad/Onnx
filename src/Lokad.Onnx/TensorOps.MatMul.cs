@@ -139,7 +139,7 @@ where T : unmanaged
         var found = GraphPacking.ResolvePacked(options.PackedMatMulWeights, y);
         if (found is null || found.Dimensions.Length != 2) return null;
         int n = found.Dimensions[0], k = found.Dimensions[1];
-        if (n < 1 || k < 1 || n >= GraphPacking.MaxPackedAxis || k >= GraphPacking.MaxPackedAxis) return null;
+        if (n < 1 || k < 1 || n >= GraphPacking.MaxPackedAxis || (long)n * k > GraphPacking.MaxPackedBytes) return null;
         return found;
     }
 

@@ -39,6 +39,18 @@ public class GraphFoldTransposeTests
     }
 
     [Fact]
+    public void ConstantTranspose_FoldsEagerlyAtRefresh()
+    {
+        var g = NewGraph();
+        g.Initializers["w"] = DenseTensor<float>.OfValues(new float[2, 3] { { 1f, 2f, 3f }, { 4f, 5f, 6f } });
+        g.Outputs["zt"] = DenseTensor<float>.OfShape(3, 2);
+        AddTranspose(g, "t", "w", "zt");
+        g.RefreshLifetimeAnalysis();
+        Assert.True(g.Initializers.ContainsKey("folded:t"));
+        Assert.Equal(new float[] { 1f, 4f, 2f, 5f, 3f, 6f }, ((Tensor<float>)g.Initializers["folded:t"]).ToArray());
+    }
+
+    [Fact]
     public void ReplacedInitializer_Refolds()
     {
         var g = NewGraph();

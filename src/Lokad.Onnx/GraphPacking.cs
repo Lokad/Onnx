@@ -32,9 +32,35 @@ internal static class GraphPacking
     /// <summary>Upper axis bound of measured packed-kernel territory.</summary>
     internal const int MaxPackedAxis = 2560;
 
+    /// <summary>Upper packed-clone size in bytes (P34).</summary>
+    /// <remarks>The reduction axis stays bounded while the panel axis scales linearly (proven to 1570 panels), so total bytes bound residency instead.</remarks>
+    internal const long MaxPackedBytes = 512L * 1024 * 1024;
+
+    /// <summary>Resolves a MatMul edge name to a folded-transpose prepared tensor (P34).</summary>
+    /// <remarks>Folded outputs materialize under a generated name, so the consuming edge name never hits Initializers directly; the prepared bytes are stable and guarded exactly like initializer sources downstream.</remarks>
+    static bool TryResolveFoldedSource(ComputationalGraph graph, string edgeName, out ITensor? init)
+    {
+        init = null;
+        foreach (var node in graph.Nodes)
+        {
+            if (node.Op != OpType.Transpose || node.Outputs is null) continue;
+            bool produces = false;
+            foreach (var o in node.Outputs) if (o == edgeName) { produces = true; break; }
+            if (!produces) continue;
+            if (graph.FoldedTransposes.TryGetValue(node.Name, out var fold)
+                && graph.Initializers.TryGetValue(fold.PreparedName, out var prepared)
+                && prepared is DenseTensor<float>)
+            {
+                init = prepared;
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
     /// <summary>
     /// Packs eligible MatMul B-side weight initializers of the graph.
-    /// Eligible means float32, rank 2, non-empty axes below MaxPackedAxis,
+    /// Eligible means float32, rank 2, reduction axis below MaxPackedAxis with total bytes below MaxPackedBytes,
     /// never a graph input or output, and consumed only as MatMul input 1.
     /// Fresh records reuse verified clones; stale records are dropped and
     /// rebuilt. Returns the live packed count.
@@ -59,14 +85,14 @@ internal static class GraphPacking
         {
             if (!kv.Value) continue;
             if (graph.Inputs.ContainsKey(kv.Key) || graph.Outputs.ContainsKey(kv.Key)) continue;
-            if (!graph.Initializers.TryGetValue(kv.Key, out var init)) continue;
+            if (!graph.Initializers.TryGetValue(kv.Key, out var init) && !TryResolveFoldedSource(graph, kv.Key, out init)) continue;
             if (init is not DenseTensor<float> dense || init.ElementType != TensorElementType.Float) continue;
             if (init.Rank != 2 || dense.IsReversedStride) continue;
             if (!dense.strides.SequenceEqual(ArrayUtilities.GetStrides(dense.dimensions))) continue;
             int[] dims = init.Dims;
             if (dims.Length != 2) continue;
             int n = dims[0], k = dims[1];
-            if (n < 1 || k < 1 || n >= MaxPackedAxis || k >= MaxPackedAxis) continue;
+            if (n < 1 || k < 1 || n >= MaxPackedAxis || (long)n * k > MaxPackedBytes) continue;
             if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(dense.Buffer, out System.ArraySegment<float> window)
                 || window.Array is null || window.Offset != 0 || window.Count != dense.Buffer.Length) continue;
             current[kv.Key] = (init, window.Array);

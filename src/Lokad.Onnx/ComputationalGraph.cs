@@ -1132,12 +1132,31 @@ public class ComputationalGraph
         Info("Reset graph state.");
     }
 
+    /// <summary>Folds constant-input transposes eagerly at preparation (P34).</summary>
+    /// <remarks>Matches what first execution would fold lazily, so steady state is identical with the transpose compute moved from first run to prepare. Any failure skips the node silently and the lazy path handles it at run time exactly as before.</remarks>
+    void FoldConstantTransposes()
+    {
+        for (int i = 0; i < Nodes.Count; i++)
+        {
+            if (Nodes[i].Op != OpType.Transpose) continue;
+            try
+            {
+                var node = Nodes[i];
+                node.TransposePrepared(this, null);
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException || ex is NotSupportedException)
+            {
+                // The lazy path retries the transpose at run time exactly as before.
+            }
+        }
+    }
     /// <summary>Recomputes <see cref="LastUseIndex"/> from the current <see cref="Nodes"/> order and rebuilds panel-packed MatMul weight clones.</summary>
     /// <remarks>Graph outputs map to <see cref="Nodes"/>.Count (live to the end); graph inputs and
     /// initializers map to <see cref="int.MaxValue"/> (live forever); produced-but-unconsumed
     /// intermediates map to their producer index. Inert: no execution state changes.</remarks>
     public void RefreshLifetimeAnalysis()
     {
+        FoldConstantTransposes();
         GraphPacking.PackMatMulWeights(this);
         // Preparation assigns stable sequential identities by file-order
         // position: unlike name hashes they are distinct for duplicate or

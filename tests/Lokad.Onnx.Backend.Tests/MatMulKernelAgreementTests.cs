@@ -235,6 +235,8 @@ public class MatMulKernelAgreementTests
         PackedEqual(64, 24, 44, rnd);
         PackedEqual(64, 48, 3100, rnd);
         PackedEqual(64, 64, 3136, rnd);
+        PackedEqual(4, 64, 2600, rnd);
+        PackedEqual(4, 64, 2617, rnd);
     }
 
     static unsafe void PackedEqual(int m, int n, int k, Random rnd)

@@ -123,7 +123,7 @@ public partial struct Node
     /// are computed once, stored as plan-owned initializers, and reused while
     /// the source initializer is unchanged. Anything else computes normally.
     /// </summary>
-    OpResult TransposePrepared(ComputationalGraph graph, ExecutionOptions? opt)
+    internal OpResult TransposePrepared(ComputationalGraph graph, ExecutionOptions? opt)
     {
         var input = InputTensor(graph, 0);
         if (graph.TryGetFoldedTranspose(Name, Inputs, input, out var prepared) && prepared is not null)
