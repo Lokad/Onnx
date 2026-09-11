@@ -85,8 +85,10 @@ public class OneOpBenchmarks
         Add("matmul_30x384x384", "a", new int[] { 1, 30, 384 });
         Add("gelu_30x1536", "x", new int[] { 1, 30, 1536 });
         Add("transpose_30x12x32", "x", new int[] { 1, 30, 12, 32 });
+        Add("gemm_4x768x2304", "a", new int[] { 4, 768 });
+        Add("gemm_4x3072x768", "a", new int[] { 4, 3072 });
         foreach (var c in cases) VerifyAgreement(c);
-        Console.WriteLine("OneOp agreement: all 14 cases match element-wise.");
+        Console.WriteLine("OneOp agreement: all 16 cases match element-wise.");
     }
 
     void Add(string kase, string inputName, int[] dims)
@@ -252,4 +254,20 @@ public class OneOpBenchmarks
     [Benchmark(Description = "Transpose 1x30x12x32 - ORT session")]
     [BenchmarkCategory("tr30")]
     public void OrtTr30() => RunOrt(cases[13]);
+
+    [Benchmark(Description = "Gemm 4x768 @ 768x2304 - Lokad session")]
+    [BenchmarkCategory("g432")]
+    public void LokadGemm4x768() => RunLokad(cases[14]);
+
+    [Benchmark(Description = "Gemm 4x768 @ 768x2304 - ORT session")]
+    [BenchmarkCategory("g432")]
+    public void OrtGemm4x768() => RunOrt(cases[14]);
+
+    [Benchmark(Description = "Gemm 4x3072 @ 3072x768 - Lokad session")]
+    [BenchmarkCategory("g4768")]
+    public void LokadGemm4x3072() => RunLokad(cases[15]);
+
+    [Benchmark(Description = "Gemm 4x3072 @ 3072x768 - ORT session")]
+    [BenchmarkCategory("g4768")]
+    public void OrtGemm4x3072() => RunOrt(cases[15]);
 }

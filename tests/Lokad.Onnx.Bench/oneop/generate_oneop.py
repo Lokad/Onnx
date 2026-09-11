@@ -83,3 +83,19 @@ save("tests/Lokad.Onnx.Bench/oneop/transpose_30x12x32",
      helper.make_node("Transpose", ["x"], ["y"], perm=[0, 2, 1, 3]),
      [tinfo("x", [1, 30, 12, 32])], [tinfo("y", [1, 12, 30, 32])],
      [])
+
+# 10. GPT-2 c_attn tile: 4x768 @ 768x2304 + bias
+b = (rng.random([768, 2304]) * 2 - 1).astype(np.float32)
+c = (rng.random([2304]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/gemm_4x768x2304",
+     helper.make_node("Gemm", ["a", "b", "c"], ["y"], alpha=1.0, beta=1.0),
+     [tinfo("a", [4, 768])], [tinfo("y", [4, 2304])],
+     [finit("b", b), finit("c", c)])
+
+# 11. GPT-2 c_proj tile: 4x3072 @ 3072x768 + bias
+b = (rng.random([3072, 768]) * 2 - 1).astype(np.float32)
+c = (rng.random([768]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/gemm_4x3072x768",
+     helper.make_node("Gemm", ["a", "b", "c"], ["y"], alpha=1.0, beta=1.0),
+     [tinfo("a", [4, 3072])], [tinfo("y", [4, 768])],
+     [finit("b", b), finit("c", c)])
