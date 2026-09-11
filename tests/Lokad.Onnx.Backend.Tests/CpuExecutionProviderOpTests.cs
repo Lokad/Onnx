@@ -864,6 +864,9 @@ public class CpuExecutionProviderOpTests
         // but refuses uint32 Gemm (NOT_IMPLEMENTED, probed). The MatMul
         // gap needs uint GEMM kernels (owner scope, cf. the int32
         // imatmul path); shapes below are valid, isolating dtype gates.
+        // Overflow semantics for that future kernel, probed: plain
+        // wraparound ([Max]@[2] gives Max-1 for both widths), NOT the
+        // saturation integer reductions use.
         var a32 = DenseTensor<uint>.OfValues(new uint[,] { { 1u, 2u }, { 3u, 4u } });
         var b32 = DenseTensor<uint>.OfValues(new uint[,] { { 1u, 0u }, { 0u, 1u } });
         Assert.Equal(OpStatus.Failure, CPU.MatMul(a32, b32, null, null).Status);
