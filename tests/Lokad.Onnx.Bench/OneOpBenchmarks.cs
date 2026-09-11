@@ -76,8 +76,12 @@ public class OneOpBenchmarks
         Add("layernorm_384", "x", new int[] { 257, 384 });
         Add("gelu_384", "x", new int[] { 257, 384 });
         Add("conv_3x3", "x", new int[] { 1, 64, 28, 28 });
+        Add("gemm_1024x256", "a", new int[] { 1024, 256 });
+        Add("gemm_512x4608", "a", new int[] { 512, 4608 });
+        Add("conv_3x3_512", "x", new int[] { 1, 512, 14, 14 });
+        Add("conv_1x1_1024", "x", new int[] { 1, 256, 14, 14 });
         foreach (var c in cases) VerifyAgreement(c);
-        Console.WriteLine("OneOp agreement: all 5 cases match element-wise.");
+        Console.WriteLine("OneOp agreement: all 9 cases match element-wise.");
     }
 
     void Add(string kase, string inputName, int[] dims)
@@ -172,4 +176,36 @@ public class OneOpBenchmarks
     [Benchmark(Description = "Conv 64ch 3x3 - ORT session")]
     [BenchmarkCategory("conv")]
     public void OrtConv() => RunOrt(cases[4]);
+
+    [Benchmark(Description = "Gemm 1024x256 @ 256x196 - Lokad session")]
+    [BenchmarkCategory("gemm1024")]
+    public void LokadGemm1024() => RunLokad(cases[5]);
+
+    [Benchmark(Description = "Gemm 1024x256 @ 256x196 - ORT session")]
+    [BenchmarkCategory("gemm1024")]
+    public void OrtGemm1024() => RunOrt(cases[5]);
+
+    [Benchmark(Description = "Gemm 512x4608 @ 4608x196 - Lokad session")]
+    [BenchmarkCategory("gemm512")]
+    public void LokadGemm512() => RunLokad(cases[6]);
+
+    [Benchmark(Description = "Gemm 512x4608 @ 4608x196 - ORT session")]
+    [BenchmarkCategory("gemm512")]
+    public void OrtGemm512() => RunOrt(cases[6]);
+
+    [Benchmark(Description = "Conv 512ch 3x3 over 1x512x14x14 - Lokad session")]
+    [BenchmarkCategory("conv512")]
+    public void LokadConv512() => RunLokad(cases[7]);
+
+    [Benchmark(Description = "Conv 512ch 3x3 over 1x512x14x14 - ORT session")]
+    [BenchmarkCategory("conv512")]
+    public void OrtConv512() => RunOrt(cases[7]);
+
+    [Benchmark(Description = "Conv 1x1 256to1024 over 1x256x14x14 - Lokad session")]
+    [BenchmarkCategory("conv1024")]
+    public void LokadConv1024() => RunLokad(cases[8]);
+
+    [Benchmark(Description = "Conv 1x1 256to1024 over 1x256x14x14 - ORT session")]
+    [BenchmarkCategory("conv1024")]
+    public void OrtConv1024() => RunOrt(cases[8]);
 }
