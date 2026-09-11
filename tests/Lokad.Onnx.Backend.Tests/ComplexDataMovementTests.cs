@@ -82,4 +82,14 @@ public class ComplexDataMovementTests
         Assert.Equal(OpStatus.Failure, CPU.Neg(a, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Abs(a, null).Status);
     }
+
+    [Fact]
+    public void ComplexSplit_RefusedCleanly()
+    {
+        // ORT refuses complex64 Split at graph init (probed); Split is the
+        // one movement op without a Complex arm, matching that refusal.
+        var x = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[] { new System.Numerics.Complex(1, 0), new System.Numerics.Complex(2, 0), new System.Numerics.Complex(3, 0), new System.Numerics.Complex(4, 0) }, new int[] { 1, 4 });
+        var r = CPU.Split(x, DenseTensor<long>.OfValues(new long[] { 2L, 2L }), 1, null, null, null, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
 }

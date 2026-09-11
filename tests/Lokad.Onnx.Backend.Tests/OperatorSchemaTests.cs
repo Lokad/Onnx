@@ -1047,4 +1047,53 @@ public class OperatorSchemaTests
         Assert.NotEmpty(OperatorSchemas.All);
         Assert.True(CPUExecutionProvider.SupportsOp(OpType.Add));
     }
+
+    [Fact]
+    public void CumSumHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no CumSum schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract (verified end to end via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.CumSum));
+        var node = Nod(OpType.CumSum, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("CumSum", r.Message ?? "");
+    }
+
+    [Fact]
+    public void HardmaxHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no Hardmax schema, provider, kernel, or dispatch arm exists
+        // anywhere in src; same honest contract (verified end to end via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Hardmax));
+        var node = Nod(OpType.Hardmax, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Hardmax", r.Message ?? "");
+    }
+
+    [Fact]
+    public void DepthToSpaceHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: no DepthToSpace schema, provider, kernel, or dispatch arm
+        // exists anywhere in src; same honest contract (verified end to end
+        // via OpDump).
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.DepthToSpace));
+        var node = Nod(OpType.DepthToSpace, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("DepthToSpace", r.Message ?? "");
+    }
 }
