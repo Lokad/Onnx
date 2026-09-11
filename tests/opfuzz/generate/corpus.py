@@ -70,7 +70,7 @@ def write_model(d, case_id, node, inputs, out_shapes, inits, dtypes=None, opset=
     onnx.save(m, mp)
     return mp
 
-def emit(case_id, node, inputs, out_shapes, feed, inits=(), dtypes=None, opset=None, feed_dtypes=None):
+def emit(case_id, node, inputs, out_shapes, feed, inits=(), dtypes=None, opset=None, feed_dtypes=None, allow_nonfinite=False):
     d = os.path.join(ROOT, case_id)
     os.makedirs(d, exist_ok=True)
     mp = write_model(d, case_id, node, inputs, out_shapes, inits, dtypes, opset)
@@ -88,7 +88,8 @@ def emit(case_id, node, inputs, out_shapes, feed, inits=(), dtypes=None, opset=N
     for n, a in feed.items():
         txt_save(os.path.join(d, "in_" + n + ".txt"), a)
     for (n, s), a in zip(out_shapes, res):
-        assert np.all(np.isfinite(a)), "non-finite ORT output in " + case_id
+        if not allow_nonfinite:
+            assert np.all(np.isfinite(a)), "non-finite ORT output in " + case_id
         txt_save(os.path.join(d, "ref_" + n + ".txt"), a)
     with open(os.path.join(d, "meta.json"), "w") as f:
         meta = {"case": case_id, "seed": SEED, "opset": OPSET if opset is None else opset, "ir": 8, "env": ENV}
