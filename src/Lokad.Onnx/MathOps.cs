@@ -688,19 +688,19 @@ public class MathOps
         int blocked = K - (K % (4 * Vector256<float>.Count));
         int tiles = blocked / (4 * Vector256<float>.Count);
 
-        for (int i = 0; i < M; i += 2)
+        // Kb panels lead so each panel is fetched once and stays L1/L2 resident
+        // across every row group; per-element FMA order matches the row-led nest
+        // exactly, so results agree bit-wise with the tiled kernel.
+        for (int tb = 0; tb < tiles; tb++)
         {
-            var Ap1 = A + i * N;
-            var Ap2 = Ap1 + N;
-
-            var Cp1 = C + i * K;
-            var Cp2 = Cp1 + K;
-
-            for (int tb = 0; tb < tiles; tb++)
+            int kb = tb * (4 * Vector256<float>.Count);
+            float* panel = P + tb * N * (4 * Vector256<float>.Count);
+            for (int i = 0; i < M; i += 2)
             {
-                int kb = tb * (4 * Vector256<float>.Count);
-                var Cpv1 = (Vector256<float>*)(Cp1 + kb);
-                var Cpv2 = (Vector256<float>*)(Cp2 + kb);
+                var Ap1 = A + i * N;
+                var Ap2 = Ap1 + N;
+                var Cpv1 = (Vector256<float>*)(C + i * K + kb);
+                var Cpv2 = (Vector256<float>*)(C + (i + 1) * K + kb);
                 Vector256<float> c00 = Cpv1[0];
                 Vector256<float> c01 = Cpv1[1];
                 Vector256<float> c02 = Cpv1[2];
@@ -709,7 +709,6 @@ public class MathOps
                 Vector256<float> c11 = Cpv2[1];
                 Vector256<float> c12 = Cpv2[2];
                 Vector256<float> c13 = Cpv2[3];
-                float* panel = P + tb * N * (4 * Vector256<float>.Count);
                 for (int j = 0; j < N; ++j)
                 {
                     var av1 = Vector256.Create(Ap1[j]);
@@ -733,15 +732,20 @@ public class MathOps
                 Cpv2[2] = c12;
                 Cpv2[3] = c13;
             }
-            int rem = K - blocked;
-            if (rem > 0)
+        }
+        int rem = K - blocked;
+        if (rem > 0)
+        {
+            float* T = P + tiles * N * (4 * Vector256<float>.Count);
+            int rv = rem / Vector256<float>.Count;
+            for (int tt = 0; tt < rv; tt++)
             {
-                float* T = P + tiles * N * (4 * Vector256<float>.Count);
-                var rC1 = (Vector256<float>*)(Cp1 + blocked);
-                var rC2 = (Vector256<float>*)(Cp2 + blocked);
-                int rv = rem / Vector256<float>.Count;
-                for (int tt = 0; tt < rv; tt++)
+                for (int i = 0; i < M; i += 2)
                 {
+                    var Ap1 = A + i * N;
+                    var Ap2 = Ap1 + N;
+                    var rC1 = (Vector256<float>*)(C + i * K + blocked);
+                    var rC2 = (Vector256<float>*)(C + (i + 1) * K + blocked);
                     Vector256<float> c1 = rC1[tt];
                     Vector256<float> c2 = rC2[tt];
                     for (int j = 0; j < N; ++j)
@@ -753,7 +757,14 @@ public class MathOps
                     rC1[tt] = c1;
                     rC2[tt] = c2;
                 }
-                int vcols = rv * Vector256<float>.Count;
+            }
+            int vcols = rv * Vector256<float>.Count;
+            for (int i = 0; i < M; i += 2)
+            {
+                var Ap1 = A + i * N;
+                var Ap2 = Ap1 + N;
+                var Cp1 = C + i * K;
+                var Cp2 = Cp1 + K;
                 for (int j = 0; j < N; ++j)
                 {
                     float a1 = Ap1[j];
