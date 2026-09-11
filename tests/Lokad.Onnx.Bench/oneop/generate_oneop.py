@@ -180,3 +180,17 @@ save("tests/Lokad.Onnx.Bench/oneop/attn_1x6x201x201",
      helper.make_node("MatMul", ["a", "b"], ["y"]),
      [tinfo("a", [1, 6, 201, 201])], [tinfo("y", [1, 6, 201, 64])],
      [finit("b", b)])
+
+# 24. e5 attention scores (batched): 1x12x30x32 @ 32x30
+b = (rng.random([32, 30]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/attn_1x12x30x32",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 12, 30, 32])], [tinfo("y", [1, 12, 30, 30])],
+     [finit("b", b)])
+
+# 25. e5 attention context (batched): 1x12x30x30 @ 30x32
+b = (rng.random([30, 32]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/attn_1x12x30x30",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 12, 30, 30])], [tinfo("y", [1, 12, 30, 32])],
+     [finit("b", b)])
