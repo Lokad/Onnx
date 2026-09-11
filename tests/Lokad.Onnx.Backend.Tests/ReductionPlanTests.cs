@@ -212,6 +212,14 @@ public class ReductionPlanTests
         Assert.Equal(new float[] { 0f, 0f }, sum.ToArray());
         var isum = Tensor<int>.ReduceSum(DenseTensor<int>.OfShape(2, 0), axes, false, false);
         Assert.Equal(new int[] { 0, 0 }, isum.ToArray());
+        // Integer empty maxima yield the dtype minimum (ORT 1.29
+        // returns Min across widths, probed); the old throw is gone.
+        var imax = Tensor<int>.ReduceMax(DenseTensor<int>.OfShape(2, 0), axes, false, false);
+        Assert.Equal(new int[] { int.MinValue, int.MinValue }, imax.ToArray());
+        var i8max = Tensor<sbyte>.ReduceMax(DenseTensor<sbyte>.OfShape(2, 0), axes, false, false);
+        Assert.Equal(new sbyte[] { sbyte.MinValue, sbyte.MinValue }, i8max.ToArray());
+        var u8max = Tensor<byte>.ReduceMax(DenseTensor<byte>.OfShape(2, 0), axes, false, false);
+        Assert.Equal(new byte[] { byte.MinValue, byte.MinValue }, u8max.ToArray());
     }
 
     [Fact]
@@ -300,14 +308,12 @@ public class ReductionPlanTests
     public void OutOfScopeDtypes_RejectedCleanly()
     {
         // int8 ReduceSum is refused at load on both sides (agreement);
-        // int64 Sum and Mean moved to supported (double accumulation;
-        // saturation and truncation semantics pinned in
-        // ReduceSumInt64Tests/ReduceMeanInt64Tests); int64 Max still needs
-        // version gating (ORT accepts Max only through opset 13), so it
-        // stays refused with uint (NOT_IMPLEMENTED there) for now. int32
-        // Max moved to supported earlier (ReduceMaxInt32_MatchesOrt).
-        var i64 = DenseTensor<long>.OfValues(new long[] { 1L, 2L });
-        Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMax(i64, null, null, null, null).Status);
+        // int64 Sum, Mean and Max all moved to supported (values pinned
+        // in ReduceSumInt64Tests/ReduceMeanInt64Tests/ReduceMaxInt64Tests;
+        // Max accepts every opset in valid forms, so no version gating
+        // was needed). uint stays refused (NOT_IMPLEMENTED in ORT);
+        // int32 Max moved to supported earlier (ReduceMaxInt32_MatchesOrt).
+        // The rest fail descriptively instead of reaching a kernel cast.
         var i8 = DenseTensor<sbyte>.OfValues(new sbyte[] { 1 });
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceSum(i8, null, null, null, null).Status);
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.ReduceMean(i8, null, null, null, null).Status);
@@ -474,16 +480,17 @@ public class ReductionPlanTests
     public void ReduceMaxInt32_MatchesOrt()
     {
         // ORT 1.29 runs int32 ReduceMax (axes attribute at 14, axes input
-        // at 18, both probed); empty reduction extents fail the run there
-        // (no integer identity), so the kernel throws instead of writing
-        // a seed like the float -inf path.
+        // at 18, both probed); empty extents yield dtype Min (probed across
+        // keepdims and full/flat forms), like float -inf.
         var x = DenseTensor<int>.OfValues(new int[,] { { 3, 1 }, { 2, 5 } });
         var axes = new int[] { 1 }.ToTensor<int>();
         var r = CPUExecutionProvider.ReduceMax(x, axes, 0, null, null);
         Assert.Equal(OpStatus.Success, r.Status);
         Assert.Equal(new int[] { 3, 5 }, ((Tensor<int>)r.Outputs![0]).ToArray());
         var e = DenseTensor<int>.OfShape(2, 0);
-        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceMax(e, axes, 0, null, null));
+        var er = CPUExecutionProvider.ReduceMax(e, axes, 0, null, null);
+        Assert.Equal(OpStatus.Success, er.Status);
+        Assert.Equal(new int[] { int.MinValue, int.MinValue }, ((Tensor<int>)er.Outputs![0]).ToArray());
         var graph = new ComputationalGraph
         {
             Opset = new Dictionary<string, int> { [""] = 18 },
@@ -499,15 +506,14 @@ public class ReductionPlanTests
             Attributes = new Dictionary<string, object>(),
         };
         var rn = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, rn.Status);
+        Assert.Equal(OpStatus.Success, rn.Status);
     }
 
     [Fact]
     public void ReduceMaxSub32_MatchesOrt()
     {
         // ORT 1.29 runs int8/uint8 ReduceMax (int16/uint16 stay refused on
-        // both sides); like int32, empty extents fail the run (no integer
-        // identity), so the kernel throws instead of writing a seed.
+        // both sides); empty extents yield dtype Min (probed), like int32.
         var axes = new int[] { 0 }.ToTensor<int>();
         var s8 = CPUExecutionProvider.ReduceMax(DenseTensor<sbyte>.OfValues(new sbyte[] { -128, 127, 1, 2 }), axes, 0, null, null);
         Assert.Equal(OpStatus.Success, s8.Status);
@@ -517,6 +523,11 @@ public class ReductionPlanTests
         Assert.Equal(new byte[] { 255 }, ((Tensor<byte>)u8.Outputs![0]).ToArray());
         var e = DenseTensor<sbyte>.OfShape(2, 0);
         var ax1 = new int[] { 1 }.ToTensor<int>();
-        Assert.Throws<System.ArgumentException>(() => CPUExecutionProvider.ReduceMax(e, ax1, 0, null, null));
+        var er8 = CPUExecutionProvider.ReduceMax(e, ax1, 0, null, null);
+        Assert.Equal(OpStatus.Success, er8.Status);
+        Assert.Equal(new sbyte[] { sbyte.MinValue, sbyte.MinValue }, ((Tensor<sbyte>)er8.Outputs![0]).ToArray());
+        var eu8 = CPUExecutionProvider.ReduceMax(DenseTensor<byte>.OfShape(2, 0), ax1, 0, null, null);
+        Assert.Equal(OpStatus.Success, eu8.Status);
+        Assert.Equal(new byte[] { byte.MinValue, byte.MinValue }, ((Tensor<byte>)eu8.Outputs![0]).ToArray());
     }
 }

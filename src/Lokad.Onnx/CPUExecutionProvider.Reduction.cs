@@ -78,6 +78,7 @@ public partial class CPUExecutionProvider
             case TensorElementType.Int8: return Success(op, Tensor<sbyte>.ReduceMax((Tensor<sbyte>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             case TensorElementType.UInt8: return Success(op, Tensor<byte>.ReduceMax((Tensor<byte>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             case TensorElementType.Int32: return Success(op, Tensor<int>.ReduceMax((Tensor<int>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.ReduceMax((Tensor<long>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             case TensorElementType.Float: return Success(op, Tensor<float>.ReduceMax((Tensor<float>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             case TensorElementType.Double: return Success(op, Tensor<double>.ReduceMax((Tensor<double>)data, (Tensor<int>?)axes, keepDims, noopWithEmptyAxes));
             default: return NotSupported(op);

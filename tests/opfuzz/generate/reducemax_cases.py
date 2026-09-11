@@ -46,6 +46,24 @@ def main():
     emit("reducemax_uint8", node, [("x", [4])], [("z", [1])],
          {"x": np.array([0, 255, 1, 2], dtype=np.uint8)},
          dtypes=du8, feed_dtypes=fu8)
+    dt64 = {"x": TensorProto.INT64, "z": TensorProto.INT64}
+    fd64 = {"x": np.int64}
+    node = helper.make_node("ReduceMax", ["x"], ["z"], axes=[0], keepdims=1)
+    emit("reducemax_basic_int64", node, [("x", [3])], [("z", [1])],
+         {"x": np.array([1, 5, 3], dtype=np.int64)},
+         dtypes=dt64, feed_dtypes=fd64)
+    # Empty maxima yield the dtype minimum (ORT 1.29, probed for
+    # int64/int32/uint8; int8 mirrors int32 by code shape).
+    node = helper.make_node("ReduceMax", ["x"], ["z"], axes=[1], keepdims=1)
+    emit("reducemax_empty_int64", node, [("x", [2, 0])], [("z", [2, 1])],
+         {"x": np.zeros((2, 0), dtype=np.int64)},
+         dtypes=dt64, feed_dtypes=fd64)
+    dt32 = {"x": TensorProto.INT32, "z": TensorProto.INT32}
+    fd32 = {"x": np.int32}
+    node = helper.make_node("ReduceMax", ["x"], ["z"], axes=[1], keepdims=1)
+    emit("reducemax_empty_int32", node, [("x", [2, 0])], [("z", [2, 1])],
+         {"x": np.zeros((2, 0), dtype=np.int32)},
+         dtypes=dt32, feed_dtypes=fd32)
 
 
 if __name__ == "__main__":
