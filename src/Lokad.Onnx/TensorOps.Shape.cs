@@ -354,9 +354,11 @@ where T : unmanaged
     }
 
     /// <summary>
-    /// Shared transpose copy: odometer over the destination with source stride
-    /// math, so no iterator objects or per-element virtual dispatch remain.
-    /// The source is densified once up front; the destination must be standard.
+    /// Shared transpose copy: contiguous trailing runs copy whole lines and the
+    /// 4D head-merge face tiles directly; all other shapes keep the odometer over
+    /// the destination with source stride math, so no iterator objects or
+    /// per-element virtual dispatch remain. The source is densified once up front;
+    /// the destination must be standard.
     /// </summary>
     static void TransposeInto(Tensor<T> data, DenseTensor<T> destination, int[] perm)
     {
@@ -374,6 +376,48 @@ where T : unmanaged
         var xs = xd.Buffer.Span;
         var ds = destination.Buffer.Span;
         var destDims = destination.Dimensions;
+        // Fast path: a trailing output run that advances source bytes by one
+        // copies whole lines (head-split attention permutes are 360 line copies
+        // here); every other shape keeps the element loop below by construction.
+        long runBytes = 1;
+        int runAxes = 0;
+        for (int d = rank - 1; d >= 0; d--)
+        {
+            if (map[d] != runBytes) break;
+            runBytes *= destDims[d];
+            runAxes++;
+        }
+        if (runAxes > 0 && runBytes > 1)
+        {
+            int block = (int)runBytes;
+            int outer = (int)destination.Length / block;
+            int outerRank = rank - runAxes;
+            for (int o = 0; o < outer; o++)
+            {
+                int srcOff = 0;
+                int rem = o;
+                for (int d = outerRank - 1; d >= 0; d--)
+                {
+                    int c = rem % destDims[d];
+                    rem /= destDims[d];
+                    srcOff += c * map[d];
+                }
+                xs.Slice(srcOff, block).CopyTo(ds.Slice(o * block, block));
+            }
+            return;
+        }
+        // Fast path: the 4D head-merge face (0,2,3,1) is one small 2D rotation
+        // per batch-and-token position, tiled directly instead of odometer-stepped.
+        if (rank == 4 && perm[0] == 0 && perm[1] == 2 && perm[2] == 3 && perm[3] == 1 && HasStandardStrides(xd))
+        {
+            int dimB = xd.Dimensions[0], dimH = xd.Dimensions[1], dimS = xd.Dimensions[2], dimD = xd.Dimensions[3];
+            for (int b = 0; b < dimB; b++)
+                for (int i = 0; i < dimS; i++)
+                    for (int jj = 0; jj < dimD; jj++)
+                        for (int k = 0; k < dimH; k++)
+                            ds[((b * dimS + i) * dimD + jj) * dimH + k] = xs[((b * dimH + k) * dimS + i) * dimD + jj];
+            return;
+        }
         var coords = new int[rank];
         int total = (int)destination.Length;
         for (int i = 0; i < total; i++)
