@@ -42,7 +42,10 @@ public class CpuExecutionProviderDinoTests
         Assert.Equal(OpStatus.Success, fallback.Status);
         Assert.Equal(0.8413f, ((Tensor<float>)fallback.Outputs[0])[1], 3);
 
-        var rejected = CPU.Gelu(input, "tanh", null, null);
+        var tanh = CPU.Gelu(input, "tanh", null, null);
+        Assert.Equal(OpStatus.Success, tanh.Status);
+        Assert.Equal(0.8412f, ((Tensor<float>)tanh.Outputs[0])[1], 3);
+        var rejected = CPU.Gelu(input, "gelu", null, null);
         Assert.Equal(OpStatus.Failure, rejected.Status);
         Assert.NotNull(rejected.Message);
     }

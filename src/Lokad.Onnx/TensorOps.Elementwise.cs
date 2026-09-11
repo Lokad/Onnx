@@ -557,6 +557,58 @@ where T : unmanaged
         return x.Apply((double v) => 0.5 * v * (1.0 + MathOps.Erf(v * 0.7071067811865476)));
     }
 
+    /// <summary>Tanh-approximate Gaussian error linear unit in one pass: 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3))).</summary>
+    /// <remarks>Matches the Mul/Pow/Mul/Add/Mul/Tanh/Add/Mul chain element order (cube via multiplies), so outputs agree with the unfused chain within 1e-6.</remarks>
+    public static Tensor<float> GeluTanh(Tensor<float> x, TensorExecutionOptions? options)
+    {
+        (options ?? TensorExecutionOptions.Auto).Validate();
+        var dx = x.ToDenseTensor();
+        var output = DenseTensor<float>.OfShape(dx.Dimensions.ToArray());
+        GeluTanhInto(dx.Buffer.Span, output.Buffer.Span);
+        return output;
+    }
+
+    public static Tensor<float> GeluTanh(Tensor<float> x, DenseTensor<float> destination, TensorExecutionOptions? options)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        (options ?? TensorExecutionOptions.Auto).Validate();
+        var dx = x.ToDenseTensor();
+        if (!destination.Dimensions.SequenceEqual(dx.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
+        GeluTanhInto(dx.Buffer.Span, destination.Buffer.Span);
+        return destination;
+    }
+
+    static void GeluTanhInto(System.Span<float> xs, System.Span<float> ys)
+    {
+        for (int i = 0; i < xs.Length; i++)
+        {
+            float v = xs[i];
+            float t1 = 0.5f * v;
+            float t3 = 0.044715f * v * v * v;
+            float t5 = 0.7978846f * (v + t3);
+            ys[i] = t1 * (MathF.Tanh(t5) + 1f);
+        }
+    }
+
+    /// <summary>Double-precision tanh-approximate GELU, same single-pass order as the float kernel.</summary>
+    public static Tensor<double> GeluTanh(Tensor<double> x, TensorExecutionOptions? options)
+    {
+        (options ?? TensorExecutionOptions.Auto).Validate();
+        var dx = x.ToDenseTensor();
+        var output = DenseTensor<double>.OfShape(dx.Dimensions.ToArray());
+        var xs = dx.Buffer.Span;
+        var ys = output.Buffer.Span;
+        for (int i = 0; i < xs.Length; i++)
+        {
+            double v = xs[i];
+            double t1 = 0.5 * v;
+            double t3 = 0.044715 * v * v * v;
+            double t5 = 0.79788456 * (v + t3);
+            ys[i] = t1 * (Math.Tanh(t5) + 1.0);
+        }
+        return output;
+    }
+
     public static Tensor<float> Sqrt(Tensor<float> x) => Sqrt(x, TensorExecutionOptions.Auto);
     public static Tensor<float> Sqrt(Tensor<float> x, TensorExecutionOptions options) => x.VectorizedApply(Vector.SquareRoot, MathF.Sqrt, options);
 

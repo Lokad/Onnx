@@ -144,6 +144,12 @@ namespace Lokad.Onnx
                     if (!IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo) || !IsProvenFloatInner(graph, producer, pn.Inputs[1], visiting, memo)) return false;
                     if (pn.Inputs.Length >= 3 && !string.IsNullOrEmpty(pn.Inputs[2])) return IsProvenFloatInner(graph, producer, pn.Inputs[2], visiting, memo);
                     return true;
+                case OpType.ConstantOfShape:
+                {
+                    // Output dtype comes from the value attribute alone; the shape input is int64 by spec and says nothing.
+                    var cv = ConstantValue(pn);
+                    return cv is not null && cv.ElementType == TensorElementType.Float;
+                }
                 case OpType.Gather:
                 case OpType.Split:
                 case OpType.SplitToSequence:
@@ -605,6 +611,225 @@ namespace Lokad.Onnx
             gelu.Attributes = new Dictionary<string, object>();
             graph.Nodes[mul1] = gelu;
             return true;
+        }
+
+        /// <summary>
+        static bool TryMatchGeluTanh(
+            ComputationalGraph graph,
+            Dictionary<string, int> producer,
+            Dictionary<string, List<int>> consumers,
+            HashSet<string> outputs,
+            HashSet<int> drop,
+            int tanhIndex,
+            out List<int> dead,
+            out List<int> constNodes,
+            out int survivor)
+        {
+            dead = new List<int>();
+            constNodes = new List<int>();
+            survivor = -1;
+            var tanh = graph.Nodes[tanhIndex];
+            if (!IsFusableParticipant(tanh)) return false;
+            if (tanh.Inputs.Length != 1) return false;
+            if (tanh.Outputs.Length != 1) return false;
+            int OnlyConsumer(string output, OpType op)
+            {
+                if (outputs.Contains(output)) return -1;
+                if (!consumers.TryGetValue(output, out var uses)) return -1;
+                var live = new List<int>();
+                foreach (var u in uses) if (!drop.Contains(u)) live.Add(u);
+                if (live.Count != 1) return -1;
+                var cand = graph.Nodes[live[0]];
+                if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
+                return live[0];
+            }
+            int ProducerOf(string input, OpType op)
+            {
+                if (string.IsNullOrEmpty(input) || !producer.TryGetValue(input, out var pi)) return -1;
+                if (drop.Contains(pi)) return -1;
+                var cand = graph.Nodes[pi];
+                if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
+                return pi;
+            }
+            float? ScalarFloatOf(string input, out int constNode)
+            {
+                constNode = -1;
+                if (string.IsNullOrEmpty(input)) return null;
+                if (graph.Initializers.TryGetValue(input, out var init))
+                {
+                    if (init.ElementType != TensorElementType.Float) return null;
+                    var arr = init.ToArray();
+                    if (arr.Length != 1) return null;
+                    float v = Convert.ToSingle(arr.GetValue(0));
+                    if (!float.IsFinite(v)) return null;
+                    return v;
+                }
+                int pi = ProducerOf(input, OpType.Constant);
+                if (pi < 0) return null;
+                var cnode = graph.Nodes[pi];
+                if (cnode.Outputs.Length != 1) return null;
+                var tensor = ConstantValue(cnode);
+                if (tensor is null) return null;
+                if (tensor.ElementType != TensorElementType.Float) return null;
+                var vals = tensor.ToArray();
+                if (vals.Length != 1) return null;
+                float fv = Convert.ToSingle(vals.GetValue(0));
+                if (!float.IsFinite(fv)) return null;
+                constNode = pi;
+                return fv;
+            }
+            int mul2 = ProducerOf(tanh.Inputs[0], OpType.Mul);
+            if (mul2 < 0) return false;
+            var mul2Node = graph.Nodes[mul2];
+            if (mul2Node.Inputs.Length != 2) return false;
+            if (mul2Node.Outputs.Length != 1) return false;
+            if (mul2Node.Outputs[0] != tanh.Inputs[0]) return false;
+            string mul2A = mul2Node.Inputs[0], mul2B = mul2Node.Inputs[1];
+            float? cS = ScalarFloatOf(mul2A, out int cSn);
+            string addOut = mul2B;
+            if (!cS.HasValue || cS.Value != 0.7978846f)
+            {
+                cS = ScalarFloatOf(mul2B, out cSn);
+                addOut = mul2A;
+                if (!cS.HasValue || cS.Value != 0.7978846f) return false;
+            }
+            int add = ProducerOf(addOut, OpType.Add);
+            if (add < 0) return false;
+            var addNode = graph.Nodes[add];
+            if (addNode.Inputs.Length != 2) return false;
+            if (addNode.Outputs.Length != 1) return false;
+            if (addNode.Outputs[0] != addOut) return false;
+            string addX = addNode.Inputs[0] == addOut ? addNode.Inputs[1] : addNode.Inputs[0];
+            if (addX == addOut) return false;
+            string mul1Out = addNode.Inputs[0] == addX ? addNode.Inputs[1] : addNode.Inputs[0];
+            if (!IsProvenFloat(graph, producer, addX)) return false;
+            if (mul1Out == addX) return false;
+            int mul1 = ProducerOf(mul1Out, OpType.Mul);
+            if (mul1 < 0) return false;
+            var mul1Node = graph.Nodes[mul1];
+            if (mul1Node.Inputs.Length != 2) return false;
+            if (mul1Node.Outputs.Length != 1) return false;
+            if (mul1Node.Outputs[0] != mul1Out) return false;
+            string mul1A = mul1Node.Inputs[0], mul1B = mul1Node.Inputs[1];
+            float? cQ = ScalarFloatOf(mul1A, out int cQn);
+            string powOut = mul1B;
+            if (!cQ.HasValue || cQ.Value != 0.044715f)
+            {
+                cQ = ScalarFloatOf(mul1B, out cQn);
+                powOut = mul1A;
+                if (!cQ.HasValue || cQ.Value != 0.044715f) return false;
+            }
+            int pow = ProducerOf(powOut, OpType.Pow);
+            if (pow < 0) return false;
+            var powNode = graph.Nodes[pow];
+            if (powNode.Inputs.Length != 2) return false;
+            if (powNode.Outputs.Length != 1) return false;
+            if (powNode.Outputs[0] != powOut) return false;
+            if (powNode.Inputs[0] != addX) return false;
+            float? cE = ScalarFloatOf(powNode.Inputs[1], out int cEn);
+            if (!cE.HasValue || cE.Value != 3f) return false;
+            int add1 = OnlyConsumer(tanh.Outputs[0], OpType.Add);
+            if (add1 < 0) return false;
+            var add1Node = graph.Nodes[add1];
+            if (add1Node.Inputs.Length != 2) return false;
+            if (add1Node.Outputs.Length != 1) return false;
+            if (!add1Node.Inputs.Contains(tanh.Outputs[0])) return false;
+            string add1Other = add1Node.Inputs[0] == tanh.Outputs[0] ? add1Node.Inputs[1] : add1Node.Inputs[0];
+            if (add1Other == tanh.Outputs[0]) return false;
+            float? c1 = ScalarFloatOf(add1Other, out int c1n);
+            if (!c1.HasValue || c1.Value != 1f) return false;
+            int mul3 = OnlyConsumer(add1Node.Outputs[0], OpType.Mul);
+            if (mul3 < 0) return false;
+            var mul3Node = graph.Nodes[mul3];
+            if (mul3Node.Inputs.Length != 2) return false;
+            if (mul3Node.Outputs.Length != 1) return false;
+            if (!mul3Node.Inputs.Contains(add1Node.Outputs[0])) return false;
+            string mul0Out = mul3Node.Inputs[0] == add1Node.Outputs[0] ? mul3Node.Inputs[1] : mul3Node.Inputs[0];
+            if (mul0Out == add1Node.Outputs[0]) return false;
+            int mul0 = ProducerOf(mul0Out, OpType.Mul);
+            if (mul0 < 0) return false;
+            var mul0Node = graph.Nodes[mul0];
+            if (mul0Node.Inputs.Length != 2) return false;
+            if (mul0Node.Outputs.Length != 1) return false;
+            if (mul0Node.Outputs[0] != mul0Out) return false;
+            int c0nA = -1;
+            bool mul0Ok = (mul0Node.Inputs[0] == addX && ScalarFloatOf(mul0Node.Inputs[1], out c0nA) is float hA && hA == 0.5f) || (mul0Node.Inputs[1] == addX && ScalarFloatOf(mul0Node.Inputs[0], out c0nA) is float hB && hB == 0.5f);
+            if (!mul0Ok) return false;
+            var deadSet = new HashSet<int> { mul0, pow, mul1, add, mul2, tanhIndex, add1 };
+            foreach (var d in deadSet) if (drop.Contains(d)) return false;
+            foreach (var d in deadSet)
+            {
+                foreach (var o in graph.Nodes[d].Outputs)
+                {
+                    if (string.IsNullOrEmpty(o)) continue;
+                    if (o == mul3Node.Outputs[0]) continue;
+                    if (outputs.Contains(o)) return false;
+                    if (consumers.TryGetValue(o, out var uses) && uses.Any(u => !deadSet.Contains(u) && u != mul3 && !drop.Contains(u))) return false;
+                }
+            }
+            if (!IsFusableParticipant(mul3Node)) return false;
+            dead.AddRange(deadSet);
+            survivor = mul3;
+            if (cSn >= 0) constNodes.Add(cSn);
+            if (cQn >= 0) constNodes.Add(cQn);
+            if (cEn >= 0) constNodes.Add(cEn);
+            if (c1n >= 0) constNodes.Add(c1n);
+            if (c0nA >= 0) constNodes.Add(c0nA);
+            var gelu = mul3Node;
+            gelu.Op = OpType.Gelu;
+            gelu.OpTypeName = OpType.Gelu.ToString();
+            gelu.Domain = "";
+            int stdv = StandardOpset(graph);
+            if (stdv >= 0) gelu.OpsetVersion = stdv;
+            gelu.IsFused = true;
+            gelu.Inputs = new[] { addX };
+            gelu.Attributes = new Dictionary<string, object> { ["approximate"] = "tanh" };
+            graph.Nodes[mul3] = gelu;
+            return true;
+        }
+
+        /// Fuses tanh-approximate GELU chains (x times one half; cube; times 0.044715; plus x; times sqrt(2/pi); Tanh; plus one; times) into native Gelu nodes carrying approximate=tanh.
+        /// </summary>
+        public static int FuseGeluTanhPatterns(ComputationalGraph graph)
+        {
+            var idx = BuildIndex(graph);
+            var producer = idx.Producer;
+            var consumers = idx.Consumers;
+            var outputs = idx.Outputs;
+
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.Tanh) continue;
+                if (!IsFusableParticipant(graph.Nodes[i])) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchGeluTanh(graph, producer, consumers, outputs, drop, i, out var dead, out var constNodes, out var survivor))
+                {
+                    foreach (var d in dead) drop.Add(d);
+                    foreach (var cn in constNodes)
+                    {
+                        bool ConstOnlyFeedsDead(string output) =>
+                            !outputs.Contains(output) && (!consumers.TryGetValue(output, out var uses) || uses.All(u => u == survivor || drop.Contains(u)));
+                        var cnode = graph.Nodes[cn];
+                        if (cnode.Outputs.All(ConstOnlyFeedsDead)) drop.Add(cn);
+                    }
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
         }
 
         public static int FuseRopePatterns(ComputationalGraph graph)

@@ -537,6 +537,7 @@ public partial class CPUExecutionProvider
     {
         var op = OpType.Gelu;
         if (X is null) return MissingInput(op, nameof(X));
+        if (approximate == "tanh") return GeluTanh(op, X, options, pool);
         if (approximate is not null && approximate != "none") return AttributeNotSupported(op, nameof(approximate), approximate, null);
         Profiler.StartOpStage(OpStage.Math);
         var opts = (options ?? ExecutionOptions.Default).Validated();
@@ -551,6 +552,25 @@ public partial class CPUExecutionProvider
                 return Success(op, Tensor<float>.Gelu(fx, rented, tensorOptions));
             }
             case TensorElementType.Double: return Success(op, Tensor<double>.Gelu((Tensor<double>)X, opts.Tensor));
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    static OpResult GeluTanh(OpType op, ITensor? X, ExecutionOptions? options, TensorBufferPool? pool)
+    {
+        if (X is null) return MissingInput(op, nameof(X));
+        Profiler.StartOpStage(OpStage.Math);
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float:
+            {
+                var fx = (Tensor<float>)X;
+                if (pool is null) return Success(op, Tensor<float>.GeluTanh(fx, opts.Tensor));
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
+                return Success(op, Tensor<float>.GeluTanh(fx, rented, opts.Tensor));
+            }
+            case TensorElementType.Double: return Success(op, Tensor<double>.GeluTanh((Tensor<double>)X, opts.Tensor));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
