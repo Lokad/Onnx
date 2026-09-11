@@ -96,6 +96,10 @@ public class ComputationalGraph
 
     internal TensorBufferPool? ActivePool { get; private set; }
 
+    /// <summary>Running live-payload byte total backing <see cref="LastPeakLiveBytes"/> (P28).</summary>
+    /// <remarks>Maintained by bind and release deltas plus a per-run full recompute, so per-node peak checks stay O(1) with bit-identical values.</remarks>
+    long livePayloadBytes;
+
     internal IScratchAccountant? ActiveScratch { get; private set; }
 
     internal ICopyAccountant? ActiveCopy { get; private set; }
@@ -762,6 +766,7 @@ public class ComputationalGraph
         using var poolScope = new ExecutionPoolScope(this);
         var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy } };
         nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights } };
+        livePayloadBytes = LivePayloadBytes();
         NoteLivePeak();
         foreach (var node in Nodes)
         {
@@ -961,9 +966,11 @@ public class ComputationalGraph
 
     public void InvalidateOutputs()
     {
+        foreach (var kv in Outputs) livePayloadBytes -= PayloadBytes(kv.Value);
         Outputs.Clear();
         foreach (var key in IntermediateOutputs.Keys.ToArray())
         {
+            livePayloadBytes -= PayloadBytes(IntermediateOutputs[key]);
             IntermediateOutputs[key] = null;
         }
     }
@@ -1107,8 +1114,10 @@ public class ComputationalGraph
     {
         foreach (var o in IntermediateOutputs.Keys)
         {
+            livePayloadBytes -= PayloadBytes(IntermediateOutputs[o]);
             IntermediateOutputs[o] = null;
         }
+        foreach (var kv in Outputs) livePayloadBytes -= PayloadBytes(kv.Value);
         Outputs.Clear();
         foreach (var vp in OutputDescs)
         {
@@ -1380,6 +1389,7 @@ public class ComputationalGraph
                 pool.Return(arr);
                 returned ??= new HashSet<Array>();
                 returned.Add(arr);
+                livePayloadBytes -= PayloadBytes(tensor);
                 IntermediateOutputs[name] = null;
                 return true;
             }
@@ -1387,6 +1397,7 @@ public class ComputationalGraph
             return false;
         }
         RemoveLiveRefs(tensor);
+        livePayloadBytes -= PayloadBytes(tensor);
         IntermediateOutputs[name] = null;
         return true;
     }
@@ -1474,6 +1485,9 @@ public class ComputationalGraph
         _ => 0,
     };
 
+    /// <summary>Logical payload bytes of one binding, counting aliases per binding like the full scan.</summary>
+    static long PayloadBytes(ITensor? tensor) => tensor is null ? 0L : tensor.Length * ElementByteSize(tensor.ElementType);
+
     /// <summary>Sums logical payload bytes over the run bindings (inputs, outputs, live intermediates).</summary>
     /// <remarks>Counts per binding without deduplicating aliased storage, matching the manual
     /// live-at-end census; initializers are static model data, not run pressure, and stay out.
@@ -1489,8 +1503,7 @@ public class ComputationalGraph
 
     void NoteLivePeak()
     {
-        long live = LivePayloadBytes();
-        if (live > LastPeakLiveBytes) LastPeakLiveBytes = live;
+        if (livePayloadBytes > LastPeakLiveBytes) LastPeakLiveBytes = livePayloadBytes;
     }
 
     bool HasLiveAliasIndexed(Array candidate, TensorBufferPool pool)
@@ -1522,7 +1535,9 @@ public class ComputationalGraph
 
     void TrackBind(IDictionary<string, ITensor?> map, string name, ITensor? value)
     {
-        if (map.TryGetValue(name, out var old) && !ReferenceEquals(old, value)) RemoveLiveRefs(old);
+        map.TryGetValue(name, out var old);
+        if (!ReferenceEquals(old, value)) RemoveLiveRefs(old);
+        livePayloadBytes += PayloadBytes(value) - PayloadBytes(old);
         map[name] = value;
         AddLiveRefs(value);
     }
