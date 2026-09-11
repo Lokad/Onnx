@@ -3,9 +3,9 @@ from onnx import helper, TensorProto
 
 rng = np.random.default_rng(20260912)
 
-def save(path, node, inp, out, inits):
+def save(path, node, inp, out, inits, opset=14):
     g = helper.make_graph([node], "oneop", inp, out, inits)
-    m = helper.make_model(g, opset_imports=[helper.make_opsetid("", 14)], ir_version=8)
+    m = helper.make_model(g, opset_imports=[helper.make_opsetid("", opset)], ir_version=8)
     import os
     os.makedirs(path, exist_ok=True)
     import onnx
@@ -51,3 +51,35 @@ save("tests/Lokad.Onnx.Bench/oneop/conv_1x1_1024",
      helper.make_node("Conv", ["x", "w"], ["y"]),
      [tinfo("x", [1, 256, 14, 14])], [tinfo("y", [1, 1024, 14, 14])],
      [finit("w", w)])
+# 5. e5 MLP up tile (batched 3D): 1x30x384 @ 384x1536
+b = (rng.random([384, 1536]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_30x384x1536",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 30, 384])], [tinfo("y", [1, 30, 1536])],
+     [finit("b", b)])
+
+# 6. e5 MLP down tile (batched 3D): 1x30x1536 @ 1536x384
+b = (rng.random([1536, 384]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_30x1536x384",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 30, 1536])], [tinfo("y", [1, 30, 384])],
+     [finit("b", b)])
+
+# 7. e5 QKV tile (batched 3D): 1x30x384 @ 384x384
+b = (rng.random([384, 384]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_30x384x384",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 30, 384])], [tinfo("y", [1, 30, 384])],
+     [finit("b", b)])
+
+# 8. e5 intermediate Gelu: 1x30x1536
+save("tests/Lokad.Onnx.Bench/oneop/gelu_30x1536",
+     helper.make_node("Gelu", ["x"], ["y"]),
+     [tinfo("x", [1, 30, 1536])], [tinfo("y", [1, 30, 1536])],
+     [], opset=20)
+
+# 9. e5 QKV shuffle transpose: 1x30x12x32 perm 0,2,1,3
+save("tests/Lokad.Onnx.Bench/oneop/transpose_30x12x32",
+     helper.make_node("Transpose", ["x"], ["y"], perm=[0, 2, 1, 3]),
+     [tinfo("x", [1, 30, 12, 32])], [tinfo("y", [1, 12, 30, 32])],
+     [])

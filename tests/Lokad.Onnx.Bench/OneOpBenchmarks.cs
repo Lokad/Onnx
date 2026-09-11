@@ -80,8 +80,13 @@ public class OneOpBenchmarks
         Add("gemm_512x4608", "a", new int[] { 512, 4608 });
         Add("conv_3x3_512", "x", new int[] { 1, 512, 14, 14 });
         Add("conv_1x1_1024", "x", new int[] { 1, 256, 14, 14 });
+        Add("matmul_30x384x1536", "a", new int[] { 1, 30, 384 });
+        Add("matmul_30x1536x384", "a", new int[] { 1, 30, 1536 });
+        Add("matmul_30x384x384", "a", new int[] { 1, 30, 384 });
+        Add("gelu_30x1536", "x", new int[] { 1, 30, 1536 });
+        Add("transpose_30x12x32", "x", new int[] { 1, 30, 12, 32 });
         foreach (var c in cases) VerifyAgreement(c);
-        Console.WriteLine("OneOp agreement: all 9 cases match element-wise.");
+        Console.WriteLine("OneOp agreement: all 14 cases match element-wise.");
     }
 
     void Add(string kase, string inputName, int[] dims)
@@ -208,4 +213,43 @@ public class OneOpBenchmarks
     [Benchmark(Description = "Conv 1x1 256to1024 over 1x256x14x14 - ORT session")]
     [BenchmarkCategory("conv1024")]
     public void OrtConv1024() => RunOrt(cases[8]);
+    [Benchmark(Description = "MatMul 1x30x384 @ 384x1536 - Lokad session")]
+    [BenchmarkCategory("mm30up")]
+    public void LokadMm30Up() => RunLokad(cases[9]);
+
+    [Benchmark(Description = "MatMul 1x30x384 @ 384x1536 - ORT session")]
+    [BenchmarkCategory("mm30up")]
+    public void OrtMm30Up() => RunOrt(cases[9]);
+
+    [Benchmark(Description = "MatMul 1x30x1536 @ 1536x384 - Lokad session")]
+    [BenchmarkCategory("mm30down")]
+    public void LokadMm30Down() => RunLokad(cases[10]);
+
+    [Benchmark(Description = "MatMul 1x30x1536 @ 1536x384 - ORT session")]
+    [BenchmarkCategory("mm30down")]
+    public void OrtMm30Down() => RunOrt(cases[10]);
+
+    [Benchmark(Description = "MatMul 1x30x384 @ 384x384 - Lokad session")]
+    [BenchmarkCategory("mm30qkv")]
+    public void LokadMm30Qkv() => RunLokad(cases[11]);
+
+    [Benchmark(Description = "MatMul 1x30x384 @ 384x384 - ORT session")]
+    [BenchmarkCategory("mm30qkv")]
+    public void OrtMm30Qkv() => RunOrt(cases[11]);
+
+    [Benchmark(Description = "Gelu 1x30x1536 - Lokad session")]
+    [BenchmarkCategory("gelu30")]
+    public void LokadGelu30() => RunLokad(cases[12]);
+
+    [Benchmark(Description = "Gelu 1x30x1536 - ORT session")]
+    [BenchmarkCategory("gelu30")]
+    public void OrtGelu30() => RunOrt(cases[12]);
+
+    [Benchmark(Description = "Transpose 1x30x12x32 - Lokad session")]
+    [BenchmarkCategory("tr30")]
+    public void LokadTr30() => RunLokad(cases[13]);
+
+    [Benchmark(Description = "Transpose 1x30x12x32 - ORT session")]
+    [BenchmarkCategory("tr30")]
+    public void OrtTr30() => RunOrt(cases[13]);
 }
