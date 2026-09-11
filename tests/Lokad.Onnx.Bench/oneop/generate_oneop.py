@@ -99,3 +99,42 @@ save("tests/Lokad.Onnx.Bench/oneop/gemm_4x3072x768",
      helper.make_node("Gemm", ["a", "b", "c"], ["y"], alpha=1.0, beta=1.0),
      [tinfo("a", [4, 3072])], [tinfo("y", [4, 768])],
      [finit("b", b), finit("c", c)])
+
+# 12. DINOv3 MLP up tile (batched 3D): 1x201x384 @ 384x1536
+b = (rng.random([384, 1536]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_1x201x384x1536",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 201, 384])], [tinfo("y", [1, 201, 1536])],
+     [finit("b", b)])
+
+# 13. DINOv3 MLP down tile (batched 3D): 1x201x1536 @ 1536x384
+b = (rng.random([1536, 384]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_1x201x1536x384",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 201, 1536])], [tinfo("y", [1, 201, 384])],
+     [finit("b", b)])
+
+# 14. DINOv3 QKV tile (batched 3D): 1x201x384 @ 384x384
+b = (rng.random([384, 384]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_1x201x384x384",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 201, 384])], [tinfo("y", [1, 201, 384])],
+     [finit("b", b)])
+
+# 15. DINOv3 attention softmax: 6x201x201
+save("tests/Lokad.Onnx.Bench/oneop/softmax_6x201x201",
+     helper.make_node("Softmax", ["x"], ["y"], axis=-1),
+     [tinfo("x", [6, 201, 201])], [tinfo("y", [6, 201, 201])],
+     [])
+
+# 16. DINOv3 intermediate Gelu: 1x201x1536
+save("tests/Lokad.Onnx.Bench/oneop/gelu_1x201x1536",
+     helper.make_node("Gelu", ["x"], ["y"]),
+     [tinfo("x", [1, 201, 1536])], [tinfo("y", [1, 201, 1536])],
+     [], opset=20)
+
+# 17. DINOv3 QKV shuffle transpose: 1x201x6x64 perm 0,2,1,3
+save("tests/Lokad.Onnx.Bench/oneop/transpose_1x201x6x64",
+     helper.make_node("Transpose", ["x"], ["y"], perm=[0, 2, 1, 3]),
+     [tinfo("x", [1, 201, 6, 64])], [tinfo("y", [1, 6, 201, 64])],
+     [])

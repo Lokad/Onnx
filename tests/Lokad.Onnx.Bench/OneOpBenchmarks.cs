@@ -87,8 +87,14 @@ public class OneOpBenchmarks
         Add("transpose_30x12x32", "x", new int[] { 1, 30, 12, 32 });
         Add("gemm_4x768x2304", "a", new int[] { 4, 768 });
         Add("gemm_4x3072x768", "a", new int[] { 4, 3072 });
+        Add("matmul_1x201x384x1536", "a", new int[] { 1, 201, 384 });
+        Add("matmul_1x201x1536x384", "a", new int[] { 1, 201, 1536 });
+        Add("matmul_1x201x384x384", "a", new int[] { 1, 201, 384 });
+        Add("softmax_6x201x201", "x", new int[] { 6, 201, 201 });
+        Add("gelu_1x201x1536", "x", new int[] { 1, 201, 1536 });
+        Add("transpose_1x201x6x64", "x", new int[] { 1, 201, 6, 64 });
         foreach (var c in cases) VerifyAgreement(c);
-        Console.WriteLine("OneOp agreement: all 16 cases match element-wise.");
+        Console.WriteLine("OneOp agreement: all 22 cases match element-wise.");
     }
 
     void Add(string kase, string inputName, int[] dims)
@@ -270,4 +276,52 @@ public class OneOpBenchmarks
     [Benchmark(Description = "Gemm 4x3072 @ 3072x768 - ORT session")]
     [BenchmarkCategory("g4768")]
     public void OrtGemm4x3072() => RunOrt(cases[15]);
+
+    [Benchmark(Description = "MatMul 1x201x384 @ 384x1536 - Lokad session")]
+    [BenchmarkCategory("mm201up")]
+    public void LokadMm201Up() => RunLokad(cases[16]);
+
+    [Benchmark(Description = "MatMul 1x201x384 @ 384x1536 - ORT session")]
+    [BenchmarkCategory("mm201up")]
+    public void OrtMm201Up() => RunOrt(cases[16]);
+
+    [Benchmark(Description = "MatMul 1x201x1536 @ 1536x384 - Lokad session")]
+    [BenchmarkCategory("mm201down")]
+    public void LokadMm201Down() => RunLokad(cases[17]);
+
+    [Benchmark(Description = "MatMul 1x201x1536 @ 1536x384 - ORT session")]
+    [BenchmarkCategory("mm201down")]
+    public void OrtMm201Down() => RunOrt(cases[17]);
+
+    [Benchmark(Description = "MatMul 1x201x384 @ 384x384 - Lokad session")]
+    [BenchmarkCategory("mm201qkv")]
+    public void LokadMm201Qkv() => RunLokad(cases[18]);
+
+    [Benchmark(Description = "MatMul 1x201x384 @ 384x384 - ORT session")]
+    [BenchmarkCategory("mm201qkv")]
+    public void OrtMm201Qkv() => RunOrt(cases[18]);
+
+    [Benchmark(Description = "Softmax 6x201x201 - Lokad session")]
+    [BenchmarkCategory("sm201")]
+    public void LokadSm201() => RunLokad(cases[19]);
+
+    [Benchmark(Description = "Softmax 6x201x201 - ORT session")]
+    [BenchmarkCategory("sm201")]
+    public void OrtSm201() => RunOrt(cases[19]);
+
+    [Benchmark(Description = "Gelu 1x201x1536 - Lokad session")]
+    [BenchmarkCategory("gelu201")]
+    public void LokadGelu201() => RunLokad(cases[20]);
+
+    [Benchmark(Description = "Gelu 1x201x1536 - ORT session")]
+    [BenchmarkCategory("gelu201")]
+    public void OrtGelu201() => RunOrt(cases[20]);
+
+    [Benchmark(Description = "Transpose 1x201x6x64 - Lokad session")]
+    [BenchmarkCategory("tr201")]
+    public void LokadTr201() => RunLokad(cases[21]);
+
+    [Benchmark(Description = "Transpose 1x201x6x64 - ORT session")]
+    [BenchmarkCategory("tr201")]
+    public void OrtTr201() => RunOrt(cases[21]);
 }
