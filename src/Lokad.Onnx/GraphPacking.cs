@@ -60,7 +60,7 @@ internal static class GraphPacking
     }
     /// <summary>
     /// Packs eligible MatMul B-side weight initializers of the graph.
-    /// Eligible means float32, rank 2, reduction axis below MaxPackedAxis with total bytes below MaxPackedBytes,
+    /// Eligible means float32, rank 2, reduction axis below MaxPackedAxis with total bytes below MaxPackedBytes, plain layout (Gemm transB must be 0),
     /// never a graph input or output, and consumed only as MatMul input 1.
     /// Fresh records reuse verified clones; stale records are dropped and
     /// rebuilt. Returns the live packed count.
@@ -75,7 +75,7 @@ internal static class GraphPacking
             {
                 string input = node.Inputs[i];
                 if (string.IsNullOrEmpty(input)) continue;
-                bool eligible = node.Op == OpType.MatMul && i == 1;
+                bool eligible = (node.Op == OpType.MatMul && i == 1) || (node.Op == OpType.Gemm && i == 1 && (node.GetInt("transB", 0) ?? 0) == 0);
                 if (consumers.TryGetValue(input, out bool prior)) consumers[input] = prior && eligible;
                 else consumers[input] = eligible;
             }

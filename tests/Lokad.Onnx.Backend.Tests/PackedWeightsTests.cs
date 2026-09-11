@@ -302,4 +302,81 @@ public class PackedWeightsTests
         AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z1"], "shared-1");
         AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z2"], "shared-2");
     }
+    static ComputationalGraph BuildGemmGraph(DenseTensor<float> xFeed, DenseTensor<float> w, string wName, int transB)
+    {
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "packed-test-gemm";
+        graph.Inputs["x"] = xFeed;
+        graph.Initializers[wName] = w;
+        int m = xFeed.Dimensions[0];
+        int k = transB == 1 ? w.Dimensions[0] : w.Dimensions[1];
+        graph.Outputs["z"] = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        var node = new Node
+        {
+            Name = "gm",
+            Op = OpType.Gemm,
+            OpTypeName = "Gemm",
+            Domain = "",
+            Inputs = new[] { "x", wName },
+            Outputs = new[] { "z" },
+        };
+        node.Attributes = new Dictionary<string, object> { ["transB"] = transB };
+        graph.Nodes.Add(node);
+        return graph;
+    }
+
+    [Fact]
+    public void PackPass_PacksPlainGemmWeight()
+    {
+        var rnd = new Random(Seed);
+        var x = FillRect(4, 24, rnd);
+        var w = FillRect(24, 44, rnd);
+        var graph = BuildGemmGraph(x, w, "w", 0);
+        graph.RefreshLifetimeAnalysis();
+        Assert.True(graph.Initializers.ContainsKey("packed:w"), "packed clone is missing for plain Gemm.");
+        var user = new Dictionary<string, ITensor> { ["x"] = x };
+        Assert.True(graph.Execute(user, true), graph.LastErrorMessage + " / node=" + graph.LastFailedNodeName);
+        AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z"], "packed-gemm");
+    }
+
+    [Fact]
+    public void PackPass_SkipsTransposedGemmWeight()
+    {
+        var rnd = new Random(Seed);
+        var x = FillRect(4, 44, rnd);
+        var w = FillRect(24, 44, rnd);
+        var graph = BuildGemmGraph(x, w, "w", 1);
+        graph.RefreshLifetimeAnalysis();
+        Assert.False(graph.Initializers.ContainsKey("packed:w"), "transposed Gemm weight must not pack.");
+        var user = new Dictionary<string, ITensor> { ["x"] = x };
+        Assert.True(graph.Execute(user, true), graph.LastErrorMessage + " / node=" + graph.LastFailedNodeName);
+        var wsp = w.Buffer.Span;
+        var tw = new float[44 * 24];
+        for (int j = 0; j < 24; j++) for (int l = 0; l < 44; l++) tw[l * 24 + j] = wsp[j * 44 + l];
+        var a = x.ToArray();
+        var exp2 = new float[4 * 24];
+        for (int i = 0; i < 4; i++) for (int j = 0; j < 24; j++) { float acc = 0f; for (int l = 0; l < 44; l++) acc += a[i * 44 + l] * tw[l * 24 + j]; exp2[i * 24 + j] = acc; }
+        var actual = ((Tensor<float>)graph.Outputs["z"]).ToArray();
+        Assert.Equal(exp2.Length, actual.Length);
+        for (int i = 0; i < exp2.Length; i++) Assert.True(Math.Abs(exp2[i] - actual[i]) <= 1e-3f * Math.Max(1f, Math.Abs(exp2[i])), "transposed-gemm mismatch at " + i);
+    }
+
+    [Fact]
+    public void PackPass_SharedMatMulGemmWeightPacks()
+    {
+        var rnd = new Random(Seed);
+        var x = FillRect(4, 24, rnd);
+        var w = FillRect(24, 44, rnd);
+        var graph = BuildGraph(x, w, "w");
+        graph.Outputs["z2"] = Tensor<float>.Zeros(4, 44).ToDenseTensor();
+        var gnode = new Node { Name = "gm", Op = OpType.Gemm, OpTypeName = "Gemm", Domain = "", Inputs = new[] { "x", "w" }, Outputs = new[] { "z2" } };
+        gnode.Attributes = new Dictionary<string, object> { ["transB"] = 0 };
+        graph.Nodes.Add(gnode);
+        graph.RefreshLifetimeAnalysis();
+        Assert.True(graph.Initializers.ContainsKey("packed:w"), "shared MatMul+Gemm weight must pack.");
+        var user = new Dictionary<string, ITensor> { ["x"] = x };
+        Assert.True(graph.Execute(user, true), graph.LastErrorMessage + " / node=" + graph.LastFailedNodeName);
+        AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z"], "shared-mm");
+        AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z2"], "shared-gm");
+    }
 }
