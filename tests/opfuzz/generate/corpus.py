@@ -17,11 +17,13 @@ SEED = 20260904
 # (and from Lokad.Onnx, which follows the spec). Recorded into meta.json as
 # "known_divergence"; the conformance test xfails these instead of going red.
 KNOWN_DIVERGENCES = {
-    # Full keepdims=0 reduction over input [2,1]: spec result is scalar ();
-    # ORT 1.29 returns (1,) whenever a size-1 dim is present (verified [] on
-    # full reductions without size-1 dims). Values agree bit-identically.
-    "reducemean_2": "ORT returns (1,) for full keepdims=0 reduction over a size-1 dim; spec and Lokad.Onnx give scalar ()",
 }
+
+# History: reducemean_2 carried a flag (ORT 1.29 returned (1,) for full
+# keepdims=0 reduction over a size-1 dim at freeze time, spec gives ()).
+# 60+ reruns across sessions have returned () stably since, so the flag
+# was removed and the scalar reference frozen; the conformance test's
+# stale-flag tripwire guards any future flip in either direction.
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "corpus")
 rng = random.Random(SEED)
 npr = np.random.default_rng(SEED)
