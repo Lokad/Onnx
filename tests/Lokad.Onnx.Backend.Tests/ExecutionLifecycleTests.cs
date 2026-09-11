@@ -580,4 +580,21 @@ public class ExecutionLifecycleTests
         Assert.False(g.Execute(three, false));
         Assert.NotNull(g.LastErrorMessage);
     }
+
+    [Fact]
+    public void PrepareTwice_ExecutesIdentically()
+    {
+        // Preparation only warms analysis: re-preparing between runs
+        // must not disturb values, and invalidating must recover.
+        var g = NewMatMulGraph(2);
+        g.Prepare();
+        Assert.True(g.Execute(MatMulInputs(2), false));
+        Assert.Equal(new float[] { 2f, 2f, 2f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        g.Prepare();
+        Assert.True(g.Execute(MatMulInputs(2), false));
+        Assert.Equal(new float[] { 2f, 2f, 2f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+        g.InvalidatePreparation();
+        Assert.True(g.Execute(MatMulInputs(2), false));
+        Assert.Equal(new float[] { 2f, 2f, 2f, 2f }, ((Tensor<float>)g.Outputs["y"]).ToArray());
+    }
 }
