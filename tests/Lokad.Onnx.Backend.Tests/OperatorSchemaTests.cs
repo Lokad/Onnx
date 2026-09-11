@@ -1096,4 +1096,51 @@ public class OperatorSchemaTests
         Assert.Equal(OpStatus.Failure, r.Status);
         Assert.Contains("DepthToSpace", r.Message ?? "");
     }
+
+    [Fact]
+    public void IfHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: If exists only as an enum value; no schema, provider,
+        // kernel, or dispatch arm exists anywhere in src (control flow
+        // is out of scope); same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.If));
+        var node = Nod(OpType.If, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("If", r.Message ?? "");
+    }
+
+    [Fact]
+    public void LoopHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: Loop exists only as an enum value; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Loop));
+        var node = Nod(OpType.Loop, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Loop", r.Message ?? "");
+    }
+
+    [Fact]
+    public void ScanHonestlyUnsupported_FailsCleanly()
+    {
+        // C11: Scan exists only as an enum value; same honest contract.
+        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Scan));
+        var node = Nod(OpType.Scan, "", 14,
+            new[] { "x" }, new[] { "z" }, false);
+        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(14);
+        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+        Assert.Contains("Scan", r.Message ?? "");
+    }
 }
