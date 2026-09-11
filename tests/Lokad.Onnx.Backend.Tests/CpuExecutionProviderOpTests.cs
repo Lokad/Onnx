@@ -893,6 +893,7 @@ public class CpuExecutionProviderOpTests
         Assert.Equal(OpStatus.Failure, CPU.Sqrt(DenseTensor<int>.OfValues(new int[] { 1, 4 }), null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Sqrt(DenseTensor<sbyte>.OfValues(new sbyte[] { 1, 4 }), null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Pow(DenseTensor<sbyte>.OfValues(new sbyte[] { 2, 3 }), DenseTensor<sbyte>.OfValues(new sbyte[] { 2, 2 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Pow(DenseTensor<short>.OfValues(new short[] { 2, 3 }), DenseTensor<short>.OfValues(new short[] { 2, 2 }), null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Cos(DenseTensor<int>.OfValues(new int[] { 0, 1 }), null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Tanh(DenseTensor<int>.OfValues(new int[] { 0, 1 }), null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Erf(DenseTensor<int>.OfValues(new int[] { 0, 1 }), null, null).Status);
@@ -930,5 +931,42 @@ public class CpuExecutionProviderOpTests
         var y = DenseTensor<System.Numerics.Complex>.OfValues(new System.Numerics.Complex[] { new System.Numerics.Complex(1, 0), new System.Numerics.Complex(3, 0) });
         Assert.Equal(OpStatus.Failure, CPU.Equal(x, y, null).Status);
         Assert.Equal(OpStatus.Failure, CPU.Less(x, y, null).Status);
+    }
+
+    [Fact]
+    public void RangeUnsupportedDtypes_RefusedCleanly()
+    {
+        // ORT schema-refuses Range on every dtype below (all probed);
+        // arms exist only for float/double/int16/int32/int64.
+        Assert.Equal(OpStatus.Failure, CPU.Range(DenseTensor<sbyte>.OfValues(new sbyte[] { 0 }), DenseTensor<sbyte>.OfValues(new sbyte[] { 3 }), DenseTensor<sbyte>.OfValues(new sbyte[] { 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Range(DenseTensor<byte>.OfValues(new byte[] { 0 }), DenseTensor<byte>.OfValues(new byte[] { 3 }), DenseTensor<byte>.OfValues(new byte[] { 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Range(DenseTensor<ushort>.OfValues(new ushort[] { 0 }), DenseTensor<ushort>.OfValues(new ushort[] { 3 }), DenseTensor<ushort>.OfValues(new ushort[] { 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Range(DenseTensor<uint>.OfValues(new uint[] { 0 }), DenseTensor<uint>.OfValues(new uint[] { 3 }), DenseTensor<uint>.OfValues(new uint[] { 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Range(DenseTensor<ulong>.OfValues(new ulong[] { 0 }), DenseTensor<ulong>.OfValues(new ulong[] { 3 }), DenseTensor<ulong>.OfValues(new ulong[] { 1 }), null).Status);
+    }
+
+    [Fact]
+    public void MatMulNarrowDtypes_RefusedCleanly()
+    {
+        // ORT schema-refuses int8/uint8 MatMul (both probed); only
+        // float/double/int32 kernels exist (uint32/64 gap documented
+        // separately).
+        var a8 = DenseTensor<sbyte>.OfValues(new sbyte[,] { { 1, 2 }, { 3, 4 } });
+        Assert.Equal(OpStatus.Failure, CPU.MatMul(a8, a8, null, null).Status);
+        var au8 = DenseTensor<byte>.OfValues(new byte[,] { { 1, 2 }, { 3, 4 } });
+        Assert.Equal(OpStatus.Failure, CPU.MatMul(au8, au8, null, null).Status);
+    }
+
+    [Fact]
+    public void UintScalarMath_RefusedCleanly()
+    {
+        // ORT schema-refuses every form below (all probed); the float
+        // kernels have no unsigned arms.
+        Assert.Equal(OpStatus.Failure, CPU.Sqrt(DenseTensor<uint>.OfValues(new uint[] { 1, 4 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Sqrt(DenseTensor<ulong>.OfValues(new ulong[] { 1, 4 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Cos(DenseTensor<byte>.OfValues(new byte[] { 0, 1 }), null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.Erf(DenseTensor<byte>.OfValues(new byte[] { 0, 1 }), null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.LayerNormalization(DenseTensor<byte>.OfValues(new byte[,] { { 1, 2 }, { 3, 4 } }), DenseTensor<byte>.OfValues(new byte[] { 1, 1 }), null, -1, 1e-5f, null, 1, null, null).Status);
+        Assert.Equal(OpStatus.Failure, CPU.GlobalAveragePool(DenseTensor<byte>.OfShape(1, 1, 2, 2), null).Status);
     }
 }
