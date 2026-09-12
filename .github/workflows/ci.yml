@@ -29,10 +29,12 @@ jobs:
       - name: Test Release
         shell: pwsh
         run: |
-          ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-vector.log
-          if ($LASTEXITCODE -ne 0) {
+          $runOk = $true; $runErr = ''
+          try { ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-vector.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
+          if ((-not $runOk) -or ($LASTEXITCODE -ne 0)) {
+            if ($runErr) { Write-Host ('::warning::diag ERR ' + ($runErr -replace '%','%25')) }
             if (Test-Path test-vector.log) { Get-Content test-vector.log | Select-Object -Last 30 | ForEach-Object { Write-Host ('::warning::diag ' + ($_ -replace '%','%25')) } }
-            exit $LASTEXITCODE
+            exit 1
           }
       - name: Publish test log
         if: always()
@@ -59,10 +61,12 @@ jobs:
       - name: Test Release without hardware intrinsics
         shell: pwsh
         run: |
-          ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-scalar.log
-          if ($LASTEXITCODE -ne 0) {
+          $runOk = $true; $runErr = ''
+          try { ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-scalar.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
+          if ((-not $runOk) -or ($LASTEXITCODE -ne 0)) {
+            if ($runErr) { Write-Host ('::warning::diag ERR ' + ($runErr -replace '%','%25')) }
             if (Test-Path test-scalar.log) { Get-Content test-scalar.log | Select-Object -Last 30 | ForEach-Object { Write-Host ('::warning::diag ' + ($_ -replace '%','%25')) } }
-            exit $LASTEXITCODE
+            exit 1
           }
       - name: Publish test log
         if: always()
