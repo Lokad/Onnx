@@ -17,13 +17,17 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $zip = [System.IO.Compression.ZipFile]::OpenRead($nupkg.FullName)
 try {
     $names = @($zip.Entries | ForEach-Object { $_.FullName })
-    foreach ($required in @("lib/net10.0/Lokad.Onnx.dll", "Lokad.Onnx.nuspec", "LICENSE.txt", "README.md", "CHANGELOG.md")) {
+    foreach ($required in @("lib/net10.0/Lokad.Onnx.dll", "Lokad.Onnx.nuspec", "LICENSE.txt", "README.md", "CHANGELOG.md", "icon.png")) {
         if ($names -notcontains $required) { Fail ("package is missing " + $required) }
     }
     $nuspec = $zip.Entries | Where-Object { $_.Name.EndsWith(".nuspec") } | Select-Object -First 1
     $reader = New-Object System.IO.StreamReader($nuspec.Open())
     try { $spec = $reader.ReadToEnd() } finally { $reader.Dispose() }
     if ($spec -match "<dependency[ />]") { Fail "package declares runtime dependencies" }
+    $readmeEntry = $zip.Entries | Where-Object { $_.Name -eq "README.md" } | Select-Object -First 1
+    $readmeReader = New-Object System.IO.StreamReader($readmeEntry.Open())
+    try { $readmeText = $readmeReader.ReadToEnd() } finally { $readmeReader.Dispose() }
+    if ($readmeText -match '\]\((?!https?://|#|mailto:)') { Fail "packaged README has repository-relative links" }
 }
 finally { $zip.Dispose() }
 Write-Host "PASS contents"

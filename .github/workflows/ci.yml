@@ -4,23 +4,47 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   offline-tests:
-    runs-on: windows-latest
+    name: tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.300-preview.0.26177.108
-      - name: Restore
-        run: dotnet restore --tl:off -v minimal Lokad.Onnx.slnx
-      - name: Build Release
-        run: dotnet build --tl:off --nologo -v minimal -c Release Lokad.Onnx.slnx --no-restore
+          global-json-file: global.json
       - name: Test Release
-        run: dotnet test --tl:off --nologo -v minimal -c Release --no-build Lokad.Onnx.slnx
+        shell: pwsh
+        run: |
+          ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-vector.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Publish test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-log-${{ matrix.os }}
+          path: test-vector.log
   fallback-tests:
-    runs-on: windows-latest
+    name: tests scalar (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     env:
       DOTNET_EnableHWIntrinsic: '0'
     steps:
@@ -28,36 +52,52 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.300-preview.0.26177.108
-      - name: Restore
-        run: dotnet restore --tl:off -v minimal Lokad.Onnx.slnx
-      - name: Build Release
-        run: dotnet build --tl:off --nologo -v minimal -c Release Lokad.Onnx.slnx --no-restore
+          global-json-file: global.json
       - name: Test Release without hardware intrinsics
-        run: dotnet test --tl:off --nologo -v minimal -c Release --no-build Lokad.Onnx.slnx
+        shell: pwsh
+        run: |
+          ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-scalar.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Publish test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-log-scalar-${{ matrix.os }}
+          path: test-scalar.log
   opfuzz:
     runs-on: windows-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.300-preview.0.26177.108
+          global-json-file: global.json
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: 3.13
       - name: Install lane packages
+        shell: pwsh
         run: python -m pip install -r tests/opfuzz/python/requirements.txt
       - name: Differential lane
+        shell: pwsh
         run: pwsh -NoProfile -File eng/test-opfuzz.ps1
   smoke-pack:
     runs-on: windows-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.300-preview.0.26177.108
+          global-json-file: global.json
       - name: Package smoke
+        shell: pwsh
         run: pwsh -NoProfile -File eng/smoke-pack.ps1
+      - name: Publish package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: artifacts/nuget/*
