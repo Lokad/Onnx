@@ -30,7 +30,10 @@ jobs:
         shell: pwsh
         run: |
           ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-vector.log
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($LASTEXITCODE -ne 0) {
+            if (Test-Path test-vector.log) { Get-Content test-vector.log | Select-Object -Last 30 | ForEach-Object { Write-Host ('::warning::diag ' + ($_ -replace '%','%25')) } }
+            exit $LASTEXITCODE
+          }
       - name: Publish test log
         if: always()
         uses: actions/upload-artifact@v4
@@ -57,7 +60,10 @@ jobs:
         shell: pwsh
         run: |
           ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-scalar.log
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($LASTEXITCODE -ne 0) {
+            if (Test-Path test-scalar.log) { Get-Content test-scalar.log | Select-Object -Last 30 | ForEach-Object { Write-Host ('::warning::diag ' + ($_ -replace '%','%25')) } }
+            exit $LASTEXITCODE
+          }
       - name: Publish test log
         if: always()
         uses: actions/upload-artifact@v4
