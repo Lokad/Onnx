@@ -65,4 +65,4 @@ The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Re
 
 ## Implementation notes
 * The tensors library is pure managed C# implemented from the layout contracts. It was originally ported from [the ORT C# tensors](https://github.com/microsoft/onnxruntime/tree/main/csharp/src/Microsoft.ML.OnnxRuntime/Tensors) and has since been reimplemented from those contracts piece by piece (see CHANGELOG.md); no third-party notices ship.
-* The shipped `Lokad.Onnx` assembly is dependency-free. ONNX parsing lives in the non-shipped `Lokad.Onnx.Import` project (OnnxSharp); text and image helpers live in `Lokad.Onnx.Data`; the console lives in `Lokad.Onnx.CLI`.
+* The shipped `Lokad.Onnx` assembly carries one runtime dependency, `Google.Protobuf` (pinned 3.33.5), for the integrated ONNX importer under `src/Lokad.Onnx/Import/` (schema code generated from pinned upstream `onnx.proto`); text and image helpers live in `Lokad.Onnx.Data`; the console lives in `Lokad.Onnx.CLI`.

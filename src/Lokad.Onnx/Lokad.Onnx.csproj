@@ -19,7 +19,7 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>0.2.0 is the breaking .NET 10-only release: net10.0 floor, dependency-free core assembly, MatMul wrong-answer fixes, immutable execution options, pooled dense-float outputs, and the native e5 conformance gate. See CHANGELOG.md for the full record.</PackageReleaseNotes>
+    <PackageReleaseNotes>0.2.0 is the breaking .NET 10-only release: net10.0 floor, integrated ONNX importer on Google.Protobuf, MatMul wrong-answer fixes, immutable execution options, pooled dense-float outputs, and the native e5 conformance gate. See CHANGELOG.md for the full record.</PackageReleaseNotes>
     <PackageTags>onnx;inference;machine-learning;tensors;dotnet</PackageTags>
     <PackageProjectUrl>https://github.com/Lokad/Onnx</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Lokad/Onnx.git</RepositoryUrl>

@@ -24,11 +24,13 @@ try {
     $reader = New-Object System.IO.StreamReader($nuspec.Open())
     try { $spec = $reader.ReadToEnd() } finally { $reader.Dispose() }
     $depIds = @([regex]::Matches($spec, '<dependency id="([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
-    # I01 transitional: the moved importer still decodes via OnnxSharp 0.2.1; I02 swaps it for Google.Protobuf and I03 tightens this check.
-    $unexpected = @($depIds | Where-Object { $_ -ne "OnnxSharp" })
+    # I03 contract: the integrated importer ships on exactly Google.Protobuf 3.33.5; nothing else, no OnnxSharp, no separate importer assembly.
+    $unexpected = @($depIds | Where-Object { $_ -ne "Google.Protobuf" })
     if ($unexpected.Count -gt 0) { Fail ("package declares unexpected runtime dependencies: " + ($unexpected -join ",")) }
-    $sharpVer = [regex]::Match($spec, '<dependency id="OnnxSharp" version="([^"]+)"').Groups[1].Value
-    if ($depIds -notcontains "OnnxSharp" -or $sharpVer -ne "0.2.1") { Fail "package lost the transitional OnnxSharp 0.2.1 dependency" }
+    $pbVer = [regex]::Match($spec, '<dependency id="Google.Protobuf" version="([^"]+)"').Groups[1].Value
+    if ($depIds -notcontains "Google.Protobuf" -or $pbVer -ne "3.33.5") { Fail "package must declare exactly Google.Protobuf 3.33.5" }
+    if ($names -contains "lib/net10.0/Lokad.Onnx.Import.dll") { Fail "package must not ship a separate importer assembly" }
+    if ($spec -match "OnnxSharp") { Fail "package must not mention OnnxSharp" }
     $readmeEntry = $zip.Entries | Where-Object { $_.Name -eq "README.md" } | Select-Object -First 1
     $readmeReader = New-Object System.IO.StreamReader($readmeEntry.Open())
     try { $readmeText = $readmeReader.ReadToEnd() } finally { $readmeReader.Dispose() }
@@ -42,7 +44,7 @@ $feed = Join-Path $work "feed"
 New-Item -ItemType Directory -Force $work | Out-Null
 New-Item -ItemType Directory -Force $feed | Out-Null
 Copy-Item $nupkg.FullName $feed
-Set-Content (Join-Path $work "nuget.config") "<configuration><packageSources><clear /></packageSources></configuration>"
+Set-Content (Join-Path $work "nuget.config") "<configuration><packageSources><clear /><add key=`"local`" value=`"feed`" /><add key=`"nuget.org`" value=`"https://api.nuget.org/v3/index.json`" /></packageSources></configuration>"
 $cacheDir = Join-Path ([System.Environment]::GetFolderPath("UserProfile")) ".nuget/packages/lokad.onnx/$version"
 if (Test-Path $cacheDir) { Remove-Item $cacheDir -Recurse -Force }
 Push-Location $work
@@ -62,14 +64,28 @@ try {
 'var graph = Model.Load(mp);',
 'var ok = graph.Execute(new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } }, true);',
 'var y = ((Tensor<float>)graph.Outputs["y"]).ToArray();',
-'Console.WriteLine("SMOKE-OK " + ok + " " + string.Join(",", y));'
+'Console.WriteLine("SMOKE-OK " + ok + " " + string.Join(",", y));',
+('var fixture = @"' + (Join-Path $root "tests/Lokad.Onnx.Backend.Tests/models/mnist-8.onnx") + '";'),
+'var dto = OnnxImport.Parse(fixture);',
+'var inName = dto.Inputs[0].Name;',
+'var fed = DenseTensor<float>.OfShape(dto.Inputs[0].Dims);',
+'fed.Fill(0.5f);',
+'var g1 = OnnxImport.Load(fixture)!;',
+'var ok1 = g1.Execute(new Dictionary<string, ITensor> { { inName, fed } }, true);',
+'var o1 = ((Tensor<float>)g1.Outputs.Values.First()).ToArray();',
+'var g2 = OnnxImport.Load(File.ReadAllBytes(fixture))!;',
+'var ok2 = g2.Execute(new Dictionary<string, ITensor> { { inName, fed } }, true);',
+'var o2 = ((Tensor<float>)g2.Outputs.Values.First()).ToArray();',
+'var odims = string.Join("x", ((Tensor<float>)g1.Outputs.Values.First()).Dimensions.ToArray());',
+'Console.WriteLine("SMOKE-IMPORT-OK " + ok1 + " " + ok2 + " " + o1.SequenceEqual(o2) + " " + odims);'
     )
     Set-Content Program.cs ($program -join "`r`n")
-    & dotnet add package Lokad.Onnx --version $version --source $feed | Out-Null
+    & dotnet add package Lokad.Onnx --version $version | Out-Null
     if ($LASTEXITCODE -ne 0) { Fail "package reference failed" }
     $out = & dotnet run -c $Configuration --no-restore 2>&1
     if ($LASTEXITCODE -ne 0) { Fail "scratch run failed" }
     if (-not ($out -match "SMOKE-OK True 0,2")) { Fail "unexpected scratch output" }
+    if (-not ($out -match "SMOKE-IMPORT-OK True True True 1x10")) { Fail "fixture import check failed" }
 }
 finally { Pop-Location }
 Remove-Item $work -Recurse -Force
