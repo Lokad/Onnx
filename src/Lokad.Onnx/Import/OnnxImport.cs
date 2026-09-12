@@ -7,8 +7,8 @@ using System.Linq;
 
 /// <summary>
 /// File and buffer entry points for ONNX models. Parsing (protobuf) and
-/// external-data resolution live here so the core library stays free of the
-/// OnnxSharp dependency; referenced by the CLI, tests and runners only.
+/// external-data resolution ship inside the core library so packaged
+/// consumers can load model files and buffers directly.
 /// </summary>
 public static class OnnxImport
 {

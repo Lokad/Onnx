@@ -23,7 +23,12 @@ try {
     $nuspec = $zip.Entries | Where-Object { $_.Name.EndsWith(".nuspec") } | Select-Object -First 1
     $reader = New-Object System.IO.StreamReader($nuspec.Open())
     try { $spec = $reader.ReadToEnd() } finally { $reader.Dispose() }
-    if ($spec -match "<dependency[ />]") { Fail "package declares runtime dependencies" }
+    $depIds = @([regex]::Matches($spec, '<dependency id="([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
+    # I01 transitional: the moved importer still decodes via OnnxSharp 0.2.1; I02 swaps it for Google.Protobuf and I03 tightens this check.
+    $unexpected = @($depIds | Where-Object { $_ -ne "OnnxSharp" })
+    if ($unexpected.Count -gt 0) { Fail ("package declares unexpected runtime dependencies: " + ($unexpected -join ",")) }
+    $sharpVer = [regex]::Match($spec, '<dependency id="OnnxSharp" version="([^"]+)"').Groups[1].Value
+    if ($depIds -notcontains "OnnxSharp" -or $sharpVer -ne "0.2.1") { Fail "package lost the transitional OnnxSharp 0.2.1 dependency" }
     $readmeEntry = $zip.Entries | Where-Object { $_.Name -eq "README.md" } | Select-Object -First 1
     $readmeReader = New-Object System.IO.StreamReader($readmeEntry.Open())
     try { $readmeText = $readmeReader.ReadToEnd() } finally { $readmeReader.Dispose() }

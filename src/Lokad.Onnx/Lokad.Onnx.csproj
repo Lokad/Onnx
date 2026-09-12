@@ -54,6 +54,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.111" PrivateAssets="All" />
+    <!-- I01: importer moved into the shipped library; OnnxSharp travels with it until I02 swaps in Google.Protobuf. -->
+    <PackageReference Include="OnnxSharp" Version="0.2.1">
+      <Aliases>OnnxSharp</Aliases>
+    </PackageReference>
   </ItemGroup>
 
   <Target Name="EnforceReleasePackageConfiguration" BeforeTargets="GenerateNuspec"

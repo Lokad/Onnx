@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lokad.Onnx\Lokad.Onnx.csproj" />
-    <ProjectReference Include="..\Lokad.Onnx.Import\Lokad.Onnx.Import.csproj" />
     <ProjectReference Include="..\Lokad.Onnx.Data\Lokad.Onnx.Data.csproj" />
   </ItemGroup>
 
