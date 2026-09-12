@@ -194,3 +194,17 @@ save("tests/Lokad.Onnx.Bench/oneop/attn_1x12x30x30",
      helper.make_node("MatMul", ["a", "b"], ["y"]),
      [tinfo("a", [1, 12, 30, 30])], [tinfo("y", [1, 12, 30, 32])],
      [finit("b", b)])
+
+# 26. e5 8-token MLP up tile (batched 3D): 1x8x384 @ 384x1536
+b = (rng.random([384, 1536]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_1x8x384x1536",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 8, 384])], [tinfo("y", [1, 8, 1536])],
+     [finit("b", b)])
+
+# 27. e5 8-token MLP down tile (batched 3D): 1x8x1536 @ 1536x384
+b = (rng.random([1536, 384]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/matmul_1x8x1536x384",
+     helper.make_node("MatMul", ["a", "b"], ["y"]),
+     [tinfo("a", [1, 8, 1536])], [tinfo("y", [1, 8, 384])],
+     [finit("b", b)])

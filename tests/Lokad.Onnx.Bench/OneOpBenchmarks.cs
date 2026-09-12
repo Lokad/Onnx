@@ -101,8 +101,10 @@ public class OneOpBenchmarks
         Add("attn_1x6x201x201", "a", new int[] { 1, 6, 201, 201 });
         Add("attn_1x12x30x32", "a", new int[] { 1, 12, 30, 32 });
         Add("attn_1x12x30x30", "a", new int[] { 1, 12, 30, 30 });
+        Add("matmul_1x8x384x1536", "a", new int[] { 1, 8, 384 });
+        Add("matmul_1x8x1536x384", "a", new int[] { 1, 8, 1536 });
         foreach (var c in cases) VerifyAgreement(c);
-        Console.WriteLine("OneOp agreement: all 28 cases match element-wise.");
+        Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise.");
     }
 
     void Add(string kase, string inputName, int[] dims)
@@ -396,4 +398,20 @@ public class OneOpBenchmarks
     [Benchmark(Description = "AttnContext 1x12x30x30 - ORT session")]
     [BenchmarkCategory("attnctx30")]
     public void OrtAttnCtx30() => RunOrt(cases[29]);
+
+    [Benchmark(Description = "MatMul 1x8x384 @ 384x1536 - Lokad session")]
+    [BenchmarkCategory("mm8up")]
+    public void LokadMm8Up() => RunLokad(cases[30]);
+
+    [Benchmark(Description = "MatMul 1x8x384 @ 384x1536 - ORT session")]
+    [BenchmarkCategory("mm8up")]
+    public void OrtMm8Up() => RunOrt(cases[30]);
+
+    [Benchmark(Description = "MatMul 1x8x1536 @ 1536x384 - Lokad session")]
+    [BenchmarkCategory("mm8down")]
+    public void LokadMm8Down() => RunLokad(cases[31]);
+
+    [Benchmark(Description = "MatMul 1x8x1536 @ 1536x384 - ORT session")]
+    [BenchmarkCategory("mm8down")]
+    public void OrtMm8Down() => RunOrt(cases[31]);
 }
