@@ -2,9 +2,7 @@
 
 ## About
 Lokad.Onnx is a 100% managed-code [ONNX backend](https://onnx.ai/onnx/repo-docs/ImplementingAnOnnxBackend.html) implementation for .NET 10.
-It runs transformer and vision models end to end on CPU, with numeric parity against native ONNX Runtime frozen in the test suite for multilingual-e5-small, DINOv3 ViT-S/16 (full weights), ResNet50, and GPT-2. DINOv2-small is excluded from the benchmark full-output gate: it diverges above the validation gate (see BENCHMARK.md); its compact C# oracle runs in the test suite.
-
-![img](https://ajb.nyc3.cdn.digitaloceanspaces.com/lokadonnx8.gif)
+It runs transformer and vision models end to end on CPU, with numeric parity against native ONNX Runtime frozen in the test suite for multilingual-e5-small, DINOv3 ViT-S/16 (full weights), ResNet50, and GPT-2.
 
 ## Getting started
 * Clone the repo: `git clone https://github.com/Lokad/Onnx.git`
@@ -55,7 +53,7 @@ Five lanes, from fastest to strongest:
 
 - Offline unit tests: `dotnet test --tl:off --nologo -v minimal Lokad.Onnx.slnx`.
 - Integration tests using committed assets such as MNIST (same command, no extra setup).
-- Local-model conformance (DINOv3, ResNet50, GPT-2, and the compact DINOv2 oracle): same command with assets present; frozen oracles pin numeric parity with native ONNX Runtime. DINOv2 is excluded from the benchmark full-output gate with reason (see BENCHMARK.md).
+- Local-model conformance (DINOv3, ResNet50, GPT-2, and the compact DINOv2 oracle): same command with assets present; frozen oracles pin numeric parity with native ONNX Runtime.
 - Single-op differential lane: `.\eng\test-opfuzz.ps1` replays the frozen corpus against native ONNX Runtime references in scalar, SIMD, and intrinsics modes. Needs Python with the packages in `tests\opfuzz\python\requirements.txt`.
 - Native e5 gate: `.\eng\test-e5.ps1 -RequireIntrinsics` verifies asset hashes, exact tokenizer inputs, full hidden states, normalized embeddings, determinism across scalar, SIMD, and intrinsic modes, and the semantic ranking margin. Needs Python with the packages in `tests\e5\python\requirements.txt`.
 

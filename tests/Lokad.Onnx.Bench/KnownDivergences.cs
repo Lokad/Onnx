@@ -26,7 +26,7 @@ internal static class KnownDivergences
             "last_hidden_state",
             1e-3,
             "C01",
-            "DINOv2-small depth-amplified fp32 summation-order drift after bit-identical GELU fusion and tail order parity; uniform layer-0 seed with no localizable kernel defect."),
+            "DINOv2-small depth-amplified fp32 summation-order drift after bit-identical GELU fusion and tail order parity; ORT disagrees with itself here (plain-vs-fused 1.48e-4 at layer-11 attention, same site as the Lokad breach) and a 1-ulp input perturbation moves ORT output past the gate, so cross-implementation 1e-4 agreement is unachievable on this operating point."),
     };
 
     internal static bool TryMatch(string caseLabel, string outputName, double measuredScaled, double gate, out KnownDivergence match)

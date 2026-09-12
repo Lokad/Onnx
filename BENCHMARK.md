@@ -164,7 +164,7 @@ applies. DINOv2 is excluded by a tracked known-divergence condition (PLAN.md
 C01, registry in `tests/Lokad.Onnx.Bench/KnownDivergences.cs`): after bit-identical
 GELU fusion and tail order parity, `last_hidden_state` still diverges at reference-scaled
 1.92E-004 from uniform depth-amplified fp32 summation-order drift with no localizable
-kernel defect, above the unchanged 1e-4 gate. The case validates, reports
+kernel defect, above the unchanged 1e-4 gate. A 2026-09-12 per-layer probe (temp instrumented copy, ORT 1.29, gate metric |ref-cand|/(1+|ref|)) shows embeddings agreeing at 8e-8, the layer-0 norm output already at 1.2e-6 in ORT-vs-ORT as well, and a layer-11 attention jump to 1.48e-4 at the identical token and channel in ORT-vs-ORT and in Lokad-vs-ORT; a 1-ulp input perturbation alone moves ORT's own output by 1.0e-4 (plain) and 1.2e-4 (fused). Cross-implementation 1e-4 agreement is therefore unachievable on this operating point, while DINOv3 passes because it runs native LayerNormalization/Gelu single ops with no fusion-order differences. The case validates, reports
 `case-status dinov2-224=excluded-known-divergence`, and skips every timed row, so no
 DINOv2 rows are published. A breach at or above the 1e-3 tripwire, or on any
 unregistered case, still fails the run as a fresh regression.
