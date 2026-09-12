@@ -30,10 +30,10 @@ jobs:
         shell: pwsh
         run: |
           $runOk = $true; $runErr = ''
-          try { ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-vector.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
+          try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-vector.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
           if ((-not $runOk) -or ($LASTEXITCODE -ne 0)) {
             if ($runErr) { Write-Host ('::warning::diag ERR ' + ($runErr -replace '%','%25')) }
-            if (Test-Path test-vector.log) { Get-Content test-vector.log | Select-Object -Last 30 | ForEach-Object { Write-Host ('::warning::diag ' + ($_ -replace '%','%25')) } }
+            if (Test-Path test-vector.log) { Get-Content test-vector.log | Select-String -Pattern 'Failed|Passed!|Failed!|Testhost|testhost|error|Exception|Segmentation|stack overflow|FailFast|core dumped|Aborted|Killed' | Select-Object -Last 40 | ForEach-Object { Write-Host ('::warning::diag ' + ($_.Line -replace '%','%25')) } }
             exit 1
           }
       - name: Publish test log
@@ -62,10 +62,10 @@ jobs:
         shell: pwsh
         run: |
           $runOk = $true; $runErr = ''
-          try { ./eng/test.ps1 -Configuration Release | Tee-Object -FilePath test-scalar.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
+          try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-scalar.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
           if ((-not $runOk) -or ($LASTEXITCODE -ne 0)) {
             if ($runErr) { Write-Host ('::warning::diag ERR ' + ($runErr -replace '%','%25')) }
-            if (Test-Path test-scalar.log) { Get-Content test-scalar.log | Select-Object -Last 30 | ForEach-Object { Write-Host ('::warning::diag ' + ($_ -replace '%','%25')) } }
+            if (Test-Path test-scalar.log) { Get-Content test-scalar.log | Select-String -Pattern 'Failed|Passed!|Failed!|Testhost|testhost|error|Exception|Segmentation|stack overflow|FailFast|core dumped|Aborted|Killed' | Select-Object -Last 40 | ForEach-Object { Write-Host ('::warning::diag ' + ($_.Line -replace '%','%25')) } }
             exit 1
           }
       - name: Publish test log
