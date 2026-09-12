@@ -33,7 +33,7 @@ ENV = {"onnx": onnx.__version__, "onnxruntime": ort.__version__, "numpy": np.__v
 def txt_save(path, arr):
     arr = np.asarray(arr)
     dtype = {np.dtype("float32"): "float32", np.dtype("float64"): "float64", np.dtype("int64"): "int64", np.dtype("int32"): "int32", np.dtype("bool"): "bool", np.dtype("uint32"): "uint32", np.dtype("uint64"): "uint64", np.dtype("int8"): "int8", np.dtype("uint8"): "uint8", np.dtype("int16"): "int16", np.dtype("uint16"): "uint16"}[arr.dtype]
-    with open(path, "w") as f:
+    with open(path, "w", newline="\n") as f:
         f.write("%s %d %s\n" % (dtype, arr.ndim, " ".join(str(d) for d in arr.shape)))
         if arr.dtype == np.dtype("bool"):
             f.write(" ".join("1" if v else "0" for v in arr.ravel()))
@@ -92,7 +92,7 @@ def emit(case_id, node, inputs, out_shapes, feed, inits=(), dtypes=None, opset=N
         if not allow_nonfinite:
             assert np.all(np.isfinite(a)), "non-finite ORT output in " + case_id
         txt_save(os.path.join(d, "ref_" + n + ".txt"), a)
-    with open(os.path.join(d, "meta.json"), "w") as f:
+    with open(os.path.join(d, "meta.json"), "w", newline="\n") as f:
         meta = {"case": case_id, "seed": SEED, "opset": OPSET if opset is None else opset, "ir": 8, "env": ENV}
         if case_id in KNOWN_DIVERGENCES:
             meta["known_divergence"] = KNOWN_DIVERGENCES[case_id]
@@ -274,7 +274,7 @@ def gather_cases(n=4):
         res = run_ort(mp, {"x": a})
         assert list(res[0].shape) == zs and np.all(np.isfinite(res[0]))
         txt_save(os.path.join(d, "ref_z.txt"), res[0])
-        with open(os.path.join(d, "meta.json"), "w") as f:
+        with open(os.path.join(d, "meta.json"), "w", newline="\n") as f:
             json.dump({"case": "gather_%d" % i, "seed": SEED, "opset": OPSET, "ir": 8, "env": ENV}, f, indent=1)
 
 def layernorm_cases():
@@ -376,7 +376,7 @@ def boundary_cases():
     res = run_ort(mp, {"x": a})
     assert list(res[0].shape) == [2, 3, 3] and np.all(np.isfinite(res[0]))
     txt_save(os.path.join(d, "ref_z.txt"), res[0])
-    with open(os.path.join(d, "meta.json"), "w") as f:
+    with open(os.path.join(d, "meta.json"), "w", newline="\n") as f:
         json.dump({"case": "gather_negaxis", "seed": SEED, "opset": OPSET, "ir": 8, "env": ENV}, f, indent=1)
 
 def gather_extra_cases():

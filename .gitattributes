@@ -61,3 +61,11 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+# Frozen opfuzz corpus is hash-gated (eng/test-opfuzz.ps1): force LF so
+# Windows and Linux checkouts hash identically. The generator writes LF
+# (newline="\n") to match; .onnx stays binary.
+tests/opfuzz/corpus/**/*.txt text eol=lf
+tests/opfuzz/corpus/**/*.json text eol=lf
+tests/opfuzz/corpus/SHA256SUMS text eol=lf
+tests/opfuzz/corpus/**/*.onnx binary
