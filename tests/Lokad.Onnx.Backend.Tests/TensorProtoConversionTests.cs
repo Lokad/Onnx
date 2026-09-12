@@ -1,10 +1,9 @@
-extern alias OnnxSharp;
 
 using System;
 using System.IO;
 using System.Linq;
 
-using OnnxSharp::Onnx;
+using Onnx;
 
 namespace Lokad.Onnx.Backend.Tests;
 

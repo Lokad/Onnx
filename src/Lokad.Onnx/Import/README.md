@@ -1,6 +1,6 @@
 # Lokad.Onnx.Import
 
-ONNX protobuf loading shipped in the core library: parses .onnx files and buffers (OnnxSharp until the Google.Protobuf swap) into the core OnnxModel DTO and hands it to Model.Load. Available to packaged consumers as well as the CLI, the test runners and the test suite.
+ONNX protobuf loading shipped in the core library: parses .onnx files and buffers (Google.Protobuf with generated schema code under Generated/) into the core OnnxModel DTO and hands it to Model.Load. Available to packaged consumers as well as the CLI, the test runners and the test suite.
 
 ## Entry points (OnnxImport)
 

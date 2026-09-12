@@ -1,11 +1,10 @@
-extern alias OnnxSharp;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Google.Protobuf;
-using OnnxSharp::Onnx;
+using Onnx;
 using Xunit;
 
 namespace Lokad.Onnx.Backend.Tests;

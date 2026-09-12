@@ -110,6 +110,15 @@ public class NoNullForgivingTests
     }
 
     [Fact]
+    public void ProductSources_ExcludesGeneratedCode()
+    {
+        string root = TestSupport.RepoRoot();
+        string generated = Path.Combine(root, "src", "Lokad.Onnx", "Import", "Generated", "Onnx.g.cs");
+        Assert.True(File.Exists(generated), "expected generated schema file: " + generated);
+        Assert.DoesNotContain(TestSupport.ProductSources(), f => f.EndsWith(".g.cs", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void SourceTree_HasNoNullForgivingOperators()
     {
         string root = TestSupport.RepoRoot();

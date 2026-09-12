@@ -12,5 +12,7 @@ global using System.Threading.Tasks;
 
 global using static Lokad.Onnx.CollectionUtils;
 
+global using Onnx;
+
 
 using System.Runtime.Versioning;

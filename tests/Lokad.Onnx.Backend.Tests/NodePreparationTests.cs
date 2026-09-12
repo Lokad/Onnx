@@ -1,6 +1,5 @@
-extern alias OnnxSharp;
 
-using OnnxSharp::Onnx;
+using Onnx;
 using Lokad.Onnx.Tests.Support;
 
 namespace Lokad.Onnx.Backend.Tests;

@@ -1,7 +1,6 @@
-extern alias OnnxSharp;
 
 using Google.Protobuf;
-using OnnxSharp::Onnx;
+using Onnx;
 
 namespace Lokad.Onnx.Backend.Tests;
 
