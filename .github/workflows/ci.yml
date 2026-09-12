@@ -29,13 +29,8 @@ jobs:
       - name: Test Release
         shell: pwsh
         run: |
-          $runOk = $true; $runErr = ''
-          try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-vector.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
-          if ((-not $runOk) -or ($LASTEXITCODE -ne 0)) {
-            if ($runErr) { Write-Host ('::warning::diag ERR ' + ($runErr -replace '%','%25')) }
-            if (Test-Path test-vector.log) { $dl = Get-Content test-vector.log; for ($i=0; $i -lt $dl.Count; $i++) { if ($dl[$i] -match '^Failed \S') { for ($j=$i; $j -lt [Math]::Min($i+25, $dl.Count); $j++) { Write-Host ('::warning::diag ' + ($dl[$j] -replace '%','%25')) } } }; $dl | Select-String -Pattern 'Passed!|Failed!|Testhost|Segmentation|FailFast|core dumped|Aborted|Killed' | Select-Object -Last 10 | ForEach-Object { Write-Host ('::warning::diag ' + ($_.Line -replace '%','%25')) } }
-            exit 1
-          }
+          try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-vector.log } catch { exit 1 }
+          if ($LASTEXITCODE -ne 0) { exit 1 }
       - name: Publish test log
         if: always()
         uses: actions/upload-artifact@v4
@@ -61,13 +56,8 @@ jobs:
       - name: Test Release without hardware intrinsics
         shell: pwsh
         run: |
-          $runOk = $true; $runErr = ''
-          try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-scalar.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
-          if ((-not $runOk) -or ($LASTEXITCODE -ne 0)) {
-            if ($runErr) { Write-Host ('::warning::diag ERR ' + ($runErr -replace '%','%25')) }
-            if (Test-Path test-scalar.log) { $dl = Get-Content test-scalar.log; for ($i=0; $i -lt $dl.Count; $i++) { if ($dl[$i] -match '^Failed \S') { for ($j=$i; $j -lt [Math]::Min($i+25, $dl.Count); $j++) { Write-Host ('::warning::diag ' + ($dl[$j] -replace '%','%25')) } } }; $dl | Select-String -Pattern 'Passed!|Failed!|Testhost|Segmentation|FailFast|core dumped|Aborted|Killed' | Select-Object -Last 10 | ForEach-Object { Write-Host ('::warning::diag ' + ($_.Line -replace '%','%25')) } }
-            exit 1
-          }
+          try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-scalar.log } catch { exit 1 }
+          if ($LASTEXITCODE -ne 0) { exit 1 }
       - name: Publish test log
         if: always()
         uses: actions/upload-artifact@v4
@@ -75,7 +65,12 @@ jobs:
           name: test-log-scalar-${{ matrix.os }}
           path: test-scalar.log
   opfuzz:
-    runs-on: windows-latest
+    name: opfuzz (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -94,7 +89,12 @@ jobs:
         shell: pwsh
         run: pwsh -NoProfile -File eng/test-opfuzz.ps1
   smoke-pack:
-    runs-on: windows-latest
+    name: pack (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -109,5 +109,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: package
+          name: package-${{ matrix.os }}
           path: artifacts/nuget/*
