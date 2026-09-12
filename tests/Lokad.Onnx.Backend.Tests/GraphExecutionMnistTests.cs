@@ -1,5 +1,6 @@
 using Lokad.Onnx;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Lokad.Onnx.Tests.Support;
 
@@ -35,8 +36,8 @@ namespace Lokad.Onnx.Backend.Tests
         [Fact]
         public void CanInferWithMnist2()
         {
-            var g = OnnxImport.Load("models\\\\mnist-8.onnx")!;
-            var ui = Data.GetInputTensorsFromFileArgs(new[] { "images\\\\mnist4.png::mnist" })!;
+            var g = OnnxImport.Load(Path.Combine("models", "mnist-8.onnx"))!;
+            var ui = Data.GetInputTensorsFromFileArgs(new[] { Path.Combine("images", "mnist4.png") + "::mnist" })!;
             Assert.True(g.Execute(ui, true));
             var o = (Tensor<float>)((INumericTensor)g.Outputs.Values.First()!).RemoveDim(0);
             var expected = new float[] { -7.3263092f, -1.658613f, -7.8152933f, -12.741977f, 18.316916f, -0.16605358f, -6.70112f, 11.390553f, 2.657311f, 1.4563596f };

@@ -33,7 +33,7 @@ jobs:
           try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-vector.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
           if ((-not $runOk) -or ($LASTEXITCODE -ne 0)) {
             if ($runErr) { Write-Host ('::warning::diag ERR ' + ($runErr -replace '%','%25')) }
-            if (Test-Path test-vector.log) { Get-Content test-vector.log | Select-String -Pattern 'Failed|Passed!|Failed!|Testhost|testhost|error|Exception|Segmentation|stack overflow|FailFast|core dumped|Aborted|Killed' | Select-Object -Last 40 | ForEach-Object { Write-Host ('::warning::diag ' + ($_.Line -replace '%','%25')) } }
+            if (Test-Path test-vector.log) { $dl = Get-Content test-vector.log; for ($i=0; $i -lt $dl.Count; $i++) { if ($dl[$i] -match '^Failed \S') { for ($j=$i; $j -lt [Math]::Min($i+25, $dl.Count); $j++) { Write-Host ('::warning::diag ' + ($dl[$j] -replace '%','%25')) } } }; $dl | Select-String -Pattern 'Passed!|Failed!|Testhost|Segmentation|FailFast|core dumped|Aborted|Killed' | Select-Object -Last 10 | ForEach-Object { Write-Host ('::warning::diag ' + ($_.Line -replace '%','%25')) } }
             exit 1
           }
       - name: Publish test log
@@ -65,7 +65,7 @@ jobs:
           try { ./eng/test.ps1 -Configuration Release 2>&1 | Tee-Object -FilePath test-scalar.log } catch { $runOk = $false; $runErr = $_.Exception.Message }
           if ((-not $runOk) -or ($LASTEXITCODE -ne 0)) {
             if ($runErr) { Write-Host ('::warning::diag ERR ' + ($runErr -replace '%','%25')) }
-            if (Test-Path test-scalar.log) { Get-Content test-scalar.log | Select-String -Pattern 'Failed|Passed!|Failed!|Testhost|testhost|error|Exception|Segmentation|stack overflow|FailFast|core dumped|Aborted|Killed' | Select-Object -Last 40 | ForEach-Object { Write-Host ('::warning::diag ' + ($_.Line -replace '%','%25')) } }
+            if (Test-Path test-scalar.log) { $dl = Get-Content test-scalar.log; for ($i=0; $i -lt $dl.Count; $i++) { if ($dl[$i] -match '^Failed \S') { for ($j=$i; $j -lt [Math]::Min($i+25, $dl.Count); $j++) { Write-Host ('::warning::diag ' + ($dl[$j] -replace '%','%25')) } } }; $dl | Select-String -Pattern 'Passed!|Failed!|Testhost|Segmentation|FailFast|core dumped|Aborted|Killed' | Select-Object -Last 10 | ForEach-Object { Write-Host ('::warning::diag ' + ($_.Line -replace '%','%25')) } }
             exit 1
           }
       - name: Publish test log
