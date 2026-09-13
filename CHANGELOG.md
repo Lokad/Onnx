@@ -1,10 +1,9 @@
 # Changelog
 
-## Unreleased — 0.2.0 development
+## 0.2.0 — 2026-09-13
 
-The next release targets modern, managed CPU ONNX inference on .NET 10.
-The changes below are implemented in the working source line unless marked
-as planned or a known limitation. This is not a release-readiness claim.
+0.2.0 is the breaking .NET 10-only release of modern, managed CPU ONNX inference.
+The changes below are implemented unless marked as planned or a known limitation.
 
 ### Direction
 
@@ -23,11 +22,14 @@ as planned or a known limitation. This is not a release-readiness claim.
 ### Breaking
 
 - All maintained projects target `net10.0`; legacy target frameworks are removed.
-- The core package is one `Lokad.Onnx` assembly with no runtime NuGet
-  dependencies. Base, Tensors and Backend are consolidated into
+- The core package is one `Lokad.Onnx` assembly with a single pinned runtime
+  NuGet dependency (`Google.Protobuf` 3.33.5, carrying the integrated ONNX
+  importer). Base, Tensors and Backend are consolidated into
   `src/Lokad.Onnx`, which packs directly. The former package project is removed.
-- ONNX protobuf parsing is separated into the non-shipped
-  `Lokad.Onnx.Import` adapter using OnnxSharp. The core loads plain
+- ONNX protobuf parsing is integrated into the shipped core under
+  `src/Lokad.Onnx/Import` on `Google.Protobuf` (schema code generated from the
+  checked-in `onnx.proto`; the `OnnxSharp` adapter and the separate
+  `Lokad.Onnx.Import` project are removed). The core loads plain
   `OnnxModel` descriptions; Data and CLI remain separate support projects.
 - Removed the Satsuma graph dependency and public graph members, the pythonnet
   bridge and Interop assembly. Native ORT remains a development oracle and
@@ -176,7 +178,7 @@ as planned or a known limitation. This is not a release-readiness claim.
   e5, DINOv3, ResNet50 and GPT-2 run; DINOv2 is excluded with its divergence
   stated, and `bench.ps1` is labeled a startup-inclusive CLI benchmark.
 
-### Known limitations before release
+### Known limitations
 
 - A direct-output graph can report success with no outputs on retry after a
   binding failure, as reproduced in the 2026-09-08 review.

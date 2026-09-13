@@ -10,9 +10,10 @@ Demo, inspection and benchmarking console over the core library. lonnx.cmd wraps
 
 ## Distribution boundary
 
-The `Lokad.Onnx` NuGet package ships the dependency-free core engine only:
-tensors, graph execution, and the `OnnxModel` description API. File import
-(`OnnxImport`), tokenizers, image helpers, and this CLI live outside the
-package and need their own dependencies (notably OnnxSharp for parsing).
+The `Lokad.Onnx` NuGet package ships the core engine with its integrated
+file importer (`OnnxImport` on a pinned `Google.Protobuf` runtime dependency):
+tensors, graph execution, and the `OnnxModel` description API. Tokenizers,
+image helpers, and this CLI live outside the package and need their own
+dependencies.
 `eng/smoke-pack.ps1` proves the boundary by executing a fresh consumer
 against the packed core with no source references.

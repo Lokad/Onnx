@@ -23,15 +23,14 @@
 - Concurrency: one execution per graph instance at a time; a concurrent call fails. Run separate execution contexts on separate threads.
 - Inputs: caller-owned. The graph never takes input storage: constants, caller inputs and sequence elements are protected from buffer pooling.
 - Threading: sequential by default. TensorExecutionOptions MaxDegreeOfParallelism opts batch-parallel float MatMul kernels in (default 1).
-- Packaging: only src/Lokad.Onnx ships as Lokad.Onnx.dll (net10.0, dependency-free, via pack.cmd). Import, Data, CLI, tests, and Bench declare IsPackable false and never ship.
+- Packaging: only src/Lokad.Onnx ships as Lokad.Onnx.dll (net10.0, via pack.cmd) with one pinned runtime dependency (Google.Protobuf, carrying the integrated importer under src/Lokad.Onnx/Import). Data, CLI, tests, and Bench declare IsPackable false and never ship.
 
 ## Distribution boundary
 
-The core never parses files or protobuf: it loads plain `OnnxModel`
-descriptions (see OnnxModel.cs) through `Model.Load`. File and buffer
-parsing lives in the separate, non-shipped Import adapter
-(src/Lokad.Onnx.Import), which the CLI and test runners reference. A
-file-free local example:
+The core loads plain `OnnxModel` descriptions (see OnnxModel.cs) through
+`Model.Load`, and ships its own file and buffer parsing under
+`src/Lokad.Onnx/Import` (`OnnxImport`, protobuf-backed). Data helpers and
+the CLI live outside the package. A file-free local example:
 
     var mp = new OnnxModel { Name = "relu" };
     mp.Opset[""] = 11;
