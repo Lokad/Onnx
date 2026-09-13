@@ -579,6 +579,54 @@ where T : unmanaged
     /// length M takes the vector path when M is a multiple of the vector
     /// width; anything else runs the scalar tail loop. Safe in place.
     /// </summary>
+    /// <summary>
+    /// BiasGelu pointer fast path: identical arithmetic and order to BiasGeluSpanFloat
+    /// with raw vector pointers instead of a per-vector Slice plus Cast, removing
+    /// bounds-check setup from the hot loop.
+    /// </summary>
+    internal static unsafe void BiasGeluSpanFloatPtr(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
+    {
+        int w = Vector<float>.Count;
+        var half = new Vector<float>(0.5f);
+        var one = Vector<float>.One;
+        var scale = new Vector<float>(0.7071067811865476f);
+        int M = bias.Length;
+        if (M <= 1 || M % w != 0 || xs.Length != ys.Length)
+        {
+            int soff = 0;
+            for (int i = 0; i < xs.Length; i++)
+            {
+                ys[i] = ScalarGelu(xs[i] + bias[soff]);
+                soff++;
+                if (soff >= M) soff = 0;
+            }
+            return;
+        }
+        fixed (float* px = xs, py = ys, pb = bias)
+        {
+            var xvec = (Vector<float>*)px;
+            var yvec = (Vector<float>*)py;
+            var bvec = (Vector<float>*)pb;
+            int nvec = xs.Length / w;
+            int bvecs = M / w;
+            int boff = 0;
+            for (int i = 0; i < nvec; i++)
+            {
+                var tv = xvec[i] + bvec[boff];
+                yvec[i] = half * tv * (one + ErfVector(scale * tv));
+                if (++boff >= bvecs) boff = 0;
+            }
+            int tail = nvec * w;
+            int toff = tail % M;
+            for (int i = tail; i < xs.Length; i++)
+            {
+                ys[i] = ScalarGelu(xs[i] + bias[toff]);
+                toff++;
+                if (toff >= M) toff = 0;
+            }
+        }
+    }
+
     internal static void BiasGeluSpanFloat(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
     {
         int w = Vector<float>.Count;

@@ -125,6 +125,7 @@ public class OneOpBenchmarks
         Add("chain_transpose_2", "x", new int[] { 1, 30, 12, 32 });
         Add("chain_transpose_4", "x", new int[] { 1, 30, 12, 32 });
         Add("chain_transpose_8", "x", new int[] { 1, 30, 12, 32 });
+        Add("mlpbias_e5_8", "x", new int[] { 1, 8, 384 });
         foreach (var c in cases) VerifyAgreement(c);
         Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise.");
     }
@@ -612,4 +613,12 @@ public class OneOpBenchmarks
     [Benchmark(Description = "Chain 8x Transpose 1x30x12x32 - ORT session")]
     [BenchmarkCategory("chaintr8")]
     public void OrtChainTr8() => RunOrt(cases[53]);
+
+    [Benchmark(Description = "E5 MLP up-projection with bias plus exact GELU 1x8x384 (MatMul/Add/Gelu) - Lokad session")]
+    [BenchmarkCategory("mlpbias8")]
+    public void LokadMlpBias8() => RunLokad(cases[54]);
+
+    [Benchmark(Description = "E5 MLP up-projection with bias plus exact GELU 1x8x384 (MatMul/Add/Gelu) - ORT session")]
+    [BenchmarkCategory("mlpbias8")]
+    public void OrtMlpBias8() => RunOrt(cases[54]);
 }

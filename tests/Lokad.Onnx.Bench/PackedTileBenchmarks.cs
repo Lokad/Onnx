@@ -58,6 +58,13 @@ public class PackedTileBenchmarks
         Tensor<float>.Transpose(trx, tro, new[] { 0, 2, 1, 3 });
         if (!trRef.Buffer.Span.SequenceEqual(tro.Buffer.Span))
             throw new InvalidOperationException("DirectTranspose diverges from dispatched.");
+        var rnd2 = new Random(Seed + 1);
+        bg8x = FillFlat(new[] { 8, 1536 }, rnd2);
+        bg8b = FillFlat(new[] { 1536 }, rnd2);
+        bg30x = FillFlat(new[] { 30, 1536 }, rnd2);
+        bg30b = FillFlat(new[] { 1536 }, rnd2);
+        CheckBiasGelu(bg8x, bg8b);
+        CheckBiasGelu(bg30x, bg30b);
         // Agreement: dispatched rank-4 small tiles match the one-op sessions element-wise.
         CheckDispatched("scores", sqa, sqb, 77.33f);
         CheckDispatched("context", cxa, cxb, 41.21f);
@@ -70,6 +77,14 @@ public class PackedTileBenchmarks
         var data = new float[total];
         for (int i = 0; i < total; i++) data[i] = (float)rnd.NextDouble() * 2f - 1f;
         return new DenseTensor<float>(data, (int[])dims.Clone());
+    }
+
+    static void CheckBiasGelu(DenseTensor<float> x, DenseTensor<float> b)
+    {
+        // Success and shape only; values are covered by the one-op session gate.
+        var r = CPUExecutionProvider.BiasGelu(x, b, null, null);
+        if (r.Outputs is null || r.Outputs.Length != 1 || r.Outputs[0] is not Tensor<float> y || y.Length != x.Length)
+            throw new InvalidOperationException("BiasGelu probe failed.");
     }
 
     static void CheckDispatched(string name, DenseTensor<float> a, DenseTensor<float> b, float _)
@@ -196,6 +211,22 @@ public class PackedTileBenchmarks
     [Benchmark(Description = "Direct Transpose 1x30x12x32 kernel")]
     [BenchmarkCategory("dtranspose")]
     public void DirectTranspose() => Tensor<float>.Transpose(trx, tro, new[] { 0, 2, 1, 3 });
+
+    // BiasGelu region split probes: provider call (kernel plus pooled output) on the
+    // 8-row and 30-row MLP shapes, to split the mlpbias region time into MatMul
+    // versus fused-activation parts without any graph.
+    DenseTensor<float> bg8x = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> bg8b = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> bg30x = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> bg30b = Tensor<float>.Zeros(0).ToDenseTensor();
+
+    [Benchmark(Description = "BiasGelu provider 8x1536")]
+    [BenchmarkCategory("biasgelu8")]
+    public void BiasGeluDirect8() => CPUExecutionProvider.BiasGelu(bg8x, bg8b, null, null);
+
+    [Benchmark(Description = "BiasGelu provider 30x1536")]
+    [BenchmarkCategory("biasgelu30")]
+    public void BiasGeluDirect30() => CPUExecutionProvider.BiasGelu(bg30x, bg30b, null, null);
 
     // Discriminator: the unpacked tiled kernel over row-major B. If the session matches
     // THIS probe instead of the packed one, the session is not reaching packed weights.

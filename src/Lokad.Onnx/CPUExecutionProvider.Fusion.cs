@@ -57,7 +57,7 @@ public partial class CPUExecutionProvider
                 DenseTensor<float> output = pool is null
                     ? DenseTensor<float>.OfShape(xd.Dimensions.ToArray())
                     : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)xd.Length)), xd.Dimensions.ToArray());
-                Tensor<float>.BiasGeluSpanFloat(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
+                Tensor<float>.BiasGeluSpanFloatPtr(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
                 return Success(op, output);
             }
         }

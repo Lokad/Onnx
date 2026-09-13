@@ -338,6 +338,16 @@ save_graph("tests/Lokad.Onnx.Bench/oneop/mlpbias_e5_30", mlp_nodes,
      [tinfo("x", [1, 30, 384])], [tinfo("y", [1, 30, 1536])],
      [finit("wm", wmlp), finit("bm", bmlp)], opset=20)
 
+# 38. e5 MLP region at 8 tokens (e5-8tok core): same fused path, small-M behavior.
+mlp8_nodes = [
+    helper.make_node("MatMul", ["x", "wm8"], ["mm"], name="uproj"),
+    helper.make_node("Add", ["mm", "bm8"], ["biased"], name="bias"),
+    helper.make_node("Gelu", ["biased"], ["y"], name="act"),
+]
+save_graph("tests/Lokad.Onnx.Bench/oneop/mlpbias_e5_8", mlp8_nodes,
+     [tinfo("x", [1, 8, 384])], [tinfo("y", [1, 8, 1536])],
+     [finit("wm8", wmlp), finit("bm8", bmlp)], opset=20)
+
 
 # 35. chain fixtures for G03 marginal-node-cost slopes: 1/2/4/8 identical nodes
 # per family so session time against node count splits kernel slope from fixed
