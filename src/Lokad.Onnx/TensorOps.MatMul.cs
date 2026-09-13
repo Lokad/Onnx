@@ -146,34 +146,6 @@ where T : unmanaged
         return found;
     }
 
-    /// <summary>
-    /// K01 prototype switch: routes panel-packed multiplies to the 4-row micro-kernel
-    /// when LOKAD_ONNX_GEMM_4ROW=1 and the row count cooperates. Default-off; the
-    /// incumbent 3-row/2-row selection is untouched otherwise.
-    /// </summary>
-    internal static readonly bool UseFourRowPackedKernel =
-        string.Equals(Environment.GetEnvironmentVariable("LOKAD_ONNX_GEMM_4ROW"), "1", StringComparison.Ordinal);
-
-    /// <summary>
-    /// K01 prototype switch: routes panel-packed multiplies with row counts divisible by 6
-    /// to the 6-row micro-kernel when LOKAD_ONNX_GEMM_6ROW=1. Independent of the 4-row switch;
-    /// when both apply the 6-row kernel wins. Default-off.
-    /// </summary>
-    internal static readonly bool UseSixRowPackedKernel =
-        string.Equals(Environment.GetEnvironmentVariable("LOKAD_ONNX_GEMM_6ROW"), "1", StringComparison.Ordinal);
-
-    static unsafe void RunPackedRowKernel(int m, int n, int k, float* x, float* pp, float* o)
-    {
-        if (UseSixRowPackedKernel && (m % 6) == 0)
-            mm_unsafe_vectorized_intrinsics_6x2packed(m, n, k, x, pp, o);
-        else if (UseFourRowPackedKernel && (m % 4) == 0)
-            mm_unsafe_vectorized_intrinsics_4x2packed(m, n, k, x, pp, o);
-        else if ((m % 3) == 0)
-            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, o);
-        else
-            mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, x, pp, o);
-    }
-
     static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
     {
         // Register-tiled accumulation wins while both the reduction axis (n)
@@ -303,7 +275,10 @@ where T : unmanaged
             {
                 // Three-row groups share each B vector at the same broadcast rate (P65);
                 // every other packed shape keeps the proven 2-row nest.
-                RunPackedRowKernel(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
+                if ((m % 3) == 0)
+                    mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
+                else
+                    mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
             }
             return destination;
         }
@@ -655,10 +630,16 @@ where T : unmanaged
                         // P65: exact 3-row groups cover every row at the same broadcast rate;
                         // other batch shapes keep the proven 2-row nest (odd counts only arrive
                         // here in exact 3-row groups via the relaxed packed gate).
-                        RunPackedRowKernel(m, n, k,
-                            (float*)xp0 + xOff[bi],
-                            pp,
-                            (float*)zp0 + zOff[bi]);
+                        if ((m % 3) == 0)
+                            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k,
+                                (float*)xp0 + xOff[bi],
+                                pp,
+                                (float*)zp0 + zOff[bi]);
+                        else
+                            mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k,
+                                (float*)xp0 + xOff[bi],
+                                pp,
+                                (float*)zp0 + zOff[bi]);
                     }
                 });
             }
@@ -671,7 +652,10 @@ where T : unmanaged
                 int ox = 0, oz = 0;
                 for (int b = 0; b < batchCount; b++)
                 {
-                    RunPackedRowKernel(m, n, k, xp + ox, pp, zp + oz);
+                    if ((m % 3) == 0)
+                        mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, xp + ox, pp, zp + oz);
+                    else
+                        mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, xp + ox, pp, zp + oz);
                     for (int d = r - 1; d >= 0; d--)
                     {
                         coords[d]++;
