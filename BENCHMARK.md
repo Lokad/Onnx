@@ -273,3 +273,81 @@ fresh CLI process for every e5 sample, so its warmup process cannot warm
 those subsequent JITs/sessions. Read its `graphMs`/`wallMs` series as
 per-process startup plus inference, not warmed inference throughput.
 Persistent-process inference timing lives in the Bench runner above.
+
+## Voice-model engine comparison — 2026-09-14
+
+Measured under the single-CPU contract on ATHENA (Intel64 Family 6 Model
+85, 8 logical CPUs): verified affinity to logical CPU 4 (core mask 0x30,
+efficiency-class 0, SMT siblings), one inference thread on each side, Lokad
+Auto with SIMD/intrinsics (Vector256, AVX-512F, FMA), ORT CPU intra-op
+1/inter-op 1 sequential with ORT_ENABLE_ALL, power settings left untouched
+(scheme not recorded). Three independent fresh processes, 3 warmups and 33
+timed iterations per engine per case, alternating order. Every case
+validated before and after timed reuse (float gate 1e-4 scaled, documented
+2e-4 for the 10-second segmentation window, exact integer checks) with
+fingerprinted-intact inputs. Machine-readable artifacts with embedded raw
+samples live in
+`tests/Lokad.Onnx.Bench/baseline/summary-voice-20260914.json`, regenerated
+from the per-rep logs by
+`python eng/parse_baseline.py --expect parakeet-encoder,parakeet-decoder,pyannote-segmentation,pyannote-embedding <rep logs>`;
+raw logs stay local under `artifacts/bench/voice-20260913/` (an earlier
+first rep overlapped with concurrent build activity and was discarded as
+contended per the discard rule; the published reps ran on a quiet box).
+Confinement ratios were 0.98, 1.00 and 1.00 with no warnings.
+
+Measured at ce72c92 with a clean tracked tree (untracked PLAN.md,
+models/, and .agent scratch only); no code differences across reps. SDK
+10.0.102, runtime .NET 10.0.12, ORT C# 1.23.2.0, Lokad assembly 0.2.0.0.
+Asset bytes and hashes print in each rep header and match
+ModelManifest.json: encoder graph 41,770,866 bytes (98A74B21B4CC) plus its
+2,435,420,160-byte external weights (9A22D372C514); decoder 72,520,893
+bytes (E978DDF66885); segmentation 5,916,329 bytes (AF62796ADFC4);
+embedding 21,306,024 bytes (9903474D6230). Replay inputs come from the
+hash-pinned `models/voice-fixtures/replay` fixtures.
+
+| Voice case | rep2 L/ORT ms | rep3 L/ORT ms | rep4 L/ORT ms | Lokad / ORT |
+|---|---:|---:|---:|---|
+| parakeet-encoder | 1245.7 / 263.9 | 1255.7 / 264.1 | 1246.2 / 261.3 | 4.7-4.8x |
+| parakeet-decoder | 93.5 / 8.7 | 82.7 / 8.7 | 82.9 / 8.6 | 9.6-10.8x |
+| pyannote-segmentation | 1444.4 / 36.6 | 1110.1 / 36.8 | 1095.9 / 36.3 | 30.2-39.4x |
+| pyannote-embedding | 424.7 / 49.4 | 452.8 / 49.4 | 419.7 / 48.8 | 8.6-9.2x |
+
+Cells are Lokad warmed public-Execute median versus ORT warmed-Run median
+per rep in milliseconds; the ratio spans the three within-rep median
+ratios. Case inputs (batch size one throughout): encoder mel [1,128,128]
+to frames [1,1024,16]; decoder fixed tokens [1,5] with zero states to
+scores [1,8,5,8198] plus carried states; segmentation real 10 s waveform
+[1,1,160000] to scores [1,589,7]; embedding fbank [1,200,80] to frames
+[1,2560,25]. Decoder and encoder integer lengths check exactly. Do not
+read a decoder step or a backbone-only embedding row as whole-model
+performance: decoding advances a few frames per step, and embeddings still
+need masked pooling plus projection.
+
+Agreement at validation (rep4): encoder 4.8e-07, decoder 6.3e-06,
+embedding 2.3e-06 at gate 1e-4; segmentation real-audio 1.2e-05 at the
+documented 2e-4 long-window gate (the synthetic 10 s window measures
+1.27e-04; see the Milestone 3 rounding-amplification investigation in
+PLAN.md — every kernel isolated at 4e-6 or better, ORT self-noise 6.9e-05
+on the same point). Decoder state chaining (output-to-input carry) and
+reset determinism additionally validate without timing in every rep.
+
+The segmentation Lokad medians settle downward across reps (1444 to 1110
+to 1096 ms) while ORT holds 36.3–36.8 ms with clean confinement
+throughout, so the 30–40x span reflects machine settling more than engine
+variance; ratios compare engines within shared reps only. This host
+differs from the LOKAD-0399 baseline machine, so voice ratios must not be
+compared with the 2026-09-12 table. Voice keys are opt-in and excluded
+from the default/`all` set (the encoder loads 2.4 GB); name them
+explicitly. The ORT/TorchSharp waveform comparison lane is not measured
+here: the TorchSharp reference sidecar (Milestone 1) does not exist yet,
+so no TorchSharp timings are published and nothing below stands in for
+them.
+
+Reproduce from the repo root after building Release (requires the
+git-ignored voice models and replay fixtures; named cases fail loudly
+when assets are absent):
+
+```powershell
+dotnet build tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj -c Release --tl:off --nologo -v minimal
+dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding --mode auto --threads 1 --rows canonical --cpu 4 --iters 33
+```
