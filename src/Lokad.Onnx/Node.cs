@@ -267,6 +267,8 @@ public partial struct Node
     {
         OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), GetReshapeAllowZero(), opt),
 
+        OpType.Identity => CPU.Identity(InputTensor(graph, 0), opt),
+
         OpType.Add => Sub32Gate(graph, OpType.Add) ?? CPU.Add(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
         OpType.Sub => Sub32Gate(graph, OpType.Sub) ?? CPU.Sub(InputTensor(graph, 0), InputTensor(graph, 1), opt),
@@ -389,6 +391,10 @@ public partial struct Node
         OpType.Tile => CPU.Tile(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis", null), GetFloat("epsilon", null), Int("stash_type", null), Outputs.Length, opt, graph.ActivePool),
+
+        OpType.LSTM => CPU.Lstm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4), InputTensor(graph, 5), InputTensor(graph, 6), InputTensor(graph, 7),
+            Attr<string>("direction", null), Attr<string[]>("activations", null), Attr<float[]>("activation_alpha", null), Attr<float[]>("activation_beta", null),
+            GetFloat("clip", null), RequiredInt("hidden_size"), (GetInt("input_forget", 0) ?? 0) == 1, GetInt("layout", 0) ?? 0, Outputs.Length, opt, graph.ActivePool),
 
         OpType.SplitToSequence => CPU.SplitToSequence(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), Int("keepdims", null), opt),
 
