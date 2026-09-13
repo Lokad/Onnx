@@ -11,7 +11,7 @@ using Microsoft.ML.OnnxRuntime;
 
 static class Bench
 {
-    const int Warm = 3;
+    const int DefaultWarmup = 3;
     const double Tolerance = 1e-4;
     const double ConfinementRatioLimit = 1.3;
     const int ConfinementDurationMs = 2000;
@@ -44,6 +44,9 @@ static class Bench
         int threads = 1;
         int cpu = 0;
         int iters = 7;
+        int warmup = DefaultWarmup;
+        int warmupMin = -1;
+        int warmupMax = -1;
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] == "--mode" && i + 1 < args.Length) modeName = args[++i];
@@ -51,10 +54,15 @@ static class Bench
             else if (args[i] == "--cpu" && i + 1 < args.Length && int.TryParse(args[i + 1], out var c)) { cpu = c; i++; }
             else if (args[i] == "--threads" && i + 1 < args.Length && int.TryParse(args[i + 1], out var t) && t >= 1) { threads = t; i++; }
             else if (args[i] == "--iters" && i + 1 < args.Length && int.TryParse(args[i + 1], out var k) && k >= 1) { iters = k; i++; }
+            else if (args[i] == "--warmup" && i + 1 < args.Length && int.TryParse(args[i + 1], out var w) && w >= 0) { warmup = w; i++; }
+            else if (args[i] == "--warmup-min" && i + 1 < args.Length && int.TryParse(args[i + 1], out var wmin)) { warmupMin = wmin; i++; }
+            else if (args[i] == "--warmup-max" && i + 1 < args.Length && int.TryParse(args[i + 1], out var wmax)) { warmupMax = wmax; i++; }
             else if (args[i] == "all" || assets.ContainsKey(args[i])) { if (args[i] != "all" && !selected.Contains(args[i], StringComparer.OrdinalIgnoreCase)) selected.Add(args[i]); }
-            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all] [--cpu N]"); return 2; }
+            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--warmup N] [--warmup-min A --warmup-max B] [--rows canonical|all] [--cpu N]"); return 2; }
         }
         if (rowsName != "canonical" && rowsName != "all") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all)"); return 2; }
+        if ((warmupMin < 0) != (warmupMax < 0)) { Console.WriteLine("--warmup-min and --warmup-max must be given together (absent selects fixed --warmup " + warmup + ")"); return 2; }
+        if (warmupMin >= 0 && (warmupMin > warmupMax || warmupMax > 100)) { Console.WriteLine("invalid adaptive warmup range (expected 0 <= min <= max <= 100)"); return 2; }
         if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount) { Console.WriteLine("invalid --cpu " + cpu + " (expected 0.." + (Environment.ProcessorCount - 1) + ")"); return 2; }
         if (selected.Count == 0) selected.AddRange(assets.Keys);
         TensorExecutionOptions tensorOpts = modeName.ToLowerInvariant() switch
@@ -87,7 +95,7 @@ static class Bench
             + " lokad=" + typeof(ComputationalGraph).Assembly.GetName().Version
             + " ort=" + typeof(InferenceSession).Assembly.GetName().Version
             + " ort-provider=cpu-only ort-optimizations=ORT_ENABLE_ALL nospin intraop=" + threads + " interop=1 seq"
-            + " mode=" + modeName + " threads=" + threads + " rows=" + rowsName + " iters=" + iters + " warmup=" + Warm);
+            + " mode=" + modeName + " threads=" + threads + " rows=" + rowsName + " iters=" + iters + " warmup=" + warmup + " warmupMin=" + warmupMin + " warmupMax=" + warmupMax);
         var confinement = MeasureSingleCpuConfinement(ConfinementDurationMs);
         Console.WriteLine("confinement wallMs=" + confinement.wallMs.ToString("F0")
             + " cpuMs=" + confinement.cpuMs.ToString("F0")
@@ -110,6 +118,7 @@ static class Bench
             + " first=Lokad first Execute|ORT first Run in this row (process-cold only on the first row);"
             + " lokad=warmed public Execute|ctx=warmed reused-context Execute|ort=warmed ORT Run, alternating order, other side outputs already released;"
             + " convert=one-time managed-to-ORT input build reused by all ORT runs;"
+            + " req=warmed Reset+Execute+Reset per request (public)|reqCtx=same on reused context"
             + " resetPop=reset after execute|resetClean=reset when empty (no-op floor);"
             + " gc/alloc=shared-process totals over warmed loops without per-engine attribution; output disposal outside all timings."
             + " agree=maxAbs + ORT-reference-scaled diff (tol 1e-4 scaled, unchanged);"
@@ -142,13 +151,13 @@ static class Bench
         if (selected.Contains("e5", StringComparer.OrdinalIgnoreCase))
         {
             var e5 = assets["e5"];
-            RunCase("e5-8tok", () => CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, rowsName, modeName));
-            RunCase("e5-30tok", () => CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, rowsName, modeName));
+            RunCase("e5-8tok", () => CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
+            RunCase("e5-30tok", () => CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
         }
-        if (selected.Contains("dinov2", StringComparer.OrdinalIgnoreCase)) RunCase("dinov2-224", () => CompareVision("dinov2-224", assets["dinov2"][0], tensorOpts, threads, iters, rowsName, modeName));
-        if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) RunCase("dinov3-224", () => CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, rowsName, modeName));
-        if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) RunCase("resnet50-224", () => CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters, rowsName, modeName));
-        if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) RunCase("gpt2-4tok", () => CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, rowsName, modeName));
+        if (selected.Contains("dinov2", StringComparer.OrdinalIgnoreCase)) RunCase("dinov2-224", () => CompareVision("dinov2-224", assets["dinov2"][0], tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
+        if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) RunCase("dinov3-224", () => CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
+        if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) RunCase("resnet50-224", () => CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
+        if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) RunCase("gpt2-4tok", () => CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
         if (excludedCases.Count > 0)
         {
             Console.WriteLine("cases-excluded [" + string.Join(",", excludedCases) + "] (tracked known divergences; no rows are eligible for excluded cases)");
@@ -349,22 +358,22 @@ static class Bench
         throw new InvalidOperationException("repo root not found");
     }
 
-    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
+    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
         Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + ShortHash(tokenizer));
-        Compare(name, model, inputs, tensorOpts, threads, iters, rowsName, modeName);
+        Compare(name, model, inputs, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
     }
 
-    static void CompareVision(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
+    static void CompareVision(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)
     {
         var flat = new float[1 * 3 * 224 * 224];
         for (int i = 0; i < flat.Length; i++) flat[i] = 0.5f;
         var input = new DenseTensor<float>(flat, new[] { 1, 3, 224, 224 });
-        Compare(name, model, new ITensor[] { input }, tensorOpts, threads, iters, rowsName, modeName);
+        Compare(name, model, new ITensor[] { input }, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
     }
 
-    static void CompareGpt2(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
+    static void CompareGpt2(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)
     {
         var ids = new DenseTensor<long>(new long[] { 15496, 11, 314, 716 }, new[] { 1, 4 });
         ids.Name = "input_ids";
@@ -382,10 +391,10 @@ static class Bench
             inputs.Add(k);
             inputs.Add(v);
         }
-        Compare(name, model, inputs.ToArray(), tensorOpts, threads, iters, rowsName, modeName);
+        Compare(name, model, inputs.ToArray(), tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
     }
 
-    static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
+    static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)
     {
         var loadSw = Stopwatch.StartNew();
         var graph = OnnxImport.Load(model)!;
@@ -408,7 +417,7 @@ static class Bench
                 using (var ortMatched = OpenSession(model, matchedSo, out ortLoadMs))
                 {
                     TimedRow(name, model, graph, inputs, ortMatched, matchedOpts,
-                        CanonicalLokDesc(modeName, threads), "intraop=" + threads + " interop=1 seq opt=ALL nospin", iters, sidecarInfo,
+                        CanonicalLokDesc(modeName, threads), "intraop=" + threads + " interop=1 seq opt=ALL nospin", iters, warmup, warmupMin, warmupMax, sidecarInfo,
                         loadMs, prepareMs, ortLoadMs);
                 }
             }
@@ -418,7 +427,7 @@ static class Bench
         using (var ortDefault = OpenDefaultSession(model, out defaultLoadMs))
         {
             TimedRow(name, model, graph, inputs, ortDefault, ExecutionOptions.Default,
-                "defaults (archival unequal-CPU: lokad-auto-1-thread vs ort-default-pool; do-not-gate)", "ort-defaults", iters, sidecarInfo,
+                "defaults (archival unequal-CPU: lokad-auto-1-thread vs ort-default-pool; do-not-gate)", "ort-defaults", iters, warmup, warmupMin, warmupMax, sidecarInfo,
                 loadMs, prepareMs, defaultLoadMs);
         }
         var oneOpts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Scalar);
@@ -428,7 +437,7 @@ static class Bench
             using (var ortOne = OpenSession(model, oneSo, out oneLoadMs))
             {
                 TimedRow(name, model, graph, inputs, ortOne, oneOpts,
-                    "scalar-1-thread (SIMD-disabled diagnostic)", "intraop=1 interop=1 seq opt=ALL nospin", iters, sidecarInfo,
+                    "scalar-1-thread (SIMD-disabled diagnostic)", "intraop=1 interop=1 seq opt=ALL nospin", iters, warmup, warmupMin, warmupMax, sidecarInfo,
                     loadMs, prepareMs, oneLoadMs);
             }
         }
@@ -439,7 +448,7 @@ static class Bench
             using (var ortMatched = OpenSession(model, legacyMatchedSo, out legacyLoadMs))
             {
                 TimedRow(name, model, graph, inputs, ortMatched, legacyMatchedOpts,
-                    CanonicalLokDesc(modeName, threads), "intraop=" + threads + " interop=1 seq opt=ALL nospin", iters, sidecarInfo,
+                    CanonicalLokDesc(modeName, threads), "intraop=" + threads + " interop=1 seq opt=ALL nospin", iters, warmup, warmupMin, warmupMax, sidecarInfo,
                     loadMs, prepareMs, legacyLoadMs);
             }
         }
@@ -465,7 +474,7 @@ static class Bench
 
     static void TimedRow(string name, string model, ComputationalGraph graph, ITensor[] inputs,
         InferenceSession ortSession, ExecutionOptions lokadOpts, string lokDesc, string ortDesc,
-        int iters, string sidecarInfo, double loadMs, double prepareMs, double ortLoadMs)
+        int iters, int warmup, int warmupMin, int warmupMax, string sidecarInfo, double loadMs, double prepareMs, double ortLoadMs)
     {
         var inNames = ortSession.InputMetadata.Keys.ToArray();
         var outNames = ortSession.OutputMetadata.Keys.ToArray();
@@ -479,11 +488,17 @@ static class Bench
             + " bytes=" + new FileInfo(model).Length + " sha12=" + ShortHash(model) + sidecarInfo
             + " inputs=[" + string.Join(",", named.Select(kv => kv.Key + ":" + string.Join("x", kv.Value.Dims))) + "]"
             + " outputs=[" + string.Join(",", OutputShapes(graph, outNames)) + "]"
-            + " warmup=" + Warm + " iters=" + iters
+            + " warmup=" + warmup + " iters=" + iters
             + " load=" + loadMs.ToString("F1") + "ms prepare=" + prepareMs.ToString("F1") + "ms ortLoad=" + ortLoadMs.ToString("F1") + "ms"
             + " firstLokad=" + first.lokadFirstMs.ToString("F1") + "ms firstOrt=" + first.ortFirstMs.ToString("F1") + "ms"
             + " (first-run is process-cold only on the first row; later rows share warmed JIT)");
-        TimedRun(name, graph, named, outNames, lokadOpts, lokDesc, ortDesc, iters, valSw.Elapsed.TotalMilliseconds, first.scaled, first.abs, ortSession);
+        Console.WriteLine("casedef " + name
+            + " model=" + Path.GetFileName(Path.GetDirectoryName(model)) + "/model.onnx"
+            + " bytes=" + new FileInfo(model).Length + " sha12=" + ShortHash(model)
+            + " inputs=" + string.Join(",", named.Select(kv => kv.Key + ":" + string.Join("x", kv.Value.Dims)))
+            + " outputs=" + string.Join(",", OutputShapes(graph, outNames))
+            + " iters=" + iters + " warmup=" + warmup + " tol=" + Tolerance.ToString("E2"));
+        TimedRun(name, graph, named, outNames, lokadOpts, lokDesc, ortDesc, iters, warmup, warmupMin, warmupMax, valSw.Elapsed.TotalMilliseconds, first.scaled, first.abs, ortSession);
     }
 
     static string[] OutputShapes(ComputationalGraph graph, string[] outNames)
@@ -499,7 +514,7 @@ static class Bench
     }
 
     static void TimedRun(string name, ComputationalGraph graph, Dictionary<string, ITensor> named, string[] outNames,
-        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, double validationMs, double maxScaled, double maxAbs, InferenceSession ortSession)
+        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, int warmup, int warmupMin, int warmupMax, double validationMs, double maxScaled, double maxAbs, InferenceSession ortSession)
     {
         // One-time input conversion, reused by every ORT run below; Lokad inputs need no conversion.
         var convSw = Stopwatch.StartNew();
@@ -511,63 +526,143 @@ static class Bench
         {
             using var ro = new RunOptions();
             // Warmups establish steady state. Each side's outputs are released before the other side runs.
-            for (int w = 0; w < Warm; w++)
+            // Fixed mode runs exactly <warmup> iterations. Adaptive mode (min/max >= 0) runs at least
+            // warmupMin and at most warmupMax iterations, stopping early once both engines' last three
+            // warmup times agree within 10% (range/median, needing at least 3 iterations for the rule).
+            // The recorded warmup line pins what actually ran; timed loops below use only warmed state.
+            var wsw = new Stopwatch();
+            var wlok = new List<double>();
+            var wort = new List<double>();
+            void TimeWarmupPair()
             {
                 graph.Reset();
+                wsw.Restart();
                 if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad warmup execute failed");
+                wsw.Stop();
+                wlok.Add(wsw.Elapsed.TotalMilliseconds);
                 graph.Reset();
+                wsw.Restart();
                 using var wr = ortSession.Run(ro, ortInputs, outNames);
+                wsw.Stop();
+                wort.Add(wsw.Elapsed.TotalMilliseconds);
             }
-            // Warmed reusable-context inference on the shared prepared plan (no per-run context allocation or copy-back).
+            bool WarmupSteady(List<double> xs)
+            {
+                int n = xs.Count;
+                if (n < 3) return false;
+                double a = xs[n - 3], b = xs[n - 2], c = xs[n - 1];
+                double hi = Math.Max(a, Math.Max(b, c));
+                double lo = Math.Min(a, Math.Min(b, c));
+                double median = a + b + c - hi - lo;
+                return (hi - lo) <= 0.10 * Math.Max(median, 1e-9);
+            }
+            int warmupUsed;
+            string warmupStop;
+            if (warmupMin < 0)
+            {
+                for (int w = 0; w < warmup; w++) TimeWarmupPair();
+                warmupUsed = warmup;
+                warmupStop = "fixed";
+            }
+            else
+            {
+                warmupStop = "max-reached";
+                for (int w = 0; w < warmupMax; w++)
+                {
+                    TimeWarmupPair();
+                    if (wlok.Count >= Math.Max(warmupMin, 3) && WarmupSteady(wlok) && WarmupSteady(wort)) { warmupStop = 
+"steady"; break; }
+                }
+                warmupUsed = wlok.Count;
+            }
+            Console.WriteLine("warmup " + name + " used=" + warmupUsed + " stop=" + warmupStop
+                + " lok=[" + string.Join(",", wlok.Select(v => v.ToString("F2"))) + "]"
+                + " ort=[" + string.Join(",", wort.Select(v => v.ToString("F2"))) + "]");
+            // Warmed reusable-context handle on the shared prepared plan (no per-run context allocation or copy-back).
             var ctx = graph.CreateExecution(lokadOpts);
             ctx.Reset();
             if (!ctx.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": context warmup execute failed");
             ctx.Reset();
+            // Warmed inference, alternating all three lanes fairly. No lane executes while another's
+            // outputs are alive: ORT outputs are disposed right after each timed run, the graph is reset
+            // right after each timed public execute, and the context is reset right after each timed
+            // context execute. Rotation by i % 3 gives each lane each position equally often when iters
+            // is a multiple of 3. Reset stays outside the timed regions and is reported separately.
+            // GC and allocation accounting below is shared-process; per-engine attribution is not claimed.
+            long allocBefore = GC.GetTotalAllocatedBytes(false);
+            int g0Before = GC.CollectionCount(0), g1Before = GC.CollectionCount(1), g2Before = GC.CollectionCount(2);
             var clok = new List<double>();
+            var tctx = new List<long>();
+            var lok = new List<double>();
+            var tlok = new List<long>();
+            var ort = new List<double>();
+            var tort = new List<long>();
             var sw = new Stopwatch();
-            for (int i = 0; i < iters; i++)
+            void TimeCtx()
             {
                 ctx.Reset();
                 sw.Restart();
                 if (!ctx.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": context execute failed");
                 sw.Stop();
                 clok.Add(sw.Elapsed.TotalMilliseconds);
+                tctx.Add(sw.ElapsedTicks);
                 ctx.Reset();
             }
-            // Warmed public-API inference, alternating engine order. Neither engine executes while the other's
-            // outputs are alive: ORT outputs are disposed right after each timed run and the graph is reset
-            // right after each timed execute. Reset stays outside the timed regions and is reported separately.
-            // GC and allocation accounting below is shared-process; per-engine attribution is not claimed.
-            long allocBefore = GC.GetTotalAllocatedBytes(false);
-            int g0Before = GC.CollectionCount(0), g1Before = GC.CollectionCount(1), g2Before = GC.CollectionCount(2);
-            var lok = new List<double>();
-            var ort = new List<double>();
+            void TimeLok()
+            {
+                graph.Reset();
+                sw.Restart();
+                if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
+                sw.Stop();
+                lok.Add(sw.Elapsed.TotalMilliseconds);
+                tlok.Add(sw.ElapsedTicks);
+                graph.Reset();
+            }
+            void TimeOrt()
+            {
+                sw.Restart();
+                using (var timed = ortSession.Run(ro, ortInputs, outNames)) { sw.Stop(); }
+                ort.Add(sw.Elapsed.TotalMilliseconds);
+                tort.Add(sw.ElapsedTicks);
+            }
             for (int i = 0; i < iters; i++)
             {
-                if (i % 2 == 0)
+                switch (i % 3)
                 {
-                    sw.Restart();
-                    using (var timed = ortSession.Run(ro, ortInputs, outNames)) { sw.Stop(); }
-                    ort.Add(sw.Elapsed.TotalMilliseconds);
-                    graph.Reset();
-                    sw.Restart();
-                    if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
-                    sw.Stop();
-                    lok.Add(sw.Elapsed.TotalMilliseconds);
-                    graph.Reset();
+                    case 0: TimeCtx(); TimeLok(); TimeOrt(); break;
+                    case 1: TimeLok(); TimeOrt(); TimeCtx(); break;
+                    default: TimeOrt(); TimeCtx(); TimeLok(); break;
                 }
-                else
-                {
-                    graph.Reset();
-                    sw.Restart();
-                    if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
-                    sw.Stop();
-                    lok.Add(sw.Elapsed.TotalMilliseconds);
-                    graph.Reset();
-                    sw.Restart();
-                    using (var timed = ortSession.Run(ro, ortInputs, outNames)) { sw.Stop(); }
-                    ort.Add(sw.Elapsed.TotalMilliseconds);
-                }
+            }
+            // Complete repeated-request boundary: what a caller pays per request on a reused
+            // graph, with Reset/output release inside the timed unit. req uses the public Execute
+            // (per-run context plus copy-back); reqCtx reuses one context. The two lanes alternate.
+            // ORT has no reset concept (its outputs are already disposed per run), so no ORT lane
+            // belongs here. Both handles are left reset-clean, as the timed loops above leave them.
+            var req = new List<double>();
+            var reqCtx = new List<double>();
+            void TimeReq()
+            {
+                graph.Reset();
+                sw.Restart();
+                if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": request execute failed");
+                graph.Reset();
+                sw.Stop();
+                req.Add(sw.Elapsed.TotalMilliseconds);
+            }
+            void TimeReqCtx()
+            {
+                ctx.Reset();
+                sw.Restart();
+                if (!ctx.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": request context execute failed");
+                ctx.Reset();
+                sw.Stop();
+                reqCtx.Add(sw.Elapsed.TotalMilliseconds);
+            }
+            for (int i = 0; i < iters; i++)
+            {
+                if (i % 2 == 0) { TimeReq(); TimeReqCtx(); }
+                else { TimeReqCtx(); TimeReq(); }
             }
             long allocAfter = GC.GetTotalAllocatedBytes(false);
             string gcLine = "gc=" + (GC.CollectionCount(0) - g0Before) + "/" + (GC.CollectionCount(1) - g1Before) + "/" + (GC.CollectionCount(2) - g2Before)
@@ -580,7 +675,7 @@ static class Bench
             var post = Validate(name + " post-timed", graph, ortSession, named, outNames, lokadOpts);
 
             Console.WriteLine(name + " [" + lokDesc + " vs " + ortDesc + "]: lokad " + Dist(lok) + " | ctxLokad " + Dist(clok) + " | ort " + Dist(ort)
-                + " | resetPop " + Dist(resetPop) + " | resetClean " + Dist(resetClean) + " | convert=" + convertMs.ToString("F1") + "ms"
+                + " | req " + Dist(req) + " | reqCtx " + Dist(reqCtx) + " | resetPop " + Dist(resetPop) + " | resetClean " + Dist(resetClean) + " | convert=" + convertMs.ToString("F1") + "ms"
                 + " | validation=" + validationMs.ToString("F1") + "ms | disposal=outside"
                 + " | " + gcLine
                 + " | maxScaled=" + maxScaled.ToString("E2") + " maxAbs=" + maxAbs.ToString("E2")
@@ -589,6 +684,12 @@ static class Bench
             Console.WriteLine("raw lok=[" + string.Join(",", lok.Select(v => v.ToString("F2"))) + "]"
                 + " raw ctx=[" + string.Join(",", clok.Select(v => v.ToString("F2"))) + "]"
                 + " raw ort=[" + string.Join(",", ort.Select(v => v.ToString("F2"))) + "]");
+            Console.WriteLine("raw req=[" + string.Join(",", req.Select(v => v.ToString("F2"))) + "]"
+                + " raw reqctx=[" + string.Join(",", reqCtx.Select(v => v.ToString("F2"))) + "]");
+            Console.WriteLine("rawticks lok=[" + string.Join(",", tlok) + "]"
+                + " rawticks ctx=[" + string.Join(",", tctx) + "]"
+                + " rawticks ort=[" + string.Join(",", tort) + "]"
+                + " tickfreq=" + Stopwatch.Frequency);
         }
         finally
         {

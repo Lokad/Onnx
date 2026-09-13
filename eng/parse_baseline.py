@@ -20,10 +20,18 @@ def parse_rep(path):
     conf = next((l for l in text if l.startswith("confinement ")), "")
     status = {}
     headers = {}
+    casedefs = {}
+    warmups = {}
     for l in text:
         if l.startswith("case-status "):
             k, _, v = l[len("case-status "):].partition("=")
             status[k] = v
+        elif l.startswith("warmup "):
+            k, _, v = l[len("warmup "):].partition(" ")
+            warmups[k] = v
+        elif l.startswith("casedef "):
+            k, _, v = l[len("casedef "):].partition(" ")
+            casedefs[k] = v
         elif l.startswith("case "):
             k, _, v = l[len("case "):].partition(" ")
             headers[k] = v
@@ -39,7 +47,7 @@ def parse_rep(path):
                 raws[key] = [float(v) for v in l[j + len(tag):k].split(",") if v.strip()]
             cases[name] = {"summary": text[i - 1] if i > 0 else "", "raw": raws}
     return {"log": str(path), "host": host, "confinement": conf,
-            "status": status, "headers": headers, "cases": cases}
+            "status": status, "headers": headers, "casedefs": casedefs, "warmups": warmups, "cases": cases}
 
 
 def stats(xs):
