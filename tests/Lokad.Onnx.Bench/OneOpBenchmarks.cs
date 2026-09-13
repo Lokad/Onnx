@@ -103,6 +103,8 @@ public class OneOpBenchmarks
         Add("attn_1x12x30x30", "a", new int[] { 1, 12, 30, 30 });
         Add("matmul_1x8x384x1536", "a", new int[] { 1, 8, 384 });
         Add("matmul_1x8x1536x384", "a", new int[] { 1, 8, 1536 });
+        Add("attnblock_e5_30", "x", new int[] { 1, 30, 384 });
+        Add("resblock_rn50", "x", new int[] { 1, 128, 28, 28 });
         foreach (var c in cases) VerifyAgreement(c);
         Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise.");
     }
@@ -414,4 +416,20 @@ public class OneOpBenchmarks
     [Benchmark(Description = "MatMul 1x8x1536 @ 1536x384 - ORT session")]
     [BenchmarkCategory("mm8down")]
     public void OrtMm8Down() => RunOrt(cases[31]);
+
+    [Benchmark(Description = "E5 attention block 1x30x384 (QKV/transpose/scores/softmax/context/proj) - Lokad session")]
+    [BenchmarkCategory("attnblock")]
+    public void LokadAttnBlock() => RunLokad(cases[32]);
+
+    [Benchmark(Description = "E5 attention block 1x30x384 (QKV/transpose/scores/softmax/context/proj) - ORT session")]
+    [BenchmarkCategory("attnblock")]
+    public void OrtAttnBlock() => RunOrt(cases[32]);
+
+    [Benchmark(Description = "ResNet bottleneck 128ch 28x28 (pw-conv/relu/3x3/relu/pw-conv/add/relu) - Lokad session")]
+    [BenchmarkCategory("resblock")]
+    public void LokadResBlock() => RunLokad(cases[33]);
+
+    [Benchmark(Description = "ResNet bottleneck 128ch 28x28 (pw-conv/relu/3x3/relu/pw-conv/add/relu) - ORT session")]
+    [BenchmarkCategory("resblock")]
+    public void OrtResBlock() => RunOrt(cases[33]);
 }

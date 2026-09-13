@@ -208,3 +208,70 @@ save("tests/Lokad.Onnx.Bench/oneop/matmul_1x8x1536x384",
      helper.make_node("MatMul", ["a", "b"], ["y"]),
      [tinfo("a", [1, 8, 1536])], [tinfo("y", [1, 8, 384])],
      [finit("b", b)])
+# 28. e5 attention block (multi-op region fixture, 12 heads x 30 tok, d=384/32):
+# Q/K/V projections, head-layout transposes, scaled causal-free scores, softmax,
+# context, merge transpose, output projection. Seeded weights; the runner feeds a
+# runtime-shaped activation. Exercises the dispatch/transpose/copy traffic that
+# single-op tiles cannot show (A01/M03 material).
+def save_graph(path, nodes, inp, out, inits, opset=14):
+    g = helper.make_graph(nodes, "multiop", inp, out, inits)
+    m = helper.make_model(g, opset_imports=[helper.make_opsetid("", opset)], ir_version=8)
+    import os
+    os.makedirs(path, exist_ok=True)
+    import onnx
+    onnx.save(m, os.path.join(path, "model.onnx"))
+    print("wrote", os.path.join(path, "model.onnx"))
+
+wq = (rng.random([384, 384]) * 2 - 1).astype(np.float32)
+wk = (rng.random([384, 384]) * 2 - 1).astype(np.float32)
+wv = (rng.random([384, 384]) * 2 - 1).astype(np.float32)
+wo = (rng.random([384, 384]) * 2 - 1).astype(np.float32)
+scale = np.array(1.0 / np.sqrt(32.0), dtype=np.float32)
+attn_nodes = [
+    helper.make_node("MatMul", ["x", "wq"], ["q3"], name="qproj"),
+    helper.make_node("MatMul", ["x", "wk"], ["k3"], name="kproj"),
+    helper.make_node("MatMul", ["x", "wv"], ["v3"], name="vproj"),
+    helper.make_node("Reshape", ["q3", "qshape"], ["q4"], name="qreshape"),
+    helper.make_node("Reshape", ["k3", "kshape"], ["k4"], name="kreshape"),
+    helper.make_node("Reshape", ["v3", "vshape"], ["v4"], name="vreshape"),
+    helper.make_node("Transpose", ["q4"], ["q"], perm=[0, 2, 1, 3], name="qtranspose"),
+    helper.make_node("Transpose", ["k4"], ["kt"], perm=[0, 2, 3, 1], name="ktranspose"),
+    helper.make_node("Transpose", ["v4"], ["v"], perm=[0, 2, 1, 3], name="vtranspose"),
+    helper.make_node("MatMul", ["q", "kt"], ["scores"], name="scores"),
+    helper.make_node("Div", ["scores", "scale"], ["scaled"], name="scalediv"),
+    helper.make_node("Softmax", ["scaled"], ["probs"], axis=-1, name="softmax"),
+    helper.make_node("MatMul", ["probs", "v"], ["ctx4"], name="context"),
+    helper.make_node("Transpose", ["ctx4"], ["ctx3"], perm=[0, 2, 1, 3], name="ctxmerge"),
+    helper.make_node("Reshape", ["ctx3", "yshape"], ["merged"], name="mergereshape"),
+    helper.make_node("MatMul", ["merged", "wo"], ["y"], name="outproj"),
+]
+shape4132 = np.array([1, 30, 12, 32], dtype=np.int64)
+mergeshape = np.array([1, 30, 384], dtype=np.int64)
+save_graph("tests/Lokad.Onnx.Bench/oneop/attnblock_e5_30", attn_nodes,
+     [tinfo("x", [1, 30, 384])], [tinfo("y", [1, 30, 384])],
+     [finit("wq", wq), finit("wk", wk), finit("wv", wv), finit("wo", wo),
+      finit("scale", scale),
+      helper.make_tensor("qshape", TensorProto.INT64, [4], shape4132),
+      helper.make_tensor("kshape", TensorProto.INT64, [4], shape4132),
+      helper.make_tensor("vshape", TensorProto.INT64, [4], shape4132),
+      helper.make_tensor("yshape", TensorProto.INT64, [3], mergeshape)])
+
+# 29. resnet bottleneck (multi-op region fixture, 128ch @28x28, inner 32):
+# pointwise -> 3x3 -> pointwise with residual add and relu epilogues. Downscaled
+# from layer2.1 (512ch/inner-128) for fixture iteration speed; the region pattern
+# (layout transitions, fused output work) is what C02/C03 prototypes measure.
+w1 = (rng.random([32, 128, 1, 1]) * 2 - 1).astype(np.float32)
+w3 = (rng.random([32, 32, 3, 3]) * 2 - 1).astype(np.float32)
+w2 = (rng.random([128, 32, 1, 1]) * 2 - 1).astype(np.float32)
+res_nodes = [
+    helper.make_node("Conv", ["x", "w1"], ["c1"], kernel_shape=[1, 1], name="pw1"),
+    helper.make_node("Relu", ["c1"], ["r1"], name="relu1"),
+    helper.make_node("Conv", ["r1", "w3"], ["c3"], kernel_shape=[3, 3], pads=[1, 1, 1, 1], name="spconv"),
+    helper.make_node("Relu", ["c3"], ["r3"], name="relu3"),
+    helper.make_node("Conv", ["r3", "w2"], ["c2"], kernel_shape=[1, 1], name="pw2"),
+    helper.make_node("Add", ["c2", "x"], ["summed"], name="residual"),
+    helper.make_node("Relu", ["summed"], ["y"], name="reluout"),
+]
+save_graph("tests/Lokad.Onnx.Bench/oneop/resblock_rn50", res_nodes,
+     [tinfo("x", [1, 128, 28, 28])], [tinfo("y", [1, 128, 28, 28])],
+     [finit("w1", w1), finit("w3", w3), finit("w2", w2)])
