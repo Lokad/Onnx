@@ -39,3 +39,7 @@ The ONNX model at `models\multilingual-e5-small\model.onnx` is already downloade
 - `lonnx info <model.onnx>`: model metadata; supports `--ops`, `--init`, `--op-filter`.
 - `lonnx run <model.onnx> <inputs...>`: supports image/text inputs, `--softmax`, `--print-input`, profiling, SIMD toggles.
 - Benchmarks live in `tests/Lokad.Onnx.Bench` (`dotnet Lokad.Onnx.Bench.dll micro <matmul2d|matmul|indexing|ops>` with BenchmarkDotNet flags); model comparisons via `Bench` model keys or `bench.ps1`.
+
+## CI
+
+Anonymous GitHub API calls are capped at 60/hour: space CI status checks minutes apart, never poll in a tight loop.
