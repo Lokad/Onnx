@@ -885,6 +885,133 @@ namespace Lokad.Onnx
             producerIndex = pi;
             return true;
         }
+        static readonly object BiasGeluPassLock = new object();
+        static bool biasGeluRegistered;
+
+        public static void RegisterBiasGeluPass()
+        {
+            lock (BiasGeluPassLock)
+            {
+                if (biasGeluRegistered) return;
+                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
+                    "biasgelu",
+                    (graph, facts) =>
+                    {
+                        var rewritten = new List<int>();
+                        int n = FuseBiasGeluPass(graph, facts, rewritten);
+                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
+                        result.Nodes.AddRange(rewritten);
+                        if (n > 0) result.Notes.Add("fused " + n + " bias+GELU regions");
+                        return result;
+                    }));
+                biasGeluRegistered = true;
+            }
+        }
+
+        public static int FuseBiasGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        {
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.Gelu) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchBiasGelu(graph, facts, drop, i, out int producer))
+                {
+                    drop.Add(i);
+                    rewritten.Add(producer);
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        /// <summary>
+        /// Matches Add(data, bias-initializer) feeding exact GELU with no other
+        /// consumer and no graph-output exposure, rewriting the Add struct in
+        /// place to BiasGelu with data-first inputs; the caller drops the Gelu
+        /// node. Float32 only; tanh-approximate and double forms keep legacy paths.
+        /// </summary>
+        static bool TryMatchBiasGelu(
+            ComputationalGraph graph,
+            Optimization.GraphFacts facts,
+            HashSet<int> drop,
+            int geluIndex,
+            out int producerIndex)
+        {
+            producerIndex = -1;
+            var gelu = graph.Nodes[geluIndex];
+            if (gelu.Op != OpType.Gelu) return false;
+            // The consumer may be a native exact GELU or an already-fused one
+            // from the earlier gelu pass (same formula, empty attributes); only
+            // the producer side must be an unfused participant. Tanh forms
+            // decline on attributes below regardless of fused state.
+            if (!Node.IsStandardDomain(gelu.Domain)) return false;
+            if (gelu.Inputs.Length != 1 || gelu.Outputs.Length != 1) return false;
+            string approx = gelu.Attr<string>("approximate", null);
+            if (approx is not null && approx != "none") return false;
+            string mid = gelu.Inputs[0];
+            string rout = gelu.Outputs[0];
+            if (string.IsNullOrEmpty(mid) || string.IsNullOrEmpty(rout)) return false;
+            if (facts.GraphOutputs.Contains(mid)) return false;
+            if (!facts.Producer.TryGetValue(mid, out int pi) || drop.Contains(pi)) return false;
+            var add = graph.Nodes[pi];
+            if (add.Op != OpType.Add || add.IsFused) return false;
+            if (!IsFusableParticipant(add)) return false;
+            if (add.Inputs.Length != 2 || add.Outputs.Length != 1) return false;
+            if (!facts.Consumers.TryGetValue(mid, out var uses)) return false;
+            int live = 0;
+            foreach (var u in uses) if (!drop.Contains(u)) live++;
+            if (live != 1) return false;
+            if (!facts.Dtypes.TryGetValue(mid, out var dt) || dt != TensorElementType.Float) return false;
+            string data = null;
+            string bias = null;
+            foreach (var inp in add.Inputs)
+            {
+                // Exactly one side must be a rank-one float initializer: the
+                // bias. Graph inputs are excluded outright (their values vary
+                // per run), and a second constant side declines so constant
+                // folding keeps owning all-constant Adds with their own rules.
+                if (!string.IsNullOrEmpty(inp) && bias is null && !graph.Inputs.ContainsKey(inp)
+                    && graph.Initializers.TryGetValue(inp, out var init)
+                    && init.ElementType == TensorElementType.Float && init.Rank == 1 && init.Length >= 1)
+                    bias = inp;
+                else if (data is null && !string.IsNullOrEmpty(inp))
+                    data = inp;
+                else
+                    return false;
+            }
+            if (data is null || bias is null) return false;
+            if (graph.Initializers.TryGetValue(data, out var dataInit)
+                && dataInit.ElementType == TensorElementType.Float && dataInit.Rank == 1)
+                return false;
+            var fused = add;
+            fused.Op = OpType.BiasGelu;
+            fused.OpTypeName = OpType.BiasGelu.ToString();
+            fused.Domain = "";
+            int stdv = StandardOpset(graph);
+            if (stdv >= 0) fused.OpsetVersion = stdv;
+            fused.IsFused = true;
+            fused.Inputs = new[] { data, bias };
+            fused.Attributes = new Dictionary<string, object>();
+            fused.Outputs = new[] { rout };
+            graph.Nodes[pi] = fused;
+            producerIndex = pi;
+            return true;
+        }
+
         static readonly object RopePassLock = new object();
         static bool ropeRegistered;
 

@@ -533,15 +533,101 @@ where T : unmanaged
     /// </summary>
     public static Tensor<float> Gelu(Tensor<float> x) => Gelu(x, TensorExecutionOptions.Auto);
 
-    public static Tensor<float> Gelu(Tensor<float> x, TensorExecutionOptions options) =>
-        x.VectorizedApply((Vector<float> v) => new Vector<float>(0.5f) * v * (Vector<float>.One + ErfVector(new Vector<float>(0.7071067811865476f) * v)), (float v) => 0.5f * v * (1f + MathOps.Erf(v * 0.7071067811865476f)), options);
+    static readonly Func<Vector<float>, Vector<float>> GeluVecOp = v => new Vector<float>(0.5f) * v * (Vector<float>.One + ErfVector(new Vector<float>(0.7071067811865476f) * v));
+
+    static float ScalarGelu(float v) => 0.5f * v * (1f + MathOps.Erf(v * 0.7071067811865476f));
+
+    /// <summary>
+    /// Single-pass exact GELU over spans: identical arithmetic to the composed
+    /// path (same ErfVector call and combine order per element, same scalar
+    /// tail), without per-chunk delegates or virtual calls. Safe in place:
+    /// each output depends only on its own input element.
+    /// </summary>
+    internal static void GeluSpanFloat(ReadOnlySpan<float> xs, Span<float> ys)
+    {
+        var xvec = MemoryMarshal.Cast<float, Vector<float>>(xs);
+        var yvec = MemoryMarshal.Cast<float, Vector<float>>(ys);
+        var half = new Vector<float>(0.5f);
+        var one = Vector<float>.One;
+        var scale = new Vector<float>(0.7071067811865476f);
+        for (int i = 0; i < yvec.Length; i++)
+        {
+            var v = xvec[i];
+            yvec[i] = half * v * (one + ErfVector(scale * v));
+        }
+        for (int i = yvec.Length * Vector<float>.Count; i < xs.Length; i++)
+            ys[i] = ScalarGelu(xs[i]);
+    }
+
+    public static Tensor<float> Gelu(Tensor<float> x, TensorExecutionOptions options)
+    {
+        if (options.UseSimd && x is DenseTensor<float> xd && xd.Buffer.Length == xd.Length)
+        {
+            var output = DenseTensor<float>.OfShape(xd.Dimensions.ToArray());
+            GeluSpanFloat(xd.Buffer.Span, output.Buffer.Span);
+            return output;
+        }
+        return x.Apply(ScalarGelu);
+    }
 
     public static Tensor<float> Gelu(Tensor<float> x, Tensor<float> destination) => Gelu(x, destination, TensorExecutionOptions.Auto);
+
+    /// <summary>
+    /// Fused bias-add plus exact GELU over spans: y[i] = gelu(x[i] + b[i % M])
+    /// with the same per-element arithmetic as the two-node form (identical
+    /// add, then the identical erf call and combine order). Rank-one bias of
+    /// length M takes the vector path when M is a multiple of the vector
+    /// width; anything else runs the scalar tail loop. Safe in place.
+    /// </summary>
+    internal static void BiasGeluSpanFloat(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
+    {
+        int w = Vector<float>.Count;
+        var half = new Vector<float>(0.5f);
+        var one = Vector<float>.One;
+        var scale = new Vector<float>(0.7071067811865476f);
+        int M = bias.Length;
+        if (M > 1 && M % w == 0 && xs.Length == ys.Length)
+        {
+            var xvec = MemoryMarshal.Cast<float, Vector<float>>(xs);
+            var yvec = MemoryMarshal.Cast<float, Vector<float>>(ys);
+            int boff = 0;
+            for (int i = 0; i < yvec.Length; i++)
+            {
+                var bv = MemoryMarshal.Cast<float, Vector<float>>(bias.Slice(boff, w))[0];
+                var tv = xvec[i] + bv;
+                yvec[i] = half * tv * (one + ErfVector(scale * tv));
+                boff += w;
+                if (boff >= M) boff -= M;
+            }
+            int tail = yvec.Length * w;
+            int toff = tail % M;
+            for (int i = tail; i < xs.Length; i++)
+            {
+                ys[i] = ScalarGelu(xs[i] + bias[toff]);
+                toff++;
+                if (toff >= M) toff = 0;
+            }
+            return;
+        }
+        int soff = 0;
+        for (int i = 0; i < xs.Length; i++)
+        {
+            ys[i] = ScalarGelu(xs[i] + bias[soff]);
+            soff++;
+            if (soff >= M) soff = 0;
+        }
+    }
 
     public static Tensor<float> Gelu(Tensor<float> x, Tensor<float> destination, TensorExecutionOptions options)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
-        x.VectorizedApply((Vector<float> v) => new Vector<float>(0.5f) * v * (Vector<float>.One + ErfVector(new Vector<float>(0.7071067811865476f) * v)), (float v) => 0.5f * v * (1f + MathOps.Erf(v * 0.7071067811865476f)), destination, options);
+        if (options.UseSimd && x is DenseTensor<float> xd && destination is DenseTensor<float> dd
+            && xd.Buffer.Length == xd.Length && dd.Buffer.Length == dd.Length && xd.Buffer.Length == dd.Buffer.Length)
+        {
+            GeluSpanFloat(xd.Buffer.Span, dd.Buffer.Span);
+            return destination;
+        }
+        x.VectorizedApply(GeluVecOp, ScalarGelu, destination, options);
         return destination;
     }
 

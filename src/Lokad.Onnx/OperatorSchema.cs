@@ -75,6 +75,7 @@ public static class OperatorSchemas
         [OpType.SplitToSequence] = Def(OpType.SplitToSequence, 1, 2),
         [OpType.SequenceAt] = Def(OpType.SequenceAt, 2, 2),
         [OpType.RotaryEmbedding] = Def(OpType.RotaryEmbedding, 3, 3, 1, 1, 1, true),
+        [OpType.BiasGelu] = Def(OpType.BiasGelu, 2, 2, 1, 1, 1, true),
         [OpType.ConvRelu] = Def(OpType.ConvRelu, 2, 3, 1, 1, 1, true),
         [OpType.AddRelu] = Def(OpType.AddRelu, 2, 2, 1, 1, 1, true),
         [OpType.Gemm] = Def(OpType.Gemm, 2, 3),

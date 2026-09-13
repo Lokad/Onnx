@@ -34,6 +34,42 @@ public partial class CPUExecutionProvider
         return FinishRelu(op, inner.Outputs[0], options);
     }
 
+    /// <summary>
+    /// Bias-add fused with exact GELU: runs the single-pass span kernel when
+    /// the data is dense float32 with a rank-one float bias matching the last
+    /// dimension, else the legacy two-step path with identical values. Bitwise
+    /// identity on the hot path holds by construction (identical add, then the
+    /// identical erf call and combine order per element).
+    /// </summary>
+    public static OpResult BiasGelu(ITensor? X, ITensor? Bias, ExecutionOptions? options, TensorBufferPool? pool)
+    {
+        var op = OpType.BiasGelu;
+        if (X is null) return MissingInput(op, nameof(X));
+        if (Bias is null) return MissingInput(op, nameof(Bias));
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        if (X.ElementType == TensorElementType.Float && Bias.ElementType == TensorElementType.Float
+            && X is DenseTensor<float> xd && xd.Buffer.Length == (int)xd.Length
+            && Bias is DenseTensor<float> bd && bd.Rank == 1 && bd.Buffer.Length == (int)bd.Length)
+        {
+            int lastDim = xd.Dimensions[^1];
+            if (lastDim > 0 && bd.Length == lastDim)
+            {
+                DenseTensor<float> output = pool is null
+                    ? DenseTensor<float>.OfShape(xd.Dimensions.ToArray())
+                    : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)xd.Length)), xd.Dimensions.ToArray());
+                Tensor<float>.BiasGeluSpanFloat(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
+                return Success(op, output);
+            }
+        }
+        var add = Add(X, Bias, options, pool);
+        if (add.Status != OpStatus.Success || add.Outputs is null || add.Outputs.Length != 1 || add.Outputs[0] is null)
+            return add;
+        var gelu = Gelu(add.Outputs[0], null, options, pool);
+        if (gelu.Status != OpStatus.Success || gelu.Outputs is null)
+            return gelu;
+        return Success(op, gelu.Outputs);
+    }
+
     static OpResult FinishRelu(OpType op, ITensor output, ExecutionOptions? options)
     {
         if (output is DenseTensor<float> df && !df.IsReversedStride

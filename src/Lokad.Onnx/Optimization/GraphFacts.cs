@@ -118,13 +118,13 @@ internal sealed class GraphFacts
         if (pn.IsFused)
         {
             if (!Node.IsStandardDomain(pn.Domain)) return null;
-            if (pn.Op == OpType.ConvRelu || pn.Op == OpType.AddRelu)
+            if (pn.Op == OpType.ConvRelu || pn.Op == OpType.AddRelu || pn.Op == OpType.BiasGelu)
             {
                 // Fused epilogues keep producer inputs verbatim, so prove under
                 // the producer rule with a defused copy (Node is a value type).
                 var qn = pn;
                 qn.IsFused = false;
-                qn.Op = pn.Op == OpType.ConvRelu ? OpType.Conv : OpType.Add;
+                qn.Op = pn.Op == OpType.ConvRelu ? OpType.Conv : pn.Op == OpType.AddRelu ? OpType.Add : OpType.Gelu;
                 return ProveNodeDtype(graph, nodes, producer, qn, visiting, memo);
             }
             if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu) return null;

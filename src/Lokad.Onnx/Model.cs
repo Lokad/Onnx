@@ -111,6 +111,16 @@ public class Model
             }
         }
         if (addRelu > 0) Info("Fused {c} Add+Relu epilogues into native nodes.", addRelu);
+        GraphFusion.RegisterBiasGeluPass();
+        int biasGelu = 0;
+        if (runOptimizer)
+        {
+            foreach (var change in Optimization.GraphOptimizer.Run(graph))
+            {
+                if (change.Pass == "biasgelu") biasGelu += change.Rewritten;
+            }
+        }
+        if (biasGelu > 0) Info("Fused {c} bias+GELU regions into native nodes.", biasGelu);
         Optimization.ConstFold.RegisterConstFoldPass();
         Optimization.ShapeZeroCopy.RegisterShapeZeroCopyPass();
         if (runOptimizer)

@@ -324,3 +324,16 @@ save("tests/Lokad.Onnx.Bench/oneop/conv_3x3_256_14",
      helper.make_node("Conv", ["x", "w"], ["y"], kernel_shape=[3, 3], pads=[1, 1, 1, 1]),
      [tinfo("x", [1, 256, 14, 14])], [tinfo("y", [1, 256, 14, 14])],
      [finit("w", w)])
+
+# 37. e5 MLP up-projection with bias plus exact GELU (F01a region fixture):
+# exercises the BiasGelu fused path end to end with agreement gating.
+wmlp = (rng.random([384, 1536]) * 2 - 1).astype(np.float32)
+bmlp = (rng.random([1536]) * 2 - 1).astype(np.float32)
+mlp_nodes = [
+    helper.make_node("MatMul", ["x", "wm"], ["mm"], name="uproj"),
+    helper.make_node("Add", ["mm", "bm"], ["biased"], name="bias"),
+    helper.make_node("Gelu", ["biased"], ["y"], name="act"),
+]
+save_graph("tests/Lokad.Onnx.Bench/oneop/mlpbias_e5_30", mlp_nodes,
+     [tinfo("x", [1, 30, 384])], [tinfo("y", [1, 30, 1536])],
+     [finit("wm", wmlp), finit("bm", bmlp)], opset=20)

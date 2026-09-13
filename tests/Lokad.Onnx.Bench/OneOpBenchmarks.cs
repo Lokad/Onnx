@@ -112,6 +112,7 @@ public class OneOpBenchmarks
         Add("conv_3x3_64_56", "x", new int[] { 1, 64, 56, 56 });
         Add("conv_3x3_128_28", "x", new int[] { 1, 128, 28, 28 });
         Add("conv_3x3_256_14", "x", new int[] { 1, 256, 14, 14 });
+        Add("mlpbias_e5_30", "x", new int[] { 1, 30, 384 });
         foreach (var c in cases) VerifyAgreement(c);
         Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise.");
     }
@@ -495,4 +496,12 @@ public class OneOpBenchmarks
     [Benchmark(Description = "Conv 256ch 3x3 over 1x256x14x14 - ORT session")]
     [BenchmarkCategory("conv3x3_256")]
     public void OrtConv3x3_256() => RunOrt(cases[40]);
+
+    [Benchmark(Description = "E5 MLP up-projection with bias plus exact GELU 1x30x384 (MatMul/Add/Gelu) - Lokad session")]
+    [BenchmarkCategory("mlpbias")]
+    public void LokadMlpBias() => RunLokad(cases[41]);
+
+    [Benchmark(Description = "E5 MLP up-projection with bias plus exact GELU 1x30x384 (MatMul/Add/Gelu) - ORT session")]
+    [BenchmarkCategory("mlpbias")]
+    public void OrtMlpBias() => RunOrt(cases[41]);
 }
