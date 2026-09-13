@@ -303,6 +303,45 @@ public class MatMulKernelAgreementTests
     }
 
     [SkippableFact]
+    public unsafe void Packed4MatchesTiledBitwise()
+    {
+        // K01: the 4-row packed nest keeps the exact per-element j-ascending
+        // order of the 2-row nest, so it must agree with the tiled kernel
+        // bit-wise on exact, vector-tail and scalar-tail widths, including
+        // two in-model tile shapes.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        Packed4Equal(4, 16, 96, rnd);
+        Packed4Equal(4, 16, 44, rnd);
+        Packed4Equal(8, 24, 68, rnd);
+        Packed4Equal(12, 24, 40, rnd);
+        Packed4Equal(4, 64, 108, rnd);
+        Packed4Equal(8, 384, 1536, rnd);
+        Packed4Equal(4, 768, 2304, rnd);
+    }
+
+    static unsafe void Packed4Equal(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_4x2packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"4-row packed diverges bitwise from tiled on {m}x{n}x{k}.");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_4x2packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, q, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"4-row packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
+    }
+
+    [SkippableFact]
     public unsafe void Packed3OddMatchesDispatchedBitwise()
     {
         // P65: odd multiples of 3 (e.g. DINO M=201) run the 3-row nest over all

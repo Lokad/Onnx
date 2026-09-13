@@ -1044,6 +1044,134 @@ public class MathOps
 
 
     /// <summary>
+    /// Register-tiled matrix multiplication reading panel-packed B, four rows at a time.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 4).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
+    /// <param name="C">Result matrix.</param>
+    /// <remarks>
+    /// K01 prototype behind the LOKAD_ONNX_GEMM_4ROW switch. Same 32-column panels as the
+    /// 2-row packed kernel, but each panel column pair is shared across 4 rows (two
+    /// 16-column halves, 8 accumulators) instead of 2 rows, halving packed-B traffic per
+    /// output row. Per-element accumulation order matches the 2-row packed kernel exactly
+    /// (C seed, then j-ascending fused multiply-add), so results agree with it bit-wise
+    /// on every shape.
+    /// </remarks>
+    public unsafe static void mm_unsafe_vectorized_intrinsics_4x2packed(int M,
+                              int N,
+                              int K,
+                              float* A,
+                              float* P,
+                              float* C)
+    {
+        if (M % 4 != 0)
+            throw new ArgumentException(nameof(M));
+
+        int panelWidth = 4 * Vector256<float>.Count;
+        int halfWidth = 2 * Vector256<float>.Count;
+        int blocked = K - (K % panelWidth);
+        int tiles = blocked / panelWidth;
+
+        // Kb panels lead so each panel is fetched once and stays L1/L2 resident
+        // across every row group; per-element FMA order matches the 2-row nest
+        // exactly, so results agree bit-wise with the packed kernels.
+        for (int tb = 0; tb < tiles; tb++)
+        {
+            int kb = tb * panelWidth;
+            float* panel = P + tb * N * panelWidth;
+            for (int h = 0; h < 2; h++)
+            {
+                int ko = kb + h * halfWidth;
+                for (int i = 0; i < M; i += 4)
+                {
+                    var Ap1 = A + i * N;
+                    var Ap2 = Ap1 + N;
+                    var Ap3 = Ap2 + N;
+                    var Ap4 = Ap3 + N;
+                    var Cp1 = (Vector256<float>*)(C + i * K + ko);
+                    var Cp2 = (Vector256<float>*)(C + (i + 1) * K + ko);
+                    var Cp3 = (Vector256<float>*)(C + (i + 2) * K + ko);
+                    var Cp4 = (Vector256<float>*)(C + (i + 3) * K + ko);
+                    Vector256<float> c00 = Cp1[0];
+                    Vector256<float> c01 = Cp1[1];
+                    Vector256<float> c10 = Cp2[0];
+                    Vector256<float> c11 = Cp2[1];
+                    Vector256<float> c20 = Cp3[0];
+                    Vector256<float> c21 = Cp3[1];
+                    Vector256<float> c30 = Cp4[0];
+                    Vector256<float> c31 = Cp4[1];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        var av1 = Vector256.Create(Ap1[j]);
+                        var av2 = Vector256.Create(Ap2[j]);
+                        var av3 = Vector256.Create(Ap3[j]);
+                        var av4 = Vector256.Create(Ap4[j]);
+                        var Bpv = (Vector256<float>*)(panel + j * panelWidth + h * halfWidth);
+                        c00 = Fma.MultiplyAdd(Bpv[0], av1, c00);
+                        c01 = Fma.MultiplyAdd(Bpv[1], av1, c01);
+                        c10 = Fma.MultiplyAdd(Bpv[0], av2, c10);
+                        c11 = Fma.MultiplyAdd(Bpv[1], av2, c11);
+                        c20 = Fma.MultiplyAdd(Bpv[0], av3, c20);
+                        c21 = Fma.MultiplyAdd(Bpv[1], av3, c21);
+                        c30 = Fma.MultiplyAdd(Bpv[0], av4, c30);
+                        c31 = Fma.MultiplyAdd(Bpv[1], av4, c31);
+                    }
+                    Cp1[0] = c00;
+                    Cp1[1] = c01;
+                    Cp2[0] = c10;
+                    Cp2[1] = c11;
+                    Cp3[0] = c20;
+                    Cp3[1] = c21;
+                    Cp4[0] = c30;
+                    Cp4[1] = c31;
+                }
+            }
+        }
+        int rem = K - blocked;
+        if (rem > 0)
+        {
+            float* T = P + tiles * N * panelWidth;
+            int vcount = Vector256<float>.Count;
+            int rv = rem / vcount;
+            for (int tt = 0; tt < rv; tt++)
+            {
+                for (int i = 0; i < M; i++)
+                {
+                    var Ap = A + i * N;
+                    var rC = (Vector256<float>*)(C + i * K + blocked);
+                    Vector256<float> c = rC[tt];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        var Bpv = (Vector256<float>*)(T + j * rem + tt * vcount);
+                        c = Fma.MultiplyAdd(Bpv[0], Vector256.Create(Ap[j]), c);
+                    }
+                    rC[tt] = c;
+                }
+            }
+            int vcols = rv * vcount;
+            // Scalar tail keeps the reduction-major order of the packed kernels
+            // (seed from C, then j-ascending mul-then-add per element), so results
+            // agree with them bit-wise on every shape.
+            int tail = rem - vcols;
+            if (tail > 0)
+            for (int i = 0; i < M; i++)
+            {
+                var Ap = A + i * N;
+                var Cp = C + i * K + blocked + vcols;
+                for (int t = 0; t < tail; t++)
+                {
+                    float c = Cp[t];
+                    for (int j = 0; j < N; ++j) c += Ap[j] * (T + j * rem + vcols)[t];
+                    Cp[t] = c;
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Matrix multiplication.
     /// </summary>
     /// <param name="M">A rows.</param>
