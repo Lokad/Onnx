@@ -13,6 +13,7 @@ import statistics
 import sys
 
 ORDER = ["e5-8tok", "e5-30tok", "dinov3-224", "resnet50-224", "gpt2-4tok"]
+EXTENDED = ["e5-128tok", "e5-512tok"]
 
 
 def read_log_text(path):
@@ -77,7 +78,8 @@ def main():
             if rep["status"].get(name) != "ok" or name not in rep["cases"]:
                 raise SystemExit("case missing or not ok: %s in %s" % (name, rep["log"]))
     table = []
-    for name in ORDER:
+    present = [n for n in EXTENDED if all(rep["status"].get(n) == "ok" and n in rep["cases"] for rep in reps)]
+    for name in ORDER + present:
         rep_cells = []
         for rep in reps:
             lok = stats(rep["cases"][name]["raw"]["lok"])

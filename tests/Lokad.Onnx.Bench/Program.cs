@@ -153,6 +153,9 @@ static class Bench
             var e5 = assets["e5"];
             RunCase("e5-8tok", () => CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
             RunCase("e5-30tok", () => CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
+            var e5Long = "query: " + string.Join(" ", Enumerable.Repeat("The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", 40));
+            RunCase("e5-128tok", () => CompareE5("e5-128tok", e5[0], e5[1], e5Long, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 128));
+            RunCase("e5-512tok", () => CompareE5("e5-512tok", e5[0], e5[1], e5Long, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 512));
         }
         if (selected.Contains("dinov2", StringComparer.OrdinalIgnoreCase)) RunCase("dinov2-224", () => CompareVision("dinov2-224", assets["dinov2"][0], tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
         if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) RunCase("dinov3-224", () => CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
@@ -358,9 +361,28 @@ static class Bench
         throw new InvalidOperationException("repo root not found");
     }
 
-    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)
+    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, int takeTokens = 0)
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
+        if (takeTokens > 0)
+        {
+            var cut = new List<ITensor>();
+            foreach (var t in inputs)
+            {
+                if (t is Tensor<long> tl && tl.Dimensions.Length == 2 && tl.Dimensions[0] == 1 && tl.Dimensions[1] >= takeTokens)
+                {
+                    if (tl.Dimensions[1] == takeTokens) { cut.Add(t); continue; }
+                    var sub = new long[takeTokens];
+                    for (int ti = 0; ti < takeTokens; ti++) sub[ti] = tl.GetValue(ti);
+                    var nt = new DenseTensor<long>(sub, new[] { 1, takeTokens });
+                    nt.Name = tl.Name;
+                    cut.Add(nt);
+                }
+                else if (t is Tensor<long>) throw new InvalidOperationException(name + ": cannot take " + takeTokens + " tokens from " + t.Dims[1] + ".");
+                else cut.Add(t);
+            }
+            inputs = cut.ToArray();
+        }
         Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + ShortHash(tokenizer));
         Compare(name, model, inputs, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
     }
