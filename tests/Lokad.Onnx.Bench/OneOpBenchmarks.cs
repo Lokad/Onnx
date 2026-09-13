@@ -113,6 +113,18 @@ public class OneOpBenchmarks
         Add("conv_3x3_128_28", "x", new int[] { 1, 128, 28, 28 });
         Add("conv_3x3_256_14", "x", new int[] { 1, 256, 14, 14 });
         Add("mlpbias_e5_30", "x", new int[] { 1, 30, 384 });
+        Add("chain_softmax_1", "x", new int[] { 12, 30, 30 });
+        Add("chain_softmax_2", "x", new int[] { 12, 30, 30 });
+        Add("chain_softmax_4", "x", new int[] { 12, 30, 30 });
+        Add("chain_softmax_8", "x", new int[] { 12, 30, 30 });
+        Add("chain_matmul_1", "a", new int[] { 1, 8, 1536 });
+        Add("chain_matmul_2", "a", new int[] { 1, 8, 1536 });
+        Add("chain_matmul_4", "a", new int[] { 1, 8, 1536 });
+        Add("chain_matmul_8", "a", new int[] { 1, 8, 1536 });
+        Add("chain_transpose_1", "x", new int[] { 1, 30, 12, 32 });
+        Add("chain_transpose_2", "x", new int[] { 1, 30, 12, 32 });
+        Add("chain_transpose_4", "x", new int[] { 1, 30, 12, 32 });
+        Add("chain_transpose_8", "x", new int[] { 1, 30, 12, 32 });
         foreach (var c in cases) VerifyAgreement(c);
         Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise.");
     }
@@ -504,4 +516,100 @@ public class OneOpBenchmarks
     [Benchmark(Description = "E5 MLP up-projection with bias plus exact GELU 1x30x384 (MatMul/Add/Gelu) - ORT session")]
     [BenchmarkCategory("mlpbias")]
     public void OrtMlpBias() => RunOrt(cases[41]);
+
+    [Benchmark(Description = "Chain 1x Softmax 12x30x30 - Lokad session")]
+    [BenchmarkCategory("chainsm1")]
+    public void LokadChainSm1() => RunLokad(cases[42]);
+
+    [Benchmark(Description = "Chain 1x Softmax 12x30x30 - ORT session")]
+    [BenchmarkCategory("chainsm1")]
+    public void OrtChainSm1() => RunOrt(cases[42]);
+
+    [Benchmark(Description = "Chain 2x Softmax 12x30x30 - Lokad session")]
+    [BenchmarkCategory("chainsm2")]
+    public void LokadChainSm2() => RunLokad(cases[43]);
+
+    [Benchmark(Description = "Chain 2x Softmax 12x30x30 - ORT session")]
+    [BenchmarkCategory("chainsm2")]
+    public void OrtChainSm2() => RunOrt(cases[43]);
+
+    [Benchmark(Description = "Chain 4x Softmax 12x30x30 - Lokad session")]
+    [BenchmarkCategory("chainsm4")]
+    public void LokadChainSm4() => RunLokad(cases[44]);
+
+    [Benchmark(Description = "Chain 4x Softmax 12x30x30 - ORT session")]
+    [BenchmarkCategory("chainsm4")]
+    public void OrtChainSm4() => RunOrt(cases[44]);
+
+    [Benchmark(Description = "Chain 8x Softmax 12x30x30 - Lokad session")]
+    [BenchmarkCategory("chainsm8")]
+    public void LokadChainSm8() => RunLokad(cases[45]);
+
+    [Benchmark(Description = "Chain 8x Softmax 12x30x30 - ORT session")]
+    [BenchmarkCategory("chainsm8")]
+    public void OrtChainSm8() => RunOrt(cases[45]);
+
+    [Benchmark(Description = "Chain 1x MatMul 1x8x1536 - Lokad session")]
+    [BenchmarkCategory("chainmm1")]
+    public void LokadChainMm1() => RunLokad(cases[46]);
+
+    [Benchmark(Description = "Chain 1x MatMul 1x8x1536 - ORT session")]
+    [BenchmarkCategory("chainmm1")]
+    public void OrtChainMm1() => RunOrt(cases[46]);
+
+    [Benchmark(Description = "Chain 2x MatMul 1x8x1536 - Lokad session")]
+    [BenchmarkCategory("chainmm2")]
+    public void LokadChainMm2() => RunLokad(cases[47]);
+
+    [Benchmark(Description = "Chain 2x MatMul 1x8x1536 - ORT session")]
+    [BenchmarkCategory("chainmm2")]
+    public void OrtChainMm2() => RunOrt(cases[47]);
+
+    [Benchmark(Description = "Chain 4x MatMul 1x8x1536 - Lokad session")]
+    [BenchmarkCategory("chainmm4")]
+    public void LokadChainMm4() => RunLokad(cases[48]);
+
+    [Benchmark(Description = "Chain 4x MatMul 1x8x1536 - ORT session")]
+    [BenchmarkCategory("chainmm4")]
+    public void OrtChainMm4() => RunOrt(cases[48]);
+
+    [Benchmark(Description = "Chain 8x MatMul 1x8x1536 - Lokad session")]
+    [BenchmarkCategory("chainmm8")]
+    public void LokadChainMm8() => RunLokad(cases[49]);
+
+    [Benchmark(Description = "Chain 8x MatMul 1x8x1536 - ORT session")]
+    [BenchmarkCategory("chainmm8")]
+    public void OrtChainMm8() => RunOrt(cases[49]);
+
+    [Benchmark(Description = "Chain 1x Transpose 1x30x12x32 - Lokad session")]
+    [BenchmarkCategory("chaintr1")]
+    public void LokadChainTr1() => RunLokad(cases[50]);
+
+    [Benchmark(Description = "Chain 1x Transpose 1x30x12x32 - ORT session")]
+    [BenchmarkCategory("chaintr1")]
+    public void OrtChainTr1() => RunOrt(cases[50]);
+
+    [Benchmark(Description = "Chain 2x Transpose 1x30x12x32 - Lokad session")]
+    [BenchmarkCategory("chaintr2")]
+    public void LokadChainTr2() => RunLokad(cases[51]);
+
+    [Benchmark(Description = "Chain 2x Transpose 1x30x12x32 - ORT session")]
+    [BenchmarkCategory("chaintr2")]
+    public void OrtChainTr2() => RunOrt(cases[51]);
+
+    [Benchmark(Description = "Chain 4x Transpose 1x30x12x32 - Lokad session")]
+    [BenchmarkCategory("chaintr4")]
+    public void LokadChainTr4() => RunLokad(cases[52]);
+
+    [Benchmark(Description = "Chain 4x Transpose 1x30x12x32 - ORT session")]
+    [BenchmarkCategory("chaintr4")]
+    public void OrtChainTr4() => RunOrt(cases[52]);
+
+    [Benchmark(Description = "Chain 8x Transpose 1x30x12x32 - Lokad session")]
+    [BenchmarkCategory("chaintr8")]
+    public void LokadChainTr8() => RunLokad(cases[53]);
+
+    [Benchmark(Description = "Chain 8x Transpose 1x30x12x32 - ORT session")]
+    [BenchmarkCategory("chaintr8")]
+    public void OrtChainTr8() => RunOrt(cases[53]);
 }

@@ -337,3 +337,42 @@ mlp_nodes = [
 save_graph("tests/Lokad.Onnx.Bench/oneop/mlpbias_e5_30", mlp_nodes,
      [tinfo("x", [1, 30, 384])], [tinfo("y", [1, 30, 1536])],
      [finit("wm", wmlp), finit("bm", bmlp)], opset=20)
+
+
+# 35. chain fixtures for G03 marginal-node-cost slopes: 1/2/4/8 identical nodes
+# per family so session time against node count splits kernel slope from fixed
+# intercept. MatMul chain weights are scaled to keep chained values in range.
+for _n in [1, 2, 4, 8]:
+    _nodes, _prev = [], "x"
+    for _i in range(_n):
+        _out = "y" if _i == _n - 1 else "s%d" % _i
+        _nodes.append(helper.make_node("Softmax", [_prev], [_out], axis=-1))
+        _prev = _out
+    save_graph("tests/Lokad.Onnx.Bench/oneop/chain_softmax_%d" % _n, _nodes,
+         [tinfo("x", [12, 30, 30])], [tinfo("y", [12, 30, 30])], [])
+
+for _n in [1, 2, 4, 8]:
+    _nodes, _prev, _inits = [], "a", []
+    _dims = [1, 8, 1536]
+    for _i in range(_n):
+        _bname = "b%d" % _i
+        _kdims = [1536, 384] if _dims[-1] == 1536 else [384, 1536]
+        _bw = (rng.random(_kdims) * 2 - 1).astype(np.float32) * 0.05
+        _inits.append(finit(_bname, _bw))
+        _out = "y" if _i == _n - 1 else "m%d" % _i
+        _nodes.append(helper.make_node("MatMul", [_prev, _bname], [_out]))
+        _prev = _out
+        _dims = [1, 8, _kdims[-1]]
+    save_graph("tests/Lokad.Onnx.Bench/oneop/chain_matmul_%d" % _n, _nodes,
+         [tinfo("a", [1, 8, 1536])], [tinfo("y", _dims)], _inits)
+
+for _n in [1, 2, 4, 8]:
+    _nodes, _prev = [], "x"
+    _dims = [1, 30, 12, 32]
+    for _i in range(_n):
+        _out = "y" if _i == _n - 1 else "t%d" % _i
+        _nodes.append(helper.make_node("Transpose", [_prev], [_out], perm=[0, 2, 1, 3]))
+        _prev = _out
+        _dims = [_dims[0], _dims[2], _dims[1], _dims[3]]
+    save_graph("tests/Lokad.Onnx.Bench/oneop/chain_transpose_%d" % _n, _nodes,
+         [tinfo("x", [1, 30, 12, 32])], [tinfo("y", _dims)], [])

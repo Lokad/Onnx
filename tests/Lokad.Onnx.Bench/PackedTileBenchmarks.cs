@@ -45,6 +45,19 @@ public class PackedTileBenchmarks
         sqb = FillFlat(new[] { 1, 12, 32, 30 }, rnd);
         cxa = FillFlat(new[] { 1, 12, 30, 30 }, rnd);
         cxb = FillFlat(new[] { 1, 12, 30, 32 }, rnd);
+        smx = FillFlat(new[] { 12, 30, 30 }, rnd);
+        smo = Tensor<float>.Zeros(new[] { 12, 30, 30 }).ToDenseTensor();
+        trx = FillFlat(new[] { 1, 30, 12, 32 }, rnd);
+        tro = Tensor<float>.Zeros(new[] { 1, 12, 30, 32 }).ToDenseTensor();
+        // Agreement: kernel-direct matches dispatched exactly (same kernel underneath).
+        var smRef = Tensor<float>.Softmax(smx, -1, TensorExecutionOptions.Intrinsics, 13).ToDenseTensor();
+        Tensor<float>.Softmax(smx, smo, -1, TensorExecutionOptions.Intrinsics, 13);
+        if (!smRef.Buffer.Span.SequenceEqual(smo.Buffer.Span))
+            throw new InvalidOperationException("DirectSoftmax diverges from dispatched.");
+        var trRef = Tensor<float>.Transpose(trx, new[] { 0, 2, 1, 3 }).ToDenseTensor();
+        Tensor<float>.Transpose(trx, tro, new[] { 0, 2, 1, 3 });
+        if (!trRef.Buffer.Span.SequenceEqual(tro.Buffer.Span))
+            throw new InvalidOperationException("DirectTranspose diverges from dispatched.");
         // Agreement: dispatched rank-4 small tiles match the one-op sessions element-wise.
         CheckDispatched("scores", sqa, sqb, 77.33f);
         CheckDispatched("context", cxa, cxb, 41.21f);
@@ -161,6 +174,10 @@ public class PackedTileBenchmarks
     DenseTensor<float> sqb = Tensor<float>.Zeros(0).ToDenseTensor();
     DenseTensor<float> cxa = Tensor<float>.Zeros(0).ToDenseTensor();
     DenseTensor<float> cxb = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> smx = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> smo = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> trx = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> tro = Tensor<float>.Zeros(0).ToDenseTensor();
 
     [Benchmark(Description = "Dispatched 12x30x32 @ 12x32x30 scores-shaped")]
     [BenchmarkCategory("dscores")]
@@ -169,6 +186,16 @@ public class PackedTileBenchmarks
     [Benchmark(Description = "Dispatched 12x30x30 @ 12x30x32 context-shaped")]
     [BenchmarkCategory("dcontext")]
     public void DispatchedContext() => Tensor<float>.MatMul(cxa, cxb, TensorExecutionOptions.Intrinsics);
+
+    // Kernel-direct probes (preallocated destination, steady-state reuse): the timed
+    // body is the kernel alone, so session-minus-direct splits kernel from dispatch.
+    [Benchmark(Description = "Direct Softmax 12x30x30 kernel")]
+    [BenchmarkCategory("dsoftmax")]
+    public void DirectSoftmax() => Tensor<float>.Softmax(smx, smo, -1, TensorExecutionOptions.Intrinsics, 13);
+
+    [Benchmark(Description = "Direct Transpose 1x30x12x32 kernel")]
+    [BenchmarkCategory("dtranspose")]
+    public void DirectTranspose() => Tensor<float>.Transpose(trx, tro, new[] { 0, 2, 1, 3 });
 
     // Discriminator: the unpacked tiled kernel over row-major B. If the session matches
     // THIS probe instead of the packed one, the session is not reaching packed weights.
