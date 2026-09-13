@@ -105,6 +105,24 @@ internal static class GraphProfile
                     lokTotal += ProfileLokad(graph, named, opts, lokStages, lokOps, lokNodes, lokNodeOps);
                 }
             }
+            var mem = new
+            {
+                allocatedBytes = graph.LastAllocatedBytes,
+                gc = graph.LastGcCollections.ToArray(),
+                poolNew = graph.LastPoolAllocatedNew,
+                poolNewBytes = graph.LastPoolAllocatedNewBytes,
+                poolReused = graph.LastPoolReused,
+                poolReusedBytes = graph.LastPoolReusedBytes,
+                poolReturned = graph.LastPoolReturned,
+                poolDropped = graph.LastPoolDropped,
+                poolPeakOutstandingBytes = graph.LastPoolPeakOutstandingBytes,
+                scratchBytes = graph.LastScratchBytes,
+                copyBytes = graph.LastCopyBytes,
+                peakLiveBytes = graph.LastPeakLiveBytes,
+                retainedPackedWeightBytes = graph.RetainedPackedWeightBytes,
+                workingSetBytes = System.Diagnostics.Process.GetCurrentProcess().WorkingSet64,
+                gcTotalBytes = GC.GetTotalMemory(false),
+            };
             string landed = session.EndProfiling();
             string traceFile = Path.Combine(outDir, kase + "-ort-trace.json");
             if (!string.Equals(landed, traceFile, StringComparison.OrdinalIgnoreCase))
@@ -119,6 +137,7 @@ internal static class GraphProfile
                 model,
                 reps,
                 gateScaled = gate.scaled,
+                memory = mem,
                 lokad = new { totalMs = lokTotal,
                     nodes = lokNodes.OrderByDescending(kv => kv.Value).Select(kv => new { id = kv.Key, op = lokNodeOps[kv.Key], ms = kv.Value }).ToArray(), perOp = lokOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), stages = lokStages.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value) },
                 ort = new { totalMs = ortTotal, perOp = ortOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), traceFile },
@@ -131,6 +150,7 @@ internal static class GraphProfile
             Console.WriteLine("--- ort per-op ms (trace, " + reps + " reps) ---");
             foreach (var kv in ortOps.OrderByDescending(kv => kv.Value).Take(12))
                 Console.WriteLine("  " + kv.Key + "=" + kv.Value.ToString("F1"));
+            Console.WriteLine("memory: peakLive=" + mem.peakLiveBytes + " poolPeakOut=" + mem.poolPeakOutstandingBytes + " scratch=" + mem.scratchBytes + " copy=" + mem.copyBytes + " retainedPacks=" + mem.retainedPackedWeightBytes + " allocMB=" + (mem.allocatedBytes / 1000000.0).ToString("F1"));
             Console.WriteLine("profile wrote " + Path.Combine(outDir, kase + "-profile.json"));
             return 0;
         }

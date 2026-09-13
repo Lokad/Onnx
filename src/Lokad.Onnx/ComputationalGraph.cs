@@ -334,6 +334,10 @@ public class ComputationalGraph
     /// <summary>High-water mark of pool bytes checked out during the last execution.</summary>
     /// <remarks>Pool outputs and live intermediates raise it; returns lower it. ArrayPool scratch is not counted.</remarks>
     public long LastPoolPeakOutstandingBytes { get; private set; }
+    /// <summary>Retained panel-packed MatMul weight bytes held by the prepared plan.</summary>
+    /// <remarks>Set by preparation (PackMatMulWeights), not per execution; dropped when
+    /// preparation is invalidated. Distinct from per-run pool/scratch/live gauges below.</remarks>
+    public long RetainedPackedWeightBytes { get; internal set; }
     #endregion
 
     #region Methods

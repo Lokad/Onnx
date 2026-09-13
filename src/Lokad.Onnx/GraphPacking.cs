@@ -147,6 +147,9 @@ internal static class GraphPacking
             graph.PackedWeights[kv.Value.array] = new PackedMatMulWeight(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed);
             live++;
         }
+        long retained = 0;
+        foreach (var rec in graph.PackedWeights.Values) retained += (long)rec.Packed.Length * 4;
+        graph.RetainedPackedWeightBytes = retained;
         return live;
     }
     /// <summary>
