@@ -154,9 +154,19 @@ where T : unmanaged
     internal static readonly bool UseFourRowPackedKernel =
         string.Equals(Environment.GetEnvironmentVariable("LOKAD_ONNX_GEMM_4ROW"), "1", StringComparison.Ordinal);
 
+    /// <summary>
+    /// K01 prototype switch: routes panel-packed multiplies with row counts divisible by 6
+    /// to the 6-row micro-kernel when LOKAD_ONNX_GEMM_6ROW=1. Independent of the 4-row switch;
+    /// when both apply the 6-row kernel wins. Default-off.
+    /// </summary>
+    internal static readonly bool UseSixRowPackedKernel =
+        string.Equals(Environment.GetEnvironmentVariable("LOKAD_ONNX_GEMM_6ROW"), "1", StringComparison.Ordinal);
+
     static unsafe void RunPackedRowKernel(int m, int n, int k, float* x, float* pp, float* o)
     {
-        if (UseFourRowPackedKernel && (m % 4) == 0)
+        if (UseSixRowPackedKernel && (m % 6) == 0)
+            mm_unsafe_vectorized_intrinsics_6x2packed(m, n, k, x, pp, o);
+        else if (UseFourRowPackedKernel && (m % 4) == 0)
             mm_unsafe_vectorized_intrinsics_4x2packed(m, n, k, x, pp, o);
         else if ((m % 3) == 0)
             mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, o);
