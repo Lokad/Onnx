@@ -111,6 +111,37 @@
         "revision": "1975fb9b4a2a92bd99f457407337ee25ab6cfde0",
         "path": "onnx/model.onnx"
       }
+    },
+    {
+      "key": "voice-embedding",
+      "file": "models/speaker-diarization-community-1/onnx/embedding/embedding_encoder.onnx",
+      "sha256": "9903474D6230E5E858DC6B6382A0E3F6E402EA9B4210E1E2F2BEE60A33830E7A",
+      "bytes": 21306024,
+      "opset": 14,
+      "generator": "PLAN.md Milestone 2 voice probe with Python onnxruntime==1.29.0 oracle (ORT_SEQUENTIAL, intra/inter-op 1, ORT_ENABLE_ALL) over deterministic synthetic fbank and a wespeaker-fbank slice; C# ORT 1.23.2 cross-check maxScaled <= 5.1e-06 at tol 1e-4",
+      "test": "GraphExecutionVoiceEmbeddingTests (synthetic backbone oracle, varying lengths, reuse/input-intact, real fbank slice)",
+      "inputs": "synthetic [1,200,80] and [1,120,80] sin pattern; real first 200 frames of models/voice-fixtures/reference/wespeaker-fbank/fbank.npy",
+      "oracle": "output /resnet/pool/Reshape_output_0 [1,2560,25] at 200 frames / [1,2560,15] at 120 frames, finite, mean 1e-6, spots 1e-3",
+      "source": {
+        "repo": "welcomyou/pyannote-community-1-onnx-split",
+        "revision": "cde44c2db938c8abb755853b9a87cb3179c47803",
+        "path": "embedding_encoder.onnx"
+      }
+    },
+    {
+      "key": "voice-fbank",
+      "file": "models/voice-fixtures/reference/wespeaker-fbank/fbank.npy",
+      "sha256": "8E919EAC991AD604588FAAE4D793FD69C95974F95DEF43CA458F9BEB15A3640B",
+      "bytes": 959488,
+      "opset": 0,
+      "generator": "Staged numerical fixture for voice embedding replay inputs (float32 [2998,80])",
+      "test": "GraphExecutionVoiceEmbeddingTests.VoiceEmbedding_RealFbankSlice_Agrees",
+      "inputs": "this file is the input fixture",
+      "oracle": "shape/dtype identity only; inference oracle lives on the voice-embedding entry",
+      "source": {
+        "repo": "local-staged-fixture",
+        "path": "models/voice-fixtures/reference/wespeaker-fbank/fbank.npy"
+      }
     }
   ]
 }
