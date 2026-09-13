@@ -149,6 +149,68 @@ public partial struct Node
     }
 
 
+    /// <summary>
+    /// Executes the selected If branch inline against the enclosing run
+    /// bindings. Captured outer values (inputs, initializers, already
+    /// computed intermediates) resolve from the parent maps; branch-local
+    /// initializers seed names the parent run has not bound; every branch
+    /// intermediate lands in the parent intermediate map under its own
+    /// name. Branch intermediates bypass lifetime analysis and stay alive
+    /// to run end, so branch-internal names must not collide with outer
+    /// bindings. The If outputs are collected from the branch bindings for
+    /// the dispatch loop to rebind under the node output names.
+    /// </summary>
+    OpResult ExecuteIf(ComputationalGraph graph, ExecutionOptions? options)
+    {
+        var op = OpType.If;
+        var cond = InputTensor(graph, 0);
+        if (cond is null) return MissingInput(op, "cond");
+        if (cond.ElementType != TensorElementType.Bool || cond.Length != 1)
+            return WrongInputType(op, "cond", "The If condition must be a scalar bool tensor.", cond);
+        bool take = ((Tensor<bool>)cond).ToArray()[0];
+        string key = take ? "then_branch" : "else_branch";
+        if (Attributes is null || !Attributes.TryGetValue(key, out var bv) || bv is not ComputationalGraph branch)
+            return MissingAttribute(op, key, "The If branch was not imported as an executable subgraph.");
+        foreach (var kv in branch.Initializers)
+        {
+            if (!graph.Inputs.ContainsKey(kv.Key) && !graph.Initializers.ContainsKey(kv.Key) && !graph.IntermediateOutputs.ContainsKey(kv.Key))
+                graph.IntermediateOutputs[kv.Key] = kv.Value;
+        }
+        foreach (var bn in branch.Nodes)
+        {
+            Profiler.StartNodeProfile(bn.ID, bn.Op, () => bn.Name);
+            OpResult r;
+            try
+            {
+                r = bn.Execute(graph, ExecutionProvider.CPU, options);
+            }
+            finally
+            {
+                Profiler.StopNodeProfile();
+            }
+            if (r.Status != OpStatus.Success)
+                return Failure(op, "Branch " + key + " node " + bn.Name + " (" + bn.Op + ") failed: " + r.Message, r.Cause);
+            for (int i = 0; i < bn.Outputs.Length; i++)
+            {
+                if (string.IsNullOrEmpty(bn.Outputs[i])) continue;
+                graph.IntermediateOutputs[bn.Outputs[i]] = r.Outputs[i];
+                r.Outputs[i].Name = bn.Outputs[i];
+            }
+        }
+        // Branch outputs map positionally onto the If outputs; the names
+        // differ (the dispatch loop rebinds the returned tensors under the
+        // node output names), so collect the branch-declared names.
+        var outs = new ITensor[Outputs.Length];
+        for (int i = 0; i < Outputs.Length; i++)
+        {
+            string bname = i < branch.OutputDescs.Count ? branch.OutputDescs[i].Name : "";
+            if (string.IsNullOrEmpty(bname) || !graph.IntermediateOutputs.TryGetValue(bname, out var bound) || bound is null)
+                return Failure(op, "Branch " + key + " did not produce output " + Outputs[i] + ".");
+            outs[i] = bound;
+        }
+        return Success(op, outs);
+    }
+
     public OpResult Execute(ComputationalGraph graph, ExecutionProvider provider, ExecutionOptions? options)
     {
         try
@@ -411,6 +473,8 @@ public partial struct Node
         OpType.SequenceAt => CPU.SequenceAt(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.RotaryEmbedding => CPU.RotaryEmbedding(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), RequiredInt("half"), Int("axis", null), Int("concatAxis", null), opt, graph.ActivePool),
+
+        OpType.If => ExecuteIf(graph, opt),
 
         _ => NotSupported(Op)
     };

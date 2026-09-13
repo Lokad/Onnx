@@ -365,7 +365,10 @@ public static class ProtoConversions
 
     public static string TensorNameDesc(this TensorProto tp) => $"{tp.Name}:{((TensorElementType)tp.DataType).ToString().ToLowerInvariant()}:{string.Join("x", tp.Dims)}";
 
-    public static object Value(this AttributeProto ap, string? baseDirectory)
+    public static object Value(this AttributeProto ap, string? baseDirectory) =>
+        Value(ap, baseDirectory, true);
+
+    public static object Value(this AttributeProto ap, string? baseDirectory, bool materializeInitializers)
     {
         switch (ap.Type)
         {
@@ -376,11 +379,27 @@ public static class ProtoConversions
             case AttributeProto.Types.AttributeType.Tensor: return ap.T.ToTensor(baseDirectory);
             case AttributeProto.Types.AttributeType.String: return ap.S.ToStringUtf8();
             case AttributeProto.Types.AttributeType.Strings: return ap.Strings.Select(s => s.ToStringUtf8()).ToArray();
+            case AttributeProto.Types.AttributeType.Graph: return ap.G.ToSubgraphDto(baseDirectory, materializeInitializers);
             default: throw new NotSupportedException($"Cannot convert attribute proto value of type {ap.Type}.");
         }
     }
 
-    public static OnnxNode ToNodeDto(this NodeProto np, string? baseDirectory)
+    public static OnnxNode ToNodeDto(this NodeProto np, string? baseDirectory) =>
+        ToNodeDto(np, baseDirectory, true);
+
+    public static OnnxSubgraph ToSubgraphDto(this GraphProto gp, string? baseDirectory, bool materializeInitializers)
+    {
+        return new OnnxSubgraph
+        {
+            Name = gp.Name,
+            Inputs = gp.Input.Select(vp => vp.ToValueDto()).ToList(),
+            Outputs = gp.Output.Select(vp => vp.ToValueDto()).ToList(),
+            Initializers = gp.Initializer.Select(tp => tp.ToTensorDto(baseDirectory, materializeInitializers)).ToList(),
+            Nodes = gp.Node.Select(np => np.ToNodeDto(baseDirectory, materializeInitializers)).ToList(),
+        };
+    }
+
+    public static OnnxNode ToNodeDto(this NodeProto np, string? baseDirectory, bool materializeInitializers)
     {
         Runtime.Debug("Converting model node proto {npn} with op type {npot} and inputs {npi} and outputs {npot} and attributes [{npa}] to graph node.", np.Name, np.OpType, np.Input, np.Output, np.Attribute.Select(a => a.Name));
         // Tensor-valued attributes read external data directly into final
@@ -395,7 +414,7 @@ public static class ProtoConversions
             Domain = np.Domain ?? "",
             Inputs = np.Input.ToArray(),
             Outputs = np.Output.ToArray(),
-            Attributes = np.Attribute.ToDictionary(k => k.Name, v => (object)v.Value(baseDirectory)),
+            Attributes = np.Attribute.ToDictionary(k => k.Name, v => (object)v.Value(baseDirectory, materializeInitializers)),
         };
     }
 }

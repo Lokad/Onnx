@@ -1097,21 +1097,16 @@ public class OperatorSchemaTests
         Assert.Contains("DepthToSpace", r.Message ?? "");
     }
 
-    [Fact]
-    public void IfHonestlyUnsupported_FailsCleanly()
+        [Fact]
+    public void IfHonestlySupported_ResolvesSchema()
     {
-        // C11: If exists only as an enum value; no schema, provider,
-        // kernel, or dispatch arm exists anywhere in src (control flow
-        // is out of scope); same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.If));
+        // If gained subgraph import, a schema entry, and branch execution,
+        // so support resolution must now succeed. Execution itself is
+        // covered by IfBranchTests with real branch graphs.
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.If));
         var node = Nod(OpType.If, "", 14,
             new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
-        var graph = Graph(14);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
-        var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("If", r.Message ?? "");
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
     }
 
     [Fact]

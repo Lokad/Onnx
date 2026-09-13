@@ -1179,6 +1179,13 @@ public class ComputationalGraph
                 lastUse[input] = i;
             }
         }
+        // Branch subgraphs read outer bindings that no top-level node input
+        // names: extend those captures to the owning If index so early
+        // release cannot reclaim them mid-run. Branch-local names stay out.
+        for (int i = 0; i < Nodes.Count; i++)
+        {
+            if (Nodes[i].Op == OpType.If) ExtendBranchLifetimes(Nodes[i], i, lastUse, null);
+        }
         foreach (var name in Outputs.Keys)
         {
             if (!string.IsNullOrEmpty(name)) lastUse[name] = Nodes.Count;
@@ -1205,6 +1212,42 @@ public class ComputationalGraph
         _prepared = true;
         _preparedFingerprint = ComputeStructureFingerprint();
         _preparationError = ValidatePreparation();
+    }
+
+    /// <summary>
+    /// Extends last-use entries for values a branch subgraph captures from
+    /// enclosing scopes. Nested branches recurse with the accumulated local
+    /// names so only genuinely outer values are extended.
+    /// </summary>
+    static void ExtendBranchLifetimes(Node node, int index, Dictionary<string, int> lastUse, HashSet<string>? outerLocal)
+    {
+        if (node.Attributes is null) return;
+        foreach (var kv in node.Attributes)
+        {
+            if (kv.Value is not ComputationalGraph branch) continue;
+            var local = new HashSet<string>(StringComparer.Ordinal);
+            if (outerLocal is not null) local.UnionWith(outerLocal);
+            foreach (var init in branch.Initializers.Keys) local.Add(init);
+            foreach (var bn in branch.Nodes)
+            {
+                if (bn.Outputs is not null)
+                    foreach (var o in bn.Outputs)
+                        if (!string.IsNullOrEmpty(o)) local.Add(o);
+            }
+            foreach (var bn in branch.Nodes)
+            {
+                if (bn.Inputs is not null)
+                {
+                    foreach (var input in bn.Inputs)
+                    {
+                        if (string.IsNullOrEmpty(input) || local.Contains(input)) continue;
+                        if (lastUse.TryGetValue(input, out var prev)) lastUse[input] = Math.Max(prev, index);
+                        else lastUse[input] = index;
+                    }
+                }
+                if (bn.Op == OpType.If) ExtendBranchLifetimes(bn, index, lastUse, local);
+            }
+        }
     }
 
     /// <summary>

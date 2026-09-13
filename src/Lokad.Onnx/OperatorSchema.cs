@@ -88,6 +88,7 @@ public static class OperatorSchemas
         [OpType.And] = Def(OpType.And, 2, 2),
         [OpType.Not] = Def(OpType.Not, 1, 1),
         [OpType.Pad] = Def(OpType.Pad, 1, 3, 1, 1, 1, false),
+        [OpType.If] = Def(OpType.If, 1, 1, 1, Unbounded, 1, false),
     };
 
     public static bool IsStandardDomain(string? domain) =>

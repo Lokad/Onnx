@@ -60,3 +60,18 @@ public sealed class OnnxNode
     public string[] Outputs = Array.Empty<string>();
     public Dictionary<string, object> Attributes = new Dictionary<string, object>();
 }
+
+/// <summary>
+/// Plain-data description of a nested ONNX graph carried by a Graph-typed
+/// node attribute (If branches, Loop bodies). Captured outer values resolve
+/// from the enclosing run bindings; only names bound inside the branch or
+/// its own initializers are branch-local.
+/// </summary>
+public sealed class OnnxSubgraph
+{
+    public string Name = "";
+    public List<OnnxValueInfo> Inputs = new List<OnnxValueInfo>();
+    public List<OnnxValueInfo> Outputs = new List<OnnxValueInfo>();
+    public List<OnnxTensor> Initializers = new List<OnnxTensor>();
+    public List<OnnxNode> Nodes = new List<OnnxNode>();
+}

@@ -59,6 +59,33 @@ public class Model
         return graph;
     }
 
+    /// <summary>
+    /// Prepares a nested attribute graph (If branch) for execution. Nodes
+    /// convert exactly like top-level nodes against the shared opsets, but
+    /// their outputs register on the branch plan only: at run time captures
+    /// resolve from the enclosing run bindings while branch intermediates
+    /// land in the parent intermediate map under their own names.
+    /// </summary>
+    static ComputationalGraph BuildBranchGraph(OnnxSubgraph sg, Dictionary<string, int> opset, string name)
+    {
+        var branch = new ComputationalGraph();
+        branch.Opset = opset;
+        branch.Metadata["Name"] = string.IsNullOrEmpty(sg.Name) ? name : sg.Name;
+        foreach (var i in sg.Initializers)
+        {
+            branch.Initializers.Add(i.Name, ToTensor(i));
+        }
+        branch.Inputs = new BindingMap(sg.Inputs.ToDictionary(vp => vp.Name, vp => (ITensor?)null));
+        branch.Outputs = new BindingMap(sg.Outputs.ToDictionary(vp => vp.Name, vp => (ITensor?)null));
+        branch.InputDescs = sg.Inputs;
+        branch.OutputDescs = sg.Outputs;
+        foreach (var np in sg.Nodes)
+        {
+            branch.Nodes.Add(ToNode(np, branch));
+        }
+        return branch;
+    }
+
     static Node ToNode(OnnxNode np, ComputationalGraph graph)
     {
         var domain = np.Domain ?? "";
@@ -73,7 +100,9 @@ public class Model
         {
             Name = np.Name,
             ID = np.Name.GetHashCode(),
-            Attributes = np.Attributes,
+            Attributes = np.Attributes.ToDictionary(
+                kv => kv.Key,
+                kv => kv.Value is OnnxSubgraph sg ? (object)BuildBranchGraph(sg, graph.Opset, np.Name + "/" + kv.Key) : kv.Value),
             Op = op,
             OpTypeName = np.OpType ?? "",
             Domain = domain,
