@@ -881,6 +881,176 @@ where T : unmanaged
         }
     }
 
+    /// <summary>
+    /// Numerically stable log-softmax: each row emits (x - max) - log(sum)
+    /// rather than log(softmax(x)), so very negative logits stay finite.
+    /// Axis and pre-13 flattening mirror Softmax; the math runs a fixed
+    /// scalar path.
+    /// </summary>
+    public static Tensor<float> LogSoftmax(Tensor<float> x, int axis, TensorExecutionOptions? options, int opsetVersion)
+    {
+        StartOpStage(OpStage.ValidateArguments);
+        if (x.Rank < 1) throw new ArgumentException(nameof(x), "LogSoftmax requires a tensor of rank 1 or more.");
+        axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
+        if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be a dimension of the tensor.");
+        var denseInput = x.ToDenseTensor();
+        var output = new DenseTensor<float>(denseInput.Dimensions);
+        StartOpStage(OpStage.Math);
+        LogSoftmaxFloatInto(denseInput, output, axis, opsetVersion);
+        return output;
+    }
+
+    static void LogSoftmaxFloatInto(DenseTensor<float> input, DenseTensor<float> destination, int axis, int opsetVersion)
+    {
+        var dims = input.Dimensions.ToArray();
+        var inputSpan = input.Buffer.Span;
+        var outputSpan = destination.Buffer.Span;
+        if (opsetVersion < 13)
+        {
+            int block = 1;
+            for (int dimension = axis; dimension < dims.Length; dimension++) block *= dims[dimension];
+            int outer = block == 0 ? 0 : (int)(input.Length / block);
+            LogSoftmaxContiguousFloat(inputSpan, outputSpan, outer, block);
+            return;
+        }
+        int outerCount = 1;
+        for (int d = 0; d < axis; d++) outerCount *= dims[d];
+        int dimLen = dims[axis];
+        int inner = 1;
+        for (int d = axis + 1; d < dims.Length; d++) inner *= dims[d];
+        if (inner == 1)
+        {
+            int outer = dimLen == 0 ? 0 : (int)(input.Length / dimLen);
+            LogSoftmaxContiguousFloat(inputSpan, outputSpan, outer, dimLen);
+            return;
+        }
+        for (int o = 0; o < outerCount; o++)
+        {
+            for (int i = 0; i < inner; i++)
+            {
+                float max = float.NegativeInfinity;
+                for (int a = 0; a < dimLen; a++)
+                {
+                    float candidate = inputSpan[(o * dimLen + a) * inner + i];
+                    if (float.IsNaN(candidate)) { max = float.NaN; break; }
+                    if (candidate > max) max = candidate;
+                }
+                float sum = 0f;
+                for (int a = 0; a < dimLen; a++) sum += MathF.Exp(inputSpan[(o * dimLen + a) * inner + i] - max);
+                float norm = MathF.Log(sum);
+                for (int a = 0; a < dimLen; a++) outputSpan[(o * dimLen + a) * inner + i] = inputSpan[(o * dimLen + a) * inner + i] - max - norm;
+            }
+        }
+    }
+
+    static void LogSoftmaxContiguousFloat(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block)
+    {
+        for (int outerIndex = 0; outerIndex < outer; outerIndex++)
+        {
+            float max = float.NegativeInfinity;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            {
+                float candidate = inputSpan[outerIndex * block + blockIndex];
+                if (float.IsNaN(candidate)) { max = float.NaN; break; }
+                if (candidate > max) max = candidate;
+            }
+            float sum = 0f;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++) sum += MathF.Exp(inputSpan[outerIndex * block + blockIndex] - max);
+            float norm = MathF.Log(sum);
+            for (int blockIndex = 0; blockIndex < block; blockIndex++) outputSpan[outerIndex * block + blockIndex] = inputSpan[outerIndex * block + blockIndex] - max - norm;
+        }
+    }
+
+    /// <summary>Writes the float log-softmax into an existing dense destination.</summary>
+    public static Tensor<float> LogSoftmax(Tensor<float> x, DenseTensor<float> destination, int axis, TensorExecutionOptions? options, int opsetVersion)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        StartOpStage(OpStage.ValidateArguments);
+        if (x.Rank < 1) throw new ArgumentException(nameof(x), "LogSoftmax requires a tensor of rank 1 or more.");
+        axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
+        if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be a dimension of the tensor.");
+        var denseInput = x.ToDenseTensor();
+        if (!destination.Dimensions.SequenceEqual(denseInput.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
+        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        StartOpStage(OpStage.Math);
+        LogSoftmaxFloatInto(denseInput, destination, axis, opsetVersion);
+        return destination;
+    }
+
+    public static Tensor<double> LogSoftmax(Tensor<double> x, int axis, TensorExecutionOptions? options, int opsetVersion)
+    {
+        StartOpStage(OpStage.ValidateArguments);
+        if (x.Rank < 1) throw new ArgumentException(nameof(x), "LogSoftmax requires a tensor of rank 1 or more.");
+        axis = ArrayUtilities.HandleNegativeAxisOrIndex(x.Rank, axis);
+        if (axis < 0 || axis >= x.Rank) throw new ArgumentException(nameof(axis), "The specified axis must be a dimension of the tensor.");
+        var denseInput = x.ToDenseTensor();
+        var output = new DenseTensor<double>(denseInput.Dimensions);
+        StartOpStage(OpStage.Math);
+        LogSoftmaxDoubleInto(denseInput, output, axis, opsetVersion);
+        return output;
+    }
+
+    static void LogSoftmaxDoubleInto(DenseTensor<double> input, DenseTensor<double> destination, int axis, int opsetVersion)
+    {
+        var dims = input.Dimensions.ToArray();
+        var inputSpan = input.Buffer.Span;
+        var outputSpan = destination.Buffer.Span;
+        if (opsetVersion < 13)
+        {
+            int block = 1;
+            for (int dimension = axis; dimension < dims.Length; dimension++) block *= dims[dimension];
+            int outer = block == 0 ? 0 : (int)(input.Length / block);
+            LogSoftmaxContiguousDouble(inputSpan, outputSpan, outer, block);
+            return;
+        }
+        int outerCount = 1;
+        for (int d = 0; d < axis; d++) outerCount *= dims[d];
+        int dimLen = dims[axis];
+        int inner = 1;
+        for (int d = axis + 1; d < dims.Length; d++) inner *= dims[d];
+        if (inner == 1)
+        {
+            int outer = dimLen == 0 ? 0 : (int)(input.Length / dimLen);
+            LogSoftmaxContiguousDouble(inputSpan, outputSpan, outer, dimLen);
+            return;
+        }
+        for (int o = 0; o < outerCount; o++)
+        {
+            for (int i = 0; i < inner; i++)
+            {
+                double max = double.NegativeInfinity;
+                for (int a = 0; a < dimLen; a++)
+                {
+                    double candidate = inputSpan[(o * dimLen + a) * inner + i];
+                    if (double.IsNaN(candidate)) { max = double.NaN; break; }
+                    if (candidate > max) max = candidate;
+                }
+                double sum = 0d;
+                for (int a = 0; a < dimLen; a++) sum += Math.Exp(inputSpan[(o * dimLen + a) * inner + i] - max);
+                double norm = Math.Log(sum);
+                for (int a = 0; a < dimLen; a++) outputSpan[(o * dimLen + a) * inner + i] = inputSpan[(o * dimLen + a) * inner + i] - max - norm;
+            }
+        }
+    }
+
+    static void LogSoftmaxContiguousDouble(System.Span<double> inputSpan, System.Span<double> outputSpan, int outer, int block)
+    {
+        for (int outerIndex = 0; outerIndex < outer; outerIndex++)
+        {
+            double max = double.NegativeInfinity;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            {
+                double candidate = inputSpan[outerIndex * block + blockIndex];
+                if (double.IsNaN(candidate)) { max = double.NaN; break; }
+                if (candidate > max) max = candidate;
+            }
+            double sum = 0d;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++) sum += Math.Exp(inputSpan[outerIndex * block + blockIndex] - max);
+            double norm = Math.Log(sum);
+            for (int blockIndex = 0; blockIndex < block; blockIndex++) outputSpan[outerIndex * block + blockIndex] = inputSpan[outerIndex * block + blockIndex] - max - norm;
+        }
+    }
+
     public static Tensor<float> Erf(Tensor<float> x) => Erf(x, TensorExecutionOptions.Auto);
 
     public static Tensor<float> Erf(Tensor<float> x, TensorExecutionOptions options) => x.VectorizedApply(MathOps.ErfVector, MathOps.Erf, options);

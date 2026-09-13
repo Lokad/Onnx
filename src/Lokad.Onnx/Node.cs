@@ -382,6 +382,12 @@ public partial struct Node
 
         OpType.Pad => CPU.Pad(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Attr<string>("mode", null), Ints("pads"), OneOfAttr("value") as ITensor, opt),
 
+        OpType.Clip => ResolvedOpsetVersion(graph) switch
+        {
+            int v when v >= 11 => CPU.Clip(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), null, null, opt),
+            _ => CPU.Clip(InputTensor(graph, 0), null, null, GetFloat("min", null), GetFloat("max", null), opt),
+        },
+
         OpType.Equal => CPU.Equal(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.Less => CPU.Less(InputTensor(graph, 0), InputTensor(graph, 1), opt),
@@ -450,6 +456,10 @@ public partial struct Node
 
         OpType.Neg => CPU.Neg(InputTensor(graph, 0), opt),
 
+        OpType.LeakyRelu => CPU.LeakyRelu(InputTensor(graph, 0), GetFloat("alpha", null), opt),
+
+        OpType.LogSoftmax => CPU.LogSoftmax(InputTensor(graph, 0), Int("axis", null), opt, graph.ActivePool, ResolvedOpsetVersion(graph)),
+
         OpType.Gelu => CPU.Gelu(InputTensor(graph, 0), Attr<string>("approximate", null), opt, graph.ActivePool),
 
         OpType.Squeeze => ResolvedOpsetVersion(graph) switch
@@ -463,6 +473,8 @@ public partial struct Node
         OpType.Tile => CPU.Tile(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.LayerNormalization => CPU.LayerNormalization(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Int("axis", null), GetFloat("epsilon", null), Int("stash_type", null), Outputs.Length, opt, graph.ActivePool),
+
+        OpType.InstanceNormalization => CPU.InstanceNorm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("epsilon", null), opt),
 
         OpType.LSTM => CPU.Lstm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), InputTensor(graph, 4), InputTensor(graph, 5), InputTensor(graph, 6), InputTensor(graph, 7),
             Attr<string>("direction", null), Attr<string[]>("activations", null), Attr<float[]>("activation_alpha", null), Attr<float[]>("activation_beta", null),

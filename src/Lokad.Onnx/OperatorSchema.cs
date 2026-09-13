@@ -88,6 +88,10 @@ public static class OperatorSchemas
         [OpType.And] = Def(OpType.And, 2, 2),
         [OpType.Not] = Def(OpType.Not, 1, 1),
         [OpType.Pad] = Def(OpType.Pad, 1, 3, 1, 1, 1, false),
+        [OpType.InstanceNormalization] = Def(OpType.InstanceNormalization, 3, 3),
+        [OpType.Clip] = Def(OpType.Clip, 1, 3),
+        [OpType.LeakyRelu] = Def(OpType.LeakyRelu, 1, 1),
+        [OpType.LogSoftmax] = Def(OpType.LogSoftmax, 1, 1),
         [OpType.If] = Def(OpType.If, 1, 1, 1, Unbounded, 1, false),
     };
 

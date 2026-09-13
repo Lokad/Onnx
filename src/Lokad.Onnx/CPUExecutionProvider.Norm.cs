@@ -26,6 +26,67 @@ public partial class CPUExecutionProvider
         if (rented is null) return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, half.Value, axis ?? -1, concatAxis ?? -1));
         return Success(op, Tensor<float>.RotaryEmbedding(fx, (Tensor<float>)cos, (Tensor<float>)sin, rented, half.Value, axis ?? -1, concatAxis ?? -1));
     }
+    /// <summary>
+    /// Instance normalization over the spatial dimensions per (N, C) slice:
+    /// mean/variance pooling followed by the per-channel scale and bias.
+    /// Float32 only, matching the ORT CPU implemented surface; every output
+    /// element is assigned through a fixed scalar path.
+    /// </summary>
+    public static OpResult InstanceNorm(ITensor? X, ITensor? scale, ITensor? bias, float? epsilon, ExecutionOptions? options)
+    {
+        var op = OpType.InstanceNormalization;
+        if (X is null) return MissingInput(op, nameof(X));
+        if (scale is null) return MissingInput(op, nameof(scale));
+        if (bias is null) return MissingInput(op, nameof(bias));
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        Profiler.StartOpStage(OpStage.Math);
+        if (X.ElementType != TensorElementType.Float) return InputTypeNotSupported(op, nameof(X), X, "Only float32 instance normalization is supported.");
+        if (scale.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(scale), TensorElementType.Float, scale);
+        if (bias.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(bias), TensorElementType.Float, bias);
+        if (X.Rank < 2) return WrongInputShape(op, nameof(X), X, "InstanceNormalization requires rank 2 or more [N, C, ...].");
+        int channels = X.Dims[1];
+        if (scale.Rank != 1 || scale.Dims[0] != channels)
+            return WrongInputShape(op, nameof(scale), scale, "scale must be [C].");
+        if (bias.Rank != 1 || bias.Dims[0] != channels)
+            return WrongInputShape(op, nameof(bias), bias, "bias must be [C].");
+        float eps = epsilon ?? 1e-5f;
+        // Coordinate reads below assume standard row-major strides.
+        var xd = Tensor<float>.RequireContiguous((Tensor<float>)X, nameof(X), opts.Tensor.CopyReporter);
+        var sd = Tensor<float>.RequireContiguous((Tensor<float>)scale, nameof(scale), opts.Tensor.CopyReporter);
+        var bd = Tensor<float>.RequireContiguous((Tensor<float>)bias, nameof(bias), opts.Tensor.CopyReporter);
+        var xs = xd.Buffer.Span;
+        var ss = sd.Buffer.Span;
+        var bs = bd.Buffer.Span;
+        var dims = xd.Dimensions.ToArray();
+        var y = DenseTensor<float>.OfShape(dims);
+        var ys = y.Buffer.Span;
+        int spatial = 1;
+        for (int d = 2; d < dims.Length; d++) spatial *= dims[d];
+        int batch = dims[0];
+        for (int n = 0; n < batch; n++)
+        {
+            for (int c = 0; c < channels; c++)
+            {
+                int baseOff = (n * channels + c) * spatial;
+                double sum = 0;
+                for (int k = 0; k < spatial; k++) sum += xs[baseOff + k];
+                double mean = spatial == 0 ? 0 : sum / spatial;
+                double var = 0;
+                for (int k = 0; k < spatial; k++)
+                {
+                    double d = xs[baseOff + k] - mean;
+                    var += d * d;
+                }
+                var /= spatial == 0 ? 1 : spatial;
+                float inv = (float)(1.0 / Math.Sqrt(var + eps));
+                float sc = ss[c];
+                float bc = bs[c];
+                for (int k = 0; k < spatial; k++) ys[baseOff + k] = (xs[baseOff + k] - (float)mean) * inv * sc + bc;
+            }
+        }
+        return Success(op, y);
+    }
+
     public static OpResult LayerNormalization(ITensor? x, ITensor? scale, ITensor? bias, int? axis, float? epsilon, int? stashType, int outputCount, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.LayerNormalization;

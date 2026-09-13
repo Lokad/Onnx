@@ -561,6 +561,131 @@ public partial class CPUExecutionProvider
         }
     }
 
+    /// <summary>
+    /// Clamps every element between the resolved bounds. Bounds arrive as
+    /// same-dtype scalar inputs (opset 11+) or float attributes (older
+    /// graphs); a bound given both ways is refused. Missing bounds default
+    /// to the dtype extremes. NaN inputs compare false on both sides and
+    /// pass through, matching ORT.
+    /// </summary>
+    public static OpResult Clip(ITensor? data, ITensor? min, ITensor? max, float? attrMin, float? attrMax, ExecutionOptions? options)
+    {
+        var op = OpType.Clip;
+        if (data is null) return MissingInput(op, nameof(data));
+        (options ?? ExecutionOptions.Default).Validated();
+        Profiler.StartOpStage(OpStage.Math);
+        if (min is not null && attrMin.HasValue)
+            return AttributeNotSupported(op, "min", "input+attribute", "min must not be given both as input and attribute.");
+        if (max is not null && attrMax.HasValue)
+            return AttributeNotSupported(op, "max", "input+attribute", "max must not be given both as input and attribute.");
+        switch (data.ElementType)
+        {
+            case TensorElementType.Float:
+            {
+                float lo = float.NegativeInfinity;
+                float hi = float.PositiveInfinity;
+                if (min is not null)
+                {
+                    if (min.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(min), TensorElementType.Float, min);
+                    if (min.Length != 1) return WrongInputShape(op, nameof(min), min, "Clip bounds must be scalars.");
+                    lo = ((Tensor<float>)min).ToArray()[0];
+                }
+                else if (attrMin.HasValue) lo = attrMin.Value;
+                if (max is not null)
+                {
+                    if (max.ElementType != TensorElementType.Float) return WrongInputType(op, nameof(max), TensorElementType.Float, max);
+                    if (max.Length != 1) return WrongInputShape(op, nameof(max), max, "Clip bounds must be scalars.");
+                    hi = ((Tensor<float>)max).ToArray()[0];
+                }
+                else if (attrMax.HasValue) hi = attrMax.Value;
+                var x = ((Tensor<float>)data).ToDenseTensor();
+                var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = xs[i] < lo ? lo : (xs[i] > hi ? hi : xs[i]);
+                return Success(op, y);
+            }
+            case TensorElementType.Double:
+            {
+                double lo = double.NegativeInfinity;
+                double hi = double.PositiveInfinity;
+                if (min is not null)
+                {
+                    if (min.ElementType != TensorElementType.Double) return WrongInputType(op, nameof(min), TensorElementType.Double, min);
+                    if (min.Length != 1) return WrongInputShape(op, nameof(min), min, "Clip bounds must be scalars.");
+                    lo = ((Tensor<double>)min).ToArray()[0];
+                }
+                else if (attrMin.HasValue) lo = attrMin.Value;
+                if (max is not null)
+                {
+                    if (max.ElementType != TensorElementType.Double) return WrongInputType(op, nameof(max), TensorElementType.Double, max);
+                    if (max.Length != 1) return WrongInputShape(op, nameof(max), max, "Clip bounds must be scalars.");
+                    hi = ((Tensor<double>)max).ToArray()[0];
+                }
+                else if (attrMax.HasValue) hi = attrMax.Value;
+                var x = ((Tensor<double>)data).ToDenseTensor();
+                var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = xs[i] < lo ? lo : (xs[i] > hi ? hi : xs[i]);
+                return Success(op, y);
+            }
+            case TensorElementType.Int32:
+            {
+                // Attribute bounds predate integer support, so they saturate
+                // rather than overflow when narrowed.
+                int lo = int.MinValue;
+                int hi = int.MaxValue;
+                if (min is not null)
+                {
+                    if (min.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(min), TensorElementType.Int32, min);
+                    if (min.Length != 1) return WrongInputShape(op, nameof(min), min, "Clip bounds must be scalars.");
+                    lo = ((Tensor<int>)min).ToArray()[0];
+                }
+                else if (attrMin.HasValue) return AttributeNotSupported(op, "min", "attribute", "Attribute bounds pair with float data; integer data takes input bounds.");
+                if (max is not null)
+                {
+                    if (max.ElementType != TensorElementType.Int32) return WrongInputType(op, nameof(max), TensorElementType.Int32, max);
+                    if (max.Length != 1) return WrongInputShape(op, nameof(max), max, "Clip bounds must be scalars.");
+                    hi = ((Tensor<int>)max).ToArray()[0];
+                }
+                else if (attrMax.HasValue) return AttributeNotSupported(op, "max", "attribute", "Attribute bounds pair with float data; integer data takes input bounds.");
+                var x = ((Tensor<int>)data).ToDenseTensor();
+                var y = DenseTensor<int>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = xs[i] < lo ? lo : (xs[i] > hi ? hi : xs[i]);
+                return Success(op, y);
+            }
+            case TensorElementType.Int64:
+            {
+                long lo = long.MinValue;
+                long hi = long.MaxValue;
+                if (min is not null)
+                {
+                    if (min.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(min), TensorElementType.Int64, min);
+                    if (min.Length != 1) return WrongInputShape(op, nameof(min), min, "Clip bounds must be scalars.");
+                    lo = ((Tensor<long>)min).ToArray()[0];
+                }
+                else if (attrMin.HasValue) return AttributeNotSupported(op, "min", "attribute", "Attribute bounds pair with float data; integer data takes input bounds.");
+                if (max is not null)
+                {
+                    if (max.ElementType != TensorElementType.Int64) return WrongInputType(op, nameof(max), TensorElementType.Int64, max);
+                    if (max.Length != 1) return WrongInputShape(op, nameof(max), max, "Clip bounds must be scalars.");
+                    hi = ((Tensor<long>)max).ToArray()[0];
+                }
+                else if (attrMax.HasValue) return AttributeNotSupported(op, "max", "attribute", "Attribute bounds pair with float data; integer data takes input bounds.");
+                var x = ((Tensor<long>)data).ToDenseTensor();
+                var y = DenseTensor<long>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = xs[i] < lo ? lo : (xs[i] > hi ? hi : xs[i]);
+                return Success(op, y);
+            }
+            default: return InputTypeNotSupported(op, nameof(data), data);
+        }
+    }
+
     public static OpResult Floor(ITensor? X, ExecutionOptions? options)
     {
         var op = OpType.Floor;
@@ -619,6 +744,65 @@ public partial class CPUExecutionProvider
         var y = DenseTensor<bool>.OfShape(x.Dimensions.ToArray());
         for (int i = 0; i < y.Length; i++) y.SetValue(i, !x.GetValue(i));
         return Success(op, y);
+    }
+
+    public static OpResult LeakyRelu(ITensor? X, float? alpha, ExecutionOptions? options)
+    {
+        var op = OpType.LeakyRelu;
+        if (X is null) return MissingInput(op, nameof(X));
+        (options ?? ExecutionOptions.Default).Validated();
+        Profiler.StartOpStage(OpStage.Math);
+        float a = alpha ?? 0.01f;
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float:
+            {
+                var x = ((Tensor<float>)X).ToDenseTensor();
+                var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = xs[i] < 0f ? a * xs[i] : xs[i];
+                return Success(op, y);
+            }
+            case TensorElementType.Double:
+            {
+                double ad = a;
+                var x = ((Tensor<double>)X).ToDenseTensor();
+                var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = xs[i] < 0.0 ? ad * xs[i] : xs[i];
+                return Success(op, y);
+            }
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult LogSoftmax(ITensor? input, int? _axis, ExecutionOptions? options, TensorBufferPool? pool, int opsetVersion)
+    {
+        var op = OpType.LogSoftmax;
+        if (input is null) return MissingInput(op, nameof(input));
+        // The default axis is -1 at every opset (verified against ORT 1.29
+        // at opsets 10, 11, and 13 alike); no version split is needed.
+        var axis = _axis ?? -1;
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        var tensorOptions = opts.Tensor;
+        if (opts.Optimization == OptimizationMode.Speed)
+        {
+            input = ((INumericTensor)input).ToDenseTensor();
+        }
+        switch (input.ElementType)
+        {
+            case TensorElementType.Float:
+            {
+                var fx = (Tensor<float>)input;
+                if (pool is null) return Success(op, Tensor<float>.LogSoftmax(fx, axis, tensorOptions, opsetVersion));
+                var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)fx.Length)), fx.Dimensions.ToArray());
+                return Success(op, Tensor<float>.LogSoftmax(fx, rented, axis, tensorOptions, opsetVersion));
+            }
+            case TensorElementType.Double: return Success(op, Tensor<double>.LogSoftmax((Tensor<double>)input, axis, tensorOptions, opsetVersion));
+            default: return InputTypeNotSupported(op, nameof(input), input);
+        }
     }
 
     public static OpResult Neg(ITensor? X, ExecutionOptions? options)
