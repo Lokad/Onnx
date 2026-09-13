@@ -726,6 +726,165 @@ namespace Lokad.Onnx
             return fused;
         }
 
+        static readonly object ConvReluPassLock = new object();
+        static bool convReluRegistered;
+
+        public static void RegisterConvReluPass()
+        {
+            lock (ConvReluPassLock)
+            {
+                if (convReluRegistered) return;
+                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
+                    "convrelu",
+                    (graph, facts) =>
+                    {
+                        var rewritten = new List<int>();
+                        int n = FuseConvReluPass(graph, facts, rewritten);
+                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
+                        result.Nodes.AddRange(rewritten);
+                        if (n > 0) result.Notes.Add("fused " + n + " Conv+Relu epilogues");
+                        return result;
+                    }));
+                convReluRegistered = true;
+            }
+        }
+
+        public static int FuseConvReluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        {
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.Relu) continue;
+                if (!IsFusableParticipant(graph.Nodes[i])) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchEpilogue(graph, facts, drop, i, OpType.Conv, 2, 3, OpType.ConvRelu, out int producer))
+                {
+                    drop.Add(i);
+                    rewritten.Add(producer);
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        static readonly object AddReluPassLock = new object();
+        static bool addReluRegistered;
+
+        public static void RegisterAddReluPass()
+        {
+            lock (AddReluPassLock)
+            {
+                if (addReluRegistered) return;
+                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
+                    "addrelu",
+                    (graph, facts) =>
+                    {
+                        var rewritten = new List<int>();
+                        int n = FuseAddReluPass(graph, facts, rewritten);
+                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
+                        result.Nodes.AddRange(rewritten);
+                        if (n > 0) result.Notes.Add("fused " + n + " Add+Relu epilogues");
+                        return result;
+                    }));
+                addReluRegistered = true;
+            }
+        }
+
+        public static int FuseAddReluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        {
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.Relu) continue;
+                if (!IsFusableParticipant(graph.Nodes[i])) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchEpilogue(graph, facts, drop, i, OpType.Add, 2, 2, OpType.AddRelu, out int producer))
+                {
+                    drop.Add(i);
+                    rewritten.Add(producer);
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        /// <summary>
+        /// Matches Producer followed by Relu where the producer output feeds
+        /// nothing else and is no graph output, with proven float32/64 dtype.
+        /// Rewrites the producer struct in place to the fused identity carrying
+        /// the Relu output name; the caller drops the Relu node.
+        /// </summary>
+        static bool TryMatchEpilogue(
+            ComputationalGraph graph,
+            Optimization.GraphFacts facts,
+            HashSet<int> drop,
+            int reluIndex,
+            OpType producerOp,
+            int minInputs,
+            int maxInputs,
+            OpType fusedOp,
+            out int producerIndex)
+        {
+            producerIndex = -1;
+            var relu = graph.Nodes[reluIndex];
+            if (relu.Op != OpType.Relu || relu.IsFused) return false;
+            if (!IsFusableParticipant(relu)) return false;
+            if (relu.Inputs.Length != 1 || relu.Outputs.Length != 1) return false;
+            if (relu.Attributes is not null && relu.Attributes.Count != 0) return false;
+            string mid = relu.Inputs[0];
+            string rout = relu.Outputs[0];
+            if (string.IsNullOrEmpty(mid) || string.IsNullOrEmpty(rout)) return false;
+            if (facts.GraphOutputs.Contains(mid)) return false;
+            if (!facts.Producer.TryGetValue(mid, out int pi) || drop.Contains(pi)) return false;
+            var prod = graph.Nodes[pi];
+            if (prod.Op != producerOp || prod.IsFused) return false;
+            if (!IsFusableParticipant(prod)) return false;
+            if (prod.Inputs.Length < minInputs || prod.Inputs.Length > maxInputs) return false;
+            if (prod.Outputs.Length != 1) return false;
+            if (!facts.Consumers.TryGetValue(mid, out var uses)) return false;
+            int live = 0;
+            foreach (var u in uses) if (!drop.Contains(u)) live++;
+            if (live != 1) return false;
+            if (!facts.Dtypes.TryGetValue(mid, out var dt)) return false;
+            if (dt != TensorElementType.Float && dt != TensorElementType.Double) return false;
+            var fused = prod;
+            fused.Op = fusedOp;
+            fused.OpTypeName = fusedOp.ToString();
+            fused.Domain = "";
+            int stdv = StandardOpset(graph);
+            if (stdv >= 0) fused.OpsetVersion = stdv;
+            fused.IsFused = true;
+            fused.Outputs = new[] { rout };
+            graph.Nodes[pi] = fused;
+            producerIndex = pi;
+            return true;
+        }
         static readonly object RopePassLock = new object();
         static bool ropeRegistered;
 

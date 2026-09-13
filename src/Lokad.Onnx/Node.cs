@@ -284,6 +284,11 @@ public partial struct Node
 
         OpType.Relu => ReluIntGate(graph) ?? CPU.Relu(InputTensor(graph, 0), opt),
 
+        OpType.ConvRelu => CPU.ConvRelu(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt),
+
+        OpType.AddRelu => Sub32Gate(graph, OpType.Add) ?? CPU.AddRelu(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+
         OpType.Erf => CPU.Erf(InputTensor(graph, 0), opt, graph.ActivePool),
 
         OpType.MaxPool => CPU.MaxPool(InputTensor(graph, 0), Attr<string>("auto_pad", null), GetInt("ceil_mode", null), Ints("dilations"), Ints("kernel_shape"), Ints("pads"), GetInt("storage_order", null), Ints("strides"), opt),

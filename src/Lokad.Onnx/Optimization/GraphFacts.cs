@@ -118,6 +118,15 @@ internal sealed class GraphFacts
         if (pn.IsFused)
         {
             if (!Node.IsStandardDomain(pn.Domain)) return null;
+            if (pn.Op == OpType.ConvRelu || pn.Op == OpType.AddRelu)
+            {
+                // Fused epilogues keep producer inputs verbatim, so prove under
+                // the producer rule with a defused copy (Node is a value type).
+                var qn = pn;
+                qn.IsFused = false;
+                qn.Op = pn.Op == OpType.ConvRelu ? OpType.Conv : OpType.Add;
+                return ProveNodeDtype(graph, nodes, producer, qn, visiting, memo);
+            }
             if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu) return null;
             if (pn.Inputs is null || pn.Inputs.Length < 1) return null;
             return ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
@@ -132,6 +141,32 @@ internal sealed class GraphFacts
             int? to = pn.Int("to", null);
             if (!to.HasValue) return null;
             return Enum.IsDefined(typeof(TensorElementType), to.Value) ? (TensorElementType)to.Value : null;
+        }
+        // Fused epilogues keep their producer inputs verbatim and Relu
+        // preserves dtype, so they prove exactly under the producer rule.
+        // These sit before the fusability gate on purpose: without them every
+        // fact downstream of a fused node degrades to unknown, silently
+        // disabling later matchers (found when Add+Relu fusion starved).
+        if (pn.Op == OpType.ConvRelu)
+        {
+            if (pn.Inputs is null || pn.Inputs.Length < 2) return null;
+            var first = ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
+            var second = ProveDtype(graph, nodes, producer, pn.Inputs[1], visiting, memo);
+            if (!first.HasValue || !second.HasValue || first.Value != second.Value) return null;
+            if (pn.Inputs.Length >= 3 && !string.IsNullOrEmpty(pn.Inputs[2]))
+            {
+                var third = ProveDtype(graph, nodes, producer, pn.Inputs[2], visiting, memo);
+                if (!third.HasValue || third.Value != first.Value) return null;
+            }
+            return first;
+        }
+        if (pn.Op == OpType.AddRelu)
+        {
+            if (pn.Inputs is null || pn.Inputs.Length != 2) return null;
+            var left = ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
+            var right = ProveDtype(graph, nodes, producer, pn.Inputs[1], visiting, memo);
+            if (!left.HasValue || !right.HasValue || left.Value != right.Value) return null;
+            return left;
         }
         if (!IsFusableParticipant(pn)) return null;
         if (pn.Op == OpType.Add || pn.Op == OpType.Sub || pn.Op == OpType.Mul || pn.Op == OpType.Div || pn.Op == OpType.Pow)

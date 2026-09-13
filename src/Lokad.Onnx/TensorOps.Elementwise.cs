@@ -633,7 +633,7 @@ where T : unmanaged
     }
 
     /// <summary>Vectorized float Relu with exact edge semantics: keep where positive, keep signed zero, keep NaN, zero the rest.</summary>
-    static unsafe void ReluSpanFloat(System.Span<float> xs, System.Span<float> ys)
+    internal static unsafe void ReluSpanFloat(System.Span<float> xs, System.Span<float> ys)
     {
         int n = xs.Length;
         int w = Vector256<float>.Count;
@@ -668,7 +668,7 @@ where T : unmanaged
     }
 
     /// <summary>Vectorized double Relu with exact edge semantics.</summary>
-    static unsafe void ReluSpanDouble(System.Span<double> xs, System.Span<double> ys)
+    internal static unsafe void ReluSpanDouble(System.Span<double> xs, System.Span<double> ys)
     {
         int n = xs.Length;
         int w = Vector256<double>.Count;

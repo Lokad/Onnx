@@ -91,6 +91,26 @@ public class Model
         }
         if (geluTanh > 0) Info("Fused {c} tanh-approx GELU patterns into native nodes.", geluTanh);
         if (gelu > 0) Info("Fused {c} exact-GELU patterns into native nodes.", gelu);
+        GraphFusion.RegisterConvReluPass();
+        int convRelu = 0;
+        if (runOptimizer)
+        {
+            foreach (var change in Optimization.GraphOptimizer.Run(graph))
+            {
+                if (change.Pass == "convrelu") convRelu += change.Rewritten;
+            }
+        }
+        if (convRelu > 0) Info("Fused {c} Conv+Relu epilogues into native nodes.", convRelu);
+        GraphFusion.RegisterAddReluPass();
+        int addRelu = 0;
+        if (runOptimizer)
+        {
+            foreach (var change in Optimization.GraphOptimizer.Run(graph))
+            {
+                if (change.Pass == "addrelu") addRelu += change.Rewritten;
+            }
+        }
+        if (addRelu > 0) Info("Fused {c} Add+Relu epilogues into native nodes.", addRelu);
         Optimization.ConstFold.RegisterConstFoldPass();
         Optimization.ShapeZeroCopy.RegisterShapeZeroCopyPass();
         if (runOptimizer)
