@@ -635,6 +635,102 @@ public class MathOps
     /// <param name="K">B columns.</param>
     /// <param name="B">Right matrix, row-major.</param>
     /// <param name="P">Destination with room for N times K floats.</param>
+    /// <summary>
+    /// Small-tile matrix multiplication over row-major B, two rows by up to 16 columns.
+    /// </summary>
+    /// <param name="M">A rows (must be even).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns (must be 64 or fewer).</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="B">Right matrix, row-major.</param>
+    /// <param name="C">Result matrix.</param>
+    /// <remarks>
+    /// A01 prototype (M2b). Covers the small attention tiles (scores/context, K at most 64)
+    /// that run in the 8-column tail of the 32-column tiled kernel: each j-step shares its
+    /// two broadcasts across 4 FMAs over 16 columns (broadcast per FMA quartered against
+    /// the tail) with 8 live accumulators that fit the register file with no spills.
+    /// Per-element accumulation order matches the tiled kernel tail exactly (C seed, then
+    /// j-ascending fused multiply-add; scalar tail in reduction-major order), so results
+    /// agree with it bit-wise on every covered shape.
+    /// </remarks>
+    public unsafe static void mm_unsafe_rowmajor_2x2blk(int M,
+                              int N,
+                              int K,
+                              float* A,
+                              float* B,
+                              float* C)
+    {
+        if (M % 2 != 0)
+            throw new ArgumentException(nameof(M));
+        if (K > 2 * 2 * Vector256<float>.Count)
+            throw new ArgumentException(nameof(K));
+
+        int vcount = Vector256<float>.Count;
+        int blockCols = 2 * vcount;
+        for (int i = 0; i < M; i += 2)
+        {
+            var Ap1 = A + i * N;
+            var Ap2 = Ap1 + N;
+            var Cp1 = C + i * K;
+            var Cp2 = Cp1 + K;
+            int kb = 0;
+            for (; kb + blockCols <= K; kb += blockCols)
+            {
+                var C1 = (Vector256<float>*)(Cp1 + kb);
+                var C2 = (Vector256<float>*)(Cp2 + kb);
+                Vector256<float> c00 = C1[0];
+                Vector256<float> c01 = C1[1];
+                Vector256<float> c10 = C2[0];
+                Vector256<float> c11 = C2[1];
+                for (int j = 0; j < N; ++j)
+                {
+                    var av1 = Vector256.Create(Ap1[j]);
+                    var av2 = Vector256.Create(Ap2[j]);
+                    var Bpv = (Vector256<float>*)(B + j * K + kb);
+                    c00 = Fma.MultiplyAdd(Bpv[0], av1, c00);
+                    c01 = Fma.MultiplyAdd(Bpv[1], av1, c01);
+                    c10 = Fma.MultiplyAdd(Bpv[0], av2, c10);
+                    c11 = Fma.MultiplyAdd(Bpv[1], av2, c11);
+                }
+                C1[0] = c00;
+                C1[1] = c01;
+                C2[0] = c10;
+                C2[1] = c11;
+            }
+            int rem = K - kb;
+            int rv = rem / vcount;
+            for (int t = 0; t < rv; t++)
+            {
+                var rC1 = (Vector256<float>*)(Cp1 + kb);
+                var rC2 = (Vector256<float>*)(Cp2 + kb);
+                Vector256<float> c1 = rC1[t];
+                Vector256<float> c2 = rC2[t];
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bpv = (Vector256<float>*)(B + j * K + kb + t * vcount);
+                    c1 = Fma.MultiplyAdd(Bpv[0], Vector256.Create(Ap1[j]), c1);
+                    c2 = Fma.MultiplyAdd(Bpv[0], Vector256.Create(Ap2[j]), c2);
+                }
+                rC1[t] = c1;
+                rC2[t] = c2;
+            }
+            // Scalar tail keeps the reduction-major order of the tiled kernel
+            // (accumulate into the destination per step) so results agree bit-wise.
+            int vcols = rv * vcount;
+            for (int j = 0; j < N; ++j)
+            {
+                float a1 = Ap1[j];
+                float a2 = Ap2[j];
+                var Brow = B + j * K;
+                for (int k = kb + vcols; k < K; k++)
+                {
+                    Cp1[k] += a1 * Brow[k];
+                    Cp2[k] += a2 * Brow[k];
+                }
+            }
+        }
+    }
+
     public unsafe static void PackPanelsB(int N,
                           int K,
                           float* B,
