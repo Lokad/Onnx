@@ -158,6 +158,38 @@
         "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
         "path": "decoder_joint-model.onnx"
       }
+    },
+    {
+      "key": "parakeet-encoder",
+      "file": "models/parakeet-tdt-0.6b-v3/onnx/encoder-model.onnx",
+      "sha256": "98A74B21B4CC0017C1E7030319A4A96F4A9506E50F0708F3A516D02A77C96BB1",
+      "bytes": 41770866,
+      "opset": 17,
+      "generator": "PLAN.md Milestone 3 voice probe with Python onnxruntime==1.29.0 oracle (ORT_SEQUENTIAL, intra/inter-op 1, ORT_ENABLE_ALL) over synthetic mel features at two lengths; C# ORT 1.23.2 cross-check maxScaled 4.8e-07 at tol 1e-4 with int-exact lengths",
+      "test": "GraphExecutionEncoderTests (encoded-frames oracle, exact lengths, reuse/input-intact, shorter input)",
+      "inputs": "audio_signal [1,128,128] and [1,128,64] sin pattern, length [frames]",
+      "oracle": "outputs [1,1024,16]/[1,1024,8], finite, mean 1e-6, spots 1e-3; encoded_lengths exact",
+      "source": {
+        "repo": "istupakov/parakeet-tdt-0.6b-v3-onnx",
+        "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
+        "path": "encoder-model.onnx"
+      }
+    },
+    {
+      "key": "parakeet-encoder-weights",
+      "file": "models/parakeet-tdt-0.6b-v3/onnx/encoder-model.onnx.data",
+      "sha256": "9A22D372C51455C34F13405DA2520BAEFB7125BD16981397561423ED32D24F36",
+      "bytes": 2435420160,
+      "opset": 0,
+      "generator": "External weights accompanying encoder-model.onnx (see parakeet-encoder entry)",
+      "test": "External-data resolution for GraphExecutionEncoderTests",
+      "inputs": "external tensor data referenced by encoder-model.onnx",
+      "oracle": "exact hash and byte match; inference oracle lives on the parakeet-encoder entry",
+      "source": {
+        "repo": "istupakov/parakeet-tdt-0.6b-v3-onnx",
+        "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
+        "path": "encoder-model.onnx.data"
+      }
     }
   ]
 }
