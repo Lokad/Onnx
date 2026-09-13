@@ -30,6 +30,10 @@ static class Bench
             ["resnet50"] = new[] { Path.Combine(root, "models", "resnet50-onnx", "model.onnx") },
             ["gpt2"] = new[] { Path.Combine(root, "models", "gpt2-onnx", "onnx", "model.onnx") },
         };
+        if (args.Length > 0 && args[0] == "graph")
+        {
+            return GraphCensus.RunGraph(root, assets, args.Skip(1).ToArray());
+        }
         if (args.Length > 0 && args[0] == "micro")
         {
             int microCpu = 0;
