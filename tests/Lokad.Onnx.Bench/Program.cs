@@ -189,7 +189,7 @@ static class Bench
         return 0;
     }
 
-    static string[] StripCpuSelector(string[] args, ref int cpu)
+    internal static string[] StripCpuSelector(string[] args, ref int cpu)
     {
         var rest = new List<string>();
         for (int i = 0; i < args.Length; i++)
@@ -206,7 +206,7 @@ static class Bench
     [System.Runtime.Versioning.SupportedOSPlatformGuard("linux")]
     static bool AffinitySupported => OperatingSystem.IsWindows() || OperatingSystem.IsLinux();
 
-    static IntPtr EnforceSingleCpuAffinity(int cpu)
+    internal static IntPtr EnforceSingleCpuAffinity(int cpu)
     {
         if (!AffinitySupported)
             throw new InvalidOperationException("single-CPU confinement failed: process affinity is not supported on "
@@ -377,7 +377,7 @@ static class Bench
         throw new InvalidOperationException("repo root not found");
     }
 
-    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, int takeTokens = 0, int padTo = 0)
+    internal static ITensor[] E5Inputs(string name, string tokenizer, string text, int takeTokens, int padTo)
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
         if (takeTokens > 0)
@@ -420,21 +420,29 @@ static class Bench
             }
             inputs = padded.ToArray();
         }
+        return inputs;
+    }
+
+    internal static ITensor[] VisionInputs()
+    {
+        var flat = new float[1 * 3 * 224 * 224];
+        for (int i = 0; i < flat.Length; i++) flat[i] = 0.5f;
+        return new ITensor[] { new DenseTensor<float>(flat, new[] { 1, 3, 224, 224 }) };
+    }
+    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, int takeTokens = 0, int padTo = 0)
+    {
+        var inputs = E5Inputs(name, tokenizer, text, takeTokens, padTo);
         Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + ShortHash(tokenizer));
         Compare(name, model, inputs, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
     }
 
     static void CompareVision(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)
     {
-        var flat = new float[1 * 3 * 224 * 224];
-        for (int i = 0; i < flat.Length; i++) flat[i] = 0.5f;
-        var input = new DenseTensor<float>(flat, new[] { 1, 3, 224, 224 });
-        Compare(name, model, new ITensor[] { input }, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
+        Compare(name, model, VisionInputs(), tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
     }
 
     static readonly long[] Gpt2PrefillPattern = new long[] { 15496, 11, 314, 716 };
-
-    static ITensor[] Gpt2PrefillInputs(int tokens, bool legacyCycle)
+    internal static ITensor[] Gpt2PrefillInputs(int tokens, bool legacyCycle)
     {
         if (tokens < 1) throw new InvalidOperationException("gpt2 prefill needs at least 1 token.");
         var idv = new long[tokens];
@@ -463,6 +471,7 @@ static class Bench
         }
         return inputs.ToArray();
     }
+
 
     static void CompareGpt2(string name, string model, int tokens, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, bool legacyCycle = false)
     {
@@ -811,7 +820,7 @@ static class Bench
         }
     }
 
-    static (double scaled, double abs, double lokadFirstMs, double ortFirstMs) Validate(string name, ComputationalGraph graph, InferenceSession session, Dictionary<string, ITensor> named, string[] outNames, ExecutionOptions lokadOpts)
+    internal static (double scaled, double abs, double lokadFirstMs, double ortFirstMs) Validate(string name, ComputationalGraph graph, InferenceSession session, Dictionary<string, ITensor> named, string[] outNames, ExecutionOptions lokadOpts)
     {
         // First runs on cold state; output disposal stays outside both first-run figures.
         // The ORT session is the reference in every comparison below.
@@ -898,7 +907,7 @@ static class Bench
         return h;
     }
 
-    static Dictionary<string, OrtValue> BuildOrtInputs(Dictionary<string, ITensor> named, string[] inNames)
+    internal static Dictionary<string, OrtValue> BuildOrtInputs(Dictionary<string, ITensor> named, string[] inNames)
     {
         var ortInputs = new Dictionary<string, OrtValue>();
         foreach (var n in inNames)
@@ -917,7 +926,7 @@ static class Bench
         return ortInputs;
     }
 
-    static Dictionary<string, ITensor> ToNamed(string name, ITensor[] inputs, string[] names)
+    internal static Dictionary<string, ITensor> ToNamed(string name, ITensor[] inputs, string[] names)
     {
         var d = new Dictionary<string, ITensor>(StringComparer.Ordinal);
         foreach (var t in inputs)
