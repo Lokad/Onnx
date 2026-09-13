@@ -98,7 +98,7 @@ internal static class ConstFold
         return folded + swept;
     }
 
-    static void SweepDeadNodes(ComputationalGraph graph, GraphFacts facts)
+    internal static void SweepDeadNodes(ComputationalGraph graph, GraphFacts facts)
     {
         for (int round = 0; round < graph.Nodes.Count + 1; round++)
         {

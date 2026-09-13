@@ -92,6 +92,7 @@ public class Model
         if (geluTanh > 0) Info("Fused {c} tanh-approx GELU patterns into native nodes.", geluTanh);
         if (gelu > 0) Info("Fused {c} exact-GELU patterns into native nodes.", gelu);
         Optimization.ConstFold.RegisterConstFoldPass();
+        Optimization.ShapeZeroCopy.RegisterShapeZeroCopyPass();
         if (runOptimizer)
         {
             Optimization.GraphOptimizer.Run(graph);
