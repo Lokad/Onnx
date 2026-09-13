@@ -1,6 +1,12 @@
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
+/// N01 two-tier policy: SequenceEqual asserts below stay only for kernel pairs documented
+/// as order-identical at a fixed mode (controls for intentionally equal arithmetic). Every
+/// kernel must also meet the elementwise double-reference bounds added at the end of this
+/// class, which assume no reduction order and leave headroom for new groupings. Public promise
+/// (core README, Numeric contracts): correct within float32 accumulation noise; bitwise
+/// identity only for repeated runs at a fixed mode and thread count.
 /// Guards the T02 rule: the raw production MatMul kernels must all compute
 /// A-times-B (never A-times-A) and agree with an independent reference
 /// within float-reorder tolerance, including accumulation onto a nonzero
@@ -589,6 +595,110 @@ public class MatMulKernelAgreementTests
         Assert.Throws<System.ArgumentException>(() => Tensor<float>.MatMul(sx, sy, TensorExecutionOptions.Scalar));
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Gemm(sx, sy, null, 1f, 1f, null, 0, 0).Status);
         Assert.Equal(OpStatus.Failure, CPUExecutionProvider.Conv(sx, sy, null, null, null, null, null, null, null, null).Status);
+    }
+
+    static double ReferenceElement(DenseTensor<float> a, DenseTensor<float> b, DenseTensor<float> c, int m, int n, int k, int i, int j)
+    {
+        // Independent double-precision reference for one output element, destination included.
+        double acc = c.GetValue(i * k + j);
+        for (int l = 0; l < n; l++) acc += (double)a.GetValue(i * n + l) * (double)b.GetValue(l * k + j);
+        return acc;
+    }
+
+    static void AgreesWithDouble(DenseTensor<float> got, DenseTensor<float> a, DenseTensor<float> b, DenseTensor<float> c, int m, int n, int k, double tolerance, string variant)
+    {
+        double worst = 0;
+        int wi = -1, wj = -1;
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < k; j++)
+            {
+                double expected = ReferenceElement(a, b, c, m, n, k, i, j);
+                double scaled = Math.Abs(got.GetValue(i * k + j) - expected) / (1.0 + Math.Abs(expected));
+                if (scaled > worst) { worst = scaled; wi = i; wj = j; }
+            }
+        Assert.True(worst <= tolerance,
+            $"{variant} exceeds double-reference bound: scaled {worst:E2} at ({wi},{wj}) vs {tolerance:E2}.");
+    }
+
+    static DenseTensor<float> FillSigned(int rows, int cols, Random rnd)
+    {
+        var t = Tensor<float>.Zeros(rows, cols).ToDenseTensor();
+        for (int i = 0; i < t.Length; i++) t.SetValue(i, rnd.NextSingle() * 2f - 1f);
+        return t;
+    }
+
+    static DenseTensor<float> FillSpanned(int rows, int cols, Random rnd)
+    {
+        // Positive entries alternating small/large magnitude: exercises exponent range in
+        // packing and accumulation without engineering catastrophic cancellation (sums stay
+        // positive, so the bound below constrains real rounding, not ill-conditioning).
+        var t = Tensor<float>.Zeros(rows, cols).ToDenseTensor();
+        for (int i = 0; i < t.Length; i++)
+            t.SetValue(i, (i & 1) == 0 ? 0.001f * (1f + rnd.NextSingle()) : 1f + 999f * rnd.NextSingle());
+        return t;
+    }
+
+    static unsafe void DoubleBounded(int m, int n, int k, Func<int, int, Random, DenseTensor<float>> fill, double tolerance, Random rnd, string tag)
+    {
+        var a = fill(m, n, rnd);
+        var b = fill(n, k, rnd);
+        var c = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        var routed = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics).ToDenseTensor();
+        AgreesWithDouble(routed, a, b, c, m, n, k, tolerance, tag + "-dispatched-intrinsics");
+        var scalar = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Scalar).ToDenseTensor();
+        AgreesWithDouble(scalar, a, b, c, m, n, k, tolerance, tag + "-dispatched-scalar");
+        var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var packed = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, packed);
+        AgreesWithDouble(packed, a, b, c, m, n, k, tolerance, tag + "-packed");
+    }
+
+    [SkippableFact]
+    public unsafe void KernelsAgreeWithDoubleReference()
+    {
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        DoubleBounded(8, 24, 20, FillRect, 1e-5, rnd, "uniform");
+        DoubleBounded(30, 48, 80, FillRect, 1e-5, rnd, "uniform-tail");
+        DoubleBounded(30, 48, 80, FillSpanned, 1e-5, rnd, "magnitude-span");
+    }
+
+    [SkippableFact]
+    public unsafe void KernelsTolerateSignedCancellation()
+    {
+        // Mixed-sign data: partial sums genuinely cancel, so the bound is the budgeted worst
+        // case (1e-4 scaled, the full-model gate), not the quiet-data 1e-5. A failure here is a
+        // real excess over float32 accumulation noise, not an ordering technicality.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        DoubleBounded(32, 32, 32, FillSigned, 1e-4, rnd, "signed");
+    }
+
+    [SkippableFact]
+    public unsafe void NegativeZeroDestination_AccumulatesToPositiveZero()
+    {
+        // IEEE round-to-nearest: (-0.0) + (+0.0) is +0.0, and every product below is an exact
+        // zero, so all reduction groupings must produce positive-zero bits. Pins the documented
+        // accumulate-into-destination semantics, not an implementation order.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        // Dispatched paths rent cleared outputs, so the destination sign is exercised through
+        // the raw kernels, which accumulate into caller storage by contract.
+        var a = Tensor<float>.Zeros(8, 4).ToDenseTensor();
+        var b = FillRect(4, 4, new Random(Seed));
+        void AssertPositiveZero(DenseTensor<float> c, string variant)
+        {
+            Assert.All(c.ToArray(), v => Assert.True(BitConverter.SingleToInt32Bits(v) == 0,
+                $"{variant} produced signed-zero bits {BitConverter.SingleToInt32Bits(v):X8}."));
+        }
+        var c1 = Tensor<float>.Zeros(8, 4).ToDenseTensor();
+        for (int i = 0; i < c1.Length; i++) c1.SetValue(i, -0.0f);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(8, 4, 4, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        AssertPositiveZero(c1, "tiled");
+        var p = Tensor<float>.Zeros(4, 4).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(8, 4).ToDenseTensor();
+        for (int i = 0; i < c2.Length; i++) c2.SetValue(i, -0.0f);
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(4, 4, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(8, 4, 4, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        AssertPositiveZero(c2, "packed");
     }
 
 }
