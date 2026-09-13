@@ -153,6 +153,7 @@ static class Bench
             var e5 = assets["e5"];
             RunCase("e5-8tok", () => CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
             RunCase("e5-30tok", () => CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
+            RunCase("e5-30pad128", () => CompareE5("e5-30pad128", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 0, 128));
             var e5Long = "query: " + string.Join(" ", Enumerable.Repeat("The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", 40));
             RunCase("e5-128tok", () => CompareE5("e5-128tok", e5[0], e5[1], e5Long, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 128));
             RunCase("e5-512tok", () => CompareE5("e5-512tok", e5[0], e5[1], e5Long, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 512));
@@ -372,7 +373,7 @@ static class Bench
         throw new InvalidOperationException("repo root not found");
     }
 
-    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, int takeTokens = 0)
+    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, int takeTokens = 0, int padTo = 0)
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
         if (takeTokens > 0)
@@ -393,6 +394,27 @@ static class Bench
                 else cut.Add(t);
             }
             inputs = cut.ToArray();
+        }
+        if (padTo > 0)
+        {
+            // Right-pad to padTo with RoBERTa <pad> (1) on input_ids and 0 elsewhere, so the
+            // attention mask marks real content vs padding on both engines identically.
+            var padded = new List<ITensor>();
+            foreach (var t in inputs)
+            {
+                if (t is Tensor<long> tl && tl.Dimensions.Length == 2 && tl.Dimensions[0] == 1 && tl.Dimensions[1] < padTo)
+                {
+                    long pad = tl.Name == "input_ids" ? 1 : 0;
+                    var ext = new long[padTo];
+                    for (int pi = 0; pi < tl.Dimensions[1]; pi++) ext[pi] = tl.GetValue(pi);
+                    for (int pi = tl.Dimensions[1]; pi < padTo; pi++) ext[pi] = pad;
+                    var nt = new DenseTensor<long>(ext, new[] { 1, padTo });
+                    nt.Name = tl.Name;
+                    padded.Add(nt);
+                }
+                else padded.Add(t);
+            }
+            inputs = padded.ToArray();
         }
         Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + ShortHash(tokenizer));
         Compare(name, model, inputs, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);

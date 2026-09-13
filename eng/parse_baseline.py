@@ -13,7 +13,7 @@ import statistics
 import sys
 
 ORDER = ["e5-8tok", "e5-30tok", "dinov3-224", "resnet50-224", "gpt2-4tok"]
-EXTENDED = ["e5-128tok", "e5-512tok", "gpt2-1tok", "gpt2-32tok", "gpt2-128tok", "gpt2-dec-p1", "gpt2-dec-p32", "gpt2-dec-p128", "gpt2-dec-p512"]
+EXTENDED = ["e5-128tok", "e5-512tok", "gpt2-1tok", "gpt2-32tok", "gpt2-128tok", "gpt2-dec-p1", "gpt2-dec-p32", "gpt2-dec-p128", "gpt2-dec-p512", "e5-30pad128"]
 
 
 def read_log_text(path):
