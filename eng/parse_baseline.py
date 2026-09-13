@@ -69,17 +69,26 @@ def stats(xs):
 
 
 def main():
-    logs = sys.argv[1:]
+    args = sys.argv[1:]
+    want = None
+    if args[:1] == ["--cases"]:
+        if len(args) < 3:
+            raise SystemExit("usage: python eng/parse_baseline.py [--cases a,b,c] <rep1.log> [rep2.log ...]")
+        want = args[1].split(",")
+        logs = args[2:]
+    else:
+        logs = args
     if not logs:
         raise SystemExit("usage: python eng/parse_baseline.py <rep1.log> [rep2.log ...]")
     reps = [parse_rep(p) for p in logs]
+    order = [n for n in ORDER if want is None or n in want]
+    present = [n for n in EXTENDED if all(rep["status"].get(n) == "ok" and n in rep["cases"] for rep in reps) and (want is None or n in want)]
     for rep in reps:
-        for name in ORDER:
+        for name in order:
             if rep["status"].get(name) != "ok" or name not in rep["cases"]:
                 raise SystemExit("case missing or not ok: %s in %s" % (name, rep["log"]))
     table = []
-    present = [n for n in EXTENDED if all(rep["status"].get(n) == "ok" and n in rep["cases"] for rep in reps)]
-    for name in ORDER + present:
+    for name in order + present:
         rep_cells = []
         for rep in reps:
             lok = stats(rep["cases"][name]["raw"]["lok"])

@@ -124,6 +124,7 @@ resnet 2.4–2.6x), so future revisions compare within these reps.
 | gpt2-dec-p32 | 45.1 / 28.8 | 41.0 / 27.4 | 39.9 / 27.4 | 1.5-1.6x |
 | gpt2-dec-p128 | 49.6 / 28.4 | 51.8 / 29.0 | 49.8 / 28.6 | 1.7-1.8x |
 | gpt2-dec-p512 | 97.8 / 32.4 | 99.8 / 31.6 | 101.1 / 32.6 | 3.0-3.2x |
+| e5-30pad128 | 84.6 / 48.3 | 77.3 / 46.2 | 123.9 / 64.6 | 1.7-1.9x |
 
 Two findings for the optimization epics. First, the E5 gap grows with
 length (1.5x at 30–128 tokens, 1.9–2.0x at 512): the A02 tiled-attention
@@ -135,6 +136,8 @@ New GPT-2 regimes use a non-repeating token stride: the legacy 4-cycle trips
 a narrow 1.5e-4 operating-point breach at 32+ tokens (identical situs in all
 five probes, position 23; stride gates at 4.6e-5 through 512), recorded as
 N01 material. Frozen `gpt2-4tok` keeps the legacy cycle byte-identical.
+
+The padded case (30 real tokens + padding to 128) costs more than dense-128 on the Lokad side in all three reps (+13%, +14%, +59% on elevated rep3) while ORT is padding-indifferent (46–48 vs 46–47 ms on reps 1–2): mask-application or unskipped padded compute, priced for F02/G02 by B03 attribution before anyone "fixes" it. Rep3 of the pad campaign ran under renewed box load (both engines elevated); its ratios hold, so the rep stands. Pad artifacts: `tests/Lokad.Onnx.Bench/baseline/summary-20260913-pad.json` (e5-only campaign, `--cases` subset flag added to the parser for partial campaigns).
 ## Historical methodology
 
 Each model case reports three validated rows measured in one process:
