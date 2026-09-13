@@ -126,6 +126,7 @@ public class OneOpBenchmarks
         Add("chain_transpose_4", "x", new int[] { 1, 30, 12, 32 });
         Add("chain_transpose_8", "x", new int[] { 1, 30, 12, 32 });
         Add("mlpbias_e5_8", "x", new int[] { 1, 8, 384 });
+        Add("attnblock_e5_8", "x", new int[] { 1, 8, 384 });
         foreach (var c in cases) VerifyAgreement(c);
         Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise.");
     }
@@ -621,4 +622,12 @@ public class OneOpBenchmarks
     [Benchmark(Description = "E5 MLP up-projection with bias plus exact GELU 1x8x384 (MatMul/Add/Gelu) - ORT session")]
     [BenchmarkCategory("mlpbias8")]
     public void OrtMlpBias8() => RunOrt(cases[54]);
+
+    [Benchmark(Description = "E5 attention block 1x8x384 (QKV/transpose/scores/softmax/context/proj) - Lokad session")]
+    [BenchmarkCategory("attnblock8")]
+    public void LokadAttnBlock8() => RunLokad(cases[55]);
+
+    [Benchmark(Description = "E5 attention block 1x8x384 (QKV/transpose/scores/softmax/context/proj) - ORT session")]
+    [BenchmarkCategory("attnblock8")]
+    public void OrtAttnBlock8() => RunOrt(cases[55]);
 }

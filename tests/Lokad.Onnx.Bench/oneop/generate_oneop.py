@@ -256,6 +256,36 @@ save_graph("tests/Lokad.Onnx.Bench/oneop/attnblock_e5_30", attn_nodes,
       helper.make_tensor("vshape", TensorProto.INT64, [4], shape4132),
       helper.make_tensor("yshape", TensorProto.INT64, [3], mergeshape)])
 
+# 28b. e5 8-token attention block (A01 8tok picture): same region as #28 at S=8.
+shape8132 = np.array([1, 8, 12, 32], dtype=np.int64)
+mergeshape8 = np.array([1, 8, 384], dtype=np.int64)
+attn8_nodes = [
+    helper.make_node("MatMul", ["x", "wq"], ["q3"], name="qproj"),
+    helper.make_node("MatMul", ["x", "wk"], ["k3"], name="kproj"),
+    helper.make_node("MatMul", ["x", "wv"], ["v3"], name="vproj"),
+    helper.make_node("Reshape", ["q3", "qshape8"], ["q4"], name="qreshape"),
+    helper.make_node("Reshape", ["k3", "kshape8"], ["k4"], name="kreshape"),
+    helper.make_node("Reshape", ["v3", "vshape8"], ["v4"], name="vreshape"),
+    helper.make_node("Transpose", ["q4"], ["q"], perm=[0, 2, 1, 3], name="qtranspose"),
+    helper.make_node("Transpose", ["k4"], ["kt"], perm=[0, 2, 3, 1], name="ktranspose"),
+    helper.make_node("Transpose", ["v4"], ["v"], perm=[0, 2, 1, 3], name="vtranspose"),
+    helper.make_node("MatMul", ["q", "kt"], ["scores"], name="scores"),
+    helper.make_node("Div", ["scores", "scale"], ["scaled"], name="scalediv"),
+    helper.make_node("Softmax", ["scaled"], ["probs"], axis=-1, name="softmax"),
+    helper.make_node("MatMul", ["probs", "v"], ["ctx4"], name="context"),
+    helper.make_node("Transpose", ["ctx4"], ["ctx3"], perm=[0, 2, 1, 3], name="ctxmerge"),
+    helper.make_node("Reshape", ["ctx3", "yshape8"], ["merged"], name="mergereshape"),
+    helper.make_node("MatMul", ["merged", "wo"], ["y"], name="outproj"),
+]
+save_graph("tests/Lokad.Onnx.Bench/oneop/attnblock_e5_8", attn8_nodes,
+     [tinfo("x", [1, 8, 384])], [tinfo("y", [1, 8, 384])],
+     [finit("wq", wq), finit("wk", wk), finit("wv", wv), finit("wo", wo),
+      finit("scale", scale),
+      helper.make_tensor("qshape8", TensorProto.INT64, [4], shape8132),
+      helper.make_tensor("kshape8", TensorProto.INT64, [4], shape8132),
+      helper.make_tensor("vshape8", TensorProto.INT64, [4], shape8132),
+      helper.make_tensor("yshape8", TensorProto.INT64, [3], mergeshape8)])
+
 # 29. resnet bottleneck (multi-op region fixture, 128ch @28x28, inner 32):
 # pointwise -> 3x3 -> pointwise with residual add and relu epilogues. Downscaled
 # from layer2.1 (512ch/inner-128) for fixture iteration speed; the region pattern
