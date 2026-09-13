@@ -392,23 +392,17 @@ where T : unmanaged
             int block = (int)runBytes;
             int outer = (int)destination.Length / block;
             int outerRank = rank - runAxes;
-            // Incrementing odometer over the outer axes: same block order as the
-            // divide/modulo form above with no divisions in the copy loop.
-            var starts = new int[outerRank];
-            int srcOff = 0;
             for (int o = 0; o < outer; o++)
             {
-                xs.Slice(srcOff, block).CopyTo(ds.Slice(o * block, block));
-                for (int dd = outerRank - 1; dd >= 0; dd--)
+                int srcOff = 0;
+                int rem = o;
+                for (int d = outerRank - 1; d >= 0; d--)
                 {
-                    // Size-1 axes never advance and contribute nothing: skipping
-                    // them keeps srcOff exact where a naive carry would corrupt it.
-                    if (destDims[dd] < 2) continue;
-                    starts[dd]++;
-                    if (starts[dd] < destDims[dd]) { srcOff += map[dd]; break; }
-                    starts[dd] = 0;
-                    srcOff -= map[dd] * (destDims[dd] - 1);
+                    int c = rem % destDims[d];
+                    rem /= destDims[d];
+                    srcOff += c * map[d];
                 }
+                xs.Slice(srcOff, block).CopyTo(ds.Slice(o * block, block));
             }
             return;
         }
