@@ -61,7 +61,15 @@ public class Model
             }
         }
         if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
-        int rope = GraphFusion.FuseRopePatterns(graph);
+        GraphFusion.RegisterRopePass();
+        int rope = 0;
+        if (runOptimizer)
+        {
+            foreach (var change in Optimization.GraphOptimizer.Run(graph))
+            {
+                if (change.Pass == "rope") rope += change.Rewritten;
+            }
+        }
         if (rope > 0) Info("Fused {c} rotary-embedding patterns into native nodes.", rope);
         GraphFusion.RegisterGeluPass();
         int gelu = 0;
@@ -72,7 +80,15 @@ public class Model
                 if (change.Pass == "gelu") gelu += change.Rewritten;
             }
         }
-        int geluTanh = GraphFusion.FuseGeluTanhPatterns(graph);
+        GraphFusion.RegisterGeluTanhPass();
+        int geluTanh = 0;
+        if (runOptimizer)
+        {
+            foreach (var change in Optimization.GraphOptimizer.Run(graph))
+            {
+                if (change.Pass == "gelu-tanh") geluTanh += change.Rewritten;
+            }
+        }
         if (geluTanh > 0) Info("Fused {c} tanh-approx GELU patterns into native nodes.", geluTanh);
         if (gelu > 0) Info("Fused {c} exact-GELU patterns into native nodes.", gelu);
         graph.Prepare();
