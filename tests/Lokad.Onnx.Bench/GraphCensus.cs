@@ -83,5 +83,5 @@ internal static class GraphCensus
     }
 
     static object NodeView(OnnxNode n) => new { name = n.Name, domain = n.Domain, op = n.OpType, inputs = n.Inputs, outputs = n.Outputs };
-    static object LokadView(Node n) => new { name = n.Name, domain = n.Domain, op = n.OpTypeName ?? n.Op.ToString(), fused = n.IsFused, inputs = n.Inputs, outputs = n.Outputs };
+    static object LokadView(Node n) => new { id = n.ID, name = n.Name, domain = n.Domain, op = n.OpTypeName ?? n.Op.ToString(), fused = n.IsFused, inputs = n.Inputs, outputs = n.Outputs };
 }

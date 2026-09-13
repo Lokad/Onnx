@@ -33,8 +33,9 @@ internal static class GraphProfile
         }
         if (kase is null) { Console.WriteLine("usage: Bench profile <case> [--out dir] [--cpu N] [--reps K]"); return 2; }
         if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount) { Console.WriteLine("invalid --cpu " + cpu); return 2; }
-        try { return ProfileCase(root, kase, outDir, cpu, reps); }
-        catch (Exception ex) { Console.WriteLine(kase + ": profile failed: " + ex.GetType().Name + ": " + ex.Message.Split((char)10)[0]); return 1; }
+        var startedUtc = DateTime.UtcNow;
+        try { int rc = ProfileCase(root, kase, outDir, cpu, reps); SweepStrayTraces(startedUtc); return rc; }
+        catch (Exception ex) { Console.WriteLine(kase + ": profile failed: " + ex.GetType().Name + ": " + ex.Message.Split((char)10)[0]); SweepStrayTraces(startedUtc); return 1; }
     }
 
     static int ProfileCase(string root, string kase, string outDir, int cpu, int reps)
@@ -81,6 +82,8 @@ internal static class GraphProfile
         try
         {
             var lokStages = new Dictionary<string, double>(StringComparer.Ordinal);
+            var lokNodes = new Dictionary<long, double>();
+            var lokNodeOps = new Dictionary<long, string>();
             var lokOps = new Dictionary<string, double>(StringComparer.Ordinal);
             double lokTotal = 0;
             var ortOps = new Dictionary<string, double>(StringComparer.Ordinal);
@@ -91,7 +94,7 @@ internal static class GraphProfile
             {
                 if (r % 2 == 0)
                 {
-                    lokTotal += ProfileLokad(graph, named, opts, lokStages, lokOps);
+                    lokTotal += ProfileLokad(graph, named, opts, lokStages, lokOps, lokNodes, lokNodeOps);
                     sw.Restart(); using (var o = session.Run(ro, ortInputs, outNames)) { sw.Stop(); }
                     ortTotal += sw.Elapsed.TotalMilliseconds;
                 }
@@ -99,7 +102,7 @@ internal static class GraphProfile
                 {
                     sw.Restart(); using (var o = session.Run(ro, ortInputs, outNames)) { sw.Stop(); }
                     ortTotal += sw.Elapsed.TotalMilliseconds;
-                    lokTotal += ProfileLokad(graph, named, opts, lokStages, lokOps);
+                    lokTotal += ProfileLokad(graph, named, opts, lokStages, lokOps, lokNodes, lokNodeOps);
                 }
             }
             string landed = session.EndProfiling();
@@ -116,7 +119,8 @@ internal static class GraphProfile
                 model,
                 reps,
                 gateScaled = gate.scaled,
-                lokad = new { totalMs = lokTotal, perOp = lokOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), stages = lokStages.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value) },
+                lokad = new { totalMs = lokTotal,
+                    nodes = lokNodes.OrderByDescending(kv => kv.Value).Select(kv => new { id = kv.Key, op = lokNodeOps[kv.Key], ms = kv.Value }).ToArray(), perOp = lokOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), stages = lokStages.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value) },
                 ort = new { totalMs = ortTotal, perOp = ortOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), traceFile },
             };
             File.WriteAllText(Path.Combine(outDir, kase + "-profile.json"),
@@ -143,7 +147,7 @@ internal static class GraphProfile
 
     static string E5Long(string root) => "query: " + string.Join(" ", Enumerable.Repeat(global::Bench.E5Sentence, 40));
 
-    static double ProfileLokad(ComputationalGraph graph, Dictionary<string, ITensor> named, ExecutionOptions opts, Dictionary<string, double> stages, Dictionary<string, double> ops)
+    static double ProfileLokad(ComputationalGraph graph, Dictionary<string, ITensor> named, ExecutionOptions opts, Dictionary<string, double> stages, Dictionary<string, double> ops, Dictionary<long, double> nodes, Dictionary<long, string> nodeOps)
     {
         using (Profiler.BeginExecution(true))
         {
@@ -167,6 +171,8 @@ internal static class GraphProfile
                     stages[stage] = stages.TryGetValue(stage, out var acc) ? acc + ms : ms;
                 }
                 ops[op] = ops.TryGetValue(op, out var oacc) ? oacc + nodeMs : nodeMs;
+                nodes[np.NodeId] = nodes.TryGetValue(np.NodeId, out var nacc) ? nacc + nodeMs : nodeMs;
+                nodeOps[np.NodeId] = op;
                 total += nodeMs;
             }
         }
@@ -195,6 +201,17 @@ internal static class GraphProfile
             ops[op] = ops.TryGetValue(op, out var acc) ? acc + ms : ms;
         }
         Console.WriteLine("ort trace " + Path.GetFileName(traceFile) + ": priced " + ops.Count + " op families, skipped " + skipped + " events.");
+    }
+
+    static void SweepStrayTraces(DateTime startedUtc)
+    {
+        // ORT drops its trace in the working directory and rewrites a near-empty one on
+        // session dispose; the real trace is relocated by ProfileCase. Delete our own duds.
+        foreach (var f in Directory.GetFiles(Directory.GetCurrentDirectory(), "onnxruntime_profile_*.json"))
+        {
+            try { if (File.GetCreationTimeUtc(f) >= startedUtc) File.Delete(f); }
+            catch (Exception ex) { Console.WriteLine("stray-trace sweep skipped " + f + ": " + ex.GetType().Name); }
+        }
     }
 
     const string UnknownOp = "(unknown)";
