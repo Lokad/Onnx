@@ -344,7 +344,7 @@ static class Bench
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops|oneop> [BenchmarkDotNet options]");
+            Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops|oneop|packed> [BenchmarkDotNet options]");
             return 2;
         }
         // Micro failures propagate with a nonzero exit; nothing here converts an error into success.
@@ -365,9 +365,12 @@ static class Bench
             case "oneop":
                 OneOpMicro.RunOneOp(args.Skip(1).ToArray());
                 return 0;
+            case "packed":
+                MicroBenchmarks.RunPacked(args.Skip(1).ToArray());
+                return 0;
             default:
                 Console.WriteLine("Unknown micro benchmark: " + args[0] + ".");
-                Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops|oneop> [BenchmarkDotNet options]");
+                Console.WriteLine("usage: Bench micro <matmul2d|matmul|indexing|ops|oneop|packed> [BenchmarkDotNet options]");
                 return 2;
         }
     }

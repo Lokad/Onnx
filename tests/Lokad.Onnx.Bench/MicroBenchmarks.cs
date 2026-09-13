@@ -990,6 +990,12 @@ internal static class MicroBenchmarks
         BenchmarkRunner.Run<TensorMatMulBenchmarks>(DefaultConfig.Instance, args);
     }
 
+    internal static void RunPacked(string[] args)
+    {
+        Console.WriteLine("Running packed-direct tile benchmark...");
+        BenchmarkRunner.Run<PackedTileBenchmarks>(DefaultConfig.Instance, args);
+    }
+
     internal static void RunIndexing(string[] args)
     {
         BenchmarkRunner.Run<TensorIndexingBenchmarks>(DefaultConfig.Instance, args);
