@@ -142,6 +142,22 @@
         "repo": "local-staged-fixture",
         "path": "models/voice-fixtures/reference/wespeaker-fbank/fbank.npy"
       }
+    },
+    {
+      "key": "parakeet-decoder",
+      "file": "models/parakeet-tdt-0.6b-v3/onnx/decoder_joint-model.onnx",
+      "sha256": "E978DDF6688527182C10FDE2EB4B83068421648985EF23F7A86BE732BE8706C1",
+      "bytes": 72520893,
+      "opset": 17,
+      "generator": "PLAN.md Milestone 3 voice probe with Python onnxruntime==1.29.0 oracle (ORT_SEQUENTIAL, intra/inter-op 1, ORT_ENABLE_ALL) over synthetic encoder frames, fixed tokens, and zero/carried states; C# ORT 1.23.2 cross-check maxScaled <= 6.4e-06 at tol 1e-4 with int-exact lengths",
+      "test": "GraphExecutionDecoderTests (score/state oracle, exact lengths, reuse/input-intact, chained-state continuation)",
+      "inputs": "encoder_outputs [1,1024,8] sin pattern, targets [1,2,3,4,5], target_length [5], input_states [2,1,640] zero then carried",
+      "oracle": "outputs [1,8,5,8198] mean 0.01 spots 0.1 (logits ~4000); states mean 1e-6 spots 1e-3; prednet_lengths exact",
+      "source": {
+        "repo": "istupakov/parakeet-tdt-0.6b-v3-onnx",
+        "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
+        "path": "decoder_joint-model.onnx"
+      }
     }
   ]
 }
