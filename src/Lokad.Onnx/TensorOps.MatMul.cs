@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -144,6 +145,47 @@ where T : unmanaged
         int n = found.Dimensions[0], k = found.Dimensions[1];
         if (n < 1 || k < 1 || n >= GraphPacking.MaxPackedAxis || (long)n * k > GraphPacking.MaxPackedBytes) return null;
         return found;
+    }
+
+    /// <summary>
+    /// A01 prototype switches: single-pin small-batch loop (LOKAD_ONNX_BATCHED_SMALL)
+    /// and small-K kernel (LOKAD_ONNX_SMALLK) for attention-style tiles. Default-off;
+    /// every unmet condition keeps the proven path.
+    /// </summary>
+    internal static readonly bool UseBatchedSmallLoop =
+        string.Equals(Environment.GetEnvironmentVariable("LOKAD_ONNX_BATCHED_SMALL"), "1", StringComparison.Ordinal);
+
+    internal static readonly bool UseSmallKKernel =
+        string.Equals(Environment.GetEnvironmentVariable("LOKAD_ONNX_SMALLK"), "1", StringComparison.Ordinal);
+
+    /// <summary>
+    /// Runs one pinned small tile per batch with no per-batch prologue. K-order matches
+    /// the legacy batch loop element by element (same kernels, same C seed, same
+    /// j-ascending order), so results agree bit-wise.
+    /// </summary>
+    internal static unsafe void RunSmallBatches(float* xp0, float* yp0, float* zp0,
+        int[] xSteps, int[] ySteps, int[] zSteps, int[] batchDims, int batchCount,
+        int m, int n, int k)
+    {
+        int r = batchDims.Length;
+        var coords = new int[r];
+        int ox = 0, oy = 0, oz = 0;
+        bool smallK = UseSmallKKernel && (m % 2) == 0 && k <= 4 * Vector256<float>.Count;
+        for (int b = 0; b < batchCount; b++)
+        {
+            if (smallK)
+                mm_unsafe_smallK_2x(m, n, k, xp0 + ox, yp0 + oy, zp0 + oz);
+            else
+                mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, xp0 + ox, yp0 + oy, zp0 + oz);
+            for (int dd = r - 1; dd >= 0; dd--)
+            {
+                coords[dd]++;
+                ox += xSteps[dd]; oy += ySteps[dd]; oz += zSteps[dd];
+                if (coords[dd] < batchDims[dd]) break;
+                coords[dd] = 0;
+                ox -= xSteps[dd] * batchDims[dd]; oy -= ySteps[dd] * batchDims[dd]; oz -= zSteps[dd] * batchDims[dd];
+            }
+        }
     }
 
     static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
@@ -576,6 +618,13 @@ where T : unmanaged
                         (float*)zp0 + zOff[bi], options);
                 }
             });
+        }
+        else if (UseBatchedSmallLoop && batchCount >= 2 && (m % 2) == 0 && (long)m * n * k <= 65536)
+        {
+            unsafe
+            {
+                RunSmallBatches((float*)xp0, (float*)yp0, (float*)zp0, xSteps, ySteps, zSteps, batchDims, batchCount, m, n, k);
+            }
         }
         else
         {

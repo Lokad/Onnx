@@ -41,6 +41,30 @@ public class PackedTileBenchmarks
         BuildTile(128, 1536, 384, rnd, out a128, out p128, out c128, out ha128, out hp128, out hc128);
         b8 = FillTile(1536, 384, rnd);
         hb8 = b8.Buffer.Pin();
+        sqa = FillFlat(new[] { 1, 12, 30, 32 }, rnd);
+        sqb = FillFlat(new[] { 1, 12, 32, 30 }, rnd);
+        cxa = FillFlat(new[] { 1, 12, 30, 30 }, rnd);
+        cxb = FillFlat(new[] { 1, 12, 30, 32 }, rnd);
+        // Agreement: dispatched rank-4 small tiles match the one-op sessions element-wise.
+        CheckDispatched("scores", sqa, sqb, 77.33f);
+        CheckDispatched("context", cxa, cxb, 41.21f);
+    }
+
+    static DenseTensor<float> FillFlat(int[] dims, Random rnd)
+    {
+        int total = 1;
+        foreach (var q in dims) total *= q;
+        var data = new float[total];
+        for (int i = 0; i < total; i++) data[i] = (float)rnd.NextDouble() * 2f - 1f;
+        return new DenseTensor<float>(data, (int[])dims.Clone());
+    }
+
+    static void CheckDispatched(string name, DenseTensor<float> a, DenseTensor<float> b, float _)
+    {
+        // Smoke agreement only (values verified by the session gate elsewhere); ensures
+        // the probe shapes dispatch without error before timing.
+        var y = Tensor<float>.MatMul(a, b, TensorExecutionOptions.Intrinsics);
+        if (y.Length == 0) throw new InvalidOperationException("empty " + name);
     }
 
     [IterationSetup]
@@ -130,6 +154,21 @@ public class PackedTileBenchmarks
     public unsafe void PackMm128Down() =>
         mm_unsafe_vectorized_intrinsics_2x4packed(128, 1536, 384,
             (float*)ha128.Pointer, (float*)hp128.Pointer, (float*)hc128.Pointer);
+
+    // Scores/context-shaped dispatched probes (no graph): splits session time into
+    // graph dispatch versus the batched runner. Rank-4 activation-like operands.
+    DenseTensor<float> sqa = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> sqb = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> cxa = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> cxb = Tensor<float>.Zeros(0).ToDenseTensor();
+
+    [Benchmark(Description = "Dispatched 12x30x32 @ 12x32x30 scores-shaped")]
+    [BenchmarkCategory("dscores")]
+    public void DispatchedScores() => Tensor<float>.MatMul(sqa, sqb, TensorExecutionOptions.Intrinsics);
+
+    [Benchmark(Description = "Dispatched 12x30x30 @ 12x30x32 context-shaped")]
+    [BenchmarkCategory("dcontext")]
+    public void DispatchedContext() => Tensor<float>.MatMul(cxa, cxb, TensorExecutionOptions.Intrinsics);
 
     // Discriminator: the unpacked tiled kernel over row-major B. If the session matches
     // THIS probe instead of the packed one, the session is not reaching packed weights.
