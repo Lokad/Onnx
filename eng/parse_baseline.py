@@ -6,6 +6,7 @@ lines; recomputes best, median, p95, and max per engine; verifies every
 expected case is ok in every rep; and prints the markdown table plus a JSON
 summary to stdout (redirect to a file). Standard library only.
 """
+import codecs
 import json
 import pathlib
 import statistics
@@ -14,8 +15,17 @@ import sys
 ORDER = ["e5-8tok", "e5-30tok", "dinov3-224", "resnet50-224", "gpt2-4tok"]
 
 
+def read_log_text(path):
+    raw = pathlib.Path(path).read_bytes()
+    if raw.startswith(codecs.BOM_UTF16_LE):
+        return raw.decode("utf-16")
+    if raw.startswith(codecs.BOM_UTF8):
+        return raw.decode("utf-8-sig")
+    return raw.decode("utf-8", errors="replace")
+
+
 def parse_rep(path):
-    text = pathlib.Path(path).read_text(encoding="utf-8", errors="replace").splitlines()
+    text = read_log_text(path).splitlines()
     host = next((l for l in text if l.startswith("host=")), "")
     conf = next((l for l in text if l.startswith("confinement ")), "")
     status = {}
