@@ -166,21 +166,21 @@ public class OperatorSchemaTests
         Assert.Contains("Mod", r.Message ?? "");
     }
 
-    [Fact]
-    public void PadHonestlyUnsupported_FailsCleanly()
+        [Fact]
+    public void PadHonestlySupported_ExecutesCleanly()
     {
-        // C11: no Pad kernel exists; like OpType.Mod it must stay honestly
-        // unsupported with a clean reason-naming failure, never a throw.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Pad));
+        // Pad gained a schema entry, constant-mode kernel, and dispatch
+        // arm, so support and node execution must now succeed.
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.Pad));
         var node = Nod(OpType.Pad, "", 13,
             new[] { "x", "pads" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
         Bind(graph, "pads", DenseTensor<long>.OfValues(new long[] { 1L, 1L }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Pad", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 0f, 1f, 2f, 0f }, ((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
     [Fact]
@@ -217,20 +217,20 @@ public class OperatorSchemaTests
         Assert.Contains("Clip", r.Message ?? "");
     }
 
-    [Fact]
-    public void SigmoidHonestlyUnsupported_FailsCleanly()
+        [Fact]
+    public void SigmoidHonestlySupported_ExecutesCleanly()
     {
-        // C11: no Sigmoid kernel exists anywhere in src; same honest contract
-        // as Mod/Pad/Identity/Clip.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Sigmoid));
+        // Sigmoid gained a schema entry, kernel, and dispatch arm, so
+        // support and node execution must now succeed.
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.Sigmoid));
         var node = Nod(OpType.Sigmoid, "", 13,
             new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 0f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Sigmoid", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 0.5f }, ((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
     [Fact]
@@ -280,21 +280,21 @@ public class OperatorSchemaTests
         Assert.Contains("Greater", r.Message ?? "");
     }
 
-    [Fact]
-    public void AndHonestlyUnsupported_FailsCleanly()
+        [Fact]
+    public void AndHonestlySupported_ExecutesCleanly()
     {
-        // C11: no And schema, provider, kernel, or dispatch arm exists
-        // anywhere in src; same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.And));
+        // And gained a schema entry, bool kernel, and dispatch arm, so
+        // support and node execution must now succeed.
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.And));
         var node = Nod(OpType.And, "", 13,
             new[] { "x", "y" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<bool>.OfValues(new bool[] { true }));
         Bind(graph, "y", DenseTensor<bool>.OfValues(new bool[] { false }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("And", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new bool[] { false }, ((Tensor<bool>)r.Outputs[0]).ToArray());
     }
 
     [Fact]
@@ -347,20 +347,20 @@ public class OperatorSchemaTests
         Assert.Contains("Xor", r.Message ?? "");
     }
 
-    [Fact]
-    public void NotHonestlyUnsupported_FailsCleanly()
+        [Fact]
+    public void NotHonestlySupported_ExecutesCleanly()
     {
-        // C11: no Not schema, provider, kernel, or dispatch arm exists
-        // anywhere in src; same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Not));
+        // Not gained a schema entry, bool kernel, and dispatch arm, so
+        // support and node execution must now succeed.
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.Not));
         var node = Nod(OpType.Not, "", 13,
             new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<bool>.OfValues(new bool[] { true }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Not", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new bool[] { false }, ((Tensor<bool>)r.Outputs[0]).ToArray());
     }
 
     [Fact]

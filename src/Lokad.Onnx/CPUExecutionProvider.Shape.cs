@@ -792,6 +792,85 @@ public partial class CPUExecutionProvider
     /// <summary>
     /// Dispatches scalar start, limit, and delta to the matching dtype Range kernel.
     /// </summary>
+    /// <summary>
+    /// Constant padding: each dimension grows by its begin/end pads with the
+    /// fill value (default zero), while negative pads crop. Accepts pads as
+    /// an int32/int64 input (opset 11+) or attribute (older graphs), and the
+    /// fill as an optional scalar input or attribute tensor. Only constant
+    /// mode is supported.
+    /// </summary>
+    public static OpResult Pad(ITensor? data, ITensor? pads, ITensor? value, string? mode, int[]? padsAttr, ITensor? valueAttr, ExecutionOptions? options)
+    {
+        var op = OpType.Pad;
+        if (data is null) return MissingInput(op, nameof(data));
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        if (!string.IsNullOrEmpty(mode) && mode != "constant")
+            return AttributeNotSupported(op, "mode", mode, "Only constant padding mode is supported.");
+        int[] padVals;
+        if (pads is not null && padsAttr is not null)
+            return AttributeNotSupported(op, "pads", "input+attribute", "pads must not be given both as input and attribute.");
+        if (pads is not null)
+        {
+            if (pads.ElementType != TensorElementType.Int32 && pads.ElementType != TensorElementType.Int64)
+                return WrongInputType(op, nameof(pads), "pads must be int32 or int64.", pads);
+            padVals = ToIntArray(pads, nameof(pads));
+        }
+        else if (padsAttr is not null) padVals = padsAttr;
+        else return MissingInput(op, nameof(pads));
+        if (padVals.Length != 2 * data.Rank)
+            return WrongInputShape(op, nameof(pads), data, "pads must hold 2 values per data dimension.");
+        ITensor? fill = value ?? valueAttr;
+        if (fill is not null && fill.ElementType != data.ElementType)
+            return WrongInputType(op, "constant_value", data.ElementType, fill);
+        if (fill is not null && fill.Length != 1)
+            return WrongInputShape(op, "constant_value", fill, "constant_value must be a scalar tensor.");
+        Profiler.StartOpStage(OpStage.Math);
+        switch (data.ElementType)
+        {
+            case TensorElementType.Float:
+                return Success(op, PadCore((Tensor<float>)data, padVals, fill is null ? 0f : ((Tensor<float>)fill).ToArray()[0]));
+            case TensorElementType.Double:
+                return Success(op, PadCore((Tensor<double>)data, padVals, fill is null ? 0.0 : ((Tensor<double>)fill).ToArray()[0]));
+            case TensorElementType.Int32:
+                return Success(op, PadCore((Tensor<int>)data, padVals, fill is null ? 0 : ((Tensor<int>)fill).ToArray()[0]));
+            case TensorElementType.Int64:
+                return Success(op, PadCore((Tensor<long>)data, padVals, fill is null ? 0L : ((Tensor<long>)fill).ToArray()[0]));
+            default: return InputTypeNotSupported(op, nameof(data), data);
+        }
+    }
+
+    static DenseTensor<T> PadCore<T>(Tensor<T> data, int[] pads, T fill) where T : unmanaged
+    {
+        var dd = data.Dimensions.ToArray();
+        int rank = dd.Length;
+        var outDims = new int[rank];
+        for (int i = 0; i < rank; i++) outDims[i] = dd[i] + pads[i] + pads[rank + i];
+        var src = data.ToDenseTensor();
+        var sVals = src.Buffer.Span;
+        var dst = DenseTensor<T>.OfShape(outDims);
+        var dVals = dst.Buffer.Span;
+        dVals.Fill(fill);
+        var sStrides = ArrayUtilities.GetStrides(dd);
+        var dStrides = ArrayUtilities.GetStrides(outDims);
+        for (int i = 0; i < sVals.Length; i++)
+        {
+            // Negative pads crop: source elements falling outside the
+            // destination are skipped, never written out of bounds.
+            int rem = i;
+            int dFlat = 0;
+            bool inside = true;
+            for (int d = 0; d < rank; d++)
+            {
+                int dc = rem / sStrides[d] + pads[d];
+                rem %= sStrides[d];
+                if ((uint)dc >= (uint)outDims[d]) { inside = false; break; }
+                dFlat += dc * dStrides[d];
+            }
+            if (inside) dVals[dFlat] = sVals[i];
+        }
+        return dst;
+    }
+
     public static OpResult Range(ITensor? start, ITensor? limit, ITensor? delta, ExecutionOptions? options)
     {
         var op = OpType.Range;

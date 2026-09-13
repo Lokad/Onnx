@@ -531,6 +531,96 @@ public partial class CPUExecutionProvider
         }
     }
 
+    public static OpResult Sigmoid(ITensor? X, ExecutionOptions? options)
+    {
+        var op = OpType.Sigmoid;
+        if (X is null) return MissingInput(op, nameof(X));
+        (options ?? ExecutionOptions.Default).Validated();
+        Profiler.StartOpStage(OpStage.Math);
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float:
+            {
+                var x = ((Tensor<float>)X).ToDenseTensor();
+                var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = 1f / (1f + MathF.Exp(-xs[i]));
+                return Success(op, y);
+            }
+            case TensorElementType.Double:
+            {
+                var x = ((Tensor<double>)X).ToDenseTensor();
+                var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = 1.0 / (1.0 + Math.Exp(-xs[i]));
+                return Success(op, y);
+            }
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult Floor(ITensor? X, ExecutionOptions? options)
+    {
+        var op = OpType.Floor;
+        if (X is null) return MissingInput(op, nameof(X));
+        (options ?? ExecutionOptions.Default).Validated();
+        Profiler.StartOpStage(OpStage.Math);
+        switch (X.ElementType)
+        {
+            case TensorElementType.Float:
+            {
+                var x = ((Tensor<float>)X).ToDenseTensor();
+                var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = MathF.Floor(xs[i]);
+                return Success(op, y);
+            }
+            case TensorElementType.Double:
+            {
+                var x = ((Tensor<double>)X).ToDenseTensor();
+                var y = DenseTensor<double>.OfShape(x.Dimensions.ToArray());
+                var xs = x.Buffer.Span;
+                var ys = y.Buffer.Span;
+                for (int i = 0; i < xs.Length; i++) ys[i] = Math.Floor(xs[i]);
+                return Success(op, y);
+            }
+            default: return InputTypeNotSupported(op, nameof(X), X);
+        }
+    }
+
+    public static OpResult And(ITensor? A, ITensor? B, ExecutionOptions? options)
+    {
+        var op = OpType.And;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        (options ?? ExecutionOptions.Default).Validated();
+        if (A.ElementType != TensorElementType.Bool) return WrongInputType(op, nameof(A), TensorElementType.Bool, A);
+        if (B.ElementType != TensorElementType.Bool) return WrongInputType(op, nameof(B), TensorElementType.Bool, B);
+        Profiler.StartOpStage(OpStage.Math);
+        var a = (Tensor<bool>)A;
+        var b = (Tensor<bool>)B;
+        if (!Tensor<bool>.Broadcast(a, b, out var ba, out var bb)) return CannotBroadcast(op, A, B);
+        var y = DenseTensor<bool>.OfShape(ba.Dimensions.ToArray());
+        for (int i = 0; i < y.Length; i++) y.SetValue(i, ba.GetValue(i) && bb.GetValue(i));
+        return Success(op, y);
+    }
+
+    public static OpResult Not(ITensor? X, ExecutionOptions? options)
+    {
+        var op = OpType.Not;
+        if (X is null) return MissingInput(op, nameof(X));
+        (options ?? ExecutionOptions.Default).Validated();
+        if (X.ElementType != TensorElementType.Bool) return WrongInputType(op, nameof(X), TensorElementType.Bool, X);
+        Profiler.StartOpStage(OpStage.Math);
+        var x = ((Tensor<bool>)X).ToDenseTensor();
+        var y = DenseTensor<bool>.OfShape(x.Dimensions.ToArray());
+        for (int i = 0; i < y.Length; i++) y.SetValue(i, !x.GetValue(i));
+        return Success(op, y);
+    }
+
     public static OpResult Neg(ITensor? X, ExecutionOptions? options)
     {
         var op = OpType.Neg;
