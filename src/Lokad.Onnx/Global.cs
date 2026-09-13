@@ -16,3 +16,5 @@ global using Onnx;
 
 
 using System.Runtime.Versioning;
+
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Lokad.Onnx.Backend.Tests")]

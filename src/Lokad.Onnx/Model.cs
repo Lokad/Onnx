@@ -46,6 +46,9 @@ public class Model
             graph.Nodes.Add(ToNode(np, graph));
         }
         op.Complete();
+        // G01 substrate: runs zero passes until fusions migrate onto it (M2/M3), so loading
+        // behavior is unchanged by construction. Passes report through the returned record.
+        Optimization.GraphOptimizer.Run(graph);
         int fused = GraphFusion.FuseLayerNormPatterns(graph);
         if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
         int rope = GraphFusion.FuseRopePatterns(graph);
