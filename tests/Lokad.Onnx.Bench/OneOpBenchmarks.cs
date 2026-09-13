@@ -105,6 +105,13 @@ public class OneOpBenchmarks
         Add("matmul_1x8x1536x384", "a", new int[] { 1, 8, 1536 });
         Add("attnblock_e5_30", "x", new int[] { 1, 30, 384 });
         Add("resblock_rn50", "x", new int[] { 1, 128, 28, 28 });
+        Add("conv_7x7_stem", "x", new int[] { 1, 3, 224, 224 });
+        Add("conv_1x1_s2_2048", "x", new int[] { 1, 1024, 14, 14 });
+        Add("conv_3x3_s2_512", "x", new int[] { 1, 512, 14, 14 });
+        Add("conv_3x3_512_7", "x", new int[] { 1, 512, 7, 7 });
+        Add("conv_3x3_64_56", "x", new int[] { 1, 64, 56, 56 });
+        Add("conv_3x3_128_28", "x", new int[] { 1, 128, 28, 28 });
+        Add("conv_3x3_256_14", "x", new int[] { 1, 256, 14, 14 });
         foreach (var c in cases) VerifyAgreement(c);
         Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise.");
     }
@@ -432,4 +439,60 @@ public class OneOpBenchmarks
     [Benchmark(Description = "ResNet bottleneck 128ch 28x28 (pw-conv/relu/3x3/relu/pw-conv/add/relu) - ORT session")]
     [BenchmarkCategory("resblock")]
     public void OrtResBlock() => RunOrt(cases[33]);
+
+    [Benchmark(Description = "Conv 7x7 stem 64ch stride-2 over 1x3x224x224 - Lokad session")]
+    [BenchmarkCategory("convstem")]
+    public void LokadConvStem() => RunLokad(cases[34]);
+
+    [Benchmark(Description = "Conv 7x7 stem 64ch stride-2 over 1x3x224x224 - ORT session")]
+    [BenchmarkCategory("convstem")]
+    public void OrtConvStem() => RunOrt(cases[34]);
+
+    [Benchmark(Description = "Conv 1x1 1024to2048 stride-2 over 1x1024x14x14 - Lokad session")]
+    [BenchmarkCategory("conv1x1s2")]
+    public void LokadConv1x1S2() => RunLokad(cases[35]);
+
+    [Benchmark(Description = "Conv 1x1 1024to2048 stride-2 over 1x1024x14x14 - ORT session")]
+    [BenchmarkCategory("conv1x1s2")]
+    public void OrtConv1x1S2() => RunOrt(cases[35]);
+
+    [Benchmark(Description = "Conv 512ch 3x3 stride-2 over 1x512x14x14 - Lokad session")]
+    [BenchmarkCategory("conv3x3s2")]
+    public void LokadConv3x3S2() => RunLokad(cases[36]);
+
+    [Benchmark(Description = "Conv 512ch 3x3 stride-2 over 1x512x14x14 - ORT session")]
+    [BenchmarkCategory("conv3x3s2")]
+    public void OrtConv3x3S2() => RunOrt(cases[36]);
+
+    [Benchmark(Description = "Conv 512ch 3x3 over 1x512x7x7 - Lokad session")]
+    [BenchmarkCategory("conv3x3late")]
+    public void LokadConv3x3Late() => RunLokad(cases[37]);
+
+    [Benchmark(Description = "Conv 512ch 3x3 over 1x512x7x7 - ORT session")]
+    [BenchmarkCategory("conv3x3late")]
+    public void OrtConv3x3Late() => RunOrt(cases[37]);
+
+    [Benchmark(Description = "Conv 64ch 3x3 over 1x64x56x56 - Lokad session")]
+    [BenchmarkCategory("conv3x3_64")]
+    public void LokadConv3x3_64() => RunLokad(cases[38]);
+
+    [Benchmark(Description = "Conv 64ch 3x3 over 1x64x56x56 - ORT session")]
+    [BenchmarkCategory("conv3x3_64")]
+    public void OrtConv3x3_64() => RunOrt(cases[38]);
+
+    [Benchmark(Description = "Conv 128ch 3x3 over 1x128x28x28 - Lokad session")]
+    [BenchmarkCategory("conv3x3_128")]
+    public void LokadConv3x3_128() => RunLokad(cases[39]);
+
+    [Benchmark(Description = "Conv 128ch 3x3 over 1x128x28x28 - ORT session")]
+    [BenchmarkCategory("conv3x3_128")]
+    public void OrtConv3x3_128() => RunOrt(cases[39]);
+
+    [Benchmark(Description = "Conv 256ch 3x3 over 1x256x14x14 - Lokad session")]
+    [BenchmarkCategory("conv3x3_256")]
+    public void LokadConv3x3_256() => RunLokad(cases[40]);
+
+    [Benchmark(Description = "Conv 256ch 3x3 over 1x256x14x14 - ORT session")]
+    [BenchmarkCategory("conv3x3_256")]
+    public void OrtConv3x3_256() => RunOrt(cases[40]);
 }

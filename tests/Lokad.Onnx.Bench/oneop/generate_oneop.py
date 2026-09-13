@@ -275,3 +275,52 @@ res_nodes = [
 save_graph("tests/Lokad.Onnx.Bench/oneop/resblock_rn50", res_nodes,
      [tinfo("x", [1, 128, 28, 28])], [tinfo("y", [1, 128, 28, 28])],
      [finit("w1", w1), finit("w3", w3), finit("w2", w2)])
+
+# 30. resnet stem 7x7 stride-2: 1x3x224x224 -> 64x112x112, no bias (C01 family).
+w = (rng.random([64, 3, 7, 7]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/conv_7x7_stem",
+     helper.make_node("Conv", ["x", "w"], ["y"], kernel_shape=[7, 7], strides=[2, 2], pads=[3, 3, 3, 3]),
+     [tinfo("x", [1, 3, 224, 224])], [tinfo("y", [1, 64, 112, 112])],
+     [finit("w", w)])
+
+# 31. resnet stride-2 pointwise, largest shortcut (1024->2048 @14x14), no bias.
+w = (rng.random([2048, 1024, 1, 1]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/conv_1x1_s2_2048",
+     helper.make_node("Conv", ["x", "w"], ["y"], kernel_shape=[1, 1], strides=[2, 2]),
+     [tinfo("x", [1, 1024, 14, 14])], [tinfo("y", [1, 2048, 7, 7])],
+     [finit("w", w)])
+
+# 32. resnet stride-2 spatial, largest downsampler (512ch @14x14), no bias.
+w = (rng.random([512, 512, 3, 3]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/conv_3x3_s2_512",
+     helper.make_node("Conv", ["x", "w"], ["y"], kernel_shape=[3, 3], strides=[2, 2], pads=[1, 1, 1, 1]),
+     [tinfo("x", [1, 512, 14, 14])], [tinfo("y", [1, 512, 7, 7])],
+     [finit("w", w)])
+
+# 33. resnet late-stage spatial (512ch @7x7 stride-1), no bias.
+w = (rng.random([512, 512, 3, 3]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/conv_3x3_512_7",
+     helper.make_node("Conv", ["x", "w"], ["y"], kernel_shape=[3, 3], pads=[1, 1, 1, 1]),
+     [tinfo("x", [1, 512, 7, 7])], [tinfo("y", [1, 512, 7, 7])],
+     [finit("w", w)])
+
+# 34. resnet 3x3 stride-1 64ch @56x56 (layer1, x3), no bias (C01 family).
+w = (rng.random([64, 64, 3, 3]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/conv_3x3_64_56",
+     helper.make_node("Conv", ["x", "w"], ["y"], kernel_shape=[3, 3], pads=[1, 1, 1, 1]),
+     [tinfo("x", [1, 64, 56, 56])], [tinfo("y", [1, 64, 56, 56])],
+     [finit("w", w)])
+
+# 35. resnet 3x3 stride-1 128ch @28x28 (layer2, x3), no bias (C01 family).
+w = (rng.random([128, 128, 3, 3]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/conv_3x3_128_28",
+     helper.make_node("Conv", ["x", "w"], ["y"], kernel_shape=[3, 3], pads=[1, 1, 1, 1]),
+     [tinfo("x", [1, 128, 28, 28])], [tinfo("y", [1, 128, 28, 28])],
+     [finit("w", w)])
+
+# 36. resnet 3x3 stride-1 256ch @14x14 (layer3, x5), no bias (C01 family).
+w = (rng.random([256, 256, 3, 3]) * 2 - 1).astype(np.float32)
+save("tests/Lokad.Onnx.Bench/oneop/conv_3x3_256_14",
+     helper.make_node("Conv", ["x", "w"], ["y"], kernel_shape=[3, 3], pads=[1, 1, 1, 1]),
+     [tinfo("x", [1, 256, 14, 14])], [tinfo("y", [1, 256, 14, 14])],
+     [finit("w", w)])
