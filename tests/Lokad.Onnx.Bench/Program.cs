@@ -362,7 +362,7 @@ static class Bench
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
         Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + ShortHash(tokenizer));
-        Compare(name, model, inputs, tensorOpts, threads, iters, rowsName, modeName);
+        Compare(name, model, inputs, tensorOpts, threads, iters, rowsName, modeName, Tolerance);
     }
 
     static void CompareVision(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
@@ -370,7 +370,7 @@ static class Bench
         var flat = new float[1 * 3 * 224 * 224];
         for (int i = 0; i < flat.Length; i++) flat[i] = 0.5f;
         var input = new DenseTensor<float>(flat, new[] { 1, 3, 224, 224 });
-        Compare(name, model, new ITensor[] { input }, tensorOpts, threads, iters, rowsName, modeName);
+        Compare(name, model, new ITensor[] { input }, tensorOpts, threads, iters, rowsName, modeName, Tolerance);
     }
 
     static void CompareGpt2(string name, string model, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
@@ -391,7 +391,7 @@ static class Bench
             inputs.Add(k);
             inputs.Add(v);
         }
-        Compare(name, model, inputs.ToArray(), tensorOpts, threads, iters, rowsName, modeName);
+        Compare(name, model, inputs.ToArray(), tensorOpts, threads, iters, rowsName, modeName, Tolerance);
     }
 
     // Voice-model cases run the canonical matched row only: replay inputs
@@ -426,7 +426,7 @@ static class Bench
         var h1 = ((Tensor<float>)graph.Outputs["output_states_1"]).ToArray();
         var c1 = ((Tensor<float>)graph.Outputs["output_states_2"]).ToArray();
         var chained = VoiceModelCases.DecoderChainedInputs(root, h1, c1);
-        Validate(name + "-chained", graph, session, chained, outNames, lokadOpts);
+        Validate(name + "-chained", graph, session, chained, outNames, lokadOpts, Tolerance);
         Console.WriteLine("chained validation ok for " + name + " (output-to-input state carry, ortLoad=" + ortLoadMs.ToString("F1") + "ms)");
         graph.Reset();
         if (!graph.Execute(first, true, ExecutionProvider.CPU, lokadOpts))
@@ -437,7 +437,7 @@ static class Bench
         Console.WriteLine("reset determinism ok for " + name);
     }
 
-    static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName, double tolerance = Tolerance)
+    static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName, double tolerance)
     {
         var loadSw = Stopwatch.StartNew();
         var graph = OnnxImport.Load(model)!;
@@ -471,7 +471,7 @@ static class Bench
         {
             TimedRow(name, model, graph, inputs, ortDefault, ExecutionOptions.Default,
                 "defaults (archival unequal-CPU: lokad-auto-1-thread vs ort-default-pool; do-not-gate)", "ort-defaults", iters, sidecarInfo,
-                loadMs, prepareMs, defaultLoadMs);
+                loadMs, prepareMs, defaultLoadMs, Tolerance);
         }
         var oneOpts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Scalar);
         using (var oneSo = CreateSingleCpuSessionOptions(1))
@@ -481,7 +481,7 @@ static class Bench
             {
                 TimedRow(name, model, graph, inputs, ortOne, oneOpts,
                     "scalar-1-thread (SIMD-disabled diagnostic)", "intraop=1 interop=1 seq opt=ALL nospin", iters, sidecarInfo,
-                    loadMs, prepareMs, oneLoadMs);
+                    loadMs, prepareMs, oneLoadMs, Tolerance);
             }
         }
         var legacyMatchedOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
@@ -492,7 +492,7 @@ static class Bench
             {
                 TimedRow(name, model, graph, inputs, ortMatched, legacyMatchedOpts,
                     CanonicalLokDesc(modeName, threads), "intraop=" + threads + " interop=1 seq opt=ALL nospin", iters, sidecarInfo,
-                    loadMs, prepareMs, legacyLoadMs);
+                    loadMs, prepareMs, legacyLoadMs, Tolerance);
             }
         }
     }
@@ -517,7 +517,7 @@ static class Bench
 
     static void TimedRow(string name, string model, ComputationalGraph graph, ITensor[] inputs,
         InferenceSession ortSession, ExecutionOptions lokadOpts, string lokDesc, string ortDesc,
-        int iters, string sidecarInfo, double loadMs, double prepareMs, double ortLoadMs, double tolerance = Tolerance)
+        int iters, string sidecarInfo, double loadMs, double prepareMs, double ortLoadMs, double tolerance)
     {
         var inNames = ortSession.InputMetadata.Keys.ToArray();
         var outNames = ortSession.OutputMetadata.Keys.ToArray();
@@ -551,7 +551,7 @@ static class Bench
     }
 
     static void TimedRun(string name, ComputationalGraph graph, Dictionary<string, ITensor> named, string[] outNames,
-        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, double validationMs, double maxScaled, double maxAbs, InferenceSession ortSession, double tolerance = Tolerance)
+        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, double validationMs, double maxScaled, double maxAbs, InferenceSession ortSession, double tolerance)
     {
         // One-time input conversion, reused by every ORT run below; Lokad inputs need no conversion.
         var convSw = Stopwatch.StartNew();
@@ -648,7 +648,7 @@ static class Bench
         }
     }
 
-    static (double scaled, double abs, double lokadFirstMs, double ortFirstMs) Validate(string name, ComputationalGraph graph, InferenceSession session, Dictionary<string, ITensor> named, string[] outNames, ExecutionOptions lokadOpts, double tolerance = Tolerance)
+    static (double scaled, double abs, double lokadFirstMs, double ortFirstMs) Validate(string name, ComputationalGraph graph, InferenceSession session, Dictionary<string, ITensor> named, string[] outNames, ExecutionOptions lokadOpts, double tolerance)
     {
         // First runs on cold state; output disposal stays outside both first-run figures.
         // The ORT session is the reference in every comparison below.

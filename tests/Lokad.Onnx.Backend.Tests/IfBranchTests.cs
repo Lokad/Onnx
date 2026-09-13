@@ -11,7 +11,12 @@ namespace Lokad.Onnx.Backend.Tests;
 // single-If graph with multi-node branches.
 public class IfBranchTests
 {
-    static ComputationalGraph IfModel(string elseOp = "Mul")
+    static ComputationalGraph IfModel()
+    {
+        return IfModel("Mul");
+    }
+
+    static ComputationalGraph IfModel(string elseOp)
     {
         var model = new OnnxModel { Name = "if-test", Opset = new Dictionary<string, int> { [""] = 17 } };
         model.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new[] { 2 } });

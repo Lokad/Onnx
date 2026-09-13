@@ -39,24 +39,38 @@ public class CpuExecutionProviderLstmTests
 
     static float[] Halved(float[] v) => v.Select(x => 0.5f * x).ToArray();
 
-    static OpResult Run(
-        float[] x, int[] xd, float[] w, int[] wd, float[] r, int[] rd,
-        float[]? b = null, int[]? lens = null,
-        float[]? h0 = null, float[]? c0 = null, float[]? p = null,
-        string? direction = null, string[]? activations = null,
-        float[]? alpha = null, float? clip = null, bool inputForget = false,
-        int outputCount = 3)
+    sealed class LstmOpts
+    {
+        public float[]? B;
+        public int[]? Lens;
+        public float[]? H0;
+        public float[]? C0;
+        public float[]? P;
+        public string? Direction;
+        public string[]? Activations;
+        public float[]? Alpha;
+        public float? Clip;
+        public bool InputForget;
+        public int OutputCount = 3;
+    }
+
+    static OpResult Run(float[] x, int[] xd, float[] w, int[] wd, float[] r, int[] rd, LstmOpts o)
     {
         var X = FT(x, xd);
         var W = FT(w, wd);
         var R = FT(r, rd);
-        ITensor? B = b is null ? null : FT(b, new[] { wd[0], 8 * 2 });
-        ITensor? S = lens is null ? null : new DenseTensor<int>(lens, new[] { lens.Length });
-        ITensor? H0 = h0 is null ? null : FT(h0, new[] { wd[0], xd[1], 2 });
-        ITensor? C0 = c0 is null ? null : FT(c0, new[] { wd[0], xd[1], 2 });
-        ITensor? P = p is null ? null : FT(p, new[] { wd[0], 3 * 2 });
-        return CPU.Lstm(X, W, R, B, S, H0, C0, P, direction, activations, alpha, null,
-            clip, 2, inputForget, 0, outputCount, null, null);
+        ITensor? B = o.B is null ? null : FT(o.B, new[] { wd[0], 8 * 2 });
+        ITensor? S = o.Lens is null ? null : new DenseTensor<int>(o.Lens, new[] { o.Lens.Length });
+        ITensor? H0 = o.H0 is null ? null : FT(o.H0, new[] { wd[0], xd[1], 2 });
+        ITensor? C0 = o.C0 is null ? null : FT(o.C0, new[] { wd[0], xd[1], 2 });
+        ITensor? P = o.P is null ? null : FT(o.P, new[] { wd[0], 3 * 2 });
+        return CPU.Lstm(X, W, R, B, S, H0, C0, P, o.Direction, o.Activations, o.Alpha, null,
+            o.Clip, 2, o.InputForget, 0, o.OutputCount, null, null);
+    }
+
+    static OpResult Run(float[] x, int[] xd, float[] w, int[] wd, float[] r, int[] rd, float[] b)
+    {
+        return Run(x, xd, w, wd, r, rd, new LstmOpts { B = b });
     }
 
     static float[][] Outputs(OpResult r, int count)
@@ -87,7 +101,7 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void InitialState_MatchesOrt()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), h0: H0v(), c0: C0v()), 3);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), H0 = H0v(), C0 = C0v() }), 3);
         AssertNear(o[0], new float[] { 0.03230323f, 0.05889474f, 0.13819446f, -0.11631908f }, "Y");
         AssertNear(o[1], new float[] { 0.13819446f, -0.11631908f }, "Yh");
         AssertNear(o[2], new float[] { 0.29669607f, -0.21676102f }, "Yc");
@@ -96,7 +110,7 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void SequenceLens_FreezesStatesAndZeroesPaddedFrames()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), lens: new[] { 1 }, h0: H0v(), c0: C0v()), 3);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Lens = new[] { 1 }, H0 = H0v(), C0 = C0v() }), 3);
         AssertNear(o[0], new float[] { 0.03230323f, 0.05889474f, 0f, 0f }, "Y");
         AssertNear(o[1], new float[] { 0.03230323f, 0.05889474f }, "Yh");
         AssertNear(o[2], new float[] { 0.04989660f, 0.18439621f }, "Yc");
@@ -105,7 +119,7 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void Peephole_MatchesOrt()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), h0: H0v(), c0: C0v(), p: Pv()), 3);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), H0 = H0v(), C0 = C0v(), P = Pv() }), 3);
         AssertNear(o[0], new float[] { 0.03206320f, 0.05715560f, 0.14277087f, -0.11796851f }, "Y");
         AssertNear(o[1], new float[] { 0.14277087f, -0.11796851f }, "Yh");
         AssertNear(o[2], new float[] { 0.29749081f, -0.21545935f }, "Yc");
@@ -114,7 +128,7 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void Reverse_MatchesOrt()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), h0: H0v(), c0: C0v(), direction: "reverse"), 3);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), H0 = H0v(), C0 = C0v(), Direction = "reverse" }), 3);
         AssertNear(o[0], new float[] { 0.11566413f, -0.02198114f, 0.20056140f, -0.18987322f }, "Y");
         AssertNear(o[1], new float[] { 0.11566413f, -0.02198114f }, "Yh");
         AssertNear(o[2], new float[] { 0.18269953f, -0.06536282f }, "Yc");
@@ -128,7 +142,7 @@ public class CpuExecutionProviderLstmTests
         var b = Bv().Concat(Halved(Bv())).ToArray();
         var h0 = H0v().Concat(Halved(H0v())).ToArray();
         var c0 = C0v().Concat(Halved(C0v())).ToArray();
-        var o = Outputs(Run(Xv(), Xd(), w, new[] { 2, 8, 2 }, r, new[] { 2, 8, 2 }, b, h0: h0, c0: c0, direction: "bidirectional"), 3);
+        var o = Outputs(Run(Xv(), Xd(), w, new[] { 2, 8, 2 }, r, new[] { 2, 8, 2 }, new LstmOpts { B = b, H0 = h0, C0 = c0, Direction = "bidirectional" }), 3);
         AssertNear(o[0], new float[] { 0.03230323f, 0.05889474f, 0.03025197f, 0.00469680f, 0.13819446f, -0.11631908f, 0.11130657f, -0.08722385f }, "Y");
         AssertNear(o[1], new float[] { 0.13819446f, -0.11631908f, 0.03025197f, 0.00469680f }, "Yh");
         AssertNear(o[2], new float[] { 0.29669607f, -0.21676102f, 0.05190494f, 0.01178272f }, "Yc");
@@ -137,7 +151,7 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void ReluActivations_MatchOrt()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), activations: new[] { "Relu", "Tanh", "Tanh" }), 3);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Activations = new[] { "Relu", "Tanh", "Tanh" } }), 3);
         AssertNear(o[0], new float[] { -0.01794419f, 0f, 0f, -0.01170706f }, "Y");
         AssertNear(o[1], new float[] { 0f, -0.01170706f }, "Yh");
         AssertNear(o[2], new float[] { 0.13661975f, -0.06091034f }, "Yc");
@@ -146,7 +160,7 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void LeakyReluAlpha_MatchesOrt()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), activations: new[] { "LeakyRelu", "Tanh", "Tanh" }, alpha: new[] { 0.2f, 0f, 0f }), 3);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Activations = new[] { "LeakyRelu", "Tanh", "Tanh" }, Alpha = new[] { 0.2f, 0f, 0f } }), 3);
         AssertNear(o[0], new float[] { -0.01794419f, 0.00970348f, -0.00247074f, -0.01102191f }, "Y");
         AssertNear(o[1], new float[] { -0.00247074f, -0.01102191f }, "Yh");
         AssertNear(o[2], new float[] { 0.13509507f, -0.05975334f }, "Yc");
@@ -155,7 +169,7 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void Clip_MatchesOrt()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), h0: H0v(), c0: C0v(), clip: 0.25f), 3);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), H0 = H0v(), C0 = C0v(), Clip = 0.25f }), 3);
         AssertNear(o[0], new float[] { 0.02802743f, 0.07035208f, 0.07729613f, -0.03311840f }, "Y");
         AssertNear(o[1], new float[] { 0.07729613f, -0.03311840f }, "Yh");
         AssertNear(o[2], new float[] { 0.16192976f, -0.06118195f }, "Yc");
@@ -164,7 +178,7 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void InputForget_MatchesOrt()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), h0: H0v(), c0: C0v(), inputForget: true), 3);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), H0 = H0v(), C0 = C0v(), InputForget = true }), 3);
         AssertNear(o[0], new float[] { 0.01706260f, 0.06141679f, 0.13089505f, -0.10693064f }, "Y");
         AssertNear(o[1], new float[] { 0.13089505f, -0.10693064f }, "Yh");
         AssertNear(o[2], new float[] { 0.27900207f, -0.19996536f }, "Yc");
@@ -173,7 +187,7 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void NoBias_MatchesOrt()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }), 3);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts()), 3);
         AssertNear(o[0], new float[] { -0.16233273f, 0.08591857f, -0.00730866f, -0.00665735f }, "Y");
         AssertNear(o[1], new float[] { -0.00730866f, -0.00665735f }, "Yh");
         AssertNear(o[2], new float[] { -0.01631326f, -0.01188101f }, "Yc");
@@ -182,28 +196,28 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void SingleOutput_ReturnsYOnly()
     {
-        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), outputCount: 1), 1);
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), OutputCount = 1 }), 1);
         AssertNear(o[0], new float[] { -0.13495068f, 0.05704088f, 0.06371567f, -0.07539268f }, "Y");
     }
 
     [Fact]
     public void UnknownDirection_Fails()
     {
-        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), direction: "sideways");
+        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Direction = "sideways" });
         Assert.Equal(OpStatus.Failure, r.Status);
     }
 
     [Fact]
     public void WrongActivationCount_Fails()
     {
-        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), activations: new[] { "Sigmoid", "Tanh" });
+        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Activations = new[] { "Sigmoid", "Tanh" } });
         Assert.Equal(OpStatus.Failure, r.Status);
     }
 
     [Fact]
     public void UnknownActivation_Fails()
     {
-        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), activations: new[] { "Swish", "Tanh", "Tanh" });
+        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Activations = new[] { "Swish", "Tanh", "Tanh" } });
         Assert.Equal(OpStatus.Failure, r.Status);
     }
 
@@ -228,14 +242,14 @@ public class CpuExecutionProviderLstmTests
     [Fact]
     public void LensLengthMismatch_Fails()
     {
-        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), lens: new[] { 1, 2 });
+        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Lens = new[] { 1, 2 } });
         Assert.Equal(OpStatus.Failure, r.Status);
     }
 
     [Fact]
     public void NegativeLens_Fails()
     {
-        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, Bv(), lens: new[] { -1 });
+        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Lens = new[] { -1 } });
         Assert.Equal(OpStatus.Failure, r.Status);
     }
 
