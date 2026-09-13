@@ -190,6 +190,22 @@
         "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
         "path": "encoder-model.onnx.data"
       }
+    },
+    {
+      "key": "pyannote-segmentation",
+      "file": "models/speaker-diarization-community-1/onnx/segmentation/model.onnx",
+      "sha256": "AF62796ADFC46AB36FB27C183E7FE6530A745C665B64E949ACD73BF01A18A31A",
+      "bytes": 5916329,
+      "opset": 17,
+      "generator": "PLAN.md Milestone 3 voice probe with Python onnxruntime==1.29.0 oracle (ORT_SEQUENTIAL, intra/inter-op 1, ORT_ENABLE_ALL) over synthetic 1s/10s waveforms and the first 10s fixture window; C# ORT 1.23.2 cross-check",
+      "test": "GraphExecutionSegmentationTests (score oracle, reuse/input-intact, long window, real fixture, both-branch import tripwire)",
+      "inputs": "waveform [1,1,16000]/[1,1,160000] sin pattern; fixture first 160000 PCM16 samples",
+      "oracle": "scores [1,56,7]/[1,589,7], finite, mean 1e-4, spots 1e-3",
+      "source": {
+        "repo": "FredrikKarlssonSpeech/pyannote-speaker-diarization-onnx",
+        "revision": "0a7a3bf63c16c6718a7411a3e3fe01598fc46550",
+        "path": "segmentation/model.onnx"
+      }
     }
   ]
 }
