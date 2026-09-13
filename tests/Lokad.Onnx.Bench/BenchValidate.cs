@@ -55,6 +55,24 @@ internal static class BenchValidate
         return (worstScaled, scaledIndex, worstAbs, absIndex);
     }
 
+    public static void RequireExact(string what, int[] referenceDims, Array reference, int[] candidateDims, Array candidate)
+    {
+        RequireSameDims(what, referenceDims, candidateDims);
+        if (reference.GetType().GetElementType() != candidate.GetType().GetElementType())
+            throw new InvalidOperationException(what + ": integer dtype mismatch.");
+        if (reference.Length != candidate.Length)
+            throw new InvalidOperationException(what + ": length mismatch (reference "
+                + reference.Length + ", candidate " + candidate.Length + ").");
+        for (int i = 0; i < reference.Length; i++)
+        {
+            long r = Convert.ToInt64(reference.GetValue(i));
+            long c = Convert.ToInt64(candidate.GetValue(i));
+            if (r != c)
+                throw new InvalidOperationException(what + ": integer outputs differ at index " + i
+                    + " (reference " + r + ", candidate " + c + ").");
+        }
+    }
+
     public static (double scaled, double abs) RequireAgreement(string what, int[] referenceDims, float[] reference, int[] candidateDims, float[] candidate, double tolerance)
     {
         RequireSameDims(what, referenceDims, candidateDims);

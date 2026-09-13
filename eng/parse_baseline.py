@@ -50,16 +50,25 @@ def stats(xs):
 
 
 def main():
-    logs = sys.argv[1:]
+    argv = sys.argv[1:]
+    order = ORDER
+    if "--expect" in argv:
+        i = argv.index("--expect")
+        try:
+            order = argv[i + 1].split(",")
+        except IndexError:
+            raise SystemExit("usage: python eng/parse_baseline.py [--expect a,b,c] <rep1.log> [rep2.log ...]")
+        del argv[i:i + 2]
+    logs = argv
     if not logs:
-        raise SystemExit("usage: python eng/parse_baseline.py <rep1.log> [rep2.log ...]")
+        raise SystemExit("usage: python eng/parse_baseline.py [--expect a,b,c] <rep1.log> [rep2.log ...]")
     reps = [parse_rep(p) for p in logs]
     for rep in reps:
-        for name in ORDER:
+        for name in order:
             if rep["status"].get(name) != "ok" or name not in rep["cases"]:
                 raise SystemExit("case missing or not ok: %s in %s" % (name, rep["log"]))
     table = []
-    for name in ORDER:
+    for name in order:
         rep_cells = []
         for rep in reps:
             lok = stats(rep["cases"][name]["raw"]["lok"])

@@ -29,7 +29,12 @@ static class Bench
             ["dinov3"] = new[] { Path.Combine(root, "models", "dinov3-vits16", "onnx", "model.onnx") },
             ["resnet50"] = new[] { Path.Combine(root, "models", "resnet50-onnx", "model.onnx") },
             ["gpt2"] = new[] { Path.Combine(root, "models", "gpt2-onnx", "onnx", "model.onnx") },
+            ["parakeet-encoder"] = new[] { Path.Combine(root, "models", "parakeet-tdt-0.6b-v3", "onnx", "encoder-model.onnx") },
+            ["parakeet-decoder"] = new[] { Path.Combine(root, "models", "parakeet-tdt-0.6b-v3", "onnx", "decoder_joint-model.onnx") },
+            ["pyannote-segmentation"] = new[] { Path.Combine(root, "models", "speaker-diarization-community-1", "onnx", "segmentation", "model.onnx") },
+            ["pyannote-embedding"] = new[] { Path.Combine(root, "models", "speaker-diarization-community-1", "onnx", "embedding", "embedding_encoder.onnx") },
         };
+        var voiceKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "parakeet-encoder", "parakeet-decoder", "pyannote-segmentation", "pyannote-embedding" };
         if (args.Length > 0 && args[0] == "micro")
         {
             int microCpu = 0;
@@ -52,11 +57,11 @@ static class Bench
             else if (args[i] == "--threads" && i + 1 < args.Length && int.TryParse(args[i + 1], out var t) && t >= 1) { threads = t; i++; }
             else if (args[i] == "--iters" && i + 1 < args.Length && int.TryParse(args[i + 1], out var k) && k >= 1) { iters = k; i++; }
             else if (args[i] == "all" || assets.ContainsKey(args[i])) { if (args[i] != "all" && !selected.Contains(args[i], StringComparer.OrdinalIgnoreCase)) selected.Add(args[i]); }
-            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all] [--cpu N]"); return 2; }
+            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all] [--cpu N] (voice keys run the canonical matched row only; the default set is all non-voice keys)"); return 2; }
         }
         if (rowsName != "canonical" && rowsName != "all") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all)"); return 2; }
         if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount) { Console.WriteLine("invalid --cpu " + cpu + " (expected 0.." + (Environment.ProcessorCount - 1) + ")"); return 2; }
-        if (selected.Count == 0) selected.AddRange(assets.Keys);
+        if (selected.Count == 0) selected.AddRange(assets.Keys.Where(k => !voiceKeys.Contains(k)));
         TensorExecutionOptions tensorOpts = modeName.ToLowerInvariant() switch
         {
             "scalar" => TensorExecutionOptions.Scalar with { MaxDegreeOfParallelism = threads },
@@ -149,6 +154,10 @@ static class Bench
         if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) RunCase("dinov3-224", () => CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, rowsName, modeName));
         if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) RunCase("resnet50-224", () => CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters, rowsName, modeName));
         if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) RunCase("gpt2-4tok", () => CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, rowsName, modeName));
+        if (selected.Contains("parakeet-encoder", StringComparer.OrdinalIgnoreCase)) RunCase("parakeet-encoder", () => CompareVoice("parakeet-encoder", assets["parakeet-encoder"][0], VoiceModelCases.EncoderInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
+        if (selected.Contains("parakeet-decoder", StringComparer.OrdinalIgnoreCase)) RunCase("parakeet-decoder", () => CompareVoiceDecoder("parakeet-decoder", assets["parakeet-decoder"][0], root, tensorOpts, threads, iters, modeName));
+        if (selected.Contains("pyannote-segmentation", StringComparer.OrdinalIgnoreCase)) RunCase("pyannote-segmentation", () => CompareVoice("pyannote-segmentation", assets["pyannote-segmentation"][0], VoiceModelCases.SegmentationInputs(root), VoiceModelCases.SegLongTolerance, tensorOpts, threads, iters, modeName));
+        if (selected.Contains("pyannote-embedding", StringComparer.OrdinalIgnoreCase)) RunCase("pyannote-embedding", () => CompareVoice("pyannote-embedding", assets["pyannote-embedding"][0], VoiceModelCases.EmbeddingInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
         if (excludedCases.Count > 0)
         {
             Console.WriteLine("cases-excluded [" + string.Join(",", excludedCases) + "] (tracked known divergences; no rows are eligible for excluded cases)");
@@ -385,7 +394,50 @@ static class Bench
         Compare(name, model, inputs.ToArray(), tensorOpts, threads, iters, rowsName, modeName);
     }
 
-    static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
+    // Voice-model cases run the canonical matched row only: replay inputs
+    // are fixed, so the diagnostic rows add no information. Decoder timing
+    // uses fixed token/state inputs for equal work; state chaining and
+    // reset determinism are checked separately without timing.
+    static void CompareVoice(string name, string model, Dictionary<string, ITensor> named, double tolerance, TensorExecutionOptions tensorOpts, int threads, int iters, string modeName)
+    {
+        Console.WriteLine("voice case " + name + ": replay inputs [" + string.Join(",", named.Select(kv => kv.Key + ":" + string.Join("x", kv.Value.Dims))) + "] tolerance=" + tolerance.ToString("E0") + " (canonical matched row only)");
+        Compare(name, model, named.Values.ToArray(), tensorOpts, threads, iters, "canonical", modeName, tolerance);
+    }
+
+    static void CompareVoiceDecoder(string name, string model, string root, TensorExecutionOptions tensorOpts, int threads, int iters, string modeName)
+    {
+        CompareVoice(name, model, VoiceModelCases.DecoderStep1Inputs(root), Tolerance, tensorOpts, threads, iters, modeName);
+        DecoderChainedCheck(name, model, root, tensorOpts, threads);
+    }
+
+    static void DecoderChainedCheck(string name, string model, string root, TensorExecutionOptions tensorOpts, int threads)
+    {
+        var graph = OnnxImport.Load(model)!;
+        var lokadOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
+        using var so = CreateSingleCpuSessionOptions(threads);
+        double ortLoadMs;
+        using var session = OpenSession(model, so, out ortLoadMs);
+        var outNames = session.OutputMetadata.Keys.ToArray();
+        var first = VoiceModelCases.DecoderStep1Inputs(root);
+        if (!graph.Execute(first, true, ExecutionProvider.CPU, lokadOpts))
+            throw new InvalidOperationException(name + "-chained: zero-state execute failed");
+        var firstScores = ((Tensor<float>)graph.Outputs["outputs"]).ToArray();
+        var firstLen = ((Tensor<int>)graph.Outputs["prednet_lengths"]).ToArray();
+        var h1 = ((Tensor<float>)graph.Outputs["output_states_1"]).ToArray();
+        var c1 = ((Tensor<float>)graph.Outputs["output_states_2"]).ToArray();
+        var chained = VoiceModelCases.DecoderChainedInputs(root, h1, c1);
+        Validate(name + "-chained", graph, session, chained, outNames, lokadOpts);
+        Console.WriteLine("chained validation ok for " + name + " (output-to-input state carry, ortLoad=" + ortLoadMs.ToString("F1") + "ms)");
+        graph.Reset();
+        if (!graph.Execute(first, true, ExecutionProvider.CPU, lokadOpts))
+            throw new InvalidOperationException(name + "-chained: reset rerun failed");
+        if (!((Tensor<float>)graph.Outputs["outputs"]).ToArray().SequenceEqual(firstScores)
+            || !((Tensor<int>)graph.Outputs["prednet_lengths"]).ToArray().SequenceEqual(firstLen))
+            throw new InvalidOperationException(name + "-chained: sequence reset is not deterministic.");
+        Console.WriteLine("reset determinism ok for " + name);
+    }
+
+    static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName, double tolerance = Tolerance)
     {
         var loadSw = Stopwatch.StartNew();
         var graph = OnnxImport.Load(model)!;
@@ -409,7 +461,7 @@ static class Bench
                 {
                     TimedRow(name, model, graph, inputs, ortMatched, matchedOpts,
                         CanonicalLokDesc(modeName, threads), "intraop=" + threads + " interop=1 seq opt=ALL nospin", iters, sidecarInfo,
-                        loadMs, prepareMs, ortLoadMs);
+                        loadMs, prepareMs, ortLoadMs, tolerance);
                 }
             }
             return;
@@ -465,14 +517,14 @@ static class Bench
 
     static void TimedRow(string name, string model, ComputationalGraph graph, ITensor[] inputs,
         InferenceSession ortSession, ExecutionOptions lokadOpts, string lokDesc, string ortDesc,
-        int iters, string sidecarInfo, double loadMs, double prepareMs, double ortLoadMs)
+        int iters, string sidecarInfo, double loadMs, double prepareMs, double ortLoadMs, double tolerance = Tolerance)
     {
         var inNames = ortSession.InputMetadata.Keys.ToArray();
         var outNames = ortSession.OutputMetadata.Keys.ToArray();
         if (inputs.Length == 1 && string.IsNullOrEmpty(inputs[0].Name) && inNames.Length == 1) inputs[0].Name = inNames[0];
         var named = ToNamed(name, inputs, inNames);
         var valSw = Stopwatch.StartNew();
-        var first = Validate(name, graph, ortSession, named, outNames, lokadOpts);
+        var first = Validate(name, graph, ortSession, named, outNames, lokadOpts, tolerance);
         valSw.Stop();
         Console.WriteLine("case " + name + " [" + lokDesc + " vs " + ortDesc + "]: model="
             + Path.GetFileName(Path.GetDirectoryName(model)) + "/model.onnx"
@@ -483,7 +535,7 @@ static class Bench
             + " load=" + loadMs.ToString("F1") + "ms prepare=" + prepareMs.ToString("F1") + "ms ortLoad=" + ortLoadMs.ToString("F1") + "ms"
             + " firstLokad=" + first.lokadFirstMs.ToString("F1") + "ms firstOrt=" + first.ortFirstMs.ToString("F1") + "ms"
             + " (first-run is process-cold only on the first row; later rows share warmed JIT)");
-        TimedRun(name, graph, named, outNames, lokadOpts, lokDesc, ortDesc, iters, valSw.Elapsed.TotalMilliseconds, first.scaled, first.abs, ortSession);
+        TimedRun(name, graph, named, outNames, lokadOpts, lokDesc, ortDesc, iters, valSw.Elapsed.TotalMilliseconds, first.scaled, first.abs, ortSession, tolerance);
     }
 
     static string[] OutputShapes(ComputationalGraph graph, string[] outNames)
@@ -499,7 +551,7 @@ static class Bench
     }
 
     static void TimedRun(string name, ComputationalGraph graph, Dictionary<string, ITensor> named, string[] outNames,
-        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, double validationMs, double maxScaled, double maxAbs, InferenceSession ortSession)
+        ExecutionOptions lokadOpts, string lokDesc, string ortDesc, int iters, double validationMs, double maxScaled, double maxAbs, InferenceSession ortSession, double tolerance = Tolerance)
     {
         // One-time input conversion, reused by every ORT run below; Lokad inputs need no conversion.
         var convSw = Stopwatch.StartNew();
@@ -577,7 +629,7 @@ static class Bench
             ulong fpAfter = FingerprintInputs(named);
             if (fpAfter != fpBefore)
                 throw new InvalidOperationException(name + ": inputs mutated during timed reuse (fingerprint changed).");
-            var post = Validate(name + " post-timed", graph, ortSession, named, outNames, lokadOpts);
+            var post = Validate(name + " post-timed", graph, ortSession, named, outNames, lokadOpts, tolerance);
 
             Console.WriteLine(name + " [" + lokDesc + " vs " + ortDesc + "]: lokad " + Dist(lok) + " | ctxLokad " + Dist(clok) + " | ort " + Dist(ort)
                 + " | resetPop " + Dist(resetPop) + " | resetClean " + Dist(resetClean) + " | convert=" + convertMs.ToString("F1") + "ms"
@@ -596,7 +648,7 @@ static class Bench
         }
     }
 
-    static (double scaled, double abs, double lokadFirstMs, double ortFirstMs) Validate(string name, ComputationalGraph graph, InferenceSession session, Dictionary<string, ITensor> named, string[] outNames, ExecutionOptions lokadOpts)
+    static (double scaled, double abs, double lokadFirstMs, double ortFirstMs) Validate(string name, ComputationalGraph graph, InferenceSession session, Dictionary<string, ITensor> named, string[] outNames, ExecutionOptions lokadOpts, double tolerance = Tolerance)
     {
         // First runs on cold state; output disposal stays outside both first-run figures.
         // The ORT session is the reference in every comparison below.
@@ -625,8 +677,28 @@ static class Bench
                 string onm = outNames[oi];
                 var res = outs[oi];
                 var shape = res.GetTensorTypeAndShape();
-                if (shape.ElementDataType != Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Float)
-                    throw new InvalidOperationException(name + ": ort output is not float32: " + onm + " (got " + shape.ElementDataType + ").");
+                if (shape.ElementDataType != Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Float
+                    && shape.ElementDataType != Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int32
+                    && shape.ElementDataType != Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int64)
+                    throw new InvalidOperationException(name + ": ort output is not float32/int32/int64: " + onm + " (got " + shape.ElementDataType + ").");
+                if (shape.ElementDataType == Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int32
+                    || shape.ElementDataType == Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int64)
+                {
+                    // Integer outputs (decoder lengths, encoder lengths) compare exactly.
+                    long[] oaInt = shape.ElementDataType == Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int32
+                        ? Array.ConvertAll(res.GetTensorDataAsSpan<int>().ToArray(), v => (long)v)
+                        : res.GetTensorDataAsSpan<long>().ToArray();
+                    if (!graph.Outputs.TryGetValue(onm, out var ltInt) || ltInt is null)
+                        throw new InvalidOperationException(name + ": lokad output missing: " + onm + ".");
+                    long[] laInt;
+                    int[] ldimsInt;
+                    if (ltInt is Tensor<int> li) { laInt = Array.ConvertAll(li.ToArray(), v => (long)v); ldimsInt = li.Dimensions.ToArray(); }
+                    else if (ltInt is Tensor<long> ll) { laInt = ll.ToArray(); ldimsInt = ll.Dimensions.ToArray(); }
+                    else throw new InvalidOperationException(name + ": lokad output is not int32/int64: " + onm + ".");
+                    BenchValidate.RequireExact(name + ":" + onm,
+                        shape.Shape.Select(d => checked((int)d)).ToArray(), oaInt, ldimsInt, laInt);
+                    continue;
+                }
                 if (!graph.Outputs.TryGetValue(onm, out var lt) || lt is not Tensor<float> lf)
                     throw new InvalidOperationException(name + ": lokad output missing or not float32: " + onm
                         + " (got " + (lt is null ? "unresolved" : lt.GetType().Name) + ").");
@@ -638,15 +710,15 @@ static class Bench
                     agree = BenchValidate.RequireAgreement(
                         name + ":" + onm,
                         shape.Shape.Select(d => checked((int)d)).ToArray(), oa,
-                        lf.Dimensions.ToArray(), la, Tolerance);
+                        lf.Dimensions.ToArray(), la, tolerance);
                 }
                 catch (InvalidOperationException ex)
                 {
                     if (oa.Length == la.Length)
                     {
                         var diff = BenchValidate.ScaledAndAbsDiff(oa, la);
-                        if (KnownDivergences.TryMatch(name, onm, diff.scaled, Tolerance, out var known))
-                            throw new KnownDivergenceException(name, onm, diff.scaled, Tolerance, known, ex);
+                        if (KnownDivergences.TryMatch(name, onm, diff.scaled, tolerance, out var known))
+                            throw new KnownDivergenceException(name, onm, diff.scaled, tolerance, known, ex);
                     }
                     throw;
                 }
@@ -678,6 +750,10 @@ static class Bench
             {
                 for (int i = 0; i < fi.Length; i++) { h ^= (ulong)(uint)BitConverter.SingleToInt32Bits(fi.GetValue(i)); h *= 1099511628211UL; }
             }
+            else if (t is Tensor<int> ii)
+            {
+                for (int i = 0; i < ii.Length; i++) { h ^= (ulong)(uint)ii.GetValue(i); h *= 1099511628211UL; }
+            }
             else throw new InvalidOperationException("unsupported input tensor type " + t.GetType().Name);
         }
         return h;
@@ -696,6 +772,10 @@ static class Bench
             else if (src is Tensor<float> fi)
             {
                 ortInputs[n] = OrtValue.CreateTensorValueFromMemory(fi.ToArray(), fi.Dimensions.ToArray().Select(d => (long)d).ToArray());
+            }
+            else if (src is Tensor<int> ii)
+            {
+                ortInputs[n] = OrtValue.CreateTensorValueFromMemory(ii.ToArray(), ii.Dimensions.ToArray().Select(d => (long)d).ToArray());
             }
             else throw new InvalidOperationException("unsupported input tensor type " + src.GetType().Name);
         }
