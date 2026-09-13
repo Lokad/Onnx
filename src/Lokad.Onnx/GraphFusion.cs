@@ -195,13 +195,30 @@ namespace Lokad.Onnx
             return (int)t.Length;
         }
 
-        public static int FuseLayerNormPatterns(ComputationalGraph graph)
-        {
-            var idx = BuildIndex(graph);
-            var producer = idx.Producer;
-            var consumers = idx.Consumers;
-            var outputs = idx.Outputs;
+        static readonly object PassLock = new object();
+        static bool layerNormRegistered;
 
+        public static void RegisterLayerNormPass()
+        {
+            lock (PassLock)
+            {
+                if (layerNormRegistered) return;
+                Optimization.GraphOptimizer.Passes.Add(new Optimization.GraphOptimizer.Pass(
+                    "layernorm",
+                    (graph, facts) =>
+                    {
+                        var rewritten = new List<int>();
+                        int n = FuseLayerNormPass(graph, facts, rewritten);
+                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
+                        result.Nodes.AddRange(rewritten);
+                        if (n > 0) result.Notes.Add("fused " + n + " LayerNorm patterns");
+                        return result;
+                    }));
+                layerNormRegistered = true;
+            }
+        }
+        public static int FuseLayerNormPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        {
             var drop = new HashSet<int>();
             int fused = 0;
 
@@ -210,13 +227,13 @@ namespace Lokad.Onnx
                 if (graph.Nodes[i].Op != OpType.Div) continue;
                 if (!IsFusableParticipant(graph.Nodes[i])) continue;
                 if (drop.Contains(i)) continue;
-                if (TryMatchLayerNorm(graph, producer, consumers, outputs, drop, i, out var dead, out var epsConst))
+                if (TryMatchLayerNorm(graph, facts, drop, rewritten, i, out var dead, out var epsConst))
                 {
                     foreach (var d in dead) drop.Add(d);
                     if (epsConst >= 0)
                     {
                         bool ConstOnlyFeedsDead(string output) =>
-                            !outputs.Contains(output) && (!consumers.TryGetValue(output, out var uses) || uses.All(u => drop.Contains(u)));
+                            !facts.GraphOutputs.Contains(output) && (!facts.Consumers.TryGetValue(output, out var uses) || uses.All(u => drop.Contains(u)));
                         var cnode = graph.Nodes[epsConst];
                         if (cnode.Outputs.All(ConstOnlyFeedsDead)) drop.Add(epsConst);
                     }
@@ -239,10 +256,9 @@ namespace Lokad.Onnx
 
         static bool TryMatchLayerNorm(
             ComputationalGraph graph,
-            Dictionary<string, int> producer,
-            Dictionary<string, List<int>> consumers,
-            HashSet<string> outputs,
+            Optimization.GraphFacts facts,
             HashSet<int> drop,
+            List<int> rewritten,
             int divIndex,
             out List<int> dead,
             out int epsConst)
@@ -255,8 +271,8 @@ namespace Lokad.Onnx
             if (div.Outputs.Length != 1) return false;
             int OnlyConsumer(string output, OpType op)
             {
-                if (outputs.Contains(output)) return -1;
-                if (!consumers.TryGetValue(output, out var uses)) return -1;
+                if (facts.GraphOutputs.Contains(output)) return -1;
+                if (!facts.Consumers.TryGetValue(output, out var uses)) return -1;
                 var live = new List<int>();
                 foreach (var u in uses) if (!drop.Contains(u)) live.Add(u);
                 if (live.Count != 1) return -1;
@@ -266,7 +282,7 @@ namespace Lokad.Onnx
             }
             int ProducerOf(string input, OpType op)
             {
-                if (string.IsNullOrEmpty(input) || !producer.TryGetValue(input, out var pi)) return -1;
+                if (string.IsNullOrEmpty(input) || !facts.Producer.TryGetValue(input, out var pi)) return -1;
                 if (drop.Contains(pi)) return -1;
                 var cand = graph.Nodes[pi];
                 if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
@@ -309,7 +325,7 @@ namespace Lokad.Onnx
             }
             bool IsKnownFloat(string name)
             {
-                return IsProvenFloat(graph, producer, name);
+                return facts.Dtypes.TryGetValue(name, out var proven) && proven == TensorElementType.Float;
             }
             int LastDimOf(string name)
             {
@@ -409,8 +425,8 @@ namespace Lokad.Onnx
                 {
                     if (string.IsNullOrEmpty(o)) continue;
                     if (o == abNode.Outputs[0]) continue;
-                    if (outputs.Contains(o)) return false;
-                    if (consumers.TryGetValue(o, out var uses) && uses.Any(u => !deadSet.Contains(u) && u != ab && !drop.Contains(u))) return false;
+                    if (facts.GraphOutputs.Contains(o)) return false;
+                    if (facts.Consumers.TryGetValue(o, out var uses) && uses.Any(u => !deadSet.Contains(u) && u != ab && !drop.Contains(u))) return false;
                 }
             }
             if (!IsFusableParticipant(abNode)) return false;
@@ -426,6 +442,7 @@ namespace Lokad.Onnx
             ln.Inputs = new[] { xPos, gamma, beta };
             ln.Attributes = new Dictionary<string, object> { { "axis", -1 }, { "epsilon", eps.Value } };
             graph.Nodes[ab] = ln;
+            rewritten.Add(ab);
             return true;
         }
 

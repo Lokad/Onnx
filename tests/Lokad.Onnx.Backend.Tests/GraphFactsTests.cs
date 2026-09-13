@@ -47,7 +47,7 @@ public class GraphFactsTests
         Assert.Equal(TensorElementType.Float, facts.Dtypes["w"]);
         Assert.Equal(TensorElementType.Float, facts.Dtypes["c1"]);
         Assert.Equal(TensorElementType.Float, facts.Dtypes["m"]);
-        Assert.False(facts.Dtypes.ContainsKey("y"));
+        Assert.Equal(TensorElementType.Float, facts.Dtypes["y"]);
         Assert.Equal(new[] { 2, 4 }, facts.KnownDims["x"]);
         Assert.Equal(new[] { 4, 4 }, facts.KnownDims["w"]);
         Assert.Empty(facts.KnownDims["c1"]);
@@ -65,6 +65,5 @@ public class GraphFactsTests
         var report = GraphOptimizer.Run(graph);
         Assert.Empty(report);
         Assert.Equal(before, graph.Nodes.Count);
-        Assert.True(GraphOptimizer.Passes.Count == 0);
     }
 }

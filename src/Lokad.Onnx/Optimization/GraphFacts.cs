@@ -144,18 +144,76 @@ internal sealed class GraphFacts
         }
         if (pn.Op == OpType.Concat)
         {
+            // Mirrors the historical rule exactly, including its vacuous truth: empty inputs
+            // are skipped, and all-empty (but present) inputs prove float like the original.
             if (pn.Inputs is null || pn.Inputs.Length < 1) return null;
+            TensorElementType? first = null;
+            foreach (var inp in pn.Inputs)
+            {
+                if (string.IsNullOrEmpty(inp)) continue;
+                var next = ProveDtype(graph, nodes, producer, inp, visiting, memo);
+                if (!next.HasValue) return null;
+                if (!first.HasValue) first = next;
+                else if (next.Value != first.Value) return null;
+            }
+            return first ?? TensorElementType.Float;
+        }
+        if (pn.Op == OpType.MatMul)
+        {
+            if (pn.Inputs is null || pn.Inputs.Length != 2) return null;
+            var left = ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
+            var right = ProveDtype(graph, nodes, producer, pn.Inputs[1], visiting, memo);
+            if (!left.HasValue || !right.HasValue || left.Value != right.Value) return null;
+            return left;
+        }
+        if (pn.Op == OpType.Conv || pn.Op == OpType.Gemm)
+        {
+            if (pn.Inputs is null || pn.Inputs.Length < 2) return null;
+            var first = ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
+            var second = ProveDtype(graph, nodes, producer, pn.Inputs[1], visiting, memo);
+            if (!first.HasValue || !second.HasValue || first.Value != second.Value) return null;
+            if (pn.Inputs.Length >= 3 && !string.IsNullOrEmpty(pn.Inputs[2]))
+            {
+                var third = ProveDtype(graph, nodes, producer, pn.Inputs[2], visiting, memo);
+                if (!third.HasValue || third.Value != first.Value) return null;
+            }
+            return first;
+        }
+        if (pn.Op == OpType.Where)
+        {
+            if (pn.Inputs is null || pn.Inputs.Length != 3) return null;
+            var branch = ProveDtype(graph, nodes, producer, pn.Inputs[1], visiting, memo);
+            var other = ProveDtype(graph, nodes, producer, pn.Inputs[2], visiting, memo);
+            if (!branch.HasValue || !other.HasValue || branch.Value != other.Value) return null;
+            return branch;
+        }
+        if (pn.Op == OpType.Range)
+        {
+            if (pn.Inputs is null || pn.Inputs.Length != 3) return null;
             var first = ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);
             if (!first.HasValue) return null;
-            for (int i = 1; i < pn.Inputs.Length; i++)
+            for (int i = 1; i < 3; i++)
             {
                 var next = ProveDtype(graph, nodes, producer, pn.Inputs[i], visiting, memo);
                 if (!next.HasValue || next.Value != first.Value) return null;
             }
             return first;
         }
+        if (pn.Op == OpType.ConstantOfShape)
+        {
+            if (pn.Attributes is not null && pn.Attributes.TryGetValue("value", out var v) && v is ITensor ct && ct.ElementType == TensorElementType.Float) return TensorElementType.Float;
+            return null;
+        }
         switch (pn.Op)
         {
+            case OpType.Gather:
+            case OpType.Split:
+            case OpType.SplitToSequence:
+            case OpType.SequenceAt:
+            case OpType.Tile:
+            case OpType.GlobalAveragePool:
+            case OpType.MaxPool:
+            case OpType.Sqrt:
             case OpType.ReduceMean:
             case OpType.ReduceSum:
             case OpType.ReduceMax:

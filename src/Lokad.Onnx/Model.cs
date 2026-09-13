@@ -14,7 +14,12 @@ public class Model
     /// not reuse the description after this call. Tensor payload arrays become
     /// the backing storage of the graph initializers with no further copy.
     /// </remarks>
-    public static ComputationalGraph Load(OnnxModel mp)
+    public static ComputationalGraph Load(OnnxModel mp) => Load(mp, runOptimizer: true);
+
+    /// <summary>Assembles a graph with optional load-time optimization.</summary>
+    /// <remarks>Diagnostic entry for pass tests: skipping the optimizer leaves the pre-pass
+    /// graph. Legacy (not yet migrated) fusions still apply; only pipeline passes are gated.</remarks>
+    internal static ComputationalGraph Load(OnnxModel mp, bool runOptimizer)
     {
         if (Log.IsEnabled(LogLevel.Info)) Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Name, mp.Domain, mp.Opset.Select(o => o.Key + ":" + o.Value).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.DocString);
         var cop = Begin("Creating computational graph from ONNX model");
@@ -46,10 +51,15 @@ public class Model
             graph.Nodes.Add(ToNode(np, graph));
         }
         op.Complete();
-        // G01 substrate: runs zero passes until fusions migrate onto it (M2/M3), so loading
-        // behavior is unchanged by construction. Passes report through the returned record.
-        Optimization.GraphOptimizer.Run(graph);
-        int fused = GraphFusion.FuseLayerNormPatterns(graph);
+        GraphFusion.RegisterLayerNormPass();
+        int fused = 0;
+        if (runOptimizer)
+        {
+            foreach (var change in Optimization.GraphOptimizer.Run(graph))
+            {
+                if (change.Pass == "layernorm") fused += change.Rewritten;
+            }
+        }
         if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
         int rope = GraphFusion.FuseRopePatterns(graph);
         if (rope > 0) Info("Fused {c} rotary-embedding patterns into native nodes.", rope);
