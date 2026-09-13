@@ -12,6 +12,8 @@ using Microsoft.ML.OnnxRuntime;
 static class Bench
 {
     const int DefaultWarmup = 3;
+    internal const string E5ShortText = "query: hello world";
+    internal const string E5Sentence = "The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk";
     const double Tolerance = 1e-4;
     const double ConfinementRatioLimit = 1.3;
     const int ConfinementDurationMs = 2000;
@@ -33,6 +35,10 @@ static class Bench
         if (args.Length > 0 && args[0] == "graph")
         {
             return GraphCensus.RunGraph(root, assets, args.Skip(1).ToArray());
+        }
+        if (args.Length > 0 && args[0] == "profile")
+        {
+            return GraphProfile.RunProfile(root, args.Skip(1).ToArray());
         }
         if (args.Length > 0 && args[0] == "micro")
         {
@@ -155,10 +161,10 @@ static class Bench
         if (selected.Contains("e5", StringComparer.OrdinalIgnoreCase))
         {
             var e5 = assets["e5"];
-            RunCase("e5-8tok", () => CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
-            RunCase("e5-30tok", () => CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
-            RunCase("e5-30pad128", () => CompareE5("e5-30pad128", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 0, 128));
-            var e5Long = "query: " + string.Join(" ", Enumerable.Repeat("The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", 40));
+            RunCase("e5-8tok", () => CompareE5("e5-8tok", e5[0], e5[1], E5ShortText, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
+            RunCase("e5-30tok", () => CompareE5("e5-30tok", e5[0], e5[1], "query: " + E5Sentence, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
+            RunCase("e5-30pad128", () => CompareE5("e5-30pad128", e5[0], e5[1], "query: " + E5Sentence, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 0, 128));
+            var e5Long = "query: " + string.Join(" ", Enumerable.Repeat(E5Sentence, 40));
             RunCase("e5-128tok", () => CompareE5("e5-128tok", e5[0], e5[1], e5Long, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 128));
             RunCase("e5-512tok", () => CompareE5("e5-512tok", e5[0], e5[1], e5Long, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 512));
         }
