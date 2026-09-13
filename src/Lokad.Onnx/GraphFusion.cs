@@ -203,7 +203,7 @@ namespace Lokad.Onnx
             lock (PassLock)
             {
                 if (layerNormRegistered) return;
-                Optimization.GraphOptimizer.Passes.Add(new Optimization.GraphOptimizer.Pass(
+                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
                     "layernorm",
                     (graph, facts) =>
                     {
@@ -453,13 +453,31 @@ namespace Lokad.Onnx
         /// application against the fused reference; the native kernel matches
         /// ORT bit-identically.
         /// </summary>
-        public static int FuseGeluPatterns(ComputationalGraph graph)
-        {
-            var idx = BuildIndex(graph);
-            var producer = idx.Producer;
-            var consumers = idx.Consumers;
-            var outputs = idx.Outputs;
+        static readonly object GeluPassLock = new object();
+        static bool geluRegistered;
 
+        public static void RegisterGeluPass()
+        {
+            lock (GeluPassLock)
+            {
+                if (geluRegistered) return;
+                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
+                    "gelu",
+                    (graph, facts) =>
+                    {
+                        var rewritten = new List<int>();
+                        int n = FuseGeluPass(graph, facts, rewritten);
+                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
+                        result.Nodes.AddRange(rewritten);
+                        if (n > 0) result.Notes.Add("fused " + n + " exact-GELU patterns");
+                        return result;
+                    }));
+                geluRegistered = true;
+            }
+        }
+
+        public static int FuseGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        {
             var drop = new HashSet<int>();
             int fused = 0;
 
@@ -468,7 +486,7 @@ namespace Lokad.Onnx
                 if (graph.Nodes[i].Op != OpType.Erf) continue;
                 if (!IsFusableParticipant(graph.Nodes[i])) continue;
                 if (drop.Contains(i)) continue;
-                if (TryMatchGelu(graph, producer, consumers, outputs, drop, i, out var dead, out var constNodes, out var survivor))
+                if (TryMatchGelu(graph, facts, drop, i, out var dead, out var constNodes, out var survivor))
                 {
                     foreach (var d in dead) drop.Add(d);
                     foreach (var cn in constNodes)
@@ -476,10 +494,11 @@ namespace Lokad.Onnx
                         // The surviving fused node still names its half
                         // constant, which no longer needs a producer.
                         bool ConstOnlyFeedsDead(string output) =>
-                            !outputs.Contains(output) && (!consumers.TryGetValue(output, out var uses) || uses.All(u => u == survivor || drop.Contains(u)));
+                            !facts.GraphOutputs.Contains(output) && (!facts.Consumers.TryGetValue(output, out var uses) || uses.All(u => u == survivor || drop.Contains(u)));
                         var cnode = graph.Nodes[cn];
                         if (cnode.Outputs.All(ConstOnlyFeedsDead)) drop.Add(cn);
                     }
+                    if (survivor >= 0) rewritten.Add(survivor);
                     fused++;
                 }
             }
@@ -499,9 +518,7 @@ namespace Lokad.Onnx
 
         static bool TryMatchGelu(
             ComputationalGraph graph,
-            Dictionary<string, int> producer,
-            Dictionary<string, List<int>> consumers,
-            HashSet<string> outputs,
+            Optimization.GraphFacts facts,
             HashSet<int> drop,
             int erfIndex,
             out List<int> dead,
@@ -517,8 +534,8 @@ namespace Lokad.Onnx
             if (erf.Outputs.Length != 1) return false;
             int OnlyConsumer(string output, OpType op)
             {
-                if (outputs.Contains(output)) return -1;
-                if (!consumers.TryGetValue(output, out var uses)) return -1;
+                if (facts.GraphOutputs.Contains(output)) return -1;
+                if (!facts.Consumers.TryGetValue(output, out var uses)) return -1;
                 var live = new List<int>();
                 foreach (var u in uses) if (!drop.Contains(u)) live.Add(u);
                 if (live.Count != 1) return -1;
@@ -528,7 +545,7 @@ namespace Lokad.Onnx
             }
             int ProducerOf(string input, OpType op)
             {
-                if (string.IsNullOrEmpty(input) || !producer.TryGetValue(input, out var pi)) return -1;
+                if (string.IsNullOrEmpty(input) || !facts.Producer.TryGetValue(input, out var pi)) return -1;
                 if (drop.Contains(pi)) return -1;
                 var cand = graph.Nodes[pi];
                 if (cand.Op != op || !IsFusableParticipant(cand)) return -1;
@@ -568,7 +585,7 @@ namespace Lokad.Onnx
             if (divNode.Outputs.Length != 1) return false;
             // Division is not commutative: the activated value divides first.
             string xPos = divNode.Inputs[0];
-            if (!IsProvenFloat(graph, producer, xPos)) return false;
+            if (!(facts.Dtypes.TryGetValue(xPos, out var xdt) && xdt == TensorElementType.Float)) return false;
             float? c0 = ScalarFloatOf(divNode.Inputs[1], out int c0n);
             if (!c0.HasValue || c0.Value != 1.4142135f) return false;
             int add = OnlyConsumer(erf.Outputs[0], OpType.Add);
@@ -607,8 +624,8 @@ namespace Lokad.Onnx
                 {
                     if (string.IsNullOrEmpty(o)) continue;
                     if (o == mul1Node.Outputs[0]) continue;
-                    if (outputs.Contains(o)) return false;
-                    if (consumers.TryGetValue(o, out var uses) && uses.Any(u => !deadSet.Contains(u) && u != mul1 && !drop.Contains(u))) return false;
+                    if (facts.GraphOutputs.Contains(o)) return false;
+                    if (facts.Consumers.TryGetValue(o, out var uses) && uses.Any(u => !deadSet.Contains(u) && u != mul1 && !drop.Contains(u))) return false;
                 }
             }
             if (!IsFusableParticipant(mul1Node)) return false;

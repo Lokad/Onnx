@@ -57,6 +57,18 @@ internal static class GraphOptimizer
 
     public static readonly List<Pass> Passes = new List<Pass>();
 
+    /// <summary>Guards pass registration and snapshots: model loads run concurrently across tests.</summary>
+    internal static readonly object PassLock = new object();
+
+    public static void AddPass(Pass pass)
+    {
+        lock (PassLock)
+        {
+            foreach (var p in Passes) if (p.Name == pass.Name) return;
+            Passes.Add(pass);
+        }
+    }
+
     public static readonly HashSet<string> Disabled = new HashSet<string>(StringComparer.Ordinal);
 
     public const int MaxRounds = 8;
@@ -64,24 +76,28 @@ internal static class GraphOptimizer
     public static List<PassChange> Run(ComputationalGraph graph, IEnumerable<string>? disabled = null)
     {
         var report = new List<PassChange>();
-        HashSet<string> off = Disabled;
-        if (disabled is not null)
+        Pass[] active;
+        HashSet<string> off;
+        lock (PassLock)
         {
-            var merged = new HashSet<string>(Disabled, StringComparer.Ordinal);
-            foreach (var d in disabled) merged.Add(d);
-            off = merged;
+            active = Passes.ToArray();
+            off = new HashSet<string>(Disabled, StringComparer.Ordinal);
+            if (disabled is not null) foreach (var d in disabled) off.Add(d);
         }
         for (int round = 0; round < MaxRounds; round++)
         {
             var facts = GraphFacts.Build(graph);
             bool changed = false;
-            foreach (var pass in Passes)
+            foreach (var pass in active)
             {
                 if (off.Contains(pass.Name)) continue;
                 var result = pass.Run(graph, facts);
                 if (result is null || !result.Changed) continue;
                 changed = true;
                 report.Add(new PassChange(pass.Name, result.Rewritten, result.Nodes, result.Notes));
+                // A pass that reports a change may have reordered the node list; later passes
+                // in this round must see fresh positions, never the pre-mutation snapshot.
+                facts = GraphFacts.Build(graph);
             }
             if (!changed) break;
         }

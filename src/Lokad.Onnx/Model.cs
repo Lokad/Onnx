@@ -63,7 +63,15 @@ public class Model
         if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
         int rope = GraphFusion.FuseRopePatterns(graph);
         if (rope > 0) Info("Fused {c} rotary-embedding patterns into native nodes.", rope);
-        int gelu = GraphFusion.FuseGeluPatterns(graph);
+        GraphFusion.RegisterGeluPass();
+        int gelu = 0;
+        if (runOptimizer)
+        {
+            foreach (var change in Optimization.GraphOptimizer.Run(graph))
+            {
+                if (change.Pass == "gelu") gelu += change.Rewritten;
+            }
+        }
         int geluTanh = GraphFusion.FuseGeluTanhPatterns(graph);
         if (geluTanh > 0) Info("Fused {c} tanh-approx GELU patterns into native nodes.", geluTanh);
         if (gelu > 0) Info("Fused {c} exact-GELU patterns into native nodes.", gelu);
