@@ -797,7 +797,8 @@ where T : unmanaged
             int block = 1;
             for (int dimension = axis; dimension < dims.Length; dimension++) block *= dims[dimension];
             int outer = block == 0 ? 0 : (int)(input.Length / block);
-            SoftmaxContiguousFloat(inputSpan, outputSpan, outer, block, options.UseSimd);
+            if (UseSoftmaxSpan) SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, block, options.UseSimd);
+            else SoftmaxContiguousFloat(inputSpan, outputSpan, outer, block, options.UseSimd);
             return;
         }
         int outerCount = 1;
@@ -808,7 +809,8 @@ where T : unmanaged
         if (inner == 1)
         {
             int outer = dimLen == 0 ? 0 : (int)(input.Length / dimLen);
-            SoftmaxContiguousFloat(inputSpan, outputSpan, outer, dimLen, options.UseSimd);
+            if (UseSoftmaxSpan) SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, dimLen, options.UseSimd);
+            else SoftmaxContiguousFloat(inputSpan, outputSpan, outer, dimLen, options.UseSimd);
             return;
         }
         for (int o = 0; o < outerCount; o++)
@@ -831,6 +833,68 @@ where T : unmanaged
                 }
                 for (int a = 0; a < dimLen; a++) outputSpan[(o * dimLen + a) * inner + i] /= sum;
             }
+        }
+    }
+
+    /// <summary>
+    /// A01 prototype switch: span-fused softmax (fused exp-summation, vector
+    /// normalization) when LOKAD_ONNX_SOFTMAX_SPAN=1. Default-off.
+    /// </summary>
+    internal static readonly bool UseSoftmaxSpan =
+        string.Equals(Environment.GetEnvironmentVariable("LOKAD_ONNX_SOFTMAX_SPAN"), "1", StringComparison.Ordinal);
+
+    /// <summary>
+    /// Softmax over contiguous rows with fused exp-summation and vectorized
+    /// normalization. Max semantics (including NaN propagation) and exp calls match
+    /// the legacy path call for call; only the summation groups vector lanes first,
+    /// so finite values agree within 1e-6 while NaN rows stay NaN. Deterministic per
+    /// shape: fixed-mode repeats are bit-identical run to run.
+    /// </summary>
+    internal static void SoftmaxContiguousFloatSpan(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
+    {
+        for (int outerIndex = 0; outerIndex < outer; outerIndex++)
+        {
+            float max = float.NegativeInfinity;
+            for (int blockIndex = 0; blockIndex < block; blockIndex++)
+            {
+                float candidate = inputSpan[outerIndex * block + blockIndex];
+                if (float.IsNaN(candidate)) { max = float.NaN; break; }
+                if (candidate > max) max = candidate;
+            }
+            float sum = 0f;
+            int expIndex = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax = new Vector<float>(max);
+                var vsum = Vector<float>.Zero;
+                for (; expIndex <= block - width; expIndex += width)
+                {
+                    int baseIndex = outerIndex * block + expIndex;
+                    var activated = MathOps.ExpVector(new Vector<float>(inputSpan.Slice(baseIndex, width)) - vmax);
+                    activated.CopyTo(outputSpan.Slice(baseIndex, width));
+                    vsum += activated;
+                }
+                sum = Vector.Sum(vsum);
+            }
+            for (; expIndex < block; expIndex++)
+            {
+                float activated = MathF.Exp(inputSpan[outerIndex * block + expIndex] - max);
+                outputSpan[outerIndex * block + expIndex] = activated;
+                sum += activated;
+            }
+            int normIndex = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv = new Vector<float>(sum);
+                for (; normIndex <= block - width; normIndex += width)
+                {
+                    int baseIndex = outerIndex * block + normIndex;
+                    (new Vector<float>(outputSpan.Slice(baseIndex, width)) / vdiv).CopyTo(outputSpan.Slice(baseIndex, width));
+                }
+            }
+            for (; normIndex < block; normIndex++) outputSpan[outerIndex * block + normIndex] /= sum;
         }
     }
 
