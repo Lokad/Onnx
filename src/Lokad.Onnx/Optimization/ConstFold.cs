@@ -153,8 +153,11 @@ internal static class ConstFold
             {
                 string survivor = graph.Nodes[group[0]].Outputs[0];
                 string dup = graph.Nodes[group[a]].Outputs[0];
-                var survivorTensor = (ITensor)graph.Nodes[group[0]].Attributes!["value"];
-                var dupTensor = (ITensor)graph.Nodes[group[a]].Attributes!["value"];
+                var survivorAttrs = graph.Nodes[group[0]].Attributes;
+                var dupAttrs = graph.Nodes[group[a]].Attributes;
+                if (survivorAttrs is null || dupAttrs is null) continue;
+                if (!survivorAttrs.TryGetValue("value", out var survivorObj) || survivorObj is not ITensor survivorTensor) continue;
+                if (!dupAttrs.TryGetValue("value", out var dupObj) || dupObj is not ITensor dupTensor) continue;
                 if (BitsEqual(survivorTensor, dupTensor)) rename[dup] = survivor;
             }
         }

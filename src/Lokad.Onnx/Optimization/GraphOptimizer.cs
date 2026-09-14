@@ -73,7 +73,12 @@ internal static class GraphOptimizer
 
     public const int MaxRounds = 8;
 
-    public static List<PassChange> Run(ComputationalGraph graph, IEnumerable<string>? disabled = null)
+    public static List<PassChange> Run(ComputationalGraph graph)
+    {
+        return Run(graph, Array.Empty<string>());
+    }
+
+    public static List<PassChange> Run(ComputationalGraph graph, IEnumerable<string> disabled)
     {
         var report = new List<PassChange>();
         Pass[] active;
@@ -82,7 +87,7 @@ internal static class GraphOptimizer
         {
             active = Passes.ToArray();
             off = new HashSet<string>(Disabled, StringComparer.Ordinal);
-            if (disabled is not null) foreach (var d in disabled) off.Add(d);
+            foreach (var d in disabled) off.Add(d);
         }
         for (int round = 0; round < MaxRounds; round++)
         {

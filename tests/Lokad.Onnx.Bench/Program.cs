@@ -438,7 +438,17 @@ static class Bench
         for (int i = 0; i < flat.Length; i++) flat[i] = 0.5f;
         return new ITensor[] { new DenseTensor<float>(flat, new[] { 1, 3, 224, 224 }) };
     }
-    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, int takeTokens = 0, int padTo = 0)
+    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)
+    {
+        CompareE5(name, model, tokenizer, text, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, 0, 0);
+    }
+
+    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, int takeTokens)
+    {
+        CompareE5(name, model, tokenizer, text, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, takeTokens, 0);
+    }
+
+    static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, int takeTokens, int padTo)
     {
         var inputs = E5Inputs(name, tokenizer, text, takeTokens, padTo);
         Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + ShortHash(tokenizer));
@@ -482,7 +492,12 @@ static class Bench
     }
 
 
-    static void CompareGpt2(string name, string model, int tokens, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, bool legacyCycle = false)
+    static void CompareGpt2(string name, string model, int tokens, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)
+    {
+        CompareGpt2(name, model, tokens, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName, false);
+    }
+
+    static void CompareGpt2(string name, string model, int tokens, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName, bool legacyCycle)
     {
         Compare(name, model, Gpt2PrefillInputs(tokens, legacyCycle), tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
     }

@@ -86,7 +86,7 @@ public class ModelLoadTests
         {
             unsafe { return new System.Span<byte>(_ptr, _len); }
         }
-        public override unsafe System.Buffers.MemoryHandle Pin(int elementIndex = 0)
+        public override unsafe System.Buffers.MemoryHandle Pin(int elementIndex)
         {
             return new System.Buffers.MemoryHandle(_ptr + elementIndex);
         }
