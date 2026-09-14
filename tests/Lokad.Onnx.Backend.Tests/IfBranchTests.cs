@@ -4,11 +4,11 @@ using Onnx;
 
 namespace Lokad.Onnx.Backend.Tests;
 
-// If/subgraph coverage (PLAN.md Milestone 3). A hand-built model exercises
-// branch selection, outer captures (inputs and initializers),
-// branch-local initializers, failure propagation with branch context, and
-// Graph-attribute decoding; the tracked segmentation case proves the real
-// single-If graph with multi-node branches.
+// If/subgraph coverage. A hand-built model exercises branch selection,
+// outer captures (inputs and initializers), branch-local initializers,
+// failure propagation with branch context, and Graph-attribute decoding;
+// the sibling-local fact pins per-invocation scoping, and
+// GraphExecutionSegmentationTests covers a real single-If graph.
 public class IfBranchTests
 {
     static ComputationalGraph IfModel()

@@ -4,11 +4,12 @@ using CPU = Lokad.Onnx.CPUExecutionProvider;
 
 namespace Lokad.Onnx.Backend.Tests;
 
-// Differential LSTM coverage (PLAN.md Milestone 3). Expected values are
-// frozen Python onnxruntime 1.29.0 oracles (ORT_SEQUENTIAL, intra/inter-op
-// 1, ORT_ENABLE_ALL, opset 17) over the small inputs built below; the
-// generator is the ignored .agent/voice-probe/gen_lstm_small.py. Sequence
-// lengths are int32 because ORT refuses int64 there.
+// Differential LSTM coverage. Expected values are frozen ORT reference
+// outputs (ORT_SEQUENTIAL, intra/inter-op 1, ORT_ENABLE_ALL, opset 17)
+// over the small inputs built below; the pre-existing facts pin Python
+// onnxruntime 1.29.0 values while the reverse short-length and
+// HardSigmoid-default facts pin the C# 1.23.2 comparator values. Sequence
+// lengths use int32 tensors here.
 public class CpuExecutionProviderLstmTests
 {
     const double Tol = 1e-5;
