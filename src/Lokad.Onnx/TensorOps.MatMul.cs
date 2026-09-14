@@ -664,6 +664,26 @@ where T : unmanaged
     /// peel one 3-row head, leaving an even tail for one 2-row call, so no
     /// scalar tail or original-operand read ever appears here.
     /// </summary>
+    /// <summary>
+    /// Runs one panel-packed product as 12-row AVX512 heads, one 6-row head,
+    /// and 3/2-row tails: exact shapes keep single calls bit-identically,
+    /// while larger counts trade 2-row passes for wider panel sharing. Rows
+    /// are independent, so partitioning never changes per-element arithmetic;
+    /// every piece uses the same panel layout and FMA order. Odd remainders
+    /// peel one 3-row head, leaving an even tail for one 2-row call, so no
+    /// scalar tail or original-operand read ever appears here. Callers admit
+    /// m >= 2 through the packed gate.
+    /// </summary>
+    /// <summary>
+    /// Runs one panel-packed product as 12-row AVX512 heads, one 6-row head,
+    /// and 3/2-row tails: exact shapes keep single calls bit-identically,
+    /// while larger counts trade 2-row passes for wider panel sharing. Rows
+    /// are independent, so partitioning never changes per-element arithmetic;
+    /// every piece uses the same panel layout and FMA order. Odd remainders
+    /// peel one 3-row head, leaving an even tail for one 2-row call, so no
+    /// scalar tail or original-operand read ever appears here. Callers admit
+    /// m >= 2 through the packed gate.
+    /// </summary>
     static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* packed, float* dest)
     {
         int rest = m;
@@ -671,19 +691,22 @@ where T : unmanaged
         float* dr = dest;
         if (Avx512F.IsSupported && rest >= 6)
         {
-            int main = (rest / 6) * 6;
+            int main = (rest / 12) * 12;
             int rem = rest - main;
-            if (rem == 1) { main -= 6; rem = 7; }
+            if (rem == 1) { main -= 12; rem = 13; }
             if (main > 0)
             {
-                mm_unsafe_vectorized_avx512_6x32packed(main, n, k, xr, packed, dr);
+                mm_unsafe_vectorized_avx512_12x32packed(main, n, k, xr, packed, dr);
                 xr += main * n;
                 dr += main * k;
-                rest = rem;
             }
-            else
+            rest = rem;
+            if (rem >= 6 && rem != 7)
             {
-                rest = rem;
+                mm_unsafe_vectorized_avx512_6x32packed(6, n, k, xr, packed, dr);
+                xr += 6 * n;
+                dr += 6 * k;
+                rest = rem - 6;
             }
         }
         if (rest == 0)

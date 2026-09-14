@@ -175,4 +175,91 @@ public class Avx512PackedKernelTests
                 break;
         }
     }
+    static unsafe void RunTwelve(int m, int n, int k, DenseTensor<float> a, DenseTensor<float> b, DenseTensor<float> p, DenseTensor<float> c)
+    {
+        using var pa = a.Buffer.Pin();
+        using var pb = b.Buffer.Pin();
+        using var pp = p.Buffer.Pin();
+        using var pc = c.Buffer.Pin();
+        MathOps.PackPanelsB(n, k, (float*)pb.Pointer, (float*)pp.Pointer);
+        MathOps.mm_unsafe_vectorized_avx512_12x32packed(m, n, k, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer);
+    }
+
+    static double[] Oracle12(DenseTensor<float> a, DenseTensor<float> b, int m, int n, int k)
+    {
+        var aa = a.ToArray();
+        var bb = b.ToArray();
+        var c = new double[m * k];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < k; j++)
+            {
+                double acc = 0.0;
+                for (int l = 0; l < n; l++) acc += (double)aa[i * n + l] * bb[l * k + j];
+                c[i * k + j] = acc;
+            }
+        return c;
+    }
+
+    static void AssertNear12(double[] expected, float[] actual)
+    {
+        Assert.Equal(expected.Length, actual.Length);
+        for (int i = 0; i < expected.Length; i++)
+        {
+            double tol = 2e-4 * (1.0 + System.Math.Abs(expected[i]));
+            Assert.True(System.Math.Abs(actual[i] - expected[i]) <= tol, "index " + i);
+        }
+    }
+
+    [SkippableFact]
+    public unsafe void TwelveRowMatchesSixRowBitwise()
+    {
+        Skip.If(!Avx512F.IsSupported, "AVX512F not available on this machine.");
+        var rnd = new Random(Seed);
+        foreach (var shape in new[] { (12, 64, 64), (24, 128, 96) })
+        {
+            var a = FillRect(shape.Item1, shape.Item2, rnd);
+            var b = FillRect(shape.Item2, shape.Item3, rnd);
+            var p = Tensor<float>.Zeros(shape.Item2, shape.Item3).ToDenseTensor();
+            var c1 = Tensor<float>.Zeros(shape.Item1, shape.Item3).ToDenseTensor();
+            var c2 = Tensor<float>.Zeros(shape.Item1, shape.Item3).ToDenseTensor();
+            RunTwelve(shape.Item1, shape.Item2, shape.Item3, a, b, p, c1);
+            RunSix(shape.Item1, shape.Item2, shape.Item3, a, b, p, c2);
+            Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+                "12-row diverges bitwise from 6-row on " + shape.Item1 + "x" + shape.Item2 + "x" + shape.Item3);
+        }
+    }
+
+    [SkippableFact]
+    public unsafe void TwelveRowMaskedTailMatchesOracle()
+    {
+        Skip.If(!Avx512F.IsSupported, "AVX512F not available on this machine.");
+        var rnd = new Random(Seed);
+        foreach (var shape in new[] { (12, 128, 100), (24, 64, 20) })
+        {
+            var a = FillRect(shape.Item1, shape.Item2, rnd);
+            var b = FillRect(shape.Item2, shape.Item3, rnd);
+            var p = Tensor<float>.Zeros(shape.Item2, shape.Item3).ToDenseTensor();
+            var c = Tensor<float>.Zeros(shape.Item1, shape.Item3).ToDenseTensor();
+            RunTwelve(shape.Item1, shape.Item2, shape.Item3, a, b, p, c);
+            AssertNear12(Oracle12(a, b, shape.Item1, shape.Item2, shape.Item3), c.ToArray());
+        }
+    }
+
+    [SkippableFact]
+    public unsafe void TwelveRowRejectsRemainder()
+    {
+        Skip.If(!Avx512F.IsSupported, "AVX512F not available on this machine.");
+        var a = FillRect(7, 8, new Random(Seed));
+        var b = FillRect(8, 32, new Random(Seed));
+        var p = Tensor<float>.Zeros(8, 32).ToDenseTensor();
+        var c = Tensor<float>.Zeros(7, 32).ToDenseTensor();
+        Assert.Throws<System.ArgumentException>(() =>
+        {
+            using var pa = a.Buffer.Pin();
+            using var pb = b.Buffer.Pin();
+            using var pp = p.Buffer.Pin();
+            using var pc = c.Buffer.Pin();
+            MathOps.mm_unsafe_vectorized_avx512_12x32packed(7, 8, 32, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer);
+        });
+    }
 }
