@@ -28,7 +28,7 @@ public class BroadcastScalarOneTests
     {
         var big = Fill(bigDims, seed);
         var one = Fill(oneDims, seed + 1);
-        var got = big.BroadcastApply<MultiplyBroadcast<float>>(one, TensorExecutionOptions.Intrinsics).ToDenseTensor();
+        var got = big.BroadcastApply<MultiplyBroadcast<float>>(one, TensorExecutionOptions.Auto).ToDenseTensor();
         var naive = new float[big.Length];
         var bs = big.Buffer.Span;
         float s = one.Buffer.Span[0];
@@ -40,7 +40,7 @@ public class BroadcastScalarOneTests
     {
         var big = Fill(bigDims, seed);
         var one = Fill(oneDims, seed + 1);
-        var got = big.BroadcastApply<AddBroadcast<float>>(one, TensorExecutionOptions.Intrinsics).ToDenseTensor();
+        var got = big.BroadcastApply<AddBroadcast<float>>(one, TensorExecutionOptions.Auto).ToDenseTensor();
         var naive = new float[big.Length];
         var bs = big.Buffer.Span;
         float s = one.Buffer.Span[0];
@@ -61,7 +61,7 @@ public class BroadcastScalarOneTests
     {
         var one = Fill(new[] { 1 }, 94);
         var big = Fill(new[] { 1, 12, 64, 513 }, 95);
-        var got = one.BroadcastApply<MultiplyBroadcast<float>>(big, TensorExecutionOptions.Intrinsics).ToDenseTensor();
+        var got = one.BroadcastApply<MultiplyBroadcast<float>>(big, TensorExecutionOptions.Auto).ToDenseTensor();
         var naive = new float[big.Length];
         var bs = big.Buffer.Span;
         float s = one.Buffer.Span[0];
