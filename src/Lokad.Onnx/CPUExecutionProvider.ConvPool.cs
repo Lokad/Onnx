@@ -105,6 +105,10 @@ public partial class CPUExecutionProvider
                 var bias = B is null ? null : (Tensor<float>)B;
                 if (padmode is null)
                 {
+                    if (Tensor<float>.TryConvDepthwise2D((Tensor<float>)X, (Tensor<float>)W, bias, group ?? 1, pads, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, out var dwConv2D) && dwConv2D is not null)
+                    {
+                        return Success(op, dwConv2D);
+                    }
                     return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu));
                 }
                 return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu));
