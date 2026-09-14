@@ -392,4 +392,67 @@ public class PackedWeightsTests
         Assert.True(graph.Execute(user, true), graph.LastErrorMessage + " / node=" + graph.LastFailedNodeName);
         AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z"], "wide-gemm");
     }
+    [Fact]
+    public void PackingReport_CountsShapesAndBytes()
+    {
+        var rnd = new Random(Seed);
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "packing-report";
+        graph.Inputs["x1"] = FillRect(8, 24, rnd);
+        graph.Inputs["x2"] = FillRect(8, 24, rnd);
+        graph.Inputs["x3"] = FillRect(4, 8, rnd);
+        graph.Initializers["w1"] = FillRect(24, 44, rnd);
+        graph.Initializers["w2"] = FillRect(24, 44, rnd);
+        graph.Initializers["w3"] = FillRect(8, 16, rnd);
+        graph.Outputs["z1"] = Tensor<float>.Zeros(8, 44).ToDenseTensor();
+        graph.Outputs["z2"] = Tensor<float>.Zeros(8, 44).ToDenseTensor();
+        graph.Outputs["z3"] = Tensor<float>.Zeros(4, 16).ToDenseTensor();
+        int n = 1;
+        foreach (var io in new[] { ("x1", "w1", "z1"), ("x2", "w2", "z2"), ("x3", "w3", "z3") })
+        {
+            graph.Nodes.Add(new Node
+            {
+                Name = "mm" + n++,
+                Op = OpType.MatMul,
+                OpTypeName = "MatMul",
+                Domain = "",
+                Inputs = new[] { io.Item1, io.Item2 },
+                Outputs = new[] { io.Item3 },
+            });
+        }
+        graph.RefreshLifetimeAnalysis();
+        var report = graph.PackingReport;
+        Assert.Equal(3, report.Live);
+        Assert.Equal((24 * 44 + 24 * 44 + 8 * 16) * 4L, report.RetainedBytes);
+        Assert.Equal(2, report.Shapes.Count);
+        Assert.Equal(new PackedWeightShape(8, 16, 1), report.Shapes[0]);
+        Assert.Equal(new PackedWeightShape(24, 44, 2), report.Shapes[1]);
+    }
+
+    [Fact]
+    public void PackingReport_EmptyGraphIsZero()
+    {
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "packing-report-empty";
+        graph.RefreshLifetimeAnalysis();
+        Assert.Equal(0, graph.PackingReport.Live);
+        Assert.Equal(0L, graph.PackingReport.RetainedBytes);
+        Assert.Empty(graph.PackingReport.Shapes);
+    }
+
+    [Fact]
+    public void PackingReport_ResetsOnInvalidate()
+    {
+        var rnd = new Random(Seed);
+        var x = FillRect(8, 24, rnd);
+        var w = FillRect(24, 44, rnd);
+        var graph = BuildGraph(x, w, "w");
+        graph.RefreshLifetimeAnalysis();
+        Assert.Equal(1, graph.PackingReport.Live);
+        Assert.Equal(24 * 44 * 4L, graph.PackingReport.RetainedBytes);
+        graph.InvalidatePreparation();
+        Assert.Equal(0, graph.PackingReport.Live);
+        Assert.Equal(0L, graph.PackingReport.RetainedBytes);
+        Assert.Empty(graph.PackingReport.Shapes);
+    }
 }

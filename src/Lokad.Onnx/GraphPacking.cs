@@ -11,6 +11,20 @@ using System.Linq;
 /// unpacked path, while structural edits require InvalidatePreparation,
 /// which drops the clone like the folded transposes.
 /// </summary>
+/// <summary>
+/// Prepared packing inventory for one graph: live panel-packed clone count,
+/// retained clone bytes with correct element-size arithmetic, and live
+/// counts by packed clone shape. Observability only; the admission policy
+/// behind these numbers is unchanged.
+/// </summary>
+public sealed record PackedWeightsReport(
+    int Live,
+    long RetainedBytes,
+    IReadOnlyList<PackedWeightShape> Shapes);
+
+/// <summary>Live packed-clone count for one packed clone shape (rows by columns).</summary>
+public sealed record PackedWeightShape(int Rows, int Cols, int Count);
+
 internal sealed record PackedMatMulWeight(
     string SourceName,
     ITensor SourceRef,
@@ -147,6 +161,23 @@ internal static class GraphPacking
             graph.PackedWeights[kv.Value.array] = new PackedMatMulWeight(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed);
             live++;
         }
+        long retained = 0;
+        var byShape = new Dictionary<(int Rows, int Cols), int>();
+        foreach (var rec in graph.PackedWeights.Values)
+        {
+            int rn = rec.Packed.Dimensions[0];
+            int rk = rec.Packed.Dimensions[1];
+            checked { retained += (long)rn * rk * sizeof(float); }
+            var key = (rn, rk);
+            byShape.TryGetValue(key, out int shaped);
+            byShape[key] = shaped + 1;
+        }
+        var shapes = byShape
+            .OrderBy(kv => kv.Key.Rows)
+            .ThenBy(kv => kv.Key.Cols)
+            .Select(kv => new PackedWeightShape(kv.Key.Rows, kv.Key.Cols, kv.Value))
+            .ToArray();
+        graph.PackingReport = new PackedWeightsReport(graph.PackedWeights.Count, retained, shapes);
         return live;
     }
     /// <summary>

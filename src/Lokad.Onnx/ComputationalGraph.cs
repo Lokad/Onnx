@@ -32,6 +32,9 @@ public class ComputationalGraph
     /// <summary>Panel-packed MatMul weight clones by source initializer name.</summary>
     internal Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
 
+    /// <summary>Prepared packing inventory: live clone count, retained clone bytes, and counts by shape.</summary>
+    public PackedWeightsReport PackingReport { get; internal set; } = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>());
+
     internal object FoldLock = new object();
 
     internal object PrepareLock = new object();
@@ -178,6 +181,7 @@ public class ComputationalGraph
                         Initializers.Remove(packed.PackedName);
                 }
                 PackedWeights.Clear();
+                PackingReport = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>());
             }
         }
     }
