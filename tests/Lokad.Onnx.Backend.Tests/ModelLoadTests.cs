@@ -70,6 +70,73 @@ public class ModelLoadTests
         Assert.Single(g!.Outputs);
     }
 
+    sealed class NativeByteOwner : System.Buffers.MemoryManager<byte>
+    {
+        private unsafe byte* _ptr;
+        private int _len;
+        private bool _disposed;
+        public unsafe NativeByteOwner(byte[] source)
+        {
+            _len = source.Length;
+            _ptr = (byte*)System.Runtime.InteropServices.Marshal.AllocHGlobal(_len).ToPointer();
+            new System.Span<byte>(_ptr, _len).Clear();
+            source.CopyTo(new System.Span<byte>(_ptr, _len));
+        }
+        public override System.Span<byte> GetSpan()
+        {
+            unsafe { return new System.Span<byte>(_ptr, _len); }
+        }
+        public override unsafe System.Buffers.MemoryHandle Pin(int elementIndex = 0)
+        {
+            return new System.Buffers.MemoryHandle(_ptr + elementIndex);
+        }
+        public override void Unpin() { }
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                unsafe { System.Runtime.InteropServices.Marshal.FreeHGlobal(new System.IntPtr(_ptr)); }
+                _disposed = true;
+            }
+        }
+    }
+
+    [Fact]
+    public void ReadOnlyMemoryNonArrayBacked_ParsesWithoutArray()
+    {
+        // Unmanaged-backed memory: MemoryMarshal.TryGetArray fails on it, so any
+        // array assumption in the path throws instead of silently copying.
+        string path = MnistModel();
+        byte[] bytes = File.ReadAllBytes(path);
+        using var owner = new NativeByteOwner(bytes);
+        System.ReadOnlyMemory<byte> rom = owner.Memory;
+        var fromNative = OnnxImport.Parse(rom);
+        var fromBuffer = OnnxImport.Parse(bytes);
+        Assert.Equal(fromBuffer.Nodes.Count, fromNative.Nodes.Count);
+        Assert.Equal(fromBuffer.Initializers.Count, fromNative.Initializers.Count);
+        var g = OnnxImport.Load(rom);
+        Assert.NotNull(g);
+        Assert.Single(g!.Outputs);
+    }
+
+    [Fact]
+    public void ReadOnlyMemoryReuseAfterReturn_LeavesDtoIntact()
+    {
+        string path = MnistModel();
+        byte[] bytes = File.ReadAllBytes(path);
+        var padded = new byte[bytes.Length + 64];
+        Array.Copy(bytes, 0, padded, 37, bytes.Length);
+        var slice = new ReadOnlyMemory<byte>(padded, 37, bytes.Length);
+        var dto = OnnxImport.Parse(slice);
+        int nodes = dto.Nodes.Count;
+        string firstInit = dto.Initializers[0].Name;
+        int firstLen = dto.Initializers[0].Data.Length;
+        Array.Fill<byte>(padded, 0xFF);
+        Assert.Equal(nodes, dto.Nodes.Count);
+        Assert.Equal(firstInit, dto.Initializers[0].Name);
+        Assert.Equal(firstLen, dto.Initializers[0].Data.Length);
+    }
+
     [Fact]
     public void ReadOnlyMemoryInvalid_MatchesBufferContracts()
     {

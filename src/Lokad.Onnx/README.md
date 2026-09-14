@@ -30,7 +30,11 @@
 The core loads plain `OnnxModel` descriptions (see OnnxModel.cs) through
 `Model.Load`, and ships its own file and buffer parsing under
 `src/Lokad.Onnx/Import` (`OnnxImport`, protobuf-backed). Data helpers and
-the CLI live outside the package. A file-free local example:
+the CLI live outside the package. Buffers import without a copy: `OnnxImport.Parse` and
+`OnnxImport.Load` take `ReadOnlyMemory<byte>` (slices and custom memory welcome, no
+`ToArray()`), with the same contracts as the `byte[]` overloads; the caller owns the
+memory during the call. External-weight sidecars still resolve from the model file path.
+A file-free local example:
 
     var mp = new OnnxModel { Name = "relu" };
     mp.Opset[""] = 11;
