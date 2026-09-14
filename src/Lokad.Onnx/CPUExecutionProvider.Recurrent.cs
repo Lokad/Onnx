@@ -247,8 +247,8 @@ public partial class CPUExecutionProvider
                         // accumulate into the gate buffer would need a new
                         // primitive for identical traffic, so plain dots win.
                         int rDir = d * 4 * H * H;
-                        for (int gh = 0; gh < 4 * H; gh++)
-                            hrBuf[gh] = MathOps.RowDot(hv, rs.Slice(rDir + gh * H, H), tensorOpts);
+                        for (int h = 0; h < H; h++)
+                            MathOps.RowDot4(hv, rs.Slice(rDir + h * H, H), rs.Slice(rDir + (H + h) * H, H), rs.Slice(rDir + (2 * H + h) * H, H), rs.Slice(rDir + (3 * H + h) * H, H), out hrBuf[h], out hrBuf[H + h], out hrBuf[2 * H + h], out hrBuf[3 * H + h], tensorOpts);
                     }
                     else
                     {
@@ -260,10 +260,10 @@ public partial class CPUExecutionProvider
                         int xOff = (t * batch + b) * inputSize;
                         int wDir = d * 4 * H * inputSize;
                         int rDir = d * 4 * H * H;
-                        for (int gh = 0; gh < 4 * H; gh++)
+                        for (int h = 0; h < H; h++)
                         {
-                            xwBuf[xwBase + gh] = MathOps.RowDot(xs.Slice(xOff, inputSize), ws.Slice(wDir + gh * inputSize, inputSize), tensorOpts);
-                            hrBuf[gh] = MathOps.RowDot(hv, rs.Slice(rDir + gh * H, H), tensorOpts);
+                            MathOps.RowDot4(xs.Slice(xOff, inputSize), ws.Slice(wDir + h * inputSize, inputSize), ws.Slice(wDir + (H + h) * inputSize, inputSize), ws.Slice(wDir + (2 * H + h) * inputSize, inputSize), ws.Slice(wDir + (3 * H + h) * inputSize, inputSize), out xwBuf[xwBase + h], out xwBuf[xwBase + H + h], out xwBuf[xwBase + 2 * H + h], out xwBuf[xwBase + 3 * H + h], tensorOpts);
+                            MathOps.RowDot4(hv, rs.Slice(rDir + h * H, H), rs.Slice(rDir + (H + h) * H, H), rs.Slice(rDir + (2 * H + h) * H, H), rs.Slice(rDir + (3 * H + h) * H, H), out hrBuf[h], out hrBuf[H + h], out hrBuf[2 * H + h], out hrBuf[3 * H + h], tensorOpts);
                         }
                     }
                     for (int h = 0; h < H; h++)

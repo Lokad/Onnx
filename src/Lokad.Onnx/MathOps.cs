@@ -1814,6 +1814,63 @@ public class MathOps
         for (int i = 0; i < n; i++) total += x[i] * y[i];
         return total;
     }
+    /// <summary>
+    /// Four dot products sharing one left span, for LSTM gate projections:
+    /// each dot keeps RowDot's exact per-element order (vector chunks then
+    /// scalar tail, portable scalar loop otherwise), so results agree
+    /// bit-wise with four RowDot calls while paying one call setup and
+    /// streaming the shared span once.
+    /// </summary>
+    public static void RowDot4(ReadOnlySpan<float> x, ReadOnlySpan<float> y0, ReadOnlySpan<float> y1, ReadOnlySpan<float> y2, ReadOnlySpan<float> y3, out float d0, out float d1, out float d2, out float d3, TensorExecutionOptions? options)
+    {
+        int n = Math.Min(Math.Min(x.Length, y0.Length), Math.Min(Math.Min(y1.Length, y2.Length), y3.Length));
+        d0 = 0f; d1 = 0f; d2 = 0f; d3 = 0f;
+        if (n == 0) return;
+        if ((options?.UseSimd ?? true) && (options?.UseIntrinsics ?? true) && Avx.IsSupported && Fma.IsSupported)
+        {
+            ref float xr = ref MemoryMarshal.GetReference(x);
+            ref float r0 = ref MemoryMarshal.GetReference(y0);
+            ref float r1 = ref MemoryMarshal.GetReference(y1);
+            ref float r2 = ref MemoryMarshal.GetReference(y2);
+            ref float r3 = ref MemoryMarshal.GetReference(y3);
+            var acc0 = Vector256<float>.Zero;
+            var acc1 = Vector256<float>.Zero;
+            var acc2 = Vector256<float>.Zero;
+            var acc3 = Vector256<float>.Zero;
+            int i = 0;
+            int full = n & ~7;
+            for (; i < full; i += 8)
+            {
+                var xv = Vector256.LoadUnsafe(ref xr, (nuint)i);
+                acc0 = Fma.MultiplyAdd(Vector256.LoadUnsafe(ref r0, (nuint)i), xv, acc0);
+                acc1 = Fma.MultiplyAdd(Vector256.LoadUnsafe(ref r1, (nuint)i), xv, acc1);
+                acc2 = Fma.MultiplyAdd(Vector256.LoadUnsafe(ref r2, (nuint)i), xv, acc2);
+                acc3 = Fma.MultiplyAdd(Vector256.LoadUnsafe(ref r3, (nuint)i), xv, acc3);
+            }
+            float s0 = Vector256.Sum(acc0);
+            float s1 = Vector256.Sum(acc1);
+            float s2 = Vector256.Sum(acc2);
+            float s3 = Vector256.Sum(acc3);
+            for (; i < n; i++)
+            {
+                s0 += x[i] * y0[i];
+                s1 += x[i] * y1[i];
+                s2 += x[i] * y2[i];
+                s3 += x[i] * y3[i];
+            }
+            d0 = s0; d1 = s1; d2 = s2; d3 = s3;
+            return;
+        }
+        float t0 = 0f, t1 = 0f, t2 = 0f, t3 = 0f;
+        for (int i = 0; i < n; i++)
+        {
+            t0 += x[i] * y0[i];
+            t1 += x[i] * y1[i];
+            t2 += x[i] * y2[i];
+            t3 += x[i] * y3[i];
+        }
+        d0 = t0; d1 = t1; d2 = t2; d3 = t3;
+    }
 
     public static unsafe void Im2col(float* src,
                               int srcC,
