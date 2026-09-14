@@ -159,8 +159,12 @@ internal static class GraphPacking
         if (map is null || map.Count == 0) return null;
         Tensor<float> core = y;
         while (core is BroadcastedTensor<float> view) core = view.source;
+        // Offset views (for example per-direction LSTM weight windows over one
+        // shared transpose buffer) expose no whole backing array and must fall
+        // back to the unpacked path instead of throwing on a null key.
         if (core is DenseTensor<float> dense
-            && map.TryGetValue(DenseArray(dense), out var rec)
+            && DenseArray(dense) is float[] backing
+            && map.TryGetValue(backing, out var rec)
             && ReferenceEquals(rec.SourceArray, DenseArray(dense))
             && TrailingDimsMatch(y, rec.Packed))
         {

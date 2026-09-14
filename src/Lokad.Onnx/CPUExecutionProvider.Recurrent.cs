@@ -140,19 +140,47 @@ public partial class CPUExecutionProvider
         int hLen = numDirections * batch * hiddenSize;
         float[] yArr = pool is null ? new float[yLen] : pool.Rent<float>(yLen);
         float[]? yhArr = outputCount > 1 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
+        int H = hiddenSize;
         float[]? ycArr = outputCount > 2 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
-        var xw = new float[4 * hiddenSize];
-        var hr = new float[4 * hiddenSize];
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
-        int H = hiddenSize;
+        // Shared-matrix LSTM projections (M5): per-direction transposed
+        // weights Wt [inputSize,4H] and Rt [H,4H] built once, XW hoisted per
+        // batch across valid rows through MatMul2D, HR per step through
+        // MatMul2D. Gate math below is unchanged.
+        var tensorOpts = opts.Tensor;
+        var wt = new float[numDirections * inputSize * 4 * H];
+        var rt = new float[numDirections * H * 4 * H];
+        for (int d = 0; d < numDirections; d++)
+        {
+            int wDir0 = d * 4 * H * inputSize;
+            int rDir0 = d * 4 * H * H;
+            int wtBase = d * inputSize * 4 * H;
+            int rtBase = d * H * 4 * H;
+            for (int gh = 0; gh < 4 * H; gh++)
+                for (int k = 0; k < inputSize; k++)
+                    wt[wtBase + k * 4 * H + gh] = ws[wDir0 + gh * inputSize + k];
+            for (int gh = 0; gh < 4 * H; gh++)
+                for (int k = 0; k < H; k++)
+                    rt[rtBase + k * 4 * H + gh] = rs[rDir0 + gh * H + k];
+        }
+        var wtTensors = new DenseTensor<float>[numDirections];
+        var rtTensors = new DenseTensor<float>[numDirections];
+        for (int d = 0; d < numDirections; d++)
+        {
+            wtTensors[d] = new DenseTensor<float>(new Memory<float>(wt, d * inputSize * 4 * H, inputSize * 4 * H), new[] { inputSize, 4 * H });
+            rtTensors[d] = new DenseTensor<float>(new Memory<float>(rt, d * H * 4 * H, H * 4 * H), new[] { H, 4 * H });
+        }
+        // Bounded per-invocation scratch reused across batches and steps.
+        var xGather = new float[seq * inputSize];
+        var xwBuf = new float[seq * 4 * H];
+        var hrBuf = new float[4 * H];
+        var hrDestT = new DenseTensor<float>(new Memory<float>(hrBuf), new[] { 1, 4 * H });
         for (int d = 0; d < numDirections; d++)
         {
             // The solo reverse direction and the second bidirectional
             // direction both iterate time backwards.
             bool rev = reverse || (numDirections == 2 && d == 1);
-            int wDir = d * 4 * H * inputSize;
-            int rDir = d * 4 * H * H;
             int bDir = B is null ? 0 : (B.Rank == 2 ? d * 8 * H : 0);
             int pDir = P is null ? 0 : d * 3 * H;
             var fAct = gateF[d];
@@ -167,6 +195,19 @@ public partial class CPUExecutionProvider
                 else cd.Buffer.Span.Slice((d * batch + b) * H, H).CopyTo(cv);
                 // ORT ignores initial states when the sequence length is zero: final states stay zero.
                 if (limit == 0) { Array.Clear(hv, 0, H); Array.Clear(cv, 0, H); }
+                // Hoist XW across valid rows: gather computation-order rows
+                // once, one shared MatMul into xwBuf, indexed per step below.
+                if (limit > 0)
+                {
+                    for (int gs = 0; gs < limit; gs++)
+                    {
+                        int gt = rev ? limit - 1 - gs : gs;
+                        xd.Buffer.Span.Slice((gt * batch + b) * inputSize, inputSize).CopyTo(new Span<float>(xGather, gs * inputSize, inputSize));
+                    }
+                    var xgT = new DenseTensor<float>(new Memory<float>(xGather, 0, limit * inputSize), new[] { limit, inputSize });
+                    var xwT = new DenseTensor<float>(new Memory<float>(xwBuf, 0, limit * 4 * H), new[] { limit, 4 * H });
+                    Tensor<float>.MatMul2D(xgT, wtTensors[d], xwT, tensorOpts);
+                }
                 for (int s = 0; s < seq; s++)
                 {
                     // ORT ReverseSequence reverses only the valid prefix: reverse steps read/write X[limit-1-s]/Y[limit-1-s] for s < limit, with zeros above limit.
@@ -178,21 +219,9 @@ public partial class CPUExecutionProvider
                     }
                     int t = rev ? limit - 1 - s : s;
                     int yOff = ((t * numDirections + d) * batch + b) * H;
-                    int xOff = (t * batch + b) * inputSize;
-                    for (int gh = 0; gh < 4 * H; gh++)
-                    {
-                        float acc = 0f;
-                        int wRow = wDir + gh * inputSize;
-                        for (int k = 0; k < inputSize; k++) acc += xs[xOff + k] * ws[wRow + k];
-                        xw[gh] = acc;
-                    }
-                    for (int gh = 0; gh < 4 * H; gh++)
-                    {
-                        float acc = 0f;
-                        int rRow = rDir + gh * H;
-                        for (int k = 0; k < H; k++) acc += hv[k] * rs[rRow + k];
-                        hr[gh] = acc;
-                    }
+                    var hRowT = new DenseTensor<float>(new Memory<float>(hv), new[] { 1, H });
+                    Tensor<float>.MatMul2D(hRowT, rtTensors[d], hrDestT, tensorOpts);
+                    int xwBase = s * 4 * H;
                     for (int h = 0; h < H; h++)
                     {
                         float wbI = bd is null ? 0f : bd.Buffer.Span[bDir + h];
@@ -203,10 +232,10 @@ public partial class CPUExecutionProvider
                         float rbO = bd is null ? 0f : bd.Buffer.Span[bDir + 5 * H + h];
                         float rbF = bd is null ? 0f : bd.Buffer.Span[bDir + 6 * H + h];
                         float rbC = bd is null ? 0f : bd.Buffer.Span[bDir + 7 * H + h];
-                        float iPre = xw[h] + hr[h] + wbI + rbI;
-                        float oPre = xw[H + h] + hr[H + h] + wbO + rbO;
-                        float fPre = xw[2 * H + h] + hr[2 * H + h] + wbF + rbF;
-                        float gPre = xw[3 * H + h] + hr[3 * H + h] + wbC + rbC;
+                        float iPre = xwBuf[xwBase + h] + hrBuf[h] + wbI + rbI;
+                        float oPre = xwBuf[xwBase + H + h] + hrBuf[H + h] + wbO + rbO;
+                        float fPre = xwBuf[xwBase + 2 * H + h] + hrBuf[2 * H + h] + wbF + rbF;
+                        float gPre = xwBuf[xwBase + 3 * H + h] + hrBuf[3 * H + h] + wbC + rbC;
                         if (pd is not null)
                         {
                             ReadOnlySpan<float> ps = pd.Buffer.Span;
