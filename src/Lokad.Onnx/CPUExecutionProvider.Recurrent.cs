@@ -149,42 +149,33 @@ public partial class CPUExecutionProvider
         float[]? ycArr = outputCount > 2 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
-        // Shared-matrix LSTM projections (M5, P3): per-direction transposed
-        // weights Wt [inputSize,4H] and Rt [H,4H] resolve from prepared plan
-        // clones when the weight initializer is unchanged, else build once
-        // per invocation as before. XW hoists per batch across valid rows
-        // through MatMul2D, HR per step through MatMul2D. Gate math below
-        // is unchanged.
+        // Shared-matrix LSTM projections (M5, P3): the per-direction
+        // transposed input weights Wt [inputSize,4H] resolve from prepared
+        // plan clones when the weight initializer is unchanged, else build
+        // once per invocation as before. XW hoists per batch across valid
+        // rows through MatMul2D; recurrent HR runs per step as row dots over
+        // the original R rows. Gate math below is unchanged.
         var tensorOpts = opts.Tensor;
         var wtPrep = useShared ? GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, wd) : null;
-        var rtPrep = useShared ? GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, rd) : null;
-        bool usePrepared = wtPrep is not null && rtPrep is not null;
+        bool usePrepared = wtPrep is not null;
         var wt = usePrepared ? Array.Empty<float>() : (useShared ? new float[numDirections * inputSize * 4 * H] : Array.Empty<float>());
-        var rt = usePrepared ? Array.Empty<float>() : (useShared ? new float[numDirections * H * 4 * H] : Array.Empty<float>());
         if (useShared && !usePrepared)
         {
         for (int d = 0; d < numDirections; d++)
         {
             int wDir0 = d * 4 * H * inputSize;
-            int rDir0 = d * 4 * H * H;
             int wtBase = d * inputSize * 4 * H;
-            int rtBase = d * H * 4 * H;
             for (int gh = 0; gh < 4 * H; gh++)
                 for (int k = 0; k < inputSize; k++)
                     wt[wtBase + k * 4 * H + gh] = ws[wDir0 + gh * inputSize + k];
-            for (int gh = 0; gh < 4 * H; gh++)
-                for (int k = 0; k < H; k++)
-                    rt[rtBase + k * 4 * H + gh] = rs[rDir0 + gh * H + k];
         }
         }
         var wtTensors = new DenseTensor<float>[numDirections];
-        var rtTensors = new DenseTensor<float>[numDirections];
-        if (usePrepared && wtPrep is not null && rtPrep is not null)
+        if (usePrepared && wtPrep is not null)
         {
         for (int d = 0; d < numDirections; d++)
         {
             wtTensors[d] = new DenseTensor<float>(wtPrep.Buffer.Slice(d * inputSize * 4 * H, inputSize * 4 * H), new[] { inputSize, 4 * H });
-            rtTensors[d] = new DenseTensor<float>(rtPrep.Buffer.Slice(d * H * 4 * H, H * 4 * H), new[] { H, 4 * H });
         }
         }
         else if (useShared)
@@ -192,14 +183,16 @@ public partial class CPUExecutionProvider
         for (int d = 0; d < numDirections; d++)
         {
             wtTensors[d] = new DenseTensor<float>(new Memory<float>(wt, d * inputSize * 4 * H, inputSize * 4 * H), new[] { inputSize, 4 * H });
-            rtTensors[d] = new DenseTensor<float>(new Memory<float>(rt, d * H * 4 * H, H * 4 * H), new[] { H, 4 * H });
         }
         }
         // Bounded per-invocation scratch reused across batches and steps.
+        // Bias spans are hoisted once: the gate loop below reads them per
+        // element and must not pay a buffer fetch per read.
         var xGather = new float[seq * inputSize];
         var xwBuf = new float[seq * 4 * H];
         var hrBuf = new float[4 * H];
-        var hrDestT = new DenseTensor<float>(new Memory<float>(hrBuf), new[] { 1, 4 * H });
+        ReadOnlySpan<float> bs = bd is null ? default : bd.Buffer.Span;
+        ReadOnlySpan<float> ps = pd is null ? default : pd.Buffer.Span;
         for (int d = 0; d < numDirections; d++)
         {
             // The solo reverse direction and the second bidirectional
@@ -246,8 +239,14 @@ public partial class CPUExecutionProvider
                     int xwBase = s * 4 * H;
                     if (useShared)
                     {
-                        var hRowT = new DenseTensor<float>(new Memory<float>(hv), new[] { 1, H });
-                        Tensor<float>.MatMul2D(hRowT, rtTensors[d], hrDestT, tensorOpts);
+                        // Recurrent projection as row dots over the original R
+                        // rows: same flops as the M=1 product with no kernel
+                        // call, wrapper, or destination clear. A beta-style
+                        // accumulate into the gate buffer would need a new
+                        // primitive for identical traffic, so plain dots win.
+                        int rDir = d * 4 * H * H;
+                        for (int gh = 0; gh < 4 * H; gh++)
+                            hrBuf[gh] = MathOps.RowDot(hv, rs.Slice(rDir + gh * H, H), tensorOpts);
                     }
                     else
                     {
@@ -267,21 +266,20 @@ public partial class CPUExecutionProvider
                     }
                     for (int h = 0; h < H; h++)
                     {
-                        float wbI = bd is null ? 0f : bd.Buffer.Span[bDir + h];
-                        float wbO = bd is null ? 0f : bd.Buffer.Span[bDir + H + h];
-                        float wbF = bd is null ? 0f : bd.Buffer.Span[bDir + 2 * H + h];
-                        float wbC = bd is null ? 0f : bd.Buffer.Span[bDir + 3 * H + h];
-                        float rbI = bd is null ? 0f : bd.Buffer.Span[bDir + 4 * H + h];
-                        float rbO = bd is null ? 0f : bd.Buffer.Span[bDir + 5 * H + h];
-                        float rbF = bd is null ? 0f : bd.Buffer.Span[bDir + 6 * H + h];
-                        float rbC = bd is null ? 0f : bd.Buffer.Span[bDir + 7 * H + h];
+                        float wbI = bd is null ? 0f : bs[bDir + h];
+                        float wbO = bd is null ? 0f : bs[bDir + H + h];
+                        float wbF = bd is null ? 0f : bs[bDir + 2 * H + h];
+                        float wbC = bd is null ? 0f : bs[bDir + 3 * H + h];
+                        float rbI = bd is null ? 0f : bs[bDir + 4 * H + h];
+                        float rbO = bd is null ? 0f : bs[bDir + 5 * H + h];
+                        float rbF = bd is null ? 0f : bs[bDir + 6 * H + h];
+                        float rbC = bd is null ? 0f : bs[bDir + 7 * H + h];
                         float iPre = xwBuf[xwBase + h] + hrBuf[h] + wbI + rbI;
                         float oPre = xwBuf[xwBase + H + h] + hrBuf[H + h] + wbO + rbO;
                         float fPre = xwBuf[xwBase + 2 * H + h] + hrBuf[2 * H + h] + wbF + rbF;
                         float gPre = xwBuf[xwBase + 3 * H + h] + hrBuf[3 * H + h] + wbC + rbC;
                         if (pd is not null)
                         {
-                            ReadOnlySpan<float> ps = pd.Buffer.Span;
                             iPre += ps[pDir + h] * cv[h];
                             fPre += ps[pDir + 2 * H + h] * cv[h];
                         }
@@ -293,7 +291,7 @@ public partial class CPUExecutionProvider
                         float ff = inputForget ? 1f - iv : fv;
                         float cNew = ff * cv[h] + iv * gv;
                         float oo = oPre;
-                        if (pd is not null) oo += pd.Buffer.Span[pDir + H + h] * cNew;
+                        if (pd is not null) oo += ps[pDir + H + h] * cNew;
                         float hNew = fAct(ClipGate(oo, clip)) * hAct(cNew);
                         cv[h] = cNew;
                         hv[h] = hNew;

@@ -68,13 +68,10 @@ public class LstmPreparedWeightsTests
         var graph = BuildLstmGraph(x, w, r, 4, "forward");
         graph.RefreshLifetimeAnalysis();
         Assert.True(graph.Initializers.ContainsKey("lstm-t:w"), "prepared W transpose is missing.");
-        Assert.True(graph.Initializers.ContainsKey("lstm-t:r"), "prepared R transpose is missing.");
+        Assert.False(graph.Initializers.ContainsKey("lstm-t:r"), "recurrent projections run as row dots and need no clone.");
         var wt = (DenseTensor<float>)graph.Initializers["lstm-t:w"];
-        var rt = (DenseTensor<float>)graph.Initializers["lstm-t:r"];
         Assert.Equal(new[] { 1, 6, 16 }, wt.Dimensions.ToArray());
-        Assert.Equal(new[] { 1, 4, 16 }, rt.Dimensions.ToArray());
         Assert.Equal(TransposeRef(w.ToArray(), 1, 16, 6), wt.ToArray());
-        Assert.Equal(TransposeRef(r.ToArray(), 1, 16, 4), rt.ToArray());
     }
 
     [Fact]
@@ -154,7 +151,6 @@ public class LstmPreparedWeightsTests
         Assert.True(graph.Initializers.ContainsKey("lstm-t:w"), "expected a prepared clone.");
         graph.InvalidatePreparation();
         Assert.False(graph.Initializers.ContainsKey("lstm-t:w"), "clone must drop on invalidate.");
-        Assert.False(graph.Initializers.ContainsKey("lstm-t:r"), "clone must drop on invalidate.");
     }
     [SkippableFact]
     public void RealSegmentation_PreparesEveryLstmWeight()
@@ -167,7 +163,6 @@ public class LstmPreparedWeightsTests
             lstmNodes++;
             Assert.True(node.Inputs.Length >= 3, "LSTM node carries W/R inputs.");
             Assert.True(graph.Initializers.ContainsKey("lstm-t:" + node.Inputs[1]), "missing prepared W for " + node.Name);
-            Assert.True(graph.Initializers.ContainsKey("lstm-t:" + node.Inputs[2]), "missing prepared R for " + node.Name);
         }
         Assert.Equal(4, lstmNodes);
     }

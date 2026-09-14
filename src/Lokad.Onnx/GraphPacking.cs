@@ -104,53 +104,39 @@ internal static class GraphPacking
     /// rebuilt. Returns the live packed count.
     /// </summary>
     /// <summary>
-    /// Prepares transposed clones of constant LSTM W/R weight initializers.
+    /// Prepares transposed clones of constant LSTM input-weight initializers.
     /// Each clone transposes every [4H,K] direction slice to [K,4H] once per
-    /// preparation instead of once per invocation. Only direct float32
-    /// rank-three initializers with whole backing arrays qualify, with R
-    /// additionally requiring dims [D,4H,H]; anything else keeps the
-    /// per-invocation build. Fresh records reuse verified clones; stale
-    /// records are dropped and rebuilt. Returns the live prepared count.
+    /// preparation instead of once per invocation, serving the hoisted
+    /// sequence-input projection; recurrent projections run as row dots
+    /// over original R rows and need no clone. Only direct float32
+    /// rank-three initializers with whole backing arrays qualify; anything
+    /// else keeps the per-invocation build. Fresh records reuse verified
+    /// clones; stale records are dropped and rebuilt. Returns the live
+    /// prepared count.
     /// </summary>
     internal static int PrepareLstmWeights(ComputationalGraph graph)
     {
-        var candidates = new Dictionary<string, int>(StringComparer.Ordinal);
+        var candidates = new HashSet<string>(StringComparer.Ordinal);
         foreach (var node in graph.Nodes)
         {
             if (node.Op != OpType.LSTM || node.Inputs is null || node.Inputs.Length < 3) continue;
-            for (int i = 1; i <= 2; i++)
-            {
-                string input = node.Inputs[i];
-                if (string.IsNullOrEmpty(input)) continue;
-                if (i == 2)
-                {
-                    if (!candidates.TryGetValue(input, out int prior)) candidates[input] = 2;
-                    else if (prior == 1) candidates[input] = 3;
-                }
-                else
-                {
-                    if (!candidates.TryGetValue(input, out int prior2)) candidates[input] = 1;
-                    else if (prior2 == 2) candidates[input] = 3;
-                }
-            }
+            string input = node.Inputs[1];
+            if (!string.IsNullOrEmpty(input)) candidates.Add(input);
         }
-        var current = new Dictionary<string, (ITensor tensor, float[] array, bool isR)>(StringComparer.Ordinal);
-        foreach (var kv in candidates)
+        var current = new Dictionary<string, (ITensor tensor, float[] array)>(StringComparer.Ordinal);
+        foreach (var name in candidates)
         {
-            if (graph.Inputs.ContainsKey(kv.Key) || graph.Outputs.ContainsKey(kv.Key)) continue;
-            if (!graph.Initializers.TryGetValue(kv.Key, out var init)) continue;
+            if (graph.Inputs.ContainsKey(name) || graph.Outputs.ContainsKey(name)) continue;
+            if (!graph.Initializers.TryGetValue(name, out var init)) continue;
             if (init is not DenseTensor<float> dense || init.ElementType != TensorElementType.Float) continue;
             if (init.Rank != 3) continue;
             int[] dims = init.Dims;
             if (dims.Length != 3) continue;
             int d = dims[0], gh = dims[1], k = dims[2];
             if (d < 1 || gh < 4 || k < 1 || gh % 4 != 0) continue;
-            bool isR = kv.Value == 2;
-            if (kv.Value == 3) continue;
-            if (isR && gh != 4 * k) continue;
             if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(dense.Buffer, out System.ArraySegment<float> window)
                 || window.Array is null || window.Offset != 0 || window.Count != dense.Buffer.Length) continue;
-            current[kv.Key] = (init, window.Array, isR);
+            current[name] = (init, window.Array);
         }
         int live = 0;
         var stale = new List<float[]>();
