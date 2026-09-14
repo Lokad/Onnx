@@ -790,9 +790,6 @@ public partial class CPUExecutionProvider
     }
 
     /// <summary>
-    /// Dispatches scalar start, limit, and delta to the matching dtype Range kernel.
-    /// </summary>
-    /// <summary>
     /// Constant padding: each dimension grows by its begin/end pads with the
     /// fill value (default zero), while negative pads crop. Accepts pads as
     /// an int32/int64 input (opset 11+) or attribute (older graphs), and the
@@ -871,6 +868,9 @@ public partial class CPUExecutionProvider
         return dst;
     }
 
+    /// <summary>
+    /// Dispatches scalar start, limit, and delta to the matching dtype Range kernel.
+    /// </summary>
     public static OpResult Range(ITensor? start, ITensor? limit, ITensor? delta, ExecutionOptions? options)
     {
         var op = OpType.Range;

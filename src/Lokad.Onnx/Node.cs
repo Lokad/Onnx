@@ -113,6 +113,32 @@ public partial struct Node
     }
 
     public int[] RequiredInts(string name) => Ints(name) ?? throw new ArgumentException($"The Ints attribute {name} is required but was not found.");
+    /// <summary>
+    /// Legacy Pad constant value: pre-11 stores a FLOAT attribute while newer
+    /// graphs carry it as an input. Converts the attribute to a single-element
+    /// tensor matching the data dtype so the provider sees one scalar form.
+    /// </summary>
+    public ITensor? PadConstantAttr(ComputationalGraph graph)
+    {
+        if (Attributes is null || !Attributes.TryGetValue("value", out var v) || v is null) return null;
+        if (v is ITensor t) return t;
+        float f;
+        if (v is float ff) f = ff;
+        else if (v is double dd) f = checked((float)dd);
+        else if (v is int ii) f = ii;
+        else if (v is long ll) f = checked((float)ll);
+        else throw new ArgumentException("The attribute value must be a float or tensor.");
+        TensorElementType? dtype = null;
+        try
+        {
+            if (Inputs.Length > 0 && !string.IsNullOrEmpty(Inputs[0])) dtype = graph.GetInputTensor(Inputs[0]).ElementType;
+        }
+        catch { dtype = null; }
+        if (dtype == TensorElementType.Double) return new DenseTensor<double>(new double[] { f }, new[] { 1 });
+        if (dtype == TensorElementType.Int32) return new DenseTensor<int>(new int[] { checked((int)f) }, new[] { 1 });
+        if (dtype == TensorElementType.Int64) return new DenseTensor<long>(new long[] { checked((long)f) }, new[] { 1 });
+        return new DenseTensor<float>(new float[] { f }, new[] { 1 });
+    }
 
 
     public ITensor? InputTensor(ComputationalGraph graph, int index) =>
@@ -380,7 +406,11 @@ public partial struct Node
 
         OpType.Split => CPU.Split(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), Ints("split"), Int("num_outputs", null), opt, Outputs.Length),
 
-        OpType.Pad => CPU.Pad(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Attr<string>("mode", null), Ints("pads"), OneOfAttr("value") as ITensor, opt),
+        OpType.Pad => ResolvedOpsetVersion(graph) switch
+        {
+            int v when v >= 11 => CPU.Pad(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Attr<string>("mode", null), null, OneOfAttr("value") as ITensor, opt),
+            _ => CPU.Pad(InputTensor(graph, 0), null, null, Attr<string>("mode", null), Ints("pads"), PadConstantAttr(graph), opt),
+        },
 
         OpType.Clip => ResolvedOpsetVersion(graph) switch
         {
