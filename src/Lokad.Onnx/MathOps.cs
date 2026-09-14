@@ -1961,6 +1961,11 @@ public class MathOps
     {
         int dyFirst = colStart / dstW;
         int dyLast = (colStart + colCount - 1) / dstW;
+        // Pure copies, so vectorization is bit-identical; gate on hardware
+        // only (no options reach this helper). At stride-one width with a
+        // valid source row, the in-bounds run copies contiguously with
+        // scalar zero borders; everything else keeps the scalar loop.
+        bool vector = Avx.IsSupported;
         for (int sc = 0; sc < srcC; ++sc)
         {
             for (int ky = 0; ky < kernelY; ++ky)
@@ -1976,10 +1981,25 @@ public class MathOps
                         var line = (uint)sy < (uint)srcH ? src + (sc * srcH + sy) * srcW : null;
                         int dxLo = dy == dyFirst ? colStart - dy * dstW : 0;
                         int dxHi = dy == dyLast ? colStart + colCount - dy * dstW : dstW;
-                        for (int dx = dxLo; dx < dxHi; ++dx)
+                        if (vector && strideX == 1 && line != null)
                         {
-                            int sx = col0 + dx * strideX;
-                            row[dy * dstW + dx] = (line != null && (uint)sx < (uint)srcW) ? line[sx] : 0;
+                            int vxLo = dxLo > -col0 ? dxLo : -col0;
+                            int vxHi = dxHi < srcW - col0 ? dxHi : srcW - col0;
+                            int i = dxLo;
+                            for (; i < vxLo; i++) row[dy * dstW + i] = 0f;
+                            int vecEnd = vxLo + ((vxHi - vxLo) & ~7);
+                            for (; i < vecEnd; i += 8)
+                                *(Vector256<float>*)(row + dy * dstW + i) = *(Vector256<float>*)(line + col0 + i);
+                            for (; i < vxHi; i++) row[dy * dstW + i] = line[col0 + i];
+                            for (; i < dxHi; i++) row[dy * dstW + i] = 0f;
+                        }
+                        else
+                        {
+                            for (int dx = dxLo; dx < dxHi; ++dx)
+                            {
+                                int sx = col0 + dx * strideX;
+                                row[dy * dstW + dx] = (line != null && (uint)sx < (uint)srcW) ? line[sx] : 0;
+                            }
                         }
                     }
                 }
