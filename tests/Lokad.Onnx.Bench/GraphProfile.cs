@@ -42,6 +42,7 @@ internal static class GraphProfile
     {
         string model, tokenizer = "";
         Func<string, ITensor[]> build;
+        int decodeLen = 0;
         switch (kase)
         {
             case "e5-8tok": model = E5Model(root, out tokenizer); build = n => global::Bench.E5Inputs(n, tokenizer, global::Bench.E5ShortText, 0, 0); break;
@@ -55,9 +56,12 @@ internal static class GraphProfile
             case "gpt2-4tok": model = Gpt2Model(root); build = _ => global::Bench.Gpt2PrefillInputs(4, true); break;
             case "gpt2-32tok": model = Gpt2Model(root); build = _ => global::Bench.Gpt2PrefillInputs(32, false); break;
             case "gpt2-128tok": model = Gpt2Model(root); build = _ => global::Bench.Gpt2PrefillInputs(128, false); break;
+            case "gpt2-dec-p1": model = Gpt2Model(root); build = _ => global::Bench.Gpt2PrefillInputs(1, false); decodeLen = 1; break;
+            case "gpt2-dec-p32": model = Gpt2Model(root); build = _ => global::Bench.Gpt2PrefillInputs(32, false); decodeLen = 32; break;
+            case "gpt2-dec-p128": model = Gpt2Model(root); build = _ => global::Bench.Gpt2PrefillInputs(128, false); decodeLen = 128; break;
+            case "gpt2-dec-p512": model = Gpt2Model(root); build = _ => global::Bench.Gpt2PrefillInputs(512, false); decodeLen = 512; break;
             case "dinov2-224": Console.WriteLine("dinov2-224 is diverged; profiling it would price incorrect execution. Refusing."); return 1;
             default:
-                if (kase.StartsWith("gpt2-dec-")) { Console.WriteLine(kase + ": decode profiling needs the two-phase past procedure; not yet supported."); return 2; }
                 Console.WriteLine("unknown case " + kase); return 2;
         }
         if (!File.Exists(model)) { Console.WriteLine("missing asset: " + model); return 1; }
@@ -73,9 +77,20 @@ internal static class GraphProfile
         using var session = new InferenceSession(model, so);
         var inNames = session.InputMetadata.Keys.ToArray();
         var outNames = session.OutputMetadata.Keys.ToArray();
-        var built = build(kase);
-        if (built.Length == 1 && string.IsNullOrEmpty(built[0].Name) && inNames.Length == 1) built[0].Name = inNames[0];
-        var named = global::Bench.ToNamed(kase, built, inNames);
+        Dictionary<string, ITensor> named;
+        if (decodeLen > 0)
+        {
+            var preNamed = global::Bench.ToNamed(kase + "-prefill", global::Bench.Gpt2PrefillInputs(decodeLen, false), inNames);
+            var pre = global::Bench.Validate(kase + "-prefill", graph, session, preNamed, outNames, opts);
+            Console.WriteLine("prefill " + kase + " tokens=" + decodeLen + " maxScaled=" + pre.scaled.ToString("E2") + " maxAbs=" + pre.abs.ToString("E2"));
+            named = global::Bench.ToNamed(kase, global::Bench.BuildGpt2DecodeInputs(graph, decodeLen), inNames);
+        }
+        else
+        {
+            var built = build(kase);
+            if (built.Length == 1 && string.IsNullOrEmpty(built[0].Name) && inNames.Length == 1) built[0].Name = inNames[0];
+            named = global::Bench.ToNamed(kase, built, inNames);
+        }
         var gate = global::Bench.Validate(kase, graph, session, named, outNames, opts);
         Console.WriteLine(kase + ": agreement gate maxScaled=" + gate.scaled.ToString("E2") + " (tol 1e-4); profiling " + reps + " reps per engine.");
         var ortInputs = global::Bench.BuildOrtInputs(named, inNames);

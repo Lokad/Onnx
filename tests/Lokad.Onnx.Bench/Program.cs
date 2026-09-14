@@ -502,6 +502,18 @@ static class Bench
         var named = ToNamed(name + "-prefill", Gpt2PrefillInputs(pastLen, false), session.InputMetadata.Keys.ToArray());
         var pre = Validate(name + "-prefill", graph, session, named, outNames, matchedOpts);
         Console.WriteLine("prefill " + name + " tokens=" + pastLen + " maxScaled=" + pre.scaled.ToString("E2") + " maxAbs=" + pre.abs.ToString("E2"));
+        var decode = BuildGpt2DecodeInputs(graph, pastLen);
+        Compare(name, model, decode, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
+    }
+
+    /// <summary>
+    /// Builds teacher-forced single-token decode inputs from Lokad prefill outputs
+    /// already bound on the graph (prefill must have executed): token 317 with a
+    /// full mask plus past key/values copied out per layer, so prefill drift cannot
+    /// change the decode work. Shared by the timing and profile lanes.
+    /// </summary>
+    internal static ITensor[] BuildGpt2DecodeInputs(ComputationalGraph graph, int pastLen)
+    {
         var decode = new List<ITensor>();
         var nid = new DenseTensor<long>(new long[] { 317 }, new[] { 1, 1 });
         nid.Name = "input_ids";
@@ -517,13 +529,13 @@ static class Bench
             foreach (var kv in new[] { "key", "value" })
             {
                 if (!graph.Outputs.TryGetValue("present." + layer + "." + kv, out var lt) || lt is not Tensor<float> lf)
-                    throw new InvalidOperationException(name + ": prefill present missing: present." + layer + "." + kv);
+                    throw new InvalidOperationException("decode past missing: present." + layer + "." + kv);
                 var past = new DenseTensor<float>(lf.ToArray(), lf.Dimensions.ToArray());
                 past.Name = "past_key_values." + layer + "." + kv;
                 decode.Add(past);
             }
         }
-        Compare(name, model, decode.ToArray(), tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
+        return decode.ToArray();
     }
 
     static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)

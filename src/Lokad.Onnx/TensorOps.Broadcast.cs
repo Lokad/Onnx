@@ -233,6 +233,29 @@ where T : unmanaged
             for (int i = 0; i < Length; i++) destination.SetValue(i, TOp.Scalar(GetValue(i), scalar));
             return;
         }
+        if (other.Length == 1)
+        {
+            // Single-element (but non-rank-0) operands take the scalar tier: the
+            // run engine below would otherwise degenerate to per-element scalar
+            // calls with stride math on every element. Same per-element arithmetic.
+            var scalar = other.GetValue(0);
+            if (options.UseSimd && this is DenseTensor<T> xd1 && IsDirectSpanCompatible(xd1) && IsDirectSpanCompatible(destination))
+            {
+                var sv = new Vector<T>(scalar);
+                var xv = MemoryMarshal.Cast<T, Vector<T>>(xd1.Buffer.Span);
+                var dv = MemoryMarshal.Cast<T, Vector<T>>(destination.Buffer.Span);
+                int k = 0;
+                int kend = Math.Min(xv.Length, dv.Length);
+                for (; k < kend; k++) dv[k] = TOp.Vector(xv[k], sv);
+                int done = k * Vector<T>.Count;
+                var xs = xd1.Buffer.Span;
+                var ds = destination.Buffer.Span;
+                for (int i = done; i < (int)Length; i++) ds[i] = TOp.Scalar(xs[i], scalar);
+                return;
+            }
+            for (int i = 0; i < Length; i++) destination.SetValue(i, TOp.Scalar(GetValue(i), scalar));
+            return;
+        }
         if (Rank == 0)
         {
             var scalar = GetValue(0);
@@ -246,6 +269,27 @@ where T : unmanaged
                 for (; k < kend; k++) dv[k] = TOp.Vector(sv, yv[k]);
                 int done = k * Vector<T>.Count;
                 var ys = yd0.Buffer.Span;
+                var ds = destination.Buffer.Span;
+                for (int i = done; i < (int)other.Length; i++) ds[i] = TOp.Scalar(scalar, ys[i]);
+                return;
+            }
+            for (int i = 0; i < other.Length; i++) destination.SetValue(i, TOp.Scalar(scalar, other.GetValue(i)));
+            return;
+        }
+        if (Length == 1)
+        {
+            // Mirror image of the single-element right-operand tier above.
+            var scalar = GetValue(0);
+            if (options.UseSimd && other is DenseTensor<T> yd1 && IsDirectSpanCompatible(yd1) && IsDirectSpanCompatible(destination))
+            {
+                var sv = new Vector<T>(scalar);
+                var yv = MemoryMarshal.Cast<T, Vector<T>>(yd1.Buffer.Span);
+                var dv = MemoryMarshal.Cast<T, Vector<T>>(destination.Buffer.Span);
+                int k = 0;
+                int kend = Math.Min(yv.Length, dv.Length);
+                for (; k < kend; k++) dv[k] = TOp.Vector(sv, yv[k]);
+                int done = k * Vector<T>.Count;
+                var ys = yd1.Buffer.Span;
                 var ds = destination.Buffer.Span;
                 for (int i = done; i < (int)other.Length; i++) ds[i] = TOp.Scalar(scalar, ys[i]);
                 return;
