@@ -26,6 +26,9 @@ where T : unmanaged
         return rented;
     }
 
+    /// <summary>Bounds one tiled-convolution column block (patch plus GEMM output tile) to L2-resident scratch.</summary>
+    const int ConvTileBudgetBytes = 256 * 1024;
+
     // Shared Conv2D preparation for PadType padding: validates ranks, fills
     // default strides and dilations, resolves dims and kernel extents, and
     // computes the padded output geometry. Exception parameter names below
@@ -168,6 +171,22 @@ where T : unmanaged
             RunPointwiseBatchesFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, outH, outW, inBatch, outBatch, options, fuseRelu);
             return output;
         }
+        int tileN = outH * outW;
+        int tileKFull = C * kH * kW;
+        int tileM = M / group;
+        int blockN = tileN;
+        if ((long)tileKFull * tileN * sizeof(float) > ConvTileBudgetBytes)
+        {
+            long perColumn = ((long)tileKFull + M) * sizeof(float);
+            long fit = ConvTileBudgetBytes / perColumn;
+            if (fit < 64) fit = 64;
+            if (fit < tileN) blockN = (int)fit;
+        }
+        if (blockN < tileN)
+        {
+            RunTiledConvFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, dop, options, fuseRelu);
+            return output;
+        }
         if (dop > 1)
         {
             Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
@@ -240,6 +259,96 @@ where T : unmanaged
             }
         }
     }
+    /// <summary>
+    /// Runs convolution in bounded column tiles when the full patch would
+    /// exceed L2-resident scratch: each tile converts one output-column
+    /// block, multiplies it through the shared dispatcher into a block
+    /// output buffer, and streams it through the bias/ReLU epilogue.
+    /// Blocking covers independent outputs only, so each dot product keeps
+    /// the single-pass order; the shared dispatcher may still pick different
+    /// vectorized kernels per block shape, so agreement is within float
+    /// rounding (validated at the 1e-4 gate), not bit for bit.
+    /// </summary>
+    static void RunTiledConvFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, int N, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, int dop, TensorExecutionOptions options, bool fuseRelu)
+    {
+        int blockPatch = C * kH * kW * blockN;
+        int blockOut = M * blockN;
+        if (dop > 1)
+        {
+            Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
+                () => RentScratch<float>(blockPatch + blockOut, options),
+                (b, state, scratch) =>
+                {
+                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options, fuseRelu);
+                    return scratch;
+                },
+                scratch => ArrayPool<float>.Shared.Return(scratch));
+        }
+        else
+        {
+            var scratch = RentScratch<float>(blockPatch + blockOut, options);
+            try
+            {
+                for (int b = 0; b < N; b++)
+                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options, fuseRelu);
+            }
+            finally { ArrayPool<float>.Shared.Return(scratch); }
+        }
+    }
+
+    /// <summary>
+    /// Runs one batch of tiled float convolution: for each output-column
+    /// block, converts the block patch, runs one shared-dispatcher product
+    /// per group into the block output buffer (cleared by the dispatcher),
+    /// then streams the block through the bias/ReLU epilogue. The epilogue
+    /// keeps the single-pass add order and max, including NaN handling.
+    /// </summary>
+    static void RunTiledBatchFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, float[] scratch, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, TensorExecutionOptions options, bool fuseRelu)
+    {
+        int tileKFull = C * kH * kW;
+        int tileM = M / group;
+        int tileKg = tileKFull / group;
+        var patchMem = new Memory<float>(scratch, 0, tileKFull * blockN);
+        var outMem = new Memory<float>(scratch, tileKFull * blockN, M * blockN);
+        int numBlocks = (tileN + blockN - 1) / blockN;
+        var bs = bMem.Span;
+        var os = oMem.Span;
+        var ds = outMem.Span;
+        for (int s = 0; s < numBlocks; s++)
+        {
+            int colStart = s * blockN;
+            int colCount = Math.Min(blockN, tileN - colStart);
+            unsafe
+            {
+                fixed (float* src = xMem.Span.Slice(b * inBatch, inBatch))
+                fixed (float* patch = patchMem.Span)
+                {
+                    MathOps.Im2colRange(src, C, H, W, kH, kW, dH, dW, sH, sW, pad.top, pad.left, pad.bottom, pad.right, outW, colStart, colCount, patch);
+                }
+            }
+            for (int g = 0; g < group; g++)
+            {
+                var wView = new DenseTensor<float>(wMem.Slice(g * tileM * tileKg, tileM * tileKg), new int[] { tileM, tileKg });
+                var pView = new DenseTensor<float>(patchMem.Slice(g * tileKg * colCount, tileKg * colCount), new int[] { tileKg, colCount });
+                var dView = new DenseTensor<float>(outMem.Slice(g * tileM * colCount, tileM * colCount), new int[] { tileM, colCount });
+                Tensor<float>.MatMul2D(wView, pView, dView, options);
+                int outBase = b * outBatch + g * tileM * tileN;
+                int blkBase = g * tileM * colCount;
+                for (int i = 0; i < tileM; i++)
+                {
+                    float bi = hasBias ? bs[g * tileM + i] : 0f;
+                    int outRow = outBase + i * tileN + colStart;
+                    int blkRow = blkBase + i * colCount;
+                    for (int j = 0; j < colCount; j++)
+                    {
+                        float v = hasBias ? ds[blkRow + j] + bi : ds[blkRow + j];
+                        os[outRow + j] = fuseRelu && v < 0f ? 0f : v;
+                    }
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Runs 1x1 stride-1 no-pad batches with no patch matrix: the input slice
     /// already lays out as the GEMM right-hand side, so each group multiplies

@@ -1142,6 +1142,80 @@ public class MathOps
         }
     }
 
+    /// <summary>
+    /// Image to column conversion restricted to a contiguous output-column
+    /// range. Column c holds output position (c / dstW, c % dstW), and the
+    /// buffer lays out as [srcC*kernelY*kernelX, colCount] row-major with
+    /// the same values the full Im2col patch holds at those columns. The
+    /// shared dispatcher may still select different vectorized kernels per
+    /// block shape, so tiled results agree with the single-pass path within
+    /// float rounding (validated at the 1e-4 gate), not bit for bit.
+    /// </summary>
+    /// <param name="src">Source data.</param>
+    /// <param name="srcC">Input channels.</param>
+    /// <param name="srcH">Input height.</param>
+    /// <param name="srcW">Input width.</param>
+    /// <param name="kernelY">Kernel height.</param>
+    /// <param name="kernelX">Kernel width.</param>
+    /// <param name="dilationY">Dilation of the kernel by height.</param>
+    /// <param name="dilationX">Dilation of the kernel by width.</param>
+    /// <param name="strideY">Stride of the convolution by height.</param>
+    /// <param name="strideX">Stride of the convolution by width.</param>
+    /// <param name="padY">Zero padding at the top (begin height).</param>
+    /// <param name="padX">Zero padding at the left (begin width).</param>
+    /// <param name="padH">Zero padding at the bottom (end height).</param>
+    /// <param name="padW">Zero padding at the right (end width).</param>
+    /// <param name="dstW">Full output width; columns index dy * dstW + dx.</param>
+    /// <param name="colStart">First output column to convert.</param>
+    /// <param name="colCount">Number of output columns to convert.</param>
+    /// <param name="buf">Buffer.</param>
+    public static unsafe void Im2colRange(float* src,
+                              int srcC,
+                              int srcH,
+                              int srcW,
+                              int kernelY,
+                              int kernelX,
+                              int dilationY,
+                              int dilationX,
+                              int strideY,
+                              int strideX,
+                              int padY,
+                              int padX,
+                              int padH,
+                              int padW,
+                              int dstW,
+                              int colStart,
+                              int colCount,
+                              float* buf)
+    {
+        int dyFirst = colStart / dstW;
+        int dyLast = (colStart + colCount - 1) / dstW;
+        for (int sc = 0; sc < srcC; ++sc)
+        {
+            for (int ky = 0; ky < kernelY; ++ky)
+            {
+                int row0 = ky * dilationY - padY;
+                for (int kx = 0; kx < kernelX; ++kx)
+                {
+                    int col0 = kx * dilationX - padX;
+                    float* row = buf + ((sc * kernelY + ky) * kernelX + kx) * colCount - colStart;
+                    for (int dy = dyFirst; dy <= dyLast; ++dy)
+                    {
+                        int sy = row0 + dy * strideY;
+                        var line = (uint)sy < (uint)srcH ? src + (sc * srcH + sy) * srcW : null;
+                        int dxLo = dy == dyFirst ? colStart - dy * dstW : 0;
+                        int dxHi = dy == dyLast ? colStart + colCount - dy * dstW : dstW;
+                        for (int dx = dxLo; dx < dxHi; ++dx)
+                        {
+                            int sx = col0 + dx * strideX;
+                            row[dy * dstW + dx] = (line != null && (uint)sx < (uint)srcW) ? line[sx] : 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public static unsafe void Im2col(double* src,
                              int srcC,
                              int srcH,
