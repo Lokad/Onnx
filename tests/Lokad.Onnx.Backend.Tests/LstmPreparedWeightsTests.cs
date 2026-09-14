@@ -105,7 +105,17 @@ public class LstmPreparedWeightsTests
         var viaGraph = ((Tensor<float>)graph.Outputs["y"]).ToArray();
         var direct = CPUExecutionProvider.Lstm(x, w, r, null, null, null, null, null, "bidirectional", null, null, null, null, 4, false, 0, 1, null, null);
         Assert.Equal(OpStatus.Success, direct.Status);
-        Assert.Equal(viaGraph, ((Tensor<float>)direct.Outputs[0]).ToArray());
+        // Short prepared sequences take the shared MatMul projection while
+        // the direct call keeps scalar row dots, so agreement is within
+        // float rounding (observed ~6e-8), not bit identity. The transpose
+        // itself stays pinned bit-exact by Prepare_BuildsTransposedClones.
+        var viaDirect = ((Tensor<float>)direct.Outputs[0]).ToArray();
+        Assert.Equal(viaGraph.Length, viaDirect.Length);
+        for (int i = 0; i < viaGraph.Length; i++)
+        {
+            double tol = 1e-6 * (1.0 + System.Math.Abs((double)viaGraph[i]));
+            Assert.True(System.Math.Abs((double)viaGraph[i] - viaDirect[i]) <= tol, "index " + i);
+        }
     }
 
     [Fact]

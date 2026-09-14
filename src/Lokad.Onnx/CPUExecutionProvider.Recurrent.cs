@@ -141,11 +141,16 @@ public partial class CPUExecutionProvider
         float[] yArr = pool is null ? new float[yLen] : pool.Rent<float>(yLen);
         float[]? yhArr = outputCount > 1 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
         int H = hiddenSize;
-        // Cost-model dispatch: the transpose build copies ~8H(K+H) floats, so the
-        // shared-kernel path only pays past short sequences (decoder grids run
-        // 5-8 steps; segmentation runs 589). The scalar nest stays as the
-        // tested generic fallback for small shapes.
-        bool useShared = (long)seq * batch >= 32;
+        var tensorOpts = opts.Tensor;
+        var wtPrep = GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, wd);
+        bool usePrepared = wtPrep is not null;
+        // Cost-model dispatch: the per-invocation transpose build copies
+        // ~8H(K+H) floats, so unprepared weights only pay past short
+        // sequences (segmentation runs 589 steps). Prepared clones cost
+        // nothing per invocation, so prepared graphs (decoder grids run 5-8
+        // steps) take the shared path at any length. The scalar nest stays
+        // as the tested generic fallback for unprepared small shapes.
+        bool useShared = (long)seq * batch >= 32 || usePrepared;
         float[]? ycArr = outputCount > 2 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
@@ -155,9 +160,6 @@ public partial class CPUExecutionProvider
         // once per invocation as before. XW hoists per batch across valid
         // rows through MatMul2D; recurrent HR runs per step as row dots over
         // the original R rows. Gate math below is unchanged.
-        var tensorOpts = opts.Tensor;
-        var wtPrep = useShared ? GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, wd) : null;
-        bool usePrepared = wtPrep is not null;
         var wt = usePrepared ? Array.Empty<float>() : (useShared ? new float[numDirections * inputSize * 4 * H] : Array.Empty<float>());
         if (useShared && !usePrepared)
         {
