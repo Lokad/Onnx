@@ -1526,6 +1526,216 @@ public class MathOps
             }
         }
     }
+    /// <summary>
+    /// Register-tiled matrix multiplication reading panel-packed B, eight
+    /// rows per group with masked column tails. Panels, tails, and the
+    /// per-element FMA order match the 2/3/6/12-row packed nests exactly, so
+    /// results agree bit-wise with them; 8-way B sharing absorbs remainders
+    /// that would otherwise stream panels through narrow 2-row tails.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 8).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
+    /// <param name="C">Result matrix.</param>
+    public unsafe static void mm_unsafe_vectorized_avx512_8x32packed(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* P,
+                          float* C)
+    {
+        if (M % 8 != 0)
+            throw new ArgumentException(nameof(M));
+
+        int blocked = K - (K % (2 * Vector512<float>.Count));
+        int tiles = blocked / (2 * Vector512<float>.Count);
+
+        for (int tb = 0; tb < tiles; tb++)
+        {
+            int kb = tb * (2 * Vector512<float>.Count);
+            float* panel = P + tb * N * (2 * Vector512<float>.Count);
+            for (int i = 0; i < M; i += 8)
+            {
+                // Group bases only: every address recomputes per use so the
+                // hot reduction loop keeps few live pointers.
+                float* aGroup = A + i * N;
+                float* cGroup = C + i * K + kb;
+                Vector512<float> c00 = ((Vector512<float>*)(cGroup))[0];
+                Vector512<float> c01 = ((Vector512<float>*)(cGroup))[1];
+                Vector512<float> c10 = ((Vector512<float>*)(cGroup + 1 * K))[0];
+                Vector512<float> c11 = ((Vector512<float>*)(cGroup + 1 * K))[1];
+                Vector512<float> c20 = ((Vector512<float>*)(cGroup + 2 * K))[0];
+                Vector512<float> c21 = ((Vector512<float>*)(cGroup + 2 * K))[1];
+                Vector512<float> c30 = ((Vector512<float>*)(cGroup + 3 * K))[0];
+                Vector512<float> c31 = ((Vector512<float>*)(cGroup + 3 * K))[1];
+                Vector512<float> c40 = ((Vector512<float>*)(cGroup + 4 * K))[0];
+                Vector512<float> c41 = ((Vector512<float>*)(cGroup + 4 * K))[1];
+                Vector512<float> c50 = ((Vector512<float>*)(cGroup + 5 * K))[0];
+                Vector512<float> c51 = ((Vector512<float>*)(cGroup + 5 * K))[1];
+                Vector512<float> c60 = ((Vector512<float>*)(cGroup + 6 * K))[0];
+                Vector512<float> c61 = ((Vector512<float>*)(cGroup + 6 * K))[1];
+                Vector512<float> c70 = ((Vector512<float>*)(cGroup + 7 * K))[0];
+                Vector512<float> c71 = ((Vector512<float>*)(cGroup + 7 * K))[1];
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bpv = (Vector512<float>*)(panel + j * (2 * Vector512<float>.Count));
+                    var b0 = Bpv[0];
+                    var b1 = Bpv[1];
+                    var aa = Vector512.Create(aGroup[j]);
+                    c00 = Avx512F.FusedMultiplyAdd(aa, b0, c00);
+                    c01 = Avx512F.FusedMultiplyAdd(aa, b1, c01);
+                    aa = Vector512.Create((aGroup + 1 * N)[j]);
+                    c10 = Avx512F.FusedMultiplyAdd(aa, b0, c10);
+                    c11 = Avx512F.FusedMultiplyAdd(aa, b1, c11);
+                    aa = Vector512.Create((aGroup + 2 * N)[j]);
+                    c20 = Avx512F.FusedMultiplyAdd(aa, b0, c20);
+                    c21 = Avx512F.FusedMultiplyAdd(aa, b1, c21);
+                    aa = Vector512.Create((aGroup + 3 * N)[j]);
+                    c30 = Avx512F.FusedMultiplyAdd(aa, b0, c30);
+                    c31 = Avx512F.FusedMultiplyAdd(aa, b1, c31);
+                    aa = Vector512.Create((aGroup + 4 * N)[j]);
+                    c40 = Avx512F.FusedMultiplyAdd(aa, b0, c40);
+                    c41 = Avx512F.FusedMultiplyAdd(aa, b1, c41);
+                    aa = Vector512.Create((aGroup + 5 * N)[j]);
+                    c50 = Avx512F.FusedMultiplyAdd(aa, b0, c50);
+                    c51 = Avx512F.FusedMultiplyAdd(aa, b1, c51);
+                    aa = Vector512.Create((aGroup + 6 * N)[j]);
+                    c60 = Avx512F.FusedMultiplyAdd(aa, b0, c60);
+                    c61 = Avx512F.FusedMultiplyAdd(aa, b1, c61);
+                    aa = Vector512.Create((aGroup + 7 * N)[j]);
+                    c70 = Avx512F.FusedMultiplyAdd(aa, b0, c70);
+                    c71 = Avx512F.FusedMultiplyAdd(aa, b1, c71);
+                }
+                ((Vector512<float>*)(cGroup))[0] = c00;
+                ((Vector512<float>*)(cGroup))[1] = c01;
+                ((Vector512<float>*)(cGroup + 1 * K))[0] = c10;
+                ((Vector512<float>*)(cGroup + 1 * K))[1] = c11;
+                ((Vector512<float>*)(cGroup + 2 * K))[0] = c20;
+                ((Vector512<float>*)(cGroup + 2 * K))[1] = c21;
+                ((Vector512<float>*)(cGroup + 3 * K))[0] = c30;
+                ((Vector512<float>*)(cGroup + 3 * K))[1] = c31;
+                ((Vector512<float>*)(cGroup + 4 * K))[0] = c40;
+                ((Vector512<float>*)(cGroup + 4 * K))[1] = c41;
+                ((Vector512<float>*)(cGroup + 5 * K))[0] = c50;
+                ((Vector512<float>*)(cGroup + 5 * K))[1] = c51;
+                ((Vector512<float>*)(cGroup + 6 * K))[0] = c60;
+                ((Vector512<float>*)(cGroup + 6 * K))[1] = c61;
+                ((Vector512<float>*)(cGroup + 7 * K))[0] = c70;
+                ((Vector512<float>*)(cGroup + 7 * K))[1] = c71;
+            }
+        }
+        int rem = K - blocked;
+        if (rem > 0)
+            mm_avx512_8x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem);
+    }
+    /// <summary>
+    /// Column-tail half of the 8-row AVX512 packed nest: full-vector
+    /// remainders first, then one masked remainder. Split from the main
+    /// nest so the hot reduction loop stays compact for the JIT; takes
+    /// the same operands plus the precomputed tile geometry.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 8).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
+    /// <param name="C">Result matrix.</param>
+    /// <param name="blocked">Leading output columns covered by full tiles.</param>
+    /// <param name="tiles">Count of full 32-column tiles.</param>
+    /// <param name="rem">Trailing output columns (must be positive).</param>
+    public unsafe static void mm_avx512_8x32packed_col_tail(int M,
+                              int N,
+                              int K,
+                              float* A,
+                              float* P,
+                              float* C,
+                              int blocked,
+                              int tiles,
+                              int rem)
+    {
+        float* T = P + tiles * N * (2 * Vector512<float>.Count);
+        int rv = rem / Vector512<float>.Count;
+        for (int tt = 0; tt < rv; tt++)
+        {
+            for (int i = 0; i < M; i += 8)
+            {
+                float* aGroup = A + i * N;
+                float* cGroup = C + i * K + blocked;
+                Vector512<float> c0 = ((Vector512<float>*)(cGroup))[tt];
+                Vector512<float> c1 = ((Vector512<float>*)(cGroup + 1 * K))[tt];
+                Vector512<float> c2 = ((Vector512<float>*)(cGroup + 2 * K))[tt];
+                Vector512<float> c3 = ((Vector512<float>*)(cGroup + 3 * K))[tt];
+                Vector512<float> c4 = ((Vector512<float>*)(cGroup + 4 * K))[tt];
+                Vector512<float> c5 = ((Vector512<float>*)(cGroup + 5 * K))[tt];
+                Vector512<float> c6 = ((Vector512<float>*)(cGroup + 6 * K))[tt];
+                Vector512<float> c7 = ((Vector512<float>*)(cGroup + 7 * K))[tt];
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bpv = (Vector512<float>*)(T + j * rem + tt * Vector512<float>.Count);
+                    c0 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(aGroup[j]), c0);
+                    c1 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create((aGroup + 1 * N)[j]), c1);
+                    c2 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create((aGroup + 2 * N)[j]), c2);
+                    c3 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create((aGroup + 3 * N)[j]), c3);
+                    c4 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create((aGroup + 4 * N)[j]), c4);
+                    c5 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create((aGroup + 5 * N)[j]), c5);
+                    c6 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create((aGroup + 6 * N)[j]), c6);
+                    c7 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create((aGroup + 7 * N)[j]), c7);
+                }
+                ((Vector512<float>*)(cGroup))[tt] = c0;
+                ((Vector512<float>*)(cGroup + 1 * K))[tt] = c1;
+                ((Vector512<float>*)(cGroup + 2 * K))[tt] = c2;
+                ((Vector512<float>*)(cGroup + 3 * K))[tt] = c3;
+                ((Vector512<float>*)(cGroup + 4 * K))[tt] = c4;
+                ((Vector512<float>*)(cGroup + 5 * K))[tt] = c5;
+                ((Vector512<float>*)(cGroup + 6 * K))[tt] = c6;
+                ((Vector512<float>*)(cGroup + 7 * K))[tt] = c7;
+            }
+        }
+        int vcols = rv * Vector512<float>.Count;
+        int rem2 = rem - vcols;
+        if (rem2 > 0)
+        {
+            float* mbuf = stackalloc float[Vector512<float>.Count];
+            for (int q = 0; q < Vector512<float>.Count; q++) mbuf[q] = q < rem2 ? -1f : 0f;
+            var vmask = Vector512.Load(mbuf);
+            for (int i = 0; i < M; i += 8)
+            {
+                float* aGroup = A + i * N;
+                float* cGroup = C + i * K + blocked + vcols;
+                Vector512<float> d0 = Avx512F.MaskLoad(cGroup, vmask, Vector512<float>.Zero);
+                Vector512<float> d1 = Avx512F.MaskLoad(cGroup + 1 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d2 = Avx512F.MaskLoad(cGroup + 2 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d3 = Avx512F.MaskLoad(cGroup + 3 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d4 = Avx512F.MaskLoad(cGroup + 4 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d5 = Avx512F.MaskLoad(cGroup + 5 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d6 = Avx512F.MaskLoad(cGroup + 6 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d7 = Avx512F.MaskLoad(cGroup + 7 * K, vmask, Vector512<float>.Zero);
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bm = T + j * rem + vcols;
+                    var bv = Avx512F.MaskLoad(Bm, vmask, Vector512<float>.Zero);
+                    d0 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create(aGroup[j]), d0);
+                    d1 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((aGroup + 1 * N)[j]), d1);
+                    d2 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((aGroup + 2 * N)[j]), d2);
+                    d3 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((aGroup + 3 * N)[j]), d3);
+                    d4 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((aGroup + 4 * N)[j]), d4);
+                    d5 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((aGroup + 5 * N)[j]), d5);
+                    d6 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((aGroup + 6 * N)[j]), d6);
+                    d7 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((aGroup + 7 * N)[j]), d7);
+                }
+                Avx512F.MaskStore(cGroup, vmask, d0);
+                Avx512F.MaskStore(cGroup + 1 * K, vmask, d1);
+                Avx512F.MaskStore(cGroup + 2 * K, vmask, d2);
+                Avx512F.MaskStore(cGroup + 3 * K, vmask, d3);
+                Avx512F.MaskStore(cGroup + 4 * K, vmask, d4);
+                Avx512F.MaskStore(cGroup + 5 * K, vmask, d5);
+                Avx512F.MaskStore(cGroup + 6 * K, vmask, d6);
+                Avx512F.MaskStore(cGroup + 7 * K, vmask, d7);
+            }
+        }
+    }
     public unsafe static void mm_unsafe_vectorized_intrinsics(int M,
                           int N,
                           int K,
