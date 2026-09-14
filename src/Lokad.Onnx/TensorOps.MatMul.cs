@@ -136,9 +136,11 @@ where T : unmanaged
     static DenseTensor<float>? ResolvePackedKernel(TensorExecutionOptions options, Tensor<float> y, int m)
     {
         if (!options.UseSimd || !options.UseIntrinsics || !Fma.IsSupported) return null;
-        // The 2-row kernel needs even rows; odd counts route packed only when exact
-        // 3-row groups cover them (P65).
-        if ((m & 1) != 0 && (m % 3) != 0) return null;
+        // Row groups cover every count of two or more rows; single rows stay
+        // unpacked. Non-AVX512 hardware still admits only even and exact
+        // 3-row counts, whose decomposition reproduces the legacy calls.
+        if (m < 2) return null;
+        if (!Avx512F.IsSupported && (m & 1) != 0 && (m % 3) != 0) return null;
         var found = GraphPacking.ResolvePacked(options.PackedMatMulWeights, y);
         if (found is null || found.Dimensions.Length != 2) return null;
         int n = found.Dimensions[0], k = found.Dimensions[1];
@@ -273,12 +275,9 @@ where T : unmanaged
             using var oh = destination.Buffer.Pin();
             unsafe
             {
-                // Three-row groups share each B vector at the same broadcast rate (P65);
-                // every other packed shape keeps the proven 2-row nest.
-                if ((m % 3) == 0)
-                    mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
-                else
-                    mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
+                // Row groups with 6-row AVX512 heads and 3/2-row tails (P5);
+                // exact shapes keep single calls bit-identically.
+                RunPackedRowGroups(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
             }
             return destination;
         }
@@ -656,6 +655,55 @@ where T : unmanaged
     /// every batch. Mirrors RunBatchedFloatMatMul loop-for-loop with the
     /// packed kernel; the shared buffer pins once outside the loops.
     /// </summary>
+    /// <summary>
+    /// Runs one panel-packed product as 6-row AVX512 heads with 3/2-row
+    /// tails: exact shapes keep single calls bit-identically, while larger
+    /// counts trade 2-row passes for 6-way panel sharing. Rows are
+    /// independent, so partitioning never changes per-element arithmetic;
+    /// every piece uses the same panel layout and FMA order. Odd remainders
+    /// peel one 3-row head, leaving an even tail for one 2-row call, so no
+    /// scalar tail or original-operand read ever appears here.
+    /// </summary>
+    static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* packed, float* dest)
+    {
+        int rest = m;
+        float* xr = x;
+        float* dr = dest;
+        if (Avx512F.IsSupported && rest >= 6)
+        {
+            int main = (rest / 6) * 6;
+            int rem = rest - main;
+            if (rem == 1) { main -= 6; rem = 7; }
+            if (main > 0)
+            {
+                mm_unsafe_vectorized_avx512_6x32packed(main, n, k, xr, packed, dr);
+                xr += main * n;
+                dr += main * k;
+                rest = rem;
+            }
+            else
+            {
+                rest = rem;
+            }
+        }
+        if (rest == 0)
+        {
+            return;
+        }
+        if ((rest % 3) == 0)
+        {
+            mm_unsafe_vectorized_intrinsics_3x4packed(rest, n, k, xr, packed, dr);
+            return;
+        }
+        if ((rest & 1) == 0)
+        {
+            mm_unsafe_vectorized_intrinsics_2x4packed(rest, n, k, xr, packed, dr);
+            return;
+        }
+        mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr);
+        mm_unsafe_vectorized_intrinsics_2x4packed(rest - 3, n, k, xr + 3 * n, packed, dr + 3 * k);
+    }
+
     static void RunPackedBatches(Tensor<float> bx, Tensor<float> z, int[] batchDims, int[] xSteps, int[] zSteps, int batchCount, int dop, int m, int n, int k, DenseTensor<float> packed)
     {
         using var xh = bx.Storage.Pin();
@@ -675,19 +723,11 @@ where T : unmanaged
                 {
                     unsafe
                     {
-                        // P65: exact 3-row groups cover every row at the same broadcast rate;
-                        // other batch shapes keep the proven 2-row nest (odd counts only arrive
-                        // here in exact 3-row groups via the relaxed packed gate).
-                        if ((m % 3) == 0)
-                            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k,
-                                (float*)xp0 + xOff[bi],
-                                pp,
-                                (float*)zp0 + zOff[bi]);
-                        else
-                            mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k,
-                                (float*)xp0 + xOff[bi],
-                                pp,
-                                (float*)zp0 + zOff[bi]);
+                        // Row groups with 6-row AVX512 heads and 3/2-row tails (P5).
+                        RunPackedRowGroups(m, n, k,
+                            (float*)xp0 + xOff[bi],
+                            pp,
+                            (float*)zp0 + zOff[bi]);
                     }
                 });
             }
@@ -700,10 +740,7 @@ where T : unmanaged
                 int ox = 0, oz = 0;
                 for (int b = 0; b < batchCount; b++)
                 {
-                    if ((m % 3) == 0)
-                        mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, xp + ox, pp, zp + oz);
-                    else
-                        mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, xp + ox, pp, zp + oz);
+                    RunPackedRowGroups(m, n, k, xp + ox, pp, zp + oz);
                     for (int d = r - 1; d >= 0; d--)
                     {
                         coords[d]++;

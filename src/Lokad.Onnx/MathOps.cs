@@ -1052,6 +1052,191 @@ public class MathOps
     /// <param name="A">Left matrix.</param>
     /// <param name="B">Right matrix.</param>
     /// <param name="C">Result matrix.</param>
+    /// <summary>
+    /// Register-tiled matrix multiplication reading panel-packed B, six
+    /// rows per group with masked column tails. Panels, tails, and the
+    /// per-element FMA order match the 2/3-row packed nests exactly, so
+    /// results agree bit-wise with them; 6-way B sharing halves panel
+    /// re-reads against the 2-row nest at the same 14-register budget.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 6).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
+    /// <param name="C">Result matrix.</param>
+    public unsafe static void mm_unsafe_vectorized_avx512_6x32packed(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* P,
+                          float* C)
+    {
+        if (M % 6 != 0)
+            throw new ArgumentException(nameof(M));
+
+        int blocked = K - (K % (2 * Vector512<float>.Count));
+        int tiles = blocked / (2 * Vector512<float>.Count);
+
+        for (int tb = 0; tb < tiles; tb++)
+        {
+            int kb = tb * (2 * Vector512<float>.Count);
+            float* panel = P + tb * N * (2 * Vector512<float>.Count);
+            for (int i = 0; i < M; i += 6)
+            {
+                var Ap1 = A + i * N;
+                var Ap2 = Ap1 + N;
+                var Ap3 = Ap2 + N;
+                var Ap4 = Ap3 + N;
+                var Ap5 = Ap4 + N;
+                var Ap6 = Ap5 + N;
+                var Cp1 = (Vector512<float>*)(C + i * K + kb);
+                var Cp2 = (Vector512<float>*)(C + (i + 1) * K + kb);
+                var Cp3 = (Vector512<float>*)(C + (i + 2) * K + kb);
+                var Cp4 = (Vector512<float>*)(C + (i + 3) * K + kb);
+                var Cp5 = (Vector512<float>*)(C + (i + 4) * K + kb);
+                var Cp6 = (Vector512<float>*)(C + (i + 5) * K + kb);
+                Vector512<float> c00 = Cp1[0];
+                Vector512<float> c01 = Cp1[1];
+                Vector512<float> c10 = Cp2[0];
+                Vector512<float> c11 = Cp2[1];
+                Vector512<float> c20 = Cp3[0];
+                Vector512<float> c21 = Cp3[1];
+                Vector512<float> c30 = Cp4[0];
+                Vector512<float> c31 = Cp4[1];
+                Vector512<float> c40 = Cp5[0];
+                Vector512<float> c41 = Cp5[1];
+                Vector512<float> c50 = Cp6[0];
+                Vector512<float> c51 = Cp6[1];
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bpv = (Vector512<float>*)(panel + j * (2 * Vector512<float>.Count));
+                    var b0 = Bpv[0];
+                    var b1 = Bpv[1];
+                    var aa = Vector512.Create(Ap1[j]);
+                    c00 = Avx512F.FusedMultiplyAdd(aa, b0, c00);
+                    c01 = Avx512F.FusedMultiplyAdd(aa, b1, c01);
+                    aa = Vector512.Create(Ap2[j]);
+                    c10 = Avx512F.FusedMultiplyAdd(aa, b0, c10);
+                    c11 = Avx512F.FusedMultiplyAdd(aa, b1, c11);
+                    aa = Vector512.Create(Ap3[j]);
+                    c20 = Avx512F.FusedMultiplyAdd(aa, b0, c20);
+                    c21 = Avx512F.FusedMultiplyAdd(aa, b1, c21);
+                    aa = Vector512.Create(Ap4[j]);
+                    c30 = Avx512F.FusedMultiplyAdd(aa, b0, c30);
+                    c31 = Avx512F.FusedMultiplyAdd(aa, b1, c31);
+                    aa = Vector512.Create(Ap5[j]);
+                    c40 = Avx512F.FusedMultiplyAdd(aa, b0, c40);
+                    c41 = Avx512F.FusedMultiplyAdd(aa, b1, c41);
+                    aa = Vector512.Create(Ap6[j]);
+                    c50 = Avx512F.FusedMultiplyAdd(aa, b0, c50);
+                    c51 = Avx512F.FusedMultiplyAdd(aa, b1, c51);
+                }
+                Cp1[0] = c00;
+                Cp1[1] = c01;
+                Cp2[0] = c10;
+                Cp2[1] = c11;
+                Cp3[0] = c20;
+                Cp3[1] = c21;
+                Cp4[0] = c30;
+                Cp4[1] = c31;
+                Cp5[0] = c40;
+                Cp5[1] = c41;
+                Cp6[0] = c50;
+                Cp6[1] = c51;
+            }
+        }
+        int rem = K - blocked;
+        if (rem > 0)
+        {
+            float* T = P + tiles * N * (2 * Vector512<float>.Count);
+            int rv = rem / Vector512<float>.Count;
+            for (int tt = 0; tt < rv; tt++)
+            {
+                for (int i = 0; i < M; i += 6)
+                {
+                    var Ap1 = A + i * N;
+                    var Ap2 = Ap1 + N;
+                    var Ap3 = Ap2 + N;
+                    var Ap4 = Ap3 + N;
+                    var Ap5 = Ap4 + N;
+                    var Ap6 = Ap5 + N;
+                    var rC1 = (Vector512<float>*)(C + i * K + blocked);
+                    var rC2 = (Vector512<float>*)(C + (i + 1) * K + blocked);
+                    var rC3 = (Vector512<float>*)(C + (i + 2) * K + blocked);
+                    var rC4 = (Vector512<float>*)(C + (i + 3) * K + blocked);
+                    var rC5 = (Vector512<float>*)(C + (i + 4) * K + blocked);
+                    var rC6 = (Vector512<float>*)(C + (i + 5) * K + blocked);
+                    Vector512<float> c1 = rC1[tt];
+                    Vector512<float> c2 = rC2[tt];
+                    Vector512<float> c3 = rC3[tt];
+                    Vector512<float> c4 = rC4[tt];
+                    Vector512<float> c5 = rC5[tt];
+                    Vector512<float> c6 = rC6[tt];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        var Bpv = (Vector512<float>*)(T + j * rem + tt * Vector512<float>.Count);
+                        c1 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap1[j]), c1);
+                        c2 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap2[j]), c2);
+                        c3 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap3[j]), c3);
+                        c4 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap4[j]), c4);
+                        c5 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap5[j]), c5);
+                        c6 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap6[j]), c6);
+                    }
+                    rC1[tt] = c1;
+                    rC2[tt] = c2;
+                    rC3[tt] = c3;
+                    rC4[tt] = c4;
+                    rC5[tt] = c5;
+                    rC6[tt] = c6;
+                }
+            }
+            int vcols = rv * Vector512<float>.Count;
+            // Masked narrow tail: fault-suppressed masked loads keep the
+            // vector width into the row-major tail without a scalar loop,
+            // and masked stores never touch columns past the edge. Sign-set
+            // lanes select memory, matching blend semantics on both sides.
+            int rem2 = rem - vcols;
+            if (rem2 > 0)
+            {
+                float* mbuf = stackalloc float[Vector512<float>.Count];
+                for (int q = 0; q < Vector512<float>.Count; q++) mbuf[q] = q < rem2 ? -1f : 0f;
+                var vmask = Vector512.Load(mbuf);
+                for (int i = 0; i < M; i += 6)
+                {
+                    var mC1 = C + i * K + blocked + vcols;
+                    var mC2 = C + (i + 1) * K + blocked + vcols;
+                    var mC3 = C + (i + 2) * K + blocked + vcols;
+                    var mC4 = C + (i + 3) * K + blocked + vcols;
+                    var mC5 = C + (i + 4) * K + blocked + vcols;
+                    var mC6 = C + (i + 5) * K + blocked + vcols;
+                    Vector512<float> d1 = Avx512F.MaskLoad(mC1, vmask, Vector512<float>.Zero);
+                    Vector512<float> d2 = Avx512F.MaskLoad(mC2, vmask, Vector512<float>.Zero);
+                    Vector512<float> d3 = Avx512F.MaskLoad(mC3, vmask, Vector512<float>.Zero);
+                    Vector512<float> d4 = Avx512F.MaskLoad(mC4, vmask, Vector512<float>.Zero);
+                    Vector512<float> d5 = Avx512F.MaskLoad(mC5, vmask, Vector512<float>.Zero);
+                    Vector512<float> d6 = Avx512F.MaskLoad(mC6, vmask, Vector512<float>.Zero);
+                    for (int j = 0; j < N; ++j)
+                    {
+                        var Bm = T + j * rem + vcols;
+                        var bv = Avx512F.MaskLoad(Bm, vmask, Vector512<float>.Zero);
+                        d1 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + i * N)[j]), d1);
+                        d2 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 1) * N)[j]), d2);
+                        d3 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 2) * N)[j]), d3);
+                        d4 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 3) * N)[j]), d4);
+                        d5 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 4) * N)[j]), d5);
+                        d6 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 5) * N)[j]), d6);
+                    }
+                    Avx512F.MaskStore(mC1, vmask, d1);
+                    Avx512F.MaskStore(mC2, vmask, d2);
+                    Avx512F.MaskStore(mC3, vmask, d3);
+                    Avx512F.MaskStore(mC4, vmask, d4);
+                    Avx512F.MaskStore(mC5, vmask, d5);
+                    Avx512F.MaskStore(mC6, vmask, d6);
+                }
+            }
+        }
+    }
     public unsafe static void mm_unsafe_vectorized_intrinsics(int M,
                           int N,
                           int K,
