@@ -357,6 +357,164 @@ where T : unmanaged
     }
 
     /// <summary>
+    /// Tries a direct float rank-three depthwise convolution: every channel
+    /// owns one length-K filter (group, input and output channels equal,
+    /// single filter channel), so each output is one row dot with no patch
+    /// matrix and no per-group dispatch. Anything else, including automatic
+    /// padding modes, declines for the rank-three adapter, which validates
+    /// and reports unsupported contracts authoritatively.
+    /// </summary>
+    public static bool TryConvDepthwise1D(Tensor<float> input, Tensor<float> weight, Tensor<float>? bias, int group, int[]? pads, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, out Tensor<float>? output)
+    {
+        output = null;
+        if (input.Rank != 3 || weight.Rank != 3) return false;
+        int N = input.Dimensions[0], C = input.Dimensions[1], L = input.Dimensions[2];
+        int M = weight.Dimensions[0];
+        if (N < 1 || C < 1 || M != C || group != C || weight.Dimensions[1] != 1) return false;
+        int K = weight.Dimensions[2];
+        if (K < 1) return false;
+        if (kernelshape is not null && (kernelshape.Length != 1 || kernelshape[0] != K)) return false;
+        int s = 1;
+        if (strides is not null)
+        {
+            if (strides.Length != 1 || strides[0] < 1) return false;
+            s = strides[0];
+        }
+        int d = 1;
+        if (dilations is not null)
+        {
+            if (dilations.Length != 1 || dilations[0] < 1) return false;
+            d = dilations[0];
+        }
+        int padL = 0, padR = 0;
+        if (pads is not null)
+        {
+            if (pads.Length != 2 || pads[0] < 0 || pads[1] < 0) return false;
+            padL = pads[0];
+            padR = pads[1];
+        }
+        if (bias is not null && bias.Length != M) return false;
+        int effK = (K - 1) * d + 1;
+        int outL = (L + padL + padR - effK) / s + 1;
+        if (outL < 1) return false;
+        options.Validate();
+        output = RunDepthwise1DFloat(input.ToDenseTensor(), weight.ToDenseTensor(), bias?.ToDenseTensor(), N, C, L, M, K, s, d, padL, padR, outL, options, fuseRelu);
+        return true;
+    }
+
+    /// <summary>
+    /// Direct rank-three float depthwise convolution. Output positions run
+    /// over a contiguous time axis, so stride/dilation one takes an AVX256
+    /// FMA vector loop over an explicit no-check interior, with scalar
+    /// border/tail handling; anything else stays scalar. Batches and channels
+    /// are independent, so parallel degrees split over batch-channels with
+    /// identical per-element results.
+    /// </summary>
+    static Tensor<float> RunDepthwise1DFloat(DenseTensor<float> x, DenseTensor<float> w, DenseTensor<float>? b, int N, int C, int L, int M, int K, int s, int d, int padL, int padR, int outL, TensorExecutionOptions options, bool fuseRelu)
+    {
+        var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outL });
+        var xMem = x.Buffer;
+        var wMem = w.Buffer;
+        var oMem = output.Buffer;
+        var bMem = b is null ? default : b.Buffer;
+        bool hasBias = b is not null;
+        bool vector = options.UseSimd && options.UseIntrinsics && s == 1 && d == 1 && Avx.IsSupported && Fma.IsSupported;
+        int jobs = N * C;
+        int dop = options.MaxDegreeOfParallelism < 2 || jobs < 2 ? 1 : Math.Min(options.MaxDegreeOfParallelism, jobs);
+        if (dop > 1)
+        {
+            Parallel.For(0, jobs, new ParallelOptions { MaxDegreeOfParallelism = dop }, job =>
+            {
+                RunDepthwiseChannelFloat(xMem, wMem, bMem, hasBias, oMem, job / C, job % C, C, L, M, K, s, d, padL, outL, vector, fuseRelu);
+            });
+        }
+        else
+        {
+            for (int job = 0; job < jobs; job++)
+                RunDepthwiseChannelFloat(xMem, wMem, bMem, hasBias, oMem, job / C, job % C, C, L, M, K, s, d, padL, outL, vector, fuseRelu);
+        }
+        return output;
+    }
+
+    /// <summary>
+    /// One batch-channel of direct depthwise convolution: bias-seeded
+    /// accumulation over the K filter taps per output position, vectorized
+    /// across the explicit interior for stride/dilation one, scalar with
+    /// zero padding elsewhere.
+    /// </summary>
+    static void RunDepthwiseChannelFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, int b, int c, int C, int L, int M, int K, int s, int d, int padL, int outL, bool vector, bool fuseRelu)
+    {
+        var xs = xMem.Span;
+        var ws = wMem.Span;
+        var os = oMem.Span;
+        int xBase = (b * C + c) * L;
+        int wBase = c * K;
+        int oBase = (b * M + c) * outL;
+        float bi = hasBias ? bMem.Span[c] : 0f;
+        int effK = (K - 1) * d + 1;
+        int tLo = (padL + s - 1) / s;
+        int hiNum = L - 1 + padL - (effK - 1);
+        int tHi = (hiNum >= 0 ? hiNum / s : -1) + 1;
+        if (tLo < 0) tLo = 0;
+        if (tHi > outL) tHi = outL;
+        if (vector)
+        {
+            var zero = Vector256<float>.Zero;
+            int vecEnd = tLo + ((tHi - tLo) & ~7);
+            unsafe
+            {
+                fixed (float* xp = xs, wp = ws, op = os)
+                {
+                    float* xc = xp + xBase;
+                    float* wc = wp + wBase;
+                    float* oc = op + oBase;
+                    for (int t = tLo; t < vecEnd; t += 8)
+                    {
+                        var acc = Vector256.Create(bi);
+                        for (int k = 0; k < K; k++)
+                        {
+                            var xv = *(Vector256<float>*)(xc + t + k - padL);
+                            acc = Fma.MultiplyAdd(Vector256.Create(wc[k]), xv, acc);
+                        }
+                        if (fuseRelu)
+                        {
+                            var keep = Vector256.GreaterThan(acc, zero) | Vector256.Equals(acc, zero) | ~Vector256.Equals(acc, acc);
+                            acc = Vector256.ConditionalSelect(keep, acc, zero);
+                        }
+                        *(Vector256<float>*)(oc + t) = acc;
+                    }
+                }
+            }
+            for (int t = 0; t < tLo; t++) os[oBase + t] = DepthwiseTapScalar(xs, ws, xBase, wBase, bi, t, K, s, d, padL, L, fuseRelu);
+            for (int t = vecEnd; t < outL; t++)
+            {
+                if (t >= tHi) os[oBase + t] = DepthwiseTapScalar(xs, ws, xBase, wBase, bi, t, K, s, d, padL, L, fuseRelu);
+                else
+                {
+                    float acc2 = bi;
+                    for (int k = 0; k < K; k++) acc2 += ws[wBase + k] * xs[xBase + t + k - padL];
+                    os[oBase + t] = fuseRelu && acc2 < 0f ? 0f : acc2;
+                }
+            }
+            return;
+        }
+        for (int t = 0; t < outL; t++) os[oBase + t] = DepthwiseTapScalar(xs, ws, xBase, wBase, bi, t, K, s, d, padL, L, fuseRelu);
+    }
+
+    /// <summary>Scalar depthwise tap accumulation with explicit zero padding.</summary>
+    static float DepthwiseTapScalar(ReadOnlySpan<float> xs, ReadOnlySpan<float> ws, int xBase, int wBase, float bi, int t, int K, int s, int d, int padL, int L, bool fuseRelu)
+    {
+        float acc = bi;
+        for (int k = 0; k < K; k++)
+        {
+            int ix = t * s + k * d - padL;
+            float xv = (uint)ix < (uint)L ? xs[xBase + ix] : 0f;
+            acc += ws[wBase + k] * xv;
+        }
+        return fuseRelu && acc < 0f ? 0f : acc;
+    }
+
+    /// <summary>
     /// Runs 1x1 stride-1 no-pad batches with no patch matrix: the input slice
     /// already lays out as the GEMM right-hand side, so each group multiplies
     /// directly through the shared dispatcher with the same bias epilogue.

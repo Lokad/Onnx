@@ -52,6 +52,13 @@ public partial class CPUExecutionProvider
             {
                 return AttributeNotSupported(op, "pads", pads.Print(), "One-dimensional pads must hold two values [begin, end].");
             }
+            if (X.ElementType == TensorElementType.Float
+                && (string.IsNullOrEmpty(auto_pad) || auto_pad == "NOTSET")
+                && Tensor<float>.TryConvDepthwise1D((Tensor<float>)X, (Tensor<float>)W, (Tensor<float>?)B, group ?? 1, pads, kernel_shape, strides, dilations, (options ?? ExecutionOptions.Default).Validated().Tensor, fuseRelu, out var dwConv)
+                && dwConv is not null)
+            {
+                return Success(op, dwConv);
+            }
             var xu = Unsqueeze(X, new[] { 3 }, options);
             if (xu.Status != OpStatus.Success) return xu;
             var wu = Unsqueeze(W, new[] { 3 }, options);
