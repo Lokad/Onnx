@@ -27,7 +27,11 @@
 
 - No known behavior changes: every optimization above preserves exact output bits
   (frozen bit-hash gates green), and all changes are additive with legacy fallbacks.
-  Public API additions only; no signatures removed or altered since 0.2.0.
+  Public API additions only; no public signatures removed or altered since 0.2.0
+  (audited 0.2.0-revision diff: added surface is the two `ReadOnlyMemory<byte>`
+  import overloads, the fused `CPUExecutionProvider.ConvRelu`/`AddRelu`/`BiasGelu`
+  entry points, and the `RetainedPackedWeightBytes` diagnostic gauge; the retired
+  `GraphFusion` pattern fields/methods lived in an internal type).
 
 ## 0.2.0 — 2026-09-13
 
