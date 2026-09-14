@@ -532,6 +532,8 @@ static class Bench
             + " outputs=[" + string.Join(",", OutputShapes(graph, outNames)) + "]"
             + " warmup=" + Warm + " iters=" + iters
             + " load=" + loadMs.ToString("F1") + "ms prepare=" + prepareMs.ToString("F1") + "ms ortLoad=" + ortLoadMs.ToString("F1") + "ms"
+            + " packed=" + graph.PackingReport.Live + "/" + graph.PackingReport.Eligible
+            + "/" + (graph.PackingReport.RetainedBytes / 1048576.0).ToString("F0") + "MiB"
             + " firstLokad=" + first.lokadFirstMs.ToString("F1") + "ms firstOrt=" + first.ortFirstMs.ToString("F1") + "ms"
             + " (first-run is process-cold only on the first row; later rows share warmed JIT)");
         TimedRun(name, graph, named, outNames, lokadOpts, lokDesc, ortDesc, iters, valSw.Elapsed.TotalMilliseconds, first.scaled, first.abs, ortSession, tolerance);

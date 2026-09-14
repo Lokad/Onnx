@@ -20,7 +20,8 @@ using System.Linq;
 public sealed record PackedWeightsReport(
     int Live,
     long RetainedBytes,
-    IReadOnlyList<PackedWeightShape> Shapes);
+    IReadOnlyList<PackedWeightShape> Shapes,
+    int Eligible);
 
 /// <summary>Live packed-clone count for one packed clone shape (rows by columns).</summary>
 public sealed record PackedWeightShape(int Rows, int Cols, int Count);
@@ -43,12 +44,24 @@ internal static class GraphPacking
 {
     internal const string PackedPrefix = "packed:";
 
-    /// <summary>Upper axis bound of measured packed-kernel territory (P46: 4096, covering GPT-2 c_proj at n=3072; census shows no other model edge in range).</summary>
+    /// <summary>Upper source-rows bound of measured packed-kernel territory: 4096 is admitted (encoder K=4096 projections at M=16), wider reductions are unmeasured and stay unpacked.</summary>
     internal const int MaxPackedAxis = 4096;
 
-    /// <summary>Upper packed-clone size in bytes (P34).</summary>
-    /// <remarks>The reduction axis stays bounded while the panel axis scales linearly (proven to 1570 panels), so total bytes bound residency instead.</remarks>
+    /// <summary>Upper single-clone size in real bytes. Aggregate residency is intentionally not capped (see P2): capped subsets regressed the measured workload while full coverage wins, so the running total stays visible in PackingReport and bench headers.</summary>
     internal const long MaxPackedBytes = 512L * 1024 * 1024;
+
+    /// <summary>Bytes of one n-by-k float32 packed clone with checked arithmetic.</summary>
+    internal static long PackedCloneBytes(int n, int k) => checked((long)n * k * sizeof(float));
+
+    /// <summary>
+    /// Centralized per-matrix packing predicate: source rows within measured
+    /// territory and a single clone inside the size bound, with exact byte math.
+    /// </summary>
+    internal static bool IsPackableShape(int n, int k)
+    {
+        if (n < 1 || k < 1 || n > MaxPackedAxis) return false;
+        return PackedCloneBytes(n, k) <= MaxPackedBytes;
+    }
 
     /// <summary>Resolves a MatMul edge name to a folded-transpose prepared tensor (P34).</summary>
     /// <remarks>Folded outputs materialize under a generated name, so the consuming edge name never hits Initializers directly; the prepared bytes are stable and guarded exactly like initializer sources downstream.</remarks>
@@ -74,7 +87,7 @@ internal static class GraphPacking
     }
     /// <summary>
     /// Packs eligible MatMul B-side weight initializers of the graph.
-    /// Eligible means float32, rank 2, reduction axis below MaxPackedAxis with total bytes below MaxPackedBytes, plain layout (Gemm transB must be 0),
+    /// Eligible means float32, rank 2, source rows within measured territory with a single clone inside the byte budget, plain layout (Gemm transB must be 0),
     /// never a graph input or output, and consumed only as MatMul input 1.
     /// Fresh records reuse verified clones; stale records are dropped and
     /// rebuilt. Returns the live packed count.
@@ -106,7 +119,7 @@ internal static class GraphPacking
             int[] dims = init.Dims;
             if (dims.Length != 2) continue;
             int n = dims[0], k = dims[1];
-            if (n < 1 || k < 1 || n >= MaxPackedAxis || (long)n * k > MaxPackedBytes) continue;
+            if (!IsPackableShape(n, k)) continue;
             if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(dense.Buffer, out System.ArraySegment<float> window)
                 || window.Array is null || window.Offset != 0 || window.Count != dense.Buffer.Length) continue;
             current[kv.Key] = (init, window.Array);
@@ -167,7 +180,7 @@ internal static class GraphPacking
         {
             int rn = rec.Packed.Dimensions[0];
             int rk = rec.Packed.Dimensions[1];
-            checked { retained += (long)rn * rk * sizeof(float); }
+            checked { retained += PackedCloneBytes(rn, rk); }
             var key = (rn, rk);
             byShape.TryGetValue(key, out int shaped);
             byShape[key] = shaped + 1;
@@ -177,7 +190,7 @@ internal static class GraphPacking
             .ThenBy(kv => kv.Key.Cols)
             .Select(kv => new PackedWeightShape(kv.Key.Rows, kv.Key.Cols, kv.Value))
             .ToArray();
-        graph.PackingReport = new PackedWeightsReport(graph.PackedWeights.Count, retained, shapes);
+        graph.PackingReport = new PackedWeightsReport(graph.PackedWeights.Count, retained, shapes, current.Count);
         return live;
     }
     /// <summary>

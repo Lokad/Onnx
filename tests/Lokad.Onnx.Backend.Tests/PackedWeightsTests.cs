@@ -455,4 +455,63 @@ public class PackedWeightsTests
         Assert.Equal(0L, graph.PackingReport.RetainedBytes);
         Assert.Empty(graph.PackingReport.Shapes);
     }
+    [Fact]
+    public void PackableShape_K4096Boundary()
+    {
+        var rnd = new Random(Seed);
+        var ok = BuildGraph(FillRect(2, 4096, rnd), FillRect(4096, 4, rnd), "w");
+        ok.RefreshLifetimeAnalysis();
+        Assert.True(ok.Initializers.ContainsKey("packed:w"), "K=4096 weight must pack inside measured territory.");
+        Assert.Equal(1, ok.PackingReport.Live);
+        var wide = BuildGraph(FillRect(2, 4097, rnd), FillRect(4097, 4, rnd), "w");
+        wide.RefreshLifetimeAnalysis();
+        Assert.False(wide.Initializers.ContainsKey("packed:w"), "K=4097 weight must stay unpacked.");
+        Assert.Equal(0, wide.PackingReport.Live);
+    }
+
+    [Fact]
+    public void PackingReport_BytesAreExactAtScale()
+    {
+        var rnd = new Random(Seed);
+        var graph = BuildGraph(FillRect(2, 2048, rnd), FillRect(2048, 1024, rnd), "w");
+        graph.RefreshLifetimeAnalysis();
+        Assert.Equal(1, graph.PackingReport.Live);
+        Assert.Equal(2048L * 1024 * 4, graph.PackingReport.RetainedBytes);
+    }
+
+    [Fact]
+    public void PackingReport_EligibleCountsConsidered()
+    {
+        var rnd = new Random(Seed);
+        var graph = BuildGraph(FillRect(8, 24, rnd), FillRect(24, 44, rnd), "w");
+        graph.Outputs["w"] = graph.Initializers["w"];
+        graph.RefreshLifetimeAnalysis();
+        Assert.Equal(0, graph.PackingReport.Eligible);
+        Assert.Equal(0, graph.PackingReport.Live);
+    }
+
+    [Fact]
+    public void PackingReport_NameCollisionSkipsClone()
+    {
+        var rnd = new Random(Seed);
+        var graph = BuildGraph(FillRect(8, 24, rnd), FillRect(24, 44, rnd), "w");
+        graph.Initializers["packed:w"] = FillRect(24, 44, rnd);
+        graph.RefreshLifetimeAnalysis();
+        Assert.Equal(1, graph.PackingReport.Eligible);
+        Assert.Equal(0, graph.PackingReport.Live);
+        Assert.Equal(0L, graph.PackingReport.RetainedBytes);
+    }
+
+    [Fact]
+    public void Prepare_ConcurrentCalls_StableReport()
+    {
+        var rnd = new Random(Seed);
+        var graph = BuildGraph(FillRect(8, 24, rnd), FillRect(24, 44, rnd), "w");
+        graph.RefreshLifetimeAnalysis();
+        System.Threading.Tasks.Parallel.For(0, 8, _ => graph.Prepare());
+        Assert.Equal(1, graph.PackingReport.Live);
+        Assert.Equal(24 * 44 * 4L, graph.PackingReport.RetainedBytes);
+        var user = new Dictionary<string, ITensor> { ["x"] = FillRect(8, 24, new Random(Seed)) };
+        Assert.True(graph.Execute(user, true), graph.LastErrorMessage);
+    }
 }

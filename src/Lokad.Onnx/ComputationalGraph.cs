@@ -33,7 +33,7 @@ public class ComputationalGraph
     internal Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
 
     /// <summary>Prepared packing inventory: live clone count, retained clone bytes, and counts by shape.</summary>
-    public PackedWeightsReport PackingReport { get; internal set; } = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>());
+    public PackedWeightsReport PackingReport { get; internal set; } = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>(), 0);
 
     internal object FoldLock = new object();
 
@@ -181,7 +181,7 @@ public class ComputationalGraph
                         Initializers.Remove(packed.PackedName);
                 }
                 PackedWeights.Clear();
-                PackingReport = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>());
+                PackingReport = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>(), 0);
             }
         }
     }
