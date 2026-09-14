@@ -410,6 +410,76 @@ static class Bench
         DecoderChainedCheck(name, model, root, tensorOpts, threads);
     }
 
+    static void RunOrtOutputs(InferenceSession session, Dictionary<string, ITensor> named, string[] outNames, Dictionary<string, float[]> floats, Dictionary<string, long[]> ints)
+    {
+        var ortInputs = BuildOrtInputs(named, session.InputMetadata.Keys.ToArray());
+        try
+        {
+            using var ro = new RunOptions();
+            using var results = session.Run(ro, ortInputs, outNames);
+            var outs = results.ToArray();
+            if (outs.Length != outNames.Length) throw new InvalidOperationException("ort returned " + outs.Length + " outputs for " + outNames.Length + " requested.");
+            for (int i = 0; i < outNames.Length; i++)
+            {
+                var shape = outs[i].GetTensorTypeAndShape();
+                if (shape.ElementDataType == Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Float)
+                    floats[outNames[i]] = outs[i].GetTensorDataAsSpan<float>().ToArray();
+                else if (shape.ElementDataType == Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int32)
+                    ints[outNames[i]] = Array.ConvertAll(outs[i].GetTensorDataAsSpan<int>().ToArray(), v => (long)v);
+                else if (shape.ElementDataType == Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int64)
+                    ints[outNames[i]] = outs[i].GetTensorDataAsSpan<long>().ToArray();
+                else throw new InvalidOperationException("ort output is not float32/int32/int64: " + outNames[i] + ".");
+            }
+        }
+        finally
+        {
+            foreach (var v in ortInputs.Values) v.Dispose();
+        }
+    }
+
+    static void DecoderTrajectories(string name, InferenceSession session, ComputationalGraph graph, string root, string[] outNames, ExecutionOptions lokadOpts, float[] lokH, float[] lokC)
+    {
+        // Independent carried trajectories: each engine feeds its OWN states
+        // for chained rounds, distinguishing accumulated feedback drift from
+        // the single-step local differences the common-state check measures.
+        const int rounds = 4;
+        var first = VoiceModelCases.DecoderStep1Inputs(root);
+        var ortFloats = new Dictionary<string, float[]>(StringComparer.Ordinal);
+        var ortInts = new Dictionary<string, long[]>(StringComparer.Ordinal);
+        RunOrtOutputs(session, first, outNames, ortFloats, ortInts);
+        var ortH = ortFloats["output_states_1"];
+        var ortC = ortFloats["output_states_2"];
+        double worst = 0.0;
+        for (int round = 1; round <= rounds; round++)
+        {
+            var lokInputs = VoiceModelCases.DecoderChainedInputs(root, lokH, lokC);
+            graph.Reset();
+            if (!graph.Execute(lokInputs, true, ExecutionProvider.CPU, lokadOpts))
+                throw new InvalidOperationException(name + "-trajectory: lokad round " + round + " failed");
+            var lokScores = ((Tensor<float>)graph.Outputs["outputs"]).ToArray();
+            var lokLen = ((Tensor<int>)graph.Outputs["prednet_lengths"]).ToArray();
+            lokH = ((Tensor<float>)graph.Outputs["output_states_1"]).ToArray();
+            lokC = ((Tensor<float>)graph.Outputs["output_states_2"]).ToArray();
+            var ortRoundInputs = VoiceModelCases.DecoderChainedInputs(root, ortH, ortC);
+            var ortRoundFloats = new Dictionary<string, float[]>(StringComparer.Ordinal);
+            var ortRoundInts = new Dictionary<string, long[]>(StringComparer.Ordinal);
+            RunOrtOutputs(session, ortRoundInputs, outNames, ortRoundFloats, ortRoundInts);
+            ortH = ortRoundFloats["output_states_1"];
+            ortC = ortRoundFloats["output_states_2"];
+            if (!ortRoundInts["prednet_lengths"].Select(v => (int)v).ToArray().SequenceEqual(lokLen))
+                throw new InvalidOperationException(name + "-trajectory: lengths diverge at round " + round);
+            var agreeScores = BenchValidate.RequireAgreement(name + "-trajectory:outputs:round" + round,
+                new[] { 1, 8, 5, 8198 }, ortRoundFloats["outputs"],
+                new[] { 1, 8, 5, 8198 }, lokScores, Tolerance);
+            var agreeH = BenchValidate.RequireAgreement(name + "-trajectory:output_states_1:round" + round,
+                new[] { 2, 1, 640 }, ortH, new[] { 2, 1, 640 }, lokH, Tolerance);
+            var agreeC = BenchValidate.RequireAgreement(name + "-trajectory:output_states_2:round" + round,
+                new[] { 2, 1, 640 }, ortC, new[] { 2, 1, 640 }, lokC, Tolerance);
+            worst = Math.Max(worst, Math.Max(agreeScores.scaled, Math.Max(agreeH.scaled, agreeC.scaled)));
+        }
+        Console.WriteLine("independent trajectories ok for " + name + " (" + rounds + " chained rounds, worstScaled=" + worst.ToString("E2") + ")");
+    }
+
     static void DecoderChainedCheck(string name, string model, string root, TensorExecutionOptions tensorOpts, int threads)
     {
         VoiceProvenance.VerifyModelFile(name, model);
@@ -433,9 +503,12 @@ static class Bench
         if (!graph.Execute(first, true, ExecutionProvider.CPU, lokadOpts))
             throw new InvalidOperationException(name + "-chained: reset rerun failed");
         if (!((Tensor<float>)graph.Outputs["outputs"]).ToArray().SequenceEqual(firstScores)
-            || !((Tensor<int>)graph.Outputs["prednet_lengths"]).ToArray().SequenceEqual(firstLen))
+            || !((Tensor<int>)graph.Outputs["prednet_lengths"]).ToArray().SequenceEqual(firstLen)
+            || !((Tensor<float>)graph.Outputs["output_states_1"]).ToArray().SequenceEqual(h1)
+            || !((Tensor<float>)graph.Outputs["output_states_2"]).ToArray().SequenceEqual(c1))
             throw new InvalidOperationException(name + "-chained: sequence reset is not deterministic.");
-        Console.WriteLine("reset determinism ok for " + name);
+        Console.WriteLine("reset determinism ok for " + name + " (scores, lengths, and both states)");
+        DecoderTrajectories(name, session, graph, root, outNames, lokadOpts, h1, c1);
     }
 
     static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName, double tolerance)
