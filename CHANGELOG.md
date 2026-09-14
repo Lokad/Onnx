@@ -1,5 +1,34 @@
 # Changelog
 
+## Unreleased (0.2.1 in progress)
+
+### Added
+
+- Direct `ReadOnlyMemory<byte>` model import: `OnnxImport.Parse` and `OnnxImport.Load`
+  overloads read caller-owned memory with no `ToArray()` copy (API01). Existing `byte[]`
+  and file overloads and the Parse-throws / Load-null-plus-diagnostics contracts are
+  unchanged.
+
+### Improved
+
+- Fused bias-plus-exact-GELU regions run a pointer fast path (identical arithmetic):
+  roughly minus 25 percent on MLP activation tiles with tighter run-to-run stability.
+- Single-element broadcast operands (scales, biases, masks) take the SIMD scalar tier
+  instead of per-element stride math: GPT-2 decode at 512 past went from about 3.2x to
+  about 1.6x of the pinned reference.
+- The 4D last-two-axes-swap transpose runs a tiled face path (bit-identical): about
+  minus 38 percent profiled on GPT-2 key transposes.
+- Graph optimization passes (constant folding with dead sweep and dedupe, self-shape
+  Reshape zero-copy, LayerNorm/exact-GELU/tanh-GELU/RoPE fusion, Conv/Add epilogue
+  fusion) reduced E5/DINOv3/ResNet versus 0.2.0 by roughly 10-25 percent; see
+  `BENCHMARK.md` at release time for frozen tables.
+
+### Compatibility
+
+- No known behavior changes: every optimization above preserves exact output bits
+  (frozen bit-hash gates green), and all changes are additive with legacy fallbacks.
+  Public API additions only; no signatures removed or altered since 0.2.0.
+
 ## 0.2.0 — 2026-09-13
 
 0.2.0 is the breaking .NET 10-only release of modern, managed CPU ONNX inference.
