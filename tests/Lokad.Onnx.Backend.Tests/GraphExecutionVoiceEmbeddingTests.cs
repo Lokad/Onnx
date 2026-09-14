@@ -1,14 +1,12 @@
 namespace Lokad.Onnx.Backend.Tests;
+using Lokad.Onnx.Tests.Support;
 
-// First managed speech-model conformance case (PLAN.md Milestone 2).
-// Covers the pyannote embedding backbone: fbank features [batch,frames,80]
+// Pyannote embedding backbone conformance: fbank features [batch,frames,80]
 // through the ResNet encoder to frame features [batch,2560,reducedFrames].
-// The tracked regression uses a deterministic synthetic input so it runs
-// offline with only the model file present; the ignored voice probe
-// validated the same graph against ORT 1.23.2 on real fbank slices
-// (200/998/2998 frames, maxScaled 2.3e-06/3.1e-06/5.0e-06, tol 1e-4,
-// bit-identical reuse). The third fact replays the real fbank fixture
-// when it is present and skips otherwise.
+// The first facts use a deterministic synthetic input pinned by output mean
+// and spot values, so they run offline with only the model file present.
+// The last fact replays the real fbank fixture when it is present and
+// skips otherwise.
 public class GraphExecutionVoiceEmbeddingTests
 {
     const string InputName = "fbank_features";
@@ -84,7 +82,7 @@ public class GraphExecutionVoiceEmbeddingTests
         var npyPath = ModelFixture.FindModelPath("models", "voice-fixtures", "reference", "wespeaker-fbank", "fbank.npy");
         Skip.If(npyPath is null, "Real fbank fixture not present; synthetic facts above still cover the backbone.");
 
-        var fb = ReadNpyFloat32(npyPath!);
+        var fb = NpySupport.ReadFloat32(npyPath!);
         Assert.Equal(new[] { 2998, 80 }, fb.Shape);
         int useFrames = 200;
         var data = new float[useFrames * 80];
@@ -102,32 +100,5 @@ public class GraphExecutionVoiceEmbeddingTests
             new int[] { 40000, 22611, 49207 },
             new float[] { 0f, 0f, 0.0640186667f },
             1e-3, "voice-embedding-fbank");
-    }
-
-    static (float[] Values, int[] Shape) ReadNpyFloat32(string path)
-    {
-        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        Span<byte> magic = stackalloc byte[6];
-        fs.ReadExactly(magic);
-        if (magic[0] != 0x93 || magic[1] != 78) throw new InvalidDataException("Bad NPY magic.");
-        fs.ReadByte(); fs.ReadByte();
-        Span<byte> lenBytes = stackalloc byte[2];
-        fs.ReadExactly(lenBytes);
-        int headerLen = lenBytes[0] | (lenBytes[1] << 8);
-        var headerBytes = new byte[headerLen];
-        fs.ReadExactly(headerBytes);
-        string header = System.Text.Encoding.ASCII.GetString(headerBytes);
-        if (!header.Contains("<f4")) throw new InvalidDataException("Expected float32 NPY.");
-        int p0 = header.IndexOf('(');
-        int p1 = header.IndexOf(')');
-        var parts = header.Substring(p0 + 1, p1 - p0 - 1).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        int[] shape = parts.Select(p => int.Parse(p)).ToArray();
-        int n = 1;
-        foreach (var d in shape) n *= d;
-        var raw = new byte[n * 4];
-        fs.ReadExactly(raw);
-        var values = new float[n];
-        Buffer.BlockCopy(raw, 0, values, 0, raw.Length);
-        return (values, shape);
     }
 }
