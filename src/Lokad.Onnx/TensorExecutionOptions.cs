@@ -48,6 +48,8 @@ public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntri
     public ICopyAccountant? CopyReporter { get; init; }
     /// <summary>Optional prepared packed-MatMul map; null disables packed routing.</summary>
     internal IReadOnlyDictionary<float[], PackedMatMulWeight>? PackedMatMulWeights { get; init; }
+    /// <summary>Optional prepared transposed-LSTM map; null disables prepared resolution.</summary>
+    internal IReadOnlyDictionary<float[], PreparedLstmTranspose>? LstmTransposedWeights { get; init; }
 
     public static TensorExecutionOptions Scalar => new TensorExecutionOptions(false, false, 1);
 

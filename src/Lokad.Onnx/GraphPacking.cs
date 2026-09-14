@@ -26,6 +26,16 @@ public sealed record PackedWeightsReport(
 /// <summary>Live packed-clone count for one packed clone shape (rows by columns).</summary>
 public sealed record PackedWeightShape(int Rows, int Cols, int Count);
 
+/// <summary>
+/// A row-major LSTM weight initializer with a prepared transposed clone.
+/// The clone lays each [4H,K] direction slice out as [K,4H] so projections
+/// read it directly; direction order never affects these bytes. Freshness
+/// follows the packed-clone precedent: replacing the source initializer is
+/// detected per use and falls back to the per-invocation build, while
+/// structural edits require InvalidatePreparation.
+/// </summary>
+internal sealed record PreparedLstmTranspose(string SourceName, ITensor SourceRef, long SourceLength, DenseTensor<float> Transposed);
+
 internal sealed record PackedMatMulWeight(
     string SourceName,
     ITensor SourceRef,
@@ -43,6 +53,7 @@ internal sealed record PackedMatMulWeight(
 internal static class GraphPacking
 {
     internal const string PackedPrefix = "packed:";
+    internal const string LstmTransposePrefix = "lstm-t:";
 
     /// <summary>Upper source-rows bound of measured packed-kernel territory: 4096 is admitted (encoder K=4096 projections at M=16), wider reductions are unmeasured and stay unpacked.</summary>
     internal const int MaxPackedAxis = 4096;
@@ -92,6 +103,134 @@ internal static class GraphPacking
     /// Fresh records reuse verified clones; stale records are dropped and
     /// rebuilt. Returns the live packed count.
     /// </summary>
+    /// <summary>
+    /// Prepares transposed clones of constant LSTM W/R weight initializers.
+    /// Each clone transposes every [4H,K] direction slice to [K,4H] once per
+    /// preparation instead of once per invocation. Only direct float32
+    /// rank-three initializers with whole backing arrays qualify, with R
+    /// additionally requiring dims [D,4H,H]; anything else keeps the
+    /// per-invocation build. Fresh records reuse verified clones; stale
+    /// records are dropped and rebuilt. Returns the live prepared count.
+    /// </summary>
+    internal static int PrepareLstmWeights(ComputationalGraph graph)
+    {
+        var candidates = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var node in graph.Nodes)
+        {
+            if (node.Op != OpType.LSTM || node.Inputs is null || node.Inputs.Length < 3) continue;
+            for (int i = 1; i <= 2; i++)
+            {
+                string input = node.Inputs[i];
+                if (string.IsNullOrEmpty(input)) continue;
+                if (i == 2)
+                {
+                    if (!candidates.TryGetValue(input, out int prior)) candidates[input] = 2;
+                    else if (prior == 1) candidates[input] = 3;
+                }
+                else
+                {
+                    if (!candidates.TryGetValue(input, out int prior2)) candidates[input] = 1;
+                    else if (prior2 == 2) candidates[input] = 3;
+                }
+            }
+        }
+        var current = new Dictionary<string, (ITensor tensor, float[] array, bool isR)>(StringComparer.Ordinal);
+        foreach (var kv in candidates)
+        {
+            if (graph.Inputs.ContainsKey(kv.Key) || graph.Outputs.ContainsKey(kv.Key)) continue;
+            if (!graph.Initializers.TryGetValue(kv.Key, out var init)) continue;
+            if (init is not DenseTensor<float> dense || init.ElementType != TensorElementType.Float) continue;
+            if (init.Rank != 3) continue;
+            int[] dims = init.Dims;
+            if (dims.Length != 3) continue;
+            int d = dims[0], gh = dims[1], k = dims[2];
+            if (d < 1 || gh < 4 || k < 1 || gh % 4 != 0) continue;
+            bool isR = kv.Value == 2;
+            if (kv.Value == 3) continue;
+            if (isR && gh != 4 * k) continue;
+            if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(dense.Buffer, out System.ArraySegment<float> window)
+                || window.Array is null || window.Offset != 0 || window.Count != dense.Buffer.Length) continue;
+            current[kv.Key] = (init, window.Array, isR);
+        }
+        int live = 0;
+        var stale = new List<float[]>();
+        foreach (var kv in graph.LstmTransposes)
+        {
+            var rec = kv.Value;
+            if (current.TryGetValue(rec.SourceName, out var cur)
+                && ReferenceEquals(cur.tensor, rec.SourceRef) && cur.tensor.Length == rec.SourceLength)
+            {
+                live++;
+                continue;
+            }
+            stale.Add(kv.Key);
+        }
+        foreach (float[] key in stale)
+        {
+            if (graph.LstmTransposes.TryGetValue(key, out var rec))
+            {
+                if (graph.Initializers.TryGetValue(rec.Transposed.Name, out var held) && ReferenceEquals(held, rec.Transposed))
+                    graph.Initializers.Remove(rec.Transposed.Name);
+                graph.LstmTransposes.Remove(key);
+            }
+        }
+        foreach (var kv in current)
+        {
+            bool already = false;
+            foreach (var rec in graph.LstmTransposes.Values)
+            {
+                if (ReferenceEquals(rec.SourceRef, kv.Value.tensor)) { already = true; break; }
+            }
+            if (already) continue;
+            string preparedName = LstmTransposePrefix + kv.Key;
+            if (graph.Initializers.ContainsKey(preparedName) || graph.Inputs.ContainsKey(preparedName)) continue;
+            var dense = (DenseTensor<float>)kv.Value.tensor;
+            int dd = dense.Dimensions[0], ggh = dense.Dimensions[1], kk = dense.Dimensions[2];
+            var panel = new float[(long)dd * ggh * kk];
+            unsafe
+            {
+                using var sh = dense.Buffer.Pin();
+                using var ph = new Memory<float>(panel).Pin();
+                float* sp = (float*)sh.Pointer;
+                float* dp = (float*)ph.Pointer;
+                for (int dir = 0; dir < dd; dir++)
+                    for (int row = 0; row < ggh; row++)
+                        for (int col = 0; col < kk; col++)
+                            dp[(dir * kk + col) * ggh + row] = sp[(dir * ggh + row) * kk + col];
+            }
+            var transposed = new DenseTensor<float>(new Memory<float>(panel), new int[] { dd, kk, ggh });
+            transposed.Name = preparedName;
+            graph.Initializers[preparedName] = transposed;
+            graph.LstmTransposes[kv.Value.array] = new PreparedLstmTranspose(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, transposed);
+            live++;
+        }
+        return live;
+    }
+
+    /// <summary>
+    /// Resolves an LSTM weight operand to its prepared transposed clone when
+    /// the unwrapped source is the unchanged initializer the clone was built
+    /// from. Broadcast views resolve through their source; offset views and
+    /// replaced initializers fall back to the per-invocation build. The clone
+    /// holds every direction slice, so callers window per-direction views.
+    /// </summary>
+    internal static DenseTensor<float>? ResolveLstmTranspose(IReadOnlyDictionary<float[], PreparedLstmTranspose>? map, Tensor<float> source)
+    {
+        if (map is null || map.Count == 0) return null;
+        Tensor<float> core = source;
+        while (core is BroadcastedTensor<float> view) core = view.source;
+        if (core is DenseTensor<float> dense
+            && DenseArray(dense) is float[] backing
+            && map.TryGetValue(backing, out var rec)
+            && ReferenceEquals(rec.SourceRef, dense)
+            && rec.SourceLength == dense.Length
+            && rec.Transposed.Length == dense.Length)
+        {
+            return rec.Transposed;
+        }
+        return null;
+    }
+
     internal static int PackMatMulWeights(ComputationalGraph graph)
     {
         var consumers = new Dictionary<string, bool>(StringComparer.Ordinal);

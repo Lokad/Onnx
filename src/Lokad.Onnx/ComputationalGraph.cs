@@ -31,6 +31,8 @@ public class ComputationalGraph
     internal Dictionary<string, FoldedTranspose> FoldedTransposes = new Dictionary<string, FoldedTranspose>(StringComparer.Ordinal);
     /// <summary>Panel-packed MatMul weight clones by source initializer name.</summary>
     internal Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
+    /// <summary>Prepared transposed LSTM weight clones by source initializer array.</summary>
+    internal Dictionary<float[], PreparedLstmTranspose> LstmTransposes = new Dictionary<float[], PreparedLstmTranspose>();
 
     /// <summary>Prepared packing inventory: live clone count, retained clone bytes, and counts by shape.</summary>
     public PackedWeightsReport PackingReport { get; internal set; } = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>(), 0);
@@ -182,6 +184,12 @@ public class ComputationalGraph
                 }
                 PackedWeights.Clear();
                 PackingReport = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>(), 0);
+                foreach (var prep in LstmTransposes.Values)
+                {
+                    if (Initializers.TryGetValue(prep.Transposed.Name, out var heldLstm) && ReferenceEquals(heldLstm, prep.Transposed))
+                        Initializers.Remove(prep.Transposed.Name);
+                }
+                LstmTransposes.Clear();
             }
         }
     }
@@ -770,6 +778,7 @@ public class ComputationalGraph
         using var poolScope = new ExecutionPoolScope(this);
         var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy } };
         nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights } };
+        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { LstmTransposedWeights = LstmTransposes } };
         livePayloadBytes = LivePayloadBytes();
         NoteLivePeak();
         foreach (var node in Nodes)
@@ -1162,6 +1171,7 @@ public class ComputationalGraph
     {
         FoldConstantTransposes();
         GraphPacking.PackMatMulWeights(this);
+        GraphPacking.PrepareLstmWeights(this);
         // Preparation assigns stable sequential identities by file-order
         // position: unlike name hashes they are distinct for duplicate or
         // anonymous names and identical across processes.

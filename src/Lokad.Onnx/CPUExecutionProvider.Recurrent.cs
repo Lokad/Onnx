@@ -149,14 +149,19 @@ public partial class CPUExecutionProvider
         float[]? ycArr = outputCount > 2 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
-        // Shared-matrix LSTM projections (M5): per-direction transposed
-        // weights Wt [inputSize,4H] and Rt [H,4H] built once, XW hoisted per
-        // batch across valid rows through MatMul2D, HR per step through
-        // MatMul2D. Gate math below is unchanged.
+        // Shared-matrix LSTM projections (M5, P3): per-direction transposed
+        // weights Wt [inputSize,4H] and Rt [H,4H] resolve from prepared plan
+        // clones when the weight initializer is unchanged, else build once
+        // per invocation as before. XW hoists per batch across valid rows
+        // through MatMul2D, HR per step through MatMul2D. Gate math below
+        // is unchanged.
         var tensorOpts = opts.Tensor;
-        var wt = useShared ? new float[numDirections * inputSize * 4 * H] : Array.Empty<float>();
-        var rt = useShared ? new float[numDirections * H * 4 * H] : Array.Empty<float>();
-        if (useShared)
+        var wtPrep = useShared ? GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, wd) : null;
+        var rtPrep = useShared ? GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, rd) : null;
+        bool usePrepared = wtPrep is not null && rtPrep is not null;
+        var wt = usePrepared ? Array.Empty<float>() : (useShared ? new float[numDirections * inputSize * 4 * H] : Array.Empty<float>());
+        var rt = usePrepared ? Array.Empty<float>() : (useShared ? new float[numDirections * H * 4 * H] : Array.Empty<float>());
+        if (useShared && !usePrepared)
         {
         for (int d = 0; d < numDirections; d++)
         {
@@ -174,7 +179,15 @@ public partial class CPUExecutionProvider
         }
         var wtTensors = new DenseTensor<float>[numDirections];
         var rtTensors = new DenseTensor<float>[numDirections];
-        if (useShared)
+        if (usePrepared && wtPrep is not null && rtPrep is not null)
+        {
+        for (int d = 0; d < numDirections; d++)
+        {
+            wtTensors[d] = new DenseTensor<float>(wtPrep.Buffer.Slice(d * inputSize * 4 * H, inputSize * 4 * H), new[] { inputSize, 4 * H });
+            rtTensors[d] = new DenseTensor<float>(rtPrep.Buffer.Slice(d * H * 4 * H, H * 4 * H), new[] { H, 4 * H });
+        }
+        }
+        else if (useShared)
         {
         for (int d = 0; d < numDirections; d++)
         {
