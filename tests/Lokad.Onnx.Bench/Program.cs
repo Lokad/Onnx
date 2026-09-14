@@ -57,9 +57,11 @@ static class Bench
             else if (args[i] == "--threads" && i + 1 < args.Length && int.TryParse(args[i + 1], out var t) && t >= 1) { threads = t; i++; }
             else if (args[i] == "--iters" && i + 1 < args.Length && int.TryParse(args[i + 1], out var k) && k >= 1) { iters = k; i++; }
             else if (args[i] == "all" || assets.ContainsKey(args[i])) { if (args[i] != "all" && !selected.Contains(args[i], StringComparer.OrdinalIgnoreCase)) selected.Add(args[i]); }
-            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all] [--cpu N] (voice keys run the canonical matched row only; the default set is all non-voice keys)"); return 2; }
+            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all|representative] [--cpu N] (voice keys run the canonical matched row only, or the staged representative rows with --rows representative; the default set is all non-voice keys)"); return 2; }
         }
-        if (rowsName != "canonical" && rowsName != "all") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all)"); return 2; }
+        if (rowsName != "canonical" && rowsName != "all" && rowsName != "representative") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all|representative)"); return 2; }
+        bool representative = rowsName == "representative";
+        string nonVoiceRows = representative ? "canonical" : rowsName;
         if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount) { Console.WriteLine("invalid --cpu " + cpu + " (expected 0.." + (Environment.ProcessorCount - 1) + ")"); return 2; }
         if (selected.Count == 0) selected.AddRange(assets.Keys.Where(k => !voiceKeys.Contains(k)));
         TensorExecutionOptions tensorOpts = modeName.ToLowerInvariant() switch
@@ -147,17 +149,37 @@ static class Bench
         if (selected.Contains("e5", StringComparer.OrdinalIgnoreCase))
         {
             var e5 = assets["e5"];
-            RunCase("e5-8tok", () => CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, rowsName, modeName));
-            RunCase("e5-30tok", () => CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, rowsName, modeName));
+            RunCase("e5-8tok", () => CompareE5("e5-8tok", e5[0], e5[1], "query: hello world", tensorOpts, threads, iters, nonVoiceRows, modeName));
+            RunCase("e5-30tok", () => CompareE5("e5-30tok", e5[0], e5[1], "query: The quick brown fox jumps over the lazy dog near the river bank in springtime weather for a pleasant afternoon walk", tensorOpts, threads, iters, nonVoiceRows, modeName));
         }
-        if (selected.Contains("dinov2", StringComparer.OrdinalIgnoreCase)) RunCase("dinov2-224", () => CompareVision("dinov2-224", assets["dinov2"][0], tensorOpts, threads, iters, rowsName, modeName));
-        if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) RunCase("dinov3-224", () => CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, rowsName, modeName));
-        if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) RunCase("resnet50-224", () => CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters, rowsName, modeName));
-        if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) RunCase("gpt2-4tok", () => CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, rowsName, modeName));
-        if (selected.Contains("parakeet-encoder", StringComparer.OrdinalIgnoreCase)) RunCase("parakeet-encoder", () => CompareVoice("parakeet-encoder", assets["parakeet-encoder"][0], VoiceModelCases.EncoderInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
-        if (selected.Contains("parakeet-decoder", StringComparer.OrdinalIgnoreCase)) RunCase("parakeet-decoder", () => CompareVoiceDecoder("parakeet-decoder", assets["parakeet-decoder"][0], root, tensorOpts, threads, iters, modeName));
-        if (selected.Contains("pyannote-segmentation", StringComparer.OrdinalIgnoreCase)) RunCase("pyannote-segmentation", () => CompareVoice("pyannote-segmentation", assets["pyannote-segmentation"][0], VoiceModelCases.SegmentationInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
-        if (selected.Contains("pyannote-embedding", StringComparer.OrdinalIgnoreCase)) RunCase("pyannote-embedding", () => CompareVoice("pyannote-embedding", assets["pyannote-embedding"][0], VoiceModelCases.EmbeddingInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
+        if (selected.Contains("dinov2", StringComparer.OrdinalIgnoreCase)) RunCase("dinov2-224", () => CompareVision("dinov2-224", assets["dinov2"][0], tensorOpts, threads, iters, nonVoiceRows, modeName));
+        if (selected.Contains("dinov3", StringComparer.OrdinalIgnoreCase)) RunCase("dinov3-224", () => CompareVision("dinov3-224", assets["dinov3"][0], tensorOpts, threads, iters, nonVoiceRows, modeName));
+        if (selected.Contains("resnet50", StringComparer.OrdinalIgnoreCase)) RunCase("resnet50-224", () => CompareVision("resnet50-224", assets["resnet50"][0], tensorOpts, threads, iters, nonVoiceRows, modeName));
+        if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) RunCase("gpt2-4tok", () => CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, nonVoiceRows, modeName));
+        if (selected.Contains("parakeet-encoder", StringComparer.OrdinalIgnoreCase))
+        {
+            if (representative) RunCase("parakeet-encoder-64", () => CompareVoice("parakeet-encoder-64", assets["parakeet-encoder"][0], VoiceModelCases.EncoderInputs64(root), Tolerance, tensorOpts, threads, iters, modeName));
+            else RunCase("parakeet-encoder", () => CompareVoice("parakeet-encoder", assets["parakeet-encoder"][0], VoiceModelCases.EncoderInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
+        }
+        if (selected.Contains("parakeet-decoder", StringComparer.OrdinalIgnoreCase))
+        {
+            if (representative)
+            {
+                RunCase("parakeet-decoder-1x1", () => CompareVoice("parakeet-decoder-1x1", assets["parakeet-decoder"][0], VoiceModelCases.DecoderStepSingleInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
+                RunCase("parakeet-decoder-1x1-carried", () => CompareVoice("parakeet-decoder-1x1-carried", assets["parakeet-decoder"][0], VoiceModelCases.DecoderStepSingleCarriedInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
+            }
+            else RunCase("parakeet-decoder", () => CompareVoiceDecoder("parakeet-decoder", assets["parakeet-decoder"][0], root, tensorOpts, threads, iters, modeName));
+        }
+        if (selected.Contains("pyannote-segmentation", StringComparer.OrdinalIgnoreCase))
+        {
+            if (representative) RunCase("pyannote-segmentation-1s", () => CompareVoice("pyannote-segmentation-1s", assets["pyannote-segmentation"][0], VoiceModelCases.SegmentationSynth1sInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
+            else RunCase("pyannote-segmentation", () => CompareVoice("pyannote-segmentation", assets["pyannote-segmentation"][0], VoiceModelCases.SegmentationInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
+        }
+        if (selected.Contains("pyannote-embedding", StringComparer.OrdinalIgnoreCase))
+        {
+            if (representative) Console.WriteLine("voice case pyannote-embedding: no second backbone fixture staged; canonical row only (see PLAN.md P7).");
+            else RunCase("pyannote-embedding", () => CompareVoice("pyannote-embedding", assets["pyannote-embedding"][0], VoiceModelCases.EmbeddingInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
+        }
         if (excludedCases.Count > 0)
         {
             Console.WriteLine("cases-excluded [" + string.Join(",", excludedCases) + "] (tracked known divergences; no rows are eligible for excluded cases)");

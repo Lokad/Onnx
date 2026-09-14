@@ -12,6 +12,8 @@
   <ItemGroup>
     <Compile Include="..\Shared\TestSupport.cs" Link="TestSupport.cs" />
     <Compile Include="..\Shared\NpySupport.cs" Link="NpySupport.cs" />
+    <Compile Include="..\Lokad.Onnx.Bench\VoiceModelCases.cs" Link="VoiceModelCases.cs" />
+    <Compile Include="..\Lokad.Onnx.Bench\VoiceProvenance.cs" Link="VoiceProvenance.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -76,6 +76,74 @@ static class VoiceModelCases
         });
     }
 
+    // Representative rows (P7, --rows representative): same models, new
+    // shapes from staged replay assets only. The decoder single-step rows
+    // slice the first frame and token of the step-1 fixtures: with zero
+    // states this is exactly a real first decoding step; with the recorded
+    // s1 states it is a real mid-trajectory step. No fixture is generated
+    // or altered; slices copy values and keep replay provenance.
+    public static Dictionary<string, ITensor> EncoderInputs64(string root)
+    {
+        return LoadNamed(root, new (string, string)[]
+        {
+            ("audio_signal", "encoder_mel64.npy"),
+            ("length", "encoder_len64.npy"),
+        });
+    }
+
+    public static Dictionary<string, ITensor> SegmentationSynth1sInputs(string root)
+    {
+        return LoadNamed(root, new (string, string)[]
+        {
+            ("waveform", "seg_synth_1s.npy"),
+        });
+    }
+
+    public static Dictionary<string, ITensor> DecoderStepSingleInputs(string root)
+    {
+        var full = DecoderStep1Inputs(root);
+        var d = new Dictionary<string, ITensor>(StringComparer.Ordinal);
+        d["encoder_outputs"] = Named("encoder_outputs", PrefixFrames((Tensor<float>)full["encoder_outputs"], 1));
+        d["targets"] = Named("targets", PrefixTokens((Tensor<int>)full["targets"], 1));
+        d["target_length"] = Named("target_length", new DenseTensor<int>(new[] { 1 }, new[] { 1 }));
+        d["input_states_1"] = Named("input_states_1", new DenseTensor<float>(new float[2 * 1 * 640], new[] { 2, 1, 640 }));
+        d["input_states_2"] = Named("input_states_2", new DenseTensor<float>(new float[2 * 1 * 640], new[] { 2, 1, 640 }));
+        return d;
+    }
+
+    public static Dictionary<string, ITensor> DecoderStepSingleCarriedInputs(string root)
+    {
+        var d = DecoderStepSingleInputs(root);
+        var carried = LoadNamed(root, new (string, string)[]
+        {
+            ("input_states_1", "decoder_s1_1.npy"),
+            ("input_states_2", "decoder_s1_2.npy"),
+        });
+        d["input_states_1"] = carried["input_states_1"];
+        d["input_states_2"] = carried["input_states_2"];
+        return d;
+    }
+
+    static DenseTensor<float> PrefixFrames(Tensor<float> source, int frames)
+    {
+        int[] dims = source.Dimensions.ToArray();
+        if (dims.Length != 3) throw new InvalidOperationException("expected rank-3 encoder outputs.");
+        var src = source.ToArray();
+        var dst = new float[dims[0] * dims[1] * frames];
+        Array.Copy(src, dst, dst.Length);
+        return new DenseTensor<float>(dst, new[] { dims[0], dims[1], frames });
+    }
+
+    static DenseTensor<int> PrefixTokens(Tensor<int> source, int tokens)
+    {
+        int[] dims = source.Dimensions.ToArray();
+        if (dims.Length != 2) throw new InvalidOperationException("expected rank-2 targets.");
+        var src = source.ToArray();
+        var dst = new int[dims[0] * tokens];
+        Array.Copy(src, dst, dst.Length);
+        return new DenseTensor<int>(dst, new[] { dims[0], tokens });
+    }
+
     static Dictionary<string, ITensor> LoadNamed(string root, (string name, string file)[] entries)
     {
         var d = new Dictionary<string, ITensor>(StringComparer.Ordinal);

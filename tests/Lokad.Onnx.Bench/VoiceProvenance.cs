@@ -75,18 +75,25 @@ static class VoiceProvenance
             throw new InvalidDataException("voice replay manifest lacks cases: " + manifest + ".");
         foreach (var kase in cases.EnumerateObject())
         {
-            if (!kase.Value.TryGetProperty("inputs", out var inputs)) continue;
-            foreach (var input in inputs.EnumerateObject())
+            // Inputs and recorded outputs are equally hash-pinned assets:
+            // chained states (decoder_s1_*) live as step-1 output records
+            // and must verify when reused as step inputs. Refs carry no
+            // bytes of their own and stay skipped.
+            foreach (var section in new[] { "inputs", "outputs" })
             {
-                var entry = input.Value;
-                if (entry.TryGetProperty("ref", out _)) continue;
-                if (!entry.TryGetProperty("file", out var fileProp)
-                    || !entry.TryGetProperty("bytes", out var bytesProp)
-                    || !entry.TryGetProperty("sha256", out var shaProp))
-                    throw new InvalidDataException("voice replay manifest entry lacks file/bytes/sha256: " + manifest + ".");
-                string key = Path.GetFileName(fileProp.GetString() ?? string.Empty);
-                if (key.Length > 0 && !table.ContainsKey(key))
-                    table[key] = (bytesProp.GetInt64(), shaProp.GetString() ?? string.Empty);
+                if (!kase.Value.TryGetProperty(section, out var members)) continue;
+                foreach (var input in members.EnumerateObject())
+                {
+                    var entry = input.Value;
+                    if (entry.TryGetProperty("ref", out _)) continue;
+                    if (!entry.TryGetProperty("file", out var fileProp)
+                        || !entry.TryGetProperty("bytes", out var bytesProp)
+                        || !entry.TryGetProperty("sha256", out var shaProp))
+                        throw new InvalidDataException("voice replay manifest entry lacks file/bytes/sha256: " + manifest + ".");
+                    string key = Path.GetFileName(fileProp.GetString() ?? string.Empty);
+                    if (key.Length > 0 && !table.ContainsKey(key))
+                        table[key] = (bytesProp.GetInt64(), shaProp.GetString() ?? string.Empty);
+                }
             }
         }
         replayCache = table;
