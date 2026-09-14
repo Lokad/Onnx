@@ -73,7 +73,7 @@ public partial class CPUExecutionProvider
                 return WrongInputType(op, nameof(sequenceLens), "sequence_lens must be int32 or int64.", sequenceLens);
             lens = ToIntArray(sequenceLens, nameof(sequenceLens));
             for (int i = 0; i < lens.Length; i++)
-                if (lens[i] < 0) return Failure(op, "sequence_lens values must be non-negative.");
+                if (lens[i] < 0 || lens[i] > seq) return Failure(op, "sequence_lens values must be within [0, seq_length].");
         }
         if (initialH is not null && (initialH.Rank != 3 || initialH.Dims[0] != numDirections || initialH.Dims[1] != batch || initialH.Dims[2] != hiddenSize))
             return WrongInputShape(op, nameof(initialH), initialH, "initial_h must be [num_directions, batch_size, hidden_size].");
@@ -108,12 +108,12 @@ public partial class CPUExecutionProvider
         var gateH = new Func<float, float>[numDirections];
         for (int d = 0; d < numDirections; d++)
         {
-            float a0 = activationAlpha is null ? 0f : activationAlpha[3 * d];
-            float b0 = activationBeta is null ? 0f : activationBeta[3 * d];
-            float a1 = activationAlpha is null ? 0f : activationAlpha[3 * d + 1];
-            float b1 = activationBeta is null ? 0f : activationBeta[3 * d + 1];
-            float a2 = activationAlpha is null ? 0f : activationAlpha[3 * d + 2];
-            float b2 = activationBeta is null ? 0f : activationBeta[3 * d + 2];
+            float a0 = activationAlpha is null ? LstmDefaultAlpha(acts[3 * d]) : activationAlpha[3 * d];
+            float b0 = activationBeta is null ? LstmDefaultBeta(acts[3 * d]) : activationBeta[3 * d];
+            float a1 = activationAlpha is null ? LstmDefaultAlpha(acts[3 * d + 1]) : activationAlpha[3 * d + 1];
+            float b1 = activationBeta is null ? LstmDefaultBeta(acts[3 * d + 1]) : activationBeta[3 * d + 1];
+            float a2 = activationAlpha is null ? LstmDefaultAlpha(acts[3 * d + 2]) : activationAlpha[3 * d + 2];
+            float b2 = activationBeta is null ? LstmDefaultBeta(acts[3 * d + 2]) : activationBeta[3 * d + 2];
             var f = LstmActivation(acts[3 * d], a0, b0);
             var g = LstmActivation(acts[3 * d + 1], a1, b1);
             var h = LstmActivation(acts[3 * d + 2], a2, b2);
@@ -139,8 +139,8 @@ public partial class CPUExecutionProvider
         int yLen = seq * numDirections * batch * hiddenSize;
         int hLen = numDirections * batch * hiddenSize;
         float[] yArr = pool is null ? new float[yLen] : pool.Rent<float>(yLen);
-        float[] yhArr = pool is null ? new float[hLen] : pool.Rent<float>(hLen);
-        float[] ycArr = pool is null ? new float[hLen] : pool.Rent<float>(hLen);
+        float[]? yhArr = outputCount > 1 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
+        float[]? ycArr = outputCount > 2 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
         var xw = new float[4 * hiddenSize];
         var hr = new float[4 * hiddenSize];
         var hv = new float[hiddenSize];
@@ -165,15 +165,19 @@ public partial class CPUExecutionProvider
                 else hd.Buffer.Span.Slice((d * batch + b) * H, H).CopyTo(hv);
                 if (cd is null) Array.Clear(cv, 0, H);
                 else cd.Buffer.Span.Slice((d * batch + b) * H, H).CopyTo(cv);
+                // ORT ignores initial states when the sequence length is zero: final states stay zero.
+                if (limit == 0) { Array.Clear(hv, 0, H); Array.Clear(cv, 0, H); }
                 for (int s = 0; s < seq; s++)
                 {
-                    int t = rev ? seq - 1 - s : s;
-                    int yOff = ((t * numDirections + d) * batch + b) * H;
+                    // ORT ReverseSequence reverses only the valid prefix: reverse steps read/write X[limit-1-s]/Y[limit-1-s] for s < limit, with zeros above limit.
                     if (s >= limit)
                     {
-                        Array.Clear(yArr, yOff, H);
+                        int zOff = ((s * numDirections + d) * batch + b) * H;
+                        Array.Clear(yArr, zOff, H);
                         continue;
                     }
+                    int t = rev ? limit - 1 - s : s;
+                    int yOff = ((t * numDirections + d) * batch + b) * H;
                     int xOff = (t * batch + b) * inputSize;
                     for (int gh = 0; gh < 4 * H; gh++)
                     {
@@ -224,20 +228,22 @@ public partial class CPUExecutionProvider
                         yArr[yOff + h] = hNew;
                     }
                 }
-                Array.Copy(hv, 0, yhArr, (d * batch + b) * H, H);
-                Array.Copy(cv, 0, ycArr, (d * batch + b) * H, H);
+                if (yhArr is not null) Array.Copy(hv, 0, yhArr, (d * batch + b) * H, H);
+                if (ycArr is not null) Array.Copy(cv, 0, ycArr, (d * batch + b) * H, H);
             }
         }
         var outs = new ITensor[outputCount];
         if (outputCount > 0) outs[0] = new DenseTensor<float>(new Memory<float>(yArr), new[] { seq, numDirections, batch, H });
-        if (outputCount > 1) outs[1] = new DenseTensor<float>(new Memory<float>(yhArr), new[] { numDirections, batch, H });
-        if (outputCount > 2) outs[2] = new DenseTensor<float>(new Memory<float>(ycArr), new[] { numDirections, batch, H });
+        if (outputCount > 1) outs[1] = new DenseTensor<float>(new Memory<float>(yhArr!), new[] { numDirections, batch, H });
+        if (outputCount > 2) outs[2] = new DenseTensor<float>(new Memory<float>(ycArr!), new[] { numDirections, batch, H });
         return Success(op, outs);
     }
 
     static float ClipGate(float v, float? clip) =>
         clip.HasValue ? Math.Clamp(v, -clip.Value, clip.Value) : v;
 
+    static float LstmDefaultAlpha(string name) => name.ToLowerInvariant() switch { "hardsigmoid" => 0.2f, "leakyrelu" => 0.01f, "elu" => 1f, _ => 0f };
+    static float LstmDefaultBeta(string name) => name.ToLowerInvariant() switch { "hardsigmoid" => 0.5f, _ => 0f };
     static Func<float, float>? LstmActivation(string name, float alpha, float beta) =>
         name.ToLowerInvariant() switch
         {
@@ -247,7 +253,7 @@ public partial class CPUExecutionProvider
             "affine" => v => alpha * v + beta,
             "leakyrelu" => v => v >= 0f ? v : alpha * v,
             "thresholdedrelu" => v => v > alpha ? v : 0f,
-            "scaledtanh" => v => beta * MathF.Tanh(alpha * v),
+            "scaledtanh" => v => alpha * MathF.Tanh(beta * v),
             "hardsigmoid" => v => Math.Min(1f, Math.Max(0f, alpha * v + beta)),
             "elu" => v => v >= 0f ? v : alpha * (MathF.Exp(v) - 1f),
             "softsign" => v => v / (1f + MathF.Abs(v)),

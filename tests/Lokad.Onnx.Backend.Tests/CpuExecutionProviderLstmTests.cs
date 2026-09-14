@@ -260,4 +260,45 @@ public class CpuExecutionProviderLstmTests
             null, null, null, null, null, 3, false, 0, 3, null, null);
         Assert.Equal(OpStatus.Failure, r.Status);
     }
+
+    [Fact]
+    public void ReverseShortLength_MatchesOrt()
+    {
+        var X = FT(new float[] { 0.5f, 9f }, new[] { 2, 1, 1 });
+        var W = FT(new float[] { 1f, 1f, 1f, 1f }, new[] { 1, 4, 1 });
+        var R = FT(new float[] { 0f, 0f, 0f, 0f }, new[] { 1, 4, 1 });
+        var S = new DenseTensor<int>(new[] { 1 }, new[] { 1 });
+        var r = CPU.Lstm(X, W, R, null, S, null, null, null, "reverse", null, null, null, null, 1, false, 0, 1, null, null);
+        var o = Outputs(r, 1);
+        AssertNear(o[0], new float[] { 0.1742697f, 0f }, "Y");
+    }
+
+    [Fact]
+    public void HardSigmoidDefaults_MatchOrt()
+    {
+        var X = FT(new float[] { 0.5f, 9f }, new[] { 2, 1, 1 });
+        var W = FT(new float[] { 1f, 1f, 1f, 1f }, new[] { 1, 4, 1 });
+        var R = FT(new float[] { 0f, 0f, 0f, 0f }, new[] { 1, 4, 1 });
+        var S = new DenseTensor<int>(new[] { 2 }, new[] { 1 });
+        var r = CPU.Lstm(X, W, R, null, S, null, null, null, "forward", new[] { "HardSigmoid", "Tanh", "Tanh" }, null, null, null, 1, false, 0, 1, null, null);
+        var o = Outputs(r, 1);
+        AssertNear(o[0], new float[] { 0.16222608f, 0.8557559f }, "Y");
+    }
+
+    [Fact]
+    public void OverlongLens_FailsLikeOrt()
+    {
+        var r = Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Lens = new[] { 3 } });
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
+    public void ZeroLens_ZeroesOutputsAndStates()
+    {
+        var o = Outputs(Run(Xv(), Xd(), Wv(), new[] { 1, 8, 2 }, Rv(), new[] { 1, 8, 2 }, new LstmOpts { B = Bv(), Lens = new[] { 0 }, H0 = H0v(), C0 = C0v() }), 3);
+        AssertNear(o[0], new float[] { 0f, 0f, 0f, 0f }, "Y");
+        AssertNear(o[1], new float[] { 0f, 0f }, "Yh");
+        AssertNear(o[2], new float[] { 0f, 0f }, "Yc");
+    }
+
 }
