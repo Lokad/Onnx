@@ -251,19 +251,18 @@ public partial class CPUExecutionProvider
                     }
                     else
                     {
+                        // Transpose-aware short projection: row dots consume the
+                        // original ONNX weight rows directly, so short sequences
+                        // never build a transposed copy. The shared primitive
+                        // vectorizes under SIMD/intrinsics/FMA and keeps the
+                        // proven scalar order otherwise.
                         int xOff = (t * batch + b) * inputSize;
                         int wDir = d * 4 * H * inputSize;
                         int rDir = d * 4 * H * H;
                         for (int gh = 0; gh < 4 * H; gh++)
                         {
-                            float accX = 0f;
-                            float accR = 0f;
-                            int wRow = wDir + gh * inputSize;
-                            int rRow = rDir + gh * H;
-                            for (int k = 0; k < inputSize; k++) accX += xs[xOff + k] * ws[wRow + k];
-                            for (int k = 0; k < H; k++) accR += hv[k] * rs[rRow + k];
-                            xwBuf[xwBase + gh] = accX;
-                            hrBuf[gh] = accR;
+                            xwBuf[xwBase + gh] = MathOps.RowDot(xs.Slice(xOff, inputSize), ws.Slice(wDir + gh * inputSize, inputSize), tensorOpts);
+                            hrBuf[gh] = MathOps.RowDot(hv, rs.Slice(rDir + gh * H, H), tensorOpts);
                         }
                     }
                     for (int h = 0; h < H; h++)

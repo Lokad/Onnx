@@ -1101,6 +1101,36 @@ public class MathOps
     /// <param name="padH">Zero padding at the bottom (end height).</param>
     /// <param name="padW">Zero padding at the right (end width).</param>
     /// <param name="buf">Buffer.</param>
+    /// <summary>
+    /// Dot product of two float spans over original row-major rows, so short
+    /// projections need no transposed copy. Uses 8-wide AVX256 FMA
+    /// accumulation with a scalar tail when intrinsics are enabled and
+    /// supported; the portable scalar loop otherwise. Vector accumulation
+    /// reassociates the sum, so results agree with the scalar order within
+    /// float rounding, not bit for bit.
+    /// </summary>
+    public static float RowDot(ReadOnlySpan<float> x, ReadOnlySpan<float> y, TensorExecutionOptions? options)
+    {
+        int n = Math.Min(x.Length, y.Length);
+        if (n == 0) return 0f;
+        if ((options?.UseSimd ?? true) && (options?.UseIntrinsics ?? true) && Avx.IsSupported && Fma.IsSupported)
+        {
+            ref float xr = ref MemoryMarshal.GetReference(x);
+            ref float yr = ref MemoryMarshal.GetReference(y);
+            var acc = Vector256<float>.Zero;
+            int i = 0;
+            int full = n & ~7;
+            for (; i < full; i += 8)
+                acc = Fma.MultiplyAdd(Vector256.LoadUnsafe(ref xr, (nuint)i), Vector256.LoadUnsafe(ref yr, (nuint)i), acc);
+            float sum = Vector256.Sum(acc);
+            for (; i < n; i++) sum += x[i] * y[i];
+            return sum;
+        }
+        float total = 0f;
+        for (int i = 0; i < n; i++) total += x[i] * y[i];
+        return total;
+    }
+
     public static unsafe void Im2col(float* src,
                               int srcC,
                               int srcH,
