@@ -301,9 +301,9 @@ models/, and agent scratch only); no code differences across reps. SDK
 Since the September 13 baseline the runtime gained shared-kernel LSTM
 projections, Conv+Relu fusion, and bounded im2col tiling; the workload
 boundaries, fixtures, and gates below are unchanged.
-Graph bytes and hashes print in each rep header. The asset manifest also
-records external weights, which the current runner does not print for the
-encoder's `.onnx.data` suffix: encoder graph 41,770,866 bytes
+Graph bytes and hashes print in each rep header, including the
+encoder sidecar as `sidecar=encoder-model.onnx.data` with bytes and hash:
+encoder graph 41,770,866 bytes
 (98A74B21B4CC) plus its
 2,435,420,160-byte external weights (9A22D372C514); decoder 72,520,893
 bytes (E978DDF66885); segmentation 5,916,329 bytes (AF62796ADFC4);

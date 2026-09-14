@@ -27,11 +27,23 @@ public class NpySupportTests
         return raw;
     }
 
-    static byte[] Build(string descr, int[] shape, byte[] payload, int major = 1, bool fortran = false, bool dropFortran = false, byte[] extra = null)
+    static byte[] Build(string descr, int[] shape, byte[] payload) =>
+        Build(descr, shape, payload, 1);
+
+    static byte[] Build(string descr, int[] shape, byte[] payload, int major) =>
+        Build(descr, shape, payload, major, false);
+
+    static byte[] Build(string descr, int[] shape, byte[] payload, int major, bool fortran) =>
+        Build(descr, shape, payload, major, fortran, false);
+
+    static byte[] Build(string descr, int[] shape, byte[] payload, int major, bool fortran, bool dropFortran) =>
+        Build(descr, shape, payload, major, fortran, dropFortran, Array.Empty<byte>());
+
+    static byte[] Build(string descr, int[] shape, byte[] payload, int major, bool fortran, bool dropFortran, byte[] extra)
     {
         string shapeText = shape.Length == 0 ? "()" : "(" + string.Join(", ", shape) + (shape.Length == 1 ? "," : string.Empty) + ")";
         string orderPart = dropFortran ? string.Empty : "'fortran_order': " + (fortran ? "True" : "False") + ", ";
-        string dict = "{'descr': " + (char)34 + descr + (char)34 + "', " + orderPart + "'shape': " + shapeText + ", }";
+        string dict = "{'descr': '" + descr + "', " + orderPart + "'shape': " + shapeText + ", }";
         int pre = major == 1 ? 10 : 12;
         string header = dict;
         while ((pre + header.Length + 1) % 64 != 0) header += " ";
@@ -45,7 +57,7 @@ public class NpySupportTests
         file.AddRange(lb);
         file.AddRange(hb);
         file.AddRange(payload);
-        if (extra != null) file.AddRange(extra);
+        file.AddRange(extra);
         return file.ToArray();
     }
 
