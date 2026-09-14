@@ -156,7 +156,7 @@ static class Bench
         if (selected.Contains("gpt2", StringComparer.OrdinalIgnoreCase)) RunCase("gpt2-4tok", () => CompareGpt2("gpt2-4tok", assets["gpt2"][0], tensorOpts, threads, iters, rowsName, modeName));
         if (selected.Contains("parakeet-encoder", StringComparer.OrdinalIgnoreCase)) RunCase("parakeet-encoder", () => CompareVoice("parakeet-encoder", assets["parakeet-encoder"][0], VoiceModelCases.EncoderInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
         if (selected.Contains("parakeet-decoder", StringComparer.OrdinalIgnoreCase)) RunCase("parakeet-decoder", () => CompareVoiceDecoder("parakeet-decoder", assets["parakeet-decoder"][0], root, tensorOpts, threads, iters, modeName));
-        if (selected.Contains("pyannote-segmentation", StringComparer.OrdinalIgnoreCase)) RunCase("pyannote-segmentation", () => CompareVoice("pyannote-segmentation", assets["pyannote-segmentation"][0], VoiceModelCases.SegmentationInputs(root), VoiceModelCases.SegLongTolerance, tensorOpts, threads, iters, modeName));
+        if (selected.Contains("pyannote-segmentation", StringComparer.OrdinalIgnoreCase)) RunCase("pyannote-segmentation", () => CompareVoice("pyannote-segmentation", assets["pyannote-segmentation"][0], VoiceModelCases.SegmentationInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
         if (selected.Contains("pyannote-embedding", StringComparer.OrdinalIgnoreCase)) RunCase("pyannote-embedding", () => CompareVoice("pyannote-embedding", assets["pyannote-embedding"][0], VoiceModelCases.EmbeddingInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
         if (excludedCases.Count > 0)
         {
@@ -361,7 +361,7 @@ static class Bench
     static void CompareE5(string name, string model, string tokenizer, string text, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName)
     {
         var inputs = Text.RobertaTokenizeFromFile(text, tokenizer)!;
-        Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + ShortHash(tokenizer));
+        Console.WriteLine("sidecar tokenizer bytes=" + new FileInfo(tokenizer).Length + " sha12=" + VoiceProvenance.ShortHash(tokenizer));
         Compare(name, model, inputs, tensorOpts, threads, iters, rowsName, modeName, Tolerance);
     }
 
@@ -394,8 +394,8 @@ static class Bench
         Compare(name, model, inputs.ToArray(), tensorOpts, threads, iters, rowsName, modeName, Tolerance);
     }
 
-    // Voice-model cases run the canonical matched row only: replay inputs
-    // are fixed, so the diagnostic rows add no information. Decoder timing
+    // Voice-model cases publish the canonical matched row only, on fixed
+    // replay inputs for identical timed work. Decoder timing
     // uses fixed token/state inputs for equal work; state chaining and
     // reset determinism are checked separately without timing.
     static void CompareVoice(string name, string model, Dictionary<string, ITensor> named, double tolerance, TensorExecutionOptions tensorOpts, int threads, int iters, string modeName)
@@ -412,7 +412,8 @@ static class Bench
 
     static void DecoderChainedCheck(string name, string model, string root, TensorExecutionOptions tensorOpts, int threads)
     {
-        var graph = OnnxImport.Load(model)!;
+        VoiceProvenance.VerifyModelFile(name, model);
+        var graph = OnnxImport.Load(model) ?? throw new InvalidOperationException(name + ": failed to load model: " + model + " (" + OnnxImport.LastErrorMessage + ")");
         var lokadOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
         using var so = CreateSingleCpuSessionOptions(threads);
         double ortLoadMs;
@@ -440,17 +441,15 @@ static class Bench
     static void Compare(string name, string model, ITensor[] inputs, TensorExecutionOptions tensorOpts, int threads, int iters, string rowsName, string modeName, double tolerance)
     {
         var loadSw = Stopwatch.StartNew();
-        var graph = OnnxImport.Load(model)!;
+        VoiceProvenance.VerifyModelFile(name, model);
+        var graph = OnnxImport.Load(model) ?? throw new InvalidOperationException(name + ": failed to load model: " + model + " (" + OnnxImport.LastErrorMessage + ")");
         loadSw.Stop();
         var prepSw = Stopwatch.StartNew();
         graph.Prepare();
         prepSw.Stop();
         double loadMs = loadSw.Elapsed.TotalMilliseconds;
         double prepareMs = prepSw.Elapsed.TotalMilliseconds;
-        var sidecar = Path.ChangeExtension(model, ".onnx_data");
-        string sidecarInfo = File.Exists(sidecar)
-            ? " sidecar=" + Path.GetFileName(sidecar) + " bytes=" + new FileInfo(sidecar).Length + " sha12=" + ShortHash(sidecar)
-            : "";
+        string sidecarInfo = VoiceProvenance.SidecarInfo(model);
         if (rowsName == "canonical")
         {
             var matchedOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
@@ -527,8 +526,8 @@ static class Bench
         var first = Validate(name, graph, ortSession, named, outNames, lokadOpts, tolerance);
         valSw.Stop();
         Console.WriteLine("case " + name + " [" + lokDesc + " vs " + ortDesc + "]: model="
-            + Path.GetFileName(Path.GetDirectoryName(model)) + "/model.onnx"
-            + " bytes=" + new FileInfo(model).Length + " sha12=" + ShortHash(model) + sidecarInfo
+            + VoiceProvenance.ModelLabel(model)
+            + " bytes=" + new FileInfo(model).Length + " sha12=" + VoiceProvenance.ShortHash(model) + sidecarInfo
             + " inputs=[" + string.Join(",", named.Select(kv => kv.Key + ":" + string.Join("x", kv.Value.Dims))) + "]"
             + " outputs=[" + string.Join(",", OutputShapes(graph, outNames)) + "]"
             + " warmup=" + Warm + " iters=" + iters
@@ -829,10 +828,4 @@ static class Bench
             + "ms max=" + ts[ts.Length - 1].ToString("F1") + "ms (n=" + ts.Length + ")";
     }
 
-    static string ShortHash(string file)
-    {
-        using var sha = SHA256.Create();
-        using var s = File.OpenRead(file);
-        return Convert.ToHexString(sha.ComputeHash(s)).Substring(0, 12);
-    }
 }

@@ -16,11 +16,11 @@ using Lokad.Onnx.Tests.Support;
 // waveform float32 [1,1,160000]; embedding fbank_features float32 [1,200,80].
 static class VoiceModelCases
 {
-    // Documented long-window gate: the 10-second segmentation operating
-    // point amplifies cross-implementation rounding through high-gain
-    // normalization channels and recurrence (see the Milestone 3
-    // investigation in PLAN.md); every kernel in isolation matches ORT to
-    // 4e-6 or better and ORT self-noise is 6.9e-05 on the same point.
+    // Historical long-window gate (2e-4) kept for the published 2026-09-14
+    // summaries: the 10-second segmentation window amplifies
+    // cross-implementation rounding through normalization and recurrence,
+    // so it validated under a wider gate. The canonical row now uses the
+    // standard 1e-4 gate.
     public const double SegLongTolerance = 2e-4;
 
     public static string ReplayDir(string root) =>
@@ -84,7 +84,8 @@ static class VoiceModelCases
             string path = Path.Combine(ReplayDir(root), file);
             if (!File.Exists(path))
                 throw new InvalidOperationException("voice replay asset missing: " + path
-                    + " (models/ is git-ignored; generate it with .agent/voice-probe/gen_replay.py).");
+                    + " (git-ignored local asset; recorded in models/voice-fixtures/replay/replay.json).");
+            VoiceProvenance.VerifyReplayFile(path);
             d[name] = Named(name, NpySupport.ReadTensor(path));
         }
         return d;
