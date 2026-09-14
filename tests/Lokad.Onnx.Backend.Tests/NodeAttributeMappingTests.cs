@@ -376,4 +376,40 @@ public class NodeAttributeMappingTests
         Assert.Equal(3f, y[0], 5);
         Assert.Equal(4f, y[1], 5);
     }
+
+    [Fact]
+    public void LogSoftmax_OmittedAxis_ResolvesByOpset()
+    {
+        float[] input = new float[] { 0f, 1f, 2f, 3f, 4f, 5f };
+        var g11 = CreateGraph(11);
+        g11.Inputs["x"] = new DenseTensor<float>(input, new[] { 1, 2, 3 });
+        var n11 = new Node
+        {
+            Name = "logsoftmax",
+            Op = OpType.LogSoftmax,
+            Inputs = new[] { "x" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>()
+        };
+        var r11 = n11.Execute(g11, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r11.Status);
+        var y11 = ((Tensor<float>)r11.Outputs[0]).ToArray();
+        float[] expected11 = new float[] { -5.4561934f, -4.4561934f, -3.4561934f, -2.4561934f, -1.4561933f, -0.45619333f };
+        for (int i = 0; i < expected11.Length; i++) Assert.Equal(expected11[i], y11[i], 4);
+        var g13 = CreateGraph(13);
+        g13.Inputs["x"] = new DenseTensor<float>(input, new[] { 1, 2, 3 });
+        var n13 = new Node
+        {
+            Name = "logsoftmax",
+            Op = OpType.LogSoftmax,
+            Inputs = new[] { "x" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object>()
+        };
+        var r13 = n13.Execute(g13, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r13.Status);
+        var y13 = ((Tensor<float>)r13.Outputs[0]).ToArray();
+        float[] expected13 = new float[] { -2.407606f, -1.4076059f, -0.40760595f, -2.407606f, -1.4076059f, -0.40760595f };
+        for (int i = 0; i < expected13.Length; i++) Assert.Equal(expected13[i], y13[i], 4);
+    }
 }

@@ -782,9 +782,9 @@ public partial class CPUExecutionProvider
     {
         var op = OpType.LogSoftmax;
         if (input is null) return MissingInput(op, nameof(input));
-        // The default axis is -1 at every opset (verified against ORT 1.29
-        // at opsets 10, 11, and 13 alike); no version split is needed.
-        var axis = _axis ?? -1;
+        // ORT cpu/math/softmax.h uses axis 1 before opset 13 and -1 thereafter
+        // for both Softmax and LogSoftmax; pre-13 flattens from axis onward.
+        var axis = _axis.HasValue ? _axis.Value : (opsetVersion < 13 ? 1 : -1);
         var opts = (options ?? ExecutionOptions.Default).Validated();
         var tensorOptions = opts.Tensor;
         if (opts.Optimization == OptimizationMode.Speed)
