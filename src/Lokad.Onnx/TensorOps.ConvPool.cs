@@ -9,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
+using System.Runtime.Intrinsics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -179,8 +180,14 @@ where T : unmanaged
         {
             long perColumn = ((long)tileKFull + M) * sizeof(float);
             long fit = ConvTileBudgetBytes / perColumn;
-            if (fit < 64) fit = 64;
-            if (fit < tileN) blockN = (int)fit;
+            // Align full tiles down to the matrix kernel micro-panel so only
+            // the final spatial remainder (handled per block below) pays a
+            // remainder; narrower fits still take one panel, which the scratch
+            // accountant reports exactly like any other rental.
+            int panel = 4 * Vector256<float>.Count;
+            long aligned = (fit / panel) * panel;
+            if (aligned < panel) aligned = panel;
+            if (aligned < tileN) blockN = (int)aligned;
         }
         if (blockN < tileN)
         {
