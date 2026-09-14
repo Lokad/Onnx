@@ -234,8 +234,8 @@ public partial class CPUExecutionProvider
         }
         var outs = new ITensor[outputCount];
         if (outputCount > 0) outs[0] = new DenseTensor<float>(new Memory<float>(yArr), new[] { seq, numDirections, batch, H });
-        if (outputCount > 1) outs[1] = new DenseTensor<float>(new Memory<float>(yhArr!), new[] { numDirections, batch, H });
-        if (outputCount > 2) outs[2] = new DenseTensor<float>(new Memory<float>(ycArr!), new[] { numDirections, batch, H });
+        if (outputCount > 1 && yhArr is not null) outs[1] = new DenseTensor<float>(new Memory<float>(yhArr), new[] { numDirections, batch, H });
+        if (outputCount > 2 && ycArr is not null) outs[2] = new DenseTensor<float>(new Memory<float>(ycArr), new[] { numDirections, batch, H });
         return Success(op, outs);
     }
 
