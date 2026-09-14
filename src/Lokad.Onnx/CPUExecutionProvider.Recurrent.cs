@@ -141,6 +141,11 @@ public partial class CPUExecutionProvider
         float[] yArr = pool is null ? new float[yLen] : pool.Rent<float>(yLen);
         float[]? yhArr = outputCount > 1 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
         int H = hiddenSize;
+        // Cost-model dispatch: the transpose build copies ~8H(K+H) floats, so the
+        // shared-kernel path only pays past short sequences (decoder grids run
+        // 5-8 steps; segmentation runs 589). The scalar nest stays as the
+        // tested generic fallback for small shapes.
+        bool useShared = (long)seq * batch >= 32;
         float[]? ycArr = outputCount > 2 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
@@ -149,8 +154,10 @@ public partial class CPUExecutionProvider
         // batch across valid rows through MatMul2D, HR per step through
         // MatMul2D. Gate math below is unchanged.
         var tensorOpts = opts.Tensor;
-        var wt = new float[numDirections * inputSize * 4 * H];
-        var rt = new float[numDirections * H * 4 * H];
+        var wt = useShared ? new float[numDirections * inputSize * 4 * H] : Array.Empty<float>();
+        var rt = useShared ? new float[numDirections * H * 4 * H] : Array.Empty<float>();
+        if (useShared)
+        {
         for (int d = 0; d < numDirections; d++)
         {
             int wDir0 = d * 4 * H * inputSize;
@@ -164,12 +171,16 @@ public partial class CPUExecutionProvider
                 for (int k = 0; k < H; k++)
                     rt[rtBase + k * 4 * H + gh] = rs[rDir0 + gh * H + k];
         }
+        }
         var wtTensors = new DenseTensor<float>[numDirections];
         var rtTensors = new DenseTensor<float>[numDirections];
+        if (useShared)
+        {
         for (int d = 0; d < numDirections; d++)
         {
             wtTensors[d] = new DenseTensor<float>(new Memory<float>(wt, d * inputSize * 4 * H, inputSize * 4 * H), new[] { inputSize, 4 * H });
             rtTensors[d] = new DenseTensor<float>(new Memory<float>(rt, d * H * 4 * H, H * 4 * H), new[] { H, 4 * H });
+        }
         }
         // Bounded per-invocation scratch reused across batches and steps.
         var xGather = new float[seq * inputSize];
@@ -197,7 +208,7 @@ public partial class CPUExecutionProvider
                 if (limit == 0) { Array.Clear(hv, 0, H); Array.Clear(cv, 0, H); }
                 // Hoist XW across valid rows: gather computation-order rows
                 // once, one shared MatMul into xwBuf, indexed per step below.
-                if (limit > 0)
+                if (useShared && limit > 0)
                 {
                     for (int gs = 0; gs < limit; gs++)
                     {
@@ -219,9 +230,29 @@ public partial class CPUExecutionProvider
                     }
                     int t = rev ? limit - 1 - s : s;
                     int yOff = ((t * numDirections + d) * batch + b) * H;
-                    var hRowT = new DenseTensor<float>(new Memory<float>(hv), new[] { 1, H });
-                    Tensor<float>.MatMul2D(hRowT, rtTensors[d], hrDestT, tensorOpts);
                     int xwBase = s * 4 * H;
+                    if (useShared)
+                    {
+                        var hRowT = new DenseTensor<float>(new Memory<float>(hv), new[] { 1, H });
+                        Tensor<float>.MatMul2D(hRowT, rtTensors[d], hrDestT, tensorOpts);
+                    }
+                    else
+                    {
+                        int xOff = (t * batch + b) * inputSize;
+                        int wDir = d * 4 * H * inputSize;
+                        int rDir = d * 4 * H * H;
+                        for (int gh = 0; gh < 4 * H; gh++)
+                        {
+                            float accX = 0f;
+                            float accR = 0f;
+                            int wRow = wDir + gh * inputSize;
+                            int rRow = rDir + gh * H;
+                            for (int k = 0; k < inputSize; k++) accX += xs[xOff + k] * ws[wRow + k];
+                            for (int k = 0; k < H; k++) accR += hv[k] * rs[rRow + k];
+                            xwBuf[xwBase + gh] = accX;
+                            hrBuf[gh] = accR;
+                        }
+                    }
                     for (int h = 0; h < H; h++)
                     {
                         float wbI = bd is null ? 0f : bd.Buffer.Span[bDir + h];
