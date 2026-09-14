@@ -68,6 +68,15 @@ public class TransposeFastPathTests
     }
 
     [Fact]
+    public void FastPathMatchesNaiveOnLastTwoSwap()
+    {
+        Agree(new[] { 1, 12, 513, 64 }, new[] { 0, 1, 3, 2 }, 91);
+        Agree(new[] { 1, 12, 30, 32 }, new[] { 0, 1, 3, 2 }, 92);
+        Agree(new[] { 2, 3, 9, 5 }, new[] { 0, 1, 3, 2 }, 93);
+        Agree(new[] { 1, 1, 17, 8 }, new[] { 0, 1, 3, 2 }, 94);
+    }
+
+    [Fact]
     public void FastPathMatchesNaiveOnEdges()
     {
         Agree(new[] { 1, 1, 12, 32 }, new[] { 0, 2, 1, 3 }, 81);

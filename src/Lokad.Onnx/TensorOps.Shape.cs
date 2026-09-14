@@ -418,6 +418,23 @@ where T : unmanaged
                             ds[((b * dimS + i) * dimD + jj) * dimH + k] = xs[((b * dimH + k) * dimS + i) * dimD + jj];
             return;
         }
+        // Fast path: the 4D last-two-axes swap (0,1,3,2) is one 2D rotation per
+        // batch-and-head position, tiled directly instead of odometer-stepped.
+        // Each output is written once from its source element, so this is
+        // bit-identical to the generic path by construction.
+        if (rank == 4 && perm[0] == 0 && perm[1] == 1 && perm[2] == 3 && perm[3] == 2 && HasStandardStrides(xd))
+        {
+            int dimB = xd.Dimensions[0], dimH = xd.Dimensions[1], dimS = xd.Dimensions[2], dimD = xd.Dimensions[3];
+            const int Tile = 8;
+            for (int b = 0; b < dimB; b++)
+                for (int h = 0; h < dimH; h++)
+                    for (int i = 0; i < dimS; i += Tile)
+                        for (int j = 0; j < dimD; j += Tile)
+                            for (int ii = i; ii < System.Math.Min(i + Tile, dimS); ii++)
+                                for (int jj = j; jj < System.Math.Min(j + Tile, dimD); jj++)
+                                    ds[((b * dimH + h) * dimD + jj) * dimS + ii] = xs[((b * dimH + h) * dimS + ii) * dimD + jj];
+            return;
+        }
         var coords = new int[rank];
         int total = (int)destination.Length;
         for (int i = 0; i < total; i++)
