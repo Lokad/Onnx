@@ -131,7 +131,9 @@ public class ConvTiledTests
     public void TiledWidth_AlignsToKernelPanels()
     {
         // C=32, K=288 fits 204 columns in budget; the runner must choose 192
-        // (6 kernel panels) so full tiles avoid remainders entirely.
+        // (6 kernel panels) so full tiles avoid remainders entirely. The
+        // batch rent also carves one packed-tile buffer (K=288 by blockN),
+        // reported exactly like the patch and output tiles.
         var x = FilledTensor(new[] { 1, 32, 16, 16 });
         var w = FilledTensor(new[] { 32, 32, 3, 3 });
         var b = FilledTensor(new[] { 32 });
@@ -139,7 +141,7 @@ public class ConvTiledTests
         var opts = TensorExecutionOptions.Auto with { ScratchReporter = acc };
         var y = Tensor<float>.Conv2D(x, w, 1, new int[] { 1, 1, 1, 1 }, b, null, new int[] { 1, 1 }, null, opts, true);
         Assert.Equal(new int[] { 1, 32, 16, 16 }, y.Dimensions.ToArray());
-        Assert.Equal((288 + 32) * 192 * 4L, acc.TotalScratchBytes);
+        Assert.Equal((288 + 32 + 288) * 192 * 4L, acc.TotalScratchBytes);
         var expected = NaiveConv(x.Buffer.ToArray(), 1, 32, 16, 16, w.Buffer.ToArray(), 32, 3, 3, b.Buffer.ToArray(), 1, 1, 1, 1);
         AssertNear(expected, y.ToArray(), true);
     }

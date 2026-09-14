@@ -276,28 +276,60 @@ where T : unmanaged
     /// vectorized kernels per block shape, so agreement is within float
     /// rounding (validated at the 1e-4 gate), not bit for bit.
     /// </summary>
+    /// <summary>
+    /// Packs one patch block once, then runs the shared AVX512 row-group
+    /// composer directly (P6.1): the per-tile patch is small and L2-hot, so
+    /// a single pack pass pays for 8/12-way panel sharing that the unpacked
+    /// transient kernel cannot use at these row counts. The destination tile
+    /// is cleared first, preserving dispatcher clearing semantics. The
+    /// pack buffer is carved from the batch scratch the caller sizes, so no
+    /// extra rent appears in scratch accounting.
+    /// </summary>
+    static void RunPackedTileProduct(Memory<float> wMem, int wOff, Memory<float> patchMem, int pOff, Memory<float> outMem, int oOff, Memory<float> packMem, int tileM, int tileK, int cols)
+    {
+        unsafe
+        {
+            fixed (float* w = wMem.Span)
+            fixed (float* p = patchMem.Span)
+            fixed (float* o = outMem.Span)
+            fixed (float* pp = packMem.Span)
+            {
+                PackPanelsB(tileK, cols, p + pOff, pp);
+                new Span<float>(o + oOff, tileM * cols).Clear();
+                RunPackedRowGroups(tileM, tileK, cols, w + wOff, pp, o + oOff);
+            }
+        }
+    }
+
+    static bool UsePackedTile(int tileM, TensorExecutionOptions options) =>
+        Avx512F.IsSupported && Fma.IsSupported && tileM >= 8 && options.UseSimd && options.UseIntrinsics;
+
     static void RunTiledConvFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, int N, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, int dop, TensorExecutionOptions options, bool fuseRelu)
     {
         int blockPatch = C * kH * kW * blockN;
         int blockOut = M * blockN;
+        // Pack space for one group tile rides the same batch rent, so the
+        // packed-tile product adds no extra rent; legacy shapes rent nothing.
+        int tileKg = C * kH * kW / group;
+        int blockPack = UsePackedTile(M / group, options) ? tileKg * blockN : 0;
         if (dop > 1)
         {
             Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
-                () => RentScratch<float>(blockPatch + blockOut, options),
+                () => RentScratch<float>(blockPatch + blockOut + blockPack, options),
                 (b, state, scratch) =>
                 {
-                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options, fuseRelu);
+                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, new Memory<float>(scratch, blockPatch + blockOut, blockPack), b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options, fuseRelu);
                     return scratch;
                 },
                 scratch => ArrayPool<float>.Shared.Return(scratch));
         }
         else
         {
-            var scratch = RentScratch<float>(blockPatch + blockOut, options);
+            var scratch = RentScratch<float>(blockPatch + blockOut + blockPack, options);
             try
             {
                 for (int b = 0; b < N; b++)
-                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options, fuseRelu);
+                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, new Memory<float>(scratch, blockPatch + blockOut, blockPack), b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options, fuseRelu);
             }
             finally { ArrayPool<float>.Shared.Return(scratch); }
         }
@@ -310,7 +342,7 @@ where T : unmanaged
     /// then streams the block through the bias/ReLU epilogue. The epilogue
     /// keeps the single-pass add order and max, including NaN handling.
     /// </summary>
-    static void RunTiledBatchFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, float[] scratch, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, TensorExecutionOptions options, bool fuseRelu)
+    static void RunTiledBatchFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, float[] scratch, Memory<float> packMem, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, TensorExecutionOptions options, bool fuseRelu)
     {
         int tileKFull = C * kH * kW;
         int tileM = M / group;
@@ -335,10 +367,18 @@ where T : unmanaged
             }
             for (int g = 0; g < group; g++)
             {
-                var wView = new DenseTensor<float>(wMem.Slice(g * tileM * tileKg, tileM * tileKg), new int[] { tileM, tileKg });
-                var pView = new DenseTensor<float>(patchMem.Slice(g * tileKg * colCount, tileKg * colCount), new int[] { tileKg, colCount });
-                var dView = new DenseTensor<float>(outMem.Slice(g * tileM * colCount, tileM * colCount), new int[] { tileM, colCount });
-                Tensor<float>.MatMul2D(wView, pView, dView, options);
+                if (UsePackedTile(tileM, options) && packMem.Length >= tileKg * colCount)
+                {
+                    RunPackedTileProduct(wMem, g * tileM * tileKg, patchMem, g * tileKg * colCount, outMem, g * tileM * colCount, packMem, tileM, tileKg, colCount);
+                    // Falls through to the shared bias/ReLU epilogue below.
+                }
+                else
+                {
+                    var wView = new DenseTensor<float>(wMem.Slice(g * tileM * tileKg, tileM * tileKg), new int[] { tileM, tileKg });
+                    var pView = new DenseTensor<float>(patchMem.Slice(g * tileKg * colCount, tileKg * colCount), new int[] { tileKg, colCount });
+                    var dView = new DenseTensor<float>(outMem.Slice(g * tileM * colCount, tileM * colCount), new int[] { tileM, colCount });
+                    Tensor<float>.MatMul2D(wView, pView, dView, options);
+                }
                 int outBase = b * outBatch + g * tileM * tileN;
                 int blkBase = g * tileM * colCount;
                 for (int i = 0; i < tileM; i++)
