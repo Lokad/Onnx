@@ -43,8 +43,8 @@ loop; the harness fails above 1.3 and warns below 0.8): no warnings, but a
 stable sub-1.00 band from box background load, so the discard rule below
 still applies per session.
 
-Measured at `8f478a3` with a clean tracked tree (untracked PLAN.md and
-.agent scratch only); no code differences. SDK
+Measured at `8f478a3` with a clean tracked tree (local working files and
+agent scratch only); no code differences. SDK
 `10.0.300-preview.0.26177.108`, runtime `.NET 10.0.12`, ORT C# `1.23.2.0`,
 Lokad assembly `0.2.0.0`. Asset bytes and hashes per case print in each
 rep header and match `ModelManifest.json`; inputs and outputs print there
@@ -160,8 +160,8 @@ timing. Full hashes live in
 
 DINOv3 now runs against the full-weight asset (graph plus `model.onnx_data`)
 and validates end to end; the earlier placeholder-asset caveat no longer
-applies. DINOv2 is excluded by a tracked known-divergence condition (PLAN.md
-C01, registry in `tests/Lokad.Onnx.Bench/KnownDivergences.cs`): after bit-identical
+applies. DINOv2 is excluded by a tracked known-divergence condition in
+`tests/Lokad.Onnx.Bench/KnownDivergences.cs`: after bit-identical
 GELU fusion and tail order parity, `last_hidden_state` still diverges at reference-scaled
 1.92E-004 from uniform depth-amplified fp32 summation-order drift with no localizable
 kernel defect, above the unchanged 1e-4 gate. A 2026-09-12 per-layer probe (temp instrumented copy, ORT 1.29, gate metric |ref-cand|/(1+|ref|)) shows embeddings agreeing at 8e-8, the layer-0 norm output already at 1.2e-6 in ORT-vs-ORT as well, and a layer-11 attention jump to 1.48e-4 at the identical token and channel in ORT-vs-ORT and in Lokad-vs-ORT; a 1-ulp input perturbation alone moves ORT's own output by 1.0e-4 (plain) and 1.2e-4 (fused). Cross-implementation 1e-4 agreement is therefore unachievable on this operating point, while DINOv3 passes because it runs native LayerNormalization/Gelu single ops with no fusion-order differences. The case validates, reports
@@ -295,11 +295,13 @@ first rep overlapped with concurrent build activity and was discarded as
 contended per the discard rule; the published reps ran on a quiet box).
 Confinement ratios were 0.98, 1.00 and 1.00 with no warnings.
 
-Measured at ce72c92 with a clean tracked tree (untracked PLAN.md,
-models/, and .agent scratch only); no code differences across reps. SDK
+Measured at ce72c92 with a clean tracked tree (local working files,
+models/, and agent scratch only); no code differences across reps. SDK
 10.0.102, runtime .NET 10.0.12, ORT C# 1.23.2.0, Lokad assembly 0.2.0.0.
-Asset bytes and hashes print in each rep header and match
-ModelManifest.json: encoder graph 41,770,866 bytes (98A74B21B4CC) plus its
+Graph bytes and hashes print in each rep header. The asset manifest also
+records external weights, which the current runner does not print for the
+encoder's `.onnx.data` suffix: encoder graph 41,770,866 bytes
+(98A74B21B4CC) plus its
 2,435,420,160-byte external weights (9A22D372C514); decoder 72,520,893
 bytes (E978DDF66885); segmentation 5,916,329 bytes (AF62796ADFC4);
 embedding 21,306,024 bytes (9903474D6230). Replay inputs come from the
@@ -319,29 +321,28 @@ to frames [1,1024,16]; decoder fixed tokens [1,5] with zero states to
 scores [1,8,5,8198] plus carried states; segmentation real 10 s waveform
 [1,1,160000] to scores [1,589,7]; embedding fbank [1,200,80] to frames
 [1,2560,25]. Decoder and encoder integer lengths check exactly. Do not
-read a decoder step or a backbone-only embedding row as whole-model
-performance: decoding advances a few frames per step, and embeddings still
-need masked pooling plus projection.
+read the fixed decoder token/frame grid or a backbone-only embedding row
+as whole-model performance: decoding normally advances through individual
+token/state steps, and embeddings still need masked pooling plus projection.
 
 Agreement at validation (rep4): encoder 4.8e-07, decoder 6.3e-06,
 embedding 2.3e-06 at gate 1e-4; segmentation real-audio 1.2e-05 at the
-documented 2e-4 long-window gate (the synthetic 10 s window measures
-1.27e-04; see the Milestone 3 rounding-amplification investigation in
-PLAN.md — every kernel isolated at 4e-6 or better, ORT self-noise 6.9e-05
-on the same point). Decoder state chaining (output-to-input carry) and
-reset determinism additionally validate without timing in every rep.
+2e-4 long-window gate in `tests/Lokad.Onnx.Bench/VoiceModelCases.cs`.
+The synthetic 10 s fixture measured 1.27e-04; the real-audio case above
+also passes the standard 1e-4 gate. The broader long-window tolerance
+remains subject to numerical review. Decoder validation additionally
+checks a second call with carried Lokad states supplied to both engines,
+then checks reset determinism, outside timing. This does not test drift
+across two independently evolving decoder trajectories.
 
 The segmentation Lokad medians settle downward across reps (1444 to 1110
 to 1096 ms) while ORT holds 36.3–36.8 ms with clean confinement
-throughout, so the 30–40x span reflects machine settling more than engine
-variance; ratios compare engines within shared reps only. This host
+throughout. The cause of that downward trend was not isolated; retain the
+full range and compare engines within shared reps only. This host
 differs from the LOKAD-0399 baseline machine, so voice ratios must not be
 compared with the 2026-09-12 table. Voice keys are opt-in and excluded
 from the default/`all` set (the encoder loads 2.4 GB); name them
-explicitly. The ORT/TorchSharp waveform comparison lane is not measured
-here: the TorchSharp reference sidecar (Milestone 1) does not exist yet,
-so no TorchSharp timings are published and nothing below stands in for
-them.
+explicitly.
 
 Reproduce from the repo root after building Release (requires the
 git-ignored voice models and replay fixtures; named cases fail loudly
