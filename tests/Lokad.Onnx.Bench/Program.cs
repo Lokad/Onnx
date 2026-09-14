@@ -684,7 +684,7 @@ static class Bench
                 if (shape.ElementDataType == Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int32
                     || shape.ElementDataType == Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int64)
                 {
-                    // Integer outputs (decoder lengths, encoder lengths) compare exactly.
+                    // Integer outputs (decoder lengths, encoder lengths) compare exactly with matching element types: ORT int32 requires Lokad int32, ORT int64 requires Lokad int64.
                     long[] oaInt = shape.ElementDataType == Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int32
                         ? Array.ConvertAll(res.GetTensorDataAsSpan<int>().ToArray(), v => (long)v)
                         : res.GetTensorDataAsSpan<long>().ToArray();
@@ -692,8 +692,8 @@ static class Bench
                         throw new InvalidOperationException(name + ": lokad output missing: " + onm + ".");
                     long[] laInt;
                     int[] ldimsInt;
-                    if (ltInt is Tensor<int> li) { laInt = Array.ConvertAll(li.ToArray(), v => (long)v); ldimsInt = li.Dimensions.ToArray(); }
-                    else if (ltInt is Tensor<long> ll) { laInt = ll.ToArray(); ldimsInt = ll.Dimensions.ToArray(); }
+                    if (ltInt is Tensor<int> li) { if (shape.ElementDataType != Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int32) throw new InvalidOperationException(name + ": lokad output is int32 but ORT is int64: " + onm + "."); laInt = Array.ConvertAll(li.ToArray(), v => (long)v); ldimsInt = li.Dimensions.ToArray(); }
+                    else if (ltInt is Tensor<long> ll) { if (shape.ElementDataType != Microsoft.ML.OnnxRuntime.Tensors.TensorElementType.Int64) throw new InvalidOperationException(name + ": lokad output is int64 but ORT is int32: " + onm + "."); laInt = ll.ToArray(); ldimsInt = ll.Dimensions.ToArray(); }
                     else throw new InvalidOperationException(name + ": lokad output is not int32/int64: " + onm + ".");
                     BenchValidate.RequireExact(name + ":" + onm,
                         shape.Shape.Select(d => checked((int)d)).ToArray(), oaInt, ldimsInt, laInt);
