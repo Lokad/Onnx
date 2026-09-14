@@ -832,6 +832,99 @@ namespace Lokad.Onnx
             return fused;
         }
 
+        /// <summary>
+        /// Fuses Conv followed by a single-consumer ReLU into the convolution
+        /// node with a fused epilogue (fuse_relu attribute): the bias/activation
+        /// tail runs in the same output pass, so the pair costs no extra tensor
+        /// pass and matches the unfused result bit for bit (same add order and
+        /// max, including signed zero and NaN). Only rank-4 float weights take
+        /// part: the rank-3 adapter path has no epilogue, and anything else
+        /// keeps the unfused nodes. Graph outputs on either side veto fusion.
+        /// </summary>
+        public static int FuseConvReluPatterns(ComputationalGraph graph)
+        {
+            var idx = BuildIndex(graph);
+            var producer = idx.Producer;
+            var consumers = idx.Consumers;
+            var outputs = idx.Outputs;
+
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.Relu) continue;
+                if (!IsFusableParticipant(graph.Nodes[i])) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchConvRelu(graph, producer, consumers, outputs, drop, i, out int convIndex))
+                {
+                    var conv = graph.Nodes[convIndex];
+                    conv.Attributes ??= new Dictionary<string, object>();
+                    conv.Attributes["fuse_relu"] = 1;
+                    conv.IsFused = true;
+                    graph.Nodes[convIndex] = conv;
+                    string convOut = conv.Outputs[0];
+                    string reluOut = graph.Nodes[i].Outputs[0];
+                    if (consumers.TryGetValue(reluOut, out var uses))
+                    {
+                        foreach (var u in uses)
+                        {
+                            if (drop.Contains(u)) continue;
+                            var n = graph.Nodes[u];
+                            n.Inputs = n.Inputs.Select(x => x == reluOut ? convOut : x).ToArray();
+                            graph.Nodes[u] = n;
+                        }
+                    }
+                    drop.Add(i);
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        static bool TryMatchConvRelu(
+            ComputationalGraph graph,
+            Dictionary<string, int> producer,
+            Dictionary<string, List<int>> consumers,
+            HashSet<string> outputs,
+            HashSet<int> drop,
+            int reluIndex,
+            out int convIndex)
+        {
+            convIndex = -1;
+            var relu = graph.Nodes[reluIndex];
+            if (!IsFusableParticipant(relu)) return false;
+            if (relu.Inputs.Length != 1 || relu.Outputs.Length != 1) return false;
+            string convOut = relu.Inputs[0];
+            string reluOut = relu.Outputs[0];
+            if (string.IsNullOrEmpty(convOut) || string.IsNullOrEmpty(reluOut)) return false;
+            if (outputs.Contains(reluOut) || outputs.Contains(convOut)) return false;
+            if (!producer.TryGetValue(convOut, out int ci) || drop.Contains(ci)) return false;
+            var conv = graph.Nodes[ci];
+            if (conv.Op != OpType.Conv || !IsFusableParticipant(conv)) return false;
+            if (conv.Outputs.Length != 1 || conv.Outputs[0] != convOut) return false;
+            if (!consumers.TryGetValue(convOut, out var uses)) return false;
+            int live = 0;
+            foreach (var u in uses) if (!drop.Contains(u)) live++;
+            if (live != 1) return false;
+            if (conv.Inputs.Length < 2 || string.IsNullOrEmpty(conv.Inputs[1])) return false;
+            if (!graph.Initializers.TryGetValue(conv.Inputs[1], out var w)) return false;
+            if (w.Rank != 4) return false;
+            convIndex = ci;
+            return true;
+        }
+
         public static int FuseRopePatterns(ComputationalGraph graph)
         {
             var idx = BuildIndex(graph);

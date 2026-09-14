@@ -52,6 +52,8 @@ public class Model
         if (rope > 0) Info("Fused {c} rotary-embedding patterns into native nodes.", rope);
         int gelu = GraphFusion.FuseGeluPatterns(graph);
         int geluTanh = GraphFusion.FuseGeluTanhPatterns(graph);
+        int convRelu = GraphFusion.FuseConvReluPatterns(graph);
+        if (convRelu > 0) Info("Fused {c} Conv+Relu pairs with a fused epilogue.", convRelu);
         if (geluTanh > 0) Info("Fused {c} tanh-approx GELU patterns into native nodes.", geluTanh);
         if (gelu > 0) Info("Fused {c} exact-GELU patterns into native nodes.", gelu);
         graph.Prepare();

@@ -10,7 +10,15 @@ public partial class CPUExecutionProvider
 {
 
     /// <summary>2D convolution, lowered through the shared matrix dispatcher.</summary>
-    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options)
+    /// <summary>2D convolution, lowered through the shared matrix dispatcher.</summary>
+    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options) =>
+        ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, false);
+
+    /// <summary>2D convolution with a fused ReLU epilogue for graph-fused Conv+Relu pairs.</summary>
+    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, bool fuseRelu) =>
+        ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, fuseRelu);
+
+    private static OpResult ConvCore(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, bool fuseRelu)
     {
         var op = OpType.Conv;
         if (X is null) return MissingInput(op, nameof(X));
@@ -52,7 +60,7 @@ public partial class CPUExecutionProvider
             int[]? st4 = strides is null ? null : new[] { strides[0], 1 };
             int[]? di4 = dilations is null ? null : new[] { dilations[0], 1 };
             int[]? pa4 = pads is null ? null : new[] { pads[0], 0, pads[1], 0 };
-            var c = Conv(xu.Outputs[0], wu.Outputs[0], B, auto_pad, di4, group, ks4, pa4, st4, options);
+            var c = ConvCore(xu.Outputs[0], wu.Outputs[0], B, auto_pad, di4, group, ks4, pa4, st4, options, fuseRelu);
             if (c.Status != OpStatus.Success) return c;
             var s = Squeeze(c.Outputs[0], new DenseTensor<long>(new long[] { 3 }, new[] { 1 }), options);
             s.Op = op;
@@ -90,18 +98,18 @@ public partial class CPUExecutionProvider
                 var bias = B is null ? null : (Tensor<float>)B;
                 if (padmode is null)
                 {
-                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor));
+                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu));
                 }
-                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor));
+                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu));
             }
             case TensorElementType.Double:
             {
                 var biasd = B is null ? null : (Tensor<double>)B;
                 if (padmode is null)
                 {
-                    return Success(op, Tensor<double>.Conv2D((Tensor<double>)X, (Tensor<double>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, biasd, kernel_shape, strides, dilations, opts.Tensor));
+                    return Success(op, Tensor<double>.Conv2D((Tensor<double>)X, (Tensor<double>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, biasd, kernel_shape, strides, dilations, opts.Tensor, fuseRelu));
                 }
-                return Success(op, Tensor<double>.Conv2D((Tensor<double>)X, (Tensor<double>)W, group ?? 1, padmode.Value, null, biasd, kernel_shape, strides, dilations, opts.Tensor));
+                return Success(op, Tensor<double>.Conv2D((Tensor<double>)X, (Tensor<double>)W, group ?? 1, padmode.Value, null, biasd, kernel_shape, strides, dilations, opts.Tensor, fuseRelu));
             }
             default:
                 return InputTypeNotSupported(op, nameof(X), X);

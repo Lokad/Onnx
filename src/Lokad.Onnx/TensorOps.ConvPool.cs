@@ -116,7 +116,7 @@ where T : unmanaged
     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
+        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, false);
 
     }
 
@@ -127,11 +127,25 @@ where T : unmanaged
     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
+        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, false);
 
     }
 
-    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options)
+    /// <summary>Two-dimensional convolution with explicit execution options and a fused ReLU epilogue.</summary>
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu)
+    {
+        var (fN, fC, fH, fW, fM, fkH, fkW, fdH, fdW, fsH, fsW, fpad, foutH, foutW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+        return Conv2DFloatCore(input, weight, group, fN, fC, fH, fW, fM, fkH, fkW, fdH, fdW, fsH, fsW, fpad, foutH, foutW, bias, options, fuseRelu);
+    }
+
+    /// <summary>Two-dimensional convolution with explicit execution options and a fused ReLU epilogue.</summary>
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu)
+    {
+        var (eN, eC, eH, eW, eM, ekH, ekW, edH, edW, esH, esW, epad, eoutH, eoutW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+        return Conv2DFloatCore(input, weight, group, eN, eC, eH, eW, eM, ekH, ekW, edH, edW, esH, esW, epad, eoutH, eoutW, bias, options, fuseRelu);
+    }
+
+    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options, bool fuseRelu)
     {
         options.Validate();
         var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outH, outW });
@@ -151,7 +165,7 @@ where T : unmanaged
             && pad.top == 0 && pad.left == 0 && pad.bottom == 0 && pad.right == 0
             && outH == H && outW == W)
         {
-            RunPointwiseBatchesFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, outH, outW, inBatch, outBatch, options);
+            RunPointwiseBatchesFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, outH, outW, inBatch, outBatch, options, fuseRelu);
             return output;
         }
         if (dop > 1)
@@ -160,7 +174,7 @@ where T : unmanaged
                 () => RentScratch<float>(patchSize, options),
                 (b, state, scratch) =>
                 {
-                    RunConvBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options);
+                    RunConvBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options, fuseRelu);
                     return scratch;
                 },
                 scratch => ArrayPool<float>.Shared.Return(scratch));
@@ -171,7 +185,7 @@ where T : unmanaged
             try
             {
                 for (int b = 0; b < N; b++)
-                    RunConvBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options);
+                    RunConvBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options, fuseRelu);
             }
             finally { ArrayPool<float>.Shared.Return(scratch); }
         }
@@ -185,7 +199,7 @@ where T : unmanaged
     /// shared-dispatcher product per group (which clears each destination tile,
     /// preserving the legacy clearing semantics), then bias.
     /// </summary>
-    static void RunConvBatchFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, float[] scratch, int patchSize, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, TensorExecutionOptions options)
+    static void RunConvBatchFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, float[] scratch, int patchSize, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, TensorExecutionOptions options, bool fuseRelu)
     {
         var patchMem = new Memory<float>(scratch, 0, patchSize);
         unsafe
@@ -206,15 +220,23 @@ where T : unmanaged
             var dView = new DenseTensor<float>(oMem.Slice(b * outBatch + g * tileM * tileN, tileM * tileN), new int[] { tileM, tileN });
             Tensor<float>.MatMul2D(wView, pView, dView, options);
         }
-        if (hasBias)
+        // Fused ReLU epilogue: with fuseRelu the max applies in the same pass
+        // as the bias add, so a fused Conv+Relu pair costs no extra tensor
+        // pass. Unfused behavior is bit-identical (same add order, same max,
+        // including signed zero and NaN handling).
+        if (hasBias || fuseRelu)
         {
             var bs = bMem.Span;
             var os = oMem.Span;
             for (int i = 0; i < M; i++)
             {
-                float bi = bs[i];
+                float bi = hasBias ? bs[i] : 0f;
                 int row = b * outBatch + i * tileN;
-                for (int j = 0; j < tileN; j++) os[row + j] += bi;
+                for (int j = 0; j < tileN; j++)
+                {
+                    float v = hasBias ? os[row + j] + bi : os[row + j];
+                    os[row + j] = fuseRelu && v < 0f ? 0f : v;
+                }
             }
         }
     }
@@ -223,7 +245,7 @@ where T : unmanaged
     /// already lays out as the GEMM right-hand side, so each group multiplies
     /// directly through the shared dispatcher with the same bias epilogue.
     /// </summary>
-    static void RunPointwiseBatchesFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, int N, int group, int C, int H, int W, int M, int outH, int outW, int inBatch, int outBatch, TensorExecutionOptions options)
+    static void RunPointwiseBatchesFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, int N, int group, int C, int H, int W, int M, int outH, int outW, int inBatch, int outBatch, TensorExecutionOptions options, bool fuseRelu)
     {
         int tileN = outH * outW;
         int tileM = M / group;
@@ -238,17 +260,21 @@ where T : unmanaged
                 Tensor<float>.MatMul2D(wView, pView, dView, options);
             }
         }
-        if (hasBias)
+        if (hasBias || fuseRelu)
         {
             var bs = bMem.Span;
             var os = oMem.Span;
             for (int i = 0; i < M; i++)
             {
-                float bi = bs[i];
+                float bi = hasBias ? bs[i] : 0f;
                 for (int n = 0; n < N; n++)
                 {
                     int row = n * outBatch + i * tileN;
-                    for (int j = 0; j < tileN; j++) os[row + j] += bi;
+                    for (int j = 0; j < tileN; j++)
+                    {
+                        float v = hasBias ? os[row + j] + bi : os[row + j];
+                        os[row + j] = fuseRelu && v < 0f ? 0f : v;
+                    }
                 }
             }
         }
@@ -261,7 +287,7 @@ where T : unmanaged
     public static Tensor<double> Conv2D(Tensor<double> input, Tensor<double> weight, int group, PadType padtype, int? padvalue, Tensor<double>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DDoubleCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
+        return Conv2DDoubleCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, false);
 
     }
 
@@ -272,11 +298,25 @@ where T : unmanaged
     public static Tensor<double> Conv2D(Tensor<double> input, Tensor<double> weight, int group, int[] pads, Tensor<double>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DDoubleCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
+        return Conv2DDoubleCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, false);
 
     }
 
-    static Tensor<double> Conv2DDoubleCore(Tensor<double> input, Tensor<double> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<double>? bias, TensorExecutionOptions options)
+    /// <summary>Two-dimensional convolution with explicit execution options and a fused ReLU epilogue.</summary>
+    public static Tensor<double> Conv2D(Tensor<double> input, Tensor<double> weight, int group, PadType padtype, int? padvalue, Tensor<double>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu)
+    {
+        var (dN, dC, dH, dW2, dM, dkH, dkW, ddH, ddW, dsH, dsW, dpad, doutH, doutW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+        return Conv2DDoubleCore(input, weight, group, dN, dC, dH, dW2, dM, dkH, dkW, ddH, ddW, dsH, dsW, dpad, doutH, doutW, bias, options, fuseRelu);
+    }
+
+    /// <summary>Two-dimensional convolution with explicit execution options and a fused ReLU epilogue.</summary>
+    public static Tensor<double> Conv2D(Tensor<double> input, Tensor<double> weight, int group, int[] pads, Tensor<double>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu)
+    {
+        var (qN, qC, qH, qW, qM, qkH, qkW, qdH, qdW, qsH, qsW, qpad, qoutH, qoutW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+        return Conv2DDoubleCore(input, weight, group, qN, qC, qH, qW, qM, qkH, qkW, qdH, qdW, qsH, qsW, qpad, qoutH, qoutW, bias, options, fuseRelu);
+    }
+
+    static Tensor<double> Conv2DDoubleCore(Tensor<double> input, Tensor<double> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<double>? bias, TensorExecutionOptions options, bool fuseRelu)
     {
         options.Validate();
         var output = new DenseTensor<double>((ReadOnlySpan<int>)new int[] { N, M, outH, outW });
@@ -298,7 +338,7 @@ where T : unmanaged
                 () => RentScratch<double>(patchSize, options),
                 (b, state, scratch) =>
                 {
-                    RunConvBatchDouble(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options);
+                    RunConvBatchDouble(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options, fuseRelu);
                     return scratch;
                 },
                 scratch => ArrayPool<double>.Shared.Return(scratch));
@@ -309,7 +349,7 @@ where T : unmanaged
             try
             {
                 for (int b = 0; b < N; b++)
-                    RunConvBatchDouble(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options);
+                    RunConvBatchDouble(xMem, wMem, bMem, hasBias, oMem, scratch, patchSize, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, options, fuseRelu);
             }
             finally { ArrayPool<double>.Shared.Return(scratch); }
         }
@@ -323,7 +363,7 @@ where T : unmanaged
     /// shared-dispatcher product per group (which clears each destination tile,
     /// preserving the legacy clearing semantics), then bias.
     /// </summary>
-    static void RunConvBatchDouble(Memory<double> xMem, Memory<double> wMem, Memory<double> bMem, bool hasBias, Memory<double> oMem, double[] scratch, int patchSize, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, TensorExecutionOptions options)
+    static void RunConvBatchDouble(Memory<double> xMem, Memory<double> wMem, Memory<double> bMem, bool hasBias, Memory<double> oMem, double[] scratch, int patchSize, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, TensorExecutionOptions options, bool fuseRelu)
     {
         var patchMem = new Memory<double>(scratch, 0, patchSize);
         unsafe
@@ -344,15 +384,20 @@ where T : unmanaged
             var dView = new DenseTensor<double>(oMem.Slice(b * outBatch + g * tileM * tileN, tileM * tileN), new int[] { tileM, tileN });
             Tensor<double>.MatMul2D(wView, pView, dView, options);
         }
-        if (hasBias)
+        // Fused ReLU epilogue: same pass, same max, bit-identical when unfused.
+        if (hasBias || fuseRelu)
         {
             var bs = bMem.Span;
             var os = oMem.Span;
             for (int i = 0; i < M; i++)
             {
-                double bi = bs[i];
+                double bi = hasBias ? bs[i] : 0.0;
                 int row = b * outBatch + i * tileN;
-                for (int j = 0; j < tileN; j++) os[row + j] += bi;
+                for (int j = 0; j < tileN; j++)
+                {
+                    double v = hasBias ? os[row + j] + bi : os[row + j];
+                    os[row + j] = fuseRelu && v < 0.0 ? 0.0 : v;
+                }
             }
         }
     }
