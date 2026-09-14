@@ -77,7 +77,16 @@ try {
 'var ok2 = g2.Execute(new Dictionary<string, ITensor> { { inName, fed } }, true);',
 'var o2 = ((Tensor<float>)g2.Outputs.Values.First()).ToArray();',
 'var odims = string.Join("x", ((Tensor<float>)g1.Outputs.Values.First()).Dimensions.ToArray());',
-'Console.WriteLine("SMOKE-IMPORT-OK " + ok1 + " " + ok2 + " " + o1.SequenceEqual(o2) + " " + odims);'
+'Console.WriteLine("SMOKE-IMPORT-OK " + ok1 + " " + ok2 + " " + o1.SequenceEqual(o2) + " " + odims);',
+'var romBytes = File.ReadAllBytes(fixture);',
+'var romPadded = new byte[romBytes.Length + 64];',
+'Array.Copy(romBytes, 0, romPadded, 37, romBytes.Length);',
+'var romSlice = new ReadOnlyMemory<byte>(romPadded, 37, romBytes.Length);',
+'var dtoRom = OnnxImport.Parse(romSlice);',
+'var g3 = OnnxImport.Load(romSlice)!;',
+'var ok3 = g3.Execute(new Dictionary<string, ITensor> { { inName, fed } }, true);',
+'var o3 = ((Tensor<float>)g3.Outputs.Values.First()).ToArray();',
+'Console.WriteLine("SMOKE-ROM-OK " + ok3 + " " + o1.SequenceEqual(o3) + " " + (dtoRom.Nodes.Count == dto.Nodes.Count));'
     )
     Set-Content Program.cs ($program -join "`r`n")
     & dotnet add package Lokad.Onnx --version $version | Out-Null
@@ -86,6 +95,7 @@ try {
     if ($LASTEXITCODE -ne 0) { Fail "scratch run failed" }
     if (-not ($out -match "SMOKE-OK True 0,2")) { Fail "unexpected scratch output" }
     if (-not ($out -match "SMOKE-IMPORT-OK True True True 1x10")) { Fail "fixture import check failed" }
+    if (-not ($out -match "SMOKE-ROM-OK True True True")) { Fail "ROM import check failed" }
 }
 finally { Pop-Location }
 Remove-Item $work -Recurse -Force
