@@ -51,6 +51,23 @@ public static class OnnxImport
         return m.ToModelDto(null, true);
     }
 
+    /// <summary>
+    /// Parses a model from caller-owned memory without a <c>ToArray()</c> copy:
+    /// the pinned protobuf parser reads <see cref="ReadOnlyMemory{T}.Span"/>
+    /// directly and the resulting DTO owns its bytes afterwards.
+    /// </summary>
+    /// <remarks>
+    /// The caller owns the input and keeps it valid and unchanged during the
+    /// synchronous call; after return, the parsed model must not depend on it.
+    /// </remarks>
+    public static OnnxModel Parse(ReadOnlyMemory<byte> data)
+    {
+        using var op = Runtime.Begin("Parsing ONNX model buffer of length {f} bytes", data.Length);
+        var m = ModelProto.Parser.ParseFrom(data.Span);
+        op.Complete();
+        return m.ToModelDto(null, true);
+    }
+
     /// <summary>Rendered template of the last import failure, without exception text; null when the last load succeeded or none ran. Last write wins under concurrent loads.</summary>
     public static string? LastErrorMessage { get; private set; }
 
@@ -61,6 +78,14 @@ public static class OnnxImport
         LoadCore(() => Parse(onnxInputFilePath), "Could not parse {f} as ONNX model file.", "Could not load {f} as ONNX model.", onnxInputFilePath);
 
     public static ComputationalGraph? Load(byte[] buffer) =>
+        LoadCore(() => Parse(buffer), "Could not parse buffer as ONNX model.", "Could not load buffer as ONNX model.", null);
+
+    /// <summary>
+    /// Loads a model from caller-owned memory without a <c>ToArray()</c> copy,
+    /// sharing the buffer overloads contracts: null plus diagnostics on any
+    /// nonfatal failure. The caller owns the input during the synchronous call.
+    /// </summary>
+    public static ComputationalGraph? Load(ReadOnlyMemory<byte> buffer) =>
         LoadCore(() => Parse(buffer), "Could not parse buffer as ONNX model.", "Could not load buffer as ONNX model.", null);
 
     static ComputationalGraph? LoadCore(Func<OnnxModel> parse, string parseTemplate, string loadTemplate, string? path)

@@ -29,6 +29,63 @@ public class ModelLoadTests
     }
 
     [Fact]
+    public void ReadOnlyMemoryParse_AgreesWithBufferParse()
+    {
+        string path = MnistModel();
+        byte[] bytes = File.ReadAllBytes(path);
+        var fromBuffer = OnnxImport.Parse(bytes);
+        var fromMemory = OnnxImport.Parse(new ReadOnlyMemory<byte>(bytes));
+        Assert.Equal(fromBuffer.Nodes.Count, fromMemory.Nodes.Count);
+        Assert.Equal(fromBuffer.Initializers.Count, fromMemory.Initializers.Count);
+        Assert.Equal(
+            fromBuffer.Nodes.Select(n => n.OpType).OrderBy(o => o),
+            fromMemory.Nodes.Select(n => n.OpType).OrderBy(o => o));
+        Assert.Equal(
+            fromBuffer.Initializers.Select(i => i.Name),
+            fromMemory.Initializers.Select(i => i.Name));
+    }
+
+    [Fact]
+    public void ReadOnlyMemorySlice_ParsesWithoutArrayCopy()
+    {
+        // Offset view: proves the overload reads the span, not the backing array.
+        string path = MnistModel();
+        byte[] bytes = File.ReadAllBytes(path);
+        var padded = new byte[bytes.Length + 64];
+        Array.Copy(bytes, 0, padded, 37, bytes.Length);
+        var slice = new ReadOnlyMemory<byte>(padded, 37, bytes.Length);
+        var fromSlice = OnnxImport.Parse(slice);
+        var fromBuffer = OnnxImport.Parse(bytes);
+        Assert.Equal(fromBuffer.Nodes.Count, fromSlice.Nodes.Count);
+        Assert.Equal(fromBuffer.Initializers.Count, fromSlice.Initializers.Count);
+    }
+
+    [Fact]
+    public void ReadOnlyMemoryLoad_ExecutesMnist()
+    {
+        string path = MnistModel();
+        byte[] bytes = File.ReadAllBytes(path);
+        var g = OnnxImport.Load(new ReadOnlyMemory<byte>(bytes));
+        Assert.NotNull(g);
+        Assert.Single(g!.Outputs);
+    }
+
+    [Fact]
+    public void ReadOnlyMemoryInvalid_MatchesBufferContracts()
+    {
+        var garbage = new byte[] { 1, 2, 3, 4 };
+        Exception? bufferEx = null, memoryEx = null;
+        try { OnnxImport.Parse(garbage); } catch (Exception ex) { bufferEx = ex; }
+        try { OnnxImport.Parse(new ReadOnlyMemory<byte>(garbage)); } catch (Exception ex) { memoryEx = ex; }
+        Assert.NotNull(bufferEx);
+        Assert.NotNull(memoryEx);
+        Assert.Equal(bufferEx!.GetType(), memoryEx!.GetType());
+        Assert.Null(OnnxImport.Load(garbage));
+        Assert.Null(OnnxImport.Load(new ReadOnlyMemory<byte>(garbage)));
+        Assert.NotNull(OnnxImport.LastErrorMessage);
+    }
+
+    [Fact]
     public void ParseMetadata_MatchesParseStructure_WithoutInitializerPayloads()
     {
         string path = MnistModel();
