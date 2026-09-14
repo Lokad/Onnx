@@ -21,7 +21,7 @@ The ONNX model at `models\multilingual-e5-small\model.onnx` is already downloade
 - `src\Lokad.Onnx`: core library and NuGet package (tensors, graph execution, shared infra); unsafe + SIMD options.
 
 - `src\Lokad.Onnx.Data`: text + image IO helpers (tokenizers, ImageSharp).
-- `src\Lokad.Onnx.CLI`: `lonnx` CLI (verbs: `info`, `run`, `benchmark`); output in `src\Lokad.Onnx.CLI\bin\Release\net10.0\`.
+- `src\Lokad.Onnx.CLI`: `lonnx` CLI (verbs: `info`, `run`); output in `src\Lokad.Onnx.CLI\bin\Release\net10.0\`.
 
 - `tests\Lokad.Onnx.Backend.Tests`: xUnit backend tests + MNIST assets.
 - `tests\Lokad.Onnx.Tensors.Tests`: xUnit tensor tests.
