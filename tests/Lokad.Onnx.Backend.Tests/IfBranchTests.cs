@@ -120,4 +120,58 @@ public class IfBranchTests
         Assert.Equal("Conv", sg.Nodes[0].OpType);
         Assert.Equal(new[] { "a", "w" }, sg.Nodes[0].Inputs);
     }
+
+    static ComputationalGraph SiblingLocalModel()
+    {
+        var model = new OnnxModel { Name = "if-sibling", Opset = new Dictionary<string, int> { [""] = 17 } };
+        model.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new[] { 2 } });
+        model.Outputs.Add(new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Float, Dims = new[] { 2 } });
+        model.Initializers.Add(new OnnxTensor { Name = "cond", ElementType = TensorElementType.Bool, Dims = Array.Empty<int>(), Data = new bool[] { true } });
+        OnnxSubgraph Branch(string name, float amount)
+        {
+            var g = new OnnxSubgraph { Name = name };
+            g.Outputs.Add(new OnnxValueInfo { Name = name, ElementType = TensorElementType.Float, Dims = new[] { 2 } });
+            g.Initializers.Add(new OnnxTensor { Name = "local_weight", ElementType = TensorElementType.Float, Dims = new[] { 2 }, Data = new float[] { amount, amount } });
+            g.Nodes.Add(new OnnxNode { Name = name + "_add", OpType = "Add", Inputs = new[] { "x", "local_weight" }, Outputs = new[] { name } });
+            return g;
+        }
+        model.Nodes.Add(new OnnxNode
+        {
+            Name = "first",
+            OpType = "If",
+            Inputs = new[] { "cond" },
+            Outputs = new[] { "unused" },
+            Attributes = new Dictionary<string, object> { ["then_branch"] = Branch("a", 2f), ["else_branch"] = Branch("aa", 2f) },
+        });
+        model.Nodes.Add(new OnnxNode
+        {
+            Name = "second",
+            OpType = "If",
+            Inputs = new[] { "cond" },
+            Outputs = new[] { "y" },
+            Attributes = new Dictionary<string, object> { ["then_branch"] = Branch("b", 3f), ["else_branch"] = Branch("bb", 3f) },
+        });
+        return Model.Load(model);
+    }
+
+    [Fact]
+    public void SiblingBranchLocals_DoNotLeak()
+    {
+        var graph = SiblingLocalModel();
+        Assert.True(graph.Execute(new Dictionary<string, ITensor> { ["x"] = new DenseTensor<float>(new float[] { 1f, 2f }, new[] { 2 }) }, true));
+        Assert.Equal(new float[] { 4f, 5f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public void RepeatedConditionFlips_UseCurrentBranch()
+    {
+        var graph = IfModel();
+        Assert.True(graph.Execute(Feeds(new float[] { 1f, 2f }, true), true));
+        Assert.Equal(new float[] { 11f, 22f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+        Assert.True(graph.Execute(Feeds(new float[] { 1f, 2f }, false), true));
+        Assert.Equal(new float[] { 2f, 4f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+        Assert.True(graph.Execute(Feeds(new float[] { 1f, 2f }, true), true));
+        Assert.Equal(new float[] { 11f, 22f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+    }
+
 }
