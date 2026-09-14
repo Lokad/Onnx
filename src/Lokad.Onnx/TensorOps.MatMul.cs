@@ -167,6 +167,11 @@ where T : unmanaged
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
             int blocked = m - (m % 2);
+            // On AVX512 hardware the transient pack routes through the same
+            // 12-row composer as persistent weights: every piece shares panel
+            // layout and per-element FMA order, so the swap stays bitwise
+            // identical while sharing each B vector up to twelve ways.
+            bool transientAvxCovered = false;
             if ((m % 3) == 0 && m >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements)
             {
                 // P65: exact 3-row groups cover every row, so no scalar fixup follows.
@@ -176,7 +181,15 @@ where T : unmanaged
                     fixed (float* pp = packed)
                     {
                         PackPanelsB(n, k, y, pp);
-                        mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
+                        if (Avx512F.IsSupported)
+                        {
+                            RunPackedRowGroups(m, n, k, x, pp, output);
+                            transientAvxCovered = true;
+                        }
+                        else
+                        {
+                            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
+                        }
                     }
                 }
                 finally
@@ -192,7 +205,15 @@ where T : unmanaged
                     fixed (float* pp = packed)
                     {
                         PackPanelsB(n, k, y, pp);
-                        mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output);
+                        if (Avx512F.IsSupported)
+                        {
+                            RunPackedRowGroups(m, n, k, x, pp, output);
+                            transientAvxCovered = true;
+                        }
+                        else
+                        {
+                            mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output);
+                        }
                     }
                 }
                 finally
@@ -211,7 +232,7 @@ where T : unmanaged
             // The P65 3-row branch above already covers every row exactly, so the 2-row
             // remainder fixup must not re-accumulate the last row.
             bool threeRowCovered = (m % 3) == 0 && m >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements;
-            if (blocked != m && !threeRowCovered)
+            if (blocked != m && !threeRowCovered && !transientAvxCovered)
             {
                 mm_unsafe_vectorized_intrinsics(1, n, k, x + blocked * n, y, output + blocked * k);
             }
@@ -275,7 +296,7 @@ where T : unmanaged
             using var oh = destination.Buffer.Pin();
             unsafe
             {
-                // Row groups with 6-row AVX512 heads and 3/2-row tails (P5);
+                // Row groups with 12/6-row AVX512 heads and 3/2-row tails (P5);
                 // exact shapes keep single calls bit-identically.
                 RunPackedRowGroups(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
             }
@@ -656,7 +677,7 @@ where T : unmanaged
     /// packed kernel; the shared buffer pins once outside the loops.
     /// </summary>
     /// <summary>
-    /// Runs one panel-packed product as 6-row AVX512 heads with 3/2-row
+    /// Runs one panel-packed product as 12/6-row AVX512 heads with 3/2-row
     /// tails: exact shapes keep single calls bit-identically, while larger
     /// counts trade 2-row passes for 6-way panel sharing. Rows are
     /// independent, so partitioning never changes per-element arithmetic;
@@ -746,7 +767,7 @@ where T : unmanaged
                 {
                     unsafe
                     {
-                        // Row groups with 6-row AVX512 heads and 3/2-row tails (P5).
+                        // Row groups with 12/6-row AVX512 heads and 3/2-row tails (P5).
                         RunPackedRowGroups(m, n, k,
                             (float*)xp0 + xOff[bi],
                             pp,

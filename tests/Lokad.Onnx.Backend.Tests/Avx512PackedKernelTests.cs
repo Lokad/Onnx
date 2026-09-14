@@ -245,6 +245,24 @@ public class Avx512PackedKernelTests
         }
     }
 
+    [Fact]
+    public void TransientPackedCoversOddRows()
+    {
+        // The transient per-call pack (M>=64 without persistent weights)
+        // routes through the 12/6-row composer on AVX512 hardware and the
+        // 2/3-row kernels elsewhere; odd row counts must cover every row
+        // exactly once on either path, including the composer rem==1 peel
+        // (M=73) and the exact-3-row branch (M=69).
+        var rnd = new Random(Seed);
+        foreach (var shape in new[] { (65, 64, 64), (69, 64, 64), (73, 64, 64), (77, 64, 96) })
+        {
+            var a = FillRect(shape.Item1, shape.Item2, rnd);
+            var b = FillRect(shape.Item2, shape.Item3, rnd);
+            var c = Tensor<float>.MatMul2D(a, b);
+            AssertNear12(Oracle12(a, b, shape.Item1, shape.Item2, shape.Item3), c.ToArray());
+        }
+    }
+
     [SkippableFact]
     public unsafe void TwelveRowRejectsRemainder()
     {
