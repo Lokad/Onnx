@@ -287,17 +287,20 @@ validated before and after timed reuse (float gate 1e-4 scaled, documented
 2e-4 for the 10-second segmentation window, exact integer checks) with
 fingerprinted-intact inputs. Machine-readable artifacts with embedded raw
 samples live in
-`tests/Lokad.Onnx.Bench/baseline/summary-voice-20260914.json`, regenerated
-from the per-rep logs by
+`tests/Lokad.Onnx.Bench/baseline/summary-voice-20260914-m7.json`,
+regenerated from the per-rep logs by
 `python eng/parse_baseline.py --expect parakeet-encoder,parakeet-decoder,pyannote-segmentation,pyannote-embedding <rep logs>`;
-raw logs stay local under `artifacts/bench/voice-20260913/` (an earlier
-first rep overlapped with concurrent build activity and was discarded as
-contended per the discard rule; the published reps ran on a quiet box).
-Confinement ratios were 0.98, 1.00 and 1.00 with no warnings.
+raw logs stay local under `artifacts/bench/voice-m7/`. The September 13
+baseline (`summary-voice-20260914.json`, reps under
+`artifacts/bench/voice-20260913/`) remains for the pre-optimization
+comparison. Confinement ratios were 1.00, 0.95 and 1.00 with no warnings.
 
-Measured at ce72c92 with a clean tracked tree (local working files,
+Measured at 8af223e with a clean tracked tree (local working files,
 models/, and agent scratch only); no code differences across reps. SDK
 10.0.102, runtime .NET 10.0.12, ORT C# 1.23.2.0, Lokad assembly 0.2.0.0.
+Since the September 13 baseline the runtime gained shared-kernel LSTM
+projections, Conv+Relu fusion, and bounded im2col tiling; the workload
+boundaries, fixtures, and gates below are unchanged.
 Graph bytes and hashes print in each rep header. The asset manifest also
 records external weights, which the current runner does not print for the
 encoder's `.onnx.data` suffix: encoder graph 41,770,866 bytes
@@ -307,12 +310,12 @@ bytes (E978DDF66885); segmentation 5,916,329 bytes (AF62796ADFC4);
 embedding 21,306,024 bytes (9903474D6230). Replay inputs come from the
 hash-pinned `models/voice-fixtures/replay` fixtures.
 
-| Voice case | rep2 L/ORT ms | rep3 L/ORT ms | rep4 L/ORT ms | Lokad / ORT |
+| Voice case | rep1 L/ORT ms | rep2 L/ORT ms | rep3 L/ORT ms | Lokad / ORT |
 |---|---:|---:|---:|---|
-| parakeet-encoder | 1245.7 / 263.9 | 1255.7 / 264.1 | 1246.2 / 261.3 | 4.7-4.8x |
-| parakeet-decoder | 93.5 / 8.7 | 82.7 / 8.7 | 82.9 / 8.6 | 9.6-10.8x |
-| pyannote-segmentation | 1444.4 / 36.6 | 1110.1 / 36.8 | 1095.9 / 36.3 | 30.2-39.4x |
-| pyannote-embedding | 424.7 / 49.4 | 452.8 / 49.4 | 419.7 / 48.8 | 8.6-9.2x |
+| parakeet-encoder | 1279.3 / 265.6 | 1260.9 / 267.1 | 1369.8 / 287.6 | 4.7-4.8x |
+| parakeet-decoder | 90.9 / 8.8 | 90.3 / 8.7 | 95.9 / 9.2 | 10.3-10.5x |
+| pyannote-segmentation | 217.4 / 36.6 | 216.2 / 38.3 | 233.4 / 38.3 | 5.6-6.1x |
+| pyannote-embedding | 317.3 / 48.9 | 336.0 / 49.3 | 342.6 / 51.1 | 6.5-6.8x |
 
 Cells are Lokad warmed public-Execute median versus ORT warmed-Run median
 per rep in milliseconds; the ratio spans the three within-rep median
@@ -325,20 +328,35 @@ read the fixed decoder token/frame grid or a backbone-only embedding row
 as whole-model performance: decoding normally advances through individual
 token/state steps, and embeddings still need masked pooling plus projection.
 
-Agreement at validation (rep4): encoder 4.8e-07, decoder 6.3e-06,
-embedding 2.3e-06 at gate 1e-4; segmentation real-audio 1.2e-05 at the
-2e-4 long-window gate in `tests/Lokad.Onnx.Bench/VoiceModelCases.cs`.
-The synthetic 10 s fixture measured 1.27e-04; the real-audio case above
-also passes the standard 1e-4 gate. The broader long-window tolerance
-remains subject to numerical review. Decoder validation additionally
+Startup versus warm execution (rep1): model load 2875/132/15/30 ms and
+lifetime preparation 37/0.3/0.2/0.1 ms for encoder, decoder,
+segmentation, and embedding against warmed medians of 1279/91/217/317
+ms; first cold executions cost 2643/146/253/356 ms and are process-cold
+only on the first row. Dominant remaining costs per the
+post-optimization profiles are shared-matrix work in the encoder (MatMul
+76%), recurrent and joint projections in the decoder (LSTM/MatMul
+50/49), LSTM recurrence in segmentation (54%), and convolution in the
+embedding backbone (98%). Decoder parity is the weakest at 10.3-10.5x
+with no dedicated optimization this campaign; encoder parity is flat at
+4.7-4.8x.
+
+Agreement at validation (identical in all three reps): encoder
+4.83e-07, decoder 6.34e-006, embedding 1.85e-006 at gate 1e-4; the
+canonical real-audio segmentation row passes the standard 1e-4 gate at
+1.25e-05. The synthetic 10 s fixture keeps the documented 2e-4
+long-window gate in `tests/Lokad.Onnx.Bench/VoiceModelCases.cs`; the
+broader long-window tolerance remains subject to numerical review. Decoder validation additionally
 checks a second call with carried Lokad states supplied to both engines,
 then checks reset determinism, outside timing. This does not test drift
 across two independently evolving decoder trajectories.
 
-The segmentation Lokad medians settle downward across reps (1444 to 1110
-to 1096 ms) while ORT holds 36.3–36.8 ms with clean confinement
-throughout. The cause of that downward trend was not isolated; retain the
-full range and compare engines within shared reps only. This host
+The September 13 baseline saw segmentation Lokad medians settle
+downward across reps (1444 to 1110 to 1096 ms) for an unisolated cause;
+this campaign shows no such trend (217.4, 216.2, 233.4 ms) with ORT at
+36.6-38.3 ms and clean confinement throughout. Rep3 ran about 5 pct slower
+on both engines on the early rows (encoder ORT 287.6 ms against 265-267
+ms); the within-rep ratios hold (4.76x against 4.72-4.82x), so the rep
+stands. Retain the full range and compare engines within shared reps only. This host
 differs from the LOKAD-0399 baseline machine, so voice ratios must not be
 compared with the 2026-09-12 table. Voice keys are opt-in and excluded
 from the default/`all` set (the encoder loads 2.4 GB); name them
