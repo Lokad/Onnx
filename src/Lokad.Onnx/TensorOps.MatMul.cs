@@ -534,6 +534,50 @@ where T : unmanaged
         }
     }
 
+    /// <summary>
+    /// Folds a shared-right batch into one matrix product when every batch
+    /// reads the same right block and the left/output batch blocks tile
+    /// their storage densely. With batchCount batches of [m,n] over one
+    /// [n,k], a single [batchCount*m,n] by [n,k] product computes identical
+    /// dot products in the same order, so results match the per-batch loop
+    /// up to the vectorized kernel the shared dispatcher selects per width.
+    /// Size-one batch dims accept any step since they contribute one block
+    /// at offset zero. Broadcast, strided, or truly batched right operands
+    /// keep the per-batch fallback. The folded destination aliases the same
+    /// output storage, preserving shape, and is cleared explicitly because
+    /// the kernels accumulate onto zero.
+    /// </summary>
+    static bool TryFoldSharedRightBatch(Tensor<float> bx, Tensor<float> by, Tensor<float> z, int[] batchDims, int[] xSteps, int[] ySteps, int[] zSteps, int batchCount, int m, int n, int k, TensorExecutionOptions options)
+    {
+        if (batchDims.Length == 0 || batchCount < 2) return false;
+        foreach (var s in ySteps) if (s != 0) return false;
+        if (!IsDenseBatchLayout(batchDims, xSteps, (long)m * n)) return false;
+        if (!IsDenseBatchLayout(batchDims, zSteps, (long)m * k)) return false;
+        int fm = checked(batchCount * m);
+        var fx = new DenseTensor<float>(bx.Storage.Slice(0, checked(fm * n)), new[] { fm, n });
+        var fy = new DenseTensor<float>(by.Storage.Slice(0, checked(n * k)), new[] { n, k });
+        var fz = new DenseTensor<float>(z.Storage.Slice(0, checked(fm * k)), new[] { fm, k });
+        fz.Buffer.Span.Clear();
+        MatMul2DCore(fx, fy, fz, options, clearDestination: false);
+        return true;
+    }
+
+    /// <summary>
+    /// True when odometer-order batch blocks of the given element count tile
+    /// storage contiguously from offset zero. Size-one dims are exempt: their
+    /// single block sits at the accumulated offset whatever the step.
+    /// </summary>
+    static bool IsDenseBatchLayout(int[] batchDims, int[] steps, long block)
+    {
+        long stride = block;
+        for (int d = batchDims.Length - 1; d >= 0; d--)
+        {
+            if (batchDims[d] != 1 && steps[d] != stride) return false;
+            stride *= batchDims[d];
+        }
+        return true;
+    }
+
     static void RunBatchedFloatMatMul(Tensor<float> bx, Tensor<float> by, Tensor<float> z, TensorExecutionOptions options)
     {
         bx = RequireBatchOperand(bx, nameof(bx), options.CopyReporter);
@@ -550,6 +594,10 @@ where T : unmanaged
         int dop = options.MaxDegreeOfParallelism < 2 || batchCount < 2
             ? 1
             : Math.Min(options.MaxDegreeOfParallelism, batchCount);
+        if (TryFoldSharedRightBatch(bx, by, z, batchDims, xSteps, ySteps, zSteps, batchCount, m, n, k, options))
+        {
+            return;
+        }
         if (ResolvePackedKernel(options, by, m) is { } packedB && (batchCount == 1 || ySteps.All(s => s == 0)))
         {
             RunPackedBatches(bx, z, batchDims, xSteps, zSteps, batchCount, dop, m, n, k, packedB);
