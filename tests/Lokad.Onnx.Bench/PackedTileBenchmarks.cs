@@ -63,8 +63,11 @@ public class PackedTileBenchmarks
         bg8b = FillFlat(new[] { 1536 }, rnd2);
         bg30x = FillFlat(new[] { 30, 1536 }, rnd2);
         bg30b = FillFlat(new[] { 1536 }, rnd2);
+        bg201x = FillFlat(new[] { 201, 1536 }, rnd2);
+        bg201b = FillFlat(new[] { 1536 }, rnd2);
         CheckBiasGelu(bg8x, bg8b);
         CheckBiasGelu(bg30x, bg30b);
+        CheckBiasGelu(bg201x, bg201b);
         // Agreement: dispatched rank-4 small tiles match the one-op sessions element-wise.
         CheckDispatched("scores", sqa, sqb, 77.33f);
         CheckDispatched("context", cxa, cxb, 41.21f);
@@ -219,6 +222,8 @@ public class PackedTileBenchmarks
     DenseTensor<float> bg8b = Tensor<float>.Zeros(0).ToDenseTensor();
     DenseTensor<float> bg30x = Tensor<float>.Zeros(0).ToDenseTensor();
     DenseTensor<float> bg30b = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> bg201x = Tensor<float>.Zeros(0).ToDenseTensor();
+    DenseTensor<float> bg201b = Tensor<float>.Zeros(0).ToDenseTensor();
 
     [Benchmark(Description = "BiasGelu provider 8x1536")]
     [BenchmarkCategory("biasgelu8")]
@@ -227,6 +232,10 @@ public class PackedTileBenchmarks
     [Benchmark(Description = "BiasGelu provider 30x1536")]
     [BenchmarkCategory("biasgelu30")]
     public void BiasGeluDirect30() => CPUExecutionProvider.BiasGelu(bg30x, bg30b, null, null);
+
+    [Benchmark(Description = "BiasGelu provider 201x1536")]
+    [BenchmarkCategory("biasgelu201")]
+    public void BiasGeluDirect201() => CPUExecutionProvider.BiasGelu(bg201x, bg201b, null, null);
 
     // Discriminator: the unpacked tiled kernel over row-major B. If the session matches
     // THIS probe instead of the packed one, the session is not reaching packed weights.
