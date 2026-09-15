@@ -6,8 +6,9 @@ using Lokad.Onnx.Tests.Support;
 /// Guards the G05 rule: every abstract or virtual method in product code
 /// documents its implementor contract (ownership, layout, empty tensors,
 /// aliasing, exceptions, destination initialization) with adjacent XML docs,
-/// and no friend assemblies are declared. Overrides inherit base docs and
-/// are reconciled by review instead of by this scan.
+/// and exactly one approved friend edge exists (Backend.Tests in Global.cs).
+/// Overrides inherit base docs and are reconciled by review instead of by
+/// this scan.
 /// </summary>
 public class ImplementorDocsTests
 {
@@ -96,24 +97,79 @@ public class ImplementorDocsTests
             "Abstract/virtual methods without XML docs:\n" + string.Join("\n", offenders.Take(20)));
     }
 
-    [Fact]
-    public void SourceTree_DeclaresNoFriendAssemblies()
+    internal static readonly string ApprovedFriendFile = "src/Lokad.Onnx/Global.cs";
+    internal const string ApprovedFriendAssembly = "Lokad.Onnx.Backend.Tests";
+
+    internal static bool IsApprovedFriendFile(string relativePath, string content)
     {
-        string root = TestSupport.RepoRoot();
+        if (!relativePath.Equals(ApprovedFriendFile, StringComparison.Ordinal)) return false;
+        var matches = System.Text.RegularExpressions.Regex.Matches(content, "InternalsVisibleTo\\(\\s*\"([^\"]+)\"\\s*\\)");
+        return matches.Count == 1 && matches[0].Groups[1].Value == ApprovedFriendAssembly;
+    }
+
+    internal static List<string> FindFriendAssemblyViolations(string root)
+    {
         var offenders = new List<string>();
-        foreach (string file in Directory.GetFiles(root, "*.csproj", SearchOption.AllDirectories))
+        foreach (string file in MaintainedProjects(root))
         {
-            if (file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar) ||
-                file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar)) continue;
-            if (File.ReadAllText(file).Contains("InternalsVisibleTo"))
-                offenders.Add(Path.GetRelativePath(root, file));
+            string rel = Path.GetRelativePath(root, file).Replace(Path.DirectorySeparatorChar, '/');
+            string text = File.ReadAllText(file);
+            if (IsApprovedFriendFile(rel, text)) continue;
+            if (text.Contains("InternalsVisibleTo")) offenders.Add(rel);
         }
         foreach (string file in TestSupport.ProductSources())
         {
-            if (File.ReadAllText(file).Contains("InternalsVisibleTo"))
-                offenders.Add(Path.GetRelativePath(root, file));
+            string rel = Path.GetRelativePath(root, file).Replace(Path.DirectorySeparatorChar, '/');
+            string text = File.ReadAllText(file);
+            if (IsApprovedFriendFile(rel, text)) continue;
+            if (text.Contains("InternalsVisibleTo")) offenders.Add(rel);
         }
+        return offenders;
+    }
+
+    static IEnumerable<string> MaintainedProjects(string root)
+    {
+        // Maintained build surface only: ignored research checkouts under
+        // artifacts/, external/ or eng scratch must not control the result.
+        foreach (string dir in new[] { "src", "tests" })
+        {
+            string full = Path.Combine(root, dir);
+            if (!Directory.Exists(full)) continue;
+            foreach (string file in Directory.GetFiles(full, "*.csproj", SearchOption.AllDirectories))
+            {
+                if (file.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar) ||
+                    file.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar)) continue;
+                yield return file;
+            }
+        }
+        foreach (string file in Directory.GetFiles(root, "*.csproj", SearchOption.TopDirectoryOnly))
+            yield return file;
+    }
+
+    [Fact]
+    public void Allowlist_AcceptsSingleApprovedEdge()
+    {
+        string good = "[assembly: System.Runtime.CompilerServices.InternalsVisibleTo(\"Lokad.Onnx.Backend.Tests\")]";
+        Assert.True(IsApprovedFriendFile(ApprovedFriendFile, good));
+    }
+
+    [Fact]
+    public void Allowlist_RejectsSecondEdgeWrongAssemblyAndOtherFiles()
+    {
+        string two = "[assembly: InternalsVisibleTo(\"Lokad.Onnx.Backend.Tests\")]\n[assembly: InternalsVisibleTo(\"Other.Tests\")]";
+        Assert.False(IsApprovedFriendFile(ApprovedFriendFile, two));
+        string wrong = "[assembly: InternalsVisibleTo(\"Other.Tests\")]";
+        Assert.False(IsApprovedFriendFile(ApprovedFriendFile, wrong));
+        string good = "[assembly: InternalsVisibleTo(\"Lokad.Onnx.Backend.Tests\")]";
+        Assert.False(IsApprovedFriendFile("src/Lokad.Onnx/Other.cs", good));
+        Assert.False(IsApprovedFriendFile(ApprovedFriendFile, "// no edges here"));
+    }
+
+    [Fact]
+    public void SourceTree_DeclaresNoFriendAssemblies()
+    {
+        var offenders = FindFriendAssemblyViolations(TestSupport.RepoRoot());
         Assert.True(offenders.Count == 0,
-            "InternalsVisibleTo found in:\n" + string.Join("\n", offenders));
+            "Unapproved InternalsVisibleTo found in:\n" + string.Join("\n", offenders));
     }
 }
