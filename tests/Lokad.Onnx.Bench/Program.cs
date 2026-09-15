@@ -56,6 +56,10 @@ static class Bench
         {
             return P07CopyProbe.RunCopyProbe(args.Skip(1).ToArray());
         }
+        if (args.Length > 0 && args[0] == "scaletwin")
+        {
+            return P07ScaleTwin.RunScaleTwin(args.Skip(1).ToArray());
+        }
         if (args.Length > 0 && args[0] == "gemmblock")
         {
             return P05GemmBlocked.RunGemmBlock(args.Skip(1).ToArray());
