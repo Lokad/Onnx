@@ -109,6 +109,12 @@ internal static class GraphOptimizer
             active = Passes.ToArray();
             off = new HashSet<string>(Disabled, StringComparer.Ordinal);
             foreach (var d in disabled) off.Add(d);
+            // Ablation hatch for measurement lanes (profile --disable-pass):
+            // env names are unioned into the disabled set for this run only.
+            // Unset in normal runs, so optimization behavior is unchanged.
+            var env = Environment.GetEnvironmentVariable("LOKAD_ONNX_DISABLE_PASSES");
+            if (!string.IsNullOrWhiteSpace(env))
+                foreach (var d in env.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)) off.Add(d.Trim());
         }
         bool exhausted = false;
         for (int round = 0; round < MaxRounds; round++)
