@@ -860,7 +860,7 @@ internal static class BlockedBottleneck
         return RunLegacy(y1, f1b, b1b, f2b, b2b, f3b, b3b, y1, N, C, R, H, W);
     }
 
-    static int CheckCase2(string name, int N, int C, int R, int H, int W, float wscale = 1f)
+    static int CheckCase2(string name, int N, int C, int R, int H, int W, float wscale)
     {
         var rnd = new Random(4321 + N + C + R + H + W);
         float[] x = Rand(N * C * H * W, rnd, 1f);
@@ -899,7 +899,7 @@ internal static class BlockedBottleneck
         return worst;
     }
 
-    static int CheckCase(string name, int N, int C, int R, int H, int W, bool biased, float wscale = 1f)
+    static int CheckCase(string name, int N, int C, int R, int H, int W, bool biased, float wscale)
     {
         var rnd = new Random(1234 + N + C + R + H + W);
         float[] x = Rand(N * C * H * W, rnd, 1f);
@@ -947,11 +947,11 @@ internal static class BlockedBottleneck
         if (args.Length == 1 && args[0] == "verify")
         {
             int rc = 0;
-            rc |= CheckCase("A-target-bias", 1, 256, 64, 56, 56, true);
-            rc |= CheckCase("B-target-nobias", 1, 256, 64, 56, 56, false);
-            rc |= CheckCase("C-tail", 1, 24, 10, 5, 5, true);
-            rc |= CheckCase("D-degenerate", 1, 16, 8, 1, 1, true);
-            rc |= CheckCase2("E-two-stage0-pair", 1, 256, 64, 56, 56);
+            rc |= CheckCase("A-target-bias", 1, 256, 64, 56, 56, true, 1f);
+            rc |= CheckCase("B-target-nobias", 1, 256, 64, 56, 56, false, 1f);
+            rc |= CheckCase("C-tail", 1, 24, 10, 5, 5, true, 1f);
+            rc |= CheckCase("D-degenerate", 1, 16, 8, 1, 1, true, 1f);
+            rc |= CheckCase2("E-two-stage0-pair", 1, 256, 64, 56, 56, 1f);
             rc |= CheckCase2("F-two-stage2-pair", 1, 1024, 256, 14, 14, 0.15f);
             rc |= CheckCase("G-single-stage2", 1, 1024, 256, 14, 14, true, 0.15f);
             rc |= CheckGuardTrip();
