@@ -695,43 +695,7 @@ public class MathOps
         {
             int kb = tb * (4 * Vector256<float>.Count);
             float* panel = P + tb * N * (4 * Vector256<float>.Count);
-            for (int i = 0; i < M; i += 2)
-            {
-                var Ap1 = A + i * N;
-                var Ap2 = Ap1 + N;
-                var Cpv1 = (Vector256<float>*)(C + i * K + kb);
-                var Cpv2 = (Vector256<float>*)(C + (i + 1) * K + kb);
-                Vector256<float> c00 = Cpv1[0];
-                Vector256<float> c01 = Cpv1[1];
-                Vector256<float> c02 = Cpv1[2];
-                Vector256<float> c03 = Cpv1[3];
-                Vector256<float> c10 = Cpv2[0];
-                Vector256<float> c11 = Cpv2[1];
-                Vector256<float> c12 = Cpv2[2];
-                Vector256<float> c13 = Cpv2[3];
-                for (int j = 0; j < N; ++j)
-                {
-                    var av1 = Vector256.Create(Ap1[j]);
-                    var av2 = Vector256.Create(Ap2[j]);
-                    var Bpv = (Vector256<float>*)(panel + j * (4 * Vector256<float>.Count));
-                    c00 = Fma.MultiplyAdd(Bpv[0], av1, c00);
-                    c10 = Fma.MultiplyAdd(Bpv[0], av2, c10);
-                    c01 = Fma.MultiplyAdd(Bpv[1], av1, c01);
-                    c11 = Fma.MultiplyAdd(Bpv[1], av2, c11);
-                    c02 = Fma.MultiplyAdd(Bpv[2], av1, c02);
-                    c12 = Fma.MultiplyAdd(Bpv[2], av2, c12);
-                    c03 = Fma.MultiplyAdd(Bpv[3], av1, c03);
-                    c13 = Fma.MultiplyAdd(Bpv[3], av2, c13);
-                }
-                Cpv1[0] = c00;
-                Cpv1[1] = c01;
-                Cpv1[2] = c02;
-                Cpv1[3] = c03;
-                Cpv2[0] = c10;
-                Cpv2[1] = c11;
-                Cpv2[2] = c12;
-                Cpv2[3] = c13;
-            }
+            mm_2x4packed_tile(M, N, A, panel, C, K, kb);
         }
         int rem = K - blocked;
         if (rem > 0)
@@ -836,6 +800,65 @@ public class MathOps
         }
     }
     /// <summary>
+    /// One full 32-column tile of the 2-row packed nest across all of
+    /// its row groups. Extracted for the tiled row-group composer;
+    /// the full method calls it per tile in the same order,
+    /// so results match bit for bit.
+    /// </summary>
+    /// <param name="M">A rows (must be even).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="panel">One packed panel tile.</param>
+    /// <param name="C">Result matrix.</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="kb">Leading output column of this tile.</param>
+    public unsafe static void mm_2x4packed_tile(int M,
+                              int N,
+                              float* A,
+                              float* panel,
+                              float* C,
+                              int K,
+                              int kb)
+    {
+            for (int i = 0; i < M; i += 2)
+            {
+                var Ap1 = A + i * N;
+                var Ap2 = Ap1 + N;
+                var Cpv1 = (Vector256<float>*)(C + i * K + kb);
+                var Cpv2 = (Vector256<float>*)(C + (i + 1) * K + kb);
+                Vector256<float> c00 = Cpv1[0];
+                Vector256<float> c01 = Cpv1[1];
+                Vector256<float> c02 = Cpv1[2];
+                Vector256<float> c03 = Cpv1[3];
+                Vector256<float> c10 = Cpv2[0];
+                Vector256<float> c11 = Cpv2[1];
+                Vector256<float> c12 = Cpv2[2];
+                Vector256<float> c13 = Cpv2[3];
+                for (int j = 0; j < N; ++j)
+                {
+                    var av1 = Vector256.Create(Ap1[j]);
+                    var av2 = Vector256.Create(Ap2[j]);
+                    var Bpv = (Vector256<float>*)(panel + j * (4 * Vector256<float>.Count));
+                    c00 = Fma.MultiplyAdd(Bpv[0], av1, c00);
+                    c10 = Fma.MultiplyAdd(Bpv[0], av2, c10);
+                    c01 = Fma.MultiplyAdd(Bpv[1], av1, c01);
+                    c11 = Fma.MultiplyAdd(Bpv[1], av2, c11);
+                    c02 = Fma.MultiplyAdd(Bpv[2], av1, c02);
+                    c12 = Fma.MultiplyAdd(Bpv[2], av2, c12);
+                    c03 = Fma.MultiplyAdd(Bpv[3], av1, c03);
+                    c13 = Fma.MultiplyAdd(Bpv[3], av2, c13);
+                }
+                Cpv1[0] = c00;
+                Cpv1[1] = c01;
+                Cpv1[2] = c02;
+                Cpv1[3] = c03;
+                Cpv2[0] = c10;
+                Cpv2[1] = c11;
+                Cpv2[2] = c12;
+                Cpv2[3] = c13;
+            }
+    }
+    /// <summary>
     /// Register-tiled matrix multiplication reading panel-packed B, three
     /// rows per group.
     /// </summary>
@@ -871,58 +894,7 @@ public class MathOps
         {
             int kb = tb * (4 * Vector256<float>.Count);
             float* panel = P + tb * N * (4 * Vector256<float>.Count);
-            for (int i = 0; i < M; i += 3)
-            {
-                var Ap1 = A + i * N;
-                var Ap2 = Ap1 + N;
-                var Ap3 = Ap2 + N;
-                var Cpv1 = (Vector256<float>*)(C + i * K + kb);
-                var Cpv2 = (Vector256<float>*)(C + (i + 1) * K + kb);
-                var Cpv3 = (Vector256<float>*)(C + (i + 2) * K + kb);
-                Vector256<float> c00 = Cpv1[0];
-                Vector256<float> c01 = Cpv1[1];
-                Vector256<float> c02 = Cpv1[2];
-                Vector256<float> c03 = Cpv1[3];
-                Vector256<float> c10 = Cpv2[0];
-                Vector256<float> c11 = Cpv2[1];
-                Vector256<float> c12 = Cpv2[2];
-                Vector256<float> c13 = Cpv2[3];
-                Vector256<float> c20 = Cpv3[0];
-                Vector256<float> c21 = Cpv3[1];
-                Vector256<float> c22 = Cpv3[2];
-                Vector256<float> c23 = Cpv3[3];
-                for (int j = 0; j < N; ++j)
-                {
-                    var av1 = Vector256.Create(Ap1[j]);
-                    var av2 = Vector256.Create(Ap2[j]);
-                    var av3 = Vector256.Create(Ap3[j]);
-                    var Bpv = (Vector256<float>*)(panel + j * (4 * Vector256<float>.Count));
-                    c00 = Fma.MultiplyAdd(Bpv[0], av1, c00);
-                    c10 = Fma.MultiplyAdd(Bpv[0], av2, c10);
-                    c20 = Fma.MultiplyAdd(Bpv[0], av3, c20);
-                    c01 = Fma.MultiplyAdd(Bpv[1], av1, c01);
-                    c11 = Fma.MultiplyAdd(Bpv[1], av2, c11);
-                    c21 = Fma.MultiplyAdd(Bpv[1], av3, c21);
-                    c02 = Fma.MultiplyAdd(Bpv[2], av1, c02);
-                    c12 = Fma.MultiplyAdd(Bpv[2], av2, c12);
-                    c22 = Fma.MultiplyAdd(Bpv[2], av3, c22);
-                    c03 = Fma.MultiplyAdd(Bpv[3], av1, c03);
-                    c13 = Fma.MultiplyAdd(Bpv[3], av2, c13);
-                    c23 = Fma.MultiplyAdd(Bpv[3], av3, c23);
-                }
-                Cpv1[0] = c00;
-                Cpv1[1] = c01;
-                Cpv1[2] = c02;
-                Cpv1[3] = c03;
-                Cpv2[0] = c10;
-                Cpv2[1] = c11;
-                Cpv2[2] = c12;
-                Cpv2[3] = c13;
-                Cpv3[0] = c20;
-                Cpv3[1] = c21;
-                Cpv3[2] = c22;
-                Cpv3[3] = c23;
-            }
+            mm_3x4packed_tile(M, N, A, panel, C, K, kb);
         }
         int rem = K - blocked;
         if (rem > 0)
@@ -1040,6 +1012,80 @@ public class MathOps
                 }
             }
         }
+    }
+    /// <summary>
+    /// One full 32-column tile of the 3-row packed nest across all of
+    /// its row groups. Extracted for the tiled row-group composer;
+    /// the full method calls it per tile in the same order,
+    /// so results match bit for bit.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 3).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="panel">One packed panel tile.</param>
+    /// <param name="C">Result matrix.</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="kb">Leading output column of this tile.</param>
+    public unsafe static void mm_3x4packed_tile(int M,
+                              int N,
+                              float* A,
+                              float* panel,
+                              float* C,
+                              int K,
+                              int kb)
+    {
+            for (int i = 0; i < M; i += 3)
+            {
+                var Ap1 = A + i * N;
+                var Ap2 = Ap1 + N;
+                var Ap3 = Ap2 + N;
+                var Cpv1 = (Vector256<float>*)(C + i * K + kb);
+                var Cpv2 = (Vector256<float>*)(C + (i + 1) * K + kb);
+                var Cpv3 = (Vector256<float>*)(C + (i + 2) * K + kb);
+                Vector256<float> c00 = Cpv1[0];
+                Vector256<float> c01 = Cpv1[1];
+                Vector256<float> c02 = Cpv1[2];
+                Vector256<float> c03 = Cpv1[3];
+                Vector256<float> c10 = Cpv2[0];
+                Vector256<float> c11 = Cpv2[1];
+                Vector256<float> c12 = Cpv2[2];
+                Vector256<float> c13 = Cpv2[3];
+                Vector256<float> c20 = Cpv3[0];
+                Vector256<float> c21 = Cpv3[1];
+                Vector256<float> c22 = Cpv3[2];
+                Vector256<float> c23 = Cpv3[3];
+                for (int j = 0; j < N; ++j)
+                {
+                    var av1 = Vector256.Create(Ap1[j]);
+                    var av2 = Vector256.Create(Ap2[j]);
+                    var av3 = Vector256.Create(Ap3[j]);
+                    var Bpv = (Vector256<float>*)(panel + j * (4 * Vector256<float>.Count));
+                    c00 = Fma.MultiplyAdd(Bpv[0], av1, c00);
+                    c10 = Fma.MultiplyAdd(Bpv[0], av2, c10);
+                    c20 = Fma.MultiplyAdd(Bpv[0], av3, c20);
+                    c01 = Fma.MultiplyAdd(Bpv[1], av1, c01);
+                    c11 = Fma.MultiplyAdd(Bpv[1], av2, c11);
+                    c21 = Fma.MultiplyAdd(Bpv[1], av3, c21);
+                    c02 = Fma.MultiplyAdd(Bpv[2], av1, c02);
+                    c12 = Fma.MultiplyAdd(Bpv[2], av2, c12);
+                    c22 = Fma.MultiplyAdd(Bpv[2], av3, c22);
+                    c03 = Fma.MultiplyAdd(Bpv[3], av1, c03);
+                    c13 = Fma.MultiplyAdd(Bpv[3], av2, c13);
+                    c23 = Fma.MultiplyAdd(Bpv[3], av3, c23);
+                }
+                Cpv1[0] = c00;
+                Cpv1[1] = c01;
+                Cpv1[2] = c02;
+                Cpv1[3] = c03;
+                Cpv2[0] = c10;
+                Cpv2[1] = c11;
+                Cpv2[2] = c12;
+                Cpv2[3] = c13;
+                Cpv3[0] = c20;
+                Cpv3[1] = c21;
+                Cpv3[2] = c22;
+                Cpv3[3] = c23;
+            }
     }
 
 

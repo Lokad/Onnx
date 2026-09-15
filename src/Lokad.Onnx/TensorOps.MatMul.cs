@@ -705,11 +705,12 @@ where T : unmanaged
     const long TiledComposerMinPanelBytes = 1024L * 1024;
 
     /// <summary>
-    /// Tile-major packed row-group composer (M4): chains 12-row and 8-row groups
-    /// per panel tile instead of sweeping the panel once per group call. Fires only
-    /// on mixed 12/8 decompositions with no narrower remainder, where the legacy
-    /// path emits two sweeps; single-width shapes already stream once per call and
-    /// keep the legacy path. Per-element arithmetic and order match bit for bit.
+    /// Tile-major packed row-group composer (M4): chains every row group per panel
+    /// tile instead of sweeping the panel once per group call. Fires only where the
+    /// legacy path emits at least two full-tile sweeps and every group has a tile
+    /// entry (12/8/3/2-wide rows with no narrower remainder and no column remnant
+    /// for narrow groups); single-sweep shapes keep the legacy path. Per-element
+    /// arithmetic and order match bit for bit.
     /// </summary>
     /// <returns>True when the product was computed and the caller must return.</returns>
     static unsafe bool TryRunPackedRowGroupsTiled(int m, int n, int k, float* x, float* packed, float* dest)
@@ -724,9 +725,24 @@ where T : unmanaged
         int rest = rem;
         int eightTotal = 0;
         while (rest >= 8 && rest != 9) { eightTotal += 8; rest -= 8; }
-        if (rest != 0 || main <= 0 || eightTotal <= 0) return false;
+        int narrow3 = 0;
+        int narrow2 = 0;
+        int narrowSweeps = 0;
+        switch (rest)
+        {
+            case 0: break;
+            case 2: narrow2 = 2; narrowSweeps = 1; break;
+            case 3: narrow3 = 3; narrowSweeps = 1; break;
+            case 4: narrow2 = 4; narrowSweeps = 1; break;
+            case 5: narrow3 = 3; narrow2 = 2; narrowSweeps = 2; break;
+            case 7: narrow3 = 3; narrow2 = 4; narrowSweeps = 2; break;
+            default: return false;
+        }
+        int legacySweeps = (main > 0 ? 1 : 0) + (eightTotal > 0 ? 1 : 0) + narrowSweeps;
+        if (legacySweeps < 2) return false;
         int tileStep = 2 * Vector512<float>.Count;
         int blocked = k - (k % tileStep);
+        if ((narrow3 > 0 || narrow2 > 0) && k != blocked) return false;
         int tiles = blocked / tileStep;
         int groups12 = main / 12;
         for (int tb = 0; tb < tiles; tb++)
@@ -741,7 +757,24 @@ where T : unmanaged
                 xr += 12 * n;
                 dr += 12 * k;
             }
-            mm_avx512_8x32packed_tile(eightTotal, n, xr, panel, dr, k, kb);
+            if (eightTotal > 0)
+            {
+                mm_avx512_8x32packed_tile(eightTotal, n, xr, panel, dr, k, kb);
+                xr += eightTotal * n;
+                dr += eightTotal * k;
+            }
+            if (narrow3 > 0)
+            {
+                mm_3x4packed_tile(narrow3, n, xr, panel, dr, k, kb);
+                xr += narrow3 * n;
+                dr += narrow3 * k;
+            }
+            if (narrow2 > 0)
+            {
+                mm_2x4packed_tile(narrow2, n, xr, panel, dr, k, kb);
+                xr += narrow2 * n;
+                dr += narrow2 * k;
+            }
         }
         int remCols = k - blocked;
         if (remCols > 0)
@@ -754,10 +787,15 @@ where T : unmanaged
                 xr += 12 * n;
                 dr += 12 * k;
             }
-            mm_avx512_8x32packed_col_tail(eightTotal, n, k, xr, packed, dr, blocked, tiles, remCols);
+            if (eightTotal > 0)
+            {
+                mm_avx512_8x32packed_col_tail(eightTotal, n, k, xr, packed, dr, blocked, tiles, remCols);
+            }
         }
         return true;
     }
+
+
 
     static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* packed, float* dest)
     {

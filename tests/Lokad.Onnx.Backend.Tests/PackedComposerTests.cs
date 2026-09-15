@@ -200,7 +200,111 @@ public class PackedComposerTests
     {
         ComposerCase(20, 256, 2048);
         ComposerCase(40, 256, 2048);
+        ComposerCase(31, 1024, 1024);
+        ComposerCase(5, 640, 2560);
     }
+
+    [Fact]
+    public void NarrowTiles_MatchFullMethods()
+    {
+        const int n = 256;
+        const int k = 512;
+        var a = Range(-1f, 0.01f, 8 * n);
+        var b = Range(-2f, 0.001f, n * k);
+        var p = new float[n * k];
+        Pack(n, k, b, p);
+        var cFull3 = new float[3 * k];
+        var cTile3 = new float[3 * k];
+        Full3(3, n, k, a, 0, p, cFull3, 0);
+        var cFull2 = new float[4 * k];
+        var cTile2 = new float[4 * k];
+        Full2(4, n, k, a, 0, p, cFull2, 0);
+        int tileStep = 32;
+        int tiles = k / tileStep;
+        for (int tb = 0; tb < tiles; tb++)
+        {
+            int kb = tb * tileStep;
+            int pOff = tb * n * tileStep;
+            Tile3(n, k, a, 0, p, pOff, cTile3, 0, kb);
+            Tile2(4, n, k, a, 0, p, pOff, cTile2, 0, kb);
+        }
+        AssertBitsEqual(cFull3, cTile3);
+        AssertBitsEqual(cFull2, cTile2);
+    }
+
+    [Fact]
+    public void NarrowComposedChain_MatchesGroupedCalls()
+    {
+        const int m = 31;
+        const int n = 1024;
+        const int k = 1024;
+        var a = Range(-1f, 0.0001f, m * n);
+        var b = Range(0.5f, -0.00001f, n * k);
+        var p = new float[n * k];
+        Pack(n, k, b, p);
+        var legacy = new float[m * k];
+        Full12(24, n, k, a, 0, p, legacy, 0);
+        Full3(3, n, k, a, 24 * n, p, legacy, 24 * k);
+        Full2(4, n, k, a, 27 * n, p, legacy, 27 * k);
+        var composed = new float[m * k];
+        int tileStep = 32;
+        int tiles = k / tileStep;
+        for (int tb = 0; tb < tiles; tb++)
+        {
+            int kb = tb * tileStep;
+            int pOff = tb * n * tileStep;
+            Tile12(n, k, a, 0, p, pOff, composed, 0, kb);
+            Tile12(n, k, a, 12 * n, p, pOff, composed, 12 * k, kb);
+            Tile3(n, k, a, 24 * n, p, pOff, composed, 24 * k, kb);
+            Tile2(4, n, k, a, 27 * n, p, pOff, composed, 27 * k, kb);
+        }
+        AssertBitsEqual(legacy, composed);
+    }
+
+    static void Full3(int m, int n, int k, float[] a, int aOff, float[] p, float[] c, int cOff)
+    {
+        unsafe
+        {
+            fixed (float* ap = a, pp = p, cp = c)
+            {
+                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, ap + aOff, pp, cp + cOff);
+            }
+        }
+    }
+
+    static void Full2(int m, int n, int k, float[] a, int aOff, float[] p, float[] c, int cOff)
+    {
+        unsafe
+        {
+            fixed (float* ap = a, pp = p, cp = c)
+            {
+                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, ap + aOff, pp, cp + cOff);
+            }
+        }
+    }
+
+    static void Tile3(int n, int k, float[] a, int aOff, float[] p, int pOff, float[] c, int cOff, int kb)
+    {
+        unsafe
+        {
+            fixed (float* ap = a, pp = p, cp = c)
+            {
+                MathOps.mm_3x4packed_tile(3, n, ap + aOff, pp + pOff, cp + cOff, k, kb);
+            }
+        }
+    }
+
+    static void Tile2(int m, int n, int k, float[] a, int aOff, float[] p, int pOff, float[] c, int cOff, int kb)
+    {
+        unsafe
+        {
+            fixed (float* ap = a, pp = p, cp = c)
+            {
+                MathOps.mm_2x4packed_tile(m, n, ap + aOff, pp + pOff, cp + cOff, k, kb);
+            }
+        }
+    }
+
 
     static void Tail12(int n, int k, float[] a, int aOff, float[] p, float[] c, int cOff, int blocked, int tiles, int remCols)
     {
