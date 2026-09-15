@@ -2423,22 +2423,25 @@ public class MathOps
         // only (no options reach this helper). At stride-one width with a
         // valid source row, the in-bounds run copies contiguously with
         // scalar zero borders; everything else keeps the scalar loop.
+        // Taps share one source row: kernel-x sits innermost so each
+        // (channel, tap-row, output-row) resolves its input line once for
+        // all tap columns instead of once per patch row.
         bool vector = Avx.IsSupported;
         for (int sc = 0; sc < srcC; ++sc)
         {
             for (int ky = 0; ky < kernelY; ++ky)
             {
                 int row0 = ky * dilationY - padY;
-                for (int kx = 0; kx < kernelX; ++kx)
+                for (int dy = dyFirst; dy <= dyLast; ++dy)
                 {
-                    int col0 = kx * dilationX - padX;
-                    float* row = buf + ((sc * kernelY + ky) * kernelX + kx) * colCount - colStart;
-                    for (int dy = dyFirst; dy <= dyLast; ++dy)
+                    int sy = row0 + dy * strideY;
+                    var line = (uint)sy < (uint)srcH ? src + (sc * srcH + sy) * srcW : null;
+                    int dxLo = dy == dyFirst ? colStart - dy * dstW : 0;
+                    int dxHi = dy == dyLast ? colStart + colCount - dy * dstW : dstW;
+                    for (int kx = 0; kx < kernelX; ++kx)
                     {
-                        int sy = row0 + dy * strideY;
-                        var line = (uint)sy < (uint)srcH ? src + (sc * srcH + sy) * srcW : null;
-                        int dxLo = dy == dyFirst ? colStart - dy * dstW : 0;
-                        int dxHi = dy == dyLast ? colStart + colCount - dy * dstW : dstW;
+                        int col0 = kx * dilationX - padX;
+                        float* row = buf + ((sc * kernelY + ky) * kernelX + kx) * colCount - colStart;
                         if (vector && strideX == 1 && line != null)
                         {
                             int vxLo = dxLo > -col0 ? dxLo : -col0;
