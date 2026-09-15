@@ -85,4 +85,57 @@ public class GeluTanhKernelTests
         }
         Assert.True(worst <= 1e-6, "worst scaled error " + worst);
     }
+
+    static float[] RunVectorTwin(float[] data)
+    {
+        var xs = new float[data.Length];
+        var ys = new float[data.Length];
+        System.Array.Copy(data, xs, data.Length);
+        Tensor<float>.GeluTanhSpanFloat(xs, ys);
+        return ys;
+    }
+
+    [Theory]
+    [InlineData(1, 51)]
+    [InlineData(7, 52)]
+    [InlineData(9, 53)]
+    [InlineData(100, 54)]
+    [InlineData(768, 55)]
+    [InlineData(3072, 56)]
+    public void VectorTwin_MatchesScalarWithin1e6(int n, int seed)
+    {
+        var data = RandomData(n, seed);
+        var scalar = RunDestination(data);
+        var twin = RunVectorTwin(data);
+        double worst = 0;
+        for (int i = 0; i < data.Length; i++)
+        {
+            double scaled = System.Math.Abs(twin[i] - scalar[i]) / (1.0 + System.Math.Abs(scalar[i]));
+            if (scaled > worst) worst = scaled;
+        }
+        Assert.True(worst <= 1e-6, "vector twin worst scaled error " + worst);
+    }
+
+    [Fact]
+    public void VectorTwin_ExceptionalBitParity()
+    {
+        var data = new float[] { float.PositiveInfinity, float.NegativeInfinity, float.NaN, -0f, 0f, 1e-30f, -1e-30f, 88f, -88f, 1e30f, -1e30f, 10f, -10f };
+        AssertBitsEqual(RunDestination(data), RunVectorTwin(data), "exceptional twin parity");
+    }
+
+    [Fact]
+    public void VectorTwin_DoubleReferenceBounds()
+    {
+        var data = RandomData(2048, 57);
+        var got = RunVectorTwin(data);
+        double worst = 0;
+        for (int i = 0; i < data.Length; i++)
+        {
+            double v = data[i];
+            double reference = 0.5 * v * (1.0 + System.Math.Tanh(0.79788456 * (v + 0.044715 * v * v * v)));
+            double scaled = System.Math.Abs(got[i] - reference) / (1.0 + System.Math.Abs(reference));
+            if (scaled > worst) worst = scaled;
+        }
+        Assert.True(worst <= 1e-6, "vector twin worst scaled error " + worst);
+    }
 }

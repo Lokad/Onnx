@@ -724,6 +724,42 @@ where T : unmanaged
         }
     }
 
+    /// <summary>
+    /// Vectorized tanh-approximate GELU over spans: identical formula and
+    /// per-element order to GeluTanhInto, with tanh evaluated through the
+    /// shared ExpVector block as 1 - 2 / (exp(2t) + 1) plus a scalar tail
+    /// using the same operations as GeluTanhInto. Safe in place: each output
+    /// depends only on its own input element.
+    /// </summary>
+    internal static void GeluTanhSpanFloat(ReadOnlySpan<float> xs, Span<float> ys)
+    {
+        var xvec = MemoryMarshal.Cast<float, Vector<float>>(xs);
+        var yvec = MemoryMarshal.Cast<float, Vector<float>>(ys);
+        var half = new Vector<float>(0.5f);
+        var one = Vector<float>.One;
+        var two = new Vector<float>(2f);
+        var c3 = new Vector<float>(0.044715f);
+        var c5 = new Vector<float>(0.7978846f);
+        for (int i = 0; i < yvec.Length; i++)
+        {
+            var v = xvec[i];
+            var t1 = half * v;
+            var t3 = c3 * v * v * v;
+            var t5 = c5 * (v + t3);
+            var e = ExpVector(t5 + t5);
+            var t = one - two / (e + one);
+            yvec[i] = t1 * (t + one);
+        }
+        for (int i = yvec.Length * Vector<float>.Count; i < xs.Length; i++)
+        {
+            float v = xs[i];
+            float t1 = 0.5f * v;
+            float t3 = 0.044715f * v * v * v;
+            float t5 = 0.7978846f * (v + t3);
+            ys[i] = t1 * (MathF.Tanh(t5) + 1f);
+        }
+    }
+
     /// <summary>Double-precision tanh-approximate GELU, same single-pass order as the float kernel.</summary>
     public static Tensor<double> GeluTanh(Tensor<double> x, TensorExecutionOptions? options)
     {
