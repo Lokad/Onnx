@@ -106,6 +106,7 @@ internal static class GraphProfile
             var lokNodeOps = new Dictionary<long, string>();
             var lokOps = new Dictionary<string, double>(StringComparer.Ordinal);
             double lokTotal = 0;
+            double lokWall = 0;
             var ortOps = new Dictionary<string, double>(StringComparer.Ordinal);
             double ortTotal = 0;
             var sw = new System.Diagnostics.Stopwatch();
@@ -114,7 +115,9 @@ internal static class GraphProfile
             {
                 if (r % 2 == 0)
                 {
-                    lokTotal += ProfileLokad(graph, named, opts, lokStages, lokOps, lokNodes, lokNodeOps);
+                    var lok = ProfileLokad(graph, named, opts, lokStages, lokOps, lokNodes, lokNodeOps);
+                    lokTotal += lok.nodeMs;
+                    lokWall += lok.wallMs;
                     sw.Restart(); using (var o = session.Run(ro, ortInputs, outNames)) { sw.Stop(); }
                     ortTotal += sw.Elapsed.TotalMilliseconds;
                 }
@@ -122,7 +125,9 @@ internal static class GraphProfile
                 {
                     sw.Restart(); using (var o = session.Run(ro, ortInputs, outNames)) { sw.Stop(); }
                     ortTotal += sw.Elapsed.TotalMilliseconds;
-                    lokTotal += ProfileLokad(graph, named, opts, lokStages, lokOps, lokNodes, lokNodeOps);
+                    var lok = ProfileLokad(graph, named, opts, lokStages, lokOps, lokNodes, lokNodeOps);
+                    lokTotal += lok.nodeMs;
+                    lokWall += lok.wallMs;
                 }
             }
             var mem = new
@@ -152,7 +157,7 @@ internal static class GraphProfile
             }
             ownedTraces.Add(landed);
             ownedTraces.Add(traceFile);
-            AggregateOrtTrace(traceFile, ortOps);
+            double ortNodes = AggregateOrtTrace(traceFile, ortOps);
             var doc = new
             {
                 kase,
@@ -160,9 +165,9 @@ internal static class GraphProfile
                 reps,
                 gateScaled = gate.scaled,
                 memory = mem,
-                lokad = new { totalMs = lokTotal,
+                lokad = new { totalMs = lokTotal, wallMs = lokWall,
                     nodes = lokNodes.OrderByDescending(kv => kv.Value).Select(kv => new { id = kv.Key, op = lokNodeOps[kv.Key], ms = kv.Value }).ToArray(), perOp = lokOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), stages = lokStages.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value) },
-                ort = new { totalMs = ortTotal, perOp = ortOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), traceFile },
+                ort = new { totalMs = ortTotal, nodeMs = ortNodes, perOp = ortOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), traceFile },
             };
             File.WriteAllText(Path.Combine(outDir, kase + "-profile.json"),
                 JsonSerializer.Serialize(doc, new JsonSerializerOptions { WriteIndented = true }));
@@ -172,6 +177,7 @@ internal static class GraphProfile
             Console.WriteLine("--- ort per-op ms (trace, " + reps + " reps) ---");
             foreach (var kv in ortOps.OrderByDescending(kv => kv.Value).Take(12))
                 Console.WriteLine("  " + kv.Key + "=" + kv.Value.ToString("F1"));
+            Console.WriteLine("totals: lokad nodes=" + lokTotal.ToString("F1") + " wall=" + lokWall.ToString("F1") + "; ort nodes=" + ortNodes.ToString("F1") + " wall=" + ortTotal.ToString("F1"));
             Console.WriteLine("memory: peakLive=" + mem.peakLiveBytes + " poolPeakOut=" + mem.poolPeakOutstandingBytes + " scratch=" + mem.scratchBytes + " copy=" + mem.copyBytes + " retainedPacks=" + mem.retainedPackedWeightBytes + " allocMB=" + (mem.allocatedBytes / 1000000.0).ToString("F1"));
             Console.WriteLine("profile wrote " + Path.Combine(outDir, kase + "-profile.json"));
             return 0;
@@ -189,8 +195,9 @@ internal static class GraphProfile
 
     static string E5Long(string root) => "query: " + string.Join(" ", Enumerable.Repeat(global::Bench.E5Sentence, 40));
 
-    static double ProfileLokad(ComputationalGraph graph, Dictionary<string, ITensor> named, ExecutionOptions opts, Dictionary<string, double> stages, Dictionary<string, double> ops, Dictionary<long, double> nodes, Dictionary<long, string> nodeOps)
+    static (double nodeMs, double wallMs) ProfileLokad(ComputationalGraph graph, Dictionary<string, ITensor> named, ExecutionOptions opts, Dictionary<string, double> stages, Dictionary<string, double> ops, Dictionary<long, double> nodes, Dictionary<long, string> nodeOps)
     {
+        var wall = System.Diagnostics.Stopwatch.StartNew();
         using (Profiler.BeginExecution(true))
         {
             graph.Reset();
@@ -218,10 +225,11 @@ internal static class GraphProfile
                 total += nodeMs;
             }
         }
-        return total;
+        wall.Stop();
+        return (total, wall.Elapsed.TotalMilliseconds);
     }
 
-    static void AggregateOrtTrace(string traceFile, Dictionary<string, double> ops)
+    static double AggregateOrtTrace(string traceFile, Dictionary<string, double> ops)
     {
         using var doc = JsonDocument.Parse(File.ReadAllText(traceFile));
         var events = doc.RootElement.ValueKind == JsonValueKind.Array
@@ -242,7 +250,10 @@ internal static class GraphProfile
             double ms = durEl.GetDouble() / 1000.0;
             ops[op] = ops.TryGetValue(op, out var acc) ? acc + ms : ms;
         }
+        double priced = 0;
+        foreach (var v in ops.Values) priced += v;
         Console.WriteLine("ort trace " + Path.GetFileName(traceFile) + ": priced " + ops.Count + " op families, skipped " + skipped + " events.");
+        return priced;
     }
 
     static void SweepStrayTraces(DateTime startedUtc, string outDir, string kase, List<string> owned)
