@@ -16,6 +16,7 @@ static class GeluEvidence
         Envelope("narrow-8x1536", 12288, rnd, 6f);
         Exceptional();
         Cost("mlp-32x3072", 98304);
+        Chain();
         return 0;
     }
 
@@ -29,6 +30,11 @@ static class GeluEvidence
     static float[] RunExact(float[] x)
     {
         var xt = DenseTensor<float>.OfValues(x.AsSpan(), new int[] { x.Length });
+        return RunExactT(xt);
+    }
+
+    static float[] RunExactT(Tensor<float> xt)
+    {
         return Tensor<float>.Gelu(xt).ToDenseTensor().Buffer.ToArray();
     }
 
@@ -94,5 +100,32 @@ static class GeluEvidence
         Console.WriteLine("cost " + name + " n=" + n);
         Console.WriteLine("exact best=" + tE[0].ToString("F3") + "ms median=" + tE[reps / 2].ToString("F3") + "ms");
         Console.WriteLine("tanh  best=" + tT[0].ToString("F3") + "ms median=" + tT[reps / 2].ToString("F3") + "ms");
+    }
+
+    static void Chain()
+    {
+        var opts = TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 1 };
+        var rnd = new Random(11);
+        var a = DenseTensor<float>.OfValues(Rand(32 * 768, rnd, 1f).AsSpan(), new int[] { 32, 768 });
+        var w = DenseTensor<float>.OfValues(Rand(768 * 3072, rnd, 0.1f).AsSpan(), new int[] { 768, 3072 });
+        float[] bRow = Rand(3072, rnd, 0.5f);
+        var bFull = new float[32 * 3072];
+        for (int r = 0; r < 32; r++) Array.Copy(bRow, 0, bFull, r * 3072, 3072);
+        var b = DenseTensor<float>.OfValues(bFull.AsSpan(), new int[] { 32, 3072 });
+        Tensor<float> m = Tensor<float>.MatMul(a, w, opts).BroadcastApply<AddBroadcast<float>>(DenseTensor<float>.OfValues(bRow.AsSpan(), new int[] { 3072 }), opts);
+        Console.WriteLine("chain: producer type=" + m.GetType().Name + " len=" + m.Length);
+        if (m is DenseTensor<float> md)
+            Console.WriteLine("chain: dense buffer=" + md.Buffer.Length + " reversed=" + md.IsReversedStride);
+        var rented = DenseTensor<float>.OfShape(m.Dimensions.ToArray());
+        Tensor<float>.Gelu(m, rented, opts);
+        int reps = 9;
+        var t = new double[reps];
+        var sw = new System.Diagnostics.Stopwatch();
+        for (int r = 0; r < reps; r++)
+        {
+            sw.Restart(); Tensor<float>.Gelu(m, rented, opts); sw.Stop(); t[r] = sw.Elapsed.TotalMilliseconds;
+        }
+        Array.Sort(t);
+        Console.WriteLine("chain gelu best=" + t[0].ToString("F3") + "ms median=" + t[reps / 2].ToString("F3") + "ms");
     }
 }
