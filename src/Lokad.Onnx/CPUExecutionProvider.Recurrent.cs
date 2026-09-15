@@ -143,6 +143,7 @@ public partial class CPUExecutionProvider
         int H = hiddenSize;
         var tensorOpts = opts.Tensor;
         var wtPrep = GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, wd);
+        var rtPrep = GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, rd);
         bool usePrepared = wtPrep is not null;
         // Cost-model dispatch: the per-invocation transpose build copies
         // ~8H(K+H) floats, so unprepared weights only pay past short
@@ -254,14 +255,21 @@ public partial class CPUExecutionProvider
                     int xwBase = s * 4 * H;
                     if (useShared)
                     {
-                        // Recurrent projection as row dots over the original R
-                        // rows: same flops as the M=1 product with no kernel
-                        // call, wrapper, or destination clear. A beta-style
-                        // accumulate into the gate buffer would need a new
-                        // primitive for identical traffic, so plain dots win.
-                        int rDir = d * 4 * H * H;
-                        for (int h = 0; h < H; h++)
-                            MathOps.RowDot4(hv, rs.Slice(rDir + h * H, H), rs.Slice(rDir + (H + h) * H, H), rs.Slice(rDir + (2 * H + h) * H, H), rs.Slice(rDir + (3 * H + h) * H, H), out hrBuf[h], out hrBuf[H + h], out hrBuf[2 * H + h], out hrBuf[3 * H + h], tensorOpts);
+                        // Recurrent projection over the prepared [H,4H] panel
+                        // where the dispatch wins, else row dots over the
+                        // original R rows (same flops, no kernel call or
+                        // destination clear either way).
+                        if (rtPrep is not null && UseRecurrentPanel(H))
+                        {
+                            var rtSpan = rtPrep.Buffer.Span;
+                            MathOps.MatVecPanel(hv, rtSpan.Slice(d * H * 4 * H, H * 4 * H), hrBuf, 4 * H, H, false, tensorOpts);
+                        }
+                        else
+                        {
+                            int rDir = d * 4 * H * H;
+                            for (int h = 0; h < H; h++)
+                                MathOps.RowDot4(hv, rs.Slice(rDir + h * H, H), rs.Slice(rDir + (H + h) * H, H), rs.Slice(rDir + (2 * H + h) * H, H), rs.Slice(rDir + (3 * H + h) * H, H), out hrBuf[h], out hrBuf[H + h], out hrBuf[2 * H + h], out hrBuf[3 * H + h], tensorOpts);
+                        }
                     }
                     else
                     {
@@ -363,6 +371,10 @@ public partial class CPUExecutionProvider
         if (outputCount > 2 && ycArr is not null) outs[2] = new DenseTensor<float>(new Memory<float>(ycArr), new[] { numDirections, batch, H });
         return Success(op, outs);
     }
+
+    // Prepared-panel dispatch for the recurrent projection, pinned by the M2 micro (see PLAN.md): 2.09x at H=128/O=512, no win at H=640 (0.96x), and steep losses on non-64-multiple tails. Only panel-aligned small/medium projections take the MatVecPanel lane; H=640 and odd shapes keep the row-dot loop.
+    public static bool UseRecurrentPanel(int hiddenSize) =>
+        hiddenSize > 0 && (4 * hiddenSize) % 64 == 0 && hiddenSize <= 128;
 
     static float ClipGate(float v, float? clip) =>
         clip.HasValue ? Math.Clamp(v, -clip.Value, clip.Value) : v;

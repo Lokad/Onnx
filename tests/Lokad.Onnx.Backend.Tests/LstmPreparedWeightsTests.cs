@@ -151,6 +151,11 @@ public class LstmPreparedWeightsTests
         graph.RefreshLifetimeAnalysis();
         var wt = (DenseTensor<float>)graph.Initializers["lstm-t:w"];
         Assert.Equal(TransposeRef(w2.ToArray(), 1, 16, 6), wt.ToArray());
+        var r2 = FillRank3(1, 16, 4, new Random(Seed + 2));
+        graph.Initializers["r"] = r2;
+        graph.RefreshLifetimeAnalysis();
+        var rt = (DenseTensor<float>)graph.Initializers["lstm-t:r"];
+        Assert.Equal(TransposeRef(r2.ToArray(), 1, 16, 4), rt.ToArray());
         var user = new Dictionary<string, ITensor> { ["x"] = x };
         Assert.True(graph.Execute(user, true), graph.LastErrorMessage);
     }
@@ -165,6 +170,40 @@ public class LstmPreparedWeightsTests
         graph.InvalidatePreparation();
         Assert.False(graph.Initializers.ContainsKey("lstm-t:w"), "clone must drop on invalidate.");
     }
+    [Fact]
+    public void Execute_PreparedPanelAgreesWithRowDots()
+    {
+        Assert.True(CPUExecutionProvider.UseRecurrentPanel(128), "H=128 must take the panel lane.");
+        Assert.False(CPUExecutionProvider.UseRecurrentPanel(640), "H=640 keeps row dots (measured 0.96x).");
+        Assert.False(CPUExecutionProvider.UseRecurrentPanel(100), "non-64-multiple tails keep row dots.");
+        AssertPanelAgreement(128, "forward", 1);
+        AssertPanelAgreement(128, "bidirectional", 2);
+    }
+
+    static void AssertPanelAgreement(int hidden, string direction, int dirs)
+    {
+        var rnd = new Random(Seed + hidden + dirs);
+        var x = FillRank3(40, 1, 64, rnd);
+        var w = FillRank3(dirs, 4 * hidden, 64, rnd);
+        var r = FillRank3(dirs, 4 * hidden, hidden, rnd);
+        var graph = BuildLstmGraph(x, w, r, hidden, direction);
+        graph.RefreshLifetimeAnalysis();
+        Assert.True(graph.Initializers.ContainsKey("lstm-t:r"), "prepared R transpose is missing.");
+        var user = new Dictionary<string, ITensor> { ["x"] = x };
+        Assert.True(graph.Execute(user, true), graph.LastErrorMessage);
+        var viaGraph = ((Tensor<float>)graph.Outputs["y"]).ToArray();
+        var direct = CPUExecutionProvider.Lstm(x, w, r, null, null, null, null, null, direction, null, null, null, null, hidden, false, 0, 1, null, null);
+        Assert.Equal(OpStatus.Success, direct.Status);
+        var viaDirect = ((Tensor<float>)direct.Outputs[0]).ToArray();
+        Assert.Equal(viaGraph.Length, viaDirect.Length);
+        for (int i = 0; i < viaGraph.Length; i++)
+        {
+            double tol = 1e-6 * (1.0 + System.Math.Abs((double)viaGraph[i]));
+            Assert.True(System.Math.Abs((double)viaGraph[i] - viaDirect[i]) <= tol, direction + " index " + i);
+        }
+    }
+
+
     [SkippableFact]
     public void RealSegmentation_PreparesEveryLstmWeight()
     {
@@ -176,6 +215,7 @@ public class LstmPreparedWeightsTests
             lstmNodes++;
             Assert.True(node.Inputs.Length >= 3, "LSTM node carries W/R inputs.");
             Assert.True(graph.Initializers.ContainsKey("lstm-t:" + node.Inputs[1]), "missing prepared W for " + node.Name);
+            Assert.True(graph.Initializers.ContainsKey("lstm-t:" + node.Inputs[2]), "missing prepared R for " + node.Name);
         }
         Assert.Equal(4, lstmNodes);
     }
