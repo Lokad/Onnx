@@ -179,6 +179,7 @@ static class Bench
         if (selected.Contains("pyannote-embedding", StringComparer.OrdinalIgnoreCase))
         {
             if (representative) RunCase("pyannote-embedding-400", () => CompareVoice("pyannote-embedding-400", assets["pyannote-embedding"][0], VoiceModelCases.EmbeddingInputs400(root), Tolerance, tensorOpts, threads, iters, modeName));
+            if (representative) RunCase("pyannote-embedding-800", () => CompareVoice("pyannote-embedding-800", assets["pyannote-embedding"][0], VoiceModelCases.EmbeddingInputs800(root), Tolerance, tensorOpts, threads, iters, modeName));
             else RunCase("pyannote-embedding", () => CompareVoice("pyannote-embedding", assets["pyannote-embedding"][0], VoiceModelCases.EmbeddingInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
         }
         if (excludedCases.Count > 0)

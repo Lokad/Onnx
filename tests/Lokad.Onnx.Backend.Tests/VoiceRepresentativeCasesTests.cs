@@ -59,6 +59,14 @@ public class VoiceRepresentativeCasesTests
     }
 
     [Fact]
+    public void Embedding800_ShapesAndDtypes()
+    {
+        string root = RequireRoot();
+        var feeds = VoiceModelCases.EmbeddingInputs800(root);
+        AssertNamed(feeds["fbank_features"], "fbank_features", new[] { 1, 800, 80 }, TensorElementType.Float);
+    }
+
+    [Fact]
     public void Segmentation1s_ShapesAndDtypes()
     {
         string root = RequireRoot();

@@ -124,4 +124,28 @@ public class GraphExecutionVoiceEmbeddingTests
             new int[] { 1994, 3988, 6979, 22931, 25922, 41874 },
             new float[] { 0.33314839005470276f, 0.1358853578567505f, 0.6166670322418213f, 0.02999110519886017f, 1.9192506074905396f, 0.33672693371772766f },
             1e-3, "voice-embedding-400");
+    }
+
+    [SkippableFact]
+    public void VoiceEmbedding_Replay800_Agrees()
+    {
+        var graph = ModelFixture.LoadRequiredModel("VoiceEmbedding", "models", "speaker-diarization-community-1", "onnx", "embedding", "embedding_encoder.onnx");
+        var npyPath = ModelFixture.FindModelPath("models", "voice-fixtures", "replay", "embedding_fbank800.npy");
+        Skip.If(npyPath is null, "Replay 800-frame fbank not present.");
+
+        var fb = NpySupport.ReadFloat32(npyPath!);
+        Assert.Equal(new[] { 1, 800, 80 }, fb.Shape);
+        var input = new DenseTensor<float>(fb.Values, new[] { 1, 800, 80 });
+
+        var feeds = new Dictionary<string, ITensor>();
+        feeds[InputName] = input;
+        ModelFixture.AssertExecuted(graph, graph.Execute(feeds, true));
+        var output = (Tensor<float>)graph.Outputs[OutputName];
+        Assert.Equal(new[] { 1, 2560, 100 }, output.Dimensions.ToArray());
+        var values = ModelFixture.CheckedOutput(graph, OutputName);
+        ModelFixture.AssertMean(values, 0.056571044028, 1e-6, "voice-embedding-800");
+        ModelFixture.AssertSpots(values,
+            new int[] { 22, 43364, 83890, 129157, 175041, 210289 },
+            new float[] { 0.19356074929237366f, 0.8195791244506836f, 0.3041200637817383f, 0.7797530293464661f, 0.7403908967971802f, 0.13034236431121826f },
+            1e-3, "voice-embedding-800");
     }}
