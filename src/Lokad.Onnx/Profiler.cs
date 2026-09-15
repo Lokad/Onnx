@@ -10,6 +10,8 @@ namespace Lokad.Onnx
     {
         Math,
         Copy,
+        CopyX,
+        CopyY,
         Broadcast,
         ValidateArguments,
         CalculateIndices,
@@ -138,6 +140,8 @@ namespace Lokad.Onnx
             OpStage.GraphOrchestration => "Graph Orchestration",
             OpStage.Math => "Math",
             OpStage.Copy => "Copy",
+            OpStage.CopyX => "CopyX",
+            OpStage.CopyY => "CopyY",
             OpStage.Broadcast => "Broadcast",
             OpStage.ValidateArguments => "Validate Arguments",
             OpStage.CalculateIndices => "Calculate Indices",

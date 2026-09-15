@@ -22,14 +22,14 @@ public partial class CPUExecutionProvider
         var opts = (options ?? ExecutionOptions.Default).Validated();
         switch (A.ElementType)
         {
-            case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul(SpeedDensify((Tensor<int>)A, opts), SpeedDensify((Tensor<int>)B, opts), opts.Tensor));
-            case TensorElementType.Float: return Success(op, Tensor<float>.MatMul(SpeedDensify((Tensor<float>)A, opts), SpeedDensify((Tensor<float>)B, opts), opts.Tensor, pool));
-            case TensorElementType.Double: return Success(op, Tensor<double>.MatMul(SpeedDensify((Tensor<double>)A, opts), SpeedDensify((Tensor<double>)B, opts), opts.Tensor));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.MatMul(SpeedDensify((Tensor<int>)A, opts, OpStage.CopyX), SpeedDensify((Tensor<int>)B, opts, OpStage.CopyY), opts.Tensor));
+            case TensorElementType.Float: return Success(op, Tensor<float>.MatMul(SpeedDensify((Tensor<float>)A, opts, OpStage.CopyX), SpeedDensify((Tensor<float>)B, opts, OpStage.CopyY), opts.Tensor, pool));
+            case TensorElementType.Double: return Success(op, Tensor<double>.MatMul(SpeedDensify((Tensor<double>)A, opts, OpStage.CopyX), SpeedDensify((Tensor<double>)B, opts, OpStage.CopyY), opts.Tensor));
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
 
-    static Tensor<T> SpeedDensify<T>(Tensor<T> t, ExecutionOptions opts) where T : unmanaged
+    static Tensor<T> SpeedDensify<T>(Tensor<T> t, ExecutionOptions opts, OpStage stage) where T : unmanaged
     {
         // Speed mode densifies operands up front (views materialize here,
         // counted); other modes leave views for the kernels, which densify
@@ -41,7 +41,7 @@ public partial class CPUExecutionProvider
             && opts.Tensor.PackedMatMulWeights is not null
             && GraphPacking.ResolvePacked(opts.Tensor.PackedMatMulWeights, tf) is not null)
             return t;
-        Profiler.StartOpStage(OpStage.Copy);
+        Profiler.StartOpStage(stage);
         return Tensor<T>.RequireContiguous(t, nameof(t), opts.Tensor.CopyReporter);
     }
 

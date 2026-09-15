@@ -115,15 +115,20 @@ where T : unmanaged
 
     static (DenseTensor<float> x, DenseTensor<float> y) DensifyFloatOperands(Tensor<float> x, Tensor<float> y, ICopyAccountant? copy)
     {
+        // Copy attribution split by operand (CopyX/CopyY stages): identical
+        // pass/copy decisions as the former single Copy stage, so numerical
+        // behavior and fallback paths are unchanged; only profiling labels differ.
         var dx = x as DenseTensor<float>;
         var dy = y as DenseTensor<float>;
-        if (dx is not { IsReversedStride: false } || dy is not { IsReversedStride: false })
-        {
-            StartOpStage(OpStage.Copy);
-        }
-        DenseTensor<float> ddx = dx is { IsReversedStride: false } ownX ? ownX : CountedCopy(x.ToDenseTensor(), copy);
-        DenseTensor<float> ddy = dy is { IsReversedStride: false } ownY ? ownY : CountedCopy(y.ToDenseTensor(), copy);
+        DenseTensor<float> ddx = dx is { IsReversedStride: false } ownX ? ownX : DensifyOne(x, copy, OpStage.CopyX);
+        DenseTensor<float> ddy = dy is { IsReversedStride: false } ownY ? ownY : DensifyOne(y, copy, OpStage.CopyY);
         return (ddx, ddy);
+    }
+
+    static DenseTensor<float> DensifyOne(Tensor<float> t, ICopyAccountant? copy, OpStage stage)
+    {
+        StartOpStage(stage);
+        return CountedCopy(t.ToDenseTensor(), copy);
     }
 
     /// <summary>
