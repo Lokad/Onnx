@@ -29,6 +29,28 @@ public partial class CPUExecutionProvider
         }
     }
 
+    /// <summary>
+    /// Scale-fused MatMul: computes MatMul(Mul(A, scale), B) with the scale
+    /// applied live per execution. Composite sequencing first: the exact
+    /// legacy Mul then MatMul run in order, so fusion plumbing lands with
+    /// identical values before any fused kernel arrives. Inputs are
+    /// [data, weights, scalar-scale]; any rank the legacy paths accept works.
+    /// </summary>
+    public static OpResult ScaledMatMul(ITensor? A, ITensor? B, ITensor? Scale, ExecutionOptions? options, TensorBufferPool? pool)
+    {
+        var op = OpType.ScaledMatMul;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (Scale is null) return MissingInput(op, nameof(Scale));
+        var mul = Mul(A, Scale, options, pool);
+        if (mul.Status != OpStatus.Success || mul.Outputs is null || mul.Outputs.Length != 1 || mul.Outputs[0] is null)
+            return mul;
+        var mm = MatMul(mul.Outputs[0], B, options, pool);
+        if (mm.Status != OpStatus.Success || mm.Outputs is null)
+            return mm;
+        return Success(op, mm.Outputs);
+    }
+
     static Tensor<T> SpeedDensify<T>(Tensor<T> t, ExecutionOptions opts, OpStage stage) where T : unmanaged
     {
         // Speed mode densifies operands up front (views materialize here,

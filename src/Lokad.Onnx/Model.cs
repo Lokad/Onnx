@@ -61,6 +61,7 @@ public class Model
         int addRelu = 0;
         int biasGelu = 0;
         int gemmGelu = 0;
+        int scaledMatMul = 0;
         if (runOptimizer)
         {
             foreach (var change in Optimization.GraphOptimizer.Run(graph))
@@ -75,6 +76,7 @@ public class Model
                     case "addrelu": addRelu += change.Rewritten; break;
                     case "biasgelu": biasGelu += change.Rewritten; break;
                     case "gemmgelu": gemmGelu += change.Rewritten; break;
+                    case "scalematmul": scaledMatMul += change.Rewritten; break;
                 }
             }
         }
@@ -86,6 +88,7 @@ public class Model
         if (addRelu > 0) Info("Fused {c} Add+Relu epilogues into native nodes.", addRelu);
         if (biasGelu > 0) Info("Fused {c} bias+GELU regions into native nodes.", biasGelu);
         if (gemmGelu > 0) Info("Fused {c} Gemm+GELU epilogues into native nodes.", gemmGelu);
+        if (scaledMatMul > 0) Info("Fused {c} scale+MatMul regions into native nodes.", scaledMatMul);
         graph.Prepare();
         cop.Complete();
         return graph;

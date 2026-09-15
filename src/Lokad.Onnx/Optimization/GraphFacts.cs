@@ -132,6 +132,21 @@ internal sealed class GraphFacts
                 qn.Op = pn.Op == OpType.ConvRelu ? OpType.Conv : pn.Op == OpType.AddRelu ? OpType.Add : OpType.Gelu;
                 return ProveNodeDtype(graph, nodes, producer, qn, visiting, memo);
             }
+            if (pn.Op == OpType.ScaledMatMul)
+            {
+                // Defuse to the MatMul rule over the data/weight inputs; the
+                // scalar scale must prove the same dtype (the Mul rule).
+                if (pn.Inputs is null || pn.Inputs.Length != 3) return null;
+                var qn = pn;
+                qn.IsFused = false;
+                qn.Op = OpType.MatMul;
+                qn.Inputs = new string[] { pn.Inputs[0], pn.Inputs[1] };
+                var madd = ProveNodeDtype(graph, nodes, producer, qn, visiting, memo);
+                if (!madd.HasValue) return null;
+                var third = ProveDtype(graph, nodes, producer, pn.Inputs[2], visiting, memo);
+                if (!third.HasValue || third.Value != madd.Value) return null;
+                return madd;
+            }
             if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu) return null;
             if (pn.Inputs is null || pn.Inputs.Length < 1) return null;
             return ProveDtype(graph, nodes, producer, pn.Inputs[0], visiting, memo);

@@ -201,5 +201,6 @@ public enum OpType
     ConvRelu,
     AddRelu,
     GemmGelu,
+    ScaledMatMul,
     Unknown,
 }
