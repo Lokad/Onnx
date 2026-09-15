@@ -107,7 +107,7 @@ function SnapCpu($phase) {
   return $sib
 }
 Snap "pre"
-SnapCpu "pre"
+$null = SnapCpu "pre"
 # Anchor on the L1 binary (box-state probe, library-independent).
 & dotnet (Join-Path $root $l1dll) micro oneop --cpu $Cpu --artifacts (Join-Path $runDir "bdn-anchor") --filter "*Mm30Up*" 2>&1 | Out-File (Join-Path $runDir "anchor.log") -Encoding utf8
 $gate = & pwsh -NoProfile -File (Join-Path $root "eng/parse_anchor2.ps1") (Join-Path $runDir "anchor.log") 2>&1
@@ -118,7 +118,7 @@ $l0logs = @(); $l1logs = @()
 for ($r = 1; $r -le $Reps; $r++) {
   if ($r -gt 1) { Log ("cooldown " + $CooldownSeconds + "s before rep " + $r); Start-Sleep -Seconds $CooldownSeconds }
   Snap ("rep" + $r + "-pre")
-  SnapCpu ("rep" + $r + "-pre")
+  $null = SnapCpu ("rep" + $r + "-pre")
   $l0first = if ($r -le [Math]::Ceiling($Reps / 2.0)) { $r % 2 -eq 1 } else { $r % 2 -eq 0 }
   $order = ($l0first) ? @("L0", "L1") : @("L1", "L0")
   Log ("rep" + $r + " order=" + ($order -join ","))
@@ -140,7 +140,7 @@ for ($r = 1; $r -le $Reps; $r++) {
   }
 }
 Snap "post"
-SnapCpu "post"
+$null = SnapCpu "post"
 & python eng/score_campaign.py @l0logs --l1 @l1logs 2>&1 | Out-File (Join-Path $runDir "score.log") -Encoding utf8
 $sec = $LASTEXITCODE
 Get-Content (Join-Path $runDir "score.log") | ForEach-Object { Log ("score: " + $_) }
