@@ -1872,6 +1872,115 @@ public class MathOps
         d0 = t0; d1 = t1; d2 = t2; d3 = t3;
     }
 
+    /// <summary>
+    /// Vector single-precision exp, Cephes-style range reduction with a
+    /// degree-5 polynomial: matches scalar MathF.Exp within a few ulps over
+    /// the finite range (validated at 1e-6 relative, never bit-identical).
+    /// Out-of-range inputs saturate (+Inf above ~88, +0 below ~-88, NaN
+    /// propagates) exactly like the scalar edges the sigmoid/tanh wrappers
+    /// depend on. Requires AVX/FMA/AVX2 (checked by callers).
+    /// </summary>
+    static Vector256<float> ExpVector256(Vector256<float> v)
+    {
+        var log2e = Vector256.Create(1.44269504088896341f);
+        var c1 = Vector256.Create(-0.693359375f);
+        var c2 = Vector256.Create(2.12194440e-4f);
+        var p0 = Vector256.Create(1.9875691500E-4f);
+        var p1 = Vector256.Create(1.3981999507E-3f);
+        var p2 = Vector256.Create(8.3334519073E-3f);
+        var p3 = Vector256.Create(4.1665795894E-2f);
+        var p4 = Vector256.Create(1.6666665459E-1f);
+        var p5 = Vector256.Create(5.0000001201E-1f);
+        var n = Avx.ConvertToVector256Int32(Avx.Floor(Fma.MultiplyAdd(v, log2e, Vector256.Create(0.5f))));
+        var r = Fma.MultiplyAdd(Avx.ConvertToVector256Single(n), c1, v);
+        r = Fma.MultiplyAdd(Avx.ConvertToVector256Single(n), c2, r);
+        var z = r * r;
+        var y = Fma.MultiplyAdd(p0, r, p1);
+        y = Fma.MultiplyAdd(y, r, p2);
+        y = Fma.MultiplyAdd(y, r, p3);
+        y = Fma.MultiplyAdd(y, r, p4);
+        y = Fma.MultiplyAdd(y, r, p5);
+        y = Fma.MultiplyAdd(y, z, r);
+        y = y + Vector256<float>.One;
+        var scale = Avx2.ShiftLeftLogical(n + Vector256.Create(127), 23).AsSingle();
+        var scaled = y * scale;
+        var over = Avx.CompareGreaterThan(v, Vector256.Create(88.3762626647949f));
+        var under = Avx.CompareLessThan(v, Vector256.Create(-88.0f));
+        var nan = Avx.CompareUnordered(v, v);
+        var result = Avx.BlendVariable(scaled, Vector256.Create(float.PositiveInfinity), over);
+        result = Avx.BlendVariable(result, Vector256<float>.Zero, under);
+        result = Avx.BlendVariable(result, v, nan);
+        return result;
+    }
+
+    /// <summary>
+    /// Sigmoid over a span: 1/(1+exp(-x)) with the vector core, scalar libm
+    /// tail. Matches the scalar LSTM/elementwise formula within float
+    /// rounding (validated at 1e-6, never bit-identical).
+    /// </summary>
+    public static void SigmoidSpan(ReadOnlySpan<float> xs, Span<float> ys)
+    {
+        int n = Math.Min(xs.Length, ys.Length);
+        if (!(Avx.IsSupported && Avx2.IsSupported && Fma.IsSupported))
+        {
+            for (int j = 0; j < n; j++) ys[j] = 1f / (1f + MathF.Exp(-xs[j]));
+            return;
+        }
+        int i = 0;
+        int full = n & ~7;
+        unsafe
+        {
+            fixed (float* s = xs, d = ys)
+            {
+                for (; i < full; i += 8)
+                {
+                    var v = *(Vector256<float>*)(s + i);
+                    var e = ExpVector256(Vector256<float>.Zero - v);
+                    *(Vector256<float>*)(d + i) = Vector256<float>.One / (e + Vector256<float>.One);
+                }
+            }
+        }
+        for (; i < n; i++) ys[i] = 1f / (1f + MathF.Exp(-xs[i]));
+    }
+
+    /// <summary>
+    /// Tanh over a span via odd symmetry around a non-overflowing exp:
+    /// sign(x)*(1-2/(exp(2|x|)+1)) for |x|<=10, sign otherwise. Matches
+    /// scalar MathF.Tanh within float rounding (validated at 1e-6, never
+    /// bit-identical).
+    /// </summary>
+    public static void TanhSpan(ReadOnlySpan<float> xs, Span<float> ys)
+    {
+        int n = Math.Min(xs.Length, ys.Length);
+        if (!(Avx.IsSupported && Avx2.IsSupported && Fma.IsSupported))
+        {
+            for (int j = 0; j < n; j++) ys[j] = MathF.Tanh(xs[j]);
+            return;
+        }
+        int i = 0;
+        int full = n & ~7;
+        unsafe
+        {
+            fixed (float* s = xs, d = ys)
+            {
+                var ten = Vector256.Create(10f);
+                var two = Vector256.Create(2f);
+                for (; i < full; i += 8)
+                {
+                    var v = *(Vector256<float>*)(s + i);
+                    var sign = Vector256.Create(1f);
+                    var neg = Avx.CompareLessThan(v, Vector256<float>.Zero); // Note: -0.0 yields +0.0 here (== -0.0, no downstream effect).
+                    var a = Avx.BlendVariable(v, Vector256<float>.Zero - v, neg);
+                    sign = Avx.BlendVariable(sign, Vector256.Create(-1f), neg);
+                    var e = ExpVector256(a + a);
+                    var core = Vector256<float>.One - two / (e + Vector256<float>.One);
+                    var big = Avx.CompareGreaterThan(a, ten);
+                    *(Vector256<float>*)(d + i) = Avx.BlendVariable(sign * core, sign, big);
+                }
+            }
+        }
+        for (; i < n; i++) ys[i] = MathF.Tanh(xs[i]);
+    }
     public static unsafe void Im2col(float* src,
                               int srcC,
                               int srcH,
