@@ -75,13 +75,17 @@ internal static class GraphProfile
         so.EnableProfiling = true;
         so.ProfileOutputPathPrefix = Path.Combine(outDir, kase + "-ort-");
         using var session = new InferenceSession(model, so);
+        // The agreement gate and decode prefill must not pollute the profiled trace:
+        // ORT records every Run of a profiling session, so validation runs on an
+        // identically configured session with profiling left disabled.
+        using var valSession = new InferenceSession(model, global::Bench.CreateSingleCpuSessionOptions(1));
         var inNames = session.InputMetadata.Keys.ToArray();
         var outNames = session.OutputMetadata.Keys.ToArray();
         Dictionary<string, ITensor> named;
         if (decodeLen > 0)
         {
             var preNamed = global::Bench.ToNamed(kase + "-prefill", global::Bench.Gpt2PrefillInputs(decodeLen, false), inNames);
-            var pre = global::Bench.Validate(kase + "-prefill", graph, session, preNamed, outNames, opts);
+            var pre = global::Bench.Validate(kase + "-prefill", graph, valSession, preNamed, outNames, opts);
             Console.WriteLine("prefill " + kase + " tokens=" + decodeLen + " maxScaled=" + pre.scaled.ToString("E2") + " maxAbs=" + pre.abs.ToString("E2"));
             named = global::Bench.ToNamed(kase, global::Bench.BuildGpt2DecodeInputs(graph, decodeLen), inNames);
         }
@@ -91,7 +95,7 @@ internal static class GraphProfile
             if (built.Length == 1 && string.IsNullOrEmpty(built[0].Name) && inNames.Length == 1) built[0].Name = inNames[0];
             named = global::Bench.ToNamed(kase, built, inNames);
         }
-        var gate = global::Bench.Validate(kase, graph, session, named, outNames, opts);
+        var gate = global::Bench.Validate(kase, graph, valSession, named, outNames, opts);
         Console.WriteLine(kase + ": agreement gate maxScaled=" + gate.scaled.ToString("E2") + " (tol 1e-4); profiling " + reps + " reps per engine.");
         var ortInputs = global::Bench.BuildOrtInputs(named, inNames);
         try
