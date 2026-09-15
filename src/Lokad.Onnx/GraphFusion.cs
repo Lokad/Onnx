@@ -1025,6 +1025,120 @@ namespace Lokad.Onnx
             return false;
         }
 
+        /// <summary>Fuses MatMul followed by a scalar-constant Mul into the MatMul node with a fuse_scale epilogue (M3).</summary>
+        /// <remarks>Only float MatMul pairs with a single live consumer qualify; the scale must come from a single-use standard Constant node holding one float (import-time form). The surviving MatMul keeps its op, inputs, and float proofs; dispatch routes it to a scaled provider that runs the identical product plus one scale pass over the owned destination. That pass is bit-identical to the removed Mul: same product, same single rounding per element (multiplication commutes), with no bias term at all. No tolerance is involved. Removes the Mul dispatch and its M-by-N intermediate per site.</remarks>
+        public static int FuseMatMulScalePatterns(ComputationalGraph graph)
+        {
+            var idx = BuildIndex(graph);
+            var producer = idx.Producer;
+            var consumers = idx.Consumers;
+            var outputs = idx.Outputs;
+
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int j = 0; j < graph.Nodes.Count; j++)
+            {
+                if (graph.Nodes[j].Op != OpType.Mul) continue;
+                if (!IsFusableParticipant(graph.Nodes[j])) continue;
+                if (drop.Contains(j)) continue;
+                if (TryMatchMatMulScale(graph, producer, consumers, outputs, drop, j, out float scale, out int mmIndex, out int scaleIndex))
+                {
+                    var mm = graph.Nodes[mmIndex];
+                    var mul = graph.Nodes[j];
+                    mm.Attributes ??= new Dictionary<string, object>();
+                    mm.Attributes["fuse_scale"] = scale;
+                    mm.Outputs = new[] { mul.Outputs[0] };
+                    graph.Nodes[mmIndex] = mm;
+                    drop.Add(j);
+                    if (scaleIndex >= 0) drop.Add(scaleIndex);
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        static bool TryMatchMatMulScale(
+            ComputationalGraph graph,
+            Dictionary<string, int> producer,
+            Dictionary<string, List<int>> consumers,
+            HashSet<string> outputs,
+            HashSet<int> drop,
+            int mulIndex,
+            out float scale,
+            out int mmIndex,
+            out int scaleIndex)
+        {
+            scale = 1f;
+            mmIndex = -1;
+            scaleIndex = -1;
+            var mul = graph.Nodes[mulIndex];
+            if (!IsFusableParticipant(mul)) return false;
+            if (mul.Inputs.Length != 2 || mul.Outputs.Length != 1) return false;
+            if (string.IsNullOrEmpty(mul.Outputs[0])) return false;
+            for (int k = 0; k < 2; k++)
+            {
+                string mmOut = mul.Inputs[k];
+                string sname = mul.Inputs[1 - k];
+                if (string.IsNullOrEmpty(mmOut) || string.IsNullOrEmpty(sname)) continue;
+                if (outputs.Contains(mmOut)) continue;
+                if (!producer.TryGetValue(mmOut, out int mi) || drop.Contains(mi)) continue;
+                var mm = graph.Nodes[mi];
+                if (mm.Op != OpType.MatMul || !IsFusableParticipant(mm)) continue;
+                if (mm.Inputs.Length != 2 || mm.Outputs.Length != 1 || mm.Outputs[0] != mmOut) continue;
+                if (!consumers.TryGetValue(mmOut, out var uses)) continue;
+                int live = 0;
+                foreach (var u in uses) if (!drop.Contains(u)) live++;
+                if (live != 1) continue;
+                if (!IsProvenFloat(graph, producer, mm.Inputs[0])) continue;
+                if (!IsProvenFloat(graph, producer, mm.Inputs[1])) continue;
+                if (!TryMatMulScaleValue(graph, producer, consumers, outputs, drop, sname, out scale, out scaleIndex)) continue;
+                mmIndex = mi;
+                return true;
+            }
+            return false;
+        }
+
+        static bool TryMatMulScaleValue(
+            ComputationalGraph graph,
+            Dictionary<string, int> producer,
+            Dictionary<string, List<int>> consumers,
+            HashSet<string> outputs,
+            HashSet<int> drop,
+            string sname,
+            out float scale,
+            out int scaleIndex)
+        {
+            scale = 1f;
+            scaleIndex = -1;
+            if (string.IsNullOrEmpty(sname) || outputs.Contains(sname)) return false;
+            if (!producer.TryGetValue(sname, out int si) || drop.Contains(si)) return false;
+            var sn = graph.Nodes[si];
+            if (sn.Op != OpType.Constant || !IsFusableParticipant(sn)) return false;
+            if (sn.Inputs.Length != 0 || sn.Outputs.Length != 1 || sn.Outputs[0] != sname) return false;
+            if (!consumers.TryGetValue(sname, out var uses)) return false;
+            int live = 0;
+            foreach (var u in uses) if (!drop.Contains(u)) live++;
+            if (live != 1) return false;
+            var cv = ConstantValue(sn);
+            if (cv is not Tensor<float> ctf || ctf.Length != 1) return false;
+            scale = ctf.ToArray()[0];
+            scaleIndex = si;
+            return true;
+        }
+
+
         public static int FuseRopePatterns(ComputationalGraph graph)
         {
             var idx = BuildIndex(graph);

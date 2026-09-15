@@ -353,6 +353,16 @@ public partial struct Node
         if (k.Value != 0 && k.Value != 1) return OpResult.AttributeNotSupported(OpType.Mul, "fuse_sigmoid", k.Value.ToString(), "Fused Sigmoid+Mul selects input 0 or 1.");
         return CPU.MulSigmoid(InputTensor(graph, 0), InputTensor(graph, 1), k.Value, opt, graph.ActivePool);
     }
+    /// <summary>
+    /// Routes MatMul nodes carrying the MatMul+scale fusion marker to the scaled
+    /// provider; unmarked nodes fall through to plain MatMul.
+    /// </summary>
+    OpResult? MatMulScaleGate(ComputationalGraph graph, ExecutionOptions? opt)
+    {
+        float? s = GetFloat("fuse_scale", null);
+        if (!s.HasValue) return null;
+        return CPU.MatMulScaled(InputTensor(graph, 0), InputTensor(graph, 1), s.Value, opt, graph.ActivePool);
+    }
     OpResult? MatMulIntGate(ComputationalGraph graph)
     {
         int v = ResolvedOpsetVersion(graph);
@@ -409,7 +419,7 @@ public partial struct Node
 
         OpType.GlobalAveragePool => CPU.GlobalAveragePool(InputTensor(graph, 0), opt),
 
-        OpType.MatMul => MatMulIntGate(graph) ?? CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+        OpType.MatMul => MatMulScaleGate(graph, opt) ?? MatMulIntGate(graph) ?? CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
         OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0),
 

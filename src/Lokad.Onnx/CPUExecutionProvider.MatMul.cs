@@ -29,6 +29,36 @@ public partial class CPUExecutionProvider
         }
     }
 
+    /// <summary>MatMul with a fused output scale (the MatMul+scalar fusion).</summary>
+    /// <remarks>Runs the identical product through the shared entry points, then one scale pass over the result. The destination is freshly owned in graph runs (pool-rented or new); squeezed views materialize a scaled copy instead, so inputs are never written. Bit-identical to a trailing scalar Mul: same product, same single rounding per element.</remarks>
+    public static OpResult MatMulScaled(ITensor? A, ITensor? B, float scale, ExecutionOptions? options, TensorBufferPool? pool)
+    {
+        var op = OpType.MatMul;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        if (A.ElementType != TensorElementType.Float)
+        {
+            return WrongInputType(op, nameof(A), "Fused MatMul scale supports float32.", A);
+        }
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        var y = Tensor<float>.MatMul(SpeedDensify((Tensor<float>)A, opts), SpeedDensify((Tensor<float>)B, opts), opts.Tensor, pool);
+        if (scale == 1f) return Success(op, y);
+        if (y is DenseTensor<float> dense)
+        {
+            var span = dense.Buffer.Span;
+            for (int i = 0; i < span.Length; i++) span[i] *= scale;
+            return Success(op, y);
+        }
+        var copy = y.ToDenseTensor();
+        var cspan = copy.Buffer.Span;
+        for (int i = 0; i < cspan.Length; i++) cspan[i] *= scale;
+        return Success(op, copy);
+    }
+
     static Tensor<T> SpeedDensify<T>(Tensor<T> t, ExecutionOptions opts) where T : unmanaged
     {
         // Speed mode densifies operands up front (views materialize here,

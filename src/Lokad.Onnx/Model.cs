@@ -54,8 +54,10 @@ public class Model
         int geluTanh = GraphFusion.FuseGeluTanhPatterns(graph);
         int convRelu = GraphFusion.FuseConvReluPatterns(graph);
         int sigmoidMul = GraphFusion.FuseSigmoidMulPatterns(graph);
+        int matMulScale = GraphFusion.FuseMatMulScalePatterns(graph);
         if (convRelu > 0) Info("Fused {c} Conv+Relu pairs with a fused epilogue.", convRelu);
         if (sigmoidMul > 0) Info("Fused {c} Sigmoid+Mul pairs with a fused epilogue.", sigmoidMul);
+        if (matMulScale > 0) Info("Fused {c} MatMul+scale pairs with a fused scale epilogue.", matMulScale);
         if (geluTanh > 0) Info("Fused {c} tanh-approx GELU patterns into native nodes.", geluTanh);
         if (gelu > 0) Info("Fused {c} exact-GELU patterns into native nodes.", gelu);
         graph.Prepare();
