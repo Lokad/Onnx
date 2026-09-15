@@ -1187,6 +1187,7 @@ public class ComputationalGraph
         GraphConstants.FoldLiteralConstants(this);
         GraphConstants.RevalidateFoldedComputations(this);
         GraphConstants.FoldComputedConstants(this);
+        GraphConstants.FoldBranchConstants(this);
         FoldConstantTransposes();
         GraphPacking.PackMatMulWeights(this);
         GraphPacking.PrepareLstmWeights(this);

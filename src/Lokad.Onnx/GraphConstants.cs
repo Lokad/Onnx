@@ -168,28 +168,64 @@ internal static class GraphConstants
     /// </summary>
     internal static void RevalidateFoldedComputations(ComputationalGraph graph)
     {
-        if (graph.FoldedComputations.Count == 0) return;
-        foreach (var rec in graph.FoldedComputations.Values)
+        RevalidateLevel(graph, new List<ComputationalGraph>(), graph);
+    }
+
+    /// <summary>Revalidates one level with ancestor-aware source checks, then recurses into nested branch graphs. Returns false after triggering a full recursive rebuild from the validation root, so every frame unwinds without touching reset collections.</summary>
+    static bool RevalidateLevel(ComputationalGraph graph, List<ComputationalGraph> ancestors, ComputationalGraph root)
+    {
+        if (graph.FoldedComputations.Count > 0)
         {
-            if (!graph.Initializers.TryGetValue(rec.Output, out var cur) || !ReferenceEquals(cur, rec.Value))
+            foreach (var rec in graph.FoldedComputations.Values)
             {
-                RebuildFoldedComputations(graph);
-                return;
-            }
-            foreach (var source in rec.Sources)
-            {
-                if (!graph.Initializers.TryGetValue(source.Name, out var init) || !ReferenceEquals(init, source.Ref) || init.Length != source.Length)
+                if (!graph.Initializers.TryGetValue(rec.Output, out var cur) || !ReferenceEquals(cur, rec.Value))
                 {
-                    RebuildFoldedComputations(graph);
-                    return;
+                    RebuildFoldedComputations(root);
+                    return false;
+                }
+                foreach (var source in rec.Sources)
+                {
+                    if (!BranchSourceCurrent(graph, ancestors, source))
+                    {
+                        RebuildFoldedComputations(root);
+                        return false;
+                    }
                 }
             }
         }
+        foreach (var node in graph.Nodes)
+        {
+            if (node.Attributes is null) continue;
+            foreach (var value in node.Attributes.Values)
+            {
+                if (value is not ComputationalGraph branch) continue;
+                ancestors.Add(graph);
+                bool ok;
+                try
+                {
+                    ok = RevalidateLevel(branch, ancestors, root);
+                }
+                finally
+                {
+                    ancestors.RemoveAt(ancestors.Count - 1);
+                }
+                if (!ok) return false;
+            }
+        }
+        return true;
     }
 
     /// <summary>Restores removed blueprint nodes in recorded order and drops tracked folded values, returning the graph to its unfolded structure.</summary>
     internal static void RebuildFoldedComputations(ComputationalGraph graph)
     {
+        foreach (var node in graph.Nodes)
+        {
+            if (node.Attributes is null) continue;
+            foreach (var value in node.Attributes.Values)
+            {
+                if (value is ComputationalGraph branch) RebuildFoldedComputations(branch);
+            }
+        }
         if (graph.FoldedComputations.Count == 0) return;
         var recs = new List<FoldedComputation>(graph.FoldedComputations.Values);
         recs.Sort((a, b) => a.Index.CompareTo(b.Index));
@@ -206,4 +242,98 @@ internal static class GraphConstants
         }
     }
 
+
+    /// <summary>
+    /// Folds constants inside If-branch subgraphs (M3): branch-literal Constants
+    /// become branch initializers and branch-computed chains evaluate once at
+    /// preparation, mirroring the top-level folds. Outer-scope initializers are
+    /// visible as fold inputs through temporary borrowed references (removed
+    /// afterwards); user-overridable names (any Inputs map on the chain) and
+    /// branch-produced names never borrow. Returns the total folded nodes.
+    /// </summary>
+    internal static int FoldBranchConstants(ComputationalGraph graph)
+    {
+        return FoldBranchLevel(graph, new List<ComputationalGraph>());
+    }
+
+    static int FoldBranchLevel(ComputationalGraph parent, List<ComputationalGraph> ancestors)
+    {
+        int total = 0;
+        foreach (var node in parent.Nodes)
+        {
+            if (node.Attributes is null) continue;
+            foreach (var value in node.Attributes.Values)
+            {
+                if (value is not ComputationalGraph branch) continue;
+                ancestors.Add(parent);
+                try
+                {
+                    var borrowed = BorrowOuterInitializers(branch, ancestors);
+                    try
+                    {
+                        total += FoldLiteralConstants(branch);
+                        total += FoldComputedConstants(branch);
+                    }
+                    finally
+                    {
+                        foreach (var name in borrowed) branch.Initializers.Remove(name);
+                    }
+                    total += FoldBranchLevel(branch, ancestors);
+                }
+                finally
+                {
+                    ancestors.RemoveAt(ancestors.Count - 1);
+                }
+            }
+        }
+        return total;
+    }
+
+    /// <summary>
+    /// Exposes outer-scope initializers inside a branch for fold evaluation.
+    /// Nearer scopes win; branch-owned names, branch-produced names, declared
+    /// branch inputs, and any user-overridable name on the ancestor chain keep
+    /// their existing meaning. Returns the borrowed names so the caller can
+    /// remove them after folding; folded values themselves stay branch-owned.
+    /// </summary>
+    static List<string> BorrowOuterInitializers(ComputationalGraph branch, List<ComputationalGraph> ancestors)
+    {
+        var chain = ancestors;
+        var forbidden = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var scope in chain)
+            foreach (var key in scope.Inputs.Keys)
+                forbidden.Add(key);
+        foreach (var key in branch.Inputs.Keys)
+            forbidden.Add(key);
+        foreach (var bn in branch.Nodes)
+        {
+            if (bn.Outputs is null) continue;
+            foreach (var o in bn.Outputs)
+                if (!string.IsNullOrEmpty(o)) forbidden.Add(o);
+        }
+        var borrowed = new List<string>();
+        for (int i = chain.Count - 1; i >= 0; i--)
+        {
+            foreach (var kv in chain[i].Initializers)
+            {
+                if (forbidden.Contains(kv.Key) || branch.Initializers.ContainsKey(kv.Key)) continue;
+                branch.Initializers[kv.Key] = kv.Value;
+                borrowed.Add(kv.Key);
+            }
+        }
+        return borrowed;
+    }
+
+    static bool BranchSourceCurrent(ComputationalGraph branch, List<ComputationalGraph> ancestors, (string Name, ITensor Ref, long Length) source)
+    {
+        if (branch.Initializers.TryGetValue(source.Name, out var own))
+            return ReferenceEquals(own, source.Ref) && own.Length == source.Length;
+        for (int i = ancestors.Count - 1; i >= 0; i--)
+        {
+            if (ancestors[i].Inputs.ContainsKey(source.Name)) return false;
+            if (ancestors[i].Initializers.TryGetValue(source.Name, out var outer))
+                return ReferenceEquals(outer, source.Ref) && outer.Length == source.Length;
+        }
+        return false;
+    }
 }

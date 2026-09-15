@@ -103,13 +103,14 @@ public class GraphExecutionSegmentationTests
     {
         // Tripwire against first-fixture specialization: the imported If
         // must carry both executable branch graphs (single-Conv then path,
-        // 34-node chunked else path) with their outer captures available.
+        // 11-node chunked else path after 17 literal plus 6 computed branch
+        // folds) with their outer captures available.
         var graph = ModelFixture.LoadRequiredModel("PyannoteSegmentation", "models", "speaker-diarization-community-1", "onnx", "segmentation", "model.onnx");
         var node = graph.Nodes.First(n => n.Op == OpType.If);
         Assert.True(node.Attributes!.TryGetValue("then_branch", out var then) && then is ComputationalGraph);
         Assert.True(node.Attributes!.TryGetValue("else_branch", out var els) && els is ComputationalGraph);
         Assert.Equal(1, ((ComputationalGraph)then).Nodes.Count);
-        Assert.Equal(34, ((ComputationalGraph)els).Nodes.Count);
+        Assert.Equal(11, ((ComputationalGraph)els).Nodes.Count);
     }
 
     // Minimal test-local RIFF reader for 16 kHz mono PCM16 fixtures.
