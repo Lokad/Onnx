@@ -722,12 +722,22 @@ where T : unmanaged
             rest = rem;
             // Never leave a single row: rem 9 drains to 6+3 through the peel
             // below instead of 8+1, which no kernel covers.
+            // The 8-row kernel loops its groups tile-major inside one call, so emit
+            // the whole 8-row region as a single call: separate M=8 calls would
+            // re-sweep the full packed panel once per call, while one call streams
+            // each tile once for all its groups. Grouping decisions are unchanged,
+            // so per-element arithmetic and order match bit for bit.
+            int eightTotal = 0;
             while (rest >= 8 && rest != 9)
             {
-                mm_unsafe_vectorized_avx512_8x32packed(8, n, k, xr, packed, dr);
-                xr += 8 * n;
-                dr += 8 * k;
+                eightTotal += 8;
                 rest -= 8;
+            }
+            if (eightTotal > 0)
+            {
+                mm_unsafe_vectorized_avx512_8x32packed(eightTotal, n, k, xr, packed, dr);
+                xr += eightTotal * n;
+                dr += eightTotal * k;
             }
             if (rest >= 6 && rest != 7)
             {
