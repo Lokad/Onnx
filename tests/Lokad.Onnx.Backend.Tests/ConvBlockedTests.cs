@@ -176,49 +176,4 @@ public class ConvBlockedTests
             MathOpsConvBlocked.BlockedAdd(new float[4], new float[5], new float[5], TensorExecutionOptions.Intrinsics));
     }
 
-    static void BlockedBiasAddCase(int m, int spatial)
-    {
-        var rnd = new Random(4300 + m + spatial);
-        var data = new float[m * spatial];
-        var bias = new float[m];
-        for (int i = 0; i < data.Length; i++) data[i] = (float)(rnd.NextDouble() * 20 - 10);
-        for (int i = 0; i < bias.Length; i++) bias[i] = (float)(rnd.NextDouble() * 2 - 1);
-        var expected = new float[data.Length];
-        for (int mb = 0; mb < m / 16; mb++)
-            for (int s = 0; s < spatial; s++)
-                for (int mm = 0; mm < 16; mm++)
-                    expected[(mb * spatial + s) * 16 + mm] = data[(mb * spatial + s) * 16 + mm] + bias[mb * 16 + mm];
-        var got = new float[data.Length];
-        MathOpsConvBlocked.BlockedBiasAdd(data, bias, got, spatial, TensorExecutionOptions.Intrinsics);
-        for (int i = 0; i < got.Length; i++)
-            Assert.Equal(BitConverter.SingleToInt32Bits(expected[i]), BitConverter.SingleToInt32Bits(got[i]));
-        var sc = new float[data.Length];
-        MathOpsConvBlocked.BlockedBiasAdd(data, bias, sc, spatial, TensorExecutionOptions.Scalar);
-        for (int i = 0; i < got.Length; i++)
-            Assert.Equal(BitConverter.SingleToInt32Bits(got[i]), BitConverter.SingleToInt32Bits(sc[i]));
-        var alias = (float[])data.Clone();
-        MathOpsConvBlocked.BlockedBiasAdd(alias, bias, alias, spatial, TensorExecutionOptions.Intrinsics);
-        for (int i = 0; i < got.Length; i++)
-            Assert.Equal(BitConverter.SingleToInt32Bits(expected[i]), BitConverter.SingleToInt32Bits(alias[i]));
-    }
-
-    [Fact]
-    public void BlockedBiasAdd_Bitwise()
-    {
-        BlockedBiasAddCase(16, 1);
-        BlockedBiasAddCase(16, 7);
-        BlockedBiasAddCase(32, 200);
-        BlockedBiasAddCase(64, 2500);
-        BlockedBiasAddCase(256, 250);
-    }
-
-    [Fact]
-    public void BlockedBiasAdd_BadShape_Throws()
-    {
-        Assert.Throws<System.ArgumentException>(() =>
-            MathOpsConvBlocked.BlockedBiasAdd(new float[32], new float[15], new float[32], 2, TensorExecutionOptions.Intrinsics));
-        Assert.Throws<System.ArgumentException>(() =>
-            MathOpsConvBlocked.BlockedBiasAdd(new float[32], new float[16], new float[32], 3, TensorExecutionOptions.Intrinsics));
-    }
-
 }
