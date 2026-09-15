@@ -30,6 +30,17 @@ static class P07ScaleTwin
         return c;
     }
 
+    // Broadcast-load candidate: scalar multiply per element (mulss shape),
+    // then consumed via broadcast - mirrors the packed/unpacked kernel
+    // A-load idiom (Vector256.Create(Ap[j]*s)). Must equal the vector-lane
+    // Mul output bit-for-bit, including NaN payloads on either side.
+    static float[] ScaledLoadBroadcast(float[] a, float s)
+    {
+        var c = new float[a.Length];
+        for (int i = 0; i < a.Length; i++) c[i] = a[i] * s;
+        return c;
+    }
+
     static int CheckTwin(string name, float[] a, float s, bool useSimd, bool rankZeroScale)
     {
         var opts = useSimd ? TensorExecutionOptions.Simd : TensorExecutionOptions.Scalar;
@@ -39,6 +50,8 @@ static class P07ScaleTwin
         float[] r = refer.ToDenseTensor().Buffer.ToArray();
         float[] cand = ScaledLoad(a, s, useSimd && Vector.IsHardwareAccelerated);
         bool bit = r.AsSpan().SequenceEqual(cand);
+        float[] bcand = ScaledLoadBroadcast(a, s);
+        bool bitB = r.AsSpan().SequenceEqual(bcand);
         double worst = 0;
         for (int i = 0; i < r.Length; i++)
         {
@@ -46,8 +59,8 @@ static class P07ScaleTwin
             double d = Math.Abs(r[i] - cand[i]) / (1.0 + Math.Abs(cand[i]));
             if (d > worst) worst = d;
         }
-        bool ok = bit;
-        Console.WriteLine("case " + name + " simd=" + (useSimd && Vector.IsHardwareAccelerated) + " scaleRank=" + (rankZeroScale ? "0" : "1") + " maxScaled=" + worst.ToString("E2") + " bitwise=" + bit + (ok ? " PASS" : " FAIL"));
+        bool ok = bit && bitB;
+        Console.WriteLine("case " + name + " simd=" + (useSimd && Vector.IsHardwareAccelerated) + " scaleRank=" + (rankZeroScale ? "0" : "1") + " maxScaled=" + worst.ToString("E2") + " bitwise=" + bit + " bitwiseBcast=" + bitB + (ok ? " PASS" : " FAIL"));
         return ok ? 0 : 1;
     }
 
@@ -90,7 +103,7 @@ static class P07ScaleTwin
         int rc = 0;
         var rnd = new Random(31);
         int[] lens = new int[] { 201 * 384, 7 * 13, 201 * 65, 1, 8, 9, 384, 201 * 384 + 3 };
-        float[] scales = new float[] { 0.125f, 1.0f, -2.5f, 1e-30f, 1e30f, float.PositiveInfinity, -0.0f };
+        float[] scales = new float[] { 0.125f, 1.0f, -2.5f, 1e-30f, 1e30f, float.PositiveInfinity, float.NegativeInfinity, float.NaN, BitConverter.Int32BitsToSingle(0x7FC00001), -0.0f };
         foreach (int len in lens)
             foreach (float s in scales)
                 foreach (int kind in new int[] { 0, 1, 2, 3 })
