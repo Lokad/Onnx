@@ -193,6 +193,9 @@ public partial class CPUExecutionProvider
         var xGather = new float[seq * inputSize];
         var xwBuf = new float[seq * 4 * H];
         var hrBuf = new float[4 * H];
+        // Scratch for the vector-gate fast path below: holds cNew per step
+        // while its tanh leg runs in place (cv keeps the pre-tanh cell).
+        var cNewBuf = new float[H];
         ReadOnlySpan<float> bs = bd is null ? default : bd.Buffer.Span;
         ReadOnlySpan<float> ps = pd is null ? default : pd.Buffer.Span;
         for (int d = 0; d < numDirections; d++)
@@ -205,6 +208,16 @@ public partial class CPUExecutionProvider
             var fAct = gateF[d];
             var gAct = gateG[d];
             var hAct = gateH[d];
+            // Vector-activation fast path: the default Sigmoid/Tanh/Tanh trio
+            // with no clip, no peephole, and no coupled gates computes the same
+            // pre-activations as the scalar nest, so the four gate projections
+            // run through the shared vector-exp spans instead of scalar libm.
+            // Scalar modes and non-default configurations keep the nest below.
+            bool fastGates = pd is null && clip is null && !inputForget
+                && tensorOpts.UseSimd && tensorOpts.UseIntrinsics
+                && acts[3 * d].Equals("Sigmoid", StringComparison.OrdinalIgnoreCase)
+                && acts[3 * d + 1].Equals("Tanh", StringComparison.OrdinalIgnoreCase)
+                && acts[3 * d + 2].Equals("Tanh", StringComparison.OrdinalIgnoreCase);
             for (int b = 0; b < batch; b++)
             {
                 int limit = lens is null ? seq : Math.Min(lens[b], seq);
@@ -266,7 +279,46 @@ public partial class CPUExecutionProvider
                             MathOps.RowDot4(hv, rs.Slice(rDir + h * H, H), rs.Slice(rDir + (H + h) * H, H), rs.Slice(rDir + (2 * H + h) * H, H), rs.Slice(rDir + (3 * H + h) * H, H), out hrBuf[h], out hrBuf[H + h], out hrBuf[2 * H + h], out hrBuf[3 * H + h], tensorOpts);
                         }
                     }
-                    for (int h = 0; h < H; h++)
+                    if (fastGates)
+                    {
+                        // Fuse the input/recurrent projections plus both biases
+                        // into the hrBuf quads. Float addition commutes, so these
+                        // sums match the scalar order bit for bit; only the
+                        // sigmoid/tanh evaluations differ, within 1e-6 scaled.
+                        for (int h = 0; h < H; h++)
+                        {
+                            float wbI = bd is null ? 0f : bs[bDir + h];
+                            float wbO = bd is null ? 0f : bs[bDir + H + h];
+                            float wbF = bd is null ? 0f : bs[bDir + 2 * H + h];
+                            float wbC = bd is null ? 0f : bs[bDir + 3 * H + h];
+                            float rbI = bd is null ? 0f : bs[bDir + 4 * H + h];
+                            float rbO = bd is null ? 0f : bs[bDir + 5 * H + h];
+                            float rbF = bd is null ? 0f : bs[bDir + 6 * H + h];
+                            float rbC = bd is null ? 0f : bs[bDir + 7 * H + h];
+                            hrBuf[h] += xwBuf[xwBase + h] + wbI + rbI;
+                            hrBuf[H + h] += xwBuf[xwBase + H + h] + wbO + rbO;
+                            hrBuf[2 * H + h] += xwBuf[xwBase + 2 * H + h] + wbF + rbF;
+                            hrBuf[3 * H + h] += xwBuf[xwBase + 3 * H + h] + wbC + rbC;
+                        }
+                        MathOps.SigmoidSpan(hrBuf.AsSpan(0, H), hrBuf.AsSpan(0, H));
+                        MathOps.SigmoidSpan(hrBuf.AsSpan(H, H), hrBuf.AsSpan(H, H));
+                        MathOps.SigmoidSpan(hrBuf.AsSpan(2 * H, H), hrBuf.AsSpan(2 * H, H));
+                        MathOps.TanhSpan(hrBuf.AsSpan(3 * H, H), hrBuf.AsSpan(3 * H, H));
+                        for (int h = 0; h < H; h++)
+                        {
+                            float cNew = hrBuf[2 * H + h] * cv[h] + hrBuf[h] * hrBuf[3 * H + h];
+                            cv[h] = cNew;
+                            cNewBuf[h] = cNew;
+                        }
+                        MathOps.TanhSpan(cNewBuf.AsSpan(0, H), cNewBuf.AsSpan(0, H));
+                        for (int h = 0; h < H; h++)
+                        {
+                            float hNew = hrBuf[H + h] * cNewBuf[h];
+                            hv[h] = hNew;
+                            yArr[yOff + h] = hNew;
+                        }
+                    }
+                    else for (int h = 0; h < H; h++)
                     {
                         float wbI = bd is null ? 0f : bs[bDir + h];
                         float wbO = bd is null ? 0f : bs[bDir + H + h];

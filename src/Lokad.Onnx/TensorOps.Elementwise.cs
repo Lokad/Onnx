@@ -739,6 +739,38 @@ where T : unmanaged
             for (; i < n; i++) d[i] = s[i] <= 0.0 ? (s[i] == 0.0 ? s[i] : 0.0) : s[i];
         }
     }
+    // Scalar logistic sigmoid: 1/(1+exp(-v)); NaN propagates and tails saturate like ORT.
+    public static Tensor<float> Sigmoid(Tensor<float> x) => x.Apply(v => 1f / (1f + MathF.Exp(-v)));
+    /// <summary>Float Sigmoid honoring execution options: dense standard inputs run the shared vector-exp span path when SIMD with x86 intrinsics is enabled, everything else keeps the scalar contract.</summary>
+    public static Tensor<float> Sigmoid(Tensor<float> x, TensorExecutionOptions options)
+    {
+        var dx = x.ToDenseTensor();
+        if (options.UseSimd && options.UseIntrinsics && Avx.IsSupported && Avx2.IsSupported && Fma.IsSupported
+            && dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
+        {
+            var output = DenseTensor<float>.OfShape(own.Dimensions.ToArray());
+            MathOps.SigmoidSpan(own.Buffer.Span, output.Buffer.Span);
+            return output;
+        }
+        return Sigmoid(x);
+    }
+
+    // Scalar hyperbolic tangent; matches MathF.Tanh on every input including NaN and infinities.
+    public static Tensor<float> Tanh(Tensor<float> x) => x.Apply(MathF.Tanh);
+    /// <summary>Float Tanh honoring execution options: dense standard inputs run the shared vector-exp span path when SIMD with x86 intrinsics is enabled, everything else keeps the scalar contract.</summary>
+    public static Tensor<float> Tanh(Tensor<float> x, TensorExecutionOptions options)
+    {
+        var dx = x.ToDenseTensor();
+        if (options.UseSimd && options.UseIntrinsics && Avx.IsSupported && Avx2.IsSupported && Fma.IsSupported
+            && dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
+        {
+            var output = DenseTensor<float>.OfShape(own.Dimensions.ToArray());
+            MathOps.TanhSpan(own.Buffer.Span, output.Buffer.Span);
+            return output;
+        }
+        return Tanh(x);
+    }
+
     public static Tensor<sbyte> Relu(Tensor<sbyte> x) => x.Apply(l => l >= 0 ? l : (sbyte)0);
     public static Tensor<int> Relu(Tensor<int> x) => x.Apply(l => l >= 0 ? l : 0);
 

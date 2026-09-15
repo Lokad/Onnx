@@ -506,18 +506,10 @@ public partial class CPUExecutionProvider
     {
         var op = OpType.Tanh;
         if (X is null) return MissingInput(op, nameof(X));
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         switch (X.ElementType)
         {
-            case TensorElementType.Float:
-            {
-                var x = ((Tensor<float>)X).ToDenseTensor();
-                var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
-                var xs = x.Buffer.Span;
-                var ys = y.Buffer.Span;
-                for (int i = 0; i < xs.Length; i++) ys[i] = MathF.Tanh(xs[i]);
-                return Success(op, y);
-            }
+            case TensorElementType.Float: return Success(op, Tensor<float>.Tanh((Tensor<float>)X, opts.Tensor));
             case TensorElementType.Double:
             {
                 var x = ((Tensor<double>)X).ToDenseTensor();
@@ -535,19 +527,11 @@ public partial class CPUExecutionProvider
     {
         var op = OpType.Sigmoid;
         if (X is null) return MissingInput(op, nameof(X));
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         Profiler.StartOpStage(OpStage.Math);
         switch (X.ElementType)
         {
-            case TensorElementType.Float:
-            {
-                var x = ((Tensor<float>)X).ToDenseTensor();
-                var y = DenseTensor<float>.OfShape(x.Dimensions.ToArray());
-                var xs = x.Buffer.Span;
-                var ys = y.Buffer.Span;
-                for (int i = 0; i < xs.Length; i++) ys[i] = 1f / (1f + MathF.Exp(-xs[i]));
-                return Success(op, y);
-            }
+            case TensorElementType.Float: return Success(op, Tensor<float>.Sigmoid((Tensor<float>)X, opts.Tensor));
             case TensorElementType.Double:
             {
                 var x = ((Tensor<double>)X).ToDenseTensor();
