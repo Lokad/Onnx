@@ -33,6 +33,9 @@ public class ComputationalGraph
     internal Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
     /// <summary>Prepared transposed LSTM weight clones by source initializer array.</summary>
     internal Dictionary<float[], PreparedLstmTranspose> LstmTransposes = new Dictionary<float[], PreparedLstmTranspose>();
+    internal Dictionary<string, GraphConstants.FoldedComputation> FoldedComputations = new Dictionary<string, GraphConstants.FoldedComputation>(StringComparer.Ordinal);
+    /// <summary>Live computed-constant folds from the last preparation.</summary>
+    public int FoldedComputationCount => FoldedComputations.Count;
 
     /// <summary>Prepared packing inventory: live clone count, retained clone bytes, and counts by shape.</summary>
     public PackedWeightsReport PackingReport { get; internal set; } = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>(), 0);
@@ -190,6 +193,7 @@ public class ComputationalGraph
                         Initializers.Remove(prep.Transposed.Name);
                 }
                 LstmTransposes.Clear();
+                GraphConstants.RebuildFoldedComputations(this);
             }
         }
     }
@@ -1170,6 +1174,8 @@ public class ComputationalGraph
     public void RefreshLifetimeAnalysis()
     {
         GraphConstants.FoldLiteralConstants(this);
+        GraphConstants.RevalidateFoldedComputations(this);
+        GraphConstants.FoldComputedConstants(this);
         FoldConstantTransposes();
         GraphPacking.PackMatMulWeights(this);
         GraphPacking.PrepareLstmWeights(this);
