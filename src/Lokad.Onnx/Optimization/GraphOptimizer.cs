@@ -41,7 +41,7 @@ internal static class GraphOptimizer
 
     public sealed class PassChange
     {
-        public PassChange(string pass, int rewritten, List<int> nodes, List<string> notes, TimeSpan elapsed = default)
+        public PassChange(string pass, int rewritten, List<int> nodes, List<string> notes, TimeSpan elapsed)
         {
             Pass = pass;
             Rewritten = rewritten;
