@@ -905,6 +905,160 @@ namespace Lokad.Onnx
             return fused;
         }
 
+        /// <summary>
+        /// Fuses Conv followed by a residual Add and a single-consumer Relu into the
+        /// convolution node with the skip tensor as a fourth input (M5 tiled-path
+        /// epilogues): the provider adds the residual and applies Relu in one pass over
+        /// the owned convolution output, so the triple costs one tensor instead of three
+        /// and matches the unfused chain bit for bit (same add order and max, including
+        /// signed zero and NaN). Only rank-4 float convolutions take part; the fused node
+        /// is emitted at the Add position so it executes after both the convolution path
+        /// and the skip producer. Graph outputs on any of the three values veto fusion,
+        /// as do multi-consumer links and custom domains. Chained residuals resolve
+        /// through the remap at rebuild, so every kept input edge is rewritten.
+        /// </summary>
+        public static int FuseConvAddReluPatterns(ComputationalGraph graph)
+        {
+            var idx = BuildIndex(graph);
+            var producer = idx.Producer;
+            var consumers = idx.Consumers;
+            var outputs = idx.Outputs;
+
+            var drop = new HashSet<int>();
+            var fusedAt = new Dictionary<int, Node>();
+            var remap = new Dictionary<string, string>(StringComparer.Ordinal);
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.Relu) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchConvAddRelu(graph, producer, consumers, outputs, drop, i, out int convIndex, out int addIndex, out string convOut, out string reluOut, out string skipRaw))
+                {
+                    var conv = graph.Nodes[convIndex];
+                    string b = conv.Inputs.Length >= 3 ? conv.Inputs[2] : "";
+                    var fusedNode = new Node
+                    {
+                        Name = conv.Name,
+                        ID = conv.ID,
+                        Attributes = conv.Attributes,
+                        Op = conv.Op,
+                        OpTypeName = conv.OpTypeName,
+                        Domain = conv.Domain,
+                        OpsetVersion = conv.OpsetVersion,
+                        IsFused = true,
+                        Inputs = new[] { conv.Inputs[0], conv.Inputs[1], b, skipRaw },
+                        Outputs = new[] { convOut },
+                    };
+                    fusedAt[addIndex] = fusedNode;
+                    drop.Add(convIndex);
+                    drop.Add(addIndex);
+                    drop.Add(i);
+                    remap[graph.Nodes[addIndex].Outputs[0]] = convOut;
+                    remap[reluOut] = convOut;
+                    fused++;
+                }
+            }
+
+            if (drop.Count == 0) return 0;
+            string Resolve(string name)
+            {
+                string current = name;
+                int guard = 0;
+                while (remap.TryGetValue(current, out var next) && guard < 8)
+                {
+                    current = next;
+                    guard++;
+                }
+                return current;
+            }
+            var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (fusedAt.TryGetValue(i, out var fusedNode))
+                {
+                    fusedNode.Inputs = fusedNode.Inputs.Select(Resolve).ToArray();
+                    kept.Add(fusedNode);
+                }
+                if (drop.Contains(i)) continue;
+                var n = graph.Nodes[i];
+                n.Inputs = n.Inputs.Select(Resolve).ToArray();
+                kept.Add(n);
+            }
+            graph.Nodes.Clear();
+            graph.Nodes.AddRange(kept);
+            return fused;
+        }
+
+        static bool TryMatchConvAddRelu(
+            ComputationalGraph graph,
+            Dictionary<string, int> producer,
+            Dictionary<string, List<int>> consumers,
+            HashSet<string> outputs,
+            HashSet<int> drop,
+            int reluIndex,
+            out int convIndex,
+            out int addIndex,
+            out string convOut,
+            out string reluOut,
+            out string skip)
+        {
+            convIndex = -1;
+            addIndex = -1;
+            convOut = "";
+            reluOut = "";
+            skip = "";
+            var relu = graph.Nodes[reluIndex];
+            if (!IsFusableParticipant(relu)) return false;
+            if (relu.Inputs.Length != 1 || relu.Outputs.Length != 1) return false;
+            string addOut = relu.Inputs[0];
+            reluOut = relu.Outputs[0];
+            if (string.IsNullOrEmpty(addOut) || string.IsNullOrEmpty(reluOut)) return false;
+            if (outputs.Contains(reluOut) || outputs.Contains(addOut)) return false;
+            if (!producer.TryGetValue(addOut, out int ai) || drop.Contains(ai)) return false;
+            var add = graph.Nodes[ai];
+            if (add.Op != OpType.Add || !IsFusableParticipant(add)) return false;
+            if (add.Inputs.Length != 2 || add.Outputs.Length != 1 || add.Outputs[0] != addOut) return false;
+            if (!consumers.TryGetValue(addOut, out var addUses)) return false;
+            int addLive = 0;
+            foreach (var u in addUses) if (!drop.Contains(u)) addLive++;
+            if (addLive != 1) return false;
+            string a0 = add.Inputs[0];
+            string a1 = add.Inputs[1];
+            if (string.IsNullOrEmpty(a0) || string.IsNullOrEmpty(a1)) return false;
+            string candidate = "";
+            if (producer.TryGetValue(a0, out int c0) && !drop.Contains(c0) && graph.Nodes[c0].Op == OpType.Conv)
+            {
+                candidate = a0;
+                skip = a1;
+                convIndex = c0;
+            }
+            else if (producer.TryGetValue(a1, out int c1) && !drop.Contains(c1) && graph.Nodes[c1].Op == OpType.Conv)
+            {
+                candidate = a1;
+                skip = a0;
+                convIndex = c1;
+            }
+            else return false;
+            var conv = graph.Nodes[convIndex];
+            if (!IsFusableParticipant(conv)) return false;
+            if (conv.Outputs.Length != 1 || conv.Outputs[0] != candidate) return false;
+            convOut = candidate;
+            if (outputs.Contains(convOut)) return false;
+            if (!consumers.TryGetValue(convOut, out var convUses)) return false;
+            int convLive = 0;
+            foreach (var u in convUses) if (!drop.Contains(u)) convLive++;
+            if (convLive != 1) return false;
+            if (conv.Inputs.Length < 2 || conv.Inputs.Length > 3) return false;
+            if (string.IsNullOrEmpty(conv.Inputs[0]) || string.IsNullOrEmpty(conv.Inputs[1])) return false;
+            if (!graph.Initializers.TryGetValue(conv.Inputs[1], out var w)) return false;
+            if (w.Rank != 4) return false;
+            if (string.IsNullOrEmpty(skip)) return false;
+            if (!IsProvenFloat(graph, producer, skip)) return false;
+            addIndex = ai;
+            return true;
+        }
+
         static bool TryMatchConvRelu(
             ComputationalGraph graph,
             Dictionary<string, int> producer,

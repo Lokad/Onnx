@@ -41,7 +41,7 @@ public static class OperatorSchemas
         [OpType.Sub] = Def(OpType.Sub, 2, 2),
         [OpType.Mul] = Def(OpType.Mul, 2, 2),
         [OpType.Pow] = Def(OpType.Pow, 2, 2),
-        [OpType.Conv] = Def(OpType.Conv, 2, 3),
+        [OpType.Conv] = Def(OpType.Conv, 2, 4), // 4th input is the internal fused residual set only by FuseConvAddReluPatterns, never by the importer.
         [OpType.Relu] = Def(OpType.Relu, 1, 1),
         [OpType.MaxPool] = Def(OpType.MaxPool, 1, 1),
         [OpType.MatMul] = Def(OpType.MatMul, 2, 2),

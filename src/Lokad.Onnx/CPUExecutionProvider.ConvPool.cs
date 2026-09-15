@@ -4,6 +4,9 @@ namespace Lokad.Onnx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 
 using static OpResult;
 public partial class CPUExecutionProvider
@@ -17,6 +20,110 @@ public partial class CPUExecutionProvider
     /// <summary>2D convolution with a fused ReLU epilogue for graph-fused Conv+Relu pairs.</summary>
     public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, bool fuseRelu) =>
         ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, fuseRelu);
+    /// <summary>2D convolution with a fused residual Add and trailing Relu for graph-fused Conv+Add+Relu triples.</summary>
+    /// <remarks>The residual tensor rides as a fourth node input so lifetime analysis
+    /// keeps the skip value alive; the plain convolution runs first and the residual
+    /// plus Relu apply as one in-place pass over the owned output (bit-identical to the
+    /// unfused chain). Overlapping or non-array storage, shape mismatch, and non-float
+    /// dtypes fall back to separate broadcast-capable Add and Relu passes.</remarks>
+    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, ITensor? residual, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, TensorBufferPool? pool) =>
+        ConvCoreResidual(X, W, B, residual, auto_pad, dilations, group, kernel_shape, pads, strides, options, pool);
+
+    static OpResult ConvCoreResidual(ITensor? X, ITensor? W, ITensor? B, ITensor? residual, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, TensorBufferPool? pool)
+    {
+        var plain = ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, false);
+        if (plain.Status != OpStatus.Success) return plain;
+        if (residual is null) return plain;
+        var convOut = plain.Outputs[0];
+        if (convOut is DenseTensor<float> convDense && residual is DenseTensor<float> residualDense)
+        {
+            var dst = convDense.Buffer;
+            var src = residualDense.Buffer;
+            if (dst.Length == convDense.Length && src.Length == residualDense.Length && dst.Length == src.Length
+                && convDense.IsReversedStride == false && residualDense.IsReversedStride == false
+                && convDense.Strides.SequenceEqual(ArrayUtilities.GetStrides(convDense.Dimensions))
+                && residualDense.Strides.SequenceEqual(ArrayUtilities.GetStrides(residualDense.Dimensions))
+                && TryGetInPlaceSlices(dst, src, out var dSeg, out var sSeg) && dSeg.Array is not null && sSeg.Array is not null)
+            {
+                var opts = (options ?? ExecutionOptions.Default).Validated();
+                AddResidualReluInPlace(dSeg.Array, dSeg.Offset, sSeg.Array, sSeg.Offset, dst.Length, opts.Tensor);
+                return plain;
+            }
+        }
+        var added = Add(convOut, residual, options, pool);
+        if (added.Status != OpStatus.Success) return added;
+        return Relu(added.Outputs[0], options);
+    }
+
+    static bool TryGetInPlaceSlices(Memory<float> dst, Memory<float> src, out ArraySegment<float> dSeg, out ArraySegment<float> sSeg)
+    {
+        dSeg = default;
+        sSeg = default;
+        if (!MemoryMarshal.TryGetArray(dst, out dSeg) || dSeg.Array is null) return false;
+        if (!MemoryMarshal.TryGetArray(src, out sSeg) || sSeg.Array is null) return false;
+        if (ReferenceEquals(dSeg.Array, sSeg.Array))
+        {
+            int dEnd = dSeg.Offset + dSeg.Count;
+            int sEnd = sSeg.Offset + sSeg.Count;
+            if (dSeg.Offset < sEnd && sSeg.Offset < dEnd) return false;
+        }
+        return true;
+    }
+
+    static void AddResidualReluInPlace(float[] dst, int dOff, float[] src, int sOff, int n, TensorExecutionOptions tensorOpts)
+    {
+        unsafe
+        {
+            fixed (float* dBase = dst, sBase = src)
+            {
+                float* d = dBase + dOff;
+                float* s = sBase + sOff;
+                if (tensorOpts.UseSimd && tensorOpts.UseIntrinsics && Avx512F.IsSupported && Fma.IsSupported)
+                {
+                    var zero = Vector512<float>.Zero;
+                    int full = n & ~(Vector512<float>.Count - 1);
+                    int i = 0;
+                    for (; i < full; i += Vector512<float>.Count)
+                    {
+                        var v = Avx512F.Add(Vector512.LoadUnsafe(ref d[i]), Vector512.LoadUnsafe(ref s[i]));
+                        var keep = Vector512.GreaterThan(v, zero) | Vector512.Equals(v, zero) | ~Vector512.Equals(v, v);
+                        Vector512.ConditionalSelect(keep, v, zero).StoreUnsafe(ref d[i]);
+                    }
+                    for (; i < n; i++)
+                    {
+                        float v = d[i] + s[i];
+                        d[i] = v < 0f ? 0f : v;
+                    }
+                    return;
+                }
+                if (tensorOpts.UseSimd && tensorOpts.UseIntrinsics && Avx.IsSupported && Fma.IsSupported)
+                {
+                    var zero = Vector256<float>.Zero;
+                    int full = n & ~(Vector256<float>.Count - 1);
+                    int i = 0;
+                    for (; i < full; i += Vector256<float>.Count)
+                    {
+                        var v = Avx.Add(Vector256.LoadUnsafe(ref d[i]), Vector256.LoadUnsafe(ref s[i]));
+                        var keep = Vector256.GreaterThan(v, zero) | Vector256.Equals(v, zero) | ~Vector256.Equals(v, v);
+                        Vector256.ConditionalSelect(keep, v, zero).StoreUnsafe(ref d[i]);
+                    }
+                    for (; i < n; i++)
+                    {
+                        float v = d[i] + s[i];
+                        d[i] = v < 0f ? 0f : v;
+                    }
+                    return;
+                }
+                for (int i = 0; i < n; i++)
+                {
+                    float v = d[i] + s[i];
+                    d[i] = v < 0f ? 0f : v;
+                }
+            }
+        }
+    }
+
+
 
     private static OpResult ConvCore(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, bool fuseRelu)
     {
