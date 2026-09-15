@@ -493,22 +493,48 @@ of a second utterance the same way, and embedding-800 the first 800.
 
 The single-step decoder runs at near parity (1.2x) with zero and carried
 states alike, so the remaining bulk-grid gap sits in the joint shape,
-not the step machinery. Longer encoder audio scales sublinearly (around 2x at T=64 through T=256 against 2.6-2.7x at T=128), and the embedding backbone likewise (4.2x at 400 frames to 3.7x at 800). Reproduce with
+not the step machinery. Ratios at different input lengths are single-rep
+snapshots, not a scaling law: encoder reads 2.0x at T=64/256 against
+2.6-2.7x at T=128 and embedding 4.2x at 400 frames against 3.7x at 800 in
+one representative process each, with different fixtures across rows. Do
+not read sublinear scaling or a size trend into these rows; either claim
+needs repeated canonical-length campaigns. Reproduce with
 `dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding --mode auto --threads 1 --rows representative --cpu 4 --iters 33`.
 
-## Remaining work after 2026-09-15
+## Remaining work after 2026-09-15 (revised for the active parity campaign)
 
-Encoder parity (2.6-2.7x) is limited by large-matrix kernel efficiency
-against native 12-row kernels; reduction blocking, software prefetch,
-and pointer tuning were measured and rejected on full-workload
-evidence. The decoder bulk grid (1.7x) contrasts with single-step parity
-(1.2x): the joint shape, not per-step work, dominates. Segmentation
-(4.8-4.9x) is limited by small-matrix recurrent efficiency. Embedding
-(3.6-3.8x) still needs cross-layer blocked-channel layout with residual
-fusion; per-tile patch packing, vectorized im2col, and single-layer
-blocked prototypes were measured, with only the first two promoting.
-Further embedding shapes beyond 200/400 frames are unstaged, matched TorchSharp/ORT single-step
-calibration and encoder activation fusion are outstanding, and the
-managed-dependency smoke (no TorchSharp, LibTorch, or ORT in the
-published closure, 9/9 replay checks) must be re-run after further
-runtime changes.
+Since the post-activation table above, an active managed-only parity
+campaign (tracked in the working plan, not yet published) refreshed the
+starting bands at M0 (encoder about 2.3-2.4x, decoder about 1.7x,
+segmentation 2.2-2.4x, embedding 3.5-3.9x) and works each boundary
+toward halving its excess latency over ORT. Landed and measured since:
+width-first rank-three convolution (about 25% full-segmentation win),
+prepared recurrent panels (15-25 ms segmentation win at H=128),
+constant-clone elimination plus 48-site MatMul scale epilogues (about
+11% encoder win with deterministic allocation evidence), 8/12-row GEMM
+rescheduling with a tile-major composer and overwrite-mode destinations
+(micro-proven, workload proof queued), pooled Where and convolution
+destinations plus LSTM scratch pooling (encoder p95 more than halved at
+a stable median), Conv+Add+Relu residual fusion (about 10% embedding win
+with deterministic allocation evidence), and copy-pipeline
+vectorization (panel packing 2.1x anchored, tap-sharing gather nest).
+Open measurement: staged workload quads with predeclared bands
+(composer, narrow tails, overwrite on decoder; eightTotal on encoder)
+plus Sinc-fold segmentation magnitude, all awaiting quiet processes;
+then per-boundary verdicts and a regenerated canonical table.
+Segmentation already meets its halve-the-excess target; decoder carries
+a pre-recorded ceiling analysis near 1.53x against its 1.4x target.
+Embedding (proven about 3.1-3.6x, needs 2.5x or better) still needs a
+multi-block convolution kernel or tiled-path deepenings: blocked regions
+were reverted after an honest time-neutral A/B, and fused gather-pack,
+bigger tile budgets, and interior fast paths were refuted with
+measurement evidence. Prior verdicts against reduction blocking,
+software prefetch, pointer tuning, and scalar borders covered only those
+implementations, never GEMM scheduling or convolution layout in
+general; do not treat them as exhausted-work claims.
+Already completed, do not redo: embedding 200/400/800 representative
+rows are staged; matched TorchSharp/ORT single-step calibration reads
+1.41-1.46x per step with the old 27-29x grid figure confirmed as pure
+batching asymmetry; encoder scale epilogues and Swish/GLU fusion are
+shipped; managed-dependency smoke stands at 12 passed / 0 failed with a
+286-case native differential lane green, re-run after runtime changes.
