@@ -20,14 +20,19 @@ internal static class BlockedBottleneck
     static int BIndex(int n, int cb, int h, int w, int b, int Cb, int H, int W)
         => ((((n * Cb) + cb) * H + h) * W + w) * Bc + b;
 
-    static float[] ToBlocked(float[] src, int N, int C, int H, int W, int Cb)
+    static void ToBlockedInto(float[] src, float[] dst, int N, int C, int H, int W, int Cb)
     {
-        var dst = new float[N * Cb * H * W * Bc];
         for (int n = 0; n < N; n++)
         for (int c = 0; c < C; c++)
         for (int h = 0; h < H; h++)
         for (int w = 0; w < W; w++)
             dst[BIndex(n, c / Bc, h, w, c % Bc, Cb, H, W)] = src[(((n * C) + c) * H + h) * W + w];
+    }
+
+    static float[] ToBlocked(float[] src, int N, int C, int H, int W, int Cb)
+    {
+        var dst = new float[N * Cb * H * W * Bc];
+        ToBlockedInto(src, dst, N, C, H, W, Cb);
         return dst;
     }
 
@@ -78,6 +83,46 @@ internal static class BlockedBottleneck
         }
     }
 
+    internal struct RegionCost
+    {
+        internal double ReorderMs;
+        internal double KernelMs;
+    }
+
+    internal sealed class RegionWorkspace
+    {
+        int N, C, R, H, W;
+        internal float[] Xb, Rb, T1, T2, Yb;
+
+        internal RegionWorkspace()
+        {
+            Xb = Array.Empty<float>();
+            Rb = Array.Empty<float>();
+            T1 = Array.Empty<float>();
+            T2 = Array.Empty<float>();
+            Yb = Array.Empty<float>();
+        }
+
+        internal void Ensure(int n, int c, int r, int h, int w)
+        {
+            if (N == n && C == c && R == r && H == h && W == w && Xb.Length > 0) return;
+            N = n;
+            C = c;
+            R = r;
+            H = h;
+            W = w;
+            int CbC = (c + Bc - 1) / Bc;
+            int CbR = (r + Bc - 1) / Bc;
+            Xb = new float[n * CbC * h * w * Bc];
+            Rb = new float[n * CbC * h * w * Bc];
+            T1 = new float[n * CbR * h * w * Bc];
+            T2 = new float[n * CbR * h * w * Bc];
+            Yb = new float[n * CbC * h * w * Bc];
+        }
+
+        internal int Bytes => (Xb.Length + Rb.Length + T1.Length + T2.Length + Yb.Length) * 4;
+    }
+
     static void PointwiseBlocked(float[] x, BlockedFilter w, float[]? bias, float[] y,
         int N, int C, int K, int CbIn, int CbOut, int H, int W, bool relu)
     {
@@ -95,20 +140,44 @@ internal static class BlockedBottleneck
                 int cCount = Math.Min(Bc, C - (cb * Bc));
                 int xBase = BIndex(n, cb, h, wpos, 0, CbIn, H, W);
                 int wBase = ((kb * w.Ct) + cb) * Bc * Bc;
-                for (int ci = 0; ci < cCount; ci++)
+                if (kCount == Bc && Vector<float>.Count == Bc)
                 {
-                    float xv = x[xBase + ci];
-                    int wRow = wBase + (ci * Bc);
-                    int bi = 0;
-                    int step = Vector<float>.Count;
-                    var xvV = new Vector<float>(xv);
-                    for (; bi + step <= kCount; bi += step)
+                    var accV0 = new Vector<float>(acc);
+                    var accV1 = Vector<float>.Zero;
+                    int ci = 0;
+                    int cPairs = cCount & ~1;
+                    for (; ci < cPairs; ci += 2)
                     {
-                        var av = new Vector<float>(acc.Slice(bi));
-                        av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
-                        av.CopyTo(acc.Slice(bi));
+                        float x0 = x[xBase + ci];
+                        float x1 = x[xBase + ci + 1];
+                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
+                        accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
                     }
-                    for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
+                    for (; ci < cCount; ci++)
+                    {
+                        float xv = x[xBase + ci];
+                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
+                    }
+                    accV0 += accV1;
+                    accV0.CopyTo(acc);
+                }
+                else
+                {
+                    for (int ci = 0; ci < cCount; ci++)
+                    {
+                        float xv = x[xBase + ci];
+                        int wRow = wBase + (ci * Bc);
+                        int bi = 0;
+                        int step = Vector<float>.Count;
+                        var xvV = new Vector<float>(xv);
+                        for (; bi + step <= kCount; bi += step)
+                        {
+                            var av = new Vector<float>(acc.Slice(bi));
+                            av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
+                            av.CopyTo(acc.Slice(bi));
+                        }
+                        for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
+                    }
                 }
             }
             int yBase = BIndex(n, kb, h, wpos, 0, CbOut, H, W);
@@ -143,20 +212,44 @@ internal static class BlockedBottleneck
                 int cCount = Math.Min(Bc, C - (cb * Bc));
                 int xBase = BIndex(n, cb, ih, iw, 0, CbIn, H, W);
                 int wBase = ((((kb * w.Ct) + cb) * 3 + kh) * 3 + kw) * Bc * Bc;
-                for (int ci = 0; ci < cCount; ci++)
+                if (kCount == Bc && Vector<float>.Count == Bc)
                 {
-                    float xv = x[xBase + ci];
-                    int wRow = wBase + (ci * Bc);
-                    int bi = 0;
-                    int step = Vector<float>.Count;
-                    var xvV = new Vector<float>(xv);
-                    for (; bi + step <= kCount; bi += step)
+                    var accV0 = new Vector<float>(acc);
+                    var accV1 = Vector<float>.Zero;
+                    int ci = 0;
+                    int cPairs = cCount & ~1;
+                    for (; ci < cPairs; ci += 2)
                     {
-                        var av = new Vector<float>(acc.Slice(bi));
-                        av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
-                        av.CopyTo(acc.Slice(bi));
+                        float x0 = x[xBase + ci];
+                        float x1 = x[xBase + ci + 1];
+                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
+                        accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
                     }
-                    for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
+                    for (; ci < cCount; ci++)
+                    {
+                        float xv = x[xBase + ci];
+                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
+                    }
+                    accV0 += accV1;
+                    accV0.CopyTo(acc);
+                }
+                else
+                {
+                    for (int ci = 0; ci < cCount; ci++)
+                    {
+                        float xv = x[xBase + ci];
+                        int wRow = wBase + (ci * Bc);
+                        int bi = 0;
+                        int step = Vector<float>.Count;
+                        var xvV = new Vector<float>(xv);
+                        for (; bi + step <= kCount; bi += step)
+                        {
+                            var av = new Vector<float>(acc.Slice(bi));
+                            av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
+                            av.CopyTo(acc.Slice(bi));
+                        }
+                        for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
+                    }
                 }
             }
             int yBase = BIndex(n, kb, h, wpos, 0, CbOut, H, W);
@@ -186,20 +279,44 @@ internal static class BlockedBottleneck
                 int cCount = Math.Min(Bc, C - (cb * Bc));
                 int xBase = BIndex(n, cb, h, wpos, 0, CbIn, H, W);
                 int wBase = ((kb * w.Ct) + cb) * Bc * Bc;
-                for (int ci = 0; ci < cCount; ci++)
+                if (kCount == Bc && Vector<float>.Count == Bc)
                 {
-                    float xv = x[xBase + ci];
-                    int wRow = wBase + (ci * Bc);
-                    int bi = 0;
-                    int step = Vector<float>.Count;
-                    var xvV = new Vector<float>(xv);
-                    for (; bi + step <= kCount; bi += step)
+                    var accV0 = new Vector<float>(acc);
+                    var accV1 = Vector<float>.Zero;
+                    int ci = 0;
+                    int cPairs = cCount & ~1;
+                    for (; ci < cPairs; ci += 2)
                     {
-                        var av = new Vector<float>(acc.Slice(bi));
-                        av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
-                        av.CopyTo(acc.Slice(bi));
+                        float x0 = x[xBase + ci];
+                        float x1 = x[xBase + ci + 1];
+                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
+                        accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
                     }
-                    for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
+                    for (; ci < cCount; ci++)
+                    {
+                        float xv = x[xBase + ci];
+                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
+                    }
+                    accV0 += accV1;
+                    accV0.CopyTo(acc);
+                }
+                else
+                {
+                    for (int ci = 0; ci < cCount; ci++)
+                    {
+                        float xv = x[xBase + ci];
+                        int wRow = wBase + (ci * Bc);
+                        int bi = 0;
+                        int step = Vector<float>.Count;
+                        var xvV = new Vector<float>(xv);
+                        for (; bi + step <= kCount; bi += step)
+                        {
+                            var av = new Vector<float>(acc.Slice(bi));
+                            av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
+                            av.CopyTo(acc.Slice(bi));
+                        }
+                        for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
+                    }
                 }
             }
             int yBase = BIndex(n, kb, h, wpos, 0, CbOut, H, W);
@@ -216,23 +333,50 @@ internal static class BlockedBottleneck
         float[] f1, BlockedFilter w1, float[]? b1,
         float[] f2, BlockedFilter w2, float[]? b2,
         float[] f3, BlockedFilter w3, float[]? b3,
-        float[] resid, int N, int C, int R, int H, int W, out int scratchBytes)
+        float[] resid, int N, int C, int R, int H, int W,
+        RegionWorkspace? ws, out int scratchBytes, out RegionCost cost)
     {
         scratchBytes = 0;
+        cost = default;
         if (w1 == null || w2 == null || w3 == null) return null;
         if (!w1.Check(f1) || !w2.Check(f2) || !w3.Check(f3)) return null;
         int CbC = (C + Bc - 1) / Bc;
         int CbR = (R + Bc - 1) / Bc;
-        float[] xb = ToBlocked(x, N, C, H, W, CbC);
-        float[] rb = ToBlocked(resid, N, C, H, W, CbC);
-        float[] t1 = new float[N * CbR * H * W * Bc];
-        float[] t2 = new float[N * CbR * H * W * Bc];
-        float[] yb = new float[N * CbC * H * W * Bc];
+        float[] xb, rb, t1, t2, yb;
+        if (ws == null)
+        {
+            xb = new float[N * CbC * H * W * Bc];
+            rb = new float[N * CbC * H * W * Bc];
+            t1 = new float[N * CbR * H * W * Bc];
+            t2 = new float[N * CbR * H * W * Bc];
+            yb = new float[N * CbC * H * W * Bc];
+        }
+        else
+        {
+            ws.Ensure(N, C, R, H, W);
+            xb = ws.Xb;
+            rb = ws.Rb;
+            t1 = ws.T1;
+            t2 = ws.T2;
+            yb = ws.Yb;
+        }
         scratchBytes = (t1.Length + t2.Length + yb.Length + xb.Length + rb.Length) * 4;
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        ToBlockedInto(x, xb, N, C, H, W, CbC);
+        ToBlockedInto(resid, rb, N, C, H, W, CbC);
+        sw.Stop();
+        double reorder = sw.Elapsed.TotalMilliseconds;
+        sw.Restart();
         PointwiseBlocked(xb, w1, b1, t1, N, C, R, CbC, CbR, H, W, true);
         Spatial3x3Blocked(t1, w2, b2, t2, N, R, R, CbR, CbR, H, W, true);
         PointwiseResidualBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W);
-        return FromBlocked(yb, N, C, H, W, CbC);
+        sw.Stop();
+        double kernel = sw.Elapsed.TotalMilliseconds;
+        sw.Restart();
+        float[] y = FromBlocked(yb, N, C, H, W, CbC);
+        sw.Stop();
+        cost = new RegionCost { ReorderMs = reorder + sw.Elapsed.TotalMilliseconds, KernelMs = kernel };
+        return y;
     }
 
     static float[] RunLegacy(float[] x,
@@ -285,7 +429,7 @@ internal static class BlockedBottleneck
         var w2 = BlockedFilter.Pack(f2, R, R, 3, 3);
         var w3 = BlockedFilter.Pack(f3, C, R, 1, 1);
         float[] refer = RunLegacy(x, f1, b1, f2, b2, f3, b3, resid, N, C, R, H, W);
-        float[]? cand = RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, resid, N, C, R, H, W, out int scratch);
+        float[]? cand = RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, resid, N, C, R, H, W, null, out int scratch, out RegionCost _);
         if (cand == null) { Console.WriteLine("case " + name + ": guard tripped on fresh packs (unexpected). FAIL"); return 1; }
         double ms = MaxScaled(cand, refer);
         bool ok = ms <= 1e-4;
@@ -307,7 +451,7 @@ internal static class BlockedBottleneck
         var w2 = BlockedFilter.Pack(f2, 8, 8, 3, 3);
         var w3 = BlockedFilter.Pack(f3, 16, 8, 1, 1);
         float[] swapped = (float[])f1.Clone();
-        float[]? got = RunRegion(x, swapped, w1, b, f2, w2, b, f3, w3, bc, resid, 1, 16, 8, 1, 4, out int _);
+        float[]? got = RunRegion(x, swapped, w1, b, f2, w2, b, f3, w3, bc, resid, 1, 16, 8, 1, 4, null, out int _, out RegionCost _);
         bool ok = got == null;
         Console.WriteLine("case guard-trip: replaced source " + (ok ? "tripped PASS" : "missed FAIL"));
         return ok ? 0 : 1;
@@ -389,7 +533,8 @@ internal static class BlockedBottleneck
             var w1 = BlockedFilter.Pack(f1, R, C, 1, 1);
             var w2 = BlockedFilter.Pack(f2, R, R, 3, 3);
             var w3 = BlockedFilter.Pack(f3, C, R, 1, 1);
-            float[] blocked = RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, out int scratch);
+            var ws = new RegionWorkspace();
+            float[]? blocked = RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, ws, out int scratch, out RegionCost _);
             if (blocked == null) { Console.WriteLine("blocked leg guard tripped on fresh packs. FAIL"); return 1; }
             float[] ort;
             using (var ro = new RunOptions())
@@ -401,12 +546,15 @@ internal static class BlockedBottleneck
             var tL = new double[reps];
             var tB = new double[reps];
             var tO = new double[reps];
+            var tR = new double[reps];
+            var tK = new double[reps];
             var sw = new System.Diagnostics.Stopwatch();
             using (var ro = new RunOptions())
             for (int r = 0; r < reps; r++)
             {
                 sw.Restart(); RunLegacy(x, f1, b1, f2, b2, f3, b3, x, N, C, R, H, W); sw.Stop(); tL[r] = sw.Elapsed.TotalMilliseconds;
-                sw.Restart(); RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, out int _); sw.Stop(); tB[r] = sw.Elapsed.TotalMilliseconds;
+                RegionCost c;
+                sw.Restart(); RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, ws, out int _, out c); sw.Stop(); tB[r] = sw.Elapsed.TotalMilliseconds; tR[r] = c.ReorderMs; tK[r] = c.KernelMs;
                 sw.Restart(); using (var o = session.Run(ro, ortInputs, outNames)) { } sw.Stop(); tO[r] = sw.Elapsed.TotalMilliseconds;
             }
             long packBytes = (long)(w1.Packed.Length + w2.Packed.Length + w3.Packed.Length) * 4;
@@ -416,6 +564,7 @@ internal static class BlockedBottleneck
             Console.WriteLine("blocked best=" + BestOf(tB).ToString("F2") + "ms median=" + MedianOf(tB).ToString("F2") + "ms");
             Console.WriteLine("ort     best=" + BestOf(tO).ToString("F2") + "ms median=" + MedianOf(tO).ToString("F2") + "ms");
             Console.WriteLine("bytes: scratch=" + scratch + " prepacked=" + packBytes);
+            Console.WriteLine("split (steady-state workspace): reorder median=" + MedianOf(tR).ToString("F2") + "ms kernel median=" + MedianOf(tK).ToString("F2") + "ms");
             return 0;
         }
         finally { foreach (var v in ortInputs.Values) v.Dispose(); }
