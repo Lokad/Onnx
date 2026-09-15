@@ -204,6 +204,17 @@ public class LstmPreparedWeightsTests
     }
 
 
+    [Fact]
+    public void UseRecurrentPanel_DispatchTable()
+    {
+        // Pinned from the M2 micro: panel wins only at panel-aligned small/medium H.
+        foreach (int h in new[] { 16, 32, 64, 128 })
+            Assert.True(CPUExecutionProvider.UseRecurrentPanel(h), "H=" + h + " must take the panel lane.");
+        foreach (int h in new[] { 0, 1, 7, 8, 15, 17, 31, 33, 63, 65, 100, 127, 129, 200, 255, 256, 257, 639, 640, 641, -4 })
+            Assert.False(CPUExecutionProvider.UseRecurrentPanel(h), "H=" + h + " must keep row dots.");
+    }
+
+
     [SkippableFact]
     public void RealSegmentation_PreparesEveryLstmWeight()
     {
