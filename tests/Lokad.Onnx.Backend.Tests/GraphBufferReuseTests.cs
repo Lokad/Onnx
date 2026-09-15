@@ -431,4 +431,46 @@ public class GraphBufferReuseTests
     }
 
 
+    [Fact]
+    public void PublicExecute_ReusesSharedPoolAcrossRuns()
+    {
+        var graph = MatMulAddGraph();
+        var first = MatMulAddFeeds(1f, 2f, 3f);
+        Assert.True(graph.Execute(first, true));
+        Assert.Equal(131f, ToArray(graph.Outputs["y"])[0]);
+        long firstNew = graph.LastPoolAllocatedNewBytes;
+        Assert.True(firstNew >= 2L * 64 * 64 * 4, "first run must allocate t and y, saw " + firstNew);
+        var second = MatMulAddFeeds(1f, 2f, 3f);
+        Assert.True(graph.Execute(second, true));
+        Assert.Equal(131f, ToArray(graph.Outputs["y"])[0]);
+        Assert.True(graph.LastPoolReused > 0, "second public run must reuse shared storage.");
+        Assert.True(graph.LastPoolAllocatedNewBytes < firstNew, "second run must allocate less: " + graph.LastPoolAllocatedNewBytes + " vs " + firstNew);
+    }
+
+    [Fact]
+    public void ConcurrentContexts_ExecuteCorrectly()
+    {
+        var graph = MatMulAddGraph();
+        var exceptions = new System.Collections.Concurrent.ConcurrentQueue<Exception>();
+        System.Threading.Tasks.Parallel.For(0, 8, i =>
+        {
+            try
+            {
+                var ctx = graph.CreateExecution(null);
+                float v = 1f + (i % 3);
+                var feeds = MatMulAddFeeds(v, 2f, 3f);
+                if (!ctx.Execute(feeds, true)) throw new InvalidOperationException(ctx.LastErrorMessage ?? "execute failed");
+                float want = 64f * v * 2f + 3f;
+                float got = ToArray(ctx.Outputs["y"])[0];
+                if (System.Math.Abs(got - want) > 1e-3f) throw new InvalidOperationException("got " + got + " want " + want);
+            }
+            catch (Exception ex)
+            {
+                exceptions.Enqueue(ex);
+            }
+        });
+        Assert.True(exceptions.IsEmpty, "concurrent runs failed: " + string.Join("; ", exceptions.Select(e => e.Message)));
+    }
+
+
 }

@@ -103,9 +103,9 @@ public class ComputationalGraph
     public Dictionary<string, int> LastUseIndex { get; internal set; } = new Dictionary<string, int>(StringComparer.Ordinal);
 
     internal TensorBufferPool? ActivePool { get; private set; }
-    /// <summary>Buffer pool retained across executions of this instance (warm reuse).</summary>
-    /// <remarks>Per-instance state, so isolated contexts never share scratch. Free stacks persist; ownership, gauges, and counters restart every run (see ResetRunState), which also keeps caller-held outputs from ever re-entering circulation.</remarks>
-    internal TensorBufferPool? RetainedPool;
+    /// <summary>Buffer pool shared across executions of this plan (warm reuse).</summary>
+    /// <remarks>One instance per prepared plan, shared by reference with its contexts; all pool operations serialize on its leaf lock. Per-run Last* reporting uses mark deltas, exact for serial executions. Isolated executions never share live storage: only dead free-stack buffers recirculate.</remarks>
+    internal TensorBufferPool SharedPool = new TensorBufferPool();
 
     /// <summary>Running live-payload byte total backing <see cref="LastPeakLiveBytes"/> (P28).</summary>
     /// <remarks>Maintained by bind and release deltas plus a per-run full recompute, so per-node peak checks stay O(1) with bit-identical values.</remarks>
@@ -129,6 +129,12 @@ public class ComputationalGraph
     HashSet<ITensor>? liveUnknownTensors;
 
     bool liveIndexSeeded;
+
+    /// <summary>Memoized run-static alias roots for release probes, built lazily on the first probe so executions without pool-owned releases never pay for it.</summary>
+    /// <remarks>Per-execution state reset every run (unlike the shared pool): bindings change between runs, so a stale snapshot would miss live aliases. Null with rootsBuilt set selects the legacy per-release scan.</remarks>
+    HashSet<Array>? poolStaticRoots;
+
+    bool poolStaticRootsBuilt;
 
     /// <summary>Reentrancy guard: at most one execution at a time per graph or context.</summary>
     protected int _executing;
@@ -933,6 +939,8 @@ public class ComputationalGraph
         liveArrayUsers = null;
         liveUnknownTensors = null;
         liveIndexSeeded = false;
+        poolStaticRoots = null;
+        poolStaticRootsBuilt = false;
     }
 
     /// <summary>
@@ -1418,12 +1426,12 @@ public class ComputationalGraph
     readonly struct ExecutionPoolScope : IDisposable
     {
         readonly ComputationalGraph graph;
+        readonly PoolMark mark;
         public ExecutionPoolScope(ComputationalGraph graph)
         {
             this.graph = graph;
-            graph.ActivePool = graph.RetainedPool ?? new TensorBufferPool();
-            graph.RetainedPool = null;
-            graph.ActivePool.ResetRunState();
+            graph.ActivePool = graph.SharedPool;
+            mark = graph.ActivePool.BeginRun();
             graph.ActiveScratch = new ScratchAccountant();
             graph.ActiveCopy = new CopyAccountant();
         }
@@ -1431,13 +1439,14 @@ public class ComputationalGraph
         {
             if (graph.ActivePool is not null)
             {
-                graph.LastPoolAllocatedNew = graph.ActivePool.AllocatedNew;
-                graph.LastPoolReused = graph.ActivePool.Reused;
-                graph.LastPoolReturned = graph.ActivePool.Returned;
-                graph.LastPoolDropped = graph.ActivePool.Dropped;
-                graph.LastPoolAllocatedNewBytes = graph.ActivePool.AllocatedNewBytes;
-                graph.LastPoolReusedBytes = graph.ActivePool.ReusedBytes;
-                graph.LastPoolPeakOutstandingBytes = graph.ActivePool.PeakOutstandingBytes;
+                var delta = graph.ActivePool.EndRun(mark);
+                graph.LastPoolAllocatedNew = delta.AllocatedNew;
+                graph.LastPoolReused = delta.Reused;
+                graph.LastPoolReturned = delta.Returned;
+                graph.LastPoolDropped = delta.Dropped;
+                graph.LastPoolAllocatedNewBytes = delta.AllocatedNewBytes;
+                graph.LastPoolReusedBytes = delta.ReusedBytes;
+                graph.LastPoolPeakOutstandingBytes = delta.PeakOutstandingBytes;
             }
             if (graph.ActiveScratch is not null)
             {
@@ -1449,7 +1458,6 @@ public class ComputationalGraph
             }
             graph.ActiveScratch = null;
             graph.ActiveCopy = null;
-            graph.RetainedPool = graph.ActivePool;
             graph.ActivePool = null;
         }
     }
@@ -1473,7 +1481,7 @@ public class ComputationalGraph
         {
             EnsureLiveIndexSeeded();
             RemoveLiveRefs(tensor);
-            if (!HasLiveAliasIndexed(arr, pool))
+            if (!HasLiveAliasIndexed(arr))
             {
                 pool.Return(arr);
                 returned ??= new HashSet<Array>();
@@ -1595,9 +1603,9 @@ public class ComputationalGraph
         if (livePayloadBytes > LastPeakLiveBytes) LastPeakLiveBytes = livePayloadBytes;
     }
 
-    bool HasLiveAliasIndexed(Array candidate, TensorBufferPool pool)
+    bool HasLiveAliasIndexed(Array candidate)
     {
-        var staticRoots = EnsurePoolRoots(pool);
+        var staticRoots = EnsurePoolRoots();
         if (staticRoots is not null)
         {
             if (staticRoots.Contains(candidate)) return true;
@@ -1696,12 +1704,12 @@ public class ComputationalGraph
     /// graphs without pool-owned releases never pay for it. A null snapshot
     /// selects the legacy per-release scan for every probe of the run.
     /// </summary>
-    HashSet<Array>? EnsurePoolRoots(TensorBufferPool pool)
+    HashSet<Array>? EnsurePoolRoots()
     {
-        if (pool.StaticRootsBuilt) return pool.StaticRoots;
-        pool.StaticRootsBuilt = true;
-        pool.StaticRoots = BuildStaticAliasRoots();
-        return pool.StaticRoots;
+        if (poolStaticRootsBuilt) return poolStaticRoots;
+        poolStaticRootsBuilt = true;
+        poolStaticRoots = BuildStaticAliasRoots();
+        return poolStaticRoots;
     }
 
     /// <summary>
