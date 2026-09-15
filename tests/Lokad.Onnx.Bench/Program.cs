@@ -40,6 +40,10 @@ static class Bench
         {
             return GraphProfile.RunProfile(root, args.Skip(1).ToArray());
         }
+        if (args.Length > 0 && args[0] == "convblock")
+        {
+            return BlockedBottleneck.RunConvBlock(args.Skip(1).ToArray());
+        }
         if (args.Length > 0 && args[0] == "micro")
         {
             int microCpu = 0;
