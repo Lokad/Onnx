@@ -122,9 +122,13 @@ static class P05GemmBlocked
             }
             return RunBench(reps);
         }
+        if (args.Length == 1 && args[0] == "stride")
+        {
+            return StrideTwin();
+        }
         if (args.Length != 1 || args[0] != "verify")
         {
-            Console.WriteLine("usage: Bench gemmblock verify");
+            Console.WriteLine("usage: Bench gemmblock verify|bench|stride");
             return 2;
         }
         int rc = 0;
@@ -167,6 +171,44 @@ static class P05GemmBlocked
         BenchShape("e5-128tok-mlp", 128, 384, 1536, reps);
         BenchShape("gpt2-32tok-mlp", 32, 768, 3072, reps);
         BenchShape("e5-512tok-mlp", 512, 384, 1536, reps);
+        return 0;
+    }
+    static int StrideTwin()
+    {
+        const int M = 1, K = 768, N = 50257;
+        var rnd = new Random(4242);
+        float[] a = RandG(M * K, rnd);
+        float[] wRowMajor = RandG(N * K, rnd);
+        var da = DenseTensor<float>.OfValues(a.AsSpan(), new int[] { M, K });
+        var view = new DenseTensor<float>(new Memory<float>(wRowMajor), new int[] { K, N }, true);
+        Console.WriteLine("stride: view reversed=" + view.IsReversedStride + " buffer=" + view.Buffer.Length + " len=" + view.Length);
+        var twin = new float[K * N];
+        for (int k = 0; k < K; k++)
+        for (int j = 0; j < N; j++) twin[k * N + j] = wRowMajor[j * K + k];
+        var dt = DenseTensor<float>.OfValues(twin.AsSpan(), new int[] { K, N });
+        float[] rv = Tensor<float>.MatMul(da, view).ToDenseTensor().Buffer.ToArray();
+        float[] rt = Tensor<float>.MatMul(da, dt).ToDenseTensor().Buffer.ToArray();
+        double worst = 0;
+        for (int i = 0; i < rv.Length; i++)
+        {
+            double ds = Math.Abs(rv[i] - rt[i]) / (1.0 + Math.Abs(rt[i]));
+            if (ds > worst) worst = ds;
+        }
+        Console.WriteLine("stride: agreement maxScaled=" + worst.ToString("E2"));
+        if (worst > 1e-4) { Console.WriteLine("stride: twin MISMATCH, no timing."); return 1; }
+        int reps = 9;
+        var tV = new double[reps];
+        var tT = new double[reps];
+        var sw = new System.Diagnostics.Stopwatch();
+        for (int r = 0; r < reps; r++)
+        {
+            sw.Restart(); Tensor<float>.MatMul(da, view); sw.Stop(); tV[r] = sw.Elapsed.TotalMilliseconds;
+            sw.Restart(); Tensor<float>.MatMul(da, dt); sw.Stop(); tT[r] = sw.Elapsed.TotalMilliseconds;
+        }
+        Array.Sort(tV);
+        Array.Sort(tT);
+        Console.WriteLine("stride view best=" + tV[0].ToString("F2") + "ms median=" + tV[reps / 2].ToString("F2") + "ms");
+        Console.WriteLine("stride twin best=" + tT[0].ToString("F2") + "ms median=" + tT[reps / 2].ToString("F2") + "ms");
         return 0;
     }
 }
