@@ -1,6 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Numerics;
 
 using Lokad.Onnx;
+using Microsoft.ML.OnnxRuntime;
 
 // P03/M1 prototype: one complete channel-blocked ResNet bottleneck region, kept outside
 // the product graph executor. Blocked activations lay out as [N, Cb, H, W, 8] with the
@@ -67,7 +72,7 @@ internal static class BlockedBottleneck
             for (int c = 0; c < C; c++)
             for (int kh = 0; kh < KH; kh++)
             for (int kw = 0; kw < KW; kw++)
-                p[(((((k / Bc) * Ct) + (c / Bc)) * KH + kh) * KW + kw) * Bc * Bc + ((k % Bc) * Bc) + (c % Bc)]
+                p[(((((k / Bc) * Ct) + (c / Bc)) * KH + kh) * KW + kw) * Bc * Bc + ((c % Bc) * Bc) + (k % Bc)]
                     = src[(((k * C) + c) * KH + kh) * KW + kw];
             return new BlockedFilter(p, Kt, Ct, KH, KW, src);
         }
@@ -93,8 +98,17 @@ internal static class BlockedBottleneck
                 for (int ci = 0; ci < cCount; ci++)
                 {
                     float xv = x[xBase + ci];
-                    int wCol = wBase + ci;
-                    for (int bi = 0; bi < kCount; bi++) acc[bi] += w.Packed[wCol + (bi * Bc)] * xv;
+                    int wRow = wBase + (ci * Bc);
+                    int bi = 0;
+                    int step = Vector<float>.Count;
+                    var xvV = new Vector<float>(xv);
+                    for (; bi + step <= kCount; bi += step)
+                    {
+                        var av = new Vector<float>(acc.Slice(bi));
+                        av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
+                        av.CopyTo(acc.Slice(bi));
+                    }
+                    for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
                 }
             }
             int yBase = BIndex(n, kb, h, wpos, 0, CbOut, H, W);
@@ -132,8 +146,17 @@ internal static class BlockedBottleneck
                 for (int ci = 0; ci < cCount; ci++)
                 {
                     float xv = x[xBase + ci];
-                    int wCol = wBase + ci;
-                    for (int bi = 0; bi < kCount; bi++) acc[bi] += w.Packed[wCol + (bi * Bc)] * xv;
+                    int wRow = wBase + (ci * Bc);
+                    int bi = 0;
+                    int step = Vector<float>.Count;
+                    var xvV = new Vector<float>(xv);
+                    for (; bi + step <= kCount; bi += step)
+                    {
+                        var av = new Vector<float>(acc.Slice(bi));
+                        av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
+                        av.CopyTo(acc.Slice(bi));
+                    }
+                    for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
                 }
             }
             int yBase = BIndex(n, kb, h, wpos, 0, CbOut, H, W);
@@ -166,8 +189,17 @@ internal static class BlockedBottleneck
                 for (int ci = 0; ci < cCount; ci++)
                 {
                     float xv = x[xBase + ci];
-                    int wCol = wBase + ci;
-                    for (int bi = 0; bi < kCount; bi++) acc[bi] += w.Packed[wCol + (bi * Bc)] * xv;
+                    int wRow = wBase + (ci * Bc);
+                    int bi = 0;
+                    int step = Vector<float>.Count;
+                    var xvV = new Vector<float>(xv);
+                    for (; bi + step <= kCount; bi += step)
+                    {
+                        var av = new Vector<float>(acc.Slice(bi));
+                        av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
+                        av.CopyTo(acc.Slice(bi));
+                    }
+                    for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
                 }
             }
             int yBase = BIndex(n, kb, h, wpos, 0, CbOut, H, W);
@@ -281,20 +313,111 @@ internal static class BlockedBottleneck
         return ok ? 0 : 1;
     }
 
-    internal static int RunConvBlock(string[] args)
+    internal static int RunConvBlock(string root, string[] args)
     {
-        if (args.Length != 1 || args[0] != "verify")
+        if (args.Length == 1 && args[0] == "verify")
         {
-            Console.WriteLine("usage: Bench convblock verify");
-            return 2;
+            int rc = 0;
+            rc |= CheckCase("A-target-bias", 1, 256, 64, 56, 56, true);
+            rc |= CheckCase("B-target-nobias", 1, 256, 64, 56, 56, false);
+            rc |= CheckCase("C-tail", 1, 24, 10, 5, 5, true);
+            rc |= CheckCase("D-degenerate", 1, 16, 8, 1, 1, true);
+            rc |= CheckGuardTrip();
+            Console.WriteLine(rc == 0 ? "convblock verify: all cases agree." : "convblock verify: FAILED.");
+            return rc;
         }
-        int rc = 0;
-        rc |= CheckCase("A-target-bias", 1, 256, 64, 56, 56, true);
-        rc |= CheckCase("B-target-nobias", 1, 256, 64, 56, 56, false);
-        rc |= CheckCase("C-tail", 1, 24, 10, 5, 5, true);
-        rc |= CheckCase("D-degenerate", 1, 16, 8, 1, 1, true);
-        rc |= CheckGuardTrip();
-        Console.WriteLine(rc == 0 ? "convblock verify: all cases agree." : "convblock verify: FAILED.");
-        return rc;
+        if (args.Length >= 1 && args[0] == "run")
+        {
+            int reps = 9;
+            for (int i = 1; i < args.Length; i++)
+            {
+                if (args[i] == "--reps" && i + 1 < args.Length && int.TryParse(args[i + 1], out int k) && k >= 1) { reps = k; i++; }
+                else { Console.WriteLine("usage: Bench convblock run [--reps K]"); return 2; }
+            }
+            return RunTable(root, reps);
+        }
+        Console.WriteLine("usage: Bench convblock verify|run [--reps K]");
+        return 2;
+    }
+
+    static float[] InitArray(ComputationalGraph graph, string name)
+    {
+        var t = (Tensor<float>)graph.Initializers[name];
+        return t.ToDenseTensor().Buffer.ToArray();
+    }
+
+    static double MedianOf(double[] v)
+    {
+        var s = (double[])v.Clone();
+        Array.Sort(s);
+        return s[s.Length / 2];
+    }
+
+    static double BestOf(double[] v)
+    {
+        double b = v[0];
+        foreach (double d in v) b = Math.Min(b, d);
+        return b;
+    }
+
+    static int RunTable(string root, int reps)
+    {
+        string model = Path.Combine(root, "artifacts", "p03-region", "bottleneck.onnx");
+        if (!File.Exists(model)) { Console.WriteLine("missing region model: " + model); return 1; }
+        const int N = 1, C = 256, R = 64, H = 56, W = 56;
+        var graph = OnnxImport.Load(model);
+        if (graph == null) { Console.WriteLine("region model failed to load."); return 1; }
+        float[] f1 = InitArray(graph, "W1");
+        float[] b1 = InitArray(graph, "B1");
+        float[] f2 = InitArray(graph, "W2");
+        float[] b2 = InitArray(graph, "B2");
+        float[] f3 = InitArray(graph, "W3");
+        float[] b3 = InitArray(graph, "B3");
+        var rnd = new Random(20260915);
+        float[] x = Rand(N * C * H * W, rnd, 1f);
+        using var so = Bench.CreateSingleCpuSessionOptions(1);
+        using var session = new InferenceSession(model, so);
+        string[] inNames = session.InputMetadata.Keys.ToArray();
+        string[] outNames = session.OutputMetadata.Keys.ToArray();
+        var xt = DenseTensor<float>.OfValues(x.AsSpan(), new int[] { N, C, H, W });
+        var named = new Dictionary<string, ITensor>(StringComparer.Ordinal);
+        named[inNames[0]] = xt;
+        var ortInputs = Bench.BuildOrtInputs(named, inNames);
+        try
+        {
+            float[] legacy = RunLegacy(x, f1, b1, f2, b2, f3, b3, x, N, C, R, H, W);
+            var w1 = BlockedFilter.Pack(f1, R, C, 1, 1);
+            var w2 = BlockedFilter.Pack(f2, R, R, 3, 3);
+            var w3 = BlockedFilter.Pack(f3, C, R, 1, 1);
+            float[] blocked = RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, out int scratch);
+            if (blocked == null) { Console.WriteLine("blocked leg guard tripped on fresh packs. FAIL"); return 1; }
+            float[] ort;
+            using (var ro = new RunOptions())
+            using (var o = session.Run(ro, ortInputs, outNames)) { ort = o[0].GetTensorDataAsSpan<float>().ToArray(); }
+            double bl = MaxScaled(blocked, legacy);
+            double ol = MaxScaled(ort, legacy);
+            Console.WriteLine("agreement: blocked-vs-legacy=" + bl.ToString("E2") + " ort-vs-legacy=" + ol.ToString("E2"));
+            if (bl > 1e-4 || ol > 1e-4) { Console.WriteLine("convblock run: agreement FAILED."); return 1; }
+            var tL = new double[reps];
+            var tB = new double[reps];
+            var tO = new double[reps];
+            var sw = new System.Diagnostics.Stopwatch();
+            using (var ro = new RunOptions())
+            for (int r = 0; r < reps; r++)
+            {
+                sw.Restart(); RunLegacy(x, f1, b1, f2, b2, f3, b3, x, N, C, R, H, W); sw.Stop(); tL[r] = sw.Elapsed.TotalMilliseconds;
+                sw.Restart(); RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, out int _); sw.Stop(); tB[r] = sw.Elapsed.TotalMilliseconds;
+                sw.Restart(); using (var o = session.Run(ro, ortInputs, outNames)) { } sw.Stop(); tO[r] = sw.Elapsed.TotalMilliseconds;
+            }
+            long packBytes = (long)(w1.Packed.Length + w2.Packed.Length + w3.Packed.Length) * 4;
+            Console.WriteLine("hardware: VectorCount=" + Vector<float>.Count + " accelerated=" + Vector.IsHardwareAccelerated);
+            Console.WriteLine("region 1x1-64x256 + 3x3-64x64 + 1x1-256x64 at 56x56, reps=" + reps);
+            Console.WriteLine("legacy  best=" + BestOf(tL).ToString("F2") + "ms median=" + MedianOf(tL).ToString("F2") + "ms");
+            Console.WriteLine("blocked best=" + BestOf(tB).ToString("F2") + "ms median=" + MedianOf(tB).ToString("F2") + "ms");
+            Console.WriteLine("ort     best=" + BestOf(tO).ToString("F2") + "ms median=" + MedianOf(tO).ToString("F2") + "ms");
+            Console.WriteLine("bytes: scratch=" + scratch + " prepacked=" + packBytes);
+            return 0;
+        }
+        finally { foreach (var v in ortInputs.Values) v.Dispose(); }
     }
 }

@@ -42,7 +42,7 @@ static class Bench
         }
         if (args.Length > 0 && args[0] == "convblock")
         {
-            return BlockedBottleneck.RunConvBlock(args.Skip(1).ToArray());
+            return BlockedBottleneck.RunConvBlock(root, args.Skip(1).ToArray());
         }
         if (args.Length > 0 && args[0] == "micro")
         {
