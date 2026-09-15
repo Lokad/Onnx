@@ -84,4 +84,54 @@ public class BiasGeluLayoutTests
             Assert.True(System.BitConverter.SingleToInt32Bits(expected[i]) == System.BitConverter.SingleToInt32Bits(got[i]),
                 "differs at " + i + ": " + expected[i] + " vs " + got[i]);
     }
+    static float[] TanhBiasReference(float[] x, float[] bias)
+    {
+        var y = new float[x.Length];
+        for (int i = 0; i < x.Length; i++)
+        {
+            float v = x[i] + bias[i % bias.Length];
+            float t1 = 0.5f * v;
+            float t3 = 0.044715f * v * v * v;
+            y[i] = t1 * (System.MathF.Tanh(0.7978846f * (v + t3)) + 1f);
+        }
+        return y;
+    }
+    static void AssertTanhTwin(string what, float[] x, float[] bias)
+    {
+        var ys = new float[x.Length];
+        Tensor<float>.BiasGeluTanhSpanFloat(x, bias, ys);
+        var refer = TanhBiasReference(x, bias);
+        double worst = 0;
+        for (int i = 0; i < x.Length; i++)
+        {
+            bool yn = float.IsNaN(ys[i]);
+            bool rn = float.IsNaN(refer[i]);
+            Assert.True(yn == rn, what + " NaN parity differs at " + i);
+            if (yn) continue;
+            double scaled = System.Math.Abs(ys[i] - refer[i]) / (1.0 + System.Math.Abs(refer[i]));
+            if (scaled > worst) worst = scaled;
+        }
+        Assert.True(worst <= 1e-6, what + " worst scaled error " + worst);
+    }
+    [Theory]
+    [InlineData(6144, 3072, 61)]
+    [InlineData(100, 7, 62)]
+    [InlineData(64, 1, 63)]
+    [InlineData(17, 8, 64)]
+    public void BiasGeluTanhTwin_MatchesScalarReference(int n, int m, int seed)
+    {
+        var rnd = new System.Random(seed);
+        var x = new float[n];
+        for (int i = 0; i < n; i++) x[i] = (float)rnd.NextDouble() * 8f - 4f;
+        var b = new float[m];
+        for (int i = 0; i < m; i++) b[i] = (float)rnd.NextDouble() - 0.5f;
+        AssertTanhTwin("n=" + n + " m=" + m, x, b);
+    }
+    [Fact]
+    public void BiasGeluTanhTwin_ExceptionalParity()
+    {
+        var x = new float[] { float.PositiveInfinity, float.NegativeInfinity, float.NaN, -0f, 0f, 88f, -88f, 10f };
+        var b = new float[] { 0f, 0.5f, -0.5f, 1f, -1f, 2f, -2f, 0.25f };
+        AssertTanhTwin("exceptional", x, b);
+    }
 }

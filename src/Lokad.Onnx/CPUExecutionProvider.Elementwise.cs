@@ -533,12 +533,22 @@ public partial class CPUExecutionProvider
         }
     }
 
+    /// <summary>
+    /// Opt-in trial switch for the P11 tanh-GELU evaluation: when the
+    /// LOKAD_ONNX_GELU_TANH environment variable is 1, exact GELU executes
+    /// the vector tanh-approximate kernel instead. Defaults are unchanged;
+    /// read per call so trial harnesses can toggle within a process.
+    /// </summary>
+    static bool UseGeluTanhTrial() =>
+        string.Equals(System.Environment.GetEnvironmentVariable("LOKAD_ONNX_GELU_TANH"), "1", System.StringComparison.Ordinal);
+
     public static OpResult Gelu(ITensor? X, string? approximate, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.Gelu;
         if (X is null) return MissingInput(op, nameof(X));
         if (approximate == "tanh") return GeluTanh(op, X, options, pool);
         if (approximate is not null && approximate != "none") return AttributeNotSupported(op, nameof(approximate), approximate, null);
+        if (UseGeluTanhTrial()) return GeluTanh(op, X, options, pool);
         Profiler.StartOpStage(OpStage.Math);
         var opts = (options ?? ExecutionOptions.Default).Validated();
         switch (X.ElementType)

@@ -666,6 +666,56 @@ where T : unmanaged
         }
     }
 
+    /// <summary>
+    /// Bias-add fused with tanh-approximate GELU over spans: y[i] = tanhgelu(x[i] + b[i % M]).
+    /// Vector fast path mirrors BiasGeluSpanFloat with the GeluTanhSpanFloat formula per lane;
+    /// scalar tail uses GeluTanhScalar. Cyclic bias offsets match BiasGeluSpanFloat exactly.
+    /// </summary>
+    internal static void BiasGeluTanhSpanFloat(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
+    {
+        int w = Vector<float>.Count;
+        var half = new Vector<float>(0.5f);
+        var one = Vector<float>.One;
+        var two = new Vector<float>(2f);
+        var c3 = new Vector<float>(0.044715f);
+        var c5 = new Vector<float>(0.7978846f);
+        int M = bias.Length;
+        if (M > 1 && M % w == 0 && xs.Length == ys.Length)
+        {
+            var xvec = MemoryMarshal.Cast<float, Vector<float>>(xs);
+            var yvec = MemoryMarshal.Cast<float, Vector<float>>(ys);
+            int boff = 0;
+            for (int i = 0; i < yvec.Length; i++)
+            {
+                var bv = MemoryMarshal.Cast<float, Vector<float>>(bias.Slice(boff, w))[0];
+                var tv = xvec[i] + bv;
+                var t3 = c3 * tv * tv * tv;
+                var t5 = c5 * (tv + t3);
+                var e = ExpVector(t5 + t5);
+                var t = one - two / (e + one);
+                yvec[i] = half * tv * (t + one);
+                boff += w;
+                if (boff >= M) boff -= M;
+            }
+            int tail = yvec.Length * w;
+            int toff = tail % M;
+            for (int i = tail; i < xs.Length; i++)
+            {
+                ys[i] = GeluTanhScalar(xs[i] + bias[toff]);
+                toff++;
+                if (toff >= M) toff = 0;
+            }
+            return;
+        }
+        int soff = 0;
+        for (int i = 0; i < xs.Length; i++)
+        {
+            ys[i] = GeluTanhScalar(xs[i] + bias[soff]);
+            soff++;
+            if (soff >= M) soff = 0;
+        }
+    }
+
     public static Tensor<float> Gelu(Tensor<float> x, Tensor<float> destination, TensorExecutionOptions options)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
@@ -698,7 +748,7 @@ where T : unmanaged
         (options ?? TensorExecutionOptions.Auto).Validate();
         var dx = x.ToDenseTensor();
         var output = DenseTensor<float>.OfShape(dx.Dimensions.ToArray());
-        GeluTanhInto(dx.Buffer.Span, output.Buffer.Span);
+        GeluTanhSpanFloat(dx.Buffer.Span, output.Buffer.Span);
         return output;
     }
 
@@ -708,27 +758,23 @@ where T : unmanaged
         (options ?? TensorExecutionOptions.Auto).Validate();
         var dx = x.ToDenseTensor();
         if (!destination.Dimensions.SequenceEqual(dx.Dimensions.ToArray())) throw new ArgumentException(nameof(destination), "Destination shape must match the input shape.");
-        GeluTanhInto(dx.Buffer.Span, destination.Buffer.Span);
+        GeluTanhSpanFloat(dx.Buffer.Span, destination.Buffer.Span);
         return destination;
     }
 
-    static void GeluTanhInto(System.Span<float> xs, System.Span<float> ys)
+    static float GeluTanhScalar(float v)
     {
-        for (int i = 0; i < xs.Length; i++)
-        {
-            float v = xs[i];
-            float t1 = 0.5f * v;
-            float t3 = 0.044715f * v * v * v;
-            float t5 = 0.7978846f * (v + t3);
-            ys[i] = t1 * (MathF.Tanh(t5) + 1f);
-        }
+        float t1 = 0.5f * v;
+        float t3 = 0.044715f * v * v * v;
+        float t5 = 0.7978846f * (v + t3);
+        return t1 * (MathF.Tanh(t5) + 1f);
     }
 
     /// <summary>
     /// Vectorized tanh-approximate GELU over spans: identical formula and
-    /// per-element order to GeluTanhInto, with tanh evaluated through the
+    /// per-element order to GeluTanhScalar, with tanh evaluated through the
     /// shared ExpVector block as 1 - 2 / (exp(2t) + 1) plus a scalar tail
-    /// using the same operations as GeluTanhInto. Safe in place: each output
+    /// GeluTanhScalar for remainders. Safe in place: each output
     /// depends only on its own input element.
     /// </summary>
     internal static void GeluTanhSpanFloat(ReadOnlySpan<float> xs, Span<float> ys)
@@ -751,13 +797,7 @@ where T : unmanaged
             yvec[i] = t1 * (t + one);
         }
         for (int i = yvec.Length * Vector<float>.Count; i < xs.Length; i++)
-        {
-            float v = xs[i];
-            float t1 = 0.5f * v;
-            float t3 = 0.044715f * v * v * v;
-            float t5 = 0.7978846f * (v + t3);
-            ys[i] = t1 * (MathF.Tanh(t5) + 1f);
-        }
+            ys[i] = GeluTanhScalar(xs[i]);
     }
 
     /// <summary>Double-precision tanh-approximate GELU, same single-pass order as the float kernel.</summary>
