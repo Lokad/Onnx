@@ -469,7 +469,7 @@ Segmentation moves 4.8-4.9x to 3.9-4.1x with ORT pinned near 38 ms in all three 
 ## Representative voice rows — 2026-09-15
 
 Timed separately with the same single-CPU settings (one fresh process, 3
-warmups, 33 iterations, confinement 1.00), all validating at gate 1e-4;
+warmups, 33 iterations, confinement 0.98), all validating at gate 1e-4;
 machine-readable summary in
 `tests/Lokad.Onnx.Bench/baseline/summary-voice-rep-20260915.json`, raw
 log local. These rows reuse staged replay assets only: the decoder
@@ -478,21 +478,22 @@ single steps slice the first frame and token of the step-1 fixtures
 states reproduce a real mid-trajectory step), encoder-64 and the
 synthetic 1 s segmentation use staged fixtures, encoder-256 replays the
 first 256 frames of real speech features with recorded ORT references
-(see replay.json), and embedding-400 replays the first 400 fbank frames
-of a second utterance the same way.
+(see replay.json), embedding-400 replays the first 400 fbank frames
+of a second utterance the same way, and embedding-800 the first 800.
 
 | Voice case | rep1 L/ORT ms | Lokad / ORT |
 |---|---:|---|
-| parakeet-encoder-64 | 495.9 / 251.6 | 2.0-2.0x |
-| parakeet-encoder-256 | 1064.3 / 457.5 | 2.3-2.3x |
-| parakeet-decoder-1x1 | 4.8 / 3.9 | 1.2-1.2x |
-| parakeet-decoder-1x1-carried | 4.6 / 3.9 | 1.2-1.2x |
-| pyannote-segmentation-1s | 21.2 / 4.1 | 5.2-5.2x |
-| pyannote-embedding-400 | 410.0 / 102.3 | 4.0-4.0x |
+| parakeet-encoder-64 | 495.9 / 246.8 | 2.0-2.0x |
+| parakeet-encoder-256 | 984.9 / 425.4 | 2.3-2.3x |
+| parakeet-decoder-1x1 | 4.7 / 3.9 | 1.2-1.2x |
+| parakeet-decoder-1x1-carried | 4.6 / 3.8 | 1.2-1.2x |
+| pyannote-segmentation-1s | 18.1 / 4.0 | 4.6-4.6x |
+| pyannote-embedding-400 | 399.0 / 95.8 | 4.2-4.2x |
+| pyannote-embedding-800 | 734.2 / 196.7 | 3.7-3.7x |
 
 The single-step decoder runs at near parity (1.2x) with zero and carried
 states alike, so the remaining bulk-grid gap sits in the joint shape,
-not the step machinery. Longer encoder audio scales sublinearly (around 2x at T=64 through T=256 against 2.6-2.7x at T=128). Reproduce with
+not the step machinery. Longer encoder audio scales sublinearly (around 2x at T=64 through T=256 against 2.6-2.7x at T=128), and the embedding backbone likewise (4.2x at 400 frames to 3.7x at 800). Reproduce with
 `dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding --mode auto --threads 1 --rows representative --cpu 4 --iters 33`.
 
 ## Remaining work after 2026-09-15
