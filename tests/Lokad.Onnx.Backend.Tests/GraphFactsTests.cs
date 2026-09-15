@@ -52,7 +52,7 @@ public class GraphFactsTests
         Assert.Equal(new[] { 4, 4 }, facts.KnownDims["w"]);
         Assert.Empty(facts.KnownDims["c1"]);
         Assert.False(facts.KnownDims.ContainsKey("m"));
-        Assert.True(facts.Constants.ContainsKey("w"));
+        Assert.False(facts.Constants.ContainsKey("w"));
         Assert.True(facts.Constants.ContainsKey("c1"));
         Assert.False(facts.Constants.ContainsKey("x"));
     }

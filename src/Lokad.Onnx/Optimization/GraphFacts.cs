@@ -9,7 +9,8 @@ namespace Lokad.Onnx.Optimization;
 /// is rebuilt whenever a pass reports a change, so facts never describe a newer list.
 /// Dtype proving mirrors the historical per-fusion rules exactly (same accept/refuse answers);
 /// only the plumbing is shared. Rank, dimensions and constants cover what load can prove
-/// cheaply: model inputs, initializers and Constant nodes. Produced tensors without a
+/// cheaply: model inputs, initializer rank/dtype (never foldable values) and
+/// standard-domain Constant nodes. Produced tensors without a
 /// static source stay unknown rather than guessed.
 /// </summary>
 internal sealed class GraphFacts
@@ -70,11 +71,15 @@ internal sealed class GraphFacts
             if (kv.Value is null || string.IsNullOrEmpty(kv.Key)) continue;
             facts.Dtypes[kv.Key] = kv.Value.ElementType;
             facts.KnownDims[kv.Key] = kv.Value.Dims;
-            facts.Constants[kv.Key] = kv.Value;
         }
         foreach (var kv in facts.Producer)
         {
             var node = nodes[kv.Value];
+            // Fold sources are standard-domain Constant nodes only. Initializers stay
+            // out even when immutable today: graph inputs may override them, callers may
+            // replace their contents, and preparation invalidation cannot resurrect an
+            // erased node. Custom-domain "Constant" nodes are not constants either.
+            if (node.IsFused || !Node.IsStandardDomain(node.Domain)) continue;
             if (node.Op == OpType.Constant && node.Outputs is not null && node.Outputs.Length == 1
                 && node.Attributes is not null && node.Attributes.TryGetValue("value", out var v) && v is ITensor t)
             {

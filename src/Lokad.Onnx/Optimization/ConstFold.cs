@@ -6,9 +6,11 @@ namespace Lokad.Onnx.Optimization;
 
 /// <summary>
 /// G02-M1: pure-constant folding over data-movement ops. Nodes whose every input resolves
-/// to a constant are executed through the exact runtime path (Node.Execute on a scratch
-/// graph seeded with the known constants) and replaced in place by Constant nodes, so
-/// folding cannot disagree with runtime execution by construction. Only data-movement ops
+/// to a standard-domain Constant are executed through the exact runtime path (Node.Execute
+/// on a scratch graph seeded with the known constants) and replaced in place by Constant nodes, so
+/// folding cannot disagree with runtime execution by construction. Initializers never seed
+/// folds (overridable inputs, replacement and in-place mutation must keep working), and graph
+/// outputs never fold. Only data-movement ops
 /// fold here (Shape, Gather, Unsqueeze, Concat, Reshape, Transpose, Slice): their results
 /// are bit-identical under every execution option, unlike arithmetic kernels whose float
 /// reduction order may vary by mode. Graph outputs never fold (structure preserved), fused
@@ -65,6 +67,7 @@ internal static class ConstFold
             if (node.Outputs is null || node.Outputs.Length != 1) continue;
             string output = node.Outputs[0];
             if (string.IsNullOrEmpty(output)) continue;
+            if (facts.IsGraphOutput(output)) continue;
             if (node.Inputs is null) continue;
             bool ready = true;
             foreach (var inp in node.Inputs)

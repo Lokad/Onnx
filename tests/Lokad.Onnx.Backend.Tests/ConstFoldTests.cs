@@ -65,14 +65,19 @@ public class ConstFoldTests
     }
 
     [Fact]
-    public void FoldCollapsesChainDropsStrayDedupesTwin()
+    public void InitializerChainKeepsNodesWhileConstantsDedupe()
     {
+        // Initializer-rooted chains never fold (overridable inputs, replacement and
+        // in-place mutation must keep working; see ConstFoldProvenanceTests), while
+        // true Constant nodes still merge and strays still sweep.
         var graph = Model.Load(FoldModel())!;
-        Assert.DoesNotContain(graph.Nodes, n => n.Op == OpType.Reshape || n.Op == OpType.Transpose || n.Op == OpType.Slice);
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.Reshape);
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.Transpose);
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.Slice && n.Outputs.Length == 1 && n.Outputs[0] == "z2");
+        Assert.DoesNotContain(graph.Nodes, n => n.Op == OpType.Constant && n.Outputs.Length == 1 && n.Outputs[0] == "z2");
         Assert.DoesNotContain(graph.Nodes, n => n.Outputs.Length == 1 && n.Outputs[0] == "stray");
         int sevenConstants = graph.Nodes.Count(n => n.Op == OpType.Constant && n.Outputs.Length == 1 && !n.Outputs[0].StartsWith("z"));
         Assert.Equal(1, sevenConstants);
-        Assert.Contains(graph.Nodes, n => n.Op == OpType.Constant && n.Outputs.Length == 1 && n.Outputs[0] == "z2");
     }
 
     [Fact]
