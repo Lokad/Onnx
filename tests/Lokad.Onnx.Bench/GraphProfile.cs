@@ -34,11 +34,12 @@ internal static class GraphProfile
         if (kase is null) { Console.WriteLine("usage: Bench profile <case> [--out dir] [--cpu N] [--reps K]"); return 2; }
         if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount) { Console.WriteLine("invalid --cpu " + cpu); return 2; }
         var startedUtc = DateTime.UtcNow;
-        try { int rc = ProfileCase(root, kase, outDir, cpu, reps); SweepStrayTraces(startedUtc); return rc; }
-        catch (Exception ex) { Console.WriteLine(kase + ": profile failed: " + ex.GetType().Name + ": " + ex.Message.Split((char)10)[0]); SweepStrayTraces(startedUtc); return 1; }
+        var ownedTraces = new List<string>();
+        try { int rc = ProfileCase(root, kase, outDir, cpu, reps, ownedTraces); SweepStrayTraces(startedUtc, outDir, kase, ownedTraces); return rc; }
+        catch (Exception ex) { Console.WriteLine(kase + ": profile failed: " + ex.GetType().Name + ": " + ex.Message.Split((char)10)[0]); SweepStrayTraces(startedUtc, outDir, kase, ownedTraces); return 1; }
     }
 
-    static int ProfileCase(string root, string kase, string outDir, int cpu, int reps)
+    static int ProfileCase(string root, string kase, string outDir, int cpu, int reps, List<string> ownedTraces)
     {
         string model, tokenizer = "";
         Func<string, ITensor[]> build;
@@ -149,6 +150,8 @@ internal static class GraphProfile
                 if (File.Exists(traceFile)) File.Delete(traceFile);
                 File.Move(landed, traceFile);
             }
+            ownedTraces.Add(landed);
+            ownedTraces.Add(traceFile);
             AggregateOrtTrace(traceFile, ortOps);
             var doc = new
             {
@@ -242,13 +245,33 @@ internal static class GraphProfile
         Console.WriteLine("ort trace " + Path.GetFileName(traceFile) + ": priced " + ops.Count + " op families, skipped " + skipped + " events.");
     }
 
-    static void SweepStrayTraces(DateTime startedUtc)
+    static void SweepStrayTraces(DateTime startedUtc, string outDir, string kase, List<string> owned)
     {
-        // ORT drops its trace in the working directory and rewrites a near-empty one on
-        // session dispose; the real trace is relocated by ProfileCase. Delete our own duds.
+        // Ownership rule: this process removes only files it can prove are its own
+        // byproducts. Recorded EndProfiling identities are exact. Anything else we
+        // touch must sit in our output directory under our case prefix and have been
+        // born during this run (ORT emits a near-empty trace on session dispose).
+        // Working-directory traces are only reported, never deleted: a concurrent
+        // process may own them, and creation time cannot tell owners apart.
+        var keep = new HashSet<string>(owned, StringComparer.OrdinalIgnoreCase);
+        string prefix = kase + "-ort-";
+        foreach (var f in Directory.GetFiles(outDir, prefix + "*.json"))
+        {
+            try
+            {
+                if (keep.Contains(f)) continue;
+                if (File.GetCreationTimeUtc(f) >= startedUtc) File.Delete(f);
+                else Console.WriteLine("stray-trace kept (predates run): " + f);
+            }
+            catch (Exception ex) { Console.WriteLine("stray-trace sweep skipped " + f + ": " + ex.GetType().Name); }
+        }
         foreach (var f in Directory.GetFiles(Directory.GetCurrentDirectory(), "onnxruntime_profile_*.json"))
         {
-            try { if (File.GetCreationTimeUtc(f) >= startedUtc) File.Delete(f); }
+            try
+            {
+                if (File.GetCreationTimeUtc(f) >= startedUtc)
+                    Console.WriteLine("stray-trace kept (working directory, owner unknown): " + f);
+            }
             catch (Exception ex) { Console.WriteLine("stray-trace sweep skipped " + f + ": " + ex.GetType().Name); }
         }
     }
