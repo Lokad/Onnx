@@ -25,6 +25,16 @@
 - Gemm-plus-GELU epilogue fusion removes the separate activation pass
   (bit-identical, no math change): all 12 GPT-2 MLP regions convert with zero
   standalone Gelu ops left.
+- Scale-then-MatMul regions fuse into a structural `ScaledMatMul` node
+  (composite kernel runs the legacy paths in order; 12 DINO plus 12 GPT-2
+  sites, E5 correctly declined): graph simplification with no arithmetic
+  change. Packed scaled fast kernels were prototyped and rejected by an
+  isolation bench, so no kernel speedup is claimed here.
+- Decode-only single-row projections with very wide weights (M = 1, K >= 8192,
+  the logits projection) take a K-blocked kernel that removes the output
+  read-modify-write pass (bitwise versus the one-row kernel on tails,
+  nonzero destinations and exceptional values): directional improvement only,
+  pending a quiet-box A/B for the exact split.
 - Graph optimization passes (constant folding with dead sweep and dedupe, self-shape
   Reshape zero-copy, LayerNorm/exact-GELU/tanh-GELU/RoPE fusion, Conv/Add epilogue
   fusion) plus the fused bias-GELU pointer path showed directionally better E5-8tok
@@ -41,8 +51,9 @@
   (frozen bit-hash gates green), and all changes are additive with legacy fallbacks.
   Public API additions only; no public signatures removed or altered since 0.2.0
   (audited 0.2.0-revision diff: added surface is the two `ReadOnlyMemory<byte>`
-  import overloads, the fused `CPUExecutionProvider.ConvRelu`/`AddRelu`/`BiasGelu`/`GemmGelu`
-  entry points, and the `RetainedPackedWeightBytes` diagnostic gauge; the retired
+  import overloads, the fused `CPUExecutionProvider.ConvRelu`/`AddRelu`/`BiasGelu`/`GemmGelu`/
+  `ScaledMatMul` entry points, the `MathOps.mm_m1_kblocked` row kernel and the
+  `OpStage.CopyX`/`CopyY` attribution members, and the `RetainedPackedWeightBytes` diagnostic gauge; the retired
   `GraphFusion` pattern fields/methods lived in an internal type).
 
 ## 0.2.0 — 2026-09-13
