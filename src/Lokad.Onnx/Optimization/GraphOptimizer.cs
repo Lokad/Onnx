@@ -41,18 +41,20 @@ internal static class GraphOptimizer
 
     public sealed class PassChange
     {
-        public PassChange(string pass, int rewritten, List<int> nodes, List<string> notes)
+        public PassChange(string pass, int rewritten, List<int> nodes, List<string> notes, TimeSpan elapsed = default)
         {
             Pass = pass;
             Rewritten = rewritten;
             Nodes = nodes;
             Notes = notes;
+            Elapsed = elapsed;
         }
 
         public string Pass { get; }
         public int Rewritten { get; }
         public List<int> Nodes { get; }
         public List<string> Notes { get; }
+        public TimeSpan Elapsed { get; }
     }
 
     public static readonly List<Pass> Passes = new List<Pass>();
@@ -115,10 +117,12 @@ internal static class GraphOptimizer
             foreach (var pass in active)
             {
                 if (off.Contains(pass.Name)) continue;
+                var sw = Stopwatch.StartNew();
                 var result = pass.Run(graph, facts);
+                sw.Stop();
                 if (result is null || !result.Changed) continue;
                 changed = true;
-                report.Add(new PassChange(pass.Name, result.Rewritten, result.Nodes, result.Notes));
+                report.Add(new PassChange(pass.Name, result.Rewritten, result.Nodes, result.Notes, sw.Elapsed));
                 // A pass that reports a change may have reordered the node list; later passes
                 // in this round must see fresh positions, never the pre-mutation snapshot.
                 facts = GraphFacts.Build(graph);
