@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -696,11 +697,74 @@ where T : unmanaged
     /// original-operand read ever appears here. Callers admit m >= 2 through
     /// the packed gate.
     /// </summary>
+    /// <summary>
+    /// Minimum packed-panel bytes for the tile-major composer: below an L2-resident
+    /// panel every grouping re-reads from fast cache anyway, so the legacy grouped
+    /// calls stay.
+    /// </summary>
+    const long TiledComposerMinPanelBytes = 1024L * 1024;
+
+    /// <summary>
+    /// Tile-major packed row-group composer (M4): chains 12-row and 8-row groups
+    /// per panel tile instead of sweeping the panel once per group call. Fires only
+    /// on mixed 12/8 decompositions with no narrower remainder, where the legacy
+    /// path emits two sweeps; single-width shapes already stream once per call and
+    /// keep the legacy path. Per-element arithmetic and order match bit for bit.
+    /// </summary>
+    /// <returns>True when the product was computed and the caller must return.</returns>
+    static unsafe bool TryRunPackedRowGroupsTiled(int m, int n, int k, float* x, float* packed, float* dest)
+    {
+        if (!Avx512F.IsSupported || !Fma.IsSupported) return false;
+        if ((long)n * k * sizeof(float) <= TiledComposerMinPanelBytes) return false;
+        int main = (m / 12) * 12;
+        int rem = m - main;
+        if (rem == 1) { main -= 12; rem = 13; }
+        if (rem == 4 && main >= 12) { main -= 12; rem = 16; }
+        else if (rem == 2 && main >= 12) { main -= 12; rem = 14; }
+        int rest = rem;
+        int eightTotal = 0;
+        while (rest >= 8 && rest != 9) { eightTotal += 8; rest -= 8; }
+        if (rest != 0 || main <= 0 || eightTotal <= 0) return false;
+        int tileStep = 2 * Vector512<float>.Count;
+        int blocked = k - (k % tileStep);
+        int tiles = blocked / tileStep;
+        int groups12 = main / 12;
+        for (int tb = 0; tb < tiles; tb++)
+        {
+            int kb = tb * tileStep;
+            float* panel = packed + tb * n * tileStep;
+            float* xr = x;
+            float* dr = dest;
+            for (int g = 0; g < groups12; g++)
+            {
+                mm_avx512_12x32packed_tile(12, n, xr, panel, dr, k, kb);
+                xr += 12 * n;
+                dr += 12 * k;
+            }
+            mm_avx512_8x32packed_tile(eightTotal, n, xr, panel, dr, k, kb);
+        }
+        int remCols = k - blocked;
+        if (remCols > 0)
+        {
+            float* xr = x;
+            float* dr = dest;
+            for (int g = 0; g < groups12; g++)
+            {
+                mm_avx512_12x32packed_col_tail(12, n, k, xr, packed, dr, blocked, tiles, remCols);
+                xr += 12 * n;
+                dr += 12 * k;
+            }
+            mm_avx512_8x32packed_col_tail(eightTotal, n, k, xr, packed, dr, blocked, tiles, remCols);
+        }
+        return true;
+    }
+
     static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* packed, float* dest)
     {
         int rest = m;
         float* xr = x;
         float* dr = dest;
+            if (TryRunPackedRowGroupsTiled(m, n, k, x, packed, dest)) return;
         if (Avx512F.IsSupported && rest >= 6)
         {
             int main = (rest / 12) * 12;

@@ -1267,6 +1267,33 @@ public class MathOps
         {
             int kb = tb * (2 * Vector512<float>.Count);
             float* panel = P + tb * N * (2 * Vector512<float>.Count);
+            mm_avx512_12x32packed_tile(M, N, A, panel, C, K, kb);
+        }
+        int rem = K - blocked;
+        if (rem > 0)
+            mm_avx512_12x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem);
+    }
+    /// <summary>
+    /// One full 32-column tile of the 12-row AVX512 packed nest across all of
+    /// its row groups. Extracted so the tiled row-group composer can chain
+    /// widths per tile; the full method calls it per tile in the same order,
+    /// so results match bit for bit.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 12).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="panel">One packed panel tile.</param>
+    /// <param name="C">Result matrix.</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="kb">Leading output column of this tile.</param>
+    public unsafe static void mm_avx512_12x32packed_tile(int M,
+                              int N,
+                              float* A,
+                              float* panel,
+                              float* C,
+                              int K,
+                              int kb)
+    {
             for (int i = 0; i < M; i += 12)
             {
                 var Ap1 = A + i * N;
@@ -1376,10 +1403,6 @@ public class MathOps
                 ((Vector512<float>*)(cGroup + 11 * K))[0] = cC0;
                 ((Vector512<float>*)(cGroup + 11 * K))[1] = cC1;
             }
-        }
-        int rem = K - blocked;
-        if (rem > 0)
-            mm_avx512_12x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem);
     }
     /// <summary>
     /// Column-tail half of the 12-row AVX512 packed nest: full-vector
@@ -1573,6 +1596,33 @@ public class MathOps
         {
             int kb = tb * (2 * Vector512<float>.Count);
             float* panel = P + tb * N * (2 * Vector512<float>.Count);
+            mm_avx512_8x32packed_tile(M, N, A, panel, C, K, kb);
+        }
+        int rem = K - blocked;
+        if (rem > 0)
+            mm_avx512_8x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem);
+    }
+    /// <summary>
+    /// One full 32-column tile of the 8-row AVX512 packed nest across all of
+    /// its row groups. Extracted so the tiled row-group composer can chain
+    /// widths per tile; the full method calls it per tile in the same order,
+    /// so results match bit for bit.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 8).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="panel">One packed panel tile.</param>
+    /// <param name="C">Result matrix.</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="kb">Leading output column of this tile.</param>
+    public unsafe static void mm_avx512_8x32packed_tile(int M,
+                              int N,
+                              float* A,
+                              float* panel,
+                              float* C,
+                              int K,
+                              int kb)
+    {
             for (int i = 0; i < M; i += 8)
             {
                 // Hoisted A-row bases: the eight row pointers stay live in
@@ -1652,10 +1702,6 @@ public class MathOps
                 ((Vector512<float>*)(cGroup + 7 * K))[0] = c70;
                 ((Vector512<float>*)(cGroup + 7 * K))[1] = c71;
             }
-        }
-        int rem = K - blocked;
-        if (rem > 0)
-            mm_avx512_8x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem);
     }
     /// <summary>
     /// Column-tail half of the 8-row AVX512 packed nest: full-vector
