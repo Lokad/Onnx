@@ -178,7 +178,7 @@ static class Bench
         }
         if (selected.Contains("pyannote-embedding", StringComparer.OrdinalIgnoreCase))
         {
-            if (representative) Console.WriteLine("voice case pyannote-embedding: no second backbone fixture staged; canonical row only (see PLAN.md P7).");
+            if (representative) RunCase("pyannote-embedding-400", () => CompareVoice("pyannote-embedding-400", assets["pyannote-embedding"][0], VoiceModelCases.EmbeddingInputs400(root), Tolerance, tensorOpts, threads, iters, modeName));
             else RunCase("pyannote-embedding", () => CompareVoice("pyannote-embedding", assets["pyannote-embedding"][0], VoiceModelCases.EmbeddingInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
         }
         if (excludedCases.Count > 0)

@@ -465,19 +465,21 @@ single steps slice the first frame and token of the step-1 fixtures
 states reproduce a real mid-trajectory step), encoder-64 and the
 synthetic 1 s segmentation use staged fixtures, encoder-256 replays the
 first 256 frames of real speech features with recorded ORT references
-(see replay.json), and embedding has no second backbone fixture.
+(see replay.json), and embedding-400 replays the first 400 fbank frames
+of a second utterance the same way.
 
 | Voice case | rep1 L/ORT ms | Lokad / ORT |
 |---|---:|---|
-| parakeet-encoder-64 | 449.5 / 233.0 | 1.9-1.9x |
-| parakeet-encoder-256 | 1012.6 / 428.2 | 2.4-2.4x |
-| parakeet-decoder-1x1 | 4.4 / 3.7 | 1.2-1.2x |
-| parakeet-decoder-1x1-carried | 4.4 / 3.6 | 1.2-1.2x |
-| pyannote-segmentation-1s | 19.8 / 4.0 | 4.9-4.9x |
+| parakeet-encoder-64 | 495.9 / 251.6 | 2.0-2.0x |
+| parakeet-encoder-256 | 1064.3 / 457.5 | 2.3-2.3x |
+| parakeet-decoder-1x1 | 4.8 / 3.9 | 1.2-1.2x |
+| parakeet-decoder-1x1-carried | 4.6 / 3.9 | 1.2-1.2x |
+| pyannote-segmentation-1s | 21.2 / 4.1 | 5.2-5.2x |
+| pyannote-embedding-400 | 410.0 / 102.3 | 4.0-4.0x |
 
 The single-step decoder runs at near parity (1.2x) with zero and carried
 states alike, so the remaining bulk-grid gap sits in the joint shape,
-not the step machinery. Longer encoder audio scales sublinearly (1.9x at T=64, 2.4x at T=256, 2.6-2.7x at T=128). Reproduce with
+not the step machinery. Longer encoder audio scales sublinearly (around 2x at T=64 through T=256 against 2.6-2.7x at T=128). Reproduce with
 `dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding --mode auto --threads 1 --rows representative --cpu 4 --iters 33`.
 
 ## Remaining work after 2026-09-15
@@ -491,7 +493,7 @@ evidence. The decoder bulk grid (1.7x) contrasts with single-step parity
 (3.6-3.8x) still needs cross-layer blocked-channel layout with residual
 fusion; per-tile patch packing, vectorized im2col, and single-layer
 blocked prototypes were measured, with only the first two promoting.
-A second embedding backbone fixture is unstaged, matched TorchSharp/ORT single-step
+Further embedding shapes beyond 200/400 frames are unstaged, matched TorchSharp/ORT single-step
 calibration and encoder activation fusion are outstanding, and the
 managed-dependency smoke (no TorchSharp, LibTorch, or ORT in the
 published closure, 9/9 replay checks) must be re-run after further

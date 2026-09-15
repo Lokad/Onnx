@@ -33,6 +33,13 @@ static class VoiceModelCases
             ("fbank_features", "embedding_fbank.npy"),
         });
     }
+    public static Dictionary<string, ITensor> EmbeddingInputs400(string root)
+    {
+        return LoadNamed(root, new (string, string)[]
+        {
+            ("fbank_features", "embedding_fbank400.npy"),
+        });
+    }
 
     public static Dictionary<string, ITensor> DecoderStep1Inputs(string root)
     {
