@@ -1,6 +1,7 @@
 namespace Lokad.Onnx;
 
 using System;
+using System.Buffers;
 
 using static OpResult;
 
@@ -189,112 +190,155 @@ public partial class CPUExecutionProvider
         }
         }
         // Bounded per-invocation scratch reused across batches and steps.
+        // The two large buffers are pool rents: at speech shapes they are
+        // LOH sized (segmentation: ~0.2MB gather + ~1.2MB XW per layer),
+        // so per-invocation `new` churns gen2 every run. Every read below
+        // follows a same-invocation overwrite of the exact span consumed
+        // (gather prefix, MatMul/row-dot XW prefix, per-step HR), so pooled
+        // backing is sound; the single exit below returns both arrays.
         // Bias spans are hoisted once: the gate loop below reads them per
         // element and must not pay a buffer fetch per read.
-        var xGather = new float[seq * inputSize];
-        var xwBuf = new float[seq * 4 * H];
-        var hrBuf = new float[4 * H];
-        // Scratch for the vector-gate fast path below: holds cNew per step
-        // while its tanh leg runs in place (cv keeps the pre-tanh cell).
-        var cNewBuf = new float[H];
-        ReadOnlySpan<float> bs = bd is null ? default : bd.Buffer.Span;
-        ReadOnlySpan<float> ps = pd is null ? default : pd.Buffer.Span;
-        for (int d = 0; d < numDirections; d++)
+        int xGatherLen = seq * inputSize;
+        int xwBufLen = seq * 4 * H;
+        float[] xGather = xGatherLen > 0 ? ArrayPool<float>.Shared.Rent(xGatherLen) : Array.Empty<float>();
+        float[] xwBuf = xwBufLen > 0 ? ArrayPool<float>.Shared.Rent(xwBufLen) : Array.Empty<float>();
+        try
         {
-            // The solo reverse direction and the second bidirectional
-            // direction both iterate time backwards.
-            bool rev = reverse || (numDirections == 2 && d == 1);
-            int bDir = B is null ? 0 : (B.Rank == 2 ? d * 8 * H : 0);
-            int pDir = P is null ? 0 : d * 3 * H;
-            var fAct = gateF[d];
-            var gAct = gateG[d];
-            var hAct = gateH[d];
-            // Vector-activation fast path: the default Sigmoid/Tanh/Tanh trio
-            // with no clip, no peephole, and no coupled gates computes the same
-            // pre-activations as the scalar nest, so the four gate projections
-            // run through the shared vector-exp spans instead of scalar libm.
-            // Scalar modes and non-default configurations keep the nest below.
-            bool fastGates = pd is null && clip is null && !inputForget
-                && tensorOpts.UseSimd && tensorOpts.UseIntrinsics
-                && acts[3 * d].Equals("Sigmoid", StringComparison.OrdinalIgnoreCase)
-                && acts[3 * d + 1].Equals("Tanh", StringComparison.OrdinalIgnoreCase)
-                && acts[3 * d + 2].Equals("Tanh", StringComparison.OrdinalIgnoreCase);
-            for (int b = 0; b < batch; b++)
+            var hrBuf = new float[4 * H];
+            // Scratch for the vector-gate fast path below: holds cNew per step
+            // while its tanh leg runs in place (cv keeps the pre-tanh cell).
+            var cNewBuf = new float[H];
+            ReadOnlySpan<float> bs = bd is null ? default : bd.Buffer.Span;
+            ReadOnlySpan<float> ps = pd is null ? default : pd.Buffer.Span;
+            for (int d = 0; d < numDirections; d++)
             {
-                int limit = lens is null ? seq : Math.Min(lens[b], seq);
-                if (hd is null) Array.Clear(hv, 0, H);
-                else hd.Buffer.Span.Slice((d * batch + b) * H, H).CopyTo(hv);
-                if (cd is null) Array.Clear(cv, 0, H);
-                else cd.Buffer.Span.Slice((d * batch + b) * H, H).CopyTo(cv);
-                // ORT ignores initial states when the sequence length is zero: final states stay zero.
-                if (limit == 0) { Array.Clear(hv, 0, H); Array.Clear(cv, 0, H); }
-                // Hoist XW across valid rows: gather computation-order rows
-                // once, one shared MatMul into xwBuf, indexed per step below.
-                if (useShared && limit > 0)
+                // The solo reverse direction and the second bidirectional
+                // direction both iterate time backwards.
+                bool rev = reverse || (numDirections == 2 && d == 1);
+                int bDir = B is null ? 0 : (B.Rank == 2 ? d * 8 * H : 0);
+                int pDir = P is null ? 0 : d * 3 * H;
+                var fAct = gateF[d];
+                var gAct = gateG[d];
+                var hAct = gateH[d];
+                // Vector-activation fast path: the default Sigmoid/Tanh/Tanh trio
+                // with no clip, no peephole, and no coupled gates computes the same
+                // pre-activations as the scalar nest, so the four gate projections
+                // run through the shared vector-exp spans instead of scalar libm.
+                // Scalar modes and non-default configurations keep the nest below.
+                bool fastGates = pd is null && clip is null && !inputForget
+                    && tensorOpts.UseSimd && tensorOpts.UseIntrinsics
+                    && acts[3 * d].Equals("Sigmoid", StringComparison.OrdinalIgnoreCase)
+                    && acts[3 * d + 1].Equals("Tanh", StringComparison.OrdinalIgnoreCase)
+                    && acts[3 * d + 2].Equals("Tanh", StringComparison.OrdinalIgnoreCase);
+                for (int b = 0; b < batch; b++)
                 {
-                    for (int gs = 0; gs < limit; gs++)
+                    int limit = lens is null ? seq : Math.Min(lens[b], seq);
+                    if (hd is null) Array.Clear(hv, 0, H);
+                    else hd.Buffer.Span.Slice((d * batch + b) * H, H).CopyTo(hv);
+                    if (cd is null) Array.Clear(cv, 0, H);
+                    else cd.Buffer.Span.Slice((d * batch + b) * H, H).CopyTo(cv);
+                    // ORT ignores initial states when the sequence length is zero: final states stay zero.
+                    if (limit == 0) { Array.Clear(hv, 0, H); Array.Clear(cv, 0, H); }
+                    // Hoist XW across valid rows: gather computation-order rows
+                    // once, one shared MatMul into xwBuf, indexed per step below.
+                    if (useShared && limit > 0)
                     {
-                        int gt = rev ? limit - 1 - gs : gs;
-                        xd.Buffer.Span.Slice((gt * batch + b) * inputSize, inputSize).CopyTo(new Span<float>(xGather, gs * inputSize, inputSize));
-                    }
-                    var xgT = new DenseTensor<float>(new Memory<float>(xGather, 0, limit * inputSize), new[] { limit, inputSize });
-                    var xwT = new DenseTensor<float>(new Memory<float>(xwBuf, 0, limit * 4 * H), new[] { limit, 4 * H });
-                    Tensor<float>.MatMul2D(xgT, wtTensors[d], xwT, tensorOpts);
-                }
-                for (int s = 0; s < seq; s++)
-                {
-                    // ORT ReverseSequence reverses only the valid prefix: reverse steps read/write X[limit-1-s]/Y[limit-1-s] for s < limit, with zeros above limit.
-                    if (s >= limit)
-                    {
-                        int zOff = ((s * numDirections + d) * batch + b) * H;
-                        Array.Clear(yArr, zOff, H);
-                        continue;
-                    }
-                    int t = rev ? limit - 1 - s : s;
-                    int yOff = ((t * numDirections + d) * batch + b) * H;
-                    int xwBase = s * 4 * H;
-                    if (useShared)
-                    {
-                        // Recurrent projection over the prepared [H,4H] panel
-                        // where the dispatch wins, else row dots over the
-                        // original R rows (same flops, no kernel call or
-                        // destination clear either way).
-                        if (rtPrep is not null && UseRecurrentPanel(H))
+                        for (int gs = 0; gs < limit; gs++)
                         {
-                            var rtSpan = rtPrep.Buffer.Span;
-                            MathOps.MatVecPanel(hv, rtSpan.Slice(d * H * 4 * H, H * 4 * H), hrBuf, 4 * H, H, false, tensorOpts);
+                            int gt = rev ? limit - 1 - gs : gs;
+                            xd.Buffer.Span.Slice((gt * batch + b) * inputSize, inputSize).CopyTo(new Span<float>(xGather, gs * inputSize, inputSize));
+                        }
+                        var xgT = new DenseTensor<float>(new Memory<float>(xGather, 0, limit * inputSize), new[] { limit, inputSize });
+                        var xwT = new DenseTensor<float>(new Memory<float>(xwBuf, 0, limit * 4 * H), new[] { limit, 4 * H });
+                        Tensor<float>.MatMul2D(xgT, wtTensors[d], xwT, tensorOpts);
+                    }
+                    for (int s = 0; s < seq; s++)
+                    {
+                        // ORT ReverseSequence reverses only the valid prefix: reverse steps read/write X[limit-1-s]/Y[limit-1-s] for s < limit, with zeros above limit.
+                        if (s >= limit)
+                        {
+                            int zOff = ((s * numDirections + d) * batch + b) * H;
+                            Array.Clear(yArr, zOff, H);
+                            continue;
+                        }
+                        int t = rev ? limit - 1 - s : s;
+                        int yOff = ((t * numDirections + d) * batch + b) * H;
+                        int xwBase = s * 4 * H;
+                        if (useShared)
+                        {
+                            // Recurrent projection over the prepared [H,4H] panel
+                            // where the dispatch wins, else row dots over the
+                            // original R rows (same flops, no kernel call or
+                            // destination clear either way).
+                            if (rtPrep is not null && UseRecurrentPanel(H))
+                            {
+                                var rtSpan = rtPrep.Buffer.Span;
+                                MathOps.MatVecPanel(hv, rtSpan.Slice(d * H * 4 * H, H * 4 * H), hrBuf, 4 * H, H, false, tensorOpts);
+                            }
+                            else
+                            {
+                                int rDir = d * 4 * H * H;
+                                for (int h = 0; h < H; h++)
+                                    MathOps.RowDot4(hv, rs.Slice(rDir + h * H, H), rs.Slice(rDir + (H + h) * H, H), rs.Slice(rDir + (2 * H + h) * H, H), rs.Slice(rDir + (3 * H + h) * H, H), out hrBuf[h], out hrBuf[H + h], out hrBuf[2 * H + h], out hrBuf[3 * H + h], tensorOpts);
+                            }
                         }
                         else
                         {
+                            // Transpose-aware short projection: row dots consume the
+                            // original ONNX weight rows directly, so short sequences
+                            // never build a transposed copy. The shared primitive
+                            // vectorizes under SIMD/intrinsics/FMA and keeps the
+                            // proven scalar order otherwise.
+                            int xOff = (t * batch + b) * inputSize;
+                            int wDir = d * 4 * H * inputSize;
                             int rDir = d * 4 * H * H;
                             for (int h = 0; h < H; h++)
+                            {
+                                MathOps.RowDot4(xs.Slice(xOff, inputSize), ws.Slice(wDir + h * inputSize, inputSize), ws.Slice(wDir + (H + h) * inputSize, inputSize), ws.Slice(wDir + (2 * H + h) * inputSize, inputSize), ws.Slice(wDir + (3 * H + h) * inputSize, inputSize), out xwBuf[xwBase + h], out xwBuf[xwBase + H + h], out xwBuf[xwBase + 2 * H + h], out xwBuf[xwBase + 3 * H + h], tensorOpts);
                                 MathOps.RowDot4(hv, rs.Slice(rDir + h * H, H), rs.Slice(rDir + (H + h) * H, H), rs.Slice(rDir + (2 * H + h) * H, H), rs.Slice(rDir + (3 * H + h) * H, H), out hrBuf[h], out hrBuf[H + h], out hrBuf[2 * H + h], out hrBuf[3 * H + h], tensorOpts);
+                            }
                         }
-                    }
-                    else
-                    {
-                        // Transpose-aware short projection: row dots consume the
-                        // original ONNX weight rows directly, so short sequences
-                        // never build a transposed copy. The shared primitive
-                        // vectorizes under SIMD/intrinsics/FMA and keeps the
-                        // proven scalar order otherwise.
-                        int xOff = (t * batch + b) * inputSize;
-                        int wDir = d * 4 * H * inputSize;
-                        int rDir = d * 4 * H * H;
-                        for (int h = 0; h < H; h++)
+                        if (fastGates)
                         {
-                            MathOps.RowDot4(xs.Slice(xOff, inputSize), ws.Slice(wDir + h * inputSize, inputSize), ws.Slice(wDir + (H + h) * inputSize, inputSize), ws.Slice(wDir + (2 * H + h) * inputSize, inputSize), ws.Slice(wDir + (3 * H + h) * inputSize, inputSize), out xwBuf[xwBase + h], out xwBuf[xwBase + H + h], out xwBuf[xwBase + 2 * H + h], out xwBuf[xwBase + 3 * H + h], tensorOpts);
-                            MathOps.RowDot4(hv, rs.Slice(rDir + h * H, H), rs.Slice(rDir + (H + h) * H, H), rs.Slice(rDir + (2 * H + h) * H, H), rs.Slice(rDir + (3 * H + h) * H, H), out hrBuf[h], out hrBuf[H + h], out hrBuf[2 * H + h], out hrBuf[3 * H + h], tensorOpts);
+                            // Fuse the input/recurrent projections plus both biases
+                            // into the hrBuf quads. The right-hand sides repeat the
+                            // scalar nest summation order exactly, so the
+                            // pre-activations match bit for bit; only the
+                            // sigmoid/tanh evaluations differ, within 1e-6 scaled.
+                            for (int h = 0; h < H; h++)
+                            {
+                                float wbI = bd is null ? 0f : bs[bDir + h];
+                                float wbO = bd is null ? 0f : bs[bDir + H + h];
+                                float wbF = bd is null ? 0f : bs[bDir + 2 * H + h];
+                                float wbC = bd is null ? 0f : bs[bDir + 3 * H + h];
+                                float rbI = bd is null ? 0f : bs[bDir + 4 * H + h];
+                                float rbO = bd is null ? 0f : bs[bDir + 5 * H + h];
+                                float rbF = bd is null ? 0f : bs[bDir + 6 * H + h];
+                                float rbC = bd is null ? 0f : bs[bDir + 7 * H + h];
+                                hrBuf[h] = xwBuf[xwBase + h] + hrBuf[h] + wbI + rbI;
+                                hrBuf[H + h] = xwBuf[xwBase + H + h] + hrBuf[H + h] + wbO + rbO;
+                                hrBuf[2 * H + h] = xwBuf[xwBase + 2 * H + h] + hrBuf[2 * H + h] + wbF + rbF;
+                                hrBuf[3 * H + h] = xwBuf[xwBase + 3 * H + h] + hrBuf[3 * H + h] + wbC + rbC;
+                            }
+                            MathOps.SigmoidSpan(hrBuf.AsSpan(0, H), hrBuf.AsSpan(0, H));
+                            MathOps.SigmoidSpan(hrBuf.AsSpan(H, H), hrBuf.AsSpan(H, H));
+                            MathOps.SigmoidSpan(hrBuf.AsSpan(2 * H, H), hrBuf.AsSpan(2 * H, H));
+                            MathOps.TanhSpan(hrBuf.AsSpan(3 * H, H), hrBuf.AsSpan(3 * H, H));
+                            for (int h = 0; h < H; h++)
+                            {
+                                float cNew = hrBuf[2 * H + h] * cv[h] + hrBuf[h] * hrBuf[3 * H + h];
+                                cv[h] = cNew;
+                                cNewBuf[h] = cNew;
+                            }
+                            MathOps.TanhSpan(cNewBuf.AsSpan(0, H), cNewBuf.AsSpan(0, H));
+                            for (int h = 0; h < H; h++)
+                            {
+                                float hNew = hrBuf[H + h] * cNewBuf[h];
+                                hv[h] = hNew;
+                                yArr[yOff + h] = hNew;
+                            }
                         }
-                    }
-                    if (fastGates)
-                    {
-                        // Fuse the input/recurrent projections plus both biases
-                        // into the hrBuf quads. The right-hand sides repeat the
-                        // scalar nest summation order exactly, so the
-                        // pre-activations match bit for bit; only the
-                        // sigmoid/tanh evaluations differ, within 1e-6 scaled.
-                        for (int h = 0; h < H; h++)
+                        else for (int h = 0; h < H; h++)
                         {
                             float wbI = bd is null ? 0f : bs[bDir + h];
                             float wbO = bd is null ? 0f : bs[bDir + H + h];
@@ -304,72 +348,45 @@ public partial class CPUExecutionProvider
                             float rbO = bd is null ? 0f : bs[bDir + 5 * H + h];
                             float rbF = bd is null ? 0f : bs[bDir + 6 * H + h];
                             float rbC = bd is null ? 0f : bs[bDir + 7 * H + h];
-                            hrBuf[h] = xwBuf[xwBase + h] + hrBuf[h] + wbI + rbI;
-                            hrBuf[H + h] = xwBuf[xwBase + H + h] + hrBuf[H + h] + wbO + rbO;
-                            hrBuf[2 * H + h] = xwBuf[xwBase + 2 * H + h] + hrBuf[2 * H + h] + wbF + rbF;
-                            hrBuf[3 * H + h] = xwBuf[xwBase + 3 * H + h] + hrBuf[3 * H + h] + wbC + rbC;
-                        }
-                        MathOps.SigmoidSpan(hrBuf.AsSpan(0, H), hrBuf.AsSpan(0, H));
-                        MathOps.SigmoidSpan(hrBuf.AsSpan(H, H), hrBuf.AsSpan(H, H));
-                        MathOps.SigmoidSpan(hrBuf.AsSpan(2 * H, H), hrBuf.AsSpan(2 * H, H));
-                        MathOps.TanhSpan(hrBuf.AsSpan(3 * H, H), hrBuf.AsSpan(3 * H, H));
-                        for (int h = 0; h < H; h++)
-                        {
-                            float cNew = hrBuf[2 * H + h] * cv[h] + hrBuf[h] * hrBuf[3 * H + h];
+                            float iPre = xwBuf[xwBase + h] + hrBuf[h] + wbI + rbI;
+                            float oPre = xwBuf[xwBase + H + h] + hrBuf[H + h] + wbO + rbO;
+                            float fPre = xwBuf[xwBase + 2 * H + h] + hrBuf[2 * H + h] + wbF + rbF;
+                            float gPre = xwBuf[xwBase + 3 * H + h] + hrBuf[3 * H + h] + wbC + rbC;
+                            if (pd is not null)
+                            {
+                                iPre += ps[pDir + h] * cv[h];
+                                fPre += ps[pDir + 2 * H + h] * cv[h];
+                            }
+                            float fv = fAct(ClipGate(fPre, clip));
+                            float gv = gAct(ClipGate(gPre, clip));
+                            float iv = fAct(ClipGate(iPre, clip));
+                            // Coupled gates tie forget to the input gate
+                            // (forget = 1 - input), verified against ORT 1.29.
+                            float ff = inputForget ? 1f - iv : fv;
+                            float cNew = ff * cv[h] + iv * gv;
+                            float oo = oPre;
+                            if (pd is not null) oo += ps[pDir + H + h] * cNew;
+                            float hNew = fAct(ClipGate(oo, clip)) * hAct(cNew);
                             cv[h] = cNew;
-                            cNewBuf[h] = cNew;
-                        }
-                        MathOps.TanhSpan(cNewBuf.AsSpan(0, H), cNewBuf.AsSpan(0, H));
-                        for (int h = 0; h < H; h++)
-                        {
-                            float hNew = hrBuf[H + h] * cNewBuf[h];
                             hv[h] = hNew;
                             yArr[yOff + h] = hNew;
                         }
                     }
-                    else for (int h = 0; h < H; h++)
-                    {
-                        float wbI = bd is null ? 0f : bs[bDir + h];
-                        float wbO = bd is null ? 0f : bs[bDir + H + h];
-                        float wbF = bd is null ? 0f : bs[bDir + 2 * H + h];
-                        float wbC = bd is null ? 0f : bs[bDir + 3 * H + h];
-                        float rbI = bd is null ? 0f : bs[bDir + 4 * H + h];
-                        float rbO = bd is null ? 0f : bs[bDir + 5 * H + h];
-                        float rbF = bd is null ? 0f : bs[bDir + 6 * H + h];
-                        float rbC = bd is null ? 0f : bs[bDir + 7 * H + h];
-                        float iPre = xwBuf[xwBase + h] + hrBuf[h] + wbI + rbI;
-                        float oPre = xwBuf[xwBase + H + h] + hrBuf[H + h] + wbO + rbO;
-                        float fPre = xwBuf[xwBase + 2 * H + h] + hrBuf[2 * H + h] + wbF + rbF;
-                        float gPre = xwBuf[xwBase + 3 * H + h] + hrBuf[3 * H + h] + wbC + rbC;
-                        if (pd is not null)
-                        {
-                            iPre += ps[pDir + h] * cv[h];
-                            fPre += ps[pDir + 2 * H + h] * cv[h];
-                        }
-                        float fv = fAct(ClipGate(fPre, clip));
-                        float gv = gAct(ClipGate(gPre, clip));
-                        float iv = fAct(ClipGate(iPre, clip));
-                        // Coupled gates tie forget to the input gate
-                        // (forget = 1 - input), verified against ORT 1.29.
-                        float ff = inputForget ? 1f - iv : fv;
-                        float cNew = ff * cv[h] + iv * gv;
-                        float oo = oPre;
-                        if (pd is not null) oo += ps[pDir + H + h] * cNew;
-                        float hNew = fAct(ClipGate(oo, clip)) * hAct(cNew);
-                        cv[h] = cNew;
-                        hv[h] = hNew;
-                        yArr[yOff + h] = hNew;
-                    }
+                    if (yhArr is not null) Array.Copy(hv, 0, yhArr, (d * batch + b) * H, H);
+                    if (ycArr is not null) Array.Copy(cv, 0, ycArr, (d * batch + b) * H, H);
                 }
-                if (yhArr is not null) Array.Copy(hv, 0, yhArr, (d * batch + b) * H, H);
-                if (ycArr is not null) Array.Copy(cv, 0, ycArr, (d * batch + b) * H, H);
             }
+            var outs = new ITensor[outputCount];
+            if (outputCount > 0) outs[0] = new DenseTensor<float>(new Memory<float>(yArr), new[] { seq, numDirections, batch, H });
+            if (outputCount > 1 && yhArr is not null) outs[1] = new DenseTensor<float>(new Memory<float>(yhArr), new[] { numDirections, batch, H });
+            if (outputCount > 2 && ycArr is not null) outs[2] = new DenseTensor<float>(new Memory<float>(ycArr), new[] { numDirections, batch, H });
+            return Success(op, outs);
         }
-        var outs = new ITensor[outputCount];
-        if (outputCount > 0) outs[0] = new DenseTensor<float>(new Memory<float>(yArr), new[] { seq, numDirections, batch, H });
-        if (outputCount > 1 && yhArr is not null) outs[1] = new DenseTensor<float>(new Memory<float>(yhArr), new[] { numDirections, batch, H });
-        if (outputCount > 2 && ycArr is not null) outs[2] = new DenseTensor<float>(new Memory<float>(ycArr), new[] { numDirections, batch, H });
-        return Success(op, outs);
+        finally
+        {
+            if (xGatherLen > 0) ArrayPool<float>.Shared.Return(xGather);
+            if (xwBufLen > 0) ArrayPool<float>.Shared.Return(xwBuf);
+        }
     }
 
     // Prepared-panel dispatch for the recurrent projection, pinned by the M2 micro (see PLAN.md): 2.09x at H=128/O=512, no win at H=640 (0.96x), and steep losses on non-64-multiple tails. Only panel-aligned small/medium projections take the MatVecPanel lane; H=640 and odd shapes keep the row-dot loop.
