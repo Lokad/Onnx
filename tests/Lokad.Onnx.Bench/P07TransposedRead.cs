@@ -10,7 +10,54 @@ using Lokad.Onnx;
 // twin gate stays finite like the P05 lab.
 static class P07TransposedRead
 {
-    internal static float[] MmTransposedB(float[] a, float[] b, int M, int K, int N)
+    internal static float[] MmTransposedB4(float[] a, float[] b, int M, int K, int N)
+    {
+        // v2: four n-lanes share each A vector, keeping four FMA chains live.
+        var c = new float[M * N];
+        int step = Vector<float>.Count;
+        int n4 = (N / 4) * 4;
+        for (int m = 0; m < M; m++)
+        {
+            int n = 0;
+            for (; n < n4; n += 4)
+            {
+                var acc0 = Vector<float>.Zero;
+                var acc1 = Vector<float>.Zero;
+                var acc2 = Vector<float>.Zero;
+                var acc3 = Vector<float>.Zero;
+                int k = 0;
+                for (; k + step <= K; k += step)
+                {
+                    var av = new Vector<float>(a, m * K + k);
+                    acc0 = Vector.FusedMultiplyAdd(av, new Vector<float>(b, (n + 0) * K + k), acc0);
+                    acc1 = Vector.FusedMultiplyAdd(av, new Vector<float>(b, (n + 1) * K + k), acc1);
+                    acc2 = Vector.FusedMultiplyAdd(av, new Vector<float>(b, (n + 2) * K + k), acc2);
+                    acc3 = Vector.FusedMultiplyAdd(av, new Vector<float>(b, (n + 3) * K + k), acc3);
+                }
+                float s0 = Vector.Sum(acc0), s1 = Vector.Sum(acc1), s2 = Vector.Sum(acc2), s3 = Vector.Sum(acc3);
+                for (; k < K; k++)
+                {
+                    float x = a[m * K + k];
+                    s0 += x * b[(n + 0) * K + k];
+                    s1 += x * b[(n + 1) * K + k];
+                    s2 += x * b[(n + 2) * K + k];
+                    s3 += x * b[(n + 3) * K + k];
+                }
+                c[m * N + n] = s0; c[m * N + n + 1] = s1; c[m * N + n + 2] = s2; c[m * N + n + 3] = s3;
+            }
+            for (; n < N; n++)
+            {
+                var acc = Vector<float>.Zero;
+                int k = 0;
+                for (; k + step <= K; k += step)
+                    acc = Vector.FusedMultiplyAdd(new Vector<float>(a, m * K + k), new Vector<float>(b, n * K + k), acc);
+                float s = Vector.Sum(acc);
+                for (; k < K; k++) s += a[m * K + k] * b[n * K + k];
+                c[m * N + n] = s;
+            }
+        }
+        return c;
+    }    internal static float[] MmTransposedB(float[] a, float[] b, int M, int K, int N)
     {
         var c = new float[M * N];
         int step = Vector<float>.Count;
@@ -44,13 +91,22 @@ static class P07TransposedRead
         var view = new DenseTensor<float>(new Memory<float>(bRowMajor), new int[] { K, N }, true);
         float[] refer = Tensor<float>.MatMul(da, view).ToDenseTensor().Buffer.ToArray();
         float[] cand = MmTransposedB(a, bRowMajor, M, K, N);
+        float[] cand4 = MmTransposedB4(a, bRowMajor, M, K, N);
         double worst = 0;
         for (int i = 0; i < refer.Length; i++)
         {
             double ds = Math.Abs(cand[i] - refer[i]) / (1.0 + Math.Abs(refer[i]));
             if (ds > worst) worst = ds;
         }
-        bool ok = worst <= 1e-4;
+        double worst4 = 0;
+        for (int i = 0; i < refer.Length; i++)
+        {
+            double ds4 = Math.Abs(cand4[i] - refer[i]) / (1.0 + Math.Abs(refer[i]));
+            if (ds4 > worst4) worst4 = ds4;
+        }
+        bool ok4 = worst4 <= 1e-4;
+        Console.WriteLine("case " + name + " v2 maxScaled=" + worst4.ToString("E2") + (ok4 ? " PASS" : " FAIL"));
+        bool ok = worst <= 1e-4 && ok4;
         Console.WriteLine("case " + name + ": maxScaled=" + worst.ToString("E2") + (ok ? " PASS" : " FAIL"));
         return ok ? 0 : 1;
     }
@@ -90,17 +146,21 @@ static class P07TransposedRead
         Tensor<float>.MatMul(da, view);
         MmTransposedB(a, bRowMajor, M, K, N);
         var tR = new double[reps];
-        var tB = new double[reps];
+        var tV1 = new double[reps];
+        var tV2 = new double[reps];
         var sw = new System.Diagnostics.Stopwatch();
         for (int r = 0; r < reps; r++)
         {
             sw.Restart(); Tensor<float>.MatMul(da, view); sw.Stop(); tR[r] = sw.Elapsed.TotalMilliseconds;
-            sw.Restart(); MmTransposedB(a, bRowMajor, M, K, N); sw.Stop(); tB[r] = sw.Elapsed.TotalMilliseconds;
+            sw.Restart(); MmTransposedB(a, bRowMajor, M, K, N); sw.Stop(); tV1[r] = sw.Elapsed.TotalMilliseconds;
+            sw.Restart(); MmTransposedB4(a, bRowMajor, M, K, N); sw.Stop(); tV2[r] = sw.Elapsed.TotalMilliseconds;
         }
         Array.Sort(tR);
-        Array.Sort(tB);
+        Array.Sort(tV1);
+        Array.Sort(tV2);
         Console.WriteLine(name + " ref(densify+matmul) best=" + tR[0].ToString("F2") + "ms median=" + tR[reps / 2].ToString("F2") + "ms");
-        Console.WriteLine(name + " trread best=" + tB[0].ToString("F2") + "ms median=" + tB[reps / 2].ToString("F2") + "ms");
+        Console.WriteLine(name + " trread-v1 best=" + tV1[0].ToString("F2") + "ms median=" + tV1[reps / 2].ToString("F2") + "ms");
+        Console.WriteLine(name + " trread-v2 best=" + tV2[0].ToString("F2") + "ms median=" + tV2[reps / 2].ToString("F2") + "ms");
     }
     static int RunBench(int reps)
     {
