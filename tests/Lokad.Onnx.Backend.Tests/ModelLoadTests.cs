@@ -300,4 +300,59 @@ public class ModelLoadTests
         };
         Assert.True(graph.Execute(user, false));
     }
+    [Fact]
+    public void ReadOnlyMemoryOverwrite_PreservesInitializerPayloads()
+    {
+        // D05: post-overwrite acceptance compares payload values, not only names/counts/lengths.
+        string path = MnistModel();
+        byte[] bytes = File.ReadAllBytes(path);
+        var padded = new byte[bytes.Length + 64];
+        Array.Copy(bytes, 0, padded, 37, bytes.Length);
+        var dto = OnnxImport.Parse(new ReadOnlyMemory<byte>(padded, 37, bytes.Length));
+        var snapshot = dto.Initializers.Select(i => (Array)i.Data.Clone()).ToList();
+        Array.Fill<byte>(padded, 0xFF);
+        Assert.Equal(snapshot.Count, dto.Initializers.Count);
+        for (int t = 0; t < snapshot.Count; t++)
+        {
+            Assert.Equal(snapshot[t].Length, dto.Initializers[t].Data.Length);
+            for (int i = 0; i < snapshot[t].Length; i++)
+                Assert.Equal(snapshot[t].GetValue(i), dto.Initializers[t].Data.GetValue(i));
+        }
+    }
+
+    static void AssertMnist4ReferenceLogits(ComputationalGraph g)
+    {
+        var ui = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::mnist" })!;
+        Assert.True(g.Execute(ui, true));
+        var o = (Tensor<float>)((INumericTensor)g.Outputs.Values.First()!).RemoveDim(0);
+        var expected = new float[] { -7.3263092f, -1.658613f, -7.8152933f, -12.741977f, 18.316916f, -0.16605358f, -6.70112f, 11.390553f, 2.657311f, 1.4563596f };
+        Assert.Equal(10, o.Dimensions[0]);
+        for (int i = 0; i < 10; i++) Assert.Equal(expected[i], o[i], 4);
+    }
+
+    [Fact]
+    public void ReadOnlyMemoryLoad_InferenceSurvivesSourceOverwrite()
+    {
+        // D05: a graph loaded from memory owns its payloads, so inference after
+        // source overwrite matches the file-loaded reference logits.
+        string path = MnistModel();
+        byte[] bytes = File.ReadAllBytes(path);
+        var g = OnnxImport.Load(new ReadOnlyMemory<byte>(bytes))!;
+        Array.Fill<byte>(bytes, 0xFF);
+        AssertMnist4ReferenceLogits(g);
+    }
+
+    [Fact]
+    public void UnmanagedMemoryLoad_InferenceSurvivesOwnerDisposal()
+    {
+        // D05: disposing the unmanaged ROM owner after load must not affect inference.
+        string path = MnistModel();
+        byte[] bytes = File.ReadAllBytes(path);
+        ComputationalGraph g;
+        using (var owner = new NativeByteOwner(bytes))
+        {
+            g = OnnxImport.Load(owner.Memory)!;
+        }
+        AssertMnist4ReferenceLogits(g);
+    }
 }
