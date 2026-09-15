@@ -15,11 +15,14 @@ public partial class CPUExecutionProvider
     /// <summary>2D convolution, lowered through the shared matrix dispatcher.</summary>
     /// <summary>2D convolution, lowered through the shared matrix dispatcher.</summary>
     public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options) =>
-        ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, false);
+        ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, false, null);
 
     /// <summary>2D convolution with a fused ReLU epilogue for graph-fused Conv+Relu pairs.</summary>
     public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, bool fuseRelu) =>
-        ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, fuseRelu);
+        Conv(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, fuseRelu, null);
+    /// <summary>2D convolution with a fused ReLU epilogue and a pooled destination.</summary>
+    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, bool fuseRelu, TensorBufferPool? pool) =>
+        ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, fuseRelu, pool);
     /// <summary>2D convolution with a fused residual Add and trailing Relu for graph-fused Conv+Add+Relu triples.</summary>
     /// <remarks>The residual tensor rides as a fourth node input so lifetime analysis
     /// keeps the skip value alive; the plain convolution runs first and the residual
@@ -31,7 +34,7 @@ public partial class CPUExecutionProvider
 
     static OpResult ConvCoreResidual(ITensor? X, ITensor? W, ITensor? B, ITensor? residual, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, TensorBufferPool? pool)
     {
-        var plain = ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, false);
+        var plain = ConvCore(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, false, pool);
         if (plain.Status != OpStatus.Success) return plain;
         if (residual is null) return plain;
         var convOut = plain.Outputs[0];
@@ -125,7 +128,7 @@ public partial class CPUExecutionProvider
 
 
 
-    private static OpResult ConvCore(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, bool fuseRelu)
+    private static OpResult ConvCore(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, bool fuseRelu, TensorBufferPool? pool)
     {
         var op = OpType.Conv;
         if (X is null) return MissingInput(op, nameof(X));
@@ -176,7 +179,7 @@ public partial class CPUExecutionProvider
             int[]? st4 = strides is null ? null : new[] { 1, strides[0] };
             int[]? di4 = dilations is null ? null : new[] { 1, dilations[0] };
             int[]? pa4 = pads is null ? null : new[] { 0, pads[0], 0, pads[1] };
-            var c = ConvCore(xu.Outputs[0], wu.Outputs[0], B, auto_pad, di4, group, ks4, pa4, st4, options, fuseRelu);
+            var c = ConvCore(xu.Outputs[0], wu.Outputs[0], B, auto_pad, di4, group, ks4, pa4, st4, options, fuseRelu, pool);
             if (c.Status != OpStatus.Success) return c;
             var s = Squeeze(c.Outputs[0], new DenseTensor<long>(new long[] { 2 }, new[] { 1 }), options);
             s.Op = op;
@@ -218,9 +221,9 @@ public partial class CPUExecutionProvider
                     {
                         return Success(op, dwConv2D);
                     }
-                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu));
+                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, pool));
                 }
-                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu));
+                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, pool));
             }
             case TensorElementType.Double:
             {

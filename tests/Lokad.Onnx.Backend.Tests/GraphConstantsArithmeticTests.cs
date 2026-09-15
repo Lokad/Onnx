@@ -39,7 +39,7 @@ public class GraphConstantsArithmeticTests
         mp.Nodes.Add(Nod("Add", new[] { "m", "C" }, new[] { "a" }));
         mp.Nodes.Add(Nod("Mul", new[] { "a", "x" }, new[] { "z" }));
         var graph = Model.Load(mp)!;
-        Assert.Equal(1, graph.Nodes.Count);
+        Assert.Single(graph.Nodes);
         Assert.True(graph.Initializers.ContainsKey("a"));
         var x = new DenseTensor<float>(new[] { 2f, 0.5f }, new[] { 2 });
         var graph2 = Model.Load(mp)!;
@@ -61,7 +61,7 @@ public class GraphConstantsArithmeticTests
         mp.Nodes.Add(Nod("Div", new[] { "d", "b" }, new[] { "a" }));
         mp.Nodes.Add(Nod("Identity", new[] { "a" }, new[] { "z" }));
         var graph = Model.Load(mp)!;
-        Assert.Equal(1, graph.Nodes.Count);
+        Assert.Single(graph.Nodes);
         Assert.True(graph.Initializers.ContainsKey("a"));
         var actual = RunZ(mp, "z");
         var want = new float[] { 1f, (4f - MathF.Sin(1f)) / 4f };
@@ -80,7 +80,7 @@ public class GraphConstantsArithmeticTests
         mp.Nodes.Add(Nod("MatMul", new[] { "X", "Y" }, new[] { "m" }));
         mp.Nodes.Add(Nod("Identity", new[] { "m" }, new[] { "z" }));
         var graph = Model.Load(mp)!;
-        Assert.Equal(1, graph.Nodes.Count);
+        Assert.Single(graph.Nodes);
         Assert.True(graph.Initializers.ContainsKey("m"));
         Assert.Equal(new float[] { 4f, 5f, 10f, 11f }, RunZ(mp, "z"));
     }
@@ -95,7 +95,7 @@ public class GraphConstantsArithmeticTests
         mp.Initializers.Add(FloatInit("A", new[] { 2 }, new[] { 1f, 2f }));
         mp.Nodes.Add(Nod("Mul", new[] { "A", "x" }, new[] { "z" }));
         var graph = Model.Load(mp)!;
-        Assert.Equal(1, graph.Nodes.Count);
+        Assert.Single(graph.Nodes);
         Assert.False(graph.Initializers.ContainsKey("z"));
     }
 
@@ -144,4 +144,3 @@ public class GraphConstantsArithmeticTests
         }
     }
 }
-

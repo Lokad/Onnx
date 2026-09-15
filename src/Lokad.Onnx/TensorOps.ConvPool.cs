@@ -120,7 +120,7 @@ where T : unmanaged
     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, false);
+        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, false, null);
 
     }
 
@@ -131,28 +131,37 @@ where T : unmanaged
     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, false);
+        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, false, null);
 
     }
 
     /// <summary>Two-dimensional convolution with explicit execution options and a fused ReLU epilogue.</summary>
     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu)
+        => Conv2D(input, weight, group, padtype, padvalue, bias, kernelshape, strides, dilations, options, fuseRelu, null);
+
+    /// <summary>Two-dimensional convolution with explicit execution options, a fused ReLU epilogue, and a pooled destination.</summary>
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool)
     {
         var (fN, fC, fH, fW, fM, fkH, fkW, fdH, fdW, fsH, fsW, fpad, foutH, foutW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DFloatCore(input, weight, group, fN, fC, fH, fW, fM, fkH, fkW, fdH, fdW, fsH, fsW, fpad, foutH, foutW, bias, options, fuseRelu);
+        return Conv2DFloatCore(input, weight, group, fN, fC, fH, fW, fM, fkH, fkW, fdH, fdW, fsH, fsW, fpad, foutH, foutW, bias, options, fuseRelu, pool);
     }
 
     /// <summary>Two-dimensional convolution with explicit execution options and a fused ReLU epilogue.</summary>
     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu)
+        => Conv2D(input, weight, group, pads, bias, kernelshape, strides, dilations, options, fuseRelu, null);
+
+    /// <summary>Two-dimensional convolution with explicit execution options, a fused ReLU epilogue, and a pooled destination.</summary>
+    public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool)
     {
         var (eN, eC, eH, eW, eM, ekH, ekW, edH, edW, esH, esW, epad, eoutH, eoutW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DFloatCore(input, weight, group, eN, eC, eH, eW, eM, ekH, ekW, edH, edW, esH, esW, epad, eoutH, eoutW, bias, options, fuseRelu);
+        return Conv2DFloatCore(input, weight, group, eN, eC, eH, eW, eM, ekH, ekW, edH, edW, esH, esW, epad, eoutH, eoutW, bias, options, fuseRelu, pool);
     }
 
-    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options, bool fuseRelu)
+    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool)
     {
         options.Validate();
-        var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outH, outW });
+        var outDims = new int[] { N, M, outH, outW };
+        var output = pool is null ? new DenseTensor<float>((ReadOnlySpan<int>)outDims) : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)((long)N * M * outH * outW))), outDims);
         var xd = input.ToDenseTensor();
         var wd = weight.ToDenseTensor();
         var bd = bias?.ToDenseTensor();
