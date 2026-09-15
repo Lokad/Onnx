@@ -123,13 +123,18 @@ internal sealed class GraphFacts
         if (pn.IsFused)
         {
             if (!Node.IsStandardDomain(pn.Domain)) return null;
-            if (pn.Op == OpType.ConvRelu || pn.Op == OpType.AddRelu || pn.Op == OpType.BiasGelu)
+            if (pn.Op == OpType.ConvRelu || pn.Op == OpType.AddRelu || pn.Op == OpType.BiasGelu || pn.Op == OpType.GemmGelu)
             {
                 // Fused epilogues keep producer inputs verbatim, so prove under
                 // the producer rule with a defused copy (Node is a value type).
+                // The defused copy must also satisfy the producer arity gate:
+                // BiasGelu carries [data, bias] while plain Gelu takes one
+                // input, so truncate (data is first by matcher contract).
                 var qn = pn;
                 qn.IsFused = false;
-                qn.Op = pn.Op == OpType.ConvRelu ? OpType.Conv : pn.Op == OpType.AddRelu ? OpType.Add : OpType.Gelu;
+                qn.Op = pn.Op == OpType.ConvRelu ? OpType.Conv : pn.Op == OpType.AddRelu ? OpType.Add : pn.Op == OpType.BiasGelu ? OpType.Gelu : OpType.Gemm;
+                if (pn.Op == OpType.BiasGelu && qn.Inputs is not null && qn.Inputs.Length > 1)
+                    qn.Inputs = new string[] { qn.Inputs[0] };
                 return ProveNodeDtype(graph, nodes, producer, qn, visiting, memo);
             }
             if (pn.Op == OpType.ScaledMatMul)
@@ -196,6 +201,29 @@ internal sealed class GraphFacts
             var right = ProveDtype(graph, nodes, producer, pn.Inputs[1], visiting, memo);
             if (!left.HasValue || !right.HasValue || left.Value != right.Value) return null;
             return left;
+        }
+        if (pn.Op == OpType.SplitToSequence)
+        {
+            // Sequences carry no tensor dtype themselves; SequenceAt
+            // resolves through the split source below.
+            return null;
+        }
+        if (pn.Op == OpType.SequenceAt)
+        {
+            // Element dtype equals the split source dtype: chunks preserve
+            // dtype by construction (per-dtype ChunkCopy). Resolves only
+            // through a visible SplitToSequence producer of the exact
+            // sequence edge; anything else stays unknown rather than guessed.
+            // Trust class matches the existing rules (same ProveDtype
+            // machinery over initializers/descriptors/Constants).
+            if (pn.Inputs is null || pn.Inputs.Length != 2) return null;
+            string seq = pn.Inputs[0];
+            if (string.IsNullOrEmpty(seq) || !producer.TryGetValue(seq, out var spi)) return null;
+            if (spi < 0 || spi >= nodes.Count) return null;
+            var split = nodes[spi];
+            if (split.Op != OpType.SplitToSequence || split.Outputs is null || split.Outputs.Length != 1 || split.Outputs[0] != seq) return null;
+            if (split.Inputs is null || split.Inputs.Length < 1 || string.IsNullOrEmpty(split.Inputs[0])) return null;
+            return ProveDtype(graph, nodes, producer, split.Inputs[0], visiting, memo);
         }
         if (pn.Op == OpType.Concat)
         {

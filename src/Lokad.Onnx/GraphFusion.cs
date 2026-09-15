@@ -1035,6 +1035,143 @@ namespace Lokad.Onnx
             }
         }
 
+        static readonly object ScaledMatMulPassLock = new object();
+        static bool scaledMatMulRegistered;
+
+        public static void RegisterScaledMatMulPass()
+        {
+            lock (ScaledMatMulPassLock)
+            {
+                if (scaledMatMulRegistered) return;
+                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
+                    "scalematmul",
+                    (graph, facts) =>
+                    {
+                        var rewritten = new List<int>();
+                        int n = FuseScaledMatMulPass(graph, facts, rewritten);
+                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
+                        result.Nodes.AddRange(rewritten);
+                        if (n > 0) result.Notes.Add("fused " + n + " scale+MatMul regions");
+                        return result;
+                    }));
+                scaledMatMulRegistered = true;
+            }
+        }
+
+        /// <summary>
+        /// True when the edge is a known single-element float32 source: a
+        /// length-1 float initializer or a standard-domain Constant payload.
+        /// Runtime edges decline (length unprovable at load); the fused kernel
+        /// reads the value live, so initializers stay replaceable.
+        /// </summary>
+        static bool IsSingletonFloatEdge(ComputationalGraph graph, Optimization.GraphFacts facts, string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            if (graph.Initializers.TryGetValue(name, out var init) && init is not null
+                && init.ElementType == TensorElementType.Float && init.Length == 1) return true;
+            if (facts.Constants.TryGetValue(name, out var c) && c is not null
+                && c.ElementType == TensorElementType.Float && c.Length == 1) return true;
+            return false;
+        }
+
+        public static int FuseScaledMatMulPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        {
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.MatMul) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchScaledMatMul(graph, facts, drop, i, out int mulIndex))
+                {
+                    drop.Add(mulIndex);
+                    rewritten.Add(i);
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        /// <summary>
+        /// Matches Mul(data, scalar-scale) feeding MatMul with no other live
+        /// consumer and no graph-output exposure on the link, rewriting the
+        /// MatMul struct in place to ScaledMatMul with data-first inputs; the
+        /// caller drops the Mul node. Exactly one Mul side must be a known
+        /// singleton float (initializer or standard Constant); float32 only,
+        /// both-singleton and runtime-scale forms keep legacy paths.
+        /// </summary>
+        static bool TryMatchScaledMatMul(
+            ComputationalGraph graph,
+            Optimization.GraphFacts facts,
+            HashSet<int> drop,
+            int matmulIndex,
+            out int mulIndex)
+        {
+            mulIndex = -1;
+            var mm = graph.Nodes[matmulIndex];
+            if (mm.Op != OpType.MatMul) return false;
+            if (!IsFusableParticipant(mm)) return false;
+            if (mm.Inputs.Length != 2 || mm.Outputs.Length != 1) return false;
+            if (!Node.IsStandardDomain(mm.Domain)) return false;
+            string mid = mm.Inputs[0];
+            string rout = mm.Outputs[0];
+            if (string.IsNullOrEmpty(mid) || string.IsNullOrEmpty(rout)) return false;
+            if (facts.GraphOutputs.Contains(mid)) return false;
+            if (!facts.Producer.TryGetValue(mid, out int pi) || drop.Contains(pi)) return false;
+            var mul = graph.Nodes[pi];
+            if (mul.Op != OpType.Mul || mul.IsFused) return false;
+            if (!IsFusableParticipant(mul)) return false;
+            if (!Node.IsStandardDomain(mul.Domain)) return false;
+            if (mul.Inputs.Length != 2 || mul.Outputs.Length != 1) return false;
+            if (!facts.Consumers.TryGetValue(mid, out var uses)) return false;
+            int live = 0;
+            foreach (var u in uses) if (!drop.Contains(u)) live++;
+            if (live != 1) return false;
+            if (!facts.Dtypes.TryGetValue(mid, out var dt) || dt != TensorElementType.Float) return false;
+            string? data = null;
+            string? scale = null;
+            foreach (var inp in mul.Inputs)
+            {
+                if (string.IsNullOrEmpty(inp)) return false;
+                if (IsSingletonFloatEdge(graph, facts, inp))
+                {
+                    if (scale is not null) return false;
+                    scale = inp;
+                }
+                else if (data is null)
+                {
+                    data = inp;
+                }
+                else return false;
+            }
+            if (data is null || scale is null) return false;
+            var fused = mm;
+            fused.Op = OpType.ScaledMatMul;
+            fused.OpTypeName = OpType.ScaledMatMul.ToString();
+            fused.Domain = "";
+            int stdv = StandardOpset(graph);
+            if (stdv >= 0) fused.OpsetVersion = stdv;
+            fused.IsFused = true;
+            fused.Inputs = new[] { data, mm.Inputs[1], scale };
+            fused.Attributes = new Dictionary<string, object>();
+            fused.Outputs = new[] { rout };
+            graph.Nodes[matmulIndex] = fused;
+            mulIndex = pi;
+            return true;
+        }
+
         public static int FuseGemmGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
         {
             var drop = new HashSet<int>();
