@@ -4,7 +4,7 @@
 # eng/score_campaign.py. Release evidence: no -Force, no -DryRun, quiet box.
 # Engineering smoke: -DryRun shrinks counts and watermarks foreign findings.
 # Run: pwsh -NoProfile -File eng/run-l0l1-canonical.ps1 [-Iters 33] [-Reps 3] [-DryRun]
-param([int]$Iters = 33, [int]$Reps = 3, [int]$CooldownSeconds = 300,
+param([int]$Iters = 33, [int]$Reps = 4, [int]$CooldownSeconds = 300,
       [string]$L0Ref = "origin/master", [int]$Cpu = 4, [switch]$DryRun)
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
@@ -79,7 +79,8 @@ $l0logs = @(); $l1logs = @()
 for ($r = 1; $r -le $Reps; $r++) {
   if ($r -gt 1) { Log ("cooldown " + $CooldownSeconds + "s before rep " + $r); Start-Sleep -Seconds $CooldownSeconds }
   Snap ("rep" + $r + "-pre")
-  $order = ($r % 2 -eq 1) ? @("L0", "L1") : @("L1", "L0")
+  $l0first = if ($r -le [Math]::Ceiling($Reps / 2.0)) { $r % 2 -eq 1 } else { $r % 2 -eq 0 }
+  $order = ($l0first) ? @("L0", "L1") : @("L1", "L0")
   Log ("rep" + $r + " order=" + ($order -join ","))
   foreach ($leg in $order) {
     $dll = ($leg -eq "L0") ? $l0dll : (Join-Path $root $l1dll)
