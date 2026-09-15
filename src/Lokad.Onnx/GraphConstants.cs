@@ -60,7 +60,7 @@ internal static class GraphConstants
         ITensor Value);
 
     /// <summary>Constant-only ops eligible for preparation-time evaluation (M3).</summary>
-    /// <remarks>Every member is pure, deterministic, and exact (no arithmetic approximations), so the preparation result cannot differ from repeated execution under any options. Random, stateful, control-flow, and multi-output ops are excluded by construction; data-dependent inputs fail the initializer precondition below.</remarks>
+    /// <remarks>Every member is pure and deterministic; shape members are exact under all options, while arithmetic members evaluate under the graph preparation options (matching default execution, and inside the numerical gates under custom per-call options). Random, stateful, control-flow, and multi-output ops are excluded by construction; data-dependent inputs fail the initializer precondition below.</remarks>
     internal static readonly HashSet<OpType> FoldableOps = new HashSet<OpType>
     {
         OpType.ConstantOfShape,
@@ -69,11 +69,27 @@ internal static class GraphConstants
         OpType.Slice,
         OpType.Transpose,
         OpType.Cast,
+        OpType.Add,
+        OpType.Sub,
+        OpType.Mul,
+        OpType.Div,
+        OpType.Sin,
+        OpType.Cos,
+        OpType.Abs,
+        OpType.Neg,
+        OpType.Clip,
+        OpType.Gather,
+        OpType.Unsqueeze,
+        OpType.MatMul,
     };
+
+    /// <summary>Maximum elements of one folded value: bounds preparation residency.</summary>
+    internal const long MaxFoldedElements = 16L * 1024 * 1024;
 
     /// <summary>
     /// Evaluates constant-only chains to fixpoint: any eligible node whose non-empty inputs all resolve to initializers executes once via the standard provider path and its fresh output becomes a plan-owned initializer while the node is removed. Runs after literal folding so folded literals feed chains, and before packing so folded weights pack. Skipped failures keep the node for run time, exactly as before.
     /// </summary>
+
     internal static int FoldComputedConstants(ComputationalGraph graph)
     {
         int folded = 0;
@@ -119,7 +135,7 @@ internal static class GraphConstants
         OpResult result;
         try
         {
-            result = node.Execute(graph, ExecutionProvider.CPU, null);
+            result = node.Execute(graph, ExecutionProvider.CPU, graph.Options);
         }
         catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException || ex is NotSupportedException)
         {
@@ -128,6 +144,7 @@ internal static class GraphConstants
         if (result.Status != OpStatus.Success || result.Outputs is null || result.Outputs.Length != 1) return false;
         var value = result.Outputs[0];
         if (value is null) return false;
+        if (value.Length > MaxFoldedElements) return false;
         value.Name = output;
         graph.Initializers[output] = value;
         graph.FoldedComputations[output] = new FoldedComputation(index, node, output, sources.ToArray(), value);
@@ -190,4 +207,3 @@ internal static class GraphConstants
     }
 
 }
-
