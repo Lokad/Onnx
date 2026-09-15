@@ -68,7 +68,46 @@ function Snap($phase) {
     Export-Csv (Join-Path $runDir ("foreign-" + $phase + ".csv")) -NoTypeInformation -Encoding utf8
   Log ("foreign-snapshot " + $phase)
 }
+# SMT-sibling busy snapshots (E02 hardening): Bench is pinned to $Cpu, so
+# sustained busy time on its SMT sibling is foreign pressure by construction.
+# Raw cumulative counters need no sampling waits; per-CPU busy fractions are
+# computed between consecutive snapshots. A rep averaging above $SibBusyAbort
+# on the sibling aborts release evidence (contamination, not steady-noise):
+# over a multi-minute rep that level cannot be OS jitter. Sibling defaults to
+# the adjacent thread of the $Cpu pair (Cpu 4 -> 5 matches the observed mask
+# 0x30); the full per-CPU table stays in cpu-<phase>.csv for audit either way.
+$SibBusyAbort = 0.30
+$SibCpu = if ($Cpu % 2 -eq 0) { $Cpu + 1 } else { $Cpu - 1 }
+Log ("sibling-cpu=" + $SibCpu + " sib-busy-abort=" + $SibBusyAbort)
+$script:prevCpuSnap = $null
+function SnapCpu($phase) {
+  $cur = Get-CimInstance Win32_PerfRawData_PerfOS_Processor |
+    Where-Object { $_.Name -ne "_Total" } | Sort-Object { [int]$_.Name } |
+    Select-Object Name, PercentProcessorTime, TimeStamp_Sys100NS
+  $cur | Export-Csv (Join-Path $runDir ("cpu-" + $phase + ".csv")) -NoTypeInformation -Encoding utf8
+  $prev = $script:prevCpuSnap
+  $script:prevCpuSnap = $cur
+  if ($null -eq $prev) { Log ("cpu-snapshot " + $phase + " baseline"); return -1.0 }
+  $parts = @()
+  $sib = -1.0
+  foreach ($c in $cur) {
+    $p = $prev | Where-Object { $_.Name -eq $c.Name } | Select-Object -First 1
+    if ($null -eq $p) { continue }
+    $dt = [double]$c.TimeStamp_Sys100NS - [double]$p.TimeStamp_Sys100NS
+    $busy = 0.0
+    if ($dt -gt 0) {
+      $busy = ([double]$c.PercentProcessorTime - [double]$p.PercentProcessorTime) / $dt
+      if ($busy -lt 0) { $busy = 0 }
+      if ($busy -gt 1) { $busy = 1 }
+    }
+    $parts += ($c.Name + "=" + $busy.ToString("F2"))
+    if ([int]$c.Name -eq $SibCpu) { $sib = $busy }
+  }
+  Log ("cpu-busy " + $phase + " sib=" + $SibCpu + " " + ($parts -join " "))
+  return $sib
+}
 Snap "pre"
+SnapCpu "pre"
 # Anchor on the L1 binary (box-state probe, library-independent).
 & dotnet (Join-Path $root $l1dll) micro oneop --cpu $Cpu --artifacts (Join-Path $runDir "bdn-anchor") --filter "*Mm30Up*" 2>&1 | Out-File (Join-Path $runDir "anchor.log") -Encoding utf8
 $gate = & pwsh -NoProfile -File (Join-Path $root "eng/parse_anchor2.ps1") (Join-Path $runDir "anchor.log") 2>&1
@@ -79,6 +118,7 @@ $l0logs = @(); $l1logs = @()
 for ($r = 1; $r -le $Reps; $r++) {
   if ($r -gt 1) { Log ("cooldown " + $CooldownSeconds + "s before rep " + $r); Start-Sleep -Seconds $CooldownSeconds }
   Snap ("rep" + $r + "-pre")
+  SnapCpu ("rep" + $r + "-pre")
   $l0first = if ($r -le [Math]::Ceiling($Reps / 2.0)) { $r % 2 -eq 1 } else { $r % 2 -eq 0 }
   $order = ($l0first) ? @("L0", "L1") : @("L1", "L0")
   Log ("rep" + $r + " order=" + ($order -join ","))
@@ -93,8 +133,14 @@ for ($r = 1; $r -le $Reps; $r++) {
     if ($leg -eq "L0") { $l0logs += $log } else { $l1logs += $log }
   }
   Snap ("rep" + $r + "-post")
+  $sibBusy = SnapCpu ("rep" + $r + "-post")
+  if ($sibBusy -ge 0 -and $sibBusy -gt $SibBusyAbort) {
+    if ($DryRun) { Log ("WATERMARK: sibling CPU " + $SibCpu + " busy " + $sibBusy.ToString("F2") + " during rep " + $r + " would abort release evidence") }
+    else { Log ("ABORT: sibling CPU " + $SibCpu + " busy " + $sibBusy.ToString("F2") + " during rep " + $r + " (foreign SMT pressure)"); exit 1 }
+  }
 }
 Snap "post"
+SnapCpu "post"
 & python eng/score_campaign.py @l0logs --l1 @l1logs 2>&1 | Out-File (Join-Path $runDir "score.log") -Encoding utf8
 $sec = $LASTEXITCODE
 Get-Content (Join-Path $runDir "score.log") | ForEach-Object { Log ("score: " + $_) }
