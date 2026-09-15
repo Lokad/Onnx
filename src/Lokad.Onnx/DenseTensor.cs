@@ -185,7 +185,19 @@ namespace Lokad.Onnx
                     "the end of the destination array.", nameof(array));
             }
 
-            Buffer.Span.CopyTo(array.AsSpan(arrayIndex));
+            // Row-major storage copies verbatim; column-major (reversed)
+            // storage must decode through the strides, or ToArray would
+            // return physical order while the indexers promise logical.
+            if (!IsReversedStride)
+            {
+                Buffer.Span.CopyTo(array.AsSpan(arrayIndex));
+                return;
+            }
+            int o = arrayIndex;
+            foreach (var index in GetDimensionsIterator())
+            {
+                array[o++] = this[index];
+            }
         }
 
         /// <summary>
