@@ -771,6 +771,62 @@ where T : unmanaged
         return Tanh(x);
     }
 
+    // Scalar gated multiply: other * sigmoid(gated side). NaN propagates and
+    // infinities follow the libm chain exactly (0 * Inf yields NaN on both).
+    static Tensor<float> SigmoidMulScalar(Tensor<float> a, Tensor<float> b, int sigmoidInput)
+    {
+        var aa = a.ToArray();
+        var bb = b.ToArray();
+        if (aa.Length != bb.Length) throw new ArgumentException("SigmoidMul scalar fallback requires matching lengths.", nameof(b));
+        var output = new float[aa.Length];
+        if (sigmoidInput == 1)
+        {
+            for (int i = 0; i < output.Length; i++) output[i] = aa[i] * (1f / (1f + MathF.Exp(-bb[i])));
+        }
+        else
+        {
+            for (int i = 0; i < output.Length; i++) output[i] = (1f / (1f + MathF.Exp(-aa[i]))) * bb[i];
+        }
+        return new DenseTensor<float>(output, a.Dimensions.ToArray());
+    }
+
+    /// <summary>Float gated multiply honoring execution options: y = a*sigmoid(b) (sigmoidInput 1) or sigmoid(a)*b (sigmoidInput 0). Dense standard same-length inputs run one fused span pass when SIMD with x86 intrinsics is enabled; broadcast or exotic layouts route the sigmoid through a temp with the proven broadcast multiply; everything else keeps the scalar contract.</summary>
+    public static Tensor<float> SigmoidMul(Tensor<float> a, Tensor<float> b, int sigmoidInput, TensorExecutionOptions options)
+    {
+        if (sigmoidInput != 0 && sigmoidInput != 1) throw new ArgumentOutOfRangeException(nameof(sigmoidInput), "SigmoidMul selects input 0 or 1 for the sigmoid leg.");
+        if (!Tensor<float>.BroadcastShape(a.Dimensions, b.Dimensions, out _)) throw new ArgumentException("SigmoidMul inputs must broadcast.", nameof(b));
+        var da = a.ToDenseTensor();
+        var db = b.ToDenseTensor();
+        if (options.UseSimd && options.UseIntrinsics && Avx.IsSupported && Avx2.IsSupported && Fma.IsSupported
+            && da is { IsReversedStride: false } owna && HasStandardStrides(owna) && owna.Buffer.Length == (int)owna.Length
+            && db is { IsReversedStride: false } ownb && HasStandardStrides(ownb) && ownb.Buffer.Length == (int)ownb.Length
+            && owna.Length == ownb.Length)
+        {
+            var output = DenseTensor<float>.OfShape(owna.Dimensions.ToArray());
+            if (ReferenceEquals(da, db)) MathOps.SwishSpan(owna.Buffer.Span, output.Buffer.Span);
+            else if (sigmoidInput == 1) MathOps.SigmoidMulSpan(owna.Buffer.Span, ownb.Buffer.Span, output.Buffer.Span);
+            else MathOps.SigmoidMulSpan(ownb.Buffer.Span, owna.Buffer.Span, output.Buffer.Span);
+            return output;
+        }
+        if (da.Length == db.Length) return SigmoidMulScalar(a, b, sigmoidInput);
+        var gated = sigmoidInput == 1 ? db : da;
+        var temp = new DenseTensor<float>(new float[(int)gated.Length], gated.Dimensions.ToArray());
+        MathOps.SigmoidSpan(gated.Buffer.Span, temp.Buffer.Span);
+        return sigmoidInput == 1 ? da.BroadcastApply<MultiplyBroadcast<float>>(temp, options) : temp.BroadcastApply<MultiplyBroadcast<float>>(db, options);
+    }
+
+    /// <summary>Float gated multiply into a caller-provided destination honoring execution options, mirroring the rented convention.</summary>
+    public static Tensor<float> SigmoidMul(Tensor<float> a, Tensor<float> b, int sigmoidInput, TensorExecutionOptions options, DenseTensor<float> destination)
+    {
+        if (destination is null) throw new ArgumentNullException(nameof(destination));
+        if (sigmoidInput != 0 && sigmoidInput != 1) throw new ArgumentOutOfRangeException(nameof(sigmoidInput), "SigmoidMul selects input 0 or 1 for the sigmoid leg.");
+        if (!Tensor<float>.BroadcastShape(a.Dimensions, b.Dimensions, out var shape)) throw new ArgumentException("SigmoidMul inputs must broadcast.", nameof(b));
+        if (!destination.Dimensions.SequenceEqual(shape)) throw new ArgumentException("Destination shape must match the broadcast shape.", nameof(destination));
+        var r = SigmoidMul(a, b, sigmoidInput, options);
+        r.ToDenseTensor().Buffer.Span.CopyTo(destination.Buffer.Span);
+        return destination;
+    }
+
     public static Tensor<sbyte> Relu(Tensor<sbyte> x) => x.Apply(l => l >= 0 ? l : (sbyte)0);
     public static Tensor<int> Relu(Tensor<int> x) => x.Apply(l => l >= 0 ? l : 0);
 

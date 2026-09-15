@@ -93,7 +93,16 @@ namespace Lokad.Onnx
             if (pn.IsFused)
             {
                 if (!Node.IsStandardDomain(pn.Domain)) return false;
-                if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu) return false;
+                // Epilogue-fused nodes keep their input dtype (the epilogue is
+                // an elementwise tail), so they prove exactly like their
+                // unfused data inputs. Every attribute-epilogue fusion must
+                // extend this list or downstream float proofs silently fail.
+                if (pn.Op == OpType.Mul)
+                {
+                    if (pn.Inputs.Length != 2) return false;
+                    return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo) && IsProvenFloatInner(graph, producer, pn.Inputs[1], visiting, memo);
+                }
+                if (pn.Op != OpType.LayerNormalization && pn.Op != OpType.RotaryEmbedding && pn.Op != OpType.Gelu && pn.Op != OpType.Conv) return false;
                 if (pn.Inputs.Length < 1) return false;
                 return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo);
             }
@@ -177,6 +186,9 @@ namespace Lokad.Onnx
                 case OpType.Abs:
                 case OpType.Cos:
                 case OpType.Sin:
+                case OpType.Sigmoid:
+                case OpType.Floor:
+                case OpType.Pad:
                 case OpType.LayerNormalization:
                 case OpType.RotaryEmbedding:
                     if (pn.Inputs.Length < 1 || string.IsNullOrEmpty(pn.Inputs[0])) return false;
@@ -923,6 +935,94 @@ namespace Lokad.Onnx
             if (w.Rank != 4) return false;
             convIndex = ci;
             return true;
+        }
+
+        /// <summary>
+        /// Fuses Sigmoid feeding a single-consumer Mul into the multiply node
+        /// with a fused sigmoid epilogue (fuse_sigmoid attribute naming the
+        /// activated input): the pair costs one tensor pass instead of two and
+        /// matches the unfused chain within float rounding (never
+        /// bit-identical). Covers both Swish x*sigmoid(x) and gated
+        /// a*sigmoid(b) halves; only one sigmoid leg fuses per Mul, float
+        /// proven on both sides, and a Sigmoid held as a graph output vetoes.
+        /// </summary>
+        public static int FuseSigmoidMulPatterns(ComputationalGraph graph)
+        {
+            var idx = BuildIndex(graph);
+            var producer = idx.Producer;
+            var consumers = idx.Consumers;
+            var outputs = idx.Outputs;
+
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int j = 0; j < graph.Nodes.Count; j++)
+            {
+                if (graph.Nodes[j].Op != OpType.Mul) continue;
+                if (!IsFusableParticipant(graph.Nodes[j])) continue;
+                if (drop.Contains(j)) continue;
+                if (TryMatchSigmoidMul(graph, producer, consumers, outputs, drop, j, out int leg))
+                {
+                    var mul = graph.Nodes[j];
+                    mul.Attributes ??= new Dictionary<string, object>();
+                    mul.Attributes["fuse_sigmoid"] = leg;
+                    mul.IsFused = true;
+                    graph.Nodes[j] = mul;
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        static bool TryMatchSigmoidMul(
+            ComputationalGraph graph,
+            Dictionary<string, int> producer,
+            Dictionary<string, List<int>> consumers,
+            HashSet<string> outputs,
+            HashSet<int> drop,
+            int mulIndex,
+            out int leg)
+        {
+            leg = -1;
+            var mul = graph.Nodes[mulIndex];
+            if (!IsFusableParticipant(mul)) return false;
+            if (mul.Inputs.Length != 2 || mul.Outputs.Length != 1) return false;
+            for (int k = 0; k < 2; k++)
+            {
+                string sname = mul.Inputs[k];
+                string other = mul.Inputs[1 - k];
+                if (string.IsNullOrEmpty(sname) || string.IsNullOrEmpty(other)) continue;
+                if (outputs.Contains(sname)) continue;
+                if (!producer.TryGetValue(sname, out int si) || drop.Contains(si)) continue;
+                var sig = graph.Nodes[si];
+                if (sig.Op != OpType.Sigmoid || !IsFusableParticipant(sig)) continue;
+                if (sig.Inputs.Length != 1 || sig.Outputs.Length != 1 || sig.Outputs[0] != sname) continue;
+                string sin = sig.Inputs[0];
+                if (string.IsNullOrEmpty(sin)) continue;
+                if (!consumers.TryGetValue(sname, out var uses)) continue;
+                int live = 0;
+                foreach (var u in uses) if (!drop.Contains(u)) live++;
+                if (live != 1) continue;
+                if (!IsProvenFloat(graph, producer, sin)) continue;
+                if (!IsProvenFloat(graph, producer, other)) continue;
+                mul.Inputs[k] = sin;
+                graph.Nodes[mulIndex] = mul;
+                drop.Add(si);
+                leg = k;
+                return true;
+            }
+            return false;
         }
 
         public static int FuseRopePatterns(ComputationalGraph graph)

@@ -342,6 +342,17 @@ public partial struct Node
             return InputTypeNotSupported(OpType.Relu, "X", t, null);
         return null;
     }
+    /// <summary>
+    /// Routes Mul nodes carrying the Sigmoid+Mul fusion marker to the fused
+    /// gated-multiply kernel; unmarked nodes fall through to plain Mul.
+    /// </summary>
+    OpResult? MulSigmoidGate(ComputationalGraph graph, ExecutionOptions? opt)
+    {
+        int? k = GetInt("fuse_sigmoid", null);
+        if (!k.HasValue) return null;
+        if (k.Value != 0 && k.Value != 1) return OpResult.AttributeNotSupported(OpType.Mul, "fuse_sigmoid", k.Value.ToString(), "Fused Sigmoid+Mul selects input 0 or 1.");
+        return CPU.MulSigmoid(InputTensor(graph, 0), InputTensor(graph, 1), k.Value, opt, graph.ActivePool);
+    }
     OpResult? MatMulIntGate(ComputationalGraph graph)
     {
         int v = ResolvedOpsetVersion(graph);
@@ -379,7 +390,7 @@ public partial struct Node
 
         OpType.Sub => Sub32Gate(graph, OpType.Sub) ?? CPU.Sub(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Mul => Sub32Gate(graph, OpType.Mul) ?? CPU.Mul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+        OpType.Mul => Sub32Gate(graph, OpType.Mul) ?? MulSigmoidGate(graph, opt) ?? CPU.Mul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
         OpType.Div => Sub32Gate(graph, OpType.Div) ?? CPU.Div(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 

@@ -187,6 +187,28 @@ public partial class CPUExecutionProvider
         }
     }
 
+    /// <summary>Fused gated multiply for the Sigmoid+Mul fusion: y = a*sigmoid(b) (sigmoidInput 1) or sigmoid(a)*b (sigmoidInput 0) in one pass. Only float32 takes part; anything else is refused like the LSTM gate contract.</summary>
+    public static OpResult MulSigmoid(ITensor? A, ITensor? B, int sigmoidInput, ExecutionOptions? options, TensorBufferPool? pool)
+    {
+        var op = OpType.Mul;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (A.ElementType != TensorElementType.Float || B.ElementType != TensorElementType.Float) return InputTypeNotSupported(op, nameof(A), A, "Fused Sigmoid+Mul supports float32 only.");
+        if (sigmoidInput != 0 && sigmoidInput != 1) return AttributeNotSupported(op, "fuse_sigmoid", sigmoidInput.ToString(), "Fused Sigmoid+Mul selects input 0 or 1.");
+        Profiler.StartOpStage(OpStage.Broadcast);
+        if (!Tensor<int>.BroadcastShape(A.Dims, B.Dims, out _)) return CannotBroadcast(op, A, B);
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        Profiler.StartOpStage(OpStage.Math);
+        var fa = (Tensor<float>)A;
+        var fb = (Tensor<float>)B;
+        if (pool is null) return Success(op, Tensor<float>.SigmoidMul(fa, fb, sigmoidInput, opts.Tensor));
+        if (!Tensor<float>.BroadcastShape(fa.Dimensions, fb.Dimensions, out var shape)) return CannotBroadcast(op, A, B);
+        int flat = 1;
+        foreach (var d in shape) flat *= d;
+        var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>(flat)), shape);
+        return Success(op, Tensor<float>.SigmoidMul(fa, fb, sigmoidInput, opts.Tensor, rented));
+    }
+
     public static OpResult Div(ITensor? A, ITensor? B, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.Div;
