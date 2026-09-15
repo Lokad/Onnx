@@ -42,6 +42,18 @@ public partial class CPUExecutionProvider
         if (A is null) return MissingInput(op, nameof(A));
         if (B is null) return MissingInput(op, nameof(B));
         if (Scale is null) return MissingInput(op, nameof(Scale));
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        if (A is Tensor<float> fa && B is Tensor<float> fb && Scale is Tensor<float> fscale && fscale.Length == 1)
+        {
+            var dest = Tensor<float>.TryScaledMatMul(fa, fb, fscale.GetValue(0), opts.Tensor, pool);
+            if (dest is not null)
+                return Success(op, dest);
+        }
+        return CompositeScaledMatMul(op, A, B, Scale, options, pool);
+    }
+
+    static OpResult CompositeScaledMatMul(OpType op, ITensor A, ITensor B, ITensor Scale, ExecutionOptions? options, TensorBufferPool? pool)
+    {
         var mul = Mul(A, Scale, options, pool);
         if (mul.Status != OpStatus.Success || mul.Outputs is null || mul.Outputs.Length != 1 || mul.Outputs[0] is null)
             return mul;

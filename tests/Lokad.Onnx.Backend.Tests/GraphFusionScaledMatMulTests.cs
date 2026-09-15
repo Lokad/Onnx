@@ -144,6 +144,92 @@ public class GraphFusionScaledMatMulTests
         Assert.Contains(graph.Nodes, n => n.Op == OpType.ScaledMatMul && n.Outputs.Length == 1 && n.Outputs[0] == "y");
     }
 
+    static unsafe float[] RunScaledPacked(int m, int n, int k, float[] a, float[] bRowMajor, float s, bool threeRow)
+    {
+        var packed = new float[n * k + 64];
+        var c = new float[m * k];
+        fixed (float* bp = bRowMajor, pp = packed, cp = c, ap = a)
+        {
+            MathOps.PackPanelsB(n, k, bp, pp);
+            if (threeRow) MathOps.mm_scaled_3x4packed(m, n, k, ap, pp, cp, s);
+            else MathOps.mm_scaled_2x4packed(m, n, k, ap, pp, cp, s);
+        }
+        return c;
+    }
+
+    static unsafe float[] RunStockPacked(int m, int n, int k, float[] a, float[] bRowMajor, bool threeRow)
+    {
+        var packed = new float[n * k + 64];
+        var c = new float[m * k];
+        fixed (float* bp = bRowMajor, pp = packed, cp = c, ap = a)
+        {
+            MathOps.PackPanelsB(n, k, bp, pp);
+            if (threeRow) MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, ap, pp, cp);
+            else MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, ap, pp, cp);
+        }
+        return c;
+    }
+
+    static void AssertScaledKernel(string name, int m, int n, int k, float s, bool threeRow)
+    {
+        var rnd = new System.Random(name.GetHashCode());
+        var a = new float[m * n];
+        var b = new float[n * k];
+        for (int i = 0; i < a.Length; i++) a[i] = (float)rnd.NextDouble() * 2f - 1f;
+        for (int i = 0; i < b.Length; i++) b[i] = (float)rnd.NextDouble() * 2f - 1f;
+        a[0] = System.BitConverter.Int32BitsToSingle(0x7FC00001);
+        if (a.Length > 1) a[1] = float.NegativeInfinity;
+        if (a.Length > 2) a[2] = -0f;
+        var scaled = RunScaledPacked(m, n, k, a, b, s, threeRow);
+        // S=1 identity against the stock kernel is bitwise by IEEE identity.
+        var stock1 = RunStockPacked(m, n, k, a, b, threeRow);
+        var s1 = RunScaledPacked(m, n, k, a, b, 1f, threeRow);
+        Assert.True(stock1.AsSpan().SequenceEqual(s1), name + " S=1 identity");
+        // General S must equal Mul-then-stock applied to a separately scaled copy.
+        var pre = new float[a.Length];
+        for (int i = 0; i < a.Length; i++) pre[i] = a[i] * s;
+        var expect = RunStockPacked(m, n, k, pre, b, threeRow);
+        Assert.True(expect.AsSpan().SequenceEqual(scaled), name + " s=" + s + " vs prescaled");
+    }
+
+    [Fact]
+    public void ScaledPackedKernels_MatchStockBitwise()
+    {
+        AssertScaledKernel("dino201-3x4", 201, 64, 201, 0.125f, true);
+        AssertScaledKernel("even-2x4", 200, 64, 200, 0.125f, false);
+        AssertScaledKernel("tail-2x4", 12, 33, 45, 2.5f, false);
+        AssertScaledKernel("tail-3x4", 9, 33, 45, -1.5f, true);
+        AssertScaledKernel("neg-one", 6, 16, 24, -1f, false);
+    }
+
+    static void AssertFastPathBitwise(string name, int[] adims, int[] bdims, float s)
+    {
+        var a = Rand(adims, 21);
+        var b = Rand(bdims, 22);
+        var scale = DenseTensor<float>.Scalar(s);
+        var legacy = CPUExecutionProvider.Mul(a, scale, null, null);
+        Assert.Equal(OpStatus.Success, legacy.Status);
+        var mm = CPUExecutionProvider.MatMul(legacy.Outputs![0]!, b, null, null);
+        Assert.Equal(OpStatus.Success, mm.Status);
+        var fused = CPUExecutionProvider.ScaledMatMul(a, b, scale, null, null);
+        Assert.Equal(OpStatus.Success, fused.Status);
+        var f = Out(fused.Outputs![0]!);
+        var e = Out(mm.Outputs![0]!);
+        Assert.Equal(e.Length, f.Length);
+        Assert.True(e.AsSpan().SequenceEqual(f.AsSpan()), name + " diverged");
+    }
+
+    [Fact]
+    public void ScaledMatMul_FastPathMatchesLegacyBitwise()
+    {
+        // 3x4-packed territory (DINO scores geometry) plus even-m packed,
+        // rank-4 batched, tails and exceptional values via seeded data.
+        AssertFastPathBitwise("dino-3x4", new[] { 201, 64 }, new[] { 64, 201 }, 0.125f);
+        AssertFastPathBitwise("even-2x4", new[] { 200, 64 }, new[] { 64, 200 }, 0.125f);
+        AssertFastPathBitwise("batch4d", new[] { 1, 6, 12, 32 }, new[] { 1, 6, 32, 40 }, -2.5f);
+        AssertFastPathBitwise("tail-k", new[] { 66, 33 }, new[] { 33, 45 }, 1e-10f);
+    }
+
     [Fact]
     public void ScaledMatMul_MissingScaleIsNotSuccess()
     {
