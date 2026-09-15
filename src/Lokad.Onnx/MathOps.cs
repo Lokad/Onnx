@@ -1281,42 +1281,34 @@ public class MathOps
                 var ApA = Ap9 + N;
                 var ApB = ApA + N;
                 var ApC = ApB + N;
-                var Cp1 = (Vector512<float>*)(C + i * K + kb);
-                var Cp2 = (Vector512<float>*)(C + (i + 1) * K + kb);
-                var Cp3 = (Vector512<float>*)(C + (i + 2) * K + kb);
-                var Cp4 = (Vector512<float>*)(C + (i + 3) * K + kb);
-                var Cp5 = (Vector512<float>*)(C + (i + 4) * K + kb);
-                var Cp6 = (Vector512<float>*)(C + (i + 5) * K + kb);
-                var Cp7 = (Vector512<float>*)(C + (i + 6) * K + kb);
-                var Cp8 = (Vector512<float>*)(C + (i + 7) * K + kb);
-                var Cp9 = (Vector512<float>*)(C + (i + 8) * K + kb);
-                var CpA = (Vector512<float>*)(C + (i + 9) * K + kb);
-                var CpB = (Vector512<float>*)(C + (i + 10) * K + kb);
-                var CpC = (Vector512<float>*)(C + (i + 11) * K + kb);
-                Vector512<float> c00 = Cp1[0];
-                Vector512<float> c01 = Cp1[1];
-                Vector512<float> c10 = Cp2[0];
-                Vector512<float> c11 = Cp2[1];
-                Vector512<float> c20 = Cp3[0];
-                Vector512<float> c21 = Cp3[1];
-                Vector512<float> c30 = Cp4[0];
-                Vector512<float> c31 = Cp4[1];
-                Vector512<float> c40 = Cp5[0];
-                Vector512<float> c41 = Cp5[1];
-                Vector512<float> c50 = Cp6[0];
-                Vector512<float> c51 = Cp6[1];
-                Vector512<float> c70 = Cp7[0];
-                Vector512<float> c71 = Cp7[1];
-                Vector512<float> c80 = Cp8[0];
-                Vector512<float> c81 = Cp8[1];
-                Vector512<float> c90 = Cp9[0];
-                Vector512<float> c91 = Cp9[1];
-                Vector512<float> cA0 = CpA[0];
-                Vector512<float> cA1 = CpA[1];
-                Vector512<float> cB0 = CpB[0];
-                Vector512<float> cB1 = CpB[1];
-                Vector512<float> cC0 = CpC[0];
-                Vector512<float> cC1 = CpC[1];
+                // C addresses recompute at the cold load/store points (8-row
+                // style) so the twelve C-row pointers do not stay live
+                // across the reduction loop and spill the A-row bases.
+                float* cGroup = C + i * K + kb;
+                Vector512<float> c00 = ((Vector512<float>*)(cGroup))[0];
+                Vector512<float> c01 = ((Vector512<float>*)(cGroup))[1];
+                Vector512<float> c10 = ((Vector512<float>*)(cGroup + 1 * K))[0];
+                Vector512<float> c11 = ((Vector512<float>*)(cGroup + 1 * K))[1];
+                Vector512<float> c20 = ((Vector512<float>*)(cGroup + 2 * K))[0];
+                Vector512<float> c21 = ((Vector512<float>*)(cGroup + 2 * K))[1];
+                Vector512<float> c30 = ((Vector512<float>*)(cGroup + 3 * K))[0];
+                Vector512<float> c31 = ((Vector512<float>*)(cGroup + 3 * K))[1];
+                Vector512<float> c40 = ((Vector512<float>*)(cGroup + 4 * K))[0];
+                Vector512<float> c41 = ((Vector512<float>*)(cGroup + 4 * K))[1];
+                Vector512<float> c50 = ((Vector512<float>*)(cGroup + 5 * K))[0];
+                Vector512<float> c51 = ((Vector512<float>*)(cGroup + 5 * K))[1];
+                Vector512<float> c70 = ((Vector512<float>*)(cGroup + 6 * K))[0];
+                Vector512<float> c71 = ((Vector512<float>*)(cGroup + 6 * K))[1];
+                Vector512<float> c80 = ((Vector512<float>*)(cGroup + 7 * K))[0];
+                Vector512<float> c81 = ((Vector512<float>*)(cGroup + 7 * K))[1];
+                Vector512<float> c90 = ((Vector512<float>*)(cGroup + 8 * K))[0];
+                Vector512<float> c91 = ((Vector512<float>*)(cGroup + 8 * K))[1];
+                Vector512<float> cA0 = ((Vector512<float>*)(cGroup + 9 * K))[0];
+                Vector512<float> cA1 = ((Vector512<float>*)(cGroup + 9 * K))[1];
+                Vector512<float> cB0 = ((Vector512<float>*)(cGroup + 10 * K))[0];
+                Vector512<float> cB1 = ((Vector512<float>*)(cGroup + 10 * K))[1];
+                Vector512<float> cC0 = ((Vector512<float>*)(cGroup + 11 * K))[0];
+                Vector512<float> cC1 = ((Vector512<float>*)(cGroup + 11 * K))[1];
                 for (int j = 0; j < N; ++j)
                 {
                     var Bpv = (Vector512<float>*)(panel + j * (2 * Vector512<float>.Count));
@@ -1359,170 +1351,195 @@ public class MathOps
                     cC0 = Avx512F.FusedMultiplyAdd(aa, b0, cC0);
                     cC1 = Avx512F.FusedMultiplyAdd(aa, b1, cC1);
                 }
-                Cp1[0] = c00;
-                Cp1[1] = c01;
-                Cp2[0] = c10;
-                Cp2[1] = c11;
-                Cp3[0] = c20;
-                Cp3[1] = c21;
-                Cp4[0] = c30;
-                Cp4[1] = c31;
-                Cp5[0] = c40;
-                Cp5[1] = c41;
-                Cp6[0] = c50;
-                Cp6[1] = c51;
-                Cp7[0] = c70;
-                Cp7[1] = c71;
-                Cp8[0] = c80;
-                Cp8[1] = c81;
-                Cp9[0] = c90;
-                Cp9[1] = c91;
-                CpA[0] = cA0;
-                CpA[1] = cA1;
-                CpB[0] = cB0;
-                CpB[1] = cB1;
-                CpC[0] = cC0;
-                CpC[1] = cC1;
+                ((Vector512<float>*)(cGroup))[0] = c00;
+                ((Vector512<float>*)(cGroup))[1] = c01;
+                ((Vector512<float>*)(cGroup + 1 * K))[0] = c10;
+                ((Vector512<float>*)(cGroup + 1 * K))[1] = c11;
+                ((Vector512<float>*)(cGroup + 2 * K))[0] = c20;
+                ((Vector512<float>*)(cGroup + 2 * K))[1] = c21;
+                ((Vector512<float>*)(cGroup + 3 * K))[0] = c30;
+                ((Vector512<float>*)(cGroup + 3 * K))[1] = c31;
+                ((Vector512<float>*)(cGroup + 4 * K))[0] = c40;
+                ((Vector512<float>*)(cGroup + 4 * K))[1] = c41;
+                ((Vector512<float>*)(cGroup + 5 * K))[0] = c50;
+                ((Vector512<float>*)(cGroup + 5 * K))[1] = c51;
+                ((Vector512<float>*)(cGroup + 6 * K))[0] = c70;
+                ((Vector512<float>*)(cGroup + 6 * K))[1] = c71;
+                ((Vector512<float>*)(cGroup + 7 * K))[0] = c80;
+                ((Vector512<float>*)(cGroup + 7 * K))[1] = c81;
+                ((Vector512<float>*)(cGroup + 8 * K))[0] = c90;
+                ((Vector512<float>*)(cGroup + 8 * K))[1] = c91;
+                ((Vector512<float>*)(cGroup + 9 * K))[0] = cA0;
+                ((Vector512<float>*)(cGroup + 9 * K))[1] = cA1;
+                ((Vector512<float>*)(cGroup + 10 * K))[0] = cB0;
+                ((Vector512<float>*)(cGroup + 10 * K))[1] = cB1;
+                ((Vector512<float>*)(cGroup + 11 * K))[0] = cC0;
+                ((Vector512<float>*)(cGroup + 11 * K))[1] = cC1;
             }
         }
         int rem = K - blocked;
         if (rem > 0)
+            mm_avx512_12x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem);
+    }
+    /// <summary>
+    /// Column-tail half of the 12-row AVX512 packed nest: full-vector
+    /// remainders first, then one masked remainder. Split from the main
+    /// nest so the hot reduction loop stays compact for the JIT; takes
+    /// the same operands plus the precomputed tile geometry.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 12).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
+    /// <param name="C">Result matrix.</param>
+    /// <param name="blocked">Leading output columns covered by full tiles.</param>
+    /// <param name="tiles">Count of full 32-column tiles.</param>
+    /// <param name="rem">Trailing output columns (must be positive).</param>
+    public unsafe static void mm_avx512_12x32packed_col_tail(int M,
+                              int N,
+                              int K,
+                              float* A,
+                              float* P,
+                              float* C,
+                              int blocked,
+                              int tiles,
+                              int rem)
+    {
+        float* T = P + tiles * N * (2 * Vector512<float>.Count);
+        int rv = rem / Vector512<float>.Count;
+        for (int tt = 0; tt < rv; tt++)
         {
-            float* T = P + tiles * N * (2 * Vector512<float>.Count);
-            int rv = rem / Vector512<float>.Count;
-            for (int tt = 0; tt < rv; tt++)
+            for (int i = 0; i < M; i += 12)
             {
-                for (int i = 0; i < M; i += 12)
+                var Ap1 = A + i * N;
+                var Ap2 = Ap1 + N;
+                var Ap3 = Ap2 + N;
+                var Ap4 = Ap3 + N;
+                var Ap5 = Ap4 + N;
+                var Ap6 = Ap5 + N;
+                var Ap7 = Ap6 + N;
+                var Ap8 = Ap7 + N;
+                var Ap9 = Ap8 + N;
+                var ApA = Ap9 + N;
+                var ApB = ApA + N;
+                var ApC = ApB + N;
+                var rC1 = (Vector512<float>*)(C + i * K + blocked);
+                var rC2 = (Vector512<float>*)(C + (i + 1) * K + blocked);
+                var rC3 = (Vector512<float>*)(C + (i + 2) * K + blocked);
+                var rC4 = (Vector512<float>*)(C + (i + 3) * K + blocked);
+                var rC5 = (Vector512<float>*)(C + (i + 4) * K + blocked);
+                var rC6 = (Vector512<float>*)(C + (i + 5) * K + blocked);
+                var rC7 = (Vector512<float>*)(C + (i + 6) * K + blocked);
+                var rC8 = (Vector512<float>*)(C + (i + 7) * K + blocked);
+                var rC9 = (Vector512<float>*)(C + (i + 8) * K + blocked);
+                var rCA = (Vector512<float>*)(C + (i + 9) * K + blocked);
+                var rCB = (Vector512<float>*)(C + (i + 10) * K + blocked);
+                var rCC = (Vector512<float>*)(C + (i + 11) * K + blocked);
+                Vector512<float> c1 = rC1[tt];
+                Vector512<float> c2 = rC2[tt];
+                Vector512<float> c3 = rC3[tt];
+                Vector512<float> c4 = rC4[tt];
+                Vector512<float> c5 = rC5[tt];
+                Vector512<float> c6 = rC6[tt];
+                Vector512<float> c7 = rC7[tt];
+                Vector512<float> c8 = rC8[tt];
+                Vector512<float> c9 = rC9[tt];
+                Vector512<float> cA = rCA[tt];
+                Vector512<float> cB = rCB[tt];
+                Vector512<float> cC = rCC[tt];
+                for (int j = 0; j < N; ++j)
                 {
-                    var Ap1 = A + i * N;
-                    var Ap2 = Ap1 + N;
-                    var Ap3 = Ap2 + N;
-                    var Ap4 = Ap3 + N;
-                    var Ap5 = Ap4 + N;
-                    var Ap6 = Ap5 + N;
-                    var Ap7 = Ap6 + N;
-                    var Ap8 = Ap7 + N;
-                    var Ap9 = Ap8 + N;
-                    var ApA = Ap9 + N;
-                    var ApB = ApA + N;
-                    var ApC = ApB + N;
-                    var rC1 = (Vector512<float>*)(C + i * K + blocked);
-                    var rC2 = (Vector512<float>*)(C + (i + 1) * K + blocked);
-                    var rC3 = (Vector512<float>*)(C + (i + 2) * K + blocked);
-                    var rC4 = (Vector512<float>*)(C + (i + 3) * K + blocked);
-                    var rC5 = (Vector512<float>*)(C + (i + 4) * K + blocked);
-                    var rC6 = (Vector512<float>*)(C + (i + 5) * K + blocked);
-                    var rC7 = (Vector512<float>*)(C + (i + 6) * K + blocked);
-                    var rC8 = (Vector512<float>*)(C + (i + 7) * K + blocked);
-                    var rC9 = (Vector512<float>*)(C + (i + 8) * K + blocked);
-                    var rCA = (Vector512<float>*)(C + (i + 9) * K + blocked);
-                    var rCB = (Vector512<float>*)(C + (i + 10) * K + blocked);
-                    var rCC = (Vector512<float>*)(C + (i + 11) * K + blocked);
-                    Vector512<float> c1 = rC1[tt];
-                    Vector512<float> c2 = rC2[tt];
-                    Vector512<float> c3 = rC3[tt];
-                    Vector512<float> c4 = rC4[tt];
-                    Vector512<float> c5 = rC5[tt];
-                    Vector512<float> c6 = rC6[tt];
-                    Vector512<float> c7 = rC7[tt];
-                    Vector512<float> c8 = rC8[tt];
-                    Vector512<float> c9 = rC9[tt];
-                    Vector512<float> cA = rCA[tt];
-                    Vector512<float> cB = rCB[tt];
-                    Vector512<float> cC = rCC[tt];
-                    for (int j = 0; j < N; ++j)
-                    {
-                        var Bpv = (Vector512<float>*)(T + j * rem + tt * Vector512<float>.Count);
-                        c1 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap1[j]), c1);
-                        c2 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap2[j]), c2);
-                        c3 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap3[j]), c3);
-                        c4 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap4[j]), c4);
-                        c5 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap5[j]), c5);
-                        c6 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap6[j]), c6);
-                        c7 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap7[j]), c7);
-                        c8 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap8[j]), c8);
-                        c9 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap9[j]), c9);
-                        cA = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(ApA[j]), cA);
-                        cB = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(ApB[j]), cB);
-                        cC = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(ApC[j]), cC);
-                    }
-                    rC1[tt] = c1;
-                    rC2[tt] = c2;
-                    rC3[tt] = c3;
-                    rC4[tt] = c4;
-                    rC5[tt] = c5;
-                    rC6[tt] = c6;
-                    rC7[tt] = c7;
-                    rC8[tt] = c8;
-                    rC9[tt] = c9;
-                    rCA[tt] = cA;
-                    rCB[tt] = cB;
-                    rCC[tt] = cC;
+                    var Bpv = (Vector512<float>*)(T + j * rem + tt * Vector512<float>.Count);
+                    c1 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap1[j]), c1);
+                    c2 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap2[j]), c2);
+                    c3 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap3[j]), c3);
+                    c4 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap4[j]), c4);
+                    c5 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap5[j]), c5);
+                    c6 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap6[j]), c6);
+                    c7 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap7[j]), c7);
+                    c8 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap8[j]), c8);
+                    c9 = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(Ap9[j]), c9);
+                    cA = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(ApA[j]), cA);
+                    cB = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(ApB[j]), cB);
+                    cC = Avx512F.FusedMultiplyAdd(Bpv[0], Vector512.Create(ApC[j]), cC);
                 }
+                rC1[tt] = c1;
+                rC2[tt] = c2;
+                rC3[tt] = c3;
+                rC4[tt] = c4;
+                rC5[tt] = c5;
+                rC6[tt] = c6;
+                rC7[tt] = c7;
+                rC8[tt] = c8;
+                rC9[tt] = c9;
+                rCA[tt] = cA;
+                rCB[tt] = cB;
+                rCC[tt] = cC;
             }
-            int vcols = rv * Vector512<float>.Count;
-            int rem2 = rem - vcols;
-            if (rem2 > 0)
+        }
+        int vcols = rv * Vector512<float>.Count;
+        int rem2 = rem - vcols;
+        if (rem2 > 0)
+        {
+            float* mbuf = stackalloc float[Vector512<float>.Count];
+            for (int q = 0; q < Vector512<float>.Count; q++) mbuf[q] = q < rem2 ? -1f : 0f;
+            var vmask = Vector512.Load(mbuf);
+            for (int i = 0; i < M; i += 12)
             {
-                float* mbuf = stackalloc float[Vector512<float>.Count];
-                for (int q = 0; q < Vector512<float>.Count; q++) mbuf[q] = q < rem2 ? -1f : 0f;
-                var vmask = Vector512.Load(mbuf);
-                for (int i = 0; i < M; i += 12)
+                var mC1 = C + i * K + blocked + vcols;
+                var mC2 = C + (i + 1) * K + blocked + vcols;
+                var mC3 = C + (i + 2) * K + blocked + vcols;
+                var mC4 = C + (i + 3) * K + blocked + vcols;
+                var mC5 = C + (i + 4) * K + blocked + vcols;
+                var mC6 = C + (i + 5) * K + blocked + vcols;
+                var mC7 = C + (i + 6) * K + blocked + vcols;
+                var mC8 = C + (i + 7) * K + blocked + vcols;
+                var mC9 = C + (i + 8) * K + blocked + vcols;
+                var mCA = C + (i + 9) * K + blocked + vcols;
+                var mCB = C + (i + 10) * K + blocked + vcols;
+                var mCC = C + (i + 11) * K + blocked + vcols;
+                Vector512<float> d1 = Avx512F.MaskLoad(mC1, vmask, Vector512<float>.Zero);
+                Vector512<float> d2 = Avx512F.MaskLoad(mC2, vmask, Vector512<float>.Zero);
+                Vector512<float> d3 = Avx512F.MaskLoad(mC3, vmask, Vector512<float>.Zero);
+                Vector512<float> d4 = Avx512F.MaskLoad(mC4, vmask, Vector512<float>.Zero);
+                Vector512<float> d5 = Avx512F.MaskLoad(mC5, vmask, Vector512<float>.Zero);
+                Vector512<float> d6 = Avx512F.MaskLoad(mC6, vmask, Vector512<float>.Zero);
+                Vector512<float> d7 = Avx512F.MaskLoad(mC7, vmask, Vector512<float>.Zero);
+                Vector512<float> d8 = Avx512F.MaskLoad(mC8, vmask, Vector512<float>.Zero);
+                Vector512<float> d9 = Avx512F.MaskLoad(mC9, vmask, Vector512<float>.Zero);
+                Vector512<float> dA = Avx512F.MaskLoad(mCA, vmask, Vector512<float>.Zero);
+                Vector512<float> dB = Avx512F.MaskLoad(mCB, vmask, Vector512<float>.Zero);
+                Vector512<float> dC = Avx512F.MaskLoad(mCC, vmask, Vector512<float>.Zero);
+                for (int j = 0; j < N; ++j)
                 {
-                    var mC1 = C + i * K + blocked + vcols;
-                    var mC2 = C + (i + 1) * K + blocked + vcols;
-                    var mC3 = C + (i + 2) * K + blocked + vcols;
-                    var mC4 = C + (i + 3) * K + blocked + vcols;
-                    var mC5 = C + (i + 4) * K + blocked + vcols;
-                    var mC6 = C + (i + 5) * K + blocked + vcols;
-                    var mC7 = C + (i + 6) * K + blocked + vcols;
-                    var mC8 = C + (i + 7) * K + blocked + vcols;
-                    var mC9 = C + (i + 8) * K + blocked + vcols;
-                    var mCA = C + (i + 9) * K + blocked + vcols;
-                    var mCB = C + (i + 10) * K + blocked + vcols;
-                    var mCC = C + (i + 11) * K + blocked + vcols;
-                    Vector512<float> d1 = Avx512F.MaskLoad(mC1, vmask, Vector512<float>.Zero);
-                    Vector512<float> d2 = Avx512F.MaskLoad(mC2, vmask, Vector512<float>.Zero);
-                    Vector512<float> d3 = Avx512F.MaskLoad(mC3, vmask, Vector512<float>.Zero);
-                    Vector512<float> d4 = Avx512F.MaskLoad(mC4, vmask, Vector512<float>.Zero);
-                    Vector512<float> d5 = Avx512F.MaskLoad(mC5, vmask, Vector512<float>.Zero);
-                    Vector512<float> d6 = Avx512F.MaskLoad(mC6, vmask, Vector512<float>.Zero);
-                    Vector512<float> d7 = Avx512F.MaskLoad(mC7, vmask, Vector512<float>.Zero);
-                    Vector512<float> d8 = Avx512F.MaskLoad(mC8, vmask, Vector512<float>.Zero);
-                    Vector512<float> d9 = Avx512F.MaskLoad(mC9, vmask, Vector512<float>.Zero);
-                    Vector512<float> dA = Avx512F.MaskLoad(mCA, vmask, Vector512<float>.Zero);
-                    Vector512<float> dB = Avx512F.MaskLoad(mCB, vmask, Vector512<float>.Zero);
-                    Vector512<float> dC = Avx512F.MaskLoad(mCC, vmask, Vector512<float>.Zero);
-                    for (int j = 0; j < N; ++j)
-                    {
-                        var Bm = T + j * rem + vcols;
-                        var bv = Avx512F.MaskLoad(Bm, vmask, Vector512<float>.Zero);
-                        d1 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + i * N)[j]), d1);
-                        d2 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 1) * N)[j]), d2);
-                        d3 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 2) * N)[j]), d3);
-                        d4 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 3) * N)[j]), d4);
-                        d5 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 4) * N)[j]), d5);
-                        d6 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 5) * N)[j]), d6);
-                        d7 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 6) * N)[j]), d7);
-                        d8 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 7) * N)[j]), d8);
-                        d9 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 8) * N)[j]), d9);
-                        dA = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 9) * N)[j]), dA);
-                        dB = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 10) * N)[j]), dB);
-                        dC = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 11) * N)[j]), dC);
-                    }
-                    Avx512F.MaskStore(mC1, vmask, d1);
-                    Avx512F.MaskStore(mC2, vmask, d2);
-                    Avx512F.MaskStore(mC3, vmask, d3);
-                    Avx512F.MaskStore(mC4, vmask, d4);
-                    Avx512F.MaskStore(mC5, vmask, d5);
-                    Avx512F.MaskStore(mC6, vmask, d6);
-                    Avx512F.MaskStore(mC7, vmask, d7);
-                    Avx512F.MaskStore(mC8, vmask, d8);
-                    Avx512F.MaskStore(mC9, vmask, d9);
-                    Avx512F.MaskStore(mCA, vmask, dA);
-                    Avx512F.MaskStore(mCB, vmask, dB);
-                    Avx512F.MaskStore(mCC, vmask, dC);
+                    var Bm = T + j * rem + vcols;
+                    var bv = Avx512F.MaskLoad(Bm, vmask, Vector512<float>.Zero);
+                    d1 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + i * N)[j]), d1);
+                    d2 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 1) * N)[j]), d2);
+                    d3 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 2) * N)[j]), d3);
+                    d4 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 3) * N)[j]), d4);
+                    d5 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 4) * N)[j]), d5);
+                    d6 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 5) * N)[j]), d6);
+                    d7 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 6) * N)[j]), d7);
+                    d8 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 7) * N)[j]), d8);
+                    d9 = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 8) * N)[j]), d9);
+                    dA = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 9) * N)[j]), dA);
+                    dB = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 10) * N)[j]), dB);
+                    dC = Avx512F.FusedMultiplyAdd(bv, Vector512.Create((A + (i + 11) * N)[j]), dC);
                 }
+                Avx512F.MaskStore(mC1, vmask, d1);
+                Avx512F.MaskStore(mC2, vmask, d2);
+                Avx512F.MaskStore(mC3, vmask, d3);
+                Avx512F.MaskStore(mC4, vmask, d4);
+                Avx512F.MaskStore(mC5, vmask, d5);
+                Avx512F.MaskStore(mC6, vmask, d6);
+                Avx512F.MaskStore(mC7, vmask, d7);
+                Avx512F.MaskStore(mC8, vmask, d8);
+                Avx512F.MaskStore(mC9, vmask, d9);
+                Avx512F.MaskStore(mCA, vmask, dA);
+                Avx512F.MaskStore(mCB, vmask, dB);
+                Avx512F.MaskStore(mCC, vmask, dC);
             }
         }
     }
