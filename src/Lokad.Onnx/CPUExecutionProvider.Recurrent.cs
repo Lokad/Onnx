@@ -282,8 +282,9 @@ public partial class CPUExecutionProvider
                     if (fastGates)
                     {
                         // Fuse the input/recurrent projections plus both biases
-                        // into the hrBuf quads. Float addition commutes, so these
-                        // sums match the scalar order bit for bit; only the
+                        // into the hrBuf quads. The right-hand sides repeat the
+                        // scalar nest summation order exactly, so the
+                        // pre-activations match bit for bit; only the
                         // sigmoid/tanh evaluations differ, within 1e-6 scaled.
                         for (int h = 0; h < H; h++)
                         {
@@ -295,10 +296,10 @@ public partial class CPUExecutionProvider
                             float rbO = bd is null ? 0f : bs[bDir + 5 * H + h];
                             float rbF = bd is null ? 0f : bs[bDir + 6 * H + h];
                             float rbC = bd is null ? 0f : bs[bDir + 7 * H + h];
-                            hrBuf[h] += xwBuf[xwBase + h] + wbI + rbI;
-                            hrBuf[H + h] += xwBuf[xwBase + H + h] + wbO + rbO;
-                            hrBuf[2 * H + h] += xwBuf[xwBase + 2 * H + h] + wbF + rbF;
-                            hrBuf[3 * H + h] += xwBuf[xwBase + 3 * H + h] + wbC + rbC;
+                            hrBuf[h] = xwBuf[xwBase + h] + hrBuf[h] + wbI + rbI;
+                            hrBuf[H + h] = xwBuf[xwBase + H + h] + hrBuf[H + h] + wbO + rbO;
+                            hrBuf[2 * H + h] = xwBuf[xwBase + 2 * H + h] + hrBuf[2 * H + h] + wbF + rbF;
+                            hrBuf[3 * H + h] = xwBuf[xwBase + 3 * H + h] + hrBuf[3 * H + h] + wbC + rbC;
                         }
                         MathOps.SigmoidSpan(hrBuf.AsSpan(0, H), hrBuf.AsSpan(0, H));
                         MathOps.SigmoidSpan(hrBuf.AsSpan(H, H), hrBuf.AsSpan(H, H));

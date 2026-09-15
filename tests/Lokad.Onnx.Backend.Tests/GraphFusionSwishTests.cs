@@ -187,6 +187,59 @@ public class GraphFusionSwishTests
     }
 
     [Fact]
+    public void MulSigmoid_MismatchedBroadcastShapes()
+    {
+        // Same lengths but different shapes broadcast to [2,2]; the fused
+        // kernel must follow the broadcast, not the flat pairing.
+        var a = DenseTensor<float>.OfValues(new float[,] { { 1f }, { -2f } });
+        var b = DenseTensor<float>.OfValues(new float[] { 0.5f, -1.5f });
+        foreach (int leg in new[] { 0, 1 })
+        {
+            var sig = leg == 1 ? (Tensor<float>)b : (Tensor<float>)a;
+            var other = leg == 1 ? (Tensor<float>)a : (Tensor<float>)b;
+            var s = CPUExecutionProvider.Sigmoid(sig, null);
+            Assert.Equal(OpStatus.Success, s.Status);
+            var m = CPUExecutionProvider.Mul(other, (Tensor<float>)s.Outputs[0], null, null);
+            Assert.Equal(OpStatus.Success, m.Status);
+            var expected = ((Tensor<float>)m.Outputs[0]).ToArray();
+            Assert.Equal(new[] { 2, 2 }, ((Tensor<float>)m.Outputs[0]).Dimensions.ToArray());
+            var f = CPUExecutionProvider.MulSigmoid(a, b, leg, null, null);
+            Assert.Equal(OpStatus.Success, f.Status);
+            var actual = (Tensor<float>)f.Outputs[0];
+            Assert.Equal(new[] { 2, 2 }, actual.Dimensions.ToArray());
+            AssertScaledNear(expected, actual.ToArray(), 1e-6, "mulsig-mismatch leg=" + leg);
+        }
+    }
+
+    [Fact]
+    public void MulSigmoid_TransposedInputMatchesUnfused()
+    {
+        var rnd = new Random(93);
+        var av = new float[12];
+        var bv = new float[12];
+        for (int i = 0; i < 12; i++)
+        {
+            av[i] = (float)(rnd.NextDouble() * 8 - 4);
+            bv[i] = (float)(rnd.NextDouble() * 8 - 4);
+        }
+        var a = new DenseTensor<float>(av, new[] { 3, 4 });
+        var bt = Tensor<float>.Transpose(new DenseTensor<float>(bv, new[] { 4, 3 }), new[] { 1, 0 });
+        foreach (int leg in new[] { 0, 1 })
+        {
+            var sig = leg == 1 ? bt : (Tensor<float>)a;
+            var other = leg == 1 ? (Tensor<float>)a : bt;
+            var s = CPUExecutionProvider.Sigmoid(sig, null);
+            Assert.Equal(OpStatus.Success, s.Status);
+            var m = CPUExecutionProvider.Mul(other, (Tensor<float>)s.Outputs[0], null, null);
+            Assert.Equal(OpStatus.Success, m.Status);
+            var f = CPUExecutionProvider.MulSigmoid(a, bt, leg, null, null);
+            Assert.Equal(OpStatus.Success, f.Status);
+            AssertScaledNear(((Tensor<float>)m.Outputs[0]).ToArray(), ((Tensor<float>)f.Outputs[0]).ToArray(), 1e-6,
+                "mulsig-transposed leg=" + leg);
+        }
+    }
+
+    [Fact]
     public void MulSigmoid_ProviderBroadcastFallback()
     {
         var a = DenseTensor<float>.OfValues(new float[,] { { 1f, -2f, 3f }, { -4f, 5f, -6f } });

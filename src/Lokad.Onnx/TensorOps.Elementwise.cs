@@ -797,10 +797,13 @@ where T : unmanaged
         if (!Tensor<float>.BroadcastShape(a.Dimensions, b.Dimensions, out _)) throw new ArgumentException("SigmoidMul inputs must broadcast.", nameof(b));
         var da = a.ToDenseTensor();
         var db = b.ToDenseTensor();
-        if (options.UseSimd && options.UseIntrinsics && Avx.IsSupported && Avx2.IsSupported && Fma.IsSupported
+        // Equal lengths alone do not imply pairable elements ([2,1] against
+        // [1,2] broadcasts to [2,2]); only identical shapes run the flat
+        // span or scalar lanes, everything else takes the broadcast lane.
+        bool sameShape = da.Dimensions.SequenceEqual(db.Dimensions);
+        if (sameShape && options.UseSimd && options.UseIntrinsics && Avx.IsSupported && Avx2.IsSupported && Fma.IsSupported
             && da is { IsReversedStride: false } owna && HasStandardStrides(owna) && owna.Buffer.Length == (int)owna.Length
-            && db is { IsReversedStride: false } ownb && HasStandardStrides(ownb) && ownb.Buffer.Length == (int)ownb.Length
-            && owna.Length == ownb.Length)
+            && db is { IsReversedStride: false } ownb && HasStandardStrides(ownb) && ownb.Buffer.Length == (int)ownb.Length)
         {
             var output = DenseTensor<float>.OfShape(owna.Dimensions.ToArray());
             if (ReferenceEquals(da, db)) MathOps.SwishSpan(owna.Buffer.Span, output.Buffer.Span);
@@ -808,11 +811,17 @@ where T : unmanaged
             else MathOps.SigmoidMulSpan(ownb.Buffer.Span, owna.Buffer.Span, output.Buffer.Span);
             return output;
         }
-        if (da.Length == db.Length) return SigmoidMulScalar(a, b, sigmoidInput);
-        var gated = sigmoidInput == 1 ? db : da;
-        var temp = new DenseTensor<float>(new float[(int)gated.Length], gated.Dimensions.ToArray());
-        MathOps.SigmoidSpan(gated.Buffer.Span, temp.Buffer.Span);
-        return sigmoidInput == 1 ? da.BroadcastApply<MultiplyBroadcast<float>>(temp, options) : temp.BroadcastApply<MultiplyBroadcast<float>>(db, options);
+        if (sameShape) return SigmoidMulScalar(a, b, sigmoidInput);
+        // Buffer spans of densified views need not run in logical order
+        // (reversed strides survive ToDenseTensor), so the sigmoid temp is
+        // built from the logical-order copy while the proven broadcast
+        // multiply pairs the originals.
+        var gated = sigmoidInput == 1 ? b : a;
+        var gb = gated.ToArray();
+        var tt = new float[gb.Length];
+        MathOps.SigmoidSpan(gb, tt);
+        var temp = new DenseTensor<float>(tt, gated.Dimensions.ToArray());
+        return sigmoidInput == 1 ? a.BroadcastApply<MultiplyBroadcast<float>>(temp, options) : temp.BroadcastApply<MultiplyBroadcast<float>>(b, options);
     }
 
     /// <summary>Float gated multiply into a caller-provided destination honoring execution options, mirroring the rented convention.</summary>
