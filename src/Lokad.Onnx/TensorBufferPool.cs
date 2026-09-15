@@ -53,6 +53,24 @@ public sealed class TensorBufferPool
 
     long outstandingBytes;
 
+    /// <summary>Resets per-run bookkeeping so one pool instance can serve consecutive executions.</summary>
+    /// <remarks>Free stacks and their duplicate guards persist (that is the reuse); ownership, outstanding gauges, peaks, and counters restart because cross-run rents re-register on Rent and cross-run stale returns must not recycle storage that outlived its run (for example caller-held outputs).</remarks>
+    internal void ResetRunState()
+    {
+        owned.Clear();
+        outstanding.Clear();
+        outstandingBytes = 0;
+        PeakOutstandingBytes = 0;
+        AllocatedNew = 0;
+        Reused = 0;
+        Returned = 0;
+        Dropped = 0;
+        AllocatedNewBytes = 0;
+        ReusedBytes = 0;
+        StaticRoots = null;
+        StaticRootsBuilt = false;
+    }
+
     /// <summary>Memoized run-static alias roots for release probes, built lazily on the first probe so executions without pool-owned releases never pay for the snapshot. Null with StaticRootsBuilt set selects the legacy per-release scan.</summary>
     internal HashSet<Array>? StaticRoots;
 

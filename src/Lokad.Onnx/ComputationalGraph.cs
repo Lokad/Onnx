@@ -103,6 +103,9 @@ public class ComputationalGraph
     public Dictionary<string, int> LastUseIndex { get; internal set; } = new Dictionary<string, int>(StringComparer.Ordinal);
 
     internal TensorBufferPool? ActivePool { get; private set; }
+    /// <summary>Buffer pool retained across executions of this instance (warm reuse).</summary>
+    /// <remarks>Per-instance state, so isolated contexts never share scratch. Free stacks persist; ownership, gauges, and counters restart every run (see ResetRunState), which also keeps caller-held outputs from ever re-entering circulation.</remarks>
+    internal TensorBufferPool? RetainedPool;
 
     /// <summary>Running live-payload byte total backing <see cref="LastPeakLiveBytes"/> (P28).</summary>
     /// <remarks>Maintained by bind and release deltas plus a per-run full recompute, so per-node peak checks stay O(1) with bit-identical values.</remarks>
@@ -1418,7 +1421,9 @@ public class ComputationalGraph
         public ExecutionPoolScope(ComputationalGraph graph)
         {
             this.graph = graph;
-            graph.ActivePool = new TensorBufferPool();
+            graph.ActivePool = graph.RetainedPool ?? new TensorBufferPool();
+            graph.RetainedPool = null;
+            graph.ActivePool.ResetRunState();
             graph.ActiveScratch = new ScratchAccountant();
             graph.ActiveCopy = new CopyAccountant();
         }
@@ -1444,6 +1449,7 @@ public class ComputationalGraph
             }
             graph.ActiveScratch = null;
             graph.ActiveCopy = null;
+            graph.RetainedPool = graph.ActivePool;
             graph.ActivePool = null;
         }
     }

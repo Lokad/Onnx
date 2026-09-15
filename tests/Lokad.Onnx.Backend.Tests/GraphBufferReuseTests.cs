@@ -361,4 +361,74 @@ public class GraphBufferReuseTests
         Assert.True(graph.Execute(inputs, true));
         AssertBitwise(first, graph.Outputs["z"]);
     }
+    static ComputationalGraph MatMulAddGraph()
+    {
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "pool-retain";
+        graph.Inputs["a"] = DenseTensor<float>.OfShape(64, 64);
+        graph.Inputs["b"] = DenseTensor<float>.OfShape(64, 64);
+        graph.Inputs["c"] = DenseTensor<float>.OfShape(64, 64);
+        graph.Outputs["y"] = DenseTensor<float>.OfShape(64, 64);
+        graph.Nodes.Add(new Node { Name = "mm", Op = OpType.MatMul, Inputs = new[] { "a", "b" }, Outputs = new[] { "t" } });
+        graph.Nodes.Add(new Node { Name = "add", Op = OpType.Add, Inputs = new[] { "t", "c" }, Outputs = new[] { "y" } });
+        graph.IntermediateOutputs["t"] = null;
+        graph.RefreshLifetimeAnalysis();
+        return graph;
+    }
+
+    static Dictionary<string, ITensor> MatMulAddFeeds(float a, float b, float c)
+    {
+        var fa = new float[64 * 64];
+        var fb = new float[64 * 64];
+        var fc = new float[64 * 64];
+        for (int i = 0; i < fa.Length; i++) { fa[i] = a; fb[i] = b; fc[i] = c; }
+        return new Dictionary<string, ITensor>
+        {
+            ["a"] = new DenseTensor<float>(new Memory<float>(fa), new[] { 64, 64 }),
+            ["b"] = new DenseTensor<float>(new Memory<float>(fb), new[] { 64, 64 }),
+            ["c"] = new DenseTensor<float>(new Memory<float>(fc), new[] { 64, 64 }),
+        };
+    }
+
+    [Fact]
+    public void PoolRetainedAcrossRuns_ReusesStorage()
+    {
+        var graph = MatMulAddGraph();
+        var ctx = graph.CreateExecution(null);
+        Assert.True(ctx.Execute(MatMulAddFeeds(1f, 2f, 3f), true));
+        Assert.Equal(131f, ToArray(ctx.Outputs["y"])[0]);
+        long firstNew = ctx.LastPoolAllocatedNewBytes;
+        Assert.True(firstNew >= 2L * 64 * 64 * 4, "first run must allocate t and y, saw " + firstNew);
+        Assert.True(ctx.Execute(MatMulAddFeeds(1f, 2f, 3f), true));
+        Assert.Equal(131f, ToArray(ctx.Outputs["y"])[0]);
+        Assert.True(ctx.LastPoolReused > 0, "second run must reuse retained storage.");
+        Assert.True(ctx.LastPoolAllocatedNewBytes < firstNew, "second run must allocate less: " + ctx.LastPoolAllocatedNewBytes + " vs " + firstNew);
+    }
+
+    [Fact]
+    public void RetainedOutput_HeldAcrossRuns_StaysValid()
+    {
+        var graph = MatMulAddGraph();
+        var ctx = graph.CreateExecution(null);
+        Assert.True(ctx.Execute(MatMulAddFeeds(1f, 2f, 3f), true));
+        var held = (Tensor<float>)ctx.Outputs["y"];
+        Assert.Equal(131f, held.ToArray()[0]);
+        Assert.True(ctx.Execute(MatMulAddFeeds(2f, 1f, 0f), true));
+        Assert.Equal(131f, held.ToArray()[0]);
+        Assert.Equal(128f, ToArray(ctx.Outputs["y"])[0]);
+    }
+
+    [Fact]
+    public void PoolRetention_SurvivesReset()
+    {
+        var graph = MatMulAddGraph();
+        var ctx = graph.CreateExecution(null);
+        Assert.True(ctx.Execute(MatMulAddFeeds(1f, 2f, 3f), true));
+        ctx.Reset();
+        Assert.True(ctx.Execute(MatMulAddFeeds(1f, 2f, 3f), true));
+        Assert.Equal(131f, ToArray(ctx.Outputs["y"])[0]);
+        Assert.True(ctx.LastPoolReused > 0, "retained pool must survive Reset.");
+    }
+
+
 }
