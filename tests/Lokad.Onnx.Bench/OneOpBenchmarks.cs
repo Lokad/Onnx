@@ -16,10 +16,24 @@ using OrtTensors = Microsoft.ML.OnnxRuntime.Tensors;
 
 internal static class OneOpMicro
 {
+    internal static GraphOptimizationLevel OrtLevel = GraphOptimizationLevel.ORT_ENABLE_ALL;
+
     internal static void RunOneOp(string[] args)
     {
-        Console.WriteLine("Running one-op ORT session comparisons...");
-        BenchmarkRunner.Run<OneOpBenchmarks>(DefaultConfig.Instance, args);
+        var rest = new List<string>();
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "--ort-level" && i + 1 < args.Length)
+            {
+                OrtLevel = args[i + 1].Equals("extended", StringComparison.OrdinalIgnoreCase)
+                    ? GraphOptimizationLevel.ORT_ENABLE_EXTENDED
+                    : GraphOptimizationLevel.ORT_ENABLE_ALL;
+                i++;
+            }
+            else rest.Add(args[i]);
+        }
+        Console.WriteLine("Running one-op ORT session comparisons (ort-level=" + OrtLevel + ", headline stays ORT_ENABLE_ALL)...");
+        BenchmarkRunner.Run<OneOpBenchmarks>(DefaultConfig.Instance, rest.ToArray());
     }
 }
 
@@ -41,25 +55,25 @@ public class OneOpBenchmarks
 
     sealed class Case
     {
-        internal Case(string name, string inputName, ComputationalGraph graph, InferenceSession session, SessionOptions sessionOptions, ITensor lokadInput, OrtTensors.DenseTensor<float> ortInput, ExecutionOptions execOptions)
+        internal Case(string name, ComputationalGraph graph, InferenceSession session, SessionOptions sessionOptions, List<string> inputNames, List<ITensor> lokadInputs, List<OrtTensors.DenseTensor<float>> ortInputs, ExecutionOptions execOptions)
         {
             Name = name;
-            InputName = inputName;
             Graph = graph;
             Session = session;
             SessionOptions = sessionOptions;
-            LokadInput = lokadInput;
-            OrtInput = ortInput;
+            InputNames = inputNames;
+            LokadInputs = lokadInputs;
+            OrtInputs = ortInputs;
             ExecOptions = execOptions;
         }
 
         internal string Name;
-        internal string InputName;
         internal ComputationalGraph Graph;
         internal InferenceSession Session;
         internal SessionOptions SessionOptions;
-        internal ITensor LokadInput;
-        internal OrtTensors.DenseTensor<float> OrtInput;
+        internal List<string> InputNames;
+        internal List<ITensor> LokadInputs;
+        internal List<OrtTensors.DenseTensor<float>> OrtInputs;
         internal ExecutionOptions ExecOptions;
     }
 
@@ -127,39 +141,81 @@ public class OneOpBenchmarks
         Add("chain_transpose_8", "x", new int[] { 1, 30, 12, 32 });
         Add("mlpbias_e5_8", "x", new int[] { 1, 8, 384 });
         Add("attnblock_e5_8", "x", new int[] { 1, 8, 384 });
+        AddMulti("attnmask_e5_30", new (string, int[])[] { ("q", new int[] { 1, 12, 30, 32 }), ("kt", new int[] { 1, 12, 32, 30 }), ("v", new int[] { 1, 12, 30, 32 }), ("scale", new int[0]), ("mask", new int[] { 1, 1, 30, 30 }) }, CausalFill);
+        Add("attnblock_dino_201", "x", new int[] { 1, 201, 384 });
+        Add("resblock_s2_trans", "x", new int[] { 1, 256, 56, 56 });
+        AddMulti("matmul_runtime_ab", new (string, int[])[] { ("a", new int[] { 1, 12, 30, 32 }), ("b", new int[] { 1, 12, 32, 30 }) }, null);
         foreach (var c in cases) VerifyAgreement(c);
-        Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise.");
+        Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise (ort-level=" + OneOpMicro.OrtLevel + ").");
     }
 
     void Add(string kase, string inputName, int[] dims)
     {
+        AddMulti(kase, new (string, int[])[] { (inputName, dims) }, null);
+    }
+
+    static float[]? CausalFill(string name, int[] dims)
+    {
+        if (name == "scale") return new float[] { 0.1767766953f };
+        if (name == "mask")
+        {
+            int rows = dims[2], cols = dims[3];
+            var m = new float[rows * cols];
+            for (int r = 0; r < rows; r++)
+                for (int c = 0; c < cols; c++)
+                    m[r * cols + c] = c <= r ? 0f : -10000f;
+            return m;
+        }
+        return null;
+    }
+
+    void AddMulti(string kase, (string name, int[] dims)[] specs, Func<string, int[], float[]?>? values)
+    {
         string path = ModelPath(kase);
         if (!File.Exists(path)) throw new FileNotFoundException("one-op model missing: " + path);
-        int n = 1;
-        foreach (var d in dims) n *= d;
-        var rnd = new Random(Seed);
-        var data = new float[n];
-        for (int i = 0; i < n; i++) data[i] = (float)rnd.NextDouble() * 2f - 1f;
-        var lokadInput = new DenseTensor<float>(data, dims);
-        var ortInput = new OrtTensors.DenseTensor<float>(data, dims);
         var graph = OnnxImport.Load(path);
         if (graph is null) throw new InvalidOperationException("one-op model failed to load: " + path);
+        var order = graph.InputDescs.Select(d => d.Name).ToList();
+        var names = new List<string>();
+        var lokad = new List<ITensor>();
+        var ort = new List<OrtTensors.DenseTensor<float>>();
+        var rnd = new Random(Seed);
+        foreach (var spec in specs.OrderBy(s => order.IndexOf(s.name)))
+        {
+            if (!order.Contains(spec.name)) throw new InvalidOperationException("one-op " + kase + ": unknown input " + spec.name);
+            int n = 1;
+            foreach (var d in spec.dims) n *= d;
+            float[]? data = values?.Invoke(spec.name, spec.dims);
+            if (data is null)
+            {
+                data = new float[n];
+                for (int i = 0; i < n; i++) data[i] = (float)rnd.NextDouble() * 2f - 1f;
+            }
+            if (data.Length != n) throw new InvalidOperationException("one-op " + kase + ": filler length mismatch for " + spec.name);
+            names.Add(spec.name);
+            lokad.Add(new DenseTensor<float>(data, spec.dims));
+            ort.Add(new OrtTensors.DenseTensor<float>(data, spec.dims));
+        }
         var so = global::Bench.CreateSingleCpuSessionOptions(1);
+        so.GraphOptimizationLevel = OneOpMicro.OrtLevel;
         var session = new InferenceSession(path, so);
         var execOptions = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Auto);
-        cases.Add(new Case(kase, inputName, graph, session, so, lokadInput, ortInput, execOptions));
+        cases.Add(new Case(kase, graph, session, so, names, lokad, ort, execOptions));
     }
 
     static float[] RunLokad(Case c)
     {
-        if (!c.Graph.Execute(new ITensor[] { c.LokadInput }, true, ExecutionProvider.CPU, c.ExecOptions))
+        if (!c.Graph.Execute(c.LokadInputs.ToArray(), true, ExecutionProvider.CPU, c.ExecOptions))
             throw new InvalidOperationException("Lokad execution failed for " + c.Name);
         return ((Tensor<float>)c.Graph.Outputs["y"]).ToArray();
     }
 
     static float[] RunOrt(Case c)
     {
-        using (var results = c.Session.Run(new[] { NamedOnnxValue.CreateFromTensor(c.InputName, c.OrtInput) }, new[] { "y" }))
+        var feeds = new NamedOnnxValue[c.InputNames.Count];
+        for (int i = 0; i < feeds.Length; i++)
+            feeds[i] = NamedOnnxValue.CreateFromTensor(c.InputNames[i], c.OrtInputs[i]);
+        using (var results = c.Session.Run(feeds, new[] { "y" }))
         {
             foreach (var r in results)
             {
@@ -630,4 +686,34 @@ public class OneOpBenchmarks
     [Benchmark(Description = "E5 attention block 1x8x384 (QKV/transpose/scores/softmax/context/proj) - ORT session")]
     [BenchmarkCategory("attnblock8")]
     public void OrtAttnBlock8() => RunOrt(cases[55]);
-}
+    [Benchmark(Description = "Attention scores with runtime scale plus causal mask 1x12x30x32 (MatMul/Mul/Add/Softmax/MatMul) - Lokad session")]
+    [BenchmarkCategory("attnmask")]
+    public void LokadAttnMask() => RunLokad(cases[56]);
+
+    [Benchmark(Description = "Attention scores with runtime scale plus causal mask 1x12x30x32 (MatMul/Mul/Add/Softmax/MatMul) - ORT session")]
+    [BenchmarkCategory("attnmask")]
+    public void OrtAttnMask() => RunOrt(cases[56]);
+
+    [Benchmark(Description = "DINOv3 attention block 1x201x384 (QKV/transpose/scores/softmax/context/proj) - Lokad session")]
+    [BenchmarkCategory("attnblock201")]
+    public void LokadAttnBlock201() => RunLokad(cases[57]);
+
+    [Benchmark(Description = "DINOv3 attention block 1x201x384 (QKV/transpose/scores/softmax/context/proj) - ORT session")]
+    [BenchmarkCategory("attnblock201")]
+    public void OrtAttnBlock201() => RunOrt(cases[57]);
+
+    [Benchmark(Description = "ResNet transition bottleneck 1x256x56x56 stride-2 (1x1/3x3s2/1x1 plus shortcut) - Lokad session")]
+    [BenchmarkCategory("resblocks2")]
+    public void LokadResBlockS2() => RunLokad(cases[58]);
+
+    [Benchmark(Description = "ResNet transition bottleneck 1x256x56x56 stride-2 (1x1/3x3s2/1x1 plus shortcut) - ORT session")]
+    [BenchmarkCategory("resblocks2")]
+    public void OrtResBlockS2() => RunOrt(cases[58]);
+
+    [Benchmark(Description = "Attention-scores MatMul with two live inputs 1x12x30x32 - Lokad session")]
+    [BenchmarkCategory("matmulrt")]
+    public void LokadMatMulRt() => RunLokad(cases[59]);
+
+    [Benchmark(Description = "Attention-scores MatMul with two live inputs 1x12x30x32 - ORT session")]
+    [BenchmarkCategory("matmulrt")]
+    public void OrtMatMulRt() => RunOrt(cases[59]);}

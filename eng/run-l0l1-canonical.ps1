@@ -70,7 +70,7 @@ function Snap($phase) {
 }
 Snap "pre"
 # Anchor on the L1 binary (box-state probe, library-independent).
-& dotnet (Join-Path $root $l1dll) micro oneop --cpu $Cpu --filter "*Mm30Up*" 2>&1 | Out-File (Join-Path $runDir "anchor.log") -Encoding utf8
+& dotnet (Join-Path $root $l1dll) micro oneop --cpu $Cpu --artifacts (Join-Path $runDir "bdn-anchor") --filter "*Mm30Up*" 2>&1 | Out-File (Join-Path $runDir "anchor.log") -Encoding utf8
 $gate = & pwsh -NoProfile -File (Join-Path $root "eng/parse_anchor2.ps1") (Join-Path $runDir "anchor.log") 2>&1
 $gate | Out-File (Join-Path $runDir "anchor-gate.log") -Encoding utf8
 $gate | ForEach-Object { Log ("anchor: " + $_) }

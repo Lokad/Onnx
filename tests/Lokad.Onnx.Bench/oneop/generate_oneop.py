@@ -416,3 +416,98 @@ for _n in [1, 2, 4, 8]:
         _dims = [_dims[0], _dims[2], _dims[1], _dims[3]]
     save_graph("tests/Lokad.Onnx.Bench/oneop/chain_transpose_%d" % _n, _nodes,
          [tinfo("x", [1, 30, 12, 32])], [tinfo("y", _dims)], [])
+
+# 39. e5-30 attention scores with RUNTIME scale and causal mask (E04 region):
+# mirrors the GPT-2 scale-plus-transpose-plus-mask region at e5-30 shape with
+# both MatMul operands live (no constant B), so packing-unavailable traffic is
+# priced instead of the constant-B tiles above. Mask is causal 0/-1e4.
+_mask = np.zeros([1, 1, 30, 30], dtype=np.float32)
+for _i in range(30):
+    _mask[0, 0, _i, _i + 1:] = -10000.0
+mask_nodes = [
+    helper.make_node("MatMul", ["q", "kt"], ["scores"], name="scores"),
+    helper.make_node("Mul", ["scores", "scale"], ["scaled"], name="rscale"),
+    helper.make_node("Add", ["scaled", "mask"], ["masked"], name="maskadd"),
+    helper.make_node("Softmax", ["masked"], ["probs"], axis=-1, name="softmax"),
+    helper.make_node("MatMul", ["probs", "v"], ["y"], name="context"),
+]
+save_graph("tests/Lokad.Onnx.Bench/oneop/attnmask_e5_30", mask_nodes,
+     [tinfo("q", [1, 12, 30, 32]), tinfo("kt", [1, 12, 32, 30]),
+      tinfo("v", [1, 12, 30, 32]), tinfo("scale", []),
+      tinfo("mask", [1, 1, 30, 30])],
+     [tinfo("y", [1, 12, 30, 32])], [])
+
+# 40. DINOv3-201 attention block (E04 region): same pattern as #28 with
+# S=201/H=6/d=384 and Div-by-constant scale, matching the DINOv3 graph which
+# has no mask. Prices the ~46MB score traffic A02 omitted.
+# Block weights are scaled to +-0.125 like gemm_512x4608 above: with raw +-1
+# draws the region amplifies fp-ordering noise about 100x (6e-06 projection
+# diffs grow through scores/softmax/context/outproj to 1.35e-02 at y, measured
+# per-prefix against ORT), drowning the 1e-4 gate without changing shapes,
+# draws, or timing. Scaled draws agree at 3.2e-05 with margin to spare.
+wq6 = ((rng.random([384, 384]) * 2 - 1) * 0.125).astype(np.float32)
+wk6 = ((rng.random([384, 384]) * 2 - 1) * 0.125).astype(np.float32)
+wv6 = ((rng.random([384, 384]) * 2 - 1) * 0.125).astype(np.float32)
+wo6 = ((rng.random([384, 384]) * 2 - 1) * 0.125).astype(np.float32)
+shape201 = np.array([1, 201, 6, 64], dtype=np.int64)
+merge201 = np.array([1, 201, 384], dtype=np.int64)
+dino_nodes = [
+    helper.make_node("MatMul", ["x", "wq"], ["q3"], name="qproj"),
+    helper.make_node("MatMul", ["x", "wk"], ["k3"], name="kproj"),
+    helper.make_node("MatMul", ["x", "wv"], ["v3"], name="vproj"),
+    helper.make_node("Reshape", ["q3", "qshape"], ["q4"], name="qreshape"),
+    helper.make_node("Reshape", ["k3", "kshape"], ["k4"], name="kreshape"),
+    helper.make_node("Reshape", ["v3", "vshape"], ["v4"], name="vreshape"),
+    helper.make_node("Transpose", ["q4"], ["q"], perm=[0, 2, 1, 3], name="qtranspose"),
+    helper.make_node("Transpose", ["k4"], ["kt"], perm=[0, 2, 3, 1], name="ktranspose"),
+    helper.make_node("Transpose", ["v4"], ["v"], perm=[0, 2, 1, 3], name="vtranspose"),
+    helper.make_node("MatMul", ["q", "kt"], ["scores"], name="scores"),
+    helper.make_node("Div", ["scores", "scale"], ["scaled"], name="scalediv"),
+    helper.make_node("Softmax", ["scaled"], ["probs"], axis=-1, name="softmax"),
+    helper.make_node("MatMul", ["probs", "v"], ["ctx4"], name="context"),
+    helper.make_node("Transpose", ["ctx4"], ["ctx3"], perm=[0, 2, 1, 3], name="ctxmerge"),
+    helper.make_node("Reshape", ["ctx3", "yshape"], ["merged"], name="mergereshape"),
+    helper.make_node("MatMul", ["merged", "wo"], ["y"], name="outproj"),
+]
+save_graph("tests/Lokad.Onnx.Bench/oneop/attnblock_dino_201", dino_nodes,
+     [tinfo("x", [1, 201, 384])], [tinfo("y", [1, 201, 384])],
+     [finit("wq", wq6), finit("wk", wk6), finit("wv", wv6), finit("wo", wo6),
+      finit("scale", scale),
+      helper.make_tensor("qshape", TensorProto.INT64, [4], shape201),
+      helper.make_tensor("kshape", TensorProto.INT64, [4], shape201),
+      helper.make_tensor("vshape", TensorProto.INT64, [4], shape201),
+      helper.make_tensor("yshape", TensorProto.INT64, [3], merge201)])
+
+# 41. ResNet layer2.0 transition bottleneck at true widths (E04 region):
+# 1x1 s1 256->128, 3x3 s2 128->128, 1x1 s1 128->512, plus the 1x1 s2 256->512
+# downsample shortcut with residual add and Relu epilogues. Replaces the
+# stride-1 proxy with the actual stride-2 family.
+# Transition weights are scaled to +-0.25 like gemm_512x4608 above: raw +-1
+# draws amplify fp-ordering noise through the pw/spatial/pw chain to 5.1e-04
+# at y (measured per-prefix against ORT); scaled draws agree at 1.3e-05 with
+# margin, same shapes, draws, and timing.
+t1 = ((rng.random([128, 256, 1, 1]) * 2 - 1) * 0.25).astype(np.float32)
+t3 = ((rng.random([128, 128, 3, 3]) * 2 - 1) * 0.25).astype(np.float32)
+t2 = ((rng.random([512, 128, 1, 1]) * 2 - 1) * 0.25).astype(np.float32)
+ts = ((rng.random([512, 256, 1, 1]) * 2 - 1) * 0.25).astype(np.float32)
+trans_nodes = [
+    helper.make_node("Conv", ["x", "w1"], ["c1"], kernel_shape=[1, 1], name="pw1"),
+    helper.make_node("Relu", ["c1"], ["r1"], name="relu1"),
+    helper.make_node("Conv", ["r1", "w3"], ["c3"], kernel_shape=[3, 3], strides=[2, 2], pads=[1, 1, 1, 1], name="spconv"),
+    helper.make_node("Relu", ["c3"], ["r3"], name="relu3"),
+    helper.make_node("Conv", ["r3", "w2"], ["c2"], kernel_shape=[1, 1], name="pw2"),
+    helper.make_node("Conv", ["x", "ws"], ["ds"], kernel_shape=[1, 1], strides=[2, 2], name="shortcut"),
+    helper.make_node("Add", ["c2", "ds"], ["summed"], name="residual"),
+    helper.make_node("Relu", ["summed"], ["y"], name="reluout"),
+]
+save_graph("tests/Lokad.Onnx.Bench/oneop/resblock_s2_trans", trans_nodes,
+     [tinfo("x", [1, 256, 56, 56])], [tinfo("y", [1, 512, 28, 28])],
+     [finit("w1", t1), finit("w3", t3), finit("w2", t2), finit("ws", ts)])
+
+# 42. two-live-input attention-scores MatMul (E04): 1x12x30x32 @ 1x12x32x30
+# with zero constants, pricing the activation-by-activation regime that the
+# constant-B attn tiles above cannot show.
+save_graph("tests/Lokad.Onnx.Bench/oneop/matmul_runtime_ab",
+     [helper.make_node("MatMul", ["a", "b"], ["y"])],
+     [tinfo("a", [1, 12, 30, 32]), tinfo("b", [1, 12, 32, 30])],
+     [tinfo("y", [1, 12, 30, 30])], [])
