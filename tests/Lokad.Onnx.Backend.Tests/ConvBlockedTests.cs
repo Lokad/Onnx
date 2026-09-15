@@ -97,5 +97,83 @@ public class ConvBlockedTests
         Assert.False(MathOpsConvBlocked.TryConvBlocked3x3S1P1(x, f, null, 1, 16, 16, 16, 16, pad, opts, false, out var got));
         Assert.Null(got);
     }
-}
+    static void BlockedAddCase(int n)
+    {
+        var rnd = new Random(4100 + n);
+        var a = new float[n];
+        var b = new float[n];
+        for (int i = 0; i < n; i++)
+        {
+            a[i] = (float)(rnd.NextDouble() * 20 - 10);
+            b[i] = (float)(rnd.NextDouble() * 20 - 10);
+        }
+        if (n > 3)
+        {
+            a[0] = -0f; b[0] = 0f;
+            a[1] = float.NaN; b[1] = 1f;
+            a[2] = float.PositiveInfinity; b[2] = float.NegativeInfinity;
+        }
+        var dSimp = new float[n];
+        var opts = TensorExecutionOptions.Intrinsics;
+        MathOpsConvBlocked.BlockedAdd(a, b, dSimp, opts);
+        var expected = new float[n];
+        for (int i = 0; i < n; i++) expected[i] = a[i] + b[i];
+        Assert.Equal(expected.Length, dSimp.Length);
+        for (int i = 0; i < n; i++)
+            Assert.Equal(BitConverter.SingleToInt32Bits(expected[i]), BitConverter.SingleToInt32Bits(dSimp[i]));
+        var dScalar = new float[n];
+        MathOpsConvBlocked.BlockedAdd(a, b, dScalar, TensorExecutionOptions.Scalar);
+        for (int i = 0; i < n; i++)
+            Assert.Equal(BitConverter.SingleToInt32Bits(dSimp[i]), BitConverter.SingleToInt32Bits(dScalar[i]));
+        MathOpsConvBlocked.BlockedAdd(a, b, a, opts);
+        for (int i = 0; i < n; i++)
+            Assert.Equal(BitConverter.SingleToInt32Bits(expected[i]), BitConverter.SingleToInt32Bits(a[i]));
+    }
 
+    [Fact]
+    public void BlockedAdd_Bitwise()
+    {
+        foreach (int n in new[] { 0, 1, 7, 8, 15, 16, 17, 31, 32, 33, 100, 1000 })
+            BlockedAddCase(n);
+    }
+
+    static void BlockedReluCase(int n)
+    {
+        var rnd = new Random(4200 + n);
+        var data = new float[n];
+        for (int i = 0; i < n; i++) data[i] = (float)(rnd.NextDouble() * 20 - 10);
+        if (n > 4)
+        {
+            data[0] = -0f;
+            data[1] = 0f;
+            data[2] = float.NaN;
+            data[3] = float.NegativeInfinity;
+            data[4] = float.PositiveInfinity;
+        }
+        var vec = (float[])data.Clone();
+        MathOpsConvBlocked.BlockedRelu(vec, TensorExecutionOptions.Intrinsics);
+        var prod = Tensor<float>.Relu(new DenseTensor<float>(new Memory<float>((float[])data.Clone()), new[] { n })).ToArray();
+        Assert.Equal(prod.Length, vec.Length);
+        for (int i = 0; i < n; i++)
+            Assert.Equal(BitConverter.SingleToInt32Bits(prod[i]), BitConverter.SingleToInt32Bits(vec[i]));
+        var sc = (float[])data.Clone();
+        MathOpsConvBlocked.BlockedRelu(sc, TensorExecutionOptions.Scalar);
+        for (int i = 0; i < n; i++)
+            Assert.Equal(BitConverter.SingleToInt32Bits(vec[i]), BitConverter.SingleToInt32Bits(sc[i]));
+    }
+
+    [Fact]
+    public void BlockedRelu_Bitwise()
+    {
+        foreach (int n in new[] { 0, 1, 7, 8, 15, 16, 17, 31, 32, 33, 100, 1000 })
+            BlockedReluCase(n);
+    }
+
+    [Fact]
+    public void BlockedAdd_Mismatched_Throws()
+    {
+        Assert.Throws<System.ArgumentException>(() =>
+            MathOpsConvBlocked.BlockedAdd(new float[4], new float[5], new float[5], TensorExecutionOptions.Intrinsics));
+    }
+
+}

@@ -2,6 +2,7 @@ namespace Lokad.Onnx;
 
 using System;
 using System.Runtime.Intrinsics;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 
 /// <summary>
@@ -152,5 +153,91 @@ public static class MathOpsConvBlocked
             }
         sum.Store(dst + ((mb * h + y) * w + x) * CB);
     }
-}
 
+    /// <summary>Elementwise add over blocked buffers (region epilogue piece).</summary>
+    /// <remarks>Bit-identical to scalar Add on the same values: one rounding per element, no reassociation. The destination may alias either input.</remarks>
+    public static void BlockedAdd(ReadOnlySpan<float> left, ReadOnlySpan<float> right, Span<float> destination, TensorExecutionOptions? options)
+    {
+        if (left.Length != right.Length || destination.Length < left.Length)
+            throw new ArgumentException("Blocked add requires matching input lengths and a large enough destination.");
+        int n = left.Length;
+        if ((options?.UseSimd ?? true) && (options?.UseIntrinsics ?? true))
+        {
+            if (Avx512F.IsSupported)
+            {
+                int full = n & ~(Vector512<float>.Count - 1);
+                int i = 0;
+                for (; i < full; i += Vector512<float>.Count)
+                    (Vector512.LoadUnsafe(ref MemoryMarshal.GetReference(left), (nuint)i)
+                        + Vector512.LoadUnsafe(ref MemoryMarshal.GetReference(right), (nuint)i))
+                        .StoreUnsafe(ref MemoryMarshal.GetReference(destination), (nuint)i);
+                for (; i < n; i++) destination[i] = left[i] + right[i];
+                return;
+            }
+            if (Avx.IsSupported)
+            {
+                int full = n & ~(Vector256<float>.Count - 1);
+                int i = 0;
+                for (; i < full; i += Vector256<float>.Count)
+                    (Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(left), (nuint)i)
+                        + Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(right), (nuint)i))
+                        .StoreUnsafe(ref MemoryMarshal.GetReference(destination), (nuint)i);
+                for (; i < n; i++) destination[i] = left[i] + right[i];
+                return;
+            }
+        }
+        for (int i = 0; i < n; i++) destination[i] = left[i] + right[i];
+    }
+
+    /// <summary>In-place Relu over a blocked buffer (region epilogue piece).</summary>
+    /// <remarks>Exact production edge semantics: negatives map to +0 while signed zero and NaN are preserved (only LessThan selects the zero replacement). Bit-identical to production Relu on the same values.</remarks>
+    public static void BlockedRelu(Span<float> data, TensorExecutionOptions? options)
+    {
+        int n = data.Length;
+        if ((options?.UseSimd ?? true) && (options?.UseIntrinsics ?? true))
+        {
+            if (Avx512F.IsSupported)
+            {
+                var zero = Vector512<float>.Zero;
+                int full = n & ~(Vector512<float>.Count - 1);
+                int i = 0;
+                for (; i < full; i += Vector512<float>.Count)
+                {
+                    var v = Vector512.LoadUnsafe(ref MemoryMarshal.GetReference(data), (nuint)i);
+                    Vector512.ConditionalSelect(Vector512.LessThan(v, zero), zero, v)
+                        .StoreUnsafe(ref MemoryMarshal.GetReference(data), (nuint)i);
+                }
+                for (; i < n; i++)
+                {
+                    float v = data[i];
+                    data[i] = v <= 0f ? (v == 0f ? v : 0f) : v;
+                }
+                return;
+            }
+            if (Avx.IsSupported)
+            {
+                var zero = Vector256<float>.Zero;
+                int full = n & ~(Vector256<float>.Count - 1);
+                int i = 0;
+                for (; i < full; i += Vector256<float>.Count)
+                {
+                    var v = Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(data), (nuint)i);
+                    Vector256.ConditionalSelect(Vector256.LessThan(v, zero), zero, v)
+                        .StoreUnsafe(ref MemoryMarshal.GetReference(data), (nuint)i);
+                }
+                for (; i < n; i++)
+                {
+                    float v = data[i];
+                    data[i] = v <= 0f ? (v == 0f ? v : 0f) : v;
+                }
+                return;
+            }
+        }
+        for (int i = 0; i < n; i++)
+        {
+            float v = data[i];
+            data[i] = v <= 0f ? (v == 0f ? v : 0f) : v;
+        }
+    }
+
+}
