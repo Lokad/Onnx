@@ -119,6 +119,7 @@ static class Bench
             + " convert=one-time managed-to-ORT input build reused by all ORT runs;"
             + " resetPop=reset after execute|resetClean=reset when empty (no-op floor);"
             + " gc/alloc=shared-process totals over warmed loops without per-engine attribution; output disposal outside all timings."
+            + " poolNewB/poolReuseB/poolNewN/poolReuseN=per-run plan-pool medians over public iters (new GC bytes vs pool-served bytes and matching buffer counts);"
             + " agree=maxAbs + ORT-reference-scaled diff (tol 1e-4 scaled, unchanged);"
             + " known-divergence=tracked registry with tripwire; excluded cases skip timing;"
             + " post=agreement re-check after timed reuse; inputsIntact=input fingerprint before/after.");
@@ -691,6 +692,10 @@ static class Bench
             long allocBefore = GC.GetTotalAllocatedBytes(false);
             int g0Before = GC.CollectionCount(0), g1Before = GC.CollectionCount(1), g2Before = GC.CollectionCount(2);
             var lok = new List<double>();
+            var poolNewB = new List<double>();
+            var poolReuseB = new List<double>();
+            var poolNewN = new List<double>();
+            var poolReuseN = new List<double>();
             var ort = new List<double>();
             for (int i = 0; i < iters; i++)
             {
@@ -704,6 +709,10 @@ static class Bench
                     if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
                     sw.Stop();
                     lok.Add(sw.Elapsed.TotalMilliseconds);
+                    poolNewB.Add(graph.LastPoolAllocatedNewBytes);
+                    poolReuseB.Add(graph.LastPoolReusedBytes);
+                    poolNewN.Add(graph.LastPoolAllocatedNew);
+                    poolReuseN.Add(graph.LastPoolReused);
                     graph.Reset();
                 }
                 else
@@ -713,6 +722,10 @@ static class Bench
                     if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
                     sw.Stop();
                     lok.Add(sw.Elapsed.TotalMilliseconds);
+                    poolNewB.Add(graph.LastPoolAllocatedNewBytes);
+                    poolReuseB.Add(graph.LastPoolReusedBytes);
+                    poolNewN.Add(graph.LastPoolAllocatedNew);
+                    poolReuseN.Add(graph.LastPoolReused);
                     graph.Reset();
                     sw.Restart();
                     using (var timed = ortSession.Run(ro, ortInputs, outNames)) { sw.Stop(); }
@@ -733,6 +746,9 @@ static class Bench
                 + " | resetPop " + Dist(resetPop) + " | resetClean " + Dist(resetClean) + " | convert=" + convertMs.ToString("F1") + "ms"
                 + " | validation=" + validationMs.ToString("F1") + "ms | disposal=outside"
                 + " | " + gcLine
+                + " | poolNewB=" + MedLong(poolNewB) + " poolReuseB=" + MedLong(poolReuseB)
+                + " poolNewN=" + MedLong(poolNewN) + " poolReuseN=" + MedLong(poolReuseN)
+                + " (per-run medians over " + iters + " public iters)"
                 + " | maxScaled=" + maxScaled.ToString("E2") + " maxAbs=" + maxAbs.ToString("E2")
                 + " | postScaled=" + post.scaled.ToString("E2") + " postAbs=" + post.abs.ToString("E2")
                 + " | inputsIntact=yes");
@@ -917,6 +933,12 @@ static class Bench
         var ts = new List<double>();
         for (int i = 0; i < iters; i++) { sw.Restart(); graph.Reset(); sw.Stop(); ts.Add(sw.Elapsed.TotalMilliseconds); }
         return ts.ToArray();
+    }
+
+    static long MedLong(IEnumerable<double> values)
+    {
+        var ts = values.OrderBy(x => x).ToArray();
+        return (long)ts[ts.Length / 2];
     }
 
     static string Dist(IEnumerable<double> values)
