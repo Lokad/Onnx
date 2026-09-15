@@ -691,6 +691,44 @@ internal static class BlockedBottleneck
         }
     }
 
+    /// <summary>
+    /// One identity bottleneck block fully in blocked layout: 1x1 reduction,
+    /// 3x3 spatial, 1x1 expansion with residual+Relu fused at the final store.
+    /// Extracted verbatim from RunRegion so single- and multi-block regions
+    /// share one kernel sequence; per-leg timings flow back out.
+    /// </summary>
+    static void BlockStep(float[] xb, float[] rb,
+        BlockedFilter w1, float[]? b1, BlockedFilter w2, float[]? b2, BlockedFilter w3, float[]? b3,
+        float[] t1, float[] t2, float[] yb, int N, int C, int R, int CbC, int CbR, int H, int W,
+        out double pw1, out double sp3, out double pw2)
+    {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        if (R % 32 == 0 && C % 8 == 0)
+            PointwiseQuadBlocked(xb, w1, b1, null, t1, N, C, R, CbC, CbR, H, W, true);
+        else if (R % 16 == 0 && C % 8 == 0)
+            PointwisePairBlocked(xb, w1, b1, null, t1, N, C, R, CbC, CbR, H, W, true);
+        else
+            PointwiseBlocked(xb, w1, b1, t1, N, C, R, CbC, CbR, H, W, true);
+        sw.Stop();
+        pw1 = sw.Elapsed.TotalMilliseconds;
+        sw.Restart();
+        if (W % 2 == 0)
+            SpatialPairBlocked(t1, w2, b2, t2, N, R, R, CbR, CbR, H, W, true);
+        else
+            Spatial3x3Blocked(t1, w2, b2, t2, N, R, R, CbR, CbR, H, W, true);
+        sw.Stop();
+        sp3 = sw.Elapsed.TotalMilliseconds;
+        sw.Restart();
+        if (C % 32 == 0 && R % 8 == 0)
+            PointwiseQuadBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W, true);
+        else if (C % 16 == 0 && R % 8 == 0)
+            PointwisePairBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W, true);
+        else
+            PointwiseResidualBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W);
+        sw.Stop();
+        pw2 = sw.Elapsed.TotalMilliseconds;
+    }
+
     internal static float[]? RunRegion(float[] x,
         float[] f1, BlockedFilter w1, float[]? b1,
         float[] f2, BlockedFilter w2, float[]? b2,
@@ -728,31 +766,7 @@ internal static class BlockedBottleneck
         ToBlockedInto(resid, rb, N, C, H, W, CbC);
         sw.Stop();
         double reorder = sw.Elapsed.TotalMilliseconds;
-        sw.Restart();
-        if (R % 32 == 0 && C % 8 == 0)
-            PointwiseQuadBlocked(xb, w1, b1, null, t1, N, C, R, CbC, CbR, H, W, true);
-        else if (R % 16 == 0 && C % 8 == 0)
-            PointwisePairBlocked(xb, w1, b1, null, t1, N, C, R, CbC, CbR, H, W, true);
-        else
-            PointwiseBlocked(xb, w1, b1, t1, N, C, R, CbC, CbR, H, W, true);
-        sw.Stop();
-        double pw1 = sw.Elapsed.TotalMilliseconds;
-        sw.Restart();
-        if (W % 2 == 0)
-            SpatialPairBlocked(t1, w2, b2, t2, N, R, R, CbR, CbR, H, W, true);
-        else
-            Spatial3x3Blocked(t1, w2, b2, t2, N, R, R, CbR, CbR, H, W, true);
-        sw.Stop();
-        double sp3 = sw.Elapsed.TotalMilliseconds;
-        sw.Restart();
-        if (C % 32 == 0 && R % 8 == 0)
-            PointwiseQuadBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W, true);
-        else if (C % 16 == 0 && R % 8 == 0)
-            PointwisePairBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W, true);
-        else
-            PointwiseResidualBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W);
-        sw.Stop();
-        double pw2 = sw.Elapsed.TotalMilliseconds;
+        BlockStep(xb, rb, w1, b1, w2, b2, w3, b3, t1, t2, yb, N, C, R, CbC, CbR, H, W, out double pw1, out double sp3, out double pw2);
         double kernel = pw1 + sp3 + pw2;
         sw.Restart();
         float[] y = FromBlocked(yb, N, C, H, W, CbC);
@@ -781,6 +795,95 @@ internal static class BlockedBottleneck
         return o.ToDenseTensor().Buffer.ToArray();
     }
 
+    /// <summary>
+    /// P04/M1 two identity bottleneck blocks with ONE entry and ONE exit
+    /// reorder: the first block output stays blocked (copied as the second
+    /// residual through blocked buffers), so the middle exit/entry passes
+    /// disappear. Same geometry both blocks (identity stages only).
+    /// </summary>
+    internal static float[]? RunRegion2(float[] x,
+        float[] f1a, BlockedFilter w1a, float[]? b1a, float[] f2a, BlockedFilter w2a, float[]? b2a, float[] f3a, BlockedFilter w3a, float[]? b3a,
+        float[] f1b, BlockedFilter w1b, float[]? b1b, float[] f2b, BlockedFilter w2b, float[]? b2b, float[] f3b, BlockedFilter w3b, float[]? b3b,
+        int N, int C, int R, int H, int W,
+        RegionWorkspace? ws, out int scratchBytes, out RegionCost cost)
+    {
+        scratchBytes = 0;
+        cost = default;
+        BlockedFilter[] allw = new BlockedFilter[] { w1a, w2a, w3a, w1b, w2b, w3b };
+        foreach (var w in allw) if (w == null) return null;
+        if (!w1a.Check(f1a) || !w2a.Check(f2a) || !w3a.Check(f3a)) return null;
+        if (!w1b.Check(f1b) || !w2b.Check(f2b) || !w3b.Check(f3b)) return null;
+        int CbC = (C + Bc - 1) / Bc;
+        int CbR = (R + Bc - 1) / Bc;
+        float[] xb, rb, t1, t2, yb, yb2;
+        if (ws == null)
+        {
+            xb = new float[N * CbC * H * W * Bc];
+            rb = new float[N * CbC * H * W * Bc];
+            t1 = new float[N * CbR * H * W * Bc];
+            t2 = new float[N * CbR * H * W * Bc];
+            yb = new float[N * CbC * H * W * Bc];
+            yb2 = new float[N * CbC * H * W * Bc];
+        }
+        else
+        {
+            ws.Ensure(N, C, R, H, W);
+            xb = ws.Xb;
+            rb = ws.Rb;
+            t1 = ws.T1;
+            t2 = ws.T2;
+            yb = ws.Yb;
+            yb2 = new float[N * CbC * H * W * Bc];
+        }
+        scratchBytes = (t1.Length + t2.Length + yb.Length + yb2.Length + xb.Length + rb.Length) * 4;
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        ToBlockedInto(x, xb, N, C, H, W, CbC);
+        Array.Copy(xb, rb, xb.Length);
+        sw.Stop();
+        double reorder = sw.Elapsed.TotalMilliseconds;
+        BlockStep(xb, rb, w1a, b1a, w2a, b2a, w3a, b3a, t1, t2, yb, N, C, R, CbC, CbR, H, W, out double pw1a, out double sp3a, out double pw2a);
+        Array.Copy(yb, rb, yb.Length);
+        BlockStep(yb, rb, w1b, b1b, w2b, b2b, w3b, b3b, t1, t2, yb2, N, C, R, CbC, CbR, H, W, out double pw1b, out double sp3b, out double pw2b);
+        sw.Restart();
+        float[] y = FromBlocked(yb2, N, C, H, W, CbC);
+        sw.Stop();
+        cost = new RegionCost { ReorderMs = reorder + sw.Elapsed.TotalMilliseconds, KernelMs = pw1a + sp3a + pw2a + pw1b + sp3b + pw2b, Pw1Ms = pw1a + pw1b, Sp3Ms = sp3a + sp3b, Pw2Ms = pw2a + pw2b };
+        return y;
+    }
+
+    static float[] RunLegacy2(float[] x,
+        float[] f1a, float[]? b1a, float[] f2a, float[]? b2a, float[] f3a, float[]? b3a,
+        float[] f1b, float[]? b1b, float[] f2b, float[]? b2b, float[] f3b, float[]? b3b,
+        int N, int C, int R, int H, int W)
+    {
+        float[] y1 = RunLegacy(x, f1a, b1a, f2a, b2a, f3a, b3a, x, N, C, R, H, W);
+        return RunLegacy(y1, f1b, b1b, f2b, b2b, f3b, b3b, y1, N, C, R, H, W);
+    }
+
+    static int CheckCase2(string name, int N, int C, int R, int H, int W, float wscale = 1f)
+    {
+        var rnd = new Random(4321 + N + C + R + H + W);
+        float[] x = Rand(N * C * H * W, rnd, 1f);
+        float[][] f = new float[6][];
+        float[][] b = new float[6][];
+        int[] ks = new int[] { R * C, R * R * 9, C * R, R * C, R * R * 9, C * R };
+        float[] ss = new float[] { 0.4f * wscale, 0.2f * wscale, 0.4f * wscale, 0.4f * wscale, 0.2f * wscale, 0.4f * wscale };
+        int[] ch = new int[] { R, R, C, R, R, C };
+        for (int i = 0; i < 6; i++) { f[i] = Rand(ks[i], rnd, ss[i]); b[i] = Rand(ch[i], rnd, 0.5f); }
+        var w = new BlockedFilter[6];
+        int[] kh = new int[] { 1, 3, 1, 1, 3, 1 };
+        int[] kc = new int[] { C, R, R, C, R, R };
+        int[] kk = new int[] { R, R, C, R, R, C };
+        for (int i = 0; i < 6; i++) w[i] = BlockedFilter.Pack(f[i], kk[i], kc[i], kh[i], kh[i]);
+        float[] refer = RunLegacy2(x, f[0], b[0], f[1], b[1], f[2], b[2], f[3], b[3], f[4], b[4], f[5], b[5], N, C, R, H, W);
+        float[]? cand = RunRegion2(x, f[0], w[0], b[0], f[1], w[1], b[1], f[2], w[2], b[2], f[3], w[3], b[3], f[4], w[4], b[4], f[5], w[5], b[5], N, C, R, H, W, null, out int scratch, out RegionCost _);
+        if (cand == null) { Console.WriteLine("case " + name + ": guard tripped on fresh packs (unexpected). FAIL"); return 1; }
+        double ms = MaxScaled(cand, refer);
+        bool ok = ms <= 1e-4;
+        Console.WriteLine("case " + name + ": maxScaled=" + ms.ToString("E2") + " scratchBytes=" + scratch + (ok ? " PASS" : " FAIL"));
+        return ok ? 0 : 1;
+    }
+
     static float[] Rand(int n, Random rnd, float s)
     {
         var a = new float[n];
@@ -796,13 +899,13 @@ internal static class BlockedBottleneck
         return worst;
     }
 
-    static int CheckCase(string name, int N, int C, int R, int H, int W, bool biased)
+    static int CheckCase(string name, int N, int C, int R, int H, int W, bool biased, float wscale = 1f)
     {
         var rnd = new Random(1234 + N + C + R + H + W);
         float[] x = Rand(N * C * H * W, rnd, 1f);
-        float[] f1 = Rand(R * C, rnd, 0.4f);
-        float[] f2 = Rand(R * R * 9, rnd, 0.2f);
-        float[] f3 = Rand(C * R, rnd, 0.4f);
+        float[] f1 = Rand(R * C, rnd, 0.4f * wscale);
+        float[] f2 = Rand(R * R * 9, rnd, 0.2f * wscale);
+        float[] f3 = Rand(C * R, rnd, 0.4f * wscale);
         float[]? b1 = biased ? Rand(R, rnd, 0.5f) : null;
         float[]? b2 = biased ? Rand(R, rnd, 0.5f) : null;
         float[]? b3 = biased ? Rand(C, rnd, 0.5f) : null;
@@ -848,6 +951,9 @@ internal static class BlockedBottleneck
             rc |= CheckCase("B-target-nobias", 1, 256, 64, 56, 56, false);
             rc |= CheckCase("C-tail", 1, 24, 10, 5, 5, true);
             rc |= CheckCase("D-degenerate", 1, 16, 8, 1, 1, true);
+            rc |= CheckCase2("E-two-stage0-pair", 1, 256, 64, 56, 56);
+            rc |= CheckCase2("F-two-stage2-pair", 1, 1024, 256, 14, 14, 0.15f);
+            rc |= CheckCase("G-single-stage2", 1, 1024, 256, 14, 14, true, 0.15f);
             rc |= CheckGuardTrip();
             Console.WriteLine(rc == 0 ? "convblock verify: all cases agree." : "convblock verify: FAILED.");
             return rc;
