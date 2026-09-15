@@ -143,6 +143,47 @@ public class GraphFusionMatMulBiasTests
         return found;
     }
 
+    static OnnxValueInfo IO3(string name, int d0, int d1, int d2) =>
+        new OnnxValueInfo { Name = name, ElementType = TensorElementType.Float, Dims = new[] { d0, d1, d2 } };
+
+    static void CheckBatched(float[] bias, int[] biasDims, float[] want)
+    {
+        var mp = new OnnxModel { Name = "mm-bias-batch" };
+        mp.Opset[""] = 17;
+        mp.Inputs.Add(IO3("a", 2, 2, 3));
+        mp.Inputs.Add(IO3("b", 2, 3, 2));
+        mp.Outputs.Add(IO3("y", 2, 2, 2));
+        mp.Nodes.Add(Nod("MatMul", new[] { "a", "b" }, new[] { "m" }, null));
+        mp.Initializers.Add(new OnnxTensor { Name = "s", ElementType = TensorElementType.Float, Dims = biasDims, Data = bias });
+        mp.Nodes.Add(Nod("Add", new[] { "m", "s" }, new[] { "y" }, null));
+        var graph = Model.Load(mp)!;
+        Assert.DoesNotContain(graph.Nodes, n => n.Op == OpType.Add);
+        var mm = Assert.Single(graph.Nodes, n => n.Op == OpType.MatMul);
+        Assert.Equal("s", Assert.IsType<string>(mm.Attributes!["fuse_bias"]));
+        var feeds = new Dictionary<string, ITensor>
+        {
+            ["a"] = new DenseTensor<float>(new float[] { 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f, 11f, 12f }, new[] { 2, 2, 3 }),
+            ["b"] = new DenseTensor<float>(new float[] { 1f, 0f, 0f, 1f, 1f, 1f, 2f, 0f, 0f, 2f, 1f, 1f }, new[] { 2, 3, 2 }),
+        };
+        Assert.True(graph.Execute(feeds, true), graph.LastErrorMessage);
+        var got = ((Tensor<float>)graph.Outputs["y"]).ToArray();
+        Assert.Equal(want.Length, got.Length);
+        for (int i = 0; i < want.Length; i++)
+            Assert.Equal(Bits(want[i]), Bits(got[i]));
+    }
+
+    [Fact]
+    public void BatchedRowBias_FusesBitwise()
+    {
+        CheckBatched(new float[] { 100f, 200f }, new[] { 2 }, new float[] { 104f, 205f, 110f, 211f, 123f, 225f, 132f, 234f });
+    }
+
+    [Fact]
+    public void BatchedScalarBias_FusesBitwise()
+    {
+        CheckBatched(new float[] { 1000f }, new int[0], new float[] { 1004f, 1005f, 1010f, 1011f, 1023f, 1025f, 1032f, 1034f });
+    }
+
     [SkippableFact]
     public void Decoder_FusesThreeBiasSites()
     {
