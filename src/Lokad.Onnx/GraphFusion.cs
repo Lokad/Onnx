@@ -193,6 +193,12 @@ namespace Lokad.Onnx
                 case OpType.RotaryEmbedding:
                     if (pn.Inputs.Length < 1 || string.IsNullOrEmpty(pn.Inputs[0])) return false;
                     return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo);
+                case OpType.LSTM:
+                    // Recurrent outputs share the input element type by spec
+                    // (X, W, R, B, P all carry T); sequence lengths stay int
+                    // and are never consulted here.
+                    if (pn.Inputs.Length < 1 || string.IsNullOrEmpty(pn.Inputs[0])) return false;
+                    return IsProvenFloatInner(graph, producer, pn.Inputs[0], visiting, memo);
                 default:
                     return false;
             }
@@ -1175,6 +1181,143 @@ namespace Lokad.Onnx
                 drop.Add(si);
                 leg = k;
                 return true;
+            }
+            return false;
+        }
+
+        /// <summary>Fuses MatMul followed by a bias Add into the MatMul node with a fuse_bias epilogue (M3).</summary>
+        /// <remarks>Only float MatMul pairs with a single live consumer qualify; the bias must be a scalar or row-vector float initializer (or a single-use standard Constant folded into one), never a fed input or graph output, with length 1 or the weight output width. Scale-fused MatMuls decline so combined chains keep their proven order. The surviving MatMul keeps its op, inputs, and float proofs; dispatch resolves the live initializer by name each run (invalidation-safe) and runs the identical product plus one add pass over the owned destination. That pass is bit-identical to the removed Add: same product, same single rounding per element in the same order. No tolerance is involved. Removes the Add dispatch and its M-by-N intermediate per site.</remarks>
+        public static int FuseMatMulBiasPatterns(ComputationalGraph graph)
+        {
+            var idx = BuildIndex(graph);
+            var producer = idx.Producer;
+            var consumers = idx.Consumers;
+            var outputs = idx.Outputs;
+
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int j = 0; j < graph.Nodes.Count; j++)
+            {
+                if (graph.Nodes[j].Op != OpType.Add) continue;
+                if (!IsFusableParticipant(graph.Nodes[j])) continue;
+                if (drop.Contains(j)) continue;
+                if (TryMatchMatMulBias(graph, producer, consumers, outputs, drop, j, out string bias, out int mmIndex, out int biasIndex))
+                {
+                    var mm = graph.Nodes[mmIndex];
+                    mm.Attributes ??= new Dictionary<string, object>();
+                    mm.Attributes["fuse_bias"] = bias;
+                    mm.Outputs = new[] { graph.Nodes[j].Outputs[0] };
+                    graph.Nodes[mmIndex] = mm;
+                    drop.Add(j);
+                    if (biasIndex >= 0) drop.Add(biasIndex);
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        static bool TryMatchMatMulBias(
+            ComputationalGraph graph,
+            Dictionary<string, int> producer,
+            Dictionary<string, List<int>> consumers,
+            HashSet<string> outputs,
+            HashSet<int> drop,
+            int addIndex,
+            out string bias,
+            out int mmIndex,
+            out int biasIndex)
+        {
+            bias = "";
+            mmIndex = -1;
+            biasIndex = -1;
+            var add = graph.Nodes[addIndex];
+            if (!IsFusableParticipant(add)) return false;
+            if (add.Inputs.Length != 2 || add.Outputs.Length != 1) return false;
+            if (string.IsNullOrEmpty(add.Outputs[0])) return false;
+            for (int k = 0; k < 2; k++)
+            {
+                string mmOut = add.Inputs[k];
+                string bname = add.Inputs[1 - k];
+                if (string.IsNullOrEmpty(mmOut) || string.IsNullOrEmpty(bname)) continue;
+                if (outputs.Contains(mmOut)) continue;
+                if (!producer.TryGetValue(mmOut, out int mi) || drop.Contains(mi)) continue;
+                var mm = graph.Nodes[mi];
+                if (mm.Op != OpType.MatMul || !IsFusableParticipant(mm)) continue;
+                if (mm.Inputs.Length != 2 || mm.Outputs.Length != 1 || mm.Outputs[0] != mmOut) continue;
+                if (mm.Attributes is not null && mm.Attributes.ContainsKey("fuse_scale")) continue;
+                if (!consumers.TryGetValue(mmOut, out var uses)) continue;
+                int live = 0;
+                foreach (var u in uses) if (!drop.Contains(u)) live++;
+                if (live != 1) continue;
+                if (!IsProvenFloat(graph, producer, mm.Inputs[0])) continue;
+                if (!IsProvenFloat(graph, producer, mm.Inputs[1])) continue;
+                if (!TryMatMulBiasSource(graph, producer, consumers, outputs, drop, bname, mm.Inputs[1], out biasIndex)) continue;
+                bias = bname;
+                mmIndex = mi;
+                return true;
+            }
+            return false;
+        }
+
+        static bool TryMatMulBiasSource(
+            ComputationalGraph graph,
+            Dictionary<string, int> producer,
+            Dictionary<string, List<int>> consumers,
+            HashSet<string> outputs,
+            HashSet<int> drop,
+            string bname,
+            string weightName,
+            out int biasIndex)
+        {
+            biasIndex = -1;
+            if (string.IsNullOrEmpty(bname) || outputs.Contains(bname)) return false;
+            if (graph.Inputs.ContainsKey(bname)) return false;
+            if (producer.TryGetValue(bname, out int bi) && !drop.Contains(bi))
+            {
+                var bn = graph.Nodes[bi];
+                if (bn.Op != OpType.Constant || !IsFusableParticipant(bn)) return false;
+                if (bn.Inputs.Length != 0 || bn.Outputs.Length != 1 || bn.Outputs[0] != bname) return false;
+                if (!consumers.TryGetValue(bname, out var uses)) return false;
+                int live = 0;
+                foreach (var u in uses) if (!drop.Contains(u)) live++;
+                if (live != 1) return false;
+                var cv = ConstantValue(bn);
+                if (cv is not Tensor<float> ctf) return false;
+                if (!BiasLengthFits(ctf.Length, graph, producer, weightName)) return false;
+                if (!graph.Initializers.TryAdd(bname, ctf)) return false;
+                biasIndex = bi;
+                return true;
+            }
+            if (graph.Initializers.TryGetValue(bname, out var init) && init is Tensor<float> ftf)
+            {
+                if (!BiasLengthFits(ftf.Length, graph, producer, weightName)) return false;
+                return true;
+            }
+            return false;
+        }
+
+        static bool BiasLengthFits(long biasLength, ComputationalGraph graph, Dictionary<string, int> producer, string weightName)
+        {
+            if (biasLength == 1) return true;
+            if (string.IsNullOrEmpty(weightName)) return false;
+            if (graph.Initializers.TryGetValue(weightName, out var w) && w is Tensor<float> wtf && wtf.Dimensions.Length >= 2)
+                return biasLength == wtf.Dimensions[wtf.Dimensions.Length - 1];
+            foreach (var desc in graph.InputDescs)
+            {
+                if (desc.Name == weightName && desc.Dims is not null && desc.Dims.Length >= 2 && desc.Dims[desc.Dims.Length - 1] > 0)
+                    return biasLength == desc.Dims[desc.Dims.Length - 1];
             }
             return false;
         }

@@ -59,6 +59,53 @@ public partial class CPUExecutionProvider
         return Success(op, copy);
     }
 
+    /// <summary>MatMul with a fused output bias (the MatMul+bias fusion).</summary>
+    /// <remarks>Runs the identical product through the shared entry points, then one bias pass over the result. The destination is freshly owned in graph runs (pool-rented or new); squeezed views materialize a biased copy instead, so inputs are never written. Bit-identical to a trailing Add: same product, same single rounding per element in the same order. Scalar (length 1) or row-vector (length N) biases only; anything else fails like the removed Add would.</remarks>
+    public static OpResult MatMulBiased(ITensor? A, ITensor? B, Tensor<float> bias, ExecutionOptions? options, TensorBufferPool? pool)
+    {
+        var op = OpType.MatMul;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (bias is null) return MissingInput(op, nameof(bias));
+        if (A.ElementType != B.ElementType)
+        {
+            return WrongInputType(op, nameof(B), "Input tensors must be of the same type.", B);
+        }
+        if (A.ElementType != TensorElementType.Float)
+        {
+            return WrongInputType(op, nameof(A), "Fused MatMul bias supports float32.", A);
+        }
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        var y = Tensor<float>.MatMul(SpeedDensify((Tensor<float>)A, opts), SpeedDensify((Tensor<float>)B, opts), opts.Tensor, pool);
+        if (y is DenseTensor<float> dense)
+        {
+            if (!TryAddBias(dense, bias.ToDenseTensor())) return WrongInputShape(op, nameof(bias), dense, "Fused MatMul bias must be scalar or match the output width.");
+            return Success(op, y);
+        }
+        var copy = y.ToDenseTensor();
+        if (!TryAddBias(copy, bias.ToDenseTensor())) return WrongInputShape(op, nameof(bias), copy, "Fused MatMul bias must be scalar or match the output width.");
+        return Success(op, copy);
+    }
+
+    static bool TryAddBias(DenseTensor<float> destination, DenseTensor<float> bias)
+    {
+        int n = destination.Dimensions[destination.Dimensions.Length - 1];
+        var span = destination.Buffer.Span;
+        var bs = bias.Buffer.Span;
+        if (bs.Length == 1)
+        {
+            float b0 = bs[0];
+            for (int i = 0; i < span.Length; i++) span[i] += b0;
+            return true;
+        }
+        if (bs.Length == n)
+        {
+            for (int i = 0; i < span.Length; i++) span[i] += bs[i % n];
+            return true;
+        }
+        return false;
+    }
+
     static Tensor<T> SpeedDensify<T>(Tensor<T> t, ExecutionOptions opts) where T : unmanaged
     {
         // Speed mode densifies operands up front (views materialize here,

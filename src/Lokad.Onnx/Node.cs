@@ -363,6 +363,22 @@ public partial struct Node
         if (!s.HasValue) return null;
         return CPU.MatMulScaled(InputTensor(graph, 0), InputTensor(graph, 1), s.Value, opt, graph.ActivePool);
     }
+    /// <summary>
+    /// Routes MatMul nodes carrying the MatMul+bias fusion marker to the biased
+    /// provider; unmarked nodes fall through. The bias initializer resolves by
+    /// name on every run, so source replacement stays correct without
+    /// re-fusion; a missing or mistyped bias fails like the removed Add would.
+    /// </summary>
+    OpResult? MatMulBiasGate(ComputationalGraph graph, ExecutionOptions? opt)
+    {
+        string? bn = Attr<string>("fuse_bias", null);
+        if (bn is null) return null;
+        if (!graph.Initializers.TryGetValue(bn, out var bt) || bt is null)
+            return OpResult.MissingInput(OpType.MatMul, bn);
+        if (bt is not Tensor<float> bias)
+            return OpResult.WrongInputType(OpType.MatMul, bn, "Fused MatMul bias supports float32.", bt);
+        return CPU.MatMulBiased(InputTensor(graph, 0), InputTensor(graph, 1), bias, opt, graph.ActivePool);
+    }
     OpResult? MatMulIntGate(ComputationalGraph graph)
     {
         int v = ResolvedOpsetVersion(graph);
@@ -419,7 +435,7 @@ public partial struct Node
 
         OpType.GlobalAveragePool => CPU.GlobalAveragePool(InputTensor(graph, 0), opt),
 
-        OpType.MatMul => MatMulScaleGate(graph, opt) ?? MatMulIntGate(graph) ?? CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+        OpType.MatMul => MatMulScaleGate(graph, opt) ?? MatMulBiasGate(graph, opt) ?? MatMulIntGate(graph) ?? CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
         OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0),
 
