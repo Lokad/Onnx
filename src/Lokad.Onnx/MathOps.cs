@@ -1873,6 +1873,130 @@ public class MathOps
     }
 
     /// <summary>
+    /// Matrix-vector product over a prepared [K,O] panel (for example a
+    /// transposed LSTM direction slice): y[o] = sum_k x[k]*P[k*O+o], or
+    /// accumulated onto y when requested (ORT GEMM beta=1 semantics).
+    /// SIMD lanes cover whole outputs, so no horizontal sum is needed;
+    /// 128-wide AVX512 blocks precede 64-wide AVX256 blocks with a scalar
+    /// tail, and the portable scalar loop covers the rest. Every lane sums
+    /// each output in k order with fused multiply-add, so all paths agree
+    /// bit for bit; the double-oracle tests pin the absolute contract.
+    /// </summary>
+    public static void MatVecPanel(ReadOnlySpan<float> x, ReadOnlySpan<float> panel, Span<float> y, int outputs, int k, bool accumulate, TensorExecutionOptions? options)
+    {
+        int o = Math.Min(outputs, y.Length);
+        int kk = Math.Min(k, x.Length);
+        if (o > 0 && kk > 0) o = Math.Min(o, panel.Length / kk);
+        if (o <= 0 || kk <= 0)
+        {
+            if (!accumulate)
+            {
+                int fill = Math.Min(outputs, y.Length);
+                for (int i = 0; i < fill; i++) y[i] = 0f;
+            }
+            return;
+        }
+        if (!((options?.UseSimd ?? true) && (options?.UseIntrinsics ?? true) && Avx.IsSupported && Fma.IsSupported))
+        {
+            MatVecPanelScalar(x, panel, y, o, kk, accumulate);
+            return;
+        }
+        ref float xr = ref MemoryMarshal.GetReference(x);
+        ref float pr = ref MemoryMarshal.GetReference(panel);
+        ref float yr = ref MemoryMarshal.GetReference(y);
+        int base_ = 0;
+        if (Avx512F.IsSupported)
+        {
+            const int B = 128;
+            for (; base_ + B <= o; base_ += B)
+            {
+                var a0 = accumulate ? Vector512.LoadUnsafe(ref yr, (nuint)base_) : Vector512<float>.Zero;
+                var a1 = accumulate ? Vector512.LoadUnsafe(ref yr, (nuint)(base_ + 16)) : Vector512<float>.Zero;
+                var a2 = accumulate ? Vector512.LoadUnsafe(ref yr, (nuint)(base_ + 32)) : Vector512<float>.Zero;
+                var a3 = accumulate ? Vector512.LoadUnsafe(ref yr, (nuint)(base_ + 48)) : Vector512<float>.Zero;
+                var a4 = accumulate ? Vector512.LoadUnsafe(ref yr, (nuint)(base_ + 64)) : Vector512<float>.Zero;
+                var a5 = accumulate ? Vector512.LoadUnsafe(ref yr, (nuint)(base_ + 80)) : Vector512<float>.Zero;
+                var a6 = accumulate ? Vector512.LoadUnsafe(ref yr, (nuint)(base_ + 96)) : Vector512<float>.Zero;
+                var a7 = accumulate ? Vector512.LoadUnsafe(ref yr, (nuint)(base_ + 112)) : Vector512<float>.Zero;
+                for (int j = 0; j < kk; j++)
+                {
+                    var b = Vector512.Create(x[j]);
+                    nuint row = (nuint)(j * o + base_);
+                    a0 = Avx512F.FusedMultiplyAdd(b, Vector512.LoadUnsafe(ref pr, row), a0);
+                    a1 = Avx512F.FusedMultiplyAdd(b, Vector512.LoadUnsafe(ref pr, row + 16), a1);
+                    a2 = Avx512F.FusedMultiplyAdd(b, Vector512.LoadUnsafe(ref pr, row + 32), a2);
+                    a3 = Avx512F.FusedMultiplyAdd(b, Vector512.LoadUnsafe(ref pr, row + 48), a3);
+                    a4 = Avx512F.FusedMultiplyAdd(b, Vector512.LoadUnsafe(ref pr, row + 64), a4);
+                    a5 = Avx512F.FusedMultiplyAdd(b, Vector512.LoadUnsafe(ref pr, row + 80), a5);
+                    a6 = Avx512F.FusedMultiplyAdd(b, Vector512.LoadUnsafe(ref pr, row + 96), a6);
+                    a7 = Avx512F.FusedMultiplyAdd(b, Vector512.LoadUnsafe(ref pr, row + 112), a7);
+                }
+                a0.StoreUnsafe(ref yr, (nuint)base_);
+                a1.StoreUnsafe(ref yr, (nuint)(base_ + 16));
+                a2.StoreUnsafe(ref yr, (nuint)(base_ + 32));
+                a3.StoreUnsafe(ref yr, (nuint)(base_ + 48));
+                a4.StoreUnsafe(ref yr, (nuint)(base_ + 64));
+                a5.StoreUnsafe(ref yr, (nuint)(base_ + 80));
+                a6.StoreUnsafe(ref yr, (nuint)(base_ + 96));
+                a7.StoreUnsafe(ref yr, (nuint)(base_ + 112));
+            }
+        }
+        {
+            const int B = 64;
+            for (; base_ + B <= o; base_ += B)
+            {
+                var a0 = accumulate ? Vector256.LoadUnsafe(ref yr, (nuint)base_) : Vector256<float>.Zero;
+                var a1 = accumulate ? Vector256.LoadUnsafe(ref yr, (nuint)(base_ + 8)) : Vector256<float>.Zero;
+                var a2 = accumulate ? Vector256.LoadUnsafe(ref yr, (nuint)(base_ + 16)) : Vector256<float>.Zero;
+                var a3 = accumulate ? Vector256.LoadUnsafe(ref yr, (nuint)(base_ + 24)) : Vector256<float>.Zero;
+                var a4 = accumulate ? Vector256.LoadUnsafe(ref yr, (nuint)(base_ + 32)) : Vector256<float>.Zero;
+                var a5 = accumulate ? Vector256.LoadUnsafe(ref yr, (nuint)(base_ + 40)) : Vector256<float>.Zero;
+                var a6 = accumulate ? Vector256.LoadUnsafe(ref yr, (nuint)(base_ + 48)) : Vector256<float>.Zero;
+                var a7 = accumulate ? Vector256.LoadUnsafe(ref yr, (nuint)(base_ + 56)) : Vector256<float>.Zero;
+                for (int j = 0; j < kk; j++)
+                {
+                    var b = Vector256.Create(x[j]);
+                    nuint row = (nuint)(j * o + base_);
+                    a0 = Fma.MultiplyAdd(b, Vector256.LoadUnsafe(ref pr, row), a0);
+                    a1 = Fma.MultiplyAdd(b, Vector256.LoadUnsafe(ref pr, row + 8), a1);
+                    a2 = Fma.MultiplyAdd(b, Vector256.LoadUnsafe(ref pr, row + 16), a2);
+                    a3 = Fma.MultiplyAdd(b, Vector256.LoadUnsafe(ref pr, row + 24), a3);
+                    a4 = Fma.MultiplyAdd(b, Vector256.LoadUnsafe(ref pr, row + 32), a4);
+                    a5 = Fma.MultiplyAdd(b, Vector256.LoadUnsafe(ref pr, row + 40), a5);
+                    a6 = Fma.MultiplyAdd(b, Vector256.LoadUnsafe(ref pr, row + 48), a6);
+                    a7 = Fma.MultiplyAdd(b, Vector256.LoadUnsafe(ref pr, row + 56), a7);
+                }
+                a0.StoreUnsafe(ref yr, (nuint)base_);
+                a1.StoreUnsafe(ref yr, (nuint)(base_ + 8));
+                a2.StoreUnsafe(ref yr, (nuint)(base_ + 16));
+                a3.StoreUnsafe(ref yr, (nuint)(base_ + 24));
+                a4.StoreUnsafe(ref yr, (nuint)(base_ + 32));
+                a5.StoreUnsafe(ref yr, (nuint)(base_ + 40));
+                a6.StoreUnsafe(ref yr, (nuint)(base_ + 48));
+                a7.StoreUnsafe(ref yr, (nuint)(base_ + 56));
+            }
+        }
+        for (int t = base_; t < o; t++)
+        {
+            float s = accumulate ? y[t] : 0f;
+            for (int j = 0; j < kk; j++) s = MathF.FusedMultiplyAdd(x[j], panel[j * o + t], s);
+            y[t] = s;
+        }
+    }
+
+    static void MatVecPanelScalar(ReadOnlySpan<float> x, ReadOnlySpan<float> panel, Span<float> y, int o, int kk, bool accumulate)
+    {
+        // Single-rounding FMA like the vector lanes, so every hardware and
+        // options path agrees bit for bit.
+        for (int t = 0; t < o; t++)
+        {
+            float s = accumulate ? y[t] : 0f;
+            for (int j = 0; j < kk; j++) s = MathF.FusedMultiplyAdd(x[j], panel[j * o + t], s);
+            y[t] = s;
+        }
+    }
+
+    /// <summary>
     /// Vector single-precision exp, Cephes-style range reduction with a
     /// degree-5 polynomial: matches scalar MathF.Exp within a few ulps over
     /// the finite range (validated at 1e-6 relative, never bit-identical).

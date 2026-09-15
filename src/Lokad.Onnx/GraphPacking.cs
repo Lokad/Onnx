@@ -104,15 +104,15 @@ internal static class GraphPacking
     /// rebuilt. Returns the live packed count.
     /// </summary>
     /// <summary>
-    /// Prepares transposed clones of constant LSTM input-weight initializers.
-    /// Each clone transposes every [4H,K] direction slice to [K,4H] once per
-    /// preparation instead of once per invocation, serving the hoisted
-    /// sequence-input projection; recurrent projections run as row dots
-    /// over original R rows and need no clone. Only direct float32
-    /// rank-three initializers with whole backing arrays qualify; anything
-    /// else keeps the per-invocation build. Fresh records reuse verified
-    /// clones; stale records are dropped and rebuilt. Returns the live
-    /// prepared count.
+    /// Prepares transposed clones of constant LSTM input-weight (W) and
+    /// recurrent-weight (R) initializers. Each clone transposes every
+    /// [4H,K] direction slice to [K,4H] once per preparation instead of
+    /// once per invocation: the W clones serve the hoisted sequence-input
+    /// projection, the R clones serve output-lane recurrent GEMV panels.
+    /// Only direct float32 rank-three initializers with whole backing
+    /// arrays qualify; anything else keeps the per-invocation build.
+    /// Fresh records reuse verified clones; stale records are dropped and
+    /// rebuilt. Returns the live prepared count.
     /// </summary>
     internal static int PrepareLstmWeights(ComputationalGraph graph)
     {
@@ -122,6 +122,8 @@ internal static class GraphPacking
             if (node.Op != OpType.LSTM || node.Inputs is null || node.Inputs.Length < 3) continue;
             string input = node.Inputs[1];
             if (!string.IsNullOrEmpty(input)) candidates.Add(input);
+            string recurrent = node.Inputs[2];
+            if (!string.IsNullOrEmpty(recurrent)) candidates.Add(recurrent);
         }
         var current = new Dictionary<string, (ITensor tensor, float[] array)>(StringComparer.Ordinal);
         foreach (var name in candidates)
