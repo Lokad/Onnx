@@ -490,8 +490,62 @@ where T : unmanaged
 
     // MathF.Abs clears the NaN sign bit, matching ORT (Abs(NaN) is +NaN).
     public static Tensor<float> Abs(Tensor<float> x) => x.Apply(MathF.Abs);
+    /// <summary>Float Abs honoring execution options: dense standard inputs run the span fast path on AVX hardware, everything else keeps the scalar contract.</summary>
+    public static Tensor<float> Abs(Tensor<float> x, TensorExecutionOptions options)
+    {
+        var dx = x.ToDenseTensor();
+        if (options.UseSimd && Avx.IsSupported
+            && dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
+        {
+            var output = DenseTensor<float>.OfShape(own.Dimensions.ToArray());
+            AbsSpanFloat(own.Buffer.Span, output.Buffer.Span);
+            return output;
+        }
+        return Abs(x);
+    }
+
+    /// <summary>Vectorized float Abs with exact edge semantics: sign bit cleared, matching scalar MathF.Abs bit for bit (including NaN).</summary>
+    static unsafe void AbsSpanFloat(System.Span<float> xs, System.Span<float> ys)
+    {
+        int n = xs.Length;
+        int w = Vector256<float>.Count;
+        fixed (float* s = xs, d = ys)
+        {
+            int i = 0;
+            for (; i <= n - w; i += w)
+                *(Vector256<float>*)(d + i) = Vector256.Abs(*(Vector256<float>*)(s + i));
+            for (; i < n; i++) d[i] = MathF.Abs(s[i]);
+        }
+    }
 
     public static Tensor<double> Abs(Tensor<double> x) => x.Apply(Math.Abs);
+    /// <summary>Double Abs honoring execution options, mirroring the float fast path.</summary>
+    public static Tensor<double> Abs(Tensor<double> x, TensorExecutionOptions options)
+    {
+        var dx = x.ToDenseTensor();
+        if (options.UseSimd && Avx.IsSupported
+            && dx is { IsReversedStride: false } own && HasStandardStrides(own) && own.Buffer.Length == (int)own.Length)
+        {
+            var output = DenseTensor<double>.OfShape(own.Dimensions.ToArray());
+            AbsSpanDouble(own.Buffer.Span, output.Buffer.Span);
+            return output;
+        }
+        return Abs(x);
+    }
+
+    /// <summary>Vectorized double Abs with exact edge semantics.</summary>
+    static unsafe void AbsSpanDouble(System.Span<double> xs, System.Span<double> ys)
+    {
+        int n = xs.Length;
+        int w = Vector256<double>.Count;
+        fixed (double* s = xs, d = ys)
+        {
+            int i = 0;
+            for (; i <= n - w; i += w)
+                *(Vector256<double>*)(d + i) = Vector256.Abs(*(Vector256<double>*)(s + i));
+            for (; i < n; i++) d[i] = Math.Abs(s[i]);
+        }
+    }
     public static Tensor<float> Cos(Tensor<float> x) => Cos(x, TensorExecutionOptions.Auto);
     public static Tensor<float> Cos(Tensor<float> x, TensorExecutionOptions options) => x.VectorizedApply(Vector.Cos, MathF.Cos, options);
 
