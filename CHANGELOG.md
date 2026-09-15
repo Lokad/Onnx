@@ -18,20 +18,30 @@
   about 1.6x of the pinned reference.
 - The 4D last-two-axes-swap transpose runs a tiled face path (bit-identical): about
   minus 38 percent profiled on GPT-2 key transposes.
+- Span softmax is now the default kernel with a callable legacy fallback (approved
+  numerical promotion): same softmax math in row-major span order; DINOv3
+  bit-hashes re-frozen after independent-reference and full-model validation,
+  E5/native lanes green.
+- Gemm-plus-GELU epilogue fusion removes the separate activation pass
+  (bit-identical, no math change): all 12 GPT-2 MLP regions convert with zero
+  standalone Gelu ops left.
 - Graph optimization passes (constant folding with dead sweep and dedupe, self-shape
   Reshape zero-copy, LayerNorm/exact-GELU/tanh-GELU/RoPE fusion, Conv/Add epilogue
-  fusion) plus the fused bias-GELU pointer path improved E5-8tok by about 27 percent
-  and E5-30tok/DINOv3 by about 7 percent versus 0.2.0 in 3-rep canonical runs;
+  fusion) plus the fused bias-GELU pointer path showed directionally better E5-8tok
+  (about 27 percent) and E5-30tok/DINOv3 (about 7 percent) versus 0.2.0 in
+  earlier 3-rep canonical runs; those runs used a now-superseded protocol
+  (different-date ORT ratios, nine samples, unverified warmup), so the numbers
+  are preliminary until the repaired L0/L1/ORT campaign confirms them.
   ResNet50 and GPT-2 prefill are unchanged within noise; see `BENCHMARK.md` at
   release time for frozen tables.
 
 ### Compatibility
 
-- No known behavior changes: every optimization above preserves exact output bits
+- Behavior changes: exactly one approved numerical promotion, the span-softmax default above (DINOv3 hashes re-frozen, legacy kernel retained for tests). Every other optimization above preserves exact output bits
   (frozen bit-hash gates green), and all changes are additive with legacy fallbacks.
   Public API additions only; no public signatures removed or altered since 0.2.0
   (audited 0.2.0-revision diff: added surface is the two `ReadOnlyMemory<byte>`
-  import overloads, the fused `CPUExecutionProvider.ConvRelu`/`AddRelu`/`BiasGelu`
+  import overloads, the fused `CPUExecutionProvider.ConvRelu`/`AddRelu`/`BiasGelu`/`GemmGelu`
   entry points, and the `RetainedPackedWeightBytes` diagnostic gauge; the retired
   `GraphFusion` pattern fields/methods lived in an internal type).
 
