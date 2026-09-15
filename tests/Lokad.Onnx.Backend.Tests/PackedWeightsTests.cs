@@ -392,4 +392,14 @@ public class PackedWeightsTests
         Assert.True(graph.Execute(user, true), graph.LastErrorMessage + " / node=" + graph.LastFailedNodeName);
         AgreesWithReference(x, w, (Tensor<float>)graph.Outputs["z"], "wide-gemm");
     }
+    [Fact]
+    public void ResolvePacked_OffsetBackedDenseReturnsNullInsteadOfThrowing()
+    {
+        var backing = new float[8];
+        var offset = new DenseTensor<float>(new System.Memory<float>(backing, 2, 4), new int[] { 4 });
+        var packed = DenseTensor<float>.OfShape(new int[] { 4 });
+        var map = new System.Collections.Generic.Dictionary<float[], PackedMatMulWeight>();
+        map[new float[1]] = new PackedMatMulWeight("s", packed, 1L, new float[1], "p", packed);
+        Assert.Null(GraphPacking.ResolvePacked(map, offset));
+    }
 }

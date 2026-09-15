@@ -168,9 +168,9 @@ internal static class GraphPacking
         if (map is null || map.Count == 0) return null;
         Tensor<float> core = y;
         while (core is BroadcastedTensor<float> view) core = view.source;
-        if (core is DenseTensor<float> dense
-            && map.TryGetValue(DenseArray(dense), out var rec)
-            && ReferenceEquals(rec.SourceArray, DenseArray(dense))
+        if (core is DenseTensor<float> dense && DenseArray(dense) is float[] arr
+            && map.TryGetValue(arr, out var rec)
+            && ReferenceEquals(rec.SourceArray, arr)
             && TrailingDimsMatch(y, rec.Packed))
         {
             return rec.Packed;

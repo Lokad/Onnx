@@ -960,7 +960,7 @@ namespace Lokad.Onnx
             // decline on attributes below regardless of fused state.
             if (!Node.IsStandardDomain(gelu.Domain)) return false;
             if (gelu.Inputs.Length != 1 || gelu.Outputs.Length != 1) return false;
-            string approx = gelu.Attr<string>("approximate", null);
+            string? approx = gelu.Attr<string>("approximate", null);
             if (approx is not null && approx != "none") return false;
             string mid = gelu.Inputs[0];
             string rout = gelu.Outputs[0];
@@ -976,8 +976,8 @@ namespace Lokad.Onnx
             foreach (var u in uses) if (!drop.Contains(u)) live++;
             if (live != 1) return false;
             if (!facts.Dtypes.TryGetValue(mid, out var dt) || dt != TensorElementType.Float) return false;
-            string data = null;
-            string bias = null;
+            string? data = null;
+            string? bias = null;
             foreach (var inp in add.Inputs)
             {
                 // Exactly one side must be a rank-one float initializer: the
@@ -1084,7 +1084,7 @@ namespace Lokad.Onnx
             if (gelu.Op != OpType.Gelu) return false;
             if (!Node.IsStandardDomain(gelu.Domain)) return false;
             if (gelu.Inputs.Length != 1 || gelu.Outputs.Length != 1) return false;
-            string approx = gelu.Attr<string>("approximate", null);
+            string? approx = gelu.Attr<string>("approximate", null);
             if (approx is not null && approx != "none" && approx != "tanh") return false;
             bool tanh = approx == "tanh";
             string mid = gelu.Inputs[0];
