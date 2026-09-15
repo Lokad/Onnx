@@ -20,8 +20,10 @@
   minus 38 percent profiled on GPT-2 key transposes.
 - Graph optimization passes (constant folding with dead sweep and dedupe, self-shape
   Reshape zero-copy, LayerNorm/exact-GELU/tanh-GELU/RoPE fusion, Conv/Add epilogue
-  fusion) reduced E5/DINOv3/ResNet versus 0.2.0 by roughly 10-25 percent; see
-  `BENCHMARK.md` at release time for frozen tables.
+  fusion) plus the fused bias-GELU pointer path improved E5-8tok by about 27 percent
+  and E5-30tok/DINOv3 by about 7 percent versus 0.2.0 in 3-rep canonical runs;
+  ResNet50 and GPT-2 prefill are unchanged within noise; see `BENCHMARK.md` at
+  release time for frozen tables.
 
 ### Compatibility
 
