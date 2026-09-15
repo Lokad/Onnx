@@ -715,6 +715,7 @@ where T : unmanaged
     /// <returns>True when the product was computed and the caller must return.</returns>
     static unsafe bool TryRunPackedRowGroupsTiled(int m, int n, int k, float* x, float* packed, float* dest)
     {
+        if (m < 2) return false;
         if (!Avx512F.IsSupported || !Fma.IsSupported) return false;
         if ((long)n * k * sizeof(float) <= TiledComposerMinPanelBytes) return false;
         int main = (m / 12) * 12;
