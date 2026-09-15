@@ -87,6 +87,9 @@ internal static class BlockedBottleneck
     {
         internal double ReorderMs;
         internal double KernelMs;
+        internal double Pw1Ms;
+        internal double Sp3Ms;
+        internal double Pw2Ms;
     }
 
     internal sealed class RegionWorkspace
@@ -140,27 +143,48 @@ internal static class BlockedBottleneck
                 int cCount = Math.Min(Bc, C - (cb * Bc));
                 int xBase = BIndex(n, cb, h, wpos, 0, CbIn, H, W);
                 int wBase = ((kb * w.Ct) + cb) * Bc * Bc;
-                if (kCount == Bc && Vector<float>.Count == Bc)
+                if (kCount == Bc && Vector<float>.Count == Bc && cCount == Bc)
                 {
-                    var accV0 = new Vector<float>(acc);
-                    var accV1 = Vector<float>.Zero;
-                    int ci = 0;
-                    int cPairs = cCount & ~1;
-                    for (; ci < cPairs; ci += 2)
+                    var q0 = new Vector<float>(acc);
+                    var q1 = Vector<float>.Zero;
+                    var q2 = Vector<float>.Zero;
+                    var q3 = Vector<float>.Zero;
+                    for (int ci = 0; ci < Bc; ci += 4)
                     {
                         float x0 = x[xBase + ci];
                         float x1 = x[xBase + ci + 1];
-                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
-                        accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
+                        float x2 = x[xBase + ci + 2];
+                        float x3 = x[xBase + ci + 3];
+                        q0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), q0);
+                        q1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), q1);
+                        q2 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 2) * Bc)), new Vector<float>(x2), q2);
+                        q3 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 3) * Bc)), new Vector<float>(x3), q3);
                     }
-                    for (; ci < cCount; ci++)
-                    {
-                        float xv = x[xBase + ci];
-                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
-                    }
-                    accV0 += accV1;
-                    accV0.CopyTo(acc);
+                    q0 += q1 + q2 + q3;
+                    q0.CopyTo(acc);
                 }
+                else
+                    if (kCount == Bc && Vector<float>.Count == Bc)
+                    {
+                        var accV0 = new Vector<float>(acc);
+                        var accV1 = Vector<float>.Zero;
+                        int ci = 0;
+                        int cPairs = cCount & ~1;
+                        for (; ci < cPairs; ci += 2)
+                        {
+                            float x0 = x[xBase + ci];
+                            float x1 = x[xBase + ci + 1];
+                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
+                            accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
+                        }
+                        for (; ci < cCount; ci++)
+                        {
+                            float xv = x[xBase + ci];
+                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
+                        }
+                        accV0 += accV1;
+                        accV0.CopyTo(acc);
+                    }
                 else
                 {
                     for (int ci = 0; ci < cCount; ci++)
@@ -212,27 +236,48 @@ internal static class BlockedBottleneck
                 int cCount = Math.Min(Bc, C - (cb * Bc));
                 int xBase = BIndex(n, cb, ih, iw, 0, CbIn, H, W);
                 int wBase = ((((kb * w.Ct) + cb) * 3 + kh) * 3 + kw) * Bc * Bc;
-                if (kCount == Bc && Vector<float>.Count == Bc)
+                if (kCount == Bc && Vector<float>.Count == Bc && cCount == Bc)
                 {
-                    var accV0 = new Vector<float>(acc);
-                    var accV1 = Vector<float>.Zero;
-                    int ci = 0;
-                    int cPairs = cCount & ~1;
-                    for (; ci < cPairs; ci += 2)
+                    var q0 = new Vector<float>(acc);
+                    var q1 = Vector<float>.Zero;
+                    var q2 = Vector<float>.Zero;
+                    var q3 = Vector<float>.Zero;
+                    for (int ci = 0; ci < Bc; ci += 4)
                     {
                         float x0 = x[xBase + ci];
                         float x1 = x[xBase + ci + 1];
-                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
-                        accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
+                        float x2 = x[xBase + ci + 2];
+                        float x3 = x[xBase + ci + 3];
+                        q0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), q0);
+                        q1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), q1);
+                        q2 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 2) * Bc)), new Vector<float>(x2), q2);
+                        q3 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 3) * Bc)), new Vector<float>(x3), q3);
                     }
-                    for (; ci < cCount; ci++)
-                    {
-                        float xv = x[xBase + ci];
-                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
-                    }
-                    accV0 += accV1;
-                    accV0.CopyTo(acc);
+                    q0 += q1 + q2 + q3;
+                    q0.CopyTo(acc);
                 }
+                else
+                    if (kCount == Bc && Vector<float>.Count == Bc)
+                    {
+                        var accV0 = new Vector<float>(acc);
+                        var accV1 = Vector<float>.Zero;
+                        int ci = 0;
+                        int cPairs = cCount & ~1;
+                        for (; ci < cPairs; ci += 2)
+                        {
+                            float x0 = x[xBase + ci];
+                            float x1 = x[xBase + ci + 1];
+                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
+                            accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
+                        }
+                        for (; ci < cCount; ci++)
+                        {
+                            float xv = x[xBase + ci];
+                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
+                        }
+                        accV0 += accV1;
+                        accV0.CopyTo(acc);
+                    }
                 else
                 {
                     for (int ci = 0; ci < cCount; ci++)
@@ -279,27 +324,48 @@ internal static class BlockedBottleneck
                 int cCount = Math.Min(Bc, C - (cb * Bc));
                 int xBase = BIndex(n, cb, h, wpos, 0, CbIn, H, W);
                 int wBase = ((kb * w.Ct) + cb) * Bc * Bc;
-                if (kCount == Bc && Vector<float>.Count == Bc)
+                if (kCount == Bc && Vector<float>.Count == Bc && cCount == Bc)
                 {
-                    var accV0 = new Vector<float>(acc);
-                    var accV1 = Vector<float>.Zero;
-                    int ci = 0;
-                    int cPairs = cCount & ~1;
-                    for (; ci < cPairs; ci += 2)
+                    var q0 = new Vector<float>(acc);
+                    var q1 = Vector<float>.Zero;
+                    var q2 = Vector<float>.Zero;
+                    var q3 = Vector<float>.Zero;
+                    for (int ci = 0; ci < Bc; ci += 4)
                     {
                         float x0 = x[xBase + ci];
                         float x1 = x[xBase + ci + 1];
-                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
-                        accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
+                        float x2 = x[xBase + ci + 2];
+                        float x3 = x[xBase + ci + 3];
+                        q0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), q0);
+                        q1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), q1);
+                        q2 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 2) * Bc)), new Vector<float>(x2), q2);
+                        q3 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 3) * Bc)), new Vector<float>(x3), q3);
                     }
-                    for (; ci < cCount; ci++)
-                    {
-                        float xv = x[xBase + ci];
-                        accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
-                    }
-                    accV0 += accV1;
-                    accV0.CopyTo(acc);
+                    q0 += q1 + q2 + q3;
+                    q0.CopyTo(acc);
                 }
+                else
+                    if (kCount == Bc && Vector<float>.Count == Bc)
+                    {
+                        var accV0 = new Vector<float>(acc);
+                        var accV1 = Vector<float>.Zero;
+                        int ci = 0;
+                        int cPairs = cCount & ~1;
+                        for (; ci < cPairs; ci += 2)
+                        {
+                            float x0 = x[xBase + ci];
+                            float x1 = x[xBase + ci + 1];
+                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
+                            accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
+                        }
+                        for (; ci < cCount; ci++)
+                        {
+                            float xv = x[xBase + ci];
+                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
+                        }
+                        accV0 += accV1;
+                        accV0.CopyTo(acc);
+                    }
                 else
                 {
                     for (int ci = 0; ci < cCount; ci++)
@@ -368,14 +434,21 @@ internal static class BlockedBottleneck
         double reorder = sw.Elapsed.TotalMilliseconds;
         sw.Restart();
         PointwiseBlocked(xb, w1, b1, t1, N, C, R, CbC, CbR, H, W, true);
+        sw.Stop();
+        double pw1 = sw.Elapsed.TotalMilliseconds;
+        sw.Restart();
         Spatial3x3Blocked(t1, w2, b2, t2, N, R, R, CbR, CbR, H, W, true);
+        sw.Stop();
+        double sp3 = sw.Elapsed.TotalMilliseconds;
+        sw.Restart();
         PointwiseResidualBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W);
         sw.Stop();
-        double kernel = sw.Elapsed.TotalMilliseconds;
+        double pw2 = sw.Elapsed.TotalMilliseconds;
+        double kernel = pw1 + sp3 + pw2;
         sw.Restart();
         float[] y = FromBlocked(yb, N, C, H, W, CbC);
         sw.Stop();
-        cost = new RegionCost { ReorderMs = reorder + sw.Elapsed.TotalMilliseconds, KernelMs = kernel };
+        cost = new RegionCost { ReorderMs = reorder + sw.Elapsed.TotalMilliseconds, KernelMs = kernel, Pw1Ms = pw1, Sp3Ms = sp3, Pw2Ms = pw2 };
         return y;
     }
 
@@ -548,13 +621,16 @@ internal static class BlockedBottleneck
             var tO = new double[reps];
             var tR = new double[reps];
             var tK = new double[reps];
+            var tP1 = new double[reps];
+            var tS3 = new double[reps];
+            var tP2 = new double[reps];
             var sw = new System.Diagnostics.Stopwatch();
             using (var ro = new RunOptions())
             for (int r = 0; r < reps; r++)
             {
                 sw.Restart(); RunLegacy(x, f1, b1, f2, b2, f3, b3, x, N, C, R, H, W); sw.Stop(); tL[r] = sw.Elapsed.TotalMilliseconds;
                 RegionCost c;
-                sw.Restart(); RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, ws, out int _, out c); sw.Stop(); tB[r] = sw.Elapsed.TotalMilliseconds; tR[r] = c.ReorderMs; tK[r] = c.KernelMs;
+                sw.Restart(); RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, ws, out int _, out c); sw.Stop(); tB[r] = sw.Elapsed.TotalMilliseconds; tR[r] = c.ReorderMs; tK[r] = c.KernelMs; tP1[r] = c.Pw1Ms; tS3[r] = c.Sp3Ms; tP2[r] = c.Pw2Ms;
                 sw.Restart(); using (var o = session.Run(ro, ortInputs, outNames)) { } sw.Stop(); tO[r] = sw.Elapsed.TotalMilliseconds;
             }
             long packBytes = (long)(w1.Packed.Length + w2.Packed.Length + w3.Packed.Length) * 4;
@@ -564,7 +640,7 @@ internal static class BlockedBottleneck
             Console.WriteLine("blocked best=" + BestOf(tB).ToString("F2") + "ms median=" + MedianOf(tB).ToString("F2") + "ms");
             Console.WriteLine("ort     best=" + BestOf(tO).ToString("F2") + "ms median=" + MedianOf(tO).ToString("F2") + "ms");
             Console.WriteLine("bytes: scratch=" + scratch + " prepacked=" + packBytes);
-            Console.WriteLine("split (steady-state workspace): reorder median=" + MedianOf(tR).ToString("F2") + "ms kernel median=" + MedianOf(tK).ToString("F2") + "ms");
+            Console.WriteLine("split (steady-state workspace): reorder median=" + MedianOf(tR).ToString("F2") + "ms kernel median=" + MedianOf(tK).ToString("F2") + "ms [pw1=" + MedianOf(tP1).ToString("F2") + " sp3=" + MedianOf(tS3).ToString("F2") + " pw2=" + MedianOf(tP2).ToString("F2") + "]");
             return 0;
         }
         finally { foreach (var v in ortInputs.Values) v.Dispose(); }
