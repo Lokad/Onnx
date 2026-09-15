@@ -46,7 +46,7 @@ static class Bench
         }
         if (args.Length > 0 && args[0] == "gelu")
         {
-            return GeluEvidence.RunGelu(args.Skip(1).ToArray());
+            return GeluEvidence.RunGelu(root, args.Skip(1).ToArray());
         }
         if (args.Length > 0 && args[0] == "micro")
         {

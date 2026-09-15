@@ -8,7 +8,7 @@ using Lokad.Onnx;
 // no default and proposes no promotion by itself.
 static class GeluEvidence
 {
-    internal static int RunGelu(string[] args)
+    internal static int RunGelu(string root, string[] args)
     {
         if (args.Length != 0) { Console.WriteLine("usage: Bench gelu"); return 2; }
         var rnd = new Random(20260915);
@@ -17,6 +17,9 @@ static class GeluEvidence
         Exceptional();
         Cost("mlp-32x3072", 98304);
         Chain();
+        Provider();
+        Graph1(root);
+        Graph1Profiled(root);
         return 0;
     }
 
@@ -127,5 +130,87 @@ static class GeluEvidence
         }
         Array.Sort(t);
         Console.WriteLine("chain gelu best=" + t[0].ToString("F3") + "ms median=" + t[reps / 2].ToString("F3") + "ms");
+    }
+
+    static void Provider()
+    {
+        var tensorOpts = TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 1 };
+        var execOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
+        var rnd = new Random(23);
+        var xt = DenseTensor<float>.OfValues(Rand(98304, rnd, 4f).AsSpan(), new int[] { 98304 });
+        var pool = new TensorBufferPool();
+        CPUExecutionProvider.Gelu(xt, null, execOpts, null);
+        CPUExecutionProvider.Gelu(xt, null, execOpts, pool);
+        int reps = 9;
+        var tN = new double[reps];
+        var tP = new double[reps];
+        var sw = new System.Diagnostics.Stopwatch();
+        for (int r = 0; r < reps; r++)
+        {
+            sw.Restart(); CPUExecutionProvider.Gelu(xt, null, execOpts, null); sw.Stop(); tN[r] = sw.Elapsed.TotalMilliseconds;
+            sw.Restart(); CPUExecutionProvider.Gelu(xt, null, execOpts, pool); sw.Stop(); tP[r] = sw.Elapsed.TotalMilliseconds;
+        }
+        Array.Sort(tN);
+        Array.Sort(tP);
+        Console.WriteLine("provider nopool best=" + tN[0].ToString("F3") + "ms median=" + tN[reps / 2].ToString("F3") + "ms");
+        Console.WriteLine("provider pooled best=" + tP[0].ToString("F3") + "ms median=" + tP[reps / 2].ToString("F3") + "ms new=" + pool.AllocatedNew + " reused=" + pool.Reused);
+    }
+
+    static void Graph1(string root)
+    {
+        string model = Path.Combine(root, "artifacts", "p03-region", "single-gelu.onnx");
+        if (!File.Exists(model)) { Console.WriteLine("missing single model: " + model); return; }
+        var graph = OnnxImport.Load(model);
+        if (graph == null) { Console.WriteLine("single model failed to load."); return; }
+        graph.Prepare();
+        var opts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 1 });
+        var rnd = new Random(31);
+        var xt = DenseTensor<float>.OfValues(Rand(32 * 3072, rnd, 4f).AsSpan(), new int[] { 32, 3072 });
+        var named = new Dictionary<string, ITensor>(StringComparer.Ordinal);
+        named["X"] = xt;
+        if (!graph.Execute(named, true, ExecutionProvider.CPU, opts)) { Console.WriteLine("single execute failed."); return; }
+        int reps = 9;
+        var t = new double[reps];
+        var sw = new System.Diagnostics.Stopwatch();
+        for (int r = 0; r < reps; r++)
+        {
+            graph.Reset();
+            sw.Restart();
+            if (!graph.Execute(named, true, ExecutionProvider.CPU, opts)) { Console.WriteLine("single execute failed mid-run."); return; }
+            sw.Stop();
+            t[r] = sw.Elapsed.TotalMilliseconds;
+        }
+        Array.Sort(t);
+        Console.WriteLine("graph1 gelu best=" + t[0].ToString("F3") + "ms median=" + t[reps / 2].ToString("F3") + "ms");
+    }
+
+    static void Graph1Profiled(string root)
+    {
+        string model = Path.Combine(root, "artifacts", "p03-region", "single-gelu.onnx");
+        var graph = OnnxImport.Load(model);
+        if (graph == null) { Console.WriteLine("single model failed to load."); return; }
+        graph.Prepare();
+        var opts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 1 });
+        var rnd = new Random(31);
+        var xt = DenseTensor<float>.OfValues(Rand(32 * 3072, rnd, 4f).AsSpan(), new int[] { 32, 3072 });
+        var named = new Dictionary<string, ITensor>(StringComparer.Ordinal);
+        named["X"] = xt;
+        int reps = 9;
+        var t = new double[reps];
+        var sw = new System.Diagnostics.Stopwatch();
+        for (int r = 0; r < reps; r++)
+        {
+            sw.Restart();
+            using (Profiler.BeginExecution(true))
+            {
+                graph.Reset();
+                if (!graph.Execute(named, true, ExecutionProvider.CPU, opts)) { Console.WriteLine("single execute failed mid-run."); return; }
+                graph.Reset();
+            }
+            sw.Stop();
+            t[r] = sw.Elapsed.TotalMilliseconds;
+        }
+        Array.Sort(t);
+        Console.WriteLine("graph1 profiled best=" + t[0].ToString("F3") + "ms median=" + t[reps / 2].ToString("F3") + "ms");
     }
 }
