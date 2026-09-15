@@ -395,6 +395,89 @@ internal static class BlockedBottleneck
         }
     }
 
+    static void PointwisePairBlocked(float[] x, BlockedFilter w, float[]? bias, float[]? resid, float[] y,
+        int N, int C, int K, int CbIn, int CbOut, int H, int W, bool relu)
+    {
+        if (w.KH != 1 || w.KW != 1) throw new ArgumentException("Pointwise kernel needs a 1x1 pack.");
+        if (w.Kt * Bc != K) throw new ArgumentException("Paired kernel needs full output blocks.");
+        if ((w.Kt & 1) != 0) throw new ArgumentException("Paired kernel needs an even block count.");
+        Span<float> acc0 = stackalloc float[Bc];
+        Span<float> acc1 = stackalloc float[Bc];
+
+        for (int n = 0; n < N; n++)
+        for (int h = 0; h < H; h++)
+        for (int wpos = 0; wpos < W; wpos++)
+        for (int kb = 0; kb < w.Kt; kb += 2)
+        {
+            for (int bi = 0; bi < Bc; bi++)
+            {
+                acc0[bi] = bias == null ? 0f : bias[(kb * Bc) + bi];
+                acc1[bi] = bias == null ? 0f : bias[((kb + 1) * Bc) + bi];
+            }
+            var a0 = new Vector<float>(acc0);
+            var a1 = new Vector<float>(acc1);
+            var b0 = Vector<float>.Zero;
+            var b1 = Vector<float>.Zero;
+            for (int cb = 0; cb < w.Ct; cb++)
+            {
+                int cCount = Math.Min(Bc, C - (cb * Bc));
+                int xBase = BIndex(n, cb, h, wpos, 0, CbIn, H, W);
+                int wBase0 = ((kb * w.Ct) + cb) * Bc * Bc;
+                int wBase1 = (((kb + 1) * w.Ct) + cb) * Bc * Bc;
+                int ci = 0;
+                int cPairs = cCount & ~1;
+                for (; ci < cPairs; ci += 2)
+                {
+                    float x0 = x[xBase + ci];
+                    float x1 = x[xBase + ci + 1];
+                    var x0V = new Vector<float>(x0);
+                    var x1V = new Vector<float>(x1);
+                    a0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase0 + (ci * Bc)), x0V, a0);
+                    b0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase0 + ((ci + 1) * Bc)), x1V, b0);
+                    a1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase1 + (ci * Bc)), x0V, a1);
+                    b1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase1 + ((ci + 1) * Bc)), x1V, b1);
+                }
+                for (; ci < cCount; ci++)
+                {
+                    float xv = x[xBase + ci];
+                    var xvV = new Vector<float>(xv);
+                    a0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase0 + (ci * Bc)), xvV, a0);
+                    a1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase1 + (ci * Bc)), xvV, a1);
+                }
+            }
+            a0 += b0;
+            a1 += b1;
+            a0.CopyTo(acc0);
+            a1.CopyTo(acc1);
+            int yBase0 = BIndex(n, kb, h, wpos, 0, CbOut, H, W);
+            int yBase1 = BIndex(n, kb + 1, h, wpos, 0, CbOut, H, W);
+            if (resid is float[] r)
+            {
+                for (int bi = 0; bi < Bc; bi++)
+                {
+                    float v0 = acc0[bi] + r[yBase0 + bi];
+                    if (v0 < 0f) v0 = 0f;
+                    y[yBase0 + bi] = v0;
+                    float v1 = acc1[bi] + r[yBase1 + bi];
+                    if (v1 < 0f) v1 = 0f;
+                    y[yBase1 + bi] = v1;
+                }
+            }
+            else
+            {
+                for (int bi = 0; bi < Bc; bi++)
+                {
+                    float v0 = acc0[bi];
+                    if (relu && v0 < 0f) v0 = 0f;
+                    y[yBase0 + bi] = v0;
+                    float v1 = acc1[bi];
+                    if (relu && v1 < 0f) v1 = 0f;
+                    y[yBase1 + bi] = v1;
+                }
+            }
+        }
+    }
+
     internal static float[]? RunRegion(float[] x,
         float[] f1, BlockedFilter w1, float[]? b1,
         float[] f2, BlockedFilter w2, float[]? b2,
@@ -433,7 +516,10 @@ internal static class BlockedBottleneck
         sw.Stop();
         double reorder = sw.Elapsed.TotalMilliseconds;
         sw.Restart();
-        PointwiseBlocked(xb, w1, b1, t1, N, C, R, CbC, CbR, H, W, true);
+        if (R % 16 == 0 && C % 8 == 0)
+            PointwisePairBlocked(xb, w1, b1, null, t1, N, C, R, CbC, CbR, H, W, true);
+        else
+            PointwiseBlocked(xb, w1, b1, t1, N, C, R, CbC, CbR, H, W, true);
         sw.Stop();
         double pw1 = sw.Elapsed.TotalMilliseconds;
         sw.Restart();
@@ -441,7 +527,10 @@ internal static class BlockedBottleneck
         sw.Stop();
         double sp3 = sw.Elapsed.TotalMilliseconds;
         sw.Restart();
-        PointwiseResidualBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W);
+        if (C % 16 == 0 && R % 8 == 0)
+            PointwisePairBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W, true);
+        else
+            PointwiseResidualBlocked(t2, w3, b3, rb, yb, N, R, C, CbR, CbC, H, W);
         sw.Stop();
         double pw2 = sw.Elapsed.TotalMilliseconds;
         double kernel = pw1 + sp3 + pw2;
