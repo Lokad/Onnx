@@ -461,7 +461,7 @@ public partial struct Node
 
         OpType.Less => CPU.Less(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
-        OpType.Where => CPU.Where(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt),
+        OpType.Where => CPU.Where(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool),
 
         OpType.Expand => CPU.Expand(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 

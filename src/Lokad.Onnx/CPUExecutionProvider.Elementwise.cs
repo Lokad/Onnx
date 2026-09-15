@@ -421,13 +421,16 @@ public partial class CPUExecutionProvider
         }
     }
 
-    public static OpResult Where(ITensor? condition, ITensor? X, ITensor? Y, ExecutionOptions? options)
+    public static OpResult Where(ITensor? condition, ITensor? X, ITensor? Y, ExecutionOptions? options) =>
+        Where(condition, X, Y, options, null);
+
+    public static OpResult Where(ITensor? condition, ITensor? X, ITensor? Y, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.Where;
         if (condition is null) return MissingInput(op, nameof(condition));
         if (X is null) return MissingInput(op, nameof(X));
         if (Y is null) return MissingInput(op, nameof(Y));
-        (options ?? ExecutionOptions.Default).Validated();
+        var opts = (options ?? ExecutionOptions.Default).Validated();
         if (condition.ElementType != TensorElementType.Bool) return WrongInputType(op, nameof(condition), TensorElementType.Bool, condition);
         if (X.ElementType != Y.ElementType)
         {
@@ -435,15 +438,15 @@ public partial class CPUExecutionProvider
         }
         switch (X.ElementType)
         {
-            case TensorElementType.Bool: return Success(op, Tensor<bool>.Where((Tensor<bool>)condition, (Tensor<bool>)X, (Tensor<bool>)Y));
-            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Where((Tensor<bool>)condition, (Tensor<byte>)X, (Tensor<byte>)Y));
-            case TensorElementType.Int32: return Success(op, Tensor<int>.Where((Tensor<bool>)condition, (Tensor<int>)X, (Tensor<int>)Y));
-            case TensorElementType.Int64: return Success(op, Tensor<long>.Where((Tensor<bool>)condition, (Tensor<long>)X, (Tensor<long>)Y));
-            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Where((Tensor<bool>)condition, (Tensor<uint>)X, (Tensor<uint>)Y));
-            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Where((Tensor<bool>)condition, (Tensor<ulong>)X, (Tensor<ulong>)Y));
-            case TensorElementType.Float: return Success(op, Tensor<float>.Where((Tensor<bool>)condition, (Tensor<float>)X, (Tensor<float>)Y));
-            case TensorElementType.Double: return Success(op, Tensor<double>.Where((Tensor<bool>)condition, (Tensor<double>)X, (Tensor<double>)Y));
-            case TensorElementType.Float16: return Success(op, Tensor<Half>.Where((Tensor<bool>)condition, (Tensor<Half>)X, (Tensor<Half>)Y));
+            case TensorElementType.Bool: return Success(op, Tensor<bool>.Where((Tensor<bool>)condition, (Tensor<bool>)X, (Tensor<bool>)Y, opts.Tensor, pool));
+            case TensorElementType.UInt8: return Success(op, Tensor<byte>.Where((Tensor<bool>)condition, (Tensor<byte>)X, (Tensor<byte>)Y, opts.Tensor, pool));
+            case TensorElementType.Int32: return Success(op, Tensor<int>.Where((Tensor<bool>)condition, (Tensor<int>)X, (Tensor<int>)Y, opts.Tensor, pool));
+            case TensorElementType.Int64: return Success(op, Tensor<long>.Where((Tensor<bool>)condition, (Tensor<long>)X, (Tensor<long>)Y, opts.Tensor, pool));
+            case TensorElementType.UInt32: return Success(op, Tensor<uint>.Where((Tensor<bool>)condition, (Tensor<uint>)X, (Tensor<uint>)Y, opts.Tensor, pool));
+            case TensorElementType.UInt64: return Success(op, Tensor<ulong>.Where((Tensor<bool>)condition, (Tensor<ulong>)X, (Tensor<ulong>)Y, opts.Tensor, pool));
+            case TensorElementType.Float: return Success(op, Tensor<float>.Where((Tensor<bool>)condition, (Tensor<float>)X, (Tensor<float>)Y, opts.Tensor, pool));
+            case TensorElementType.Double: return Success(op, Tensor<double>.Where((Tensor<bool>)condition, (Tensor<double>)X, (Tensor<double>)Y, opts.Tensor, pool));
+            case TensorElementType.Float16: return Success(op, Tensor<Half>.Where((Tensor<bool>)condition, (Tensor<Half>)X, (Tensor<Half>)Y, opts.Tensor, pool));
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }

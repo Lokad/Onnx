@@ -348,6 +348,102 @@ where T : unmanaged
         return output;
     }
 
+    /// <summary>Elementwise select with a pooled span fast path (M6).</summary>
+    /// <remarks>When condition, x, and y are row-major contiguous dense tensors, the
+    /// broadcast plan maps to per-input strides (zero where an axis broadcasts) and one
+    /// flat odometer loop over pointers fills a pooled destination; anything else keeps
+    /// the view-based implementation bit-identically, including its error behavior.</remarks>
+    public static Tensor<T> Where(Tensor<bool> condition, Tensor<T> x, Tensor<T> y, TensorExecutionOptions options, TensorBufferPool? pool)
+    {
+        options.Validate();
+        if (TryWhereFast(condition, x, y, pool, out var fast) && fast is not null) return fast;
+        return Where(condition, x, y);
+    }
+
+    static bool IsRowMajorDense<TElement>(DenseTensor<TElement> t) where TElement : unmanaged
+    {
+        if (t.IsReversedStride) return false;
+        if (t.Buffer.Length != t.Length) return false;
+        return t.Strides.SequenceEqual(ArrayUtilities.GetStrides(t.Dimensions));
+    }
+
+    static int[] ExpandWhereStrides(ReadOnlySpan<int> dims, ReadOnlySpan<int> strides, int[] shape)
+    {
+        int rank = shape.Length;
+        var expanded = new int[rank];
+        int off = rank - dims.Length;
+        for (int d = 0; d < rank; d++)
+        {
+            int idim = d < off ? 1 : dims[d - off];
+            if (idim == 1)
+            {
+                expanded[d] = 0;
+            }
+            else
+            {
+                if (idim != shape[d]) return new int[0];
+                expanded[d] = strides[d - off];
+            }
+        }
+        return expanded;
+    }
+
+    static bool TryWhereFast(Tensor<bool> condition, Tensor<T> x, Tensor<T> y, TensorBufferPool? pool, out Tensor<T>? fast)
+    {
+        fast = null;
+        if (condition is not DenseTensor<bool> dc || x is not DenseTensor<T> dx || y is not DenseTensor<T> dy) return false;
+        if (!BroadcastShape(dx.Dimensions, dy.Dimensions, out var s1) || s1 is null) return false;
+        if (!BroadcastShape(s1, dc.Dimensions, out var shape) || shape is null) return false;
+        if (!IsRowMajorDense(dc) || !IsRowMajorDense(dx) || !IsRowMajorDense(dy)) return false;
+        var cs = ExpandWhereStrides(dc.Dimensions, dc.Strides, shape);
+        var xs = ExpandWhereStrides(dx.Dimensions, dx.Strides, shape);
+        var ys = ExpandWhereStrides(dy.Dimensions, dy.Strides, shape);
+        if (cs.Length == 0 || xs.Length == 0 || ys.Length == 0) return false;
+        long total = 1;
+        foreach (var e in shape) total = checked(total * e);
+        int len = checked((int)total);
+        T[] buf = pool is null ? new T[len] : pool.Rent<T>(len);
+        var output = new DenseTensor<T>(new Memory<T>(buf, 0, len), shape);
+        int rank = shape.Length;
+        var cSpan = dc.Buffer.Span;
+        var xSpan = dx.Buffer.Span;
+        var ySpan = dy.Buffer.Span;
+        var dSpan = output.Buffer.Span;
+        unsafe
+        {
+            fixed (bool* cp = cSpan)
+            fixed (T* xp = xSpan, yp = ySpan, dp = dSpan)
+            {
+                if (rank == 0)
+                {
+                    if (len > 0) dp[0] = cp[0] ? xp[0] : yp[0];
+                    fast = output;
+                    return true;
+                }
+                var coord = new int[rank];
+                int co = 0, xo = 0, yo = 0;
+                for (int o = 0; o < len; o++)
+                {
+                    dp[o] = cp[co] ? xp[xo] : yp[yo];
+                    for (int d = rank - 1; d >= 0; d--)
+                    {
+                        coord[d]++;
+                        co += cs[d];
+                        xo += xs[d];
+                        yo += ys[d];
+                        if (coord[d] < shape[d]) break;
+                        coord[d] = 0;
+                        co -= cs[d] * shape[d];
+                        xo -= xs[d] * shape[d];
+                        yo -= ys[d] * shape[d];
+                    }
+                }
+            }
+        }
+        fast = output;
+        return true;
+    }
+
     public static Tensor<byte> Add(Tensor<byte> x, Tensor<byte> y) => Add(x, y, TensorExecutionOptions.Auto);
     public static Tensor<byte> Add(Tensor<byte> x, Tensor<byte> y, TensorExecutionOptions options) => x.VectorizedApply((l, r) => (l + r), (l, r) => (byte) (l + r), y, options);
 
