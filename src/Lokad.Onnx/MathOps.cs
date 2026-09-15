@@ -640,15 +640,33 @@ public class MathOps
                           float* B,
                           float* P)
     {
-        int blocked = K - (K % (4 * Vector256<float>.Count));
-        for (int kb = 0; kb < blocked; kb += 4 * Vector256<float>.Count)
+        int panel = 4 * Vector256<float>.Count;
+        int blocked = K - (K % panel);
+        bool wide512 = Avx512F.IsSupported;
+        bool wide256 = Avx.IsSupported;
+        for (int kb = 0; kb < blocked; kb += panel)
         {
-            float* dst = P + (kb / (4 * Vector256<float>.Count)) * N * (4 * Vector256<float>.Count);
+            float* dst = P + (kb / panel) * N * panel;
             for (int j = 0; j < N; j++)
             {
                 float* src = B + j * K + kb;
-                float* d = dst + j * (4 * Vector256<float>.Count);
-                for (int kk = 0; kk < 4 * Vector256<float>.Count; kk++) d[kk] = src[kk];
+                float* d = dst + j * panel;
+                if (wide512)
+                {
+                    ((Vector512<float>*)d)[0] = ((Vector512<float>*)src)[0];
+                    ((Vector512<float>*)d)[1] = ((Vector512<float>*)src)[1];
+                }
+                else if (wide256)
+                {
+                    ((Vector256<float>*)d)[0] = ((Vector256<float>*)src)[0];
+                    ((Vector256<float>*)d)[1] = ((Vector256<float>*)src)[1];
+                    ((Vector256<float>*)d)[2] = ((Vector256<float>*)src)[2];
+                    ((Vector256<float>*)d)[3] = ((Vector256<float>*)src)[3];
+                }
+                else
+                {
+                    for (int kk = 0; kk < panel; kk++) d[kk] = src[kk];
+                }
             }
         }
         int rem = K - blocked;
