@@ -34,6 +34,7 @@ public class ComputationalGraph
     /// <summary>Prepared transposed LSTM weight clones by source initializer array.</summary>
     internal Dictionary<float[], PreparedLstmTranspose> LstmTransposes = new Dictionary<float[], PreparedLstmTranspose>();
     internal Dictionary<string, GraphConstants.FoldedComputation> FoldedComputations = new Dictionary<string, GraphConstants.FoldedComputation>(StringComparer.Ordinal);
+    internal Dictionary<string, PreparedBlockedFilter> BlockedFilters = new Dictionary<string, PreparedBlockedFilter>(StringComparer.Ordinal);
     /// <summary>Live computed-constant folds from the last preparation.</summary>
     public int FoldedComputationCount => FoldedComputations.Count;
 
@@ -197,6 +198,7 @@ public class ComputationalGraph
                 }
                 LstmTransposes.Clear();
                 GraphConstants.RebuildFoldedComputations(this);
+                BlockedFilters.Clear();
             }
         }
     }

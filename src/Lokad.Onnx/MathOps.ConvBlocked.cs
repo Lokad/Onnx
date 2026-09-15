@@ -48,42 +48,13 @@ public static class MathOpsConvBlocked
         if (ba is not null && ba.Length != m) return false;
         int cbN = c / CB;
         int mbN = m / CB;
-        var xs = xd.Buffer.Span;
-        var ws = wd.Buffer.Span;
         var actB = new float[cbN * h * w * CB];
-        for (int cc = 0; cc < c; cc++)
-        {
-            int srcBase = cc * h * w;
-            int dstBase = cc / CB * h * w * CB + cc % CB;
-            for (int i = 0; i < h * w; i++) actB[dstBase + i * CB] = xs[srcBase + i];
-        }
-        var filtB = new float[mbN * cbN * 9 * CB * CB];
-        for (int mb = 0; mb < mbN; mb++)
-            for (int cb = 0; cb < cbN; cb++)
-                for (int k9 = 0; k9 < 9; k9++)
-                    for (int cc = 0; cc < CB; cc++)
-                        for (int mm = 0; mm < CB; mm++)
-                            filtB[((((mb * cbN + cb) * 9 + k9) * CB) + cc) * CB + mm]
-                                = ws[((mb * CB + mm) * c + cb * CB + cc) * 9 + k9];
+        BlockInput(xd.Buffer.Span, actB, c, h, w);
+        var filtB = PackBlockedFilter(wd.Buffer.Span, m, c);
         var outB = new float[mbN * h * w * CB];
-        unsafe
-        {
-            fixed (float* ab = actB, fb = filtB, db = outB)
-                BlockedKernel3x3(ab, fb, db, cbN, mbN, h, w);
-        }
+        BlockedConvCore(actB, filtB, outB, cbN, mbN, h, w);
         var ys = new float[m * h * w];
-        for (int mb = 0; mb < mbN; mb++)
-            for (int mm = 0; mm < CB; mm++)
-            {
-                float bi = ba is null ? 0f : ba[mb * CB + mm];
-                int srcBase = (mb * h * w) * CB + mm;
-                int dstBase = (mb * CB + mm) * h * w;
-                for (int i = 0; i < h * w; i++)
-                {
-                    float v = outB[srcBase + i * CB] + bi;
-                    ys[dstBase + i] = fuseRelu && v < 0f ? 0f : v;
-                }
-            }
+        UnblockOutput(outB, ys, ba, m, h, w, fuseRelu);
         output = new DenseTensor<float>(new Memory<float>(ys), new[] { n, m, h, w });
         return true;
     }
@@ -238,6 +209,152 @@ public static class MathOpsConvBlocked
             float v = data[i];
             data[i] = v <= 0f ? (v == 0f ? v : 0f) : v;
         }
+    }
+
+
+    /// <summary>Adds a per-channel bias over a blocked buffer (region epilogue piece).</summary>
+    /// <remarks>Blocked layout groups sixteen lanes of channel mb*16+mm at every spatial position, so one contiguous sixteen-wide bias load serves a whole channel block across all spatial positions. Bit-identical to scalar bias addition. The destination may alias the data input. Spatial is the H-by-W position count; channels come from the bias length.</remarks>
+    public static void BlockedBiasAdd(ReadOnlySpan<float> data, ReadOnlySpan<float> bias, Span<float> destination, int spatial, TensorExecutionOptions? options)
+    {
+        int m = bias.Length;
+        if (m % CB != 0 || spatial <= 0) throw new ArgumentException("Blocked bias add needs a multiple-of-16 channel count and a positive spatial extent.");
+        if (data.Length != m * spatial || destination.Length < data.Length)
+            throw new ArgumentException("Blocked bias add requires data covering every channel and a large enough destination.");
+        if ((options?.UseSimd ?? true) && (options?.UseIntrinsics ?? true))
+        {
+            if (Avx512F.IsSupported)
+            {
+                for (int mb = 0; mb < m / CB; mb++)
+                {
+                    var vb = Vector512.LoadUnsafe(ref MemoryMarshal.GetReference(bias), (nuint)(mb * CB));
+                    int base_ = mb * spatial * CB;
+                    for (int s = 0; s < spatial; s++)
+                    {
+                        int at = base_ + s * CB;
+                        (Vector512.LoadUnsafe(ref MemoryMarshal.GetReference(data), (nuint)at) + vb)
+                            .StoreUnsafe(ref MemoryMarshal.GetReference(destination), (nuint)at);
+                    }
+                }
+                return;
+            }
+            if (Avx.IsSupported)
+            {
+                for (int mb = 0; mb < m / CB; mb++)
+                {
+                    var vb0 = Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(bias), (nuint)(mb * CB));
+                    var vb1 = Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(bias), (nuint)(mb * CB + 8));
+                    int base_ = mb * spatial * CB;
+                    for (int s = 0; s < spatial; s++)
+                    {
+                        int at = base_ + s * CB;
+                        (Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(data), (nuint)at) + vb0)
+                            .StoreUnsafe(ref MemoryMarshal.GetReference(destination), (nuint)at);
+                        (Vector256.LoadUnsafe(ref MemoryMarshal.GetReference(data), (nuint)(at + 8)) + vb1)
+                            .StoreUnsafe(ref MemoryMarshal.GetReference(destination), (nuint)(at + 8));
+                    }
+                }
+                return;
+            }
+        }
+        for (int mb = 0; mb < m / CB; mb++)
+            for (int s = 0; s < spatial; s++)
+                for (int mm = 0; mm < CB; mm++)
+                    destination[(mb * spatial + s) * CB + mm] = data[(mb * spatial + s) * CB + mm] + bias[mb * CB + mm];
+    }
+
+
+    /// <summary>Blocks one NCHW channel plane set into NCHWc16 layout.</summary>
+    internal static void BlockInput(ReadOnlySpan<float> xs, Span<float> dst, int c, int h, int w)
+    {
+        for (int cc = 0; cc < c; cc++)
+        {
+            int srcBase = cc * h * w;
+            int dstBase = cc / CB * h * w * CB + cc % CB;
+            for (int i = 0; i < h * w; i++) dst[dstBase + i * CB] = xs[srcBase + i];
+        }
+    }
+
+    /// <summary>Packs one [M,C,3,3] filter set into the blocked micro-tile layout with output lanes innermost.</summary>
+    internal static float[] PackBlockedFilter(ReadOnlySpan<float> ws, int m, int c)
+    {
+        int cbN = c / CB;
+        int mbN = m / CB;
+        var filtB = new float[mbN * cbN * 9 * CB * CB];
+        for (int mb = 0; mb < mbN; mb++)
+            for (int cb = 0; cb < cbN; cb++)
+                for (int k9 = 0; k9 < 9; k9++)
+                    for (int cc = 0; cc < CB; cc++)
+                        for (int mm = 0; mm < CB; mm++)
+                            filtB[((((mb * cbN + cb) * 9 + k9) * CB) + cc) * CB + mm]
+                                = ws[((mb * CB + mm) * c + cb * CB + cc) * 9 + k9];
+        return filtB;
+    }
+
+    /// <summary>Runs the vector blocked kernel over pre-blocked buffers; the caller must have gated SIMD execution.</summary>
+    internal static void BlockedConvCore(float[] actB, float[] filtB, float[] outB, int cbN, int mbN, int h, int w)
+    {
+        unsafe
+        {
+            fixed (float* ab = actB, fb = filtB, db = outB)
+                BlockedKernel3x3(ab, fb, db, cbN, mbN, h, w);
+        }
+    }
+
+    /// <summary>Runs the scalar blocked kernel over pre-blocked buffers.</summary>
+    /// <remarks>Same traversal and per-lane summation order as the vector kernel, with single-rounding fused multiply-add throughout, so both lanes agree bit for bit.</remarks>
+    internal static void BlockedConvCoreScalar(float[] actB, float[] filtB, float[] outB, int cbN, int mbN, int h, int w)
+    {
+        unsafe
+        {
+            fixed (float* act = actB, filt = filtB, dst = outB)
+            {
+                for (int mb = 0; mb < mbN; mb++)
+                    for (int y = 0; y < h; y++)
+                        for (int x = 0; x < w; x++)
+                            for (int mm = 0; mm < CB; mm++)
+                            {
+                                float acc = 0f;
+                                for (int cb = 0; cb < cbN; cb++)
+                                    for (int k9 = 0; k9 < 9; k9++)
+                                    {
+                                        int iy = y + k9 / 3 - 1, ix = x + k9 % 3 - 1;
+                                        if ((uint)iy >= (uint)h || (uint)ix >= (uint)w) continue;
+                                        float* av = act + ((cb * h + iy) * w + ix) * CB;
+                                        float* fv = filt + (((mb * cbN + cb) * 9 + k9) * CB) * CB;
+                                        for (int cc = 0; cc < CB; cc++)
+                                            acc = MathF.FusedMultiplyAdd(fv[cc * CB + mm], av[cc], acc);
+                                    }
+                                dst[((mb * h + y) * w + x) * CB + mm] = acc;
+                            }
+            }
+        }
+    }
+
+    /// <summary>Runs the blocked kernel over pre-blocked buffers, vector when the options and ISA allow, scalar otherwise.</summary>
+    internal static void RunBlockedConv(float[] actB, float[] filtB, float[] outB, int cbN, int mbN, int h, int w, TensorExecutionOptions? options)
+    {
+        if ((options?.UseSimd ?? true) && (options?.UseIntrinsics ?? true) && Avx512F.IsSupported)
+            BlockedConvCore(actB, filtB, outB, cbN, mbN, h, w);
+        else
+            BlockedConvCoreScalar(actB, filtB, outB, cbN, mbN, h, w);
+    }
+
+    /// <summary>Converts one blocked output to NCHW, applying bias and an optional Relu epilogue.</summary>
+    internal static void UnblockOutput(ReadOnlySpan<float> outB, Span<float> ys, float[]? bias, int m, int h, int w, bool fuseRelu)
+    {
+        int mbN = m / CB;
+        for (int mb = 0; mb < mbN; mb++)
+            for (int mm = 0; mm < CB; mm++)
+            {
+                float bi = bias is null ? 0f : bias[mb * CB + mm];
+                int srcBase = (mb * h * w) * CB + mm;
+                int dstBase = (mb * CB + mm) * h * w;
+                for (int i = 0; i < h * w; i++)
+                {
+                    float v = outB[srcBase + i * CB] + bi;
+                    ys[dstBase + i] = fuseRelu && v < 0f ? 0f : v;
+                }
+            }
     }
 
 }

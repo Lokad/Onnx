@@ -357,6 +357,16 @@ public partial struct Node
     /// Routes MatMul nodes carrying the MatMul+scale fusion marker to the scaled
     /// provider; unmarked nodes fall through to plain MatMul.
     /// </summary>
+    /// <summary>
+    /// Routes Conv nodes carrying a fused blocked-region plan to the region
+    /// executor; unmarked nodes fall through to the standard convolution.
+    /// </summary>
+    OpResult? RegionGate(ComputationalGraph graph, ExecutionOptions? opt)
+    {
+        if (Attributes is null || !Attributes.TryGetValue("fuse_region", out var r) || r is not BlockedRegionSpec spec) return null;
+        return CPU.RunBlockedRegion(spec, Inputs.Length > 0 ? InputTensor(graph, 0) : null, graph, opt);
+    }
+
     OpResult? MatMulScaleGate(ComputationalGraph graph, ExecutionOptions? opt)
     {
         float? s = GetFloat("fuse_scale", null);
@@ -408,7 +418,7 @@ public partial struct Node
 
         OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0), opt),
 
-        OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+        OpType.Conv => RegionGate(graph, opt) ?? CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, GetInt("fuse_relu", null) == 1),
 
         OpType.Relu => ReluIntGate(graph) ?? CPU.Relu(InputTensor(graph, 0), opt),
