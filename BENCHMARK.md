@@ -453,6 +453,19 @@ must not be compared with the 2026-09-12 table. Voice keys are opt-in
 and excluded from the default/`all` set (the encoder loads 2.4 GB); name
 them explicitly.
 
+### Post-activation update — later 2026-09-15
+
+Reran the four canonical cases in three fresh processes after the vector-activation campaign (vectorized Abs, shared vector-exp core with span Sigmoid/Tanh, LSTM default-trio fast gates, 96 Sigmoid+Mul fusions, float-proof completions), with unchanged settings, fixtures, and gates; raw logs stay local under `artifacts/bench/voice-postact/`, machine summary `tests/Lokad.Onnx.Bench/baseline/summary-voice-20260915-postact.json` regenerated with the same parser command. A fourth process ran but its segmentation row caught box interference on both engines (294.4/69.1 against about 150/38 elsewhere) and was discarded and rerun per the rule, never averaged in; one attempt opened with a confinement warning and was killed before timing. Measured at fa0c588 with a clean tracked tree (local working files, models, and agent scratch only).
+
+| Voice case | rep1 L/ORT ms | rep2 L/ORT ms | rep3 L/ORT ms | Lokad / ORT |
+|---|---:|---:|---:|---|
+| parakeet-encoder | 693.6 / 271.2 | 776.7 / 281.1 | 717.7 / 281.8 | 2.5-2.8x |
+| parakeet-decoder | 14.7 / 8.8 | 16.1 / 9.5 | 16.4 / 9.0 | 1.7-1.8x |
+| pyannote-segmentation | 147.1 / 38.1 | 158.4 / 38.2 | 156.5 / 38.9 | 3.9-4.1x |
+| pyannote-embedding | 212.5 / 58.3 | 201.9 / 55.3 | 205.8 / 51.2 | 3.6-4.0x |
+
+Segmentation moves 4.8-4.9x to 3.9-4.1x with ORT pinned near 38 ms in all three reps: the vectorized sinc-frontend Abs plus the vector LSTM gates on the 589-step recurrence. Encoder 2.6-2.7x to 2.5-2.8x and decoder 1.7x to 1.7-1.8x hold with small favorable drift; embedding 3.6-3.8x to 3.6-4.0x is variance-dominated on the Lokad side (338-453 ms across same-night runs against ORT near 100 ms) and untouched by this work (no Sigmoid, LSTM, or fusable pair in the backbone). Agreement validates under the same gates on every row (encoder 2.90e-07, decoder 4.46e-006, segmentation 1.20e-005, embedding 2.25e-006).
+
 ## Representative voice rows — 2026-09-15
 
 Timed separately with the same single-CPU settings (one fresh process, 3
