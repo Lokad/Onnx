@@ -303,6 +303,44 @@ public class MatMulKernelAgreementTests
     }
 
     [SkippableFact]
+    public unsafe void M1BlockedMatchesOneRowBitwise()
+    {
+        // P06: the K-blocked single-row kernel keeps the exact per-element
+        // j-ascending chains of the 1-row kernel (FMA bulk, scalar tail at
+        // the same boundary), so it must agree bit-wise on zero and nonzero
+        // destinations, chunk/middle/tail widths, and exceptional values.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        M1Equal(768, 50257, rnd);
+        M1Equal(64, 9000, rnd);
+        M1Equal(16, 8200, rnd);
+        M1Equal(33, 8193, rnd);
+        M1Equal(7, 100, rnd);
+    }
+
+    static unsafe void M1Equal(int n, int k, Random rnd)
+    {
+        var a = FillRect(1, n, rnd);
+        var b = FillRect(n, k, rnd);
+        a.Buffer.Span[0] = System.BitConverter.Int32BitsToSingle(0x7FC00001);
+        if (a.Length > 1) a.Buffer.Span[1] = float.NegativeInfinity;
+        if (b.Length > 2) b.Buffer.Span[2] = -0f;
+        var c1 = Tensor<float>.Zeros(1, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics(1, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var c2 = Tensor<float>.Zeros(1, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_m1_kblocked(1, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"kblocked diverges bitwise from 1-row on 1x{n}x{k}.");
+        var d1 = FillRect(1, k, rnd);
+        var d2 = Tensor<float>.Zeros(1, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics(1, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_m1_kblocked(1, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"kblocked diverges bitwise from 1-row on nonzero destination 1x{n}x{k}.");
+    }
+
+    [SkippableFact]
     public unsafe void Packed3OddMatchesDispatchedBitwise()
     {
         // P65: odd multiples of 3 (e.g. DINO M=201) run the 3-row nest over all

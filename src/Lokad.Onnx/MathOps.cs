@@ -627,6 +627,73 @@ public class MathOps
     }
 
     /// <summary>
+    /// Single-row K-blocked GEMV-style kernel (P06 decode path). The classic
+    /// 1-row kernel read-modify-writes the whole C row per reduction step,
+    /// which triples traffic once C outgrows L1 (logits: 200KB rows). This
+    /// keeps one 32-column chunk resident in registers across the full
+    /// reduction and stores once, so B streams once and C is written once.
+    /// Per-element arithmetic matches the 1-row kernel bit-wise: FMA chains
+    /// in j-ascending order over [0, ceiling), scalar mul-add over the same
+    /// tail, with the 32-column blocking boundaries aligned to the 8-wide
+    /// vector lanes (32 is a multiple of 8).
+    /// </summary>
+    /// <param name="M">A rows (must be 1).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix (one row).</param>
+    /// <param name="B">Right matrix, row-major.</param>
+    /// <param name="C">Result row (accumulated, like the 1-row kernel).</param>
+    /// </summary>
+    public unsafe static void mm_m1_kblocked(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* B,
+                          float* C)
+    {
+        if (M != 1)
+            throw new ArgumentException(nameof(M));
+        const int Chunk = 32; // 4 AVX vectors; Vector256<float>.Count is not a C# const
+        int blocked = K - (K % Chunk);
+        for (int kb = 0; kb < blocked; kb += Chunk)
+        {
+            var Cpv = (Vector256<float>*)(C + kb);
+            Vector256<float> c0 = Cpv[0];
+            Vector256<float> c1 = Cpv[1];
+            Vector256<float> c2 = Cpv[2];
+            Vector256<float> c3 = Cpv[3];
+            for (int j = 0; j < N; ++j)
+            {
+                var av = Vector256.Create(A[j]);
+                var Bpv = (Vector256<float>*)(B + j * K + kb);
+                c0 = Fma.MultiplyAdd(Bpv[0], av, c0);
+                c1 = Fma.MultiplyAdd(Bpv[1], av, c1);
+                c2 = Fma.MultiplyAdd(Bpv[2], av, c2);
+                c3 = Fma.MultiplyAdd(Bpv[3], av, c3);
+            }
+            Cpv[0] = c0;
+            Cpv[1] = c1;
+            Cpv[2] = c2;
+            Cpv[3] = c3;
+        }
+        int ceiling = (K / Vector256<float>.Count) * Vector256<float>.Count;
+        for (int k = blocked; k < ceiling; k += Vector256<float>.Count)
+        {
+            Vector256<float> c = *(Vector256<float>*)(C + k);
+            for (int j = 0; j < N; ++j)
+            {
+                var Bpv = (Vector256<float>*)(B + j * K + k);
+                c = Fma.MultiplyAdd(Bpv[0], Vector256.Create(A[j]), c);
+            }
+            *(Vector256<float>*)(C + k) = c;
+        }
+        for (int k = ceiling; k < K; k++)
+        {
+            for (int j = 0; j < N; ++j) C[k] += A[j] * B[j * K + k];
+        }
+    }
+
+    /// <summary>
     /// Packs B into 32-column panels laid out contiguously, with any tail
     /// columns appended row-major. Panel relocation is exact, so a kernel
     /// reading panels computes the same per-element order as the tiled kernel.

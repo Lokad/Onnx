@@ -151,8 +151,20 @@ where T : unmanaged
         return found;
     }
 
+    /// <summary>
+    /// Minimum output width for the single-row K-blocked kernel (P06): below
+    /// this the C row stays L1-resident and the classic 1-row kernel is left
+    /// alone; above it the classic kernel triple-traffics C through L2.
+    /// </summary>
+    const int M1BlockedMinColumns = 8192;
+
     static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
     {
+        if (options.UseSimd && options.UseIntrinsics && System.Runtime.Intrinsics.X86.Fma.IsSupported && m == 1 && k >= M1BlockedMinColumns)
+        {
+            mm_m1_kblocked(m, n, k, x, y, output);
+            return;
+        }
         // Register-tiled accumulation wins while both the reduction axis (n)
         // and the output width (k) fit the fast caches: a 25-shape old-vs-new
         // probe wins every shape with n and k below 2560 and loses every shape
