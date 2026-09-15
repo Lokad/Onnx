@@ -247,7 +247,7 @@ public class MatMulKernelAgreementTests
         RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
         var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
         var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
-        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc, false); }, a, b, p, c2);
         Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
             $"packed diverges bitwise from tiled on {m}x{n}x{k}.");
         var d1 = FillRect(m, k, rnd);
@@ -255,7 +255,7 @@ public class MatMulKernelAgreementTests
         d1.Buffer.Span.CopyTo(d2.Buffer.Span);
         RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
         var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
-        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, q, d2);
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc, false); }, a, b, q, d2);
         Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
             $"packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
     }
@@ -283,7 +283,7 @@ public class MatMulKernelAgreementTests
         RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
         var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
         var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
-        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc, false); }, a, b, p, c2);
         Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
             $"3-row packed diverges bitwise from tiled on {m}x{n}x{k}.");
         var d1 = FillRect(m, k, rnd);
@@ -291,7 +291,7 @@ public class MatMulKernelAgreementTests
         d1.Buffer.Span.CopyTo(d2.Buffer.Span);
         RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
         var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
-        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, q, d2);
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc, false); }, a, b, q, d2);
         Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
             $"3-row packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
     }
@@ -315,7 +315,7 @@ public class MatMulKernelAgreementTests
         var c1 = Tensor<float>.MatMul2D(a, b, TensorExecutionOptions.Intrinsics).ToDenseTensor();
         var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
         var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
-        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc, false); }, a, b, p, c2);
         Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
             $"3-row packed diverges bitwise from dispatched on odd {m}x{n}x{k}.");
     }

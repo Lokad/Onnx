@@ -33,7 +33,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_avx512_12x32packed_tile(12, n, ap + aOff, pp + pOff, cp + cOff, k, kb);
+                MathOps.mm_avx512_12x32packed_tile(12, n, ap + aOff, pp + pOff, cp + cOff, k, kb, false);
             }
         }
     }
@@ -44,7 +44,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_avx512_8x32packed_tile(m, n, ap + aOff, pp + pOff, cp + cOff, k, kb);
+                MathOps.mm_avx512_8x32packed_tile(m, n, ap + aOff, pp + pOff, cp + cOff, k, kb, false);
             }
         }
     }
@@ -55,7 +55,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_unsafe_vectorized_avx512_12x32packed(m, n, k, ap + aOff, pp, cp + cOff);
+                MathOps.mm_unsafe_vectorized_avx512_12x32packed(m, n, k, ap + aOff, pp, cp + cOff, false);
             }
         }
     }
@@ -66,7 +66,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_unsafe_vectorized_avx512_8x32packed(m, n, k, ap + aOff, pp, cp + cOff);
+                MathOps.mm_unsafe_vectorized_avx512_8x32packed(m, n, k, ap + aOff, pp, cp + cOff, false);
             }
         }
     }
@@ -267,7 +267,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, ap + aOff, pp, cp + cOff);
+                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, ap + aOff, pp, cp + cOff, false);
             }
         }
     }
@@ -278,7 +278,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, ap + aOff, pp, cp + cOff);
+                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, ap + aOff, pp, cp + cOff, false);
             }
         }
     }
@@ -289,7 +289,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_3x4packed_tile(3, n, ap + aOff, pp + pOff, cp + cOff, k, kb);
+                MathOps.mm_3x4packed_tile(3, n, ap + aOff, pp + pOff, cp + cOff, k, kb, false);
             }
         }
     }
@@ -300,7 +300,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_2x4packed_tile(m, n, ap + aOff, pp + pOff, cp + cOff, k, kb);
+                MathOps.mm_2x4packed_tile(m, n, ap + aOff, pp + pOff, cp + cOff, k, kb, false);
             }
         }
     }
@@ -312,7 +312,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_avx512_12x32packed_col_tail(12, n, k, ap + aOff, pp, cp + cOff, blocked, tiles, remCols);
+                MathOps.mm_avx512_12x32packed_col_tail(12, n, k, ap + aOff, pp, cp + cOff, blocked, tiles, remCols, false);
             }
         }
     }
@@ -323,7 +323,7 @@ public class PackedComposerTests
         {
             fixed (float* ap = a, pp = p, cp = c)
             {
-                MathOps.mm_avx512_8x32packed_col_tail(m, n, k, ap + aOff, pp, cp + cOff, blocked, tiles, remCols);
+                MathOps.mm_avx512_8x32packed_col_tail(m, n, k, ap + aOff, pp, cp + cOff, blocked, tiles, remCols, false);
             }
         }
     }

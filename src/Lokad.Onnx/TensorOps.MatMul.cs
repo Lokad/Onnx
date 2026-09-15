@@ -149,7 +149,7 @@ where T : unmanaged
         return found;
     }
 
-    static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
+    static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options, bool overwriteDestination)
     {
         // Register-tiled accumulation wins while both the reduction axis (n)
         // and the output width (k) fit the fast caches: a 25-shape old-vs-new
@@ -165,6 +165,20 @@ where T : unmanaged
         // route packed too; the pool-size guard keeps rental sane.
         const int TiledPackMinRows = 64;
         const long TiledPackMaxElements = 67108864;
+        // Overwrite contract: panel-packed kernels fully overwrite their
+        // destination, so an uninitialized output skips the clear; every
+        // other lane accumulates and keeps the explicit clear. The odd-m
+        // non-AVX512 transient leaves its last row to the unpacked fixup,
+        // so it stays on the clearing path. This sits above the dispatch
+        // so single-row and non-SIMD lanes clear too.
+        bool widePackable = (long)n * k <= TiledPackMaxElements;
+        bool p65Full = (m % 3) == 0 && m >= TiledPackMinRows && widePackable;
+        bool blockPackFull = !p65Full && (m - (m % 2)) >= TiledPackMinRows && widePackable
+            && (Avx512F.IsSupported || (m & 1) == 0);
+        bool packedFull = options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2
+            && (p65Full || blockPackFull);
+        if (overwriteDestination && !packedFull)
+            new Span<float>(output, m * k).Clear();
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
             int blocked = m - (m % 2);
@@ -184,12 +198,12 @@ where T : unmanaged
                         PackPanelsB(n, k, y, pp);
                         if (Avx512F.IsSupported)
                         {
-                            RunPackedRowGroups(m, n, k, x, pp, output);
+                            RunPackedRowGroups(m, n, k, x, pp, output, overwrite: true);
                             transientAvxCovered = true;
                         }
                         else
                         {
-                            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
+                            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output, overwrite: true);
                         }
                     }
                 }
@@ -208,12 +222,12 @@ where T : unmanaged
                         PackPanelsB(n, k, y, pp);
                         if (Avx512F.IsSupported)
                         {
-                            RunPackedRowGroups(m, n, k, x, pp, output);
+                            RunPackedRowGroups(m, n, k, x, pp, output, overwrite: true);
                             transientAvxCovered = true;
                         }
                         else
                         {
-                            mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output);
+                            mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output, overwrite: true);
                         }
                     }
                 }
@@ -258,22 +272,22 @@ where T : unmanaged
     {
         if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
         if (y.Rank != 2) throw new ArgumentException(nameof(y), "The rank of this tensor is not 2.");
-        return MatMul2DCore(x, y, DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] }), options, clearDestination: false);
+        return MatMul2DCore(x, y, DenseTensor<float>.OfShape(new int[] { x.Dimensions[0], y.Dimensions[1] }), options, overwriteDestination: false);
     }
 
     /// <summary>
     /// Writes the 2D float matrix product into an existing dense destination,
-    /// overwriting it. The destination must not alias either input. The raw
-    /// kernels accumulate, so this entry point clears the destination first;
-    /// callers that already hold a zeroed buffer use the renting overload.
+    /// overwriting it. The destination must not alias either input. The
+    /// panel-packed kernels overwrite it directly; unpacked fallback lanes
+    /// clear it first. Callers may pass uninitialized storage.
     /// </summary>
     public static Tensor<float> MatMul2D(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
-        return MatMul2DCore(x, y, destination, options, clearDestination: true);
+        return MatMul2DCore(x, y, destination, options, overwriteDestination: true);
     }
 
-    static Tensor<float> MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)
+    static Tensor<float> MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool overwriteDestination)
     {
         options.Validate();
         StartOpStage(OpStage.ValidateArguments);
@@ -283,7 +297,6 @@ where T : unmanaged
         if (destination.Dimensions.Length != 2 || destination.Dimensions[0] != x.Dimensions[0] || destination.Dimensions[1] != y.Dimensions[1]) throw new ArgumentException(nameof(destination), "Destination shape must match the matrix product shape.");
         if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
         if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y) || TensorAlias.SharesBackingMemory(destination, x) || TensorAlias.SharesBackingMemory(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input matrices.");
-        if (clearDestination) destination.Buffer.Span.Clear();
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
@@ -299,7 +312,7 @@ where T : unmanaged
             {
                 // Row groups with 12/6-row AVX512 heads and 3/2-row tails (P5);
                 // exact shapes keep single calls bit-identically.
-                RunPackedRowGroups(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
+                RunPackedRowGroups(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer, overwrite: true);
             }
             return destination;
         }
@@ -326,7 +339,7 @@ where T : unmanaged
                     RunFloatMatMulKernel(rows, n, k,
                         (float*)xh.Pointer + start * n,
                         (float*)yh.Pointer,
-                        (float*)oh.Pointer + start * k, options);
+                        (float*)oh.Pointer + start * k, options, overwriteDestination);
                 }
             });
         }
@@ -337,7 +350,7 @@ where T : unmanaged
             using var oh = destination.Buffer.Pin();
             unsafe
             {
-                RunFloatMatMulKernel(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer, options);
+                RunFloatMatMulKernel(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer, options, overwriteDestination);
             }
         }
         return destination;
@@ -352,8 +365,8 @@ where T : unmanaged
         var dims = new int[] { x.Dimensions[0], y.Dimensions[1] };
         int flat;
         checked { flat = dims[0] * dims[1]; }
-        var destination = new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>(flat)), dims);
-        return MatMul2DCore(x, y, destination, options, clearDestination: false);
+        var destination = new DenseTensor<float>(new Memory<float>(pool.Rent<float>(flat)), dims);
+        return MatMul2DCore(x, y, destination, options, overwriteDestination: true);
     }
 
     public static Tensor<double> MatMul2D(Tensor<double> x, Tensor<double> y) => MatMul2D(x, y, TensorExecutionOptions.Auto);
@@ -565,8 +578,8 @@ where T : unmanaged
     /// Size-one batch dims accept any step since they contribute one block
     /// at offset zero. Broadcast, strided, or truly batched right operands
     /// keep the per-batch fallback. The folded destination aliases the same
-    /// output storage, preserving shape, and is cleared explicitly because
-    /// the kernels accumulate onto zero.
+    /// output storage, preserving shape. Panel-packed kernels overwrite it;
+    /// unpacked fallback lanes clear it first.
     /// </summary>
     static bool TryFoldSharedRightBatch(Tensor<float> bx, Tensor<float> by, Tensor<float> z, int[] batchDims, int[] xSteps, int[] ySteps, int[] zSteps, int batchCount, int m, int n, int k, TensorExecutionOptions options)
     {
@@ -578,8 +591,7 @@ where T : unmanaged
         var fx = new DenseTensor<float>(bx.Storage.Slice(0, checked(fm * n)), new[] { fm, n });
         var fy = new DenseTensor<float>(by.Storage.Slice(0, checked(n * k)), new[] { n, k });
         var fz = new DenseTensor<float>(z.Storage.Slice(0, checked(fm * k)), new[] { fm, k });
-        fz.Buffer.Span.Clear();
-        MatMul2DCore(fx, fy, fz, options, clearDestination: false);
+        MatMul2DCore(fx, fy, fz, options, overwriteDestination: true);
         return true;
     }
 
@@ -599,7 +611,7 @@ where T : unmanaged
         return true;
     }
 
-    static void RunBatchedFloatMatMul(Tensor<float> bx, Tensor<float> by, Tensor<float> z, TensorExecutionOptions options)
+    static void RunBatchedFloatMatMul(Tensor<float> bx, Tensor<float> by, Tensor<float> z, TensorExecutionOptions options, bool overwriteDestination)
     {
         bx = RequireBatchOperand(bx, nameof(bx), options.CopyReporter);
         by = RequireBatchOperand(by, nameof(by), options.CopyReporter);
@@ -621,7 +633,7 @@ where T : unmanaged
         }
         if (ResolvePackedKernel(options, by, m) is { } packedB && (batchCount == 1 || ySteps.All(s => s == 0)))
         {
-            RunPackedBatches(bx, z, batchDims, xSteps, zSteps, batchCount, dop, m, n, k, packedB);
+            RunPackedBatches(bx, z, batchDims, xSteps, zSteps, batchCount, dop, m, n, k, packedB, overwrite: true);
             return;
         }
         using var xh = bx.Storage.Pin();
@@ -642,7 +654,7 @@ where T : unmanaged
                     RunFloatMatMulKernel(m, n, k,
                         (float*)xp0 + xOff[bi],
                         (float*)yp0 + yOff[bi],
-                        (float*)zp0 + zOff[bi], options);
+                        (float*)zp0 + zOff[bi], options, overwriteDestination);
                 }
             });
         }
@@ -658,7 +670,7 @@ where T : unmanaged
                 int ox = 0, oy = 0, oz = 0;
                 for (int b = 0; b < batchCount; b++)
                 {
-                    RunFloatMatMulKernel(m, n, k, xp + ox, yp + oy, zp + oz, options);
+                    RunFloatMatMulKernel(m, n, k, xp + ox, yp + oy, zp + oz, options, overwriteDestination);
                     for (int d = r - 1; d >= 0; d--)
                     {
                         coords[d]++;
@@ -713,7 +725,7 @@ where T : unmanaged
     /// arithmetic and order match bit for bit.
     /// </summary>
     /// <returns>True when the product was computed and the caller must return.</returns>
-    static unsafe bool TryRunPackedRowGroupsTiled(int m, int n, int k, float* x, float* packed, float* dest)
+    static unsafe bool TryRunPackedRowGroupsTiled(int m, int n, int k, float* x, float* packed, float* dest, bool overwrite)
     {
         if (m < 2) return false;
         if (!Avx512F.IsSupported || !Fma.IsSupported) return false;
@@ -754,25 +766,25 @@ where T : unmanaged
             float* dr = dest;
             for (int g = 0; g < groups12; g++)
             {
-                mm_avx512_12x32packed_tile(12, n, xr, panel, dr, k, kb);
+                mm_avx512_12x32packed_tile(12, n, xr, panel, dr, k, kb, overwrite);
                 xr += 12 * n;
                 dr += 12 * k;
             }
             if (eightTotal > 0)
             {
-                mm_avx512_8x32packed_tile(eightTotal, n, xr, panel, dr, k, kb);
+                mm_avx512_8x32packed_tile(eightTotal, n, xr, panel, dr, k, kb, overwrite);
                 xr += eightTotal * n;
                 dr += eightTotal * k;
             }
             if (narrow3 > 0)
             {
-                mm_3x4packed_tile(narrow3, n, xr, panel, dr, k, kb);
+                mm_3x4packed_tile(narrow3, n, xr, panel, dr, k, kb, overwrite);
                 xr += narrow3 * n;
                 dr += narrow3 * k;
             }
             if (narrow2 > 0)
             {
-                mm_2x4packed_tile(narrow2, n, xr, panel, dr, k, kb);
+                mm_2x4packed_tile(narrow2, n, xr, panel, dr, k, kb, overwrite);
                 xr += narrow2 * n;
                 dr += narrow2 * k;
             }
@@ -784,13 +796,13 @@ where T : unmanaged
             float* dr = dest;
             for (int g = 0; g < groups12; g++)
             {
-                mm_avx512_12x32packed_col_tail(12, n, k, xr, packed, dr, blocked, tiles, remCols);
+                mm_avx512_12x32packed_col_tail(12, n, k, xr, packed, dr, blocked, tiles, remCols, overwrite);
                 xr += 12 * n;
                 dr += 12 * k;
             }
             if (eightTotal > 0)
             {
-                mm_avx512_8x32packed_col_tail(eightTotal, n, k, xr, packed, dr, blocked, tiles, remCols);
+                mm_avx512_8x32packed_col_tail(eightTotal, n, k, xr, packed, dr, blocked, tiles, remCols, overwrite);
             }
         }
         return true;
@@ -798,12 +810,12 @@ where T : unmanaged
 
 
 
-    static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* packed, float* dest)
+    static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* packed, float* dest, bool overwrite)
     {
         int rest = m;
         float* xr = x;
         float* dr = dest;
-            if (TryRunPackedRowGroupsTiled(m, n, k, x, packed, dest)) return;
+            if (TryRunPackedRowGroupsTiled(m, n, k, x, packed, dest, overwrite)) return;
         if (Avx512F.IsSupported && rest >= 6)
         {
             int main = (rest / 12) * 12;
@@ -818,7 +830,7 @@ where T : unmanaged
             else if (rem == 2 && main >= 12) { main -= 12; rem = 14; }
             if (main > 0)
             {
-                mm_unsafe_vectorized_avx512_12x32packed(main, n, k, xr, packed, dr);
+                mm_unsafe_vectorized_avx512_12x32packed(main, n, k, xr, packed, dr, overwrite);
                 xr += main * n;
                 dr += main * k;
             }
@@ -838,13 +850,13 @@ where T : unmanaged
             }
             if (eightTotal > 0)
             {
-                mm_unsafe_vectorized_avx512_8x32packed(eightTotal, n, k, xr, packed, dr);
+                mm_unsafe_vectorized_avx512_8x32packed(eightTotal, n, k, xr, packed, dr, overwrite);
                 xr += eightTotal * n;
                 dr += eightTotal * k;
             }
             if (rest >= 6 && rest != 7)
             {
-                mm_unsafe_vectorized_avx512_6x32packed(6, n, k, xr, packed, dr);
+                mm_unsafe_vectorized_avx512_6x32packed(6, n, k, xr, packed, dr, overwrite);
                 xr += 6 * n;
                 dr += 6 * k;
                 rest -= 6;
@@ -856,19 +868,19 @@ where T : unmanaged
         }
         if ((rest % 3) == 0)
         {
-            mm_unsafe_vectorized_intrinsics_3x4packed(rest, n, k, xr, packed, dr);
+            mm_unsafe_vectorized_intrinsics_3x4packed(rest, n, k, xr, packed, dr, overwrite);
             return;
         }
         if ((rest & 1) == 0)
         {
-            mm_unsafe_vectorized_intrinsics_2x4packed(rest, n, k, xr, packed, dr);
+            mm_unsafe_vectorized_intrinsics_2x4packed(rest, n, k, xr, packed, dr, overwrite);
             return;
         }
-        mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr);
-        mm_unsafe_vectorized_intrinsics_2x4packed(rest - 3, n, k, xr + 3 * n, packed, dr + 3 * k);
+        mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr, overwrite);
+        mm_unsafe_vectorized_intrinsics_2x4packed(rest - 3, n, k, xr + 3 * n, packed, dr + 3 * k, overwrite);
     }
 
-    static void RunPackedBatches(Tensor<float> bx, Tensor<float> z, int[] batchDims, int[] xSteps, int[] zSteps, int batchCount, int dop, int m, int n, int k, DenseTensor<float> packed)
+    static void RunPackedBatches(Tensor<float> bx, Tensor<float> z, int[] batchDims, int[] xSteps, int[] zSteps, int batchCount, int dop, int m, int n, int k, DenseTensor<float> packed, bool overwrite)
     {
         using var xh = bx.Storage.Pin();
         using var ph = packed.Buffer.Pin();
@@ -891,7 +903,7 @@ where T : unmanaged
                         RunPackedRowGroups(m, n, k,
                             (float*)xp0 + xOff[bi],
                             pp,
-                            (float*)zp0 + zOff[bi]);
+                            (float*)zp0 + zOff[bi], overwrite);
                     }
                 });
             }
@@ -904,7 +916,7 @@ where T : unmanaged
                 int ox = 0, oz = 0;
                 for (int b = 0; b < batchCount; b++)
                 {
-                    RunPackedRowGroups(m, n, k, xp + ox, pp, zp + oz);
+                    RunPackedRowGroups(m, n, k, xp + ox, pp, zp + oz, overwrite);
                     for (int d = r - 1; d >= 0; d--)
                     {
                         coords[d]++;
@@ -920,14 +932,15 @@ where T : unmanaged
     /// <summary>
     /// Writes the float matrix product into an existing dense destination,
     /// overwriting it. The destination must not alias either input.
+    /// Panel-packed kernels overwrite it; unpacked fallback lanes clear it first.
     /// </summary>
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options)
 
     {
-        return MatMulInto(x, y, destination, options, clearDestination: true);
+        return MatMulInto(x, y, destination, options, overwriteDestination: true);
     }
 
-    static Tensor<float> MatMulInto(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool clearDestination)
+    static Tensor<float> MatMulInto(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool overwriteDestination)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));
         if (ReferenceEquals(destination, x) || ReferenceEquals(destination, y) || TensorAlias.SharesBackingMemory(destination, x) || TensorAlias.SharesBackingMemory(destination, y)) throw new ArgumentException(nameof(destination), "Destination must not alias the input tensors.");
@@ -942,7 +955,7 @@ where T : unmanaged
             var destView = dd.Length == 2 && dd[0] == px.dimensions[0] && dd[1] == py.dimensions[1]
                 ? destination
                 : new DenseTensor<float>(destination.Buffer, new int[] { px.dimensions[0], py.dimensions[1] });
-            MatMul2DCore(px, py, destView, options, clearDestination);
+            MatMul2DCore(px, py, destView, options, overwriteDestination);
             return destination;
         }
         var xdl = px.Dimensions[^2..];
@@ -971,8 +984,7 @@ where T : unmanaged
         StartOpStage(OpStage.Math);
         var coreDims = bd.Append(xdl[0]).Append(ydl[1]).ToArray();
         var target = coreDims.SequenceEqual(destination.dimensions) ? destination : new DenseTensor<float>(destination.Buffer, coreDims);
-        if (clearDestination) target.Buffer.Span.Clear();
-        RunBatchedFloatMatMul(bx, by, target, options);
+        RunBatchedFloatMatMul(bx, by, target, options, overwriteDestination);
         return destination;
     }
 
@@ -988,8 +1000,8 @@ where T : unmanaged
             foreach (var d in dims) length *= d;
         }
         if (length > int.MaxValue) throw new ArgumentException("MatMul output element count exceeds maximum backing-store length.");
-        var destination = new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>((int)length)), dims);
-        return MatMulInto(x, y, destination, options, clearDestination: false);
+        var destination = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)length)), dims);
+        return MatMulInto(x, y, destination, options, overwriteDestination: true);
     }
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]  
     public static Tensor<float> MatMul(Tensor<float> x, Tensor<float> y) => MatMul(x, y, TensorExecutionOptions.Auto);
@@ -1031,7 +1043,7 @@ where T : unmanaged
             StartOpStage(OpStage.Math);
 
             var z = DenseTensor<float>.OfShape(bd.Append(xdl[0]).Append(ydl[1]).ToArray());
-            RunBatchedFloatMatMul(bx, by, z, options);
+            RunBatchedFloatMatMul(bx, by, z, options, overwriteDestination: false);
             core = z;
         }
         return MatMulShapes.Squeeze(core, plan);

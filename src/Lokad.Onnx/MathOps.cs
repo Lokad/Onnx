@@ -675,12 +675,14 @@ public class MathOps
     /// with it bit-wise; panels only replace strided row jumps with sequential
     /// reads. Tails read the appended row-major tail block in the same order.
     /// </remarks>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_unsafe_vectorized_intrinsics_2x4packed(int M,
                           int N,
                           int K,
                           float* A,
                           float* P,
-                          float* C)
+                          float* C,
+                          bool overwrite)
     {
         if (M % 2 != 0)
             throw new ArgumentException(nameof(M));
@@ -695,7 +697,7 @@ public class MathOps
         {
             int kb = tb * (4 * Vector256<float>.Count);
             float* panel = P + tb * N * (4 * Vector256<float>.Count);
-            mm_2x4packed_tile(M, N, A, panel, C, K, kb);
+            mm_2x4packed_tile(M, N, A, panel, C, K, kb, overwrite);
         }
         int rem = K - blocked;
         if (rem > 0)
@@ -710,8 +712,8 @@ public class MathOps
                     var Ap2 = Ap1 + N;
                     var rC1 = (Vector256<float>*)(C + i * K + blocked);
                     var rC2 = (Vector256<float>*)(C + (i + 1) * K + blocked);
-                    Vector256<float> c1 = rC1[tt];
-                    Vector256<float> c2 = rC2[tt];
+                    Vector256<float> c1 = overwrite ? Vector256<float>.Zero : rC1[tt];
+                    Vector256<float> c2 = overwrite ? Vector256<float>.Zero : rC2[tt];
                     for (int j = 0; j < N; ++j)
                     {
                         var Bpv = (Vector256<float>*)(T + j * rem + tt * Vector256<float>.Count);
@@ -740,29 +742,29 @@ public class MathOps
                 {
                     case 1:
                     {
-                        float c1 = Cp1[0], c2 = Cp2[0];
+                        float c1 = overwrite ? 0f : Cp1[0], c2 = overwrite ? 0f : Cp2[0];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c1 += Ap1[j] * t[0]; c2 += Ap2[j] * t[0]; }
                         Cp1[0] = c1; Cp2[0] = c2;
                         break;
                     }
                     case 2:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c20 = Cp2[0], c21 = Cp2[1];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp2[0] = c20; Cp2[1] = c21;
                         break;
                     }
                     case 3:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22;
                         break;
                     }
                     case 4:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c13 = overwrite ? 0f : Cp1[3];
+                        float c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2], c23 = overwrite ? 0f : Cp2[3];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13;
                         Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23;
@@ -770,8 +772,8 @@ public class MathOps
                     }
                     case 5:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c13 = overwrite ? 0f : Cp1[3], c14 = overwrite ? 0f : Cp1[4];
+                        float c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2], c23 = overwrite ? 0f : Cp2[3], c24 = overwrite ? 0f : Cp2[4];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14;
                         Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24;
@@ -779,8 +781,8 @@ public class MathOps
                     }
                     case 6:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c13 = overwrite ? 0f : Cp1[3], c14 = overwrite ? 0f : Cp1[4], c15 = overwrite ? 0f : Cp1[5];
+                        float c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2], c23 = overwrite ? 0f : Cp2[3], c24 = overwrite ? 0f : Cp2[4], c25 = overwrite ? 0f : Cp2[5];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15;
                         Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25;
@@ -788,8 +790,8 @@ public class MathOps
                     }
                     default:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5], c16 = Cp1[6];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5], c26 = Cp2[6];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c13 = overwrite ? 0f : Cp1[3], c14 = overwrite ? 0f : Cp1[4], c15 = overwrite ? 0f : Cp1[5], c16 = overwrite ? 0f : Cp1[6];
+                        float c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2], c23 = overwrite ? 0f : Cp2[3], c24 = overwrite ? 0f : Cp2[4], c25 = overwrite ? 0f : Cp2[5], c26 = overwrite ? 0f : Cp2[6];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; c16 += Ap1[j] * t[6]; c26 += Ap2[j] * t[6]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15; Cp1[6] = c16;
                         Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25; Cp2[6] = c26;
@@ -812,13 +814,15 @@ public class MathOps
     /// <param name="C">Result matrix.</param>
     /// <param name="K">B columns.</param>
     /// <param name="kb">Leading output column of this tile.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_2x4packed_tile(int M,
                               int N,
                               float* A,
                               float* panel,
                               float* C,
                               int K,
-                              int kb)
+                              int kb,
+                              bool overwrite)
     {
             for (int i = 0; i < M; i += 2)
             {
@@ -826,14 +830,14 @@ public class MathOps
                 var Ap2 = Ap1 + N;
                 var Cpv1 = (Vector256<float>*)(C + i * K + kb);
                 var Cpv2 = (Vector256<float>*)(C + (i + 1) * K + kb);
-                Vector256<float> c00 = Cpv1[0];
-                Vector256<float> c01 = Cpv1[1];
-                Vector256<float> c02 = Cpv1[2];
-                Vector256<float> c03 = Cpv1[3];
-                Vector256<float> c10 = Cpv2[0];
-                Vector256<float> c11 = Cpv2[1];
-                Vector256<float> c12 = Cpv2[2];
-                Vector256<float> c13 = Cpv2[3];
+                Vector256<float> c00 = overwrite ? Vector256<float>.Zero : Cpv1[0];
+                Vector256<float> c01 = overwrite ? Vector256<float>.Zero : Cpv1[1];
+                Vector256<float> c02 = overwrite ? Vector256<float>.Zero : Cpv1[2];
+                Vector256<float> c03 = overwrite ? Vector256<float>.Zero : Cpv1[3];
+                Vector256<float> c10 = overwrite ? Vector256<float>.Zero : Cpv2[0];
+                Vector256<float> c11 = overwrite ? Vector256<float>.Zero : Cpv2[1];
+                Vector256<float> c12 = overwrite ? Vector256<float>.Zero : Cpv2[2];
+                Vector256<float> c13 = overwrite ? Vector256<float>.Zero : Cpv2[3];
                 for (int j = 0; j < N; ++j)
                 {
                     var av1 = Vector256.Create(Ap1[j]);
@@ -874,12 +878,14 @@ public class MathOps
     /// per FMA at the same broadcast rate. Tails read the appended row-major
     /// tail block in the same order.
     /// </remarks>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_unsafe_vectorized_intrinsics_3x4packed(int M,
                           int N,
                           int K,
                           float* A,
                           float* P,
-                          float* C)
+                          float* C,
+                          bool overwrite)
     {
         if (M % 3 != 0)
             throw new ArgumentException(nameof(M));
@@ -894,7 +900,7 @@ public class MathOps
         {
             int kb = tb * (4 * Vector256<float>.Count);
             float* panel = P + tb * N * (4 * Vector256<float>.Count);
-            mm_3x4packed_tile(M, N, A, panel, C, K, kb);
+            mm_3x4packed_tile(M, N, A, panel, C, K, kb, overwrite);
         }
         int rem = K - blocked;
         if (rem > 0)
@@ -911,9 +917,9 @@ public class MathOps
                     var rC1 = (Vector256<float>*)(C + i * K + blocked);
                     var rC2 = (Vector256<float>*)(C + (i + 1) * K + blocked);
                     var rC3 = (Vector256<float>*)(C + (i + 2) * K + blocked);
-                    Vector256<float> c1 = rC1[tt];
-                    Vector256<float> c2 = rC2[tt];
-                    Vector256<float> c3 = rC3[tt];
+                    Vector256<float> c1 = overwrite ? Vector256<float>.Zero : rC1[tt];
+                    Vector256<float> c2 = overwrite ? Vector256<float>.Zero : rC2[tt];
+                    Vector256<float> c3 = overwrite ? Vector256<float>.Zero : rC3[tt];
                     for (int j = 0; j < N; ++j)
                     {
                         var Bpv = (Vector256<float>*)(T + j * rem + tt * Vector256<float>.Count);
@@ -946,30 +952,30 @@ public class MathOps
                 {
                     case 1:
                     {
-                        float c1 = Cp1[0], c2 = Cp2[0], c3 = Cp3[0];
+                        float c1 = overwrite ? 0f : Cp1[0], c2 = overwrite ? 0f : Cp2[0], c3 = overwrite ? 0f : Cp3[0];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c1 += Ap1[j] * t[0]; c2 += Ap2[j] * t[0]; c3 += Ap3[j] * t[0]; }
                         Cp1[0] = c1; Cp2[0] = c2; Cp3[0] = c3;
                         break;
                     }
                     case 2:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c20 = Cp2[0], c21 = Cp2[1], c30 = Cp3[0], c31 = Cp3[1];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c30 = overwrite ? 0f : Cp3[0], c31 = overwrite ? 0f : Cp3[1];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp2[0] = c20; Cp2[1] = c21; Cp3[0] = c30; Cp3[1] = c31;
                         break;
                     }
                     case 3:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2], c30 = overwrite ? 0f : Cp3[0], c31 = overwrite ? 0f : Cp3[1], c32 = overwrite ? 0f : Cp3[2];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp3[0] = c30; Cp3[1] = c31; Cp3[2] = c32;
                         break;
                     }
                     case 4:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3];
-                        float c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2], c33 = Cp3[3];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c13 = overwrite ? 0f : Cp1[3];
+                        float c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2], c23 = overwrite ? 0f : Cp2[3];
+                        float c30 = overwrite ? 0f : Cp3[0], c31 = overwrite ? 0f : Cp3[1], c32 = overwrite ? 0f : Cp3[2], c33 = overwrite ? 0f : Cp3[3];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c33 += Ap3[j] * t[3]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13;
                         Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23;
@@ -978,9 +984,9 @@ public class MathOps
                     }
                     case 5:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4];
-                        float c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2], c33 = Cp3[3], c34 = Cp3[4];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c13 = overwrite ? 0f : Cp1[3], c14 = overwrite ? 0f : Cp1[4];
+                        float c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2], c23 = overwrite ? 0f : Cp2[3], c24 = overwrite ? 0f : Cp2[4];
+                        float c30 = overwrite ? 0f : Cp3[0], c31 = overwrite ? 0f : Cp3[1], c32 = overwrite ? 0f : Cp3[2], c33 = overwrite ? 0f : Cp3[3], c34 = overwrite ? 0f : Cp3[4];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c33 += Ap3[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c34 += Ap3[j] * t[4]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14;
                         Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24;
@@ -989,9 +995,9 @@ public class MathOps
                     }
                     case 6:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5];
-                        float c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2], c33 = Cp3[3], c34 = Cp3[4], c35 = Cp3[5];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c13 = overwrite ? 0f : Cp1[3], c14 = overwrite ? 0f : Cp1[4], c15 = overwrite ? 0f : Cp1[5];
+                        float c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2], c23 = overwrite ? 0f : Cp2[3], c24 = overwrite ? 0f : Cp2[4], c25 = overwrite ? 0f : Cp2[5];
+                        float c30 = overwrite ? 0f : Cp3[0], c31 = overwrite ? 0f : Cp3[1], c32 = overwrite ? 0f : Cp3[2], c33 = overwrite ? 0f : Cp3[3], c34 = overwrite ? 0f : Cp3[4], c35 = overwrite ? 0f : Cp3[5];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c33 += Ap3[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c34 += Ap3[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; c35 += Ap3[j] * t[5]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15;
                         Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25;
@@ -1000,9 +1006,9 @@ public class MathOps
                     }
                     default:
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5], c16 = Cp1[6];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5], c26 = Cp2[6];
-                        float c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2], c33 = Cp3[3], c34 = Cp3[4], c35 = Cp3[5], c36 = Cp3[6];
+                        float c10 = overwrite ? 0f : Cp1[0], c11 = overwrite ? 0f : Cp1[1], c12 = overwrite ? 0f : Cp1[2], c13 = overwrite ? 0f : Cp1[3], c14 = overwrite ? 0f : Cp1[4], c15 = overwrite ? 0f : Cp1[5], c16 = overwrite ? 0f : Cp1[6];
+                        float c20 = overwrite ? 0f : Cp2[0], c21 = overwrite ? 0f : Cp2[1], c22 = overwrite ? 0f : Cp2[2], c23 = overwrite ? 0f : Cp2[3], c24 = overwrite ? 0f : Cp2[4], c25 = overwrite ? 0f : Cp2[5], c26 = overwrite ? 0f : Cp2[6];
+                        float c30 = overwrite ? 0f : Cp3[0], c31 = overwrite ? 0f : Cp3[1], c32 = overwrite ? 0f : Cp3[2], c33 = overwrite ? 0f : Cp3[3], c34 = overwrite ? 0f : Cp3[4], c35 = overwrite ? 0f : Cp3[5], c36 = overwrite ? 0f : Cp3[6];
                         for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c33 += Ap3[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c34 += Ap3[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; c35 += Ap3[j] * t[5]; c16 += Ap1[j] * t[6]; c26 += Ap2[j] * t[6]; c36 += Ap3[j] * t[6]; }
                         Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15; Cp1[6] = c16;
                         Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25; Cp2[6] = c26;
@@ -1026,13 +1032,15 @@ public class MathOps
     /// <param name="C">Result matrix.</param>
     /// <param name="K">B columns.</param>
     /// <param name="kb">Leading output column of this tile.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_3x4packed_tile(int M,
                               int N,
                               float* A,
                               float* panel,
                               float* C,
                               int K,
-                              int kb)
+                              int kb,
+                              bool overwrite)
     {
             for (int i = 0; i < M; i += 3)
             {
@@ -1042,18 +1050,18 @@ public class MathOps
                 var Cpv1 = (Vector256<float>*)(C + i * K + kb);
                 var Cpv2 = (Vector256<float>*)(C + (i + 1) * K + kb);
                 var Cpv3 = (Vector256<float>*)(C + (i + 2) * K + kb);
-                Vector256<float> c00 = Cpv1[0];
-                Vector256<float> c01 = Cpv1[1];
-                Vector256<float> c02 = Cpv1[2];
-                Vector256<float> c03 = Cpv1[3];
-                Vector256<float> c10 = Cpv2[0];
-                Vector256<float> c11 = Cpv2[1];
-                Vector256<float> c12 = Cpv2[2];
-                Vector256<float> c13 = Cpv2[3];
-                Vector256<float> c20 = Cpv3[0];
-                Vector256<float> c21 = Cpv3[1];
-                Vector256<float> c22 = Cpv3[2];
-                Vector256<float> c23 = Cpv3[3];
+                Vector256<float> c00 = overwrite ? Vector256<float>.Zero : Cpv1[0];
+                Vector256<float> c01 = overwrite ? Vector256<float>.Zero : Cpv1[1];
+                Vector256<float> c02 = overwrite ? Vector256<float>.Zero : Cpv1[2];
+                Vector256<float> c03 = overwrite ? Vector256<float>.Zero : Cpv1[3];
+                Vector256<float> c10 = overwrite ? Vector256<float>.Zero : Cpv2[0];
+                Vector256<float> c11 = overwrite ? Vector256<float>.Zero : Cpv2[1];
+                Vector256<float> c12 = overwrite ? Vector256<float>.Zero : Cpv2[2];
+                Vector256<float> c13 = overwrite ? Vector256<float>.Zero : Cpv2[3];
+                Vector256<float> c20 = overwrite ? Vector256<float>.Zero : Cpv3[0];
+                Vector256<float> c21 = overwrite ? Vector256<float>.Zero : Cpv3[1];
+                Vector256<float> c22 = overwrite ? Vector256<float>.Zero : Cpv3[2];
+                Vector256<float> c23 = overwrite ? Vector256<float>.Zero : Cpv3[3];
                 for (int j = 0; j < N; ++j)
                 {
                     var av1 = Vector256.Create(Ap1[j]);
@@ -1111,12 +1119,15 @@ public class MathOps
     /// <param name="A">Left matrix.</param>
     /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
     /// <param name="C">Result matrix.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_unsafe_vectorized_avx512_6x32packed(int M,
                           int N,
                           int K,
                           float* A,
                           float* P,
-                          float* C)
+                          float* C,
+                          bool overwrite)
     {
         if (M % 6 != 0)
             throw new ArgumentException(nameof(M));
@@ -1142,18 +1153,18 @@ public class MathOps
                 var Cp4 = (Vector512<float>*)(C + (i + 3) * K + kb);
                 var Cp5 = (Vector512<float>*)(C + (i + 4) * K + kb);
                 var Cp6 = (Vector512<float>*)(C + (i + 5) * K + kb);
-                Vector512<float> c00 = Cp1[0];
-                Vector512<float> c01 = Cp1[1];
-                Vector512<float> c10 = Cp2[0];
-                Vector512<float> c11 = Cp2[1];
-                Vector512<float> c20 = Cp3[0];
-                Vector512<float> c21 = Cp3[1];
-                Vector512<float> c30 = Cp4[0];
-                Vector512<float> c31 = Cp4[1];
-                Vector512<float> c40 = Cp5[0];
-                Vector512<float> c41 = Cp5[1];
-                Vector512<float> c50 = Cp6[0];
-                Vector512<float> c51 = Cp6[1];
+                Vector512<float> c00 = overwrite ? Vector512<float>.Zero : Cp1[0];
+                Vector512<float> c01 = overwrite ? Vector512<float>.Zero : Cp1[1];
+                Vector512<float> c10 = overwrite ? Vector512<float>.Zero : Cp2[0];
+                Vector512<float> c11 = overwrite ? Vector512<float>.Zero : Cp2[1];
+                Vector512<float> c20 = overwrite ? Vector512<float>.Zero : Cp3[0];
+                Vector512<float> c21 = overwrite ? Vector512<float>.Zero : Cp3[1];
+                Vector512<float> c30 = overwrite ? Vector512<float>.Zero : Cp4[0];
+                Vector512<float> c31 = overwrite ? Vector512<float>.Zero : Cp4[1];
+                Vector512<float> c40 = overwrite ? Vector512<float>.Zero : Cp5[0];
+                Vector512<float> c41 = overwrite ? Vector512<float>.Zero : Cp5[1];
+                Vector512<float> c50 = overwrite ? Vector512<float>.Zero : Cp6[0];
+                Vector512<float> c51 = overwrite ? Vector512<float>.Zero : Cp6[1];
                 for (int j = 0; j < N; ++j)
                 {
                     var Bpv = (Vector512<float>*)(panel + j * (2 * Vector512<float>.Count));
@@ -1213,12 +1224,12 @@ public class MathOps
                     var rC4 = (Vector512<float>*)(C + (i + 3) * K + blocked);
                     var rC5 = (Vector512<float>*)(C + (i + 4) * K + blocked);
                     var rC6 = (Vector512<float>*)(C + (i + 5) * K + blocked);
-                    Vector512<float> c1 = rC1[tt];
-                    Vector512<float> c2 = rC2[tt];
-                    Vector512<float> c3 = rC3[tt];
-                    Vector512<float> c4 = rC4[tt];
-                    Vector512<float> c5 = rC5[tt];
-                    Vector512<float> c6 = rC6[tt];
+                    Vector512<float> c1 = overwrite ? Vector512<float>.Zero : rC1[tt];
+                    Vector512<float> c2 = overwrite ? Vector512<float>.Zero : rC2[tt];
+                    Vector512<float> c3 = overwrite ? Vector512<float>.Zero : rC3[tt];
+                    Vector512<float> c4 = overwrite ? Vector512<float>.Zero : rC4[tt];
+                    Vector512<float> c5 = overwrite ? Vector512<float>.Zero : rC5[tt];
+                    Vector512<float> c6 = overwrite ? Vector512<float>.Zero : rC6[tt];
                     for (int j = 0; j < N; ++j)
                     {
                         var Bpv = (Vector512<float>*)(T + j * rem + tt * Vector512<float>.Count);
@@ -1256,12 +1267,12 @@ public class MathOps
                     var mC4 = C + (i + 3) * K + blocked + vcols;
                     var mC5 = C + (i + 4) * K + blocked + vcols;
                     var mC6 = C + (i + 5) * K + blocked + vcols;
-                    Vector512<float> d1 = Avx512F.MaskLoad(mC1, vmask, Vector512<float>.Zero);
-                    Vector512<float> d2 = Avx512F.MaskLoad(mC2, vmask, Vector512<float>.Zero);
-                    Vector512<float> d3 = Avx512F.MaskLoad(mC3, vmask, Vector512<float>.Zero);
-                    Vector512<float> d4 = Avx512F.MaskLoad(mC4, vmask, Vector512<float>.Zero);
-                    Vector512<float> d5 = Avx512F.MaskLoad(mC5, vmask, Vector512<float>.Zero);
-                    Vector512<float> d6 = Avx512F.MaskLoad(mC6, vmask, Vector512<float>.Zero);
+                    Vector512<float> d1 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC1, vmask, Vector512<float>.Zero);
+                    Vector512<float> d2 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC2, vmask, Vector512<float>.Zero);
+                    Vector512<float> d3 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC3, vmask, Vector512<float>.Zero);
+                    Vector512<float> d4 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC4, vmask, Vector512<float>.Zero);
+                    Vector512<float> d5 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC5, vmask, Vector512<float>.Zero);
+                    Vector512<float> d6 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC6, vmask, Vector512<float>.Zero);
                     for (int j = 0; j < N; ++j)
                     {
                         var Bm = T + j * rem + vcols;
@@ -1296,12 +1307,15 @@ public class MathOps
     /// <param name="A">Left matrix.</param>
     /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
     /// <param name="C">Result matrix.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_unsafe_vectorized_avx512_12x32packed(int M,
                           int N,
                           int K,
                           float* A,
                           float* P,
-                          float* C)
+                          float* C,
+                          bool overwrite)
     {
         if (M % 12 != 0)
             throw new ArgumentException(nameof(M));
@@ -1313,11 +1327,11 @@ public class MathOps
         {
             int kb = tb * (2 * Vector512<float>.Count);
             float* panel = P + tb * N * (2 * Vector512<float>.Count);
-            mm_avx512_12x32packed_tile(M, N, A, panel, C, K, kb);
+            mm_avx512_12x32packed_tile(M, N, A, panel, C, K, kb, overwrite);
         }
         int rem = K - blocked;
         if (rem > 0)
-            mm_avx512_12x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem);
+            mm_avx512_12x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem, overwrite);
     }
     /// <summary>
     /// One full 32-column tile of the 12-row AVX512 packed nest across all of
@@ -1332,13 +1346,15 @@ public class MathOps
     /// <param name="C">Result matrix.</param>
     /// <param name="K">B columns.</param>
     /// <param name="kb">Leading output column of this tile.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_avx512_12x32packed_tile(int M,
                               int N,
                               float* A,
                               float* panel,
                               float* C,
                               int K,
-                              int kb)
+                              int kb,
+                              bool overwrite)
     {
             for (int i = 0; i < M; i += 12)
             {
@@ -1358,30 +1374,30 @@ public class MathOps
                 // style) so the twelve C-row pointers do not stay live
                 // across the reduction loop and spill the A-row bases.
                 float* cGroup = C + i * K + kb;
-                Vector512<float> c00 = ((Vector512<float>*)(cGroup))[0];
-                Vector512<float> c01 = ((Vector512<float>*)(cGroup))[1];
-                Vector512<float> c10 = ((Vector512<float>*)(cGroup + 1 * K))[0];
-                Vector512<float> c11 = ((Vector512<float>*)(cGroup + 1 * K))[1];
-                Vector512<float> c20 = ((Vector512<float>*)(cGroup + 2 * K))[0];
-                Vector512<float> c21 = ((Vector512<float>*)(cGroup + 2 * K))[1];
-                Vector512<float> c30 = ((Vector512<float>*)(cGroup + 3 * K))[0];
-                Vector512<float> c31 = ((Vector512<float>*)(cGroup + 3 * K))[1];
-                Vector512<float> c40 = ((Vector512<float>*)(cGroup + 4 * K))[0];
-                Vector512<float> c41 = ((Vector512<float>*)(cGroup + 4 * K))[1];
-                Vector512<float> c50 = ((Vector512<float>*)(cGroup + 5 * K))[0];
-                Vector512<float> c51 = ((Vector512<float>*)(cGroup + 5 * K))[1];
-                Vector512<float> c70 = ((Vector512<float>*)(cGroup + 6 * K))[0];
-                Vector512<float> c71 = ((Vector512<float>*)(cGroup + 6 * K))[1];
-                Vector512<float> c80 = ((Vector512<float>*)(cGroup + 7 * K))[0];
-                Vector512<float> c81 = ((Vector512<float>*)(cGroup + 7 * K))[1];
-                Vector512<float> c90 = ((Vector512<float>*)(cGroup + 8 * K))[0];
-                Vector512<float> c91 = ((Vector512<float>*)(cGroup + 8 * K))[1];
-                Vector512<float> cA0 = ((Vector512<float>*)(cGroup + 9 * K))[0];
-                Vector512<float> cA1 = ((Vector512<float>*)(cGroup + 9 * K))[1];
-                Vector512<float> cB0 = ((Vector512<float>*)(cGroup + 10 * K))[0];
-                Vector512<float> cB1 = ((Vector512<float>*)(cGroup + 10 * K))[1];
-                Vector512<float> cC0 = ((Vector512<float>*)(cGroup + 11 * K))[0];
-                Vector512<float> cC1 = ((Vector512<float>*)(cGroup + 11 * K))[1];
+                Vector512<float> c00 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup))[0];
+                Vector512<float> c01 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup))[1];
+                Vector512<float> c10 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 1 * K))[0];
+                Vector512<float> c11 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 1 * K))[1];
+                Vector512<float> c20 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 2 * K))[0];
+                Vector512<float> c21 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 2 * K))[1];
+                Vector512<float> c30 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 3 * K))[0];
+                Vector512<float> c31 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 3 * K))[1];
+                Vector512<float> c40 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 4 * K))[0];
+                Vector512<float> c41 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 4 * K))[1];
+                Vector512<float> c50 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 5 * K))[0];
+                Vector512<float> c51 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 5 * K))[1];
+                Vector512<float> c70 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 6 * K))[0];
+                Vector512<float> c71 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 6 * K))[1];
+                Vector512<float> c80 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 7 * K))[0];
+                Vector512<float> c81 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 7 * K))[1];
+                Vector512<float> c90 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 8 * K))[0];
+                Vector512<float> c91 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 8 * K))[1];
+                Vector512<float> cA0 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 9 * K))[0];
+                Vector512<float> cA1 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 9 * K))[1];
+                Vector512<float> cB0 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 10 * K))[0];
+                Vector512<float> cB1 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 10 * K))[1];
+                Vector512<float> cC0 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 11 * K))[0];
+                Vector512<float> cC1 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 11 * K))[1];
                 for (int j = 0; j < N; ++j)
                 {
                     var Bpv = (Vector512<float>*)(panel + j * (2 * Vector512<float>.Count));
@@ -1465,6 +1481,7 @@ public class MathOps
     /// <param name="blocked">Leading output columns covered by full tiles.</param>
     /// <param name="tiles">Count of full 32-column tiles.</param>
     /// <param name="rem">Trailing output columns (must be positive).</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_avx512_12x32packed_col_tail(int M,
                               int N,
                               int K,
@@ -1473,7 +1490,8 @@ public class MathOps
                               float* C,
                               int blocked,
                               int tiles,
-                              int rem)
+                              int rem,
+                              bool overwrite)
     {
         float* T = P + tiles * N * (2 * Vector512<float>.Count);
         int rv = rem / Vector512<float>.Count;
@@ -1505,18 +1523,18 @@ public class MathOps
                 var rCA = (Vector512<float>*)(C + (i + 9) * K + blocked);
                 var rCB = (Vector512<float>*)(C + (i + 10) * K + blocked);
                 var rCC = (Vector512<float>*)(C + (i + 11) * K + blocked);
-                Vector512<float> c1 = rC1[tt];
-                Vector512<float> c2 = rC2[tt];
-                Vector512<float> c3 = rC3[tt];
-                Vector512<float> c4 = rC4[tt];
-                Vector512<float> c5 = rC5[tt];
-                Vector512<float> c6 = rC6[tt];
-                Vector512<float> c7 = rC7[tt];
-                Vector512<float> c8 = rC8[tt];
-                Vector512<float> c9 = rC9[tt];
-                Vector512<float> cA = rCA[tt];
-                Vector512<float> cB = rCB[tt];
-                Vector512<float> cC = rCC[tt];
+                Vector512<float> c1 = overwrite ? Vector512<float>.Zero : rC1[tt];
+                Vector512<float> c2 = overwrite ? Vector512<float>.Zero : rC2[tt];
+                Vector512<float> c3 = overwrite ? Vector512<float>.Zero : rC3[tt];
+                Vector512<float> c4 = overwrite ? Vector512<float>.Zero : rC4[tt];
+                Vector512<float> c5 = overwrite ? Vector512<float>.Zero : rC5[tt];
+                Vector512<float> c6 = overwrite ? Vector512<float>.Zero : rC6[tt];
+                Vector512<float> c7 = overwrite ? Vector512<float>.Zero : rC7[tt];
+                Vector512<float> c8 = overwrite ? Vector512<float>.Zero : rC8[tt];
+                Vector512<float> c9 = overwrite ? Vector512<float>.Zero : rC9[tt];
+                Vector512<float> cA = overwrite ? Vector512<float>.Zero : rCA[tt];
+                Vector512<float> cB = overwrite ? Vector512<float>.Zero : rCB[tt];
+                Vector512<float> cC = overwrite ? Vector512<float>.Zero : rCC[tt];
                 for (int j = 0; j < N; ++j)
                 {
                     var Bpv = (Vector512<float>*)(T + j * rem + tt * Vector512<float>.Count);
@@ -1568,18 +1586,18 @@ public class MathOps
                 var mCA = C + (i + 9) * K + blocked + vcols;
                 var mCB = C + (i + 10) * K + blocked + vcols;
                 var mCC = C + (i + 11) * K + blocked + vcols;
-                Vector512<float> d1 = Avx512F.MaskLoad(mC1, vmask, Vector512<float>.Zero);
-                Vector512<float> d2 = Avx512F.MaskLoad(mC2, vmask, Vector512<float>.Zero);
-                Vector512<float> d3 = Avx512F.MaskLoad(mC3, vmask, Vector512<float>.Zero);
-                Vector512<float> d4 = Avx512F.MaskLoad(mC4, vmask, Vector512<float>.Zero);
-                Vector512<float> d5 = Avx512F.MaskLoad(mC5, vmask, Vector512<float>.Zero);
-                Vector512<float> d6 = Avx512F.MaskLoad(mC6, vmask, Vector512<float>.Zero);
-                Vector512<float> d7 = Avx512F.MaskLoad(mC7, vmask, Vector512<float>.Zero);
-                Vector512<float> d8 = Avx512F.MaskLoad(mC8, vmask, Vector512<float>.Zero);
-                Vector512<float> d9 = Avx512F.MaskLoad(mC9, vmask, Vector512<float>.Zero);
-                Vector512<float> dA = Avx512F.MaskLoad(mCA, vmask, Vector512<float>.Zero);
-                Vector512<float> dB = Avx512F.MaskLoad(mCB, vmask, Vector512<float>.Zero);
-                Vector512<float> dC = Avx512F.MaskLoad(mCC, vmask, Vector512<float>.Zero);
+                Vector512<float> d1 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC1, vmask, Vector512<float>.Zero);
+                Vector512<float> d2 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC2, vmask, Vector512<float>.Zero);
+                Vector512<float> d3 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC3, vmask, Vector512<float>.Zero);
+                Vector512<float> d4 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC4, vmask, Vector512<float>.Zero);
+                Vector512<float> d5 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC5, vmask, Vector512<float>.Zero);
+                Vector512<float> d6 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC6, vmask, Vector512<float>.Zero);
+                Vector512<float> d7 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC7, vmask, Vector512<float>.Zero);
+                Vector512<float> d8 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC8, vmask, Vector512<float>.Zero);
+                Vector512<float> d9 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mC9, vmask, Vector512<float>.Zero);
+                Vector512<float> dA = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mCA, vmask, Vector512<float>.Zero);
+                Vector512<float> dB = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mCB, vmask, Vector512<float>.Zero);
+                Vector512<float> dC = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(mCC, vmask, Vector512<float>.Zero);
                 for (int j = 0; j < N; ++j)
                 {
                     var Bm = T + j * rem + vcols;
@@ -1625,12 +1643,15 @@ public class MathOps
     /// <param name="A">Left matrix.</param>
     /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
     /// <param name="C">Result matrix.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_unsafe_vectorized_avx512_8x32packed(int M,
                           int N,
                           int K,
                           float* A,
                           float* P,
-                          float* C)
+                          float* C,
+                          bool overwrite)
     {
         if (M % 8 != 0)
             throw new ArgumentException(nameof(M));
@@ -1642,11 +1663,11 @@ public class MathOps
         {
             int kb = tb * (2 * Vector512<float>.Count);
             float* panel = P + tb * N * (2 * Vector512<float>.Count);
-            mm_avx512_8x32packed_tile(M, N, A, panel, C, K, kb);
+            mm_avx512_8x32packed_tile(M, N, A, panel, C, K, kb, overwrite);
         }
         int rem = K - blocked;
         if (rem > 0)
-            mm_avx512_8x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem);
+            mm_avx512_8x32packed_col_tail(M, N, K, A, P, C, blocked, tiles, rem, overwrite);
     }
     /// <summary>
     /// One full 32-column tile of the 8-row AVX512 packed nest across all of
@@ -1661,13 +1682,15 @@ public class MathOps
     /// <param name="C">Result matrix.</param>
     /// <param name="K">B columns.</param>
     /// <param name="kb">Leading output column of this tile.</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_avx512_8x32packed_tile(int M,
                               int N,
                               float* A,
                               float* panel,
                               float* C,
                               int K,
-                              int kb)
+                              int kb,
+                              bool overwrite)
     {
             for (int i = 0; i < M; i += 8)
             {
@@ -1685,22 +1708,22 @@ public class MathOps
                 float* a5 = aGroup + 5 * N;
                 float* a6 = aGroup + 6 * N;
                 float* a7 = aGroup + 7 * N;
-                Vector512<float> c00 = ((Vector512<float>*)(cGroup))[0];
-                Vector512<float> c01 = ((Vector512<float>*)(cGroup))[1];
-                Vector512<float> c10 = ((Vector512<float>*)(cGroup + 1 * K))[0];
-                Vector512<float> c11 = ((Vector512<float>*)(cGroup + 1 * K))[1];
-                Vector512<float> c20 = ((Vector512<float>*)(cGroup + 2 * K))[0];
-                Vector512<float> c21 = ((Vector512<float>*)(cGroup + 2 * K))[1];
-                Vector512<float> c30 = ((Vector512<float>*)(cGroup + 3 * K))[0];
-                Vector512<float> c31 = ((Vector512<float>*)(cGroup + 3 * K))[1];
-                Vector512<float> c40 = ((Vector512<float>*)(cGroup + 4 * K))[0];
-                Vector512<float> c41 = ((Vector512<float>*)(cGroup + 4 * K))[1];
-                Vector512<float> c50 = ((Vector512<float>*)(cGroup + 5 * K))[0];
-                Vector512<float> c51 = ((Vector512<float>*)(cGroup + 5 * K))[1];
-                Vector512<float> c60 = ((Vector512<float>*)(cGroup + 6 * K))[0];
-                Vector512<float> c61 = ((Vector512<float>*)(cGroup + 6 * K))[1];
-                Vector512<float> c70 = ((Vector512<float>*)(cGroup + 7 * K))[0];
-                Vector512<float> c71 = ((Vector512<float>*)(cGroup + 7 * K))[1];
+                Vector512<float> c00 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup))[0];
+                Vector512<float> c01 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup))[1];
+                Vector512<float> c10 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 1 * K))[0];
+                Vector512<float> c11 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 1 * K))[1];
+                Vector512<float> c20 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 2 * K))[0];
+                Vector512<float> c21 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 2 * K))[1];
+                Vector512<float> c30 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 3 * K))[0];
+                Vector512<float> c31 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 3 * K))[1];
+                Vector512<float> c40 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 4 * K))[0];
+                Vector512<float> c41 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 4 * K))[1];
+                Vector512<float> c50 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 5 * K))[0];
+                Vector512<float> c51 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 5 * K))[1];
+                Vector512<float> c60 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 6 * K))[0];
+                Vector512<float> c61 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 6 * K))[1];
+                Vector512<float> c70 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 7 * K))[0];
+                Vector512<float> c71 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 7 * K))[1];
                 for (int j = 0; j < N; ++j)
                 {
                     var Bpv = (Vector512<float>*)(panel + j * (2 * Vector512<float>.Count));
@@ -1764,6 +1787,7 @@ public class MathOps
     /// <param name="blocked">Leading output columns covered by full tiles.</param>
     /// <param name="tiles">Count of full 32-column tiles.</param>
     /// <param name="rem">Trailing output columns (must be positive).</param>
+    /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     public unsafe static void mm_avx512_8x32packed_col_tail(int M,
                               int N,
                               int K,
@@ -1772,7 +1796,8 @@ public class MathOps
                               float* C,
                               int blocked,
                               int tiles,
-                              int rem)
+                              int rem,
+                              bool overwrite)
     {
         float* T = P + tiles * N * (2 * Vector512<float>.Count);
         int rv = rem / Vector512<float>.Count;
@@ -1782,14 +1807,14 @@ public class MathOps
             {
                 float* aGroup = A + i * N;
                 float* cGroup = C + i * K + blocked;
-                Vector512<float> c0 = ((Vector512<float>*)(cGroup))[tt];
-                Vector512<float> c1 = ((Vector512<float>*)(cGroup + 1 * K))[tt];
-                Vector512<float> c2 = ((Vector512<float>*)(cGroup + 2 * K))[tt];
-                Vector512<float> c3 = ((Vector512<float>*)(cGroup + 3 * K))[tt];
-                Vector512<float> c4 = ((Vector512<float>*)(cGroup + 4 * K))[tt];
-                Vector512<float> c5 = ((Vector512<float>*)(cGroup + 5 * K))[tt];
-                Vector512<float> c6 = ((Vector512<float>*)(cGroup + 6 * K))[tt];
-                Vector512<float> c7 = ((Vector512<float>*)(cGroup + 7 * K))[tt];
+                Vector512<float> c0 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup))[tt];
+                Vector512<float> c1 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 1 * K))[tt];
+                Vector512<float> c2 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 2 * K))[tt];
+                Vector512<float> c3 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 3 * K))[tt];
+                Vector512<float> c4 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 4 * K))[tt];
+                Vector512<float> c5 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 5 * K))[tt];
+                Vector512<float> c6 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 6 * K))[tt];
+                Vector512<float> c7 = overwrite ? Vector512<float>.Zero : ((Vector512<float>*)(cGroup + 7 * K))[tt];
                 for (int j = 0; j < N; ++j)
                 {
                     var Bpv = (Vector512<float>*)(T + j * rem + tt * Vector512<float>.Count);
@@ -1823,14 +1848,14 @@ public class MathOps
             {
                 float* aGroup = A + i * N;
                 float* cGroup = C + i * K + blocked + vcols;
-                Vector512<float> d0 = Avx512F.MaskLoad(cGroup, vmask, Vector512<float>.Zero);
-                Vector512<float> d1 = Avx512F.MaskLoad(cGroup + 1 * K, vmask, Vector512<float>.Zero);
-                Vector512<float> d2 = Avx512F.MaskLoad(cGroup + 2 * K, vmask, Vector512<float>.Zero);
-                Vector512<float> d3 = Avx512F.MaskLoad(cGroup + 3 * K, vmask, Vector512<float>.Zero);
-                Vector512<float> d4 = Avx512F.MaskLoad(cGroup + 4 * K, vmask, Vector512<float>.Zero);
-                Vector512<float> d5 = Avx512F.MaskLoad(cGroup + 5 * K, vmask, Vector512<float>.Zero);
-                Vector512<float> d6 = Avx512F.MaskLoad(cGroup + 6 * K, vmask, Vector512<float>.Zero);
-                Vector512<float> d7 = Avx512F.MaskLoad(cGroup + 7 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d0 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(cGroup, vmask, Vector512<float>.Zero);
+                Vector512<float> d1 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(cGroup + 1 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d2 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(cGroup + 2 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d3 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(cGroup + 3 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d4 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(cGroup + 4 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d5 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(cGroup + 5 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d6 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(cGroup + 6 * K, vmask, Vector512<float>.Zero);
+                Vector512<float> d7 = overwrite ? Vector512<float>.Zero : Avx512F.MaskLoad(cGroup + 7 * K, vmask, Vector512<float>.Zero);
                 for (int j = 0; j < N; ++j)
                 {
                     var Bm = T + j * rem + vcols;

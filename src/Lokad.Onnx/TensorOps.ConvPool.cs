@@ -231,8 +231,7 @@ where T : unmanaged
 
     /// <summary>
     /// Runs one batch of float convolution: im2col into pooled scratch, then one
-    /// shared-dispatcher product per group (which clears each destination tile,
-    /// preserving the legacy clearing semantics), then bias.
+    /// shared-dispatcher product per group (which overwrites each destination tile), then bias.
     /// </summary>
     static void RunConvBatchFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, float[] scratch, int patchSize, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, TensorExecutionOptions options, bool fuseRelu)
     {
@@ -290,7 +289,7 @@ where T : unmanaged
     /// composer directly (P6.1): the per-tile patch is small and L2-hot, so
     /// a single pack pass pays for 8/12-way panel sharing that the unpacked
     /// transient kernel cannot use at these row counts. The destination tile
-    /// is cleared first, preserving dispatcher clearing semantics. The
+    /// is overwritten directly by the packed kernels. The
     /// pack buffer is carved from the batch scratch the caller sizes, so no
     /// extra rent appears in scratch accounting.
     /// </summary>
@@ -304,8 +303,7 @@ where T : unmanaged
             fixed (float* pp = packMem.Span)
             {
                 PackPanelsB(tileK, cols, p + pOff, pp);
-                new Span<float>(o + oOff, tileM * cols).Clear();
-                RunPackedRowGroups(tileM, tileK, cols, w + wOff, pp, o + oOff);
+                RunPackedRowGroups(tileM, tileK, cols, w + wOff, pp, o + oOff, overwrite: true);
             }
         }
     }
@@ -347,7 +345,7 @@ where T : unmanaged
     /// <summary>
     /// Runs one batch of tiled float convolution: for each output-column
     /// block, converts the block patch, runs one shared-dispatcher product
-    /// per group into the block output buffer (cleared by the dispatcher),
+    /// per group into the block output buffer (overwritten by the dispatcher),
     /// then streams the block through the bias/ReLU epilogue. The epilogue
     /// keeps the single-pass add order and max, including NaN handling.
     /// </summary>

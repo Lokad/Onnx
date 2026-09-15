@@ -27,7 +27,7 @@ public class Avx512PackedKernelTests
         using var pp = p.Buffer.Pin();
         using var pc = c.Buffer.Pin();
         MathOps.PackPanelsB(n, k, (float*)pb.Pointer, (float*)pp.Pointer);
-        MathOps.mm_unsafe_vectorized_avx512_6x32packed(m, n, k, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer);
+        MathOps.mm_unsafe_vectorized_avx512_6x32packed(m, n, k, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer, false);
     }
 
     static unsafe void RunTwo(int m, int n, int k, DenseTensor<float> a, DenseTensor<float> b, DenseTensor<float> p, DenseTensor<float> c)
@@ -37,7 +37,7 @@ public class Avx512PackedKernelTests
         using var pp = p.Buffer.Pin();
         using var pc = c.Buffer.Pin();
         MathOps.PackPanelsB(n, k, (float*)pb.Pointer, (float*)pp.Pointer);
-        MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer);
+        MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer, false);
     }
     static double[] Oracle(DenseTensor<float> a, DenseTensor<float> b, int m, int n, int k)
     {
@@ -113,7 +113,7 @@ public class Avx512PackedKernelTests
             using var pb = b.Buffer.Pin();
             using var pp = p.Buffer.Pin();
             using var pc = c.Buffer.Pin();
-            MathOps.mm_unsafe_vectorized_avx512_6x32packed(7, 8, 32, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer);
+            MathOps.mm_unsafe_vectorized_avx512_6x32packed(7, 8, 32, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer, false);
         });
     }
     [SkippableFact]
@@ -150,28 +150,28 @@ public class Avx512PackedKernelTests
         int main = (m / 6) * 6;
         int rem = m - main;
         if (rem == 1) { main -= 6; rem = 7; }
-        if (main > 0) MathOps.mm_unsafe_vectorized_avx512_6x32packed(main, n, k, x, packed, dest);
+        if (main > 0) MathOps.mm_unsafe_vectorized_avx512_6x32packed(main, n, k, x, packed, dest, false);
         float* xr = x + main * n;
         float* dr = dest + main * k;
         switch (rem)
         {
             case 7:
-                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr);
-                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(2, n, k, xr + 3 * n, packed, dr + 3 * k);
-                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(2, n, k, xr + 5 * n, packed, dr + 5 * k);
+                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr, false);
+                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(2, n, k, xr + 3 * n, packed, dr + 3 * k, false);
+                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(2, n, k, xr + 5 * n, packed, dr + 5 * k, false);
                 break;
             case 5:
-                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr);
-                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(2, n, k, xr + 3 * n, packed, dr + 3 * k);
+                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr, false);
+                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(2, n, k, xr + 3 * n, packed, dr + 3 * k, false);
                 break;
             case 4:
-                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(4, n, k, xr, packed, dr);
+                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(4, n, k, xr, packed, dr, false);
                 break;
             case 3:
-                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr);
+                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr, false);
                 break;
             case 2:
-                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(2, n, k, xr, packed, dr);
+                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(2, n, k, xr, packed, dr, false);
                 break;
         }
     }
@@ -182,7 +182,7 @@ public class Avx512PackedKernelTests
         using var pp = p.Buffer.Pin();
         using var pc = c.Buffer.Pin();
         MathOps.PackPanelsB(n, k, (float*)pb.Pointer, (float*)pp.Pointer);
-        MathOps.mm_unsafe_vectorized_avx512_12x32packed(m, n, k, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer);
+        MathOps.mm_unsafe_vectorized_avx512_12x32packed(m, n, k, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer, false);
     }
 
     static double[] Oracle12(DenseTensor<float> a, DenseTensor<float> b, int m, int n, int k)
@@ -277,7 +277,7 @@ public class Avx512PackedKernelTests
             using var pb = b.Buffer.Pin();
             using var pp = p.Buffer.Pin();
             using var pc = c.Buffer.Pin();
-            MathOps.mm_unsafe_vectorized_avx512_12x32packed(7, 8, 32, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer);
+            MathOps.mm_unsafe_vectorized_avx512_12x32packed(7, 8, 32, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer, false);
         });
     }
 
@@ -288,7 +288,7 @@ public class Avx512PackedKernelTests
         using var pp = p.Buffer.Pin();
         using var pc = c.Buffer.Pin();
         MathOps.PackPanelsB(n, k, (float*)pb.Pointer, (float*)pp.Pointer);
-        MathOps.mm_unsafe_vectorized_avx512_8x32packed(m, n, k, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer);
+        MathOps.mm_unsafe_vectorized_avx512_8x32packed(m, n, k, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer, false);
     }
 
     [SkippableFact]
@@ -340,7 +340,7 @@ public class Avx512PackedKernelTests
             using var pb = b.Buffer.Pin();
             using var pp = p.Buffer.Pin();
             using var pc = c.Buffer.Pin();
-            MathOps.mm_unsafe_vectorized_avx512_8x32packed(7, 8, 32, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer);
+            MathOps.mm_unsafe_vectorized_avx512_8x32packed(7, 8, 32, (float*)pa.Pointer, (float*)pp.Pointer, (float*)pc.Pointer, false);
         });
     }
 
@@ -397,7 +397,7 @@ public class Avx512PackedKernelTests
         else if (rem == 2 && main >= 12) { main -= 12; rem = 14; }
         if (main > 0)
         {
-            MathOps.mm_unsafe_vectorized_avx512_12x32packed(main, n, k, xr, packed, dr);
+            MathOps.mm_unsafe_vectorized_avx512_12x32packed(main, n, k, xr, packed, dr, false);
             xr += main * n;
             dr += main * k;
         }
@@ -406,14 +406,14 @@ public class Avx512PackedKernelTests
         // below instead of 8+1, which no kernel covers.
         while (rest >= 8 && rest != 9)
         {
-            MathOps.mm_unsafe_vectorized_avx512_8x32packed(8, n, k, xr, packed, dr);
+            MathOps.mm_unsafe_vectorized_avx512_8x32packed(8, n, k, xr, packed, dr, false);
             xr += 8 * n;
             dr += 8 * k;
             rest -= 8;
         }
         if (rest >= 6 && rest != 7)
         {
-            MathOps.mm_unsafe_vectorized_avx512_6x32packed(6, n, k, xr, packed, dr);
+            MathOps.mm_unsafe_vectorized_avx512_6x32packed(6, n, k, xr, packed, dr, false);
             xr += 6 * n;
             dr += 6 * k;
             rest -= 6;
@@ -421,15 +421,15 @@ public class Avx512PackedKernelTests
         if (rest == 0) return;
         if ((rest % 3) == 0)
         {
-            MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(rest, n, k, xr, packed, dr);
+            MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(rest, n, k, xr, packed, dr, false);
             return;
         }
         if ((rest & 1) == 0)
         {
-            MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(rest, n, k, xr, packed, dr);
+            MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(rest, n, k, xr, packed, dr, false);
             return;
         }
-        MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr);
-        MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(rest - 3, n, k, xr + 3 * n, packed, dr + 3 * k);
+        MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(3, n, k, xr, packed, dr, false);
+        MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(rest - 3, n, k, xr + 3 * n, packed, dr + 3 * k, false);
     }
 }
