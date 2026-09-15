@@ -601,6 +601,96 @@ internal static class BlockedBottleneck
         }
     }
 
+    static void SpatialPairBlocked(float[] x, BlockedFilter w, float[]? bias, float[] y,
+        int N, int C, int K, int CbIn, int CbOut, int H, int W, bool relu)
+    {
+        if (w.KH != 3 || w.KW != 3) throw new ArgumentException("Spatial kernel needs a 3x3 pack.");
+        if ((W & 1) != 0) throw new ArgumentException("Paired spatial kernel needs even width.");
+        Span<float> acc0 = stackalloc float[Bc];
+        Span<float> acc1 = stackalloc float[Bc];
+        var wv = MemoryMarshal.Cast<float, Vector<float>>(w.Packed.AsSpan());
+        for (int n = 0; n < N; n++)
+        for (int h = 0; h < H; h++)
+        for (int wpos = 0; wpos < W; wpos += 2)
+        for (int kb = 0; kb < w.Kt; kb++)
+        {
+            int kCount = Math.Min(Bc, K - (kb * Bc));
+            bool wide = kCount == Bc && Vector<float>.Count == Bc;
+            for (int bi = 0; bi < kCount; bi++) acc0[bi] = bias == null ? 0f : bias[(kb * Bc) + bi];
+            for (int bi = 0; bi < kCount; bi++) acc1[bi] = bias == null ? 0f : bias[(kb * Bc) + bi];
+            var a0 = wide ? new Vector<float>(acc0) : default;
+            var a1 = wide ? new Vector<float>(acc1) : default;
+            var b0 = Vector<float>.Zero;
+            var b1 = Vector<float>.Zero;
+            for (int cb = 0; cb < w.Ct; cb++)
+            for (int kh = 0; kh < 3; kh++)
+            for (int kw = 0; kw < 3; kw++)
+            {
+                int ih = h + kh - 1;
+                if (ih < 0 || ih >= H) continue;
+                int iw0 = wpos + kw - 1;
+                int iw1 = iw0 + 1;
+                bool v0 = iw0 >= 0 && iw0 < W;
+                bool v1 = iw1 >= 0 && iw1 < W;
+                if (!v0 && !v1) continue;
+                int cCount = Math.Min(Bc, C - (cb * Bc));
+                int xB0 = v0 ? BIndex(n, cb, ih, iw0, 0, CbIn, H, W) : 0;
+                int xB1 = v1 ? BIndex(n, cb, ih, iw1, 0, CbIn, H, W) : 0;
+                int wBase = ((((kb * w.Ct) + cb) * 3 + kh) * 3 + kw) * Bc * Bc;
+                int wvBase = (wBase >> 3);
+                int ci = 0;
+                int cPairs = wide ? (cCount & ~1) : 0;
+                for (; ci < cPairs; ci += 2)
+                {
+                    float x00 = v0 ? x[xB0 + ci] : 0f;
+                    float x01 = v0 ? x[xB0 + ci + 1] : 0f;
+                    float x10 = v1 ? x[xB1 + ci] : 0f;
+                    float x11 = v1 ? x[xB1 + ci + 1] : 0f;
+                    a0 = Vector.FusedMultiplyAdd(wv[wvBase + ci], new Vector<float>(x00), a0);
+                    b0 = Vector.FusedMultiplyAdd(wv[wvBase + ci + 1], new Vector<float>(x01), b0);
+                    a1 = Vector.FusedMultiplyAdd(wv[wvBase + ci], new Vector<float>(x10), a1);
+                    b1 = Vector.FusedMultiplyAdd(wv[wvBase + ci + 1], new Vector<float>(x11), b1);
+                }
+                for (; ci < cCount; ci++)
+                {
+                    float yv0 = v0 ? x[xB0 + ci] : 0f;
+                    float yv1 = v1 ? x[xB1 + ci] : 0f;
+                    if (wide)
+                    {
+                        a0 = Vector.FusedMultiplyAdd(wv[wvBase + ci], new Vector<float>(yv0), a0);
+                        a1 = Vector.FusedMultiplyAdd(wv[wvBase + ci], new Vector<float>(yv1), a1);
+                    }
+                    else
+                    {
+                        for (int bi = 0; bi < kCount; bi++)
+                        {
+                            acc0[bi] += w.Packed[wBase + ci * Bc + bi] * yv0;
+                            acc1[bi] += w.Packed[wBase + ci * Bc + bi] * yv1;
+                        }
+                    }
+                }
+            }
+            if (wide)
+            {
+                a0 += b0;
+                a1 += b1;
+                a0.CopyTo(acc0);
+                a1.CopyTo(acc1);
+            }
+            int yBase0 = BIndex(n, kb, h, wpos, 0, CbOut, H, W);
+            int yBase1 = BIndex(n, kb, h, wpos + 1, 0, CbOut, H, W);
+            for (int bi = 0; bi < kCount; bi++)
+            {
+                float v0 = acc0[bi];
+                if (relu && v0 < 0f) v0 = 0f;
+                y[yBase0 + bi] = v0;
+                float v1 = acc1[bi];
+                if (relu && v1 < 0f) v1 = 0f;
+                y[yBase1 + bi] = v1;
+            }
+        }
+    }
+
     internal static float[]? RunRegion(float[] x,
         float[] f1, BlockedFilter w1, float[]? b1,
         float[] f2, BlockedFilter w2, float[]? b2,
@@ -648,7 +738,10 @@ internal static class BlockedBottleneck
         sw.Stop();
         double pw1 = sw.Elapsed.TotalMilliseconds;
         sw.Restart();
-        Spatial3x3Blocked(t1, w2, b2, t2, N, R, R, CbR, CbR, H, W, true);
+        if (W % 2 == 0)
+            SpatialPairBlocked(t1, w2, b2, t2, N, R, R, CbR, CbR, H, W, true);
+        else
+            Spatial3x3Blocked(t1, w2, b2, t2, N, R, R, CbR, CbR, H, W, true);
         sw.Stop();
         double sp3 = sw.Elapsed.TotalMilliseconds;
         sw.Restart();
