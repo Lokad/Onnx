@@ -18,7 +18,8 @@ public class Model
 
     /// <summary>Assembles a graph with optional load-time optimization.</summary>
     /// <remarks>Diagnostic entry for pass tests: skipping the optimizer leaves the pre-pass
-    /// graph. Legacy (not yet migrated) fusions still apply; only pipeline passes are gated.</remarks>
+    /// graph (preparation still runs). Every fusion is a pipeline pass; the flag gates
+    /// running them, not registering the canonical set.</remarks>
     internal static ComputationalGraph Load(OnnxModel mp, bool runOptimizer)
     {
         if (Log.IsEnabled(LogLevel.Info)) Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Name, mp.Domain, mp.Opset.Select(o => o.Key + ":" + o.Value).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.DocString);
@@ -51,82 +52,37 @@ public class Model
             graph.Nodes.Add(ToNode(np, graph));
         }
         op.Complete();
-        GraphFusion.RegisterLayerNormPass();
+        Optimization.GraphOptimizer.EnsureStandardPasses();
         int fused = 0;
-        if (runOptimizer)
-        {
-            foreach (var change in Optimization.GraphOptimizer.Run(graph))
-            {
-                if (change.Pass == "layernorm") fused += change.Rewritten;
-            }
-        }
-        if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
-        GraphFusion.RegisterRopePass();
         int rope = 0;
-        if (runOptimizer)
-        {
-            foreach (var change in Optimization.GraphOptimizer.Run(graph))
-            {
-                if (change.Pass == "rope") rope += change.Rewritten;
-            }
-        }
-        if (rope > 0) Info("Fused {c} rotary-embedding patterns into native nodes.", rope);
-        GraphFusion.RegisterGeluPass();
         int gelu = 0;
-        if (runOptimizer)
-        {
-            foreach (var change in Optimization.GraphOptimizer.Run(graph))
-            {
-                if (change.Pass == "gelu") gelu += change.Rewritten;
-            }
-        }
-        GraphFusion.RegisterGeluTanhPass();
         int geluTanh = 0;
-        if (runOptimizer)
-        {
-            foreach (var change in Optimization.GraphOptimizer.Run(graph))
-            {
-                if (change.Pass == "gelu-tanh") geluTanh += change.Rewritten;
-            }
-        }
-        if (geluTanh > 0) Info("Fused {c} tanh-approx GELU patterns into native nodes.", geluTanh);
-        if (gelu > 0) Info("Fused {c} exact-GELU patterns into native nodes.", gelu);
-        GraphFusion.RegisterConvReluPass();
         int convRelu = 0;
-        if (runOptimizer)
-        {
-            foreach (var change in Optimization.GraphOptimizer.Run(graph))
-            {
-                if (change.Pass == "convrelu") convRelu += change.Rewritten;
-            }
-        }
-        if (convRelu > 0) Info("Fused {c} Conv+Relu epilogues into native nodes.", convRelu);
-        GraphFusion.RegisterAddReluPass();
         int addRelu = 0;
-        if (runOptimizer)
-        {
-            foreach (var change in Optimization.GraphOptimizer.Run(graph))
-            {
-                if (change.Pass == "addrelu") addRelu += change.Rewritten;
-            }
-        }
-        if (addRelu > 0) Info("Fused {c} Add+Relu epilogues into native nodes.", addRelu);
-        GraphFusion.RegisterBiasGeluPass();
         int biasGelu = 0;
         if (runOptimizer)
         {
             foreach (var change in Optimization.GraphOptimizer.Run(graph))
             {
-                if (change.Pass == "biasgelu") biasGelu += change.Rewritten;
+                switch (change.Pass)
+                {
+                    case "layernorm": fused += change.Rewritten; break;
+                    case "rope": rope += change.Rewritten; break;
+                    case "gelu": gelu += change.Rewritten; break;
+                    case "gelu-tanh": geluTanh += change.Rewritten; break;
+                    case "convrelu": convRelu += change.Rewritten; break;
+                    case "addrelu": addRelu += change.Rewritten; break;
+                    case "biasgelu": biasGelu += change.Rewritten; break;
+                }
             }
         }
+        if (fused > 0) Info("Fused {c} LayerNorm patterns into native nodes.", fused);
+        if (rope > 0) Info("Fused {c} rotary-embedding patterns into native nodes.", rope);
+        if (geluTanh > 0) Info("Fused {c} tanh-approx GELU patterns into native nodes.", geluTanh);
+        if (gelu > 0) Info("Fused {c} exact-GELU patterns into native nodes.", gelu);
+        if (convRelu > 0) Info("Fused {c} Conv+Relu epilogues into native nodes.", convRelu);
+        if (addRelu > 0) Info("Fused {c} Add+Relu epilogues into native nodes.", addRelu);
         if (biasGelu > 0) Info("Fused {c} bias+GELU regions into native nodes.", biasGelu);
-        Optimization.ConstFold.RegisterConstFoldPass();
-        Optimization.ShapeZeroCopy.RegisterShapeZeroCopyPass();
-        if (runOptimizer)
-        {
-            Optimization.GraphOptimizer.Run(graph);
-        }
         graph.Prepare();
         cop.Complete();
         return graph;

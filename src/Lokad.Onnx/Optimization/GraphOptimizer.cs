@@ -73,6 +73,23 @@ internal static class GraphOptimizer
 
     public const int MaxRounds = 8;
 
+    /// <summary>Registers the canonical ordered pass set once (idempotent by
+    /// pass name): fusion passes in matcher order, then constant folding and
+    /// self-shape lowering. Later passes observe earlier passes within the
+    /// same fixed-point run, so callers run one pipeline, not staged runs.</summary>
+    public static void EnsureStandardPasses()
+    {
+        GraphFusion.RegisterLayerNormPass();
+        GraphFusion.RegisterRopePass();
+        GraphFusion.RegisterGeluPass();
+        GraphFusion.RegisterGeluTanhPass();
+        GraphFusion.RegisterConvReluPass();
+        GraphFusion.RegisterAddReluPass();
+        GraphFusion.RegisterBiasGeluPass();
+        ConstFold.RegisterConstFoldPass();
+        ShapeZeroCopy.RegisterShapeZeroCopyPass();
+    }
+
     public static List<PassChange> Run(ComputationalGraph graph)
     {
         return Run(graph, Array.Empty<string>());
@@ -89,6 +106,7 @@ internal static class GraphOptimizer
             off = new HashSet<string>(Disabled, StringComparer.Ordinal);
             foreach (var d in disabled) off.Add(d);
         }
+        bool exhausted = false;
         for (int round = 0; round < MaxRounds; round++)
         {
             var facts = GraphFacts.Build(graph);
@@ -105,7 +123,10 @@ internal static class GraphOptimizer
                 facts = GraphFacts.Build(graph);
             }
             if (!changed) break;
+            if (round == MaxRounds - 1) exhausted = true;
         }
+        if (exhausted && Log.IsEnabled(LogLevel.Warn))
+            Log.Write(LogLevel.Warn, "Graph optimization hit the {rounds}-round cap with changes still pending; results are deterministic but may be incomplete.", MaxRounds);
         return report;
     }
 }
