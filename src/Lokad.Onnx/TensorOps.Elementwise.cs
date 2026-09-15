@@ -845,8 +845,7 @@ where T : unmanaged
             int block = 1;
             for (int dimension = axis; dimension < dims.Length; dimension++) block *= dims[dimension];
             int outer = block == 0 ? 0 : (int)(input.Length / block);
-            if (UseSoftmaxSpan) SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, block, options.UseSimd);
-            else SoftmaxContiguousFloat(inputSpan, outputSpan, outer, block, options.UseSimd);
+            SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, block, options.UseSimd);
             return;
         }
         int outerCount = 1;
@@ -857,8 +856,7 @@ where T : unmanaged
         if (inner == 1)
         {
             int outer = dimLen == 0 ? 0 : (int)(input.Length / dimLen);
-            if (UseSoftmaxSpan) SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, dimLen, options.UseSimd);
-            else SoftmaxContiguousFloat(inputSpan, outputSpan, outer, dimLen, options.UseSimd);
+            SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, dimLen, options.UseSimd);
             return;
         }
         for (int o = 0; o < outerCount; o++)
@@ -884,19 +882,14 @@ where T : unmanaged
         }
     }
 
-    /// <summary>
-    /// A01 prototype switch: span-fused softmax (fused exp-summation, vector
-    /// normalization) when LOKAD_ONNX_SOFTMAX_SPAN=1. Default-off.
-    /// </summary>
-    internal static readonly bool UseSoftmaxSpan =
-        string.Equals(Environment.GetEnvironmentVariable("LOKAD_ONNX_SOFTMAX_SPAN"), "1", StringComparison.Ordinal);
 
     /// <summary>
-    /// Softmax over contiguous rows with fused exp-summation and vectorized
+    /// Default float softmax over contiguous rows: fused exp-summation and vectorized
     /// normalization. Max semantics (including NaN propagation) and exp calls match
     /// the legacy path call for call; only the summation groups vector lanes first,
     /// so finite values agree within 1e-6 while NaN rows stay NaN. Deterministic per
-    /// shape: fixed-mode repeats are bit-identical run to run.
+    /// shape: fixed-mode repeats are bit-identical run to run. Scalar (non-SIMD) mode
+    /// is bitwise identical to the legacy kernel.
     /// </summary>
     internal static void SoftmaxContiguousFloatSpan(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
     {
@@ -946,7 +939,11 @@ where T : unmanaged
         }
     }
 
-    static void SoftmaxContiguousFloat(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
+    /// <summary>
+    /// Legacy float softmax over contiguous rows, preserved as the tested reference
+    /// for the default span kernel. Scalar summation order; vectorized exp only.
+    /// </summary>
+    internal static void SoftmaxContiguousFloat(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
     {
         for (int outerIndex = 0; outerIndex < outer; outerIndex++)
         {
