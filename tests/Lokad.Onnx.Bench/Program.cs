@@ -159,6 +159,7 @@ static class Bench
         if (selected.Contains("parakeet-encoder", StringComparer.OrdinalIgnoreCase))
         {
             if (representative) RunCase("parakeet-encoder-64", () => CompareVoice("parakeet-encoder-64", assets["parakeet-encoder"][0], VoiceModelCases.EncoderInputs64(root), Tolerance, tensorOpts, threads, iters, modeName));
+            if (representative) RunCase("parakeet-encoder-256", () => CompareVoice("parakeet-encoder-256", assets["parakeet-encoder"][0], VoiceModelCases.EncoderInputs256(root), Tolerance, tensorOpts, threads, iters, modeName));
             else RunCase("parakeet-encoder", () => CompareVoice("parakeet-encoder", assets["parakeet-encoder"][0], VoiceModelCases.EncoderInputs(root), Tolerance, tensorOpts, threads, iters, modeName));
         }
         if (selected.Contains("parakeet-decoder", StringComparer.OrdinalIgnoreCase))

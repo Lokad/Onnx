@@ -86,4 +86,24 @@ public class GraphExecutionEncoderTests
         var lengths = (Tensor<long>)graph.Outputs["encoded_lengths"];
         Assert.Equal(new long[] { 8L }, lengths.ToArray());
     }
+
+    [SkippableFact]
+    public void EncoderLongerInput_MatchesOracle()
+    {
+        var graph = ModelFixture.LoadRequiredModel("ParakeetEncoder", "models", "parakeet-tdt-0.6b-v3", "onnx", "encoder-model.onnx");
+
+        ModelFixture.AssertExecuted(graph, graph.Execute(StepInputs(256), true));
+        var encoded = (Tensor<float>)graph.Outputs["outputs"];
+        Assert.Equal(new[] { 1, 1024, 32 }, encoded.Dimensions.ToArray());
+
+        var values = ModelFixture.CheckedOutput(graph, "outputs");
+        ModelFixture.AssertMean(values, 5.8181132772006094e-05, 1e-6, "encoder long outputs");
+        ModelFixture.AssertSpots(values,
+            new int[] { 0, 1, 2, 100, 1000, 5000, 10000, 16384, 32767 },
+            new float[] { -0.0010227137245237827f, 0.005147488787770271f, 0.008468384854495525f, 0.006457140669226646f, 0.014119020663201809f, -0.00278714788146317f, 0.03378894180059433f, 0.0012438700068742037f, 0.003888278268277645f },
+            1e-3, "encoder long outputs");
+
+        var lengths = (Tensor<long>)graph.Outputs["encoded_lengths"];
+        Assert.Equal(new long[] { 32L }, lengths.ToArray());
+    }
 }

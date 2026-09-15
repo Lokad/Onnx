@@ -91,6 +91,15 @@ static class VoiceModelCases
         });
     }
 
+    public static Dictionary<string, ITensor> EncoderInputs256(string root)
+    {
+        return LoadNamed(root, new (string, string)[]
+        {
+            ("audio_signal", "encoder_mel256.npy"),
+            ("length", "encoder_len256.npy"),
+        });
+    }
+
     public static Dictionary<string, ITensor> SegmentationSynth1sInputs(string root)
     {
         return LoadNamed(root, new (string, string)[]

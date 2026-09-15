@@ -42,6 +42,15 @@ public class VoiceRepresentativeCasesTests
     }
 
     [Fact]
+    public void Encoder256_ShapesAndDtypes()
+    {
+        string root = RequireRoot();
+        var feeds = VoiceModelCases.EncoderInputs256(root);
+        AssertNamed(feeds["audio_signal"], "audio_signal", new[] { 1, 128, 256 }, TensorElementType.Float);
+        AssertNamed(feeds["length"], "length", new[] { 1 }, TensorElementType.Int64);
+    }
+
+    [Fact]
     public void Segmentation1s_ShapesAndDtypes()
     {
         string root = RequireRoot();
