@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 using Lokad.Onnx;
 using Microsoft.ML.OnnxRuntime;
@@ -130,6 +131,7 @@ internal static class BlockedBottleneck
         int N, int C, int K, int CbIn, int CbOut, int H, int W, bool relu)
     {
         Span<float> acc = stackalloc float[Bc];
+        var wv = MemoryMarshal.Cast<float, Vector<float>>(w.Packed.AsSpan());
         if (w.KH != 1 || w.KW != 1) throw new ArgumentException("Pointwise kernel needs a 1x1 pack.");
         for (int n = 0; n < N; n++)
         for (int h = 0; h < H; h++)
@@ -155,10 +157,10 @@ internal static class BlockedBottleneck
                         float x1 = x[xBase + ci + 1];
                         float x2 = x[xBase + ci + 2];
                         float x3 = x[xBase + ci + 3];
-                        q0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), q0);
-                        q1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), q1);
-                        q2 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 2) * Bc)), new Vector<float>(x2), q2);
-                        q3 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 3) * Bc)), new Vector<float>(x3), q3);
+                        q0 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci], new Vector<float>(x0), q0);
+                        q1 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 1], new Vector<float>(x1), q1);
+                        q2 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 2], new Vector<float>(x2), q2);
+                        q3 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 3], new Vector<float>(x3), q3);
                     }
                     q0 += q1 + q2 + q3;
                     q0.CopyTo(acc);
@@ -174,13 +176,13 @@ internal static class BlockedBottleneck
                         {
                             float x0 = x[xBase + ci];
                             float x1 = x[xBase + ci + 1];
-                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
-                            accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
+                            accV0 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci], new Vector<float>(x0), accV0);
+                            accV1 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 1], new Vector<float>(x1), accV1);
                         }
                         for (; ci < cCount; ci++)
                         {
                             float xv = x[xBase + ci];
-                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
+                            accV0 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci], new Vector<float>(xv), accV0);
                         }
                         accV0 += accV1;
                         accV0.CopyTo(acc);
@@ -197,7 +199,7 @@ internal static class BlockedBottleneck
                         for (; bi + step <= kCount; bi += step)
                         {
                             var av = new Vector<float>(acc.Slice(bi));
-                            av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
+                            av = Vector.FusedMultiplyAdd(wv[(wRow >> 3) + bi], xvV, av);
                             av.CopyTo(acc.Slice(bi));
                         }
                         for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
@@ -218,6 +220,7 @@ internal static class BlockedBottleneck
         int N, int C, int K, int CbIn, int CbOut, int H, int W, bool relu)
     {
         Span<float> acc = stackalloc float[Bc];
+        var wv = MemoryMarshal.Cast<float, Vector<float>>(w.Packed.AsSpan());
         if (w.KH != 3 || w.KW != 3) throw new ArgumentException("Spatial kernel needs a 3x3 pack.");
         for (int n = 0; n < N; n++)
         for (int h = 0; h < H; h++)
@@ -248,10 +251,10 @@ internal static class BlockedBottleneck
                         float x1 = x[xBase + ci + 1];
                         float x2 = x[xBase + ci + 2];
                         float x3 = x[xBase + ci + 3];
-                        q0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), q0);
-                        q1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), q1);
-                        q2 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 2) * Bc)), new Vector<float>(x2), q2);
-                        q3 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 3) * Bc)), new Vector<float>(x3), q3);
+                        q0 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci], new Vector<float>(x0), q0);
+                        q1 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 1], new Vector<float>(x1), q1);
+                        q2 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 2], new Vector<float>(x2), q2);
+                        q3 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 3], new Vector<float>(x3), q3);
                     }
                     q0 += q1 + q2 + q3;
                     q0.CopyTo(acc);
@@ -267,13 +270,13 @@ internal static class BlockedBottleneck
                         {
                             float x0 = x[xBase + ci];
                             float x1 = x[xBase + ci + 1];
-                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
-                            accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
+                            accV0 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci], new Vector<float>(x0), accV0);
+                            accV1 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 1], new Vector<float>(x1), accV1);
                         }
                         for (; ci < cCount; ci++)
                         {
                             float xv = x[xBase + ci];
-                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
+                            accV0 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci], new Vector<float>(xv), accV0);
                         }
                         accV0 += accV1;
                         accV0.CopyTo(acc);
@@ -290,7 +293,7 @@ internal static class BlockedBottleneck
                         for (; bi + step <= kCount; bi += step)
                         {
                             var av = new Vector<float>(acc.Slice(bi));
-                            av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
+                            av = Vector.FusedMultiplyAdd(wv[(wRow >> 3) + bi], xvV, av);
                             av.CopyTo(acc.Slice(bi));
                         }
                         for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
@@ -311,6 +314,7 @@ internal static class BlockedBottleneck
         float[] y, int N, int C, int K, int CbIn, int CbOut, int H, int W)
     {
         Span<float> acc = stackalloc float[Bc];
+        var wv = MemoryMarshal.Cast<float, Vector<float>>(w.Packed.AsSpan());
         if (w.KH != 1 || w.KW != 1) throw new ArgumentException("Pointwise kernel needs a 1x1 pack.");
         for (int n = 0; n < N; n++)
         for (int h = 0; h < H; h++)
@@ -336,10 +340,10 @@ internal static class BlockedBottleneck
                         float x1 = x[xBase + ci + 1];
                         float x2 = x[xBase + ci + 2];
                         float x3 = x[xBase + ci + 3];
-                        q0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), q0);
-                        q1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), q1);
-                        q2 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 2) * Bc)), new Vector<float>(x2), q2);
-                        q3 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 3) * Bc)), new Vector<float>(x3), q3);
+                        q0 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci], new Vector<float>(x0), q0);
+                        q1 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 1], new Vector<float>(x1), q1);
+                        q2 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 2], new Vector<float>(x2), q2);
+                        q3 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 3], new Vector<float>(x3), q3);
                     }
                     q0 += q1 + q2 + q3;
                     q0.CopyTo(acc);
@@ -355,13 +359,13 @@ internal static class BlockedBottleneck
                         {
                             float x0 = x[xBase + ci];
                             float x1 = x[xBase + ci + 1];
-                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(x0), accV0);
-                            accV1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + ((ci + 1) * Bc)), new Vector<float>(x1), accV1);
+                            accV0 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci], new Vector<float>(x0), accV0);
+                            accV1 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci + 1], new Vector<float>(x1), accV1);
                         }
                         for (; ci < cCount; ci++)
                         {
                             float xv = x[xBase + ci];
-                            accV0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase + (ci * Bc)), new Vector<float>(xv), accV0);
+                            accV0 = Vector.FusedMultiplyAdd(wv[(wBase >> 3) + ci], new Vector<float>(xv), accV0);
                         }
                         accV0 += accV1;
                         accV0.CopyTo(acc);
@@ -378,7 +382,7 @@ internal static class BlockedBottleneck
                         for (; bi + step <= kCount; bi += step)
                         {
                             var av = new Vector<float>(acc.Slice(bi));
-                            av = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wRow + bi), xvV, av);
+                            av = Vector.FusedMultiplyAdd(wv[(wRow >> 3) + bi], xvV, av);
                             av.CopyTo(acc.Slice(bi));
                         }
                         for (; bi < kCount; bi++) acc[bi] += w.Packed[wRow + bi] * xv;
@@ -403,6 +407,7 @@ internal static class BlockedBottleneck
         if ((w.Kt & 1) != 0) throw new ArgumentException("Paired kernel needs an even block count.");
         Span<float> acc0 = stackalloc float[Bc];
         Span<float> acc1 = stackalloc float[Bc];
+        var wv = MemoryMarshal.Cast<float, Vector<float>>(w.Packed.AsSpan());
 
         for (int n = 0; n < N; n++)
         for (int h = 0; h < H; h++)
@@ -432,17 +437,17 @@ internal static class BlockedBottleneck
                     float x1 = x[xBase + ci + 1];
                     var x0V = new Vector<float>(x0);
                     var x1V = new Vector<float>(x1);
-                    a0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase0 + (ci * Bc)), x0V, a0);
-                    b0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase0 + ((ci + 1) * Bc)), x1V, b0);
-                    a1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase1 + (ci * Bc)), x0V, a1);
-                    b1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase1 + ((ci + 1) * Bc)), x1V, b1);
+                    a0 = Vector.FusedMultiplyAdd(wv[(wBase0 >> 3) + ci], x0V, a0);
+                    b0 = Vector.FusedMultiplyAdd(wv[(wBase0 >> 3) + ci + 1], x1V, b0);
+                    a1 = Vector.FusedMultiplyAdd(wv[(wBase1 >> 3) + ci], x0V, a1);
+                    b1 = Vector.FusedMultiplyAdd(wv[(wBase1 >> 3) + ci + 1], x1V, b1);
                 }
                 for (; ci < cCount; ci++)
                 {
                     float xv = x[xBase + ci];
                     var xvV = new Vector<float>(xv);
-                    a0 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase0 + (ci * Bc)), xvV, a0);
-                    a1 = Vector.FusedMultiplyAdd(new Vector<float>(w.Packed, wBase1 + (ci * Bc)), xvV, a1);
+                    a0 = Vector.FusedMultiplyAdd(wv[(wBase0 >> 3) + ci], xvV, a0);
+                    a1 = Vector.FusedMultiplyAdd(wv[(wBase1 >> 3) + ci], xvV, a1);
                 }
             }
             a0 += b0;
@@ -635,14 +640,16 @@ internal static class BlockedBottleneck
         if (args.Length >= 1 && args[0] == "run")
         {
             int reps = 9;
+            int warmup = 20;
             for (int i = 1; i < args.Length; i++)
             {
                 if (args[i] == "--reps" && i + 1 < args.Length && int.TryParse(args[i + 1], out int k) && k >= 1) { reps = k; i++; }
-                else { Console.WriteLine("usage: Bench convblock run [--reps K]"); return 2; }
+                else if (args[i] == "--warmup" && i + 1 < args.Length && int.TryParse(args[i + 1], out int wu) && wu >= 0) { warmup = wu; i++; }
+                else { Console.WriteLine("usage: Bench convblock run [--reps K] [--warmup K]"); return 2; }
             }
-            return RunTable(root, reps);
+            return RunTable(root, reps, warmup);
         }
-        Console.WriteLine("usage: Bench convblock verify|run [--reps K]");
+        Console.WriteLine("usage: Bench convblock verify|run [--reps K] [--warmup K]");
         return 2;
     }
 
@@ -666,7 +673,7 @@ internal static class BlockedBottleneck
         return b;
     }
 
-    static int RunTable(string root, int reps)
+    static int RunTable(string root, int reps, int warmup)
     {
         string model = Path.Combine(root, "artifacts", "p03-region", "bottleneck.onnx");
         if (!File.Exists(model)) { Console.WriteLine("missing region model: " + model); return 1; }
@@ -696,6 +703,12 @@ internal static class BlockedBottleneck
             var w2 = BlockedFilter.Pack(f2, R, R, 3, 3);
             var w3 = BlockedFilter.Pack(f3, C, R, 1, 1);
             var ws = new RegionWorkspace();
+            for (int u = 0; u < warmup; u++)
+            {
+                RunLegacy(x, f1, b1, f2, b2, f3, b3, x, N, C, R, H, W);
+                RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, ws, out int _, out RegionCost _);
+            }
+            Console.WriteLine("warmup: " + warmup + " untimed region runs per leg (Tier1 settle).");
             float[]? blocked = RunRegion(x, f1, w1, b1, f2, w2, b2, f3, w3, b3, x, N, C, R, H, W, ws, out int scratch, out RegionCost _);
             if (blocked == null) { Console.WriteLine("blocked leg guard tripped on fresh packs. FAIL"); return 1; }
             float[] ort;
