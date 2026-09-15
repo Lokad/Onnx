@@ -36,6 +36,12 @@ internal static class GraphPacking
     /// <remarks>The reduction axis stays bounded while the panel axis scales linearly (proven to 1570 panels), so total bytes bound residency instead.</remarks>
     internal const long MaxPackedBytes = 512L * 1024 * 1024;
 
+    /// <summary>Float32 packed-clone budget: n by k panels hold 4 bytes per element,
+    /// so the element count is checked against MaxPackedBytes / 4 (division form:
+    /// n and k are ints whose product times 4 can overflow long).</summary>
+    internal static bool FitsPackBudget(int n, int k) =>
+        n >= 1 && k >= 1 && n < MaxPackedAxis && (long)n * k <= MaxPackedBytes / 4;
+
     /// <summary>Resolves a MatMul edge name to a folded-transpose prepared tensor (P34).</summary>
     /// <remarks>Folded outputs materialize under a generated name, so the consuming edge name never hits Initializers directly; the prepared bytes are stable and guarded exactly like initializer sources downstream.</remarks>
     static bool TryResolveFoldedSource(ComputationalGraph graph, string edgeName, out ITensor? init)
@@ -92,7 +98,7 @@ internal static class GraphPacking
             int[] dims = init.Dims;
             if (dims.Length != 2) continue;
             int n = dims[0], k = dims[1];
-            if (n < 1 || k < 1 || n >= MaxPackedAxis || (long)n * k > MaxPackedBytes) continue;
+            if (!FitsPackBudget(n, k)) continue;
             if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(dense.Buffer, out System.ArraySegment<float> window)
                 || window.Array is null || window.Offset != 0 || window.Count != dense.Buffer.Length) continue;
             current[kv.Key] = (init, window.Array);
