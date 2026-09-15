@@ -45,6 +45,19 @@ public class ReversedStrideTests
     }
 
     [Fact]
+    public void ProviderTanh_MatchesLogicalOracle()
+    {
+        // Voice-branch oracle port (D01 narrow pick): the vector tanh path must
+        // agree elementwise on reversed-stride views, same bug class as S04.
+        // The Sigmoid twin stays on the voice line: no Sigmoid operator here yet.
+        var r = CPUExecutionProvider.Tanh(ReversedInput(), null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var actual = (double[])((ITensor)r.Outputs[0]).ToArray();
+        Assert.Equal(Logical.Length, actual.Length);
+        for (int i = 0; i < Logical.Length; i++)
+            Assert.True(Math.Abs(actual[i] - Math.Tanh(Logical[i])) < 1e-12, "tanh[" + i + "]");
+    }
+    [Fact]
     public void ToDenseTensor_MatchesToArray()
     {
         var dense = ReversedInput().ToDenseTensor();
