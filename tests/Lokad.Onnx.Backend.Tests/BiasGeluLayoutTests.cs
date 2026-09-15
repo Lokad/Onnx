@@ -25,6 +25,50 @@ public class BiasGeluLayoutTests
         return ((Tensor<float>)gelu.Outputs![0]).ToArray();
     }
 
+    static DenseTensor<float> ScalarInput(float v)
+    {
+        var t = DenseTensor<float>.OfShape();
+        t.SetValue(0, v);
+        return t;
+    }
+
+    [Fact]
+    public void BiasGelu_ScalarInputFallsBackToLegacy()
+    {
+        // S03: scalar x with rank-one bias must not reach Dimensions[^1].
+        var x = ScalarInput(2f);
+        var bias = DenseTensor<float>.OfValues(new float[] { 1f });
+        var r = CPUExecutionProvider.BiasGelu(x, bias, null, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var got = ((Tensor<float>)r.Outputs![0]).ToArray();
+        Assert.Single(got);
+        Assert.Equal(2.9959502f, got[0], 5);
+    }
+
+    static OnnxModel ScalarBiasGeluModel()
+    {
+        var mp = new OnnxModel { Name = "tiny-biasgelu-scalar" };
+        mp.Opset[""] = 14;
+        mp.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new int[0] });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Float, Dims = new[] { 1 } });
+        mp.Initializers.Add(new OnnxTensor { Name = "bias", ElementType = TensorElementType.Float, Dims = new[] { 1 }, Data = new float[] { 1f } });
+        var NoAttrs = new Dictionary<string, object>();
+        mp.Nodes.Add(new OnnxNode { OpType = "Add", Inputs = new[] { "x", "bias" }, Outputs = new[] { "s" }, Attributes = NoAttrs });
+        mp.Nodes.Add(new OnnxNode { OpType = "Gelu", Inputs = new[] { "s" }, Outputs = new[] { "y" }, Attributes = NoAttrs });
+        return mp;
+    }
+
+    [Fact]
+    public void BiasGelu_ScalarGraphExecutes()
+    {
+        var graph = Model.Load(ScalarBiasGeluModel())!;
+        var feed = new Dictionary<string, ITensor> { ["x"] = ScalarInput(2f) };
+        Assert.True(graph.Execute(feed, true), graph.LastErrorMessage);
+        var got = ((Tensor<float>)graph.Outputs["y"]).ToArray();
+        Assert.Single(got);
+        Assert.Equal(2.9959502f, got[0], 5);
+    }
+
     [Fact]
     public void BiasGelu_ReversedInputMatchesLegacy()
     {
