@@ -69,6 +69,18 @@ public class ConvBlockedTests
     }
 
     [Fact]
+    public void EdgeRowsAndRemainders_Agree()
+    {
+        Case(32, 3, 200, 32, true, false);
+        Case(32, 80, 9, 32, true, false);
+        Case(32, 80, 10, 32, true, false);
+        Case(32, 80, 11, 32, true, false);
+        Case(64, 4, 100, 64, true, false);
+        Case(32, 80, 200, 64, true, true);
+        Case(32, 5, 33, 32, false, false);
+    }
+
+    [Fact]
     public void BiasAndRelu_Agree()
     {
         Case(32, 32, 32, 32, false, false);
