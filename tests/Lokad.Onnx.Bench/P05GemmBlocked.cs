@@ -84,6 +84,51 @@ static class P05GemmBlocked
         }
         return c;
     }
+    // P05/M2 prototype: M=1 GEMV over row-major weights, outside the product.
+    // c[k] = sum_n a[n] * b[n*K+k]; n-outer streams B once while the vector
+    // accumulators stay resident. Weights are pre-cast to a vector span once
+    // per row so FMAs pay no per-lane bounds checks. Zero-init only (the m1
+    // product kernel already owns accumulate semantics). Float order differs
+    // from the reference MatMul, so agreement uses the 1e-4 maxScaled gate on
+    // finite values, same contract as CheckGemm above.
+    internal static float[] MmRowGemv(float[] a, float[] b, int N, int K)
+    {
+        var c = new float[K];
+        int step = Vector<float>.Count;
+        int kV = K / step * step;
+        var acc = new Vector<float>[Math.Max(1, kV / step)];
+        for (int n = 0; n < N; n++)
+        {
+            var x = new Vector<float>(a[n]);
+            var bv = MemoryMarshal.Cast<float, Vector<float>>(b.AsSpan(n * K, kV));
+            for (int v = 0; v < bv.Length; v++)
+                acc[v] = Vector.FusedMultiplyAdd(bv[v], x, acc[v]);
+            for (int k = kV; k < K; k++)
+                c[k] += a[n] * b[n * K + k];
+        }
+        for (int k = 0; k < kV; k += step)
+            acc[k / step].CopyTo(c, k);
+        return c;
+    }
+    static int CheckRowGemv(string name, int N, int K, int seed)
+    {
+        var rnd = new Random(seed);
+        float[] a = RandG(N, rnd);
+        float[] b = RandG(N * K, rnd);
+        var da = DenseTensor<float>.OfValues(a.AsSpan(), new int[] { 1, N });
+        var db = DenseTensor<float>.OfValues(b.AsSpan(), new int[] { N, K });
+        float[] refer = Tensor<float>.MatMul(da, db).ToDenseTensor().Buffer.ToArray();
+        float[] cand = MmRowGemv(a, b, N, K);
+        double worst = 0;
+        for (int i = 0; i < refer.Length; i++)
+        {
+            double ds = Math.Abs(cand[i] - refer[i]) / (1.0 + Math.Abs(refer[i]));
+            if (ds > worst) worst = ds;
+        }
+        bool ok = worst <= 1e-4;
+        Console.WriteLine("case " + name + ": maxScaled=" + worst.ToString("E2") + (ok ? " PASS" : " FAIL"));
+        return ok ? 0 : 1;
+    }
     static float[] RandG(int n, Random rnd)
     {
         var a = new float[n];
@@ -122,13 +167,23 @@ static class P05GemmBlocked
             }
             return RunBench(reps);
         }
+        if (args.Length >= 1 && args[0] == "rowbench")
+        {
+            int rowReps = 9;
+            for (int i = 1; i < args.Length; i++)
+            {
+                if (args[i] == "--reps" && i + 1 < args.Length && int.TryParse(args[i + 1], out int kr) && kr >= 1) { rowReps = kr; i++; }
+                else { Console.WriteLine("usage: Bench gemmblock rowbench [--reps K]"); return 2; }
+            }
+            return RunRowBench(rowReps);
+        }
         if (args.Length == 1 && args[0] == "stride")
         {
             return StrideTwin();
         }
         if (args.Length != 1 || args[0] != "verify")
         {
-            Console.WriteLine("usage: Bench gemmblock verify|bench|stride");
+            Console.WriteLine("usage: Bench gemmblock verify|bench|stride|rowbench");
             return 2;
         }
         int rc = 0;
@@ -138,6 +193,11 @@ static class P05GemmBlocked
         rc |= CheckGemm("gpt2-32tok-mlp", 32, 768, 3072, 104);
         rc |= CheckGemm("gpt2-8tok-mlp", 8, 768, 3072, 105);
         rc |= CheckGemm("tail-6x100x70", 6, 100, 70, 106);
+        rc |= CheckRowGemv("row-gpt2-qkv", 768, 2304, 201);
+        rc |= CheckRowGemv("row-gpt2-mlp-fc", 768, 3072, 202);
+        rc |= CheckRowGemv("row-gpt2-mlp-proj", 3072, 768, 203);
+        rc |= CheckRowGemv("row-e5-1x384x1536", 384, 1536, 204);
+        rc |= CheckRowGemv("row-tail-1x100x70", 100, 70, 205);
         Console.WriteLine(rc == 0 ? "gemmblock verify: all cases agree." : "gemmblock verify: FAILED.");
         return rc;
     }
@@ -171,6 +231,37 @@ static class P05GemmBlocked
         BenchShape("e5-128tok-mlp", 128, 384, 1536, reps);
         BenchShape("gpt2-32tok-mlp", 32, 768, 3072, reps);
         BenchShape("e5-512tok-mlp", 512, 384, 1536, reps);
+        return 0;
+    }
+    static void BenchRow(string name, int N, int K, int reps)
+    {
+        var rnd = new Random(999);
+        float[] a = RandG(N, rnd);
+        float[] b = RandG(N * K, rnd);
+        var da = DenseTensor<float>.OfValues(a.AsSpan(), new int[] { 1, N });
+        var db = DenseTensor<float>.OfValues(b.AsSpan(), new int[] { N, K });
+        Tensor<float>.MatMul(da, db);
+        MmRowGemv(a, b, N, K);
+        var tR = new double[reps];
+        var tB = new double[reps];
+        var sw = new System.Diagnostics.Stopwatch();
+        for (int r = 0; r < reps; r++)
+        {
+            sw.Restart(); Tensor<float>.MatMul(da, db); sw.Stop(); tR[r] = sw.Elapsed.TotalMilliseconds;
+            sw.Restart(); MmRowGemv(a, b, N, K); sw.Stop(); tB[r] = sw.Elapsed.TotalMilliseconds;
+        }
+        Array.Sort(tR);
+        Array.Sort(tB);
+        Console.WriteLine(name + " ref best=" + tR[0].ToString("F2") + "ms median=" + tR[reps / 2].ToString("F2") + "ms");
+        Console.WriteLine(name + " gemv best=" + tB[0].ToString("F2") + "ms median=" + tB[reps / 2].ToString("F2") + "ms");
+    }
+    static int RunRowBench(int reps)
+    {
+        Console.WriteLine("hardware: VectorCount=" + Vector<float>.Count + " accelerated=" + Vector.IsHardwareAccelerated);
+        BenchRow("gpt2-decode-qkv", 768, 2304, reps);
+        BenchRow("gpt2-decode-mlp-fc", 768, 3072, reps);
+        BenchRow("gpt2-decode-mlp-proj", 3072, 768, reps);
+        BenchRow("e5-1x384x1536", 384, 1536, reps);
         return 0;
     }
     static int StrideTwin()
