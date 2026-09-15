@@ -48,6 +48,10 @@ static class Bench
         {
             return GeluEvidence.RunGelu(root, args.Skip(1).ToArray());
         }
+        if (args.Length > 0 && args[0] == "gemmblock")
+        {
+            return P05GemmBlocked.RunGemmBlock(args.Skip(1).ToArray());
+        }
         if (args.Length > 0 && args[0] == "micro")
         {
             int microCpu = 0;
