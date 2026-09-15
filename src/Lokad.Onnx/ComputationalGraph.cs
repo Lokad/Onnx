@@ -1169,6 +1169,7 @@ public class ComputationalGraph
     /// intermediates map to their producer index. Inert: no execution state changes.</remarks>
     public void RefreshLifetimeAnalysis()
     {
+        GraphConstants.FoldLiteralConstants(this);
         FoldConstantTransposes();
         GraphPacking.PackMatMulWeights(this);
         GraphPacking.PrepareLstmWeights(this);
