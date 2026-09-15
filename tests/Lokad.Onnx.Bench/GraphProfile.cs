@@ -196,7 +196,7 @@ internal static class GraphProfile
             }
             ownedTraces.Add(landed);
             ownedTraces.Add(traceFile);
-            double ortNodes = AggregateOrtTrace(traceFile, ortOps);
+            double ortNodes = AggregateOrtTrace(traceFile, ortOps, reps);
             var doc = new
             {
                 kase,
@@ -331,15 +331,17 @@ internal static class GraphProfile
         return (total, wall.Elapsed.TotalMilliseconds);
     }
 
-    static double AggregateOrtTrace(string traceFile, Dictionary<string, double> ops)
+    static double AggregateOrtTrace(string traceFile, Dictionary<string, double> ops, int reps)
     {
         using var doc = JsonDocument.Parse(File.ReadAllText(traceFile));
         var events = doc.RootElement.ValueKind == JsonValueKind.Array
             ? doc.RootElement
             : doc.RootElement.GetProperty("traceEvents");
         int skipped = 0;
+        int modelRuns = 0;
         foreach (var el in events.EnumerateArray())
         {
+            if (el.TryGetProperty("name", out var mrEl) && mrEl.GetString() == "model_run") modelRuns++;
             if (!el.TryGetProperty("cat", out var kindEl) || kindEl.GetString() != "Node") { skipped++; continue; }
             if (!el.TryGetProperty("dur", out var durEl) || durEl.GetDouble() <= 0) { skipped++; continue; }
             string op = UnknownOp;
@@ -354,16 +356,20 @@ internal static class GraphProfile
         }
         double priced = 0;
         foreach (var v in ops.Values) priced += v;
-        Console.WriteLine("ort trace " + Path.GetFileName(traceFile) + ": priced " + ops.Count + " op families, skipped " + skipped + " events.");
+        Console.WriteLine("ort trace " + Path.GetFileName(traceFile) + ": priced " + ops.Count + " op families, skipped " + skipped + " events, model_runs=" + modelRuns + " (reps=" + reps + ").");
+        if (modelRuns != reps)
+            throw new InvalidOperationException("ORT trace holds " + modelRuns + " model_run events, expected " + reps + "; the profiled session observed a stray run.");
         return priced;
     }
 
     static void SweepStrayTraces(DateTime startedUtc, string outDir, string kase, List<string> owned)
     {
-        // Ownership rule: this process removes only files it can prove are its own
-        // byproducts. Recorded EndProfiling identities are exact. Anything else we
-        // touch must sit in our output directory under our case prefix and have been
-        // born during this run (ORT emits a near-empty trace on session dispose).
+        // Ownership rule: recorded EndProfiling identities are exact and always kept.
+        // Anything else under our case prefix is deleted only when it is provably a
+        // dispose-time byproduct: born during this run AND holding zero Node events
+        // (ORT emits a near-empty trace on session dispose). A same-prefix file with
+        // real Node content is a foreign run sharing our directory: kept with a loud
+        // warning, never priced, never deleted. Creation time alone proves nothing.
         // Working-directory traces are only reported, never deleted: a concurrent
         // process may own them, and creation time cannot tell owners apart.
         var keep = new HashSet<string>(owned, StringComparer.OrdinalIgnoreCase);
@@ -373,8 +379,10 @@ internal static class GraphProfile
             try
             {
                 if (keep.Contains(f)) continue;
-                if (File.GetCreationTimeUtc(f) >= startedUtc) File.Delete(f);
-                else Console.WriteLine("stray-trace kept (predates run): " + f);
+                bool bornHere = File.GetCreationTimeUtc(f) >= startedUtc;
+                int nodes = bornHere ? CountNodeEvents(f) : -1;
+                if (bornHere && nodes == 0) { File.Delete(f); Console.WriteLine("stray-trace removed (empty dispose byproduct): " + f); }
+                else Console.WriteLine("stray-trace kept (unowned content, nodes=" + nodes + "): " + f);
             }
             catch (Exception ex) { Console.WriteLine("stray-trace sweep skipped " + f + ": " + ex.GetType().Name); }
         }
@@ -387,6 +395,19 @@ internal static class GraphProfile
             }
             catch (Exception ex) { Console.WriteLine("stray-trace sweep skipped " + f + ": " + ex.GetType().Name); }
         }
+    }
+
+    static int CountNodeEvents(string path)
+    {
+        using var doc = JsonDocument.Parse(File.ReadAllText(path));
+        var events = doc.RootElement.ValueKind == JsonValueKind.Array
+            ? doc.RootElement
+            : (doc.RootElement.TryGetProperty("traceEvents", out var te) ? te : default);
+        if (events.ValueKind != JsonValueKind.Array) return -1;
+        int n = 0;
+        foreach (var el in events.EnumerateArray())
+            if (el.TryGetProperty("cat", out var kindEl) && kindEl.GetString() == "Node") n++;
+        return n;
     }
 
     const string UnknownOp = "(unknown)";
