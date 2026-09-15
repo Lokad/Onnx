@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.X86;
 
 namespace Lokad.Onnx.Backend.Tests;
 
@@ -47,30 +48,34 @@ public class ConvBlockedTests
         Assert.True(worst <= 1e-4, "c=" + c + " h=" + h + " w=" + w + " m=" + m + " bias=" + bias + " relu=" + relu + " worst=" + worst.ToString("E2"));
     }
 
-    [Fact]
+    [SkippableFact]
     public void ProbeShape_Agrees()
     {
+        Skip.If(!Avx512F.IsSupported, "Blocked kernel needs AVX512F.");
         Case(32, 80, 200, 32, true, false);
     }
 
-    [Fact]
+    [SkippableFact]
     public void EmbeddingShapes_Agree()
     {
+        Skip.If(!Avx512F.IsSupported, "Blocked kernel needs AVX512F.");
         Case(64, 48, 96, 64, true, false);
         Case(128, 24, 40, 128, true, false);
         Case(256, 12, 20, 256, true, false);
     }
 
-    [Fact]
+    [SkippableFact]
     public void OddWidth_RemainderAgrees()
     {
+        Skip.If(!Avx512F.IsSupported, "Blocked kernel needs AVX512F.");
         Case(32, 80, 201, 32, true, false);
         Case(32, 7, 13, 32, true, false);
     }
 
-    [Fact]
+    [SkippableFact]
     public void EdgeRowsAndRemainders_Agree()
     {
+        Skip.If(!Avx512F.IsSupported, "Blocked kernel needs AVX512F.");
         Case(32, 3, 200, 32, true, false);
         Case(32, 80, 9, 32, true, false);
         Case(32, 80, 10, 32, true, false);
@@ -80,9 +85,10 @@ public class ConvBlockedTests
         Case(32, 5, 33, 32, false, false);
     }
 
-    [Fact]
+    [SkippableFact]
     public void BiasAndRelu_Agree()
     {
+        Skip.If(!Avx512F.IsSupported, "Blocked kernel needs AVX512F.");
         Case(32, 32, 32, 32, false, false);
         Case(32, 32, 32, 32, true, true);
         Case(32, 32, 32, 32, false, true);
