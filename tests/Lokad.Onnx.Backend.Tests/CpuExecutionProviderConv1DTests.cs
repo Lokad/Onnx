@@ -175,6 +175,146 @@ public class CpuExecutionProviderConv1DTests
         Assert.Equal(((Tensor<float>)rf.Outputs![0]).ToArray(), ((Tensor<double>)rd.Outputs![0]).ToArray().Select(v => (float)v).ToArray());
     }
 
+    // Independent naive oracle: direct gather-multiply loops over the
+    // rank-three layout, sharing no indexing formula with the
+    // unsqueeze-to-2D adapter under test.
+    static float[] NaiveConv1D(float[] x, int n, int c, int l, float[] w, int m, int cg, int k, float[]? b, int s, int d, int padL, int padR, bool relu, out int outL)
+    {
+        int effK = (k - 1) * d + 1;
+        outL = (l + padL + padR - effK) / s + 1;
+        int mPerGroup = m / NumGroups(m, c, cg);
+        var y = new float[n * m * outL];
+        for (int nn = 0; nn < n; nn++)
+            for (int mm = 0; mm < m; mm++)
+                for (int o = 0; o < outL; o++)
+                {
+                    float acc = b is null ? 0f : b[mm];
+                    int g = mm / mPerGroup;
+                    for (int cc = 0; cc < cg; cc++)
+                        for (int kk = 0; kk < k; kk++)
+                        {
+                            int pos = o * s - padL + kk * d;
+                            if (pos < 0 || pos >= l) continue;
+                            acc += x[(nn * c + g * cg + cc) * l + pos] * w[(mm * cg + cc) * k + kk];
+                        }
+                    if (relu && acc < 0f) acc = 0f;
+                    y[(nn * m + mm) * outL + o] = acc;
+                }
+        return y;
+    }
+
+    static int NumGroups(int m, int c, int cg) => c / cg;
+
+    static void AgreeNaive(string what, int n, int c, int l, int m, int cg, int k, int s, int d, int padL, int padR, bool bias, bool relu, int group)
+    {
+        var rnd = new Random(1234 + n * 100000 + m * 1000 + l);
+        var xv = new float[n * c * l];
+        var wv = new float[m * cg * k];
+        for (int i = 0; i < xv.Length; i++) xv[i] = (float)(rnd.NextDouble() * 2 - 1);
+        for (int i = 0; i < wv.Length; i++) wv[i] = (float)(rnd.NextDouble() * 2 - 1);
+        float[]? bv = bias ? new float[m] : null;
+        if (bv is not null) for (int i = 0; i < m; i++) bv[i] = (float)(rnd.NextDouble() * 2 - 1);
+        var x = FT(xv, n, c, l);
+        var w = FT(wv, m, cg, k);
+        Tensor<float>? b = bv is null ? null : FT(bv, m);
+        var r = CPU.Conv(x, w, b, null, new[] { d }, group, new[] { k }, new[] { padL, padR }, new[] { s }, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        var y = (Tensor<float>)r.Outputs![0];
+        var expected = NaiveConv1D(xv, n, c, l, wv, m, cg, k, bv, s, d, padL, padR, false, out int outL);
+        Assert.Equal(new[] { n, m, outL }, y.Dimensions.ToArray());
+        AssertNear(y.ToArray(), expected, what);
+        if (relu)
+        {
+            var rr = CPU.Conv(x, w, b, null, new[] { d }, group, new[] { k }, new[] { padL, padR }, new[] { s }, null, true);
+            Assert.Equal(OpStatus.Success, rr.Status);
+            var ry = (Tensor<float>)rr.Outputs![0];
+            var rexp = NaiveConv1D(xv, n, c, l, wv, m, cg, k, bv, s, d, padL, padR, true, out _);
+            AssertNear(ry.ToArray(), rexp, what + "-relu");
+        }
+    }
+
+    [Fact]
+    public void ConvNaive_PointwiseMatches() => AgreeNaive("naive-pointwise", 1, 4, 5, 6, 4, 1, 1, 1, 0, 0, true, false, 1);
+
+    [Fact]
+    public void ConvNaive_SegLikeMatches() => AgreeNaive("naive-seglike", 1, 4, 32, 3, 4, 5, 1, 1, 0, 0, true, false, 1);
+
+    [Fact]
+    public void ConvNaive_StridedMatches() => AgreeNaive("naive-strided", 1, 2, 16, 3, 2, 3, 2, 1, 0, 0, true, true, 1);
+
+    [Fact]
+    public void ConvNaive_AsymmetricPadsMatches() => AgreeNaive("naive-asympad", 1, 2, 9, 2, 2, 3, 1, 1, 2, 0, false, false, 1);
+
+    [Fact]
+    public void ConvNaive_DilatedMatches() => AgreeNaive("naive-dilated", 1, 2, 12, 2, 2, 3, 1, 2, 1, 1, true, false, 1);
+
+    [Fact]
+    public void ConvNaive_GroupedMatches() => AgreeNaive("naive-grouped", 1, 4, 8, 4, 2, 3, 1, 1, 0, 0, true, false, 2);
+
+    [Fact]
+    public void ConvNaive_BatchedMatches() => AgreeNaive("naive-batched", 2, 3, 10, 4, 3, 3, 1, 1, 1, 1, true, true, 1);
+
+    [Fact]
+    public void ConvNaive_AutoPadModesMatchSpec()
+    {
+        // Spec-literal pads: SAME_UPPER splits extra to the end,
+        // SAME_LOWER to the begin, VALID pads nothing.
+        var x = FT(Range(0.5f, 0.5f, 14), 1, 2, 7);
+        var w = FT(Range(-1.25f, 0.25f, 12), 2, 2, 3);
+        foreach (string mode in new[] { "SAME_UPPER", "SAME_LOWER", "VALID" })
+        {
+            var r = CPU.Conv(x, w, null, mode, new[] { 1 }, 1, new[] { 3 }, null, new[] { 2 }, null);
+            Assert.Equal(OpStatus.Success, r.Status);
+            var y = (Tensor<float>)r.Outputs![0];
+            int effK = 3, s = 2, l = 7;
+            int outL, padL, padR;
+            if (mode == "VALID") { padL = 0; padR = 0; outL = (l - effK) / s + 1; }
+            else
+            {
+                outL = (l + s - 1) / s;
+                int need = System.Math.Max(0, (outL - 1) * s + effK - l);
+                if (mode == "SAME_UPPER") { padL = need / 2; padR = need - padL; }
+                else { padR = need / 2; padL = need - padR; }
+            }
+            var expected = NaiveConv1D(x.ToArray(), 1, 2, 7, w.ToArray(), 2, 2, 3, null, s, 1, padL, padR, false, out int nl);
+            Assert.Equal(outL, nl);
+            Assert.Equal(new[] { 1, 2, outL }, y.Dimensions.ToArray());
+            AssertNear(y.ToArray(), expected, "conv-autopad-" + mode);
+        }
+    }
+
+    [Fact]
+    public void ConvNaive_DoubleBitMatchesFloatOnInts()
+    {
+        var xf = FT(new float[] { 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f }, 1, 2, 4);
+        var wf = FT(new float[] { 1f, 0f, -1f, 2f }, 2, 2, 1);
+        var rf = CPU.Conv(xf, wf, null, null, new[] { 1 }, 1, new[] { 1 }, new[] { 1, 0 }, new[] { 1 }, null);
+        Assert.Equal(OpStatus.Success, rf.Status);
+        var xd = new DenseTensor<double>(new double[] { 1, 2, 3, 4, 5, 6, 7, 8 }, new[] { 1, 2, 4 });
+        var wd = new DenseTensor<double>(new double[] { 1, 0, -1, 2 }, new[] { 2, 2, 1 });
+        var rd = CPU.Conv(xd, wd, null, null, new[] { 1 }, 1, new[] { 1 }, new[] { 1, 0 }, new[] { 1 }, null);
+        Assert.Equal(OpStatus.Success, rd.Status);
+        Assert.Equal(((Tensor<float>)rf.Outputs![0]).ToArray(), ((Tensor<double>)rd.Outputs![0]).ToArray().Select(v => (float)v).ToArray());
+    }
+
+    [Fact]
+    public void Conv1D_BadStrideRank_Fails()
+    {
+        var x = FT(Range(0.5f, 0.5f, 20), 1, 4, 5);
+        var w = FT(Range(-2.75f, 0.25f, 24), 6, 4, 1);
+        var r = CPU.Conv(x, w, null, null, new[] { 1 }, 1, new[] { 1 }, new[] { 0, 0 }, new[] { 1, 1 }, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
+    [Fact]
+    public void Conv1D_BadDilationRank_Fails()
+    {
+        var x = FT(Range(0.5f, 0.5f, 20), 1, 4, 5);
+        var w = FT(Range(-2.75f, 0.25f, 24), 6, 4, 1);
+        var r = CPU.Conv(x, w, null, null, new[] { 1, 1 }, 1, new[] { 1 }, new[] { 0, 0 }, new[] { 1 }, null);
+        Assert.Equal(OpStatus.Failure, r.Status);
+    }
+
     [Fact]
     public void Pool1D_MissingKernel_Fails()
     {

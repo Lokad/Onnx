@@ -28,10 +28,12 @@ public partial class CPUExecutionProvider
         if (X.Rank == 3)
         {
             // One-dimensional convolution rides the two-dimensional
-            // machinery: normalize [N,C,L] inputs to [N,C,L,1] (and likewise
-            // weights plus every spatial attribute), run the proven 2D path,
-            // then drop the trailing size-1 dimension. Unsqueeze aliases
-            // storage, so only the final squeeze may densify.
+            // machinery width-first: normalize [N,C,L] inputs to [N,C,1,L]
+            // (and likewise weights plus every spatial attribute), run the
+            // proven 2D path, then drop the size-1 height axis. The long
+            // axis stays contiguous, so the patch gather copies runs
+            // instead of striding; Unsqueeze aliases storage, so only the
+            // final squeeze may densify.
             if (W.Rank != 3)
             {
                 return WrongInputShape(op, nameof(W), 3, W);
@@ -59,17 +61,17 @@ public partial class CPUExecutionProvider
             {
                 return Success(op, dwConv);
             }
-            var xu = Unsqueeze(X, new[] { 3 }, options);
+            var xu = Unsqueeze(X, new[] { 2 }, options);
             if (xu.Status != OpStatus.Success) return xu;
-            var wu = Unsqueeze(W, new[] { 3 }, options);
+            var wu = Unsqueeze(W, new[] { 2 }, options);
             if (wu.Status != OpStatus.Success) return wu;
-            int[]? ks4 = kernel_shape is null ? null : new[] { kernel_shape[0], 1 };
-            int[]? st4 = strides is null ? null : new[] { strides[0], 1 };
-            int[]? di4 = dilations is null ? null : new[] { dilations[0], 1 };
-            int[]? pa4 = pads is null ? null : new[] { pads[0], 0, pads[1], 0 };
+            int[]? ks4 = kernel_shape is null ? null : new[] { 1, kernel_shape[0] };
+            int[]? st4 = strides is null ? null : new[] { 1, strides[0] };
+            int[]? di4 = dilations is null ? null : new[] { 1, dilations[0] };
+            int[]? pa4 = pads is null ? null : new[] { 0, pads[0], 0, pads[1] };
             var c = ConvCore(xu.Outputs[0], wu.Outputs[0], B, auto_pad, di4, group, ks4, pa4, st4, options, fuseRelu);
             if (c.Status != OpStatus.Success) return c;
-            var s = Squeeze(c.Outputs[0], new DenseTensor<long>(new long[] { 3 }, new[] { 1 }), options);
+            var s = Squeeze(c.Outputs[0], new DenseTensor<long>(new long[] { 2 }, new[] { 1 }), options);
             s.Op = op;
             return s;
         }
@@ -135,7 +137,8 @@ public partial class CPUExecutionProvider
         if (X.Rank == 3)
         {
             // One-dimensional pooling rides the two-dimensional machinery
-            // exactly like one-dimensional convolution above.
+            // with a trailing singleton axis (unlike convolution above,
+            // which runs width-first); pooling semantics are unchanged.
             if (kernel_shape is not null && kernel_shape.Length != 1)
             {
                 return AttributeNotSupported(op, "kernel_shape", kernel_shape.Print(), "One-dimensional kernel_shape must hold one value.");

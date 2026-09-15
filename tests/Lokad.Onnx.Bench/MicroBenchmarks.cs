@@ -605,6 +605,12 @@ public class TensorOpBenchmarks
         cv_stem_w = Tensor<float>.Rand(64, 3, 7, 7);
         cv_33_x = Tensor<float>.Rand(1, 64, 28, 28);
         cv_33_w = Tensor<float>.Rand(64, 64, 3, 3);
+        cv1d_a_x = Tensor<float>.Rand(1, 80, 5325);
+        cv1d_a_w = Tensor<float>.Rand(60, 80, 5);
+        cv1d_b_x = Tensor<float>.Rand(1, 60, 1773);
+        cv1d_b_w = Tensor<float>.Rand(60, 60, 5);
+        cv1d_c_x = Tensor<float>.Rand(1, 1, 16000);
+        cv1d_c_w = Tensor<float>.Rand(80, 1, 251);
         gm_a = Tensor<float>.Rand(4, 768);
         gm_b = Tensor<float>.Rand(768, 2304);
         gm_c = Tensor<float>.Rand(2304);
@@ -724,6 +730,18 @@ public class TensorOpBenchmarks
     [BenchmarkCategory("conv")]
     public void ConvStage() => CPUExecutionProvider.Conv(cv_33_x, cv_33_w, null, null, null, 1, new[] { 3, 3 }, new[] { 1, 1, 1, 1 }, new[] { 1, 1 }, null);
 
+    [Benchmark(Description = "Conv1D 5x1 s1 over 1x80x5325 (seg sinc block)")]
+    [BenchmarkCategory("conv1d")]
+    public void Conv1DSegA() => CPUExecutionProvider.Conv(cv1d_a_x, cv1d_a_w, null, null, new[] { 1 }, 1, new[] { 5 }, new[] { 0, 0 }, new[] { 1 }, null);
+
+    [Benchmark(Description = "Conv1D 5x1 s1 over 1x60x1773 (seg conv block)")]
+    [BenchmarkCategory("conv1d")]
+    public void Conv1DSegB() => CPUExecutionProvider.Conv(cv1d_b_x, cv1d_b_w, null, null, new[] { 1 }, 1, new[] { 5 }, new[] { 0, 0 }, new[] { 1 }, null);
+
+    [Benchmark(Description = "Conv1D 251x1 s10 over 1x1x16000 (seg sinc front)")]
+    [BenchmarkCategory("conv1d")]
+    public void Conv1DSegC() => CPUExecutionProvider.Conv(cv1d_c_x, cv1d_c_w, null, null, new[] { 1 }, 1, new[] { 251 }, new[] { 0, 0 }, new[] { 10 }, null);
+
     [Benchmark(Description = "Gemm 4x768 @ 768x2304 + bias (GPT-2 c_attn)")]
     [BenchmarkCategory("gemm")]
     public void GemmAttn() => CPUExecutionProvider.Gemm(gm_a, gm_b, gm_c, 1f, 1f, null, 0, 0);
@@ -754,11 +772,19 @@ public class TensorOpBenchmarks
         CheckTranspose(rnd);
         CheckConcat(rnd);
         CheckConv(rnd);
+        CheckConv1D(rnd);
         CheckGemm(rnd);
         CheckTanh(rnd);
         CheckSplit(rnd);
         CheckGap(rnd);
         Console.WriteLine("TensorOp agreement done.");
+    }
+
+    static void CheckConv1D(Random rnd)
+    {
+        var x = Seeded(new[] { 1, 2, 12 }, rnd, 1.0);
+        var w = Seeded(new[] { 3, 2, 5 }, rnd, 1.0);
+        CheckProvider("conv1d", opt => CPUExecutionProvider.Conv(x, w, null, null, new[] { 1 }, 1, new[] { 5 }, new[] { 0, 0 }, new[] { 1 }, opt));
     }
 
     static Tensor<float> Seeded(int[] dims, Random rnd, double scale)
@@ -959,6 +985,12 @@ public class TensorOpBenchmarks
     Tensor<float> cv_stem_w = Tensor<float>.Zeros(0);
     Tensor<float> cv_33_x = Tensor<float>.Zeros(0);
     Tensor<float> cv_33_w = Tensor<float>.Zeros(0);
+    Tensor<float> cv1d_a_x = Tensor<float>.Zeros(0);
+    Tensor<float> cv1d_a_w = Tensor<float>.Zeros(0);
+    Tensor<float> cv1d_b_x = Tensor<float>.Zeros(0);
+    Tensor<float> cv1d_b_w = Tensor<float>.Zeros(0);
+    Tensor<float> cv1d_c_x = Tensor<float>.Zeros(0);
+    Tensor<float> cv1d_c_w = Tensor<float>.Zeros(0);
     Tensor<float> gm_a = Tensor<float>.Zeros(0);
     Tensor<float> gm_b = Tensor<float>.Zeros(0);
     Tensor<float> gm_c = Tensor<float>.Zeros(0);
