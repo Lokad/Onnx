@@ -36,8 +36,9 @@ public partial class CPUExecutionProvider
 
     /// <summary>
     /// Bias-add fused with exact GELU: runs the single-pass span kernel when
-    /// the data is dense float32 with a rank-one float bias matching the last
-    /// dimension, else the legacy two-step path with identical values. Bitwise
+    /// the data is dense float32 in standard row-major layout with a rank-one
+    /// float bias matching the last dimension, else the legacy two-step path
+    /// with identical values (reversed layouts must not reach the pointer kernel). Bitwise
     /// identity on the hot path holds by construction (identical add, then the
     /// identical erf call and combine order per element).
     /// </summary>
@@ -48,7 +49,9 @@ public partial class CPUExecutionProvider
         if (Bias is null) return MissingInput(op, nameof(Bias));
         var opts = (options ?? ExecutionOptions.Default).Validated();
         if (X.ElementType == TensorElementType.Float && Bias.ElementType == TensorElementType.Float
-            && X is DenseTensor<float> xd && xd.Buffer.Length == (int)xd.Length
+            && X is DenseTensor<float> xd && !xd.IsReversedStride
+            && xd.strides.SequenceEqual(ArrayUtilities.GetStrides(xd.dimensions))
+            && xd.Buffer.Length == (int)xd.Length
             && Bias is DenseTensor<float> bd && bd.Rank == 1 && bd.Buffer.Length == (int)bd.Length)
         {
             int lastDim = xd.Dimensions[^1];
