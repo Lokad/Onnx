@@ -107,6 +107,10 @@ internal static class GraphProfile
             var lokOps = new Dictionary<string, double>(StringComparer.Ordinal);
             double lokTotal = 0;
             double lokWall = 0;
+            var repLokad = new List<double>();
+            var repLokadWall = new List<double>();
+            var repOrt = new List<double>();
+            var repLokadOps = new List<Dictionary<string, double>>();
             var ortOps = new Dictionary<string, double>(StringComparer.Ordinal);
             double ortTotal = 0;
             var sw = new System.Diagnostics.Stopwatch();
@@ -115,19 +119,37 @@ internal static class GraphProfile
             {
                 if (r % 2 == 0)
                 {
-                    var lok = ProfileLokad(graph, named, opts, lokStages, lokOps, lokNodes, lokNodeOps);
+                    var repStages = new Dictionary<string, double>(StringComparer.Ordinal);
+                    var repOps = new Dictionary<string, double>(StringComparer.Ordinal);
+                    var repNodes = new Dictionary<long, double>();
+                    var repNodeOps = new Dictionary<long, string>();
+                    var lok = ProfileLokad(graph, named, opts, repStages, repOps, repNodes, repNodeOps);
+                    MergeProfile(repStages, repOps, repNodes, repNodeOps, lokStages, lokOps, lokNodes, lokNodeOps);
                     lokTotal += lok.nodeMs;
                     lokWall += lok.wallMs;
+                    repLokad.Add(lok.nodeMs);
+                    repLokadWall.Add(lok.wallMs);
+                    repLokadOps.Add(repOps);
                     sw.Restart(); using (var o = session.Run(ro, ortInputs, outNames)) { sw.Stop(); }
                     ortTotal += sw.Elapsed.TotalMilliseconds;
+                    repOrt.Add(sw.Elapsed.TotalMilliseconds);
                 }
                 else
                 {
                     sw.Restart(); using (var o = session.Run(ro, ortInputs, outNames)) { sw.Stop(); }
                     ortTotal += sw.Elapsed.TotalMilliseconds;
-                    var lok = ProfileLokad(graph, named, opts, lokStages, lokOps, lokNodes, lokNodeOps);
+                    repOrt.Add(sw.Elapsed.TotalMilliseconds);
+                    var repStages = new Dictionary<string, double>(StringComparer.Ordinal);
+                    var repOps = new Dictionary<string, double>(StringComparer.Ordinal);
+                    var repNodes = new Dictionary<long, double>();
+                    var repNodeOps = new Dictionary<long, string>();
+                    var lok = ProfileLokad(graph, named, opts, repStages, repOps, repNodes, repNodeOps);
+                    MergeProfile(repStages, repOps, repNodes, repNodeOps, lokStages, lokOps, lokNodes, lokNodeOps);
                     lokTotal += lok.nodeMs;
                     lokWall += lok.wallMs;
+                    repLokad.Add(lok.nodeMs);
+                    repLokadWall.Add(lok.wallMs);
+                    repLokadOps.Add(repOps);
                 }
             }
             var mem = new
@@ -164,6 +186,10 @@ internal static class GraphProfile
                 model,
                 reps,
                 gateScaled = gate.scaled,
+                repLokadMs = repLokad.ToArray(),
+                repOrtMs = repOrt.ToArray(),
+                repLokadWallMs = repLokadWall.ToArray(),
+                repLokadPerOp = repLokadOps.Select(d => d.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value)).ToArray(),
                 memory = mem,
                 lokad = new { totalMs = lokTotal, wallMs = lokWall,
                     nodes = lokNodes.OrderByDescending(kv => kv.Value).Select(kv => new { id = kv.Key, op = lokNodeOps[kv.Key], ms = kv.Value }).ToArray(), perOp = lokOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), stages = lokStages.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value) },
@@ -177,6 +203,7 @@ internal static class GraphProfile
             Console.WriteLine("--- ort per-op ms (trace, " + reps + " reps) ---");
             foreach (var kv in ortOps.OrderByDescending(kv => kv.Value).Take(12))
                 Console.WriteLine("  " + kv.Key + "=" + kv.Value.ToString("F1"));
+            Console.WriteLine("reps lokad=[" + string.Join(",", repLokad.Select(v => v.ToString("F1"))) + "] ort=[" + string.Join(",", repOrt.Select(v => v.ToString("F1"))) + "]");
             Console.WriteLine("totals: lokad nodes=" + lokTotal.ToString("F1") + " wall=" + lokWall.ToString("F1") + "; ort nodes=" + ortNodes.ToString("F1") + " wall=" + ortTotal.ToString("F1"));
             Console.WriteLine("memory: peakLive=" + mem.peakLiveBytes + " poolPeakOut=" + mem.poolPeakOutstandingBytes + " scratch=" + mem.scratchBytes + " copy=" + mem.copyBytes + " retainedPacks=" + mem.retainedPackedWeightBytes + " allocMB=" + (mem.allocatedBytes / 1000000.0).ToString("F1"));
             Console.WriteLine("profile wrote " + Path.Combine(outDir, kase + "-profile.json"));
@@ -194,6 +221,15 @@ internal static class GraphProfile
     static string Gpt2Model(string root) => Path.Combine(root, "models", "gpt2-onnx", "onnx", "model.onnx");
 
     static string E5Long(string root) => "query: " + string.Join(" ", Enumerable.Repeat(global::Bench.E5Sentence, 40));
+
+    static void MergeProfile(Dictionary<string, double> stages, Dictionary<string, double> ops, Dictionary<long, double> nodes, Dictionary<long, string> nodeOps,
+        Dictionary<string, double> allStages, Dictionary<string, double> allOps, Dictionary<long, double> allNodes, Dictionary<long, string> allNodeOps)
+    {
+        foreach (var kv in stages) allStages[kv.Key] = allStages.TryGetValue(kv.Key, out var a) ? a + kv.Value : kv.Value;
+        foreach (var kv in ops) allOps[kv.Key] = allOps.TryGetValue(kv.Key, out var b) ? b + kv.Value : kv.Value;
+        foreach (var kv in nodes) allNodes[kv.Key] = allNodes.TryGetValue(kv.Key, out var c) ? c + kv.Value : kv.Value;
+        foreach (var kv in nodeOps) allNodeOps[kv.Key] = kv.Value;
+    }
 
     static (double nodeMs, double wallMs) ProfileLokad(ComputationalGraph graph, Dictionary<string, ITensor> named, ExecutionOptions opts, Dictionary<string, double> stages, Dictionary<string, double> ops, Dictionary<long, double> nodes, Dictionary<long, string> nodeOps)
     {
