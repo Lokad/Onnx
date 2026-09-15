@@ -300,6 +300,7 @@ public partial struct Node
         OpType.MatMul => MatMulIntGate(graph) ?? CPU.MatMul(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 
         OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0),
+        OpType.GemmGelu => CPU.GemmGelu(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0, Attr<string>("approximate", null)),
 
         OpType.Transpose => TransposePrepared(graph, opt),
 

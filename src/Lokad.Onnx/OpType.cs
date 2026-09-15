@@ -200,5 +200,6 @@ public enum OpType
     BiasGelu,
     ConvRelu,
     AddRelu,
+    GemmGelu,
     Unknown,
 }

@@ -171,4 +171,35 @@ public partial class CPUExecutionProvider
             default: return InputTypeNotSupported(op, nameof(A), A);
         }
     }
+
+    /// <summary>
+    /// Gemm with GELU epilogue: runs the identical Gemm computation, then applies
+    /// GeluSpanFloat over the owned exact-fit float output in place, which is bitwise
+    /// identical to separate Gemm and Gelu nodes by construction. Honors the opt-in
+    /// tanh trial switch with the vector tanh epilogue. Non-float or unexpected
+    /// layouts take the legacy two-step with identical values.
+    /// </summary>
+    public static OpResult GemmGelu(ITensor? A, ITensor? B, ITensor? C, float alpha, float beta, ExecutionOptions? options, int transA, int transB, string? approximate)
+    {
+        var op = OpType.GemmGelu;
+        var r = Gemm(A, B, C, alpha, beta, options, transA, transB);
+        if (r.Status != OpStatus.Success || r.Outputs is null || r.Outputs.Length != 1)
+            return r;
+        if (r.Outputs[0] is DenseTensor<float> df && df.Buffer.Length == (int)df.Length)
+        {
+            if (approximate == "tanh" || UseGeluTanhTrial())
+                Tensor<float>.GeluTanhSpanFloat(df.Buffer.Span, df.Buffer.Span);
+            else
+                Tensor<float>.GeluSpanFloat(df.Buffer.Span, df.Buffer.Span);
+            r.Op = op;
+            return r;
+        }
+        var g = Gelu(r.Outputs[0], null, options, null);
+        if (g.Status != OpStatus.Success || g.Outputs is null || g.Outputs.Length != 1)
+            return g;
+        var o = g.Outputs[0];
+        r.Outputs = new ITensor[] { o };
+        r.Op = op;
+        return r;
+    }
 }

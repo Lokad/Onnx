@@ -1012,6 +1012,160 @@ namespace Lokad.Onnx
             return true;
         }
 
+        static readonly object GemmGeluPassLock = new object();
+        static bool gemmGeluRegistered;
+
+        public static void RegisterGemmGeluPass()
+        {
+            lock (GemmGeluPassLock)
+            {
+                if (gemmGeluRegistered) return;
+                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
+                    "gemmgelu",
+                    (graph, facts) =>
+                    {
+                        var rewritten = new List<int>();
+                        int n = FuseGemmGeluPass(graph, facts, rewritten);
+                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
+                        result.Nodes.AddRange(rewritten);
+                        if (n > 0) result.Notes.Add("fused " + n + " Gemm+GELU regions");
+                        return result;
+                    }));
+                gemmGeluRegistered = true;
+            }
+        }
+
+        public static int FuseGemmGeluPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        {
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.Gelu) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchGemmGelu(graph, facts, drop, i, out int producer))
+                {
+                    drop.Add(i);
+                    rewritten.Add(producer);
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        /// <summary>
+        /// Matches Gemm(data, weights[, bias]) feeding exact GELU directly or through
+        /// one single-consumer view Reshape, with no other live consumer and no
+        /// graph-output exposure on the links. Rewrites the Gemm struct in place to
+        /// GemmGelu, drops only the Gelu node, and rewires Gelu-output consumers to
+        /// the kept tensor. Float32 only; tanh-approximate forms keep legacy paths.
+        /// </summary>
+        static bool TryMatchGemmGelu(
+            ComputationalGraph graph,
+            Optimization.GraphFacts facts,
+            HashSet<int> drop,
+            int geluIndex,
+            out int producerIndex)
+        {
+            producerIndex = -1;
+            var gelu = graph.Nodes[geluIndex];
+            if (gelu.Op != OpType.Gelu) return false;
+            if (!Node.IsStandardDomain(gelu.Domain)) return false;
+            if (gelu.Inputs.Length != 1 || gelu.Outputs.Length != 1) return false;
+            string approx = gelu.Attr<string>("approximate", null);
+            if (approx is not null && approx != "none" && approx != "tanh") return false;
+            bool tanh = approx == "tanh";
+            string mid = gelu.Inputs[0];
+            string rout = gelu.Outputs[0];
+            if (string.IsNullOrEmpty(mid) || string.IsNullOrEmpty(rout)) return false;
+            if (!facts.Producer.TryGetValue(mid, out int mi) || drop.Contains(mi)) return false;
+            var middle = graph.Nodes[mi];
+            if (middle.IsFused) return false;
+            if (!IsFusableParticipant(middle)) return false;
+            if (middle.Outputs.Length != 1) return false;
+            string kept;
+            int gemmIndex;
+            if (middle.Op == OpType.Gemm)
+            {
+                if (middle.Inputs.Length < 2 || middle.Inputs.Length > 3) return false;
+                kept = rout;
+                gemmIndex = mi;
+            }
+            else if (middle.Op == OpType.Reshape)
+            {
+                if (middle.Inputs.Length != 2) return false;
+                string data = middle.Inputs[0];
+                if (string.IsNullOrEmpty(data)) return false;
+                if (!facts.Producer.TryGetValue(data, out int gi) || drop.Contains(gi)) return false;
+                var gemm = graph.Nodes[gi];
+                if (gemm.Op != OpType.Gemm || gemm.IsFused) return false;
+                if (!IsFusableParticipant(gemm)) return false;
+                if (gemm.Inputs.Length < 2 || gemm.Inputs.Length > 3 || gemm.Outputs.Length != 1) return false;
+                if (facts.GraphOutputs.Contains(data)) return false;
+                if (!facts.Consumers.TryGetValue(data, out var dataUses)) return false;
+                int dataLive = 0;
+                foreach (var u in dataUses) if (!drop.Contains(u)) dataLive++;
+                if (dataLive != 1) return false;
+                kept = mid;
+                gemmIndex = gi;
+            }
+            else return false;
+            var gnode = graph.Nodes[gemmIndex];
+            if (!facts.Dtypes.TryGetValue(gnode.Outputs[0], out var dt) || dt != TensorElementType.Float) return false;
+            if (facts.GraphOutputs.Contains(gnode.Outputs[0])) return false;
+            if (facts.GraphOutputs.Contains(mid)) return false;
+            if (!facts.Consumers.TryGetValue(mid, out var uses)) return false;
+            int live = 0;
+            foreach (var u in uses) if (!drop.Contains(u)) live++;
+            if (live != 1) return false;
+            var fused = gnode;
+            fused.Op = OpType.GemmGelu;
+            fused.OpTypeName = OpType.GemmGelu.ToString();
+            fused.Domain = "";
+            int stdv = StandardOpset(graph);
+            if (stdv >= 0) fused.OpsetVersion = stdv;
+            fused.IsFused = true;
+            if (tanh)
+            {
+                var attrs = new Dictionary<string, object>(fused.Attributes ?? new Dictionary<string, object>());
+                attrs["approximate"] = "tanh";
+                fused.Attributes = attrs;
+            }
+            if (middle.Op == OpType.Gemm)
+                fused.Outputs = new[] { rout };
+            graph.Nodes[gemmIndex] = fused;
+            if (facts.Consumers.TryGetValue(rout, out var routUses))
+            {
+                foreach (var u in routUses)
+                {
+                    if (drop.Contains(u)) continue;
+                    if (u == geluIndex) continue;
+                    var consumer = graph.Nodes[u];
+                    if (consumer.Inputs is null) continue;
+                    var inputs = (string[])consumer.Inputs.Clone();
+                    bool changed = false;
+                    for (int k = 0; k < inputs.Length; k++)
+                        if (inputs[k] == rout) { inputs[k] = kept; changed = true; }
+                    if (changed) { consumer.Inputs = inputs; graph.Nodes[u] = consumer; }
+                }
+            }
+            producerIndex = gemmIndex;
+            return true;
+        }
+
+
         static readonly object RopePassLock = new object();
         static bool ropeRegistered;
 

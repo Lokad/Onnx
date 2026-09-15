@@ -78,6 +78,7 @@ public static class OperatorSchemas
         [OpType.BiasGelu] = Def(OpType.BiasGelu, 2, 2, 1, 1, 1, true),
         [OpType.ConvRelu] = Def(OpType.ConvRelu, 2, 3, 1, 1, 1, true),
         [OpType.AddRelu] = Def(OpType.AddRelu, 2, 2, 1, 1, 1, true),
+        [OpType.GemmGelu] = Def(OpType.GemmGelu, 2, 3, 1, 1, 1, true),
         [OpType.Gemm] = Def(OpType.Gemm, 2, 3),
         [OpType.Tanh] = Def(OpType.Tanh, 1, 1),
         [OpType.Split] = Def(OpType.Split, 1, 2, 1, Unbounded, 1, false),

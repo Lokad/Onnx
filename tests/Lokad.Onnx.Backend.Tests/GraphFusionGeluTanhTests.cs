@@ -100,7 +100,9 @@ public class GraphFusionGeluTanhTests
         var graph = ModelFixture.LoadRequiredModel("GPT-2", "models", "gpt2-onnx", "onnx", "model.onnx");
         int fused = 0;
         foreach (var node in graph.Nodes)
-            if (node.Op == OpType.Gelu && node.IsFused && node.Attributes is not null && node.Attributes.TryGetValue("approximate", out var av) && (string)av == "tanh") fused++;
+            if (node.Op == OpType.GemmGelu && node.IsFused && node.Attributes is not null && node.Attributes.TryGetValue("approximate", out var av) && (string)av == "tanh") fused++;
         Assert.Equal(12, fused);
+        foreach (var node in graph.Nodes)
+            Assert.False(node.Op == OpType.Gelu && node.Attributes is not null && node.Attributes.TryGetValue("approximate", out var bv) && (string)bv == "tanh", "unfused tanh Gelu remains: " + node.Name);
     }
 }
