@@ -890,6 +890,8 @@ where T : unmanaged
         mm_unsafe_vectorized_intrinsics_2x4packed(rest - 3, n, k, xr + 3 * n, packed, dr + 3 * k, overwrite);
     }
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static void RunPackedBatches(Tensor<float> bx, Tensor<float> z, int[] batchDims, int[] xSteps, int[] zSteps, int batchCount, int dop, int m, int n, int k, DenseTensor<float> packed, bool overwrite)
     {
         using var xh = bx.Storage.Pin();

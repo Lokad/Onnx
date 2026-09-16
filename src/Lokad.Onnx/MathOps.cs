@@ -2065,6 +2065,8 @@ public class MathOps
     /// each output in k order with fused multiply-add, so all paths agree
     /// bit for bit; the double-oracle tests pin the absolute contract.
     /// </summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static void MatVecPanel(ReadOnlySpan<float> x, ReadOnlySpan<float> panel, Span<float> y, int outputs, int k, bool accumulate, TensorExecutionOptions? options)
     {
         int o = Math.Min(outputs, y.Length);

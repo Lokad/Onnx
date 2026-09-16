@@ -157,6 +157,8 @@ where T : unmanaged
         return Conv2DFloatCore(input, weight, group, eN, eC, eH, eW, eM, ekH, ekW, edH, edW, esH, esW, epad, eoutH, eoutW, bias, options, fuseRelu, pool);
     }
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool)
     {
         options.Validate();
@@ -293,6 +295,8 @@ where T : unmanaged
     /// pack buffer is carved from the batch scratch the caller sizes, so no
     /// extra rent appears in scratch accounting.
     /// </summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static void RunPackedTileProduct(Memory<float> wMem, int wOff, Memory<float> patchMem, int pOff, Memory<float> outMem, int oOff, Memory<float> packMem, int tileM, int tileK, int cols)
     {
         unsafe
@@ -311,6 +315,8 @@ where T : unmanaged
     static bool UsePackedTile(int tileM, TensorExecutionOptions options) =>
         Avx512F.IsSupported && Fma.IsSupported && tileM >= 8 && options.UseSimd && options.UseIntrinsics;
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static void RunTiledConvFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, int N, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, int dop, TensorExecutionOptions options, bool fuseRelu)
     {
         int blockPatch = C * kH * kW * blockN;
@@ -411,6 +417,8 @@ where T : unmanaged
     /// padding modes, declines for the rank-three adapter, which validates
     /// and reports unsupported contracts authoritatively.
     /// </summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static bool TryConvDepthwise1D(Tensor<float> input, Tensor<float> weight, Tensor<float>? bias, int group, int[]? pads, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, out Tensor<float>? output)
     {
         output = null;
@@ -456,6 +464,8 @@ where T : unmanaged
     /// automatic padding modes, declines for the rank-four adapter, which
     /// validates and reports unsupported contracts authoritatively.
     /// </summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static bool TryConvDepthwise2D(Tensor<float> input, Tensor<float> weight, Tensor<float>? bias, int group, int[]? pads, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, out Tensor<float>? output)
     {
         output = null;
