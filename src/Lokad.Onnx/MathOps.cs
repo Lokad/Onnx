@@ -2454,6 +2454,72 @@ public class MathOps
                             for (; i < vxHi; i++) row[dy * dstW + i] = line[col0 + i];
                             for (; i < dxHi; i++) row[dy * dstW + i] = 0f;
                         }
+                        else if (strideX == 2 && dilationX == 1 && line != null && (Avx512F.IsSupported || Avx2.IsSupported))
+                        {
+                            // Stride-two width gather: output dx reads line[col0 + 2 * dx],
+                            // so each vector of outputs sits in twice as many contiguous
+                            // inputs. Vector loads plus one deinterleave shuffle replace
+                            // the scalar strided loads with their per-element bounds
+                            // checks. The same input values land in the same patch slots,
+                            // so the change is a pure copy reorder and stays bit-identical;
+                            // the scalar head/tail cover padding and short rows exactly
+                            // like the fallback below.
+                            int loadLo = col0 >= 0 ? 0 : ((-col0 + 1) / 2);
+                            float* dst = row + dy * dstW;
+                            int i = dxLo;
+                            if (Avx512F.IsSupported)
+                            {
+                                // 16 outputs per step from 32 contiguous inputs: a per-lane
+                                // shuffle pairs each 128-bit lane, then a cross-lane permute
+                                // orders the deinterleaved halves.
+                                int loadHi = (srcW - 32 - col0) >= 0 ? ((srcW - 32 - col0) / 2 + 1) : -1;
+                                int vLo = dxLo > loadLo ? dxLo : loadLo;
+                                int vHi = dxHi < loadHi ? dxHi : loadHi;
+                                var deint16 = Vector512.Create(0, 1, 4, 5, 8, 9, 12, 13, 2, 3, 6, 7, 10, 11, 14, 15);
+                                for (; i < vLo; i++)
+                                {
+                                    int sx = col0 + i * 2;
+                                    dst[i] = (uint)sx < (uint)srcW ? line[sx] : 0;
+                                }
+                                int vecEnd = vLo + ((vHi - vLo) & ~15);
+                                for (; i < vecEnd; i += 16)
+                                {
+                                    float* s = line + col0 + i * 2;
+                                    Vector512<float> t = Avx512F.Shuffle(*(Vector512<float>*)s, *(Vector512<float>*)(s + 16), (byte)0x88);
+                                    *(Vector512<float>*)(dst + i) = Avx512F.PermuteVar16x32(t, deint16);
+                                }
+                                for (; i < dxHi; i++)
+                                {
+                                    int sx = col0 + i * 2;
+                                    dst[i] = (uint)sx < (uint)srcW ? line[sx] : 0;
+                                }
+                            }
+                            else
+                            {
+                                // 8 outputs per step from 16 contiguous inputs.
+                                int loadHi = (srcW - 16 - col0) >= 0 ? ((srcW - 16 - col0) / 2 + 1) : -1;
+                                int vLo = dxLo > loadLo ? dxLo : loadLo;
+                                int vHi = dxHi < loadHi ? dxHi : loadHi;
+                                var deint8 = Vector256.Create(0, 1, 4, 5, 2, 3, 6, 7);
+                                for (; i < vLo; i++)
+                                {
+                                    int sx = col0 + i * 2;
+                                    dst[i] = (uint)sx < (uint)srcW ? line[sx] : 0;
+                                }
+                                int vecEnd = vLo + ((vHi - vLo) & ~7);
+                                for (; i < vecEnd; i += 8)
+                                {
+                                    float* s = line + col0 + i * 2;
+                                    Vector256<float> t = Avx.Shuffle(*(Vector256<float>*)s, *(Vector256<float>*)(s + 8), (byte)0x88);
+                                    *(Vector256<float>*)(dst + i) = Avx2.PermuteVar8x32(t, deint8);
+                                }
+                                for (; i < dxHi; i++)
+                                {
+                                    int sx = col0 + i * 2;
+                                    dst[i] = (uint)sx < (uint)srcW ? line[sx] : 0;
+                                }
+                            }
+                        }
                         else
                         {
                             for (int dx = dxLo; dx < dxHi; ++dx)
