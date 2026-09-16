@@ -1,3 +1,5 @@
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 namespace Lokad.Onnx.Backend.Tests;
 
 /// <summary>
@@ -92,5 +94,35 @@ public class Im2colRangeStride2Tests
     {
         // Every source row is a null line or too short for vector loads.
         Check(2, 5, 9, 1, 1, 0, 15);
+    }
+    [SkippableFact]
+    public void Deinterleave256Recipe_MatchesExpected()
+    {
+        // Pins the AVX2 index constants used by the Im2colRange stride-two
+        // path. This recipe never executes on AVX512 hardware (the 512 lane
+        // wins dispatch), so without this pin no test would cover the lane
+        // that AVX2-only machines actually run.
+        Skip.If(!Avx2.IsSupported, "AVX2 deinterleave recipe needs Avx2.");
+        var v0 = Vector256.Create(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        var v1 = Vector256.Create(9f, 10f, 11f, 12f, 13f, 14f, 15f, 16f);
+        var t = Avx.Shuffle(v0, v1, (byte)0x88);
+        var idx = Vector256.Create(0, 1, 4, 5, 2, 3, 6, 7);
+        var e = Avx2.PermuteVar8x32(t, idx);
+        for (int i = 0; i < 8; i++)
+            Assert.True(e.GetElement(i) == 2 * i + 1, "lane " + i + ": got " + e.GetElement(i));
+    }
+
+    [SkippableFact]
+    public void Deinterleave512Recipe_MatchesExpected()
+    {
+        // Same pin for the AVX512 lane actually dispatched on this host.
+        Skip.If(!Avx512F.IsSupported, "AVX512 deinterleave recipe needs Avx512F.");
+        var a = Vector512.Create(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f, 11f, 12f, 13f, 14f, 15f, 16f);
+        var b = Vector512.Create(17f, 18f, 19f, 20f, 21f, 22f, 23f, 24f, 25f, 26f, 27f, 28f, 29f, 30f, 31f, 32f);
+        var t = Avx512F.Shuffle(a, b, (byte)0x88);
+        var idx = Vector512.Create(0, 1, 4, 5, 8, 9, 12, 13, 2, 3, 6, 7, 10, 11, 14, 15);
+        var e = Avx512F.PermuteVar16x32(t, idx);
+        for (int i = 0; i < 16; i++)
+            Assert.True(e.GetElement(i) == 2 * i + 1, "lane " + i + ": got " + e.GetElement(i));
     }
 }
