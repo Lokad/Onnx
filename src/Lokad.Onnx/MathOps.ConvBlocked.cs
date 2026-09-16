@@ -3,6 +3,7 @@ namespace Lokad.Onnx;
 using System;
 using System.Runtime.Intrinsics;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
 
 /// <summary>
@@ -21,6 +22,8 @@ public static class MathOpsConvBlocked
     const int CB = 16;
     const int T = 8;
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; undispatched kernels never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static bool TryConvBlocked3x3S1P1(
         Tensor<float> input,
         Tensor<float> weight,
@@ -88,6 +91,8 @@ public static class MathOpsConvBlocked
         return true;
     }
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; undispatched kernels never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static unsafe void BlockedKernel3x3(float* act, float* filt, float* dst, int cbN, int mbN, int h, int w)
     {
         for (int mb = 0; mb < mbN; mb += 2)
@@ -148,6 +153,8 @@ public static class MathOpsConvBlocked
     }
 
     /// <summary>Four-position interior tile: same nest as <see cref="InteriorTile"/> with four accumulators, covering middle remainders at interior rate instead of the scalar border path. Only y-interior rows with x+3 inside the map may call it.</summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; undispatched kernels never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static unsafe void InteriorTileT4(float* act, float* filt, float* dst, int mb, int cbN, int y, int x, int h, int w)
     {
         var a0 = Vector512<float>.Zero; var a1 = Vector512<float>.Zero;
@@ -173,6 +180,8 @@ public static class MathOpsConvBlocked
     }
 
     /// <summary>Paired-block four-position interior tile: two adjacent output blocks share each input broadcast (one broadcast feeds both blocks' FMAs), halving broadcasts at the same eight live accumulators as <see cref="InteriorTile"/>. Per-position accumulation order matches the single-block nest exactly, so paired tiles agree bitwise with single tiles. Only y-interior rows with x..x+3 interior may call it, with mb even and mb+1 valid.</summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; undispatched kernels never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static unsafe void InteriorTile2Mb4(float* act, float* filt, float* dst, int mb, int cbN, int y, int x, int h, int w)
     {
         var b0 = Vector512<float>.Zero; var b1 = Vector512<float>.Zero;
@@ -212,6 +221,8 @@ public static class MathOpsConvBlocked
         c2.Store(db1 + 2 * CB); c3.Store(db1 + 3 * CB);
     }
     /// <summary>Eight-position edge-row tile: the six valid taps of a y-border row with no per-tap bounds checks. Top rows use taps 3-8 (dy 0..1), bottom rows taps 0-5 (dy -1..0). Only x-interior tiles of the matching edge row may call it.</summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; undispatched kernels never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static unsafe void InteriorTileYEdge(float* act, float* filt, float* dst, int mb, int cbN, int y, int x, int h, int w, bool topEdge)
     {
         int kLo = topEdge ? 3 : 0;
@@ -246,6 +257,8 @@ public static class MathOpsConvBlocked
         a6.Store(db + 6 * CB); a7.Store(db + 7 * CB);
     }
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; undispatched kernels never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static unsafe void InteriorTile(float* act, float* filt, float* dst, int mb, int cbN, int y, int x, int h, int w)
     {
         var a0 = Vector512<float>.Zero; var a1 = Vector512<float>.Zero;
@@ -278,6 +291,8 @@ public static class MathOpsConvBlocked
         a6.Store(db + 6 * CB); a7.Store(db + 7 * CB);
     }
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; undispatched kernels never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static unsafe void BorderPos(float* act, float* filt, float* dst, int mb, int cbN, int y, int x, int h, int w)
     {
         var sum = Vector512<float>.Zero;
