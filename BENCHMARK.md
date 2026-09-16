@@ -501,40 +501,99 @@ not read sublinear scaling or a size trend into these rows; either claim
 needs repeated canonical-length campaigns. Reproduce with
 `dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding --mode auto --threads 1 --rows representative --cpu 4 --iters 33`.
 
-## Remaining work after 2026-09-15 (revised for the active parity campaign)
+## Voice-model engine comparison — 2026-09-17 (parity campaign)
 
-Since the post-activation table above, an active managed-only parity
-campaign (tracked in the working plan, not yet published) refreshed the
-starting bands at M0 (encoder about 2.3-2.4x, decoder about 1.7x,
-segmentation 2.2-2.4x, embedding 3.5-3.9x) and works each boundary
-toward halving its excess latency over ORT. Landed and measured since:
-width-first rank-three convolution (about 25% full-segmentation win),
-prepared recurrent panels (15-25 ms segmentation win at H=128),
-constant-clone elimination plus 48-site MatMul scale epilogues (about
-11% encoder win with deterministic allocation evidence), 8/12-row GEMM
-rescheduling with a tile-major composer and overwrite-mode destinations
-(micro-proven, workload proof queued), pooled Where and convolution
-destinations plus LSTM scratch pooling (encoder p95 more than halved at
-a stable median), Conv+Add+Relu residual fusion (about 10% embedding win
-with deterministic allocation evidence), and copy-pipeline
-vectorization (panel packing 2.1x anchored, tap-sharing gather nest).
-Open measurement: staged workload quads with predeclared bands
-(composer, narrow tails, overwrite on decoder; eightTotal on encoder)
-plus Sinc-fold segmentation magnitude, all awaiting quiet processes;
-then per-boundary verdicts and a regenerated canonical table.
-Segmentation already meets its halve-the-excess target; decoder carries
-a pre-recorded ceiling analysis near 1.53x against its 1.4x target.
-Embedding (proven about 3.1-3.6x, needs 2.5x or better) still needs a
-multi-block convolution kernel or tiled-path deepenings: blocked regions
-were reverted after an honest time-neutral A/B, and fused gather-pack,
-bigger tile budgets, and interior fast paths were refuted with
-measurement evidence. Prior verdicts against reduction blocking,
-software prefetch, pointer tuning, and scalar borders covered only those
-implementations, never GEMM scheduling or convolution layout in
-general; do not treat them as exhausted-work claims.
-Already completed, do not redo: embedding 200/400/800 representative
-rows are staged; matched TorchSharp/ORT single-step calibration reads
-1.41-1.46x per step with the old 27-29x grid figure confirmed as pure
-batching asymmetry; encoder scale epilogues and Swish/GLU fusion are
-shipped; managed-dependency smoke stands at 12 passed / 0 failed with a
-286-case native differential lane green, re-run after runtime changes.
+Measured under the same single-CPU contract (verified affinity to
+logical CPU 4, one inference thread each side, Lokad Auto with
+SIMD/intrinsics, ORT CPU intra-op 1/inter-op 1 sequential with
+ORT_ENABLE_ALL): three independent fresh processes, 3 warmups and 33
+timed iterations per engine per case, alternating order, every case
+validated before and after timed reuse at gate 1e-4 scaled with exact
+integer checks and fingerprinted-intact inputs. Machine-readable
+summary in
+`tests/Lokad.Onnx.Bench/baseline/summary-voice-20260917-final.json`,
+regenerated from the per-rep logs by
+`python eng/parse_baseline.py --expect parakeet-encoder,parakeet-decoder,pyannote-segmentation,pyannote-embedding <rep logs>`;
+raw logs stay local under `artifacts/bench/voice-final-20260917/`
+(rep3, rep5, rep7; partial reps with row-level discards are documented
+in the working plan, never averaged in). Confinement ratios were 1.00, 0.99 and 0.91 with no warnings.
+
+Measured at 7c73714 with a clean tracked tree (the user global.json SDK
+pin only); no code differences across reps. SDK 10.0.401, runtime .NET
+10.0.12, ORT C# 1.23.2.0, Lokad assembly 0.2.0.0. Since the postact
+table the runtime gained: 8/12-row GEMM rescheduling with a tile-major
+composer, narrow tails and overwrite-mode destinations; MatMul
+scale/bias epilogues; pooled Where, convolution and LSTM-scratch
+destinations; Conv+Add+Relu residual fusion; vectorized panel packing,
+tap-sharing gather nest and stride-two gather deinterleave; blocked
+border tiles plus paired broadcast-sharing tiles (undispatched building
+blocks); and forced Tier1 on Tier0-stuck hot leaves, which fixed a
++24 ms decoder regression found by back-to-back quad (41.1 vs 17.5 ms
+at identical ORT). Workload boundaries, fixtures, and gates are
+unchanged; graph bytes and hashes match the September records.
+
+| Voice case | rep1 L/ORT ms | rep2 L/ORT ms | rep3 L/ORT ms | Lokad / ORT |
+|---|---:|---:|---:|---|
+| parakeet-encoder | 480.9 / 264.7 | 539.5 / 295.1 | 479.0 / 267.2 | 1.8-1.8x |
+| parakeet-decoder | 12.8 / 8.6 | 15.3 / 9.0 | 13.1 / 8.7 | 1.5-1.7x |
+| pyannote-segmentation | 73.2 / 36.3 | 83.7 / 39.5 | 74.8 / 39.5 | 1.9-2.1x |
+| pyannote-embedding | 133.7 / 49.1 | 137.9 / 51.5 | 127.6 / 48.9 | 2.6-2.7x |
+
+Cells are Lokad warmed public-Execute median versus ORT warmed-Run
+median per rep in milliseconds; the ratio spans the three within-rep
+median ratios. Against halve-the-excess (encoder 1.9, decoder 1.4,
+segmentation 2.5, embedding 2.5): encoder meets it (1.8), segmentation
+meets it with margin (1.9-2.1, was already met), decoder misses narrowly
+(1.5-1.7 with a best rep at 1.49; the static budget shows the joint near
+its compute ceiling and LSTM recurrence traffic fundamental, so 1.4
+needs a joint-kernel breakthrough past the composer or recurrent-side
+restructuring), embedding misses narrowly (2.6-2.7 with bests at 2.5;
+needs the multi-block convolution kernel or tiled-path deepenings).
+Repetitions interleave within about ten percent per boundary on both
+engines with no settling trend; compare engines within shared reps
+only. Agreement at validation (identical in all three reps): encoder
+2.90E-007, decoder 4.96E-006, segmentation 1.24E-005, embedding
+2.25E-006. Decoder validation additionally checks carried states, reset
+determinism, and independent trajectories outside timing.
+
+## Representative voice rows — 2026-09-17 (final tree)
+
+Reran the seven representative rows once at the final tree with the same
+single-CPU settings (one fresh process, 3 warmups, 33 iterations;
+watcher twin kept; agreement re-pinned at gate 1e-4 on every row).
+Medians carry some storm inflation; bests and the 7/7 agreement are the
+durable read.
+
+| Voice case | L/ORT ms | Lokad / ORT |
+|---|---:|---|
+| parakeet-encoder-64 | 384.8 / 247.7 | 1.6x |
+| parakeet-encoder-256 | 788.2 / 438.6 | 1.8x |
+| parakeet-decoder-1x1 | 4.8 / 4.4 | 1.1x |
+| parakeet-decoder-1x1-carried | 5.0 / 4.2 | 1.2x |
+| pyannote-segmentation-1s | 12.2 / 4.8 | 2.5x |
+| pyannote-embedding-400 | 351.4 / 135.7 | 2.6x |
+| pyannote-embedding-800 | 591.2 / 226.9 | 2.6x |
+
+Decoder single steps hold near parity with zero and carried states
+alike, so the remaining bulk-grid gap sits in the joint shape plus
+recurrence, not the step machinery. Ratios at different input lengths
+remain single-rep snapshots, not a scaling law.
+
+## Remaining work after 2026-09-17 (parity campaign verdicts)
+
+Encoder (1.8x, target met) and segmentation (1.9-2.1x, target met with
+margin) are done barring new regressions; the Tier1-forcing doctrine
+(new hot kernels carry AggressiveOptimization from birth) guards the
+mechanism that caused the +24 ms decoder regression. Decoder (1.5-1.7x
+vs 1.4x) and embedding (2.6-2.7x vs 2.5x) miss narrowly with explicit
+next steps recorded in the working plan and no demonstrated lever left
+in this campaign. The short-burst benchmark shape (15-33 timed calls)
+systematically underrepresents Tier1 for big methods; keep the
+forced-Tier1 pins and the tiersum audit. Managed-dependency smoke
+stands at 12 passed / 0 failed with a 286-case native differential lane
+green, re-run after runtime changes including the Tier1 pins. Do not
+reopen TorchSharp calibration (1.41-1.46x per step, closed), fused
+gather-pack, bigger tile budgets, interior fast paths, or wider blocked
+tiles (all refuted with measurement evidence); the earlier
+completion-by-disposition conclusions about exhausted opportunities
+remain superseded only where this campaign measured alternatives.
