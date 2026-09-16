@@ -558,21 +558,21 @@ determinism, and independent trajectories outside timing.
 
 ## Representative voice rows — 2026-09-17 (final tree)
 
-Reran the seven representative rows once at the final tree with the same
+Reran the seven representative rows twice at the final tree with the same
 single-CPU settings (one fresh process, 3 warmups, 33 iterations;
 watcher twin kept; agreement re-pinned at gate 1e-4 on every row).
-Medians carry some storm inflation; bests and the 7/7 agreement are the
-durable read.
+Medians carry some storm inflation; bests and the 7/7 agreement are the durable read. The table shows the tighter second pass (rep-final-r2.log);
+the first pass agreed on every row within noise (rep-final-r1.log, 7/7 ok).
 
 | Voice case | L/ORT ms | Lokad / ORT |
 |---|---:|---|
-| parakeet-encoder-64 | 384.8 / 247.7 | 1.6x |
-| parakeet-encoder-256 | 788.2 / 438.6 | 1.8x |
-| parakeet-decoder-1x1 | 4.8 / 4.4 | 1.1x |
-| parakeet-decoder-1x1-carried | 5.0 / 4.2 | 1.2x |
-| pyannote-segmentation-1s | 12.2 / 4.8 | 2.5x |
-| pyannote-embedding-400 | 351.4 / 135.7 | 2.6x |
-| pyannote-embedding-800 | 591.2 / 226.9 | 2.6x |
+| parakeet-encoder-64 | 374.1 / 239.9 | 1.6x |
+| parakeet-encoder-256 | 748.0 / 433.5 | 1.7x |
+| parakeet-decoder-1x1 | 4.5 / 3.8 | 1.2x |
+| parakeet-decoder-1x1-carried | 4.4 / 3.7 | 1.2x |
+| pyannote-segmentation-1s | 9.9 / 4.0 | 2.5x |
+| pyannote-embedding-400 | 258.5 / 96.1 | 2.7x |
+| pyannote-embedding-800 | 509.8 / 201.1 | 2.5x |
 
 Decoder single steps hold near parity with zero and carried states
 alike, so the remaining bulk-grid gap sits in the joint shape plus
