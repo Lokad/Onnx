@@ -4,6 +4,7 @@ using System.Runtime.Intrinsics.X86;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lokad.Onnx;
 
@@ -833,6 +834,8 @@ public class MathOps
     /// <param name="K">B columns.</param>
     /// <param name="kb">Leading output column of this tile.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_2x4packed_tile(int M,
                               int N,
                               float* A,
@@ -1051,6 +1054,8 @@ public class MathOps
     /// <param name="K">B columns.</param>
     /// <param name="kb">Leading output column of this tile.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_3x4packed_tile(int M,
                               int N,
                               float* A,
@@ -1139,6 +1144,8 @@ public class MathOps
     /// <param name="C">Result matrix.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_unsafe_vectorized_avx512_6x32packed(int M,
                           int N,
                           int K,
@@ -1327,6 +1334,8 @@ public class MathOps
     /// <param name="C">Result matrix.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_unsafe_vectorized_avx512_12x32packed(int M,
                           int N,
                           int K,
@@ -1365,6 +1374,8 @@ public class MathOps
     /// <param name="K">B columns.</param>
     /// <param name="kb">Leading output column of this tile.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_avx512_12x32packed_tile(int M,
                               int N,
                               float* A,
@@ -1500,6 +1511,8 @@ public class MathOps
     /// <param name="tiles">Count of full 32-column tiles.</param>
     /// <param name="rem">Trailing output columns (must be positive).</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_avx512_12x32packed_col_tail(int M,
                               int N,
                               int K,
@@ -1663,6 +1676,8 @@ public class MathOps
     /// <param name="C">Result matrix.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_unsafe_vectorized_avx512_8x32packed(int M,
                           int N,
                           int K,
@@ -1701,6 +1716,8 @@ public class MathOps
     /// <param name="K">B columns.</param>
     /// <param name="kb">Leading output column of this tile.</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_avx512_8x32packed_tile(int M,
                               int N,
                               float* A,
@@ -1806,6 +1823,8 @@ public class MathOps
     /// <param name="tiles">Count of full 32-column tiles.</param>
     /// <param name="rem">Trailing output columns (must be positive).</param>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_avx512_8x32packed_col_tail(int M,
                               int N,
                               int K,
@@ -1983,6 +2002,8 @@ public class MathOps
     /// bit-wise with four RowDot calls while paying one call setup and
     /// streaming the shared span once.
     /// </summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static void RowDot4(ReadOnlySpan<float> x, ReadOnlySpan<float> y0, ReadOnlySpan<float> y1, ReadOnlySpan<float> y2, ReadOnlySpan<float> y3, out float d0, out float d1, out float d2, out float d3, TensorExecutionOptions? options)
     {
         int n = Math.Min(Math.Min(x.Length, y0.Length), Math.Min(Math.Min(y1.Length, y2.Length), y3.Length));

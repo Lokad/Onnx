@@ -2,6 +2,7 @@ namespace Lokad.Onnx;
 
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -61,6 +62,8 @@ public partial class CPUExecutionProvider
 
     /// <summary>MatMul with a fused output bias (the MatMul+bias fusion).</summary>
     /// <remarks>Runs the identical product through the shared entry points, then one bias pass over the result. The destination is freshly owned in graph runs (pool-rented or new); squeezed views materialize a biased copy instead, so inputs are never written. Bit-identical to a trailing Add: same product, same single rounding per element in the same order. Scalar (length 1) or row-vector (length N) biases only; anything else fails like the removed Add would.</remarks>
+    // Few calls per run never trip Tier0 promotion counters; force Tier1 (see PLAN qdA2).
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static OpResult MatMulBiased(ITensor? A, ITensor? B, Tensor<float> bias, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.MatMul;

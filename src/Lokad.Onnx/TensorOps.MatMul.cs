@@ -149,6 +149,8 @@ where T : unmanaged
         return found;
     }
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options, bool overwriteDestination)
     {
         // Register-tiled accumulation wins while both the reduction axis (n)
@@ -287,6 +289,8 @@ where T : unmanaged
         return MatMul2DCore(x, y, destination, options, overwriteDestination: true);
     }
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static Tensor<float> MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool overwriteDestination)
     {
         options.Validate();
@@ -611,6 +615,8 @@ where T : unmanaged
         return true;
     }
 
+    // Few calls per run never trip Tier0 promotion counters; force Tier1 (see PLAN qdA2).
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static void RunBatchedFloatMatMul(Tensor<float> bx, Tensor<float> by, Tensor<float> z, TensorExecutionOptions options, bool overwriteDestination)
     {
         bx = RequireBatchOperand(bx, nameof(bx), options.CopyReporter);
@@ -725,6 +731,8 @@ where T : unmanaged
     /// arithmetic and order match bit for bit.
     /// </summary>
     /// <returns>True when the product was computed and the caller must return.</returns>
+    // Few calls per run never trip Tier0 promotion counters; force Tier1 (see PLAN qdA2).
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static unsafe bool TryRunPackedRowGroupsTiled(int m, int n, int k, float* x, float* packed, float* dest, bool overwrite)
     {
         if (m < 2) return false;
@@ -810,6 +818,8 @@ where T : unmanaged
 
 
 
+    // Few calls per run never trip Tier0 promotion counters; force Tier1 (see PLAN qdA2).
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* packed, float* dest, bool overwrite)
     {
         int rest = m;
@@ -940,6 +950,8 @@ where T : unmanaged
         return MatMulInto(x, y, destination, options, overwriteDestination: true);
     }
 
+    // Few calls per run never trip Tier0 promotion counters; force Tier1 (see PLAN qdA2).
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static Tensor<float> MatMulInto(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool overwriteDestination)
     {
         if (destination is null) throw new ArgumentNullException(nameof(destination));

@@ -1,6 +1,7 @@
 namespace Lokad.Onnx;
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Buffers;
 
 using static OpResult;
@@ -22,6 +23,8 @@ public partial class CPUExecutionProvider
     /// batch), so plain pooled rents are sound and no accumulation ever
     /// reads uninitialized storage.
     /// </summary>
+    // Few calls per run never trip Tier0 promotion counters; force Tier1 (see PLAN qdA2).
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static OpResult Lstm(
         ITensor? X, ITensor? W, ITensor? R, ITensor? B,
         ITensor? sequenceLens, ITensor? initialH, ITensor? initialC, ITensor? P,
