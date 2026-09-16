@@ -695,6 +695,8 @@ public class MathOps
     /// reads. Tails read the appended row-major tail block in the same order.
     /// </remarks>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_unsafe_vectorized_intrinsics_2x4packed(int M,
                           int N,
                           int K,
@@ -900,6 +902,8 @@ public class MathOps
     /// tail block in the same order.
     /// </remarks>
     /// <param name="overwrite">True when C holds uninitialized data that every element computation overwrites; false accumulates onto the existing contents, which the caller must have zeroed.</param>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public unsafe static void mm_unsafe_vectorized_intrinsics_3x4packed(int M,
                           int N,
                           int K,
@@ -2227,6 +2231,8 @@ public class MathOps
     /// tail. Matches the scalar LSTM/elementwise formula within float
     /// rounding (validated at 1e-6, never bit-identical).
     /// </summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static void SigmoidSpan(ReadOnlySpan<float> xs, Span<float> ys)
     {
         int n = Math.Min(xs.Length, ys.Length);
@@ -2258,6 +2264,8 @@ public class MathOps
     /// scalar MathF.Tanh within float rounding (validated at 1e-6, never
     /// bit-identical).
     /// </summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static void TanhSpan(ReadOnlySpan<float> xs, Span<float> ys)
     {
         int n = Math.Min(xs.Length, ys.Length);
