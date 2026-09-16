@@ -90,40 +90,61 @@ public static class MathOpsConvBlocked
 
     static unsafe void BlockedKernel3x3(float* act, float* filt, float* dst, int cbN, int mbN, int h, int w)
     {
-        for (int mb = 0; mb < mbN; mb++)
+        for (int mb = 0; mb < mbN; mb += 2)
+        {
+            // Paired output blocks share each input broadcast across two filter
+            // blocks, halving broadcasts at the same eight live accumulators as
+            // the single eight-position tile. The odd tail block, if any, keeps
+            // the single-block path. Edge and border positions stay single per
+            // block (at most two rows plus fringes per layer).
+            bool pair = mb + 1 < mbN;
+            int mbHi = pair ? mb + 1 : mb;
             for (int y = 0; y < h; y++)
             {
                 bool yIn = (uint)(y - 1) < (uint)(h - 2);
                 int x = 0;
                 if (w < 2)
                 {
-                    for (; x < w; x++) BorderPos(act, filt, dst, mb, cbN, y, x, h, w);
+                    for (; x < w; x++)
+                        for (int m2 = mb; m2 <= mbHi; m2++) BorderPos(act, filt, dst, m2, cbN, y, x, h, w);
                     continue;
                 }
                 if (!yIn && h >= 2)
                 {
-                    // Edge row with room for neighbors on one side: the six
-                    // valid taps run vectorized; x borders and remainders
-                    // keep the checked path (two rows per layer at most).
-                    BorderPos(act, filt, dst, mb, cbN, y, 0, h, w);
-                    for (x = 1; x + T <= w - 1; x += T) InteriorTileYEdge(act, filt, dst, mb, cbN, y, x, h, w, y == 0);
-                    for (; x < w; x++) BorderPos(act, filt, dst, mb, cbN, y, x, h, w);
+                    for (int m2 = mb; m2 <= mbHi; m2++)
+                    {
+                        BorderPos(act, filt, dst, m2, cbN, y, 0, h, w);
+                        int xe = 1;
+                        for (; xe + T <= w - 1; xe += T) InteriorTileYEdge(act, filt, dst, m2, cbN, y, xe, h, w, y == 0);
+                        for (; xe < w; xe++) BorderPos(act, filt, dst, m2, cbN, y, xe, h, w);
+                    }
                     continue;
                 }
                 if (!yIn)
                 {
-                    for (; x < w; x++) BorderPos(act, filt, dst, mb, cbN, y, x, h, w);
+                    for (; x < w; x++)
+                        for (int m2 = mb; m2 <= mbHi; m2++) BorderPos(act, filt, dst, m2, cbN, y, x, h, w);
                     continue;
                 }
-                BorderPos(act, filt, dst, mb, cbN, y, 0, h, w);
-                for (x = 1; x + T <= w - 1; x += T) InteriorTile(act, filt, dst, mb, cbN, y, x, h, w);
-                if (x + 4 <= w - 1)
+                for (int m2 = mb; m2 <= mbHi; m2++) BorderPos(act, filt, dst, m2, cbN, y, 0, h, w);
+                x = 1;
+                if (pair)
                 {
-                    InteriorTileT4(act, filt, dst, mb, cbN, y, x, h, w);
-                    x += 4;
+                    for (; x + 4 <= w - 1; x += 4) InteriorTile2Mb4(act, filt, dst, mb, cbN, y, x, h, w);
                 }
-                for (; x < w; x++) BorderPos(act, filt, dst, mb, cbN, y, x, h, w);
+                else
+                {
+                    for (; x + T <= w - 1; x += T) InteriorTile(act, filt, dst, mb, cbN, y, x, h, w);
+                    if (x + 4 <= w - 1)
+                    {
+                        InteriorTileT4(act, filt, dst, mb, cbN, y, x, h, w);
+                        x += 4;
+                    }
+                }
+                for (; x < w; x++)
+                    for (int m2 = mb; m2 <= mbHi; m2++) BorderPos(act, filt, dst, m2, cbN, y, x, h, w);
             }
+        }
     }
 
     /// <summary>Four-position interior tile: same nest as <see cref="InteriorTile"/> with four accumulators, covering middle remainders at interior rate instead of the scalar border path. Only y-interior rows with x+3 inside the map may call it.</summary>
@@ -151,6 +172,45 @@ public static class MathOpsConvBlocked
         a2.Store(db + 2 * CB); a3.Store(db + 3 * CB);
     }
 
+    /// <summary>Paired-block four-position interior tile: two adjacent output blocks share each input broadcast (one broadcast feeds both blocks' FMAs), halving broadcasts at the same eight live accumulators as <see cref="InteriorTile"/>. Per-position accumulation order matches the single-block nest exactly, so paired tiles agree bitwise with single tiles. Only y-interior rows with x..x+3 interior may call it, with mb even and mb+1 valid.</summary>
+    static unsafe void InteriorTile2Mb4(float* act, float* filt, float* dst, int mb, int cbN, int y, int x, int h, int w)
+    {
+        var b0 = Vector512<float>.Zero; var b1 = Vector512<float>.Zero;
+        var b2 = Vector512<float>.Zero; var b3 = Vector512<float>.Zero;
+        var c0 = Vector512<float>.Zero; var c1 = Vector512<float>.Zero;
+        var c2 = Vector512<float>.Zero; var c3 = Vector512<float>.Zero;
+        int mbStride = cbN * 9 * CB * CB;
+        for (int cb = 0; cb < cbN; cb++)
+            for (int k9 = 0; k9 < 9; k9++)
+            {
+                int dy = k9 / 3 - 1, dx = k9 % 3 - 1;
+                float* fbase = filt + (((mb * cbN + cb) * 9 + k9) * CB) * CB;
+                float* abase = act + ((cb * h + y + dy) * w + x + dx) * CB;
+                for (int cc = 0; cc < CB; cc++)
+                {
+                    var f0 = Vector512.Load(fbase + cc * CB);
+                    var f1 = Vector512.Load(fbase + mbStride + cc * CB);
+                    var s0 = Vector512.Create(abase[0 * CB + cc]);
+                    var s1 = Vector512.Create(abase[1 * CB + cc]);
+                    var s2 = Vector512.Create(abase[2 * CB + cc]);
+                    var s3 = Vector512.Create(abase[3 * CB + cc]);
+                    b0 = Avx512F.FusedMultiplyAdd(f0, s0, b0);
+                    c0 = Avx512F.FusedMultiplyAdd(f1, s0, c0);
+                    b1 = Avx512F.FusedMultiplyAdd(f0, s1, b1);
+                    c1 = Avx512F.FusedMultiplyAdd(f1, s1, c1);
+                    b2 = Avx512F.FusedMultiplyAdd(f0, s2, b2);
+                    c2 = Avx512F.FusedMultiplyAdd(f1, s2, c2);
+                    b3 = Avx512F.FusedMultiplyAdd(f0, s3, b3);
+                    c3 = Avx512F.FusedMultiplyAdd(f1, s3, c3);
+                }
+            }
+        float* db0 = dst + ((mb * h + y) * w + x) * CB;
+        float* db1 = dst + (((mb + 1) * h + y) * w + x) * CB;
+        b0.Store(db0 + 0 * CB); b1.Store(db0 + 1 * CB);
+        b2.Store(db0 + 2 * CB); b3.Store(db0 + 3 * CB);
+        c0.Store(db1 + 0 * CB); c1.Store(db1 + 1 * CB);
+        c2.Store(db1 + 2 * CB); c3.Store(db1 + 3 * CB);
+    }
     /// <summary>Eight-position edge-row tile: the six valid taps of a y-border row with no per-tap bounds checks. Top rows use taps 3-8 (dy 0..1), bottom rows taps 0-5 (dy -1..0). Only x-interior tiles of the matching edge row may call it.</summary>
     static unsafe void InteriorTileYEdge(float* act, float* filt, float* dst, int mb, int cbN, int y, int x, int h, int w, bool topEdge)
     {

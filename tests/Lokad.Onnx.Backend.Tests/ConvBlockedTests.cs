@@ -194,4 +194,16 @@ public class ConvBlockedTests
             MathOpsConvBlocked.BlockedAdd(new float[4], new float[5], new float[5], TensorExecutionOptions.Intrinsics));
     }
 
+    [SkippableFact]
+    public void PairedBlocks_Agree()
+    {
+        Skip.If(!Avx512F.IsSupported, "Blocked kernel needs AVX512F.");
+        // Even block counts run the paired broadcast-sharing tiles on the
+        // interior bulk; the odd count exercises pair plus single tail.
+        Case(32, 80, 200, 64, true, false);
+        Case(64, 48, 96, 128, true, false);
+        Case(32, 16, 40, 48, true, true);
+        Case(32, 16, 40, 16, false, false);
+        Case(64, 5, 33, 64, true, false);
+    }
 }
