@@ -94,7 +94,8 @@ static class VoiceModelCases
     // shapes from staged replay assets only. The decoder single-step rows
     // slice the first frame and token of the step-1 fixtures: with zero
     // states this is exactly a real first decoding step; with the recorded
-    // s1 states it is a real mid-trajectory step. No fixture is generated
+    // s1 states it is a shape stress case (those states come from a different
+    // recorded trajectory, not the selected first step). No fixture is generated
     // or altered; slices copy values and keep replay provenance.
     public static Dictionary<string, ITensor> EncoderInputs64(string root)
     {
@@ -147,24 +148,38 @@ static class VoiceModelCases
         return d;
     }
 
-    static DenseTensor<float> PrefixFrames(Tensor<float> source, int frames)
+    // Coordinate-aware frame prefix: [B,C,T] stores time innermost, so frame
+    // f of channel (b,c) lives at ((b*C)+c)*T+f. A flat copy of the first
+    // B*C*F values takes the wrong elements for F<T (L1).
+    internal static DenseTensor<float> PrefixFrames(Tensor<float> source, int frames)
     {
         int[] dims = source.Dimensions.ToArray();
         if (dims.Length != 3) throw new InvalidOperationException("expected rank-3 encoder outputs.");
+        int b = dims[0], c = dims[1], t = dims[2];
+        if (frames < 1 || frames > t) throw new ArgumentOutOfRangeException(nameof(frames), "expected 1..T frames.");
         var src = source.ToArray();
-        var dst = new float[dims[0] * dims[1] * frames];
-        Array.Copy(src, dst, dst.Length);
-        return new DenseTensor<float>(dst, new[] { dims[0], dims[1], frames });
+        var dst = new float[b * c * frames];
+        for (int bb = 0; bb < b; bb++)
+            for (int cc = 0; cc < c; cc++)
+                for (int f = 0; f < frames; f++)
+                    dst[(bb * c + cc) * frames + f] = src[(bb * c + cc) * t + f];
+        return new DenseTensor<float>(dst, new[] { b, c, frames });
     }
 
-    static DenseTensor<int> PrefixTokens(Tensor<int> source, int tokens)
+    // Same coordinate audit for [B,S] targets: token s of batch b lives at
+    // b*S+s. Identical to the old flat copy for B==1, now also correct for B>1.
+    internal static DenseTensor<int> PrefixTokens(Tensor<int> source, int tokens)
     {
         int[] dims = source.Dimensions.ToArray();
         if (dims.Length != 2) throw new InvalidOperationException("expected rank-2 targets.");
+        int b = dims[0], s = dims[1];
+        if (tokens < 1 || tokens > s) throw new ArgumentOutOfRangeException(nameof(tokens), "expected 1..S tokens.");
         var src = source.ToArray();
-        var dst = new int[dims[0] * tokens];
-        Array.Copy(src, dst, dst.Length);
-        return new DenseTensor<int>(dst, new[] { dims[0], tokens });
+        var dst = new int[b * tokens];
+        for (int bb = 0; bb < b; bb++)
+            for (int tt = 0; tt < tokens; tt++)
+                dst[bb * tokens + tt] = src[bb * s + tt];
+        return new DenseTensor<int>(dst, new[] { b, tokens });
     }
 
     static Dictionary<string, ITensor> LoadNamed(string root, (string name, string file)[] entries)

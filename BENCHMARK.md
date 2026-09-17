@@ -474,8 +474,11 @@ machine-readable summary in
 `tests/Lokad.Onnx.Bench/baseline/summary-voice-rep-20260915.json`, raw
 log local. These rows reuse staged replay assets only: the decoder
 single steps slice the first frame and token of the step-1 fixtures
-(zero states reproduce a real first decoding step; the recorded s1
-states reproduce a real mid-trajectory step), encoder-64 and the
+(note: these ran with a flat-prefix slice later found to take the wrong
+elements for F<T, L1; the zero-state row rebaselines as a real first step
+under the stride-aware fix, while the recorded-s1 carried row stays a shape
+stress case -- those states come from a different recorded trajectory, not
+the selected first step), encoder-64 and the
 synthetic 1 s segmentation use staged fixtures, encoder-256 replays the
 first 256 frames of real speech features with recorded ORT references
 (see replay.json), embedding-400 replays the first 400 fbank frames

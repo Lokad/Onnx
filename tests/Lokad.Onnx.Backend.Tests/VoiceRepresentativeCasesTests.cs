@@ -85,10 +85,13 @@ public class VoiceRepresentativeCasesTests
         var enc = (Tensor<float>)single["encoder_outputs"];
         AssertNamed(enc, "encoder_outputs", new[] { 1, 1024, 1 }, TensorElementType.Float);
         var fullEnc = ((Tensor<float>)full["encoder_outputs"]).ToArray();
-        Assert.Equal(fullEnc.Take(1024).ToArray(), enc.ToArray());
+        var want = new float[1024];
+        for (int c = 0; c < 1024; c++) want[c] = fullEnc[c * 8];
+        Assert.Equal(want, enc.ToArray());
         var tgt = (Tensor<int>)single["targets"];
         AssertNamed(tgt, "targets", new[] { 1, 1 }, TensorElementType.Int32);
-        Assert.Equal(new[] { 1 }, tgt.ToArray());
+        var fullTgt = ((Tensor<int>)full["targets"]).ToArray();
+        Assert.Equal(new[] { fullTgt[0] }, tgt.ToArray());
         var tlen = (Tensor<int>)single["target_length"];
         AssertNamed(tlen, "target_length", new[] { 1 }, TensorElementType.Int32);
         Assert.Equal(new[] { 1 }, tlen.ToArray());
@@ -98,6 +101,59 @@ public class VoiceRepresentativeCasesTests
             AssertNamed(st, key, new[] { 2, 1, 640 }, TensorElementType.Float);
             Assert.All(st.ToArray(), v => Assert.Equal(0f, v));
         }
+    }
+
+    [Fact]
+    public void PrefixFrames_SelectsFirstFramesByStride()
+    {
+        // [1,3,8] holding 0..23: frame f of each channel sits at stride 8,
+        // so frame 0 is [0,8,16], not the flat [0,1,2] (L1 regression).
+        var src = new DenseTensor<float>(System.Linq.Enumerable.Range(0, 24).Select(i => (float)i).ToArray(), new[] { 1, 3, 8 });
+        var one = VoiceModelCases.PrefixFrames(src, 1);
+        Assert.Equal(new[] { 1, 3, 1 }, one.Dimensions.ToArray());
+        Assert.Equal(new float[] { 0f, 8f, 16f }, one.ToArray());
+        var two = VoiceModelCases.PrefixFrames(src, 2);
+        Assert.Equal(new[] { 1, 3, 2 }, two.Dimensions.ToArray());
+        Assert.Equal(new float[] { 0f, 1f, 8f, 9f, 16f, 17f }, two.ToArray());
+    }
+
+    [Fact]
+    public void PrefixFrames_HandlesBatches()
+    {
+        // [2,2,4] holding 0..15: batch 1 starts at offset 8.
+        var src = new DenseTensor<float>(System.Linq.Enumerable.Range(0, 16).Select(i => (float)i).ToArray(), new[] { 2, 2, 4 });
+        var one = VoiceModelCases.PrefixFrames(src, 1);
+        Assert.Equal(new[] { 2, 2, 1 }, one.Dimensions.ToArray());
+        Assert.Equal(new float[] { 0f, 4f, 8f, 12f }, one.ToArray());
+    }
+
+    [Fact]
+    public void PrefixFrames_RejectsInvalidCounts()
+    {
+        var src = new DenseTensor<float>(new float[24], new[] { 1, 3, 8 });
+        Assert.Throws<ArgumentOutOfRangeException>(() => VoiceModelCases.PrefixFrames(src, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => VoiceModelCases.PrefixFrames(src, 9));
+    }
+
+    [Fact]
+    public void PrefixTokens_SelectsFirstTokensByStride()
+    {
+        // [2,5] holding 0..9: batch 1 starts at offset 5.
+        var src = new DenseTensor<int>(System.Linq.Enumerable.Range(0, 10).ToArray(), new[] { 2, 5 });
+        var one = VoiceModelCases.PrefixTokens(src, 1);
+        Assert.Equal(new[] { 2, 1 }, one.Dimensions.ToArray());
+        Assert.Equal(new[] { 0, 5 }, one.ToArray());
+        var two = VoiceModelCases.PrefixTokens(src, 2);
+        Assert.Equal(new[] { 2, 2 }, two.Dimensions.ToArray());
+        Assert.Equal(new[] { 0, 1, 5, 6 }, two.ToArray());
+    }
+
+    [Fact]
+    public void PrefixTokens_RejectsInvalidCounts()
+    {
+        var src = new DenseTensor<int>(new int[10], new[] { 2, 5 });
+        Assert.Throws<ArgumentOutOfRangeException>(() => VoiceModelCases.PrefixTokens(src, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => VoiceModelCases.PrefixTokens(src, 6));
     }
 
     [Fact]
