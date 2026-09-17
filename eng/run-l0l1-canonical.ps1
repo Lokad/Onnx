@@ -9,6 +9,13 @@ param([int]$Iters = 33, [int]$Reps = 4, [int]$CooldownSeconds = 300,
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
+# Tiering discipline (E02 root cause 2026-09-17): tiered JIT promotes and
+# OSRs hot methods mid-series (deterministic 2-3x spikes, e.g. E5-8 iter 6
+# on any box however quiet) and steady Tier0/OSR code runs ~1.75x slower
+# than full opts. Release evidence pins full-opts code on BOTH legs via the
+# inherited environment; the manifest env= line proves it (must read 0).
+# Deployment-default tiering stays a separate diagnostic, never evidence.
+$env:DOTNET_TieredCompilation = "0"
 # Portable interpreter: dev boxes expose python, minimal Linux images only python3.
 $py = if (Get-Command python -ErrorAction SilentlyContinue) { "python" } else { "python3" }
 if ($DryRun -and $Iters -eq 33) { $Iters = 2 }
