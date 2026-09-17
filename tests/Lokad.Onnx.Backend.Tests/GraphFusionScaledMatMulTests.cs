@@ -180,4 +180,119 @@ public class GraphFusionScaledMatMulTests
         var r = CPUExecutionProvider.ScaledMatMul(a, b, null, null, null);
         Assert.NotEqual(OpStatus.Success, r.Status);
     }
+
+    [Fact]
+    public void TrailingDivCompositeMatchesLegacyBitwise()
+    {
+        // E5 QK-shaped trailing Div: MatMul then Div vs the fused trailing
+        // composite must agree bit-for-bit (identical ops, identical order).
+        foreach (var d in new[] { 2.0f, 0.1f, 5.656854f })
+        {
+            var a = Rand(new[] { 30, 32 }, 31);
+            var b = Rand(new[] { 32, 30 }, 32);
+            var ab = a.Buffer.ToArray();
+            ab[0] = System.BitConverter.Int32BitsToSingle(0x7FC00001);
+            ab[1] = float.PositiveInfinity;
+            ab[2] = -0f;
+            var ax = new DenseTensor<float>(ab.AsMemory(), new[] { 30, 32 });
+            var div = DenseTensor<float>.Scalar(d);
+            var mm = CPUExecutionProvider.MatMul(ax, b, null, null);
+            Assert.Equal(OpStatus.Success, mm.Status);
+            var legacy = CPUExecutionProvider.Div(mm.Outputs![0]!, div, null, null);
+            Assert.Equal(OpStatus.Success, legacy.Status);
+            var fused = CPUExecutionProvider.ScaledMatMulTrailing(ax, b, div, null, null);
+            Assert.Equal(OpStatus.Success, fused.Status);
+            var f = Out(fused.Outputs![0]!);
+            var e = Out(legacy.Outputs![0]!);
+            Assert.Equal(e.Length, f.Length);
+            Assert.True(e.AsSpan().SequenceEqual(f.AsSpan()), "d=" + d + " diverged");
+        }
+    }
+
+    static OnnxModel TrailingDivModel()
+    {
+        // Mirrors the E5 attention tail: MatMul -> Div(const) -> mask-Add.
+        var mp = new OnnxModel { Name = "tiny-trailingdiv" };
+        mp.Opset[""] = 14;
+        mp.Inputs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new[] { 4, 6 } });
+        mp.Inputs.Add(new OnnxValueInfo { Name = "b", ElementType = TensorElementType.Float, Dims = new[] { 4, 5 } });
+        mp.Inputs.Add(new OnnxValueInfo { Name = "r", ElementType = TensorElementType.Float, Dims = new[] { 1 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y1", ElementType = TensorElementType.Float, Dims = new[] { 4, 5 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y2", ElementType = TensorElementType.Float, Dims = new[] { 4, 5 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y3", ElementType = TensorElementType.Float, Dims = new[] { 4, 5 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y4", ElementType = TensorElementType.Float, Dims = new[] { 4, 5 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y5", ElementType = TensorElementType.Float, Dims = new[] { 4, 5 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "y6", ElementType = TensorElementType.Float, Dims = new[] { 4, 5 } });
+        mp.Outputs.Add(new OnnxValueInfo { Name = "t3", ElementType = TensorElementType.Float, Dims = new[] { 4, 5 } });
+        mp.Initializers.Add(new OnnxTensor { Name = "s", ElementType = TensorElementType.Float, Dims = new int[0], Data = new float[] { 2.0f } });
+        mp.Initializers.Add(new OnnxTensor { Name = "w", ElementType = TensorElementType.Float, Dims = new[] { 6, 5 }, Data = new float[30] });
+        Dictionary<string, object> NoAttrs() => new Dictionary<string, object>();
+        mp.Nodes.Add(new OnnxNode { OpType = "MatMul", Inputs = new[] { "x", "w" }, Outputs = new[] { "t1" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Div", Inputs = new[] { "t1", "s" }, Outputs = new[] { "d1" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Add", Inputs = new[] { "d1", "b" }, Outputs = new[] { "y1" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "MatMul", Inputs = new[] { "x", "w" }, Outputs = new[] { "t2" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Div", Inputs = new[] { "t2", "s" }, Outputs = new[] { "d2" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Add", Inputs = new[] { "d2", "b" }, Outputs = new[] { "y2" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Add", Inputs = new[] { "t2", "b" }, Outputs = new[] { "y3" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "MatMul", Inputs = new[] { "x", "w" }, Outputs = new[] { "t3" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Div", Inputs = new[] { "t3", "s" }, Outputs = new[] { "d3" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Add", Inputs = new[] { "d3", "b" }, Outputs = new[] { "y4" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "MatMul", Inputs = new[] { "x", "w" }, Outputs = new[] { "t5" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Div", Inputs = new[] { "t5", "r" }, Outputs = new[] { "d5" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Add", Inputs = new[] { "d5", "b" }, Outputs = new[] { "y5" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "MatMul", Inputs = new[] { "x", "w" }, Outputs = new[] { "t6" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Div", Inputs = new[] { "s", "t6" }, Outputs = new[] { "d6" }, Attributes = NoAttrs() });
+        mp.Nodes.Add(new OnnxNode { OpType = "Add", Inputs = new[] { "d6", "b" }, Outputs = new[] { "y6" }, Attributes = NoAttrs() });
+        return mp;
+    }
+
+    [Fact]
+    public void TrailingDivRegionsFuseDecoysStay()
+    {
+        var graph = Model.Load(TrailingDivModel(), runOptimizer: false)!;
+        var report = Optimization.GraphOptimizer.Run(graph);
+        Assert.Contains(report, c => c.Pass == "scalematmul");
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.ScaledMatMul && n.Outputs.Length == 1 && n.Outputs[0] == "d1");
+        Assert.DoesNotContain(graph.Nodes, n => n.Op == OpType.Div && n.Outputs.Length == 1 && n.Outputs[0] == "d1");
+        // Second consumer on the MatMul->Div link keeps the two-node form.
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.MatMul && n.Outputs.Length == 1 && n.Outputs[0] == "t2");
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.Div && n.Outputs.Length == 1 && n.Outputs[0] == "d2");
+        // Graph-output exposure on the link keeps the two-node form.
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.MatMul && n.Outputs.Length == 1 && n.Outputs[0] == "t3");
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.Div && n.Outputs.Length == 1 && n.Outputs[0] == "d3");
+        // Runtime (non-singleton) divisor keeps the two-node form.
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.Div && n.Outputs.Length == 1 && n.Outputs[0] == "d5");
+        // Divisor at index 0 is not the ORT scale shape.
+        Assert.Contains(graph.Nodes, n => n.Op == OpType.Div && n.Outputs.Length == 1 && n.Outputs[0] == "d6");
+    }
+
+    [Fact]
+    public void TrailingDiv_BitwiseTwinWithExceptionalValues()
+    {
+        var fused = Model.Load(TrailingDivModel())!;
+        var plain = Model.Load(TrailingDivModel(), runOptimizer: false)!;
+        var rnd = new System.Random(77);
+        var x = new float[24];
+        var b = new float[20];
+        for (int i = 0; i < 24; i++) x[i] = (float)rnd.NextDouble() * 8f - 4f;
+        for (int i = 0; i < 20; i++) b[i] = (float)rnd.NextDouble() * 8f - 4f;
+        x[0] = System.BitConverter.Int32BitsToSingle(0x7FC00001);
+        x[1] = float.PositiveInfinity;
+        x[2] = -0f;
+        var feed = new System.Collections.Generic.Dictionary<string, ITensor>
+        {
+            ["x"] = new DenseTensor<float>(x.AsMemory(), new int[] { 4, 6 }),
+            ["b"] = new DenseTensor<float>(b.AsMemory(), new int[] { 4, 5 }),
+            ["r"] = new DenseTensor<float>(new float[] { 2.0f }.AsMemory(), new int[] { 1 }),
+        };
+        Assert.True(fused.Execute(feed, true), fused.LastErrorMessage);
+        Assert.True(plain.Execute(feed, true), plain.LastErrorMessage);
+        foreach (var name in new[] { "y1", "y2", "y3", "y4", "y5", "y6", "t3" })
+        {
+            var f = ((Tensor<float>)fused.Outputs[name]!).ToDenseTensor().Buffer.ToArray();
+            var p = ((Tensor<float>)plain.Outputs[name]!).ToDenseTensor().Buffer.ToArray();
+            Assert.Equal(p.Length, f.Length);
+            Assert.True(p.AsSpan().SequenceEqual(f.AsSpan()), name + " diverged");
+        }
+    }
 }

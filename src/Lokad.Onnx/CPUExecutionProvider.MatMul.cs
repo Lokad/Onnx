@@ -51,6 +51,27 @@ public partial class CPUExecutionProvider
         return Success(op, mm.Outputs);
     }
 
+    /// <summary>
+    /// Trailing-scale MatMul: computes Div(MatMul(A, B), divisor) with the
+    /// exact legacy sequence, so the fusion lands with identical values
+    /// before any alpha-epilogue kernel arrives (E5-1 M2). Internal: the
+    /// optimizer is the only producer of trailing ScaledMatMul nodes.
+    /// </summary>
+    internal static OpResult ScaledMatMulTrailing(ITensor? A, ITensor? B, ITensor? Divisor, ExecutionOptions? options, TensorBufferPool? pool)
+    {
+        var op = OpType.ScaledMatMul;
+        if (A is null) return MissingInput(op, nameof(A));
+        if (B is null) return MissingInput(op, nameof(B));
+        if (Divisor is null) return MissingInput(op, nameof(Divisor));
+        var mm = MatMul(A, B, options, pool);
+        if (mm.Status != OpStatus.Success || mm.Outputs is null || mm.Outputs.Length != 1 || mm.Outputs[0] is null)
+            return mm;
+        var dv = Div(mm.Outputs[0], Divisor, options, pool);
+        if (dv.Status != OpStatus.Success || dv.Outputs is null)
+            return dv;
+        return Success(op, dv.Outputs);
+    }
+
     static Tensor<T> SpeedDensify<T>(Tensor<T> t, ExecutionOptions opts, OpStage stage) where T : unmanaged
     {
         // Speed mode densifies operands up front (views materialize here,

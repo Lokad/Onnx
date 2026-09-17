@@ -302,7 +302,9 @@ public partial struct Node
         OpType.Gemm => CPU.Gemm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0),
         OpType.GemmGelu => CPU.GemmGelu(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("alpha", 1f) ?? 1f, GetFloat("beta", 1f) ?? 1f, opt, GetInt("transA", 0) ?? 0, GetInt("transB", 0) ?? 0, Attr<string>("approximate", null)),
 
-        OpType.ScaledMatMul => CPU.ScaledMatMul(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool),
+        OpType.ScaledMatMul => Attr<string>("placement", null) == "trailing"
+            ? CPU.ScaledMatMulTrailing(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool)
+            : CPU.ScaledMatMul(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool),
 
         OpType.Transpose => TransposePrepared(graph, opt),
 

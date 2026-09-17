@@ -36,7 +36,8 @@ public class GraphLifetimeTests
 
         var graph = OnnxImport.Load(modelPath)!;
         Assert.Equal(25, graph.Nodes.Count(n => n.Op == OpType.LayerNormalization));
-        Assert.Equal(96, graph.Nodes.Count(n => n.Op == OpType.MatMul));
+        Assert.Equal(84, graph.Nodes.Count(n => n.Op == OpType.MatMul));
+        Assert.Equal(12, graph.Nodes.Count(n => n.Op == OpType.ScaledMatMul));
         Assert.Equal(graph.Nodes.Count, graph.LastUseIndex["last_hidden_state"]);
         foreach (var name in graph.Inputs.Keys) Assert.Equal(int.MaxValue, graph.LastUseIndex[name]);
         foreach (var name in graph.Initializers.Keys) Assert.Equal(int.MaxValue, graph.LastUseIndex[name]);

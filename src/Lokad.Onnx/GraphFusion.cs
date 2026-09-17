@@ -1077,6 +1077,7 @@ namespace Lokad.Onnx
         public static int FuseScaledMatMulPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
         {
             var drop = new HashSet<int>();
+            var trailingAt = new List<(int divIndex, Node fused)>();
             int fused = 0;
 
             for (int i = 0; i < graph.Nodes.Count; i++)
@@ -1089,14 +1090,37 @@ namespace Lokad.Onnx
                     rewritten.Add(i);
                     fused++;
                 }
+                else if (TryMatchTrailingDivScale(graph, facts, drop, i, out int divIndex, out Node trailing))
+                {
+                    // The fused node lands in the Div slot (not the MatMul
+                    // slot): its divisor edge is produced between the two, so
+                    // only the later slot is topologically safe for all edges.
+                    drop.Add(i);
+                    drop.Add(divIndex);
+                    trailingAt.Add((divIndex, trailing));
+                    rewritten.Add(divIndex);
+                    fused++;
+                }
             }
 
             if (drop.Count > 0)
             {
-                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                trailingAt.Sort((a, b) => a.divIndex.CompareTo(b.divIndex));
+                int ti = 0;
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count + trailingAt.Count);
                 for (int i = 0; i < graph.Nodes.Count; i++)
                 {
+                    while (ti < trailingAt.Count && trailingAt[ti].divIndex <= i)
+                    {
+                        kept.Add(trailingAt[ti].fused);
+                        ti++;
+                    }
                     if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                while (ti < trailingAt.Count)
+                {
+                    kept.Add(trailingAt[ti].fused);
+                    ti++;
                 }
                 graph.Nodes.Clear();
                 graph.Nodes.AddRange(kept);
@@ -1169,6 +1193,65 @@ namespace Lokad.Onnx
             fused.Outputs = new[] { rout };
             graph.Nodes[matmulIndex] = fused;
             mulIndex = pi;
+            return true;
+        }
+
+        /// <summary>
+        /// Matches MatMul feeding Div(data, scalar-divisor) with no other live
+        /// consumer and no graph-output exposure on the link, rewriting the
+        /// MatMul struct in place to trailing ScaledMatMul with [A, B, divisor]
+        /// inputs; the caller drops the Div node. Mirrors the ORT Div-scale
+        /// fusion shape (divisor at index 1 only, dividend carries a real
+        /// shape); float32 only. Leading-Mul wins on chains carrying both.
+        /// </summary>
+        static bool TryMatchTrailingDivScale(
+            ComputationalGraph graph,
+            Optimization.GraphFacts facts,
+            HashSet<int> drop,
+            int matmulIndex,
+            out int divIndex,
+            out Node fusedNode)
+        {
+            divIndex = -1;
+            fusedNode = default;
+            var mm = graph.Nodes[matmulIndex];
+            if (mm.Op != OpType.MatMul) return false;
+            if (!IsFusableParticipant(mm)) return false;
+            if (mm.Inputs.Length != 2 || mm.Outputs.Length != 1) return false;
+            if (!Node.IsStandardDomain(mm.Domain)) return false;
+            string mid = mm.Outputs[0];
+            if (string.IsNullOrEmpty(mid)) return false;
+            if (facts.GraphOutputs.Contains(mid)) return false;
+            if (!facts.Consumers.TryGetValue(mid, out var uses)) return false;
+            int live = 0;
+            int ci = -1;
+            foreach (var u in uses) if (!drop.Contains(u)) { live++; ci = u; }
+            if (live != 1 || ci < 0) return false;
+            var div = graph.Nodes[ci];
+            if (div.Op != OpType.Div || div.IsFused) return false;
+            if (!IsFusableParticipant(div)) return false;
+            if (!Node.IsStandardDomain(div.Domain)) return false;
+            if (div.Inputs.Length != 2 || div.Outputs.Length != 1) return false;
+            if (div.Inputs[0] != mid) return false;
+            string divisor = div.Inputs[1];
+            if (string.IsNullOrEmpty(divisor)) return false;
+            if (!IsSingletonFloatEdge(graph, facts, divisor)) return false;
+            if (!facts.Dtypes.TryGetValue(mid, out var dt) || dt != TensorElementType.Float) return false;
+            if (IsSingletonFloatEdge(graph, facts, mid)) return false;
+            string rout = div.Outputs[0];
+            if (string.IsNullOrEmpty(rout)) return false;
+            var fused = mm;
+            fused.Op = OpType.ScaledMatMul;
+            fused.OpTypeName = OpType.ScaledMatMul.ToString();
+            fused.Domain = "";
+            int stdv = StandardOpset(graph);
+            if (stdv >= 0) fused.OpsetVersion = stdv;
+            fused.IsFused = true;
+            fused.Inputs = new[] { mm.Inputs[0], mm.Inputs[1], divisor };
+            fused.Attributes = new Dictionary<string, object> { ["placement"] = "trailing" };
+            fused.Outputs = new[] { rout };
+            fusedNode = fused;
+            divIndex = ci;
             return true;
         }
 
