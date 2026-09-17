@@ -39,10 +39,12 @@ internal static class SoftmaxRace
         var mRef = Bind<MaskedKernel>("SoftmaxMaskedFloatSpan");
         var m4 = Bind<MaskedKernel>("SoftmaxMaskedFloatSpan4x");
         var mP = Bind<MaskedKernel>("SoftmaxMaskedFloatSpanPtr");
+        var mM = Bind<MaskedKernel>("SoftmaxMaskedFloatSpanPtrMax");
         var m2 = Bind<MaskedKernel>("SoftmaxMaskedFloatSpan2x");
         var pRef = Bind<PlainKernel>("SoftmaxContiguousFloatSpan");
         var p4 = Bind<PlainKernel>("SoftmaxContiguousFloatSpan4x");
         var pP = Bind<PlainKernel>("SoftmaxContiguousFloatSpanPtr");
+        var pM = Bind<PlainKernel>("SoftmaxContiguousFloatSpanPtrMax");
         var p2 = Bind<PlainKernel>("SoftmaxContiguousFloatSpan2x");
         var shapes = new (int Outer, int Block)[]
         {
@@ -52,12 +54,12 @@ internal static class SoftmaxRace
         var rnd = new Random(733);
         int rc = 0;
         foreach (var (outer, block) in shapes)
-            rc |= RaceOne(outer, block, reps, rnd, mRef, m2, m4, mP, pRef, p2, p4, pP);
+            rc |= RaceOne(outer, block, reps, rnd, mRef, m2, m4, mP, mM, pRef, p2, p4, pP, pM);
         Console.WriteLine(rc == 0 ? "softmaxrace: all cases agree." : "softmaxrace: FAILED.");
         return rc;
     }
 
-    static int RaceOne(int outer, int block, int reps, Random rnd, MaskedKernel mRef, MaskedKernel m2, MaskedKernel m4, MaskedKernel mP, PlainKernel pRef, PlainKernel p2, PlainKernel p4, PlainKernel pP)
+    static int RaceOne(int outer, int block, int reps, Random rnd, MaskedKernel mRef, MaskedKernel m2, MaskedKernel m4, MaskedKernel mP, MaskedKernel mM, PlainKernel pRef, PlainKernel p2, PlainKernel p4, PlainKernel pP, PlainKernel pM)
     {
         var x = new float[outer * block];
         var mask = new float[block];
@@ -98,6 +100,8 @@ internal static class SoftmaxRace
         long badM4 = BadBits(y4, yRef);
         double tmP = TimeM(mP, y4);
         long badMP = BadBits(y4, yRef);
+        double tmM = TimeM(mM, y4);
+        long badMM = BadBits(y4, yRef);
         double tpRef = TimeP(pRef, yRef);
         double tp2 = TimeP(p2, y2);
         long badP = BadBits(y2, yRef);
@@ -105,7 +109,9 @@ internal static class SoftmaxRace
         long badP4 = BadBits(y4, yRef);
         double tpP = TimeP(pP, y4);
         long badPP = BadBits(y4, yRef);
-        Console.WriteLine("softmaxrace " + outer + "x" + block + ": masked-ref=" + tmRef.ToString("F3") + "ms masked-2x=" + tm2.ToString("F3") + "ms badM=" + badM + " masked-4x=" + tm4.ToString("F3") + "ms badM4=" + badM4 + " masked-ptr=" + tmP.ToString("F3") + "ms badMP=" + badMP + " plain-ref=" + tpRef.ToString("F3") + "ms plain-2x=" + tp2.ToString("F3") + "ms badP=" + badP + " plain-4x=" + tp4.ToString("F3") + "ms badP4=" + badP4 + " plain-ptr=" + tpP.ToString("F3") + "ms badPP=" + badPP);
-        return (badM == 0 && badP == 0 && badM4 == 0 && badP4 == 0 && badMP == 0 && badPP == 0) ? 0 : 1;
+        double tpM = TimeP(pM, y4);
+        long badPM = BadBits(y4, yRef);
+        Console.WriteLine("softmaxrace " + outer + "x" + block + ": masked-ref=" + tmRef.ToString("F3") + "ms masked-2x=" + tm2.ToString("F3") + "ms badM=" + badM + " masked-4x=" + tm4.ToString("F3") + "ms badM4=" + badM4 + " masked-ptr=" + tmP.ToString("F3") + "ms badMP=" + badMP + " masked-max=" + tmM.ToString("F3") + "ms badMM=" + badMM + " plain-ref=" + tpRef.ToString("F3") + "ms plain-2x=" + tp2.ToString("F3") + "ms badP=" + badP + " plain-4x=" + tp4.ToString("F3") + "ms badP4=" + badP4 + " plain-ptr=" + tpP.ToString("F3") + "ms badPP=" + badPP + " plain-max=" + tpM.ToString("F3") + "ms badPM=" + badPM);
+        return (badM == 0 && badP == 0 && badM4 == 0 && badP4 == 0 && badMP == 0 && badPP == 0 && badMM == 0 && badPM == 0) ? 0 : 1;
     }
 }

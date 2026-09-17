@@ -80,6 +80,24 @@ public class SoftmaxRowUnrollTests
         BitsEqual(yP, yRef, "plain ptr twin");
     }
 
+    static void MaskedPtrMaxMatchesRef(float[] x, float[] mask, int outer, int block, bool useSimd)
+    {
+        var yRef = new float[x.Length];
+        var yM = new float[x.Length];
+        Tensor<float>.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
+        Tensor<float>.SoftmaxMaskedFloatSpanPtrMax(x, mask, yM, outer, block, useSimd);
+        BitsEqual(yM, yRef, "masked ptrmax twin");
+    }
+
+    static void PlainPtrMaxMatchesRef(float[] x, int outer, int block, bool useSimd)
+    {
+        var yRef = new float[x.Length];
+        var yM = new float[x.Length];
+        Tensor<float>.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
+        Tensor<float>.SoftmaxContiguousFloatSpanPtrMax(x, yM, outer, block, useSimd);
+        BitsEqual(yM, yRef, "plain ptrmax twin");
+    }
+
     static float[] CausalMask(int block, Random rnd)
     {
         var m = new float[block];
@@ -158,6 +176,26 @@ public class SoftmaxRowUnrollTests
         {
             MaskedPtrMatchesRef(Rand(outer * block, rnd, 6f), CausalMask(block, rnd), outer, block, simd);
             PlainPtrMatchesRef(Rand(outer * block, rnd, 6f), outer, block, simd);
+        }
+    }
+
+    [Theory]
+    [InlineData(4, 128)]
+    [InlineData(5, 128)]
+    [InlineData(6, 128)]
+    [InlineData(7, 128)]
+    [InlineData(30, 128)]
+    [InlineData(128, 128)]
+    [InlineData(9, 512)]
+    [InlineData(5, 30)]
+    [InlineData(3, 7)]
+    public void PtrMaxMatchesRefOnShapes(int outer, int block)
+    {
+        var rnd = new Random(outer * 470287 + block);
+        foreach (bool simd in new[] { true, false })
+        {
+            MaskedPtrMaxMatchesRef(Rand(outer * block, rnd, 6f), CausalMask(block, rnd), outer, block, simd);
+            PlainPtrMaxMatchesRef(Rand(outer * block, rnd, 6f), outer, block, simd);
         }
     }
 
