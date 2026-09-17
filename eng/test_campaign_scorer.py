@@ -161,6 +161,16 @@ class CampaignTests(unittest.TestCase):
         self.assertIn("e5-30tok", result["quarantined"])
         self.assertIsNone(result.get("e5_improvement"))
 
+    def test_quarantine_disagreement_across_reps_is_union_not_error(self):
+        for index in (0, 1):
+            run = self.candidate["runs"][index]
+            (self.directory / run["log"]).write_text(make_log(run["role"], "comparison", drop=("dinov3-224",)), encoding="utf-8")
+            run["log_sha256"] = evidence.sha256(self.directory / run["log"])
+            run["cases_failed"] = ["dinov3-224"]
+        result = self.evaluate(verdict="PASS")
+        self.assertEqual(result["quarantined"], {"dinov3-224": ["comparison"]})
+        self.assertEqual(len(result["table"]), 15)
+
     def test_parity_miss_is_not_regression(self):
         self.change_samples(self.candidate, [1, 2, 4, 7], lambda name, lok, ort: (flat(15) if name.startswith("e5-") else lok, ort))
         self.evaluate(verdict="MISS")

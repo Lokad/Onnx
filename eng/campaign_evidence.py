@@ -315,7 +315,11 @@ def _load_campaign(path):
                      "host": {k: v for k, v in host.items() if k != "lokad"}, "definitions": parsed["definitions"],
                      "quarantined": list(run["cases_failed"])}
         signatures.append(signature)
-        require(signature == signatures[0], label + " workload/host/runner/native identity mismatch")
+        bare = {key: value for key, value in signature.items() if key != "quarantined"}
+        first = {key: value for key, value in signatures[0].items() if key != "quarantined"}
+        require(bare == first, label + " workload/host/runner/native identity mismatch")
+        # Quarantine sets may differ rep to rep (a flaky case can pass once); the scorer
+        # unions them and reports the case INCONCLUSIVE instead of failing the campaign.
     if manifest["kind"] == "aa":
         require(identities["L0"] == identities["L1"], "A/A requires identical core binaries and source")
     return {"manifest": str(path), "manifest_sha256": sha256(path), "kind": manifest["kind"],

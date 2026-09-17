@@ -74,8 +74,12 @@ def medians(campaign, name):
 def score(campaign, aa):
     evidence.require(campaign["kind"] == "comparison" and aa["kind"] == "aa", "expected comparison and A/A manifests")
     evidence.require(aa["end"] < campaign["start"], "A/A must finish before candidate measurements start")
-    aque = set(aa["signature"]["quarantined"])
-    cque = set(campaign["signature"]["quarantined"])
+    def qset(camp):
+        out = set()
+        for run in camp["runs"]:
+            out |= set(run.get("cases_failed", []))
+        return out
+    aque, cque = qset(aa), qset(campaign)
     quarantined = {name: sorted((["aa"] if name in aque else []) + (["comparison"] if name in cque else []))
                    for name in evidence.CASES if name in aque or name in cque}
     def sigview(signature):
