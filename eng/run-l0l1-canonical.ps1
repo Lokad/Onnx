@@ -56,6 +56,11 @@ Log ("L1-bench-sha=" + (Sha $l1dll) + " L0-bench-sha=" + (Sha $l0dll))
 $l1core = "src/Lokad.Onnx/bin/Release/net10.0/Lokad.Onnx.dll"
 Log ("L1-core-sha=" + (Sha $l1core) + " L0-core-sha=" + (Sha (Join-Path $l0root $l1core)))
 Log ("sdk=" + ((& dotnet --info 2>&1 | Select-Object -First 12) -join " | "))
+Log ("L1-sdk=" + ((& dotnet --info 2>&1 | Select-Object -First 4) -join " | "))
+Push-Location $l0root
+Log ("L0-sdk=" + ((& dotnet --info 2>&1 | Select-Object -First 4) -join " | "))
+Pop-Location
+Log ("runtimes=" + ((& dotnet --list-runtimes 2>&1 | Select-String "NETCore.App 10" | ForEach-Object { $_.Line.Trim() }) -join " | "))
 Log ("env=" + (($env:DOTNET_EnableHWIntrinsic, $env:DOTNET_TieredCompilation, $env:DOTNET_JitOSR, $env:LOKAD_ONNX_GELU_TANH, $env:LOKAD_ONNX_SOFTMAX_SPAN) -join ","))
 $ortpkg = (Select-String -Path tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj -Pattern 'OnnxRuntime.*Version="([^"]+)"').Matches[0].Groups[1].Value
 $ortdll = Get-ChildItem tests/Lokad.Onnx.Bench/bin/Release/net10.0/runtimes/*/native/* -ErrorAction SilentlyContinue | Where-Object { $_.Name -match "onnxruntime" } | Select-Object -First 1
