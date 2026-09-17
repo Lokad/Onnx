@@ -49,7 +49,6 @@ static class Bench
         int threads = 1;
         int cpu = 0;
         int iters = 7;
-        bool prefetchSweep = false;
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] == "--mode" && i + 1 < args.Length) modeName = args[++i];
@@ -57,9 +56,8 @@ static class Bench
             else if (args[i] == "--cpu" && i + 1 < args.Length && int.TryParse(args[i + 1], out var c)) { cpu = c; i++; }
             else if (args[i] == "--threads" && i + 1 < args.Length && int.TryParse(args[i + 1], out var t) && t >= 1) { threads = t; i++; }
             else if (args[i] == "--iters" && i + 1 < args.Length && int.TryParse(args[i + 1], out var k) && k >= 1) { iters = k; i++; }
-            else if (args[i] == "--prefetch-sweep") { prefetchSweep = true; }
             else if (args[i] == "all" || assets.ContainsKey(args[i])) { if (args[i] != "all" && !selected.Contains(args[i], StringComparer.OrdinalIgnoreCase)) selected.Add(args[i]); }
-            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all|representative] [--cpu N] [--prefetch-sweep] (voice keys run the canonical matched row only, or the staged representative rows with --rows representative; the default set is all non-voice keys)"); return 2; }
+            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all|representative] [--cpu N] (voice keys run the canonical matched row only, or the staged representative rows with --rows representative; the default set is all non-voice keys)"); return 2; }
         }
         if (rowsName != "canonical" && rowsName != "all" && rowsName != "representative") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all|representative)"); return 2; }
         bool representative = rowsName == "representative";
@@ -74,8 +72,6 @@ static class Bench
             _ when modeName.Equals("auto", StringComparison.OrdinalIgnoreCase) => TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = threads },
             _ => throw new InvalidOperationException("Unknown mode " + modeName + "."),
         };
-        // B3 P1 prototype switch: same values either way (agreement-gated); mirrors judge rate only.
-        MathOps.PackedSweepPrefetch = prefetchSweep;
         foreach (var key in selected)
         {
             foreach (var f in assets[key])
@@ -98,7 +94,7 @@ static class Bench
             + " lokad=" + typeof(ComputationalGraph).Assembly.GetName().Version
             + " ort=" + typeof(InferenceSession).Assembly.GetName().Version
             + " ort-provider=cpu-only ort-optimizations=ORT_ENABLE_ALL nospin intraop=" + threads + " interop=1 seq"
-            + " mode=" + modeName + " threads=" + threads + " rows=" + rowsName + " iters=" + iters + " warmup=" + Warm + " prefetchSweep=" + (prefetchSweep ? "on" : "off"));
+            + " mode=" + modeName + " threads=" + threads + " rows=" + rowsName + " iters=" + iters + " warmup=" + Warm);
         var confinement = MeasureSingleCpuConfinement(ConfinementDurationMs);
         Console.WriteLine("confinement wallMs=" + confinement.wallMs.ToString("F0")
             + " cpuMs=" + confinement.cpuMs.ToString("F0")

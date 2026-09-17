@@ -797,8 +797,7 @@ where T : unmanaged
             float* dr = dest;
             for (int g = 0; g < groups12; g++)
             {
-                if (MathOps.PackedSweepPrefetch && Sse.IsSupported) mm_avx512_12x32packed_tile_pref(12, n, xr, panel, dr, k, kb, overwrite);
-                else mm_avx512_12x32packed_tile(12, n, xr, panel, dr, k, kb, overwrite);
+                mm_avx512_12x32packed_tile(12, n, xr, panel, dr, k, kb, overwrite);
                 xr += 12 * n;
                 dr += 12 * k;
             }
