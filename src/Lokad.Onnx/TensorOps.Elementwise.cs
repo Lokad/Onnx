@@ -1108,7 +1108,7 @@ where T : unmanaged
             AblationSwitches.LegacySoftmaxUsed = true;
             SoftmaxContiguousFloat(inputSpan, outputSpan, outer, block, useSimd);
         }
-        else SoftmaxContiguousFloatSpan2x(inputSpan, outputSpan, outer, block, useSimd);
+        else SoftmaxContiguousFloatSpanPtr(inputSpan, outputSpan, outer, block, useSimd);
     }
 
     /// <summary>
