@@ -105,6 +105,34 @@ public class PackedWeightsTests
     }
 
     [Fact]
+    public void PackPass_PacksEpilogueWeightSkipsBias()
+    {
+        // E71: fused MatMulBias packs its weight operand like MatMul; the
+        // bias edge itself must never pack.
+        var rnd = new Random(Seed);
+        var x = FillRect(8, 24, rnd);
+        var w = FillRect(24, 44, rnd);
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "packed-epilogue-test";
+        graph.Inputs["x"] = x;
+        graph.Initializers["w"] = w;
+        graph.Initializers["b"] = FillRect(1, 44, rnd);
+        graph.Outputs["z"] = Tensor<float>.Zeros(8, 44).ToDenseTensor();
+        graph.Nodes.Add(new Node
+        {
+            Name = "mmb",
+            Op = OpType.MatMulBias,
+            OpTypeName = "MatMulBias",
+            Domain = "",
+            Inputs = new[] { "x", "w", "b" },
+            Outputs = new[] { "z" },
+        });
+        graph.RefreshLifetimeAnalysis();
+        Assert.True(graph.Initializers.ContainsKey("packed:w"), "epilogue weight must pack.");
+        Assert.False(graph.Initializers.ContainsKey("packed:b"), "bias edge must not pack.");
+    }
+
+
     public void PackPass_SkipsIneligibleConsumersAndShapes()
     {
         var rnd = new Random(Seed);
