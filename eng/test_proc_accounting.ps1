@@ -48,7 +48,13 @@ if ($Live) {
   # excludes lane children (builds/legs must never self-abort). setsid orphans
   # it to PID 1, making it genuinely foreign like any other box workload.
   Remove-Item /tmp/acct-burn.pid -ErrorAction SilentlyContinue
-  & setsid bash -c 'echo $BASHPID > /tmp/acct-burn.pid; exec taskset -c 0 bash -c ''while true; do :; done'' 2>$null
+  Remove-Item /tmp/acct-burn.sh -ErrorAction SilentlyContinue
+  $burnLines = @("#!/bin/bash")
+  $burnLines += "echo " + [char]36 + "BASHPID > /tmp/acct-burn.pid"
+  $burnLines += "exec taskset -c 0 bash -c 'while true; do :; done'"
+  Set-Content -Path /tmp/acct-burn.sh -Value $burnLines
+  & chmod +x /tmp/acct-burn.sh
+  & setsid /tmp/acct-burn.sh 2>$null
   Start-Sleep -Seconds 2
   $burnPid = 0
   if (Test-Path /tmp/acct-burn.pid) { [int]::TryParse((Get-Content /tmp/acct-burn.pid | Select-Object -First 1), [ref]$burnPid) | Out-Null }
@@ -57,7 +63,11 @@ if ($Live) {
     $hot = Frac10
     Write-Host ("burn-10s frac=" + $hot.ToString("F3"))
     Check ($hot -gt 0.10) "deliberate foreign workload detected above abort line"
-  } finally { if ($burnPid -gt 1) { & kill -9 $burnPid 2>$null }; Remove-Item /tmp/acct-burn.pid -ErrorAction SilentlyContinue }
+  } finally {
+    if ($burnPid -gt 1) { & kill -9 $burnPid 2>$null }
+    Remove-Item /tmp/acct-burn.pid -ErrorAction SilentlyContinue
+    Remove-Item /tmp/acct-burn.sh -ErrorAction SilentlyContinue
+  }
   $calm = Frac10
   Write-Host ("post-burn frac=" + $calm.ToString("F3"))
   Check ($calm -lt 0.02) "box calm again after burn exits"
