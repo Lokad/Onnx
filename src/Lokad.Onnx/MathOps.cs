@@ -3070,6 +3070,189 @@ public class MathOps
     }
 
     /// <summary>
+    /// Register-tiled matrix multiplication reading panel-packed B with bias
+    /// epilogue, two rows per group (E70).
+    /// </summary>
+    /// <param name="M">A rows (must be even).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
+    /// <param name="C">Result matrix.</param>
+    /// <param name="Bias">Row bias of length K, added once per stored element.</param>
+    /// <remarks>
+    /// Same panels and per-element order as the 2-row packed kernel with one
+    /// add per stored element in the unfused position, so results agree
+    /// bit-wise with packed kernel followed by Add. Tails likewise.
+    /// </remarks>
+    public unsafe static void mm_unsafe_vectorized_intrinsics_2x4packed_bias(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* P,
+                          float* C,
+                          float* Bias)
+    {
+        if (M % 2 != 0)
+            throw new ArgumentException(nameof(M));
+
+        int blocked = K - (K % (4 * Vector256<float>.Count));
+        int tiles = blocked / (4 * Vector256<float>.Count);
+
+        // Kb panels lead so each panel is fetched once and stays L1/L2 resident
+        // across every row group; per-element FMA order matches the row-led nest
+        // exactly, so results agree bit-wise with the tiled kernel.
+        for (int tb = 0; tb < tiles; tb++)
+        {
+            int kb = tb * (4 * Vector256<float>.Count);
+            float* panel = P + tb * N * (4 * Vector256<float>.Count);
+            var bb0 = ((Vector256<float>*)(Bias + kb))[0];
+            var bb1 = ((Vector256<float>*)(Bias + kb + 8))[0];
+            var bb2 = ((Vector256<float>*)(Bias + kb + 16))[0];
+            var bb3 = ((Vector256<float>*)(Bias + kb + 24))[0];
+            for (int i = 0; i < M; i += 2)
+            {
+                var Ap1 = A + i * N;
+                var Ap2 = Ap1 + N;
+                var Cpv1 = (Vector256<float>*)(C + i * K + kb);
+                var Cpv2 = (Vector256<float>*)(C + (i + 1) * K + kb);
+                Vector256<float> c00 = Cpv1[0];
+                Vector256<float> c01 = Cpv1[1];
+                Vector256<float> c02 = Cpv1[2];
+                Vector256<float> c03 = Cpv1[3];
+                Vector256<float> c10 = Cpv2[0];
+                Vector256<float> c11 = Cpv2[1];
+                Vector256<float> c12 = Cpv2[2];
+                Vector256<float> c13 = Cpv2[3];
+                for (int j = 0; j < N; ++j)
+                {
+                    var av1 = Vector256.Create(Ap1[j]);
+                    var av2 = Vector256.Create(Ap2[j]);
+                    var Bpv = (Vector256<float>*)(panel + j * (4 * Vector256<float>.Count));
+                    c00 = Fma.MultiplyAdd(Bpv[0], av1, c00);
+                    c10 = Fma.MultiplyAdd(Bpv[0], av2, c10);
+                    c01 = Fma.MultiplyAdd(Bpv[1], av1, c01);
+                    c11 = Fma.MultiplyAdd(Bpv[1], av2, c11);
+                    c02 = Fma.MultiplyAdd(Bpv[2], av1, c02);
+                    c12 = Fma.MultiplyAdd(Bpv[2], av2, c12);
+                    c03 = Fma.MultiplyAdd(Bpv[3], av1, c03);
+                    c13 = Fma.MultiplyAdd(Bpv[3], av2, c13);
+                }
+                Cpv1[0] = c00 + bb0;
+                Cpv1[1] = c01 + bb1;
+                Cpv1[2] = c02 + bb2;
+                Cpv1[3] = c03 + bb3;
+                Cpv2[0] = c10 + bb0;
+                Cpv2[1] = c11 + bb1;
+                Cpv2[2] = c12 + bb2;
+                Cpv2[3] = c13 + bb3;
+            }
+        }
+        int rem = K - blocked;
+        if (rem > 0)
+        {
+            float* T = P + tiles * N * (4 * Vector256<float>.Count);
+            int rv = rem / Vector256<float>.Count;
+            for (int tt = 0; tt < rv; tt++)
+            {
+                var bbt = (Vector256<float>*)(Bias + blocked + tt * Vector256<float>.Count);
+                for (int i = 0; i < M; i += 2)
+                {
+                    var Ap1 = A + i * N;
+                    var Ap2 = Ap1 + N;
+                    var rC1 = (Vector256<float>*)(C + i * K + blocked);
+                    var rC2 = (Vector256<float>*)(C + (i + 1) * K + blocked);
+                    Vector256<float> c1 = rC1[tt];
+                    Vector256<float> c2 = rC2[tt];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        var Bpv = (Vector256<float>*)(T + j * rem + tt * Vector256<float>.Count);
+                        c1 = Fma.MultiplyAdd(Bpv[0], Vector256.Create(Ap1[j]), c1);
+                        c2 = Fma.MultiplyAdd(Bpv[0], Vector256.Create(Ap2[j]), c2);
+                    }
+                    rC1[tt] = c1 + bbt[0];
+                    rC2[tt] = c2 + bbt[0];
+                }
+            }
+            int vcols = rv * Vector256<float>.Count;
+            // Narrow tail (fewer than 8 columns) accumulates in registers
+            // instead of read-modify-writing C on every reduction step: the
+            // per-element chain keeps the exact j-ascending mul-then-add order
+            // of the loop it replaces, so results agree bit-wise while each C
+            // row is loaded once and stored once.
+            int tail = rem - vcols;
+            if (tail > 0)
+            for (int i = 0; i < M; i += 2)
+            {
+                var Ap1 = A + i * N;
+                var Ap2 = Ap1 + N;
+                var Cp1 = C + i * K + blocked + vcols;
+                var Cp2 = Cp1 + K;
+                switch (tail)
+                {
+                    case 1:
+                    {
+                        float c1 = Cp1[0], c2 = Cp2[0];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c1 += Ap1[j] * t[0]; c2 += Ap2[j] * t[0]; }
+                        Cp1[0] = c1 + Bias[blocked + vcols + 0]; Cp2[0] = c2 + Bias[blocked + vcols + 0];
+                        break;
+                    }
+                    case 2:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c20 = Cp2[0], c21 = Cp2[1];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; }
+                        Cp1[0] = c10 + Bias[blocked + vcols + 0]; Cp1[1] = c11 + Bias[blocked + vcols + 1]; Cp2[0] = c20 + Bias[blocked + vcols + 0]; Cp2[1] = c21 + Bias[blocked + vcols + 1];
+                        break;
+                    }
+                    case 3:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; }
+                        Cp1[0] = c10 + Bias[blocked + vcols + 0]; Cp1[1] = c11 + Bias[blocked + vcols + 1]; Cp1[2] = c12 + Bias[blocked + vcols + 2]; Cp2[0] = c20 + Bias[blocked + vcols + 0]; Cp2[1] = c21 + Bias[blocked + vcols + 1]; Cp2[2] = c22 + Bias[blocked + vcols + 2];
+                        break;
+                    }
+                    case 4:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3];
+                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; }
+                        Cp1[0] = c10 + Bias[blocked + vcols + 0]; Cp1[1] = c11 + Bias[blocked + vcols + 1]; Cp1[2] = c12 + Bias[blocked + vcols + 2]; Cp1[3] = c13 + Bias[blocked + vcols + 3];
+                        Cp2[0] = c20 + Bias[blocked + vcols + 0]; Cp2[1] = c21 + Bias[blocked + vcols + 1]; Cp2[2] = c22 + Bias[blocked + vcols + 2]; Cp2[3] = c23 + Bias[blocked + vcols + 3];
+                        break;
+                    }
+                    case 5:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4];
+                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; }
+                        Cp1[0] = c10 + Bias[blocked + vcols + 0]; Cp1[1] = c11 + Bias[blocked + vcols + 1]; Cp1[2] = c12 + Bias[blocked + vcols + 2]; Cp1[3] = c13 + Bias[blocked + vcols + 3]; Cp1[4] = c14 + Bias[blocked + vcols + 4];
+                        Cp2[0] = c20 + Bias[blocked + vcols + 0]; Cp2[1] = c21 + Bias[blocked + vcols + 1]; Cp2[2] = c22 + Bias[blocked + vcols + 2]; Cp2[3] = c23 + Bias[blocked + vcols + 3]; Cp2[4] = c24 + Bias[blocked + vcols + 4];
+                        break;
+                    }
+                    case 6:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5];
+                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; }
+                        Cp1[0] = c10 + Bias[blocked + vcols + 0]; Cp1[1] = c11 + Bias[blocked + vcols + 1]; Cp1[2] = c12 + Bias[blocked + vcols + 2]; Cp1[3] = c13 + Bias[blocked + vcols + 3]; Cp1[4] = c14 + Bias[blocked + vcols + 4]; Cp1[5] = c15 + Bias[blocked + vcols + 5];
+                        Cp2[0] = c20 + Bias[blocked + vcols + 0]; Cp2[1] = c21 + Bias[blocked + vcols + 1]; Cp2[2] = c22 + Bias[blocked + vcols + 2]; Cp2[3] = c23 + Bias[blocked + vcols + 3]; Cp2[4] = c24 + Bias[blocked + vcols + 4]; Cp2[5] = c25 + Bias[blocked + vcols + 5];
+                        break;
+                    }
+                    default:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5], c16 = Cp1[6];
+                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5], c26 = Cp2[6];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; c16 += Ap1[j] * t[6]; c26 += Ap2[j] * t[6]; }
+                        Cp1[0] = c10 + Bias[blocked + vcols + 0]; Cp1[1] = c11 + Bias[blocked + vcols + 1]; Cp1[2] = c12 + Bias[blocked + vcols + 2]; Cp1[3] = c13 + Bias[blocked + vcols + 3]; Cp1[4] = c14 + Bias[blocked + vcols + 4]; Cp1[5] = c15 + Bias[blocked + vcols + 5]; Cp1[6] = c16 + Bias[blocked + vcols + 6];
+                        Cp2[0] = c20 + Bias[blocked + vcols + 0]; Cp2[1] = c21 + Bias[blocked + vcols + 1]; Cp2[2] = c22 + Bias[blocked + vcols + 2]; Cp2[3] = c23 + Bias[blocked + vcols + 3]; Cp2[4] = c24 + Bias[blocked + vcols + 4]; Cp2[5] = c25 + Bias[blocked + vcols + 5]; Cp2[6] = c26 + Bias[blocked + vcols + 6];
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Matrix multiplication.
     /// </summary>
     /// <param name="M">A rows.</param>
@@ -3605,3 +3788,4 @@ public class MathOps
 
 
 }
+

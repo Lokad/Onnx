@@ -468,6 +468,51 @@ public class MatMulKernelAgreementTests
             $"bump packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
     }
 
+    [SkippableFact]
+    public unsafe void PackedBiasMatchesCompositeBitwise()
+    {
+        // E70: bias added once per stored element in the unfused position.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        BiasEqual(8, 24, 20, rnd);
+        BiasEqual(8, 24, 44, rnd);
+        BiasEqual(30, 384, 384, rnd);
+        BiasEqual(30, 384, 388, rnd);
+        BiasEqual(30, 384, 1536, rnd);
+        BiasEqual(126, 384, 384, rnd);
+        BiasEqual(126, 1536, 384, rnd);
+        BiasEqual(128, 384, 1536, rnd);
+    }
+
+    static unsafe void BiasEqual(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var bias = FillRect(1, k, rnd);
+        bias.SetValue(0, float.NegativeInfinity);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        for (int r = 0; r < m; r++) for (int c = 0; c < k; c++) c1.SetValue(r * k + c, c1.GetValue(r * k + c) + bias.GetValue(c));
+        var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        var bb = Tensor<float>.Zeros(1, k).ToDenseTensor();
+        bias.Buffer.Span.CopyTo(bb.Buffer.Span);
+        using var bh = bb.Buffer.Pin();
+        float* bptr = (float*)bh.Pointer;
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bias(m, n, k, (float*)pa, (float*)pp, (float*)pc, bptr); }, a, b, p, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"bias epilogue diverges bitwise on {m}x{n}x{k}.");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        for (int r = 0; r < m; r++) for (int c = 0; c < k; c++) d1.SetValue(r * k + c, d1.GetValue(r * k + c) + bias.GetValue(c));
+        var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bias(m, n, k, (float*)pa, (float*)pp, (float*)pc, bptr); }, a, b, q, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"bias epilogue diverges bitwise on nonzero destination {m}x{n}x{k}.");
+    }
+
 
     [SkippableFact]
     public unsafe void SixRowMatchesTiledBitwise()
@@ -1073,3 +1118,4 @@ public class MatMulKernelAgreementTests
     }
 
 }
+

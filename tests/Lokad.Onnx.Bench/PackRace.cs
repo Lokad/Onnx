@@ -54,6 +54,10 @@ internal static class PackRace
         var c4 = new float[M * K];
         var c8 = new float[M * K];
         var cb = new float[M * K];
+        var ce = new float[M * K];
+        var cs = new float[M * K];
+        var bias = new float[K];
+        for (int bi = 0; bi < bias.Length; bi++) bias[bi] = (float)(rnd.NextDouble() * 2 - 1);
         fixed (float* bp = b, pp = p)
             MathOps.PackPanelsB(N, K, bp, pp);
         var ha = System.Runtime.InteropServices.GCHandle.Alloc(a, System.Runtime.InteropServices.GCHandleType.Pinned);
@@ -62,6 +66,9 @@ internal static class PackRace
         var hcN = System.Runtime.InteropServices.GCHandle.Alloc(cNew, System.Runtime.InteropServices.GCHandleType.Pinned);
         var hc4 = System.Runtime.InteropServices.GCHandle.Alloc(c4, System.Runtime.InteropServices.GCHandleType.Pinned);
         var hc8 = System.Runtime.InteropServices.GCHandle.Alloc(c8, System.Runtime.InteropServices.GCHandleType.Pinned);
+        var hce = System.Runtime.InteropServices.GCHandle.Alloc(ce, System.Runtime.InteropServices.GCHandleType.Pinned);
+        var hcs = System.Runtime.InteropServices.GCHandle.Alloc(cs, System.Runtime.InteropServices.GCHandleType.Pinned);
+        var hb = System.Runtime.InteropServices.GCHandle.Alloc(bias, System.Runtime.InteropServices.GCHandleType.Pinned);
         var hcb = System.Runtime.InteropServices.GCHandle.Alloc(cb, System.Runtime.InteropServices.GCHandleType.Pinned);
         try
         {
@@ -69,6 +76,7 @@ internal static class PackRace
             IntPtr cr = hcR.AddrOfPinnedObject(), cn = hcN.AddrOfPinnedObject();
             IntPtr c4p = hc4.AddrOfPinnedObject(), c8p = hc8.AddrOfPinnedObject();
             IntPtr cbp = hcb.AddrOfPinnedObject();
+            IntPtr cep = hce.AddrOfPinnedObject(), csp = hcs.AddrOfPinnedObject(), bp = hb.AddrOfPinnedObject();
             double Time(System.Action run)
             {
                 for (int w = 0; w < 5; w++) run();
@@ -125,9 +133,30 @@ internal static class PackRace
             double w8 = 0;
             for (int i = 0; i < cRef.Length; i++) { double d = Math.Abs(cRef[i] - c8[i]); if (double.IsNaN(d)) { w8 = double.NaN; break; } if (d > w8) w8 = d; }
             double tbump = Time(() => { Array.Clear(cb, 0, cb.Length); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(M, N, K, (float*)ap, (float*)pp, (float*)cbp); });
+            Action twine = () => {
+                Array.Clear(ce, 0, ce.Length);
+                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bias(M, N, K, (float*)ap, (float*)pp, (float*)cep, (float*)bp);
+            };
+            double te = Time(twine);
+            Array.Copy(cRef, cs, cRef.Length);
+            int vw = System.Numerics.Vector<float>.Count;
+            Action addpass = () => {
+                Array.Copy(cRef, cs, cRef.Length);
+                for (int rr = 0; rr < M; rr++)
+                {
+                    int kk = 0;
+                    for (; kk <= K - vw; kk += vw)
+                        (new System.Numerics.Vector<float>(cs, rr * K + kk) + new System.Numerics.Vector<float>(bias, kk)).CopyTo(cs, rr * K + kk);
+                    for (; kk < K; kk++) cs[rr * K + kk] += bias[kk];
+                }
+            };
+            double ta = Time(addpass);
+            double we = 0;
+            for (int i = 0; i < cs.Length; i++) { double d = Math.Abs(cs[i] - ce[i]); if (double.IsNaN(d)) { we = double.NaN; break; } if (d > we) we = d; }
             double wb = 0;
             for (int i = 0; i < cRef.Length; i++) { double d = Math.Abs(cRef[i] - cb[i]); if (double.IsNaN(d)) { wb = double.NaN; break; } if (d > wb) wb = d; }
-            string line = $"packrace M={M} N={N} K={K} ref2={t2:F3}ms twin6={t6:F3}ms twin4={t4:F3}ms twin8={t8:F3}ms bump2={tbump:F3}ms agree={agree}/{w4:E2}/{w8:E2}/{wb:E2} " + ((ok && w4 == 0.0 && w8 == 0.0 && wb == 0.0) ? "OK" : "FAIL");
+            string line = $"packrace M={M} N={N} K={K} ref2={t2:F3}ms twin6={t6:F3}ms twin4={t4:F3}ms twin8={t8:F3}ms bump2={tbump:F3}ms epil={te:F3}ms comp={t2 + ta:F3}ms agree={agree}/{w4:E2}/{w8:E2}/{wb:E2}/{we:E2} " + ((ok && w4 == 0.0 && w8 == 0.0 && wb == 0.0 && we == 0.0) ? "OK" : "FAIL");
+            ok = ok && we == 0.0;
             ok = ok && wb == 0.0;
             ok = ok && w4 == 0.0 && w8 == 0.0;
             if (M % 3 == 0)
@@ -149,9 +178,12 @@ internal static class PackRace
             Console.WriteLine(line);
             return ok ? 0 : 1;
         }
-        finally { ha.Free(); hp.Free(); hcR.Free(); hcN.Free(); hc4.Free(); hc8.Free(); hcb.Free(); }
+        finally { ha.Free(); hp.Free(); hcR.Free(); hcN.Free(); hc4.Free(); hc8.Free(); hcb.Free(); hce.Free(); hcs.Free(); hb.Free(); }
     }
 }
+
+
+
 
 
 
