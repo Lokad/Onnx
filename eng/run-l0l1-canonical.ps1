@@ -29,8 +29,11 @@ if (!(Test-Path (Join-Path $l0root "Lokad.Onnx.slnx"))) {
 }
 $l0models = Join-Path $l0root "models"
 if (!(Test-Path $l0models)) {
-  $t = "cmd /c mklink /J `"$l0models`" `"$(Join-Path $root 'models')`""
-  Invoke-Expression $t 2>&1 | Out-File (Join-Path $runDir "worktree.log") -Append -Encoding utf8
+  if ($IsLinux) { & ln -s (Join-Path $root "models") $l0models 2>&1 | Out-File (Join-Path $runDir "worktree.log") -Append -Encoding utf8 }
+  else {
+    $t = "cmd /c mklink /J `"$l0models`" `"$(Join-Path $root 'models')`""
+    Invoke-Expression $t 2>&1 | Out-File (Join-Path $runDir "worktree.log") -Append -Encoding utf8
+  }
   if ($LASTEXITCODE -ne 0) { Log "ABORT: models junction failed"; exit 1 }
 }
 $l0rev = (& git -C $l0root rev-parse HEAD 2>&1 | Out-String).Trim()
@@ -55,17 +58,47 @@ Log ("L1-core-sha=" + (Sha $l1core) + " L0-core-sha=" + (Sha (Join-Path $l0root 
 Log ("sdk=" + ((& dotnet --info 2>&1 | Select-Object -First 12) -join " | "))
 Log ("env=" + (($env:DOTNET_EnableHWIntrinsic, $env:DOTNET_TieredCompilation, $env:DOTNET_JitOSR, $env:LOKAD_ONNX_GELU_TANH, $env:LOKAD_ONNX_SOFTMAX_SPAN) -join ","))
 $ortpkg = (Select-String -Path tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj -Pattern 'OnnxRuntime.*Version="([^"]+)"').Matches[0].Groups[1].Value
-$ortdll = Get-ChildItem tests/Lokad.Onnx.Bench/bin/Release/net10.0/runtimes/win-x64/native/onnxruntime.dll -ErrorAction SilentlyContinue | Select-Object -First 1
+$ortdll = Get-ChildItem tests/Lokad.Onnx.Bench/bin/Release/net10.0/runtimes/*/native/* -ErrorAction SilentlyContinue | Where-Object { $_.Name -match "onnxruntime" } | Select-Object -First 1
 Log ("ort-pkg=" + $ortpkg + " ort-dll-sha=" + ($ortdll ? (Sha $ortdll.FullName) : "missing"))
-Log ("affinity-requested=" + $Cpu + " self-affinity=" + (Get-Process -Id $PID).ProcessorAffinity)
+$selfAff = "unreadable"
+try { $selfAff = (Get-Process -Id $PID).ProcessorAffinity } catch { $selfAff = "unreadable:" + $_.Exception.Message }
+Log ("affinity-requested=" + $Cpu + " self-affinity=" + $selfAff)
 foreach ($m in @("models/multilingual-e5-small/model.onnx", "models/dinov3-vits16/onnx/model.onnx", "models/resnet50-onnx/model.onnx", "models/gpt2-onnx/onnx/model.onnx")) {
   Log ("asset " + $m + " sha=" + (Sha $m))
 }
 # Foreign-process snapshots: deltas and newcomers abort release evidence.
+function Convert-PsCpuTime($t) {
+  # ps TIMES cumulative [[dd-]hh:]mm:ss -> seconds. Matches TotalProcessorTime semantics.
+  $days = 0; $rest = $t.Trim()
+  if ($rest -match "^(\d+)-(.+)$") { $days = [int]$Matches[1]; $rest = $Matches[2] }
+  $q = $rest -split ":"
+  if ($q.Count -ne 3) { return 0.0 }
+  return ([double]$days * 86400.0) + ([double]$q[0] * 3600.0) + ([double]$q[1] * 60.0) + ([double]$q[2])
+}
+function Get-ProcTable {
+  # Rows with Id, Name, PPid, CPUSec (cumulative CPU seconds) on either OS.
+  if ($IsLinux) {
+    foreach ($line in (& ps -eo pid=,ppid=,times=,comm= --no-headers 2>$null)) {
+      $p = $line.Trim() -split "\s+", 4
+      if ($p.Count -lt 4) { continue }
+      [pscustomobject]@{ Id = [int]$p[0]; Name = $p[3]; PPid = [int]$p[1]; CPUSec = (Convert-PsCpuTime $p[2]) }
+    }
+  } else {
+    foreach ($pr in (Get-CimInstance Win32_Process)) {
+      $cpu = ([double]$pr.KernelModeTime + [double]$pr.UserModeTime) / 10000000.0
+      [pscustomobject]@{ Id = $pr.ProcessId; Name = $pr.Name; PPid = $pr.ParentProcessId; CPUSec = $cpu }
+    }
+  }
+}
 function Snap($phase) {
-  Get-CimInstance Win32_Process | Where-Object { $_.Name -match "^(dotnet|testhost|python)(\.exe)?$" } |
-    Select-Object Name, ProcessId, ParentProcessId, @{n="CPU";e={$_.KernelModeTime}}, CreationDate |
-    Export-Csv (Join-Path $runDir ("foreign-" + $phase + ".csv")) -NoTypeInformation -Encoding utf8
+  if ($IsLinux) {
+    Get-ProcTable | Where-Object { $_.Name -match "^(dotnet|testhost|python3?)$" } |
+      Export-Csv (Join-Path $runDir ("foreign-" + $phase + ".csv")) -NoTypeInformation -Encoding utf8
+  } else {
+    Get-CimInstance Win32_Process | Where-Object { $_.Name -match "^(dotnet|testhost|python)(\.exe)?$" } |
+      Select-Object Name, ProcessId, ParentProcessId, @{n="CPU";e={$_.KernelModeTime}}, CreationDate |
+      Export-Csv (Join-Path $runDir ("foreign-" + $phase + ".csv")) -NoTypeInformation -Encoding utf8
+  }
   Log ("foreign-snapshot " + $phase)
 }
 # Foreign-CPU accounting (E02 hardening): per-process CPU seconds attributed
@@ -85,7 +118,7 @@ function Snap($phase) {
 # single-thread squatter reads ~1/28 and is missed; ABBA order plus the
 # steady gate backstop that case.
 $ForeignAbort = 0.10
-$LogicalCpus = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
+$LogicalCpus = $(if ($IsLinux) { [int]((& nproc 2>$null | Out-String).Trim()) } else { (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors })
 Log ("foreign-abort=" + $ForeignAbort + " logical-cpus=" + $LogicalCpus)
 $script:prevProcSnap = $null
 function Test-LaneOwned($id, $map) {
@@ -102,10 +135,9 @@ function Test-LaneOwned($id, $map) {
 function SnapForeign($phase) {
   $map = @{}
   $rows = @()
-  foreach ($pr in (Get-CimInstance Win32_Process)) {
-    $cpu = ([double]$pr.KernelModeTime + [double]$pr.UserModeTime) / 10000000.0
-    $map[$pr.ProcessId] = @($cpu, $pr.ParentProcessId)
-    $rows += [pscustomobject]@{ Id = $pr.ProcessId; Name = $pr.Name; PPid = $pr.ParentProcessId; CPUSec = $cpu }
+  foreach ($pr in (Get-ProcTable)) {
+    $map[$pr.Id] = @($pr.CPUSec, $pr.PPid)
+    $rows += $pr
   }
   $now = (Get-Date).ToUniversalTime()
   $rows | Export-Csv (Join-Path $runDir ("proc-" + $phase + ".csv")) -NoTypeInformation -Encoding utf8
