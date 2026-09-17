@@ -3,6 +3,7 @@
 # 4 reps ABBA-start per arm, 3 band cases, iters 20, tiering pinned full-opts.
 # Tree untouched (env toggle only). Cooldowns separate legs.
 set -u
+cd $HOME/Onnx || exit 1
 export DOTNET_TieredCompilation=0
 DLL=$HOME/Onnx/tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll
 OUT=$HOME/Onnx/artifacts/ab-e51; mkdir -p $OUT
