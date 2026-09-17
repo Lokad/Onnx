@@ -296,18 +296,20 @@ public class ExecutionLifecycleTests
     [Fact]
     public void ConvScratch_ReportsPatchBytes()
     {
-        // Single-batch VALID conv rents one im2col patch: 1*2*2*3*3 extents.
+        // Single-batch VALID conv rents one im2col patch. The dense C=2
+        // shape keeps the patch path (C=1 now rides the direct lane, M=1
+        // keeps the inner GEMM unpacked), so the pin stays single-feature:
+        // 2*2*2*3*3 patch floats.
         static ExecutionOptions WithScratch(IScratchAccountant acc, TensorExecutionOptions tensor) =>
             ExecutionOptions.Default with { Tensor = tensor with { ScratchReporter = acc } };
-        var x = DenseTensor<float>.OfValues(new float[1, 1, 4, 4]
-        {
-            { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f }, { 13f, 14f, 15f, 16f } } },
-        });
-        var w = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 1f }, { 1f, 1f } } } });
+        var x = DenseTensor<float>.OfShape(1, 2, 4, 4);
+        x.Fill(1f);
+        var w = DenseTensor<float>.OfShape(1, 2, 2, 2);
+        w.Fill(1f);
         var acc = new ScratchAccountant();
         var r = CPUExecutionProvider.Conv(x, w, null, null, null, 1, null, null, null, WithScratch(acc, TensorExecutionOptions.Scalar));
         Assert.Equal(OpStatus.Success, r.Status);
-        Assert.Equal(36 * 4, acc.TotalScratchBytes);
+        Assert.Equal(72 * 4, acc.TotalScratchBytes);
         var xd = DenseTensor<double>.OfValues(new double[1, 1, 4, 4]
         {
             { { { 1.0, 2.0, 3.0, 4.0 }, { 5.0, 6.0, 7.0, 8.0 }, { 9.0, 10.0, 11.0, 12.0 }, { 13.0, 14.0, 15.0, 16.0 } } },
@@ -338,31 +340,31 @@ public class ExecutionLifecycleTests
     [Fact]
     public void ScratchBytes_PublishThroughExecution()
     {
-        // The 2x2 VALID conv above rents one 36-float patch per run through
-        // dispatch, published to the context and back to the facade graph.
+        // The dense C=2 VALID conv above rents one 72-float patch per run
+        // through dispatch, published to the context and back to the facade
+        // graph. (C=1 now rides the direct lane with no scratch; M=1 keeps
+        // the inner GEMM unpacked, so the pin stays single-feature.)
         var g = new ComputationalGraph();
         g.Metadata["Name"] = "test";
-        g.Inputs["x"] = DenseTensor<float>.OfValues(new float[1, 1, 4, 4]
-        {
-            { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f }, { 13f, 14f, 15f, 16f } } },
-        });
-        g.Inputs["w"] = DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 1f }, { 1f, 1f } } } });
+        var x24 = DenseTensor<float>.OfShape(1, 2, 4, 4);
+        x24.Fill(1f);
+        g.Inputs["x"] = x24;
+        var w12 = DenseTensor<float>.OfShape(1, 2, 2, 2);
+        w12.Fill(1f);
+        g.Inputs["w"] = w12;
         g.Outputs["z"] = DenseTensor<float>.OfShape(1, 1, 3, 3);
         g.Nodes.Add(new Node { Name = "c", Op = OpType.Conv, Inputs = new[] { "x", "w" }, Outputs = new[] { "z" } });
         g.RefreshLifetimeAnalysis();
         var ctx = g.CreateExecution(null);
         var good = new Dictionary<string, ITensor>
         {
-            { "x", DenseTensor<float>.OfValues(new float[1, 1, 4, 4]
-            {
-                { { { 1f, 2f, 3f, 4f }, { 5f, 6f, 7f, 8f }, { 9f, 10f, 11f, 12f }, { 13f, 14f, 15f, 16f } } },
-            }) },
-            { "w", DenseTensor<float>.OfValues(new float[1, 1, 2, 2] { { { { 1f, 1f }, { 1f, 1f } } } }) },
+            { "x", x24},
+            { "w", w12 },
         };
         Assert.True(ctx.Execute(good, false));
-        Assert.Equal(36 * 4, ctx.LastScratchBytes);
+        Assert.Equal(72 * 4, ctx.LastScratchBytes);
         Assert.True(g.Execute(good, false));
-        Assert.Equal(36 * 4, g.LastScratchBytes);
+        Assert.Equal(72 * 4, g.LastScratchBytes);
     }
 
     [Fact]

@@ -221,6 +221,11 @@ public partial class CPUExecutionProvider
                     {
                         return Success(op, dwConv2D);
                     }
+                    // B1 single-channel direct lane: C=1 shapes the depthwise lane declines outright.
+                    if (Tensor<float>.TryConvSingleChannel2D((Tensor<float>)X, (Tensor<float>)W, bias, group ?? 1, pads, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, out var scConv2D) && scConv2D is not null)
+                    {
+                        return Success(op, scConv2D);
+                    }
                     return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, pool));
                 }
                 return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, pool));
