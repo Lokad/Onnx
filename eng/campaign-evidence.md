@@ -89,11 +89,19 @@ duplicate JSON keys and non-finite JSON numbers are errors. Each record has:
 | `environment` | Process settings described below; identical across both campaigns. |
 | `accounting` | Object with `valid: true` and numeric `foreign_cpu_fraction` from valid process accounting; fraction must be in [0, 0.10]. |
 | `cases` | Object keyed by all fifteen names, each with full `model_sha256`, `input_sha256` and explicit `external_data` map; E5 additionally has integer `unmasked_tokens`. |
+| `cases_failed` | Quarantined case names in canonical order (no timed rows). `cases` plus `cases_failed` cover all fifteen names with no overlap. |
 
 The common producer also emits `producer: "common-runner-v1"`, `runner_files`,
 `process_evidence` and `process_evidence_sha256`. The referenced child JSON is
-bound to the manifest; its observed identity/settings/cases must match. Only
+bound to the manifest; its observed identity/settings/cases/cases_failed must match. Only
 the completion timestamp may be extended to the supervisor's observed exit.
+
+A quarantined case contributes no timed rows: its log carries the case header, casedef and
+warmup series with a `FAILED` status but no summary or raw series, and the scorer reports it
+INCONCLUSIVE (never a silent pass). A quarantined primary (E5) case makes the campaign
+INCONCLUSIVE. First instance: resnet50-224 warmup never converged (strict period-2 fast/slow
+alternation on both engines, prime suspect GC cadence under workstation GC); the leg's good rows
+remain usable instead of aborting the campaign.
 `runner_sha256` for this producer hashes UTF-8 concatenation of ordinally
 sorted `filename + NUL + lowercase file SHA-256 + LF` entries in `runner_files`.
 The bundle contains top-level managed DLLs, deps.json and runtimeconfig.json,

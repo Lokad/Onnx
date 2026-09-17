@@ -86,7 +86,7 @@ def check_process_evidence(run, directory):
     require(sha256(path) == digest(run["process_evidence_sha256"], "process_evidence_sha256"), "process evidence digest mismatch")
     observed = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique_json, parse_constant=_bad_constant)
     for key in ("producer", "process_id", "started_utc", "exit_code", "source_sha", "core_sha256",
-                "runner_sha256", "runner_files", "ort_native", "environment", "cases"):
+                "runner_sha256", "runner_files", "ort_native", "environment", "cases", "cases_failed"):
         require(observed[key] == run[key], "process evidence/manifest mismatch: " + key)
     require(timestamp(observed["completed_utc"]) <= timestamp(run["completed_utc"]), "process evidence completion is after observed exit")
     files = run["runner_files"]
@@ -158,13 +158,21 @@ def parse_log(path):
             require(set(fields) == {"lok", "ctx", "ort"}, "missing/extra raw engine")
             _put(raw, name, {key: _array(fields[key], name + " " + key) for key in fields}, "raw series")
             summaries[name] = lines[i - 1]
-    for label, mapping in list(records.items()) + [("raw", raw)]:
+    for label, mapping in list(records.items()):
         require(set(mapping) == set(CASES), label + " case set mismatch; missing=" + str(sorted(set(CASES) - set(mapping)))
                 + " extra=" + str(sorted(set(mapping) - set(CASES))))
-    require(tuple(raw) == CASES, "case order differs from canonical workload")
+    failed = set()
+    for name in CASES:
+        status = records["case-status"][name]
+        require(status == "ok" or status.startswith("FAILED"), "unexpected case status in canonical log: " + name)
+        if status != "ok":
+            failed.add(name)
+    require(set(raw) == set(CASES) - failed, "raw case set mismatch; missing=" + str(sorted(set(CASES) - failed - set(raw)))
+            + " extra=" + str(sorted(set(raw) - set(CASES) - failed)))
+    require(tuple(raw) == tuple(name for name in CASES if name not in failed), "case order differs from canonical workload")
     defs, warmups = {}, {}
     for name in CASES:
-        require(records["case-status"][name] == "ok", "case not ok: " + name)
+        quarantined = name in failed
         definition = pairs(records["casedef"][name])
         require(set(definition) == {"model", "bytes", "sha12", "inputs", "outputs", "iters", "warmup", "tol"}, "incomplete casedef: " + name)
         digest(definition["sha12"], name + " model prefix", 12)
@@ -177,20 +185,23 @@ def parse_log(path):
             expected = {key + ":1x" + str(sequence) for key in ("input_ids", "attention_mask", "token_type_ids")}
             require(len(shapes) == 3 and set(shapes) == expected, "E5 input shape does not match case: " + name)
             require(definition["outputs"] == "last_hidden_state:1x%dx384" % sequence, "E5 output shape does not match case: " + name)
-        tolerance = float(definition["tol"])
-        require(math.isfinite(tolerance) and 0 < tolerance <= 1e-4, "invalid agreement tolerance: " + name)
-        require("inputsIntact=yes" in summaries[name], "input integrity not confirmed: " + name)
-        for key in ("maxScaled", "postScaled"):
-            found = re.search(r"\b" + key + r"=(\S+)", summaries[name])
-            require(found is not None, "missing agreement result: " + name + " " + key)
-            value = float(found[1])
-            require(math.isfinite(value) and 0 <= value <= tolerance, "agreement failed: " + name + " " + key)
-        for engine, values in raw[name].items():
-            require(len(values) == iterations, "sample count differs from iters: " + name + " " + engine)
+        if not quarantined:
+            tolerance = float(definition["tol"])
+            require(math.isfinite(tolerance) and 0 < tolerance <= 1e-4, "invalid agreement tolerance: " + name)
+            require("inputsIntact=yes" in summaries[name], "input integrity not confirmed: " + name)
+            for key in ("maxScaled", "postScaled"):
+                found = re.search(r"\b" + key + r"=(\S+)", summaries[name])
+                require(found is not None, "missing agreement result: " + name + " " + key)
+                value = float(found[1])
+                require(math.isfinite(value) and 0 <= value <= tolerance, "agreement failed: " + name + " " + key)
+            for engine, values in raw[name].items():
+                require(len(values) == iterations, "sample count differs from iters: " + name + " " + engine)
         warm = pairs(records["warmup"][name])
         used = int(warm["used"])
         wmin, wmax = int(host["warmupMin"]), int(host["warmupMax"])
-        if wmin == wmax == -1:
+        if quarantined:
+            require(warm["stop"] in ("steady", "fixed", "max-reached"), "unknown warmup stop: " + name)
+        elif wmin == wmax == -1:
             require(warm["stop"] == "fixed" and used == int(host["warmup"]), "fixed warmup mismatch: " + name)
         else:
             require(0 <= wmin <= used <= wmax and warm["stop"] == "steady", "adaptive warmup did not converge: " + name)
@@ -200,7 +211,7 @@ def parse_log(path):
             require(len(values) == used, "warmup count mismatch: " + name)
             require(sum(values) >= MIN_WARMUP_MS, "warmup duration below 1000 ms per engine: " + name)
         defs[name], warmups[name] = definition, warm
-    return {"host": host, "definitions": defs, "warmups": warmups, "raw": raw}
+    return {"host": host, "definitions": defs, "warmups": warmups, "raw": raw, "failed": sorted(failed, key=CASES.index)}
 
 
 def _load_campaign(path):
@@ -272,7 +283,13 @@ def _load_campaign(path):
         for key in ("host", "cpu", "runtime", "isa"):
             require(environment[key] == host[key], "environment/log mismatch: " + key)
         require(int(environment["affinity"], 16) == int(host["affinity"].split()[0], 16), "environment/log affinity mismatch")
-        require(set(run["cases"]) == set(CASES), "manifest case identities missing/extra")
+        failed = run.get("cases_failed", [])
+        require(isinstance(failed, list) and len(set(failed)) == len(failed) and all(isinstance(n, str) for n in failed), "cases_failed must be distinct case names")
+        require(set(failed) <= set(CASES) and not (set(failed) & set(run["cases"])), "cases_failed names invalid or overlap rows")
+        require(set(failed) == set(parsed["failed"]), "cases_failed does not match quarantined log cases")
+        run["cases_failed"] = [name for name in CASES if name in failed]
+        require(set(run["cases"]) | set(run["cases_failed"]) == set(CASES), "manifest case identities missing/extra")
+        require(set(run["cases"]) == set(parsed["raw"]), "manifest rows do not match logged rows")
         case_ids = {}
         for name, entry in run["cases"].items():
             model = digest(entry["model_sha256"], name + " model_sha256")
@@ -294,7 +311,8 @@ def _load_campaign(path):
                 case_ids[name]["unmasked_tokens"] = real_tokens
         signature = {"environment": environment, "runner_sha256": digest(run["runner_sha256"], "runner_sha256"),
                      "ort_sha256": digest(native["sha256"], "ORT sha256"), "cases": case_ids,
-                     "host": {k: v for k, v in host.items() if k != "lokad"}, "definitions": parsed["definitions"]}
+                     "host": {k: v for k, v in host.items() if k != "lokad"}, "definitions": parsed["definitions"],
+                     "quarantined": list(run["cases_failed"])}
         signatures.append(signature)
         require(signature == signatures[0], label + " workload/host/runner/native identity mismatch")
     if manifest["kind"] == "aa":

@@ -30,7 +30,7 @@ def array(values):
     return "[" + ",".join(map(str, values)) + "]"
 
 
-def make_log(role, kind, transform=None):
+def make_log(role, kind, transform=None, drop=()):
     lines = [
         "host=synthetic cpu=AMD synthetic CPU procs=4 (logical) affinity=0x4 "
         "(verified single-CPU, logical-cpu=2) topology=synthetic vector=Vector256 "
@@ -40,6 +40,18 @@ def make_log(role, kind, transform=None):
         "confinement wallMs=2000 cpuMs=2000 ratio=1.00 (single-threaded busy loop)"
     ]
     for name in CASES:
+        if name in drop:
+            sequence = {"e5-8tok": 8, "e5-30tok": 30, "e5-30pad128": 128, "e5-128tok": 128, "e5-512tok": 512}.get(name)
+            inputs = (",".join(key + ":1x" + str(sequence) for key in ("input_ids", "attention_mask", "token_type_ids"))
+                      if sequence else "input:1x4")
+            outputs = "last_hidden_state:1x%dx384" % sequence if sequence else "output:1x4"
+            lines.extend([
+                "case %s [single-cpu-auto-1 vs intraop=1 interop=1 seq opt=ALL nospin]: summary" % name,
+                "casedef %s model=models/model.onnx bytes=1000 sha12=%s inputs=%s outputs=%s iters=33 warmup=3 tol=1.00E-004" %
+                (name, "a" * 12, inputs, outputs),
+                "warmup %s used=5 stop=max-reached lok=[400,400,400,400,400] ort=[400,400,400,400,400]" % name,
+                "case-status %s=FAILED: synthetic quarantine" % name])
+            continue
         sequence = {"e5-8tok": 8, "e5-30tok": 30, "e5-30pad128": 128, "e5-128tok": 128, "e5-512tok": 512}.get(name)
         inputs = (",".join(key + ":1x" + str(sequence) for key in ("input_ids", "attention_mask", "token_type_ids"))
                   if sequence else "input:1x4")
@@ -68,12 +80,12 @@ class CampaignTests(unittest.TestCase):
         self.aa = self.make_campaign("aa")
         self.candidate = self.make_campaign("comparison")
 
-    def make_campaign(self, kind):
+    def make_campaign(self, kind, drop=()):
         manifest = {"schema": 1, "kind": kind, "runs": []}
         origin = dt.datetime(2026, 9, 16 if kind == "aa" else 17, tzinfo=dt.timezone.utc)
         for i, role in enumerate(ORDER):
             log = self.directory / (kind + "-%d.log" % i)
-            log.write_text(make_log(role, kind), encoding="utf-8")
+            log.write_text(make_log(role, kind, drop=drop), encoding="utf-8")
             changed = role == "L1" and kind == "comparison"
             start = origin + dt.timedelta(minutes=2 * i)
             manifest["runs"].append({
@@ -89,7 +101,8 @@ class CampaignTests(unittest.TestCase):
                 "accounting": {"valid": True, "foreign_cpu_fraction": 0.0},
                 "cases": {name: {"model_sha256": "a" * 64, "input_sha256": "b" * 64, "external_data": {},
                                  **({"unmasked_tokens": {"e5-8tok": 8, "e5-30tok": 30, "e5-30pad128": 30, "e5-128tok": 128, "e5-512tok": 512}[name]}
-                                    if name.startswith("e5-") else {})} for name in CASES}
+                                    if name.startswith("e5-") else {})} for name in CASES if name not in drop},
+                "cases_failed": sorted(drop, key=CASES.index)
             })
         return manifest
 
@@ -130,6 +143,23 @@ class CampaignTests(unittest.TestCase):
         e5 = result["table"][0]
         self.assertEqual((e5["L0"], e5["L1"], e5["O0"], e5["O1"], e5["R0"], e5["R1"], e5["gap_closure"]), (20, 10, 10, 10, 2, 1, 1))
         self.assertEqual(len(e5["reps"]), 4)
+
+    def test_quarantined_case_is_inconclusive_not_regression(self):
+        self.candidate = self.make_campaign("comparison", drop=("resnet50-224",))
+        self.aa = self.make_campaign("aa", drop=("dinov3-224",))
+        result = self.evaluate(verdict="PASS")
+        self.assertEqual(result["quarantined"], {"dinov3-224": ["aa"], "resnet50-224": ["comparison"]})
+        self.assertEqual(len(result["table"]), 15)
+        marked = [row for row in result["table"] if "quarantined" in row]
+        self.assertEqual({row["case"] for row in marked}, {"dinov3-224", "resnet50-224"})
+        self.assertNotIn("resnet50-224", result.get("regressions", []))
+        self.assertNotIn("dinov3-224", result.get("regressions", []))
+
+    def test_quarantined_primary_case_is_inconclusive(self):
+        self.candidate = self.make_campaign("comparison", drop=("e5-30tok",))
+        result = self.evaluate(expected_code=3, verdict="INCONCLUSIVE")
+        self.assertIn("e5-30tok", result["quarantined"])
+        self.assertIsNone(result.get("e5_improvement"))
 
     def test_parity_miss_is_not_regression(self):
         self.change_samples(self.candidate, [1, 2, 4, 7], lambda name, lok, ort: (flat(15) if name.startswith("e5-") else lok, ort))

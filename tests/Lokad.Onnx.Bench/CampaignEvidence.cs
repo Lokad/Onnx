@@ -24,6 +24,7 @@ internal sealed class CampaignEvidence
     readonly string source;
     readonly string expectedCore;
     readonly Dictionary<string, object> cases = new(StringComparer.Ordinal);
+    readonly System.Collections.Generic.List<string> failedCases = new();
     readonly Dictionary<string, (string Hash, SortedDictionary<string, string> External)> models = new(StringComparer.Ordinal);
     readonly Dictionary<string, (long Bytes, DateTime Modified)> files = new(StringComparer.Ordinal);
     Dictionary<string, object>? environment;
@@ -207,6 +208,11 @@ internal sealed class CampaignEvidence
         cases.Add(name, entry);
     }
 
+    internal void SetFailedCases(System.Collections.Generic.List<string> labels)
+    {
+        failedCases.AddRange(labels);
+    }
+
     internal void Finish(int exitCode)
     {
         if (environment == null) throw new InvalidOperationException("Host evidence was not captured.");
@@ -243,7 +249,7 @@ internal sealed class CampaignEvidence
             exit_code = exitCode, source_sha = source, core_sha256 = expectedCore, core_path = corePath,
             runner_sha256 = runnerHash, runner_files = runnerFiles,
             ort_native = new { path = modules[0], sha256 = HashFile(modules[0]), architecture = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant() },
-            environment, cases
+            environment, cases, cases_failed = failedCases
         };
         using var outputStream = new FileStream(output, FileMode.CreateNew, FileAccess.Write);
         JsonSerializer.Serialize(outputStream, record, new JsonSerializerOptions { WriteIndented = true });

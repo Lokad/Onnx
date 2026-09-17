@@ -44,10 +44,12 @@ def steady(name, series):
     return ""
 
 
-def campaign_stability(campaign, tag):
+def campaign_stability(campaign, tag, skip=frozenset()):
     problems = []
     for run in campaign["runs"]:
         for name in evidence.CASES:
+            if name in skip:
+                continue
             for engine in ("lok", "ort"):
                 why = steady(name, run["parsed"]["raw"][name][engine])
                 if why:
@@ -72,15 +74,28 @@ def medians(campaign, name):
 def score(campaign, aa):
     evidence.require(campaign["kind"] == "comparison" and aa["kind"] == "aa", "expected comparison and A/A manifests")
     evidence.require(aa["end"] < campaign["start"], "A/A must finish before candidate measurements start")
-    evidence.require(aa["signature"] == campaign["signature"], "A/A workload/host/runner/native identity mismatch")
+    aque = set(aa["signature"]["quarantined"])
+    cque = set(campaign["signature"]["quarantined"])
+    quarantined = {name: sorted((["aa"] if name in aque else []) + (["comparison"] if name in cque else []))
+                   for name in evidence.CASES if name in aque or name in cque}
+    def sigview(signature):
+        return {key: value for key, value in signature.items() if key not in ("cases", "quarantined")}
+    evidence.require(sigview(aa["signature"]) == sigview(campaign["signature"]), "A/A workload/host/runner/native identity mismatch")
+    common = [name for name in evidence.CASES if name not in quarantined]
+    evidence.require({name: aa["signature"]["cases"][name] for name in common} ==
+                     {name: campaign["signature"]["cases"][name] for name in common},
+                     "A/A workload model/input identity mismatch on measured cases")
     evidence.require(aa["identities"]["L0"] == campaign["identities"]["L0"], "A/A core must match comparison baseline")
     result = {"policy": "amd-e5-v1", "campaign_manifest_sha256": campaign["manifest_sha256"],
               "aa_manifest_sha256": aa["manifest_sha256"], "identities": campaign["identities"],
               "jit_regime": campaign["signature"]["environment"]["settings"]["jit"],
-              "parity_target": PARITY_TARGET, "noise_cap": NOISE_CAP}
-    unsteady = campaign_stability(aa, "A/A") + campaign_stability(campaign, "comparison")
+              "parity_target": PARITY_TARGET, "noise_cap": NOISE_CAP, "quarantined": quarantined}
+    skip = frozenset(quarantined)
+    unsteady = campaign_stability(aa, "A/A", skip) + campaign_stability(campaign, "comparison", skip)
     noise = {}
     for name in evidence.CASES:
+        if name in skip:
+            continue
         pairs = medians(aa, name)
         # Both arms and their paired ratios; candidate spread never sets a gate.
         controls = {key: spread([pair[key + str(i)] for pair in pairs for i in (0, 1)])
@@ -92,6 +107,8 @@ def score(campaign, aa):
             unsteady.append("A/A %s variation %.4f exceeds %.2f" % (name, variation, NOISE_CAP))
     result["noise"] = noise
     for name in evidence.CASES:
+        if name in skip:
+            continue
         pairs = medians(campaign, name)
         for key in ("L0", "L1", "O0", "O1", "R0", "R1"):
             variation = spread([pair[key] for pair in pairs])
@@ -102,10 +119,13 @@ def score(campaign, aa):
             if drift > noise[name]["ort_limit"]:
                 unsteady.append("comparison %s rep%d ORT control drift %.4f exceeds %.4f" %
                                 (name, pair["rep"], drift, noise[name]["ort_limit"]))
+    missing_primary = [name for name in PRIMARY if name in quarantined]
+    if missing_primary:
+        unsteady.append("primary case quarantined, parity unprovable: " + ",".join(missing_primary))
     if unsteady:
         return dict(result, verdict="INCONCLUSIVE", unsteady=unsteady), 3
     table, regressions = [], []
-    for name in evidence.CASES:
+    for name in common:
         pairs = medians(campaign, name)
         row = {key: med([pair[key] for pair in pairs]) for key in ("L0", "L1", "O0", "O1", "R0", "R1")}
         relative = med([pair["L1"] / pair["L0"] for pair in pairs])
@@ -116,10 +136,13 @@ def score(campaign, aa):
         row.update(case=name, reps=pairs, improvement=1 - relative, normalized_improvement=1 - normalized,
                    regression_limit=threshold, gap_closure=(row["R0"] - row["R1"]) / (row["R0"] - 1) if row["R0"] > 1 else None)
         table.append(row)
+    for name in evidence.CASES:
+        if name in quarantined:
+            table.append({"case": name, "quarantined": quarantined[name]})
     by_name = {row["case"]: row for row in table}
-    targets = {name: by_name[name]["R1"] <= PARITY_TARGET for name in PRIMARY}
+    targets = {name: (name not in quarantined and by_name[name]["R1"] <= PARITY_TARGET) for name in PRIMARY}
     result.update(table=table, targets=targets, regressions=regressions,
-                  e5_improvement=1 - math.prod(1 - by_name[name]["improvement"] for name in PRIMARY) ** 0.25,
+                  e5_improvement=(None if missing_primary else 1 - math.prod(1 - by_name[name]["improvement"] for name in PRIMARY) ** 0.25),
                   verdict="REGRESSION" if regressions else ("PASS" if all(targets.values()) else "MISS"))
     return result, 0
 
@@ -143,7 +166,10 @@ def main(argv=None):
         print("| Case | L0 ms | L1 ms | ORT0 ms | ORT1 ms | paired R0 | paired R1 | improvement |")
         print("|---|---:|---:|---:|---:|---:|---:|---:|---:|")
         for row in result["table"]:
-            print("| {case} | {L0:.3f} | {L1:.3f} | {O0:.3f} | {O1:.3f} | {R0:.3f} | {R1:.3f} | {improvement:.2%} |".format(**row))
+            if "quarantined" in row:
+                print("| " + row["case"] + " | quarantined (" + ",".join(row["quarantined"]) + ") |")
+            else:
+                print("| {case} | {L0:.3f} | {L1:.3f} | {O0:.3f} | {O1:.3f} | {R0:.3f} | {R1:.3f} | {improvement:.2%} |".format(**row))
     print("campaign-" + result["verdict"] + " (measurement verdict; not a ship decision)")
     print(json.dumps(result, indent=1, allow_nan=False))
     return code

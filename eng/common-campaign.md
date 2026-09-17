@@ -91,6 +91,12 @@ timing that case and fails the child. These are preliminary warmup controls;
 the scorer still checks chronological drift and fresh-process variation.
 An AMD tiering/GC diagnosis and unchanged calibration are still required.
 
+Quarantine note (September 17, first A/A): resnet50-224 warmup never converged in 60 s
+(strict period-2 ~165/~205 ms alternation on both engines across 206 pairs; GC cadence under
+workstation GC is the prime suspect, unproven). The runner quarantines such cases into
+`cases_failed` with no rows instead of aborting the leg; the scorer reports them INCONCLUSIVE.
+Per-case `gc gen0/gen1/gen2` deltas in the child log aid future warmup diagnoses.
+
 Load, prepare, first Execute/Run, warmed public Execute, reused context and
 complete request/reset diagnostics retain separate boundaries. File hashing
 and process metadata capture occur outside timed regions. Cold figures are

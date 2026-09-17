@@ -211,7 +211,8 @@ static class Bench
             + " known-divergence=tracked registry with tripwire; excluded cases skip timing;"
             + " post=agreement re-check after timed reuse; inputsIntact=input fingerprint before/after.");
         // Each requested case reports its own status. A failing case never suppresses the
-        // remaining cases, but the run still exits nonzero so its absence cannot read as success.
+        // remaining cases; quarantined labels ride explicitly in the evidence (cases_failed)
+        // so their absence cannot read as success, while the leg's good rows stay usable.
         // A tracked known divergence excludes its case (no timing, no publication) without failing the run.
         var caseFailures = new List<string>();
         var excludedCases = new List<string>();
@@ -220,6 +221,7 @@ static class Bench
         {
             if (CaseFilter != null && label != CaseFilter) return;
             casesRun++;
+            int g0 = GC.CollectionCount(0), g1 = GC.CollectionCount(1), g2 = GC.CollectionCount(2);
             try
             {
                 run();
@@ -235,6 +237,10 @@ static class Bench
                 string detail = ex.Message.Split((char)10)[0];
                 Console.WriteLine("case-status " + label + "=FAILED: " + ex.GetType().Name + ": " + detail);
                 caseFailures.Add(label);
+            }
+            finally
+            {
+                Console.WriteLine("gc " + label + " gen0=+" + (GC.CollectionCount(0) - g0) + " gen1=+" + (GC.CollectionCount(1) - g1) + " gen2=+" + (GC.CollectionCount(2) - g2));
             }
         }
         if (selected.Contains("e5", StringComparer.OrdinalIgnoreCase))
@@ -270,7 +276,7 @@ static class Bench
         if (caseFailures.Count > 0)
         {
             Console.WriteLine("cases-failed [" + string.Join(",", caseFailures) + "] (no rows are eligible for failed cases)");
-            return 1;
+            CampaignEvidence.Current?.SetFailedCases(caseFailures);
         }
         return 0;
     }

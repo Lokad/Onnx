@@ -192,12 +192,16 @@ class SupervisionTests(unittest.TestCase):
         observed = {"producer": "common-runner-v1", "process_id": 42,
                     "started_utc": "2026-09-17T00:00:00Z", "completed_utc": "2026-09-17T00:01:00Z",
                     "exit_code": 0, "source_sha": "b" * 40, "core_sha256": "c" * 64,
-                    "runner_sha256": composite, "runner_files": files, "ort_native": {}, "environment": {}, "cases": {}}
+                    "runner_sha256": composite, "runner_files": files, "ort_native": {}, "environment": {}, "cases": {},
+                    "cases_failed": []}
         path = self.root / "observations.json"
         lane.save_json(path, observed)
         run = dict(observed, process_evidence=path.name, process_evidence_sha256=evidence.sha256(path))
         evidence.check_process_evidence(run, self.root)
         changed = dict(run, core_sha256="d" * 64)
+        with self.assertRaisesRegex(evidence.EvidenceError, "manifest mismatch"):
+            evidence.check_process_evidence(changed, self.root)
+        changed = dict(run, cases_failed=["resnet50-224"])
         with self.assertRaisesRegex(evidence.EvidenceError, "manifest mismatch"):
             evidence.check_process_evidence(changed, self.root)
         path.write_text(json.dumps(dict(observed, core_sha256="d" * 64)))
