@@ -115,6 +115,20 @@ public class ConvSingleChannelTests
         AssertNear(expected, got, true);
     }
     [Fact]
+    public void AsymmetricPadsStrideDilation_MatchesNaive()
+    {
+        // Combined knife-edge: s2 with dilation 2 under asymmetric pads.
+        // Pads T1/L0/B2/R1, effK5: outH (13+1+2-5)/2+1 = 6, outW 5.
+        var x = FilledTensor(new[] { 1, 1, 13, 13 }, 361);
+        var w = FilledTensor(new[] { 4, 1, 3, 3 }, 363);
+        var b = FilledTensor(new[] { 4 }, 367);
+        var got = RunSc2D(x, w, b, new[] { 1, 0, 2, 1 }, new[] { 2, 2 }, new[] { 2, 2 }, TensorExecutionOptions.Auto, true);
+        var expected = NaiveSc2D(x.ToArray(), 1, 13, 13, w.ToArray(), 4, 3, 3, b.ToArray(), 1, 0, 2, 1, 2, 2, 2, 2);
+        Assert.Equal(1 * 4 * 6 * 5, got.Length);
+        AssertNear(expected, got, true);
+    }
+
+    [Fact]
     public void KernelOneSingleOutput_MatchesNaive()
     {
         var x = FilledTensor(new[] { 2, 1, 8, 9 }, 341);
