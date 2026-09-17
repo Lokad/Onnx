@@ -3,8 +3,12 @@ namespace Lokad.Onnx;
 using System;
 
 /// <summary>
-/// Measurement-only ablation switches. Each forces a legacy kernel path while
-/// the shipped default stays current. Production code never sets these fields;
+/// WARNING: process-wide mutable state. xUnit runs test classes concurrently,
+/// so a set flag can reroute another thread public Softmax mid-test. Bitwise tests
+/// must call kernels directly, never flag-affected publics; tolerance-based
+/// agreement tests are immune. Test code setting these fields restores in finally.
+/// Each switch forces a legacy kernel path while the shipped default stays current.
+/// Production code never sets these fields;
 /// unit tests set them directly and diagnostic harnesses set them through the
 /// documented environment variables before the process starts. The current
 /// (default) paths keep a single perfectly-predicted branch.

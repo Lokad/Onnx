@@ -1065,6 +1065,93 @@ where T : unmanaged
     }
 
     /// <summary>
+    /// Row maximum over scores plus a shared mask row (E69): the masked twin
+    /// of SoftmaxContiguousMax with identical NaN rules; mask lanes address
+    /// the row position, shared across all rows by the caller.
+    /// </summary>
+    internal static float SoftmaxContiguousMaxMasked(System.Span<float> inputSpan, int start, System.Span<float> maskSpan, int block, bool useSimd)
+    {
+        if (useSimd && Vector.IsHardwareAccelerated && block >= Vector<float>.Count)
+        {
+            int width = Vector<float>.Count;
+            var vmax = new Vector<float>(float.NegativeInfinity);
+            var vok = new Vector<int>(-1);
+            int i = 0;
+            for (; i <= block - width; i += width)
+            {
+                var v = new Vector<float>(inputSpan.Slice(start + i, width)) + new Vector<float>(maskSpan.Slice(i, width));
+                vmax = Vector.Max(vmax, v);
+                vok = vok & Vector.Equals(v, v);
+            }
+            float max = vmax[0];
+            for (int l = 1; l < width; l++) if (vmax[l] > max) max = vmax[l];
+            for (; i < block; i++)
+            {
+                float candidate = inputSpan[start + i] + maskSpan[i];
+                if (float.IsNaN(candidate)) return float.NaN;
+                if (candidate > max) max = candidate;
+            }
+            for (int l = 0; l < width; l++) if (vok[l] == 0) return float.NaN;
+            return max;
+        }
+        float smax = float.NegativeInfinity;
+        for (int blockIndex = 0; blockIndex < block; blockIndex++)
+        {
+            float candidate = inputSpan[start + blockIndex] + maskSpan[blockIndex];
+            if (float.IsNaN(candidate)) { smax = float.NaN; break; }
+            if (candidate > smax) smax = candidate;
+        }
+        return smax;
+    }
+    /// <summary>
+    /// Softmax over contiguous rows with a shared additive mask row (E69):
+    /// bit-identical to Add-then-span-softmax with the same mask, because every
+    /// lane adds before consuming in the unfused order and only the materialized
+    /// intermediate is skipped. Test-reachable only; no call sites yet.
+    /// </summary>
+    internal static void SoftmaxMaskedFloatSpan(System.Span<float> inputSpan, System.Span<float> maskSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
+    {
+        if (maskSpan.Length < block) throw new ArgumentException(nameof(maskSpan), "Mask row must cover a full block.");
+        for (int outerIndex = 0; outerIndex < outer; outerIndex++)
+        {
+            float max = SoftmaxContiguousMaxMasked(inputSpan, outerIndex * block, maskSpan, block, useSimd);
+            float sum = 0f;
+            int expIndex = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax = new Vector<float>(max);
+                var vsum = Vector<float>.Zero;
+                for (; expIndex <= block - width; expIndex += width)
+                {
+                    int baseIndex = outerIndex * block + expIndex;
+                    var activated = MathOps.ExpVectorEstrin((new Vector<float>(inputSpan.Slice(baseIndex, width)) + new Vector<float>(maskSpan.Slice(expIndex, width))) - vmax);
+                    activated.CopyTo(outputSpan.Slice(baseIndex, width));
+                    vsum += activated;
+                }
+                sum = Vector.Sum(vsum);
+            }
+            for (; expIndex < block; expIndex++)
+            {
+                float activated = MathF.Exp((inputSpan[outerIndex * block + expIndex] + maskSpan[expIndex]) - max);
+                outputSpan[outerIndex * block + expIndex] = activated;
+                sum += activated;
+            }
+            int normIndex = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv = new Vector<float>(sum);
+                for (; normIndex <= block - width; normIndex += width)
+                {
+                    int baseIndex = outerIndex * block + normIndex;
+                    (new Vector<float>(outputSpan.Slice(baseIndex, width)) / vdiv).CopyTo(outputSpan.Slice(baseIndex, width));
+                }
+            }
+            for (; normIndex < block; normIndex++) outputSpan[outerIndex * block + normIndex] /= sum;
+        }
+    }
+    /// <summary>
     /// Legacy float softmax over contiguous rows, preserved as the tested reference
     /// for the default span kernel. Scalar summation order; vectorized exp only.
     /// </summary>
