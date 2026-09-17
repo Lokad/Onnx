@@ -221,7 +221,7 @@ static class Bench
         {
             if (CaseFilter != null && label != CaseFilter) return;
             casesRun++;
-            int g0 = GC.CollectionCount(0), g1 = GC.CollectionCount(1), g2 = GC.CollectionCount(2);
+            int g0 = GC.CollectionCount(0), g1 = GC.CollectionCount(1), g2 = GC.CollectionCount(2); long allocBefore = GC.GetTotalAllocatedBytes(false); TimeSpan pauseBefore = GC.GetTotalPauseDuration();
             try
             {
                 run();
@@ -240,7 +240,7 @@ static class Bench
             }
             finally
             {
-                Console.WriteLine("gc " + label + " gen0=+" + (GC.CollectionCount(0) - g0) + " gen1=+" + (GC.CollectionCount(1) - g1) + " gen2=+" + (GC.CollectionCount(2) - g2));
+                Console.WriteLine("gc " + label + " gen0=+" + (GC.CollectionCount(0) - g0) + " gen1=+" + (GC.CollectionCount(1) - g1) + " gen2=+" + (GC.CollectionCount(2) - g2)); Console.WriteLine("gcmem " + label + " allocBytes=+" + (GC.GetTotalAllocatedBytes(false) - allocBefore) + " pauseMs=+" + (GC.GetTotalPauseDuration() - pauseBefore).TotalMilliseconds.ToString("F1", System.Globalization.CultureInfo.InvariantCulture));
             }
         }
         if (selected.Contains("e5", StringComparer.OrdinalIgnoreCase))
