@@ -16,10 +16,9 @@ measured. Do not fill absent observations by guessing from a historical log.
 
 The old log-only scoring invocation deliberately returns ABORT (exit 2).
 `eng/parse_baseline.py` still provides historical log-only diagnostic tables.
-The existing `eng/run-l0l1-canonical.ps1` needs producer integration and a common
-runner before it can produce evidence under this contract. In particular, the
-released runner's five workloads cannot substitute for the fifteen workloads
-required here. Do not launch a long campaign just to discover this at scoring.
+Use the new [common runner and supervisor](common-campaign.md) to produce
+this contract. The older `eng/run-l0l1-canonical.ps1` still uses the retired
+invocation and two different runners; its five-case baseline is insufficient.
 
 ## Measurements and policy
 
@@ -87,7 +86,17 @@ duplicate JSON keys and non-finite JSON numbers are errors. Each record has:
 | `ort_native` | Object with `path`, `sha256`, `architecture` for the **actually loaded** native ORT runtime module. |
 | `environment` | Process settings described below; identical across both campaigns. |
 | `accounting` | Object with `valid: true` and numeric `foreign_cpu_fraction` from valid process accounting; fraction must be in [0, 0.10]. |
-| `cases` | Object keyed by all fifteen names, each with full `model_sha256` and `input_sha256`; E5 additionally has integer `unmasked_tokens`. |
+| `cases` | Object keyed by all fifteen names, each with full `model_sha256`, `input_sha256` and explicit `external_data` map; E5 additionally has integer `unmasked_tokens`. |
+
+The common producer also emits `producer: "common-runner-v1"`, `runner_files`,
+`process_evidence` and `process_evidence_sha256`. The referenced child JSON is
+bound to the manifest; its observed identity/settings/cases must match. Only
+the completion timestamp may be extended to the supervisor's observed exit.
+`runner_sha256` for this producer hashes UTF-8 concatenation of ordinally
+sorted `filename + NUL + lowercase file SHA-256 + LF` entries in `runner_files`.
+The bundle contains top-level managed DLLs, deps.json and runtimeconfig.json,
+excluding only Lokad.Onnx.dll. Thus changing a tokenizer/runtime dependency or
+runner configuration requires fresh matching A/A, as well as changing code.
 
 All SHA-256 digests have 64 hex characters. Hash the loaded native module,
 not an arbitrary package asset: record an absolute path ending in `onnxruntime.dll` or
@@ -111,12 +120,22 @@ DOTNET/COMPlus tiering aliases are rejected. JIT regimes must match the A/A
 campaign. Full-opts evidence is explicitly labelled in the output and must
 not be presented as default-tiered deployment performance.
 
-Input identity is SHA-256 over a producer's deterministic, versioned encoding
-of all named input tensors, including names, dtypes, dimensions and exact
-element bytes. Fix the encoding in the common runner; include masks, padding,
-token types and past tensors. Do not hash only the text or tensor shapes.
-Hash the full ONNX bytes (and include referenced external tensor bytes when
-applicable); all current campaign assets are self-contained models. Any
+Input identity is SHA-256 over all named input tensors, including masks,
+padding, token types and past tensors. The common producer writes ASCII
+`LOKAD-CAMPAIGN-INPUTS-1` followed by NUL, then a little-endian int32 tensor
+count. Tensors are ordered by ordinal name. Each record contains int32 UTF-8
+name length and name bytes, int32 ONNX dtype (7=int64, 1=float32), int32 rank,
+int32 dimensions, int64 element count, then little-endian element bits in
+logical tensor order. Float signed zero/NaN bit patterns are not normalized.
+Unsupported input dtypes fail. Do not hash only text or shapes.
+
+`model_sha256` hashes the full ONNX file, preserving its casedef sha12 prefix.
+`external_data` separately maps relative tensor-file locations to full SHA-256
+of each referenced file; it must be explicitly `{}` for embedded-only models.
+These maps participate in cross-run/A/A identity checks. **DINOv3 has an
+external model.onnx_data file**; the earlier claim that all assets were
+self-contained was incorrect. Do not fold external hashes into model_sha256
+and thereby break the ONNX-file prefix check. Any
 tokenizer/preprocessing change that changes tensors changes the input digest.
 For E5 also record the measured count of nonzero attention-mask elements:
 8, 30, 30, 128, 512 respectively in canonical order. In particular, the padded
@@ -124,6 +143,10 @@ case has shape `1x128` with 30 unmasked elements. Never label fully unmasked
 128 tokens as the padded workload. Model/input identities must match every
 process across both campaigns. Numerical outputs need agreement within the
 existing tolerance, not byte-identical output hashes.
+
+GPT-2 decode past comes from the common ORT prefill reference in the campaign
+runner. Deriving it from each Lokad core's outputs could change the measured
+inputs between baseline and candidate even when both pass numerical tolerance.
 
 ## Required log records and runner work
 
@@ -148,10 +171,10 @@ measured execution per engine per case**. This duration is a provisional
 minimum, not a claim that one second proves JIT steady state. Fixed warmup
 must match its declared count; adaptive warmup must report `stop=steady`
 within the declared bounds, never `max-reached`. The same policy applies to
-A/A and comparison. The common runner still needs suitable minimum-duration
-warmup and convergence, actual module/environment/input capture, and producer
-integration into the lane. Those are AMD-01/03 work; the offline scorer does
-not make the present runner equivalent or repair absent historical evidence.
+A/A and comparison. The common producer now implements the duration floor,
+a stable last-nine-sample window, actual identity capture and supervision.
+Its local smoke proof does not establish AMD JIT convergence or provide
+unchanged AMD calibration. Historical logs remain historical.
 
 The test suite constructs complete synthetic manifests and canonical logs,
 then mutates individual observations to prove rejection and scoring behavior.

@@ -87,7 +87,7 @@ class CampaignTests(unittest.TestCase):
                                 "architecture": "x64", "sdk": "10.0.204", "runtime": ".NET 10.0.8", "isa": "AVX2,FMA", "affinity": "0x4",
                                 "settings": {"jit": "default-tiered", "gc": "workstation", "variables": {}}},
                 "accounting": {"valid": True, "foreign_cpu_fraction": 0.0},
-                "cases": {name: {"model_sha256": "a" * 64, "input_sha256": "b" * 64,
+                "cases": {name: {"model_sha256": "a" * 64, "input_sha256": "b" * 64, "external_data": {},
                                  **({"unmasked_tokens": {"e5-8tok": 8, "e5-30tok": 30, "e5-30pad128": 30, "e5-128tok": 128, "e5-512tok": 512}[name]}
                                     if name.startswith("e5-") else {})} for name in CASES}
             })
@@ -213,6 +213,7 @@ class CampaignTests(unittest.TestCase):
         original = copy.deepcopy(self.candidate)
         changes = (
             lambda r: r["cases"]["e5-30pad128"].update(input_sha256="c" * 64),
+            lambda r: r["cases"]["dinov3-224"].update(external_data={"model.onnx_data": "c" * 64}),
             lambda r: r["ort_native"].update(sha256="c" * 64),
             lambda r: r.update(runner_sha256="c" * 64),
             lambda r: r.update(core_sha256="c" * 64),

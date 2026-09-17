@@ -77,6 +77,27 @@ def _unique_json(items):
     return result
 
 
+def check_process_evidence(run, directory):
+    """Bind the common producer's observations in addition to the stdout log."""
+    if "producer" not in run:
+        return  # Offline schema fixtures/other trusted producers remain supported.
+    require(run["producer"] == "common-runner-v1", "unknown process evidence producer")
+    path = directory / run["process_evidence"]
+    require(sha256(path) == digest(run["process_evidence_sha256"], "process_evidence_sha256"), "process evidence digest mismatch")
+    observed = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique_json, parse_constant=_bad_constant)
+    for key in ("producer", "process_id", "started_utc", "exit_code", "source_sha", "core_sha256",
+                "runner_sha256", "runner_files", "ort_native", "environment", "cases"):
+        require(observed[key] == run[key], "process evidence/manifest mismatch: " + key)
+    require(timestamp(observed["completed_utc"]) <= timestamp(run["completed_utc"]), "process evidence completion is after observed exit")
+    files = run["runner_files"]
+    require(isinstance(files, dict) and files, "runner file identities missing")
+    for name, value in files.items():
+        require(isinstance(name, str) and name and not any(c in name for c in "\\/:\0\n"), "invalid runner file name")
+        digest(value, "runner file hash")
+    encoded = "".join(name + "\0" + files[name].lower() + "\n" for name in sorted(files)).encode("utf-8")
+    require(hashlib.sha256(encoded).hexdigest() == run["runner_sha256"].lower(), "runner composite digest mismatch")
+
+
 def _bad_constant(value):
     raise EvidenceError("non-finite JSON number: " + value)
 
@@ -205,6 +226,7 @@ def _load_campaign(path):
         require(log not in seen_logs, "reused log path: " + str(log))
         seen_logs.add(log)
         require(digest(run["log_sha256"], "log_sha256") == sha256(log), "log digest mismatch: " + str(log))
+        check_process_evidence(run, path.parent)
         require(type(run["exit_code"]) is int and run["exit_code"] == 0, label + " failed")
         require(run["accounting"]["valid"] is True, label + " has invalid process accounting")
         foreign = number(run["accounting"]["foreign_cpu_fraction"], "foreign_cpu_fraction")
@@ -257,6 +279,15 @@ def _load_campaign(path):
             inputs = digest(entry["input_sha256"], name + " input_sha256")
             require(model.startswith(parsed["definitions"][name]["sha12"].lower()), "model/log digest mismatch: " + name)
             case_ids[name] = {"model_sha256": model, "input_sha256": inputs}
+            external = entry["external_data"]
+            require(isinstance(external, dict), "external_data must be an explicit file/digest map: " + name)
+            external_ids = {}
+            for location, file_hash in external.items():
+                require(isinstance(location, str) and location and not location.startswith(("/", "\\"))
+                        and ":" not in location and ".." not in location.replace("\\", "/").split("/"),
+                        "invalid relative external tensor location: " + name)
+                external_ids[location] = digest(file_hash, name + " external_data")
+            case_ids[name]["external_data"] = external_ids
             if name.startswith("e5-"):
                 real_tokens = {"e5-8tok": 8, "e5-30tok": 30, "e5-30pad128": 30, "e5-128tok": 128, "e5-512tok": 512}[name]
                 require(integer(entry["unmasked_tokens"], "unmasked_tokens", 1) == real_tokens, "E5 attention mask does not match case: " + name)

@@ -17,12 +17,36 @@ static class Bench
     const double Tolerance = 1e-4;
     const double ConfinementRatioLimit = 1.3;
     const int ConfinementDurationMs = 2000;
+    static double WarmupMinimumMs;
+    static string? CaseFilter;
+    static bool ProbeOnly;
 
     [DllImport("kernel32.dll", SetLastError = true)]
     static extern bool GetLogicalProcessorInformationEx(int relationshipType, IntPtr buffer, ref int returnedLength);
 
     static int Main(string[] args)
     {
+        System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+        System.Globalization.CultureInfo.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+        try
+        {
+            args = CampaignEvidence.Configure(args);
+            int result = Run(args);
+            CampaignEvidence.Current?.Finish(result);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            return 1; // Missing completed evidence also makes the supervisor fail closed.
+        }
+    }
+
+    static int Run(string[] args)
+    {
+#if CAMPAIGN_RUNNER
+        if (args.Length == 1 && args[0] == "selftest") return CampaignSelfTests.Run();
+#endif
         var root = FindRoot();
         var assets = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
         {
@@ -32,6 +56,7 @@ static class Bench
             ["resnet50"] = new[] { Path.Combine(root, "models", "resnet50-onnx", "model.onnx") },
             ["gpt2"] = new[] { Path.Combine(root, "models", "gpt2-onnx", "onnx", "model.onnx") },
         };
+#if !CAMPAIGN_RUNNER
         if (args.Length > 0 && args[0] == "graph")
         {
             return GraphCensus.RunGraph(root, assets, args.Skip(1).ToArray());
@@ -72,6 +97,7 @@ static class Bench
             Console.WriteLine("bench-micro affinity=0x" + microMask.ToString("X") + " logical-cpu=" + microCpu + " (child jobs inherit process affinity on Windows)");
             return RunMicro(microArgs);
         }
+#endif
         var selected = new List<string>();
         string modeName = "auto";
         string rowsName = "canonical";
@@ -81,6 +107,11 @@ static class Bench
         int warmup = DefaultWarmup;
         int warmupMin = -1;
         int warmupMax = -1;
+#if CAMPAIGN_RUNNER
+        warmupMin = 3;
+        warmupMax = 1000;
+        WarmupMinimumMs = 1000;
+#endif
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] == "--mode" && i + 1 < args.Length) modeName = args[++i];
@@ -91,14 +122,28 @@ static class Bench
             else if (args[i] == "--warmup" && i + 1 < args.Length && int.TryParse(args[i + 1], out var w) && w >= 0) { warmup = w; i++; }
             else if (args[i] == "--warmup-min" && i + 1 < args.Length && int.TryParse(args[i + 1], out var wmin)) { warmupMin = wmin; i++; }
             else if (args[i] == "--warmup-max" && i + 1 < args.Length && int.TryParse(args[i + 1], out var wmax)) { warmupMax = wmax; i++; }
+            else if (args[i] == "--warmup-ms" && i + 1 < args.Length && double.TryParse(args[i + 1], out var wms) && double.IsFinite(wms) && wms >= 0) { WarmupMinimumMs = wms; i++; }
+            else if (args[i] == "--case" && i + 1 < args.Length) CaseFilter = args[++i];
+            else if (args[i] == "--probe") ProbeOnly = true;
             else if (args[i] == "all" || assets.ContainsKey(args[i])) { if (args[i] != "all" && !selected.Contains(args[i], StringComparer.OrdinalIgnoreCase)) selected.Add(args[i]); }
-            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--warmup N] [--warmup-min A --warmup-max B] [--rows canonical|all] [--cpu N]"); return 2; }
+            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--warmup N] [--warmup-min A --warmup-max B] [--warmup-ms MS] [--case diagnostic-case] [--rows canonical|all] [--cpu N]"); return 2; }
         }
         if (rowsName != "canonical" && rowsName != "all") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all)"); return 2; }
         if ((warmupMin < 0) != (warmupMax < 0)) { Console.WriteLine("--warmup-min and --warmup-max must be given together (absent selects fixed --warmup " + warmup + ")"); return 2; }
-        if (warmupMin >= 0 && (warmupMin > warmupMax || warmupMax > 100)) { Console.WriteLine("invalid adaptive warmup range (expected 0 <= min <= max <= 100)"); return 2; }
-        if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount) { Console.WriteLine("invalid --cpu " + cpu + " (expected 0.." + (Environment.ProcessorCount - 1) + ")"); return 2; }
-        if (selected.Count == 0) selected.AddRange(assets.Keys);
+        if (warmupMin >= 0 && (warmupMin > warmupMax || warmupMax > 10000)) { Console.WriteLine("invalid adaptive warmup range (expected 0 <= min <= max <= 10000)"); return 2; }
+#if CAMPAIGN_RUNNER
+        if (threads != 1 || modeName != "auto" || rowsName != "canonical") throw new InvalidOperationException("Campaign requires auto, canonical, one CPU thread.");
+#endif
+        // ProcessorCount reflects startup affinity, not the highest OS CPU ID.
+        if (cpu < 0 || cpu >= 64) { Console.WriteLine("invalid --cpu " + cpu + " (expected a supported OS CPU ID in 0..63)"); return 2; }
+        if (selected.Count == 0)
+        {
+#if CAMPAIGN_RUNNER
+            selected.AddRange(new[] { "e5", "dinov3", "resnet50", "gpt2" });
+#else
+            selected.AddRange(assets.Keys);
+#endif
+        }
         TensorExecutionOptions tensorOpts = modeName.ToLowerInvariant() switch
         {
             "scalar" => TensorExecutionOptions.Scalar with { MaxDegreeOfParallelism = threads },
@@ -111,11 +156,11 @@ static class Bench
         {
             foreach (var f in assets[key])
             {
-                if (!File.Exists(f)) { Console.WriteLine("missing asset for " + key + ": " + f); return 1; }
+                if (!ProbeOnly && !File.Exists(f)) { Console.WriteLine("missing asset for " + key + ": " + f); return 1; }
             }
         }
         long affinityMask = EnforceSingleCpuAffinity(cpu).ToInt64();
-        string cpuId = Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER") ?? "unknown";
+        string cpuId = CampaignEvidence.CpuIdentity();
         string vec = System.Numerics.Vector.IsHardwareAccelerated
             ? "Vector" + (System.Numerics.Vector<byte>.Count * 8)
             : "Vector-none";
@@ -129,7 +174,14 @@ static class Bench
             + " lokad=" + typeof(ComputationalGraph).Assembly.GetName().Version
             + " ort=" + typeof(InferenceSession).Assembly.GetName().Version
             + " ort-provider=cpu-only ort-optimizations=ORT_ENABLE_ALL nospin intraop=" + threads + " interop=1 seq"
-            + " mode=" + modeName + " threads=" + threads + " rows=" + rowsName + " iters=" + iters + " warmup=" + warmup + " warmupMin=" + warmupMin + " warmupMax=" + warmupMax);
+            + " mode=" + modeName + " threads=" + threads + " rows=" + rowsName + " iters=" + iters + " warmup=" + warmup + " warmupMin=" + warmupMin + " warmupMax=" + warmupMax + " warmupMs=" + WarmupMinimumMs);
+        CampaignEvidence.Current?.CaptureHost(affinityMask, cpuId);
+        if (ProbeOnly)
+        {
+            _ = OrtEnv.Instance();
+            Console.WriteLine("probe-only: loaded runtime/binaries; no inference or performance result");
+            return 0;
+        }
         var confinement = MeasureSingleCpuConfinement(ConfinementDurationMs);
         Console.WriteLine("confinement wallMs=" + confinement.wallMs.ToString("F0")
             + " cpuMs=" + confinement.cpuMs.ToString("F0")
@@ -163,8 +215,11 @@ static class Bench
         // A tracked known divergence excludes its case (no timing, no publication) without failing the run.
         var caseFailures = new List<string>();
         var excludedCases = new List<string>();
+        int casesRun = 0;
         void RunCase(string label, Action run)
         {
+            if (CaseFilter != null && label != CaseFilter) return;
+            casesRun++;
             try
             {
                 run();
@@ -207,6 +262,7 @@ static class Bench
             RunCase("gpt2-dec-p128", () => CompareGpt2Decode("gpt2-dec-p128", gpt2[0], 128, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
             RunCase("gpt2-dec-p512", () => CompareGpt2Decode("gpt2-dec-p512", gpt2[0], 512, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName));
         }
+        if (casesRun == 0) throw new InvalidOperationException("No cases matched --case " + CaseFilter);
         if (excludedCases.Count > 0)
         {
             Console.WriteLine("cases-excluded [" + string.Join(",", excludedCases) + "] (tracked known divergences; no rows are eligible for excluded cases)");
@@ -227,8 +283,8 @@ static class Bench
             if (args[i] == "--cpu" && i + 1 < args.Length && int.TryParse(args[i + 1], out var c)) { cpu = c; i++; }
             else rest.Add(args[i]);
         }
-        if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount)
-            throw new InvalidOperationException("invalid --cpu " + cpu + " (expected 0.." + (Environment.ProcessorCount - 1) + ").");
+        if (cpu < 0 || cpu >= 64)
+            throw new InvalidOperationException("invalid --cpu " + cpu + " (expected a supported OS CPU ID in 0..63).");
         return rest.ToArray();
     }
 
@@ -290,6 +346,13 @@ static class Bench
     {
         try
         {
+            if (OperatingSystem.IsLinux())
+            {
+                string topology = "/sys/devices/system/cpu/cpu" + cpu + "/topology/";
+                return "topology=(package=" + File.ReadAllText(topology + "physical_package_id").Trim()
+                    + " core=" + File.ReadAllText(topology + "core_id").Trim()
+                    + " smt-siblings=" + File.ReadAllText(topology + "thread_siblings_list").Trim() + ")";
+            }
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return "topology=non-windows-unknown";
             if (!Environment.Is64BitProcess) return "topology=32bit-unknown";
             if (cpu < 0 || cpu >= 64) return "topology=cpu-out-of-range";
@@ -364,6 +427,7 @@ static class Bench
         return "single-cpu-" + modeName.ToLowerInvariant() + "-" + threads + " (diagnostic)";
     }
 
+#if !CAMPAIGN_RUNNER
     static int RunMicro(string[] args)
     {
         if (args.Length == 0)
@@ -398,6 +462,7 @@ static class Bench
                 return 2;
         }
     }
+#endif
 
     internal static string FindRoot()
     {
@@ -529,8 +594,8 @@ static class Bench
     static void CompareGpt2Decode(string name, string model, int pastLen, TensorExecutionOptions tensorOpts, int threads, int iters, int warmup, int warmupMin, int warmupMax, string rowsName, string modeName)
     {
         // Teacher-forced single-token decode: run a validated prefill on both engines, then time
-        // the decode step on identical past state copied out of the Lokad prefill outputs, so any
-        // prefill drift cannot change the decode work. Logits and all present tensors stay gated.
+        // the decode step on identical past state copied out of the common ORT reference.
+        // Lokad prefill drift cannot change cross-core inputs. All outputs remain gated.
         if (pastLen < 1) throw new InvalidOperationException(name + ": decode needs past length >= 1.");
         var graph = OnnxImport.Load(model)!;
         graph.Prepare();
@@ -541,17 +606,40 @@ static class Bench
         var named = ToNamed(name + "-prefill", Gpt2PrefillInputs(pastLen, false), session.InputMetadata.Keys.ToArray());
         var pre = Validate(name + "-prefill", graph, session, named, outNames, matchedOpts);
         Console.WriteLine("prefill " + name + " tokens=" + pastLen + " maxScaled=" + pre.scaled.ToString("E2") + " maxAbs=" + pre.abs.ToString("E2"));
-        var decode = BuildGpt2DecodeInputs(graph, pastLen);
+        // One unchanged reference supplies past bytes for both core versions.
+        // Generating past from each Lokad prefill made input identity core-dependent.
+        using var ro = new RunOptions();
+        var ortInputs = BuildOrtInputs(named, session.InputMetadata.Keys.ToArray());
+        ITensor[] decode;
+        try
+        {
+            using var reference = session.Run(ro, ortInputs, outNames);
+            var past = outNames.Zip(reference).ToDictionary(pair => pair.First, pair => pair.Second);
+            decode = BuildGpt2DecodeInputs(pastLen, key =>
+            {
+                var value = past[key];
+                var shape = value.GetTensorTypeAndShape();
+                return new DenseTensor<float>(value.GetTensorDataAsSpan<float>().ToArray(), shape.Shape.Select(d => checked((int)d)).ToArray());
+            });
+        }
+        finally { foreach (var value in ortInputs.Values) value.Dispose(); }
         Compare(name, model, decode, tensorOpts, threads, iters, warmup, warmupMin, warmupMax, rowsName, modeName);
     }
 
     /// <summary>
-    /// Builds teacher-forced single-token decode inputs from Lokad prefill outputs
-    /// already bound on the graph (prefill must have executed): token 317 with a
-    /// full mask plus past key/values copied out per layer, so prefill drift cannot
-    /// change the decode work. Shared by the timing and profile lanes.
+    /// Legacy profile helper using the selected Lokad core's prefill outputs.
+    /// Campaign timing uses the ORT-based overload instead so both core versions
+    /// receive byte-identical past tensors. Prefill must already have executed.
     /// </summary>
     internal static ITensor[] BuildGpt2DecodeInputs(ComputationalGraph graph, int pastLen)
+        => BuildGpt2DecodeInputs(pastLen, name =>
+        {
+            if (!graph.Outputs.TryGetValue(name, out var value) || value is not Tensor<float> tensor)
+                throw new InvalidOperationException("decode past missing: " + name);
+            return new DenseTensor<float>(tensor.ToArray(), tensor.Dimensions.ToArray());
+        });
+
+    static ITensor[] BuildGpt2DecodeInputs(int pastLen, Func<string, DenseTensor<float>> getPast)
     {
         var decode = new List<ITensor>();
         var nid = new DenseTensor<long>(new long[] { 317 }, new[] { 1, 1 });
@@ -567,9 +655,7 @@ static class Bench
         {
             foreach (var kv in new[] { "key", "value" })
             {
-                if (!graph.Outputs.TryGetValue("present." + layer + "." + kv, out var lt) || lt is not Tensor<float> lf)
-                    throw new InvalidOperationException("decode past missing: present." + layer + "." + kv);
-                var past = new DenseTensor<float>(lf.ToArray(), lf.Dimensions.ToArray());
+                var past = getPast("present." + layer + "." + kv);
                 past.Name = "past_key_values." + layer + "." + kv;
                 decode.Add(past);
             }
@@ -663,6 +749,7 @@ static class Bench
         var outNames = ortSession.OutputMetadata.Keys.ToArray();
         if (inputs.Length == 1 && string.IsNullOrEmpty(inputs[0].Name) && inNames.Length == 1) inputs[0].Name = inNames[0];
         var named = ToNamed(name, inputs, inNames);
+        CampaignEvidence.Current?.CaptureCase(name, model, named);
         var valSw = Stopwatch.StartNew();
         var first = Validate(name, graph, ortSession, named, outNames, lokadOpts);
         valSw.Stop();
@@ -716,6 +803,8 @@ static class Bench
             var wsw = new Stopwatch();
             var wlok = new List<double>();
             var wort = new List<double>();
+            double warmLokMs = 0, warmOrtMs = 0;
+            var warmWall = Stopwatch.StartNew();
             void TimeWarmupPair()
             {
                 graph.Reset();
@@ -723,15 +812,19 @@ static class Bench
                 if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad warmup execute failed");
                 wsw.Stop();
                 wlok.Add(wsw.Elapsed.TotalMilliseconds);
+                warmLokMs += wsw.Elapsed.TotalMilliseconds;
                 graph.Reset();
                 wsw.Restart();
                 using var wr = ortSession.Run(ro, ortInputs, outNames);
                 wsw.Stop();
                 wort.Add(wsw.Elapsed.TotalMilliseconds);
+                warmOrtMs += wsw.Elapsed.TotalMilliseconds;
             }
             bool WarmupSteady(List<double> xs)
             {
                 int n = xs.Count;
+                if (CampaignEvidence.Current != null && WarmupMinimumMs > 0)
+                    return CampaignEvidence.SteadyWindow(xs);
                 if (n < 3) return false;
                 double a = xs[n - 3], b = xs[n - 2], c = xs[n - 1];
                 double hi = Math.Max(a, Math.Max(b, c));
@@ -753,14 +846,17 @@ static class Bench
                 for (int w = 0; w < warmupMax; w++)
                 {
                     TimeWarmupPair();
-                    if (wlok.Count >= Math.Max(warmupMin, 3) && WarmupSteady(wlok) && WarmupSteady(wort)) { warmupStop = 
-"steady"; break; }
+                    if (wlok.Count >= Math.Max(warmupMin, 3) && warmLokMs >= WarmupMinimumMs && warmOrtMs >= WarmupMinimumMs
+                        && WarmupSteady(wlok) && WarmupSteady(wort)) { warmupStop = "steady"; break; }
+                    if (warmWall.Elapsed.TotalSeconds >= 60) break;
                 }
                 warmupUsed = wlok.Count;
             }
             Console.WriteLine("warmup " + name + " used=" + warmupUsed + " stop=" + warmupStop
-                + " lok=[" + string.Join(",", wlok.Select(v => v.ToString("F2"))) + "]"
-                + " ort=[" + string.Join(",", wort.Select(v => v.ToString("F2"))) + "]");
+                + " lok=[" + string.Join(",", wlok.Select(v => v.ToString("F6"))) + "]"
+                + " ort=[" + string.Join(",", wort.Select(v => v.ToString("F6"))) + "]");
+            if (CampaignEvidence.Current != null && (warmupStop == "max-reached" || warmLokMs < WarmupMinimumMs || warmOrtMs < WarmupMinimumMs))
+                throw new InvalidOperationException(name + ": warmup duration/convergence not reached; no scored series.");
             // Warmed reusable-context handle on the shared prepared plan (no per-run context allocation or copy-back).
             var ctx = graph.CreateExecution(lokadOpts);
             ctx.Reset();

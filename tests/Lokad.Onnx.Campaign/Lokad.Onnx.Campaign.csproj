@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <DefineConstants>$(DefineConstants);CAMPAIGN_RUNNER</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>CampaignSdk</_Parameter1>
+      <_Parameter2>$(NETCoreSdkVersion)</_Parameter2>
+    </AssemblyAttribute>
+    <Reference Include="Lokad.Onnx" HintPath="$(CoreAssemblyPath)" Private="true" />
+    <PackageReference Include="Google.Protobuf" Version="3.33.5" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
+    <PackageReference Include="FastBertTokenizer" Version="0.4.67" />
+    <PackageReference Include="Lokad.Tokenizers" Version="0.1.1" />
+    <Compile Include="../Lokad.Onnx.Bench/Program.cs" Link="Program.cs" />
+    <Compile Include="../Lokad.Onnx.Bench/BenchValidate.cs" Link="BenchValidate.cs" />
+    <Compile Include="../Lokad.Onnx.Bench/KnownDivergences.cs" Link="KnownDivergences.cs" />
+    <Compile Include="../Lokad.Onnx.Bench/CampaignEvidence.cs" Link="CampaignEvidence.cs" />
+    <Compile Include="../../src/Lokad.Onnx.Data/Text.cs" Link="Text.cs" />
+  </ItemGroup>
+  <Target Name="RequireBaselineReference" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(CoreAssemblyPath)')" Text="Set CoreAssemblyPath to the built released Lokad.Onnx.dll. Compile this runner once, then stage it unchanged with each core." />
+  </Target>
+</Project>
