@@ -305,6 +305,7 @@ public partial struct Node
         OpType.ScaledMatMul => Attr<string>("placement", null) == "trailing"
             ? CPU.ScaledMatMulTrailing(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool)
             : CPU.ScaledMatMul(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool),
+        OpType.MatMulBias => CPU.MatMulBias(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), opt, graph.ActivePool),
 
         OpType.Transpose => TransposePrepared(graph, opt),
 
@@ -417,6 +418,7 @@ public partial struct Node
     };
     }
 }
+
 
 
 
