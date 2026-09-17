@@ -36,6 +36,12 @@ if (!(Test-Path $l0models)) {
   }
   if ($LASTEXITCODE -ne 0) { Log "ABORT: models junction failed"; exit 1 }
 }
+# Same-toolchain pairing (E01/D02): the 0.2.0 baseline pins a preview SDK that the
+# quiet box neither installs nor needs - 0.2.0 source builds clean under the L1 pin
+# (proven on the VM). The worktree is disposable; copy the L1 pin over it and let the
+# L0-sdk manifest line prove the pairing every run.
+Copy-Item (Join-Path $root "global.json") (Join-Path $l0root "global.json") -Force
+Log "L0-toolchain-override=global.json-from-L1"
 $l0rev = (& git -C $l0root rev-parse HEAD 2>&1 | Out-String).Trim()
 $l1rev = (& git rev-parse HEAD 2>&1 | Out-String).Trim()
 $l1diff = (& git diff HEAD --stat 2>&1 | Out-String).Trim()
