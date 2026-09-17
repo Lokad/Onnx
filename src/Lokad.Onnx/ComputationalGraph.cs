@@ -767,7 +767,7 @@ public class ComputationalGraph
         using var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
 
         using var profilerScope = Profiler.BeginExecution();
-        using var poolScope = new ExecutionPoolScope(this);
+        using var poolScope = new ExecutionPoolScope(this, Options.Tensor.DisableBufferPool);
         var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy } };
         nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights } };
         livePayloadBytes = LivePayloadBytes();
@@ -1355,10 +1355,10 @@ public class ComputationalGraph
     readonly struct ExecutionPoolScope : IDisposable
     {
         readonly ComputationalGraph graph;
-        public ExecutionPoolScope(ComputationalGraph graph)
+        public ExecutionPoolScope(ComputationalGraph graph, bool disableBufferPool)
         {
             this.graph = graph;
-            graph.ActivePool = new TensorBufferPool();
+            graph.ActivePool = disableBufferPool ? null : new TensorBufferPool();
             graph.ActiveScratch = new ScratchAccountant();
             graph.ActiveCopy = new CopyAccountant();
         }

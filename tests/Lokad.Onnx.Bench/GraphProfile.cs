@@ -24,12 +24,14 @@ internal static class GraphProfile
         int cpu = 4;
         int reps = 5;
         var disabledPasses = new List<string>();
+        bool noPool = false;
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] == "--out" && i + 1 < args.Length) { outDir = args[++i]; }
             else if (args[i] == "--cpu" && i + 1 < args.Length && int.TryParse(args[i + 1], out var c)) { cpu = c; i++; }
             else if (args[i] == "--reps" && i + 1 < args.Length && int.TryParse(args[i + 1], out var k) && k >= 1) { reps = k; i++; }
             else if (args[i] == "--disable-pass" && i + 1 < args.Length) { disabledPasses.Add(args[++i]); i++; }
+            else if (args[i] == "--no-pool") { noPool = true; }
             else if (kase is null && !args[i].StartsWith("--")) kase = args[i];
             else { Console.WriteLine("usage: Bench profile <case> [--out dir] [--cpu N] [--reps K] [--disable-pass name]..."); return 2; }
         }
@@ -39,12 +41,12 @@ internal static class GraphProfile
         var ownedTraces = new List<string>();
         if (disabledPasses.Count > 0) Console.WriteLine("profile: disabled passes=[" + string.Join(",", disabledPasses) + "]");
         Environment.SetEnvironmentVariable("LOKAD_ONNX_DISABLE_PASSES", string.Join(",", disabledPasses));
-        try { int rc = ProfileCase(root, kase, outDir, cpu, reps, ownedTraces); SweepStrayTraces(startedUtc, outDir, kase, ownedTraces); return rc; }
+        try { int rc = ProfileCase(root, kase, outDir, cpu, reps, ownedTraces, noPool); SweepStrayTraces(startedUtc, outDir, kase, ownedTraces); return rc; }
         catch (Exception ex) { Console.WriteLine(kase + ": profile failed: " + ex.GetType().Name + ": " + ex.Message.Split((char)10)[0]); SweepStrayTraces(startedUtc, outDir, kase, ownedTraces); return 1; }
         finally { Environment.SetEnvironmentVariable("LOKAD_ONNX_DISABLE_PASSES", null); }
     }
 
-    static int ProfileCase(string root, string kase, string outDir, int cpu, int reps, List<string> ownedTraces)
+    static int ProfileCase(string root, string kase, string outDir, int cpu, int reps, List<string> ownedTraces, bool noPool)
     {
         string model, tokenizer = "";
         Func<string, ITensor[]> build;
@@ -73,7 +75,7 @@ internal static class GraphProfile
         if (!File.Exists(model)) { Console.WriteLine("missing asset: " + model); return 1; }
         global::Bench.EnforceSingleCpuAffinity(cpu);
         Directory.CreateDirectory(outDir);
-        var tensorOpts = TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 1 };
+        var tensorOpts = TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 1, DisableBufferPool = noPool };
         var opts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
         var graph = OnnxImport.Load(model)!;
         graph.Prepare();
