@@ -44,6 +44,24 @@ public class SoftmaxRowUnrollTests
         BitsEqual(y2, yRef, "plain 2x twin");
     }
 
+    static void MaskedQuadMatchesRef(float[] x, float[] mask, int outer, int block, bool useSimd)
+    {
+        var yRef = new float[x.Length];
+        var y4 = new float[x.Length];
+        Tensor<float>.SoftmaxMaskedFloatSpan(x, mask, yRef, outer, block, useSimd);
+        Tensor<float>.SoftmaxMaskedFloatSpan4x(x, mask, y4, outer, block, useSimd);
+        BitsEqual(y4, yRef, "masked 4x twin");
+    }
+
+    static void PlainQuadMatchesRef(float[] x, int outer, int block, bool useSimd)
+    {
+        var yRef = new float[x.Length];
+        var y4 = new float[x.Length];
+        Tensor<float>.SoftmaxContiguousFloatSpan(x, yRef, outer, block, useSimd);
+        Tensor<float>.SoftmaxContiguousFloatSpan4x(x, y4, outer, block, useSimd);
+        BitsEqual(y4, yRef, "plain 4x twin");
+    }
+
     static float[] CausalMask(int block, Random rnd)
     {
         var m = new float[block];
@@ -84,6 +102,27 @@ public class SoftmaxRowUnrollTests
         }
     }
 
+    [Theory]
+    [InlineData(4, 128)]
+    [InlineData(5, 128)]
+    [InlineData(6, 128)]
+    [InlineData(7, 128)]
+    [InlineData(9, 128)]
+    [InlineData(30, 128)]
+    [InlineData(128, 128)]
+    [InlineData(9, 512)]
+    [InlineData(5, 30)]
+    [InlineData(3, 7)]
+    public void QuadMatchesRefOnRemainderClasses(int outer, int block)
+    {
+        var rnd = new Random(outer * 230909 + block);
+        foreach (bool simd in new[] { true, false })
+        {
+            MaskedQuadMatchesRef(Rand(outer * block, rnd, 6f), CausalMask(block, rnd), outer, block, simd);
+            PlainQuadMatchesRef(Rand(outer * block, rnd, 6f), outer, block, simd);
+        }
+    }
+
     [Fact]
     public void TwinsMatchRefOnExceptionalPayloads()
     {
@@ -105,6 +144,8 @@ public class SoftmaxRowUnrollTests
         {
             MaskedTwinsMatchRef(x, mask, outer, block, simd);
             PlainTwinsMatchRef(x, outer, block, simd);
+            MaskedQuadMatchesRef(x, mask, outer, block, simd);
+            PlainQuadMatchesRef(x, outer, block, simd);
         }
     }
 
@@ -117,6 +158,9 @@ public class SoftmaxRowUnrollTests
         var mask = new float[block];
         for (int i = 0; i < block; i++) mask[i] = float.NegativeInfinity;
         foreach (bool simd in new[] { true, false })
+        {
             MaskedTwinsMatchRef(x, mask, outer, block, simd);
+            MaskedQuadMatchesRef(x, mask, outer, block, simd);
+        }
     }
 }

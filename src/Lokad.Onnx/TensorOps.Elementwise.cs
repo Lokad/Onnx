@@ -1527,6 +1527,395 @@ where T : unmanaged
             for (; normIndex < block; normIndex++) outputSpan[outerIndex * block + normIndex] /= sum;
         }
     }
+    /// <summary>
+    /// E78 twin: row-quad unrolled masked softmax. Same per-element arithmetic
+    /// and order as SoftmaxMaskedFloatSpan, four independent rows per iteration.
+    /// Test-reachable only; no dispatch yet.
+    /// </summary>
+    internal static void SoftmaxMaskedFloatSpan4x(System.Span<float> inputSpan, System.Span<float> maskSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
+    {
+        if (maskSpan.Length < block) throw new ArgumentException(nameof(maskSpan), "Mask row must cover a full block.");
+        int quads = outer / 4;
+        for (int p = 0; p < quads; p++)
+        {
+            int base0 = (4 * p) * block;
+            int base1 = (4 * p + 1) * block;
+            int base2 = (4 * p + 2) * block;
+            int base3 = (4 * p + 3) * block;
+            float max0 = SoftmaxContiguousMaxMasked(inputSpan, base0, maskSpan, block, useSimd);
+            float max1 = SoftmaxContiguousMaxMasked(inputSpan, base1, maskSpan, block, useSimd);
+            float max2 = SoftmaxContiguousMaxMasked(inputSpan, base2, maskSpan, block, useSimd);
+            float max3 = SoftmaxContiguousMaxMasked(inputSpan, base3, maskSpan, block, useSimd);
+            float sum0 = 0f;
+            int expIndex0 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax0 = new Vector<float>(max0);
+                var vsum0 = Vector<float>.Zero;
+                for (; expIndex0 <= block - width; expIndex0 += width)
+                {
+                    int baseIndex0 = base0 + expIndex0;
+                    var activated0 = MathOps.ExpVectorEstrin((new Vector<float>(inputSpan.Slice(baseIndex0, width)) + new Vector<float>(maskSpan.Slice(expIndex0, width))) - vmax0);
+                    activated0.CopyTo(outputSpan.Slice(baseIndex0, width));
+                    vsum0 += activated0;
+                }
+                sum0 = Vector.Sum(vsum0);
+            }
+            for (; expIndex0 < block; expIndex0++)
+            {
+                float activated0 = MathF.Exp((inputSpan[base0 + expIndex0] + maskSpan[expIndex0]) - max0);
+                outputSpan[base0 + expIndex0] = activated0;
+                sum0 += activated0;
+            }
+            float sum1 = 0f;
+            int expIndex1 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax1 = new Vector<float>(max1);
+                var vsum1 = Vector<float>.Zero;
+                for (; expIndex1 <= block - width; expIndex1 += width)
+                {
+                    int baseIndex1 = base1 + expIndex1;
+                    var activated1 = MathOps.ExpVectorEstrin((new Vector<float>(inputSpan.Slice(baseIndex1, width)) + new Vector<float>(maskSpan.Slice(expIndex1, width))) - vmax1);
+                    activated1.CopyTo(outputSpan.Slice(baseIndex1, width));
+                    vsum1 += activated1;
+                }
+                sum1 = Vector.Sum(vsum1);
+            }
+            for (; expIndex1 < block; expIndex1++)
+            {
+                float activated1 = MathF.Exp((inputSpan[base1 + expIndex1] + maskSpan[expIndex1]) - max1);
+                outputSpan[base1 + expIndex1] = activated1;
+                sum1 += activated1;
+            }
+            float sum2 = 0f;
+            int expIndex2 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax2 = new Vector<float>(max2);
+                var vsum2 = Vector<float>.Zero;
+                for (; expIndex2 <= block - width; expIndex2 += width)
+                {
+                    int baseIndex2 = base2 + expIndex2;
+                    var activated2 = MathOps.ExpVectorEstrin((new Vector<float>(inputSpan.Slice(baseIndex2, width)) + new Vector<float>(maskSpan.Slice(expIndex2, width))) - vmax2);
+                    activated2.CopyTo(outputSpan.Slice(baseIndex2, width));
+                    vsum2 += activated2;
+                }
+                sum2 = Vector.Sum(vsum2);
+            }
+            for (; expIndex2 < block; expIndex2++)
+            {
+                float activated2 = MathF.Exp((inputSpan[base2 + expIndex2] + maskSpan[expIndex2]) - max2);
+                outputSpan[base2 + expIndex2] = activated2;
+                sum2 += activated2;
+            }
+            float sum3 = 0f;
+            int expIndex3 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax3 = new Vector<float>(max3);
+                var vsum3 = Vector<float>.Zero;
+                for (; expIndex3 <= block - width; expIndex3 += width)
+                {
+                    int baseIndex3 = base3 + expIndex3;
+                    var activated3 = MathOps.ExpVectorEstrin((new Vector<float>(inputSpan.Slice(baseIndex3, width)) + new Vector<float>(maskSpan.Slice(expIndex3, width))) - vmax3);
+                    activated3.CopyTo(outputSpan.Slice(baseIndex3, width));
+                    vsum3 += activated3;
+                }
+                sum3 = Vector.Sum(vsum3);
+            }
+            for (; expIndex3 < block; expIndex3++)
+            {
+                float activated3 = MathF.Exp((inputSpan[base3 + expIndex3] + maskSpan[expIndex3]) - max3);
+                outputSpan[base3 + expIndex3] = activated3;
+                sum3 += activated3;
+            }
+            int normIndex0 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv0 = new Vector<float>(sum0);
+                for (; normIndex0 <= block - width; normIndex0 += width)
+                {
+                    int baseIndex0 = base0 + normIndex0;
+                    (new Vector<float>(outputSpan.Slice(baseIndex0, width)) / vdiv0).CopyTo(outputSpan.Slice(baseIndex0, width));
+                }
+            }
+            for (; normIndex0 < block; normIndex0++) outputSpan[base0 + normIndex0] /= sum0;
+            int normIndex1 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv1 = new Vector<float>(sum1);
+                for (; normIndex1 <= block - width; normIndex1 += width)
+                {
+                    int baseIndex1 = base1 + normIndex1;
+                    (new Vector<float>(outputSpan.Slice(baseIndex1, width)) / vdiv1).CopyTo(outputSpan.Slice(baseIndex1, width));
+                }
+            }
+            for (; normIndex1 < block; normIndex1++) outputSpan[base1 + normIndex1] /= sum1;
+            int normIndex2 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv2 = new Vector<float>(sum2);
+                for (; normIndex2 <= block - width; normIndex2 += width)
+                {
+                    int baseIndex2 = base2 + normIndex2;
+                    (new Vector<float>(outputSpan.Slice(baseIndex2, width)) / vdiv2).CopyTo(outputSpan.Slice(baseIndex2, width));
+                }
+            }
+            for (; normIndex2 < block; normIndex2++) outputSpan[base2 + normIndex2] /= sum2;
+            int normIndex3 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv3 = new Vector<float>(sum3);
+                for (; normIndex3 <= block - width; normIndex3 += width)
+                {
+                    int baseIndex3 = base3 + normIndex3;
+                    (new Vector<float>(outputSpan.Slice(baseIndex3, width)) / vdiv3).CopyTo(outputSpan.Slice(baseIndex3, width));
+                }
+            }
+            for (; normIndex3 < block; normIndex3++) outputSpan[base3 + normIndex3] /= sum3;
+        }
+        for (int outerIndex = quads * 4; outerIndex < outer; outerIndex++)
+        {
+            float max = SoftmaxContiguousMaxMasked(inputSpan, outerIndex * block, maskSpan, block, useSimd);
+            float sum = 0f;
+            int expIndex = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax = new Vector<float>(max);
+                var vsum = Vector<float>.Zero;
+                for (; expIndex <= block - width; expIndex += width)
+                {
+                    int baseIndex = outerIndex * block + expIndex;
+                    var activated = MathOps.ExpVectorEstrin((new Vector<float>(inputSpan.Slice(baseIndex, width)) + new Vector<float>(maskSpan.Slice(expIndex, width))) - vmax);
+                    activated.CopyTo(outputSpan.Slice(baseIndex, width));
+                    vsum += activated;
+                }
+                sum = Vector.Sum(vsum);
+            }
+            for (; expIndex < block; expIndex++)
+            {
+                float activated = MathF.Exp((inputSpan[outerIndex * block + expIndex] + maskSpan[expIndex]) - max);
+                outputSpan[outerIndex * block + expIndex] = activated;
+                sum += activated;
+            }
+            int normIndex = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv = new Vector<float>(sum);
+                for (; normIndex <= block - width; normIndex += width)
+                {
+                    int baseIndex = outerIndex * block + normIndex;
+                    (new Vector<float>(outputSpan.Slice(baseIndex, width)) / vdiv).CopyTo(outputSpan.Slice(baseIndex, width));
+                }
+            }
+            for (; normIndex < block; normIndex++) outputSpan[outerIndex * block + normIndex] /= sum;
+        }
+    }
+    /// <summary>
+    /// E78 twin: row-quad unrolled plain softmax. Same per-element arithmetic
+    /// and order as SoftmaxContiguousFloatSpan, four independent rows per
+    /// iteration. Test-reachable only; no dispatch yet.
+    /// </summary>
+    internal static void SoftmaxContiguousFloatSpan4x(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
+    {
+        int quads = outer / 4;
+        for (int p = 0; p < quads; p++)
+        {
+            int base0 = (4 * p) * block;
+            int base1 = (4 * p + 1) * block;
+            int base2 = (4 * p + 2) * block;
+            int base3 = (4 * p + 3) * block;
+            float max0 = SoftmaxContiguousMax(inputSpan, base0, block, useSimd);
+            float max1 = SoftmaxContiguousMax(inputSpan, base1, block, useSimd);
+            float max2 = SoftmaxContiguousMax(inputSpan, base2, block, useSimd);
+            float max3 = SoftmaxContiguousMax(inputSpan, base3, block, useSimd);
+            float sum0 = 0f;
+            int expIndex0 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax0 = new Vector<float>(max0);
+                var vsum0 = Vector<float>.Zero;
+                for (; expIndex0 <= block - width; expIndex0 += width)
+                {
+                    int baseIndex0 = base0 + expIndex0;
+                    var activated0 = MathOps.ExpVectorEstrin(new Vector<float>(inputSpan.Slice(baseIndex0, width)) - vmax0);
+                    activated0.CopyTo(outputSpan.Slice(baseIndex0, width));
+                    vsum0 += activated0;
+                }
+                sum0 = Vector.Sum(vsum0);
+            }
+            for (; expIndex0 < block; expIndex0++)
+            {
+                float activated0 = MathF.Exp(inputSpan[base0 + expIndex0] - max0);
+                outputSpan[base0 + expIndex0] = activated0;
+                sum0 += activated0;
+            }
+            float sum1 = 0f;
+            int expIndex1 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax1 = new Vector<float>(max1);
+                var vsum1 = Vector<float>.Zero;
+                for (; expIndex1 <= block - width; expIndex1 += width)
+                {
+                    int baseIndex1 = base1 + expIndex1;
+                    var activated1 = MathOps.ExpVectorEstrin(new Vector<float>(inputSpan.Slice(baseIndex1, width)) - vmax1);
+                    activated1.CopyTo(outputSpan.Slice(baseIndex1, width));
+                    vsum1 += activated1;
+                }
+                sum1 = Vector.Sum(vsum1);
+            }
+            for (; expIndex1 < block; expIndex1++)
+            {
+                float activated1 = MathF.Exp(inputSpan[base1 + expIndex1] - max1);
+                outputSpan[base1 + expIndex1] = activated1;
+                sum1 += activated1;
+            }
+            float sum2 = 0f;
+            int expIndex2 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax2 = new Vector<float>(max2);
+                var vsum2 = Vector<float>.Zero;
+                for (; expIndex2 <= block - width; expIndex2 += width)
+                {
+                    int baseIndex2 = base2 + expIndex2;
+                    var activated2 = MathOps.ExpVectorEstrin(new Vector<float>(inputSpan.Slice(baseIndex2, width)) - vmax2);
+                    activated2.CopyTo(outputSpan.Slice(baseIndex2, width));
+                    vsum2 += activated2;
+                }
+                sum2 = Vector.Sum(vsum2);
+            }
+            for (; expIndex2 < block; expIndex2++)
+            {
+                float activated2 = MathF.Exp(inputSpan[base2 + expIndex2] - max2);
+                outputSpan[base2 + expIndex2] = activated2;
+                sum2 += activated2;
+            }
+            float sum3 = 0f;
+            int expIndex3 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax3 = new Vector<float>(max3);
+                var vsum3 = Vector<float>.Zero;
+                for (; expIndex3 <= block - width; expIndex3 += width)
+                {
+                    int baseIndex3 = base3 + expIndex3;
+                    var activated3 = MathOps.ExpVectorEstrin(new Vector<float>(inputSpan.Slice(baseIndex3, width)) - vmax3);
+                    activated3.CopyTo(outputSpan.Slice(baseIndex3, width));
+                    vsum3 += activated3;
+                }
+                sum3 = Vector.Sum(vsum3);
+            }
+            for (; expIndex3 < block; expIndex3++)
+            {
+                float activated3 = MathF.Exp(inputSpan[base3 + expIndex3] - max3);
+                outputSpan[base3 + expIndex3] = activated3;
+                sum3 += activated3;
+            }
+            int normIndex0 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv0 = new Vector<float>(sum0);
+                for (; normIndex0 <= block - width; normIndex0 += width)
+                {
+                    int baseIndex0 = base0 + normIndex0;
+                    (new Vector<float>(outputSpan.Slice(baseIndex0, width)) / vdiv0).CopyTo(outputSpan.Slice(baseIndex0, width));
+                }
+            }
+            for (; normIndex0 < block; normIndex0++) outputSpan[base0 + normIndex0] /= sum0;
+            int normIndex1 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv1 = new Vector<float>(sum1);
+                for (; normIndex1 <= block - width; normIndex1 += width)
+                {
+                    int baseIndex1 = base1 + normIndex1;
+                    (new Vector<float>(outputSpan.Slice(baseIndex1, width)) / vdiv1).CopyTo(outputSpan.Slice(baseIndex1, width));
+                }
+            }
+            for (; normIndex1 < block; normIndex1++) outputSpan[base1 + normIndex1] /= sum1;
+            int normIndex2 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv2 = new Vector<float>(sum2);
+                for (; normIndex2 <= block - width; normIndex2 += width)
+                {
+                    int baseIndex2 = base2 + normIndex2;
+                    (new Vector<float>(outputSpan.Slice(baseIndex2, width)) / vdiv2).CopyTo(outputSpan.Slice(baseIndex2, width));
+                }
+            }
+            for (; normIndex2 < block; normIndex2++) outputSpan[base2 + normIndex2] /= sum2;
+            int normIndex3 = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv3 = new Vector<float>(sum3);
+                for (; normIndex3 <= block - width; normIndex3 += width)
+                {
+                    int baseIndex3 = base3 + normIndex3;
+                    (new Vector<float>(outputSpan.Slice(baseIndex3, width)) / vdiv3).CopyTo(outputSpan.Slice(baseIndex3, width));
+                }
+            }
+            for (; normIndex3 < block; normIndex3++) outputSpan[base3 + normIndex3] /= sum3;
+        }
+        for (int outerIndex = quads * 4; outerIndex < outer; outerIndex++)
+        {
+            float max = SoftmaxContiguousMax(inputSpan, outerIndex * block, block, useSimd);
+            float sum = 0f;
+            int expIndex = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vmax = new Vector<float>(max);
+                var vsum = Vector<float>.Zero;
+                for (; expIndex <= block - width; expIndex += width)
+                {
+                    int baseIndex = outerIndex * block + expIndex;
+                    var activated = MathOps.ExpVectorEstrin(new Vector<float>(inputSpan.Slice(baseIndex, width)) - vmax);
+                    activated.CopyTo(outputSpan.Slice(baseIndex, width));
+                    vsum += activated;
+                }
+                sum = Vector.Sum(vsum);
+            }
+            for (; expIndex < block; expIndex++)
+            {
+                float activated = MathF.Exp(inputSpan[outerIndex * block + expIndex] - max);
+                outputSpan[outerIndex * block + expIndex] = activated;
+                sum += activated;
+            }
+            int normIndex = 0;
+            if (useSimd && Vector.IsHardwareAccelerated)
+            {
+                int width = Vector<float>.Count;
+                var vdiv = new Vector<float>(sum);
+                for (; normIndex <= block - width; normIndex += width)
+                {
+                    int baseIndex = outerIndex * block + normIndex;
+                    (new Vector<float>(outputSpan.Slice(baseIndex, width)) / vdiv).CopyTo(outputSpan.Slice(baseIndex, width));
+                }
+            }
+            for (; normIndex < block; normIndex++) outputSpan[outerIndex * block + normIndex] /= sum;
+        }
+    }
     /// Legacy float softmax over contiguous rows, preserved as the tested reference
     /// for the default span kernel. Scalar summation order; vectorized exp only.
     /// </summary>

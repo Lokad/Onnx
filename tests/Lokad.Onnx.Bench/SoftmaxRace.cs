@@ -37,8 +37,10 @@ internal static class SoftmaxRace
         if (!System.Runtime.Intrinsics.X86.Fma.IsSupported) { Console.WriteLine("softmaxrace: x86 FMA not available; refusing."); return 1; }
         global::Bench.EnforceSingleCpuAffinity(cpu);
         var mRef = Bind<MaskedKernel>("SoftmaxMaskedFloatSpan");
+        var m4 = Bind<MaskedKernel>("SoftmaxMaskedFloatSpan4x");
         var m2 = Bind<MaskedKernel>("SoftmaxMaskedFloatSpan2x");
         var pRef = Bind<PlainKernel>("SoftmaxContiguousFloatSpan");
+        var p4 = Bind<PlainKernel>("SoftmaxContiguousFloatSpan4x");
         var p2 = Bind<PlainKernel>("SoftmaxContiguousFloatSpan2x");
         var shapes = new (int Outer, int Block)[]
         {
@@ -48,12 +50,12 @@ internal static class SoftmaxRace
         var rnd = new Random(733);
         int rc = 0;
         foreach (var (outer, block) in shapes)
-            rc |= RaceOne(outer, block, reps, rnd, mRef, m2, pRef, p2);
+            rc |= RaceOne(outer, block, reps, rnd, mRef, m2, m4, pRef, p2, p4);
         Console.WriteLine(rc == 0 ? "softmaxrace: all cases agree." : "softmaxrace: FAILED.");
         return rc;
     }
 
-    static int RaceOne(int outer, int block, int reps, Random rnd, MaskedKernel mRef, MaskedKernel m2, PlainKernel pRef, PlainKernel p2)
+    static int RaceOne(int outer, int block, int reps, Random rnd, MaskedKernel mRef, MaskedKernel m2, MaskedKernel m4, PlainKernel pRef, PlainKernel p2, PlainKernel p4)
     {
         var x = new float[outer * block];
         var mask = new float[block];
@@ -61,6 +63,7 @@ internal static class SoftmaxRace
         for (int i = 0; i < mask.Length; i++) mask[i] = (float)(rnd.NextDouble() * 2 - 1);
         var yRef = new float[x.Length];
         var y2 = new float[x.Length];
+        var y4 = new float[x.Length];
         double TimeM(MaskedKernel k, float[] y)
         {
             for (int w = 0; w < 5; w++) k(x, mask, y, outer, block, true);
@@ -89,10 +92,14 @@ internal static class SoftmaxRace
         double tmRef = TimeM(mRef, yRef);
         double tm2 = TimeM(m2, y2);
         long badM = BadBits(y2, yRef);
+        double tm4 = TimeM(m4, y4);
+        long badM4 = BadBits(y4, yRef);
         double tpRef = TimeP(pRef, yRef);
         double tp2 = TimeP(p2, y2);
         long badP = BadBits(y2, yRef);
-        Console.WriteLine("softmaxrace " + outer + "x" + block + ": masked-ref=" + tmRef.ToString("F3") + "ms masked-2x=" + tm2.ToString("F3") + "ms badM=" + badM + " plain-ref=" + tpRef.ToString("F3") + "ms plain-2x=" + tp2.ToString("F3") + "ms badP=" + badP);
-        return (badM == 0 && badP == 0) ? 0 : 1;
+        double tp4 = TimeP(p4, y4);
+        long badP4 = BadBits(y4, yRef);
+        Console.WriteLine("softmaxrace " + outer + "x" + block + ": masked-ref=" + tmRef.ToString("F3") + "ms masked-2x=" + tm2.ToString("F3") + "ms badM=" + badM + " masked-4x=" + tm4.ToString("F3") + "ms badM4=" + badM4 + " plain-ref=" + tpRef.ToString("F3") + "ms plain-2x=" + tp2.ToString("F3") + "ms badP=" + badP + " plain-4x=" + tp4.ToString("F3") + "ms badP4=" + badP4);
+        return (badM == 0 && badP == 0 && badM4 == 0 && badP4 == 0) ? 0 : 1;
     }
 }
