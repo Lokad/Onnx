@@ -44,30 +44,17 @@ if ($Live) {
   $idle = Frac10
   Write-Host ("idle-10s frac=" + $idle.ToString("F3"))
   Check ($idle -lt 0.02) "idle box reads idle"
-  # NOTE: the burner must NOT be our descendant - Test-LaneOwned correctly
-  # excludes lane children (builds/legs must never self-abort). setsid orphans
-  # it to PID 1, making it genuinely foreign like any other box workload.
-  Remove-Item /tmp/acct-burn.pid -ErrorAction SilentlyContinue
-  Remove-Item /tmp/acct-burn.sh -ErrorAction SilentlyContinue
-  $burnLines = @("#!/bin/bash")
-  $burnLines += "echo " + [char]36 + "BASHPID > /tmp/acct-burn.pid"
-  $burnLines += "exec taskset -c 0 bash -c 'while true; do :; done'"
-  Set-Content -Path /tmp/acct-burn.sh -Value $burnLines
-  & chmod +x /tmp/acct-burn.sh
-  & setsid /tmp/acct-burn.sh 2>$null
-  Start-Sleep -Seconds 2
-  $burnPid = 0
-  if (Test-Path /tmp/acct-burn.pid) { [int]::TryParse((Get-Content /tmp/acct-burn.pid | Select-Object -First 1), [ref]$burnPid) | Out-Null }
-  try {
-    Check ($burnPid -gt 1) "detached burner started outside our tree"
-    $hot = Frac10
-    Write-Host ("burn-10s frac=" + $hot.ToString("F3"))
-    Check ($hot -gt 0.10) "deliberate foreign workload detected above abort line"
-  } finally {
-    if ($burnPid -gt 1) { & kill -9 $burnPid 2>$null }
-    Remove-Item /tmp/acct-burn.pid -ErrorAction SilentlyContinue
-    Remove-Item /tmp/acct-burn.sh -ErrorAction SilentlyContinue
-  }
+  # NOTE: foreign load must come from OUTSIDE this process tree: the .NET
+  # runtime subreaps orphans, so setsid/double-fork children stay lane-owned
+  # (correctly excluded - builds/legs must never self-abort). Protocol: this
+  # leg prints START-BURN-NOW, waits 25 s while the operator starts one CPU
+  # burner from an independent session, measures, then prints STOP-BURN.
+  Write-Host "START-BURN-NOW (one-CPU burner from an independent session)"
+  Start-Sleep -Seconds 25
+  $hot = Frac10
+  Write-Host ("burn-10s frac=" + $hot.ToString("F3"))
+  Check ($hot -gt 0.10) "deliberate foreign workload detected above abort line"
+  Write-Host "STOP-BURN"
   $calm = Frac10
   Write-Host ("post-burn frac=" + $calm.ToString("F3"))
   Check ($calm -lt 0.02) "box calm again after burn exits"
