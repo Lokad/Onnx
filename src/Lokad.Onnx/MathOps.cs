@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Diagnostics;
 
@@ -3759,6 +3760,55 @@ public class MathOps
         yy = Vector.ConditionalSelect(Vector.LessThan(v, new Vector<float>(-88.722839f)), Vector<float>.Zero, yy);
         return Vector.ConditionalSelect(isFinite, yy, new Vector<float>(float.NaN));
     }
+    /// <summary>Softmax-scoped 512-bit base-e exponential probe (E81): lane-for-lane port of
+    /// ExpVectorEstrin to explicit Vector512 arithmetic with the same Cody-Waite reduction,
+    /// clamps, reconstruction and guards. Same documented contract (order 1e-7 against
+    /// MathF.Exp, NaN in NaN out, overflow to infinity, underflow to zero). Test-reachable
+    /// only; requires 512-bit vectors plus FMA, checked by callers. No dispatch yet.
+    /// </summary>
+    public static Vector512<float> ExpVector512(Vector512<float> v)
+    {
+        var isFinite = Vector512.Equals(v, v);
+        var x = Vector512.Min(Vector512.Max(v, Vector512.Create(-88.722839f)), Vector512.Create(88.722839f));
+        var scaled = x * Vector512.Create(1.44269504088896341f);
+        var shifted = Vector512.ConditionalSelect(Vector512.GreaterThanOrEqual(scaled, Vector512<float>.Zero), scaled + Vector512.Create(0.5f), scaled - Vector512.Create(0.5f));
+        var n = Vector512.ConvertToInt32(shifted);
+        var clamped = Vector512.Min(Vector512.Max(n, Vector512.Create(-126)), Vector512.Create(127));
+        var nf = Vector512.ConvertToSingle(clamped);
+        var r = Vector512.FusedMultiplyAdd(nf, Vector512.Create(-0.693359375f), x);
+        r = Vector512.FusedMultiplyAdd(nf, Vector512.Create(2.12194440e-4f), r);
+        var y = r * r;
+        var tHi = Vector512.FusedMultiplyAdd(Vector512.Create(1f / 5040f), r, Vector512.Create(1f / 720f));
+        var tLo = Vector512.FusedMultiplyAdd(Vector512.Create(1f / 6f), r, Vector512.Create(1f / 2f));
+        var tMid = Vector512.FusedMultiplyAdd(Vector512.Create(1f / 120f), r, Vector512.Create(1f / 24f));
+        var tOne = Vector512.FusedMultiplyAdd(Vector512.Create(1f), r, Vector512.Create(1f));
+        var uHi = Vector512.FusedMultiplyAdd(tHi, y, tMid);
+        var uLo = Vector512.FusedMultiplyAdd(tLo, y, tOne);
+        var y2 = y * y;
+        var p = Vector512.FusedMultiplyAdd(uHi, y2, uLo);
+        var shiftedBits = Vector512.ShiftLeft(clamped + Vector512.Create(127), 23);
+        var scale = Unsafe.As<Vector512<int>, Vector512<float>>(ref shiftedBits);
+        var yy = p * scale;
+        yy = Vector512.ConditionalSelect(Vector512.GreaterThan(v, Vector512.Create(88.722839f)), Vector512.Create(float.PositiveInfinity), yy);
+        yy = Vector512.ConditionalSelect(Vector512.LessThan(v, Vector512.Create(-88.722839f)), Vector512<float>.Zero, yy);
+        return Vector512.ConditionalSelect(isFinite, yy, Vector512.Create(float.NaN));
+    }
+
+    /// <summary>Span driver for the 512-bit exponential probe: 16-wide vector core with a
+    /// scalar MathF.Exp tail (same tail rule as the span-softmax scalar tails).</summary>
+    internal static unsafe void ExpSpan512(ReadOnlySpan<float> xs, Span<float> ys)
+    {
+        int w = Vector512<float>.Count;
+        int nvec = xs.Length / w;
+        fixed (float* px = xs, py = ys)
+        {
+            var xv = (Vector512<float>*)px;
+            var yv = (Vector512<float>*)py;
+            for (int i = 0; i < nvec; i++) yv[i] = ExpVector512(xv[i]);
+            for (int i = nvec * w; i < xs.Length; i++) ys[i] = MathF.Exp(xs[i]);
+        }
+    }
+
 
     // Same Abramowitz and Stegun 7.1.26 derivation as the float overload above,
     // in double precision with its own table and magnitude helper.
