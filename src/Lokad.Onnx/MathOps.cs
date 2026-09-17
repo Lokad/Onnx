@@ -1654,6 +1654,44 @@ public class MathOps
             }
     }
 
+
+    /// <summary>
+    /// Head-merge face transpose (E5-3 M2): transposes every [H,S,D] region of
+    /// a standard row-major [B,H,S,D] buffer into [B,S,D,H], matching the
+    /// TransposeInto (0,2,3,1) fast path element for element. Source elements
+    /// stay strided (one cache line per head), but each destination run of 8
+    /// heads moves with a single vector store built from two 4-lane creates,
+    /// with scalar stores only for the H tail; no arithmetic is performed, so
+    /// results agree bit-wise on every shape, including NaN payloads and
+    /// signed zero. No SIMD ISA is required (lane creates lower to moves).
+    /// </summary>
+    /// <param name="dimB">Batch count.</param>
+    /// <param name="dimS">Tokens per face.</param>
+    /// <param name="dimH">Heads per face.</param>
+    /// <param name="dimD">Columns per face.</param>
+    /// <param name="src">Source [B,H,S,D] buffer.</param>
+    /// <param name="dst">Destination [B,S,D,H] buffer.</param>
+    public unsafe static void transpose_unsafe_vector8_headMerge(int dimB, int dimS, int dimH, int dimD, float* src, float* dst)
+    {
+        int vec = Vector256<float>.Count;
+        for (int b = 0; b < dimB; b++)
+            for (int i = 0; i < dimS; i++)
+                for (int jj = 0; jj < dimD; jj++)
+                {
+                    float* dRun = dst + (((b * dimS + i) * dimD + jj) * dimH);
+                    int k = 0;
+                    for (; k + vec <= dimH; k += vec)
+                    {
+                        float* sK = src + ((b * dimH + k) * dimS + i) * dimD + jj;
+                        var lo = Vector128.Create(sK[0 * dimS * dimD], sK[1 * dimS * dimD], sK[2 * dimS * dimD], sK[3 * dimS * dimD]);
+                        var hi = Vector128.Create(sK[4 * dimS * dimD], sK[5 * dimS * dimD], sK[6 * dimS * dimD], sK[7 * dimS * dimD]);
+                        *(Vector256<float>*)(dRun + k) = Vector256.Create(lo, hi);
+                    }
+                    for (; k < dimH; k++)
+                        dRun[k] = src[(((b * dimH + k) * dimS + i) * dimD) + jj];
+                }
+    }
+
     /// <summary>
     /// Packs B into 32-column panels laid out contiguously, with any tail
     /// columns appended row-major. Panel relocation is exact, so a kernel
