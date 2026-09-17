@@ -207,7 +207,7 @@ where T : unmanaged
                     fixed (float* pp = packed)
                     {
                         PackPanelsB(n, k, y, pp);
-                        mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output);
+                        mm_unsafe_vectorized_intrinsics_2x4packed_bump(blocked, n, k, x, pp, output);
                     }
                 }
                 finally
@@ -295,7 +295,7 @@ where T : unmanaged
                 if ((m % 3) == 0)
                     mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
                 else
-                    mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
+                    mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
             }
             return destination;
         }
@@ -653,7 +653,7 @@ where T : unmanaged
                                 pp,
                                 (float*)zp0 + zOff[bi]);
                         else
-                            mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k,
+                            mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k,
                                 (float*)xp0 + xOff[bi],
                                 pp,
                                 (float*)zp0 + zOff[bi]);
@@ -672,7 +672,7 @@ where T : unmanaged
                     if ((m % 3) == 0)
                         mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, xp + ox, pp, zp + oz);
                     else
-                        mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, xp + ox, pp, zp + oz);
+                        mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, xp + ox, pp, zp + oz);
                     for (int d = r - 1; d >= 0; d--)
                     {
                         coords[d]++;
@@ -944,3 +944,5 @@ internal static class MatMulShapes
         return core;
     }
 }
+
+
