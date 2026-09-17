@@ -50,6 +50,8 @@ public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntri
     internal IReadOnlyDictionary<float[], PackedMatMulWeight>? PackedMatMulWeights { get; init; }
     /// <summary>Optional prepared transposed-LSTM map; null disables prepared resolution.</summary>
     internal IReadOnlyDictionary<float[], PreparedLstmTranspose>? LstmTransposedWeights { get; init; }
+    /// <summary>Optional prepared panel-packed-LSTM map; null disables packed XW routing.</summary>
+    internal IReadOnlyDictionary<float[], PreparedLstmPack>? LstmPackedWeights { get; init; }
 
     public static TensorExecutionOptions Scalar => new TensorExecutionOptions(false, false, 1);
 

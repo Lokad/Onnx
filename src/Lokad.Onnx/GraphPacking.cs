@@ -45,6 +45,25 @@ internal sealed record PackedMatMulWeight(
     DenseTensor<float> Packed);
 
 /// <summary>
+/// An LSTM input-weight (W) initializer with a prepared direction-major
+/// panel-packed clone. Each direction slice holds PackPanelsB(inputSize, 4H)
+/// of the transposed [inputSize,4H] slice, so the hoisted XW projection runs
+/// the packed kernels with no per-run transpose or pack. Freshness follows
+/// the packed-clone precedent: replacing the source initializer is detected
+/// per use and falls back to the unpacked path, while structural edits
+/// require InvalidatePreparation, which drops the clone like the others.
+internal sealed record PreparedLstmPack(
+    string SourceName,
+    ITensor SourceRef,
+    long SourceLength,
+    float[] SourceArray,
+    string PackedName,
+    DenseTensor<float> Packed,
+    int Directions,
+    int InputSize,
+    int FourH);
+
+/// <summary>
 /// Builds panel-packed clones of eligible MatMul weight initializers.
 /// Dispatch resolves them through the per-graph mapping at call time, so
 /// every fallback path keeps reading original row-major bytes by
@@ -54,6 +73,7 @@ internal static class GraphPacking
 {
     internal const string PackedPrefix = "packed:";
     internal const string LstmTransposePrefix = "lstm-t:";
+    internal const string LstmPackPrefix = "lstm-p:";
 
     /// <summary>Upper source-rows bound of measured packed-kernel territory: 4096 is admitted (encoder K=4096 projections at M=16), wider reductions are unmeasured and stay unpacked.</summary>
     internal const int MaxPackedAxis = 4096;
@@ -215,6 +235,131 @@ internal static class GraphPacking
             && rec.Transposed.Length == dense.Length)
         {
             return rec.Transposed;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Prepares direction-major panel-packed clones of constant LSTM
+    /// input-weight (W) initializers. Admission mirrors PrepareLstmWeights
+    /// (float32 rank-three [directions,4H,inputSize] whole-array
+    /// initializers); the packed clone additionally requires packable panel
+    /// dims. Each direction slice packs the transposed [inputSize,4H] slice
+    /// once per preparation instead of paying Densify plus the unpacked lane
+    /// on every invocation. Fresh records reuse verified clones; stale
+    /// records are dropped and rebuilt. Returns the live prepared count.
+    /// </summary>
+    internal static int PrepareLstmPacks(ComputationalGraph graph)
+    {
+        var candidates = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var node in graph.Nodes)
+        {
+            if (node.Op != OpType.LSTM || node.Inputs is null || node.Inputs.Length < 3) continue;
+            string input = node.Inputs[1];
+            if (!string.IsNullOrEmpty(input)) candidates.Add(input);
+        }
+        var current = new Dictionary<string, (ITensor tensor, float[] array)>(StringComparer.Ordinal);
+        foreach (var name in candidates)
+        {
+            if (graph.Inputs.ContainsKey(name) || graph.Outputs.ContainsKey(name)) continue;
+            if (!graph.Initializers.TryGetValue(name, out var init)) continue;
+            if (init is not DenseTensor<float> dense || init.ElementType != TensorElementType.Float) continue;
+            if (init.Rank != 3) continue;
+            int[] dims = init.Dims;
+            if (dims.Length != 3) continue;
+            int d = dims[0], gh = dims[1], k = dims[2];
+            if (d < 1 || gh < 4 || k < 1 || gh % 4 != 0) continue;
+            // Packed XW panels read [inputSize,4H] per direction; require the
+            // same packable panel dims as the MatMul clones.
+            if (!IsPackableShape(k, gh)) continue;
+            if (!System.Runtime.InteropServices.MemoryMarshal.TryGetArray(dense.Buffer, out System.ArraySegment<float> window)
+                || window.Array is null || window.Offset != 0 || window.Count != dense.Buffer.Length) continue;
+            current[name] = (init, window.Array);
+        }
+        int live = 0;
+        var stale = new List<float[]>();
+        foreach (var kv in graph.LstmPacks)
+        {
+            var rec = kv.Value;
+            if (current.TryGetValue(rec.SourceName, out var cur)
+                && ReferenceEquals(cur.tensor, rec.SourceRef) && cur.tensor.Length == rec.SourceLength
+                && ReferenceEquals(cur.array, rec.SourceArray))
+            {
+                live++;
+                continue;
+            }
+            stale.Add(kv.Key);
+        }
+        foreach (float[] key in stale)
+        {
+            if (graph.LstmPacks.TryGetValue(key, out var rec))
+            {
+                if (graph.Initializers.TryGetValue(rec.PackedName, out var held) && ReferenceEquals(held, rec.Packed))
+                    graph.Initializers.Remove(rec.PackedName);
+                graph.LstmPacks.Remove(key);
+            }
+        }
+        foreach (var kv in current)
+        {
+            bool already = false;
+            foreach (var rec in graph.LstmPacks.Values)
+            {
+                if (ReferenceEquals(rec.SourceRef, kv.Value.tensor)) { already = true; break; }
+            }
+            if (already) continue;
+            string packedName = LstmPackPrefix + kv.Key;
+            if (graph.Initializers.ContainsKey(packedName) || graph.Inputs.ContainsKey(packedName)) continue;
+            var dense = (DenseTensor<float>)kv.Value.tensor;
+            int dd = dense.Dimensions[0], ggh = dense.Dimensions[1], kk = dense.Dimensions[2];
+            var panel = new float[(long)dd * ggh * kk];
+            unsafe
+            {
+                using var sh = dense.Buffer.Pin();
+                using var ph = new Memory<float>(panel).Pin();
+                float* sp = (float*)sh.Pointer;
+                float* pp = (float*)ph.Pointer;
+                // Transpose each direction slice to [inputSize,4H], then panel-pack it.
+                var tmp = new float[(long)kk * ggh];
+                fixed (float* tp = tmp)
+                {
+                    for (int dir = 0; dir < dd; dir++)
+                    {
+                        for (int row = 0; row < ggh; row++)
+                            for (int col = 0; col < kk; col++)
+                                tp[col * ggh + row] = sp[(dir * ggh + row) * kk + col];
+                        MathOps.PackPanelsB(kk, ggh, tp, pp + dir * kk * ggh);
+                    }
+                }
+            }
+            var packed = new DenseTensor<float>(new Memory<float>(panel), new int[] { dd, kk, ggh });
+            packed.Name = packedName;
+            graph.Initializers[packedName] = packed;
+            graph.LstmPacks[kv.Value.array] = new PreparedLstmPack(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed, dd, kk, ggh);
+            live++;
+        }
+        return live;
+    }
+
+    /// <summary>
+    /// Resolves an LSTM input-weight operand to its prepared panel-packed
+    /// clone when the unwrapped source is the unchanged initializer the clone
+    /// was built from. Broadcast views resolve through their source; offset
+    /// views and replaced initializers fall back to the unpacked path.
+    /// Callers window per-direction packed slices from the whole clone.
+    /// </summary>
+    internal static DenseTensor<float>? ResolveLstmPack(IReadOnlyDictionary<float[], PreparedLstmPack>? map, Tensor<float> source)
+    {
+        if (map is null || map.Count == 0) return null;
+        Tensor<float> core = source;
+        while (core is BroadcastedTensor<float> view) core = view.source;
+        if (core is DenseTensor<float> dense
+            && DenseArray(dense) is float[] backing
+            && map.TryGetValue(backing, out var rec)
+            && ReferenceEquals(rec.SourceRef, dense)
+            && rec.SourceLength == dense.Length
+            && rec.Packed.Length == dense.Length)
+        {
+            return rec.Packed;
         }
         return null;
     }

@@ -3,6 +3,8 @@ namespace Lokad.Onnx;
 using System;
 using System.Runtime.CompilerServices;
 using System.Buffers;
+using System.Runtime.Intrinsics.X86;
+
 
 using static OpResult;
 
@@ -148,6 +150,7 @@ public partial class CPUExecutionProvider
         var tensorOpts = opts.Tensor;
         var wtPrep = GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, wd);
         var rtPrep = GraphPacking.ResolveLstmTranspose(tensorOpts.LstmTransposedWeights, rd);
+        var wxPack = GraphPacking.ResolveLstmPack(tensorOpts.LstmPackedWeights, wd);
         bool usePrepared = wtPrep is not null;
         // Cost-model dispatch: the per-invocation transpose build copies
         // ~8H(K+H) floats, so unprepared weights only pay past short
@@ -253,7 +256,14 @@ public partial class CPUExecutionProvider
                         }
                         var xgT = new DenseTensor<float>(new Memory<float>(xGather, 0, limit * inputSize), new[] { limit, inputSize });
                         var xwT = new DenseTensor<float>(new Memory<float>(xwBuf, 0, limit * 4 * H), new[] { limit, 4 * H });
-                        Tensor<float>.MatMul2D(xgT, wtTensors[d], xwT, tensorOpts);
+                        if (wxPack is not null && UsePackedXW(tensorOpts, limit))
+                        {
+                            // Direction slice of the prepared packed clone: panels for
+                            // [inputSize,4H] ride contiguous per direction by construction.
+                            var packedView = new DenseTensor<float>(wxPack.Buffer.Slice(d * inputSize * 4 * H, inputSize * 4 * H), new[] { inputSize, 4 * H });
+                            Tensor<float>.MatMulPackedProduct(xgT, packedView, xwT, tensorOpts);
+                        }
+                        else Tensor<float>.MatMul2D(xgT, wtTensors[d], xwT, tensorOpts);
                     }
                     for (int s = 0; s < seq; s++)
                     {
@@ -395,6 +405,14 @@ public partial class CPUExecutionProvider
     // Prepared-panel dispatch for the recurrent projection, pinned by the M2 micro (see PLAN.md): 2.09x at H=128/O=512, no win at H=640 (0.96x), and steep losses on non-64-multiple tails. Only panel-aligned small/medium projections take the MatVecPanel lane; H=640 and odd shapes keep the row-dot loop.
     public static bool UseRecurrentPanel(int hiddenSize) =>
         hiddenSize > 0 && (4 * hiddenSize) % 64 == 0 && hiddenSize <= 128;
+
+    // Packed-XW dispatch for the hoisted LSTM input projection: mirrors the
+    // MatMul2D packed-kernel admission (SIMD/intrinsics/FMA, m of two or more
+    // rows with an AVX512 or exactly-covered tail). Smaller or scalar-mode
+    // shapes keep the unpacked MatMul2D lane bit-identically.
+    static bool UsePackedXW(TensorExecutionOptions o, int m) =>
+        o.UseSimd && o.UseIntrinsics && System.Runtime.Intrinsics.X86.Fma.IsSupported && m >= 2
+        && (System.Runtime.Intrinsics.X86.Avx512F.IsSupported || (m & 1) == 0 || (m % 3) == 0);
 
     static float ClipGate(float v, float? clip) =>
         clip.HasValue ? Math.Clamp(v, -clip.Value, clip.Value) : v;

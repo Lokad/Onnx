@@ -291,6 +291,38 @@ where T : unmanaged
 
     // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    /// <summary>
+    /// Runs the panel-packed product with an already-resolved packed B clone
+    /// (same kernels and overwrite contract as the MatMul2D packed branch).
+    /// The packed tensor carries panel dims [n,k]; x is [m,n], destination
+    /// [m,k]. Callers resolve freshness themselves and fall back to the
+    /// unpacked path when no prepared clone applies.
+    /// </summary>
+    internal static Tensor<float> MatMulPackedProduct(Tensor<float> x, DenseTensor<float> packedB, DenseTensor<float> destination, TensorExecutionOptions options)
+    {
+        options.Validate();
+        if (packedB.Rank != 2) throw new ArgumentException(nameof(packedB), "Packed B must be rank 2 with panel dims [n,k].");
+        var m = x.Dimensions[0];
+        var n = packedB.Dimensions[0];
+        var k = packedB.Dimensions[1];
+        if (x.Dimensions[1] != n) throw new ArgumentException("X columns must match packed panel rows.");
+        if (destination.Dimensions.Length != 2 || destination.Dimensions[0] != m || destination.Dimensions[1] != k) throw new ArgumentException(nameof(destination), "Destination shape must match the matrix product shape.");
+        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        if (ReferenceEquals(destination, x) || TensorAlias.SharesBackingMemory(destination, x)) throw new ArgumentException(nameof(destination), "Destination must not alias the input matrix.");
+        var dx = RequireContiguous(x, nameof(x), options.CopyReporter);
+        StartOpStage(OpStage.Math);
+        using var xh = dx.Buffer.Pin();
+        using var ph = packedB.Buffer.Pin();
+        using var oh = destination.Buffer.Pin();
+        unsafe
+        {
+            // Row groups with 12/6-row AVX512 heads and 3/2-row tails (P5);
+            // exact shapes keep single calls bit-identically.
+            RunPackedRowGroups(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer, overwrite: true);
+        }
+        return destination;
+    }
+
     static Tensor<float> MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool overwriteDestination)
     {
         options.Validate();
@@ -307,18 +339,7 @@ where T : unmanaged
 
         if (ResolvePackedKernel(options, y, m) is { } packedB)
         {
-            var dx = RequireContiguous(x, nameof(x), options.CopyReporter);
-            StartOpStage(OpStage.Math);
-            using var xh = dx.Buffer.Pin();
-            using var ph = packedB.Buffer.Pin();
-            using var oh = destination.Buffer.Pin();
-            unsafe
-            {
-                // Row groups with 12/6-row AVX512 heads and 3/2-row tails (P5);
-                // exact shapes keep single calls bit-identically.
-                RunPackedRowGroups(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer, overwrite: true);
-            }
-            return destination;
+            return MatMulPackedProduct(x, packedB, destination, options);
         }
 
         var (_x, _y) = DensifyFloatOperands(x, y, options.CopyReporter);
