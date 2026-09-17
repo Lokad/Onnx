@@ -323,6 +323,8 @@ where T : unmanaged
         return destination;
     }
 
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     static Tensor<float> MatMul2DCore(Tensor<float> x, Tensor<float> y, DenseTensor<float> destination, TensorExecutionOptions options, bool overwriteDestination)
     {
         options.Validate();

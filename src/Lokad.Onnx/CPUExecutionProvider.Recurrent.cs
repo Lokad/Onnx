@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Buffers;
 using System.Runtime.Intrinsics.X86;
 
-
 using static OpResult;
 
 public partial class CPUExecutionProvider
@@ -411,8 +410,8 @@ public partial class CPUExecutionProvider
     // rows with an AVX512 or exactly-covered tail). Smaller or scalar-mode
     // shapes keep the unpacked MatMul2D lane bit-identically.
     static bool UsePackedXW(TensorExecutionOptions o, int m) =>
-        o.UseSimd && o.UseIntrinsics && System.Runtime.Intrinsics.X86.Fma.IsSupported && m >= 2
-        && (System.Runtime.Intrinsics.X86.Avx512F.IsSupported || (m & 1) == 0 || (m % 3) == 0);
+        o.UseSimd && o.UseIntrinsics && Fma.IsSupported && m >= 2
+        && (Avx512F.IsSupported || (m & 1) == 0 || (m % 3) == 0);
 
     static float ClipGate(float v, float? clip) =>
         clip.HasValue ? Math.Clamp(v, -clip.Value, clip.Value) : v;
