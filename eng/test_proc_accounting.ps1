@@ -49,12 +49,17 @@ if ($Live) {
   # (correctly excluded - builds/legs must never self-abort). Protocol: this
   # leg prints START-BURN-NOW, waits 25 s while the operator starts one CPU
   # burner from an independent session, measures, then prints STOP-BURN.
-  Write-Host "START-BURN-NOW (one-CPU burner from an independent session)"
+  # Operator protocol v2 (deterministic across 10s tool polls): on sight of
+  # START-BURN-NOW, start `timeout 40` one-CPU burner from an independent
+  # session (covers the whole hot window, dies alone). After STOP-BURN the
+  # leg waits through KILL grace so a manual kill also lands before calm-A.
+  Write-Host "START-BURN-NOW (timeout-40 one-CPU burner, independent session)"
   Start-Sleep -Seconds 25
   $hot = Frac10
   Write-Host ("burn-10s frac=" + $hot.ToString("F3"))
   Check ($hot -gt 0.10) "deliberate foreign workload detected above abort line"
-  Write-Host "STOP-BURN"
+  Write-Host "STOP-BURN (kill burner now; 25 s grace)"
+  Start-Sleep -Seconds 25
   $calm = Frac10
   Write-Host ("post-burn frac=" + $calm.ToString("F3"))
   Check ($calm -lt 0.02) "box calm again after burn exits"
