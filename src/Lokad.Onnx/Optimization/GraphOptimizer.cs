@@ -91,7 +91,6 @@ internal static class GraphOptimizer
         GraphFusion.RegisterGemmGeluPass();
         GraphFusion.RegisterScaledMatMulPass();
         GraphFusion.RegisterMaskedSoftmaxPass();
-        GraphFusion.RegisterMatMulBiasPass();
         ConstFold.RegisterConstFoldPass();
         ShapeZeroCopy.RegisterShapeZeroCopyPass();
     }
@@ -144,5 +143,4 @@ internal static class GraphOptimizer
         return report;
     }
 }
-
 

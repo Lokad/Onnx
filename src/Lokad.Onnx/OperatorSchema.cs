@@ -81,7 +81,6 @@ public static class OperatorSchemas
         [OpType.GemmGelu] = Def(OpType.GemmGelu, 2, 3, 1, 1, 1, true),
         [OpType.ScaledMatMul] = Def(OpType.ScaledMatMul, 3, 3, 1, 1, 1, true),
         [OpType.MaskedSoftmax] = Def(OpType.MaskedSoftmax, 2, 2, 1, 1, 1, true),
-        [OpType.MatMulBias] = Def(OpType.MatMulBias, 3, 3, 1, 1, 1, true),
         [OpType.Gemm] = Def(OpType.Gemm, 2, 3),
         [OpType.Tanh] = Def(OpType.Tanh, 1, 1),
         [OpType.Split] = Def(OpType.Split, 1, 2, 1, Unbounded, 1, false),
@@ -201,5 +200,4 @@ public static class OperatorSchemas
         return false;
     }
 }
-
 

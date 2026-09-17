@@ -81,7 +81,7 @@ internal static class GraphPacking
             {
                 string input = node.Inputs[i];
                 if (string.IsNullOrEmpty(input)) continue;
-                bool eligible = (node.Op == OpType.MatMul && i == 1) || (node.Op == OpType.MatMulBias && i == 1) || (node.Op == OpType.Gemm && i == 1 && (node.GetInt("transB", 0) ?? 0) == 0);
+                bool eligible = (node.Op == OpType.MatMul && i == 1) || (node.Op == OpType.Gemm && i == 1 && (node.GetInt("transB", 0) ?? 0) == 0);
                 if (consumers.TryGetValue(input, out bool prior)) consumers[input] = prior && eligible;
                 else consumers[input] = eligible;
             }
@@ -206,4 +206,3 @@ internal static class GraphPacking
         return y.Dimensions[r - 2] == pd[0] && y.Dimensions[r - 1] == pd[1];
     }
 }
-

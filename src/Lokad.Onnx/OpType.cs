@@ -203,8 +203,6 @@ public enum OpType
     GemmGelu,
     ScaledMatMul,
     MaskedSoftmax,
-    MatMulBias,
     Unknown,
 }
-
 

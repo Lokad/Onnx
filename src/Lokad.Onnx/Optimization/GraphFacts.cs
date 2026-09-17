@@ -313,7 +313,6 @@ internal sealed class GraphFacts
             case OpType.Erf:
             case OpType.Softmax:
             case OpType.MaskedSoftmax:
-            case OpType.MatMulBias:
             case OpType.Neg:
             case OpType.Abs:
             case OpType.Cos:
@@ -334,5 +333,4 @@ internal sealed class GraphFacts
         return true;
     }
 }
-
 
