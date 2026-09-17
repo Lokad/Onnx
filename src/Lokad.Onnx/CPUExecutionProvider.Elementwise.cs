@@ -435,6 +435,58 @@ public partial class CPUExecutionProvider
         }
     }
 
+    /// <summary>
+    /// Fused masked softmax (E69): Softmax(scores + mask) with the mask folded
+    /// into the max/exp passes. Internal: the optimizer is the only producer.
+    /// Shared-[S] mask rows run the fused kernel; every other shape runs the
+    /// exact Add-then-Softmax composite, so values match unfused execution
+    /// bit-identically on all inputs.
+    /// </summary>
+    public static OpResult MaskedSoftmax(ITensor? scores, ITensor? mask, int? _axis, ExecutionOptions? options, TensorBufferPool? pool, int opsetVersion)
+    {
+        var op = OpType.MaskedSoftmax;
+        if (scores is null) return MissingInput(op, nameof(scores));
+        if (mask is null) return MissingInput(op, nameof(mask));
+        var axis = _axis.HasValue ? _axis.Value : (opsetVersion < 13 ? 1 : -1);
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        var tensorOptions = opts.Tensor;
+        if (scores is Tensor<float> fs && mask is Tensor<float> fm)
+        {
+            int rank = fs.Rank;
+            if (rank >= 1)
+            {
+                int ax = ArrayUtilities.HandleNegativeAxisOrIndex(rank, axis);
+                if (ax == rank - 1)
+                {
+                    var ds = fs.ToDenseTensor();
+                    var dm = fm.ToDenseTensor();
+                    int block = ds.Dimensions[rank - 1];
+                    if (block >= 1 && dm.Length == block)
+                    {
+                        int rows = (int)(ds.Length / block);
+                        Profiler.StartOpStage(OpStage.ValidateArguments);
+                        DenseTensor<float> output;
+                        if (pool is null) output = new DenseTensor<float>(new Memory<float>(new float[ds.Length]), ds.Dimensions.ToArray());
+                        else
+                        {
+                            var rented = new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)ds.Length)), ds.Dimensions.ToArray());
+                            output = rented;
+                        }
+                        Profiler.StartOpStage(OpStage.Math);
+                        Tensor<float>.SoftmaxMaskedFloatSpan(ds.Buffer.Span, dm.Buffer.Span, output.Buffer.Span, rows, block, tensorOptions.UseSimd);
+                        return Success(op, output);
+                    }
+                }
+            }
+        }
+        // Exact fallback: the unfused Add-then-Softmax provider sequence.
+        var added = Add(scores, mask, options, pool);
+        if (added.Status != OpStatus.Success || added.Outputs is null || added.Outputs.Length != 1 || added.Outputs[0] is null)
+            return added;
+        return Softmax(added.Outputs[0], _axis, options, pool, opsetVersion);
+    }
+
+
     public static OpResult Abs(ITensor? X, ExecutionOptions? options)
     {
         var op = OpType.Abs;

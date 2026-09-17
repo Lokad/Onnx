@@ -202,5 +202,7 @@ public enum OpType
     AddRelu,
     GemmGelu,
     ScaledMatMul,
+    MaskedSoftmax,
     Unknown,
 }
+

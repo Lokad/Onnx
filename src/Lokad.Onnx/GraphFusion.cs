@@ -1058,6 +1058,110 @@ namespace Lokad.Onnx
             }
         }
 
+        public static int FuseMaskedSoftmaxPass(ComputationalGraph graph, Optimization.GraphFacts facts, List<int> rewritten)
+        {
+            var drop = new HashSet<int>();
+            int fused = 0;
+
+            for (int i = 0; i < graph.Nodes.Count; i++)
+            {
+                if (graph.Nodes[i].Op != OpType.Softmax) continue;
+                if (drop.Contains(i)) continue;
+                if (TryMatchMaskedSoftmax(graph, facts, drop, i, out int producer))
+                {
+                    drop.Add(i);
+                    rewritten.Add(producer);
+                    fused++;
+                }
+            }
+
+            if (drop.Count > 0)
+            {
+                var kept = new List<Node>(graph.Nodes.Count - drop.Count);
+                for (int i = 0; i < graph.Nodes.Count; i++)
+                {
+                    if (!drop.Contains(i)) kept.Add(graph.Nodes[i]);
+                }
+                graph.Nodes.Clear();
+                graph.Nodes.AddRange(kept);
+            }
+            return fused;
+        }
+
+        /// <summary>
+        /// Matches Add(scores, mask) feeding Softmax with no other live consumer
+        /// and no graph-output exposure on the link, rewriting the Add struct in
+        /// place to MaskedSoftmax with the original input order; the caller drops
+        /// the Softmax node. Mask shape is NOT proven statically (E5 masks are
+        /// per-request dynamic): the provider runs the fused kernel on shared-[S]
+        /// rows and the exact Add-then-Softmax composite everywhere else, so a
+        /// match can never misfire. Float32 link only; other dtypes decline.
+        /// </summary>
+        static bool TryMatchMaskedSoftmax(
+            ComputationalGraph graph,
+            Optimization.GraphFacts facts,
+            HashSet<int> drop,
+            int softmaxIndex,
+            out int producerIndex)
+        {
+            producerIndex = -1;
+            var sm = graph.Nodes[softmaxIndex];
+            if (sm.Op != OpType.Softmax) return false;
+            if (!IsFusableParticipant(sm)) return false;
+            if (!Node.IsStandardDomain(sm.Domain)) return false;
+            if (sm.Inputs.Length != 1 || sm.Outputs.Length != 1) return false;
+            string mid = sm.Inputs[0];
+            string rout = sm.Outputs[0];
+            if (string.IsNullOrEmpty(mid) || string.IsNullOrEmpty(rout)) return false;
+            if (facts.GraphOutputs.Contains(mid)) return false;
+            if (!facts.Producer.TryGetValue(mid, out int pi) || drop.Contains(pi)) return false;
+            var add = graph.Nodes[pi];
+            if (add.Op != OpType.Add || add.IsFused) return false;
+            if (!IsFusableParticipant(add)) return false;
+            if (!Node.IsStandardDomain(add.Domain)) return false;
+            if (add.Inputs.Length != 2 || add.Outputs.Length != 1) return false;
+            if (!facts.Consumers.TryGetValue(mid, out var uses)) return false;
+            int live = 0;
+            foreach (var u in uses) if (!drop.Contains(u)) live++;
+            if (live != 1) return false;
+            if (!facts.Dtypes.TryGetValue(mid, out var dt) || dt != TensorElementType.Float) return false;
+            var fused = add;
+            fused.Op = OpType.MaskedSoftmax;
+            fused.OpTypeName = OpType.MaskedSoftmax.ToString();
+            fused.Domain = "";
+            int stdv = StandardOpset(graph);
+            if (stdv >= 0) fused.OpsetVersion = stdv;
+            fused.IsFused = true;
+            fused.Inputs = new[] { add.Inputs[0], add.Inputs[1] };
+            fused.Attributes = sm.Attributes is null ? null : new Dictionary<string, object>(sm.Attributes);
+            fused.Outputs = new[] { rout };
+            graph.Nodes[pi] = fused;
+            producerIndex = pi;
+            return true;
+        }
+        static readonly object MaskedSoftmaxPassLock = new object();
+        static bool maskedSoftmaxRegistered;
+
+        public static void RegisterMaskedSoftmaxPass()
+        {
+            lock (MaskedSoftmaxPassLock)
+            {
+                if (maskedSoftmaxRegistered) return;
+                Optimization.GraphOptimizer.AddPass(new Optimization.GraphOptimizer.Pass(
+                    "maskedsoftmax",
+                    (graph, facts) =>
+                    {
+                        var rewritten = new List<int>();
+                        int n = FuseMaskedSoftmaxPass(graph, facts, rewritten);
+                        var result = new Optimization.GraphOptimizer.PassResult(n > 0, n);
+                        result.Nodes.AddRange(rewritten);
+                        if (n > 0) result.Notes.Add("fused " + n + " mask+softmax regions");
+                        return result;
+                    }));
+                maskedSoftmaxRegistered = true;
+            }
+        }
+
         /// <summary>
         /// True when the edge is a known single-element float32 source: a
         /// length-1 float initializer or a standard-domain Constant payload.

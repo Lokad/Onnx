@@ -377,6 +377,11 @@ public partial struct Node
             int v when v >= 13 => CPU.Softmax(InputTensor(graph, 0), Int("axis", null) ?? -1, opt, graph.ActivePool, v),
             int v => CPU.Softmax(InputTensor(graph, 0), Int("axis", null) ?? 1, opt, graph.ActivePool, v),
         },
+        OpType.MaskedSoftmax => ResolvedOpsetVersion(graph) switch
+        {
+            int v when v >= 13 => CPU.MaskedSoftmax(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null) ?? -1, opt, graph.ActivePool, v),
+            int v => CPU.MaskedSoftmax(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null) ?? 1, opt, graph.ActivePool, v),
+        },
 
         OpType.Abs => CPU.Abs(InputTensor(graph, 0), opt),
 
@@ -412,4 +417,6 @@ public partial struct Node
     };
     }
 }
+
+
 
