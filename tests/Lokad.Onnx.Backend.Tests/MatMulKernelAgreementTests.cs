@@ -302,6 +302,52 @@ public class MatMulKernelAgreementTests
             $"3-row packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
     }
 
+    [SkippableFact]
+    public unsafe void Packed6MatchesPacked2Bitwise()
+    {
+        // E61: the 6-row packed nest keeps the exact per-element j-ascending
+        // FMA order of the 2-row packed nest over 16-column halves, so it must
+        // agree bit-wise on exact, vector-tail and scalar-tail widths, including
+        // E5 projection shapes.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        Packed6Equal(6, 16, 96, rnd);
+        Packed6Equal(6, 16, 44, rnd);
+        Packed6Equal(6, 16, 34, rnd);
+        Packed6Equal(6, 16, 35, rnd);
+        Packed6Equal(6, 16, 37, rnd);
+        Packed6Equal(6, 16, 38, rnd);
+        Packed6Equal(12, 16, 40, rnd);
+        Packed6Equal(12, 32, 33, rnd);
+        Packed6Equal(12, 32, 39, rnd);
+        Packed6Equal(30, 384, 384, rnd);
+        Packed6Equal(30, 384, 388, rnd);
+        Packed6Equal(30, 384, 1536, rnd);
+        Packed6Equal(126, 384, 384, rnd);
+        Packed6Equal(126, 1536, 384, rnd);
+    }
+
+    static unsafe void Packed6Equal(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_6x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"6-row packed diverges bitwise from tiled on {m}x{n}x{k}.");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_6x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, q, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"6-row packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
+    }
+
 
     [SkippableFact]
     public unsafe void SixRowMatchesTiledBitwise()

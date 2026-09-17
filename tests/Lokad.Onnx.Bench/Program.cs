@@ -89,6 +89,10 @@ static class Bench
         {
             return P05GemmBlocked.RunGemmBlock(args.Skip(1).ToArray());
         }
+        if (args.Length > 0 && args[0] == "packrace")
+        {
+            return PackRace.RunPackRace(args.Skip(1).ToArray());
+        }
         if (args.Length > 0 && args[0] == "micro")
         {
             int microCpu = 0;
@@ -1142,3 +1146,4 @@ static class Bench
         return Convert.ToHexString(sha.ComputeHash(s)).Substring(0, 12);
     }
 }
+
