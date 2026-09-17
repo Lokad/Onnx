@@ -60,6 +60,7 @@ public sealed class TensorBufferPool
     readonly Dictionary<Array, long> outstanding = new();
 
     readonly Dictionary<(Type, int), (long Missed, long Reused)> demand = new();
+    readonly Dictionary<(Type, int), (long Pinned, long ReturnedAtReset)> pins = new();
 
     long outstandingBytes;
 
@@ -146,6 +147,18 @@ public sealed class TensorBufferPool
         else demand[key] = missed ? (1, 0) : (0, 1);
     }
 
+    /// <summary>Bumps the run-end pin census for one owned buffer: pinned when a live alias kept it, returned otherwise.</summary>
+    /// <remarks>Called only from the Reset sweep; counters only, storm-safe.</remarks>
+    public void BumpPin(Type elementType, int length, bool pinned)
+    {
+        lock (sync)
+        {
+            var key = (elementType, length);
+            if (pins.TryGetValue(key, out var cur)) pins[key] = pinned ? (cur.Pinned + 1, cur.ReturnedAtReset) : (cur.Pinned, cur.ReturnedAtReset + 1);
+            else pins[key] = pinned ? (1, 0) : (0, 1);
+        }
+    }
+
     /// <summary>Cumulative per-shape demand snapshot since pool creation, for allocation tuning.</summary>
     public (string Type, int Length, long Missed, long Reused)[] SnapshotDemand()
     {
@@ -154,6 +167,18 @@ public sealed class TensorBufferPool
             var arr = new (string, int, long, long)[demand.Count];
             int i = 0;
             foreach (var kv in demand) arr[i++] = (kv.Key.Item1.Name, kv.Key.Item2, kv.Value.Missed, kv.Value.Reused);
+            return arr;
+        }
+    }
+
+    /// <summary>Cumulative per-shape run-end pin census since pool creation, for B7 slice-2 attribution.</summary>
+    public (string Type, int Length, long Pinned, long ReturnedAtReset)[] SnapshotPins()
+    {
+        lock (sync)
+        {
+            var arr = new (string, int, long, long)[pins.Count];
+            int i = 0;
+            foreach (var kv in pins) arr[i++] = (kv.Key.Item1.Name, kv.Key.Item2, kv.Value.Pinned, kv.Value.ReturnedAtReset);
             return arr;
         }
     }

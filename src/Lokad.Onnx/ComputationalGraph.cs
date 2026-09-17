@@ -370,6 +370,8 @@ public class ComputationalGraph
     /// <summary>Cumulative per-shape pool demand since pool creation: rents that missed (fresh GC) versus hits (served storage).</summary>
     /// <remarks>Diagnostics for allocation tuning; reading it never affects execution. Shapes are (element type, length).</remarks>
     public (string Type, int Length, long Missed, long Reused)[] PoolDemandSnapshot() => SharedPool.SnapshotDemand();
+    /// <summary>Cumulative per-shape run-end pin census (B7 slice 2): owned buffers pinned by a live alias vs returned at Reset.</summary>
+    public (string Type, int Length, long Pinned, long ReturnedAtReset)[] PoolPinSnapshot() => SharedPool.SnapshotPins();
     #endregion
 
     #region Methods
@@ -1531,13 +1533,19 @@ public class ComputationalGraph
             if (!SharedPool.IsOwned(arr)) continue;
             EnsureLiveIndexSeeded();
             RemoveLiveRefs(tensor);
+            if (arr.GetType().GetElementType() is not Type elementType) continue;
             if (!HasLiveAliasIndexed(arr))
             {
                 SharedPool.Return(arr);
+                SharedPool.BumpPin(elementType, arr.Length, false);
                 returned.Add(arr);
                 IntermediateOutputs[name] = null;
             }
-            else AddLiveRefs(tensor);
+            else
+            {
+                SharedPool.BumpPin(elementType, arr.Length, true);
+                AddLiveRefs(tensor);
+            }
         }
     }
 
