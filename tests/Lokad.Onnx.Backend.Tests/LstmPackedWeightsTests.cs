@@ -106,6 +106,48 @@ public class LstmPackedWeightsTests
     }
 
     [Fact]
+    public void Execute_MultiBlockAgreesWithDirect()
+    {
+        // H=640 multi-block agreement with bias and carried states on both
+        // sides (prepared packed-XW graph path vs direct unpacked path).
+        var rnd = new Random(Seed + 5);
+        int hidden = 640, seq = 5, batch = 1;
+        var x = FillRank3(seq, batch, hidden, rnd);
+        var w = FillRank3(1, 4 * hidden, hidden, rnd);
+        var r = FillRank3(1, 4 * hidden, hidden, rnd);
+        var b = DenseTensor<float>.OfShape(new[] { 8 * hidden });
+        var bs = b.Buffer.Span;
+        for (int i = 0; i < bs.Length; i++) bs[i] = (float)(rnd.NextDouble() - 0.5);
+        var h0 = FillRank3(1, batch, hidden, rnd);
+        var c0 = FillRank3(1, batch, hidden, rnd);
+        var graph = BuildLstmGraph(x, w, r, hidden, "forward");
+        graph.Inputs["h0"] = h0;
+        graph.Inputs["c0"] = c0;
+        var lstmNode = graph.Nodes[0];
+        lstmNode.Inputs = new[] { "x", "w", "r", "", "", "h0", "c0", "" };
+        graph.Nodes[0] = lstmNode;
+        graph.RefreshLifetimeAnalysis();
+        var user = new Dictionary<string, ITensor> { ["x"] = x, ["h0"] = h0, ["c0"] = c0 };
+        Assert.True(graph.Execute(user, true), graph.LastErrorMessage);
+        var viaGraph = ((Tensor<float>)graph.Outputs["y"]).ToArray();
+        var direct = CPUExecutionProvider.Lstm(x, w, r, b, null, h0, c0, null, "forward", null, null, null, null, hidden, false, 0, 3, null, null);
+        Assert.Equal(OpStatus.Success, direct.Status);
+        var viaDirect = ((Tensor<float>)direct.Outputs[0]).ToArray();
+        Assert.Equal(viaGraph.Length, viaDirect.Length);
+        int bad = 0;
+        string detail = "";
+        for (int i = 0; i < viaGraph.Length; i++)
+        {
+            double tol = 1e-6 * (1.0 + System.Math.Abs((double)viaGraph[i]));
+            if (!(System.Math.Abs((double)viaGraph[i] - viaDirect[i]) <= tol))
+            {
+                if (bad < 5) detail += " i=" + i + " graph=" + viaGraph[i] + " direct=" + viaDirect[i];
+                bad++;
+            }
+        }
+        Assert.True(bad == 0, bad + " diverged:" + detail);
+    }
+    [Fact]
     public void Prepare_DropsPackOnInvalidate()
     {
         var rnd = new Random(Seed);
