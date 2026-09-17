@@ -97,6 +97,10 @@ static class Bench
         {
             return GeluRace.RunGeluRace(args.Skip(1).ToArray());
         }
+        if (args.Length > 0 && args[0] == "softmaxrace")
+        {
+            return SoftmaxRace.RunSoftmaxRace(args.Skip(1).ToArray());
+        }
         if (args.Length > 0 && args[0] == "micro")
         {
             int microCpu = 0;
