@@ -30,7 +30,14 @@ internal readonly record struct PoolRunDelta(int AllocatedNew, int Reused, int R
 /// </remarks>
 public sealed class TensorBufferPool
 {
-    const int MaxBufferedPerShape = 32;
+    // Per-shape free-stack cap: Reset-time recycling returns over a hundred
+    // buffers for hot encoder shapes (x16384 peaks near 200 live), so a small
+    // cap silently drops them and forces fresh rents every run -- drops the
+    // per-run medians cannot see because they happen outside the execution
+    // scope. 512 covers observed hot shapes with headroom; actual residency
+    // stays demand-driven (encoder holds ~130 arrays total), so only genuine
+    // pressure retains more.
+    const int MaxBufferedPerShape = 512;
 
     readonly object sync = new();
 
