@@ -605,11 +605,16 @@ public class GraphBufferReuseTests
     public void PinCensus_CountsPinnedVsReturned()
     {
         // Pool-level census math behind PoolPinSnapshot, no engine involved.
+        // Storage ids are stable per array and distinct across arrays.
         var pool = new TensorBufferPool();
-        pool.BumpPin(typeof(float), 4, true);
-        pool.BumpPin(typeof(float), 4, true);
-        pool.BumpPin(typeof(float), 4, false);
-        pool.BumpPin(typeof(byte), 8, false);
+        float[] a1 = pool.Rent<float>(4);
+        float[] a2 = pool.Rent<float>(4);
+        Assert.Equal(pool.StorageId(a1), pool.StorageId(a1));
+        Assert.NotEqual(pool.StorageId(a1), pool.StorageId(a2));
+        pool.BumpPin(typeof(float), 4, true, pool.StorageId(a1), "Intermediate");
+        pool.BumpPin(typeof(float), 4, true, pool.StorageId(a1), "Intermediate");
+        pool.BumpPin(typeof(float), 4, false, pool.StorageId(a2), "Returned");
+        pool.BumpPin(typeof(byte), 8, false, 99, "Returned");
         var snap = pool.SnapshotPins();
         var f = snap.Single(s => s.Type == "Single" && s.Length == 4);
         Assert.Equal(2, f.Pinned);
@@ -617,6 +622,67 @@ public class GraphBufferReuseTests
         var b = snap.Single(s => s.Type == "Byte" && s.Length == 8);
         Assert.Equal(0, b.Pinned);
         Assert.Equal(1, b.ReturnedAtReset);
+        var details = pool.SnapshotPinDetails();
+        Assert.Equal(4, details.Length);
+        Assert.Equal(2, details.Count(r => r.Pinned && r.RootReason == "Intermediate"));
+        Assert.True(details.Where(r => r.Pinned).Select(r => r.StorageId).Distinct().Count() == 1);
+        Assert.Contains(details, r => !r.Pinned && r.RootReason == "Returned");
+    }
+
+    [Fact]
+    public void ResetPinDetails_ContextPathMatchesPublicPath()
+    {
+        // L5 reproduction on both execution paths with a real engine view:
+        // only dead FINAL-node outputs escape the release passes (the early
+        // return skips them), so the dead trailing Expand view is still
+        // bound at Reset and pins its rented base exactly once with root
+        // reason Intermediate. Consumed views die guard-free mid-run and
+        // dead non-final branches are pruned before they can pin anything.
+        foreach (bool useContext in new[] { false, true })
+        {
+            var graph = new ComputationalGraph();
+            graph.Metadata["Name"] = "pin-ctx-test";
+            graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f, 4f });
+            graph.Inputs["w"] = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f, 40f });
+            graph.Inputs["u"] = DenseTensor<float>.OfValues(new float[] { 2f, 2f, 2f, 2f });
+            graph.Inputs["u2"] = DenseTensor<float>.OfValues(new float[] { 3f, 3f, 3f, 3f });
+            graph.Initializers["eshape"] = DenseTensor<long>.OfValues(new long[] { 3, 4 });
+            graph.Outputs["z"] = DenseTensor<float>.OfShape(3, 4);
+            graph.Nodes.Add(new Node { Name = "add", Op = OpType.Add, Inputs = new[] { "x", "w" }, Outputs = new[] { "t" } });
+            graph.Nodes.Add(new Node { Name = "expand", Op = OpType.Expand, Inputs = new[] { "t", "eshape" }, Outputs = new[] { "v" } });
+            graph.Nodes.Add(new Node { Name = "mul", Op = OpType.Mul, Inputs = new[] { "u", "u2" }, Outputs = new[] { "s" } });
+            graph.Nodes.Add(new Node { Name = "add2", Op = OpType.Add, Inputs = new[] { "v", "s" }, Outputs = new[] { "z" } });
+            graph.Nodes.Add(new Node { Name = "expandLast", Op = OpType.Expand, Inputs = new[] { "t", "eshape" }, Outputs = new[] { "vd" } });
+            graph.IntermediateOutputs["t"] = null;
+            graph.IntermediateOutputs["v"] = null;
+            graph.IntermediateOutputs["vd"] = null;
+            graph.IntermediateOutputs["s"] = null;
+            graph.RefreshLifetimeAnalysis();
+            var inputs = new System.Collections.Generic.Dictionary<string, ITensor>
+            {
+                { "x", graph.Inputs["x"] },
+                { "w", graph.Inputs["w"] },
+                { "u", graph.Inputs["u"] },
+                { "u2", graph.Inputs["u2"] },
+            };
+            var row = new float[] { 17f, 28f, 39f, 50f };
+            ComputationalGraph runner = graph;
+            if (useContext)
+            {
+                runner = graph.CreateExecution(null);
+            }
+            Assert.True(runner.Execute(inputs, true));
+            AssertBitwise(row.Concat(row).Concat(row).ToArray(), runner.Outputs["z"]);
+            runner.Reset();
+            var details = runner.PoolPinDetailSnapshot();
+            var pinned = details.Where(r => r.Pinned).ToArray();
+            Assert.Single(pinned);
+            Assert.Equal("Intermediate", pinned[0].RootReason);
+            Assert.Equal("Single", pinned[0].Type);
+            Assert.Equal(4, pinned[0].Length);
+            var totals = runner.PoolPinSnapshot().Single(s => s.Type == "Single" && s.Length == 4);
+            Assert.Equal(1, totals.Pinned);
+        }
     }
 
 [Fact]

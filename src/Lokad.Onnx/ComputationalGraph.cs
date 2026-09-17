@@ -372,6 +372,8 @@ public class ComputationalGraph
     public (string Type, int Length, long Missed, long Reused)[] PoolDemandSnapshot() => SharedPool.SnapshotDemand();
     /// <summary>Cumulative per-shape run-end pin census (B7 slice 2): owned buffers pinned by a live alias vs returned at Reset.</summary>
     public (string Type, int Length, long Pinned, long ReturnedAtReset)[] PoolPinSnapshot() => SharedPool.SnapshotPins();
+    /// <summary>Cumulative per-decision Reset-sweep census with storage identities and root reasons (W2).</summary>
+    public (long StorageId, string Type, int Length, bool Pinned, string RootReason)[] PoolPinDetailSnapshot() => SharedPool.SnapshotPinDetails();
     #endregion
 
     #region Methods
@@ -1534,16 +1536,17 @@ public class ComputationalGraph
             EnsureLiveIndexSeeded();
             RemoveLiveRefs(tensor);
             if (arr.GetType().GetElementType() is not Type elementType) continue;
+            long storageId = SharedPool.StorageId(arr);
             if (!HasLiveAliasIndexed(arr))
             {
                 SharedPool.Return(arr);
-                SharedPool.BumpPin(elementType, arr.Length, false);
+                SharedPool.BumpPin(elementType, arr.Length, false, storageId, "Returned");
                 returned.Add(arr);
                 IntermediateOutputs[name] = null;
             }
             else
             {
-                SharedPool.BumpPin(elementType, arr.Length, true);
+                SharedPool.BumpPin(elementType, arr.Length, true, storageId, PinRootReason(arr, tensor));
                 AddLiveRefs(tensor);
             }
         }
@@ -1651,6 +1654,20 @@ public class ComputationalGraph
     void NoteLivePeak()
     {
         if (livePayloadBytes > LastPeakLiveBytes) LastPeakLiveBytes = livePayloadBytes;
+    }
+
+    /// <summary>Names the protecting root class for a pin decision: the first live sharer in a fixed order.</summary>
+    /// <remarks>Diagnostic only; runs solely on the rare pin path, never per rent.</remarks>
+    string PinRootReason(Array candidate, ITensor? self)
+    {
+        if (liveUnknownTensors is not null && liveUnknownTensors.Count > 0) return "UnknownKind";
+        var statics = EnsurePoolRoots();
+        if (statics is not null && statics.Contains(candidate)) return "Static";
+        foreach (var kv in Inputs) if (!ReferenceEquals(kv.Value, self) && SharesPooledStorage(candidate, kv.Value)) return "Input";
+        foreach (var kv in Initializers) if (!ReferenceEquals(kv.Value, self) && SharesPooledStorage(candidate, kv.Value)) return "Initializer";
+        foreach (var kv in Outputs) if (!ReferenceEquals(kv.Value, self) && SharesPooledStorage(candidate, kv.Value)) return "Output";
+        foreach (var kv in IntermediateOutputs) if (!ReferenceEquals(kv.Value, self) && SharesPooledStorage(candidate, kv.Value)) return "Intermediate";
+        return "Untracked";
     }
 
     bool HasLiveAliasIndexed(Array candidate)

@@ -62,6 +62,21 @@ public sealed class TensorBufferPool
     readonly Dictionary<(Type, int), (long Missed, long Reused)> demand = new();
     readonly Dictionary<(Type, int), (long Pinned, long ReturnedAtReset)> pins = new();
 
+    // Unique-storage census (W2): identity boxes assign each backing array
+    // one stable id for its pooled lifetime without retaining it (weak
+    // table), and pinDetails records every Reset-sweep decision. Both are
+    // diagnostic-only; decisions happen tens per run on the cold Reset path.
+    sealed class StorageIdBox
+    {
+        public long Id;
+    }
+
+    readonly ConditionalWeakTable<Array, StorageIdBox> storageIds = new();
+
+    long nextStorageId;
+
+    readonly List<(long StorageId, Type Type, int Length, bool Pinned, string RootReason)> pinDetails = new();
+
     long outstandingBytes;
 
     long peakWindow;
@@ -149,13 +164,26 @@ public sealed class TensorBufferPool
 
     /// <summary>Bumps the run-end pin census for one owned buffer: pinned when a live alias kept it, returned otherwise.</summary>
     /// <remarks>Called only from the Reset sweep; counters only, storm-safe.</remarks>
-    public void BumpPin(Type elementType, int length, bool pinned)
+    public void BumpPin(Type elementType, int length, bool pinned, long storageId, string rootReason)
     {
         lock (sync)
         {
             var key = (elementType, length);
             if (pins.TryGetValue(key, out var cur)) pins[key] = pinned ? (cur.Pinned + 1, cur.ReturnedAtReset) : (cur.Pinned, cur.ReturnedAtReset + 1);
             else pins[key] = pinned ? (1, 0) : (0, 1);
+            pinDetails.Add((storageId, elementType, length, pinned, rootReason));
+        }
+    }
+
+    /// <summary>Assigns one stable identity per backing array for the pin census.</summary>
+    public long StorageId(Array array)
+    {
+        lock (sync)
+        {
+            if (storageIds.TryGetValue(array, out var box)) return box.Id;
+            box = new StorageIdBox { Id = ++nextStorageId };
+            storageIds.Add(array, box);
+            return box.Id;
         }
     }
 
@@ -179,6 +207,18 @@ public sealed class TensorBufferPool
             var arr = new (string, int, long, long)[pins.Count];
             int i = 0;
             foreach (var kv in pins) arr[i++] = (kv.Key.Item1.Name, kv.Key.Item2, kv.Value.Pinned, kv.Value.ReturnedAtReset);
+            return arr;
+        }
+    }
+
+    /// <summary>Cumulative per-decision Reset-sweep census: one record per owned run-end binding.</summary>
+    public (long StorageId, string Type, int Length, bool Pinned, string RootReason)[] SnapshotPinDetails()
+    {
+        lock (sync)
+        {
+            var arr = new (long, string, int, bool, string)[pinDetails.Count];
+            int i = 0;
+            foreach (var r in pinDetails) arr[i++] = (r.StorageId, r.Type.Name, r.Length, r.Pinned, r.RootReason);
             return arr;
         }
     }
