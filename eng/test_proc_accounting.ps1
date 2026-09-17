@@ -44,13 +44,20 @@ if ($Live) {
   $idle = Frac10
   Write-Host ("idle-10s frac=" + $idle.ToString("F3"))
   Check ($idle -lt 0.02) "idle box reads idle"
-  $burn = Start-Process bash -ArgumentList "-c", "exec taskset -c 0 bash -c 'while true; do :; done'" -PassThru
+  # NOTE: the burner must NOT be our descendant - Test-LaneOwned correctly
+  # excludes lane children (builds/legs must never self-abort). setsid orphans
+  # it to PID 1, making it genuinely foreign like any other box workload.
+  Remove-Item /tmp/acct-burn.pid -ErrorAction SilentlyContinue
+  & setsid bash -c 'echo $BASHPID > /tmp/acct-burn.pid; exec taskset -c 0 bash -c ''while true; do :; done'' 2>$null
+  Start-Sleep -Seconds 2
+  $burnPid = 0
+  if (Test-Path /tmp/acct-burn.pid) { [int]::TryParse((Get-Content /tmp/acct-burn.pid | Select-Object -First 1), [ref]$burnPid) | Out-Null }
   try {
-    Start-Sleep -Seconds 2
+    Check ($burnPid -gt 1) "detached burner started outside our tree"
     $hot = Frac10
     Write-Host ("burn-10s frac=" + $hot.ToString("F3"))
     Check ($hot -gt 0.10) "deliberate foreign workload detected above abort line"
-  } finally { Stop-Process -Id $burn.Id -Force -ErrorAction SilentlyContinue }
+  } finally { if ($burnPid -gt 1) { & kill -9 $burnPid 2>$null }; Remove-Item /tmp/acct-burn.pid -ErrorAction SilentlyContinue }
   $calm = Frac10
   Write-Host ("post-burn frac=" + $calm.ToString("F3"))
   Check ($calm -lt 0.02) "box calm again after burn exits"
