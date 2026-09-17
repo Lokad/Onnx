@@ -1131,6 +1131,456 @@ public class MathOps
         }
     }
 
+
+    /// <summary>
+    /// Register-tiled matrix multiplication over 6-row groups with 32-column
+    /// AVX-512 halves (E5-2 M2): the M1 6x16 block widened to Vector512, so
+    /// each step loads 2 B vectors once per group and reuses them across all
+    /// six rows through one live broadcast temporary per vector (12 FMAs per
+    /// 2 loads, 15 live vectors of 32 architectural zmm). Sub-32 columns fall
+    /// back to 256-bit lanes with the exact M1 boundaries, so every k below
+    /// the 8-wide ceiling runs FMA chains and the scalar tail keeps the legacy
+    /// per-step order: results agree with the tiled kernel bit-wise on every
+    /// shape. Requires Avx512F (Avx2 for the tail lanes); callers check
+    /// capability, like the other raw kernels. M must be a multiple of 6.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 6).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="B">Right matrix.</param>
+    /// <param name="C">Result matrix (accumulated, like the tiled kernel).</param>
+    public unsafe static void mm_unsafe_vectorized_intrinsics_6x2tiled512(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* B,
+                          float* C)
+    {
+        if (M % 6 != 0)
+            throw new ArgumentException(nameof(M));
+
+        int word = Vector512<float>.Count;
+        int blocked = K - (K % (2 * word));
+        int mid = blocked + ((K - blocked) / word) * word;
+
+        for (int i = 0; i < M; i += 6)
+        {
+
+            var Ap0 = A + (i + 0) * N;
+            var Ap1 = A + (i + 1) * N;
+            var Ap2 = A + (i + 2) * N;
+            var Ap3 = A + (i + 3) * N;
+            var Ap4 = A + (i + 4) * N;
+            var Ap5 = A + (i + 5) * N;
+
+            var Cp0 = C + (i + 0) * K;
+            var Cp1 = C + (i + 1) * K;
+            var Cp2 = C + (i + 2) * K;
+            var Cp3 = C + (i + 3) * K;
+            var Cp4 = C + (i + 4) * K;
+            var Cp5 = C + (i + 5) * K;
+
+            for (int kb = 0; kb < blocked; kb += 2 * word)
+            {
+                var Q0 = (Vector512<float>*)(Cp0 + kb);
+                var Q1 = (Vector512<float>*)(Cp1 + kb);
+                var Q2 = (Vector512<float>*)(Cp2 + kb);
+                var Q3 = (Vector512<float>*)(Cp3 + kb);
+                var Q4 = (Vector512<float>*)(Cp4 + kb);
+                var Q5 = (Vector512<float>*)(Cp5 + kb);
+                Vector512<float> c00 = Q0[0];
+                Vector512<float> c01 = Q0[1];
+                Vector512<float> c10 = Q1[0];
+                Vector512<float> c11 = Q1[1];
+                Vector512<float> c20 = Q2[0];
+                Vector512<float> c21 = Q2[1];
+                Vector512<float> c30 = Q3[0];
+                Vector512<float> c31 = Q3[1];
+                Vector512<float> c40 = Q4[0];
+                Vector512<float> c41 = Q4[1];
+                Vector512<float> c50 = Q5[0];
+                Vector512<float> c51 = Q5[1];
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bpv = (Vector512<float>*)(B + j * K + kb);
+                    Vector512<float> bv0 = Bpv[0];
+                    Vector512<float> bv1 = Bpv[1];
+                    var av0 = Vector512.Create(Ap0[j]);
+                    c00 = Avx512F.FusedMultiplyAdd(bv0, av0, c00);
+                    c01 = Avx512F.FusedMultiplyAdd(bv1, av0, c01);
+                    var av1 = Vector512.Create(Ap1[j]);
+                    c10 = Avx512F.FusedMultiplyAdd(bv0, av1, c10);
+                    c11 = Avx512F.FusedMultiplyAdd(bv1, av1, c11);
+                    var av2 = Vector512.Create(Ap2[j]);
+                    c20 = Avx512F.FusedMultiplyAdd(bv0, av2, c20);
+                    c21 = Avx512F.FusedMultiplyAdd(bv1, av2, c21);
+                    var av3 = Vector512.Create(Ap3[j]);
+                    c30 = Avx512F.FusedMultiplyAdd(bv0, av3, c30);
+                    c31 = Avx512F.FusedMultiplyAdd(bv1, av3, c31);
+                    var av4 = Vector512.Create(Ap4[j]);
+                    c40 = Avx512F.FusedMultiplyAdd(bv0, av4, c40);
+                    c41 = Avx512F.FusedMultiplyAdd(bv1, av4, c41);
+                    var av5 = Vector512.Create(Ap5[j]);
+                    c50 = Avx512F.FusedMultiplyAdd(bv0, av5, c50);
+                    c51 = Avx512F.FusedMultiplyAdd(bv1, av5, c51);
+                }
+                Q0[0] = c00;
+                Q0[1] = c01;
+                Q1[0] = c10;
+                Q1[1] = c11;
+                Q2[0] = c20;
+                Q2[1] = c21;
+                Q3[0] = c30;
+                Q3[1] = c31;
+                Q4[0] = c40;
+                Q4[1] = c41;
+                Q5[0] = c50;
+                Q5[1] = c51;
+            }
+
+            for (int kb = blocked; kb < mid; kb += word)
+            {
+                var R0 = (Vector256<float>*)(Cp0 + kb);
+                var R1 = (Vector256<float>*)(Cp1 + kb);
+                var R2 = (Vector256<float>*)(Cp2 + kb);
+                var R3 = (Vector256<float>*)(Cp3 + kb);
+                var R4 = (Vector256<float>*)(Cp4 + kb);
+                var R5 = (Vector256<float>*)(Cp5 + kb);
+                Vector256<float> d00 = R0[0];
+                Vector256<float> d01 = R0[1];
+                Vector256<float> d10 = R1[0];
+                Vector256<float> d11 = R1[1];
+                Vector256<float> d20 = R2[0];
+                Vector256<float> d21 = R2[1];
+                Vector256<float> d30 = R3[0];
+                Vector256<float> d31 = R3[1];
+                Vector256<float> d40 = R4[0];
+                Vector256<float> d41 = R4[1];
+                Vector256<float> d50 = R5[0];
+                Vector256<float> d51 = R5[1];
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bpv = (Vector256<float>*)(B + j * K + kb);
+                    Vector256<float> bv0 = Bpv[0];
+                    Vector256<float> bv1 = Bpv[1];
+                    var av0 = Vector256.Create(Ap0[j]);
+                    d00 = Fma.MultiplyAdd(bv0, av0, d00);
+                    d01 = Fma.MultiplyAdd(bv1, av0, d01);
+                    var av1 = Vector256.Create(Ap1[j]);
+                    d10 = Fma.MultiplyAdd(bv0, av1, d10);
+                    d11 = Fma.MultiplyAdd(bv1, av1, d11);
+                    var av2 = Vector256.Create(Ap2[j]);
+                    d20 = Fma.MultiplyAdd(bv0, av2, d20);
+                    d21 = Fma.MultiplyAdd(bv1, av2, d21);
+                    var av3 = Vector256.Create(Ap3[j]);
+                    d30 = Fma.MultiplyAdd(bv0, av3, d30);
+                    d31 = Fma.MultiplyAdd(bv1, av3, d31);
+                    var av4 = Vector256.Create(Ap4[j]);
+                    d40 = Fma.MultiplyAdd(bv0, av4, d40);
+                    d41 = Fma.MultiplyAdd(bv1, av4, d41);
+                    var av5 = Vector256.Create(Ap5[j]);
+                    d50 = Fma.MultiplyAdd(bv0, av5, d50);
+                    d51 = Fma.MultiplyAdd(bv1, av5, d51);
+                }
+                R0[0] = d00;
+                R0[1] = d01;
+                R1[0] = d10;
+                R1[1] = d11;
+                R2[0] = d20;
+                R2[1] = d21;
+                R3[0] = d30;
+                R3[1] = d31;
+                R4[0] = d40;
+                R4[1] = d41;
+                R5[0] = d50;
+                R5[1] = d51;
+            }
+
+            int rem = K - mid;
+            if (rem > 0)
+            {
+                int rv = rem / Vector256<float>.Count;
+                for (int t = 0; t < rv; t++)
+                {
+                    Vector256<float> c0 = ((Vector256<float>*)(Cp0 + mid))[t];
+                    Vector256<float> c1 = ((Vector256<float>*)(Cp1 + mid))[t];
+                    Vector256<float> c2 = ((Vector256<float>*)(Cp2 + mid))[t];
+                    Vector256<float> c3 = ((Vector256<float>*)(Cp3 + mid))[t];
+                    Vector256<float> c4 = ((Vector256<float>*)(Cp4 + mid))[t];
+                    Vector256<float> c5 = ((Vector256<float>*)(Cp5 + mid))[t];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        var Bpv = (Vector256<float>*)(B + j * K + mid);
+                        Vector256<float> bv = Bpv[t];
+                        c0 = Fma.MultiplyAdd(bv, Vector256.Create(Ap0[j]), c0);
+                        c1 = Fma.MultiplyAdd(bv, Vector256.Create(Ap1[j]), c1);
+                        c2 = Fma.MultiplyAdd(bv, Vector256.Create(Ap2[j]), c2);
+                        c3 = Fma.MultiplyAdd(bv, Vector256.Create(Ap3[j]), c3);
+                        c4 = Fma.MultiplyAdd(bv, Vector256.Create(Ap4[j]), c4);
+                        c5 = Fma.MultiplyAdd(bv, Vector256.Create(Ap5[j]), c5);
+                    }
+                    ((Vector256<float>*)(Cp0 + mid))[t] = c0;
+                    ((Vector256<float>*)(Cp1 + mid))[t] = c1;
+                    ((Vector256<float>*)(Cp2 + mid))[t] = c2;
+                    ((Vector256<float>*)(Cp3 + mid))[t] = c3;
+                    ((Vector256<float>*)(Cp4 + mid))[t] = c4;
+                    ((Vector256<float>*)(Cp5 + mid))[t] = c5;
+                }
+                // Scalar tail keeps the reduction-major order of the
+                // unrolled kernel (accumulate into the destination per step)
+                // so results agree with it bit-wise on every shape.
+                for (int j = 0; j < N; ++j)
+                {
+                    float a0 = Ap0[j];
+                    float a1 = Ap1[j];
+                    float a2 = Ap2[j];
+                    float a3 = Ap3[j];
+                    float a4 = Ap4[j];
+                    float a5 = Ap5[j];
+                    var Brow = B + j * K;
+                    for (int k = mid + rv * Vector256<float>.Count; k < K; k++)
+                    {
+                        Cp0[k] += a0 * Brow[k];
+                        Cp1[k] += a1 * Brow[k];
+                        Cp2[k] += a2 * Brow[k];
+                        Cp3[k] += a3 * Brow[k];
+                        Cp4[k] += a4 * Brow[k];
+                        Cp5[k] += a5 * Brow[k];
+                    }
+                }
+            }
+
+        }
+    }
+
+    /// <summary>
+    /// Register-tiled 6-row AVX-512 multiplication with epilogue scaling
+    /// (E5-2 M2): identical tiles, FMA order and tails to
+    /// mm_unsafe_vectorized_intrinsics_6x2tiled512, except every stored element
+    /// is scaled once by alpha on its single write-back. The destination must
+    /// be zeroed on entry (same accumulate contract as the 2-row alpha twin);
+    /// each element is written exactly once across main, half, rem and tail
+    /// regions, so no scaling is ever applied twice or missed.
+    /// </summary>
+    /// <param name="M">A rows (must be a multiple of 6).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="B">Right matrix.</param>
+    /// <param name="C">Zeroed result matrix.</param>
+    /// <param name="alpha">Epilogue scale applied once per stored element.</param>
+    public unsafe static void mm_unsafe_vectorized_intrinsics_6x2tiled512_alpha(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* B,
+                          float* C,
+                          float alpha)
+    {
+        if (M % 6 != 0)
+            throw new ArgumentException(nameof(M));
+
+        var alphaVec = Vector512.Create(alpha);
+        var alphaVec256 = Vector256.Create(alpha);
+        int word = Vector512<float>.Count;
+        int blocked = K - (K % (2 * word));
+        int mid = blocked + ((K - blocked) / word) * word;
+
+        for (int i = 0; i < M; i += 6)
+        {
+
+            var Ap0 = A + (i + 0) * N;
+            var Ap1 = A + (i + 1) * N;
+            var Ap2 = A + (i + 2) * N;
+            var Ap3 = A + (i + 3) * N;
+            var Ap4 = A + (i + 4) * N;
+            var Ap5 = A + (i + 5) * N;
+
+            var Cp0 = C + (i + 0) * K;
+            var Cp1 = C + (i + 1) * K;
+            var Cp2 = C + (i + 2) * K;
+            var Cp3 = C + (i + 3) * K;
+            var Cp4 = C + (i + 4) * K;
+            var Cp5 = C + (i + 5) * K;
+
+            for (int kb = 0; kb < blocked; kb += 2 * word)
+            {
+                var Q0 = (Vector512<float>*)(Cp0 + kb);
+                var Q1 = (Vector512<float>*)(Cp1 + kb);
+                var Q2 = (Vector512<float>*)(Cp2 + kb);
+                var Q3 = (Vector512<float>*)(Cp3 + kb);
+                var Q4 = (Vector512<float>*)(Cp4 + kb);
+                var Q5 = (Vector512<float>*)(Cp5 + kb);
+                Vector512<float> c00 = Q0[0];
+                Vector512<float> c01 = Q0[1];
+                Vector512<float> c10 = Q1[0];
+                Vector512<float> c11 = Q1[1];
+                Vector512<float> c20 = Q2[0];
+                Vector512<float> c21 = Q2[1];
+                Vector512<float> c30 = Q3[0];
+                Vector512<float> c31 = Q3[1];
+                Vector512<float> c40 = Q4[0];
+                Vector512<float> c41 = Q4[1];
+                Vector512<float> c50 = Q5[0];
+                Vector512<float> c51 = Q5[1];
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bpv = (Vector512<float>*)(B + j * K + kb);
+                    Vector512<float> bv0 = Bpv[0];
+                    Vector512<float> bv1 = Bpv[1];
+                    var av0 = Vector512.Create(Ap0[j]);
+                    c00 = Avx512F.FusedMultiplyAdd(bv0, av0, c00);
+                    c01 = Avx512F.FusedMultiplyAdd(bv1, av0, c01);
+                    var av1 = Vector512.Create(Ap1[j]);
+                    c10 = Avx512F.FusedMultiplyAdd(bv0, av1, c10);
+                    c11 = Avx512F.FusedMultiplyAdd(bv1, av1, c11);
+                    var av2 = Vector512.Create(Ap2[j]);
+                    c20 = Avx512F.FusedMultiplyAdd(bv0, av2, c20);
+                    c21 = Avx512F.FusedMultiplyAdd(bv1, av2, c21);
+                    var av3 = Vector512.Create(Ap3[j]);
+                    c30 = Avx512F.FusedMultiplyAdd(bv0, av3, c30);
+                    c31 = Avx512F.FusedMultiplyAdd(bv1, av3, c31);
+                    var av4 = Vector512.Create(Ap4[j]);
+                    c40 = Avx512F.FusedMultiplyAdd(bv0, av4, c40);
+                    c41 = Avx512F.FusedMultiplyAdd(bv1, av4, c41);
+                    var av5 = Vector512.Create(Ap5[j]);
+                    c50 = Avx512F.FusedMultiplyAdd(bv0, av5, c50);
+                    c51 = Avx512F.FusedMultiplyAdd(bv1, av5, c51);
+                }
+                Q0[0] = c00 * alphaVec;
+                Q0[1] = c01 * alphaVec;
+                Q1[0] = c10 * alphaVec;
+                Q1[1] = c11 * alphaVec;
+                Q2[0] = c20 * alphaVec;
+                Q2[1] = c21 * alphaVec;
+                Q3[0] = c30 * alphaVec;
+                Q3[1] = c31 * alphaVec;
+                Q4[0] = c40 * alphaVec;
+                Q4[1] = c41 * alphaVec;
+                Q5[0] = c50 * alphaVec;
+                Q5[1] = c51 * alphaVec;
+            }
+
+            for (int kb = blocked; kb < mid; kb += word)
+            {
+                var R0 = (Vector256<float>*)(Cp0 + kb);
+                var R1 = (Vector256<float>*)(Cp1 + kb);
+                var R2 = (Vector256<float>*)(Cp2 + kb);
+                var R3 = (Vector256<float>*)(Cp3 + kb);
+                var R4 = (Vector256<float>*)(Cp4 + kb);
+                var R5 = (Vector256<float>*)(Cp5 + kb);
+                Vector256<float> d00 = R0[0];
+                Vector256<float> d01 = R0[1];
+                Vector256<float> d10 = R1[0];
+                Vector256<float> d11 = R1[1];
+                Vector256<float> d20 = R2[0];
+                Vector256<float> d21 = R2[1];
+                Vector256<float> d30 = R3[0];
+                Vector256<float> d31 = R3[1];
+                Vector256<float> d40 = R4[0];
+                Vector256<float> d41 = R4[1];
+                Vector256<float> d50 = R5[0];
+                Vector256<float> d51 = R5[1];
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bpv = (Vector256<float>*)(B + j * K + kb);
+                    Vector256<float> bv0 = Bpv[0];
+                    Vector256<float> bv1 = Bpv[1];
+                    var av0 = Vector256.Create(Ap0[j]);
+                    d00 = Fma.MultiplyAdd(bv0, av0, d00);
+                    d01 = Fma.MultiplyAdd(bv1, av0, d01);
+                    var av1 = Vector256.Create(Ap1[j]);
+                    d10 = Fma.MultiplyAdd(bv0, av1, d10);
+                    d11 = Fma.MultiplyAdd(bv1, av1, d11);
+                    var av2 = Vector256.Create(Ap2[j]);
+                    d20 = Fma.MultiplyAdd(bv0, av2, d20);
+                    d21 = Fma.MultiplyAdd(bv1, av2, d21);
+                    var av3 = Vector256.Create(Ap3[j]);
+                    d30 = Fma.MultiplyAdd(bv0, av3, d30);
+                    d31 = Fma.MultiplyAdd(bv1, av3, d31);
+                    var av4 = Vector256.Create(Ap4[j]);
+                    d40 = Fma.MultiplyAdd(bv0, av4, d40);
+                    d41 = Fma.MultiplyAdd(bv1, av4, d41);
+                    var av5 = Vector256.Create(Ap5[j]);
+                    d50 = Fma.MultiplyAdd(bv0, av5, d50);
+                    d51 = Fma.MultiplyAdd(bv1, av5, d51);
+                }
+                R0[0] = d00 * alphaVec256;
+                R0[1] = d01 * alphaVec256;
+                R1[0] = d10 * alphaVec256;
+                R1[1] = d11 * alphaVec256;
+                R2[0] = d20 * alphaVec256;
+                R2[1] = d21 * alphaVec256;
+                R3[0] = d30 * alphaVec256;
+                R3[1] = d31 * alphaVec256;
+                R4[0] = d40 * alphaVec256;
+                R4[1] = d41 * alphaVec256;
+                R5[0] = d50 * alphaVec256;
+                R5[1] = d51 * alphaVec256;
+            }
+
+            int rem = K - mid;
+            if (rem > 0)
+            {
+                int rv = rem / Vector256<float>.Count;
+                for (int t = 0; t < rv; t++)
+                {
+                    Vector256<float> c0 = ((Vector256<float>*)(Cp0 + mid))[t];
+                    Vector256<float> c1 = ((Vector256<float>*)(Cp1 + mid))[t];
+                    Vector256<float> c2 = ((Vector256<float>*)(Cp2 + mid))[t];
+                    Vector256<float> c3 = ((Vector256<float>*)(Cp3 + mid))[t];
+                    Vector256<float> c4 = ((Vector256<float>*)(Cp4 + mid))[t];
+                    Vector256<float> c5 = ((Vector256<float>*)(Cp5 + mid))[t];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        var Bpv = (Vector256<float>*)(B + j * K + mid);
+                        Vector256<float> bv = Bpv[t];
+                        c0 = Fma.MultiplyAdd(bv, Vector256.Create(Ap0[j]), c0);
+                        c1 = Fma.MultiplyAdd(bv, Vector256.Create(Ap1[j]), c1);
+                        c2 = Fma.MultiplyAdd(bv, Vector256.Create(Ap2[j]), c2);
+                        c3 = Fma.MultiplyAdd(bv, Vector256.Create(Ap3[j]), c3);
+                        c4 = Fma.MultiplyAdd(bv, Vector256.Create(Ap4[j]), c4);
+                        c5 = Fma.MultiplyAdd(bv, Vector256.Create(Ap5[j]), c5);
+                    }
+                    ((Vector256<float>*)(Cp0 + mid))[t] = c0 * alphaVec256;
+                    ((Vector256<float>*)(Cp1 + mid))[t] = c1 * alphaVec256;
+                    ((Vector256<float>*)(Cp2 + mid))[t] = c2 * alphaVec256;
+                    ((Vector256<float>*)(Cp3 + mid))[t] = c3 * alphaVec256;
+                    ((Vector256<float>*)(Cp4 + mid))[t] = c4 * alphaVec256;
+                    ((Vector256<float>*)(Cp5 + mid))[t] = c5 * alphaVec256;
+                }
+                // Scalar tail: same j-ascending per-column accumulation as the
+                // 2-row alpha twin, register-held, scaled once on the single store.
+                for (int k = mid + rv * Vector256<float>.Count; k < K; k++)
+                {
+                    float acc0 = Cp0[k];
+                    float acc1 = Cp1[k];
+                    float acc2 = Cp2[k];
+                    float acc3 = Cp3[k];
+                    float acc4 = Cp4[k];
+                    float acc5 = Cp5[k];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        acc0 += Ap0[j] * (B + j * K)[k];
+                        acc1 += Ap1[j] * (B + j * K)[k];
+                        acc2 += Ap2[j] * (B + j * K)[k];
+                        acc3 += Ap3[j] * (B + j * K)[k];
+                        acc4 += Ap4[j] * (B + j * K)[k];
+                        acc5 += Ap5[j] * (B + j * K)[k];
+                    }
+                    Cp0[k] = alpha * acc0;
+                    Cp1[k] = alpha * acc1;
+                    Cp2[k] = alpha * acc2;
+                    Cp3[k] = alpha * acc3;
+                    Cp4[k] = alpha * acc4;
+                    Cp5[k] = alpha * acc5;
+                }
+            }
+
+        }
+    }
+
     /// <summary>
     /// Packs B into 32-column panels laid out contiguously, with any tail
     /// columns appended row-major. Panel relocation is exact, so a kernel

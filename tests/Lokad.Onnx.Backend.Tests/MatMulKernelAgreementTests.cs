@@ -384,6 +384,91 @@ public class MatMulKernelAgreementTests
             "6-row alpha diverges bitwise from tiled alpha on nonzero destination " + m + "x" + n + "x" + k + ".");
     }
 
+
+    [SkippableFact]
+    public unsafe void SixRow512MatchesTiledBitwise()
+    {
+        // E5-2 M2: the 512-bit 6x32 twin keeps the exact per-element
+        // j-ascending FMA chains of the 2-row tiled kernel with 256-bit M1
+        // boundaries below 32 columns, so it must agree bit-wise on
+        // 32-wide, half, vector and scalar tails. Needs AVX-512 hardware;
+        // dev-box runs compile-check it while execution is proven on the VM.
+        Skip.If(!System.Runtime.Intrinsics.X86.Avx512F.IsSupported || !System.Runtime.Intrinsics.X86.Fma.IsSupported, "AVX-512 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        SixRow512Equal(6, 32, 8, rnd);
+        SixRow512Equal(6, 32, 16, rnd);
+        SixRow512Equal(6, 32, 17, rnd);
+        SixRow512Equal(6, 32, 24, rnd);
+        SixRow512Equal(6, 32, 30, rnd);
+        SixRow512Equal(6, 32, 32, rnd);
+        SixRow512Equal(6, 32, 33, rnd);
+        SixRow512Equal(6, 32, 44, rnd);
+        SixRow512Equal(6, 32, 48, rnd);
+        SixRow512Equal(12, 30, 44, rnd);
+        SixRow512Equal(30, 32, 30, rnd);
+        SixRow512Equal(30, 30, 32, rnd);
+        SixRow512Equal(12, 128, 128, rnd);
+        SixRow512Equal(6, 7, 24, rnd);
+        Assert.Throws<ArgumentException>(() => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled512(8, 32, 30, null, null, null));
+    }
+
+    static unsafe void SixRow512Equal(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        a.Buffer.Span[0] = System.BitConverter.Int32BitsToSingle(0x7FC00001);
+        if (a.Length > 1) a.Buffer.Span[1] = float.NegativeInfinity;
+        if (b.Length > 2) b.Buffer.Span[2] = -0f;
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled512(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            "6-row-512 diverges bitwise from tiled on " + m + "x" + n + "x" + k + ".");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled512(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            "6-row-512 diverges bitwise from tiled on nonzero destination " + m + "x" + n + "x" + k + ".");
+    }
+
+    [SkippableFact]
+    public unsafe void SixRow512AlphaMatchesTiledAlphaBitwise()
+    {
+        // E5-2 M2 alpha discipline (from E5-1): scale once on the single
+        // store; execution needs AVX-512 hardware (see above).
+        Skip.If(!System.Runtime.Intrinsics.X86.Avx512F.IsSupported || !System.Runtime.Intrinsics.X86.Fma.IsSupported, "AVX-512 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        float e5alpha = 1f / 5.656854249f;
+        SixRow512AlphaEqual(6, 32, 30, e5alpha, rnd);
+        SixRow512AlphaEqual(30, 32, 30, e5alpha, rnd);
+        SixRow512AlphaEqual(30, 30, 32, e5alpha, rnd);
+        SixRow512AlphaEqual(12, 32, 44, 0.5f, rnd);
+        SixRow512AlphaEqual(6, 32, 48, 2.0f, rnd);
+        Assert.Throws<ArgumentException>(() => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled512_alpha(8, 32, 30, null, null, null, 0.5f));
+    }
+
+    static unsafe void SixRow512AlphaEqual(int m, int n, int k, float alpha, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled_alpha(m, n, k, (float*)pa, (float*)pb, (float*)pc, alpha), a, b, c1);
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled512_alpha(m, n, k, (float*)pa, (float*)pb, (float*)pc, alpha), a, b, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            "6-row-512 alpha diverges bitwise from tiled alpha on " + m + "x" + n + "x" + k + ".");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled_alpha(m, n, k, (float*)pa, (float*)pb, (float*)pc, alpha), a, b, d1);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled512_alpha(m, n, k, (float*)pa, (float*)pb, (float*)pc, alpha), a, b, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            "6-row-512 alpha diverges bitwise from tiled alpha on nonzero destination " + m + "x" + n + "x" + k + ".");
+    }
+
     [SkippableFact]
     public unsafe void M1BlockedMatchesOneRowBitwise()
     {
