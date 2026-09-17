@@ -982,17 +982,51 @@ where T : unmanaged
         else SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, block, useSimd);
     }
 
+    /// <summary>
+    /// Row maximum for the span softmax (E62): vector reduction with an
+    /// explicit any-NaN rule reproducing the scalar break-on-first-NaN loop.
+    /// Maximum is exact and order-free, so non-NaN results equal the scalar
+    /// loop (up to signed zero, which downstream exp absorbs bit-identically).
+    /// </summary>
+    internal static float SoftmaxContiguousMax(System.Span<float> inputSpan, int start, int block, bool useSimd)
+    {
+        if (useSimd && Vector.IsHardwareAccelerated && block >= Vector<float>.Count)
+        {
+            int width = Vector<float>.Count;
+            var vmax = new Vector<float>(float.NegativeInfinity);
+            var vok = new Vector<int>(-1);
+            int i = 0;
+            for (; i <= block - width; i += width)
+            {
+                var v = new Vector<float>(inputSpan.Slice(start + i, width));
+                vmax = Vector.Max(vmax, v);
+                vok = vok & Vector.Equals(v, v);
+            }
+            float max = vmax[0];
+            for (int l = 1; l < width; l++) if (vmax[l] > max) max = vmax[l];
+            for (; i < block; i++)
+            {
+                float candidate = inputSpan[start + i];
+                if (float.IsNaN(candidate)) return float.NaN;
+                if (candidate > max) max = candidate;
+            }
+            for (int l = 0; l < width; l++) if (vok[l] == 0) return float.NaN;
+            return max;
+        }
+        float smax = float.NegativeInfinity;
+        for (int blockIndex = 0; blockIndex < block; blockIndex++)
+        {
+            float candidate = inputSpan[start + blockIndex];
+            if (float.IsNaN(candidate)) { smax = float.NaN; break; }
+            if (candidate > smax) smax = candidate;
+        }
+        return smax;
+    }
     internal static void SoftmaxContiguousFloatSpan(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
     {
         for (int outerIndex = 0; outerIndex < outer; outerIndex++)
         {
-            float max = float.NegativeInfinity;
-            for (int blockIndex = 0; blockIndex < block; blockIndex++)
-            {
-                float candidate = inputSpan[outerIndex * block + blockIndex];
-                if (float.IsNaN(candidate)) { max = float.NaN; break; }
-                if (candidate > max) max = candidate;
-            }
+            float max = SoftmaxContiguousMax(inputSpan, outerIndex * block, block, useSimd);
             float sum = 0f;
             int expIndex = 0;
             if (useSimd && Vector.IsHardwareAccelerated)
@@ -1038,13 +1072,7 @@ where T : unmanaged
     {
         for (int outerIndex = 0; outerIndex < outer; outerIndex++)
         {
-            float max = float.NegativeInfinity;
-            for (int blockIndex = 0; blockIndex < block; blockIndex++)
-            {
-                float candidate = inputSpan[outerIndex * block + blockIndex];
-                if (float.IsNaN(candidate)) { max = float.NaN; break; }
-                if (candidate > max) max = candidate;
-            }
+            float max = SoftmaxContiguousMax(inputSpan, outerIndex * block, block, useSimd);
             float sum = 0f;
             int expIndex = 0;
             if (useSimd && Vector.IsHardwareAccelerated)
@@ -1190,4 +1218,5 @@ where T : unmanaged
         return x.Apply(MathOps.Erf);
     }
 }
+
 
