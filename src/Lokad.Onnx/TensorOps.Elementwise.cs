@@ -1037,7 +1037,7 @@ where T : unmanaged
                 for (; expIndex <= block - width; expIndex += width)
                 {
                     int baseIndex = outerIndex * block + expIndex;
-                    var activated = MathOps.ExpVector(new Vector<float>(inputSpan.Slice(baseIndex, width)) - vmax);
+                    var activated = MathOps.ExpVectorEstrin(new Vector<float>(inputSpan.Slice(baseIndex, width)) - vmax);
                     activated.CopyTo(outputSpan.Slice(baseIndex, width));
                     vsum += activated;
                 }

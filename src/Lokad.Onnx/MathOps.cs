@@ -3544,6 +3544,39 @@ public class MathOps
         y = Vector.ConditionalSelect(Vector.LessThan(v, new Vector<float>(-88.722839f)), Vector<float>.Zero, y);
         return Vector.ConditionalSelect(isFinite, y, new Vector<float>(float.NaN));
     }
+    /// <summary>Softmax-scoped vectorized base-e exponential (E66): same Cody-Waite
+    /// reduction, clamps, reconstruction and guards as ExpVector, but the degree-7
+    /// Taylor core in Estrin form (parallel sub-chains) instead of serial Horner.
+    /// Same documented contract: order 1e-7 against MathF.Exp on finite inputs,
+    /// NaN in NaN out, overflow to infinity, underflow to zero. Tanh keeps ExpVector.
+    /// </summary>
+    public static Vector<float> ExpVectorEstrin(Vector<float> v)
+    {
+        var isFinite = Vector.Equals(v, v);
+        var x = Vector.Min(Vector.Max(v, new Vector<float>(-88.722839f)), new Vector<float>(88.722839f));
+        var scaled = x * new Vector<float>(1.44269504088896341f);
+        var shifted = Vector.ConditionalSelect(Vector.GreaterThanOrEqual(scaled, Vector<float>.Zero), scaled + new Vector<float>(0.5f), scaled - new Vector<float>(0.5f));
+        var n = Vector.ConvertToInt32(shifted);
+        var clamped = Vector.Min(Vector.Max(n, new Vector<int>(-126)), new Vector<int>(127));
+        var nf = Vector.ConvertToSingle(clamped);
+        var r = Vector.FusedMultiplyAdd(nf, new Vector<float>(-0.693359375f), x);
+        r = Vector.FusedMultiplyAdd(nf, new Vector<float>(2.12194440e-4f), r);
+        var y = r * r;
+        var tHi = Vector.FusedMultiplyAdd(new Vector<float>(1f / 5040f), r, new Vector<float>(1f / 720f));
+        var tLo = Vector.FusedMultiplyAdd(new Vector<float>(1f / 6f), r, new Vector<float>(1f / 2f));
+        var tMid = Vector.FusedMultiplyAdd(new Vector<float>(1f / 120f), r, new Vector<float>(1f / 24f));
+        var tOne = Vector.FusedMultiplyAdd(new Vector<float>(1f), r, new Vector<float>(1f));
+        var uHi = Vector.FusedMultiplyAdd(tHi, y, tMid);
+        var uLo = Vector.FusedMultiplyAdd(tLo, y, tOne);
+        var y2 = y * y;
+        var p = Vector.FusedMultiplyAdd(uHi, y2, uLo);
+        var scale = Vector.AsVectorSingle(Vector.ShiftLeft(clamped + new Vector<int>(127), 23));
+        var yy = p * scale;
+        yy = Vector.ConditionalSelect(Vector.GreaterThan(v, new Vector<float>(88.722839f)), new Vector<float>(float.PositiveInfinity), yy);
+        yy = Vector.ConditionalSelect(Vector.LessThan(v, new Vector<float>(-88.722839f)), Vector<float>.Zero, yy);
+        return Vector.ConditionalSelect(isFinite, yy, new Vector<float>(float.NaN));
+    }
+
     // Same Abramowitz and Stegun 7.1.26 derivation as the float overload above,
     // in double precision with its own table and magnitude helper.
     private const double ErfStegunPDouble = 0.3275911;
