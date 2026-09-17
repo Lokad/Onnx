@@ -1525,16 +1525,16 @@ public class ComputationalGraph
     /// <summary>Returns run-end live intermediates to the shared pool before Reset drops them.</summary>
     /// <remarks>Two-phase (W2): phase one groups owned run-end intermediates by
     /// backing array and collects protected roots (graph outputs, caller inputs,
-    /// initializers, attribute tensors); phase two drops the entire reset-owned
-    /// intermediate binding set, returning each unprotected array exactly once
-    /// and pinning protected ones with the protecting reason. Intermediates are
-    /// all dead at Reset by contract (the Reset body nulls every one of them,
-    /// and holding them across Reset is unsupported), so liveness among
-    /// intermediates never protects storage -- only escaping roots do. The
-    /// live-payload gauge is untouched here exactly as before: the Reset body
-    /// accounts uniformly afterwards. Any unknown-kind tensor anywhere live
-    /// forces legacy-conservative pin-everything, matching the old per-binding
-    /// outcome without its per-binding probes.</remarks>
+    /// initializers, attribute tensors) once per sweep; phase two drops the
+    /// entire reset-owned intermediate binding set, returning each unprotected
+    /// array exactly once and pinning protected ones with the protecting
+    /// reason. Intermediates are all dead at Reset by contract (the Reset body
+    /// nulls every one of them, and holding them across Reset is unsupported),
+    /// so liveness among intermediates never protects storage -- only escaping
+    /// roots do. The live-payload gauge is untouched here exactly as before:
+    /// the Reset body accounts uniformly afterwards. Any unknown-kind tensor
+    /// anywhere live forces legacy-conservative pin-everything, matching the
+    /// old per-binding outcome without its per-binding probes.</remarks>
     void ReleaseRunEndIntermediates()
     {
         if (HasLiveUnknown())
@@ -1558,13 +1558,24 @@ public class ComputationalGraph
             }
             group.Names.Add(name);
         }
+        var protectedRoots = new HashSet<Array>();
+        if (!CollectProtectedRoots(protectedRoots))
+        {
+            PinAllOwned("UnknownKind");
+            return;
+        }
         foreach (var kv in groups)
         {
             var arr = kv.Key;
             long storageId = SharedPool.StorageId(arr);
-            string? protector = FindProtectedRoot(arr);
             var (elementType, names) = kv.Value;
-            if (protector is null)
+            if (protectedRoots.Contains(arr))
+            {
+                string protector = FindProtectedRoot(arr);
+                foreach (var name in names)
+                    SharedPool.BumpPin(elementType, arr.Length, true, storageId, protector);
+            }
+            else
             {
                 SharedPool.Return(arr);
                 foreach (var name in names)
@@ -1573,15 +1584,19 @@ public class ComputationalGraph
                     IntermediateOutputs[name] = null;
                 }
             }
-            else
-            {
-                foreach (var name in names)
-                    SharedPool.BumpPin(elementType, arr.Length, true, storageId, protector);
-            }
         }
     }
 
-    /// <summary>Whether any live tensor has an unresolvable alias kind, forcing conservative pin-everything.</summary>
+    /// <summary>Collects escaping-root backing arrays once per sweep; false when any root is unresolvable.</summary>
+    bool CollectProtectedRoots(HashSet<Array> protectedRoots)
+    {
+        foreach (var kv in Outputs) if (CollectAliasRoot(kv.Value, protectedRoots) == false) return false;
+        foreach (var kv in Inputs) if (CollectAliasRoot(kv.Value, protectedRoots) == false) return false;
+        foreach (var kv in Initializers) if (CollectAliasRoot(kv.Value, protectedRoots) == false) return false;
+        foreach (var attr in EnumerateAttributeTensors()) if (CollectAliasRoot(attr, protectedRoots) == false) return false;
+        return true;
+    }
+
     bool HasLiveUnknown()
     {
         if (liveUnknownTensors is not null && liveUnknownTensors.Count > 0) return true;
