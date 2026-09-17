@@ -74,7 +74,10 @@ def finish_record(path, build, role, rep, pid, launched, exited, code, log, acco
     evidence.require(record["core_sha256"] == build["core_sha256"].lower() and record["source_sha"] == build["source_sha"].lower(), "loaded core/source differs from staged build")
     evidence.require(record["environment"]["sdk"] == build["sdk"], "runner and core SDKs differ")
     start, end = evidence.timestamp(record["started_utc"]), evidence.timestamp(record["completed_utc"])
-    evidence.require(launched <= start <= end <= exited, "child timestamps outside supervised interval")
+    evidence.require(launched <= start <= end <= exited,
+                     "child timestamps outside supervised interval: launched=" + launched.isoformat()
+                     + " start=" + record["started_utc"] + " end=" + record["completed_utc"]
+                     + " exited=" + exited.isoformat())
     record.update(role=role, rep=rep, log=log.name, log_sha256=evidence.sha256(log), accounting=accounting,
                   completed_utc=exited.isoformat(), process_evidence=path.name,
                   process_evidence_sha256=evidence.sha256(path), source_archive_sha256=build["source_archive_sha256"])

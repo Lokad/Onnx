@@ -80,6 +80,8 @@ duplicate JSON keys and non-finite JSON numbers are errors. Each record has:
 | `role`, `rep` | `L0`/`L1`, and integer 1 through 4, in the order above. |
 | `log`, `log_sha256` | Relative path from the manifest directory (or absolute path), and SHA-256 of the original complete log bytes. Paths must be distinct. |
 | `process_id`, `started_utc`, `completed_utc` | Actual fresh process identity and observed launch/exit timestamps with UTC offset. Positive PID, positive duration, no overlapping legs. A/A must finish before comparison starts. |
+
+`started_utc` is the runner-observed wall clock at managed entry, deliberately not the kernel birth tick: on Linux the birth tick truncates to the HZ boundary (up to ~10 ms early) and can precede the supervisor wall mark, falsely aborting live runs (first seen on the AMD quiet box, September 17). Completion stays wall-clock; PID identity still binds the process.
 | `exit_code` | Actual process exit code, exactly zero. |
 | `source_sha`, `core_sha256` | Full 40-hex git commit and SHA-256 of the core assembly actually used. Stable within each arm. Both A/A arms and comparison L0 must use the same source and binary. |
 | `runner_sha256` | SHA-256 identifying the identical common workload runner used in every process, including A/A. |

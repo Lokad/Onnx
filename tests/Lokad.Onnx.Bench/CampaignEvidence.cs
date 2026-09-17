@@ -28,9 +28,15 @@ internal sealed class CampaignEvidence
     readonly Dictionary<string, (long Bytes, DateTime Modified)> files = new(StringComparer.Ordinal);
     Dictionary<string, object>? environment;
     long affinity;
+    // Observed wall-clock runner entry (Main). This must NOT be Process.StartTime:
+    // on Linux the kernel start tick truncates to the HZ boundary (up to ~10 ms early),
+    // so a birth-tick timestamp can precede the supervisor's pre-spawn wall mark and
+    // falsely abort the supervised interval. Wall entry is strictly inside it by construction.
+    readonly string startedUtc;
 
     CampaignEvidence(string output, string source, string expectedCore)
     {
+        startedUtc = DateTime.UtcNow.ToString("O");
         this.output = Path.GetFullPath(output);
         this.source = source.ToLowerInvariant();
         this.expectedCore = expectedCore.ToLowerInvariant();
@@ -233,7 +239,7 @@ internal sealed class CampaignEvidence
         var record = new
         {
             producer = "common-runner-v1", process_id = Environment.ProcessId,
-            started_utc = process.StartTime.ToUniversalTime().ToString("O"), completed_utc = DateTime.UtcNow.ToString("O"),
+            started_utc = startedUtc, completed_utc = DateTime.UtcNow.ToString("O"),
             exit_code = exitCode, source_sha = source, core_sha256 = expectedCore, core_path = corePath,
             runner_sha256 = runnerHash, runner_files = runnerFiles,
             ort_native = new { path = modules[0], sha256 = HashFile(modules[0]), architecture = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant() },
