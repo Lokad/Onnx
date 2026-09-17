@@ -4,6 +4,8 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Buffers;
 using System.Runtime.Intrinsics.X86;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 
 using static OpResult;
 
@@ -213,6 +215,20 @@ public partial class CPUExecutionProvider
             // Scratch for the vector-gate fast path below: holds cNew per step
             // while its tanh leg runs in place (cv keeps the pre-tanh cell).
             var cNewBuf = new float[H];
+            // Stable vector refs for the fast-gate fusion below (buffers are
+            // rented once per invocation; contents mutate, refs do not). bsRef
+            // starts null and is bound per direction only when a bias exists.
+            ref float hrRef = ref MemoryMarshal.GetReference(hrBuf.AsSpan());
+            ref float cvRef = ref MemoryMarshal.GetReference(cv.AsSpan());
+            ref float cNewRef = ref MemoryMarshal.GetReference(cNewBuf.AsSpan());
+            ref float hvRef = ref MemoryMarshal.GetReference(hv.AsSpan());
+            ref float yRef = ref MemoryMarshal.GetReference(yArr.AsSpan());
+            ref float bsRef = ref Unsafe.NullRef<float>();
+            bool hasB = bd is not null;
+            // Adds and muls need no FMA: AVX alone gates the vector fusion, with
+            // scalar tails covering the rest (and all of H on older hardware).
+            bool fuseVec = Avx.IsSupported;
+            int hVec = fuseVec ? (H & ~7) : 0;
             ReadOnlySpan<float> bs = bd is null ? default : bd.Buffer.Span;
             ReadOnlySpan<float> ps = pd is null ? default : pd.Buffer.Span;
             for (int d = 0; d < numDirections; d++)
@@ -222,6 +238,7 @@ public partial class CPUExecutionProvider
                 bool rev = reverse || (numDirections == 2 && d == 1);
                 int bDir = B is null ? 0 : (B.Rank == 2 ? d * 8 * H : 0);
                 int pDir = P is null ? 0 : d * 3 * H;
+                if (bd is not null) bsRef = ref MemoryMarshal.GetReference(bd.Buffer.Span.Slice(bDir, 8 * H));
                 var fAct = gateF[d];
                 var gAct = gateG[d];
                 var hAct = gateH[d];
@@ -276,6 +293,7 @@ public partial class CPUExecutionProvider
                         int t = rev ? limit - 1 - s : s;
                         int yOff = ((t * numDirections + d) * batch + b) * H;
                         int xwBase = s * 4 * H;
+                        ref float xwRef = ref MemoryMarshal.GetReference(xwBuf.AsSpan(xwBase, 4 * H));
                         if (useShared)
                         {
                             // Recurrent projection over the prepared [H,4H] panel
@@ -317,7 +335,32 @@ public partial class CPUExecutionProvider
                             // scalar nest summation order exactly, so the
                             // pre-activations match bit for bit; only the
                             // sigmoid/tanh evaluations differ, within 1e-6 scaled.
-                            for (int h = 0; h < H; h++)
+                            // Vector gate fusion: same left-to-right association
+                            // per lane as the scalar body below, hence bit for
+                            // bit identical; H tails fall through to scalar.
+                            for (int h = 0; h < hVec; h += 8)
+                            {
+                                var vA0 = Vector256.LoadUnsafe(ref xwRef, (nuint)h) + Vector256.LoadUnsafe(ref hrRef, (nuint)h);
+                                var vA1 = Vector256.LoadUnsafe(ref xwRef, (nuint)(h + H)) + Vector256.LoadUnsafe(ref hrRef, (nuint)(h + H));
+                                var vA2 = Vector256.LoadUnsafe(ref xwRef, (nuint)(h + 2 * H)) + Vector256.LoadUnsafe(ref hrRef, (nuint)(h + 2 * H));
+                                var vA3 = Vector256.LoadUnsafe(ref xwRef, (nuint)(h + 3 * H)) + Vector256.LoadUnsafe(ref hrRef, (nuint)(h + 3 * H));
+                                if (hasB)
+                                {
+                                    vA0 += Vector256.LoadUnsafe(ref bsRef, (nuint)h);
+                                    vA0 += Vector256.LoadUnsafe(ref bsRef, (nuint)(h + 4 * H));
+                                    vA1 += Vector256.LoadUnsafe(ref bsRef, (nuint)(h + H));
+                                    vA1 += Vector256.LoadUnsafe(ref bsRef, (nuint)(h + 5 * H));
+                                    vA2 += Vector256.LoadUnsafe(ref bsRef, (nuint)(h + 2 * H));
+                                    vA2 += Vector256.LoadUnsafe(ref bsRef, (nuint)(h + 6 * H));
+                                    vA3 += Vector256.LoadUnsafe(ref bsRef, (nuint)(h + 3 * H));
+                                    vA3 += Vector256.LoadUnsafe(ref bsRef, (nuint)(h + 7 * H));
+                                }
+                                vA0.StoreUnsafe(ref hrRef, (nuint)h);
+                                vA1.StoreUnsafe(ref hrRef, (nuint)(h + H));
+                                vA2.StoreUnsafe(ref hrRef, (nuint)(h + 2 * H));
+                                vA3.StoreUnsafe(ref hrRef, (nuint)(h + 3 * H));
+                            }
+                            for (int h = hVec; h < H; h++)
                             {
                                 float wbI = bd is null ? 0f : bs[bDir + h];
                                 float wbO = bd is null ? 0f : bs[bDir + H + h];
@@ -336,14 +379,31 @@ public partial class CPUExecutionProvider
                             MathOps.SigmoidSpan(hrBuf.AsSpan(H, H), hrBuf.AsSpan(H, H));
                             MathOps.SigmoidSpan(hrBuf.AsSpan(2 * H, H), hrBuf.AsSpan(2 * H, H));
                             MathOps.TanhSpan(hrBuf.AsSpan(3 * H, H), hrBuf.AsSpan(3 * H, H));
-                            for (int h = 0; h < H; h++)
+                            // Vector cell update: same association per lane, bit for bit identical.
+                            for (int h = 0; h < hVec; h += 8)
+                            {
+                                var vF = Vector256.LoadUnsafe(ref hrRef, (nuint)(h + 2 * H));
+                                var vC = Vector256.LoadUnsafe(ref cvRef, (nuint)h);
+                                var vI = Vector256.LoadUnsafe(ref hrRef, (nuint)h);
+                                var vG = Vector256.LoadUnsafe(ref hrRef, (nuint)(h + 3 * H));
+                                var vCNew = vF * vC + vI * vG;
+                                vCNew.StoreUnsafe(ref cvRef, (nuint)h);
+                                vCNew.StoreUnsafe(ref cNewRef, (nuint)h);
+                            }
+                            for (int h = hVec; h < H; h++)
                             {
                                 float cNew = hrBuf[2 * H + h] * cv[h] + hrBuf[h] * hrBuf[3 * H + h];
                                 cv[h] = cNew;
                                 cNewBuf[h] = cNew;
                             }
                             MathOps.TanhSpan(cNewBuf.AsSpan(0, H), cNewBuf.AsSpan(0, H));
-                            for (int h = 0; h < H; h++)
+                            for (int h = 0; h < hVec; h += 8)
+                            {
+                                var vHNew = Vector256.LoadUnsafe(ref hrRef, (nuint)(h + H)) * Vector256.LoadUnsafe(ref cNewRef, (nuint)h);
+                                vHNew.StoreUnsafe(ref hvRef, (nuint)h);
+                                vHNew.StoreUnsafe(ref yRef, (nuint)(yOff + h));
+                            }
+                            for (int h = hVec; h < H; h++)
                             {
                                 float hNew = hrBuf[H + h] * cNewBuf[h];
                                 hv[h] = hNew;

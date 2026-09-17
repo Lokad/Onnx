@@ -302,4 +302,76 @@ public class CpuExecutionProviderLstmTests
         AssertNear(o[2], new float[] { 0f, 0f }, "Yc");
     }
 
+    [Fact]
+    public void VectorFusion_MatchesScalarNest()
+    {
+        // Default-trio gates take the vector fast path under Auto (vector
+        // fusion plus span activations) and the scalar nest under Scalar;
+        // H=10 covers one 8-wide block plus a 2-wide tail. Only the
+        // exp/tanh evaluations may differ, within 1e-6 scaled; the fused
+        // adds and cell/hidden updates are bit for bit identical.
+        const int H = 10, K = 3, S = 2;
+        var xr = new float[S * K];
+        var wr = new float[4 * H * K];
+        var rr = new float[4 * H * H];
+        var br = new float[8 * H];
+        Fill(xr, 101);
+        Fill(wr, 103);
+        Fill(rr, 107);
+        Fill(br, 109);
+        var autoOpts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Auto);
+        var scalarOpts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Scalar);
+        var a = Outputs(RunOpts(xr, wr, rr, br, autoOpts), 3);
+        var s = Outputs(RunOpts(xr, wr, rr, br, scalarOpts), 3);
+        for (int o = 0; o < 3; o++) AssertScaledNear(a[o], s[o]);
+    }
+
+    [Fact]
+    public void VectorFusion_Bidirectional_MatchesScalarNest()
+    {
+        // Bidirectional cover for the vector fusion: direction 1 uses a
+        // nonzero bias base, which caught a double-applied base offset in
+        // review (scalar tail and nest agreed, vector lane did not).
+        const int H = 10, K = 3, S = 2;
+        var xr = new float[S * K];
+        var wr = new float[2 * 4 * H * K];
+        var rr = new float[2 * 4 * H * H];
+        var br = new float[2 * 8 * H];
+        Fill(xr, 201);
+        Fill(wr, 203);
+        Fill(rr, 207);
+        Fill(br, 209);
+        var autoOpts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Auto);
+        var scalarOpts = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Scalar);
+        var a = Outputs(RunBidi(xr, wr, rr, br, autoOpts), 3);
+        var s = Outputs(RunBidi(xr, wr, rr, br, scalarOpts), 3);
+        for (int o = 0; o < 3; o++) AssertScaledNear(a[o], s[o]);
+    }
+
+    static OpResult RunBidi(float[] x, float[] w, float[] r, float[] b, ExecutionOptions opts)
+    {
+        const int H = 10, K = 3, S = 2;
+        return CPU.Lstm(FT(x, new[] { S, 1, K }), FT(w, new[] { 2, 4 * H, K }), FT(r, new[] { 2, 4 * H, H }), FT(b, new[] { 2, 8 * H }), null, null, null, null, "bidirectional", null, null, null, null, H, false, 0, 3, opts, null);
+    }
+
+    static void Fill(float[] v, int seed)
+    {
+        for (int i = 0; i < v.Length; i++) v[i] = (((i * 37 + seed) % 97) - 48) * 0.02f;
+    }
+
+    static OpResult RunOpts(float[] x, float[] w, float[] r, float[] b, ExecutionOptions opts)
+    {
+        const int H = 10, K = 3, S = 2;
+        return CPU.Lstm(FT(x, new[] { S, 1, K }), FT(w, new[] { 1, 4 * H, K }), FT(r, new[] { 1, 4 * H, H }), FT(b, new[] { 1, 8 * H }), null, null, null, null, null, null, null, null, null, H, false, 0, 3, opts, null);
+    }
+
+    static void AssertScaledNear(float[] actual, float[] expected)
+    {
+        Assert.Equal(expected.Length, actual.Length);
+        for (int i = 0; i < expected.Length; i++)
+        {
+            double tol = 1e-6 * (1.0 + System.Math.Abs(expected[i]));
+            Assert.True(System.Math.Abs(actual[i] - expected[i]) <= tol, i.ToString());
+        }
+    }
 }
