@@ -63,6 +63,9 @@ public partial class CPUExecutionProvider
         if (A is null) return MissingInput(op, nameof(A));
         if (B is null) return MissingInput(op, nameof(B));
         if (Divisor is null) return MissingInput(op, nameof(Divisor));
+        var opts = (options ?? ExecutionOptions.Default).Validated();
+        if (TryRunTrailingAlpha(A, B, Divisor, opts, out var alphaOut) && alphaOut is not null)
+            return Success(op, alphaOut);
         var mm = MatMul(A, B, options, pool);
         if (mm.Status != OpStatus.Success || mm.Outputs is null || mm.Outputs.Length != 1 || mm.Outputs[0] is null)
             return mm;
@@ -70,6 +73,53 @@ public partial class CPUExecutionProvider
         if (dv.Status != OpStatus.Success || dv.Outputs is null)
             return dv;
         return Success(op, dv.Outputs);
+    }
+
+    /// <summary>
+    /// Epilogue-alpha fast path for trailing Div fusion (E5-1 M2): when the
+    /// divisor is a readable finite nonzero float, the shapes route to the
+    /// unpacked tiled kernel, and alpha is finite, the twin scales each
+    /// element once on its single store. Divisor 1 skips the Div entirely
+    /// (x/1 == x bitwise). Every other shape falls back to the identical
+    /// composite, preserving exact IEEE behavior there unconditionally.
+    /// </summary>
+    static bool TryRunTrailingAlpha(ITensor? A, ITensor? B, ITensor? Divisor, ExecutionOptions opts, out ITensor? output)
+    {
+        output = null;
+        var topts = opts.Tensor;
+        if (!topts.UseSimd || !topts.UseIntrinsics || !System.Runtime.Intrinsics.X86.Fma.IsSupported) return false;
+        if (A is not Tensor<float> fa || B is not Tensor<float> fb) return false;
+        if (Divisor is not DenseTensor<float> dd || dd.Length != 1) return false;
+        float d = dd.Buffer.Span[0];
+        if (fa.Rank != 2 || fb.Rank != 2) return false;
+        int m = fa.Dimensions[0], n = fa.Dimensions[1], k = fb.Dimensions[1];
+        if (fb.Dimensions[0] != n) return false;
+        if (d == 1f)
+        {
+            var mm1 = MatMul(A, B, opts, null);
+            if (mm1.Status != OpStatus.Success || mm1.Outputs is null || mm1.Outputs.Length != 1 || mm1.Outputs[0] is null)
+                return false;
+            output = mm1.Outputs[0];
+            return true;
+        }
+        if (!float.IsFinite(d) || d == 0f) return false;
+        float alpha = 1f / d;
+        if (!float.IsFinite(alpha)) return false;
+        // Tiled-kernel territory only (mirrors RunFloatMatMulKernel limits);
+        // packed, classic, scalar and m1 shapes keep the composite.
+        if ((m % 2) != 0 || m < 2 || n >= 2560 || k >= 2560) return false;
+        var xa = Tensor<float>.RequireContiguous(fa, nameof(A), topts.CopyReporter);
+        var xb = Tensor<float>.RequireContiguous(fb, nameof(B), topts.CopyReporter);
+        var dest = DenseTensor<float>.OfShape(m, k);
+        unsafe
+        {
+            using var xh = xa.Buffer.Pin();
+            using var yh = xb.Buffer.Pin();
+            using var oh = dest.Buffer.Pin();
+            MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled_alpha(m, n, k, (float*)xh.Pointer, (float*)yh.Pointer, (float*)oh.Pointer, alpha);
+        }
+        output = dest;
+        return true;
     }
 
     static Tensor<T> SpeedDensify<T>(Tensor<T> t, ExecutionOptions opts, OpStage stage) where T : unmanaged

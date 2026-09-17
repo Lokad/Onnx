@@ -694,6 +694,117 @@ public class MathOps
     }
 
     /// <summary>
+    /// Register-tiled matrix multiplication with epilogue scaling (E5-1 M2):
+    /// identical tiles, FMA order and tails to
+    /// mm_unsafe_vectorized_intrinsics_2x4tiled, except every stored element
+    /// is scaled once by alpha on its single write-back. The destination must
+    /// be zeroed on entry (same accumulate contract as the tiled kernel); each
+    /// element is written exactly once across main, rem and tail regions, so
+    /// no scaling is ever applied twice or missed. Scalar tail accumulates per
+    /// column in registers in the same j-ascending order, then scales once.
+    /// </summary>
+    /// <param name="M">A rows (must be even).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="B">Right matrix.</param>
+    /// <param name="C">Zeroed result matrix.</param>
+    /// <param name="alpha">Epilogue scale applied once per stored element.</param>
+    public unsafe static void mm_unsafe_vectorized_intrinsics_2x4tiled_alpha(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* B,
+                          float* C,
+                          float alpha)
+    {
+        if (M % 2 != 0)
+            throw new ArgumentException(nameof(M));
+
+        var alphaVec = Vector256.Create(alpha);
+        int blocked = K - (K % (4 * Vector256<float>.Count));
+
+        for (int i = 0; i < M; i += 2)
+        {
+            var Ap1 = A + i * N;
+            var Ap2 = Ap1 + N;
+
+            var Cp1 = C + i * K;
+            var Cp2 = Cp1 + K;
+
+            for (int kb = 0; kb < blocked; kb += 4 * Vector256<float>.Count)
+            {
+                var Cpv1 = (Vector256<float>*)(Cp1 + kb);
+                var Cpv2 = (Vector256<float>*)(Cp2 + kb);
+                Vector256<float> c00 = Cpv1[0];
+                Vector256<float> c01 = Cpv1[1];
+                Vector256<float> c02 = Cpv1[2];
+                Vector256<float> c03 = Cpv1[3];
+                Vector256<float> c10 = Cpv2[0];
+                Vector256<float> c11 = Cpv2[1];
+                Vector256<float> c12 = Cpv2[2];
+                Vector256<float> c13 = Cpv2[3];
+                for (int j = 0; j < N; ++j)
+                {
+                    var av1 = Vector256.Create(Ap1[j]);
+                    var av2 = Vector256.Create(Ap2[j]);
+                    var Bpv = (Vector256<float>*)(B + j * K + kb);
+                    c00 = Fma.MultiplyAdd(Bpv[0], av1, c00);
+                    c10 = Fma.MultiplyAdd(Bpv[0], av2, c10);
+                    c01 = Fma.MultiplyAdd(Bpv[1], av1, c01);
+                    c11 = Fma.MultiplyAdd(Bpv[1], av2, c11);
+                    c02 = Fma.MultiplyAdd(Bpv[2], av1, c02);
+                    c12 = Fma.MultiplyAdd(Bpv[2], av2, c12);
+                    c03 = Fma.MultiplyAdd(Bpv[3], av1, c03);
+                    c13 = Fma.MultiplyAdd(Bpv[3], av2, c13);
+                }
+                Cpv1[0] = c00 * alphaVec;
+                Cpv1[1] = c01 * alphaVec;
+                Cpv1[2] = c02 * alphaVec;
+                Cpv1[3] = c03 * alphaVec;
+                Cpv2[0] = c10 * alphaVec;
+                Cpv2[1] = c11 * alphaVec;
+                Cpv2[2] = c12 * alphaVec;
+                Cpv2[3] = c13 * alphaVec;
+            }
+            int rem = K - blocked;
+            if (rem > 0)
+            {
+                var rC1 = (Vector256<float>*)(Cp1 + blocked);
+                var rC2 = (Vector256<float>*)(Cp2 + blocked);
+                int rv = rem / Vector256<float>.Count;
+                for (int t = 0; t < rv; t++)
+                {
+                    Vector256<float> c1 = rC1[t];
+                    Vector256<float> c2 = rC2[t];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        var Bpv = (Vector256<float>*)(B + j * K + blocked);
+                        c1 = Fma.MultiplyAdd(Bpv[t], Vector256.Create(Ap1[j]), c1);
+                        c2 = Fma.MultiplyAdd(Bpv[t], Vector256.Create(Ap2[j]), c2);
+                    }
+                    rC1[t] = c1 * alphaVec;
+                    rC2[t] = c2 * alphaVec;
+                }
+                // Scalar tail: same j-ascending per-column accumulation as the
+                // tiled kernel, register-held, scaled once on the single store.
+                for (int k = blocked + rv * Vector256<float>.Count; k < K; k++)
+                {
+                    float acc1 = Cp1[k];
+                    float acc2 = Cp2[k];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        acc1 += Ap1[j] * (B + j * K)[k];
+                        acc2 += Ap2[j] * (B + j * K)[k];
+                    }
+                    Cp1[k] = alpha * acc1;
+                    Cp2[k] = alpha * acc2;
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Packs B into 32-column panels laid out contiguously, with any tail
     /// columns appended row-major. Panel relocation is exact, so a kernel
     /// reading panels computes the same per-element order as the tiled kernel.

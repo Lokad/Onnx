@@ -184,17 +184,17 @@ public class GraphFusionScaledMatMulTests
     [Fact]
     public void TrailingDivCompositeMatchesLegacyBitwise()
     {
-        // E5 QK-shaped trailing Div: MatMul then Div vs the fused trailing
-        // composite must agree bit-for-bit (identical ops, identical order).
+        // Odd-m shapes decline the alpha twin and run the identical
+        // composite (same ops, same order): must agree bit-for-bit.
         foreach (var d in new[] { 2.0f, 0.1f, 5.656854f })
         {
-            var a = Rand(new[] { 30, 32 }, 31);
-            var b = Rand(new[] { 32, 30 }, 32);
+            var a = Rand(new[] { 31, 32 }, 31);
+            var b = Rand(new[] { 32, 27 }, 32);
             var ab = a.Buffer.ToArray();
             ab[0] = System.BitConverter.Int32BitsToSingle(0x7FC00001);
             ab[1] = float.PositiveInfinity;
             ab[2] = -0f;
-            var ax = new DenseTensor<float>(ab.AsMemory(), new[] { 30, 32 });
+            var ax = new DenseTensor<float>(ab.AsMemory(), new[] { 31, 32 });
             var div = DenseTensor<float>.Scalar(d);
             var mm = CPUExecutionProvider.MatMul(ax, b, null, null);
             Assert.Equal(OpStatus.Success, mm.Status);
@@ -264,6 +264,104 @@ public class GraphFusionScaledMatMulTests
         Assert.Contains(graph.Nodes, n => n.Op == OpType.Div && n.Outputs.Length == 1 && n.Outputs[0] == "d5");
         // Divisor at index 0 is not the ORT scale shape.
         Assert.Contains(graph.Nodes, n => n.Op == OpType.Div && n.Outputs.Length == 1 && n.Outputs[0] == "d6");
+    }
+
+    static double MaxScaledDiff(float[] got, float[] want)
+    {
+        // NaN positions must be preserved exactly (payloads may differ:
+        // alpha*NaN vs NaN/d take different propagation paths); bitwise-equal
+        // elements (signed zeros, same-signed infinities, lucky finites)
+        // contribute zero; everything else prices against 1+|want|.
+        double worst = 0;
+        for (int i = 0; i < got.Length; i++)
+        {
+            if (float.IsNaN(want[i]))
+            {
+                if (!float.IsNaN(got[i])) return double.NaN;
+                continue;
+            }
+            if (got[i] == want[i]) continue;
+            double denom = 1.0 + System.Math.Abs((double)want[i]);
+            double dd = System.Math.Abs((double)got[i] - want[i]) / denom;
+            if (double.IsNaN(dd) || !(dd <= worst)) { if (double.IsNaN(dd)) return double.NaN; worst = dd; }
+        }
+        return worst;
+    }
+
+    static float[] TrailingLegacy(Tensor<float> a, Tensor<float> b, float d)
+    {
+        var mm = CPUExecutionProvider.MatMul(a, b, null, null);
+        Assert.Equal(OpStatus.Success, mm.Status);
+        var div = CPUExecutionProvider.Div(mm.Outputs![0]!, DenseTensor<float>.Scalar(d), null, null);
+        Assert.Equal(OpStatus.Success, div.Status);
+        return Out(div.Outputs![0]!);
+    }
+
+    static float[] TrailingFused(Tensor<float> a, Tensor<float> b, float d)
+    {
+        var fused = CPUExecutionProvider.ScaledMatMulTrailing(a, b, DenseTensor<float>.Scalar(d), null, null);
+        Assert.Equal(OpStatus.Success, fused.Status);
+        return Out(fused.Outputs![0]!);
+    }
+
+    [Fact]
+    public void TrailingAlpha_EnvelopeWithinGate()
+    {
+        // E5-1 M2 envelope: alpha-epilogue vs Div-then-MatMul over QK shapes
+        // and divisor systematics. Inexact divisors must differ (proves the
+        // twin ran, not the composite) while staying deep inside 1e-4.
+        var cases = new (int[] ad, int[] bd, float d)[]
+        {
+            (new[] { 30, 32 }, new[] { 32, 30 }, 5.656854f),
+            (new[] { 8, 32 }, new[] { 32, 8 }, 0.1f),
+            (new[] { 30, 32 }, new[] { 32, 30 }, 1e-10f),
+            (new[] { 30, 32 }, new[] { 32, 30 }, 1e10f),
+            (new[] { 8, 32 }, new[] { 32, 8 }, -2.5f),
+            (new[] { 30, 35 }, new[] { 35, 27 }, 3.1415927f),
+        };
+        int seed = 101;
+        foreach (var (ad, bd, d) in cases)
+        {
+            var a = Rand(ad, seed++);
+            var b = Rand(bd, seed++);
+            var ab = a.Buffer.ToArray();
+            ab[0] = System.BitConverter.Int32BitsToSingle(0x7FC00001);
+            ab[1] = float.PositiveInfinity;
+            var ax = new DenseTensor<float>(ab.AsMemory(), ad);
+            var e = TrailingLegacy(ax, b, d);
+            var f = TrailingFused(ax, b, d);
+            Assert.Equal(e.Length, f.Length);
+            double worst = MaxScaledDiff(f, e);
+            Assert.True(worst <= 1e-4, "d=" + d + " envelope " + worst);
+            Assert.True(worst > 0, "d=" + d + " suspiciously bitwise (twin bypassed?)");
+        }
+    }
+
+    [Fact]
+    public void TrailingAlpha_UnitDivisorSkipsDivBitwise()
+    {
+        var a = Rand(new[] { 30, 32 }, 111);
+        var b = Rand(new[] { 32, 30 }, 112);
+        var mm = CPUExecutionProvider.MatMul(a, b, null, null);
+        Assert.Equal(OpStatus.Success, mm.Status);
+        var f = TrailingFused(a, b, 1f);
+        var e = Out(mm.Outputs![0]!);
+        Assert.True(e.AsSpan().SequenceEqual(f.AsSpan()), "div-by-1 must skip the Div bitwise");
+    }
+
+    [Fact]
+    public void TrailingAlpha_DegenerateDivisorsStayExact()
+    {
+        // Zero/NaN/Inf divisors route the identical composite: IEEE edge
+        // behavior (Inf, NaN payloads, signed zeros) preserved exactly.
+        foreach (var d in new[] { 0f, -0f, float.NaN, float.PositiveInfinity, float.NegativeInfinity })
+        {
+            var a = Rand(new[] { 8, 32 }, 121);
+            var b = Rand(new[] { 32, 8 }, 122);
+            var e = TrailingLegacy(a, b, d);
+            var f = TrailingFused(a, b, d);
+            Assert.True(e.AsSpan().SequenceEqual(f.AsSpan()), "d=" + d + " must stay bitwise via composite");
+        }
     }
 
     [Fact]
