@@ -430,6 +430,44 @@ public class MatMulKernelAgreementTests
             $"8-row packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
     }
 
+    [SkippableFact]
+    public unsafe void PackedBumpMatchesPacked2Bitwise()
+    {
+        // E65: the pointer-bump nest is statement-identical to the indexed
+        // 2-row packed nest except addressing, so it must agree bit-wise.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        BumpEqual(8, 24, 20, rnd);
+        BumpEqual(8, 24, 44, rnd);
+        BumpEqual(30, 384, 384, rnd);
+        BumpEqual(30, 384, 388, rnd);
+        BumpEqual(30, 384, 1536, rnd);
+        BumpEqual(126, 384, 384, rnd);
+        BumpEqual(126, 1536, 384, rnd);
+        BumpEqual(128, 384, 1536, rnd);
+    }
+
+    static unsafe void BumpEqual(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var p = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, p, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"bump packed diverges bitwise from tiled on {m}x{n}x{k}.");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, q, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"bump packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
+    }
+
 
     [SkippableFact]
     public unsafe void SixRowMatchesTiledBitwise()

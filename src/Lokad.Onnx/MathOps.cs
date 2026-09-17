@@ -1902,6 +1902,189 @@ public class MathOps
         }
     }
     /// <summary>
+    /// <summary>
+    /// Register-tiled matrix multiplication reading panel-packed B, two
+    /// rows per group with pointer-bump addressing (E65).
+    /// </summary>
+    /// <param name="M">A rows (must be even).</param>
+    /// <param name="N">A columns (reduction axis).</param>
+    /// <param name="K">B columns.</param>
+    /// <param name="A">Left matrix.</param>
+    /// <param name="P">Panel-packed right matrix from PackPanelsB.</param>
+    /// <param name="C">Result matrix (accumulated, like the other packed kernels).</param>
+    /// <remarks>
+    /// Same panels and per-element order as the indexed 2-row packed kernel,
+    /// so results agree with it bit-wise; the j-loop advances B by one panel
+    /// and A by one element per step instead of recomputing indexed addresses.
+    /// Tails are verbatim copies of the reference nest.
+    /// </remarks>
+    public unsafe static void mm_unsafe_vectorized_intrinsics_2x4packed_bump(int M,
+                          int N,
+                          int K,
+                          float* A,
+                          float* P,
+                          float* C)
+    {
+        if (M % 2 != 0)
+            throw new ArgumentException(nameof(M));
+
+        int panelWidth = 4 * Vector256<float>.Count;
+        int blocked = K - (K % panelWidth);
+        int tiles = blocked / panelWidth;
+
+        // Kb panels lead so each panel is fetched once and stays L1/L2 resident
+        // across every row group, exactly like the reference nest.
+        for (int tb = 0; tb < tiles; tb++)
+        {
+            int kb = tb * panelWidth;
+            float* panel = P + tb * N * panelWidth;
+            for (int i = 0; i < M; i += 2)
+            {
+                float* a0 = A + i * N;
+                float* a1 = a0 + N;
+                float* b = panel;
+                var Cpv1 = (Vector256<float>*)(C + i * K + kb);
+                var Cpv2 = (Vector256<float>*)(C + (i + 1) * K + kb);
+                Vector256<float> c00 = Cpv1[0];
+                Vector256<float> c01 = Cpv1[1];
+                Vector256<float> c02 = Cpv1[2];
+                Vector256<float> c03 = Cpv1[3];
+                Vector256<float> c10 = Cpv2[0];
+                Vector256<float> c11 = Cpv2[1];
+                Vector256<float> c12 = Cpv2[2];
+                Vector256<float> c13 = Cpv2[3];
+                for (int j = 0; j < N; ++j)
+                {
+                    var Bpv = (Vector256<float>*)b;
+                    Vector256<float> bv0 = Bpv[0];
+                    Vector256<float> bv1 = Bpv[1];
+                    Vector256<float> bv2 = Bpv[2];
+                    Vector256<float> bv3 = Bpv[3];
+                    var av1 = Vector256.Create(*a0); a0 += 1;
+                    var av2 = Vector256.Create(*a1); a1 += 1;
+                    c00 = Fma.MultiplyAdd(bv0, av1, c00);
+                    c10 = Fma.MultiplyAdd(bv0, av2, c10);
+                    c01 = Fma.MultiplyAdd(bv1, av1, c01);
+                    c11 = Fma.MultiplyAdd(bv1, av2, c11);
+                    c02 = Fma.MultiplyAdd(bv2, av1, c02);
+                    c12 = Fma.MultiplyAdd(bv2, av2, c12);
+                    c03 = Fma.MultiplyAdd(bv3, av1, c03);
+                    c13 = Fma.MultiplyAdd(bv3, av2, c13);
+                    b += panelWidth;
+                }
+                Cpv1[0] = c00;
+                Cpv1[1] = c01;
+                Cpv1[2] = c02;
+                Cpv1[3] = c03;
+                Cpv2[0] = c10;
+                Cpv2[1] = c11;
+                Cpv2[2] = c12;
+                Cpv2[3] = c13;
+            }
+        }
+
+        int rem = K - blocked;
+        if (rem > 0)
+        {
+            float* T = P + tiles * N * (4 * Vector256<float>.Count);
+            int rv = rem / Vector256<float>.Count;
+            for (int tt = 0; tt < rv; tt++)
+            {
+                for (int i = 0; i < M; i += 2)
+                {
+                    var Ap1 = A + i * N;
+                    var Ap2 = Ap1 + N;
+                    var rC1 = (Vector256<float>*)(C + i * K + blocked);
+                    var rC2 = (Vector256<float>*)(C + (i + 1) * K + blocked);
+                    Vector256<float> c1 = rC1[tt];
+                    Vector256<float> c2 = rC2[tt];
+                    for (int j = 0; j < N; ++j)
+                    {
+                        var Bpv = (Vector256<float>*)(T + j * rem + tt * Vector256<float>.Count);
+                        c1 = Fma.MultiplyAdd(Bpv[0], Vector256.Create(Ap1[j]), c1);
+                        c2 = Fma.MultiplyAdd(Bpv[0], Vector256.Create(Ap2[j]), c2);
+                    }
+                    rC1[tt] = c1;
+                    rC2[tt] = c2;
+                }
+            }
+            int vcols = rv * Vector256<float>.Count;
+            // Narrow tail (fewer than 8 columns) accumulates in registers
+            // instead of read-modify-writing C on every reduction step: the
+            // per-element chain keeps the exact j-ascending mul-then-add order
+            // of the loop it replaces, so results agree bit-wise while each C
+            // row is loaded once and stored once.
+            int tail = rem - vcols;
+            if (tail > 0)
+            for (int i = 0; i < M; i += 2)
+            {
+                var Ap1 = A + i * N;
+                var Ap2 = Ap1 + N;
+                var Cp1 = C + i * K + blocked + vcols;
+                var Cp2 = Cp1 + K;
+                switch (tail)
+                {
+                    case 1:
+                    {
+                        float c1 = Cp1[0], c2 = Cp2[0];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c1 += Ap1[j] * t[0]; c2 += Ap2[j] * t[0]; }
+                        Cp1[0] = c1; Cp2[0] = c2;
+                        break;
+                    }
+                    case 2:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c20 = Cp2[0], c21 = Cp2[1];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; }
+                        Cp1[0] = c10; Cp1[1] = c11; Cp2[0] = c20; Cp2[1] = c21;
+                        break;
+                    }
+                    case 3:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; }
+                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22;
+                        break;
+                    }
+                    case 4:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3];
+                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; }
+                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13;
+                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23;
+                        break;
+                    }
+                    case 5:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4];
+                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; }
+                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14;
+                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24;
+                        break;
+                    }
+                    case 6:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5];
+                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; }
+                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15;
+                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25;
+                        break;
+                    }
+                    default:
+                    {
+                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5], c16 = Cp1[6];
+                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5], c26 = Cp2[6];
+                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; c16 += Ap1[j] * t[6]; c26 += Ap2[j] * t[6]; }
+                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15; Cp1[6] = c16;
+                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25; Cp2[6] = c26;
+                        break;
+                    }
+                }
+            }
+        }
+    }
     /// Register-tiled matrix multiplication reading panel-packed B, three
     /// rows per group.
     /// </summary>
