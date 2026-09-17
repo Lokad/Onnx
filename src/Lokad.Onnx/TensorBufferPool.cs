@@ -59,6 +59,8 @@ public sealed class TensorBufferPool
 
     readonly Dictionary<Array, long> outstanding = new();
 
+    readonly Dictionary<(Type, int), (long Missed, long Reused)> demand = new();
+
     long outstandingBytes;
 
     long peakWindow;
@@ -107,6 +109,7 @@ public sealed class TensorBufferPool
             {
                 Reused++;
                 ReusedBytes += bytes;
+                BumpDemand(key, false);
                 var reused = (T[])stack.Pop();
                 buffered.Remove(reused);
                 owned.Add(reused);
@@ -115,6 +118,7 @@ public sealed class TensorBufferPool
             }
             AllocatedNew++;
             AllocatedNewBytes += bytes;
+            BumpDemand(key, true);
             var fresh = new T[length];
             owned.Add(fresh);
             TrackRent(fresh, bytes);
@@ -133,6 +137,24 @@ public sealed class TensorBufferPool
             var rented = Rent<T>(length);
             if (Reused != reusedBefore && rented.Length > 0) Array.Clear(rented, 0, rented.Length);
             return rented;
+        }
+    }
+
+    void BumpDemand((Type, int) key, bool missed)
+    {
+        if (demand.TryGetValue(key, out var cur)) demand[key] = missed ? (cur.Missed + 1, cur.Reused) : (cur.Missed, cur.Reused + 1);
+        else demand[key] = missed ? (1, 0) : (0, 1);
+    }
+
+    /// <summary>Cumulative per-shape demand snapshot since pool creation, for allocation tuning.</summary>
+    public (string Type, int Length, long Missed, long Reused)[] SnapshotDemand()
+    {
+        lock (sync)
+        {
+            var arr = new (string, int, long, long)[demand.Count];
+            int i = 0;
+            foreach (var kv in demand) arr[i++] = (kv.Key.Item1.Name, kv.Key.Item2, kv.Value.Missed, kv.Value.Reused);
+            return arr;
         }
     }
 

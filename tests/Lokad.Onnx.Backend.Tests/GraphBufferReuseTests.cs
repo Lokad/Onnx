@@ -473,4 +473,74 @@ public class GraphBufferReuseTests
     }
 
 
+    [Fact]
+    public void ResetRecyclesRunEndIntermediates()
+    {
+        // Final-node side outputs nobody consumes stay checked out without
+        // end-of-run recycling: every run rents them fresh. After Reset they
+        // must come back from the pool instead (no new misses on the steady run).
+        const int H = 4, S = 2, K = 3;
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "recycle-test";
+        var xr = new float[S * K];
+        var wr = new float[4 * H * K];
+        var rr = new float[4 * H * H];
+        for (int i = 0; i < xr.Length; i++) xr[i] = (i - 2) * 0.25f;
+        for (int i = 0; i < wr.Length; i++) wr[i] = ((i * 37) % 97 - 48) * 0.01f;
+        for (int i = 0; i < rr.Length; i++) rr[i] = ((i * 53) % 89 - 44) * 0.01f;
+        graph.Inputs["x"] = new DenseTensor<float>(xr, new[] { S, 1, K });
+        graph.Initializers["w"] = new DenseTensor<float>(wr, new[] { 1, 4 * H, K });
+        graph.Initializers["r"] = new DenseTensor<float>(rr, new[] { 1, 4 * H, H });
+        graph.Outputs["y"] = DenseTensor<float>.OfShape(S, 1, 1, H);
+        graph.IntermediateOutputs["yh"] = null;
+        graph.IntermediateOutputs["yc"] = null;
+        graph.Nodes.Add(new Node
+        {
+            Name = "lstm",
+            Op = OpType.LSTM,
+            OpTypeName = "LSTM",
+            Domain = "",
+            Inputs = new[] { "x", "w", "r" },
+            Outputs = new[] { "y", "yh", "yc" },
+            Attributes = new Dictionary<string, object> { ["hidden_size"] = H },
+        });
+        graph.RefreshLifetimeAnalysis();
+        var feeds = new Dictionary<string, ITensor> { ["x"] = graph.Inputs["x"] };
+        Assert.True(graph.Execute(feeds, true));
+        var first = ((Tensor<float>)graph.Outputs["y"]).ToArray();
+        graph.Reset();
+        long m1 = MissedFor(graph, H);
+        Assert.True(graph.Execute(feeds, true));
+        Assert.Equal(first, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+        graph.Reset();
+        Assert.Equal(m1, MissedFor(graph, H));
+    }
+
+    static long MissedFor(ComputationalGraph graph, int len)
+    {
+        long m = 0;
+        foreach (var s in graph.PoolDemandSnapshot()) if (s.Type == "Single" && s.Length == len) m += s.Missed;
+        return m;
+    }
+
+    [Fact]
+    public void ResetPreservesCallerHeldOutputs()
+    {
+        // Graph outputs keep their storage across Reset plus rerun: the
+        // end-of-run sweep must never recycle caller-visible storage.
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "held-output-test";
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(2);
+        graph.Outputs["y"] = DenseTensor<float>.OfShape(2);
+        graph.Nodes.Add(new Node { Name = "r", Op = OpType.Relu, Inputs = new[] { "x" }, Outputs = new[] { "y" } });
+        graph.RefreshLifetimeAnalysis();
+        var first = new Dictionary<string, ITensor> { ["x"] = DenseTensor<float>.OfValues(new float[] { -1f, 2f }) };
+        Assert.True(graph.Execute(first, true));
+        var held = (Tensor<float>)graph.Outputs["y"];
+        var second = new Dictionary<string, ITensor> { ["x"] = DenseTensor<float>.OfValues(new float[] { 3f, -4f }) };
+        graph.Reset();
+        Assert.True(graph.Execute(second, true));
+        Assert.Equal(new float[] { 0f, 2f }, held.ToArray());
+        Assert.Equal(new float[] { 3f, 0f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+    }
 }

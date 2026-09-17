@@ -367,6 +367,9 @@ public class ComputationalGraph
     /// <summary>High-water mark of pool bytes checked out during the last execution.</summary>
     /// <remarks>Pool outputs and live intermediates raise it; returns lower it. ArrayPool scratch is not counted.</remarks>
     public long LastPoolPeakOutstandingBytes { get; private set; }
+    /// <summary>Cumulative per-shape pool demand since pool creation: rents that missed (fresh GC) versus hits (served storage).</summary>
+    /// <remarks>Diagnostics for allocation tuning; reading it never affects execution. Shapes are (element type, length).</remarks>
+    public (string Type, int Length, long Missed, long Reused)[] PoolDemandSnapshot() => SharedPool.SnapshotDemand();
     #endregion
 
     #region Methods
@@ -1145,10 +1148,13 @@ public class ComputationalGraph
         return true;
     }
 
+    /// <summary>Clears run bindings so the next execution starts clean.</summary>
+    /// <remarks>Recycling note: run-end live intermediates return to the shared pool here (see ReleaseRunEndIntermediates), so tensors fetched before Reset must not be read after it; output tensors keep their storage.</remarks>
     public void Reset() => Reset(false);
 
     public void Reset(bool gc)
     {
+        ReleaseRunEndIntermediates();
         foreach (var o in IntermediateOutputs.Keys)
         {
             livePayloadBytes -= PayloadBytes(IntermediateOutputs[o]);
@@ -1508,6 +1514,31 @@ public class ComputationalGraph
         livePayloadBytes -= PayloadBytes(tensor);
         IntermediateOutputs[name] = null;
         return true;
+    }
+
+    /// <summary>Returns run-end live intermediates to the shared pool before Reset drops them.</summary>
+    /// <remarks>Intermediates still checked out when the run ends can never re-enter circulation otherwise: the final node skips the output-release pass (nothing later rents), so the next run rents them fresh -- measured 123/run (~9.7MB) on the encoder with zero cap drops. Only pool-owned storage with no live aliases recycles, mirroring the TryReleaseValue guards without touching the live-payload gauge (the Reset body below accounts uniformly); graph outputs, caller inputs, initializer storage, and views keep theirs. Bindings still null exactly as before.</remarks>
+    void ReleaseRunEndIntermediates()
+    {
+        var returned = new HashSet<Array>();
+        foreach (var name in IntermediateOutputs.Keys)
+        {
+            if (Outputs.ContainsKey(name)) continue;
+            var tensor = IntermediateOutputs[name];
+            if (tensor is null) continue;
+            var arr = (tensor as TensorBase)?.OwnedBufferArray();
+            if (arr is null || returned.Contains(arr)) continue;
+            if (!SharedPool.IsOwned(arr)) continue;
+            EnsureLiveIndexSeeded();
+            RemoveLiveRefs(tensor);
+            if (!HasLiveAliasIndexed(arr))
+            {
+                SharedPool.Return(arr);
+                returned.Add(arr);
+                IntermediateOutputs[name] = null;
+            }
+            else AddLiveRefs(tensor);
+        }
     }
 
     void ReleaseDeadTensors(Node node, int index, ref List<string>? pending)
