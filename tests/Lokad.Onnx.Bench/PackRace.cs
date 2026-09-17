@@ -51,16 +51,21 @@ internal static class PackRace
         var p = new float[N * K];
         var cRef = new float[M * K];
         var cNew = new float[M * K];
+        var c4 = new float[M * K];
+        var c8 = new float[M * K];
         fixed (float* bp = b, pp = p)
             MathOps.PackPanelsB(N, K, bp, pp);
         var ha = System.Runtime.InteropServices.GCHandle.Alloc(a, System.Runtime.InteropServices.GCHandleType.Pinned);
         var hp = System.Runtime.InteropServices.GCHandle.Alloc(p, System.Runtime.InteropServices.GCHandleType.Pinned);
         var hcR = System.Runtime.InteropServices.GCHandle.Alloc(cRef, System.Runtime.InteropServices.GCHandleType.Pinned);
         var hcN = System.Runtime.InteropServices.GCHandle.Alloc(cNew, System.Runtime.InteropServices.GCHandleType.Pinned);
+        var hc4 = System.Runtime.InteropServices.GCHandle.Alloc(c4, System.Runtime.InteropServices.GCHandleType.Pinned);
+        var hc8 = System.Runtime.InteropServices.GCHandle.Alloc(c8, System.Runtime.InteropServices.GCHandleType.Pinned);
         try
         {
             IntPtr ap = ha.AddrOfPinnedObject(), pp = hp.AddrOfPinnedObject();
             IntPtr cr = hcR.AddrOfPinnedObject(), cn = hcN.AddrOfPinnedObject();
+            IntPtr c4p = hc4.AddrOfPinnedObject(), c8p = hc8.AddrOfPinnedObject();
             double Time(System.Action run)
             {
                 for (int w = 0; w < 5; w++) run();
@@ -91,7 +96,33 @@ internal static class PackRace
             }
             string agree = double.IsNaN(worst) ? "NaN" : worst.ToString("E2");
             bool ok = worst == 0.0;
-            string line = $"packrace M={M} N={N} K={K} ref2={t2:F3}ms twin6={t6:F3}ms speedup={t2 / t6:F2}x agree={agree} " + (ok ? "OK" : "FAIL");
+            int four = M - (M % 4);
+            IntPtr apF = ap + four * N * 4, c4T = c4p + four * K * 4;
+            int rem4 = M - four;
+            Action twin4 = () => {
+                Array.Clear(c4, 0, c4.Length);
+                MathOps.mm_unsafe_vectorized_intrinsics_4x4packed(four, N, K, (float*)ap, (float*)pp, (float*)c4p);
+                if (rem4 == 3) MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(rem4, N, K, (float*)apF, (float*)pp, (float*)c4T);
+                else if (rem4 > 0) MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(rem4, N, K, (float*)apF, (float*)pp, (float*)c4T);
+            };
+            double t4 = Time(twin4);
+            double w4 = 0;
+            for (int i = 0; i < cRef.Length; i++) { double d = Math.Abs(cRef[i] - c4[i]); if (double.IsNaN(d)) { w4 = double.NaN; break; } if (d > w4) w4 = d; }
+            int eight = M - (M % 8);
+            IntPtr apE = ap + eight * N * 4, c8T = c8p + eight * K * 4;
+            int rem8 = M - eight;
+            Action twin8 = () => {
+                Array.Clear(c8, 0, c8.Length);
+                MathOps.mm_unsafe_vectorized_intrinsics_8x8packed(eight, N, K, (float*)ap, (float*)pp, (float*)c8p);
+                if (rem8 == 6) MathOps.mm_unsafe_vectorized_intrinsics_6x4packed(rem8, N, K, (float*)apE, (float*)pp, (float*)c8T);
+                else if (rem8 == 3) MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(rem8, N, K, (float*)apE, (float*)pp, (float*)c8T);
+                else if (rem8 > 0) MathOps.mm_unsafe_vectorized_intrinsics_2x4packed(rem8, N, K, (float*)apE, (float*)pp, (float*)c8T);
+            };
+            double t8 = Time(twin8);
+            double w8 = 0;
+            for (int i = 0; i < cRef.Length; i++) { double d = Math.Abs(cRef[i] - c8[i]); if (double.IsNaN(d)) { w8 = double.NaN; break; } if (d > w8) w8 = d; }
+            string line = $"packrace M={M} N={N} K={K} ref2={t2:F3}ms twin6={t6:F3}ms twin4={t4:F3}ms twin8={t8:F3}ms agree={agree}/{w4:E2}/{w8:E2} " + ((ok && w4 == 0.0 && w8 == 0.0) ? "OK" : "FAIL");
+            ok = ok && w4 == 0.0 && w8 == 0.0;
             if (M % 3 == 0)
             {
                 var c3 = new float[M * K];
@@ -111,8 +142,9 @@ internal static class PackRace
             Console.WriteLine(line);
             return ok ? 0 : 1;
         }
-        finally { ha.Free(); hp.Free(); hcR.Free(); hcN.Free(); }
+        finally { ha.Free(); hp.Free(); hcR.Free(); hcN.Free(); hc4.Free(); hc8.Free(); }
     }
 }
+
 
 
