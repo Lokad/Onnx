@@ -11,7 +11,7 @@ using System;
 /// </summary>
 internal static class AblationSwitches
 {
-    static bool EnvIsSet(string name) =>
+    internal static bool EnvIsSet(string name) =>
         string.Equals(Environment.GetEnvironmentVariable(name), "1", StringComparison.Ordinal);
 
     /// When true, softmax over contiguous float rows routes to the preserved

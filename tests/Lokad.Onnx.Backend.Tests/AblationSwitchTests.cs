@@ -93,4 +93,24 @@ public class AblationSwitchTests
             AblationSwitches.ResetLatches();
         }
     }
+    [Fact]
+    public void EnvMappingReadsExactOneValue()
+    {
+        const string name = "LOKAD_ONNX_ABLATION_TEST_PROBE";
+        string? saved = System.Environment.GetEnvironmentVariable(name);
+        try
+        {
+            System.Environment.SetEnvironmentVariable(name, "1");
+            Assert.True(AblationSwitches.EnvIsSet(name));
+            System.Environment.SetEnvironmentVariable(name, "0");
+            Assert.False(AblationSwitches.EnvIsSet(name));
+            System.Environment.SetEnvironmentVariable(name, null);
+            Assert.False(AblationSwitches.EnvIsSet(name));
+        }
+        finally
+        {
+            System.Environment.SetEnvironmentVariable(name, saved);
+        }
+    }
 }
+
