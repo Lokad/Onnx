@@ -93,6 +93,10 @@ static class Bench
         {
             return PackRace.RunPackRace(args.Skip(1).ToArray());
         }
+        if (args.Length > 0 && args[0] == "gelurace")
+        {
+            return GeluRace.RunGeluRace(args.Skip(1).ToArray());
+        }
         if (args.Length > 0 && args[0] == "micro")
         {
             int microCpu = 0;

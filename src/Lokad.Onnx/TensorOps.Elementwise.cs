@@ -627,6 +627,135 @@ where T : unmanaged
         }
     }
 
+    /// <summary>
+    /// E72 twin: two-way unrolled BiasGelu pointer loop. Same per-lane arithmetic
+    /// and order as BiasGeluSpanFloatPtr, two independent vectors per iteration
+    /// for instruction-level parallelism. Test-reachable only; no dispatch yet.
+    /// </summary>
+    internal static unsafe void BiasGeluSpanFloatPtr2x(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
+    {
+        int w = Vector<float>.Count;
+        var half = new Vector<float>(0.5f);
+        var one = Vector<float>.One;
+        var scale = new Vector<float>(0.7071067811865476f);
+        int M = bias.Length;
+        if (M <= 1 || M % w != 0 || xs.Length != ys.Length)
+        {
+            int soff = 0;
+            for (int i = 0; i < xs.Length; i++)
+            {
+                ys[i] = ScalarGelu(xs[i] + bias[soff]);
+                soff++;
+                if (soff >= M) soff = 0;
+            }
+            return;
+        }
+        fixed (float* px = xs, py = ys, pb = bias)
+        {
+            var xvec = (Vector<float>*)px;
+            var yvec = (Vector<float>*)py;
+            var bvec = (Vector<float>*)pb;
+            int nvec = xs.Length / w;
+            int bvecs = M / w;
+            int boff = 0;
+            int pairs = nvec / 2;
+            for (int i = 0; i < pairs; i++)
+            {
+                int b0 = boff;
+                int b1 = b0 + 1;
+                if (b1 >= bvecs) b1 = 0;
+                var tv0 = xvec[2 * i] + bvec[b0];
+                var tv1 = xvec[2 * i + 1] + bvec[b1];
+                yvec[2 * i] = half * tv0 * (one + ErfVector(scale * tv0));
+                yvec[2 * i + 1] = half * tv1 * (one + ErfVector(scale * tv1));
+                boff = b1 + 1;
+                if (boff >= bvecs) boff = 0;
+            }
+            for (int i = pairs * 2; i < nvec; i++)
+            {
+                var tv = xvec[i] + bvec[boff];
+                yvec[i] = half * tv * (one + ErfVector(scale * tv));
+                if (++boff >= bvecs) boff = 0;
+            }
+            int tail = nvec * w;
+            int toff = tail % M;
+            for (int i = tail; i < xs.Length; i++)
+            {
+                ys[i] = ScalarGelu(xs[i] + bias[toff]);
+                toff++;
+                if (toff >= M) toff = 0;
+            }
+        }
+    }
+
+    /// <summary>
+    /// E72 twin: four-way unrolled BiasGelu pointer loop. Same per-lane arithmetic
+    /// and order as BiasGeluSpanFloatPtr, four independent vectors per iteration.
+    /// Test-reachable only; no dispatch yet.
+    /// </summary>
+    internal static unsafe void BiasGeluSpanFloatPtr4x(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
+    {
+        int w = Vector<float>.Count;
+        var half = new Vector<float>(0.5f);
+        var one = Vector<float>.One;
+        var scale = new Vector<float>(0.7071067811865476f);
+        int M = bias.Length;
+        if (M <= 1 || M % w != 0 || xs.Length != ys.Length)
+        {
+            int soff = 0;
+            for (int i = 0; i < xs.Length; i++)
+            {
+                ys[i] = ScalarGelu(xs[i] + bias[soff]);
+                soff++;
+                if (soff >= M) soff = 0;
+            }
+            return;
+        }
+        fixed (float* px = xs, py = ys, pb = bias)
+        {
+            var xvec = (Vector<float>*)px;
+            var yvec = (Vector<float>*)py;
+            var bvec = (Vector<float>*)pb;
+            int nvec = xs.Length / w;
+            int bvecs = M / w;
+            int boff = 0;
+            int quads = nvec / 4;
+            for (int i = 0; i < quads; i++)
+            {
+                int b0 = boff;
+                int b1 = b0 + 1;
+                if (b1 >= bvecs) b1 = 0;
+                int b2 = b1 + 1;
+                if (b2 >= bvecs) b2 = 0;
+                int b3 = b2 + 1;
+                if (b3 >= bvecs) b3 = 0;
+                var tv0 = xvec[4 * i] + bvec[b0];
+                var tv1 = xvec[4 * i + 1] + bvec[b1];
+                var tv2 = xvec[4 * i + 2] + bvec[b2];
+                var tv3 = xvec[4 * i + 3] + bvec[b3];
+                yvec[4 * i] = half * tv0 * (one + ErfVector(scale * tv0));
+                yvec[4 * i + 1] = half * tv1 * (one + ErfVector(scale * tv1));
+                yvec[4 * i + 2] = half * tv2 * (one + ErfVector(scale * tv2));
+                yvec[4 * i + 3] = half * tv3 * (one + ErfVector(scale * tv3));
+                boff = b3 + 1;
+                if (boff >= bvecs) boff = 0;
+            }
+            for (int i = quads * 4; i < nvec; i++)
+            {
+                var tv = xvec[i] + bvec[boff];
+                yvec[i] = half * tv * (one + ErfVector(scale * tv));
+                if (++boff >= bvecs) boff = 0;
+            }
+            int tail = nvec * w;
+            int toff = tail % M;
+            for (int i = tail; i < xs.Length; i++)
+            {
+                ys[i] = ScalarGelu(xs[i] + bias[toff]);
+                toff++;
+                if (toff >= M) toff = 0;
+            }
+        }
+    }
     internal static void BiasGeluSpanFloat(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
     {
         int w = Vector<float>.Count;
