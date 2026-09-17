@@ -9,6 +9,7 @@ param([int]$Iters = 33, [int]$Reps = 4, [int]$CooldownSeconds = 300,
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
+. (Join-Path $PSScriptRoot "proc-acct.ps1")
 # Tiering discipline (E02 root cause 2026-09-17): tiered JIT promotes and
 # OSRs hot methods mid-series (deterministic 2-3x spikes, e.g. E5-8 iter 6
 # on any box however quiet) and steady Tier0/OSR code runs ~1.75x slower
@@ -32,10 +33,16 @@ Log ("lane=start mode=" + ($DryRun ? "dryrun" : "release") + " iters=" + $Iters 
 Log ("lane-pid=" + $PID + " start=" + $laneStart.ToString("o"))
 # L0 worktree (local objects only, never fetch) with shared model assets.
 $l0root = Join-Path $root "artifacts/worktrees/l0"
-if (!(Test-Path (Join-Path $l0root "Lokad.Onnx.slnx"))) {
-  & git worktree add --detach $l0root $L0Ref 2>&1 | Out-File (Join-Path $runDir "worktree.log") -Encoding utf8
+$l0want = (& git rev-parse $L0Ref 2>&1 | Out-String).Trim()
+if ($l0want -notmatch "^[0-9a-f]{40}$") { Log ("ABORT: cannot resolve L0Ref " + $L0Ref); exit 1 }
+$l0have = ""
+if (Test-Path (Join-Path $l0root "Lokad.Onnx.slnx")) { $l0have = (& git -C $l0root rev-parse HEAD 2>&1 | Out-String).Trim() }
+if ($l0have -ne $l0want) {
+  if ($l0have -ne "") { Log ("stale L0 worktree " + $l0have + ", rebuilding at " + $l0want); & git worktree remove --force $l0root 2>&1 | Out-File (Join-Path $runDir "worktree.log") -Encoding utf8 }
+  & git worktree add --detach $l0root $l0want 2>&1 | Out-File (Join-Path $runDir "worktree.log") -Append -Encoding utf8
   if ($LASTEXITCODE -ne 0) { Log "ABORT: L0 worktree failed, see worktree.log"; exit 1 }
 }
+Log ("L0-rev-verified=" + $l0want)
 $l0models = Join-Path $l0root "models"
 if (!(Test-Path $l0models)) {
   if ($IsLinux) { & ln -s (Join-Path $root "models") $l0models 2>&1 | Out-File (Join-Path $runDir "worktree.log") -Append -Encoding utf8 }
@@ -78,8 +85,11 @@ Pop-Location
 Log ("runtimes=" + ((& dotnet --list-runtimes 2>&1 | Select-String "NETCore.App 10" | ForEach-Object { $_.Line.Trim() }) -join " | "))
 Log ("env=" + (($env:DOTNET_EnableHWIntrinsic, $env:DOTNET_TieredCompilation, $env:DOTNET_JitOSR, $env:LOKAD_ONNX_GELU_TANH, $env:LOKAD_ONNX_SOFTMAX_SPAN) -join ","))
 $ortpkg = (Select-String -Path tests/Lokad.Onnx.Bench/Lokad.Onnx.Bench.csproj -Pattern 'OnnxRuntime.*Version="([^"]+)"').Matches[0].Groups[1].Value
-$ortdll = Get-ChildItem tests/Lokad.Onnx.Bench/bin/Release/net10.0/runtimes/*/native/* -ErrorAction SilentlyContinue | Where-Object { $_.Name -match "onnxruntime" } | Select-Object -First 1
-Log ("ort-pkg=" + $ortpkg + " ort-dll-sha=" + ($ortdll ? (Sha $ortdll.FullName) : "missing"))
+$ortNativeName = $(if ($IsLinux) { "libonnxruntime.so" } else { "onnxruntime.dll" })
+$ortdll = Get-ChildItem tests/Lokad.Onnx.Bench/bin/Release/net10.0/runtimes/*/native/* -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $ortNativeName } | Select-Object -First 1
+if (-not $ortdll) { Log ("ABORT: loaded ORT native module missing (expected " + $ortNativeName + ")"); exit 1 }
+$ortArch = $(if ($IsLinux) { (& uname -m 2>$null | Out-String).Trim() } else { $env:PROCESSOR_ARCHITECTURE })
+Log ("ort-pkg=" + $ortpkg + " ort-native=" + $ortdll.FullName + " ort-native-sha=" + (Sha $ortdll.FullName) + " ort-arch=" + $ortArch)
 $selfAff = "unreadable"
 try { $selfAff = (Get-Process -Id $PID).ProcessorAffinity } catch { $selfAff = "unreadable:" + $_.Exception.Message }
 Log ("affinity-requested=" + $Cpu + " self-affinity=" + $selfAff)
@@ -87,29 +97,8 @@ foreach ($m in @("models/multilingual-e5-small/model.onnx", "models/dinov3-vits1
   Log ("asset " + $m + " sha=" + (Sha $m))
 }
 # Foreign-process snapshots: deltas and newcomers abort release evidence.
-function Convert-PsCpuTime($t) {
-  # ps TIMES cumulative [[dd-]hh:]mm:ss -> seconds. Matches TotalProcessorTime semantics.
-  $days = 0; $rest = $t.Trim()
-  if ($rest -match "^(\d+)-(.+)$") { $days = [int]$Matches[1]; $rest = $Matches[2] }
-  $q = $rest -split ":"
-  if ($q.Count -ne 3) { return 0.0 }
-  return ([double]$days * 86400.0) + ([double]$q[0] * 3600.0) + ([double]$q[1] * 60.0) + ([double]$q[2])
-}
-function Get-ProcTable {
-  # Rows with Id, Name, PPid, CPUSec (cumulative CPU seconds) on either OS.
-  if ($IsLinux) {
-    foreach ($line in (& ps -eo pid=,ppid=,times=,comm= --no-headers 2>$null)) {
-      $p = $line.Trim() -split "\s+", 4
-      if ($p.Count -lt 4) { continue }
-      [pscustomobject]@{ Id = [int]$p[0]; Name = $p[3]; PPid = [int]$p[1]; CPUSec = (Convert-PsCpuTime $p[2]) }
-    }
-  } else {
-    foreach ($pr in (Get-CimInstance Win32_Process)) {
-      $cpu = ([double]$pr.KernelModeTime + [double]$pr.UserModeTime) / 10000000.0
-      [pscustomobject]@{ Id = $pr.ProcessId; Name = $pr.Name; PPid = $pr.ParentProcessId; CPUSec = $cpu }
-    }
-  }
-}
+
+
 function Snap($phase) {
   if ($IsLinux) {
     Get-ProcTable | Where-Object { $_.Name -match "^(dotnet|testhost|python3?)$" } |
@@ -140,18 +129,14 @@ function Snap($phase) {
 $ForeignAbort = 0.10
 $LogicalCpus = $(if ($IsLinux) { [int]((& nproc 2>$null | Out-String).Trim()) } else { (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors })
 Log ("foreign-abort=" + $ForeignAbort + " logical-cpus=" + $LogicalCpus)
-$script:prevProcSnap = $null
-function Test-LaneOwned($id, $map) {
-  $seen = @{}
-  $cur = $id
-  while ($cur -gt 0 -and !$seen.ContainsKey($cur)) {
-    if ($cur -eq $PID) { return $true }
-    $seen[$cur] = 1
-    if (!$map.ContainsKey($cur)) { return $false }
-    $cur = $map[$cur][1]
-  }
-  return $false
+if ($IsLinux) {
+  Log ("cpu-model=" + ((& lscpu 2>$null | Select-String "Model name" | ForEach-Object { $_.Line.Trim() }) -join " | "))
+  Log ("cpu-siblings=" + (Get-Content ("/sys/devices/system/cpu/cpu" + $Cpu + "/topology/thread_siblings_list") -ErrorAction SilentlyContinue))
+} else {
+  Log ("cpu-model=" + ($env:PROCESSOR_IDENTIFIER) + " arch=" + ($env:PROCESSOR_ARCHITECTURE))
 }
+$script:prevProcSnap = $null
+
 function SnapForeign($phase) {
   $map = @{}
   $rows = @()
@@ -176,6 +161,7 @@ function SnapForeign($phase) {
       if ($d -gt 0) { $foreign += $d }
     } else { $foreign += $c; $new++ }
   }
+  if ($phase -match "(^pre$|-pre$)") { $script:ProcErrAtPre = $script:ProcParseErrors }
   $frac = 0.0
   if ($wall -gt 0 -and $LogicalCpus -gt 0) { $frac = $foreign / ($wall * $LogicalCpus) }
   Log ("foreign-cpu " + $phase + " frac=" + $frac.ToString("F2") + " new=" + $new)
@@ -209,9 +195,11 @@ for ($r = 1; $r -le $Reps; $r++) {
   }
   Snap ("rep" + $r + "-post")
   $foreignFrac = SnapForeign ("rep" + $r + "-post")
-  if ($foreignFrac -ge 0 -and $foreignFrac -gt $ForeignAbort) {
-    if ($DryRun) { Log ("WATERMARK: foreign CPU " + $foreignFrac.ToString("F2") + " during rep " + $r + " would abort release evidence") }
-    else { Log ("ABORT: foreign CPU " + $foreignFrac.ToString("F2") + " during rep " + $r + " (sustained box-wide pressure)"); exit 1 }
+  $parseBad = ($script:ProcParseErrors -gt $script:ProcErrAtPre)
+  if (($foreignFrac -ge 0 -and $foreignFrac -gt $ForeignAbort) -or $parseBad) {
+    $why = $(if ($parseBad) { "unparseable process accounting (errors=" + $script:ProcParseErrors + ")" } else { "foreign CPU " + $foreignFrac.ToString("F2") + " (sustained box-wide pressure)" })
+    if ($DryRun) { Log ("WATERMARK: " + $why + " during rep " + $r + " would abort release evidence") }
+    else { Log ("ABORT: " + $why + " during rep " + $r); exit 1 }
   }
 }
 Snap "post"
