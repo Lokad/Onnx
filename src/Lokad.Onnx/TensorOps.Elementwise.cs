@@ -921,7 +921,7 @@ where T : unmanaged
             int block = 1;
             for (int dimension = axis; dimension < dims.Length; dimension++) block *= dims[dimension];
             int outer = block == 0 ? 0 : (int)(input.Length / block);
-            SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, block, options.UseSimd);
+            SoftmaxContiguousFloatRoute(inputSpan, outputSpan, outer, block, options.UseSimd);
             return;
         }
         int outerCount = 1;
@@ -932,7 +932,7 @@ where T : unmanaged
         if (inner == 1)
         {
             int outer = dimLen == 0 ? 0 : (int)(input.Length / dimLen);
-            SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, dimLen, options.UseSimd);
+            SoftmaxContiguousFloatRoute(inputSpan, outputSpan, outer, dimLen, options.UseSimd);
             return;
         }
         for (int o = 0; o < outerCount; o++)
@@ -967,6 +967,21 @@ where T : unmanaged
     /// shape: fixed-mode repeats are bit-identical run to run. Scalar (non-SIMD) mode
     /// is bitwise identical to the legacy kernel.
     /// </summary>
+    /// <summary>
+    /// Ablation router: the default span kernel, or the preserved legacy kernel
+    /// when the measurement-only ForceLegacySoftmax switch is set (which also
+    /// records the LegacySoftmaxUsed latch).
+    /// </summary>
+    static void SoftmaxContiguousFloatRoute(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
+    {
+        if (AblationSwitches.ForceLegacySoftmax)
+        {
+            AblationSwitches.LegacySoftmaxUsed = true;
+            SoftmaxContiguousFloat(inputSpan, outputSpan, outer, block, useSimd);
+        }
+        else SoftmaxContiguousFloatSpan(inputSpan, outputSpan, outer, block, useSimd);
+    }
+
     internal static void SoftmaxContiguousFloatSpan(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
     {
         for (int outerIndex = 0; outerIndex < outer; outerIndex++)
@@ -1175,3 +1190,4 @@ where T : unmanaged
         return x.Apply(MathOps.Erf);
     }
 }
+

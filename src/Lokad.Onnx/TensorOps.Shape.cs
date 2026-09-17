@@ -422,7 +422,8 @@ where T : unmanaged
         // batch-and-head position, tiled directly instead of odometer-stepped.
         // Each output is written once from its source element, so this is
         // bit-identical to the generic path by construction.
-        if (rank == 4 && perm[0] == 0 && perm[1] == 1 && perm[2] == 3 && perm[3] == 2 && HasStandardStrides(xd))
+        if (AblationSwitches.ForceLegacyTransposeFace && rank == 4 && perm[0] == 0 && perm[1] == 1 && perm[2] == 3 && perm[3] == 2 && HasStandardStrides(xd)) AblationSwitches.LegacyTransposeFaceUsed = true;
+        if (!AblationSwitches.ForceLegacyTransposeFace && rank == 4 && perm[0] == 0 && perm[1] == 1 && perm[2] == 3 && perm[3] == 2 && HasStandardStrides(xd))
         {
             int dimB = xd.Dimensions[0], dimH = xd.Dimensions[1], dimS = xd.Dimensions[2], dimD = xd.Dimensions[3];
             const int Tile = 8;
