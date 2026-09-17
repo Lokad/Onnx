@@ -28,7 +28,10 @@ public class GraphBufferReuseTests
         pool.Rent<float>(5);
         Assert.Equal(2, pool.AllocatedNew);
         for (int i = 0; i < 40; i++) pool.Return(new float[8]);
-        Assert.Equal(33, pool.Returned);
+        Assert.Equal(41, pool.Returned);
+        Assert.Equal(0, pool.Dropped);
+        for (int i = 0; i < 480; i++) pool.Return(new float[8]);
+        Assert.Equal(513, pool.Returned);
         Assert.Equal(8, pool.Dropped);
     }
 
@@ -559,12 +562,12 @@ public class GraphBufferReuseTests
     }
 
     [Fact]
-    public void ResetPinAccounting_LiveViewPinsItsBase()
+    public void ResetPinAccounting_IntermediateViewDoesNotProtectBase()
     {
-        // A base whose Expand view is still bound at Reset pins: the sweep
-        // returns nothing for it and counts Pinned. The view itself never
-        // owns storage so it is skipped. The hand-placed view mirrors the
-        // encoder residual pattern (result live while its base is shared).
+        // Two-phase contract (W2): liveness among intermediates never
+        // protects storage -- only escaping roots do. The hand-placed view
+        // is itself reset-owned, so the base returns instead of pinning.
+        // The view leaves no record; the base counts ReturnedAtReset.
         var graph = new ComputationalGraph();
         graph.Metadata["Name"] = "pin-view-test";
         graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f, 4f });
@@ -597,8 +600,8 @@ public class GraphBufferReuseTests
         graph.IntermediateOutputs["w"] = new DenseTensor<float>(new Memory<float>(window.Array, 1, 3), new[] { 3 });
         graph.Reset();
         var pin = graph.PoolPinSnapshot().Single(s => s.Type == "Single" && s.Length == 4);
-        Assert.Equal(1, pin.Pinned);
-        Assert.Equal(0, pin.ReturnedAtReset);
+        Assert.Equal(0, pin.Pinned);
+        Assert.Equal(1, pin.ReturnedAtReset);
     }
 
     [Fact]
@@ -632,12 +635,11 @@ public class GraphBufferReuseTests
     [Fact]
     public void ResetPinDetails_ContextPathMatchesPublicPath()
     {
-        // L5 reproduction on both execution paths with a real engine view:
-        // only dead FINAL-node outputs escape the release passes (the early
-        // return skips them), so the dead trailing Expand view is still
-        // bound at Reset and pins its rented base exactly once with root
-        // reason Intermediate. Consumed views die guard-free mid-run and
-        // dead non-final branches are pruned before they can pin anything.
+        // Two-phase agreement on both execution paths with a real engine
+        // view: the dead trailing Expand view survives to Reset (final-node
+        // outputs escape the release passes) but, being reset-owned itself,
+        // does not protect its base -- the base returns on both paths with
+        // identical decisions. Consumed views die guard-free mid-run.
         foreach (bool useContext in new[] { false, true })
         {
             var graph = new ComputationalGraph();
@@ -675,14 +677,183 @@ public class GraphBufferReuseTests
             AssertBitwise(row.Concat(row).Concat(row).ToArray(), runner.Outputs["z"]);
             runner.Reset();
             var details = runner.PoolPinDetailSnapshot();
-            var pinned = details.Where(r => r.Pinned).ToArray();
-            Assert.Single(pinned);
-            Assert.Equal("Intermediate", pinned[0].RootReason);
-            Assert.Equal("Single", pinned[0].Type);
-            Assert.Equal(4, pinned[0].Length);
+            Assert.Empty(details.Where(r => r.Pinned));
+            var ret = details.Where(r => !r.Pinned).ToArray();
+            Assert.Single(ret);
+            Assert.Equal("Returned", ret[0].RootReason);
             var totals = runner.PoolPinSnapshot().Single(s => s.Type == "Single" && s.Length == 4);
-            Assert.Equal(1, totals.Pinned);
+            Assert.Equal(0, totals.Pinned);
+            Assert.Equal(1, totals.ReturnedAtReset);
         }
+    }
+
+    [Fact]
+    public void ResetOutputViewProtectsItsBase()
+    {
+        // A graph output that views rented storage pins its base with root
+        // reason Output: outputs are never recycled, so their storage must
+        // never re-enter circulation while they reference it. The output
+        // stays valid across Reset and reruns; pins accumulate deterministi-
+        // cally one per run.
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "pin-output-test";
+        graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f, 4f });
+        graph.Inputs["w"] = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f, 40f });
+        graph.Inputs["u"] = DenseTensor<float>.OfValues(new float[] { 2f, 2f, 2f, 2f });
+        graph.Inputs["u2"] = DenseTensor<float>.OfValues(new float[] { 3f, 3f, 3f, 3f });
+        graph.Initializers["eshape"] = DenseTensor<long>.OfValues(new long[] { 3, 4 });
+        graph.Outputs["z"] = DenseTensor<float>.OfShape(4);
+        graph.Outputs["vout"] = DenseTensor<float>.OfShape(3, 4);
+        graph.Nodes.Add(new Node { Name = "add", Op = OpType.Add, Inputs = new[] { "x", "w" }, Outputs = new[] { "t" } });
+        graph.Nodes.Add(new Node { Name = "expand", Op = OpType.Expand, Inputs = new[] { "t", "eshape" }, Outputs = new[] { "vout" } });
+        graph.Nodes.Add(new Node { Name = "mul", Op = OpType.Mul, Inputs = new[] { "u", "u2" }, Outputs = new[] { "s" } });
+        graph.Nodes.Add(new Node { Name = "add2", Op = OpType.Add, Inputs = new[] { "s", "w" }, Outputs = new[] { "z" } });
+        graph.IntermediateOutputs["t"] = null;
+        graph.IntermediateOutputs["s"] = null;
+        graph.RefreshLifetimeAnalysis();
+        var inputs = new System.Collections.Generic.Dictionary<string, ITensor>
+        {
+            { "x", graph.Inputs["x"] },
+            { "w", graph.Inputs["w"] },
+            { "u", graph.Inputs["u"] },
+            { "u2", graph.Inputs["u2"] },
+        };
+        var row = new float[] { 11f, 22f, 33f, 44f };
+        Assert.True(graph.Execute(inputs, true));
+        AssertBitwise(new float[] { 16f, 26f, 36f, 46f }, graph.Outputs["z"]);
+        AssertBitwise(row.Concat(row).Concat(row).ToArray(), graph.Outputs["vout"]);
+        var held = (Tensor<float>)graph.Outputs["vout"];
+        graph.Reset();
+        var pinned = graph.PoolPinDetailSnapshot().Where(r => r.Pinned).ToArray();
+        Assert.Single(pinned);
+        Assert.Equal("Output", pinned[0].RootReason);
+        AssertBitwise(row.Concat(row).Concat(row).ToArray(), held);
+        Assert.True(graph.Execute(inputs, true));
+        AssertBitwise(row.Concat(row).Concat(row).ToArray(), graph.Outputs["vout"]);
+        graph.Reset();
+        Assert.Equal(2, graph.PoolPinSnapshot().Single(s => s.Type == "Single" && s.Length == 4).Pinned);
+    }
+
+    [Fact]
+    public void ResetDuplicateBindingsReturnOnceRegardlessOfOrder()
+    {
+        // The same rented array under two intermediate names returns exactly
+        // once per sweep (the pool would throw on a double return), and the
+        // per-decision records match under both binding orders. Reruns reuse
+        // the storage and stay correct.
+        foreach (bool reversed in new[] { false, true })
+        {
+            var graph = new ComputationalGraph();
+            graph.Metadata["Name"] = "pin-dup-test";
+            graph.Inputs["x"] = DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f, 4f });
+            graph.Inputs["w"] = DenseTensor<float>.OfValues(new float[] { 10f, 20f, 30f, 40f });
+            graph.Inputs["u"] = DenseTensor<float>.OfValues(new float[] { 2f, 2f, 2f, 2f });
+            graph.Inputs["u2"] = DenseTensor<float>.OfValues(new float[] { 3f, 3f, 3f, 3f });
+            graph.Initializers["eshape"] = DenseTensor<long>.OfValues(new long[] { 3, 4 });
+            graph.Outputs["z"] = DenseTensor<float>.OfShape(3, 4);
+            graph.Nodes.Add(new Node { Name = "add", Op = OpType.Add, Inputs = new[] { "x", "w" }, Outputs = new[] { "t" } });
+            graph.Nodes.Add(new Node { Name = "expand", Op = OpType.Expand, Inputs = new[] { "t", "eshape" }, Outputs = new[] { "v" } });
+            graph.Nodes.Add(new Node { Name = "mul", Op = OpType.Mul, Inputs = new[] { "u", "u2" }, Outputs = new[] { "s" } });
+            graph.Nodes.Add(new Node { Name = "add2", Op = OpType.Add, Inputs = new[] { "v", "s" }, Outputs = new[] { "z" } });
+            graph.IntermediateOutputs["t"] = null;
+            graph.IntermediateOutputs["v"] = null;
+            graph.IntermediateOutputs["s"] = null;
+            graph.RefreshLifetimeAnalysis();
+            var inputs = new System.Collections.Generic.Dictionary<string, ITensor>
+            {
+                { "x", graph.Inputs["x"] },
+                { "w", graph.Inputs["w"] },
+                { "u", graph.Inputs["u"] },
+                { "u2", graph.Inputs["u2"] },
+            };
+            var row = new float[] { 17f, 28f, 39f, 50f };
+            Assert.True(graph.Execute(inputs, true));
+            AssertBitwise(row.Concat(row).Concat(row).ToArray(), graph.Outputs["z"]);
+            var t = graph.IntermediateOutputs["t"];
+            Assert.NotNull(t);
+            if (reversed)
+            {
+                graph.IntermediateOutputs.Remove("t");
+                graph.IntermediateOutputs["dup"] = t;
+                graph.IntermediateOutputs["t"] = t;
+            }
+            else
+            {
+                graph.IntermediateOutputs["dup"] = t;
+            }
+            graph.Reset();
+            var details = graph.PoolPinDetailSnapshot();
+            var rets = details.Where(r => !r.Pinned).ToArray();
+            Assert.Equal(2, rets.Length);
+            Assert.Equal(rets[0].StorageId, rets[1].StorageId);
+            Assert.Empty(details.Where(r => r.Pinned));
+            Assert.True(graph.Execute(inputs, true));
+            AssertBitwise(row.Concat(row).Concat(row).ToArray(), graph.Outputs["z"]);
+        }
+    }
+
+    [Fact]
+    public void ResetAfterFailedExecuteRecoversCleanly()
+    {
+        // A failed run must not corrupt pool circulation: Reset after the
+        // failure is safe and the next good run is correct and reuses.
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "pin-fail-test";
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(2);
+        graph.Inputs["w"] = DenseTensor<float>.OfValues(new float[] { 10f, 20f });
+        graph.Outputs["y"] = DenseTensor<float>.OfShape(2);
+        graph.Nodes.Add(new Node { Name = "add", Op = OpType.Add, Inputs = new[] { "x", "w" }, Outputs = new[] { "t" } });
+        graph.Nodes.Add(new Node { Name = "relu", Op = OpType.Relu, Inputs = new[] { "t" }, Outputs = new[] { "y" } });
+        graph.RefreshLifetimeAnalysis();
+        var bad = new System.Collections.Generic.Dictionary<string, ITensor>
+        {
+            { "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f, 3f }) },
+            { "w", graph.Inputs["w"] },
+        };
+        Assert.False(graph.Execute(bad, true));
+        graph.Reset();
+        var good = new System.Collections.Generic.Dictionary<string, ITensor>
+        {
+            { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) },
+            { "w", graph.Inputs["w"] },
+        };
+        Assert.True(graph.Execute(good, true));
+        Assert.Equal(new float[] { 9f, 22f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+        graph.Reset();
+        Assert.True(graph.Execute(good, true));
+        Assert.Equal(new float[] { 9f, 22f }, ((Tensor<float>)graph.Outputs["y"]).ToArray());
+    }
+
+    [Fact]
+    public void ConcurrentContextsDoNotRecycleEachOthersLiveBuffers()
+    {
+        // Two contexts share one pool but own their bindings: resetting one
+        // must leave the other's held outputs valid and its reruns correct.
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "pin-ctx-test";
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(2);
+        graph.Initializers["w"] = DenseTensor<float>.OfValues(new float[] { 10f, 20f });
+        graph.Initializers["u"] = DenseTensor<float>.OfValues(new float[] { 2f, 3f });
+        graph.Outputs["y"] = DenseTensor<float>.OfShape(2);
+        graph.Nodes.Add(new Node { Name = "add", Op = OpType.Add, Inputs = new[] { "x", "w" }, Outputs = new[] { "t" } });
+        graph.Nodes.Add(new Node { Name = "mul", Op = OpType.Mul, Inputs = new[] { "t", "u" }, Outputs = new[] { "y" } });
+        graph.IntermediateOutputs["t"] = null;
+        graph.RefreshLifetimeAnalysis();
+        var ctx1 = graph.CreateExecution(null);
+        var ctx2 = graph.CreateExecution(null);
+        var first = new System.Collections.Generic.Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }) } };
+        Assert.True(ctx1.Execute(first, true));
+        var held = ((Tensor<float>)ctx1.Outputs["y"]).ToArray();
+        Assert.Equal(new float[] { 22f, 66f }, held);
+        var second = new System.Collections.Generic.Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { 3f, 4f }) } };
+        Assert.True(ctx2.Execute(second, true));
+        ctx2.Reset();
+        Assert.True(ctx2.Execute(second, true));
+        ctx2.Reset();
+        Assert.Equal(new float[] { 22f, 66f }, held);
+        Assert.Equal(new float[] { 22f, 66f }, ((Tensor<float>)ctx1.Outputs["y"]).ToArray());
+        Assert.True(ctx1.Execute(second, true));
+        Assert.Equal(new float[] { 26f, 72f }, ((Tensor<float>)ctx1.Outputs["y"]).ToArray());
     }
 
 [Fact]

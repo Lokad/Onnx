@@ -1522,34 +1522,106 @@ public class ComputationalGraph
 
     /// <summary>Returns run-end live intermediates to the shared pool before Reset drops them.</summary>
     /// <remarks>Intermediates still checked out when the run ends can never re-enter circulation otherwise: the final node skips the output-release pass (nothing later rents), so the next run rents them fresh -- measured 123/run (~9.7MB) on the encoder with zero cap drops. Only pool-owned storage with no live aliases recycles, mirroring the TryReleaseValue guards without touching the live-payload gauge (the Reset body below accounts uniformly); graph outputs, caller inputs, initializer storage, and views keep theirs. Bindings still null exactly as before.</remarks>
+    /// <summary>Returns run-end live intermediates to the shared pool before Reset drops them.</summary>
+    /// <remarks>Two-phase (W2): phase one groups owned run-end intermediates by
+    /// backing array and collects protected roots (graph outputs, caller inputs,
+    /// initializers, attribute tensors); phase two drops the entire reset-owned
+    /// intermediate binding set, returning each unprotected array exactly once
+    /// and pinning protected ones with the protecting reason. Intermediates are
+    /// all dead at Reset by contract (the Reset body nulls every one of them,
+    /// and holding them across Reset is unsupported), so liveness among
+    /// intermediates never protects storage -- only escaping roots do. The
+    /// live-payload gauge is untouched here exactly as before: the Reset body
+    /// accounts uniformly afterwards. Any unknown-kind tensor anywhere live
+    /// forces legacy-conservative pin-everything, matching the old per-binding
+    /// outcome without its per-binding probes.</remarks>
     void ReleaseRunEndIntermediates()
     {
-        var returned = new HashSet<Array>();
+        if (HasLiveUnknown())
+        {
+            PinAllOwned("UnknownKind");
+            return;
+        }
+        var groups = new Dictionary<Array, (Type ElementType, List<string> Names)>();
         foreach (var name in IntermediateOutputs.Keys)
         {
             if (Outputs.ContainsKey(name)) continue;
             var tensor = IntermediateOutputs[name];
             if (tensor is null) continue;
             var arr = (tensor as TensorBase)?.OwnedBufferArray();
-            if (arr is null || returned.Contains(arr)) continue;
-            if (!SharedPool.IsOwned(arr)) continue;
-            EnsureLiveIndexSeeded();
-            RemoveLiveRefs(tensor);
+            if (arr is null || !SharedPool.IsOwned(arr)) continue;
             if (arr.GetType().GetElementType() is not Type elementType) continue;
+            if (!groups.TryGetValue(arr, out var group))
+            {
+                group = (elementType, new List<string>());
+                groups[arr] = group;
+            }
+            group.Names.Add(name);
+        }
+        foreach (var kv in groups)
+        {
+            var arr = kv.Key;
             long storageId = SharedPool.StorageId(arr);
-            if (!HasLiveAliasIndexed(arr))
+            string? protector = FindProtectedRoot(arr);
+            var (elementType, names) = kv.Value;
+            if (protector is null)
             {
                 SharedPool.Return(arr);
-                SharedPool.BumpPin(elementType, arr.Length, false, storageId, "Returned");
-                returned.Add(arr);
-                IntermediateOutputs[name] = null;
+                foreach (var name in names)
+                {
+                    SharedPool.BumpPin(elementType, arr.Length, false, storageId, "Returned");
+                    IntermediateOutputs[name] = null;
+                }
             }
             else
             {
-                SharedPool.BumpPin(elementType, arr.Length, true, storageId, PinRootReason(arr, tensor));
-                AddLiveRefs(tensor);
+                foreach (var name in names)
+                    SharedPool.BumpPin(elementType, arr.Length, true, storageId, protector);
             }
         }
+    }
+
+    /// <summary>Whether any live tensor has an unresolvable alias kind, forcing conservative pin-everything.</summary>
+    bool HasLiveUnknown()
+    {
+        if (liveUnknownTensors is not null && liveUnknownTensors.Count > 0) return true;
+        foreach (var kv in IntermediateOutputs) if (IsUnknownKind(kv.Value)) return true;
+        return false;
+    }
+
+    /// <summary>Whether a tensor needs the conservative unknown-kind path, mirroring AddLiveRefs classification.</summary>
+    static bool IsUnknownKind(ITensor? tensor)
+    {
+        if (tensor is null) return false;
+        if (TryCollectSingleRoot(tensor, out _)) return false;
+        var roots = new HashSet<Array>();
+        return CollectAliasRoot(tensor, roots) == false;
+    }
+
+    /// <summary>Recycles nothing, pinning every owned run-end buffer with one reason (unknown-kind fallback).</summary>
+    void PinAllOwned(string reason)
+    {
+        foreach (var name in IntermediateOutputs.Keys)
+        {
+            if (Outputs.ContainsKey(name)) continue;
+            var tensor = IntermediateOutputs[name];
+            if (tensor is null) continue;
+            var arr = (tensor as TensorBase)?.OwnedBufferArray();
+            if (arr is null || !SharedPool.IsOwned(arr)) continue;
+            if (arr.GetType().GetElementType() is not Type elementType) continue;
+            SharedPool.BumpPin(elementType, arr.Length, true, SharedPool.StorageId(arr), reason);
+        }
+    }
+
+    /// <summary>Names the escaping root class protecting an array, or null when no root references it.</summary>
+    /// <remarks>Outputs first: an output reference is the most actionable retention reason.</remarks>
+    string? FindProtectedRoot(Array candidate)
+    {
+        foreach (var kv in Outputs) if (SharesPooledStorage(candidate, kv.Value)) return "Output";
+        foreach (var kv in Inputs) if (SharesPooledStorage(candidate, kv.Value)) return "Input";
+        foreach (var kv in Initializers) if (SharesPooledStorage(candidate, kv.Value)) return "Initializer";
+        foreach (var attr in EnumerateAttributeTensors()) if (SharesPooledStorage(candidate, attr)) return "Static";
+        return null;
     }
 
     void ReleaseDeadTensors(Node node, int index, ref List<string>? pending)
@@ -1654,20 +1726,6 @@ public class ComputationalGraph
     void NoteLivePeak()
     {
         if (livePayloadBytes > LastPeakLiveBytes) LastPeakLiveBytes = livePayloadBytes;
-    }
-
-    /// <summary>Names the protecting root class for a pin decision: the first live sharer in a fixed order.</summary>
-    /// <remarks>Diagnostic only; runs solely on the rare pin path, never per rent.</remarks>
-    string PinRootReason(Array candidate, ITensor? self)
-    {
-        if (liveUnknownTensors is not null && liveUnknownTensors.Count > 0) return "UnknownKind";
-        var statics = EnsurePoolRoots();
-        if (statics is not null && statics.Contains(candidate)) return "Static";
-        foreach (var kv in Inputs) if (!ReferenceEquals(kv.Value, self) && SharesPooledStorage(candidate, kv.Value)) return "Input";
-        foreach (var kv in Initializers) if (!ReferenceEquals(kv.Value, self) && SharesPooledStorage(candidate, kv.Value)) return "Initializer";
-        foreach (var kv in Outputs) if (!ReferenceEquals(kv.Value, self) && SharesPooledStorage(candidate, kv.Value)) return "Output";
-        foreach (var kv in IntermediateOutputs) if (!ReferenceEquals(kv.Value, self) && SharesPooledStorage(candidate, kv.Value)) return "Intermediate";
-        return "Untracked";
     }
 
     bool HasLiveAliasIndexed(Array candidate)
