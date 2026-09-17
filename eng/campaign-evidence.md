@@ -89,7 +89,7 @@ duplicate JSON keys and non-finite JSON numbers are errors. Each record has:
 | `environment` | Process settings described below; identical across both campaigns. |
 | `accounting` | Object with `valid: true` and numeric `foreign_cpu_fraction` from valid process accounting; fraction must be in [0, 0.10]. |
 | `cases` | Object keyed by all fifteen names, each with full `model_sha256`, `input_sha256` and explicit `external_data` map; E5 additionally has integer `unmasked_tokens`. |
-| `cases_failed` | Quarantined case names in canonical order (no timed rows). `cases` plus `cases_failed` cover all fifteen names with no overlap. |
+| `cases_failed` | Quarantined case names in canonical order (identities present, no timed rows). `cases` covers all fifteen attempted names; `cases_failed` is the subset without rows. |
 
 The common producer also emits `producer: "common-runner-v1"`, `runner_files`,
 `process_evidence` and `process_evidence_sha256`. The referenced child JSON is

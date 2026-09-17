@@ -101,7 +101,7 @@ class CampaignTests(unittest.TestCase):
                 "accounting": {"valid": True, "foreign_cpu_fraction": 0.0},
                 "cases": {name: {"model_sha256": "a" * 64, "input_sha256": "b" * 64, "external_data": {},
                                  **({"unmasked_tokens": {"e5-8tok": 8, "e5-30tok": 30, "e5-30pad128": 30, "e5-128tok": 128, "e5-512tok": 512}[name]}
-                                    if name.startswith("e5-") else {})} for name in CASES if name not in drop},
+                                    if name.startswith("e5-") else {})} for name in CASES},
                 "cases_failed": sorted(drop, key=CASES.index)
             })
         return manifest

@@ -285,11 +285,12 @@ def _load_campaign(path):
         require(int(environment["affinity"], 16) == int(host["affinity"].split()[0], 16), "environment/log affinity mismatch")
         failed = run.get("cases_failed", [])
         require(isinstance(failed, list) and len(set(failed)) == len(failed) and all(isinstance(n, str) for n in failed), "cases_failed must be distinct case names")
-        require(set(failed) <= set(CASES) and not (set(failed) & set(run["cases"])), "cases_failed names invalid or overlap rows")
+        require(set(failed) <= set(CASES), "cases_failed names invalid")
         require(set(failed) == set(parsed["failed"]), "cases_failed does not match quarantined log cases")
         run["cases_failed"] = [name for name in CASES if name in failed]
-        require(set(run["cases"]) | set(run["cases_failed"]) == set(CASES), "manifest case identities missing/extra")
-        require(set(run["cases"]) == set(parsed["raw"]), "manifest rows do not match logged rows")
+        require(set(run["cases"]) == set(CASES), "manifest case identities missing/extra")
+        require(set(failed) <= set(run["cases"]), "cases_failed without manifest identity")
+        require(set(parsed["raw"]) == set(run["cases"]) - set(failed), "logged rows do not match measured cases")
         case_ids = {}
         for name, entry in run["cases"].items():
             model = digest(entry["model_sha256"], name + " model_sha256")
