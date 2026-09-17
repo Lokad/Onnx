@@ -1581,6 +1581,79 @@ public class MathOps
         }
     }
 
+
+    /// <summary>
+    /// 8x8-shuffle transpose of the last two axes (E5-3 M2): transposes every
+    /// [S,D] face of a standard row-major [B,H,S,D] buffer into [B,H,D,S].
+    /// Full 8x8 tiles move through registers (8 loads, 8 unpacks, 8 shuffles,
+    /// 8 lane-crosses, 8 stores) instead of 64 strided scalar pairs; partial
+    /// edge tiles keep the scalar indices of the TransposeInto fast path, so
+    /// results agree with it bit-wise on every shape, including NaN payloads
+    /// and signed zero (pure movement, no arithmetic). Requires Avx; callers
+    /// check capability, like the other raw kernels.
+    /// </summary>
+    /// <param name="dimB">Batch count.</param>
+    /// <param name="dimH">Head count.</param>
+    /// <param name="dimS">Rows per face.</param>
+    /// <param name="dimD">Columns per face.</param>
+    /// <param name="src">Source [B,H,S,D] buffer.</param>
+    /// <param name="dst">Destination [B,H,D,S] buffer.</param>
+    public unsafe static void transpose_unsafe_shuffle8x8_lastTwoAxes(int dimB, int dimH, int dimS, int dimD, float* src, float* dst)
+    {
+        const int Tile = 8;
+        for (int b = 0; b < dimB; b++)
+            for (int h = 0; h < dimH; h++)
+            {
+                float* sBase = src + ((b * dimH + h) * dimS) * dimD;
+                float* dBase = dst + ((b * dimH + h) * dimD) * dimS;
+                for (int i = 0; i < dimS; i += Tile)
+                    for (int j = 0; j < dimD; j += Tile)
+                    {
+                        if (i + Tile <= dimS && j + Tile <= dimD)
+                        {
+                            var r0 = *(Vector256<float>*)(sBase + (i + 0) * dimD + j);
+                            var r1 = *(Vector256<float>*)(sBase + (i + 1) * dimD + j);
+                            var r2 = *(Vector256<float>*)(sBase + (i + 2) * dimD + j);
+                            var r3 = *(Vector256<float>*)(sBase + (i + 3) * dimD + j);
+                            var r4 = *(Vector256<float>*)(sBase + (i + 4) * dimD + j);
+                            var r5 = *(Vector256<float>*)(sBase + (i + 5) * dimD + j);
+                            var r6 = *(Vector256<float>*)(sBase + (i + 6) * dimD + j);
+                            var r7 = *(Vector256<float>*)(sBase + (i + 7) * dimD + j);
+                            var t0 = Avx.UnpackLow(r0, r1);
+                            var t1 = Avx.UnpackHigh(r0, r1);
+                            var t2 = Avx.UnpackLow(r2, r3);
+                            var t3 = Avx.UnpackHigh(r2, r3);
+                            var t4 = Avx.UnpackLow(r4, r5);
+                            var t5 = Avx.UnpackHigh(r4, r5);
+                            var t6 = Avx.UnpackLow(r6, r7);
+                            var t7 = Avx.UnpackHigh(r6, r7);
+                            var e0 = Avx.Shuffle(t0, t2, 0x44);
+                            var e1 = Avx.Shuffle(t0, t2, 0xEE);
+                            var e2 = Avx.Shuffle(t1, t3, 0x44);
+                            var e3 = Avx.Shuffle(t1, t3, 0xEE);
+                            var e4 = Avx.Shuffle(t4, t6, 0x44);
+                            var e5 = Avx.Shuffle(t4, t6, 0xEE);
+                            var e6 = Avx.Shuffle(t5, t7, 0x44);
+                            var e7 = Avx.Shuffle(t5, t7, 0xEE);
+                            *(Vector256<float>*)(dBase + (j + 0) * dimS + i) = Avx.Permute2x128(e0, e4, 0x20);
+                            *(Vector256<float>*)(dBase + (j + 1) * dimS + i) = Avx.Permute2x128(e1, e5, 0x20);
+                            *(Vector256<float>*)(dBase + (j + 2) * dimS + i) = Avx.Permute2x128(e2, e6, 0x20);
+                            *(Vector256<float>*)(dBase + (j + 3) * dimS + i) = Avx.Permute2x128(e3, e7, 0x20);
+                            *(Vector256<float>*)(dBase + (j + 4) * dimS + i) = Avx.Permute2x128(e0, e4, 0x31);
+                            *(Vector256<float>*)(dBase + (j + 5) * dimS + i) = Avx.Permute2x128(e1, e5, 0x31);
+                            *(Vector256<float>*)(dBase + (j + 6) * dimS + i) = Avx.Permute2x128(e2, e6, 0x31);
+                            *(Vector256<float>*)(dBase + (j + 7) * dimS + i) = Avx.Permute2x128(e3, e7, 0x31);
+                        }
+                        else
+                        {
+                            for (int ii = i; ii < System.Math.Min(i + Tile, dimS); ii++)
+                                for (int jj = j; jj < System.Math.Min(j + Tile, dimD); jj++)
+                                    dBase[jj * dimS + ii] = sBase[ii * dimD + jj];
+                        }
+                    }
+            }
+    }
+
     /// <summary>
     /// Packs B into 32-column panels laid out contiguously, with any tail
     /// columns appended row-major. Panel relocation is exact, so a kernel
