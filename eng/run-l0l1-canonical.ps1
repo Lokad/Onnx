@@ -9,6 +9,8 @@ param([int]$Iters = 33, [int]$Reps = 4, [int]$CooldownSeconds = 300,
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
+# Portable interpreter: dev boxes expose python, minimal Linux images only python3.
+$py = if (Get-Command python -ErrorAction SilentlyContinue) { "python" } else { "python3" }
 if ($DryRun -and $Iters -eq 33) { $Iters = 2 }
 if ($DryRun -and $Reps -eq 3) { $Reps = 1 }
 if ($Iters -lt 1 -or $Reps -lt 1) { Write-Host "ABORT: bad counts"; exit 1 }
@@ -207,7 +209,7 @@ for ($r = 1; $r -le $Reps; $r++) {
 }
 Snap "post"
 $null = SnapForeign "post"
-& python eng/score_campaign.py @l0logs --l1 @l1logs 2>&1 | Out-File (Join-Path $runDir "score.log") -Encoding utf8
+& $py eng/score_campaign.py @l0logs --l1 @l1logs 2>&1 | Out-File (Join-Path $runDir "score.log") -Encoding utf8
 $sec = $LASTEXITCODE
 Get-Content (Join-Path $runDir "score.log") | ForEach-Object { Log ("score: " + $_) }
 Log ("score-exit=" + $sec)

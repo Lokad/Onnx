@@ -10,6 +10,7 @@ param([switch]$Force, [int]$Iters = 9, [int]$CooldownSeconds = 300)
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
+$py = if (Get-Command python -ErrorAction SilentlyContinue) { "python" } else { "python3" }
 $dll = "tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll"
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $runDir = Join-Path $root ("artifacts/rerun-" + $stamp)
@@ -65,5 +66,5 @@ foreach ($r in @(1,2,3)) {
   $repLogs += $log
 }
 CheckForeign "post"
-python eng/parse_baseline.py $repLogs 2>&1 | Out-File (Join-Path $runDir "parser.log") -Encoding utf8
+& $py eng/parse_baseline.py $repLogs 2>&1 | Out-File (Join-Path $runDir "parser.log") -Encoding utf8
 Write-Host ("RERUN DONE: " + $runDir)
