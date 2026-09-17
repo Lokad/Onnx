@@ -302,6 +302,88 @@ public class MatMulKernelAgreementTests
             $"3-row packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
     }
 
+
+    [SkippableFact]
+    public unsafe void SixRowMatchesTiledBitwise()
+    {
+        // E5-2 M1: the 6-row twin keeps the exact per-element j-ascending FMA
+        // chains of the 2-row tiled kernel with one reused B load per group,
+        // so it must agree bit-wise on exact, vector-tail and scalar-tail
+        // widths, including QK/PV-shaped cases.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        SixRowEqual(6, 32, 8, rnd);
+        SixRowEqual(6, 32, 16, rnd);
+        SixRowEqual(6, 32, 17, rnd);
+        SixRowEqual(6, 7, 24, rnd);
+        SixRowEqual(12, 32, 30, rnd);
+        SixRowEqual(30, 32, 30, rnd);
+        SixRowEqual(30, 30, 32, rnd);
+        SixRowEqual(12, 128, 128, rnd);
+        SixRowEqual(6, 24, 44, rnd);
+        Assert.Throws<ArgumentException>(() => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled(8, 32, 30, null, null, null));
+    }
+
+    static unsafe void SixRowEqual(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        // Exceptional payloads must travel the shared B load identically.
+        a.Buffer.Span[0] = System.BitConverter.Int32BitsToSingle(0x7FC00001);
+        if (a.Length > 1) a.Buffer.Span[1] = float.NegativeInfinity;
+        if (b.Length > 2) b.Buffer.Span[2] = -0f;
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            "6-row diverges bitwise from tiled on " + m + "x" + n + "x" + k + ".");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            "6-row diverges bitwise from tiled on nonzero destination " + m + "x" + n + "x" + k + ".");
+    }
+
+    [SkippableFact]
+    public unsafe void SixRowAlphaMatchesTiledAlphaBitwise()
+    {
+        // E5-2 M1 alpha discipline (from E5-1): scale once on the single
+        // store; alpha==1 keeps routing to the unscaled kernel, so the twin
+        // only needs to match the 2-row alpha kernel on production alphas.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        float e5alpha = 1f / 5.656854249f;
+        SixRowAlphaEqual(6, 32, 8, e5alpha, rnd);
+        SixRowAlphaEqual(30, 32, 30, e5alpha, rnd);
+        SixRowAlphaEqual(30, 30, 32, e5alpha, rnd);
+        SixRowAlphaEqual(12, 32, 17, 0.5f, rnd);
+        SixRowAlphaEqual(6, 7, 24, 2.0f, rnd);
+        Assert.Throws<ArgumentException>(() => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled_alpha(8, 32, 30, null, null, null, 0.5f));
+    }
+
+    static unsafe void SixRowAlphaEqual(int m, int n, int k, float alpha, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled_alpha(m, n, k, (float*)pa, (float*)pb, (float*)pc, alpha), a, b, c1);
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled_alpha(m, n, k, (float*)pa, (float*)pb, (float*)pc, alpha), a, b, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            "6-row alpha diverges bitwise from tiled alpha on " + m + "x" + n + "x" + k + ".");
+        // Nonzero destinations scale the pre-existing values identically.
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled_alpha(m, n, k, (float*)pa, (float*)pb, (float*)pc, alpha), a, b, d1);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_6x2tiled_alpha(m, n, k, (float*)pa, (float*)pb, (float*)pc, alpha), a, b, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            "6-row alpha diverges bitwise from tiled alpha on nonzero destination " + m + "x" + n + "x" + k + ".");
+    }
+
     [SkippableFact]
     public unsafe void M1BlockedMatchesOneRowBitwise()
     {
