@@ -1,154 +1,153 @@
-"""Score a matched L0/L1/ORT campaign (E01/E02 lane).
+"""Score AMD E5 evidence against a preceding unchanged A/A campaign.
 
-Usage: python eng/score_campaign.py L0REP... --l1 L1REP...
-Each rep log is one fresh Bench process in the canonical rows format read by
-eng/parse_baseline.py. The lok series is the Lokad public-Execute boundary and
-the ort series is the ORT boundary; ctx is carried for diagnosis and is never
-gated or scored.
+Usage: python eng/score_campaign.py --evidence campaign.json --aa unchanged.json
+See eng/campaign-evidence.md for the manifest and acceptance contract.
+Historical log-only summaries remain available via eng/parse_baseline.py.
 
-Exit codes: 0 scored (verdict inside the JSON, may be PASS, MISS, or
-REGRESSION); 2 host or manifest mismatch between reps (ABORT, retry the
-campaign); 3 unsteady series (INCONCLUSIVE, no score); 4 usage error or fewer
-than 33 samples per rep or fewer than 3 reps per library.
-
-Gates (provisional, recorded here): per case, engine, and rep, the raw series
-must satisfy spread (max-min)/median <= 0.25 and half-split
-|median(first)-median(second)|/median <= 0.10 for both lok and ort.
+Exit 0: scored PASS/MISS/REGRESSION (inspect verdict, not only the exit code).
+Exit 2: invalid/missing evidence. Exit 3: INCONCLUSIVE measurements. Exit 4: usage.
 """
+import argparse
 import json
+import math
 import statistics
-import sys
 
-import parse_baseline as base
+import campaign_evidence as evidence
 
-PRIMARY = base.ORDER
+PRIMARY = evidence.PRIMARY
 SPREAD_CAP = 0.25
 HALF_CAP = 0.10
-MIN_SAMPLES = 33
-MIN_REPS = 3
-HOST_IGNORE = {"lokad"}
-
-
-def fail(code, msg):
-    print("campaign-%s: %s" % ("ABORT" if code == 2 else "FAIL", msg))
-    raise SystemExit(code)
-
-
-def host_pairs(line):
-    out = {}
-    for tok in line.split():
-        if "=" in tok:
-            k, _, v = tok.partition("=")
-            out[k] = v
-    return out
-
-
-def check_hosts(reps, tag):
-    ref = host_pairs(reps[0]["host"])
-    for rep in reps[1:]:
-        got = host_pairs(rep["host"])
-        for k in ref:
-            if k in HOST_IGNORE:
-                continue
-            if got.get(k) != ref[k]:
-                fail(2, "%s host mismatch on %s: %r vs %r (%s)" % (tag, k, ref[k], got.get(k), rep["log"]))
-    return ref
-
-
-def check_cross(l0host, l1host):
-    for k in l0host:
-        if k in HOST_IGNORE:
-            continue
-        if l1host.get(k) != l0host[k]:
-            fail(2, "L0/L1 host mismatch on %s: %r vs %r" % (k, l0host[k], l1host.get(k)))
+NOISE_CAP = 0.03
+PARITY_TARGET = 1.05
 
 
 def med(xs):
-    return statistics.median(sorted(xs))
+    return statistics.median(xs)
+
+
+def spread(xs):
+    return (max(xs) - min(xs)) / med(xs)
 
 
 def steady(name, series):
-    s = sorted(series)
-    m = med(s)
-    if m == 0:
-        return "zero median"
-    if (s[-1] - s[0]) / m > SPREAD_CAP:
-        return "spread %.3f over %.2f" % ((s[-1] - s[0]) / m, SPREAD_CAP)
-    n = len(s)
-    fh = med(s[: n // 2])
-    sh = med(s[n // 2 :])
-    if abs(fh - sh) / m > HALF_CAP:
-        return "half-split %.3f over %.2f" % (abs(fh - sh) / m, HALF_CAP)
+    """Check range and temporal drift; do not sort away sample chronology."""
+    if not series or any(not math.isfinite(x) or x <= 0 for x in series):
+        return name + ": timings must be finite and positive"
+    if spread(series) > SPREAD_CAP:
+        return "spread %.3f over %.2f" % (spread(series), SPREAD_CAP)
+    n = len(series)
+    if n < 2:
+        return "too few samples for drift"
+    drift = abs(med(series[:n // 2]) - med(series[n // 2:])) / med(series)
+    if drift > HALF_CAP:
+        return "half-split %.3f over %.2f" % (drift, HALF_CAP)
     return ""
 
 
-def main():
-    args = sys.argv[1:]
-    if "--l1" not in args:
-        print(__doc__)
-        raise SystemExit(4)
-    cut = args.index("--l1")
-    l0logs, l1logs = args[:cut], args[cut + 1 :]
-    if len(l0logs) < MIN_REPS or len(l1logs) < MIN_REPS:
-        fail(4, "need >=%d reps per library, got L0=%d L1=%d" % (MIN_REPS, len(l0logs), len(l1logs)))
-    l0 = [base.parse_rep(p) for p in l0logs]
-    l1 = [base.parse_rep(p) for p in l1logs]
-    h0 = check_hosts(l0, "L0")
-    h1 = check_hosts(l1, "L1")
-    check_cross(h0, h1)
-    for rep in l0 + l1:
-        for name in PRIMARY:
-            if rep["status"].get(name) != "ok" or name not in rep["cases"]:
-                fail(2, "case missing or not ok: %s in %s" % (name, rep["log"]))
-    unsteady = []
-    for lib, reps in (("L0", l0), ("L1", l1)):
-        for rep in reps:
-            for name in PRIMARY:
-                for eng in ("lok", "ort"):
-                    xs = rep["cases"][name]["raw"][eng]
-                    if len(xs) < MIN_SAMPLES:
-                        fail(4, "fewer than %d samples: %s %s %s has %d" % (MIN_SAMPLES, lib, name, eng, len(xs)))
-                    why = steady(name, xs)
-                    if why:
-                        unsteady.append("%s %s %s %s" % (lib, rep["log"], name, why))
+def campaign_stability(campaign, tag):
+    problems = []
+    for run in campaign["runs"]:
+        for name in evidence.CASES:
+            for engine in ("lok", "ort"):
+                why = steady(name, run["parsed"]["raw"][name][engine])
+                if why:
+                    problems.append("%s %s rep%d %s %s: %s" % (tag, run["role"], run["rep"], name, engine, why))
+    return problems
+
+
+def medians(campaign, name):
+    pairs = []
+    for rep in range(1, 5):
+        runs = {run["role"]: run for run in campaign["runs"] if run["rep"] == rep}
+        row = {"rep": rep}
+        for role in ("L0", "L1"):
+            raw = runs[role]["parsed"]["raw"][name]
+            row[role] = med(raw["lok"])
+            row["O" + role[1]] = med(raw["ort"])
+            row["R" + role[1]] = row[role] / row["O" + role[1]]
+        pairs.append(row)
+    return pairs
+
+
+def score(campaign, aa):
+    evidence.require(campaign["kind"] == "comparison" and aa["kind"] == "aa", "expected comparison and A/A manifests")
+    evidence.require(aa["end"] < campaign["start"], "A/A must finish before candidate measurements start")
+    evidence.require(aa["signature"] == campaign["signature"], "A/A workload/host/runner/native identity mismatch")
+    evidence.require(aa["identities"]["L0"] == campaign["identities"]["L0"], "A/A core must match comparison baseline")
+    result = {"policy": "amd-e5-v1", "campaign_manifest_sha256": campaign["manifest_sha256"],
+              "aa_manifest_sha256": aa["manifest_sha256"], "identities": campaign["identities"],
+              "jit_regime": campaign["signature"]["environment"]["settings"]["jit"],
+              "parity_target": PARITY_TARGET, "noise_cap": NOISE_CAP}
+    unsteady = campaign_stability(aa, "A/A") + campaign_stability(campaign, "comparison")
+    noise = {}
+    for name in evidence.CASES:
+        pairs = medians(aa, name)
+        # Both arms and their paired ratios; candidate spread never sets a gate.
+        controls = {key: spread([pair[key + str(i)] for pair in pairs for i in (0, 1)])
+                    for key in ("L", "O", "R")}
+        variation = max(controls.values())
+        noise[name] = {"variation": variation, "regression_limit": max(0.03, 2 * variation),
+                       "ort_limit": max(0.03, 2 * controls["O"]), "spreads": controls}
+        if variation > NOISE_CAP:
+            unsteady.append("A/A %s variation %.4f exceeds %.2f" % (name, variation, NOISE_CAP))
+    result["noise"] = noise
+    for name in evidence.CASES:
+        pairs = medians(campaign, name)
+        for key in ("L0", "L1", "O0", "O1", "R0", "R1"):
+            variation = spread([pair[key] for pair in pairs])
+            if variation > NOISE_CAP:
+                unsteady.append("comparison %s %s repetition variation %.4f exceeds %.2f" % (name, key, variation, NOISE_CAP))
+        for pair in pairs:
+            drift = abs(pair["O1"] / pair["O0"] - 1)
+            if drift > noise[name]["ort_limit"]:
+                unsteady.append("comparison %s rep%d ORT control drift %.4f exceeds %.4f" %
+                                (name, pair["rep"], drift, noise[name]["ort_limit"]))
     if unsteady:
-        print("campaign-INCONCLUSIVE: unsteady series, no score")
-        for u in unsteady:
-            print("  " + u)
-        print(json.dumps({"verdict": "INCONCLUSIVE", "unsteady": unsteady}, indent=1))
-        raise SystemExit(3)
-    table = []
-    reg = []
-    for name in PRIMARY:
-        l0m = [med(rep["cases"][name]["raw"]["lok"]) for rep in l0]
-        l1m = [med(rep["cases"][name]["raw"]["lok"]) for rep in l1]
-        om = [med(rep["cases"][name]["raw"]["ort"]) for rep in l0 + l1]
-        L0, L1, O = med(l0m), med(l1m), med(om)
-        r0, r1 = L0 / O, L1 / O
-        gap = (r0 - r1) / (r0 - 1) if r0 > 1 else None
-        respread = (max(l1m) - min(l1m)) / L1 if L1 else 0
-        thresh = max(0.03, 2 * respread)
-        if L1 / L0 - 1 > thresh:
-            reg.append("%s L1/L0=%.4f over %.4f" % (name, L1 / L0, 1 + thresh))
-        table.append({"case": name, "L0": L0, "L1": L1, "O": O,
-                      "improvement": 1 - L1 / L0, "R0": r0, "R1": r1, "gap_closure": gap})
-    r = {row["case"]: row["L1"] / row["L0"] for row in table}
-    e5 = (r["e5-8tok"] * r["e5-30tok"]) ** 0.5
-    score = 1 - (e5 * r["dinov3-224"] * r["resnet50-224"] * r["gpt2-4tok"]) ** 0.25
-    t = {row["case"]: row["improvement"] for row in table}
-    targets = {"family": score >= 0.20, "e5-8tok": t["e5-8tok"] >= 0.25, "resnet50-224": t["resnet50-224"] >= 0.25}
-    verdict = "PASS" if all(targets.values()) and not reg else ("REGRESSION" if reg else "MISS")
-    print("| Case | L0 | L1 | O | 1-L1/L0 | R0 | R1 | gap |")
-    print("|---|---|---|---|---|---|---|---|---|")
-    for row in table:
-        g = "n/a" if row["gap_closure"] is None else "%.2f" % row["gap_closure"]
-        print("| %s | %.2f | %.2f | %.2f | %.3f | %.2fx | %.2fx | %s |"
-              % (row["case"], row["L0"], row["L1"], row["O"],
-                 row["improvement"], row["R0"], row["R1"], g))
-    print("family-score=%.4f targets=%s verdict=%s" % (score, json.dumps(targets), verdict))
-    print(json.dumps({"verdict": verdict, "family_score": score,
-                      "targets": targets, "regressions": reg, "table": table}, indent=1))
+        return dict(result, verdict="INCONCLUSIVE", unsteady=unsteady), 3
+    table, regressions = [], []
+    for name in evidence.CASES:
+        pairs = medians(campaign, name)
+        row = {key: med([pair[key] for pair in pairs]) for key in ("L0", "L1", "O0", "O1", "R0", "R1")}
+        relative = med([pair["L1"] / pair["L0"] for pair in pairs])
+        normalized = med([pair["R1"] / pair["R0"] for pair in pairs])
+        threshold = noise[name]["regression_limit"]
+        if relative - 1 > threshold or normalized - 1 > threshold:
+            regressions.append(name)
+        row.update(case=name, reps=pairs, improvement=1 - relative, normalized_improvement=1 - normalized,
+                   regression_limit=threshold, gap_closure=(row["R0"] - row["R1"]) / (row["R0"] - 1) if row["R0"] > 1 else None)
+        table.append(row)
+    by_name = {row["case"]: row for row in table}
+    targets = {name: by_name[name]["R1"] <= PARITY_TARGET for name in PRIMARY}
+    result.update(table=table, targets=targets, regressions=regressions,
+                  e5_improvement=1 - math.prod(1 - by_name[name]["improvement"] for name in PRIMARY) ** 0.25,
+                  verdict="REGRESSION" if regressions else ("PASS" if all(targets.values()) else "MISS"))
+    return result, 0
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--evidence", help="comparison manifest, schema 1")
+    parser.add_argument("--aa", help="preceding unchanged A/A manifest, schema 1")
+    # An older lane wrapper must not confuse log-only results with new evidence.
+    args, legacy = parser.parse_known_args(argv)
+    if legacy or not args.evidence or not args.aa:
+        print("campaign-ABORT: release scoring requires --evidence campaign.json --aa unchanged.json; "
+              "use eng/parse_baseline.py for historical log-only summaries")
+        return 2 if legacy or args.evidence or args.aa else 4
+    try:
+        result, code = score(evidence.load_campaign(args.evidence), evidence.load_campaign(args.aa))
+    except evidence.EvidenceError as exc:
+        print("campaign-ABORT: " + str(exc))
+        return 2
+    if "table" in result:
+        print("| Case | L0 ms | L1 ms | ORT0 ms | ORT1 ms | paired R0 | paired R1 | improvement |")
+        print("|---|---:|---:|---:|---:|---:|---:|---:|---:|")
+        for row in result["table"]:
+            print("| {case} | {L0:.3f} | {L1:.3f} | {O0:.3f} | {O1:.3f} | {R0:.3f} | {R1:.3f} | {improvement:.2%} |".format(**row))
+    print("campaign-" + result["verdict"] + " (measurement verdict; not a ship decision)")
+    print(json.dumps(result, indent=1, allow_nan=False))
+    return code
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
