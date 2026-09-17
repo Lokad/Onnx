@@ -158,27 +158,6 @@ where T : unmanaged
     /// </summary>
     const int M1BlockedMinColumns = 8192;
 
-    /// <summary>
-    /// Runs panel-packed row groups with 6-row main groups (E61) and the
-    /// proven packed kernels for remainders. Callers pass even row counts or
-    /// exact multiples of 3 with M >= 2, so remainders stay in {0,2,3,4} and
-    /// every row is covered exactly once.
-    /// </summary>
-    static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* pp, float* output)
-    {
-        int six = m - (m % 6);
-        if (six > 0)
-            mm_unsafe_vectorized_intrinsics_6x4packed(six, n, k, x, pp, output);
-        int rem = m - six;
-        if (rem == 0) return;
-        float* xr = x + six * n;
-        float* cr = output + six * k;
-        if (rem == 3)
-            mm_unsafe_vectorized_intrinsics_3x4packed(rem, n, k, xr, pp, cr);
-        else
-            mm_unsafe_vectorized_intrinsics_2x4packed(rem, n, k, xr, pp, cr);
-    }
-
     static unsafe void RunFloatMatMulKernel(int m, int n, int k, float* x, float* y, float* output, TensorExecutionOptions options)
     {
         if (options.UseSimd && options.UseIntrinsics && System.Runtime.Intrinsics.X86.Fma.IsSupported && m == 1 && k >= M1BlockedMinColumns)
@@ -212,7 +191,7 @@ where T : unmanaged
                     fixed (float* pp = packed)
                     {
                         PackPanelsB(n, k, y, pp);
-                        RunPackedRowGroups(m, n, k, x, pp, output);
+                        mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
                     }
                 }
                 finally
@@ -228,7 +207,7 @@ where T : unmanaged
                     fixed (float* pp = packed)
                     {
                         PackPanelsB(n, k, y, pp);
-                        RunPackedRowGroups(blocked, n, k, x, pp, output);
+                        mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output);
                     }
                 }
                 finally
@@ -311,11 +290,9 @@ where T : unmanaged
             using var oh = destination.Buffer.Pin();
             unsafe
             {
-                // Six-row groups (E61) share each B vector across six rows;
-                // smaller counts keep the proven 2-row/3-row nests bit-identically.
-                if (m >= 6)
-                    RunPackedRowGroups(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
-                else if ((m % 3) == 0)
+                // Three-row groups share each B vector at the same broadcast rate (P65);
+                // every other packed shape keeps the proven 2-row nest.
+                if ((m % 3) == 0)
                     mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
                 else
                     mm_unsafe_vectorized_intrinsics_2x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
@@ -967,4 +944,3 @@ internal static class MatMulShapes
         return core;
     }
 }
-
