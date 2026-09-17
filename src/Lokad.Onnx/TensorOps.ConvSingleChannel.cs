@@ -29,7 +29,7 @@ where T : unmanaged
     /// pricing case is the embedding stem (32x1x3x3); wider single-channel
     /// layers keep the generic path until a mirror shows otherwise.
     /// </summary>
-    public static bool TryConvSingleChannel2D(Tensor<float> input, Tensor<float> weight, Tensor<float>? bias, int group, int[]? pads, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, out Tensor<float>? output)
+    public static bool TryConvSingleChannel2D(Tensor<float> input, Tensor<float> weight, Tensor<float>? bias, int group, int[]? pads, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool, out Tensor<float>? output)
     {
         output = null;
         if (input.Rank != 4 || weight.Rank != 4) return false;
@@ -71,7 +71,7 @@ where T : unmanaged
         int outH = outShape[0], outW = outShape[1];
         if (outH < 1 || outW < 1) return false;
         options.Validate();
-        output = RunSingleChannel2DFloat(input.ToDenseTensor(), weight.ToDenseTensor(), bias?.ToDenseTensor(), N, H, W, M, KH, KW, sH, sW, dH, dW, padT, padL, outH, outW, options, fuseRelu);
+        output = RunSingleChannel2DFloat(input.ToDenseTensor(), weight.ToDenseTensor(), bias?.ToDenseTensor(), N, H, W, M, KH, KW, sH, sW, dH, dW, padT, padL, outH, outW, options, fuseRelu, pool);
         return true;
     }
 
@@ -84,9 +84,10 @@ where T : unmanaged
     /// outputs are independent, so parallel degrees split over
     /// batch-outputs with identical per-element results.
     /// </summary>
-    static Tensor<float> RunSingleChannel2DFloat(DenseTensor<float> x, DenseTensor<float> w, DenseTensor<float>? b, int N, int H, int W, int M, int KH, int KW, int sH, int sW, int dH, int dW, int padT, int padL, int outH, int outW, TensorExecutionOptions options, bool fuseRelu)
+    static Tensor<float> RunSingleChannel2DFloat(DenseTensor<float> x, DenseTensor<float> w, DenseTensor<float>? b, int N, int H, int W, int M, int KH, int KW, int sH, int sW, int dH, int dW, int padT, int padL, int outH, int outW, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool)
     {
-        var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outH, outW });
+        int flat = (int)((long)N * M * outH * outW);
+        var output = pool is null ? new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outH, outW }) : new DenseTensor<float>(new Memory<float>(pool.Rent<float>(flat)), new int[] { N, M, outH, outW });
         var xMem = x.Buffer;
         var wMem = w.Buffer;
         var oMem = output.Buffer;

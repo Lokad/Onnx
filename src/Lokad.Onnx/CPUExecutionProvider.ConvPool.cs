@@ -166,7 +166,7 @@ public partial class CPUExecutionProvider
             }
             if (X.ElementType == TensorElementType.Float
                 && (string.IsNullOrEmpty(auto_pad) || auto_pad == "NOTSET")
-                && Tensor<float>.TryConvDepthwise1D((Tensor<float>)X, (Tensor<float>)W, (Tensor<float>?)B, group ?? 1, pads, kernel_shape, strides, dilations, (options ?? ExecutionOptions.Default).Validated().Tensor, fuseRelu, out var dwConv)
+                && Tensor<float>.TryConvDepthwise1D((Tensor<float>)X, (Tensor<float>)W, (Tensor<float>?)B, group ?? 1, pads, kernel_shape, strides, dilations, (options ?? ExecutionOptions.Default).Validated().Tensor, fuseRelu, pool, out var dwConv)
                 && dwConv is not null)
             {
                 return Success(op, dwConv);
@@ -217,12 +217,12 @@ public partial class CPUExecutionProvider
                 var bias = B is null ? null : (Tensor<float>)B;
                 if (padmode is null)
                 {
-                    if (Tensor<float>.TryConvDepthwise2D((Tensor<float>)X, (Tensor<float>)W, bias, group ?? 1, pads, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, out var dwConv2D) && dwConv2D is not null)
+                    if (Tensor<float>.TryConvDepthwise2D((Tensor<float>)X, (Tensor<float>)W, bias, group ?? 1, pads, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, pool, out var dwConv2D) && dwConv2D is not null)
                     {
                         return Success(op, dwConv2D);
                     }
                     // B1 single-channel direct lane: C=1 shapes the depthwise lane declines outright.
-                    if (Tensor<float>.TryConvSingleChannel2D((Tensor<float>)X, (Tensor<float>)W, bias, group ?? 1, pads, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, out var scConv2D) && scConv2D is not null)
+                    if (Tensor<float>.TryConvSingleChannel2D((Tensor<float>)X, (Tensor<float>)W, bias, group ?? 1, pads, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, pool, out var scConv2D) && scConv2D is not null)
                     {
                         return Success(op, scConv2D);
                     }

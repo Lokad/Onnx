@@ -419,7 +419,7 @@ where T : unmanaged
     /// </summary>
     // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    public static bool TryConvDepthwise1D(Tensor<float> input, Tensor<float> weight, Tensor<float>? bias, int group, int[]? pads, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, out Tensor<float>? output)
+    public static bool TryConvDepthwise1D(Tensor<float> input, Tensor<float> weight, Tensor<float>? bias, int group, int[]? pads, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool, out Tensor<float>? output)
     {
         output = null;
         if (input.Rank != 3 || weight.Rank != 3) return false;
@@ -453,7 +453,7 @@ where T : unmanaged
         int outL = (L + padL + padR - effK) / s + 1;
         if (outL < 1) return false;
         options.Validate();
-        output = RunDepthwise1DFloat(input.ToDenseTensor(), weight.ToDenseTensor(), bias?.ToDenseTensor(), N, C, L, M, K, s, d, padL, padR, outL, options, fuseRelu);
+        output = RunDepthwise1DFloat(input.ToDenseTensor(), weight.ToDenseTensor(), bias?.ToDenseTensor(), N, C, L, M, K, s, d, padL, padR, outL, options, fuseRelu, pool);
         return true;
     }
     /// <summary>
@@ -466,7 +466,7 @@ where T : unmanaged
     /// </summary>
     // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    public static bool TryConvDepthwise2D(Tensor<float> input, Tensor<float> weight, Tensor<float>? bias, int group, int[]? pads, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, out Tensor<float>? output)
+    public static bool TryConvDepthwise2D(Tensor<float> input, Tensor<float> weight, Tensor<float>? bias, int group, int[]? pads, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool, out Tensor<float>? output)
     {
         output = null;
         if (input.Rank != 4 || weight.Rank != 4) return false;
@@ -508,7 +508,7 @@ where T : unmanaged
         int outH = outShape[0], outW = outShape[1];
         if (outH < 1 || outW < 1) return false;
         options.Validate();
-        output = RunDepthwise2DFloat(input.ToDenseTensor(), weight.ToDenseTensor(), bias?.ToDenseTensor(), N, C, H, W, M, KH, KW, sH, sW, dH, dW, padT, padL, outH, outW, options, fuseRelu);
+        output = RunDepthwise2DFloat(input.ToDenseTensor(), weight.ToDenseTensor(), bias?.ToDenseTensor(), N, C, H, W, M, KH, KW, sH, sW, dH, dW, padT, padL, outH, outW, options, fuseRelu, pool);
         return true;
     }
 
@@ -521,9 +521,9 @@ where T : unmanaged
     /// channels are independent, so parallel degrees split over
     /// batch-channels with identical per-element results.
     /// </summary>
-    static Tensor<float> RunDepthwise2DFloat(DenseTensor<float> x, DenseTensor<float> w, DenseTensor<float>? b, int N, int C, int H, int W, int M, int KH, int KW, int sH, int sW, int dH, int dW, int padT, int padL, int outH, int outW, TensorExecutionOptions options, bool fuseRelu)
+    static Tensor<float> RunDepthwise2DFloat(DenseTensor<float> x, DenseTensor<float> w, DenseTensor<float>? b, int N, int C, int H, int W, int M, int KH, int KW, int sH, int sW, int dH, int dW, int padT, int padL, int outH, int outW, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool)
     {
-        var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outH, outW });
+        var output = pool is null ? new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outH, outW }) : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)((long)N * M * outH * outW))), new int[] { N, M, outH, outW });
         var xMem = x.Buffer;
         var wMem = w.Buffer;
         var oMem = output.Buffer;
@@ -668,9 +668,9 @@ where T : unmanaged
     /// are independent, so parallel degrees split over batch-channels with
     /// identical per-element results.
     /// </summary>
-    static Tensor<float> RunDepthwise1DFloat(DenseTensor<float> x, DenseTensor<float> w, DenseTensor<float>? b, int N, int C, int L, int M, int K, int s, int d, int padL, int padR, int outL, TensorExecutionOptions options, bool fuseRelu)
+    static Tensor<float> RunDepthwise1DFloat(DenseTensor<float> x, DenseTensor<float> w, DenseTensor<float>? b, int N, int C, int L, int M, int K, int s, int d, int padL, int padR, int outL, TensorExecutionOptions options, bool fuseRelu, TensorBufferPool? pool)
     {
-        var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outL });
+        var output = pool is null ? new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outL }) : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)((long)N * M * outL))), new int[] { N, M, outL });
         var xMem = x.Buffer;
         var wMem = w.Buffer;
         var oMem = output.Buffer;
