@@ -14,6 +14,9 @@
     <Compile Include="..\Shared\NpySupport.cs" Link="NpySupport.cs" />
     <Compile Include="..\Lokad.Onnx.Bench\VoiceModelCases.cs" Link="VoiceModelCases.cs" />
     <Compile Include="..\Lokad.Onnx.Bench\VoiceProvenance.cs" Link="VoiceProvenance.cs" />
+    <Compile Include="..\Lokad.Onnx.Bench\PairedModelRunner.cs" Link="PairedModelRunner.cs" />
+    <Compile Include="..\Lokad.Onnx.Bench\BenchmarkManifest.cs" Link="BenchmarkManifest.cs" />
+    <Compile Include="..\Lokad.Onnx.Bench\BenchmarkResults.cs" Link="BenchmarkResults.cs" />
   </ItemGroup>
 
   <ItemGroup>

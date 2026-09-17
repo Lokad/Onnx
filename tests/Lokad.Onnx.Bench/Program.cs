@@ -49,15 +49,17 @@ static class Bench
         int threads = 1;
         int cpu = 0;
         int iters = 7;
+        string manifestPrefix = "";
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] == "--mode" && i + 1 < args.Length) modeName = args[++i];
             else if (args[i] == "--rows" && i + 1 < args.Length) rowsName = args[++i];
             else if (args[i] == "--cpu" && i + 1 < args.Length && int.TryParse(args[i + 1], out var c)) { cpu = c; i++; }
             else if (args[i] == "--threads" && i + 1 < args.Length && int.TryParse(args[i + 1], out var t) && t >= 1) { threads = t; i++; }
-            else if (args[i] == "--iters" && i + 1 < args.Length && int.TryParse(args[i + 1], out var k) && k >= 1) { iters = k; i++; }
+            else if (args[i] == "--iters" && i + 1 < args.Length && int.TryParse(args[i + 1], out var k) && k >= 1) { iters = k; i++; }
+            else if (args[i] == "--manifest-out" && i + 1 < args.Length) manifestPrefix = args[++i];
             else if (args[i] == "all" || assets.ContainsKey(args[i])) { if (args[i] != "all" && !selected.Contains(args[i], StringComparer.OrdinalIgnoreCase)) selected.Add(args[i]); }
-            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all|representative] [--cpu N] (voice keys run the canonical matched row only, or the staged representative rows with --rows representative; the default set is all non-voice keys)"); return 2; }
+            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all|representative] [--cpu N] [--manifest-out PREFIX] (voice keys run the canonical matched row only, or the staged representative rows with --rows representative; the default set is all non-voice keys)"); return 2; }
         }
         if (rowsName != "canonical" && rowsName != "all" && rowsName != "representative") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all|representative)"); return 2; }
         bool representative = rowsName == "representative";
@@ -79,6 +81,7 @@ static class Bench
                 if (!File.Exists(f)) { Console.WriteLine("missing asset for " + key + ": " + f); return 1; }
             }
         }
+        PairedModelRunner.ManifestPrefix = manifestPrefix;
         long affinityMask = EnforceSingleCpuAffinity(cpu).ToInt64();
         string cpuId = Environment.GetEnvironmentVariable("PROCESSOR_IDENTIFIER") ?? "unknown";
         string vec = System.Numerics.Vector.IsHardwareAccelerated
@@ -662,12 +665,21 @@ static class Bench
         {
             using var ro = new RunOptions();
             // Warmups establish steady state. Each side's outputs are released before the other side runs.
-            for (int w = 0; w < Warm; w++)
+            var schedule = PairedModelRunner.BuildSchedule(Warm, iters);
+            var samples = new List<PairedSample>(4 * iters);
+            foreach (var step in schedule)
             {
-                graph.Reset();
-                if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad warmup execute failed");
-                graph.Reset();
-                using var wr = ortSession.Run(ro, ortInputs, outNames);
+                if (!step.IsWarm) break;
+                if (step.Role == PairedRole.PublicWarm)
+                {
+                    graph.Reset();
+                    if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad warmup execute failed");
+                    graph.Reset();
+                }
+                else
+                {
+                    using var wr = ortSession.Run(ro, ortInputs, outNames);
+                }
             }
             // Warmed reusable-context inference on the shared prepared plan (no per-run context allocation or copy-back).
             var ctx = graph.CreateExecution(lokadOpts);
@@ -676,14 +688,25 @@ static class Bench
             ctx.Reset();
             var clok = new List<double>();
             var sw = new Stopwatch();
-            for (int i = 0; i < iters; i++)
+            foreach (var step in schedule)
             {
-                ctx.Reset();
-                sw.Restart();
-                if (!ctx.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": context execute failed");
-                sw.Stop();
-                clok.Add(sw.Elapsed.TotalMilliseconds);
-                ctx.Reset();
+                if (step.IsWarm || step.PairId >= iters) continue;
+                if (step.Role == PairedRole.CtxTimed)
+                {
+                    ctx.Reset();
+                    sw.Restart();
+                    if (!ctx.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": context execute failed");
+                    sw.Stop();
+                    clok.Add(sw.Elapsed.TotalMilliseconds);
+                    samples.Add(PairedModelRunner.Sample(step, "C", sw.Elapsed.TotalMilliseconds, Stopwatch.GetTimestamp()));
+                    ctx.Reset();
+                }
+                else
+                {
+                    sw.Restart();
+                    using (var timed = ortSession.Run(ro, ortInputs, outNames)) { sw.Stop(); }
+                    samples.Add(PairedModelRunner.Sample(step, "C", sw.Elapsed.TotalMilliseconds, Stopwatch.GetTimestamp()));
+                }
             }
             // Warmed public-API inference, alternating engine order. Neither engine executes while the other's
             // outputs are alive: ORT outputs are disposed right after each timed run and the graph is reset
@@ -698,13 +721,11 @@ static class Bench
             var poolReuseN = new List<double>();
             var poolDropN = new List<double>();
             var ort = new List<double>();
-            for (int i = 0; i < iters; i++)
+            foreach (var step in schedule)
             {
-                if (i % 2 == 0)
+                if (step.IsWarm || step.PairId < iters) continue;
+                if (step.Role == PairedRole.PublicTimed)
                 {
-                    sw.Restart();
-                    using (var timed = ortSession.Run(ro, ortInputs, outNames)) { sw.Stop(); }
-                    ort.Add(sw.Elapsed.TotalMilliseconds);
                     graph.Reset();
                     sw.Restart();
                     if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
@@ -715,24 +736,15 @@ static class Bench
                     poolNewN.Add(graph.LastPoolAllocatedNew);
                     poolReuseN.Add(graph.LastPoolReused);
                     poolDropN.Add(graph.LastPoolDropped);
+                    samples.Add(PairedModelRunner.Sample(step, "P", sw.Elapsed.TotalMilliseconds, Stopwatch.GetTimestamp()));
                     graph.Reset();
                 }
                 else
                 {
-                    graph.Reset();
-                    sw.Restart();
-                    if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
-                    sw.Stop();
-                    lok.Add(sw.Elapsed.TotalMilliseconds);
-                    poolNewB.Add(graph.LastPoolAllocatedNewBytes);
-                    poolReuseB.Add(graph.LastPoolReusedBytes);
-                    poolNewN.Add(graph.LastPoolAllocatedNew);
-                    poolReuseN.Add(graph.LastPoolReused);
-                    poolDropN.Add(graph.LastPoolDropped);
-                    graph.Reset();
                     sw.Restart();
                     using (var timed = ortSession.Run(ro, ortInputs, outNames)) { sw.Stop(); }
                     ort.Add(sw.Elapsed.TotalMilliseconds);
+                    samples.Add(PairedModelRunner.Sample(step, "P", sw.Elapsed.TotalMilliseconds, Stopwatch.GetTimestamp()));
                 }
             }
             long allocAfter = GC.GetTotalAllocatedBytes(false);
@@ -744,6 +756,22 @@ static class Bench
             if (fpAfter != fpBefore)
                 throw new InvalidOperationException(name + ": inputs mutated during timed reuse (fingerprint changed).");
             var post = Validate(name + " post-timed", graph, ortSession, named, outNames, lokadOpts, tolerance);
+            string manifestPrefix = PairedModelRunner.ManifestPrefix;
+            if (!string.IsNullOrEmpty(manifestPrefix))
+            {
+                var manifest = new BenchmarkManifest
+                {
+                    Case = name,
+                    LokDesc = lokDesc,
+                    OrtDesc = ortDesc,
+                    Iters = iters,
+                    Warmup = Warm,
+                    StartedUtc = DateTime.UtcNow.ToString("o"),
+                    Samples = samples,
+                };
+                File.WriteAllText(manifestPrefix + "." + PairedModelRunner.SanitizeFileName(name) + ".json",
+                    BenchmarkManifest.ToJson(manifest));
+            }
 
             Console.WriteLine(name + " [" + lokDesc + " vs " + ortDesc + "]: lokad " + Dist(lok) + " | ctxLokad " + Dist(clok) + " | ort " + Dist(ort)
                 + " | resetPop " + Dist(resetPop) + " | resetClean " + Dist(resetClean) + " | convert=" + convertMs.ToString("F1") + "ms"
