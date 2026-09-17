@@ -473,7 +473,7 @@ public partial class CPUExecutionProvider
                             output = rented;
                         }
                         Profiler.StartOpStage(OpStage.Math);
-                        Tensor<float>.SoftmaxMaskedFloatSpanPtr(ds.Buffer.Span, dm.Buffer.Span, output.Buffer.Span, rows, block, tensorOptions.UseSimd);
+                        Tensor<float>.SoftmaxMaskedFloatSpanPtrMax(ds.Buffer.Span, dm.Buffer.Span, output.Buffer.Span, rows, block, tensorOptions.UseSimd);
                         return Success(op, output);
                     }
                 }
