@@ -64,7 +64,7 @@ public partial class CPUExecutionProvider
                 if (UseGeluTanhTrial())
                     Tensor<float>.BiasGeluTanhSpanFloat(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
                 else
-                    Tensor<float>.BiasGeluSpanFloatPtr(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
+                    Tensor<float>.BiasGeluSpanFloatPtr4x(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
                 return Success(op, output);
             }
         }
