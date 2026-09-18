@@ -223,6 +223,9 @@ def _load_campaign(path):
     path = Path(path).resolve()
     manifest = json.loads(path.read_text(encoding="utf-8-sig"), object_pairs_hook=_unique_json, parse_constant=_bad_constant)
     schema = manifest["schema"]
+    if type(schema) is int and schema == 3:
+        import isolated_evidence
+        return isolated_evidence.load(path, manifest)
     require(type(schema) is int and schema in (1, 2), "unsupported evidence schema")
     if schema == 1:
         require("scope" not in manifest, "legacy evidence cannot declare a scope")

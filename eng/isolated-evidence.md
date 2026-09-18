@@ -10,6 +10,8 @@ API. Only the core DLL changes between L0 and L1. `isolate oracle|lok|ort config
 is its new producer entry point. Configuration, process JSON, stdout/stderr,
 supervision and before/after process snapshots are bound to SHA-256. Models are
 local; no downloads, symlinks or mutable shared output directories are used.
+The seven Python producer/validator sources are copied into each evidence tree,
+hashed, rechecked after collection and included in A/A/comparison identity.
 
 The five cases, in order, are e5-8tok, e5-30tok, e5-30pad128, e5-128tok and
 e5-512tok. The first four are primary. Inputs come from the existing canonical
@@ -77,3 +79,21 @@ The smoke retains full numerical/identity checks and deliberate refusal probes.
 Choose an allowed local CPU and a new output directory. A smoke pass establishes
 producer behavior, never performance. No historical experiment is reclassified
 as schema-3 evidence.
+
+After preparation, the supervised commands are:
+
+```powershell
+python eng/test_isolated_campaign.py
+python eng/run_isolated_e5.py --prepared artifacts/common-prepared-new --output artifacts/isolated-smoke-new --cpu 2 --kind comparison --jit full-opts --smoke
+python eng/run_isolated_e5.py --prepared artifacts/common-prepared-new --output artifacts/isolated-aa-new --cpu 2 --kind aa --jit full-opts
+python eng/run_isolated_e5.py --prepared artifacts/common-prepared-new --output artifacts/isolated-comparison-new --cpu 2 --kind comparison --jit full-opts --aa artifacts/isolated-aa-new/evidence.json
+```
+
+Use `--root /absolute/repository` when the scripts live in an immutable artifact
+directory and models live in the repository. This reads the existing assets.
+Keep prepared binaries and producer sources identical across both runs. Set any
+experimental core switches in the child-inherited environment before **both**
+calibration and comparison; their values are part of the captured identity.
+Default tiering is a separate run without `--jit full-opts`. The supervisor
+rejects an unqualified calibration before staging a comparison. The offline
+scorer remains `python eng/score_campaign.py --evidence ... --aa ...`.

@@ -158,7 +158,7 @@ def score(campaign, aa):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--evidence", help="comparison manifest, schema 1 or 2")
+    parser.add_argument("--evidence", help="comparison manifest, schema 1, 2 or isolated e5 schema 3")
     parser.add_argument("--aa", help="preceding unchanged A/A manifest, matching schema and scope")
     # An older lane wrapper must not confuse log-only results with new evidence.
     args, legacy = parser.parse_known_args(argv)

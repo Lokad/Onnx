@@ -5,7 +5,10 @@ against the released public API. It links the same input construction,
 validation, timing loops and tokenizer source for both arms. Each measured
 process gets its own copy of that runner and its dependencies; only
 `Lokad.Onnx.dll` changes. There is no reflection adapter in timed Execute,
-new friend assembly, or engine worker path. One logical CPU is enforced.
+or new friend assembly. One logical CPU is enforced. This page describes the
+paired-process schema-1/2 producer. The prospective
+[isolated e5 producer](isolated-evidence.md) runs engines separately to avoid
+managed GC interference during ORT calls; it requires a new schema-3 calibration.
 
 The new producer is `eng/run_common_campaign.py`. The older
 `eng/run-l0l1-canonical.ps1` and its accounting/proof scripts remain historical
