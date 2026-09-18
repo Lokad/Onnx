@@ -128,7 +128,8 @@ public class GraphIsolationTests
                 Assert.True(SpinWait.SpinUntil(() => executing.GetValue(g) is 1, TimeSpan.FromSeconds(10)),
                     "The first call must acquire its guard before testing a concurrent call.");
                 Assert.False(g.Execute(ui, true));
-                Assert.Equal(reference, ((Tensor<float>)g.Outputs.Values.First()).ToArray());
+                var held = Assert.IsAssignableFrom<Tensor<float>>(g.Outputs.Values.First());
+                Assert.Equal(reference, held.ToArray());
             }
             Assert.True(await running);
         }

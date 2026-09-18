@@ -2003,11 +2003,11 @@ where T : unmanaged
         }
     }
     /// <summary>
-    /// E80 twin: pointer-addressed masked softmax over row pairs. Same
+    /// Pointer-addressed masked softmax over row pairs. Same
     /// per-element arithmetic and order as SoftmaxMaskedFloatSpan2x with raw
     /// vector pointers instead of per-vector Slice plus Cast, removing
     /// bounds-check setup from the hot loops and scalar tails.
-    /// Test-reachable only; no dispatch yet.
+    /// The optional wider exponential preserves the original eight-lane sums.
     /// </summary>
     internal static unsafe void SoftmaxMaskedFloatSpanPtr(System.Span<float> inputSpan, System.Span<float> maskSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
     {
@@ -2015,6 +2015,9 @@ where T : unmanaged
         fixed (float* px = inputSpan, pm = maskSpan, py = outputSpan)
         {
             int w = Vector<float>.Count;
+            bool useWideExp = AblationSwitches.EnableSoftmaxNonpositive
+                && AblationSwitches.EnableSoftmaxWideExp
+                && Vector512.IsHardwareAccelerated && w == 8 && block >= 128;
             int pairs = outer / 2;
             for (int p = 0; p < pairs; p++)
             {
@@ -2031,6 +2034,23 @@ where T : unmanaged
                     var xv0 = (Vector<float>*)(px + base0);
                     var mv0 = (Vector<float>*)pm;
                     var yv0 = (Vector<float>*)(py + base0);
+                    if (useWideExp)
+                    {
+                        // Preserve the original lower-then-upper eight-lane additions.
+                        var wideMax = Vector512.Create(max0);
+                        for (; expIndex0 <= block - 16; expIndex0 += 16)
+                        {
+                            var activated = MathOps.ExpVectorNonpositive512((*(Vector512<float>*)xv0 + *(Vector512<float>*)mv0) - wideMax);
+                            *(Vector512<float>*)yv0 = activated;
+                            var lower = activated.GetLower();
+                            var upper = activated.GetUpper();
+                            vsum0 += Unsafe.As<Vector256<float>, Vector<float>>(ref lower);
+                            vsum0 += Unsafe.As<Vector256<float>, Vector<float>>(ref upper);
+                            xv0 += 2;
+                            yv0 += 2;
+                            mv0 += 2;
+                        }
+                    }
                     for (; expIndex0 <= block - w; expIndex0 += w)
                     {
                         var activated0 = MathOps.ExpVectorSoftmax((*xv0 + *mv0) - vmax0);
@@ -2057,6 +2077,23 @@ where T : unmanaged
                     var xv1 = (Vector<float>*)(px + base1);
                     var mv1 = (Vector<float>*)pm;
                     var yv1 = (Vector<float>*)(py + base1);
+                    if (useWideExp)
+                    {
+                        // Preserve the original lower-then-upper eight-lane additions.
+                        var wideMax = Vector512.Create(max1);
+                        for (; expIndex1 <= block - 16; expIndex1 += 16)
+                        {
+                            var activated = MathOps.ExpVectorNonpositive512((*(Vector512<float>*)xv1 + *(Vector512<float>*)mv1) - wideMax);
+                            *(Vector512<float>*)yv1 = activated;
+                            var lower = activated.GetLower();
+                            var upper = activated.GetUpper();
+                            vsum1 += Unsafe.As<Vector256<float>, Vector<float>>(ref lower);
+                            vsum1 += Unsafe.As<Vector256<float>, Vector<float>>(ref upper);
+                            xv1 += 2;
+                            yv1 += 2;
+                            mv1 += 2;
+                        }
+                    }
                     for (; expIndex1 <= block - w; expIndex1 += w)
                     {
                         var activated1 = MathOps.ExpVectorSoftmax((*xv1 + *mv1) - vmax1);
@@ -2112,6 +2149,23 @@ where T : unmanaged
                     var xv = (Vector<float>*)(px + baseR);
                     var mv = (Vector<float>*)pm;
                     var yv = (Vector<float>*)(py + baseR);
+                    if (useWideExp)
+                    {
+                        // Preserve the original lower-then-upper eight-lane additions.
+                        var wideMax = Vector512.Create(max);
+                        for (; expIndex <= block - 16; expIndex += 16)
+                        {
+                            var activated = MathOps.ExpVectorNonpositive512((*(Vector512<float>*)xv + *(Vector512<float>*)mv) - wideMax);
+                            *(Vector512<float>*)yv = activated;
+                            var lower = activated.GetLower();
+                            var upper = activated.GetUpper();
+                            vsum += Unsafe.As<Vector256<float>, Vector<float>>(ref lower);
+                            vsum += Unsafe.As<Vector256<float>, Vector<float>>(ref upper);
+                            xv += 2;
+                            yv += 2;
+                            mv += 2;
+                        }
+                    }
                     for (; expIndex <= block - w; expIndex += w)
                     {
                         var activated = MathOps.ExpVectorSoftmax((*xv + *mv) - vmax);
@@ -2145,16 +2199,19 @@ where T : unmanaged
         }
     }
     /// <summary>
-    /// E80 twin: pointer-addressed plain softmax over row pairs. Same
+    /// Pointer-addressed plain softmax over row pairs. Same
     /// per-element arithmetic and order as SoftmaxContiguousFloatSpan2x with
     /// raw vector pointers instead of per-vector Slice plus Cast.
-    /// Test-reachable only; no dispatch yet.
+    /// The optional wider exponential preserves the original eight-lane sums.
     /// </summary>
     internal static unsafe void SoftmaxContiguousFloatSpanPtr(System.Span<float> inputSpan, System.Span<float> outputSpan, int outer, int block, bool useSimd)
     {
         fixed (float* px = inputSpan, py = outputSpan)
         {
             int w = Vector<float>.Count;
+            bool useWideExp = AblationSwitches.EnableSoftmaxNonpositive
+                && AblationSwitches.EnableSoftmaxWideExp
+                && Vector512.IsHardwareAccelerated && w == 8 && block >= 128;
             int pairs = outer / 2;
             for (int p = 0; p < pairs; p++)
             {
@@ -2170,6 +2227,22 @@ where T : unmanaged
                     var vsum0 = Vector<float>.Zero;
                     var xv0 = (Vector<float>*)(px + base0);
                     var yv0 = (Vector<float>*)(py + base0);
+                    if (useWideExp)
+                    {
+                        // Preserve the original lower-then-upper eight-lane additions.
+                        var wideMax = Vector512.Create(max0);
+                        for (; expIndex0 <= block - 16; expIndex0 += 16)
+                        {
+                            var activated = MathOps.ExpVectorNonpositive512(*(Vector512<float>*)xv0 - wideMax);
+                            *(Vector512<float>*)yv0 = activated;
+                            var lower = activated.GetLower();
+                            var upper = activated.GetUpper();
+                            vsum0 += Unsafe.As<Vector256<float>, Vector<float>>(ref lower);
+                            vsum0 += Unsafe.As<Vector256<float>, Vector<float>>(ref upper);
+                            xv0 += 2;
+                            yv0 += 2;
+                        }
+                    }
                     for (; expIndex0 <= block - w; expIndex0 += w)
                     {
                         var activated0 = MathOps.ExpVectorSoftmax(*xv0 - vmax0);
@@ -2194,6 +2267,22 @@ where T : unmanaged
                     var vsum1 = Vector<float>.Zero;
                     var xv1 = (Vector<float>*)(px + base1);
                     var yv1 = (Vector<float>*)(py + base1);
+                    if (useWideExp)
+                    {
+                        // Preserve the original lower-then-upper eight-lane additions.
+                        var wideMax = Vector512.Create(max1);
+                        for (; expIndex1 <= block - 16; expIndex1 += 16)
+                        {
+                            var activated = MathOps.ExpVectorNonpositive512(*(Vector512<float>*)xv1 - wideMax);
+                            *(Vector512<float>*)yv1 = activated;
+                            var lower = activated.GetLower();
+                            var upper = activated.GetUpper();
+                            vsum1 += Unsafe.As<Vector256<float>, Vector<float>>(ref lower);
+                            vsum1 += Unsafe.As<Vector256<float>, Vector<float>>(ref upper);
+                            xv1 += 2;
+                            yv1 += 2;
+                        }
+                    }
                     for (; expIndex1 <= block - w; expIndex1 += w)
                     {
                         var activated1 = MathOps.ExpVectorSoftmax(*xv1 - vmax1);
@@ -2247,6 +2336,22 @@ where T : unmanaged
                     var vsum = Vector<float>.Zero;
                     var xv = (Vector<float>*)(px + baseR);
                     var yv = (Vector<float>*)(py + baseR);
+                    if (useWideExp)
+                    {
+                        // Preserve the original lower-then-upper eight-lane additions.
+                        var wideMax = Vector512.Create(max);
+                        for (; expIndex <= block - 16; expIndex += 16)
+                        {
+                            var activated = MathOps.ExpVectorNonpositive512(*(Vector512<float>*)xv - wideMax);
+                            *(Vector512<float>*)yv = activated;
+                            var lower = activated.GetLower();
+                            var upper = activated.GetUpper();
+                            vsum += Unsafe.As<Vector256<float>, Vector<float>>(ref lower);
+                            vsum += Unsafe.As<Vector256<float>, Vector<float>>(ref upper);
+                            xv += 2;
+                            yv += 2;
+                        }
+                    }
                     for (; expIndex <= block - w; expIndex += w)
                     {
                         var activated = MathOps.ExpVectorSoftmax(*xv - vmax);

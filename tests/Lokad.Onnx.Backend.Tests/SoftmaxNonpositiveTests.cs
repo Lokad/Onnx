@@ -1,9 +1,35 @@
 using System.Numerics;
+using System.Runtime.Intrinsics;
 
 namespace Lokad.Onnx.Backend.Tests;
 
 public class SoftmaxNonpositiveTests
 {
+    [Fact]
+    public void WideHelperPreservesEveryReferenceLaneWithHardwareOrSoftwareVectors()
+    {
+        var random = new Random(20260921);
+        var values = new float[16];
+        var expected = new float[16];
+        var actual = new float[16];
+        float[] edges = { 0f, -0f, -float.Epsilon, -float.MaxValue, float.NegativeInfinity,
+            float.NaN, BitConverter.Int32BitsToSingle(0x7FA12345),
+            -88.722839f, MathF.BitIncrement(-88.722839f), MathF.BitDecrement(-88.722839f),
+            -87.33654475f, -0.3465735903f, -0.6931471806f };
+        for (int sample = 0; sample < 131072; sample++)
+        {
+            for (int lane = 0; lane < values.Length; lane++)
+                values[lane] = sample < edges.Length ? edges[(sample + lane) % edges.Length]
+                    : sample % 2 == 0 ? (float)(-random.NextDouble() * 90)
+                    : BitConverter.Int32BitsToSingle(random.Next() | int.MinValue);
+            for (int offset = 0; offset < values.Length; offset += Vector<float>.Count)
+                MathOps.ExpVectorNonpositive(new Vector<float>(values, offset)).CopyTo(expected.AsSpan(offset));
+            MathOps.ExpVectorNonpositive512(Vector512.LoadUnsafe(ref values[0])).CopyTo(actual.AsSpan());
+            for (int lane = 0; lane < values.Length; lane++)
+                Assert.Equal(BitConverter.SingleToInt32Bits(expected[lane]), BitConverter.SingleToInt32Bits(actual[lane]));
+        }
+    }
+
     static void CheckDomain(Vector<float> input)
     {
         var reference = MathOps.ExpVectorEstrinReference(input);

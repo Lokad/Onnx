@@ -43,6 +43,9 @@ internal static class AblationSwitches
     /// Specialize exponentiation after subtracting a softmax row maximum.
     internal static readonly bool EnableSoftmaxNonpositive = EnvIsSet("LOKAD_ONNX_SOFTMAX_NONPOSITIVE");
 
+    /// Widen long-row exponentiation while preserving eight-lane sums; requires nonpositive exp.
+    internal static readonly bool EnableSoftmaxWideExp = EnvIsSet("LOKAD_ONNX_SOFTMAX_WIDE_EXP");
+
     /// Normalize SIMD float softmax rows with one reciprocal and multiplication.
     internal static readonly bool EnableSoftmaxReciprocal = EnvIsSet("LOKAD_ONNX_SOFTMAX_RECIPROCAL");
 
