@@ -172,3 +172,14 @@ checks comprise 44 Python tests and 11 common-runner self-checks, including
 actual Windows child affinity inheritance and parent restoration after a
 failed launch. Linux launch wrapping has fixture coverage; live Linux
 verification remains open.
+
+For sample-level noise investigation, the ordinary Bench executable accepts
+`--sample-diagnostics`. It emits one `sample-diagnostics` JSON record per case
+after all timings and agreement checks. Rows preserve execution order, engine
+and sample index, the unchanged stopwatch latency, surrounding observation
+duration, thread/process CPU time, GC collection/pause deltas and current-thread
+allocated bytes. Counter reads and record storage occur outside the headline
+stopwatch; observation overhead and Windows CPU-counter granularity still make
+these diagnostic runs. GC counters are process-wide and cannot alone attribute
+a pause to an engine. Do not subtract counters to manufacture corrected latency
+or filter inconvenient samples. The common campaign runner rejects this flag.

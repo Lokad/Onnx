@@ -22,6 +22,7 @@
     <Compile Include="../Lokad.Onnx.Bench/BenchValidate.cs" Link="BenchValidate.cs" />
     <Compile Include="../Lokad.Onnx.Bench/KnownDivergences.cs" Link="KnownDivergences.cs" />
     <Compile Include="../Lokad.Onnx.Bench/CampaignEvidence.cs" Link="CampaignEvidence.cs" />
+    <Compile Include="../Lokad.Onnx.Bench/SampleDiagnostics.cs" Link="SampleDiagnostics.cs" />
     <Compile Include="../../src/Lokad.Onnx.Data/Text.cs" Link="Text.cs" />
   </ItemGroup>
   <Target Name="RequireBaselineReference" BeforeTargets="ResolveReferences">

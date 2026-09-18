@@ -20,6 +20,7 @@ static class Bench
     static double WarmupMinimumMs;
     static string? CaseFilter;
     static bool ProbeOnly;
+    static bool SampleDiagnosticsEnabled;
 
     [DllImport("kernel32.dll", SetLastError = true)]
     static extern bool GetLogicalProcessorInformationEx(int relationshipType, IntPtr buffer, ref int returnedLength);
@@ -137,15 +138,19 @@ static class Bench
             else if (args[i] == "--warmup-ms" && i + 1 < args.Length && double.TryParse(args[i + 1], out var wms) && double.IsFinite(wms) && wms >= 0) { WarmupMinimumMs = wms; i++; }
             else if (args[i] == "--case" && i + 1 < args.Length) CaseFilter = args[++i];
             else if (args[i] == "--probe") ProbeOnly = true;
+            else if (args[i] == "--sample-diagnostics") SampleDiagnosticsEnabled = true;
             else if (args[i] == "all" || assets.ContainsKey(args[i])) { if (args[i] != "all" && !selected.Contains(args[i], StringComparer.OrdinalIgnoreCase)) selected.Add(args[i]); }
-            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--warmup N] [--warmup-min A --warmup-max B] [--warmup-ms MS] [--case diagnostic-case] [--rows canonical|all] [--cpu N]"); return 2; }
+            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--warmup N] [--warmup-min A --warmup-max B] [--warmup-ms MS] [--case diagnostic-case] [--rows canonical|all] [--cpu N] [--sample-diagnostics (Bench only)]"); return 2; }
         }
         if (rowsName != "canonical" && rowsName != "all") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all)"); return 2; }
         if ((warmupMin < 0) != (warmupMax < 0)) { Console.WriteLine("--warmup-min and --warmup-max must be given together (absent selects fixed --warmup " + warmup + ")"); return 2; }
         if (warmupMin >= 0 && (warmupMin > warmupMax || warmupMax > 10000)) { Console.WriteLine("invalid adaptive warmup range (expected 0 <= min <= max <= 10000)"); return 2; }
 #if CAMPAIGN_RUNNER
         if (threads != 1 || modeName != "auto" || rowsName != "canonical") throw new InvalidOperationException("Campaign requires auto, canonical, one CPU thread.");
+        if (SampleDiagnosticsEnabled) throw new InvalidOperationException("Sample diagnostics are not campaign evidence; use the ordinary Bench executable.");
 #endif
+        if (SampleDiagnosticsEnabled && CampaignEvidence.Current is not null)
+            throw new InvalidOperationException("Sample diagnostics cannot capture campaign evidence.");
         // ProcessorCount reflects startup affinity, not the highest OS CPU ID.
         if (cpu < 0 || cpu >= 64) { Console.WriteLine("invalid --cpu " + cpu + " (expected a supported OS CPU ID in 0..63)"); return 2; }
         if (selected.Count == 0)
@@ -895,12 +900,15 @@ static class Bench
             var ort = new List<double>();
             var tort = new List<long>();
             var sw = new Stopwatch();
+            var samples = SampleDiagnosticsEnabled ? new SampleDiagnostics(iters) : null;
             void TimeCtx()
             {
                 ctx.Reset();
+                var before = samples is null ? default : SampleDiagnostics.Snapshot.Capture();
                 sw.Restart();
                 if (!ctx.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": context execute failed");
                 sw.Stop();
+                samples?.Record("ctx", clok.Count, sw.ElapsedTicks, before);
                 clok.Add(sw.Elapsed.TotalMilliseconds);
                 tctx.Add(sw.ElapsedTicks);
                 ctx.Reset();
@@ -908,17 +916,24 @@ static class Bench
             void TimeLok()
             {
                 graph.Reset();
+                var before = samples is null ? default : SampleDiagnostics.Snapshot.Capture();
                 sw.Restart();
                 if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": lokad execute failed");
                 sw.Stop();
+                samples?.Record("lok", lok.Count, sw.ElapsedTicks, before);
                 lok.Add(sw.Elapsed.TotalMilliseconds);
                 tlok.Add(sw.ElapsedTicks);
                 graph.Reset();
             }
             void TimeOrt()
             {
+                var before = samples is null ? default : SampleDiagnostics.Snapshot.Capture();
                 sw.Restart();
-                using (var timed = ortSession.Run(ro, ortInputs, outNames)) { sw.Stop(); }
+                using (var timed = ortSession.Run(ro, ortInputs, outNames))
+                {
+                    sw.Stop();
+                    samples?.Record("ort", ort.Count, sw.ElapsedTicks, before);
+                }
                 ort.Add(sw.Elapsed.TotalMilliseconds);
                 tort.Add(sw.ElapsedTicks);
             }
@@ -941,19 +956,23 @@ static class Bench
             void TimeReq()
             {
                 graph.Reset();
+                var before = samples is null ? default : SampleDiagnostics.Snapshot.Capture();
                 sw.Restart();
                 if (!graph.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": request execute failed");
                 graph.Reset();
                 sw.Stop();
+                samples?.Record("req", req.Count, sw.ElapsedTicks, before);
                 req.Add(sw.Elapsed.TotalMilliseconds);
             }
             void TimeReqCtx()
             {
                 ctx.Reset();
+                var before = samples is null ? default : SampleDiagnostics.Snapshot.Capture();
                 sw.Restart();
                 if (!ctx.Execute(named, true, ExecutionProvider.CPU, lokadOpts)) throw new InvalidOperationException(name + ": request context execute failed");
                 ctx.Reset();
                 sw.Stop();
+                samples?.Record("reqctx", reqCtx.Count, sw.ElapsedTicks, before);
                 reqCtx.Add(sw.Elapsed.TotalMilliseconds);
             }
             for (int i = 0; i < iters; i++)
@@ -987,6 +1006,7 @@ static class Bench
                 + " rawticks ctx=[" + string.Join(",", tctx) + "]"
                 + " rawticks ort=[" + string.Join(",", tort) + "]"
                 + " tickfreq=" + Stopwatch.Frequency);
+            samples?.Write(name);
         }
         finally
         {
