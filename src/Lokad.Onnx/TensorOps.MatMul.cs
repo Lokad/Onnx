@@ -195,7 +195,11 @@ where T : unmanaged
                     fixed (float* pp = packed)
                     {
                         PackPanelsB(n, k, y, pp);
-                        mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
+                        // Short reductions did not benefit in the packing-inclusive
+                        // attention probe. Keep their existing consumer.
+                        if (!AblationSwitches.EnablePackedAvx512Dynamic || n < 64
+                            || !TryPackedAvx512Rows(m, n, k, x, pp, output))
+                            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
                     }
                 }
                 finally
@@ -211,7 +215,9 @@ where T : unmanaged
                     fixed (float* pp = packed)
                     {
                         PackPanelsB(n, k, y, pp);
-                        mm_unsafe_vectorized_intrinsics_2x4packed_bump(blocked, n, k, x, pp, output);
+                        if (!AblationSwitches.EnablePackedAvx512Dynamic || n < 64
+                            || !TryPackedAvx512Rows(blocked, n, k, x, pp, output))
+                            mm_unsafe_vectorized_intrinsics_2x4packed_bump(blocked, n, k, x, pp, output);
                     }
                 }
                 finally

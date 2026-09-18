@@ -307,9 +307,10 @@ public class GraphFusionScaledMatMulTests
     [Fact]
     public void TrailingAlpha_EnvelopeWithinGate()
     {
-        // E5-1 M2 envelope: alpha-epilogue vs Div-then-MatMul over QK shapes
-        // and divisor systematics. Inexact divisors must differ (proves the
-        // twin ran, not the composite) while staying deep inside 1e-4.
+        // E5-1 M2 envelope: alpha-epilogue vs MatMul-then-Div over QK shapes
+        // and divisor systematics. On FMA hardware, inexact divisors must
+        // differ (proves the twin ran) while staying deep inside 1e-4.
+        // Without FMA, the unchanged composite must preserve every bit.
         var cases = new (int[] ad, int[] bd, float d)[]
         {
             (new[] { 30, 32 }, new[] { 32, 30 }, 5.656854f),
@@ -333,7 +334,10 @@ public class GraphFusionScaledMatMulTests
             Assert.Equal(e.Length, f.Length);
             double worst = MaxScaledDiff(f, e);
             Assert.True(worst <= 1e-4, "d=" + d + " envelope " + worst);
-            Assert.True(worst > 0, "d=" + d + " suspiciously bitwise (twin bypassed?)");
+            if (System.Runtime.Intrinsics.X86.Fma.IsSupported)
+                Assert.True(worst > 0, "d=" + d + " suspiciously bitwise (twin bypassed?)");
+            else
+                Assert.Equal(e.Select(BitConverter.SingleToInt32Bits), f.Select(BitConverter.SingleToInt32Bits));
         }
     }
 
