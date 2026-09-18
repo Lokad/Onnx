@@ -38,7 +38,10 @@ internal static class GraphProfile
             else { Console.WriteLine("usage: Bench profile <case> [--out dir] [--cpu N] [--reps K] [--disable-pass name]..."); return 2; }
         }
         if (kase is null) { Console.WriteLine("usage: Bench profile <case> [--out dir] [--cpu N] [--reps K]"); return 2; }
-        if (cpu < 0 || cpu >= 64 || cpu >= Environment.ProcessorCount) { Console.WriteLine("invalid --cpu " + cpu); return 2; }
+        // With startup affinity, ProcessorCount is the number of allowed CPUs,
+        // not the largest OS CPU ID (taskset -c 2 legitimately reports one CPU).
+        // EnforceSingleCpuAffinity below verifies the requested OS mask.
+        if (cpu < 0 || cpu >= 64) { Console.WriteLine("invalid --cpu " + cpu); return 2; }
         var startedUtc = DateTime.UtcNow;
         var ownedTraces = new List<string>();
         if (disabledPasses.Count > 0) Console.WriteLine("profile: disabled passes=[" + string.Join(",", disabledPasses) + "]");
