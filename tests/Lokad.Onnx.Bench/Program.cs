@@ -55,6 +55,10 @@ static class Bench
         {
             return RunConvLayers();
         }
+        if (args.Length > 0 && args[0] == "profile-voice")
+        {
+            return RunProfileVoice(args.Skip(1).ToArray());
+        }
         var selected = new List<string>();
         string modeName = "auto";
         string rowsName = "canonical";
@@ -356,6 +360,38 @@ static class Bench
         if (modeName.Equals("auto", StringComparison.OrdinalIgnoreCase) && threads == 1)
             return "single-cpu-auto-1 (canonical)";
         return "single-cpu-" + modeName.ToLowerInvariant() + "-" + threads + " (diagnostic)";
+    }
+
+    static int RunProfileVoice(string[] args)
+    {
+        string? only = null;
+        string outDir = Path.Combine(FindRoot(), "artifacts", "bench", "voice-report");
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "--output" && i + 1 < args.Length) outDir = args[++i];
+            else if (only is null) only = args[i];
+            else { Console.WriteLine("usage: Bench profile-voice [parakeet-encoder|parakeet-decoder|pyannote-segmentation|pyannote-embedding] [--output DIR]"); return 2; }
+        }
+        var root = FindRoot();
+        var cases = new (string Name, string Model, Dictionary<string, ITensor> Inputs)[]
+        {
+            ("parakeet-encoder", Path.Combine(root, "models", "parakeet-tdt-0.6b-v3", "onnx", "encoder-model.onnx"), VoiceModelCases.EncoderInputs(root)),
+            ("parakeet-decoder", Path.Combine(root, "models", "parakeet-tdt-0.6b-v3", "onnx", "decoder_joint-model.onnx"), VoiceModelCases.DecoderStep1Inputs(root)),
+            ("pyannote-segmentation", Path.Combine(root, "models", "speaker-diarization-community-1", "onnx", "segmentation", "model.onnx"), VoiceModelCases.SegmentationInputs(root)),
+            ("pyannote-embedding", Path.Combine(root, "models", "speaker-diarization-community-1", "onnx", "embedding", "embedding_encoder.onnx"), VoiceModelCases.EmbeddingInputs(root)),
+        };
+        Directory.CreateDirectory(outDir);
+        foreach (var (name, model, inputs) in cases)
+        {
+            if (only is not null && !name.Equals(only, StringComparison.OrdinalIgnoreCase)) continue;
+            VoiceProvenance.VerifyModelFile(name, model);
+            var graph = OnnxImport.Load(model) ?? throw new InvalidOperationException(name + ": failed to load model.");
+            string json = VoiceReport.Build(graph, inputs, ExecutionOptions.Default);
+            string file = Path.Combine(outDir, name + ".report.json");
+            File.WriteAllText(file, json);
+            Console.WriteLine("profile-voice " + name + " nodes=" + graph.Nodes.Count + " -> " + file);
+        }
+        return 0;
     }
 
     static int RunConvLayers()
