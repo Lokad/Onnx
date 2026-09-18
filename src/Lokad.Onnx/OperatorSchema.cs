@@ -95,6 +95,9 @@ public static class OperatorSchemas
         [OpType.Not] = Def(OpType.Not, 1, 1),
         [OpType.Pad] = Def(OpType.Pad, 1, 3, 1, 1, 1, false),
         [OpType.Clip] = Def(OpType.Clip, 1, 3, 1, 1, 6, false),
+        [OpType.InstanceNormalization] = Def(OpType.InstanceNormalization, 3, 3, 1, 1, 6, false),
+        [OpType.LeakyRelu] = Def(OpType.LeakyRelu, 1, 1, 1, 1, 6, false),
+        [OpType.LogSoftmax] = Def(OpType.LogSoftmax, 1, 1),
     };
 
     public static bool IsStandardDomain(string? domain) =>

@@ -417,6 +417,12 @@ public partial struct Node
         OpType.Clip => CPU.Clip(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
             GetFloat("min", null), GetFloat("max", null), opt, ResolvedOpsetVersion(graph)),
 
+        OpType.InstanceNormalization => CPU.InstanceNorm(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), GetFloat("epsilon", null), opt),
+
+        OpType.LeakyRelu => CPU.LeakyRelu(InputTensor(graph, 0), GetFloat("alpha", null), opt),
+
+        OpType.LogSoftmax => CPU.LogSoftmax(InputTensor(graph, 0), Int("axis", null), opt, graph.ActivePool, ResolvedOpsetVersion(graph)),
+
         OpType.Floor => CPU.Floor(InputTensor(graph, 0), opt),
 
         OpType.And => CPU.And(InputTensor(graph, 0), InputTensor(graph, 1), opt),

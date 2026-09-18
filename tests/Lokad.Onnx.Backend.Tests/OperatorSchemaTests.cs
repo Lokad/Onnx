@@ -795,19 +795,17 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void LeakyReluHonestlyUnsupported_FailsCleanly()
+    public void LeakyReluDispatchesWithDefaultAlpha()
     {
-        // C11: no LeakyRelu schema, provider, kernel, or dispatch arm exists
-        // anywhere in src; same honest contract (verified end to end via OpDump).
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.LeakyRelu));
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.LeakyRelu));
         var node = Nod(OpType.LeakyRelu, "", 13,
             new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("LeakyRelu", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new[] { -.01f, .5f }, ((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
     [Fact]
@@ -1310,19 +1308,19 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void LogSoftmaxHonestlyUnsupported_FailsCleanly()
+    public void LogSoftmaxDispatchesWithDefaultAxis()
     {
-        // C11: no LogSoftmax schema, provider, kernel, or dispatch arm exists
-        // anywhere in src (no log-softmax kernel exists (Softmax only)); same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.LogSoftmax));
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.LogSoftmax));
         var node = Nod(OpType.LogSoftmax, "", 14,
             new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(14);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("LogSoftmax", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        var output = ((Tensor<float>)r.Outputs[0]).ToArray();
+        Assert.Equal(-1.3132617f, output[0], 6);
+        Assert.Equal(-.3132617f, output[1], 6);
     }
 
     [Fact]
