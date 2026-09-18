@@ -31,6 +31,9 @@ internal static class AblationSwitches
     /// Return the private MatMul result after the trailing Div composite finishes.
     internal static readonly bool EnableFusedTempRelease = EnvIsSet("LOKAD_ONNX_FUSED_TEMP_RELEASE");
 
+    /// Skip exponential polynomial work that the existing underflow guard discards.
+    internal static readonly bool EnableSoftmaxExpPrune = EnvIsSet("LOKAD_ONNX_SOFTMAX_EXP_PRUNE");
+
     /// When true, softmax over contiguous float rows routes to the preserved
     /// legacy kernel instead of the default span kernel. Default off; set
     /// LOKAD_ONNX_SOFTMAX_LEGACY=1 before process start to enable.

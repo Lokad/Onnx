@@ -190,6 +190,12 @@ the trailing MatMul-plus-Div composite. The two arithmetic passes are unchanged;
 only its unexposed intermediate is returned after Div, including on failure.
 This experiment is off by default and does not reclaim graph intermediates.
 
+`LOKAD_ONNX_SOFTMAX_EXP_PRUNE=1` uses the bitwise-equivalent exponential
+experiment: lanes below the existing underflow cutoff use zero during polynomial
+evaluation, then select the same positive-zero result as before. This avoids
+computing discarded subnormal values. The cutoff, returned values, reduction
+order and floating-point control settings are unchanged. Off by default.
+
 `LOKAD_ONNX_RELEASED_BUFFER_CACHE=1` before process startup retains only arrays
 already released by a completed call's lifetime checks. Each serialized graph
 or explicit context has a separate cache, limited to 128 MiB of payload,
