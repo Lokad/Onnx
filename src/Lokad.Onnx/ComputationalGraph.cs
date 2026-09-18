@@ -121,6 +121,15 @@ public class ComputationalGraph
     HashSet<ITensor>? liveUnknownTensors;
 
     bool liveIndexSeeded;
+    long bindingReplacementGeneration;
+
+    // A failed probe is repeatable while all dependencies of its alias decision
+    // remain unchanged. The list still preserves the existing reverse retry order.
+    readonly record struct DeferredRelease(string Name, Array? Root, int Users,
+        bool HasUnknown, long BindingGeneration)
+    {
+        public DeferredRelease(string name) : this(name, null, 0, false, -1) { }
+    }
 
     /// <summary>Reentrancy guard: at most one execution at a time per graph or context.</summary>
     protected int _executing;
@@ -767,7 +776,7 @@ public class ComputationalGraph
 
         int count = 0;
         var boundThisRun = new HashSet<string>(StringComparer.Ordinal);
-        List<string>? pendingRelease = null;
+        List<DeferredRelease>? pendingRelease = null;
         using var op = Begin("Executing graph {n} from {f}", Metadata["Name"], ModelFile);
 
         using var profilerScope = Profiler.BeginExecution();
@@ -923,6 +932,7 @@ public class ComputationalGraph
         liveArrayUsers = null;
         liveUnknownTensors = null;
         liveIndexSeeded = false;
+        bindingReplacementGeneration = 0;
     }
 
     /// <summary>
@@ -1431,7 +1441,7 @@ public class ComputationalGraph
         return true;
     }
 
-    void ReleaseDeadTensors(Node node, int index, ref List<string>? pending)
+    void ReleaseDeadTensors(Node node, int index, ref List<DeferredRelease>? pending)
     {
         var pool = ActivePool;
         if (pool is null || node.Inputs is null) return;
@@ -1442,10 +1452,10 @@ public class ComputationalGraph
             if (!LastUseIndex.TryGetValue(name, out var last) || last != index) continue;
             if (node.Outputs is not null && Array.IndexOf(node.Outputs, name) >= 0)
             {
-                DeferRelease(name, ref pending);
+                DeferRelease(name, ref pending, attempted: false);
                 continue;
             }
-            if (TryReleaseValue(name, ref returned) == false) DeferRelease(name, ref pending);
+            if (TryReleaseValue(name, ref returned) == false) DeferRelease(name, ref pending, attempted: true);
         }
         // Reclaiming after the final node serves no later rent, so only
         // earlier nodes retry values that died behind a live alias plus
@@ -1457,7 +1467,7 @@ public class ComputationalGraph
             {
                 if (string.IsNullOrEmpty(name)) continue;
                 if (!LastUseIndex.TryGetValue(name, out var last) || last != index) continue;
-                if (TryReleaseValue(name, ref returned) == false) DeferRelease(name, ref pending);
+                if (TryReleaseValue(name, ref returned) == false) DeferRelease(name, ref pending, attempted: true);
             }
         }
         RetryPendingReleases(ref pending, ref returned);
@@ -1468,25 +1478,48 @@ public class ComputationalGraph
     /// every intermediate after every node. Released slots and graph outputs
     /// never park: the former stay dead, the latter stay live to the end.
     /// </summary>
-    void DeferRelease(string name, ref List<string>? pending)
+    void DeferRelease(string name, ref List<DeferredRelease>? pending, bool attempted)
     {
         if (Outputs.ContainsKey(name)) return;
         if (!IntermediateOutputs.TryGetValue(name, out var tensor) || tensor is null) return;
-        pending ??= new List<string>();
-        if (pending.Contains(name) == false) pending.Add(name);
+        pending ??= new List<DeferredRelease>();
+        foreach (var entry in pending) if (entry.Name == name) return;
+        // In-place output deferral has not probed the newly bound value yet.
+        pending.Add(attempted ? CaptureDeferredRelease(name) : new DeferredRelease(name));
     }
+
+    DeferredRelease CaptureDeferredRelease(string name)
+    {
+        if (!AblationSwitches.EnableDeferredReleaseCache || ActivePool is not { } pool
+            || !liveIndexSeeded || pool.StaticRoots is null
+            || liveArrayUsers is not { } usersByRoot || liveUnknownTensors is not { } unknown
+            || !IntermediateOutputs.TryGetValue(name, out var value)
+            || value is not Tensor<float> tensor
+            || tensor.OwnedBufferArray() is not { } root || !pool.IsOwned(root))
+            return new DeferredRelease(name);
+        int users = usersByRoot.TryGetValue(root, out int count) ? count : 0;
+        return new DeferredRelease(name, root, users, unknown.Count > 0, bindingReplacementGeneration);
+    }
+
+    bool ReleaseDependenciesUnchanged(DeferredRelease entry) =>
+        entry.Root is { } root && liveArrayUsers is { } users && liveUnknownTensors is { } unknown
+        && entry.BindingGeneration == bindingReplacementGeneration
+        && entry.HasUnknown == (unknown.Count > 0)
+        && entry.Users == (users.TryGetValue(root, out int count) ? count : 0);
 
     /// <summary>
     /// Retries intermediates whose storage stayed pinned by a live alias when
     /// they died. Reclaimed names leave the pending set; names that became
     /// graph outputs drop out without touching their bindings.
     /// </summary>
-    void RetryPendingReleases(ref List<string>? pending, ref HashSet<Array>? returned)
+    void RetryPendingReleases(ref List<DeferredRelease>? pending, ref HashSet<Array>? returned)
     {
         if (pending is null || pending.Count == 0) return;
         for (int i = pending.Count - 1; i >= 0; i--)
         {
-            var name = pending[i];
+            var entry = pending[i];
+            if (ReleaseDependenciesUnchanged(entry)) continue;
+            var name = entry.Name;
             if (Outputs.ContainsKey(name))
             {
                 pending.RemoveAt(i);
@@ -1495,6 +1528,7 @@ public class ComputationalGraph
             {
                 pending.RemoveAt(i);
             }
+            else pending[i] = CaptureDeferredRelease(name);
         }
     }
 
@@ -1565,6 +1599,7 @@ public class ComputationalGraph
     void TrackBind(IDictionary<string, ITensor?> map, string name, ITensor? value)
     {
         map.TryGetValue(name, out var old);
+        if (old is not null && !ReferenceEquals(old, value)) bindingReplacementGeneration++;
         if (!ReferenceEquals(old, value)) RemoveLiveRefs(old);
         livePayloadBytes += PayloadBytes(value) - PayloadBytes(old);
         map[name] = value;

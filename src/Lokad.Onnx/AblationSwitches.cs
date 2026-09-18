@@ -22,6 +22,9 @@ internal static class AblationSwitches
     /// Read once at process startup; no production default changes before AMD qualification.
     internal static readonly bool EnablePackedAvx512Rows = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_ROWS");
 
+    /// Opt-in memoization of failed deferred-release probes whose alias state is unchanged.
+    internal static readonly bool EnableDeferredReleaseCache = EnvIsSet("LOKAD_ONNX_DEFERRED_RELEASE_CACHE");
+
     /// When true, softmax over contiguous float rows routes to the preserved
     /// legacy kernel instead of the default span kernel. Default off; set
     /// LOKAD_ONNX_SOFTMAX_LEGACY=1 before process start to enable.
