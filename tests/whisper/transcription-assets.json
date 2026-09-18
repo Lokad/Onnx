@@ -1,0 +1,62 @@
+{
+  "repository": "onnx-community/whisper-large-v3-turbo",
+  "revision": "360ebcde2559d60bb474678be3c1de9ef347d01a",
+  "files": {
+    "added_tokens.json": {
+      "bytes": 34648,
+      "sha256": "3c51f66c4c21f9e126970078f11ae77a78c74aee8df606ee9daba86e467108e0"
+    },
+    "config.json": {
+      "bytes": 1332,
+      "sha256": "35cd83669f75bc2867f3b3a4461850392d5e308cd6ea951c3700539883c28df1"
+    },
+    "generation_config.json": {
+      "bytes": 3897,
+      "sha256": "16f95291d2f47c944d3c2b19390bba7965666555c1ea2a0bdc850d1fab45612f"
+    },
+    "merges.txt": {
+      "bytes": 493869,
+      "sha256": "2df2990a395e35e8dfbc7511e08c12d56018d8d04691e0133e5d63b21e154dc6"
+    },
+    "normalizer.json": {
+      "bytes": 52666,
+      "sha256": "bf1c507dc8724ca9cf9903640dacfb69dae2f00edee4f21ceba106a7392f26dd"
+    },
+    "preprocessor_config.json": {
+      "bytes": 340,
+      "sha256": "7ccc62c6f2765af1f3b46c00c9b5894426835a05021c8b9c01eecb6dfb542711"
+    },
+    "special_tokens_map.json": {
+      "bytes": 2186,
+      "sha256": "baea4ea09372eb4fca86b4e4346139fd73cb807d5087e9de0948e971739c3e74"
+    },
+    "tokenizer.json": {
+      "bytes": 2480617,
+      "sha256": "6d8cbd7cd0d8d5815e478dac67b85a26bbe77c1f5e0c6d76d1ce2abc0e5f21ca"
+    },
+    "tokenizer_config.json": {
+      "bytes": 282843,
+      "sha256": "844b642c73a91359722f47b35705f7174686df33d252695d8572cf9ac03a6389"
+    },
+    "vocab.json": {
+      "bytes": 1036558,
+      "sha256": "e2aa043ef015641d363d8288e7c241c85e36a5c761fb303598e0710233344387"
+    },
+    "onnx/decoder_model.onnx": {
+      "bytes": 687820062,
+      "sha256": "31aeaa936531239cc9d65b78cd603715f6462ffb404a4820d9da3935e340d053"
+    },
+    "onnx/decoder_with_past_model.onnx": {
+      "bytes": 635362163,
+      "sha256": "16972348eb181304f80a5af5d9b40ca894ed016888162fbdf65a2ccd7f3bc0f5"
+    },
+    "onnx/encoder_model.onnx": {
+      "bytes": 439254,
+      "sha256": "67241dccb6b4023e3e56b87e89a44077577f84c4f6fe3f629e3447dd27eabb59"
+    },
+    "onnx/encoder_model.onnx_data": {
+      "bytes": 2547875840,
+      "sha256": "c87f74d17ea85478cd563a614215868eff35a8a7ec4ff692d1edd49413f56f86"
+    }
+  }
+}

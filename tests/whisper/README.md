@@ -71,3 +71,66 @@ contains selected frames from seven deterministic cases. Its `1e-5` absolute
 gate compares against the NumPy frontend. NumPy/Torch differences are recorded
 separately; their float arithmetic is not bitwise identical. Frontend agreement
 does not establish encoder or transcription agreement.
+
+## Managed transcription API
+
+`WhisperTranscriber` in `Lokad.Onnx.Data` composes the frontend and three local
+FP32 split graphs. It accepts finite mono 16 kHz PCM up to 30 seconds:
+
+```csharp
+var model = new WhisperTranscriber("models/whisper-large-v3-turbo");
+var result = model.Transcribe(samples, 16000,
+    WhisperTranscriptionOptions.ForLanguage("fr"), CancellationToken.None);
+Console.WriteLine(result.Text);
+```
+
+The same instance serializes requests and creates independent execution contexts
+and attention caches per request. It never downloads assets or loads native ORT.
+Language is explicit; the initial policy is greedy transcription without timestamps.
+The generation configuration supplies the prefix and suppression lists. All non-text
+control/timestamp tokens are excluded from generated text. The result preserves
+actual token IDs and distinguishes EOS, token-limit termination and exact digital
+silence. Requests longer than 30 seconds are rejected, not silently truncated.
+WAV decoding/resampling, CLI integration and a long-audio policy remain separate work.
+
+Empty or exactly zero PCM returns empty text without inference; its model
+probabilities are null. The pinned native model otherwise emits “you” on the
+one-second all-zero fixture, and its no-speech probability does not catch it.
+No energy threshold is used. For nonzero audio, the default policy skips text when
+the raw first-position no-speech probability exceeds 0.6 unless average generated
+log probability exceeds -1.0. These thresholds follow the
+[OpenAI transcription policy](https://github.com/openai/whisper/blob/main/whisper/transcribe.py).
+Either threshold can be disabled with null. This policy does not guarantee that
+background noise or every nonspeech clip produces empty text.
+
+The ordinary `WhisperGenerationTests` cover frozen independent token decoding,
+UTF-8 bytes split across tokens, English/French prefixes, cache progression and
+request isolation, suppression, EOS/limits, probabilities, cancellation and failures.
+Regenerate its compact fixture with `tokenizers==0.23.2`:
+
+```powershell
+python tests/whisper/generate_text_reference.py --output tests/Lokad.Onnx.Backend.Tests/fixtures/whisper-text.json
+```
+
+An opt-in complete API replay uses `TranscribeReplay.csproj`. Its embedded
+`transcription-assets.json` pins every model/metadata file. The native oracle takes
+an audio manifest with hash-bound mono PCM and independently generated NumPy
+features. Each case includes `name`, `language`, `max_new_tokens`, `samples`, `pcm`,
+`pcm_sha256`, `features` and `features_sha256`; file paths are relative to the
+manifest. The manifest declares `sample_rate: 16000`. The frontend recipe and
+original audio/resampling identities belong in the manifest as provenance.
+
+```powershell
+python tests/whisper/generate_transcription_reference.py --models models/whisper-large-v3-turbo --audio <audio.json> --output <new-reference-directory>
+dotnet build tests/whisper/TranscribeReplay.csproj -c Release --tl:off --nologo -v minimal
+dotnet tests/whisper/bin/Release/net10.0/TranscribeReplay.dll models/whisper-large-v3-turbo <new-reference-directory>/manifest.json <new-result.json>
+```
+
+The managed replay accepts PCM and computes its own features, encoder output,
+caches and token choices. It compares complete token/text/stop decisions, verifies
+input bytes, repeats the first request after other clips and invalid/canceled calls,
+and rejects native ORT in its process. It records confidence and peak memory.
+This is application agreement, not a replacement for the existing `1e-4` tensor
+checks. Full encoder/logit numerical qualification and broader audio acceptance
+remain unresolved; successful transcript fixtures must not be reported as proving
+those separate requirements.

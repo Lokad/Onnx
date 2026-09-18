@@ -5,9 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Lokad.Onnx/Lokad.Onnx.csproj" />
+    <Compile Include="Program.cs" />
     <Compile Include="../Shared/NpySupport.cs" Link="NpySupport.cs" />
     <EmbeddedResource Include="decoder-assets.json" LogicalName="decoder-assets.json" />
   </ItemGroup>
