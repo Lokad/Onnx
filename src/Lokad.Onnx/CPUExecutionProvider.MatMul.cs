@@ -69,10 +69,25 @@ public partial class CPUExecutionProvider
         var mm = MatMul(A, B, options, pool);
         if (mm.Status != OpStatus.Success || mm.Outputs is null || mm.Outputs.Length != 1 || mm.Outputs[0] is null)
             return mm;
-        var dv = Div(mm.Outputs[0], Divisor, options, pool);
-        if (dv.Status != OpStatus.Success || dv.Outputs is null)
-            return dv;
-        return Success(op, dv.Outputs);
+        var product = mm.Outputs[0];
+        try
+        {
+            var dv = Div(product, Divisor, options, pool);
+            if (dv.Status != OpStatus.Success || dv.Outputs is null)
+                return dv;
+            return Success(op, dv.Outputs);
+        }
+        finally
+        {
+            // MatMul rents a fresh destination and Div writes a distinct one.
+            // This product never enters graph bindings or escapes to a caller;
+            // graph last-use analysis therefore cannot release it. Keep the
+            // exact two arithmetic passes and only shorten this private rent.
+            if (pool is { ReleaseFusedTemporaries: true }
+                && product is Tensor<float> tensor
+                && tensor.OwnedBufferArray() is { } array && pool.IsOwned(array))
+                pool.Return(array);
+        }
     }
 
     /// <summary>

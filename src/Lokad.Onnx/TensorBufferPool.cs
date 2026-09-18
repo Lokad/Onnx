@@ -32,6 +32,9 @@ public sealed class TensorBufferPool
     readonly ReleasedBufferCache? releasedCache;
     readonly Dictionary<Array, long>? reusableSizes;
 
+    // Per-pool override lets tests compare the experiment without global mutation.
+    internal bool ReleaseFusedTemporaries { get; set; } = AblationSwitches.EnableFusedTempRelease;
+
     public TensorBufferPool() { }
 
     internal TensorBufferPool(ReleasedBufferCache releasedCache)

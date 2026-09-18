@@ -185,6 +185,11 @@ a pause to an engine. Do not subtract counters to manufacture corrected latency
 or filter inconvenient samples. The common campaign runner rejects this flag.
 
 The managed core also has an off-by-default storage experiment:
+`LOKAD_ONNX_FUSED_TEMP_RELEASE=1` enables the private MatMul-result release in
+the trailing MatMul-plus-Div composite. The two arithmetic passes are unchanged;
+only its unexposed intermediate is returned after Div, including on failure.
+This experiment is off by default and does not reclaim graph intermediates.
+
 `LOKAD_ONNX_RELEASED_BUFFER_CACHE=1` before process startup retains only arrays
 already released by a completed call's lifetime checks. Each serialized graph
 or explicit context has a separate cache, limited to 128 MiB of payload,

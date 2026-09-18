@@ -28,6 +28,9 @@ internal static class AblationSwitches
     /// Retain only already-released arrays across serialized calls, within strict bounds.
     internal static readonly bool EnableReleasedBufferCache = EnvIsSet("LOKAD_ONNX_RELEASED_BUFFER_CACHE");
 
+    /// Return the private MatMul result after the trailing Div composite finishes.
+    internal static readonly bool EnableFusedTempRelease = EnvIsSet("LOKAD_ONNX_FUSED_TEMP_RELEASE");
+
     /// When true, softmax over contiguous float rows routes to the preserved
     /// legacy kernel instead of the default span kernel. Default off; set
     /// LOKAD_ONNX_SOFTMAX_LEGACY=1 before process start to enable.
