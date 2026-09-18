@@ -4,9 +4,12 @@ namespace Lokad.Onnx.Backend.Tests;
 /// The measurement-only ablation switches route to the legacy kernels without
 /// changing default behavior. These tests set the fields directly (never the
 /// environment) and always restore them, because the flags are process-wide;
-/// same-class xUnit tests run sequentially, and a leaked true value could only
-/// make other agreement tests compare a kernel with itself, never fail them.
+/// other test classes must not execute while a switch is temporarily changed.
+/// In particular, MaskedSoftmax's fused kernel stays current while its composite
+/// reference calls the switchable public Softmax, so parallel mutation breaks
+/// that test's intended bitwise comparison.
 /// </summary>
+[Collection("ProcessState")]
 public class AblationSwitchTests
 {
     [Fact]
