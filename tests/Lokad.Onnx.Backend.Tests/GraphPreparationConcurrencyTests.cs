@@ -42,6 +42,45 @@ public class GraphPreparationConcurrencyTests
     static Dictionary<string, ITensor> Good() =>
         new Dictionary<string, ITensor> { { "x", DenseTensor<float>.OfValues(new float[] { -1f, 2f }) } };
 
+    [Theory]
+    [InlineData(false, false, false)]
+    [InlineData(false, false, true)]
+    [InlineData(false, true, false)]
+    [InlineData(false, true, true)]
+    [InlineData(true, false, false)]
+    [InlineData(true, false, true)]
+    [InlineData(true, true, false)]
+    [InlineData(true, true, true)]
+    public void ResetAndFailure_DoNotRewriteSharedPlan(bool explicitContext, bool descriptors, bool fail)
+    {
+        var plan = ChainGraph();
+        if (descriptors)
+        {
+            plan.OutputDescs.Add(new OnnxValueInfo { Name = "y", ElementType = TensorElementType.Float, Dims = new[] { 2 } });
+            plan.Prepare();
+        }
+        var other = plan.CreateExecution(null);
+        var graph = explicitContext ? plan.CreateExecution(null) : plan;
+        Assert.True(graph.Execute(Good(), false));
+        var held = (Tensor<float>)graph.Outputs["y"];
+        var lifetime = other.LastUseIndex;
+        // Another execution enumerates this same list. Keep its enumerator
+        // alive to detect a rewrite deterministically, without a timed race.
+        using var nodes = other.Nodes.GetEnumerator();
+        Assert.True(nodes.MoveNext());
+        if (fail) Assert.False(graph.Execute(new Dictionary<string, ITensor>(), false));
+        else graph.Reset();
+        Assert.True(graph.Execute(Good(), false), graph.LastErrorMessage);
+        var fresh = plan.CreateExecution(null);
+        Assert.True(fresh.Execute(Good(), false), fresh.LastErrorMessage);
+        Assert.True(nodes.MoveNext());
+        Assert.Same(lifetime, graph.LastUseIndex);
+        Assert.Same(lifetime, fresh.LastUseIndex);
+        Assert.Equal(new float[] { 0f, 2f }, held.ToArray());
+        Assert.True(other.Execute(Good(), false), other.LastErrorMessage);
+        Assert.Equal(new float[] { 0f, 2f }, ((Tensor<float>)other.Outputs["y"]).ToArray());
+    }
+
     [Fact]
     public void SameCountEdit_Reanalyzes()
     {

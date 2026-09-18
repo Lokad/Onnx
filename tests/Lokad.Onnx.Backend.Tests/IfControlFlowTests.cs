@@ -282,6 +282,29 @@ public class IfControlFlowTests
         Assert.True(graph.Execute(Feed(true, 3, 8), true), graph.LastErrorMessage);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void MutatingBranchOutputNamesRefreshesParentCaptureReads(bool descriptors)
+    {
+        var model = Basic(Direct("a"), Direct("a"));
+        model.Nodes.Insert(0, Op("positive", "Relu", new[] { "x" }, "a"));
+        model.Nodes.Insert(1, Op("negative", "Neg", new[] { "x" }, "b"));
+        var graph = Model.Load(model, false);
+        var branch = (ComputationalGraph)graph.Nodes[2].Attributes!["then_branch"];
+        if (!descriptors) branch.OutputDescs.Clear();
+        Assert.True(graph.Execute(Feed(true, 3, 8), true), graph.LastErrorMessage);
+        var held = (Tensor<float>)graph.Outputs["y"];
+        Assert.Equal(1, graph.LastUseIndex["b"]);
+        branch.Outputs.Remove("a");
+        branch.Outputs["b"] = DenseTensor<float>.OfShape(2);
+        if (descriptors) branch.OutputDescs[0].Name = "b";
+        Assert.True(graph.Execute(Feed(true, 3, 8), true), graph.LastErrorMessage);
+        Assert.Equal(2, graph.LastUseIndex["b"]);
+        Assert.Equal(new[] { -3f, -8f }, Values(graph, "y"));
+        Assert.Equal(new[] { 3f, 8f }, held.ToArray());
+    }
+
     [Fact]
     public void FailedBranchRetainsPriorResultAndReportsChildFailure()
     {

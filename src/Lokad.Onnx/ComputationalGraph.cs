@@ -1348,6 +1348,10 @@ public partial class ComputationalGraph
                                 visiting ??= new HashSet<ComputationalGraph>(ReferenceEqualityComparer.Instance) { this };
                                 MixString(entry.Key);
                                 MixInt(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(branch));
+                                // Branch templates declare lexical output reads.
+                                // Their executions own separate binding maps.
+                                MixInt(branch.Outputs.Count);
+                                foreach (var key in branch.Outputs.Keys) MixString(key);
                                 MixUlong((ulong)branch.ComputeStructureFingerprint(visiting));
                             }
                     if (node.Inputs is null) MixInt(-1);
@@ -1365,8 +1369,9 @@ public partial class ComputationalGraph
                 }
                 MixInt(Inputs.Count);
                 foreach (var key in Inputs.Keys) MixString(key);
-                MixInt(Outputs.Count);
-                foreach (var key in Outputs.Keys) MixString(key);
+                // This instance's outputs are run bindings: Reset and failure
+                // may clear them without changing the shared prepared plan.
+                // Output declarations are fingerprinted below.
                 MixInt(Initializers.Count);
                 foreach (var key in Initializers.Keys) MixString(key);
                 MixInt(InputDescs.Count);
