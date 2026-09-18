@@ -4,6 +4,7 @@ namespace Lokad.Onnx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 using static OpResult;
 public partial class CPUExecutionProvider
@@ -611,6 +612,64 @@ public partial class CPUExecutionProvider
             }
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
+    }
+
+    /// <summary>Clip with versioned attribute/input bounds and exact numeric storage.</summary>
+    public static OpResult Clip(ITensor? data, ITensor? min, ITensor? max, float? attrMin, float? attrMax, ExecutionOptions? options, int opset)
+    {
+        var op = OpType.Clip;
+        if (data is null) return MissingInput(op, nameof(data));
+        (options ?? ExecutionOptions.Default).Validated();
+        if (opset > 0 && opset < 6) return AttributeNotSupported(op, nameof(opset), opset.ToString(), "Clip support begins at opset 6.");
+        bool legacy = opset < 11;
+        if (legacy && (min is not null || max is not null))
+            return AttributeNotSupported(op, "bounds", "input", "Clip before opset 11 uses attributes.");
+        if (!legacy && (attrMin.HasValue || attrMax.HasValue))
+            return AttributeNotSupported(op, "bounds", "attribute", "Clip at opset 11 or later uses optional inputs.");
+        if (legacy && !((attrMin ?? float.MinValue) <= (attrMax ?? float.MaxValue)))
+            return AttributeNotSupported(op, "bounds", "min/max", "Legacy Clip requires min <= max.");
+        if (opset < 12 && data.ElementType is not TensorElementType.Float and not TensorElementType.Double)
+            return InputTypeNotSupported(op, nameof(data), data);
+        for (int index = 0; index < 2; index++)
+        {
+            var bound = index == 0 ? min : max;
+            string name = index == 0 ? nameof(min) : nameof(max);
+            if (bound is null) continue;
+            if (bound.ElementType != data.ElementType) return WrongInputType(op, name, data.ElementType, bound);
+            if (bound.Length != 1 || bound.Rank > 1) return WrongInputShape(op, name, bound, "Clip bounds must be rank-zero or rank-one single-value tensors.");
+        }
+        Profiler.StartOpStage(OpStage.Math);
+        return data.ElementType switch
+        {
+            TensorElementType.Float => ClipTyped((Tensor<float>)data, min, max, attrMin ?? float.MinValue, attrMax ?? float.MaxValue),
+            TensorElementType.Double => ClipTyped((Tensor<double>)data, min, max,
+                legacy ? (double)(attrMin ?? float.MinValue) : double.MinValue,
+                legacy ? (double)(attrMax ?? float.MaxValue) : double.MaxValue),
+            TensorElementType.Int32 => ClipTyped((Tensor<int>)data, min, max, int.MinValue, int.MaxValue),
+            TensorElementType.Int64 => ClipTyped((Tensor<long>)data, min, max, long.MinValue, long.MaxValue),
+            _ => InputTypeNotSupported(op, nameof(data), data)
+        };
+    }
+
+    static OpResult ClipTyped<T>(Tensor<T> input, ITensor? min, ITensor? max, T defaultMin, T defaultMax) where T : unmanaged, INumber<T>
+    {
+        T lo = min is Tensor<T> lower ? lower.GetValue(0) : defaultMin;
+        T hi = max is Tensor<T> upper ? upper.GetValue(0) : defaultMax;
+        var x = input.ToDenseTensor();
+        var y = DenseTensor<T>.OfShape(x.Dimensions.ToArray());
+        var source = x.Buffer.Span;
+        var destination = y.Buffer.Span;
+        for (int i = 0; i < source.Length; i++)
+        {
+            T value = source[i];
+            // ONNX Clip applies the lower clamp, then the upper clamp. A single
+            // either/or branch is wrong for min > max. Comparisons also preserve
+            // NaN inputs and signed-zero ties without a floating conversion.
+            if (value < lo) value = lo;
+            if (value > hi) value = hi;
+            destination[i] = value;
+        }
+        return Success(OpType.Clip, y);
     }
 
     public static OpResult Floor(ITensor? X, ExecutionOptions? options)

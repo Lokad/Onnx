@@ -94,6 +94,7 @@ public static class OperatorSchemas
         [OpType.And] = Def(OpType.And, 2, 2),
         [OpType.Not] = Def(OpType.Not, 1, 1),
         [OpType.Pad] = Def(OpType.Pad, 1, 3, 1, 1, 1, false),
+        [OpType.Clip] = Def(OpType.Clip, 1, 3, 1, 1, 6, false),
     };
 
     public static bool IsStandardDomain(string? domain) =>
@@ -110,8 +111,9 @@ public static class OperatorSchemas
     {
         // Dispatch accepts the attribute and input forms of these operations
         // at every version (a missing input or attribute selects the other
-        // form), so only Slice keeps a version-sensitive bound.
+        // form). Slice and Clip retain version-sensitive input bounds.
         OpType.Slice when version > 0 => version >= 10 ? (3, 5) : (1, 1),
+        OpType.Clip when version > 0 => version >= 11 ? (1, 3) : (1, 1),
         _ => (schema.MinInputs, schema.MaxInputs),
     };
 

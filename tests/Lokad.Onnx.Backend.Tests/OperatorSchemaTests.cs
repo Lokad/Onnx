@@ -201,20 +201,19 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void ClipHonestlyUnsupported_FailsCleanly()
+    public void ClipDispatchesWithOptionalInputBounds()
     {
-        // C11: no Clip kernel exists anywhere in src; same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Clip));
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.Clip));
         var node = Nod(OpType.Clip, "", 13,
             new[] { "x", "lo", "hi" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { -1f, 0.5f, 2f }));
         Bind(graph, "lo", DenseTensor<float>.OfValues(new float[] { 0f }));
         Bind(graph, "hi", DenseTensor<float>.OfValues(new float[] { 1f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Clip", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new[] { 0f, .5f, 1f }, ((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
     [Fact]
