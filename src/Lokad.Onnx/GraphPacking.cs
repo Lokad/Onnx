@@ -107,6 +107,15 @@ internal static class GraphPacking
         return total;
     }
     internal static long KBlockedChunkOffset(int k, int block) => (long)block * KBlockedChunkBytes(k, KBlockedRows);
+    /// <summary>W3 prototype output-column slice width; matches ORT PACKED_STRIDEN as the comparison point, not a claimed optimum.</summary>
+    internal const int KBlockedSlice = 128;
+    /// <summary>Byte-agnostic float offset of output column col0 inside one K-blocked chunk panel (tile-aligned starts hit tile math, the tail slice hits the tail).</summary>
+    internal static long KBlockedSliceOffset(int cntN, int k, int col0)
+    {
+        int blocked = k - (k % KBlockedPanel);
+        if (col0 >= blocked) return ((long)(blocked / KBlockedPanel)) * cntN * KBlockedPanel;
+        return ((long)(col0 / KBlockedPanel)) * cntN * KBlockedPanel;
+    }
 
     /// <summary>Upper source-rows bound of measured packed-kernel territory: 4096 is admitted (encoder K=4096 projections at M=16), wider reductions are unmeasured and stay unpacked.</summary>
     internal const int MaxPackedAxis = 4096;

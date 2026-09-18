@@ -319,7 +319,10 @@ where T : unmanaged
         using var xh = dx.Buffer.Pin();
         using var ph = kblocked.Packed.Buffer.Pin();
         using var oh = destination.Buffer.Pin();
+        int blocks = (n + GraphPacking.KBlockedRows - 1) / GraphPacking.KBlockedRows;
+        int slices = (k + GraphPacking.KBlockedSlice - 1) / GraphPacking.KBlockedSlice;
         var gather = RentScratch<float>(m * GraphPacking.KBlockedRows, options);
+        var yscratch = RentScratch<float>(m * slices * GraphPacking.KBlockedSlice, options);
         try
         {
             unsafe
@@ -328,8 +331,8 @@ where T : unmanaged
                 float* pp = (float*)ph.Pointer;
                 float* dp = (float*)oh.Pointer;
                 fixed (float* gp = gather)
+                fixed (float* yp = yscratch)
                 {
-                    int blocks = (n + GraphPacking.KBlockedRows - 1) / GraphPacking.KBlockedRows;
                     for (int b = 0; b < blocks; b++)
                     {
                         int cntN = n - b * GraphPacking.KBlockedRows;
@@ -339,7 +342,23 @@ where T : unmanaged
                         {
                             new Span<float>(xp + r * n + col0, cntN).CopyTo(new Span<float>(gp + r * cntN, cntN));
                         }
-                        RunPackedRowGroups(m, cntN, k, gp, pp + GraphPacking.KBlockedChunkOffset(k, b), dp, overwrite: b == 0, "kb");
+                        for (int s = 0; s < slices; s++)
+                        {
+                            int scol0 = s * GraphPacking.KBlockedSlice;
+                            int cntK = k - scol0;
+                            if (cntK > GraphPacking.KBlockedSlice) cntK = GraphPacking.KBlockedSlice;
+                            RunPackedRowGroups(m, cntN, cntK, gp, pp + GraphPacking.KBlockedChunkOffset(k, b) + GraphPacking.KBlockedSliceOffset(cntN, k, scol0), yp + s * m * GraphPacking.KBlockedSlice, overwrite: b == 0, "kb");
+                        }
+                    }
+                    for (int s = 0; s < slices; s++)
+                    {
+                        int scol0 = s * GraphPacking.KBlockedSlice;
+                        int cntK = k - scol0;
+                        if (cntK > GraphPacking.KBlockedSlice) cntK = GraphPacking.KBlockedSlice;
+                        for (int r = 0; r < m; r++)
+                        {
+                            new Span<float>(yp + s * m * GraphPacking.KBlockedSlice + r * cntK, cntK).CopyTo(new Span<float>(dp + r * k + scol0, cntK));
+                        }
                     }
                 }
             }
@@ -347,6 +366,7 @@ where T : unmanaged
         finally
         {
             ArrayPool<float>.Shared.Return(gather);
+            ArrayPool<float>.Shared.Return(yscratch);
         }
         return destination;
     }
@@ -1057,15 +1077,19 @@ where T : unmanaged
         IntPtr xp0, zp0;
         unsafe { xp0 = (IntPtr)xh.Pointer; zp0 = (IntPtr)zh.Pointer; }
         int blocks = (n + GraphPacking.KBlockedRows - 1) / GraphPacking.KBlockedRows;
+        int slices = (k + GraphPacking.KBlockedSlice - 1) / GraphPacking.KBlockedSlice;
         var gather = RentScratch<float>(batchCount * m * GraphPacking.KBlockedRows, options);
+        var yscratch = RentScratch<float>(batchCount * slices * m * GraphPacking.KBlockedSlice, options);
         try
         {
             unsafe
             {
                 float* pp = (float*)ph.Pointer;
                 fixed (float* gpBase = gather)
+                fixed (float* ypBase = yscratch)
                 {
                     IntPtr gp0 = (IntPtr)gpBase;
+                    IntPtr yp0 = (IntPtr)ypBase;
                     if (dop > 1)
                     {
                         var xOff = new int[batchCount];
@@ -1076,6 +1100,7 @@ where T : unmanaged
                             unsafe
                             {
                                 float* gp = (float*)gp0 + bi * m * GraphPacking.KBlockedRows;
+                                float* ypb = (float*)yp0 + bi * slices * m * GraphPacking.KBlockedSlice;
                                 for (int b = 0; b < blocks; b++)
                                 {
                                     int cntN = n - b * GraphPacking.KBlockedRows;
@@ -1085,7 +1110,23 @@ where T : unmanaged
                                     {
                                         new Span<float>((float*)xp0 + xOff[bi] + r * n + col0, cntN).CopyTo(new Span<float>(gp + r * cntN, cntN));
                                     }
-                                    RunPackedRowGroups(m, cntN, k, gp, pp + GraphPacking.KBlockedChunkOffset(k, b), (float*)zp0 + zOff[bi], overwrite: b == 0, "kb");
+                                    for (int s = 0; s < slices; s++)
+                                    {
+                                        int scol0 = s * GraphPacking.KBlockedSlice;
+                                        int cntK = k - scol0;
+                                        if (cntK > GraphPacking.KBlockedSlice) cntK = GraphPacking.KBlockedSlice;
+                                        RunPackedRowGroups(m, cntN, cntK, gp, pp + GraphPacking.KBlockedChunkOffset(k, b) + GraphPacking.KBlockedSliceOffset(cntN, k, scol0), ypb + s * m * GraphPacking.KBlockedSlice, overwrite: b == 0, "kb");
+                                    }
+                                }
+                                for (int s = 0; s < slices; s++)
+                                {
+                                    int scol0 = s * GraphPacking.KBlockedSlice;
+                                    int cntK = k - scol0;
+                                    if (cntK > GraphPacking.KBlockedSlice) cntK = GraphPacking.KBlockedSlice;
+                                    for (int r = 0; r < m; r++)
+                                    {
+                                        new Span<float>(ypb + s * m * GraphPacking.KBlockedSlice + r * cntK, cntK).CopyTo(new Span<float>((float*)zp0 + zOff[bi] + r * k + scol0, cntK));
+                                    }
                                 }
                             }
                         });
@@ -1108,7 +1149,23 @@ where T : unmanaged
                                 {
                                     new Span<float>(xp + ox + rr * n + col0, cntN).CopyTo(new Span<float>(gpBase + bIdx * m * GraphPacking.KBlockedRows + rr * cntN, cntN));
                                 }
-                                RunPackedRowGroups(m, cntN, k, gpBase + bIdx * m * GraphPacking.KBlockedRows, pp + GraphPacking.KBlockedChunkOffset(k, b), zp + oz, overwrite: b == 0, "kb");
+                                for (int s = 0; s < slices; s++)
+                                {
+                                    int scol0 = s * GraphPacking.KBlockedSlice;
+                                    int cntK = k - scol0;
+                                    if (cntK > GraphPacking.KBlockedSlice) cntK = GraphPacking.KBlockedSlice;
+                                    RunPackedRowGroups(m, cntN, cntK, gpBase + bIdx * m * GraphPacking.KBlockedRows, pp + GraphPacking.KBlockedChunkOffset(k, b) + GraphPacking.KBlockedSliceOffset(cntN, k, scol0), ypBase + (bIdx * slices + s) * m * GraphPacking.KBlockedSlice, overwrite: b == 0, "kb");
+                                }
+                            }
+                            for (int s = 0; s < slices; s++)
+                            {
+                                int scol0 = s * GraphPacking.KBlockedSlice;
+                                int cntK = k - scol0;
+                                if (cntK > GraphPacking.KBlockedSlice) cntK = GraphPacking.KBlockedSlice;
+                                for (int rr = 0; rr < m; rr++)
+                                {
+                                    new Span<float>(ypBase + (bIdx * slices + s) * m * GraphPacking.KBlockedSlice + rr * cntK, cntK).CopyTo(new Span<float>(zp + oz + rr * k + scol0, cntK));
+                                }
                             }
                             for (int d = r - 1; d >= 0; d--)
                             {
@@ -1126,6 +1183,7 @@ where T : unmanaged
         finally
         {
             ArrayPool<float>.Shared.Return(gather);
+            ArrayPool<float>.Shared.Return(yscratch);
         }
     }
 
