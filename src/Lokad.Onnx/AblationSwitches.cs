@@ -25,6 +25,9 @@ internal static class AblationSwitches
     /// Reuse wide tiles for existing per-call packed products with large row/reduction axes.
     internal static readonly bool EnablePackedAvx512Dynamic = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_DYNAMIC");
 
+    /// Divide a large private MatMul product in place, preserving exact division.
+    internal static readonly bool EnableScaledMatMulInplace = EnvIsSet("LOKAD_ONNX_SCALED_MATMUL_INPLACE");
+
     /// Traverse each full packed panel across all row groups; requires packed AVX-512 rows.
     internal static readonly bool EnablePackedAvx512Panels = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_PANELS");
 
