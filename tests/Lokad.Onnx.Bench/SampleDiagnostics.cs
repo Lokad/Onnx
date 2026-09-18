@@ -49,6 +49,9 @@ internal sealed class SampleDiagnostics
             scope = "diagnostic-only; observations surround the stopwatch; GC is process-wide; allocation is current-thread; CPU includes separate thread/process counters (coarse on Windows); no subtraction-based corrected latency",
             @case = name,
             stopwatchFrequency = Stopwatch.Frequency,
+            gcServer = System.Runtime.GCSettings.IsServerGC,
+            gcLatencyMode = System.Runtime.GCSettings.LatencyMode.ToString(),
+            gcConcurrentOverride = Environment.GetEnvironmentVariable("DOTNET_gcConcurrent"),
             samples = rows
         }));
     }
