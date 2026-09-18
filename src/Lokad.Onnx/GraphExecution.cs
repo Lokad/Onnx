@@ -12,11 +12,20 @@ using static Lokad.Onnx.Runtime;
 /// reporting. Separate contexts over one graph execute concurrently without
 /// sharing mutable state; sequential <see cref="ComputationalGraph"/> calls
 /// delegate to a fresh context per run and copy results back.
+/// An optional bounded cache retains only arrays released by earlier calls.
+/// Explicit contexts own independent caches; a facade's transient context
+/// borrows its serialized owner's cache for that call.
 /// </remarks>
 public sealed class GraphExecution : ComputationalGraph
 {
-    internal GraphExecution(ComputationalGraph prepared, ExecutionOptions? options, bool preparedFlag, long preparedFingerprint, string? preparationError)
+    internal GraphExecution(ComputationalGraph prepared, ExecutionOptions? options, bool preparedFlag, long preparedFingerprint, string? preparationError, bool borrowReleasedBuffers)
     {
+        ReuseReleasedBuffers = prepared.ReuseReleasedBuffers;
+        if (borrowReleasedBuffers)
+        {
+            if (ReuseReleasedBuffers) ReleasedBuffers = prepared.GetReleasedBuffers();
+            else prepared.ReleasedBuffers?.Clear();
+        }
         _prepared = preparedFlag;
         _preparedFingerprint = preparedFingerprint;
         _preparationError = preparationError;

@@ -25,6 +25,9 @@ internal static class AblationSwitches
     /// Opt-in memoization of failed deferred-release probes whose alias state is unchanged.
     internal static readonly bool EnableDeferredReleaseCache = EnvIsSet("LOKAD_ONNX_DEFERRED_RELEASE_CACHE");
 
+    /// Retain only already-released arrays across serialized calls, within strict bounds.
+    internal static readonly bool EnableReleasedBufferCache = EnvIsSet("LOKAD_ONNX_RELEASED_BUFFER_CACHE");
+
     /// When true, softmax over contiguous float rows routes to the preserved
     /// legacy kernel instead of the default span kernel. Default off; set
     /// LOKAD_ONNX_SOFTMAX_LEGACY=1 before process start to enable.

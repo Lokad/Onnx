@@ -99,6 +99,13 @@ public class ComputationalGraph
 
     internal TensorBufferPool? ActivePool { get; private set; }
 
+    // Per-owner opt-in also lets tests exercise both routes without global mutations.
+    internal bool ReuseReleasedBuffers { get; set; } = AblationSwitches.EnableReleasedBufferCache;
+    internal ReleasedBufferCache? ReleasedBuffers;
+
+    internal ReleasedBufferCache GetReleasedBuffers() => ReleasedBuffers ??=
+        new ReleasedBufferCache(ReleasedBufferCache.DefaultByteLimit, ReleasedBufferCache.DefaultCountLimit);
+
     /// <summary>Running live-payload byte total backing <see cref="LastPeakLiveBytes"/> (P28).</summary>
     /// <remarks>Maintained by bind and release deltas plus a per-run full recompute, so per-node peak checks stay O(1) with bit-identical values.</remarks>
     long livePayloadBytes;
@@ -180,6 +187,7 @@ public class ComputationalGraph
                 throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
             }
             _prepared = false;
+            ReleasedBuffers?.Clear();
             lock (FoldLock)
             {
                 foreach (var fold in FoldedTransposes.Values) Initializers.Remove(fold.PreparedName);
@@ -251,7 +259,7 @@ public class ComputationalGraph
         lock (PrepareLock)
         {
             EnsurePreparedLocked();
-            var exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
+            var exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError, false);
             return exec;
         }
     }
@@ -721,7 +729,7 @@ public class ComputationalGraph
             lock (PrepareLock)
             {
                 EnsurePreparedLocked();
-                exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
+                exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError, true);
             }
             bool ok = exec.RunCore(userInputs, useInitializers, provider);
             CopyFromExecution(exec);
@@ -925,6 +933,13 @@ public class ComputationalGraph
         LastWallProfile = null;
         LastRunTime = TimeSpan.Zero;
         LastAllocatedBytes = 0;
+        LastPoolAllocatedNew = 0;
+        LastPoolReused = 0;
+        LastPoolReturned = 0;
+        LastPoolDropped = 0;
+        LastPoolAllocatedNewBytes = 0;
+        LastPoolReusedBytes = 0;
+        LastPoolPeakOutstandingBytes = 0;
         LastScratchBytes = 0;
         LastCopyBytes = 0;
         LastPeakLiveBytes = 0;
@@ -1021,7 +1036,7 @@ public class ComputationalGraph
             lock (PrepareLock)
             {
                 EnsurePreparedLocked();
-                exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError);
+                exec = new GraphExecution(this, options, _prepared, _preparedFingerprint, _preparationError, true);
             }
             bool ok = exec.RunNodeCore(userInputs, nodeLabel, useInitializers, provider);
             CopyFromExecution(exec);
@@ -1173,9 +1188,11 @@ public class ComputationalGraph
     /// <summary>Recomputes <see cref="LastUseIndex"/> from the current <see cref="Nodes"/> order and rebuilds panel-packed MatMul weight clones.</summary>
     /// <remarks>Graph outputs map to <see cref="Nodes"/>.Count (live to the end); graph inputs and
     /// initializers map to <see cref="int.MaxValue"/> (live forever); produced-but-unconsumed
-    /// intermediates map to their producer index. Inert: no execution state changes.</remarks>
+    /// intermediates map to their producer index. Tensor bindings are unchanged;
+    /// experimental released-buffer storage is cleared.</remarks>
     public void RefreshLifetimeAnalysis()
     {
+        ReleasedBuffers?.Clear();
         FoldConstantTransposes();
         GraphPacking.PackMatMulWeights(this);
         // Preparation assigns stable sequential identities by file-order
@@ -1374,7 +1391,9 @@ public class ComputationalGraph
         public ExecutionPoolScope(ComputationalGraph graph, bool disableBufferPool)
         {
             this.graph = graph;
-            graph.ActivePool = disableBufferPool ? null : new TensorBufferPool();
+            if (disableBufferPool || !graph.ReuseReleasedBuffers) graph.ReleasedBuffers?.Clear();
+            graph.ActivePool = disableBufferPool ? null : graph.ReuseReleasedBuffers
+                ? new TensorBufferPool(graph.GetReleasedBuffers()) : new TensorBufferPool();
             graph.ActiveScratch = new ScratchAccountant();
             graph.ActiveCopy = new CopyAccountant();
         }
@@ -1389,6 +1408,7 @@ public class ComputationalGraph
                 graph.LastPoolAllocatedNewBytes = graph.ActivePool.AllocatedNewBytes;
                 graph.LastPoolReusedBytes = graph.ActivePool.ReusedBytes;
                 graph.LastPoolPeakOutstandingBytes = graph.ActivePool.PeakOutstandingBytes;
+                graph.ActivePool.RetainReleasedBuffers();
             }
             if (graph.ActiveScratch is not null)
             {

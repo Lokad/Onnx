@@ -183,3 +183,14 @@ stopwatch; observation overhead and Windows CPU-counter granularity still make
 these diagnostic runs. GC counters are process-wide and cannot alone attribute
 a pause to an engine. Do not subtract counters to manufacture corrected latency
 or filter inconvenient samples. The common campaign runner rejects this flag.
+
+The managed core also has an off-by-default storage experiment:
+`LOKAD_ONNX_RELEASED_BUFFER_CACHE=1` before process startup retains only arrays
+already released by a completed call's lifetime checks. Each serialized graph
+or explicit context has a separate cache, limited to 128 MiB of payload,
+256 arrays and 32 arrays per type/length. Live outputs and intermediates are
+never adopted by Reset. The pool's ownership/alias accounting and metrics are
+fresh per call; cache transfers remain inside Execute. DisableBufferPool and
+preparation invalidation clear retained storage. ExecuteNode keeps its existing
+non-pooled path. Record this environment setting alongside binary identity in
+diagnostics; it is not a promoted default or a qualified campaign result.

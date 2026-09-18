@@ -21,10 +21,24 @@ using System.Runtime.CompilerServices;
 /// Return contract: only single-dimensional (SZ) arrays are pooled. Null, multidimensional, and duplicate
 /// (already buffered) arrays are rejected with an exception. Foreign arrays (never rented from this pool)
 /// are adopted for reuse; release logic still only returns owned storage.
+/// The opt-in released-buffer cache supplies/retains only already-free arrays
+/// between executions. Ownership, live/outstanding records and metrics remain
+/// per execution; no still-checked-out array is exported when a run ends.
 /// </remarks>
 public sealed class TensorBufferPool
 {
-    const int MaxBufferedPerShape = 32;
+    internal const int MaxBufferedPerShape = 32;
+
+    readonly ReleasedBufferCache? releasedCache;
+    readonly Dictionary<Array, long>? reusableSizes;
+
+    public TensorBufferPool() { }
+
+    internal TensorBufferPool(ReleasedBufferCache releasedCache)
+    {
+        this.releasedCache = releasedCache;
+        reusableSizes = new Dictionary<Array, long>();
+    }
 
     readonly Dictionary<(Type, int), Stack<Array>> free = new();
 
@@ -72,6 +86,15 @@ public sealed class TensorBufferPool
             owned.Add(reused);
             TrackRent(reused, bytes);
             return reused;
+        }
+        var retained = releasedCache?.Take<T>(length);
+        if (retained is not null)
+        {
+            Reused++;
+            ReusedBytes += bytes;
+            owned.Add(retained);
+            TrackRent(retained, bytes);
+            return retained;
         }
         AllocatedNew++;
         AllocatedNewBytes += bytes;
@@ -123,6 +146,7 @@ public sealed class TensorBufferPool
 
     void TrackRent(Array array, long bytes)
     {
+        if (reusableSizes is not null) reusableSizes[array] = bytes;
         outstanding[array] = bytes;
         outstandingBytes += bytes;
         if (outstandingBytes > PeakOutstandingBytes) PeakOutstandingBytes = outstandingBytes;
@@ -131,5 +155,16 @@ public sealed class TensorBufferPool
     void TrackReturn(Array array)
     {
         if (outstanding.Remove(array, out var bytes)) outstandingBytes -= bytes;
+    }
+
+    /// <summary>End-of-execution transfer of already-free, rent-owned arrays only.</summary>
+    internal void RetainReleasedBuffers()
+    {
+        if (releasedCache is null || reusableSizes is null) return;
+        foreach (var entry in free)
+            foreach (var array in entry.Value)
+                if (reusableSizes.TryGetValue(array, out long bytes)) releasedCache.Store(entry.Key, array, bytes);
+        free.Clear();
+        buffered.Clear();
     }
 }
