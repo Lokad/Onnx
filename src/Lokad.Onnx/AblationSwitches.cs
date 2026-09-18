@@ -37,6 +37,9 @@ internal static class AblationSwitches
     /// Inline the pruned exponential without changing its arithmetic; requires exp pruning.
     internal static readonly bool EnableSoftmaxExpInline = EnvIsSet("LOKAD_ONNX_SOFTMAX_EXP_INLINE");
 
+    /// Normalize SIMD float softmax rows with one reciprocal and multiplication.
+    internal static readonly bool EnableSoftmaxReciprocal = EnvIsSet("LOKAD_ONNX_SOFTMAX_RECIPROCAL");
+
     // Scheduling experiment: preserve erf arithmetic while removing vector call spills.
     internal static readonly bool EnableBiasGeluInline = EnvIsSet("LOKAD_ONNX_BIAS_GELU_INLINE");
 
