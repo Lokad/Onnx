@@ -52,6 +52,9 @@ internal static class AblationSwitches
     /// Drop dead dense Reshape view bindings before retrying their storage owners.
     internal static readonly bool EnableReshapeViewRelease = EnvIsSet("LOKAD_ONNX_RELEASE_RESHAPE_VIEWS");
 
+    /// Bound float convolution patches and accumulate explicit 128-term partial products.
+    internal static readonly bool EnableSegmentedConvolution = EnvIsSet("LOKAD_ONNX_SEGMENTED_CONV");
+
     /// When true, softmax over contiguous float rows routes to the preserved
     /// legacy kernel instead of the default span kernel. Default off; set
     /// LOKAD_ONNX_SOFTMAX_LEGACY=1 before process start to enable.

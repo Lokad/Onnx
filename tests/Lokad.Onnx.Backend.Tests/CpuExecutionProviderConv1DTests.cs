@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using CPU = Lokad.Onnx.CPUExecutionProvider;
 
 namespace Lokad.Onnx.Backend.Tests;
@@ -16,12 +17,13 @@ public class CpuExecutionProviderConv1DTests
 {
     const double Tol = 1e-5;
 
-    [Theory]
+    [SkippableTheory]
     [InlineData(0)]
     [InlineData(1)]
     [InlineData(2)]
     public void GroupedBatchesOffsetsAndFusedReluMatchIndependentRankThreeOracle(int mode)
     {
+        Skip.If(mode == 2 && !Fma.IsSupported, "Explicit intrinsic mode requires x86 FMA.");
         var options = mode == 0 ? ExecutionOptions.Scalar : mode == 1 ? ExecutionOptions.Simd : ExecutionOptions.Intrinsics;
         const int batch = 2, channels = 4, length = 9, outputs = 6, group = 2, kernel = 3;
         const int stride = 2, dilation = 2, left = 2, right = 1, offset = 4;

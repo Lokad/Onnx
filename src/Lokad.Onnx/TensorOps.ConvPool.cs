@@ -140,7 +140,6 @@ where T : unmanaged
         var bd = bias?.ToDenseTensor();
         int inBatch = C * H * W;
         int outBatch = M * outH * outW;
-        int patchSize = C * kH * kW * outH * outW;
         int dop = options.MaxDegreeOfParallelism < 2 || N < 2 ? 1 : Math.Min(options.MaxDegreeOfParallelism, N);
         var xMem = xd.Buffer;
         var wMem = wd.Buffer;
@@ -154,6 +153,13 @@ where T : unmanaged
             RunPointwiseBatchesFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, outH, outW, inBatch, outBatch, options);
             return output;
         }
+        if (options.UseSegmentedConvolution || AblationSwitches.EnableSegmentedConvolution)
+        {
+            RunSegmentedConvFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M,
+                kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, dop, options);
+            return output;
+        }
+        int patchSize = C * kH * kW * outH * outW;
         if (dop > 1)
         {
             Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
