@@ -16,6 +16,7 @@ PRIMARY = ("e5-8tok", "e5-30tok", "e5-128tok", "e5-30pad128")
 CASES = ("e5-8tok", "e5-30tok", "e5-30pad128", "e5-128tok", "e5-512tok",
          "dinov3-224", "resnet50-224", "gpt2-1tok", "gpt2-4tok", "gpt2-32tok",
          "gpt2-128tok", "gpt2-dec-p1", "gpt2-dec-p32", "gpt2-dec-p128", "gpt2-dec-p512")
+SCOPES = {"full": CASES, "e5": CASES[:5]}
 ORDER = ("L0", "L1", "L1", "L0", "L1", "L0", "L0", "L1")
 MIN_SAMPLES = 33
 MIN_WARMUP_MS = 1000
@@ -81,13 +82,17 @@ def check_process_evidence(run, directory):
     """Bind the common producer's observations in addition to the stdout log."""
     if "producer" not in run:
         return  # Offline schema fixtures/other trusted producers remain supported.
-    require(run["producer"] == "common-runner-v1", "unknown process evidence producer")
+    require(run["producer"] in ("common-runner-v1", "common-runner-v2"), "unknown process evidence producer")
     path = directory / run["process_evidence"]
     require(sha256(path) == digest(run["process_evidence_sha256"], "process_evidence_sha256"), "process evidence digest mismatch")
     observed = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique_json, parse_constant=_bad_constant)
     for key in ("producer", "process_id", "started_utc", "exit_code", "source_sha", "core_sha256",
                 "runner_sha256", "runner_files", "ort_native", "environment", "cases", "cases_failed"):
         require(observed[key] == run[key], "process evidence/manifest mismatch: " + key)
+    if run["producer"] == "common-runner-v2":
+        require(observed["scope"] == run["scope"], "process evidence/manifest mismatch: scope")
+    else:
+        require("scope" not in observed and "scope" not in run, "legacy process cannot declare a scope")
     require(timestamp(observed["completed_utc"]) <= timestamp(run["completed_utc"]), "process evidence completion is after observed exit")
     files = run["runner_files"]
     require(isinstance(files, dict) and files, "runner file identities missing")
@@ -114,7 +119,7 @@ def _put(mapping, key, value, label):
     mapping[key] = value
 
 
-def parse_log(path):
+def parse_log(path, cases=CASES):
     lines = base.read_log_text(path).splitlines()
     hosts = [line for line in lines if line.startswith("host=")]
     confs = [line for line in lines if line.startswith("confinement wallMs=")]
@@ -159,19 +164,19 @@ def parse_log(path):
             _put(raw, name, {key: _array(fields[key], name + " " + key) for key in fields}, "raw series")
             summaries[name] = lines[i - 1]
     for label, mapping in list(records.items()):
-        require(set(mapping) == set(CASES), label + " case set mismatch; missing=" + str(sorted(set(CASES) - set(mapping)))
-                + " extra=" + str(sorted(set(mapping) - set(CASES))))
+        require(set(mapping) == set(cases), label + " case set mismatch; missing=" + str(sorted(set(cases) - set(mapping)))
+                + " extra=" + str(sorted(set(mapping) - set(cases))))
     failed = set()
-    for name in CASES:
+    for name in cases:
         status = records["case-status"][name]
         require(status == "ok" or status.startswith("FAILED"), "unexpected case status in canonical log: " + name)
         if status != "ok":
             failed.add(name)
-    require(set(raw) == set(CASES) - failed, "raw case set mismatch; missing=" + str(sorted(set(CASES) - failed - set(raw)))
-            + " extra=" + str(sorted(set(raw) - set(CASES) - failed)))
-    require(tuple(raw) == tuple(name for name in CASES if name not in failed), "case order differs from canonical workload")
+    require(set(raw) == set(cases) - failed, "raw case set mismatch; missing=" + str(sorted(set(cases) - failed - set(raw)))
+            + " extra=" + str(sorted(set(raw) - set(cases) - failed)))
+    require(tuple(raw) == tuple(name for name in cases if name not in failed), "case order differs from canonical workload")
     defs, warmups = {}, {}
-    for name in CASES:
+    for name in cases:
         quarantined = name in failed
         definition = pairs(records["casedef"][name])
         require(set(definition) == {"model", "bytes", "sha12", "inputs", "outputs", "iters", "warmup", "tol"}, "incomplete casedef: " + name)
@@ -211,13 +216,21 @@ def parse_log(path):
             require(len(values) == used, "warmup count mismatch: " + name)
             require(sum(values) >= MIN_WARMUP_MS, "warmup duration below 1000 ms per engine: " + name)
         defs[name], warmups[name] = definition, warm
-    return {"host": host, "definitions": defs, "warmups": warmups, "raw": raw, "failed": sorted(failed, key=CASES.index)}
+    return {"host": host, "definitions": defs, "warmups": warmups, "raw": raw, "failed": sorted(failed, key=cases.index)}
 
 
 def _load_campaign(path):
     path = Path(path).resolve()
     manifest = json.loads(path.read_text(encoding="utf-8-sig"), object_pairs_hook=_unique_json, parse_constant=_bad_constant)
-    require(type(manifest["schema"]) is int and manifest["schema"] == 1, "unsupported evidence schema")
+    schema = manifest["schema"]
+    require(type(schema) is int and schema in (1, 2), "unsupported evidence schema")
+    if schema == 1:
+        require("scope" not in manifest, "legacy evidence cannot declare a scope")
+        scope = "full"
+    else:
+        scope = manifest["scope"]
+        require(isinstance(scope, str) and scope in SCOPES, "unsupported evidence scope")
+    cases = SCOPES[scope]
     require(manifest["kind"] in ("aa", "comparison"), "kind must be aa or comparison")
     runs = manifest["runs"]
     require(isinstance(runs, list) and len(runs) == 8, "need four paired repetitions (eight processes)")
@@ -225,6 +238,11 @@ def _load_campaign(path):
     previous_end = None
     for i, run in enumerate(runs):
         label = "run %d" % (i + 1)
+        if schema == 2:
+            require(run.get("producer") == "common-runner-v2", "schema 2 requires scope-bound process evidence")
+            require(run.get("scope") == scope, label + " scope differs from campaign")
+        else:
+            require("scope" not in run and run.get("producer") != "common-runner-v2", "legacy evidence cannot contain scoped runs")
         require(run["role"] == ORDER[i] and type(run["rep"]) is int and run["rep"] == i // 2 + 1,
                 label + " must follow L0,L1 / L1,L0 / L1,L0 / L0,L1 order")
         start, end = timestamp(run["started_utc"]), timestamp(run["completed_utc"])
@@ -242,7 +260,7 @@ def _load_campaign(path):
         require(run["accounting"]["valid"] is True, label + " has invalid process accounting")
         foreign = number(run["accounting"]["foreign_cpu_fraction"], "foreign_cpu_fraction")
         require(foreign <= 0.10, label + " has foreign CPU contamination")
-        parsed = parse_log(log)
+        parsed = parse_log(log, cases)
         # These loops are sequential. Their sum is a lower bound on elapsed
         # process time (load, validation and request diagnostics add more).
         measured = [value for series in parsed["raw"].values() for values in series.values() for value in values]
@@ -285,10 +303,10 @@ def _load_campaign(path):
         require(int(environment["affinity"], 16) == int(host["affinity"].split()[0], 16), "environment/log affinity mismatch")
         failed = run.get("cases_failed", [])
         require(isinstance(failed, list) and len(set(failed)) == len(failed) and all(isinstance(n, str) for n in failed), "cases_failed must be distinct case names")
-        require(set(failed) <= set(CASES), "cases_failed names invalid")
+        require(set(failed) <= set(cases), "cases_failed names invalid")
         require(set(failed) == set(parsed["failed"]), "cases_failed does not match quarantined log cases")
-        run["cases_failed"] = [name for name in CASES if name in failed]
-        require(set(run["cases"]) == set(CASES), "manifest case identities missing/extra")
+        run["cases_failed"] = [name for name in cases if name in failed]
+        require(set(run["cases"]) == set(cases), "manifest case identities missing/extra")
         require(set(failed) <= set(run["cases"]), "cases_failed without manifest identity")
         require(set(parsed["raw"]) == set(run["cases"]) - set(failed), "logged rows do not match measured cases")
         case_ids = {}
@@ -310,7 +328,7 @@ def _load_campaign(path):
                 real_tokens = {"e5-8tok": 8, "e5-30tok": 30, "e5-30pad128": 30, "e5-128tok": 128, "e5-512tok": 512}[name]
                 require(integer(entry["unmasked_tokens"], "unmasked_tokens", 1) == real_tokens, "E5 attention mask does not match case: " + name)
                 case_ids[name]["unmasked_tokens"] = real_tokens
-        signature = {"environment": environment, "runner_sha256": digest(run["runner_sha256"], "runner_sha256"),
+        signature = {"schema": schema, "scope": scope, "environment": environment, "runner_sha256": digest(run["runner_sha256"], "runner_sha256"),
                      "ort_sha256": digest(native["sha256"], "ORT sha256"), "cases": case_ids,
                      "host": {k: v for k, v in host.items() if k != "lokad"}, "definitions": parsed["definitions"],
                      "quarantined": list(run["cases_failed"])}
@@ -322,7 +340,7 @@ def _load_campaign(path):
         # unions them and reports the case INCONCLUSIVE instead of failing the campaign.
     if manifest["kind"] == "aa":
         require(identities["L0"] == identities["L1"], "A/A requires identical core binaries and source")
-    return {"manifest": str(path), "manifest_sha256": sha256(path), "kind": manifest["kind"],
+    return {"manifest": str(path), "manifest_sha256": sha256(path), "kind": manifest["kind"], "schema": schema, "scope": scope, "cases": cases,
             "runs": runs, "signature": signatures[0], "identities": identities,
             "start": timestamp(runs[0]["started_utc"]), "end": timestamp(runs[-1]["completed_utc"])}
 

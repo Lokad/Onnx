@@ -123,6 +123,9 @@ internal static class GraphProfile
             double lokWall = 0;
             var repLokad = new List<double>();
             var repLokadWall = new List<double>();
+            var repPhases = new List<ProfilePhases>();
+            var controlLokad = new List<double>();
+            var controlOrt = new List<double>();
             var repLokadWallNodes = new List<double>();
             var wallNodes = new Dictionary<long, double>();
             var wallNodeOps = new Dictionary<long, string>();
@@ -133,8 +136,31 @@ internal static class GraphProfile
             double ortTotal = 0;
             var sw = new System.Diagnostics.Stopwatch();
             using var ro = new RunOptions();
+            // Adjacent controls use the non-profiled ORT session and a disabled
+            // Lokad profiler. These diagnose observer cost; they are not a scored
+            // campaign (no convergence or four-process calibration here).
+            void ControlLokad()
+            {
+                using var disabled = Profiler.BeginExecution(false);
+                graph.Reset();
+                long start = System.Diagnostics.Stopwatch.GetTimestamp();
+                bool ok = graph.Execute(named, true, ExecutionProvider.CPU, opts);
+                long end = System.Diagnostics.Stopwatch.GetTimestamp();
+                if (!ok) throw new InvalidOperationException("unprofiled control execute failed.");
+                controlLokad.Add(Milliseconds(start, end));
+                graph.Reset();
+            }
+            void ControlOrt()
+            {
+                long start = System.Diagnostics.Stopwatch.GetTimestamp();
+                using var result = valSession.Run(ro, ortInputs, outNames);
+                long end = System.Diagnostics.Stopwatch.GetTimestamp();
+                controlOrt.Add(Milliseconds(start, end));
+            }
             for (int r = 0; r < reps; r++)
             {
+                if (r % 2 == 0) { ControlLokad(); ControlOrt(); }
+                else { ControlOrt(); ControlLokad(); }
                 if (r % 2 == 0)
                 {
                     var repStages = new Dictionary<string, double>(StringComparer.Ordinal);
@@ -151,6 +177,7 @@ internal static class GraphProfile
                     lokWall += lok.wallMs;
                     repLokad.Add(lok.nodeMs);
                     repLokadWall.Add(lok.wallMs);
+                    repPhases.Add(lok.phases);
                     repLokadWallNodes.Add(lok.wallNodeMs);
                     foreach (var wb in lok.wallBreakdown)
                     {
@@ -182,6 +209,7 @@ internal static class GraphProfile
                     lokWall += lok.wallMs;
                     repLokad.Add(lok.nodeMs);
                     repLokadWall.Add(lok.wallMs);
+                    repPhases.Add(lok.phases);
                     repLokadWallNodes.Add(lok.wallNodeMs);
                     foreach (var wb in lok.wallBreakdown)
                     {
@@ -222,17 +250,23 @@ internal static class GraphProfile
             double ortNodes = AggregateOrtTrace(traceFile, ortOps, reps);
             var doc = new
             {
+                schema = 2,
+                timingContract = "execute-only-v2",
+                profileMode = wall ? "wall-nodes" : "instrumented-stages",
+                interpretation = "Diagnostics only. Execute includes internal profiler collection; Reset, outer scope and report work are separate. Controls are unprofiled but not scored campaign evidence.",
                 kase,
                 model,
                 reps,
                 gateScaled = gate.scaled,
                 repLokadMs = repLokad.ToArray(),
                 repOrtMs = repOrt.ToArray(),
-                repLokadWallMs = repLokadWall.ToArray(),
+                repLokadExecuteMs = repLokadWall.ToArray(),
+                repLokadPhases = repPhases.ToArray(),
+                unprofiledControls = new { lokadExecuteMs = controlLokad.ToArray(), ortRunMs = controlOrt.ToArray() },
                 repLokadWallNodesMs = repLokadWallNodes.ToArray(),
                 repLokadPerOp = repLokadOps.Select(d => d.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value)).ToArray(),
                 memory = mem,
-                lokad = new { totalMs = lokTotal, wallMs = lokWall, wallNodeMs = repLokadWallNodes.Sum(), wallNodes = wallNodes.OrderByDescending(kv => kv.Value).Select(kv => new { id = kv.Key, op = wallNodeOps[kv.Key], ms = kv.Value }).ToArray(), wallFamilies = wallOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value),
+                lokad = new { totalMs = lokTotal, executeMs = lokWall, wallNodeMs = repLokadWallNodes.Sum(), wallNodes = wallNodes.OrderByDescending(kv => kv.Value).Select(kv => new { id = kv.Key, op = wallNodeOps[kv.Key], ms = kv.Value }).ToArray(), wallFamilies = wallOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value),
                     nodes = lokNodes.OrderByDescending(kv => kv.Value).Select(kv => new { id = kv.Key, op = lokNodeOps[kv.Key], ms = kv.Value, copy = lokNodeCopies.TryGetValue(kv.Key, out var ncv) ? ncv : 0, copyX = lokNodeCopyXs.TryGetValue(kv.Key, out var ncx) ? ncx : 0, copyY = lokNodeCopyYs.TryGetValue(kv.Key, out var ncy) ? ncy : 0 }).ToArray(), perOp = lokOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), stages = lokStages.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), perOpStages = lokOpStages.ToDictionary(kv => kv.Key, kv => kv.Value.OrderByDescending(sv => sv.Value).ToDictionary(sv => sv.Key, sv => sv.Value)) },
                 ort = new { totalMs = ortTotal, nodeMs = ortNodes, perOp = ortOps.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value), traceFile },
             };
@@ -254,11 +288,11 @@ internal static class GraphProfile
                 Console.WriteLine("  " + kv.Key + "=" + kv.Value.ToString("F1"));
             Console.WriteLine("reps lokad=[" + string.Join(",", repLokad.Select(v => v.ToString("F1"))) + "] ort=[" + string.Join(",", repOrt.Select(v => v.ToString("F1"))) + "]");
             Console.WriteLine("reps lokadwallnodes=[" + string.Join(",", repLokadWallNodes.Select(v => v.ToString("F1"))) + "]");
-            Console.WriteLine("wall closure nodes/wall=[" + string.Join(",", repLokadWallNodes.Zip(repLokadWall, (a, b) => (a / Math.Max(b, 1e-9)).ToString("F3"))) + "]");
+            Console.WriteLine("wall closure nodes/execute=[" + string.Join(",", repLokadWallNodes.Zip(repLokadWall, (a, b) => (a / Math.Max(b, 1e-9)).ToString("F3"))) + "]");
             Console.WriteLine("--- lokad per-op ms (wall, " + reps + " reps) ---");
             foreach (var kv in wallOps.OrderByDescending(kv => kv.Value).Take(12))
                 Console.WriteLine("  " + kv.Key + "=" + kv.Value.ToString("F1"));
-            Console.WriteLine("totals: lokad nodes=" + lokTotal.ToString("F1") + " wall=" + lokWall.ToString("F1") + "; ort nodes=" + ortNodes.ToString("F1") + " wall=" + ortTotal.ToString("F1"));
+            Console.WriteLine("totals: lokad nodes=" + lokTotal.ToString("F1") + " execute=" + lokWall.ToString("F1") + "; ort nodes=" + ortNodes.ToString("F1") + " profiledRun=" + ortTotal.ToString("F1"));
             Console.WriteLine("--- lokad top Copy nodes (profiled, id op copyMs totalMs name) ---");
             foreach (var kv in lokNodeCopies.OrderByDescending(kv => kv.Value).Take(10))
             {
@@ -303,21 +337,34 @@ internal static class GraphProfile
         }
     }
 
-    static (double nodeMs, double wallMs, double wallNodeMs, List<(long id, string op, double ms)> wallBreakdown) ProfileLokad(ComputationalGraph graph, Dictionary<string, ITensor> named, ExecutionOptions opts, Dictionary<string, double> stages, Dictionary<string, double> ops, Dictionary<long, double> nodes, Dictionary<long, string> nodeOps, Dictionary<string, Dictionary<string, double>> opStages, Dictionary<long, double> nodeCopies, Dictionary<long, double> nodeCopyXs, Dictionary<long, double> nodeCopyYs, bool wallOnly)
+    sealed record ProfilePhases(double ResetBeforeMs, double ScopeSetupMs, double ExecuteMs,
+        double ResetAfterMs, double ScopeDisposeMs, double ReportAggregationMs);
+
+    static double Milliseconds(long start, long end) => (end - start) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+
+    static (double nodeMs, double wallMs, double wallNodeMs, List<(long id, string op, double ms)> wallBreakdown, ProfilePhases phases) ProfileLokad(ComputationalGraph graph, Dictionary<string, ITensor> named, ExecutionOptions opts, Dictionary<string, double> stages, Dictionary<string, double> ops, Dictionary<long, double> nodes, Dictionary<long, string> nodeOps, Dictionary<string, Dictionary<string, double>> opStages, Dictionary<long, double> nodeCopies, Dictionary<long, double> nodeCopyXs, Dictionary<long, double> nodeCopyYs, bool wallOnly)
     {
-        var wall = System.Diagnostics.Stopwatch.StartNew();
+        long beforeReset = System.Diagnostics.Stopwatch.GetTimestamp();
+        graph.Reset();
+        long afterReset = System.Diagnostics.Stopwatch.GetTimestamp();
+        var scope = wallOnly ? Profiler.BeginWallExecution() : Profiler.BeginExecution(true);
+        long beforeExecute = System.Diagnostics.Stopwatch.GetTimestamp();
+        long afterExecute, afterCleanup;
+        try
+        {
+            bool ok = graph.Execute(named, true, ExecutionProvider.CPU, opts);
+            afterExecute = System.Diagnostics.Stopwatch.GetTimestamp();
+            if (!ok) throw new InvalidOperationException("profiled execute failed.");
+            graph.Reset();
+            afterCleanup = System.Diagnostics.Stopwatch.GetTimestamp();
+        }
+        finally { scope.Dispose(); }
+        long afterScope = System.Diagnostics.Stopwatch.GetTimestamp();
         var breakdown = new List<(long id, string op, double ms)>();
         double total = 0;
         double wallNodeMs = 0;
         if (wallOnly)
         {
-            using (Profiler.BeginWallExecution())
-            {
-                graph.Reset();
-                if (!graph.Execute(named, true, ExecutionProvider.CPU, opts))
-                    throw new InvalidOperationException("profiled execute failed.");
-                graph.Reset();
-            }
             if (graph.LastWallProfile is { } wprof)
             {
                 double freq = (double)System.Diagnostics.Stopwatch.Frequency;
@@ -328,14 +375,6 @@ internal static class GraphProfile
                     wallNodeMs += wms;
                 }
             }
-        }
-        else
-        using (Profiler.BeginExecution(true))
-        {
-            graph.Reset();
-            if (!graph.Execute(named, true, ExecutionProvider.CPU, opts))
-                throw new InvalidOperationException("profiled execute failed.");
-            graph.Reset();
         }
         if (graph.LastProfile is { } profile)
         {
@@ -379,8 +418,11 @@ internal static class GraphProfile
                 total += nodeMs;
             }
         }
-        wall.Stop();
-        return (total, wall.Elapsed.TotalMilliseconds, wallNodeMs, breakdown);
+        long afterReport = System.Diagnostics.Stopwatch.GetTimestamp();
+        var phases = new ProfilePhases(Milliseconds(beforeReset, afterReset), Milliseconds(afterReset, beforeExecute),
+            Milliseconds(beforeExecute, afterExecute), Milliseconds(afterExecute, afterCleanup),
+            Milliseconds(afterCleanup, afterScope), Milliseconds(afterScope, afterReport));
+        return (total, phases.ExecuteMs, wallNodeMs, breakdown, phases);
     }
 
     static double AggregateOrtTrace(string traceFile, Dictionary<string, double> ops, int reps)

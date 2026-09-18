@@ -6,6 +6,7 @@ import contextlib
 import copy
 import datetime as dt
 import io
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -30,7 +31,7 @@ def array(values):
     return "[" + ",".join(map(str, values)) + "]"
 
 
-def make_log(role, kind, transform=None, drop=()):
+def make_log(role, kind, transform=None, drop=(), cases=CASES):
     lines = [
         "host=synthetic cpu=AMD synthetic CPU procs=4 (logical) affinity=0x4 "
         "(verified single-CPU, logical-cpu=2) topology=synthetic vector=Vector256 "
@@ -39,7 +40,7 @@ def make_log(role, kind, transform=None, drop=()):
         "intraop=1 interop=1 seq mode=auto threads=1 rows=canonical iters=33 warmup=3 warmupMin=-1 warmupMax=-1",
         "confinement wallMs=2000 cpuMs=2000 ratio=1.00 (single-threaded busy loop)"
     ]
-    for name in CASES:
+    for name in cases:
         if name in drop:
             sequence = {"e5-8tok": 8, "e5-30tok": 30, "e5-30pad128": 128, "e5-128tok": 128, "e5-512tok": 512}.get(name)
             inputs = (",".join(key + ":1x" + str(sequence) for key in ("input_ids", "attention_mask", "token_type_ids"))
@@ -80,12 +81,15 @@ class CampaignTests(unittest.TestCase):
         self.aa = self.make_campaign("aa")
         self.candidate = self.make_campaign("comparison")
 
-    def make_campaign(self, kind, drop=()):
-        manifest = {"schema": 1, "kind": kind, "runs": []}
+    def make_campaign(self, kind, drop=(), scope=None):
+        cases = CASES if scope != "e5" else CASES[:5]
+        manifest = {"schema": 1 if scope is None else 2, "kind": kind, "runs": []}
+        if scope is not None:
+            manifest["scope"] = scope
         origin = dt.datetime(2026, 9, 16 if kind == "aa" else 17, tzinfo=dt.timezone.utc)
         for i, role in enumerate(ORDER):
             log = self.directory / (kind + "-%d.log" % i)
-            log.write_text(make_log(role, kind, drop=drop), encoding="utf-8")
+            log.write_text(make_log(role, kind, drop=drop, cases=cases), encoding="utf-8")
             changed = role == "L1" and kind == "comparison"
             start = origin + dt.timedelta(minutes=2 * i)
             manifest["runs"].append({
@@ -101,10 +105,20 @@ class CampaignTests(unittest.TestCase):
                 "accounting": {"valid": True, "foreign_cpu_fraction": 0.0},
                 "cases": {name: {"model_sha256": "a" * 64, "input_sha256": "b" * 64, "external_data": {},
                                  **({"unmasked_tokens": {"e5-8tok": 8, "e5-30tok": 30, "e5-30pad128": 30, "e5-128tok": 128, "e5-512tok": 512}[name]}
-                                    if name.startswith("e5-") else {})} for name in CASES},
+                                    if name.startswith("e5-") else {})} for name in cases},
                 "cases_failed": sorted(drop, key=CASES.index)
             })
+            if scope is not None:
+                run = manifest["runs"][-1]
+                run.update(producer="common-runner-v2", scope=scope, runner_files={"runner.dll": "5" * 64})
+                run["runner_sha256"] = hashlib.sha256(("runner.dll\0" + "5" * 64 + "\n").encode()).hexdigest()
+                self.bind_process(run)
         return manifest
+
+    def bind_process(self, run):
+        path = self.directory / (run["log"] + ".process.json")
+        path.write_text(json.dumps(run), encoding="utf-8")
+        run.update(process_evidence=path.name, process_evidence_sha256=evidence.sha256(path))
 
     def rewrite_log(self, manifest, index, transform):
         run = manifest["runs"][index]
@@ -143,6 +157,92 @@ class CampaignTests(unittest.TestCase):
         e5 = result["table"][0]
         self.assertEqual((e5["L0"], e5["L1"], e5["O0"], e5["O1"], e5["R0"], e5["R1"], e5["gap_closure"]), (20, 10, 10, 10, 2, 1, 1))
         self.assertEqual(len(e5["reps"]), 4)
+
+    def scoped_campaigns(self, scope="e5", drop=()):
+        self.aa = self.make_campaign("aa", scope=scope)
+        self.candidate = self.make_campaign("comparison", scope=scope, drop=drop)
+
+    def test_e5_scope_scores_five_ordered_cases(self):
+        self.scoped_campaigns()
+        result = self.evaluate(verdict="PASS")
+        self.assertEqual(result["scope"], "e5")
+        self.assertEqual(result["policy"], "amd-e5-v2")
+        self.assertEqual(tuple(row["case"] for row in result["table"]), CASES[:5])
+
+    def test_full_schema_two_scores_all_cases(self):
+        self.scoped_campaigns("full")
+        self.assertEqual(len(self.evaluate(verdict="PASS")["table"]), 15)
+
+    def test_e5_scope_allows_explicit_long_quarantine(self):
+        self.scoped_campaigns(drop=("e5-512tok",))
+        self.assertEqual(self.evaluate(verdict="PASS")["quarantined"], {"e5-512tok": ["comparison"]})
+
+    def test_e5_scope_primary_quarantine_is_inconclusive(self):
+        self.scoped_campaigns(drop=("e5-30tok",))
+        self.evaluate(expected_code=3, verdict="INCONCLUSIVE")
+
+    def test_e5_scope_missing_long_case_is_rejected(self):
+        self.scoped_campaigns()
+        run = self.candidate["runs"][0]
+        del run["cases"]["e5-512tok"]
+        self.bind_process(run)
+        self.assertIn("manifest case identities missing/extra", self.evaluate(expected_code=2))
+
+    def test_e5_scope_truncated_log_is_rejected(self):
+        self.scoped_campaigns()
+        self.rewrite_log(self.candidate, 0, lambda _: make_log("L0", "comparison", cases=CASES[:4]))
+        self.assertIn("case set mismatch", self.evaluate(expected_code=2))
+
+    def test_scope_is_required_in_schema_two(self):
+        self.scoped_campaigns()
+        del self.candidate["scope"]
+        self.evaluate(expected_code=2)
+
+    def test_unknown_scope_is_rejected(self):
+        self.scoped_campaigns()
+        self.candidate["scope"] = "e5-fast-only"
+        self.assertIn("unsupported evidence scope", self.evaluate(expected_code=2))
+
+    def test_legacy_evidence_cannot_be_relabelled(self):
+        self.candidate.update(schema=2, scope="full")
+        self.assertIn("scope-bound process evidence", self.evaluate(expected_code=2))
+
+    def test_legacy_schema_cannot_declare_scope(self):
+        self.candidate["scope"] = "full"
+        self.assertIn("legacy evidence cannot declare", self.evaluate(expected_code=2))
+
+    def test_mixed_scopes_between_runs_are_rejected(self):
+        self.scoped_campaigns()
+        self.candidate["runs"][1]["scope"] = "full"
+        self.assertIn("scope differs from campaign", self.evaluate(expected_code=2))
+
+    def test_manifest_scope_is_bound_to_original_process(self):
+        self.scoped_campaigns("full")
+        self.candidate["scope"] = "e5"
+        for run in self.candidate["runs"]:
+            run["scope"] = "e5"
+        self.assertIn("process evidence/manifest mismatch: scope", self.evaluate(expected_code=2))
+
+    def test_mixed_aa_scopes_are_rejected(self):
+        self.scoped_campaigns()
+        self.aa = self.make_campaign("aa", scope="full")
+        self.assertIn("A/A evidence schema/scope mismatch", self.evaluate(expected_code=2))
+
+    def test_schema_two_cannot_reuse_legacy_calibration(self):
+        self.candidate = self.make_campaign("comparison", scope="full")
+        self.assertIn("A/A evidence schema/scope mismatch", self.evaluate(expected_code=2))
+
+    def test_scoped_quarantine_does_not_hide_changed_input(self):
+        self.scoped_campaigns(drop=("e5-512tok",))
+        for run in self.candidate["runs"]:
+            run["cases"]["e5-512tok"]["input_sha256"] = "c" * 64
+            self.bind_process(run)
+        self.assertIn("including quarantined cases", self.evaluate(expected_code=2))
+
+    def test_forged_scoped_manifest_identity_is_rejected(self):
+        self.scoped_campaigns()
+        self.candidate["runs"][0]["cases"]["e5-8tok"]["input_sha256"] = "c" * 64
+        self.assertIn("process evidence/manifest mismatch: cases", self.evaluate(expected_code=2))
 
     def test_quarantined_case_is_inconclusive_not_regression(self):
         self.candidate = self.make_campaign("comparison", drop=("resnet50-224",))

@@ -43,7 +43,11 @@ explicit `CoreAssemblyPath` and is not part of the ordinary solution build.
 
 Smoke runs use one pair, two timed samples and one fixed warmup. They write
 `kind=smoke`, which the scorer rejects. `--models e5 --case e5-8tok` selects
-a smaller smoke workload; release mode requires all fifteen canonical cases.
+a smaller smoke workload. Scored runs use `--scope full` (default, all fifteen
+cases) or `--scope e5` (five ordered e5 cases), without `--models` or `--case`.
+The new producer writes schema 2 with the selected scope bound in each child
+record. It requires a freshly captured schema-2 A/A with the same scope;
+old schema-1 full-suite campaigns remain readable by the offline scorer.
 All model and tokenizer files are local. Smoke still checks numerical
 agreement, cross-core input/model identities and identical runner/runtime/ORT
 binaries. It records foreign CPU but does not call a noisy machine quiet.
@@ -59,14 +63,20 @@ the OS must also allow the selected CPU.
 
 ## A/A and comparison on the AMD baseline
 
-The AMD VM is owned by another active agent. These commands are instructions
-for a later coordinated exclusive window, not authorization to interrupt it.
-Do not infer availability from an idle-looking process list.
+The user assigned the AMD VM exclusively to this work on September 18, 2026,
+including permission to stop interfering workloads. No further coordinated
+window is required. Run one measurement lane at a time, verify process identity
+before stopping interference, and preserve the binaries/assets of any active
+lane. A quiet guest still does not establish an uncontended hypervisor host.
 
 ```powershell
 python eng/run_common_campaign.py --prepared artifacts/common-prepared --output artifacts/common-aa --cpu 2 --kind aa
 python eng/run_common_campaign.py --prepared artifacts/common-prepared --output artifacts/common-comparison --cpu 2 --kind comparison --aa artifacts/common-aa/evidence.json
 ```
+
+For the e5 optimization loop, add `--scope e5` to **both** commands and use
+new output directories. This preserves the four-pair, 33-sample contract and
+all noise/numerical/identity checks. It does not certify other model families.
 
 A/A stages the identical L0 core on both sides. Comparison stages L0/L1.
 Both use four pairs in `L0,L1 / L1,L0 / L1,L0 / L0,L1` order, with 300 seconds
@@ -87,7 +97,7 @@ The runner requires at least 1000 ms of measured execution **per engine per
 case**, a minimum of three warmup pairs and a stable last-nine-sample window
 for each engine. The window's range must be <=10% of its median. It stops
 after at most 1000 pairs or 60 seconds of warmup; failing to converge prevents
-timing that case and fails the child. These are preliminary warmup controls;
+timing that case and records an explicit quarantine. These are preliminary warmup controls;
 the scorer still checks chronological drift and fresh-process variation.
 An AMD tiering/GC diagnosis and unchanged calibration are still required.
 
@@ -102,6 +112,17 @@ complete request/reset diagnostics retain separate boundaries. File hashing
 and process metadata capture occur outside timed regions. Cold figures are
 process/startup diagnostics, not a claim of cold OS page caches. Request or
 context timings never silently replace the public Execute score.
+
+`Bench profile ... [--wall]` writes separate diagnostic schema-2 JSON with
+`timingContract: "execute-only-v2"`. `repLokadExecuteMs` brackets only public
+Execute; `repLokadPhases` records Reset before/after, outer profiler scope
+setup/disposal, and per-repetition report aggregation separately. Profiler
+collection performed **inside** Execute remains included in Execute, as does
+other execution bookkeeping. Final cross-repetition report merging/serialization
+is outside these timings. Adjacent unprofiled Lokad/ORT controls indicate
+observer cost but lack campaign warmup/calibration and cannot score. Old
+unversioned `repLokadWallMs` included Reset and report work and must not be
+compared as the same metric.
 
 ## Evidence and accounting
 
@@ -127,16 +148,16 @@ checks the supervisor birth identity, and excludes only its descendant tree.
 PID reuse cannot subtract unrelated old CPU or claim ownership through a
 younger recycled parent. A new foreign PID contributes its full observed
 lifetime CPU conservatively. More than 10% of guest-wide CPU capacity aborts
-a release run. This module is separate from the other agent's active scripts.
+a release run. This module is separate from the historical PowerShell monitors.
 
 Snapshots miss some CPU of short-lived/exited processes; the manifest reports
 that limitation and the number of observed foreign disappearances. They do
 not establish exclusive ownership of the machine or catch every transient
 competitor. Isolation, the paired ORT controls and stability gates remain
 necessary. Linux accounting/parser behavior has local fixture coverage;
-actual Linux collection/native discovery still needs validation in the
-coordinated AMD window. Windows collection and loaded-module capture were
-exercised locally.
+record actual Linux collection/native-discovery evidence when validating a
+new producer version on the assigned AMD VM. Windows collection and
+loaded-module capture were exercised locally.
 
 Local proof on September 17 used Windows/Intel, SDK 10.0.204 and runtime
 10.0.12: all fifteen cases passed on each core and every cross-core input

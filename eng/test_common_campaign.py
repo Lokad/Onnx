@@ -173,6 +173,14 @@ class SupervisionTests(unittest.TestCase):
         changed = dict(build, core_sha256="c" * 64)
         with self.assertRaises(evidence.EvidenceError):
             lane.finish_record(path, changed, "L0", 1, 42, start, end, 0, log, {"valid": True})
+        with self.assertRaisesRegex(evidence.EvidenceError, "wrong evidence producer"):
+            lane.finish_record(path, build, "L0", 1, 42, start, end, 0, log, {"valid": True}, "e5")
+        record.update(producer="common-runner-v2", scope="full")
+        path.write_text(json.dumps(record), encoding="utf-8")
+        with self.assertRaisesRegex(evidence.EvidenceError, "scope differs"):
+            lane.finish_record(path, build, "L0", 1, 42, start, end, 0, log, {"valid": True}, "e5")
+        finished = lane.finish_record(path, build, "L0", 1, 42, start, end, 0, log, {"valid": True}, "full")
+        self.assertEqual(finished["scope"], "full")
 
     def test_missing_process_evidence_is_not_success(self):
         start = dt.datetime.now(dt.timezone.utc)

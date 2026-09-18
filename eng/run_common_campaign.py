@@ -66,10 +66,12 @@ def stage(prepared, output, kind):
     return result
 
 
-def finish_record(path, build, role, rep, pid, launched, exited, code, log, accounting):
+def finish_record(path, build, role, rep, pid, launched, exited, code, log, accounting, scope=None):
     evidence.require(code == 0, "child failed; inspect " + str(log.with_suffix(".err.log")))
     record = json.loads(path.read_text(encoding="utf-8"))
-    evidence.require(record["producer"] == "common-runner-v1", "wrong evidence producer")
+    evidence.require(record["producer"] == ("common-runner-v1" if scope is None else "common-runner-v2"), "wrong evidence producer")
+    if scope is not None:
+        evidence.require(record["scope"] == scope, "child evidence scope differs from requested scope")
     evidence.require(record["process_id"] == pid and record["exit_code"] == code, "child process/exit identity mismatch")
     evidence.require(record["core_sha256"] == build["core_sha256"].lower() and record["source_sha"] == build["source_sha"].lower(), "loaded core/source differs from staged build")
     evidence.require(record["environment"]["sdk"] == build["sdk"], "runner and core SDKs differ")
@@ -150,20 +152,20 @@ def wait_child(child, label, timeout=3600):
         raise
 
 
-def preflight(builds, output, cpu, child_env, aa):
+def preflight(builds, output, cpu, child_env, aa, scope):
     records = []
     for role, build in builds.items():
         stem = role.lower() + "-probe"
         log, error, record_path = (output / (stem + suffix) for suffix in (".log", ".err.log", ".process.json"))
         command = ["dotnet", str(build["runner"]), "e5", "--probe", "--cpu", str(cpu),
                    "--evidence-out", str(record_path), "--source-sha", build["source_sha"],
-                   "--expected-core-sha256", build["core_sha256"]]
+                   "--expected-core-sha256", build["core_sha256"], "--evidence-scope", scope]
         start = dt.datetime.now(dt.timezone.utc)
         with log.open("x", encoding="utf-8") as stdout, error.open("x", encoding="utf-8") as stderr:
             child = spawn_child(command, cpu, cwd=ROOT, stdout=stdout, stderr=stderr, env=child_env)
             code = wait_child(child, stem, timeout=120)
         record = finish_record(record_path, build, role, 0, child.pid, start, dt.datetime.now(dt.timezone.utc), code, log,
-                               {"valid": False, "reason": "probe has no measured workload or accounting interval"})
+                               {"valid": False, "reason": "probe has no measured workload or accounting interval"}, scope)
         records.append(record)
     left, right = records
     for key in ("runner_sha256", "environment"):
@@ -190,11 +192,12 @@ def preflight(builds, output, cpu, child_env, aa):
     print("PREFLIGHT OK: identical runner, runtime and native ORT; expected cores loaded", flush=True)
 
 
-def run_leg(build, role, rep, output, cpu, models, only_case, smoke, child_env):
+def run_leg(build, role, rep, output, cpu, models, only_case, smoke, child_env, scope):
     stem = "%s-rep%d" % (role.lower(), rep)
     log, error, record_path = (output / (stem + suffix) for suffix in (".log", ".err.log", ".process.json"))
     args = ["dotnet", str(build["runner"]), *models, "--cpu", str(cpu), "--iters", "2" if smoke else "33",
-            "--evidence-out", str(record_path), "--source-sha", build["source_sha"], "--expected-core-sha256", build["core_sha256"]]
+            "--evidence-out", str(record_path), "--source-sha", build["source_sha"], "--expected-core-sha256", build["core_sha256"],
+            "--evidence-scope", scope]
     if smoke:
         args.extend(["--warmup", "1", "--warmup-min", "-1", "--warmup-max", "-1", "--warmup-ms", "0"])
     if only_case:
@@ -212,7 +215,7 @@ def run_leg(build, role, rep, output, cpu, models, only_case, smoke, child_env):
     accounting = processes.foreign_fraction(before, after, os.getpid())
     save_json(output / (stem + ".supervision.json"), {"pid": child.pid, "launched_utc": launched.isoformat(),
               "exited_utc": exited.isoformat(), "exit_code": code, "command": args, "accounting": accounting})
-    record = finish_record(record_path, build, role, rep, child.pid, launched, exited, code, log, accounting)
+    record = finish_record(record_path, build, role, rep, child.pid, launched, exited, code, log, accounting, scope)
     evidence.require(smoke or accounting["foreign_cpu_fraction"] <= 0.10, "foreign CPU contamination; retained diagnostic evidence")
     print("Finished %s exit=%d foreign_cpu=%.4f" % (stem, code, accounting["foreign_cpu_fraction"]), flush=True)
     return record
@@ -228,19 +231,22 @@ def main(argv=None):
     parser.add_argument("--jit", choices=("default-tiered", "full-opts"), default="default-tiered")
     parser.add_argument("--cooldown", type=int, default=300)
     parser.add_argument("--smoke", action="store_true")
-    parser.add_argument("--models", nargs="+", choices=tuple(ASSETS), default=list(ASSETS))
+    parser.add_argument("--scope", choices=tuple(evidence.SCOPES), default="full")
+    parser.add_argument("--models", nargs="+", choices=tuple(ASSETS), help="smoke only; scored workloads are selected by --scope")
     parser.add_argument("--case")
     args = parser.parse_args(argv)
     output = args.output.resolve()
     try:
         evidence.require(0 <= args.cpu < min(64, os.cpu_count() or 1), "CPU selector is outside the supported mask")
         evidence.require(args.cooldown >= 0, "negative cooldown")
-        evidence.require(args.smoke or args.models == list(ASSETS) and args.case is None, "release requires all canonical models/cases")
+        evidence.require(args.smoke or args.models is None and args.case is None, "scored workloads require --scope, without --models or --case")
+        models = args.models if args.models is not None else (["e5"] if args.scope == "e5" else list(ASSETS))
         evidence.require(args.kind != "comparison" or args.smoke or args.aa is not None, "comparison requires preceding --aa evidence")
         aa = evidence.load_campaign(args.aa) if args.aa else None  # Before any measurement work.
         if aa:
             evidence.require(aa["kind"] == "aa", "--aa is not an unchanged campaign")
-        for model in args.models:
+            evidence.require(aa["schema"] == 2 and aa["scope"] == args.scope, "A/A evidence schema/scope mismatch before launch")
+        for model in models:
             for file in ASSETS[model]:
                 evidence.require((ROOT / "models" / file).is_file(), "missing local asset: " + file)
         child_env = os.environ.copy()
@@ -250,15 +256,15 @@ def main(argv=None):
                 del child_env[key]
         child_env["DOTNET_TieredCompilation"] = "0" if args.jit == "full-opts" else "1"
         builds = stage(args.prepared.resolve(), output, args.kind)
-        preflight(builds, output, args.cpu, child_env, aa)
-        manifest = {"schema": 1, "kind": "smoke" if args.smoke else args.kind, "runs": []}
+        preflight(builds, output, args.cpu, child_env, aa, args.scope)
+        manifest = {"schema": 2, "scope": args.scope, "kind": "smoke" if args.smoke else args.kind, "runs": []}
         order = evidence.ORDER[:2] if args.smoke else evidence.ORDER
         for i, role in enumerate(order):
             if i > 0 and i % 2 == 0:
                 for remaining in range(args.cooldown, 0, -30):
                     print("Cooldown: %ds" % remaining, flush=True)
                     time.sleep(min(30, remaining))
-            record = run_leg(builds[role], role, i // 2 + 1, output, args.cpu, args.models, args.case, args.smoke, child_env)
+            record = run_leg(builds[role], role, i // 2 + 1, output, args.cpu, models, args.case, args.smoke, child_env, args.scope)
             manifest["runs"].append(record)
         destination = output / "evidence.json"
         save_json(destination, manifest)

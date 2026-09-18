@@ -23,6 +23,7 @@ internal sealed class CampaignEvidence
     readonly string output;
     readonly string source;
     readonly string expectedCore;
+    readonly string? scope;
     readonly Dictionary<string, object> cases = new(StringComparer.Ordinal);
     readonly System.Collections.Generic.List<string> failedCases = new();
     readonly Dictionary<string, (string Hash, SortedDictionary<string, string> External)> models = new(StringComparer.Ordinal);
@@ -35,12 +36,14 @@ internal sealed class CampaignEvidence
     // falsely abort the supervised interval. Wall entry is strictly inside it by construction.
     readonly string startedUtc;
 
-    CampaignEvidence(string output, string source, string expectedCore)
+    CampaignEvidence(string output, string source, string expectedCore, string? scope)
     {
         startedUtc = DateTime.UtcNow.ToString("O");
         this.output = Path.GetFullPath(output);
         this.source = source.ToLowerInvariant();
         this.expectedCore = expectedCore.ToLowerInvariant();
+        if (scope is not null and not "full" and not "e5") throw new ArgumentException("Unknown evidence scope.");
+        this.scope = scope;
         if (File.Exists(this.output)) throw new IOException("Evidence output already exists: " + output);
         if (!Regex.IsMatch(source, "^[0-9a-fA-F]{40}$") || !Regex.IsMatch(expectedCore, "^[0-9a-fA-F]{64}$"))
             throw new ArgumentException("Evidence requires full source commit and expected core SHA-256.");
@@ -54,7 +57,7 @@ internal sealed class CampaignEvidence
         var options = new Dictionary<string, string>(StringComparer.Ordinal);
         for (int i = 0; i < args.Length; i++)
         {
-            if (args[i] is "--evidence-out" or "--source-sha" or "--expected-core-sha256")
+            if (args[i] is "--evidence-out" or "--source-sha" or "--expected-core-sha256" or "--evidence-scope")
             {
                 if (i + 1 >= args.Length || !options.TryAdd(args[i], args[++i]))
                     throw new ArgumentException("Missing or duplicate evidence option.");
@@ -63,8 +66,10 @@ internal sealed class CampaignEvidence
         }
         if (options.Count != 0)
         {
-            if (options.Count != 3) throw new ArgumentException("Supply --evidence-out, --source-sha and --expected-core-sha256 together.");
-            Current = new CampaignEvidence(options["--evidence-out"], options["--source-sha"], options["--expected-core-sha256"]);
+            if (!options.ContainsKey("--evidence-out") || !options.ContainsKey("--source-sha") || !options.ContainsKey("--expected-core-sha256"))
+                throw new ArgumentException("Supply --evidence-out, --source-sha and --expected-core-sha256 together.");
+            options.TryGetValue("--evidence-scope", out var scope);
+            Current = new CampaignEvidence(options["--evidence-out"], options["--source-sha"], options["--expected-core-sha256"], scope);
         }
         return remaining.ToArray();
     }
@@ -244,7 +249,7 @@ internal sealed class CampaignEvidence
         string runnerHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(runnerText))).ToLowerInvariant();
         var record = new
         {
-            producer = "common-runner-v1", process_id = Environment.ProcessId,
+            producer = scope is null ? "common-runner-v1" : "common-runner-v2", scope, process_id = Environment.ProcessId,
             started_utc = startedUtc, completed_utc = DateTime.UtcNow.ToString("O"),
             exit_code = exitCode, source_sha = source, core_sha256 = expectedCore, core_path = corePath,
             runner_sha256 = runnerHash, runner_files = runnerFiles,
@@ -252,6 +257,7 @@ internal sealed class CampaignEvidence
             environment, cases, cases_failed = failedCases
         };
         using var outputStream = new FileStream(output, FileMode.CreateNew, FileAccess.Write);
-        JsonSerializer.Serialize(outputStream, record, new JsonSerializerOptions { WriteIndented = true });
+        JsonSerializer.Serialize(outputStream, record, new JsonSerializerOptions { WriteIndented = true,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull });
     }
 }

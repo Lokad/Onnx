@@ -1,4 +1,4 @@
-# AMD E5 campaign evidence, schema 1
+# AMD E5 campaign evidence, schemas 1 and 2
 
 Run the offline scorer with a comparison manifest and a preceding unchanged
 A/A manifest:
@@ -23,8 +23,9 @@ invocation and two different runners; its five-case baseline is insufficient.
 ## Measurements and policy
 
 Both campaigns contain four pairs of fresh processes, 33 or more samples per
-case/engine/process, in role order `L0,L1 / L1,L0 / L1,L0 / L0,L1`. The complete
-case order is:
+case/engine/process, in role order `L0,L1 / L1,L0 / L1,L0 / L0,L1`. Schema 1
+always uses the complete case order below. Schema 2 declares `scope: "full"`
+for that same order, or `scope: "e5"` for only its first five cases:
 
 ```text
 e5-8tok e5-30tok e5-30pad128 e5-128tok e5-512tok
@@ -71,8 +72,13 @@ JSON verdict rather than interpreting exit 0 as release acceptance.
 
 ## Manifest
 
-The root object has `schema: 1`, `kind: "aa"` or `"comparison"`, and a `runs`
-array containing eight records. Unknown extra fields may retain diagnostics;
+The root object has `schema: 1` or `schema: 2`, `kind: "aa"` or `"comparison"`,
+and a `runs` array containing eight records. Schema 2 additionally requires
+`scope: "full"` or `"e5"`. Its child records must come from `common-runner-v2`
+and repeat that scope in both manifest and digest-bound process JSON. A/A and
+comparison must have the same schema and scope. Schema 1 cannot contain scope
+fields or v2 process records; historical data cannot be relabelled or sliced
+to qualify as a scoped campaign. Unknown extra fields may retain diagnostics;
 duplicate JSON keys and non-finite JSON numbers are errors. Each record has:
 
 | Field | Meaning |
@@ -88,13 +94,22 @@ duplicate JSON keys and non-finite JSON numbers are errors. Each record has:
 | `ort_native` | Object with `path`, `sha256`, `architecture` for the **actually loaded** native ORT runtime module. |
 | `environment` | Process settings described below; identical across both campaigns. |
 | `accounting` | Object with `valid: true` and numeric `foreign_cpu_fraction` from valid process accounting; fraction must be in [0, 0.10]. |
-| `cases` | Object keyed by all fifteen names, each with full `model_sha256`, `input_sha256` and explicit `external_data` map; E5 additionally has integer `unmasked_tokens`. |
-| `cases_failed` | Quarantined case names in canonical order (identities present, no timed rows). `cases` covers all fifteen attempted names; `cases_failed` is the subset without rows. |
+| `cases` | Object keyed by every name in the selected scope (all fifteen for schema 1), each with full `model_sha256`, `input_sha256` and explicit `external_data` map; E5 additionally has integer `unmasked_tokens`. |
+| `cases_failed` | Quarantined case names in canonical order (identities present, no timed rows). Every selected case remains required in `cases`; `cases_failed` is the subset without rows. |
 
-The common producer also emits `producer: "common-runner-v1"`, `runner_files`,
+The common producer also emits `producer: "common-runner-v1"` (schema 1) or
+`"common-runner-v2"` (schema 2), `runner_files`,
 `process_evidence` and `process_evidence_sha256`. The referenced child JSON is
 bound to the manifest; its observed identity/settings/cases/cases_failed must match. Only
 the completion timestamp may be extended to the supervisor's observed exit.
+
+Schema 2 compares model/input/external-data identities even for quarantined
+cases. The four primary e5 cases remain mandatory for a conclusive score;
+e5-512tok may be explicitly quarantined but cannot be omitted. Full-suite
+regression qualification is still required after shared-core changes; an
+e5-only verdict makes no claim about the omitted model families. Scorer output
+labels the scope and policy (`amd-e5-v1` or `amd-e5-v2`); noise and numerical
+thresholds are unchanged.
 
 A quarantined case contributes no timed rows: its log carries the case header, casedef and
 warmup series with a `FAILED` status but no summary or raw series, and the scorer reports it

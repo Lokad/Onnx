@@ -47,7 +47,7 @@ def steady(name, series):
 def campaign_stability(campaign, tag, skip=frozenset()):
     problems = []
     for run in campaign["runs"]:
-        for name in evidence.CASES:
+        for name in campaign["cases"]:
             if name in skip:
                 continue
             for engine in ("lok", "ort"):
@@ -73,6 +73,8 @@ def medians(campaign, name):
 
 def score(campaign, aa):
     evidence.require(campaign["kind"] == "comparison" and aa["kind"] == "aa", "expected comparison and A/A manifests")
+    evidence.require((campaign["schema"], campaign["scope"]) == (aa["schema"], aa["scope"]), "A/A evidence schema/scope mismatch")
+    cases = campaign["cases"]
     evidence.require(aa["end"] < campaign["start"], "A/A must finish before candidate measurements start")
     def qset(camp):
         out = set()
@@ -81,23 +83,26 @@ def score(campaign, aa):
         return out
     aque, cque = qset(aa), qset(campaign)
     quarantined = {name: sorted((["aa"] if name in aque else []) + (["comparison"] if name in cque else []))
-                   for name in evidence.CASES if name in aque or name in cque}
+                   for name in cases if name in aque or name in cque}
     def sigview(signature):
         return {key: value for key, value in signature.items() if key not in ("cases", "quarantined")}
     evidence.require(sigview(aa["signature"]) == sigview(campaign["signature"]), "A/A workload/host/runner/native identity mismatch")
-    common = [name for name in evidence.CASES if name not in quarantined]
+    common = [name for name in cases if name not in quarantined]
+    if campaign["schema"] == 2:
+        evidence.require(aa["signature"]["cases"] == campaign["signature"]["cases"],
+                         "A/A workload model/input identity mismatch (including quarantined cases)")
     evidence.require({name: aa["signature"]["cases"][name] for name in common} ==
                      {name: campaign["signature"]["cases"][name] for name in common},
                      "A/A workload model/input identity mismatch on measured cases")
     evidence.require(aa["identities"]["L0"] == campaign["identities"]["L0"], "A/A core must match comparison baseline")
-    result = {"policy": "amd-e5-v1", "campaign_manifest_sha256": campaign["manifest_sha256"],
+    result = {"policy": "amd-e5-v" + str(campaign["schema"]), "scope": campaign["scope"], "campaign_manifest_sha256": campaign["manifest_sha256"],
               "aa_manifest_sha256": aa["manifest_sha256"], "identities": campaign["identities"],
               "jit_regime": campaign["signature"]["environment"]["settings"]["jit"],
               "parity_target": PARITY_TARGET, "noise_cap": NOISE_CAP, "quarantined": quarantined}
     skip = frozenset(quarantined)
     unsteady = campaign_stability(aa, "A/A", skip) + campaign_stability(campaign, "comparison", skip)
     noise = {}
-    for name in evidence.CASES:
+    for name in cases:
         if name in skip:
             continue
         pairs = medians(aa, name)
@@ -110,7 +115,7 @@ def score(campaign, aa):
         if variation > NOISE_CAP:
             unsteady.append("A/A %s variation %.4f exceeds %.2f" % (name, variation, NOISE_CAP))
     result["noise"] = noise
-    for name in evidence.CASES:
+    for name in cases:
         if name in skip:
             continue
         pairs = medians(campaign, name)
@@ -140,7 +145,7 @@ def score(campaign, aa):
         row.update(case=name, reps=pairs, improvement=1 - relative, normalized_improvement=1 - normalized,
                    regression_limit=threshold, gap_closure=(row["R0"] - row["R1"]) / (row["R0"] - 1) if row["R0"] > 1 else None)
         table.append(row)
-    for name in evidence.CASES:
+    for name in cases:
         if name in quarantined:
             table.append({"case": name, "quarantined": quarantined[name]})
     by_name = {row["case"]: row for row in table}
@@ -153,8 +158,8 @@ def score(campaign, aa):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--evidence", help="comparison manifest, schema 1")
-    parser.add_argument("--aa", help="preceding unchanged A/A manifest, schema 1")
+    parser.add_argument("--evidence", help="comparison manifest, schema 1 or 2")
+    parser.add_argument("--aa", help="preceding unchanged A/A manifest, matching schema and scope")
     # An older lane wrapper must not confuse log-only results with new evidence.
     args, legacy = parser.parse_known_args(argv)
     if legacy or not args.evidence or not args.aa:
