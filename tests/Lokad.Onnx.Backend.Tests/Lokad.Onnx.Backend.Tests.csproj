@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <Compile Include="..\Shared\TestSupport.cs" Link="TestSupport.cs" />
+    <Compile Include="..\Shared\NpySupport.cs" Link="NpySupport.cs" />
   </ItemGroup>
 
   <ItemGroup>
