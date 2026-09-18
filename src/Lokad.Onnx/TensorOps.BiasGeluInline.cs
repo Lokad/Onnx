@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Lokad.Onnx;
 
@@ -7,6 +8,8 @@ public abstract partial class Tensor<T>
 {
     // One vector per iteration keeps the existing cyclic-bias and tail rules.
     // Inlining erf removes vector arguments/results spilled across method calls.
+    // This numeric loop should start optimized, including in short-lived requests.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     internal static unsafe void BiasGeluSpanFloatInline(ReadOnlySpan<float> xs, ReadOnlySpan<float> bias, Span<float> ys)
     {
         int w = Vector<float>.Count;
