@@ -35,22 +35,76 @@ public partial class CPUExecutionProvider
         Profiler.StartOpStage(OpStage.Math);
         for (int start = 0, channel = 0; start < xs.Length; start += spatial, channel = (channel + 1) % channels)
         {
-            float mean = 0;
-            for (int k = 0; k < spatial; k++) mean += xs[start + k];
-            mean /= spatial;
-            float variance = 0;
-            for (int k = 0; k < spatial; k++)
-            {
-                float delta = xs[start + k] - mean;
-                variance += delta * delta;
-            }
-            // Match ORT CPU's float32 statistics and folded affine transform.
-            // A centered double transform can differ materially at large offsets.
+            var row = xs.Slice(start, spatial);
+            // Use the fixed four-lane, two-accumulator reduction of ORT's
+            // Eigen float path. A linear float sum loses substantial accuracy
+            // on long, nearly constant audio channels. Logical row alignment
+            // keeps results independent of the backing array/window address.
+            float mean = InstanceNormSum(row, Math.Min((-start) & 3, spatial), 0, false) / spatial;
+            float variance = InstanceNormSum(row, 0, mean, true);
+            // Retain float statistics and the folded affine transform: wider
+            // centered arithmetic has a different large-offset cancellation.
             float channelScale = (1f / MathF.Sqrt(variance / spatial + eps)) * s.Buffer.Span[channel];
             float channelShift = b.Buffer.Span[channel] - mean * channelScale;
             for (int k = 0; k < spatial; k++) ys[start + k] = xs[start + k] * channelScale + channelShift;
         }
         return Success(op, output);
+    }
+
+    static float InstanceNormSum(ReadOnlySpan<float> row, int alignedStart, float mean, bool squared)
+    {
+        int alignedEnd = alignedStart + (row.Length - alignedStart) / 4 * 4;
+        if (alignedEnd == alignedStart)
+        {
+            float scalar = InstanceNormValue(row[0], mean, squared);
+            for (int i = 1; i < row.Length; i++) scalar += InstanceNormValue(row[i], mean, squared);
+            return scalar;
+        }
+        int index = alignedStart;
+        float a = InstanceNormValue(row[index], mean, squared);
+        float b = InstanceNormValue(row[index + 1], mean, squared);
+        float c = InstanceNormValue(row[index + 2], mean, squared);
+        float d = InstanceNormValue(row[index + 3], mean, squared);
+        index += 4;
+        if (index < alignedEnd)
+        {
+            float e = InstanceNormValue(row[index], mean, squared);
+            float f = InstanceNormValue(row[index + 1], mean, squared);
+            float g = InstanceNormValue(row[index + 2], mean, squared);
+            float h = InstanceNormValue(row[index + 3], mean, squared);
+            index += 4;
+            for (; index + 8 <= alignedEnd; index += 8)
+            {
+                a += InstanceNormValue(row[index], mean, squared);
+                b += InstanceNormValue(row[index + 1], mean, squared);
+                c += InstanceNormValue(row[index + 2], mean, squared);
+                d += InstanceNormValue(row[index + 3], mean, squared);
+                e += InstanceNormValue(row[index + 4], mean, squared);
+                f += InstanceNormValue(row[index + 5], mean, squared);
+                g += InstanceNormValue(row[index + 6], mean, squared);
+                h += InstanceNormValue(row[index + 7], mean, squared);
+            }
+            a += e; b += f; c += g; d += h;
+            if (index < alignedEnd)
+            {
+                a += InstanceNormValue(row[index], mean, squared);
+                b += InstanceNormValue(row[index + 1], mean, squared);
+                c += InstanceNormValue(row[index + 2], mean, squared);
+                d += InstanceNormValue(row[index + 3], mean, squared);
+            }
+        }
+        float sum = (a + c) + (b + d);
+        for (int i = 0; i < alignedStart; i++) sum += InstanceNormValue(row[i], mean, squared);
+        for (int i = alignedEnd; i < row.Length; i++) sum += InstanceNormValue(row[i], mean, squared);
+        return sum;
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    static float InstanceNormValue(float value, float mean, bool squared)
+    {
+        if (!squared) return value;
+        float delta = value - mean;
+        return delta * delta;
     }
 
     public static OpResult LeakyRelu(ITensor? input, float? alpha, ExecutionOptions? options)
