@@ -37,6 +37,7 @@
     <None Update="fixtures\lstm-ort.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="fixtures\clip-ort.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="fixtures\normalization-ort.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="fixtures\whisper-frontend.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="images\mnist2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
