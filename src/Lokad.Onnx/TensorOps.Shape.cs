@@ -411,6 +411,16 @@ where T : unmanaged
         if (rank == 4 && perm[0] == 0 && perm[1] == 2 && perm[2] == 3 && perm[3] == 1 && HasStandardStrides(xd))
         {
             int dimB = xd.Dimensions[0], dimH = xd.Dimensions[1], dimS = xd.Dimensions[2], dimD = xd.Dimensions[3];
+            if (typeof(T) == typeof(float) && AblationSwitches.EnableVectorTransposeFaces && Avx.IsSupported)
+            {
+                unsafe
+                {
+                    using var source = xd.Buffer.Pin();
+                    using var target = destination.Buffer.Pin();
+                    transpose_unsafe_vector8_headMerge(dimB, dimS, dimH, dimD, (float*)source.Pointer, (float*)target.Pointer);
+                }
+                return;
+            }
             for (int b = 0; b < dimB; b++)
                 for (int i = 0; i < dimS; i++)
                     for (int jj = 0; jj < dimD; jj++)
@@ -426,6 +436,16 @@ where T : unmanaged
         if (!AblationSwitches.ForceLegacyTransposeFace && rank == 4 && perm[0] == 0 && perm[1] == 1 && perm[2] == 3 && perm[3] == 2 && HasStandardStrides(xd))
         {
             int dimB = xd.Dimensions[0], dimH = xd.Dimensions[1], dimS = xd.Dimensions[2], dimD = xd.Dimensions[3];
+            if (typeof(T) == typeof(float) && AblationSwitches.EnableVectorTransposeFaces && Avx.IsSupported)
+            {
+                unsafe
+                {
+                    using var source = xd.Buffer.Pin();
+                    using var target = destination.Buffer.Pin();
+                    transpose_unsafe_shuffle8x8_lastTwoAxes(dimB, dimH, dimS, dimD, (float*)source.Pointer, (float*)target.Pointer);
+                }
+                return;
+            }
             const int Tile = 8;
             for (int b = 0; b < dimB; b++)
                 for (int h = 0; h < dimH; h++)

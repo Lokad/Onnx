@@ -37,6 +37,9 @@ internal static class AblationSwitches
     // Scheduling experiment: preserve erf arithmetic while removing vector call spills.
     internal static readonly bool EnableBiasGeluInline = EnvIsSet("LOKAD_ONNX_BIAS_GELU_INLINE");
 
+    /// Use the existing exact-copy vector kernels for the two scalar attention faces.
+    internal static readonly bool EnableVectorTransposeFaces = EnvIsSet("LOKAD_ONNX_VECTOR_TRANSPOSE_FACES");
+
     /// When true, softmax over contiguous float rows routes to the preserved
     /// legacy kernel instead of the default span kernel. Default off; set
     /// LOKAD_ONNX_SOFTMAX_LEGACY=1 before process start to enable.

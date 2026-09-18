@@ -40,7 +40,8 @@ public class TensorTranspose8x8Tests
         {
             MathOps.transpose_unsafe_shuffle8x8_lastTwoAxes(b, h, s, d, ps, pg);
         }
-        Assert.True(expected.Buffer.Span.SequenceEqual(new System.Span<float>(got)),
+        Assert.True(System.Runtime.InteropServices.MemoryMarshal.AsBytes(expected.Buffer.Span)
+            .SequenceEqual(System.Runtime.InteropServices.MemoryMarshal.AsBytes(got.AsSpan())),
             "8x8-shuffle diverges on [" + b + "," + h + "," + s + "," + d + "].");
     }
 }

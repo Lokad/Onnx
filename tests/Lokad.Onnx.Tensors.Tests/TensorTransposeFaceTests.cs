@@ -36,7 +36,8 @@ public class TensorTransposeFaceTests
         {
             MathOps.transpose_unsafe_vector8_headMerge(b, s, h, d, ps, pg);
         }
-        Assert.True(expected.Buffer.Span.SequenceEqual(new System.Span<float>(got)),
+        Assert.True(System.Runtime.InteropServices.MemoryMarshal.AsBytes(expected.Buffer.Span)
+            .SequenceEqual(System.Runtime.InteropServices.MemoryMarshal.AsBytes(got.AsSpan())),
             "face twin diverges on [" + b + "," + h + "," + s + "," + d + "].");
     }
 }
