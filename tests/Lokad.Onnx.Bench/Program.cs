@@ -58,6 +58,7 @@ static class Bench
         int cpu = 0;
         int iters = 7;
         string manifestPrefix = "";
+        bool kblocked = false;
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] == "--mode" && i + 1 < args.Length) modeName = args[++i];
@@ -66,8 +67,9 @@ static class Bench
             else if (args[i] == "--threads" && i + 1 < args.Length && int.TryParse(args[i + 1], out var t) && t >= 1) { threads = t; i++; }
             else if (args[i] == "--iters" && i + 1 < args.Length && int.TryParse(args[i + 1], out var k) && k >= 1) { iters = k; i++; }
             else if (args[i] == "--manifest-out" && i + 1 < args.Length) manifestPrefix = args[++i];
+            else if (args[i] == "--kblocked") kblocked = true;
             else if (args[i] == "all" || assets.ContainsKey(args[i])) { if (args[i] != "all" && !selected.Contains(args[i], StringComparer.OrdinalIgnoreCase)) selected.Add(args[i]); }
-            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all|representative] [--cpu N] [--manifest-out PREFIX] (voice keys run the canonical matched row only, or the staged representative rows with --rows representative; the default set is all non-voice keys)"); return 2; }
+            else { Console.WriteLine("usage: Bench [e5 dinov2 dinov3 resnet50 gpt2 parakeet-encoder parakeet-decoder pyannote-segmentation pyannote-embedding all] [--mode auto|scalar|simd|intrinsics] [--threads N] [--iters N] [--rows canonical|all|representative] [--cpu N] [--manifest-out PREFIX] [--kblocked] (voice keys run the canonical matched row only, or the staged representative rows with --rows representative; the default set is all non-voice keys)"); return 2; }
         }
         if (rowsName != "canonical" && rowsName != "all" && rowsName != "representative") { Console.WriteLine("unknown --rows " + rowsName + " (expected canonical|all|representative)"); return 2; }
         bool representative = rowsName == "representative";
@@ -82,6 +84,7 @@ static class Bench
             _ when modeName.Equals("auto", StringComparison.OrdinalIgnoreCase) => TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = threads },
             _ => throw new InvalidOperationException("Unknown mode " + modeName + "."),
         };
+        if (kblocked) tensorOpts = tensorOpts with { UseKBlockedPanels = true };
         foreach (var key in selected)
         {
             foreach (var f in assets[key])
@@ -534,6 +537,7 @@ static class Bench
     {
         VoiceProvenance.VerifyModelFile(name, model);
         var graph = OnnxImport.Load(model) ?? throw new InvalidOperationException(name + ": failed to load model: " + model + " (" + OnnxImport.LastErrorMessage + ")");
+        if (tensorOpts.UseKBlockedPanels) { Console.WriteLine("kblocked dispatch on for " + name + " chained (prototype)"); graph.Options = new ExecutionOptions(OptimizationMode.Speed, tensorOpts); graph.Prepare(); }
         var lokadOpts = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
         using var so = CreateSingleCpuSessionOptions(threads);
         double ortLoadMs;
@@ -567,6 +571,7 @@ static class Bench
         VoiceProvenance.VerifyModelFile(name, model);
         var graph = OnnxImport.Load(model) ?? throw new InvalidOperationException(name + ": failed to load model: " + model + " (" + OnnxImport.LastErrorMessage + ")");
         loadSw.Stop();
+        if (tensorOpts.UseKBlockedPanels) { Console.WriteLine("kblocked dispatch on for " + name + " (prototype; timing diagnostic only)"); graph.Options = new ExecutionOptions(OptimizationMode.Speed, tensorOpts); }
         var prepSw = Stopwatch.StartNew();
         graph.Prepare();
         prepSw.Stop();
