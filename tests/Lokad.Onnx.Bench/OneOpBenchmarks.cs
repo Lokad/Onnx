@@ -145,6 +145,9 @@ public class OneOpBenchmarks
         Add("attnblock_dino_201", "x", new int[] { 1, 201, 384 });
         Add("resblock_s2_trans", "x", new int[] { 1, 256, 56, 56 });
         AddMulti("matmul_runtime_ab", new (string, int[])[] { ("a", new int[] { 1, 12, 30, 32 }), ("b", new int[] { 1, 12, 32, 30 }) }, null);
+        AddMulti("mul_scalar_e5_30", new (string, int[])[] { ("x", new int[] { 12, 30, 30 }), ("s", new int[0]) }, null);
+        AddMulti("add_bcast_e5_30", new (string, int[])[] { ("x", new int[] { 1, 12, 30, 30 }), ("m", new int[] { 1, 1, 30, 30 }) }, null);
+        AddMulti("add_same_e5_30", new (string, int[])[] { ("x", new int[] { 12, 30, 30 }), ("m", new int[] { 12, 30, 30 }) }, null);
         foreach (var c in cases) VerifyAgreement(c);
         Console.WriteLine("OneOp agreement: all " + cases.Count + " cases match element-wise (ort-level=" + OneOpMicro.OrtLevel + ").");
     }
@@ -716,4 +719,28 @@ public class OneOpBenchmarks
 
     [Benchmark(Description = "Attention-scores MatMul with two live inputs 1x12x30x32 - ORT session")]
     [BenchmarkCategory("matmulrt")]
-    public void OrtMatMulRt() => RunOrt(cases[59]);}
+    public void OrtMatMulRt() => RunOrt(cases[59]);
+
+    [Benchmark(Description = "Scalar Mul 12x30x30 - Lokad session")]
+    [BenchmarkCategory("mulscalar30")]
+    public void LokadMulScalar30() => RunLokad(cases[60]);
+
+    [Benchmark(Description = "Scalar Mul 12x30x30 - ORT session")]
+    [BenchmarkCategory("mulscalar30")]
+    public void OrtMulScalar30() => RunOrt(cases[60]);
+
+    [Benchmark(Description = "Broadcast Add 1x12x30x30 plus 1x1x30x30 - Lokad session")]
+    [BenchmarkCategory("addbcast30")]
+    public void LokadAddBcast30() => RunLokad(cases[61]);
+
+    [Benchmark(Description = "Broadcast Add 1x12x30x30 plus 1x1x30x30 - ORT session")]
+    [BenchmarkCategory("addbcast30")]
+    public void OrtAddBcast30() => RunOrt(cases[61]);
+
+    [Benchmark(Description = "Same-shape Add 12x30x30 - Lokad session")]
+    [BenchmarkCategory("addsame30")]
+    public void LokadAddSame30() => RunLokad(cases[62]);
+
+    [Benchmark(Description = "Same-shape Add 12x30x30 - ORT session")]
+    [BenchmarkCategory("addsame30")]
+    public void OrtAddSame30() => RunOrt(cases[62]);}
