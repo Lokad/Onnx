@@ -31,7 +31,8 @@ oracle only. Managed cached calls consume earlier **managed** outputs; the runne
 rejects substituting native cache files. Each step verifies input/cache immutability
 and keeps all earlier outputs alive through later calls and resets. Both scenarios
 share the loaded plans to exercise fresh-request state. `managed.json` records
-every comparison and the actual core/runner hashes. Execute times are diagnostics,
+every comparison, all configured `LOKAD_` environment switches and the actual
+core/runner hashes. Execute times are diagnostics,
 with no benchmark or calibration claim.
 
 This establishes decoder component behavior on these fixtures. It does not qualify

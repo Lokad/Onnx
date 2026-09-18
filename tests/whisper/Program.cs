@@ -171,8 +171,10 @@ NoNativeRuntime();
 File.WriteAllText(destination, JsonSerializer.Serialize(new { passed, manifest_sha256 = Sha(manifestPath),
     core_sha256 = Sha(typeof(ComputationalGraph).Assembly.Location), runner_sha256 = Sha(Assembly.GetExecutingAssembly().Location),
     runtime = RuntimeInformation.FrameworkDescription, os = RuntimeInformation.OSDescription,
-    switches = new[] { "PACKED_AVX512_ROWS", "DEFERRED_RELEASE_CACHE", "RELEASED_BUFFER_CACHE", "FUSED_TEMP_RELEASE", "SOFTMAX_EXP_PRUNE", "BIAS_GELU_INLINE" }
-        .ToDictionary(name => "LOKAD_ONNX_" + name, name => Environment.GetEnvironmentVariable("LOKAD_ONNX_" + name)),
+    switches = Environment.GetEnvironmentVariables().Keys.Cast<string>()
+        .Where(name => name.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase))
+        .OrderBy(name => name, StringComparer.Ordinal)
+        .ToDictionary(name => name, Environment.GetEnvironmentVariable),
     tiered_compilation = Environment.GetEnvironmentVariable("DOTNET_TieredCompilation"),
     boundary = "Diagnostic component execution; no ASR or performance qualification", models = modelReports, steps = reports }, new JsonSerializerOptions { WriteIndented = true }));
 return passed ? 0 : 2;
