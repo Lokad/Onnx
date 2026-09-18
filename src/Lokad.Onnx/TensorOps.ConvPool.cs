@@ -180,8 +180,8 @@ where T : unmanaged
             && pad.top == 0 && pad.left == 0 && pad.bottom == 0 && pad.right == 0
             && outH == H && outW == W)
         {
-            RunPointwiseBatchesFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, outH, outW, inBatch, outBatch, options, fuseRelu);
             ReportKernelRoute("conv-pointwise");
+            RunPointwiseBatchesFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, outH, outW, inBatch, outBatch, options, fuseRelu);
             return output;
         }
         int tileN = outH * outW;
@@ -203,8 +203,8 @@ where T : unmanaged
         }
         if (blockN < tileN)
         {
-            RunTiledConvFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, dop, options, fuseRelu);
             ReportKernelRoute("conv-tiledcols");
+            RunTiledConvFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, dop, options, fuseRelu);
             return output;
         }
         ReportKernelRoute("conv-fullpatch");
