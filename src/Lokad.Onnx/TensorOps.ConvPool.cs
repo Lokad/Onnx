@@ -307,7 +307,7 @@ where T : unmanaged
             fixed (float* pp = packMem.Span)
             {
                 PackPanelsB(tileK, cols, p + pOff, pp);
-                RunPackedRowGroups(tileM, tileK, cols, w + wOff, pp, o + oOff, overwrite: true);
+                RunPackedRowGroups(tileM, tileK, cols, w + wOff, pp, o + oOff, overwrite: true, "trans");
             }
         }
     }

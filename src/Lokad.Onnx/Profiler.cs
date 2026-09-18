@@ -94,6 +94,36 @@ namespace Lokad.Onnx
             }
         }
 
+        private Dictionary<string, long>? routeCounts;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ReportKernelRoute(string route)
+        {
+            if (!Enabled) return;
+            lock (sync)
+            {
+                if (routeCounts is null) routeCounts = new Dictionary<string, long>(StringComparer.Ordinal);
+                if (routeCounts.TryGetValue(route, out long hits)) routeCounts[route] = hits + 1;
+                else routeCounts[route] = 1;
+                if (Profile.Count == 0) return;
+                var top = Profile.Pop();
+                if (top.Detail.IndexOf(" route=", StringComparison.Ordinal) < 0)
+                    top.Detail += " route=" + route;
+                Profile.Push(top);
+            }
+        }
+
+        public IReadOnlyDictionary<string, long> RouteCountsSnapshot()
+        {
+            lock (sync)
+            {
+                var snap = new Dictionary<string, long>(StringComparer.Ordinal);
+                if (routeCounts is not null)
+                    foreach (var kv in routeCounts) snap[kv.Key] = kv.Value;
+                return snap;
+            }
+        }
+
         NodeProfile CurrentNodeProfile => Profile.Peek();
 
         internal bool Running => timer.IsRunning;
@@ -131,6 +161,11 @@ namespace Lokad.Onnx
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StartOpStage(OpStage stage) => Current.StartOpStage(stage);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ReportKernelRoute(string route) => Current.ReportKernelRoute(route);
+
+        public static IReadOnlyDictionary<string, long> RouteCountsSnapshot() => Current.RouteCountsSnapshot();
 
 
         public static string StageDescription(OpStage stage) => stage switch

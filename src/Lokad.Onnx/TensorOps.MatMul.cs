@@ -200,12 +200,13 @@ where T : unmanaged
                         PackPanelsB(n, k, y, pp);
                         if (Avx512F.IsSupported)
                         {
-                            RunPackedRowGroups(m, n, k, x, pp, output, overwrite: true);
+                            RunPackedRowGroups(m, n, k, x, pp, output, overwrite: true, "trans");
                             transientAvxCovered = true;
                         }
                         else
                         {
                             mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output, overwrite: true);
+                            ReportKernelRoute("trans-3x4");
                         }
                     }
                 }
@@ -224,12 +225,13 @@ where T : unmanaged
                         PackPanelsB(n, k, y, pp);
                         if (Avx512F.IsSupported)
                         {
-                            RunPackedRowGroups(m, n, k, x, pp, output, overwrite: true);
+                            RunPackedRowGroups(m, n, k, x, pp, output, overwrite: true, "trans");
                             transientAvxCovered = true;
                         }
                         else
                         {
                             mm_unsafe_vectorized_intrinsics_2x4packed(blocked, n, k, x, pp, output, overwrite: true);
+                            ReportKernelRoute("trans-2x4");
                         }
                     }
                 }
@@ -241,10 +243,12 @@ where T : unmanaged
             else if (n < TiledMatMulAxisLimit && k < TiledMatMulAxisLimit)
             {
                 mm_unsafe_vectorized_intrinsics_2x4tiled(blocked, n, k, x, y, output);
+                ReportKernelRoute("tiled-2x4");
             }
             else
             {
                 mm_unsafe_vectorized_intrinsics_2x4(blocked, n, k, x, y, output);
+                ReportKernelRoute("plain-2x4");
             }
             // The P65 3-row branch above already covers every row exactly, so the 2-row
             // remainder fixup must not re-accumulate the last row.
@@ -252,19 +256,23 @@ where T : unmanaged
             if (blocked != m && !threeRowCovered && !transientAvxCovered)
             {
                 mm_unsafe_vectorized_intrinsics(1, n, k, x + blocked * n, y, output + blocked * k);
+                ReportKernelRoute("fixup-1row");
             }
         }
         else if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported)
         {
             mm_unsafe_vectorized_intrinsics(m, n, k, x, y, output);
+            ReportKernelRoute("intrinsics");
         }
         else if (options.UseSimd)
         {
             mm_unsafe_vectorized(m, n, k, x, y, output);
+            ReportKernelRoute("simd");
         }
         else
         {
             mm(m, n, k, x, y, output);
+            ReportKernelRoute("scalar");
         }
     }
 
@@ -318,7 +326,7 @@ where T : unmanaged
         {
             // Row groups with 12/6-row AVX512 heads and 3/2-row tails (P5);
             // exact shapes keep single calls bit-identically.
-            RunPackedRowGroups(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer, overwrite: true);
+            RunPackedRowGroups(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer, overwrite: true, "prep");
         }
         return destination;
     }
@@ -843,12 +851,17 @@ where T : unmanaged
 
     // Few calls per run never trip Tier0 promotion counters; force Tier1 (see PLAN qdA2).
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
-    static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* packed, float* dest, bool overwrite)
+    static unsafe void RunPackedRowGroups(int m, int n, int k, float* x, float* packed, float* dest, bool overwrite, string panel)
     {
         int rest = m;
         float* xr = x;
         float* dr = dest;
-            if (TryRunPackedRowGroupsTiled(m, n, k, x, packed, dest, overwrite)) return;
+            if (TryRunPackedRowGroupsTiled(m, n, k, x, packed, dest, overwrite))
+            {
+                ReportKernelRoute(panel == "trans" ? "trans-tiled" : "prep-tiled");
+                return;
+            }
+            ReportKernelRoute(panel == "trans" ? "trans-grouped" : "prep-grouped");
         if (Avx512F.IsSupported && rest >= 6)
         {
             int main = (rest / 12) * 12;
@@ -938,7 +951,7 @@ where T : unmanaged
                         RunPackedRowGroups(m, n, k,
                             (float*)xp0 + xOff[bi],
                             pp,
-                            (float*)zp0 + zOff[bi], overwrite);
+                            (float*)zp0 + zOff[bi], overwrite, "prep");
                     }
                 });
             }
@@ -951,7 +964,7 @@ where T : unmanaged
                 int ox = 0, oz = 0;
                 for (int b = 0; b < batchCount; b++)
                 {
-                    RunPackedRowGroups(m, n, k, xp + ox, pp, zp + oz, overwrite);
+                    RunPackedRowGroups(m, n, k, xp + ox, pp, zp + oz, overwrite, "prep");
                     for (int d = r - 1; d >= 0; d--)
                     {
                         coords[d]++;
