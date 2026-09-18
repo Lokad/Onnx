@@ -88,6 +88,23 @@ internal sealed record PreparedLstmPack(
 /// every fallback path keeps reading original row-major bytes by
 /// construction. Follows the FoldedTransposes ownership precedent.
 /// </summary>
+/// <summary>
+/// Live prepared weight-derivative maps shared by reference between a prepared graph and its execution contexts (W5 step 1, maps only).
+/// New prepared weight maps belong here: the single GraphExecution transfer below then covers them, which a per-field copy cannot guarantee
+/// (three omission incidents to date, most recently the K-blocked map). Fold maps keep their own rebuild semantics and stay out.
+/// </summary>
+internal sealed class PreparedWeightMaps
+{
+    /// <summary>Panel-packed MatMul weight clones by source initializer name.</summary>
+    public Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
+    /// <summary>Prepared transposed LSTM weight clones by source initializer array.</summary>
+    public Dictionary<float[], PreparedLstmTranspose> LstmTransposes = new Dictionary<float[], PreparedLstmTranspose>();
+    /// <summary>Prepared panel-packed LSTM input-weight clones by source initializer array.</summary>
+    public Dictionary<float[], PreparedLstmPack> LstmPacks = new Dictionary<float[], PreparedLstmPack>();
+    /// <summary>K-blocked prepared MatMul clones by source initializer array (W3 prototype).</summary>
+    public Dictionary<float[], PackedMatMulWeightBlocked> KBlockedWeights = new Dictionary<float[], PackedMatMulWeightBlocked>();
+}
+
 internal static class GraphPacking
 {
     internal const string PackedPrefix = "packed:";
@@ -204,7 +221,7 @@ internal static class GraphPacking
         }
         int live = 0;
         var stale = new List<float[]>();
-        foreach (var kv in graph.LstmTransposes)
+        foreach (var kv in graph.WeightMaps.LstmTransposes)
         {
             var rec = kv.Value;
             if (current.TryGetValue(rec.SourceName, out var cur)
@@ -217,17 +234,17 @@ internal static class GraphPacking
         }
         foreach (float[] key in stale)
         {
-            if (graph.LstmTransposes.TryGetValue(key, out var rec))
+            if (graph.WeightMaps.LstmTransposes.TryGetValue(key, out var rec))
             {
                 if (graph.Initializers.TryGetValue(rec.Transposed.Name, out var held) && ReferenceEquals(held, rec.Transposed))
                     graph.Initializers.Remove(rec.Transposed.Name);
-                graph.LstmTransposes.Remove(key);
+                graph.WeightMaps.LstmTransposes.Remove(key);
             }
         }
         foreach (var kv in current)
         {
             bool already = false;
-            foreach (var rec in graph.LstmTransposes.Values)
+            foreach (var rec in graph.WeightMaps.LstmTransposes.Values)
             {
                 if (ReferenceEquals(rec.SourceRef, kv.Value.tensor)) { already = true; break; }
             }
@@ -251,7 +268,7 @@ internal static class GraphPacking
             var transposed = new DenseTensor<float>(new Memory<float>(panel), new int[] { dd, kk, ggh });
             transposed.Name = preparedName;
             graph.Initializers[preparedName] = transposed;
-            graph.LstmTransposes[kv.Value.array] = new PreparedLstmTranspose(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, transposed);
+            graph.WeightMaps.LstmTransposes[kv.Value.array] = new PreparedLstmTranspose(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, transposed);
             live++;
         }
         return live;
@@ -320,7 +337,7 @@ internal static class GraphPacking
         }
         int live = 0;
         var stale = new List<float[]>();
-        foreach (var kv in graph.LstmPacks)
+        foreach (var kv in graph.WeightMaps.LstmPacks)
         {
             var rec = kv.Value;
             if (current.TryGetValue(rec.SourceName, out var cur)
@@ -334,17 +351,17 @@ internal static class GraphPacking
         }
         foreach (float[] key in stale)
         {
-            if (graph.LstmPacks.TryGetValue(key, out var rec))
+            if (graph.WeightMaps.LstmPacks.TryGetValue(key, out var rec))
             {
                 if (graph.Initializers.TryGetValue(rec.PackedName, out var held) && ReferenceEquals(held, rec.Packed))
                     graph.Initializers.Remove(rec.PackedName);
-                graph.LstmPacks.Remove(key);
+                graph.WeightMaps.LstmPacks.Remove(key);
             }
         }
         foreach (var kv in current)
         {
             bool already = false;
-            foreach (var rec in graph.LstmPacks.Values)
+            foreach (var rec in graph.WeightMaps.LstmPacks.Values)
             {
                 if (ReferenceEquals(rec.SourceRef, kv.Value.tensor)) { already = true; break; }
             }
@@ -376,7 +393,7 @@ internal static class GraphPacking
             var packed = new DenseTensor<float>(new Memory<float>(panel), new int[] { dd, kk, ggh });
             packed.Name = packedName;
             graph.Initializers[packedName] = packed;
-            graph.LstmPacks[kv.Value.array] = new PreparedLstmPack(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed, dd, kk, ggh);
+            graph.WeightMaps.LstmPacks[kv.Value.array] = new PreparedLstmPack(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed, dd, kk, ggh);
             live++;
         }
         return live;
@@ -440,7 +457,7 @@ internal static class GraphPacking
         }
         int live = 0;
         var stale = new List<float[]>();
-        foreach (var kv in graph.PackedWeights)
+        foreach (var kv in graph.WeightMaps.PackedWeights)
         {
             var rec = kv.Value;
             if (current.TryGetValue(rec.SourceName, out var cur)
@@ -456,17 +473,17 @@ internal static class GraphPacking
         }
         foreach (float[] key in stale)
         {
-            if (graph.PackedWeights.TryGetValue(key, out var rec))
+            if (graph.WeightMaps.PackedWeights.TryGetValue(key, out var rec))
             {
                 if (graph.Initializers.TryGetValue(rec.PackedName, out var held) && ReferenceEquals(held, rec.Packed))
                     graph.Initializers.Remove(rec.PackedName);
-                graph.PackedWeights.Remove(key);
+                graph.WeightMaps.PackedWeights.Remove(key);
             }
         }
         foreach (var kv in current)
         {
             bool already = false;
-            foreach (var rec in graph.PackedWeights.Values)
+            foreach (var rec in graph.WeightMaps.PackedWeights.Values)
             {
                 if (rec.SourceName == kv.Key && ReferenceEquals(rec.SourceRef, kv.Value.tensor)) { already = true; break; }
             }
@@ -485,12 +502,12 @@ internal static class GraphPacking
             var packed = new DenseTensor<float>(new Memory<float>(panel), new int[] { n, k });
             packed.Name = packedName;
             graph.Initializers[packedName] = packed;
-            graph.PackedWeights[kv.Value.array] = new PackedMatMulWeight(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed);
+            graph.WeightMaps.PackedWeights[kv.Value.array] = new PackedMatMulWeight(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed);
             live++;
         }
         long retained = 0;
         var byShape = new Dictionary<(int Rows, int Cols), int>();
-        foreach (var rec in graph.PackedWeights.Values)
+        foreach (var rec in graph.WeightMaps.PackedWeights.Values)
         {
             int rn = rec.Packed.Dimensions[0];
             int rk = rec.Packed.Dimensions[1];
@@ -504,7 +521,7 @@ internal static class GraphPacking
             .ThenBy(kv => kv.Key.Cols)
             .Select(kv => new PackedWeightShape(kv.Key.Rows, kv.Key.Cols, kv.Value))
             .ToArray();
-        graph.PackingReport = new PackedWeightsReport(graph.PackedWeights.Count, retained, shapes, current.Count);
+        graph.PackingReport = new PackedWeightsReport(graph.WeightMaps.PackedWeights.Count, retained, shapes, current.Count);
         return live;
     }
     /// <summary>
@@ -516,7 +533,7 @@ internal static class GraphPacking
         // Prototype opt-in: retain the second clone set only when the graph opts into K-blocked dispatch at preparation; default preparation stays byte-identical to legacy.
         if (!graph.Options.Tensor.UseKBlockedPanels) return 0;
         var current = new Dictionary<string, (ITensor tensor, float[] array)>(StringComparer.Ordinal);
-        foreach (var kv in graph.PackedWeights)
+        foreach (var kv in graph.WeightMaps.PackedWeights)
         {
             var rec = kv.Value;
             int n = rec.Packed.Dimensions[0], k = rec.Packed.Dimensions[1];
@@ -527,7 +544,7 @@ internal static class GraphPacking
         }
         int live = 0;
         var stale = new List<float[]>();
-        foreach (var kv in graph.KBlockedWeights)
+        foreach (var kv in graph.WeightMaps.KBlockedWeights)
         {
             var rec = kv.Value;
             if (current.TryGetValue(rec.SourceName, out var cur)
@@ -543,17 +560,17 @@ internal static class GraphPacking
         }
         foreach (float[] key in stale)
         {
-            if (graph.KBlockedWeights.TryGetValue(key, out var rec))
+            if (graph.WeightMaps.KBlockedWeights.TryGetValue(key, out var rec))
             {
                 if (graph.Initializers.TryGetValue(rec.PackedName, out var held) && ReferenceEquals(held, rec.Packed))
                     graph.Initializers.Remove(rec.PackedName);
-                graph.KBlockedWeights.Remove(key);
+                graph.WeightMaps.KBlockedWeights.Remove(key);
             }
         }
         foreach (var kv in current)
         {
             bool already = false;
-            foreach (var rec in graph.KBlockedWeights.Values)
+            foreach (var rec in graph.WeightMaps.KBlockedWeights.Values)
             {
                 if (rec.SourceName == kv.Key && ReferenceEquals(rec.SourceRef, kv.Value.tensor)) { already = true; break; }
             }
@@ -580,11 +597,11 @@ internal static class GraphPacking
             var packed = new DenseTensor<float>(new Memory<float>(panel), new int[] { panel.Length });
             packed.Name = packedName;
             graph.Initializers[packedName] = packed;
-            graph.KBlockedWeights[kv.Value.array] = new PackedMatMulWeightBlocked(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed, n, k);
+            graph.WeightMaps.KBlockedWeights[kv.Value.array] = new PackedMatMulWeightBlocked(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed, n, k);
             live++;
         }
         long kbRetained = 0;
-        foreach (var rec in graph.KBlockedWeights.Values)
+        foreach (var rec in graph.WeightMaps.KBlockedWeights.Values)
         {
             checked { kbRetained += KBlockedTotalBytes(rec.N, rec.K) * 4; }
         }

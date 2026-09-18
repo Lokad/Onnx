@@ -29,14 +29,8 @@ public class ComputationalGraph
     internal sealed record FoldedTranspose(string SourceName, ITensor SourceRef, long SourceLength, string PreparedName);
 
     internal Dictionary<string, FoldedTranspose> FoldedTransposes = new Dictionary<string, FoldedTranspose>(StringComparer.Ordinal);
-    /// <summary>Panel-packed MatMul weight clones by source initializer name.</summary>
-    internal Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
-    /// <summary>Prepared transposed LSTM weight clones by source initializer array.</summary>
-    internal Dictionary<float[], PreparedLstmTranspose> LstmTransposes = new Dictionary<float[], PreparedLstmTranspose>();
-    /// <summary>Prepared panel-packed LSTM input-weight clones by source initializer array.</summary>
-    internal Dictionary<float[], PreparedLstmPack> LstmPacks = new Dictionary<float[], PreparedLstmPack>();
-    /// <summary>K-blocked prepared MatMul clones by source initializer array (W3 prototype).</summary>
-    internal Dictionary<float[], PackedMatMulWeightBlocked> KBlockedWeights = new Dictionary<float[], PackedMatMulWeightBlocked>();
+    /// <summary>Live prepared weight-derivative maps; shared by reference with execution contexts (see PreparedWeightMaps).</summary>
+    internal PreparedWeightMaps WeightMaps = new PreparedWeightMaps();
     internal Dictionary<string, GraphConstants.FoldedComputation> FoldedComputations = new Dictionary<string, GraphConstants.FoldedComputation>(StringComparer.Ordinal);
     /// <summary>Live computed-constant folds from the last preparation.</summary>
     public int FoldedComputationCount => FoldedComputations.Count;
@@ -193,31 +187,31 @@ public class ComputationalGraph
             {
                 foreach (var fold in FoldedTransposes.Values) Initializers.Remove(fold.PreparedName);
                 FoldedTransposes.Clear();
-                foreach (var packed in PackedWeights.Values)
+                foreach (var packed in WeightMaps.PackedWeights.Values)
                 {
                     if (Initializers.TryGetValue(packed.PackedName, out var held) && ReferenceEquals(held, packed.Packed))
                         Initializers.Remove(packed.PackedName);
                 }
-                PackedWeights.Clear();
+                WeightMaps.PackedWeights.Clear();
                 PackingReport = new PackedWeightsReport(0, 0, Array.Empty<PackedWeightShape>(), 0);
-                foreach (var prep in LstmTransposes.Values)
+                foreach (var prep in WeightMaps.LstmTransposes.Values)
                 {
                     if (Initializers.TryGetValue(prep.Transposed.Name, out var heldLstm) && ReferenceEquals(heldLstm, prep.Transposed))
                         Initializers.Remove(prep.Transposed.Name);
                 }
-                LstmTransposes.Clear();
-                foreach (var pack in LstmPacks.Values)
+                WeightMaps.LstmTransposes.Clear();
+                foreach (var pack in WeightMaps.LstmPacks.Values)
                 {
                     if (Initializers.TryGetValue(pack.PackedName, out var heldPack) && ReferenceEquals(heldPack, pack.Packed))
                         Initializers.Remove(pack.PackedName);
                 }
-                LstmPacks.Clear();
-                foreach (var kb in KBlockedWeights.Values)
+                WeightMaps.LstmPacks.Clear();
+                foreach (var kb in WeightMaps.KBlockedWeights.Values)
                 {
                     if (Initializers.TryGetValue(kb.PackedName, out var heldKb) && ReferenceEquals(heldKb, kb.Packed))
                         Initializers.Remove(kb.PackedName);
                 }
-                KBlockedWeights.Clear();
+                WeightMaps.KBlockedWeights.Clear();
                 GraphConstants.RebuildFoldedComputations(this);
             }
         }
@@ -813,10 +807,10 @@ public class ComputationalGraph
         using var profilerScope = Profiler.BeginExecution();
         using var poolScope = new ExecutionPoolScope(this);
         var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy } };
-        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights } };
-        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { LstmTransposedWeights = LstmTransposes } };
-        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { LstmPackedWeights = LstmPacks } };
-        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { KBlockedMatMulWeights = KBlockedWeights } };
+        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = WeightMaps.PackedWeights } };
+        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { LstmTransposedWeights = WeightMaps.LstmTransposes } };
+        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { LstmPackedWeights = WeightMaps.LstmPacks } };
+        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { KBlockedMatMulWeights = WeightMaps.KBlockedWeights } };
         livePayloadBytes = LivePayloadBytes();
         NoteLivePeak();
         foreach (var node in Nodes)

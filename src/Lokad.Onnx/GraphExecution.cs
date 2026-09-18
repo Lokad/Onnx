@@ -23,10 +23,7 @@ public sealed class GraphExecution : ComputationalGraph
         Nodes = prepared.Nodes;
         Initializers = prepared.Initializers;
         FoldedTransposes = prepared.FoldedTransposes;
-        PackedWeights = prepared.PackedWeights;
-        LstmTransposes = prepared.LstmTransposes;
-        LstmPacks = prepared.LstmPacks;
-        KBlockedWeights = prepared.KBlockedWeights;
+        WeightMaps = prepared.WeightMaps;
         FoldedComputations = prepared.FoldedComputations;
         SharedPool = prepared.SharedPool;
         FoldLock = prepared.FoldLock;
