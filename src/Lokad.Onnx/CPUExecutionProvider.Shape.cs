@@ -790,8 +790,114 @@ public partial class CPUExecutionProvider
     }
 
     /// <summary>
-    /// Dispatches scalar start, limit, and delta to the matching dtype Range kernel.
+    /// Constant padding: each dimension grows by its begin/end pads with the
+    /// fill value (default zero), while negative pads crop. Accepts pads as
+    /// an int32/int64 input (opset 11+) or attribute (older graphs), and the
+    /// fill as an optional scalar input or attribute tensor. Only constant
+    /// mode is supported.
     /// </summary>
+    public static OpResult Pad(ITensor? data, ITensor? pads, ITensor? value, string? mode, int[]? padsAttr, ITensor? valueAttr, ExecutionOptions? options)
+    {
+        var op = OpType.Pad;
+        if (data is null) return MissingInput(op, nameof(data));
+        (options ?? ExecutionOptions.Default).Validated();
+        if (data.Rank == 0) return WrongInputShape(op, nameof(data), data, "Pad requires at least one data dimension.");
+        if (!string.IsNullOrEmpty(mode) && mode != "constant")
+            return AttributeNotSupported(op, "mode", mode, "Only constant padding mode is supported.");
+        int[] padVals;
+        if (pads is not null && padsAttr is not null)
+            return AttributeNotSupported(op, "pads", "input+attribute", "pads must not be given both as input and attribute.");
+        if (pads is not null)
+        {
+            if (pads.ElementType != TensorElementType.Int32 && pads.ElementType != TensorElementType.Int64)
+                return WrongInputType(op, nameof(pads), "pads must be int32 or int64.", pads);
+            if (pads.Rank != 1 || pads.Length != 2 * data.Rank)
+                return WrongInputShape(op, nameof(pads), pads, "pads must be a rank-one tensor with 2 values per data dimension.");
+            padVals = new int[2 * data.Rank];
+            for (int i = 0; i < padVals.Length; i++)
+            {
+                long value64 = pads is Tensor<long> longPads ? longPads.GetValue(i) : ((Tensor<int>)pads).GetValue(i);
+                if (value64 < int.MinValue || value64 > int.MaxValue)
+                    return WrongInputShape(op, nameof(pads), pads, "Padding values must fit int32 dimensions.");
+                padVals[i] = (int)value64;
+            }
+        }
+        else if (padsAttr is not null) padVals = padsAttr;
+        else return MissingInput(op, nameof(pads));
+        if (padVals.Length != 2 * data.Rank)
+            return WrongInputShape(op, nameof(pads), data, "pads must hold 2 values per data dimension.");
+        var outDims = new int[data.Rank];
+        for (int i = 0; i < data.Rank; i++)
+        {
+            long size = (long)data.Dims[i] + padVals[i] + padVals[data.Rank + i];
+            if (size < 0 || size > int.MaxValue)
+                return WrongInputShape(op, nameof(pads), data, "Padded dimensions must be nonnegative and fit int32.");
+            outDims[i] = (int)size;
+        }
+        if (!outDims.Contains(0))
+        {
+            long length = 1;
+            foreach (int size in outDims)
+            {
+                if (length > int.MaxValue / size)
+                    return WrongInputShape(op, nameof(pads), data, "Padded tensor length must fit int32.");
+                length *= size;
+            }
+        }
+        if (value is not null && valueAttr is not null)
+            return AttributeNotSupported(op, "constant_value", "input+attribute", "The fill value must have one source.");
+        ITensor? fill = value ?? valueAttr;
+        if (fill is not null && fill.ElementType != data.ElementType)
+            return WrongInputType(op, "constant_value", data.ElementType, fill);
+        if (fill is not null && fill.Length != 1)
+            return WrongInputShape(op, "constant_value", fill, "constant_value must hold a single element.");
+        Profiler.StartOpStage(OpStage.Math);
+        switch (data.ElementType)
+        {
+            case TensorElementType.Float:
+                return Success(op, PadCore((Tensor<float>)data, padVals, outDims, fill is null ? 0f : ((Tensor<float>)fill).ToArray()[0]));
+            case TensorElementType.Double:
+                return Success(op, PadCore((Tensor<double>)data, padVals, outDims, fill is null ? 0.0 : ((Tensor<double>)fill).ToArray()[0]));
+            case TensorElementType.Int32:
+                return Success(op, PadCore((Tensor<int>)data, padVals, outDims, fill is null ? 0 : ((Tensor<int>)fill).ToArray()[0]));
+            case TensorElementType.Int64:
+                return Success(op, PadCore((Tensor<long>)data, padVals, outDims, fill is null ? 0L : ((Tensor<long>)fill).ToArray()[0]));
+            default: return InputTypeNotSupported(op, nameof(data), data);
+        }
+    }
+
+    static DenseTensor<T> PadCore<T>(Tensor<T> data, int[] pads, int[] outDims, T fill) where T : unmanaged
+    {
+        var dd = data.Dimensions.ToArray();
+        int rank = dd.Length;
+        var src = data.ToDenseTensor();
+        var sVals = src.Buffer.Span;
+        var dst = DenseTensor<T>.OfShape(outDims);
+        var dVals = dst.Buffer.Span;
+        dVals.Fill(fill);
+        if (dst.Length == 0) return dst;
+        var sStrides = ArrayUtilities.GetStrides(dd);
+        var dStrides = ArrayUtilities.GetStrides(outDims);
+        for (int i = 0; i < sVals.Length; i++)
+        {
+            // Negative pads crop: source elements falling outside the
+            // destination are skipped, never written out of bounds.
+            int rem = i;
+            int dFlat = 0;
+            bool inside = true;
+            for (int d = 0; d < rank; d++)
+            {
+                long dc = (long)(rem / sStrides[d]) + pads[d];
+                rem %= sStrides[d];
+                if (dc < 0 || dc >= outDims[d]) { inside = false; break; }
+                dFlat += (int)dc * dStrides[d];
+            }
+            if (inside) dVals[dFlat] = sVals[i];
+        }
+        return dst;
+    }
+
+    /// <summary>Dispatches scalar start, limit, and delta to the matching dtype Range kernel.</summary>
     public static OpResult Range(ITensor? start, ITensor? limit, ITensor? delta, ExecutionOptions? options)
     {
         var op = OpType.Range;

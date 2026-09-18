@@ -89,6 +89,11 @@ public static class OperatorSchemas
         [OpType.GlobalAveragePool] = Def(OpType.GlobalAveragePool, 1, 1),
         [OpType.Identity] = Def(OpType.Identity, 1, 1),
         [OpType.LSTM] = Def(OpType.LSTM, 3, 8, 1, 3, 1, false),
+        [OpType.Sigmoid] = Def(OpType.Sigmoid, 1, 1),
+        [OpType.Floor] = Def(OpType.Floor, 1, 1),
+        [OpType.And] = Def(OpType.And, 2, 2),
+        [OpType.Not] = Def(OpType.Not, 1, 1),
+        [OpType.Pad] = Def(OpType.Pad, 1, 3, 1, 1, 1, false),
     };
 
     public static bool IsStandardDomain(string? domain) =>

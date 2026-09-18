@@ -114,6 +114,21 @@ public partial struct Node
 
     public int[] RequiredInts(string name) => Ints(name) ?? throw new ArgumentException($"The Ints attribute {name} is required but was not found.");
 
+    // Pad before opset 11 encodes its fill as a FLOAT attribute. Normalize
+    // it to the data type without adding an unversioned attribute fallback.
+    ITensor? PadConstantAttr(ComputationalGraph graph)
+    {
+        float? value = GetFloat("value", null);
+        if (value is null) return null;
+        return InputTensor(graph, 0)?.ElementType switch
+        {
+            TensorElementType.Double => new DenseTensor<double>(new[] { (double)value.Value }, Array.Empty<int>()),
+            TensorElementType.Int32 => new DenseTensor<int>(new[] { checked((int)value.Value) }, Array.Empty<int>()),
+            TensorElementType.Int64 => new DenseTensor<long>(new[] { checked((long)value.Value) }, Array.Empty<int>()),
+            _ => new DenseTensor<float>(new[] { value.Value }, Array.Empty<int>()),
+        };
+    }
+
 
     public ITensor? InputTensor(ComputationalGraph graph, int index) =>
         index < Inputs.Length && !string.IsNullOrEmpty(Inputs[index]) ? graph.GetInputTensor(Inputs[index]) : null;
@@ -330,6 +345,10 @@ public partial struct Node
 
         OpType.Split => CPU.Split(InputTensor(graph, 0), InputTensor(graph, 1), Int("axis", null), Ints("split"), Int("num_outputs", null), opt, Outputs.Length),
 
+        OpType.Pad => ResolvedOpsetVersion(graph) >= 11
+            ? CPU.Pad(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), Attr<string>("mode", null), null, null, opt)
+            : CPU.Pad(InputTensor(graph, 0), null, null, Attr<string>("mode", null), Ints("pads"), PadConstantAttr(graph), opt),
+
         OpType.Equal => CPU.Equal(InputTensor(graph, 0), InputTensor(graph, 1), opt),
 
         OpType.Less => CPU.Less(InputTensor(graph, 0), InputTensor(graph, 1), opt),
@@ -392,6 +411,14 @@ public partial struct Node
         OpType.Sin => CPU.Sin(InputTensor(graph, 0), opt),
 
         OpType.Tanh => CPU.Tanh(InputTensor(graph, 0), opt),
+
+        OpType.Sigmoid => CPU.Sigmoid(InputTensor(graph, 0), opt),
+
+        OpType.Floor => CPU.Floor(InputTensor(graph, 0), opt),
+
+        OpType.And => CPU.And(InputTensor(graph, 0), InputTensor(graph, 1), opt),
+
+        OpType.Not => CPU.Not(InputTensor(graph, 0), opt),
 
         OpType.Neg => CPU.Neg(InputTensor(graph, 0), opt),
 

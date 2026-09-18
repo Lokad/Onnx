@@ -31,4 +31,50 @@ public class CpuExecutionProviderPadTests
         var y = (Tensor<float>)r.Outputs![0];
         Assert.Equal(new[] { 1, 1, 4, 4 }, y.Dimensions.ToArray());
     }
+
+    [Fact]
+    public void LegacyPad_HonorsFloatValueAttribute()
+    {
+        var graph = new ComputationalGraph
+        {
+            Opset = new System.Collections.Generic.Dictionary<string, int> { [""] = 10 },
+            Metadata = new System.Collections.Generic.Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = new DenseTensor<float>(new float[] { 1f, 2f }, new[] { 2 });
+        var node = new Node
+        {
+            Name = "pad",
+            Op = OpType.Pad,
+            Inputs = new[] { "x" },
+            Outputs = new[] { "y" },
+            Attributes = new System.Collections.Generic.Dictionary<string, object> { ["pads"] = new[] { 1, 1 }, ["value"] = 5f },
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 5f, 1f, 2f, 5f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
+
+    [Fact]
+    public void ModernPad_UsesInputsAtOpset11()
+    {
+        var graph = new ComputationalGraph
+        {
+            Opset = new System.Collections.Generic.Dictionary<string, int> { [""] = 13 },
+            Metadata = new System.Collections.Generic.Dictionary<string, object> { ["Name"] = "test" },
+        };
+        graph.Inputs["x"] = new DenseTensor<float>(new float[] { 1f, 2f }, new[] { 2 });
+        graph.Inputs["pads"] = new DenseTensor<long>(new long[] { 1L, 1L }, new[] { 2 });
+        graph.Inputs["value"] = new DenseTensor<float>(new float[] { 5f }, new[] { 1 });
+        var node = new Node
+        {
+            Name = "pad",
+            Op = OpType.Pad,
+            Inputs = new[] { "x", "pads", "value" },
+            Outputs = new[] { "y" },
+            Attributes = new System.Collections.Generic.Dictionary<string, object>(),
+        };
+        var r = node.Execute(graph, ExecutionProvider.CPU, null);
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 5f, 1f, 2f, 5f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+    }
 }
