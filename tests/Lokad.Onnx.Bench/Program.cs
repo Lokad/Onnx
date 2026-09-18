@@ -51,6 +51,10 @@ static class Bench
         {
             return RunGemmMatrix(TensorExecutionOptions.Auto with { UseKBlockedPanels = true });
         }
+        if (args.Length > 0 && args[0] == "conv-layers")
+        {
+            return RunConvLayers();
+        }
         var selected = new List<string>();
         string modeName = "auto";
         string rowsName = "canonical";
@@ -352,6 +356,20 @@ static class Bench
         if (modeName.Equals("auto", StringComparison.OrdinalIgnoreCase) && threads == 1)
             return "single-cpu-auto-1 (canonical)";
         return "single-cpu-" + modeName.ToLowerInvariant() + "-" + threads + " (diagnostic)";
+    }
+
+    static int RunConvLayers()
+    {
+        Console.WriteLine("conv-layers layers=" + ConvLayers.Canonical.Count + " tolerance=" + ConvLayerMatrix.Tolerance.ToString("E0") + " (legacy vs blocked agreement plus routes; no timing)");
+        var results = ConvLayerMatrix.Run(ConvLayers.Canonical);
+        int fail = 0;
+        foreach (var r in results)
+        {
+            Console.WriteLine("convlayer " + r.Name + " admitted=" + r.Admitted + " legacy=" + r.LegacyRoute + " blocked=" + r.BlockedRoute + " maxScaled=" + r.MaxScaled.ToString("E2") + " " + (r.Pass ? "ok" : "FAIL"));
+            if (!r.Pass) fail++;
+        }
+        Console.WriteLine("conv-layers " + (results.Count - fail) + "/" + results.Count + " ok");
+        return fail == 0 ? 0 : 1;
     }
 
     static int RunGemmMatrix(TensorExecutionOptions tensorOpts)

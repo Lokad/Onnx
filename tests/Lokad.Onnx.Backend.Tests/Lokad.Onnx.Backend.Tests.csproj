@@ -19,6 +19,8 @@
     <Compile Include="..\Lokad.Onnx.Bench\BenchmarkResults.cs" Link="BenchmarkResults.cs" />
     <Compile Include="..\Lokad.Onnx.Bench\GemmMatrix.cs" Link="GemmMatrix.cs" />
     <Compile Include="..\Lokad.Onnx.Bench\GemmShapes.cs" Link="GemmShapes.cs" />
+    <Compile Include="..\Lokad.Onnx.Bench\ConvLayerMatrix.cs" Link="ConvLayerMatrix.cs" />
+    <Compile Include="..\Lokad.Onnx.Bench\ConvLayers.cs" Link="ConvLayers.cs" />
   </ItemGroup>
 
   <ItemGroup>
