@@ -481,9 +481,21 @@ public class MatMulKernelAgreementTests
         SmallNKBumpEqual(8, 64, 8, rnd);
         SmallNKBumpEqual(8, 384, 8, rnd);
         SmallNKBumpEqual(128, 64, 128, rnd);
+        SmallNKBumpEqual(12, 64, 17, rnd);
+        SmallNKBumpEqual(12, 64, 18, rnd);
+        SmallNKBumpEqual(12, 64, 19, rnd);
+        SmallNKBumpEqual(12, 16, 12, rnd);
+        SmallNKBumpEqual(12, 64, 21, rnd);
+        SmallNKBumpEqual(12, 64, 23, rnd);
         SmallNK3Equal(30, 64, 30, rnd);
         SmallNK3Equal(30, 32, 30, rnd);
         SmallNK3Equal(30, 64, 8, rnd);
+        SmallNK3Equal(12, 16, 12, rnd);
+        SmallNK3Equal(30, 64, 17, rnd);
+        SmallNK3Equal(30, 64, 18, rnd);
+        SmallNK3Equal(30, 64, 19, rnd);
+        SmallNK3Equal(30, 64, 21, rnd);
+        SmallNK3Equal(30, 64, 23, rnd);
     }
 
     static unsafe void SmallNKBumpEqual(int m, int n, int k, Random rnd)

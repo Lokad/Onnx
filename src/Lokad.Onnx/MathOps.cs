@@ -2023,64 +2023,40 @@ public class MathOps
                 var Ap2 = Ap1 + N;
                 var Cp1 = C + i * K + blocked + vcols;
                 var Cp2 = Cp1 + K;
-                switch (tail)
+                // E94: masked-vector narrow tail. Same j-ascending mul-then-add
+                // order per element as the scalar switch it replaces (MULPS then
+                // ADDPS, never FMA), so results agree bit-wise. Integer maskmov
+                // moves the bits (fault-suppressed, discarded by masked store);
+                // arithmetic stays float. Scalar fallback preserves order.
+                if (Avx2.IsSupported)
                 {
-                    case 1:
+                    Vector256<int> tmask = Vector256.Create(tail > 0 ? -1 : 0, tail > 1 ? -1 : 0, tail > 2 ? -1 : 0, tail > 3 ? -1 : 0, tail > 4 ? -1 : 0, tail > 5 ? -1 : 0, tail > 6 ? -1 : 0, 0);
+                    Vector256<int> ci1 = Avx2.MaskLoad((int*)Cp1, tmask);
+                    Vector256<int> ci2 = Avx2.MaskLoad((int*)Cp2, tmask);
+                    Vector256<float> c1 = Unsafe.As<Vector256<int>, Vector256<float>>(ref ci1);
+                    Vector256<float> c2 = Unsafe.As<Vector256<int>, Vector256<float>>(ref ci2);
+                    for (int j = 0; j < N; ++j)
                     {
-                        float c1 = Cp1[0], c2 = Cp2[0];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c1 += Ap1[j] * t[0]; c2 += Ap2[j] * t[0]; }
-                        Cp1[0] = c1; Cp2[0] = c2;
-                        break;
+                        Vector256<int> bi = Avx2.MaskLoad((int*)(T + j * rem + vcols), tmask);
+                        Vector256<float> bv = Unsafe.As<Vector256<int>, Vector256<float>>(ref bi);
+                        var av1 = Vector256.Create(Ap1[j]);
+                        var av2 = Vector256.Create(Ap2[j]);
+                        c1 = c1 + av1 * bv;
+                        c2 = c2 + av2 * bv;
                     }
-                    case 2:
+                    Vector256<int> co1 = Unsafe.As<Vector256<float>, Vector256<int>>(ref c1);
+                    Vector256<int> co2 = Unsafe.As<Vector256<float>, Vector256<int>>(ref c2);
+                    Avx2.MaskStore((int*)Cp1, tmask, co1);
+                    Avx2.MaskStore((int*)Cp2, tmask, co2);
+                }
+                else
+                {
+                    for (int j = 0; j < N; ++j)
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c20 = Cp2[0], c21 = Cp2[1];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp2[0] = c20; Cp2[1] = c21;
-                        break;
-                    }
-                    case 3:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22;
-                        break;
-                    }
-                    case 4:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13;
-                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23;
-                        break;
-                    }
-                    case 5:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14;
-                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24;
-                        break;
-                    }
-                    case 6:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15;
-                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25;
-                        break;
-                    }
-                    default:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5], c16 = Cp1[6];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5], c26 = Cp2[6];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; c16 += Ap1[j] * t[6]; c26 += Ap2[j] * t[6]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15; Cp1[6] = c16;
-                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25; Cp2[6] = c26;
-                        break;
+                        float a1 = Ap1[j];
+                        float a2 = Ap2[j];
+                        var t = T + j * rem + vcols;
+                        for (int k = 0; k < tail; k++) { Cp1[k] += a1 * t[k]; Cp2[k] += a2 * t[k]; }
                     }
                 }
             }
@@ -2220,72 +2196,47 @@ public class MathOps
                 var Cp1 = C + i * K + blocked + vcols;
                 var Cp2 = Cp1 + K;
                 var Cp3 = Cp2 + K;
-                switch (tail)
+                // E94: masked-vector narrow tail. Same j-ascending mul-then-add
+                // order per element as the scalar switch it replaces (MULPS then
+                // ADDPS, never FMA), so results agree bit-wise. Integer maskmov
+                // moves the bits (fault-suppressed, discarded by masked store);
+                // arithmetic stays float. Scalar fallback preserves order.
+                if (Avx2.IsSupported)
                 {
-                    case 1:
+                    Vector256<int> tmask = Vector256.Create(tail > 0 ? -1 : 0, tail > 1 ? -1 : 0, tail > 2 ? -1 : 0, tail > 3 ? -1 : 0, tail > 4 ? -1 : 0, tail > 5 ? -1 : 0, tail > 6 ? -1 : 0, 0);
+                    Vector256<int> ci1 = Avx2.MaskLoad((int*)Cp1, tmask);
+                    Vector256<int> ci2 = Avx2.MaskLoad((int*)Cp2, tmask);
+                    Vector256<int> ci3 = Avx2.MaskLoad((int*)Cp3, tmask);
+                    Vector256<float> c1 = Unsafe.As<Vector256<int>, Vector256<float>>(ref ci1);
+                    Vector256<float> c2 = Unsafe.As<Vector256<int>, Vector256<float>>(ref ci2);
+                    Vector256<float> c3 = Unsafe.As<Vector256<int>, Vector256<float>>(ref ci3);
+                    for (int j = 0; j < N; ++j)
                     {
-                        float c1 = Cp1[0], c2 = Cp2[0], c3 = Cp3[0];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c1 += Ap1[j] * t[0]; c2 += Ap2[j] * t[0]; c3 += Ap3[j] * t[0]; }
-                        Cp1[0] = c1; Cp2[0] = c2; Cp3[0] = c3;
-                        break;
+                        Vector256<int> bi = Avx2.MaskLoad((int*)(T + j * rem + vcols), tmask);
+                        Vector256<float> bv = Unsafe.As<Vector256<int>, Vector256<float>>(ref bi);
+                        var av1 = Vector256.Create(Ap1[j]);
+                        var av2 = Vector256.Create(Ap2[j]);
+                        var av3 = Vector256.Create(Ap3[j]);
+                        c1 = c1 + av1 * bv;
+                        c2 = c2 + av2 * bv;
+                        c3 = c3 + av3 * bv;
                     }
-                    case 2:
+                    Vector256<int> co1 = Unsafe.As<Vector256<float>, Vector256<int>>(ref c1);
+                    Vector256<int> co2 = Unsafe.As<Vector256<float>, Vector256<int>>(ref c2);
+                    Vector256<int> co3 = Unsafe.As<Vector256<float>, Vector256<int>>(ref c3);
+                    Avx2.MaskStore((int*)Cp1, tmask, co1);
+                    Avx2.MaskStore((int*)Cp2, tmask, co2);
+                    Avx2.MaskStore((int*)Cp3, tmask, co3);
+                }
+                else
+                {
+                    for (int j = 0; j < N; ++j)
                     {
-                        float c10 = Cp1[0], c11 = Cp1[1], c20 = Cp2[0], c21 = Cp2[1], c30 = Cp3[0], c31 = Cp3[1];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp2[0] = c20; Cp2[1] = c21; Cp3[0] = c30; Cp3[1] = c31;
-                        break;
-                    }
-                    case 3:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp3[0] = c30; Cp3[1] = c31; Cp3[2] = c32;
-                        break;
-                    }
-                    case 4:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3];
-                        float c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2], c33 = Cp3[3];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c33 += Ap3[j] * t[3]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13;
-                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23;
-                        Cp3[0] = c30; Cp3[1] = c31; Cp3[2] = c32; Cp3[3] = c33;
-                        break;
-                    }
-                    case 5:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4];
-                        float c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2], c33 = Cp3[3], c34 = Cp3[4];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c33 += Ap3[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c34 += Ap3[j] * t[4]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14;
-                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24;
-                        Cp3[0] = c30; Cp3[1] = c31; Cp3[2] = c32; Cp3[3] = c33; Cp3[4] = c34;
-                        break;
-                    }
-                    case 6:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5];
-                        float c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2], c33 = Cp3[3], c34 = Cp3[4], c35 = Cp3[5];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c33 += Ap3[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c34 += Ap3[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; c35 += Ap3[j] * t[5]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15;
-                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25;
-                        Cp3[0] = c30; Cp3[1] = c31; Cp3[2] = c32; Cp3[3] = c33; Cp3[4] = c34; Cp3[5] = c35;
-                        break;
-                    }
-                    default:
-                    {
-                        float c10 = Cp1[0], c11 = Cp1[1], c12 = Cp1[2], c13 = Cp1[3], c14 = Cp1[4], c15 = Cp1[5], c16 = Cp1[6];
-                        float c20 = Cp2[0], c21 = Cp2[1], c22 = Cp2[2], c23 = Cp2[3], c24 = Cp2[4], c25 = Cp2[5], c26 = Cp2[6];
-                        float c30 = Cp3[0], c31 = Cp3[1], c32 = Cp3[2], c33 = Cp3[3], c34 = Cp3[4], c35 = Cp3[5], c36 = Cp3[6];
-                        for (int j = 0; j < N; ++j) { var t = T + j * rem + vcols; c10 += Ap1[j] * t[0]; c20 += Ap2[j] * t[0]; c30 += Ap3[j] * t[0]; c11 += Ap1[j] * t[1]; c21 += Ap2[j] * t[1]; c31 += Ap3[j] * t[1]; c12 += Ap1[j] * t[2]; c22 += Ap2[j] * t[2]; c32 += Ap3[j] * t[2]; c13 += Ap1[j] * t[3]; c23 += Ap2[j] * t[3]; c33 += Ap3[j] * t[3]; c14 += Ap1[j] * t[4]; c24 += Ap2[j] * t[4]; c34 += Ap3[j] * t[4]; c15 += Ap1[j] * t[5]; c25 += Ap2[j] * t[5]; c35 += Ap3[j] * t[5]; c16 += Ap1[j] * t[6]; c26 += Ap2[j] * t[6]; c36 += Ap3[j] * t[6]; }
-                        Cp1[0] = c10; Cp1[1] = c11; Cp1[2] = c12; Cp1[3] = c13; Cp1[4] = c14; Cp1[5] = c15; Cp1[6] = c16;
-                        Cp2[0] = c20; Cp2[1] = c21; Cp2[2] = c22; Cp2[3] = c23; Cp2[4] = c24; Cp2[5] = c25; Cp2[6] = c26;
-                        Cp3[0] = c30; Cp3[1] = c31; Cp3[2] = c32; Cp3[3] = c33; Cp3[4] = c34; Cp3[5] = c35; Cp3[6] = c36;
-                        break;
+                        float a1 = Ap1[j];
+                        float a2 = Ap2[j];
+                        float a3 = Ap3[j];
+                        var t = T + j * rem + vcols;
+                        for (int k = 0; k < tail; k++) { Cp1[k] += a1 * t[k]; Cp2[k] += a2 * t[k]; Cp3[k] += a3 * t[k]; }
                     }
                 }
             }

@@ -179,6 +179,10 @@ where T : unmanaged
         // route packed too; the pool-size guard keeps rental sane.
         const int TiledPackMinRows = 64;
         const long TiledPackMaxElements = 67108864;
+        // E94: small-NK per-call pack budget (elements). Delivers the rem-tail
+        // twin to QK-tiny shapes the M>=64 probe never covered; the race proof
+        // (npack vs ntile) calibrates it. Provisional 65536 pending VM confirm.
+        const long TiledPackMaxSmallElements = 65536;
         if (options.UseSimd && options.UseIntrinsics && Fma.IsSupported && m >= 2)
         {
             int blocked = m - (m % 2);
@@ -215,6 +219,27 @@ where T : unmanaged
                     ArrayPool<float>.Shared.Return(packed);
                 }
             }
+            // E94: NK gate (not M gate). Same panels, consume kernels and order
+            // as the agreed packed paths; the rem-tail twin does the winning.
+            else if (((m % 3) == 0 || (m & 1) == 0) && (long)n * k <= TiledPackMaxSmallElements)
+            {
+                float[] packed = RentScratch<float>(n * k, options);
+                try
+                {
+                    fixed (float* pp = packed)
+                    {
+                        PackPanelsB(n, k, y, pp);
+                        if ((m % 3) == 0)
+                            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, pp, output);
+                        else
+                            mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, x, pp, output);
+                    }
+                }
+                finally
+                {
+                    ArrayPool<float>.Shared.Return(packed);
+                }
+            }
             else if (n < TiledMatMulAxisLimit && k < TiledMatMulAxisLimit)
             {
                 mm_unsafe_vectorized_intrinsics_2x4tiled(blocked, n, k, x, y, output);
@@ -225,7 +250,9 @@ where T : unmanaged
             }
             // The P65 3-row branch above already covers every row exactly, so the 2-row
             // remainder fixup must not re-accumulate the last row.
-            bool threeRowCovered = (m % 3) == 0 && m >= TiledPackMinRows && (long)n * k <= TiledPackMaxElements;
+            // E94: the small-NK branch above also covers exact 3-row groups fully.
+            bool threeRowCovered = (m % 3) == 0 && (long)n * k <= TiledPackMaxElements
+                && (m >= TiledPackMinRows || (long)n * k <= TiledPackMaxSmallElements);
             if (blocked != m && !threeRowCovered)
             {
                 mm_unsafe_vectorized_intrinsics(1, n, k, x + blocked * n, y, output + blocked * k);
