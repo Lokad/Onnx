@@ -38,6 +38,44 @@ internal static class CampaignSelfTests
         Check(!CampaignEvidence.SteadyWindow(new double[] { 10, 10, 10, 10, 10, 10, 10, 10, 12 }), "recent spike prevents convergence");
         Check(CampaignEvidence.SteadyWindow(new double[] { 100, 10, 10, 10, 10, 10, 10, 10, 10, 10 }), "settled window excludes early warmup");
         Check(!CampaignEvidence.SteadyWindow(new double[] { 10, 10, 10, 10, 10, 10, 10, 10, double.NaN }), "non-finite warmup never converges");
+        Check(IsolatedE5.Definition("e5-30pad128") is (128, 30, 0, 128, _), "isolated padded case keeps thirty real tokens");
+        Check(IsolatedE5.Definition("e5-128tok").Take == 128, "isolated long input uses canonical truncation");
+        string directory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "onnx-campaign-selftest-" + Guid.NewGuid().ToString("N"));
+        System.IO.Directory.CreateDirectory(directory);
+        try
+        {
+            void Reject(Action action, string name)
+            {
+                bool refused = false;
+                try { action(); }
+                catch (System.IO.InvalidDataException) { refused = true; }
+                catch (System.Text.Json.JsonException) { refused = true; }
+                Check(refused, name);
+            }
+            string path = System.IO.Path.Combine(directory, "config.json");
+            System.IO.File.WriteAllText(path, "{\"cpu\":1,\"cpu\":2}");
+            Reject(() => IsolatedE5.ReadJson<IsolatedE5.Configuration>(path), "duplicate configuration property refused");
+            System.IO.File.WriteAllText(path, "{}");
+            Reject(() => IsolatedE5.ReadJson<IsolatedE5.Configuration>(path), "missing constructor properties refused");
+            var config = new IsolatedE5.Configuration("root", "e5-8tok", 2, "output", "source", "core", "fixture", null, true);
+            System.IO.File.Delete(path);
+            IsolatedE5.WriteJson(path, config);
+            Check(IsolatedE5.ReadJson<IsolatedE5.Configuration>(path) == config, "configuration round trip preserves nullable oracle digest");
+            System.IO.File.WriteAllText(path, System.IO.File.ReadAllText(path).TrimEnd().TrimEnd('}') + ",\"unknown\":true}");
+            Reject(() => IsolatedE5.ReadJson<IsolatedE5.Configuration>(path), "unknown configuration property refused");
+            string tensorPath = System.IO.Path.Combine(directory, "output-0.f32");
+            System.IO.File.WriteAllBytes(tensorPath, new byte[] { 0, 0, 128, 63 });
+            var tensor = new IsolatedE5.OutputIdentity("out", new[] { 1 }, "float32", "output-0.f32", CampaignEvidence.HashFile(tensorPath));
+            Check(IsolatedE5.ReadOutput(directory, tensor, 0).SequenceEqual(new[] { 1f }), "oracle output decoded as float32");
+            Reject(() => IsolatedE5.ReadOutput(directory, tensor with { File = "../output-0.f32" }, 0), "oracle path traversal refused");
+            Reject(() => IsolatedE5.ReadOutput(directory, tensor with { Dims = new[] { -1 } }, 0), "negative oracle shape refused");
+            Reject(() => IsolatedE5.ReadOutput(directory, tensor with { Dims = new[] { 2 } }, 0), "oracle shape/byte mismatch refused");
+            Reject(() => IsolatedE5.ReadOutput(directory, tensor with { Dtype = "int32" }, 0), "oracle dtype mismatch refused");
+            Reject(() => IsolatedE5.ReadOutput(directory, tensor with { Sha256 = new string('0', 64) }, 0), "oracle digest mismatch refused");
+            System.IO.File.WriteAllBytes(tensorPath, BitConverter.GetBytes(float.NaN));
+            Reject(() => IsolatedE5.ReadOutput(directory, tensor with { Sha256 = CampaignEvidence.HashFile(tensorPath) }, 0), "oracle non-finite values refused");
+        }
+        finally { System.IO.Directory.Delete(directory, true); }
         Console.WriteLine("common runner selftest: " + checks + " checks passed");
         return 0;
     }

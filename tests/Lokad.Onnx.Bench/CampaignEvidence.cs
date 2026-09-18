@@ -87,6 +87,11 @@ internal sealed class CampaignEvidence
     internal void CaptureHost(long mask, string cpu)
     {
         affinity = mask;
+        environment = DescribeHost(mask, cpu);
+    }
+
+    internal static Dictionary<string, object> DescribeHost(long mask, string cpu)
+    {
         var variables = new SortedDictionary<string, string>(StringComparer.Ordinal);
         foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
         {
@@ -97,7 +102,7 @@ internal sealed class CampaignEvidence
         string? tiered = Environment.GetEnvironmentVariable("DOTNET_TieredCompilation") ?? Environment.GetEnvironmentVariable("COMPlus_TieredCompilation");
         var sdk = Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyMetadataAttribute>().FirstOrDefault(x => x.Key == "CampaignSdk")?.Value;
         if (string.IsNullOrEmpty(sdk)) throw new InvalidOperationException("Evidence requires the common Campaign project with embedded SDK identity.");
-        environment = new Dictionary<string, object>
+        return new Dictionary<string, object>
         {
             ["host"] = Environment.MachineName, ["cpu"] = cpu, ["os"] = RuntimeInformation.OSDescription,
             ["architecture"] = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant(), ["sdk"] = sdk,
@@ -112,6 +117,28 @@ internal sealed class CampaignEvidence
     {
         using var stream = File.OpenRead(file);
         return Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant();
+    }
+
+    internal static string[] NativeModules()
+    {
+        using var process = Process.GetCurrentProcess();
+        return process.Modules.Cast<ProcessModule>().Select(m => m.FileName)
+            .Where(p => Regex.IsMatch(Path.GetFileName(p), @"^(onnxruntime\.dll|libonnxruntime\.so(\.[0-9.]+)?)$", RegexOptions.IgnoreCase))
+            .Distinct(StringComparer.Ordinal).ToArray();
+    }
+
+    internal static (string Hash, SortedDictionary<string, string> Files) RunnerIdentity()
+    {
+        string runnerPath = Assembly.GetExecutingAssembly().Location;
+        var runnerFiles = new SortedDictionary<string, string>(StringComparer.Ordinal);
+        foreach (string path in Directory.GetFiles(Path.GetDirectoryName(runnerPath)!))
+        {
+            if (Path.GetFileName(path).Equals("Lokad.Onnx.dll", StringComparison.OrdinalIgnoreCase)) continue;
+            if (path.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".deps.json", StringComparison.Ordinal)
+                || path.EndsWith(".runtimeconfig.json", StringComparison.Ordinal)) runnerFiles.Add(Path.GetFileName(path), HashFile(path));
+        }
+        string runnerText = string.Concat(runnerFiles.Select(p => p.Key + "\0" + p.Value + "\n"));
+        return (Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(runnerText))).ToLowerInvariant(), runnerFiles);
     }
 
     string ObserveFile(string path)
@@ -230,23 +257,11 @@ internal sealed class CampaignEvidence
             var info = new FileInfo(pair.Key);
             if ((info.Length, info.LastWriteTimeUtc) != pair.Value) throw new IOException("Model changed during run: " + pair.Key);
         }
-        var modules = process.Modules.Cast<ProcessModule>().Select(m => m.FileName)
-            .Where(p => Regex.IsMatch(Path.GetFileName(p), @"^(onnxruntime\.dll|libonnxruntime\.so(\.[0-9.]+)?)$", RegexOptions.IgnoreCase))
-            .Distinct(StringComparer.Ordinal).ToArray();
+        var modules = NativeModules();
         if (modules.Length != 1) throw new InvalidOperationException("Expected exactly one actually loaded ORT module; found " + modules.Length);
         string corePath = typeof(ComputationalGraph).Assembly.Location;
         if (HashFile(corePath) != expectedCore) throw new IOException("Loaded core file changed during the run.");
-        string runnerPath = Assembly.GetExecutingAssembly().Location;
-        var runnerFiles = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        foreach (string path in Directory.GetFiles(Path.GetDirectoryName(runnerPath)!))
-        {
-            if (Path.GetFileName(path).Equals("Lokad.Onnx.dll", StringComparison.OrdinalIgnoreCase)) continue;
-            if (path.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".deps.json", StringComparison.Ordinal)
-                || path.EndsWith(".runtimeconfig.json", StringComparison.Ordinal)) runnerFiles.Add(Path.GetFileName(path), HashFile(path));
-        }
-        // Composite identifies the common managed runner, dependencies and runtime config.
-        string runnerText = string.Concat(runnerFiles.Select(p => p.Key + "\0" + p.Value + "\n"));
-        string runnerHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(runnerText))).ToLowerInvariant();
+        var (runnerHash, runnerFiles) = RunnerIdentity();
         var record = new
         {
             producer = scope is null ? "common-runner-v1" : "common-runner-v2", scope, process_id = Environment.ProcessId,

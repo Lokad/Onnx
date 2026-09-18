@@ -47,6 +47,7 @@ static class Bench
     {
 #if CAMPAIGN_RUNNER
         if (args.Length == 1 && args[0] == "selftest") return CampaignSelfTests.Run();
+        if (args.Length > 0 && args[0] == "isolate") return IsolatedE5.Run(args.Skip(1).ToArray());
 #endif
         var root = FindRoot();
         var assets = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
@@ -347,7 +348,7 @@ static class Bench
         return actual;
     }
 
-    static (double wallMs, double cpuMs, double ratio) MeasureSingleCpuConfinement(int durationMs)
+    internal static (double wallMs, double cpuMs, double ratio) MeasureSingleCpuConfinement(int durationMs)
     {
         using var proc = Process.GetCurrentProcess();
         TimeSpan before = proc.TotalProcessorTime;
