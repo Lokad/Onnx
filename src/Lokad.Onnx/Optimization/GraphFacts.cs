@@ -18,6 +18,9 @@ internal sealed class GraphFacts
     public Dictionary<string, int> Producer { get; } = new Dictionary<string, int>(StringComparer.Ordinal);
     public Dictionary<string, List<int>> Consumers { get; } = new Dictionary<string, List<int>>(StringComparer.Ordinal);
     public HashSet<string> GraphOutputs { get; } = new HashSet<string>(StringComparer.Ordinal);
+    // These names cross a lexical scope boundary. Keep their spelling stable:
+    // rewriting an owning node's explicit inputs cannot rename nested reads.
+    public HashSet<string> CapturedValues { get; } = new HashSet<string>(StringComparer.Ordinal);
     public Dictionary<string, TensorElementType> Dtypes { get; } = new Dictionary<string, TensorElementType>();
     public Dictionary<string, int[]> KnownDims { get; } = new Dictionary<string, int[]>();
     public Dictionary<string, ITensor> Constants { get; } = new Dictionary<string, ITensor>(StringComparer.Ordinal);
@@ -37,7 +40,11 @@ internal sealed class GraphFacts
         }
         for (int i = 0; i < nodes.Count; i++)
         {
-            foreach (var input in nodes[i].Inputs)
+            if (nodes[i].Attributes is { } attributes)
+                foreach (var value in attributes.Values)
+                    if (value is ComputationalGraph branch)
+                        facts.CapturedValues.UnionWith(GraphCaptures.FreeVariables(branch));
+            foreach (var input in GraphCaptures.NodeInputs(nodes[i]))
             {
                 if (string.IsNullOrEmpty(input)) continue;
                 if (!facts.Consumers.TryGetValue(input, out var list))

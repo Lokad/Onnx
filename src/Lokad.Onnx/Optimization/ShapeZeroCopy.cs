@@ -111,7 +111,7 @@ internal static class ShapeZeroCopy
                     if (o == candidate) { clash = true; break; }
                 }
                 if (clash) break;
-                foreach (var inp in node.Inputs ?? Array.Empty<string>())
+                foreach (var inp in GraphCaptures.NodeInputs(node))
                 {
                     if (inp == candidate) { clash = true; break; }
                 }

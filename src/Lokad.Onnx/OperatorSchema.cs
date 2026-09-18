@@ -89,6 +89,7 @@ public static class OperatorSchemas
         [OpType.GlobalAveragePool] = Def(OpType.GlobalAveragePool, 1, 1),
         [OpType.Identity] = Def(OpType.Identity, 1, 1),
         [OpType.LSTM] = Def(OpType.LSTM, 3, 8, 1, 3, 1, false),
+        [OpType.If] = Def(OpType.If, 1, 1, 1, Unbounded, 1, false),
         [OpType.Sigmoid] = Def(OpType.Sigmoid, 1, 1),
         [OpType.Floor] = Def(OpType.Floor, 1, 1),
         [OpType.And] = Def(OpType.And, 2, 2),

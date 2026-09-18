@@ -20,7 +20,10 @@ public class Model
     /// <remarks>Diagnostic entry for pass tests: skipping the optimizer leaves the pre-pass
     /// graph (preparation still runs). Every fusion is a pipeline pass; the flag gates
     /// running them, not registering the canonical set.</remarks>
-    internal static ComputationalGraph Load(OnnxModel mp, bool runOptimizer)
+    internal static ComputationalGraph Load(OnnxModel mp, bool runOptimizer) =>
+        Load(mp, runOptimizer, new HashSet<OnnxSubgraph>(ReferenceEqualityComparer.Instance));
+
+    static ComputationalGraph Load(OnnxModel mp, bool runOptimizer, HashSet<OnnxSubgraph> visiting)
     {
         if (Log.IsEnabled(LogLevel.Info)) Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Name, mp.Domain, mp.Opset.Select(o => o.Key + ":" + o.Value).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.DocString);
         var cop = Begin("Creating computational graph from ONNX model");
@@ -49,7 +52,7 @@ public class Model
         op = Begin("Converting {c} model nodes to graph nodes", mp.Nodes.Count);
         foreach (var np in mp.Nodes)
         {
-            graph.Nodes.Add(ToNode(np, graph));
+            graph.Nodes.Add(ToNode(np, graph, runOptimizer, visiting));
         }
         op.Complete();
         Optimization.GraphOptimizer.EnsureStandardPasses();
@@ -94,7 +97,21 @@ public class Model
         return graph;
     }
 
-    static Node ToNode(OnnxNode np, ComputationalGraph graph)
+    static ComputationalGraph BuildBranch(OnnxSubgraph branch, Dictionary<string, int> opsets, bool runOptimizer, HashSet<OnnxSubgraph> visiting)
+    {
+        if (!visiting.Add(branch)) throw new InvalidOperationException("Cyclic graph attributes are not supported.");
+        try
+        {
+            return Load(new OnnxModel
+            {
+                Name = branch.Name, Inputs = branch.Inputs, Outputs = branch.Outputs,
+                Initializers = branch.Initializers, Nodes = branch.Nodes, Opset = opsets,
+            }, runOptimizer, visiting);
+        }
+        finally { visiting.Remove(branch); }
+    }
+
+    static Node ToNode(OnnxNode np, ComputationalGraph graph, bool runOptimizer, HashSet<OnnxSubgraph> visiting)
     {
         var domain = np.Domain ?? "";
         if (!Enum.TryParse<OpType>(np.OpType, false, out var op))
@@ -108,7 +125,8 @@ public class Model
         {
             Name = np.Name,
             ID = np.Name.GetHashCode(),
-            Attributes = np.Attributes,
+            Attributes = np.Attributes.ToDictionary(p => p.Key, p => p.Value is OnnxSubgraph branch
+                ? (object)BuildBranch(branch, graph.Opset, runOptimizer, visiting) : p.Value),
             Op = op,
             OpTypeName = np.OpType ?? "",
             Domain = domain,

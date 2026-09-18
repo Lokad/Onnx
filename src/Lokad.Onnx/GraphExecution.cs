@@ -43,6 +43,7 @@ public sealed class GraphExecution : ComputationalGraph
         MetadataProps = prepared.MetadataProps;
         Options = options ?? prepared.Options;
         LastUseIndex = prepared.LastUseIndex;
+        nodeReadNames = prepared.nodeReadNames;
         ModelFile = prepared.ModelFile;
         Inputs = new BindingMap(prepared.Inputs);
         Outputs = new BindingMap(prepared.Outputs);

@@ -1095,15 +1095,12 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void IfHonestlyUnsupported_FailsCleanly()
+    public void IfWithInvalidCondition_FailsCleanly()
     {
-        // C11: If exists only as an enum value; no schema, provider,
-        // kernel, or dispatch arm exists anywhere in src (control flow
-        // is out of scope); same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.If));
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.If));
         var node = Nod(OpType.If, "", 14,
             new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(14);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);

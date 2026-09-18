@@ -122,7 +122,7 @@ internal static class ConstFold
             var consumers = new Dictionary<string, int>(StringComparer.Ordinal);
             for (int i = 0; i < graph.Nodes.Count; i++)
             {
-                foreach (var inp in graph.Nodes[i].Inputs ?? Array.Empty<string>())
+                foreach (var inp in GraphCaptures.NodeInputs(graph.Nodes[i]))
                 {
                     if (string.IsNullOrEmpty(inp)) continue;
                     consumers[inp] = consumers.TryGetValue(inp, out var c) ? c + 1 : 1;
@@ -156,7 +156,7 @@ internal static class ConstFold
             var node = graph.Nodes[i];
             if (node.Op != OpType.Constant || node.Outputs is null || node.Outputs.Length != 1) continue;
             string output = node.Outputs[0];
-            if (string.IsNullOrEmpty(output) || facts.IsGraphOutput(output)) continue;
+            if (string.IsNullOrEmpty(output) || facts.IsGraphOutput(output) || facts.CapturedValues.Contains(output)) continue;
             if (node.Attributes is null || !node.Attributes.TryGetValue("value", out var v) || !(v is ITensor t)) continue;
             if (ByteCount(t) > MaxFoldBytes) continue;
             string key = t.ElementType.ToString() + "|" + string.Join("x", t.Dims);

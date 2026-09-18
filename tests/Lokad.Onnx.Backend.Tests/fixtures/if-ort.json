@@ -1,0 +1,784 @@
+{
+  "onnx": "1.22.0",
+  "onnxruntime": "1.29.0",
+  "cases": [
+    {
+      "name": "basic-then",
+      "model": "CAg66gEKrgEKBGNvbmQSAXkaBmNob29zZSICSWYqTAoLZWxzZV9icmFuY2gyOgoZCgF4EgV2YWx1ZRoIb3Bwb3NpdGUiA05lZxIIb3Bwb3NpdGViEwoFdmFsdWUSCgoICAESBAoCCAKgAQUqSQoLdGhlbl9icmFuY2gyNwoaCgF4EgV2YWx1ZRoEc2FtZSIISWRlbnRpdHkSBHNhbWViEwoFdmFsdWUSCgoICAESBAoCCAKgAQUSBWJhc2ljWg8KAXgSCgoICAESBAoCCAJaDgoEY29uZBIGCgQICRIAYg8KAXkSCgoICAESBAoCCAJCBAoAEA4=",
+      "sha256": "1a1015a5783a16b777d38527926afc54d903251a67d5efc8194f5041aeadcb53",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            true
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "basic-else",
+      "model": "CAg66gEKrgEKBGNvbmQSAXkaBmNob29zZSICSWYqTAoLZWxzZV9icmFuY2gyOgoZCgF4EgV2YWx1ZRoIb3Bwb3NpdGUiA05lZxIIb3Bwb3NpdGViEwoFdmFsdWUSCgoICAESBAoCCAKgAQUqSQoLdGhlbl9icmFuY2gyNwoaCgF4EgV2YWx1ZRoEc2FtZSIISWRlbnRpdHkSBHNhbWViEwoFdmFsdWUSCgoICAESBAoCCAKgAQUSBWJhc2ljWg8KAXgSCgoICAESBAoCCAJaDgoEY29uZBIGCgQICRIAYg8KAXkSCgoICAESBAoCCAJCBAoAEA4=",
+      "sha256": "1a1015a5783a16b777d38527926afc54d903251a67d5efc8194f5041aeadcb53",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            false
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            1.0,
+            -8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "vector-condition-then",
+      "model": "CAg6+QEKrgEKBGNvbmQSAXkaBmNob29zZSICSWYqTAoLZWxzZV9icmFuY2gyOgoZCgF4EgV2YWx1ZRoIb3Bwb3NpdGUiA05lZxIIb3Bwb3NpdGViEwoFdmFsdWUSCgoICAESBAoCCAKgAQUqSQoLdGhlbl9icmFuY2gyNwoaCgF4EgV2YWx1ZRoEc2FtZSIISWRlbnRpdHkSBHNhbWViEwoFdmFsdWUSCgoICAESBAoCCAKgAQUSEHZlY3Rvci1jb25kaXRpb25aDwoBeBIKCggIARIECgIIAloSCgRjb25kEgoKCAgJEgQKAggBYg8KAXkSCgoICAESBAoCCAJCBAoAEA4=",
+      "sha256": "b3966f6e8101baf4497da05774a4c0d008ade72d3202ab02aa6f5d5ad6515274",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [
+            1
+          ],
+          "data": [
+            true
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "vector-condition-else",
+      "model": "CAg6+QEKrgEKBGNvbmQSAXkaBmNob29zZSICSWYqTAoLZWxzZV9icmFuY2gyOgoZCgF4EgV2YWx1ZRoIb3Bwb3NpdGUiA05lZxIIb3Bwb3NpdGViEwoFdmFsdWUSCgoICAESBAoCCAKgAQUqSQoLdGhlbl9icmFuY2gyNwoaCgF4EgV2YWx1ZRoEc2FtZSIISWRlbnRpdHkSBHNhbWViEwoFdmFsdWUSCgoICAESBAoCCAKgAQUSEHZlY3Rvci1jb25kaXRpb25aDwoBeBIKCggIARIECgIIAloSCgRjb25kEgoKCAgJEgQKAggBYg8KAXkSCgoICAESBAoCCAJCBAoAEA4=",
+      "sha256": "b3966f6e8101baf4497da05774a4c0d008ade72d3202ab02aa6f5d5ad6515274",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [
+            1
+          ],
+          "data": [
+            false
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            1.0,
+            -8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "direct-multiple-then",
+      "model": "CAg65wIKkAIKBGNvbmQSAXkSAXoaBmNob29zZSICSWYqegoLZWxzZV9icmFuY2gyaAoZCgF4EgRjb3B5GgRjb3B5IghJZGVudGl0eQoXCgF4EghuZWdhdGl2ZRoDbmVnIgNOZWcSBmRpcmVjdGISCgRjb3B5EgoKCAgBEgQKAggCYhYKCG5lZ2F0aXZlEgoKCAgBEgQKAggCoAEFKnoKC3RoZW5fYnJhbmNoMmgKGQoBeBIEY29weRoEY29weSIISWRlbnRpdHkKFwoBeBIIbmVnYXRpdmUaA25lZyIDTmVnEgZkaXJlY3RiEgoEY29weRIKCggIARIECgIIAmIWCghuZWdhdGl2ZRIKCggIARIECgIIAqABBRIPZGlyZWN0LW11bHRpcGxlWg8KAXgSCgoICAESBAoCCAJaDgoEY29uZBIGCgQICRIAYg8KAXkSCgoICAESBAoCCAJiDwoBehIKCggIARIECgIIAkIECgAQDg==",
+      "sha256": "db3113e9aca2282dee5c439cc3e487d67ce8fedb5d6679de99252c2143e2baaa",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            true
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "z",
+          "dims": [
+            2
+          ],
+          "data": [
+            1.0,
+            -8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "direct-multiple-else",
+      "model": "CAg65wIKkAIKBGNvbmQSAXkSAXoaBmNob29zZSICSWYqegoLZWxzZV9icmFuY2gyaAoZCgF4EgRjb3B5GgRjb3B5IghJZGVudGl0eQoXCgF4EghuZWdhdGl2ZRoDbmVnIgNOZWcSBmRpcmVjdGISCgRjb3B5EgoKCAgBEgQKAggCYhYKCG5lZ2F0aXZlEgoKCAgBEgQKAggCoAEFKnoKC3RoZW5fYnJhbmNoMmgKGQoBeBIEY29weRoEY29weSIISWRlbnRpdHkKFwoBeBIIbmVnYXRpdmUaA25lZyIDTmVnEgZkaXJlY3RiEgoEY29weRIKCggIARIECgIIAmIWCghuZWdhdGl2ZRIKCggIARIECgIIAqABBRIPZGlyZWN0LW11bHRpcGxlWg8KAXgSCgoICAESBAoCCAJaDgoEY29uZBIGCgQICRIAYg8KAXkSCgoICAESBAoCCAJiDwoBehIKCggIARIECgIIAkIECgAQDg==",
+      "sha256": "db3113e9aca2282dee5c439cc3e487d67ce8fedb5d6679de99252c2143e2baaa",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            false
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "z",
+          "dims": [
+            2
+          ],
+          "data": [
+            1.0,
+            -8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "different-shapes-v11-then",
+      "model": "CAg6jQIKxAEKBGNvbmQSAXkaBmNob29zZSICSWYqYgoLZWxzZV9icmFuY2gyUAofCgVsb2NhbBIFdmFsdWUaBXNtYWxsIghJZGVudGl0eRIFc21hbGwqEQgBEAFCBWxvY2FsSgQAABBBYhMKBXZhbHVlEgoKCAgBEgQKAggBoAEFKkkKC3RoZW5fYnJhbmNoMjcKGgoBeBIFdmFsdWUaBHNhbWUiCElkZW50aXR5EgRzYW1lYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFEhRkaWZmZXJlbnQtc2hhcGVzLXYxMVoPCgF4EgoKCAgBEgQKAggCWg4KBGNvbmQSBgoECAkSAGINCgF5EggKBggBEgIKAEIECgAQCw==",
+      "sha256": "5bab664b0f8c1c55ca0c41d6afb894aebb71aa84dd486d02876c5322b855065f",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            true
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "different-shapes-v11-else",
+      "model": "CAg6jQIKxAEKBGNvbmQSAXkaBmNob29zZSICSWYqYgoLZWxzZV9icmFuY2gyUAofCgVsb2NhbBIFdmFsdWUaBXNtYWxsIghJZGVudGl0eRIFc21hbGwqEQgBEAFCBWxvY2FsSgQAABBBYhMKBXZhbHVlEgoKCAgBEgQKAggBoAEFKkkKC3RoZW5fYnJhbmNoMjcKGgoBeBIFdmFsdWUaBHNhbWUiCElkZW50aXR5EgRzYW1lYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFEhRkaWZmZXJlbnQtc2hhcGVzLXYxMVoPCgF4EgoKCAgBEgQKAggCWg4KBGNvbmQSBgoECAkSAGINCgF5EggKBggBEgIKAEIECgAQCw==",
+      "sha256": "5bab664b0f8c1c55ca0c41d6afb894aebb71aa84dd486d02876c5322b855065f",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            false
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            1
+          ],
+          "data": [
+            9.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "different-shapes-v14-then",
+      "model": "CAg6jQIKxAEKBGNvbmQSAXkaBmNob29zZSICSWYqYgoLZWxzZV9icmFuY2gyUAofCgVsb2NhbBIFdmFsdWUaBXNtYWxsIghJZGVudGl0eRIFc21hbGwqEQgBEAFCBWxvY2FsSgQAABBBYhMKBXZhbHVlEgoKCAgBEgQKAggBoAEFKkkKC3RoZW5fYnJhbmNoMjcKGgoBeBIFdmFsdWUaBHNhbWUiCElkZW50aXR5EgRzYW1lYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFEhRkaWZmZXJlbnQtc2hhcGVzLXYxNFoPCgF4EgoKCAgBEgQKAggCWg4KBGNvbmQSBgoECAkSAGINCgF5EggKBggBEgIKAEIECgAQDg==",
+      "sha256": "e2072a2d393a7e5cd0eeeb1798935900c216ec32338b904a362f495a9875d109",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            true
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "different-shapes-v14-else",
+      "model": "CAg6jQIKxAEKBGNvbmQSAXkaBmNob29zZSICSWYqYgoLZWxzZV9icmFuY2gyUAofCgVsb2NhbBIFdmFsdWUaBXNtYWxsIghJZGVudGl0eRIFc21hbGwqEQgBEAFCBWxvY2FsSgQAABBBYhMKBXZhbHVlEgoKCAgBEgQKAggBoAEFKkkKC3RoZW5fYnJhbmNoMjcKGgoBeBIFdmFsdWUaBHNhbWUiCElkZW50aXR5EgRzYW1lYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFEhRkaWZmZXJlbnQtc2hhcGVzLXYxNFoPCgF4EgoKCAgBEgQKAggCWg4KBGNvbmQSBgoECAkSAGINCgF5EggKBggBEgIKAEIECgAQDg==",
+      "sha256": "e2072a2d393a7e5cd0eeeb1798935900c216ec32338b904a362f495a9875d109",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            false
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            1
+          ],
+          "data": [
+            9.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "nested-shadow-then",
+      "model": "CAg6ogMK3gIKBGNvbmQSAXkaBW91dGVyIgJJZipMCgtlbHNlX2JyYW5jaDI6ChkKAXgSBXZhbHVlGghvcHBvc2l0ZSIDTmVnEghvcHBvc2l0ZWITCgV2YWx1ZRIKCggIARIECgIIAqABBSr5AQoLdGhlbl9icmFuY2gy5gEKsgEKBGNvbmQSBmluc2lkZRoFaW5uZXIiAklmKkwKC2Vsc2VfYnJhbmNoMjoKGQoBeBIFdmFsdWUaCG9wcG9zaXRlIgNOZWcSCG9wcG9zaXRlYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFKkkKC3RoZW5fYnJhbmNoMjcKGgoBeBIFdmFsdWUaBHNhbWUiCElkZW50aXR5EgRzYW1lYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFEgZuZXN0ZWQqEQgCEAFCAXhKCAAA4EAAABBBYhQKBmluc2lkZRIKCggIARIECgIIAqABBRINbmVzdGVkLXNoYWRvd1oPCgF4EgoKCAgBEgQKAggCWg4KBGNvbmQSBgoECAkSAGIPCgF5EgoKCAgBEgQKAggCQgQKABAO",
+      "sha256": "d900cbb297f48a96a9ec9b5e8999a817d7b3dc39e78f695f90de673ed192ed13",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            true
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            7.0,
+            9.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "nested-shadow-else",
+      "model": "CAg6ogMK3gIKBGNvbmQSAXkaBW91dGVyIgJJZipMCgtlbHNlX2JyYW5jaDI6ChkKAXgSBXZhbHVlGghvcHBvc2l0ZSIDTmVnEghvcHBvc2l0ZWITCgV2YWx1ZRIKCggIARIECgIIAqABBSr5AQoLdGhlbl9icmFuY2gy5gEKsgEKBGNvbmQSBmluc2lkZRoFaW5uZXIiAklmKkwKC2Vsc2VfYnJhbmNoMjoKGQoBeBIFdmFsdWUaCG9wcG9zaXRlIgNOZWcSCG9wcG9zaXRlYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFKkkKC3RoZW5fYnJhbmNoMjcKGgoBeBIFdmFsdWUaBHNhbWUiCElkZW50aXR5EgRzYW1lYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFEgZuZXN0ZWQqEQgCEAFCAXhKCAAA4EAAABBBYhQKBmluc2lkZRIKCggIARIECgIIAqABBRINbmVzdGVkLXNoYWRvd1oPCgF4EgoKCAgBEgQKAggCWg4KBGNvbmQSBgoECAkSAGIPCgF5EgoKCAgBEgQKAggCQgQKABAO",
+      "sha256": "d900cbb297f48a96a9ec9b5e8999a817d7b3dc39e78f695f90de673ed192ed13",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            false
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            1.0,
+            -8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "add-fusion-capture-then",
+      "model": "CAg67AIKGgoBeAoBdxIDcHJlGghwcm9kdWNlciIDQWRkChcKA3ByZRIEcG9zdBoEcmVsdSIEUmVsdQrHAQoEY29uZBIBeRoGY2hvb3NlIgJJZipXCgtlbHNlX2JyYW5jaDJFCiIKA3ByZRIIY2FwdHVyZWQaB2NhcHR1cmUiCElkZW50aXR5EgdjYXB0dXJlYhYKCGNhcHR1cmVkEgoKCAgBEgQKAggCoAEFKlcKC3RoZW5fYnJhbmNoMkUKIgoDcHJlEghjYXB0dXJlZBoHY2FwdHVyZSIISWRlbnRpdHkSB2NhcHR1cmViFgoIY2FwdHVyZWQSCgoICAESBAoCCAKgAQUSEmFkZC1mdXNpb24tY2FwdHVyZSoRCAIQAUIBd0oIAAAAAAAAAABaDwoBeBIKCggIARIECgIIAloOCgRjb25kEgYKBAgJEgBiDwoBeRIKCggIARIECgIIAmISCgRwb3N0EgoKCAgBEgQKAggCQgQKABAO",
+      "sha256": "f899e1c9f4baeec0a783fdd7cc50b59f4d4510eddafb8ea43f3059712d78b499",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            true
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "post",
+          "dims": [
+            2
+          ],
+          "data": [
+            0.0,
+            8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "add-fusion-capture-else",
+      "model": "CAg67AIKGgoBeAoBdxIDcHJlGghwcm9kdWNlciIDQWRkChcKA3ByZRIEcG9zdBoEcmVsdSIEUmVsdQrHAQoEY29uZBIBeRoGY2hvb3NlIgJJZipXCgtlbHNlX2JyYW5jaDJFCiIKA3ByZRIIY2FwdHVyZWQaB2NhcHR1cmUiCElkZW50aXR5EgdjYXB0dXJlYhYKCGNhcHR1cmVkEgoKCAgBEgQKAggCoAEFKlcKC3RoZW5fYnJhbmNoMkUKIgoDcHJlEghjYXB0dXJlZBoHY2FwdHVyZSIISWRlbnRpdHkSB2NhcHR1cmViFgoIY2FwdHVyZWQSCgoICAESBAoCCAKgAQUSEmFkZC1mdXNpb24tY2FwdHVyZSoRCAIQAUIBd0oIAAAAAAAAAABaDwoBeBIKCggIARIECgIIAloOCgRjb25kEgYKBAgJEgBiDwoBeRIKCggIARIECgIIAmISCgRwb3N0EgoKCAgBEgQKAggCQgQKABAO",
+      "sha256": "f899e1c9f4baeec0a783fdd7cc50b59f4d4510eddafb8ea43f3059712d78b499",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            false
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "post",
+          "dims": [
+            2
+          ],
+          "data": [
+            0.0,
+            8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "conv-fusion-capture-then",
+      "model": "CAg6lgMKGwoBeAoBdxIDcHJlGghwcm9kdWNlciIEQ29udgoXCgNwcmUSBHBvc3QaBHJlbHUiBFJlbHUK1wEKBGNvbmQSAXkaBmNob29zZSICSWYqXwoLZWxzZV9icmFuY2gyTQoiCgNwcmUSCGNhcHR1cmVkGgdjYXB0dXJlIghJZGVudGl0eRIHY2FwdHVyZWIeCghjYXB0dXJlZBISChAIARIMCgIIAQoCCAEKAggCoAEFKl8KC3RoZW5fYnJhbmNoMk0KIgoDcHJlEghjYXB0dXJlZBoHY2FwdHVyZSIISWRlbnRpdHkSB2NhcHR1cmViHgoIY2FwdHVyZWQSEgoQCAESDAoCCAEKAggBCgIIAqABBRITY29udi1mdXNpb24tY2FwdHVyZSoRCAEIAQgBEAFCAXdKBAAAgD9aFwoBeBISChAIARIMCgIIAQoCCAEKAggCWg4KBGNvbmQSBgoECAkSAGIXCgF5EhIKEAgBEgwKAggBCgIIAQoCCAJiGgoEcG9zdBISChAIARIMCgIIAQoCCAEKAggCQgQKABAO",
+      "sha256": "f18900da6dd1d158daceab88376b0c204c4f520e3ed5d8696a75b03b871f295d",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            1,
+            1,
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            true
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            1,
+            1,
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "post",
+          "dims": [
+            1,
+            1,
+            2
+          ],
+          "data": [
+            0.0,
+            8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "conv-fusion-capture-else",
+      "model": "CAg6lgMKGwoBeAoBdxIDcHJlGghwcm9kdWNlciIEQ29udgoXCgNwcmUSBHBvc3QaBHJlbHUiBFJlbHUK1wEKBGNvbmQSAXkaBmNob29zZSICSWYqXwoLZWxzZV9icmFuY2gyTQoiCgNwcmUSCGNhcHR1cmVkGgdjYXB0dXJlIghJZGVudGl0eRIHY2FwdHVyZWIeCghjYXB0dXJlZBISChAIARIMCgIIAQoCCAEKAggCoAEFKl8KC3RoZW5fYnJhbmNoMk0KIgoDcHJlEghjYXB0dXJlZBoHY2FwdHVyZSIISWRlbnRpdHkSB2NhcHR1cmViHgoIY2FwdHVyZWQSEgoQCAESDAoCCAEKAggBCgIIAqABBRITY29udi1mdXNpb24tY2FwdHVyZSoRCAEIAQgBEAFCAXdKBAAAgD9aFwoBeBISChAIARIMCgIIAQoCCAEKAggCWg4KBGNvbmQSBgoECAkSAGIXCgF5EhIKEAgBEgwKAggBCgIIAQoCCAJiGgoEcG9zdBISChAIARIMCgIIAQoCCAEKAggCQgQKABAO",
+      "sha256": "f18900da6dd1d158daceab88376b0c204c4f520e3ed5d8696a75b03b871f295d",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            1,
+            1,
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            false
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            1,
+            1,
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "post",
+          "dims": [
+            1,
+            1,
+            2
+          ],
+          "data": [
+            0.0,
+            8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "constant-capture-then",
+      "model": "CAg6pwMKNBIFZmlyc3QaBWZpcnN0IghDb25zdGFudCoaCgV2YWx1ZSoOCAIQAUoIAACAvwAAAEGgAQQKNhIGc2Vjb25kGgZzZWNvbmQiCENvbnN0YW50KhoKBXZhbHVlKg4IAhABSggAAIC/AAAAQaABBAoaCgVmaXJzdBIFb3RoZXIaBW90aGVyIgNOZWcKwQEKBGNvbmQSAXkaBmNob29zZSICSWYqVAoLZWxzZV9icmFuY2gyQgoiCgZzZWNvbmQSBXZhbHVlGgdjYXB0dXJlIghJZGVudGl0eRIHY2FwdHVyZWITCgV2YWx1ZRIKCggIARIECgIIAqABBSpUCgt0aGVuX2JyYW5jaDJCCiIKBnNlY29uZBIFdmFsdWUaB2NhcHR1cmUiCElkZW50aXR5EgdjYXB0dXJlYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFEhBjb25zdGFudC1jYXB0dXJlWg8KAXgSCgoICAESBAoCCAJaDgoEY29uZBIGCgQICRIAYg8KAXkSCgoICAESBAoCCAJiEwoFb3RoZXISCgoICAESBAoCCAJCBAoAEA4=",
+      "sha256": "e57e23e7be80c8803c5b7e0c1d5a5f957fed515757d61a7e5c295a50bf697bb8",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            true
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "other",
+          "dims": [
+            2
+          ],
+          "data": [
+            1.0,
+            -8.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "constant-capture-else",
+      "model": "CAg6pwMKNBIFZmlyc3QaBWZpcnN0IghDb25zdGFudCoaCgV2YWx1ZSoOCAIQAUoIAACAvwAAAEGgAQQKNhIGc2Vjb25kGgZzZWNvbmQiCENvbnN0YW50KhoKBXZhbHVlKg4IAhABSggAAIC/AAAAQaABBAoaCgVmaXJzdBIFb3RoZXIaBW90aGVyIgNOZWcKwQEKBGNvbmQSAXkaBmNob29zZSICSWYqVAoLZWxzZV9icmFuY2gyQgoiCgZzZWNvbmQSBXZhbHVlGgdjYXB0dXJlIghJZGVudGl0eRIHY2FwdHVyZWITCgV2YWx1ZRIKCggIARIECgIIAqABBSpUCgt0aGVuX2JyYW5jaDJCCiIKBnNlY29uZBIFdmFsdWUaB2NhcHR1cmUiCElkZW50aXR5EgdjYXB0dXJlYhMKBXZhbHVlEgoKCAgBEgQKAggCoAEFEhBjb25zdGFudC1jYXB0dXJlWg8KAXgSCgoICAESBAoCCAJaDgoEY29uZBIGCgQICRIAYg8KAXkSCgoICAESBAoCCAJiEwoFb3RoZXISCgoICAESBAoCCAJCBAoAEA4=",
+      "sha256": "e57e23e7be80c8803c5b7e0c1d5a5f957fed515757d61a7e5c295a50bf697bb8",
+      "inputs": [
+        {
+          "name": "x",
+          "type": "float32",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "cond",
+          "type": "bool",
+          "dims": [],
+          "data": [
+            false
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "y",
+          "dims": [
+            2
+          ],
+          "data": [
+            -1.0,
+            8.0
+          ]
+        },
+        {
+          "name": "other",
+          "dims": [
+            2
+          ],
+          "data": [
+            1.0,
+            -8.0
+          ]
+        }
+      ]
+    }
+  ]
+}

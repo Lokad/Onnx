@@ -64,5 +64,8 @@ Run `pack.cmd` from the repo root to produce the `Lokad.Onnx` NuGet package (net
 The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Release history lives in `CHANGELOG.md`.
 
 ## Implementation notes
+
+ONNX `If` imports graph attributes and executes the selected branch in an isolated context. Branches can capture enclosing values, nest other `If` nodes, and return multiple tensor outputs; different branch shapes are supported from opset 11. The condition must contain exactly one boolean element. Sequence and optional outputs remain unsupported. `LastSubgraphExecutions` exposes child diagnostics separately: parent wall time and GC allocation include child work, while pool, scratch, copy and live-payload counters describe each scope independently.
+
 * The tensors library is pure managed C# implemented from the layout contracts. It was originally ported from [the ORT C# tensors](https://github.com/microsoft/onnxruntime/tree/main/csharp/src/Microsoft.ML.OnnxRuntime/Tensors) and has since been reimplemented from those contracts piece by piece (see CHANGELOG.md); no third-party notices ship.
 * The shipped `Lokad.Onnx` assembly carries one runtime dependency, `Google.Protobuf` (pinned 3.33.5), for the integrated ONNX importer under `src/Lokad.Onnx/Import/` (schema code generated from pinned upstream `onnx.proto`); text and image helpers live in `Lokad.Onnx.Data`; the console lives in `Lokad.Onnx.CLI`.

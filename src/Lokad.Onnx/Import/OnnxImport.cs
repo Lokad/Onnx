@@ -149,7 +149,7 @@ public static class OnnxImport
             Inputs = mp.Graph.Input.Select(vp => vp.ToValueDto()).ToList(),
             Outputs = mp.Graph.Output.Select(vp => vp.ToValueDto()).ToList(),
             Initializers = mp.Graph.Initializer.Select(tp => tp.ToTensorDto(baseDirectory, materializeInitializers)).ToList(),
-            Nodes = mp.Graph.Node.Select(np => np.ToNodeDto(baseDirectory)).ToList(),
+            Nodes = mp.Graph.Node.Select(np => np.ToNodeDto(baseDirectory, materializeInitializers)).ToList(),
         };
     }
 }

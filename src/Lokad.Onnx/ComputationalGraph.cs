@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using static Lokad.Onnx.Runtime;
 
-public class ComputationalGraph
+public partial class ComputationalGraph
 {
     #region Fields
     public string ModelFile = "";
@@ -188,6 +188,11 @@ public class ComputationalGraph
                 throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
             }
             _prepared = false;
+            _ = GraphCaptures.FreeVariables(this); // Reject cycles before recursive invalidation.
+            foreach (var node in Nodes)
+                if (node.Attributes is not null)
+                    foreach (var value in node.Attributes.Values)
+                        if (value is ComputationalGraph branch) branch.InvalidatePreparation();
             ReleasedBuffers?.Clear();
             lock (FoldLock)
             {
@@ -295,6 +300,7 @@ public class ComputationalGraph
             LastErrorCause = exec.LastErrorCause;
             LastProfile = exec.LastProfile;
             LastWallProfile = exec.LastWallProfile;
+            subgraphExecutions = exec.subgraphExecutions;
             LastRunTime = exec.LastRunTime;
             LastAllocatedBytes = exec.LastAllocatedBytes;
             LastGcCollections = (int[])exec.LastGcCollections.Clone();
@@ -370,6 +376,7 @@ public class ComputationalGraph
         if (Inputs.TryGetValue(name, out var input) && input is not null) return input;
         if (Initializers.TryGetValue(name, out var init)) return init;
         if (IntermediateOutputs.TryGetValue(name, out var mid) && mid is not null) return mid;
+        if (CapturedInputs is not null && CapturedInputs.TryGetValue(name, out var captured)) return captured;
         if (Outputs.TryGetValue(name, out var output) && output is not null) return output;
         if (Inputs.ContainsKey(name) || Outputs.ContainsKey(name)) throw new InvalidOperationException($"The graph value {name} is declared but has no value in this run.");
         throw new InvalidOperationException($"The intermediate output tensor {name} has not been assigned a value.");
@@ -547,7 +554,7 @@ public class ComputationalGraph
     List<string> NodeRequiredInputs(Node node, bool useInitializers)
     {
         var requiredInputs = new List<string>();
-        foreach (var i in node.Inputs)
+        foreach (var i in GraphCaptures.NodeInputs(node))
         {
             // Absent optional slots bind nothing; repeated inputs resolve once.
             if (string.IsNullOrEmpty(i)) continue;
@@ -880,6 +887,10 @@ public class ComputationalGraph
             {
                 TrackBind(Outputs, name, init.Clone());
             }
+            else if (CapturedInputs is not null && CapturedInputs.TryGetValue(name, out var captured))
+            {
+                TrackBind(Outputs, name, captured.Clone());
+            }
         }
         var outputSymbolic = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var desc in OutputDescs)
@@ -932,6 +943,7 @@ public class ComputationalGraph
         LastErrorCause = null;
         LastProfile = null;
         LastWallProfile = null;
+        subgraphExecutions = null;
         LastRunTime = TimeSpan.Zero;
         LastAllocatedBytes = 0;
         LastPoolAllocatedNew = 0;
@@ -1207,9 +1219,15 @@ public class ComputationalGraph
             Nodes[i] = node;
         }
         var lastUse = new Dictionary<string, int>(StringComparer.Ordinal);
+        nodeReadNames = null;
         for (int i = 0; i < Nodes.Count; i++)
         {
-            var inputs = Nodes[i].Inputs;
+            var inputs = GraphCaptures.NodeInputs(Nodes[i]);
+            if (!ReferenceEquals(inputs, Nodes[i].Inputs))
+            {
+                nodeReadNames ??= new Dictionary<long, string[]>();
+                nodeReadNames[Nodes[i].ID] = inputs;
+            }
             if (inputs is null) continue;
             foreach (var input in inputs)
             {
@@ -1289,58 +1307,76 @@ public class ComputationalGraph
     static string NodeLabel(Node node, int index) =>
         string.IsNullOrEmpty(node.Name) ? "#" + index : node.Name;
 
-    long ComputeStructureFingerprint()
+    long ComputeStructureFingerprint() => ComputeStructureFingerprint(null);
+
+    long ComputeStructureFingerprint(HashSet<ComputationalGraph>? visiting)
     {
-        unchecked
+        if (visiting is not null && !visiting.Add(this)) throw new InvalidOperationException("Cyclic graph attributes are not supported.");
+        try
         {
-            ulong h = 1469598103934665603UL;
-            void MixUlong(ulong v)
+            unchecked
             {
-                h ^= v;
-                h *= 1099511628211UL;
-            }
-            void MixInt(int v) => MixUlong((ulong)(uint)v);
-            void MixString(string? v)
-            {
-                if (v is null)
+                ulong h = 1469598103934665603UL;
+                void MixUlong(ulong v)
                 {
-                    MixUlong(0x9E3779B97F4A7C15UL);
-                    return;
+                    h ^= v;
+                    h *= 1099511628211UL;
                 }
-                MixInt(v.Length);
-                foreach (char c in v) MixUlong((ulong)c);
-            }
-            MixInt(Nodes.Count);
-            for (int i = 0; i < Nodes.Count; i++)
-            {
-                var node = Nodes[i];
-                MixString(node.Name);
-                MixInt((int)node.Op);
-                MixString(node.Domain);
-                MixString(node.OpTypeName);
-                if (node.Inputs is null) MixInt(-1);
-                else
+                void MixInt(int v) => MixUlong((ulong)(uint)v);
+                void MixString(string? v)
                 {
-                    MixInt(node.Inputs.Length);
-                    foreach (var input in node.Inputs) MixString(input);
+                    if (v is null)
+                    {
+                        MixUlong(0x9E3779B97F4A7C15UL);
+                        return;
+                    }
+                    MixInt(v.Length);
+                    foreach (char c in v) MixUlong((ulong)c);
                 }
-                if (node.Outputs is null) MixInt(-1);
-                else
+                MixInt(Nodes.Count);
+                for (int i = 0; i < Nodes.Count; i++)
                 {
-                    MixInt(node.Outputs.Length);
-                    foreach (var output in node.Outputs) MixString(output);
+                    var node = Nodes[i];
+                    MixString(node.Name);
+                    MixInt((int)node.Op);
+                    MixString(node.Domain);
+                    MixString(node.OpTypeName);
+                    if (node.Attributes is not null)
+                        foreach (var entry in node.Attributes)
+                            if (entry.Value is ComputationalGraph branch)
+                            {
+                                visiting ??= new HashSet<ComputationalGraph>(ReferenceEqualityComparer.Instance) { this };
+                                MixString(entry.Key);
+                                MixInt(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(branch));
+                                MixUlong((ulong)branch.ComputeStructureFingerprint(visiting));
+                            }
+                    if (node.Inputs is null) MixInt(-1);
+                    else
+                    {
+                        MixInt(node.Inputs.Length);
+                        foreach (var input in node.Inputs) MixString(input);
+                    }
+                    if (node.Outputs is null) MixInt(-1);
+                    else
+                    {
+                        MixInt(node.Outputs.Length);
+                        foreach (var output in node.Outputs) MixString(output);
+                    }
                 }
+                MixInt(Inputs.Count);
+                foreach (var key in Inputs.Keys) MixString(key);
+                MixInt(Outputs.Count);
+                foreach (var key in Outputs.Keys) MixString(key);
+                MixInt(Initializers.Count);
+                foreach (var key in Initializers.Keys) MixString(key);
+                MixInt(InputDescs.Count);
+                foreach (var desc in InputDescs) MixString(desc?.Name);
+                MixInt(OutputDescs.Count);
+                foreach (var desc in OutputDescs) MixString(desc?.Name);
+                return (long)h;
             }
-            MixInt(Inputs.Count);
-            foreach (var key in Inputs.Keys) MixString(key);
-            MixInt(Initializers.Count);
-            foreach (var key in Initializers.Keys) MixString(key);
-            MixInt(InputDescs.Count);
-            foreach (var desc in InputDescs) MixString(desc?.Name);
-            MixInt(OutputDescs.Count);
-            foreach (var desc in OutputDescs) MixString(desc?.Name);
-            return (long)h;
         }
+        finally { visiting?.Remove(this); }
     }
 
     string? ValidatePreparation()
@@ -1363,7 +1399,7 @@ public class ComputationalGraph
         }
         for (int i = 0; i < Nodes.Count; i++)
         {
-            var inputs = Nodes[i].Inputs;
+            var inputs = NodeInputs(Nodes[i]);
             if (inputs is null) continue;
             foreach (var input in inputs)
             {
@@ -1381,6 +1417,7 @@ public class ComputationalGraph
             if (producer.ContainsKey(desc.Name)) continue;
             if (Inputs.ContainsKey(desc.Name)) continue;
             if (Initializers.ContainsKey(desc.Name)) continue;
+            if (CapturedInputs is not null && CapturedInputs.ContainsKey(desc.Name)) continue;
             return "Graph output " + desc.Name + " has no producer, input, or initializer.";
         }
         return null;
@@ -1477,7 +1514,7 @@ public class ComputationalGraph
         var pool = ActivePool;
         if (pool is null || node.Inputs is null) return;
         HashSet<Array>? returned = null;
-        foreach (var name in node.Inputs)
+        foreach (var name in NodeInputs(node))
         {
             if (string.IsNullOrEmpty(name)) continue;
             if (!LastUseIndex.TryGetValue(name, out var last) || last != index) continue;
@@ -1592,6 +1629,8 @@ public class ComputationalGraph
         foreach (var kv in Inputs) if (kv.Value is ITensor t) total += t.Length * ElementByteSize(t.ElementType);
         foreach (var kv in Outputs) if (kv.Value is ITensor t) total += t.Length * ElementByteSize(t.ElementType);
         foreach (var kv in IntermediateOutputs) if (kv.Value is ITensor t) total += t.Length * ElementByteSize(t.ElementType);
+        if (CapturedInputs is not null)
+            foreach (var tensor in CapturedInputs.Values) total += PayloadBytes(tensor);
         return total;
     }
 
@@ -1611,6 +1650,8 @@ public class ComputationalGraph
         {
             foreach (var tensor in Inputs.Values) if (SharesPooledStorage(candidate, tensor)) return true;
             foreach (var tensor in Initializers.Values) if (SharesPooledStorage(candidate, tensor)) return true;
+            if (CapturedInputs is not null)
+                foreach (var tensor in CapturedInputs.Values) if (SharesPooledStorage(candidate, tensor)) return true;
             foreach (var attr in EnumerateAttributeTensors()) if (SharesPooledStorage(candidate, attr)) return true;
         }
         if (liveUnknownTensors is not null && liveUnknownTensors.Count > 0) return true;
@@ -1730,6 +1771,9 @@ public class ComputationalGraph
         {
             if (CollectAliasRoot(tensor, roots) == false) return null;
         }
+        if (CapturedInputs is not null)
+            foreach (var tensor in CapturedInputs.Values)
+                if (CollectAliasRoot(tensor, roots) == false) return null;
         foreach (var attr in EnumerateAttributeTensors())
         {
             if (CollectAliasRoot(attr, roots) == false) return null;
@@ -1779,6 +1823,11 @@ public class ComputationalGraph
                 if (value is ITensor single)
                 {
                     yield return single;
+                }
+                else if (value is ComputationalGraph branch)
+                {
+                    foreach (var initializer in branch.Initializers.Values) yield return initializer;
+                    foreach (var nested in branch.EnumerateAttributeTensors()) yield return nested;
                 }
                 else if (value is System.Collections.IEnumerable enumerable && value is not string)
                 {

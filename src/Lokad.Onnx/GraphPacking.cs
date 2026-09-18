@@ -76,10 +76,10 @@ internal static class GraphPacking
         var consumers = new Dictionary<string, bool>(StringComparer.Ordinal);
         foreach (var node in graph.Nodes)
         {
-            if (node.Inputs is null) continue;
-            for (int i = 0; i < node.Inputs.Length; i++)
+            var inputs = GraphCaptures.NodeInputs(node);
+            for (int i = 0; i < inputs.Length; i++)
             {
-                string input = node.Inputs[i];
+                string input = inputs[i];
                 if (string.IsNullOrEmpty(input)) continue;
                 bool eligible = (node.Op == OpType.MatMul && i == 1) || (node.Op == OpType.Gemm && i == 1 && (node.GetInt("transB", 0) ?? 0) == 0);
                 if (consumers.TryGetValue(input, out bool prior)) consumers[input] = prior && eligible;

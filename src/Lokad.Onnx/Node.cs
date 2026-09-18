@@ -279,7 +279,8 @@ public partial struct Node
             }
         }
         return Op switch
-    {
+        {
+        OpType.If => ExecuteIf(graph, opt),
         OpType.Reshape => CPU.Reshape(InputTensor(graph, 0), InputTensor(graph, 1), GetReshapeAllowZero(), opt),
 
         OpType.Identity => CPU.Identity(InputTensor(graph, 0), opt),

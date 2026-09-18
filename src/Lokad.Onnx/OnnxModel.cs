@@ -60,3 +60,13 @@ public sealed class OnnxNode
     public string[] Outputs = Array.Empty<string>();
     public Dictionary<string, object> Attributes = new Dictionary<string, object>();
 }
+
+/// <summary>A graph-valued node attribute. Names resolve lexically in the enclosing graph.</summary>
+public sealed class OnnxSubgraph
+{
+    public string Name = "";
+    public List<OnnxValueInfo> Inputs = new List<OnnxValueInfo>();
+    public List<OnnxValueInfo> Outputs = new List<OnnxValueInfo>();
+    public List<OnnxTensor> Initializers = new List<OnnxTensor>();
+    public List<OnnxNode> Nodes = new List<OnnxNode>();
+}
