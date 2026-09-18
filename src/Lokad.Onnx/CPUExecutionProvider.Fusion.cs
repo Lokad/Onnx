@@ -63,6 +63,8 @@ public partial class CPUExecutionProvider
                     : new DenseTensor<float>(new Memory<float>(pool.Rent<float>((int)xd.Length)), xd.Dimensions.ToArray());
                 if (UseGeluTanhTrial())
                     Tensor<float>.BiasGeluTanhSpanFloat(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
+                else if (AblationSwitches.EnableBiasGeluInline)
+                    Tensor<float>.BiasGeluSpanFloatInline(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
                 else
                     Tensor<float>.BiasGeluSpanFloatPtr4x(xd.Buffer.Span, bd.Buffer.Span, output.Buffer.Span);
                 return Success(op, output);
