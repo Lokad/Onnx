@@ -15,6 +15,7 @@ public enum ExecutionProvider
 public enum OptimizationMode
 {
     Speed,
+    /// <summary>Allows dead intermediate reshape bindings to be released for buffer reuse.</summary>
     Memory
 }
 

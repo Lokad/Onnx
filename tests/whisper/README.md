@@ -99,6 +99,10 @@ request buffers are outside these limits. Other graph callers retain their exist
 packing defaults; `OnnxImport.Load(path, maximumPackedWeightBytes)` and
 `Model.Load(description, maximumPackedWeightBytes)` allow an explicit per-graph
 budget, with zero disabling packing. This is not a process memory ceiling.
+Transcription uses `ExecutionOptions.Memory`, which releases eligible dead
+intermediate reshape bindings so their storage can be reused within the call.
+It preserves inputs and returned outputs. It does not force garbage collection
+or change process-wide runtime settings.
 
 Empty or exactly zero PCM returns empty text without inference; its model
 probabilities are null. The pinned native model otherwise emits “you” on the

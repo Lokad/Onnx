@@ -4,6 +4,12 @@ public sealed record ExecutionOptions(OptimizationMode Optimization, TensorExecu
 {
     public static ExecutionOptions Default => new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Auto);
 
+    /// <summary>Uses automatic tensor dispatch and releases eligible dead intermediate views.</summary>
+    /// <remarks>IntermediateOutputs entries may be cleared after their final use so their
+    /// owned storage can be reused. Inputs, initializers, graph outputs and previously returned
+    /// tensors remain valid. This policy does not impose a process memory ceiling.</remarks>
+    public static ExecutionOptions Memory => new ExecutionOptions(OptimizationMode.Memory, TensorExecutionOptions.Auto);
+
     public static ExecutionOptions Scalar => new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Scalar);
 
     public static ExecutionOptions Simd => new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Simd);

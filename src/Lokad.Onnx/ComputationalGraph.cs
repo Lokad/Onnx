@@ -1516,7 +1516,8 @@ public partial class ComputationalGraph
             // array. Drop its dead name like other views; remaining bindings
             // keep the storage live. An unaliased view above can still return
             // storage when it is the only remaining binding.
-            if (ReleaseReshapeViews && tensor is DenseTensor<float> { IsReshapeView: true })
+            if ((ReleaseReshapeViews || Options.Optimization == OptimizationMode.Memory)
+                && tensor is DenseTensor<float> { IsReshapeView: true })
             {
                 livePayloadBytes -= PayloadBytes(tensor);
                 IntermediateOutputs[name] = null;

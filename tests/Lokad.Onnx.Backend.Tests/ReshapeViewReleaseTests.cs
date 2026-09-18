@@ -2,6 +2,63 @@ namespace Lokad.Onnx.Backend.Tests;
 
 public class ReshapeViewReleaseTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void PublicMemoryPolicy_IsContextLocalAndPreservesHeldValues(bool savedOutput)
+    {
+        var plan = Chain(false, false, savedOutput);
+        var memory = plan.CreateExecution(ExecutionOptions.Memory);
+        var speed = plan.CreateExecution(ExecutionOptions.Default);
+        var held = new List<(Tensor<float> Value, float[] Bits)>();
+        foreach (int size in new[] { 8, 10, 0, 16, 8 })
+        {
+            var input = Feed(size, held.Count + 1);
+            var before = ((Tensor<float>)input["x"]).ToArray();
+            foreach (var context in new[] { memory, speed })
+            {
+                context.Reset();
+                Assert.True(context.Execute(input, true), context.LastErrorMessage);
+                Assert.Equal(before.Select(v => 4 * v), ((Tensor<float>)context.Outputs["y"]).ToArray());
+                foreach (var tensor in context.Outputs.Values.Concat(context.IntermediateOutputs.Values).OfType<Tensor<float>>())
+                    held.Add((tensor, tensor.ToArray()));
+            }
+            Assert.NotNull(speed.IntermediateOutputs["owner"]);
+            if (!savedOutput)
+            {
+                Assert.Null(memory.IntermediateOutputs["owner"]);
+                Assert.Null(memory.IntermediateOutputs["view"]);
+                Assert.Null(memory.IntermediateOutputs["view2"]);
+                Assert.True(memory.LastPoolAllocatedNew < speed.LastPoolAllocatedNew);
+            }
+            Assert.Equal(before, ((Tensor<float>)input["x"]).ToArray());
+            foreach (var prior in held) Assert.Equal(prior.Bits, prior.Value.ToArray());
+            memory.Reset();
+            Assert.False(memory.Execute(new Dictionary<string, ITensor>(), true));
+            foreach (var prior in held) Assert.Equal(prior.Bits, prior.Value.ToArray());
+        }
+        Assert.Equal(OptimizationMode.Speed, plan.Options.Optimization);
+        Assert.Equal(OptimizationMode.Speed, speed.Options.Optimization);
+        Assert.Equal(OptimizationMode.Memory, memory.Options.Optimization);
+    }
+
+    [Fact]
+    public void ExplicitOptions_CanSelectMemoryPolicyPerCall()
+    {
+        var graph = Chain(false, false, false);
+        var input = Feed(8, 1);
+        var held = new List<(Tensor<float> Value, float[] Bits)>();
+        foreach (var options in new[] { ExecutionOptions.Default, ExecutionOptions.Memory, ExecutionOptions.Default })
+        {
+            graph.Reset();
+            Assert.True(graph.Execute(input, true, ExecutionProvider.CPU, options), graph.LastErrorMessage);
+            Assert.Equal(options.Optimization == OptimizationMode.Memory, graph.IntermediateOutputs["owner"] is null);
+            foreach (var tensor in graph.Outputs.Values.Concat(graph.IntermediateOutputs.Values).OfType<Tensor<float>>())
+                held.Add((tensor, tensor.ToArray()));
+            foreach (var prior in held) Assert.Equal(prior.Bits, prior.Value.ToArray());
+        }
+    }
+
     static ComputationalGraph Chain(bool enabled, bool reuse, bool saved)
     {
         var graph = new ComputationalGraph { ReleaseReshapeViews = enabled, ReuseReleasedBuffers = reuse };

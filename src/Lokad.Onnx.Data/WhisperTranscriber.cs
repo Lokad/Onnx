@@ -84,9 +84,9 @@ public sealed class WhisperTranscriber
         {
             cancellation.ThrowIfCancellationRequested();
             var features = WhisperAudio.LogMelSpectrogram(samples, sampleRate);
-            var encoding = encoder.CreateExecution(ExecutionOptions.Default);
-            var first = firstDecoder.CreateExecution(ExecutionOptions.Default);
-            var past = pastDecoder.CreateExecution(ExecutionOptions.Default);
+            var encoding = encoder.CreateExecution(ExecutionOptions.Memory);
+            var first = firstDecoder.CreateExecution(ExecutionOptions.Memory);
+            var past = pastDecoder.CreateExecution(ExecutionOptions.Memory);
             try
             {
                 var outputs = Execute(encoding, new Dictionary<string, ITensor> { ["input_features"] = features });
@@ -100,7 +100,7 @@ public sealed class WhisperTranscriber
     static IReadOnlyDictionary<string, ITensor> Execute(GraphExecution context, Dictionary<string, ITensor> feeds)
     {
         context.Reset();
-        if (!context.Execute(feeds, true, ExecutionProvider.CPU, ExecutionOptions.Default))
+        if (!context.Execute(feeds, true, ExecutionProvider.CPU, ExecutionOptions.Memory))
             throw new InvalidDataException(context.LastErrorMessage, context.LastErrorCause);
         return context.Outputs.ToDictionary(p => p.Key, p => p.Value
             ?? throw new InvalidDataException("Missing Whisper output: " + p.Key));
