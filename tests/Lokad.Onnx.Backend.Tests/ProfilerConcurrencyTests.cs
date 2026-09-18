@@ -23,4 +23,15 @@ public class ProfilerConcurrencyTests
         Assert.Equal(g1.Nodes.Count, g1.LastProfile!.Count);
         Assert.Equal(g2.Nodes.Count, g2.LastProfile!.Count);
     }
+
+    [Fact]
+    public void ReportWithoutNode_CountsWithoutThrowing()
+    {
+        using var profilerScope = Profiler.BeginExecution(true);
+        Profiler.ReportKernelRoute("probe");
+        Profiler.ReportKernelRoute("probe");
+        var snap = Profiler.RouteCountsSnapshot();
+        Assert.Single(snap);
+        Assert.True(snap.TryGetValue("probe", out long n) && n == 2);
+    }
 }
