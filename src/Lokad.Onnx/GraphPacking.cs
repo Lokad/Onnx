@@ -104,6 +104,7 @@ internal static class GraphPacking
             current[kv.Key] = (init, window.Array);
         }
         int live = 0;
+        long retained = 0;
         var stale = new List<float[]>();
         foreach (var kv in graph.PackedWeights)
         {
@@ -112,9 +113,11 @@ internal static class GraphPacking
                 && ReferenceEquals(cur.tensor, rec.SourceRef) && cur.tensor.Length == rec.SourceLength
                 && ReferenceEquals(cur.array, rec.SourceArray)
                 && graph.Initializers.TryGetValue(rec.PackedName, out var held)
-                && ReferenceEquals(held, rec.Packed))
+                && ReferenceEquals(held, rec.Packed)
+                && rec.Packed.Length * 4 <= graph.MaximumPackedWeightBytes - retained)
             {
                 live++;
+                retained += rec.Packed.Length * 4;
                 continue;
             }
             stale.Add(kv.Key);
@@ -135,10 +138,14 @@ internal static class GraphPacking
             {
                 if (rec.SourceName == kv.Key && ReferenceEquals(rec.SourceRef, kv.Value.tensor)) { already = true; break; }
             }
-            if (already) continue;
+            // Aliases of a source array share its one mapping. Replacing that mapping
+            // would leave an unaccounted packed initializer behind.
+            if (already || graph.PackedWeights.ContainsKey(kv.Value.array)) continue;
             string packedName = PackedPrefix + kv.Key;
             if (graph.Initializers.ContainsKey(packedName) || graph.Inputs.ContainsKey(packedName)) continue;
             int n = kv.Value.tensor.Dims[0], k = kv.Value.tensor.Dims[1];
+            long bytes = (long)n * k * 4;
+            if (bytes > graph.MaximumPackedWeightBytes - retained) continue;
             var panel = new float[(long)n * k];
             var dense = (DenseTensor<float>)kv.Value.tensor;
             unsafe
@@ -152,9 +159,8 @@ internal static class GraphPacking
             graph.Initializers[packedName] = packed;
             graph.PackedWeights[kv.Value.array] = new PackedMatMulWeight(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed);
             live++;
+            retained += bytes;
         }
-        long retained = 0;
-        foreach (var rec in graph.PackedWeights.Values) retained += (long)rec.Packed.Length * 4;
         graph.RetainedPackedWeightBytes = retained;
         return live;
     }

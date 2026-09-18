@@ -9,6 +9,22 @@ using static Lokad.Onnx.Runtime;
 
 public partial class ComputationalGraph
 {
+    /// <summary>Creates a graph without an aggregate limit on prepared packed weights.</summary>
+    public ComputationalGraph() : this(long.MaxValue) { }
+
+    /// <summary>Creates a graph with a byte limit on its prepared MatMul packed clones.</summary>
+    /// <remarks>Zero disables packing. This limit excludes original weights, folded transposes,
+    /// execution buffers and child graphs; each child has its own limit. Existing eligible clones
+    /// are retained first, then new candidates are considered in graph node order.</remarks>
+    public ComputationalGraph(long maximumPackedWeightBytes)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(maximumPackedWeightBytes);
+        MaximumPackedWeightBytes = maximumPackedWeightBytes;
+    }
+
+    /// <summary>Maximum total bytes of prepared packed weight clones in this graph.</summary>
+    public long MaximumPackedWeightBytes { get; }
+
     #region Fields
     public string ModelFile = "";
 
@@ -204,6 +220,7 @@ public partial class ComputationalGraph
                         Initializers.Remove(packed.PackedName);
                 }
                 PackedWeights.Clear();
+                RetainedPackedWeightBytes = 0;
             }
         }
     }

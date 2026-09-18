@@ -93,6 +93,13 @@ actual token IDs and distinguishes EOS, token-limit termination and exact digita
 silence. Requests longer than 30 seconds are rejected, not silently truncated.
 WAV decoding/resampling, CLI integration and a long-audio policy remain separate work.
 
+The three loaded graphs limit their optional packed weight copies to 256 MiB for
+the encoder and 64 MiB for each decoder. Original weights, folded transposes and
+request buffers are outside these limits. Other graph callers retain their existing
+packing defaults; `OnnxImport.Load(path, maximumPackedWeightBytes)` and
+`Model.Load(description, maximumPackedWeightBytes)` allow an explicit per-graph
+budget, with zero disabling packing. This is not a process memory ceiling.
+
 Empty or exactly zero PCM returns empty text without inference; its model
 probabilities are null. The pinned native model otherwise emits “you” on the
 one-second all-zero fixture, and its no-speech probability does not catch it.

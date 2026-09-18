@@ -75,10 +75,17 @@ public static class OnnxImport
     public static Exception? LastErrorCause { get; private set; }
 
     public static ComputationalGraph? Load(string onnxInputFilePath) =>
-        LoadCore(() => Parse(onnxInputFilePath), "Could not parse {f} as ONNX model file.", "Could not load {f} as ONNX model.", onnxInputFilePath);
+        Load(onnxInputFilePath, long.MaxValue);
+
+    /// <summary>Loads a file with a per-graph byte limit on prepared MatMul packed clones.</summary>
+    /// <remarks>Zero disables packing. Child graphs receive independent limits of the same size.
+    /// Original weights, folded transposes and execution buffers are excluded. Nonfatal failures,
+    /// including a negative limit, return null and populate the import diagnostics.</remarks>
+    public static ComputationalGraph? Load(string onnxInputFilePath, long maximumPackedWeightBytes) =>
+        LoadCore(() => Parse(onnxInputFilePath), "Could not parse {f} as ONNX model file.", "Could not load {f} as ONNX model.", onnxInputFilePath, maximumPackedWeightBytes);
 
     public static ComputationalGraph? Load(byte[] buffer) =>
-        LoadCore(() => Parse(buffer), "Could not parse buffer as ONNX model.", "Could not load buffer as ONNX model.", null);
+        LoadCore(() => Parse(buffer), "Could not parse buffer as ONNX model.", "Could not load buffer as ONNX model.", null, long.MaxValue);
 
     /// <summary>
     /// Loads a model from caller-owned memory without a <c>ToArray()</c> copy,
@@ -86,15 +93,16 @@ public static class OnnxImport
     /// nonfatal failure. The caller owns the input during the synchronous call.
     /// </summary>
     public static ComputationalGraph? Load(ReadOnlyMemory<byte> buffer) =>
-        LoadCore(() => Parse(buffer), "Could not parse buffer as ONNX model.", "Could not load buffer as ONNX model.", null);
+        LoadCore(() => Parse(buffer), "Could not parse buffer as ONNX model.", "Could not load buffer as ONNX model.", null, long.MaxValue);
 
-    static ComputationalGraph? LoadCore(Func<OnnxModel> parse, string parseTemplate, string loadTemplate, string? path)
+    static ComputationalGraph? LoadCore(Func<OnnxModel> parse, string parseTemplate, string loadTemplate, string? path, long maximumPackedWeightBytes)
     {
         LastErrorMessage = null;
         LastErrorCause = null;
         OnnxModel mp;
         try
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(maximumPackedWeightBytes);
             mp = parse();
         }
         catch (Exception ex) when (!Runtime.IsFatal(ex))
@@ -103,7 +111,7 @@ public static class OnnxImport
         }
         try
         {
-            var g = Model.Load(mp);
+            var g = Model.Load(mp, maximumPackedWeightBytes);
             if (path is not null) g.ModelFile = path;
             return g;
         }

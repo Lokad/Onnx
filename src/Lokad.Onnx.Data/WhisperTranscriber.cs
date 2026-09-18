@@ -35,9 +35,11 @@ public sealed class WhisperTranscriber
         var tokenizer = new WhisperTokenizer(tokenizerFile);
         using var generationFile = File.OpenRead(Path.Combine(modelDirectory, "generation_config.json"));
         generation = new WhisperGeneration(generationFile, tokenizer);
-        encoder = Load(modelDirectory, "encoder_model.onnx");
-        firstDecoder = Load(modelDirectory, "decoder_model.onnx");
-        pastDecoder = Load(modelDirectory, "decoder_with_past_model.onnx");
+        // Three split graphs already retain their original and folded weights. Bound
+        // optional packed clones to leave memory for repeated requests on a 16 GB host.
+        encoder = Load(modelDirectory, "encoder_model.onnx", 256L * 1024 * 1024);
+        firstDecoder = Load(modelDirectory, "decoder_model.onnx", 64L * 1024 * 1024);
+        pastDecoder = Load(modelDirectory, "decoder_with_past_model.onnx", 64L * 1024 * 1024);
         RequireInputs(encoder, new[] { "input_features" });
         RequireInputs(firstDecoder, new[] { "input_ids", "encoder_hidden_states" });
         var pastNames = new List<string> { "input_ids" };
@@ -47,7 +49,7 @@ public sealed class WhisperTranscriber
         RequireInputs(pastDecoder, pastNames);
     }
 
-    static ComputationalGraph Load(string directory, string name) => OnnxImport.Load(Path.Combine(directory, "onnx", name))
+    static ComputationalGraph Load(string directory, string name, long packedWeightBytes) => OnnxImport.Load(Path.Combine(directory, "onnx", name), packedWeightBytes)
         ?? throw new InvalidDataException("Could not load " + name + ": " + OnnxImport.LastErrorMessage, OnnxImport.LastErrorCause);
 
     static void RequireInputs(ComputationalGraph graph, IEnumerable<string> names)

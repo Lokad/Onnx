@@ -16,18 +16,24 @@ public class Model
     /// </remarks>
     public static ComputationalGraph Load(OnnxModel mp) => Load(mp, runOptimizer: true);
 
+    /// <summary>Consumes a model description with a per-graph byte limit on prepared packed clones.</summary>
+    /// <remarks>Original weights, folded transposes and execution buffers are outside this limit.
+    /// Child graphs receive the same limit independently. Zero disables packing.</remarks>
+    public static ComputationalGraph Load(OnnxModel mp, long maximumPackedWeightBytes) =>
+        Load(mp, true, new HashSet<OnnxSubgraph>(ReferenceEqualityComparer.Instance), maximumPackedWeightBytes);
+
     /// <summary>Assembles a graph with optional load-time optimization.</summary>
     /// <remarks>Diagnostic entry for pass tests: skipping the optimizer leaves the pre-pass
     /// graph (preparation still runs). Every fusion is a pipeline pass; the flag gates
     /// running them, not registering the canonical set.</remarks>
     internal static ComputationalGraph Load(OnnxModel mp, bool runOptimizer) =>
-        Load(mp, runOptimizer, new HashSet<OnnxSubgraph>(ReferenceEqualityComparer.Instance));
+        Load(mp, runOptimizer, new HashSet<OnnxSubgraph>(ReferenceEqualityComparer.Instance), long.MaxValue);
 
-    static ComputationalGraph Load(OnnxModel mp, bool runOptimizer, HashSet<OnnxSubgraph> visiting)
+    static ComputationalGraph Load(OnnxModel mp, bool runOptimizer, HashSet<OnnxSubgraph> visiting, long maximumPackedWeightBytes)
     {
         if (Log.IsEnabled(LogLevel.Info)) Info("Model details: Name: {name}. Domain: {dom}. Model opsets: {o}. Producer name: {pn}. Producer version: {pv}. IR Version: {ir}. DocString: {ds}.", mp.Name, mp.Domain, mp.Opset.Select(o => o.Key + ":" + o.Value).JoinWithSpaces(), mp.ProducerName, mp.ProducerVersion, mp.IrVersion.ToString(), mp.DocString);
         var cop = Begin("Creating computational graph from ONNX model");
-        var graph = new ComputationalGraph();
+        var graph = new ComputationalGraph(maximumPackedWeightBytes);
         graph.ModelFile = "<buffer>";
         graph.Opset = mp.Opset;
         graph.MetadataProps = mp.MetadataProps;
@@ -97,7 +103,7 @@ public class Model
         return graph;
     }
 
-    static ComputationalGraph BuildBranch(OnnxSubgraph branch, Dictionary<string, int> opsets, bool runOptimizer, HashSet<OnnxSubgraph> visiting)
+    static ComputationalGraph BuildBranch(OnnxSubgraph branch, Dictionary<string, int> opsets, bool runOptimizer, HashSet<OnnxSubgraph> visiting, long maximumPackedWeightBytes)
     {
         if (!visiting.Add(branch)) throw new InvalidOperationException("Cyclic graph attributes are not supported.");
         try
@@ -106,7 +112,7 @@ public class Model
             {
                 Name = branch.Name, Inputs = branch.Inputs, Outputs = branch.Outputs,
                 Initializers = branch.Initializers, Nodes = branch.Nodes, Opset = opsets,
-            }, runOptimizer, visiting);
+            }, runOptimizer, visiting, maximumPackedWeightBytes);
         }
         finally { visiting.Remove(branch); }
     }
@@ -126,7 +132,7 @@ public class Model
             Name = np.Name,
             ID = np.Name.GetHashCode(),
             Attributes = np.Attributes.ToDictionary(p => p.Key, p => p.Value is OnnxSubgraph branch
-                ? (object)BuildBranch(branch, graph.Opset, runOptimizer, visiting) : p.Value),
+                ? (object)BuildBranch(branch, graph.Opset, runOptimizer, visiting, graph.MaximumPackedWeightBytes) : p.Value),
             Op = op,
             OpTypeName = np.OpType ?? "",
             Domain = domain,
