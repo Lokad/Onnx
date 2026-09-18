@@ -52,6 +52,10 @@ public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntri
     internal IReadOnlyDictionary<float[], PreparedLstmTranspose>? LstmTransposedWeights { get; init; }
     /// <summary>Optional prepared panel-packed-LSTM map; null disables packed XW routing.</summary>
     internal IReadOnlyDictionary<float[], PreparedLstmPack>? LstmPackedWeights { get; init; }
+    /// <summary>Optional K-blocked prepared-pack map; null disables K-blocked routing.</summary>
+    internal IReadOnlyDictionary<float[], PackedMatMulWeightBlocked>? KBlockedMatMulWeights { get; init; }
+    /// <summary>Prototype switch (W3): route prepared products through K-blocked panels. Default off; off preserves legacy dispatch bit-identically. Preparation retains blocked clones only when the graph Options carry the switch at RefreshLifetimeAnalysis.</summary>
+    public bool UseKBlockedPanels { get; init; }
 
     public static TensorExecutionOptions Scalar => new TensorExecutionOptions(false, false, 1);
 

@@ -45,7 +45,11 @@ static class Bench
         }
         if (args.Length > 0 && args[0] == "gemm-matrix")
         {
-            return RunGemmMatrix();
+            return RunGemmMatrix(TensorExecutionOptions.Auto);
+        }
+        if (args.Length > 0 && args[0] == "gemm-matrix-kblocked")
+        {
+            return RunGemmMatrix(TensorExecutionOptions.Auto with { UseKBlockedPanels = true });
         }
         var selected = new List<string>();
         string modeName = "auto";
@@ -347,10 +351,10 @@ static class Bench
         return "single-cpu-" + modeName.ToLowerInvariant() + "-" + threads + " (diagnostic)";
     }
 
-    static int RunGemmMatrix()
+    static int RunGemmMatrix(TensorExecutionOptions tensorOpts)
     {
-        Console.WriteLine("gemm-matrix shapes=" + GemmShapes.Canonical.Count + " tolerance=" + GemmMatrix.Tolerance.ToString("E0") + " (routes plus double-precision agreement; no timing)");
-        var results = GemmMatrix.Run(GemmShapes.Canonical);
+        Console.WriteLine("gemm-matrix shapes=" + GemmShapes.Canonical.Count + " tolerance=" + GemmMatrix.Tolerance.ToString("E0") + " kblocked=" + tensorOpts.UseKBlockedPanels + " (routes plus double-precision agreement; no timing)");
+        var results = GemmMatrix.Run(GemmShapes.Canonical, tensorOpts);
         int fail = 0;
         foreach (var r in results)
         {

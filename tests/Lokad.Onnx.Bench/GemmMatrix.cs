@@ -47,12 +47,17 @@ public static class GemmMatrix
 
     public static List<GemmMatrixResult> Run(IEnumerable<GemmShape> shapes)
     {
+        return Run(shapes, TensorExecutionOptions.Auto);
+    }
+
+    public static List<GemmMatrixResult> Run(IEnumerable<GemmShape> shapes, TensorExecutionOptions tensorOpts)
+    {
         var results = new List<GemmMatrixResult>();
-        foreach (var s in shapes) results.Add(RunOne(s));
+        foreach (var s in shapes) results.Add(RunOne(s, tensorOpts));
         return results;
     }
 
-    static GemmMatrixResult RunOne(GemmShape s)
+    static GemmMatrixResult RunOne(GemmShape s, TensorExecutionOptions tensorOpts)
     {
         Tensor<float> y;
         string route;
@@ -65,9 +70,10 @@ public static class GemmMatrix
             g.Initializers["w"] = w;
             g.Outputs["z"] = DenseTensor<float>.OfShape(new int[] { s.M, s.K });
             g.Nodes.Add(new Node { Name = "mm", Op = OpType.MatMul, Inputs = new[] { "x", "w" }, Outputs = new[] { "z" } });
+            g.Options = new ExecutionOptions(OptimizationMode.Speed, tensorOpts);
             g.RefreshLifetimeAnalysis();
             using var scope = Profiler.BeginExecution(true);
-            if (!g.Execute(new Dictionary<string, ITensor> { ["x"] = FillF(s.M, s.N) }, true)) throw new InvalidOperationException(s.Name + ": exec failed: " + g.LastErrorMessage);
+            if (!g.Execute(new Dictionary<string, ITensor> { ["x"] = FillF(s.M, s.N) }, true, ExecutionProvider.CPU, new ExecutionOptions(OptimizationMode.Speed, tensorOpts))) throw new InvalidOperationException(s.Name + ": exec failed: " + g.LastErrorMessage);
             y = (Tensor<float>)g.Outputs["z"];
             route = RouteOf(g);
         }
@@ -75,7 +81,7 @@ public static class GemmMatrix
         {
             using var scope = Profiler.BeginExecution(true);
             Profiler.StartNodeProfile(1, OpType.MatMul);
-            y = Tensor<float>.MatMul2D(FillF(s.M, s.N), FillF(s.N, s.K), TensorExecutionOptions.Auto);
+            y = Tensor<float>.MatMul2D(FillF(s.M, s.N), FillF(s.N, s.K), tensorOpts);
             Profiler.StopNodeProfile();
             var snap = Profiler.RouteCountsSnapshot();
             route = snap.Count == 0 ? "none" : string.Join("+", snap.Keys.OrderBy(k => k, StringComparer.Ordinal));

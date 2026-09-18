@@ -45,6 +45,19 @@ internal sealed record PackedMatMulWeight(
     DenseTensor<float> Packed);
 
 /// <summary>
+/// A MatMul weight initializer with a K-blocked panel-packed clone (W3 prototype): the reduction axis is blocked in 256-row chunks, each packed in standard panel convention with its own tail, so per-block products reuse existing row-group kernels with accumulate semantics. N and K are the source panel dims; the clone itself is one flat float array.
+/// </summary>
+internal sealed record PackedMatMulWeightBlocked(
+    string SourceName,
+    ITensor SourceRef,
+    long SourceLength,
+    float[] SourceArray,
+    string PackedName,
+    DenseTensor<float> Packed,
+    int N,
+    int K);
+
+/// <summary>
 /// An LSTM input-weight (W) initializer with a prepared direction-major
 /// panel-packed clone. Each direction slice holds PackPanelsB(inputSize, 4H)
 /// of the transposed [inputSize,4H] slice, so the hoisted XW projection runs
@@ -74,6 +87,20 @@ internal static class GraphPacking
     internal const string PackedPrefix = "packed:";
     internal const string LstmTransposePrefix = "lstm-t:";
     internal const string LstmPackPrefix = "lstm-p:";
+    internal const string KBlockedPrefix = "kbpacked:";
+    /// <summary>W3 prototype reduction-block rows; matches ORT PACKED_STRIDEK as the comparison point, not a claimed optimum.</summary>
+    internal const int KBlockedRows = 256;
+    /// <summary>W3 prototype panel tile width; must match the PackPanelsB tile (4 x Vector256 lanes).</summary>
+    internal const int KBlockedPanel = 32;
+    internal static int KBlockedChunkBytes(int k, int cntN) => ((k + KBlockedPanel - 1) / KBlockedPanel) * cntN * KBlockedPanel;
+    internal static long KBlockedTotalBytes(int n, int k)
+    {
+        long total = (long)(n / KBlockedRows) * KBlockedChunkBytes(k, KBlockedRows);
+        int rem = n % KBlockedRows;
+        if (rem > 0) total += KBlockedChunkBytes(k, rem);
+        return total;
+    }
+    internal static long KBlockedChunkOffset(int k, int block) => (long)block * KBlockedChunkBytes(k, KBlockedRows);
 
     /// <summary>Upper source-rows bound of measured packed-kernel territory: 4096 is admitted (encoder K=4096 projections at M=16), wider reductions are unmeasured and stay unpacked.</summary>
     internal const int MaxPackedAxis = 4096;
@@ -466,6 +493,113 @@ internal static class GraphPacking
         return live;
     }
     /// <summary>
+    /// <summary>
+    /// Builds K-blocked panel-packed clones of already-packed MatMul weights (W3 prototype): admission inherits packability from PackedWeights and adds more than one 256-row reduction block. Both clones are retained during the prototype so the switch selects at dispatch; retained-memory accounting for the pair is part of the ship decision.
+    /// </summary>
+    internal static int PrepareKBlockedWeights(ComputationalGraph graph)
+    {
+        // Prototype opt-in: retain the second clone set only when the graph opts into K-blocked dispatch at preparation; default preparation stays byte-identical to legacy.
+        if (!graph.Options.Tensor.UseKBlockedPanels) return 0;
+        var current = new Dictionary<string, (ITensor tensor, float[] array)>(StringComparer.Ordinal);
+        foreach (var kv in graph.PackedWeights)
+        {
+            var rec = kv.Value;
+            int n = rec.Packed.Dimensions[0], k = rec.Packed.Dimensions[1];
+            if (n <= KBlockedRows) continue;
+            if (graph.Inputs.ContainsKey(rec.SourceName) || graph.Outputs.ContainsKey(rec.SourceName)) continue;
+            if (!graph.Initializers.TryGetValue(rec.SourceName, out var init) || !ReferenceEquals(init, rec.SourceRef)) continue;
+            current[rec.SourceName] = (rec.SourceRef, rec.SourceArray);
+        }
+        int live = 0;
+        var stale = new List<float[]>();
+        foreach (var kv in graph.KBlockedWeights)
+        {
+            var rec = kv.Value;
+            if (current.TryGetValue(rec.SourceName, out var cur)
+                && ReferenceEquals(cur.tensor, rec.SourceRef) && cur.tensor.Length == rec.SourceLength
+                && ReferenceEquals(cur.array, rec.SourceArray)
+                && graph.Initializers.TryGetValue(rec.PackedName, out var held)
+                && ReferenceEquals(held, rec.Packed))
+            {
+                live++;
+                continue;
+            }
+            stale.Add(kv.Key);
+        }
+        foreach (float[] key in stale)
+        {
+            if (graph.KBlockedWeights.TryGetValue(key, out var rec))
+            {
+                if (graph.Initializers.TryGetValue(rec.PackedName, out var held) && ReferenceEquals(held, rec.Packed))
+                    graph.Initializers.Remove(rec.PackedName);
+                graph.KBlockedWeights.Remove(key);
+            }
+        }
+        foreach (var kv in current)
+        {
+            bool already = false;
+            foreach (var rec in graph.KBlockedWeights.Values)
+            {
+                if (rec.SourceName == kv.Key && ReferenceEquals(rec.SourceRef, kv.Value.tensor)) { already = true; break; }
+            }
+            if (already) continue;
+            string packedName = KBlockedPrefix + kv.Key;
+            if (graph.Initializers.ContainsKey(packedName) || graph.Inputs.ContainsKey(packedName)) continue;
+            var dense = (DenseTensor<float>)kv.Value.tensor;
+            int n = dense.Dimensions[0], k = dense.Dimensions[1];
+            int blocks = (n + KBlockedRows - 1) / KBlockedRows;
+            var panel = new float[KBlockedTotalBytes(n, k)];
+            unsafe
+            {
+                using var sh = dense.Buffer.Pin();
+                using var ph = new Memory<float>(panel).Pin();
+                float* sp = (float*)sh.Pointer;
+                float* pp = (float*)ph.Pointer;
+                for (int b = 0; b < blocks; b++)
+                {
+                    int cntN = n - b * KBlockedRows;
+                    if (cntN > KBlockedRows) cntN = KBlockedRows;
+                    MathOps.PackPanelsBStrided(cntN, k, k, sp + (long)b * KBlockedRows * k, pp + KBlockedChunkOffset(k, b));
+                }
+            }
+            var packed = new DenseTensor<float>(new Memory<float>(panel), new int[] { panel.Length });
+            packed.Name = packedName;
+            graph.Initializers[packedName] = packed;
+            graph.KBlockedWeights[kv.Value.array] = new PackedMatMulWeightBlocked(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed, n, k);
+            live++;
+        }
+        return live;
+    }
+
+    /// <summary>
+    /// Resolves a B-side operand to its K-blocked clone when the unwrapped source is the unchanged initializer the clone was built from. The operand trailing two dims must equal the source panel dims. Broadcast views resolve through their source.
+    /// </summary>
+    internal static PackedMatMulWeightBlocked? ResolveKBlocked(IReadOnlyDictionary<float[], PackedMatMulWeightBlocked>? map, Tensor<float> y)
+    {
+        if (map is null || map.Count == 0) return null;
+        Tensor<float> core = y;
+        while (core is BroadcastedTensor<float> view) core = view.source;
+        if (core is DenseTensor<float> dense
+            && DenseArray(dense) is float[] backing
+            && map.TryGetValue(backing, out var rec)
+            && ReferenceEquals(rec.SourceArray, DenseArray(dense))
+            && y.Dimensions.Length >= 2
+            && y.Dimensions[y.Dimensions.Length - 2] == rec.N
+            && y.Dimensions[y.Dimensions.Length - 1] == rec.K)
+        {
+            return rec;
+        }
+        Tensor<float> direct = y;
+        while (direct is BroadcastedTensor<float> vw) direct = vw.source;
+        if (direct is DenseTensor<float> named && named.Name is not null && named.Name.StartsWith(KBlockedPrefix, StringComparison.Ordinal))
+        {
+            foreach (var cand in map.Values)
+            {
+                if (cand.PackedName == named.Name && ReferenceEquals(cand.Packed, named)) return cand;
+            }
+        }
+        return null;
+    }
     /// Resolves a B-side operand to its packed clone when the unwrapped
     /// source is a fresh mapped weight. Broadcast views resolve through
     /// their source; anything else falls back to the unpacked path.

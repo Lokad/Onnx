@@ -300,6 +300,60 @@ where T : unmanaged
     // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     /// <summary>
+    /// Runs the K-blocked panel-packed product (W3 prototype): one row-group pass per 256-row reduction block with overwrite-first and accumulate-rest semantics, matching the K-major order of the blocked clone. Each block gathers its x columns once into scratch; the row-group kernels are unchanged.
+    /// </summary>
+    internal static Tensor<float> MatMulKBlockedProduct(Tensor<float> x, PackedMatMulWeightBlocked kblocked, DenseTensor<float> destination, TensorExecutionOptions options)
+    {
+        options.Validate();
+        if (x.Rank != 2) throw new ArgumentException(nameof(x), "The rank of this tensor is not 2.");
+        var m = x.Dimensions[0];
+        var n = kblocked.N;
+        var k = kblocked.K;
+        if (x.Dimensions[1] != n) throw new ArgumentException("X columns must match the blocked panel reduction rows.");
+        if (destination.Dimensions.Length != 2 || destination.Dimensions[0] != m || destination.Dimensions[1] != k) throw new ArgumentException(nameof(destination), "Destination shape must match the matrix product shape.");
+        if (!HasStandardStrides(destination)) throw new ArgumentException(nameof(destination), "Destination must have standard row-major strides.");
+        if (ReferenceEquals(destination, x) || TensorAlias.SharesBackingMemory(destination, x)) throw new ArgumentException(nameof(destination), "Destination must not alias the input matrix.");
+        var dx = RequireContiguous(x, nameof(x), options.CopyReporter);
+        StartOpStage(OpStage.Math);
+        ReportKernelRoute("prep-kblocked");
+        using var xh = dx.Buffer.Pin();
+        using var ph = kblocked.Packed.Buffer.Pin();
+        using var oh = destination.Buffer.Pin();
+        var gather = RentScratch<float>(m * GraphPacking.KBlockedRows, options);
+        try
+        {
+            unsafe
+            {
+                float* xp = (float*)xh.Pointer;
+                float* pp = (float*)ph.Pointer;
+                float* dp = (float*)oh.Pointer;
+                fixed (float* gp = gather)
+                {
+                    int blocks = (n + GraphPacking.KBlockedRows - 1) / GraphPacking.KBlockedRows;
+                    for (int b = 0; b < blocks; b++)
+                    {
+                        int cntN = n - b * GraphPacking.KBlockedRows;
+                        if (cntN > GraphPacking.KBlockedRows) cntN = GraphPacking.KBlockedRows;
+                        int col0 = b * GraphPacking.KBlockedRows;
+                        for (int r = 0; r < m; r++)
+                        {
+                            new Span<float>(xp + r * n + col0, cntN).CopyTo(new Span<float>(gp + r * cntN, cntN));
+                        }
+                        RunPackedRowGroups(m, cntN, k, gp, pp + GraphPacking.KBlockedChunkOffset(k, b), dp, overwrite: b == 0, "kb");
+                    }
+                }
+            }
+        }
+        finally
+        {
+            ArrayPool<float>.Shared.Return(gather);
+        }
+        return destination;
+    }
+
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    /// <summary>
     /// Runs the panel-packed product with an already-resolved packed B clone
     /// (same kernels and overwrite contract as the MatMul2D packed branch).
     /// The packed tensor carries panel dims [n,k]; x is [m,n], destination
@@ -346,6 +400,11 @@ where T : unmanaged
         var m = x.Dimensions[0];
         var n = x.Dimensions[1];
         var k = y.Dimensions[1];
+
+        if (options.UseKBlockedPanels && m >= 2 && GraphPacking.ResolveKBlocked(options.KBlockedMatMulWeights, y) is { } kblocked)
+        {
+            return MatMulKBlockedProduct(x, kblocked, destination, options);
+        }
 
         if (ResolvePackedKernel(options, y, m) is { } packedB)
         {
@@ -858,10 +917,10 @@ where T : unmanaged
         float* dr = dest;
             if (TryRunPackedRowGroupsTiled(m, n, k, x, packed, dest, overwrite))
             {
-                ReportKernelRoute(panel == "trans" ? "trans-tiled" : panel == "conv" ? "conv-tiled" : "prep-tiled");
+                ReportKernelRoute(panel == "trans" ? "trans-tiled" : panel == "conv" ? "conv-tiled" : panel == "kb" ? "kb-tiled" : "prep-tiled");
                 return;
             }
-            ReportKernelRoute(panel == "trans" ? "trans-grouped" : panel == "conv" ? "conv-grouped" : "prep-grouped");
+            ReportKernelRoute(panel == "trans" ? "trans-grouped" : panel == "conv" ? "conv-grouped" : panel == "kb" ? "kb-grouped" : "prep-grouped");
         if (Avx512F.IsSupported && rest >= 6)
         {
             int main = (rest / 12) * 12;

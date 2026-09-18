@@ -35,6 +35,8 @@ public class ComputationalGraph
     internal Dictionary<float[], PreparedLstmTranspose> LstmTransposes = new Dictionary<float[], PreparedLstmTranspose>();
     /// <summary>Prepared panel-packed LSTM input-weight clones by source initializer array.</summary>
     internal Dictionary<float[], PreparedLstmPack> LstmPacks = new Dictionary<float[], PreparedLstmPack>();
+    /// <summary>K-blocked prepared MatMul clones by source initializer array (W3 prototype).</summary>
+    internal Dictionary<float[], PackedMatMulWeightBlocked> KBlockedWeights = new Dictionary<float[], PackedMatMulWeightBlocked>();
     internal Dictionary<string, GraphConstants.FoldedComputation> FoldedComputations = new Dictionary<string, GraphConstants.FoldedComputation>(StringComparer.Ordinal);
     /// <summary>Live computed-constant folds from the last preparation.</summary>
     public int FoldedComputationCount => FoldedComputations.Count;
@@ -210,6 +212,12 @@ public class ComputationalGraph
                         Initializers.Remove(pack.PackedName);
                 }
                 LstmPacks.Clear();
+                foreach (var kb in KBlockedWeights.Values)
+                {
+                    if (Initializers.TryGetValue(kb.PackedName, out var heldKb) && ReferenceEquals(heldKb, kb.Packed))
+                        Initializers.Remove(kb.PackedName);
+                }
+                KBlockedWeights.Clear();
                 GraphConstants.RebuildFoldedComputations(this);
             }
         }
@@ -808,6 +816,7 @@ public class ComputationalGraph
         nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights } };
         nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { LstmTransposedWeights = LstmTransposes } };
         nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { LstmPackedWeights = LstmPacks } };
+        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { KBlockedMatMulWeights = KBlockedWeights } };
         livePayloadBytes = LivePayloadBytes();
         NoteLivePeak();
         foreach (var node in Nodes)
@@ -1209,6 +1218,7 @@ public class ComputationalGraph
         GraphConstants.FoldBranchConstants(this);
         FoldConstantTransposes();
         GraphPacking.PackMatMulWeights(this);
+        GraphPacking.PrepareKBlockedWeights(this);
         GraphPacking.PrepareLstmWeights(this);
         GraphPacking.PrepareLstmPacks(this);
         // Preparation assigns stable sequential identities by file-order

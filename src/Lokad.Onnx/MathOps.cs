@@ -641,6 +641,18 @@ public class MathOps
                           float* B,
                           float* P)
     {
+        PackPanelsBStrided(N, K, K, B, P);
+    }
+
+    /// <summary>
+    /// Packs B rows of length K and row stride rowStride into 32-column panels (same convention as PackPanelsB); used for K-blocked chunks of a wider row-major matrix.
+    /// </summary>
+    public unsafe static void PackPanelsBStrided(int N,
+                          int K,
+                          int rowStride,
+                          float* B,
+                          float* P)
+    {
         int panel = 4 * Vector256<float>.Count;
         int blocked = K - (K % panel);
         bool wide512 = Avx512F.IsSupported;
@@ -650,7 +662,7 @@ public class MathOps
             float* dst = P + (kb / panel) * N * panel;
             for (int j = 0; j < N; j++)
             {
-                float* src = B + j * K + kb;
+                float* src = B + j * rowStride + kb;
                 float* d = dst + j * panel;
                 if (wide512)
                 {
@@ -674,7 +686,7 @@ public class MathOps
         float* tail = P + (blocked / (4 * Vector256<float>.Count)) * N * (4 * Vector256<float>.Count);
         for (int j = 0; j < N; j++)
         {
-            float* src = B + j * K + blocked;
+            float* src = B + j * rowStride + blocked;
             float* dst = tail + j * rem;
             for (int k = 0; k < rem; k++) dst[k] = src[k];
         }
