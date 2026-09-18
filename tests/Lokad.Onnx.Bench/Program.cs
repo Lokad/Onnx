@@ -866,14 +866,14 @@ static class Bench
                     TimeWarmupPair();
                     if (wlok.Count >= Math.Max(warmupMin, 3) && warmLokMs >= WarmupMinimumMs && warmOrtMs >= WarmupMinimumMs
                         && WarmupSteady(wlok) && WarmupSteady(wort)) { warmupStop = "steady"; break; }
-                    if (warmWall.Elapsed.TotalSeconds >= 60) break;
+                    if (warmWall.Elapsed.TotalSeconds >= 60) { warmupStop = "wall-cap"; break; }
                 }
                 warmupUsed = wlok.Count;
             }
             Console.WriteLine("warmup " + name + " used=" + warmupUsed + " stop=" + warmupStop
                 + " lok=[" + string.Join(",", wlok.Select(v => v.ToString("F6"))) + "]"
                 + " ort=[" + string.Join(",", wort.Select(v => v.ToString("F6"))) + "]");
-            if (CampaignEvidence.Current != null && (warmupStop == "max-reached" || warmLokMs < WarmupMinimumMs || warmOrtMs < WarmupMinimumMs))
+            if (CampaignEvidence.Current != null && (warmupStop == "max-reached" || warmupStop == "wall-cap" || warmLokMs < WarmupMinimumMs || warmOrtMs < WarmupMinimumMs))
                 throw new InvalidOperationException(name + ": warmup duration/convergence not reached; no scored series.");
             // Warmed reusable-context handle on the shared prepared plan (no per-run context allocation or copy-back).
             var ctx = graph.CreateExecution(lokadOpts);

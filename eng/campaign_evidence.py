@@ -200,7 +200,7 @@ def parse_log(path):
         used = int(warm["used"])
         wmin, wmax = int(host["warmupMin"]), int(host["warmupMax"])
         if quarantined:
-            require(warm["stop"] in ("steady", "fixed", "max-reached"), "unknown warmup stop: " + name)
+            require(warm["stop"] in ("steady", "fixed", "max-reached", "wall-cap"), "unknown warmup stop: " + name)
         elif wmin == wmax == -1:
             require(warm["stop"] == "fixed" and used == int(host["warmup"]), "fixed warmup mismatch: " + name)
         else:

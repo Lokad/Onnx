@@ -155,6 +155,20 @@ class CampaignTests(unittest.TestCase):
         self.assertNotIn("resnet50-224", result.get("regressions", []))
         self.assertNotIn("dinov3-224", result.get("regressions", []))
 
+    def test_wall_cap_stop_quarantines_like_max_reached(self):
+        self.candidate = self.make_campaign("comparison", drop=("resnet50-224",))
+        run = self.candidate["runs"][0]
+        path = self.directory / run["log"]
+        text = path.read_text(encoding="utf-8")
+        old = "warmup resnet50-224 used=5 stop=max-reached"
+        self.assertIn(old, text)
+        path.write_text(text.replace(old, "warmup resnet50-224 used=5 stop=wall-cap"), encoding="utf-8")
+        run["log_sha256"] = evidence.sha256(path)
+        result = self.evaluate(verdict="PASS")
+        self.assertEqual(result["quarantined"], {"resnet50-224": ["comparison"]})
+        marked = [row for row in result["table"] if "quarantined" in row]
+        self.assertEqual({row["case"] for row in marked}, {"resnet50-224"})
+
     def test_quarantined_primary_case_is_inconclusive(self):
         self.candidate = self.make_campaign("comparison", drop=("e5-30tok",))
         result = self.evaluate(expected_code=3, verdict="INCONCLUSIVE")
