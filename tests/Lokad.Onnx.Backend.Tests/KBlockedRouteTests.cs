@@ -112,6 +112,9 @@ public class KBlockedRouteTests
         double worst = 0.0;
         for (int i = 0; i < zf.Length; i++) worst = Math.Max(worst, Math.Abs(zf[i] - zd[i]) / Math.Max(1.0, Math.Abs(zd[i])));
         Assert.True(worst <= 1e-4, "worst=" + worst);
+        graph.Reset();
+        Assert.True(graph.Execute(new Dictionary<string, ITensor> { ["x"] = x }, true), graph.LastErrorMessage);
+        Assert.Equal(zf, ((Tensor<float>)graph.Outputs["z"]).ToArray());
     }
     [Fact]
     public void PackingReport_CountsBlockedClones()
@@ -133,5 +136,30 @@ public class KBlockedRouteTests
         Assert.Equal(1, graph.PackingReport.KBlockedLive);
         Assert.Equal(4194304, graph.PackingReport.KBlockedRetainedBytes);
         Assert.Equal(1, graph.PackingReport.Live);
+    }
+    [Fact]
+    public void BlockedProduct_IsDeterministicAcrossRuns()
+    {
+        var x = DenseTensor<float>.OfShape(new int[] { 16, 1024 });
+        var xs = x.Buffer.Span;
+        for (int i = 0; i < xs.Length; i++) xs[i] = (float)((i % 97) - 48) * 0.01f;
+        var w = DenseTensor<float>.OfShape(new int[] { 1024, 1024 });
+        var ws = w.Buffer.Span;
+        for (int i = 0; i < ws.Length; i++) ws[i] = (float)(((i + 31) % 97) - 48) * 0.01f;
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "kb-det";
+        graph.Inputs["x"] = DenseTensor<float>.OfShape(new int[] { 16, 1024 });
+        graph.Initializers["w"] = w;
+        graph.Outputs["z"] = DenseTensor<float>.OfShape(new int[] { 16, 1024 });
+        graph.Nodes.Add(new Node { Name = "mm", Op = OpType.MatMul, Inputs = new[] { "x", "w" }, Outputs = new[] { "z" } });
+        graph.Options = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Auto with { UseKBlockedPanels = true });
+        graph.RefreshLifetimeAnalysis();
+        var feeds = new Dictionary<string, ITensor> { ["x"] = x };
+        Assert.True(graph.Execute(feeds, true, ExecutionProvider.CPU, graph.Options), graph.LastErrorMessage);
+        var first = ((Tensor<float>)graph.Outputs["z"]).ToArray();
+        graph.Reset();
+        Assert.True(graph.Execute(feeds, true, ExecutionProvider.CPU, graph.Options), graph.LastErrorMessage);
+        var second = ((Tensor<float>)graph.Outputs["z"]).ToArray();
+        Assert.Equal(first, second);
     }
 }
