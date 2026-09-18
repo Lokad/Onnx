@@ -30,6 +30,7 @@ internal static class PackRace
             (126, 384, 384), (126, 384, 1536), (126, 1536, 384),
             (128, 384, 384), (128, 384, 1536), (128, 1536, 384),
             (8, 384, 384), (64, 384, 384), (30, 32, 384),
+            (30, 64, 30), (30, 32, 30), (8, 64, 8), (8, 384, 8), (128, 64, 128), (12, 16, 12),
         };
         var rnd = new Random(611);
         int rc = 0;
@@ -155,6 +156,21 @@ internal static class PackRace
             for (int i = 0; i < cs.Length; i++) { double d = Math.Abs(cs[i] - ce[i]); if (double.IsNaN(d)) { we = double.NaN; break; } if (d > we) we = d; }
             double wb = 0;
             for (int i = 0; i < cRef.Length; i++) { double d = Math.Abs(cRef[i] - cb[i]); if (double.IsNaN(d)) { wb = double.NaN; break; } if (d > wb) wb = d; }
+            var cnw = new float[M * K];
+            var pk = new float[N * K];
+            var hcnw = System.Runtime.InteropServices.GCHandle.Alloc(cnw, System.Runtime.InteropServices.GCHandleType.Pinned);
+            var hpk = System.Runtime.InteropServices.GCHandle.Alloc(pk, System.Runtime.InteropServices.GCHandleType.Pinned);
+            var hbb = System.Runtime.InteropServices.GCHandle.Alloc(b, System.Runtime.InteropServices.GCHandleType.Pinned);
+            double tnt = 0, tnp = 0, wn = double.NaN;
+            try
+            {
+                IntPtr cnpw = hcnw.AddrOfPinnedObject(), pkp = hpk.AddrOfPinnedObject(), bbp = hbb.AddrOfPinnedObject();
+                tnt = Time(() => { Array.Clear(cRef, 0, cRef.Length); MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(M, N, K, (float*)ap, (float*)bbp, (float*)cr); });
+                tnp = Time(() => { Array.Clear(cnw, 0, cnw.Length); MathOps.PackPanelsB(N, K, (float*)bbp, (float*)pkp); if ((M % 3) == 0) MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(M, N, K, (float*)ap, (float*)pkp, (float*)cnpw); else MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(M, N, K, (float*)ap, (float*)pkp, (float*)cnpw); });
+                wn = 0;
+                for (int i = 0; i < cRef.Length; i++) { double d = Math.Abs(cRef[i] - cnw[i]); if (double.IsNaN(d)) { wn = double.NaN; break; } if (d > wn) wn = d; }
+            }
+            finally { hcnw.Free(); hpk.Free(); hbb.Free(); }
             string line = $"packrace M={M} N={N} K={K} ref2={t2:F3}ms twin6={t6:F3}ms twin4={t4:F3}ms twin8={t8:F3}ms bump2={tbump:F3}ms epil={te:F3}ms comp={t2 + ta:F3}ms agree={agree}/{w4:E2}/{w8:E2}/{wb:E2}/{we:E2} " + ((ok && w4 == 0.0 && w8 == 0.0 && wb == 0.0 && we == 0.0) ? "OK" : "FAIL");
             ok = ok && we == 0.0;
             ok = ok && wb == 0.0;
@@ -175,6 +191,8 @@ internal static class PackRace
                 line += $" ref3={t3:F3}ms agree3={w3:E2}" + (w3 == 0.0 ? "" : " FAIL3");
                 ok = ok && w3 == 0.0;
             }
+            line += $" ntile={tnt:F3}ms npack={tnp:F3}ms agreeN={wn:E2}" + (wn == 0.0 ? "" : " FAILN");
+            ok = ok && wn == 0.0;
             Console.WriteLine(line);
             return ok ? 0 : 1;
         }

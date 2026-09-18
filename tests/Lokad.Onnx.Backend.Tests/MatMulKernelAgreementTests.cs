@@ -469,7 +469,67 @@ public class MatMulKernelAgreementTests
     }
 
     [SkippableFact]
-    public unsafe void PackedBiasMatchesCompositeBitwise()
+    public unsafe void PackedSmallNKMatchesTiledBitwise()
+    {
+        // E93: the NK-gated per-call pack reuses the agreed panels plus
+        // bump/3-row consume kernels on QK-tiny shapes, so it must agree with
+        // the unpacked tiled kernel bit-wise, including rem-only widths.
+        Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
+        var rnd = new Random(Seed);
+        SmallNKBumpEqual(30, 64, 30, rnd);
+        SmallNKBumpEqual(30, 32, 30, rnd);
+        SmallNKBumpEqual(8, 64, 8, rnd);
+        SmallNKBumpEqual(8, 384, 8, rnd);
+        SmallNKBumpEqual(128, 64, 128, rnd);
+        SmallNK3Equal(30, 64, 30, rnd);
+        SmallNK3Equal(30, 32, 30, rnd);
+        SmallNK3Equal(30, 64, 8, rnd);
+    }
+
+    static unsafe void SmallNKBumpEqual(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, q, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"small-NK bump packed diverges bitwise from tiled on {m}x{n}x{k}.");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        var r = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, r, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"small-NK bump packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
+    }
+
+    static unsafe void SmallNK3Equal(int m, int n, int k, Random rnd)
+    {
+        var a = FillRect(m, n, rnd);
+        var b = FillRect(n, k, rnd);
+        var c1 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, c1);
+        var q = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        var c2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, q, c2);
+        Assert.True(c1.Buffer.Span.SequenceEqual(c2.Buffer.Span),
+            $"small-NK 3-row packed diverges bitwise from tiled on {m}x{n}x{k}.");
+        var d1 = FillRect(m, k, rnd);
+        var d2 = Tensor<float>.Zeros(m, k).ToDenseTensor();
+        d1.Buffer.Span.CopyTo(d2.Buffer.Span);
+        RunUnsafe((pa, pb, pc) => MathOps.mm_unsafe_vectorized_intrinsics_2x4tiled(m, n, k, (float*)pa, (float*)pb, (float*)pc), a, b, d1);
+        var r = Tensor<float>.Zeros(n, k).ToDenseTensor();
+        RunPacked((pa, pb, pp, pc) => { MathOps.PackPanelsB(n, k, (float*)pb, (float*)pp); MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)pa, (float*)pp, (float*)pc); }, a, b, r, d2);
+        Assert.True(d1.Buffer.Span.SequenceEqual(d2.Buffer.Span),
+            $"small-NK 3-row packed diverges bitwise from tiled on nonzero destination {m}x{n}x{k}.");
+    }
+
+    [SkippableFact]
+        public unsafe void PackedBiasMatchesCompositeBitwise()
     {
         // E70: bias added once per stored element in the unfused position.
         Skip.If(!System.Runtime.Intrinsics.X86.Fma.IsSupported, "x86 FMA not available on this machine.");
