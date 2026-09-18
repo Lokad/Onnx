@@ -43,6 +43,10 @@ static class Bench
             Console.WriteLine("bench-micro affinity=0x" + microMask.ToString("X") + " logical-cpu=" + microCpu + " (child jobs inherit process affinity on Windows)");
             return RunMicro(microArgs);
         }
+        if (args.Length > 0 && args[0] == "gemm-matrix")
+        {
+            return RunGemmMatrix();
+        }
         var selected = new List<string>();
         string modeName = "auto";
         string rowsName = "canonical";
@@ -341,6 +345,20 @@ static class Bench
         if (modeName.Equals("auto", StringComparison.OrdinalIgnoreCase) && threads == 1)
             return "single-cpu-auto-1 (canonical)";
         return "single-cpu-" + modeName.ToLowerInvariant() + "-" + threads + " (diagnostic)";
+    }
+
+    static int RunGemmMatrix()
+    {
+        Console.WriteLine("gemm-matrix shapes=" + GemmShapes.Canonical.Count + " tolerance=" + GemmMatrix.Tolerance.ToString("E0") + " (routes plus double-precision agreement; no timing)");
+        var results = GemmMatrix.Run(GemmShapes.Canonical);
+        int fail = 0;
+        foreach (var r in results)
+        {
+            Console.WriteLine("gemm " + r.Name + " [" + r.M + "x" + r.N + "x" + r.K + "] " + (r.PreparedB ? "prep" : "dyn") + " route=" + r.Route + " maxScaled=" + r.MaxScaled.ToString("E2") + " " + (r.Pass ? "ok" : "FAIL"));
+            if (!r.Pass) fail++;
+        }
+        Console.WriteLine("gemm-matrix " + (results.Count - fail) + "/" + results.Count + " ok");
+        return fail == 0 ? 0 : 1;
     }
 
     static int RunMicro(string[] args)

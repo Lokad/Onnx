@@ -17,6 +17,8 @@
     <Compile Include="..\Lokad.Onnx.Bench\PairedModelRunner.cs" Link="PairedModelRunner.cs" />
     <Compile Include="..\Lokad.Onnx.Bench\BenchmarkManifest.cs" Link="BenchmarkManifest.cs" />
     <Compile Include="..\Lokad.Onnx.Bench\BenchmarkResults.cs" Link="BenchmarkResults.cs" />
+    <Compile Include="..\Lokad.Onnx.Bench\GemmMatrix.cs" Link="GemmMatrix.cs" />
+    <Compile Include="..\Lokad.Onnx.Bench\GemmShapes.cs" Link="GemmShapes.cs" />
   </ItemGroup>
 
   <ItemGroup>
