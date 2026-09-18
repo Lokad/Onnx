@@ -65,6 +65,60 @@ public class KBlockedRouteTests
     }
 
     [Fact]
+    public void ParallelBatches_MatchSequentialBitwiseAndLegacy()
+    {
+        var x0 = DenseTensor<float>.OfShape(new int[] { 1, 16, 1024 });
+        var xs = x0.Buffer.Span;
+        for (int i = 0; i < xs.Length; i++) xs[i] = (float)((i % 97) - 48) * 0.01f;
+        var w = DenseTensor<float>.OfShape(new int[] { 1024, 512 });
+        var ws = w.Buffer.Span;
+        for (int i = 0; i < ws.Length; i++) ws[i] = (float)(((i + 31) % 97) - 48) * 0.01f;
+        System.Func<ComputationalGraph> build = () =>
+        {
+            var graph = new ComputationalGraph();
+            graph.Metadata["Name"] = "kb-par";
+            graph.Inputs["x0"] = DenseTensor<float>.OfShape(new int[] { 1, 16, 1024 });
+            graph.Initializers["eshape"] = DenseTensor<long>.OfValues(new long[] { 2, 16, 1024 });
+            graph.Initializers["w"] = w;
+            graph.Outputs["z"] = DenseTensor<float>.OfShape(new int[] { 2, 16, 512 });
+            graph.Nodes.Add(new Node { Name = "ex", Op = OpType.Expand, Inputs = new[] { "x0", "eshape" }, Outputs = new[] { "xe" } });
+            graph.Nodes.Add(new Node { Name = "mm", Op = OpType.MatMul, Inputs = new[] { "xe", "w" }, Outputs = new[] { "z" } });
+            return graph;
+        };
+        var kbSeq = TensorExecutionOptions.Auto with { UseKBlockedPanels = true };
+        var kbPar = TensorExecutionOptions.Parallel(4) with { UseKBlockedPanels = true };
+        var legacyPar = TensorExecutionOptions.Parallel(4);
+        System.Func<ComputationalGraph, TensorExecutionOptions, string> run = (graph, to) =>
+        {
+            graph.Options = new ExecutionOptions(OptimizationMode.Speed, to);
+            graph.RefreshLifetimeAnalysis();
+            using var profilerScope = Profiler.BeginExecution(true);
+            Assert.True(graph.Execute(new Dictionary<string, ITensor> { ["x0"] = x0 }, true), graph.LastErrorMessage);
+            Assert.NotNull(graph.LastProfile);
+            string route = "none";
+            foreach (var np in graph.LastProfile!)
+                if (np.Op == OpType.MatMul && np.Detail.Contains(" route=", StringComparison.Ordinal))
+                    route = np.Detail.Substring(np.Detail.IndexOf(" route=", StringComparison.Ordinal) + 7);
+            return route;
+        };
+        var g1 = build();
+        Assert.Equal("prep-kblocked", run(g1, kbSeq));
+        var zSeq = ((Tensor<float>)g1.Outputs["z"]).ToArray();
+        var g2 = build();
+        Assert.Equal("prep-kblocked", run(g2, kbPar));
+        var zPar = ((Tensor<float>)g2.Outputs["z"]).ToArray();
+        Assert.Equal(zSeq, zPar);
+        var g3 = build();
+        string legacyRoute = run(g3, legacyPar);
+        Assert.True(legacyRoute.StartsWith("prep-", StringComparison.Ordinal), legacyRoute);
+        var zLeg = ((Tensor<float>)g3.Outputs["z"]).ToArray();
+        Assert.Equal(zSeq.Length, zLeg.Length);
+        double worst = 0.0;
+        for (int i = 0; i < zSeq.Length; i++) worst = Math.Max(worst, Math.Abs(zSeq[i] - zLeg[i]) / Math.Max(1.0, Math.Abs(zLeg[i])));
+        Assert.True(worst <= 1e-4, "worst=" + worst);
+    }
+
+    [Fact]
     public void DynamicPath_UntouchedBySwitch()
     {
         var r = RunOne(new GemmShape("kb-dyn", 16, 128, 128, false, "test"), KBlocked());
