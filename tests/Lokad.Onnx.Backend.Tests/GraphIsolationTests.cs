@@ -113,17 +113,30 @@ public class GraphIsolationTests
         var ui = Data.GetInputTensorsFromFileArgs(new[] { TestSupport.CommittedImage("mnist4.png") + "::mnist" })!;
         Assert.True(g.Execute(ui, true));
         var reference = ((Tensor<float>)g.Outputs.Values.First()!).ToArray();
-        const int rounds = 25;
-        var resultsA = new bool[rounds];
-        var resultsB = new bool[rounds];
-        using var barrier = new Barrier(2);
-        var tA = Task.Run(() => { for (int i = 0; i < rounds; i++) { barrier.SignalAndWait(); resultsA[i] = g.Execute(ui, true); } });
-        var tB = Task.Run(() => { for (int i = 0; i < rounds; i++) { barrier.SignalAndWait(); resultsB[i] = g.Execute(ui, true); } });
-        await Task.WhenAll(tA, tB);
-        int rejected = resultsA.Count(r => !r) + resultsB.Count(r => !r);
-        int succeeded = resultsA.Count(r => r) + resultsB.Count(r => r);
-        Assert.True(rejected >= 1, "expected at least one clean rejection under hammer");
-        Assert.True(succeeded >= 1, "expected at least one success under hammer");
+        var executing = typeof(ComputationalGraph).GetField("_executing",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Missing graph execution guard.");
+        Task<bool>? running = null;
+        try
+        {
+            // Hold preparation after the worker acquires its execution guard.
+            // A start barrier alone does not guarantee overlapping calls on one CPU.
+            lock (g.PrepareLock)
+            {
+                running = Task.Factory.StartNew(() => g.Execute(ui, true),
+                    CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                Assert.True(SpinWait.SpinUntil(() => executing.GetValue(g) is 1, TimeSpan.FromSeconds(10)),
+                    "The first call must acquire its guard before testing a concurrent call.");
+                Assert.False(g.Execute(ui, true));
+                Assert.Equal(reference, ((Tensor<float>)g.Outputs.Values.First()).ToArray());
+            }
+            Assert.True(await running);
+        }
+        finally
+        {
+            // Release the preparation lock and drain the worker even if an assertion fails.
+            if (running is not null) await running;
+        }
         Assert.True(g.Execute(ui, true));
         Assert.Equal(reference, ((Tensor<float>)g.Outputs.Values.First()!).ToArray());
     }
