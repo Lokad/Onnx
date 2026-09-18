@@ -49,6 +49,22 @@ public class KBlockedRouteTests
     }
 
     [Fact]
+    public void NarrowTail1_AgreesWithDouble()
+    {
+        var r = RunOne(new GemmShape("kb-n1", 8, 257, 16, true, "test"), KBlocked());
+        Assert.Equal("prep-kblocked", r.Route);
+        Assert.True(r.Pass, "maxScaled=" + r.MaxScaled);
+    }
+
+    [Fact]
+    public void NarrowTail14_AgreesWithDouble()
+    {
+        var r = RunOne(new GemmShape("kb-n14", 8, 270, 16, true, "test"), KBlocked());
+        Assert.Equal("prep-kblocked", r.Route);
+        Assert.True(r.Pass, "maxScaled=" + r.MaxScaled);
+    }
+
+    [Fact]
     public void DynamicPath_UntouchedBySwitch()
     {
         var r = RunOne(new GemmShape("kb-dyn", 16, 128, 128, false, "test"), KBlocked());
