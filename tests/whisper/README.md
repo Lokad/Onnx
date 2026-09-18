@@ -134,3 +134,19 @@ This is application agreement, not a replacement for the existing `1e-4` tensor
 checks. Full encoder/logit numerical qualification and broader audio acceptance
 remain unresolved; successful transcript fixtures must not be reported as proving
 those separate requirements.
+
+
+The decoder boundary lane explicitly tests a 447-token prefix followed by a cached
+step to 448, a separate 448-token prefix, and both first/cached rejection beyond
+that position table. It checks complete logits/caches and preservation of earlier
+outputs and inputs after failed requests:
+
+```powershell
+python tests/whisper/generate_decoder_reference.py --models models/whisper-large-v3-turbo --output <new-boundary-directory> --boundary
+dotnet build tests/whisper/DecoderReplay.csproj -c Release --tl:off --nologo -v minimal
+dotnet tests/whisper/bin/Release/net10.0/DecoderReplay.dll models/whisper-large-v3-turbo <new-boundary-directory>/manifest.json <new-boundary-result.json>
+```
+
+The ordinary generator still produces its original two scenarios and 106 output
+comparisons. Boundary fixtures add 43 complete output comparisons and two expected
+position-limit failures; the numerical tolerance remains `1e-4`.

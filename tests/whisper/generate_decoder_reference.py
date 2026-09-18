@@ -27,6 +27,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--models', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--boundary', action='store_true', help='Check prefixes 447/448, a cached step to 448, and rejection beyond the position table')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     options = ort.SessionOptions()
@@ -59,13 +60,16 @@ def main():
     prefix = [generation['decoder_start_token_id'], generation['lang_to_id']['<|en|>'],
               generation['task_to_id']['transcribe'], generation['no_timestamps_token_id']]
     scenarios = []
-    for name, encoder_length, tokens in [('short-prefix1', 7, prefix[:1]), ('full-prefix4', 1500, prefix)]:
+    specs = [('short-prefix1', 7, prefix[:1], 5), ('full-prefix4', 1500, prefix, 5)]
+    if args.boundary:
+        specs = [('near-limit-prefix447', 7, prefix + [32] * 443, 2), ('max-prefix448', 7, prefix + [32] * 444, 1)]
+    for name, encoder_length, tokens, calls in specs:
         rng = np.random.default_rng(20260918 + encoder_length)
         hidden = rng.normal(0, .05, (1, encoder_length, 1280)).astype(np.float32)
         initial = {'input_ids': np.array([tokens], np.int64), 'encoder_hidden_states': hidden}
         steps = []
         native_values = []
-        for step_index in range(5):
+        for step_index in range(calls):
             key = 'first' if step_index == 0 else 'past'
             session = sessions[key]
             inputs = {}
@@ -97,6 +101,29 @@ def main():
             steps.append(dict(model=key, inputs=bindings, outputs=outputs, oracle_seconds=seconds))
             native_values.append(result)
             print(name, step_index, {k: list(v.shape) for k, v in result.items()}, flush=True)
+        if args.boundary:
+            key = 'past' if calls == 2 else 'first'
+            session = sessions[key]
+            inputs = {'input_ids': np.array([[831]] if key == 'past' else [prefix + [32] * 445], np.int64)}
+            bindings = {'input_ids': dict(file=save(f'{name}/limit-input-ids.npy', inputs['input_ids']))}
+            if key == 'first':
+                inputs['encoder_hidden_states'] = hidden
+                bindings['encoder_hidden_states'] = dict(file=save(f'{name}/limit-hidden.npy', hidden))
+            else:
+                for descriptor in session.get_inputs():
+                    if not descriptor.name.startswith('past_key_values.'): continue
+                    output_name = descriptor.name.replace('past_key_values.', 'present.', 1)
+                    source_step = 0 if '.encoder.' in descriptor.name else calls - 1
+                    inputs[descriptor.name] = native_values[source_step][output_name]
+                    bindings[descriptor.name] = dict(step=source_step, output=output_name)
+            before = {k: hashlib.sha256(v.tobytes()).hexdigest() for k, v in inputs.items()}
+            try:
+                session.run(None, inputs)
+            except Exception as error:
+                steps.append(dict(model=key, inputs=bindings, expected_failure='position-limit', native_error=str(error)))
+            else:
+                raise AssertionError('Native accepted a request beyond position 448; revise the boundary contract')
+            assert before == {k: hashlib.sha256(v.tobytes()).hexdigest() for k, v in inputs.items()}
         scenarios.append(dict(name=name, encoder_length=encoder_length, prefix=tokens, steps=steps))
     manifest = dict(schema=1, description='Synthetic hidden-state decoder component qualification; not audio preprocessing or transcription',
         repo='onnx-community/whisper-large-v3-turbo', revision=REVISION, models=models, files=files, scenarios=scenarios,

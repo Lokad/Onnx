@@ -119,6 +119,22 @@ try
             var watch = Stopwatch.StartNew();
             bool success = graph.Execute(inputs, true, ExecutionProvider.CPU, ExecutionOptions.Default);
             watch.Stop();
+            if (step.TryGetProperty("expected_failure", out var expectedFailure))
+            {
+                if (expectedFailure.GetString() != "position-limit") throw new InvalidDataException("Unknown expected failure");
+                int inputLength = ((Tensor<long>)inputs["input_ids"]).Dimensions[1];
+                bool limit = step.GetProperty("model").GetString() == "first" ? inputLength == 449
+                    : inputLength == 1 && ((Tensor<float>)inputs["past_key_values.0.decoder.key"]).Dimensions[2] == 448;
+                if (!limit || success) throw new InvalidDataException("Invalid position-limit rejection");
+                foreach (var item in inputs)
+                    if (Bits(item.Value) != inputBefore[item.Key]) throw new InvalidDataException("Rejected request changed input/cache");
+                foreach (var item in held)
+                    if (Bits(item.Value) != item.Hash) throw new InvalidDataException("Rejected request changed an earlier output");
+                reports.Add(new { scenario = scenarioName, step = index++, expected_failure = "position-limit", error = graph.LastErrorMessage });
+                graph.Reset();
+                NoNativeRuntime();
+                continue;
+            }
             if (!success) throw new InvalidOperationException($"{scenarioName} step {index}: {graph.LastErrorMessage}", graph.LastErrorCause);
             if (!graph.Outputs.Keys.Order().SequenceEqual(step.GetProperty("outputs").EnumerateObject().Select(p => p.Name).Order()))
                 throw new InvalidDataException("Output name set differs");
