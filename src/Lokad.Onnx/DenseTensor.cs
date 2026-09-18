@@ -21,6 +21,10 @@ namespace Lokad.Onnx
         #region Fields
         protected readonly ArraySegment<T> arr;
         protected readonly Memory<T> memory;
+        // Reshape shares its source's storage even when its memory window spans
+        // the whole array. Execution can drop this dead binding while retaining
+        // the original storage owner until all remaining aliases are dead.
+        internal bool IsReshapeView { get; private init; }
         #endregion
 
         #region Properties
@@ -263,7 +267,7 @@ namespace Lokad.Onnx
                 throw new ArgumentException($"Cannot reshape array due to mismatch in lengths, currently {Length} would become {reshaped}.", nameof(dimensions));
             }
 
-            return new DenseTensor<T>(Buffer, dimensions, IsReversedStride);
+            return new DenseTensor<T>(Buffer, dimensions, IsReversedStride) { IsReshapeView = true };
         }
 
         protected override void CopyFrom(Tensor<T> from)

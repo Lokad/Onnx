@@ -101,6 +101,7 @@ public class ComputationalGraph
 
     // Per-owner opt-in also lets tests exercise both routes without global mutations.
     internal bool ReuseReleasedBuffers { get; set; } = AblationSwitches.EnableReleasedBufferCache;
+    internal bool ReleaseReshapeViews { get; set; } = AblationSwitches.EnableReshapeViewRelease;
     internal ReleasedBufferCache? ReleasedBuffers;
 
     internal ReleasedBufferCache GetReleasedBuffers() => ReleasedBuffers ??=
@@ -1448,6 +1449,16 @@ public class ComputationalGraph
                 pool.Return(arr);
                 returned ??= new HashSet<Array>();
                 returned.Add(arr);
+                livePayloadBytes -= PayloadBytes(tensor);
+                IntermediateOutputs[name] = null;
+                return true;
+            }
+            // A dense reshape is a view even when its memory spans the whole
+            // array. Drop its dead name like other views; remaining bindings
+            // keep the storage live. An unaliased view above can still return
+            // storage when it is the only remaining binding.
+            if (ReleaseReshapeViews && tensor is DenseTensor<float> { IsReshapeView: true })
+            {
                 livePayloadBytes -= PayloadBytes(tensor);
                 IntermediateOutputs[name] = null;
                 return true;

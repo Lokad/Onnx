@@ -40,6 +40,9 @@ internal static class AblationSwitches
     /// Use the existing exact-copy vector kernels for the two scalar attention faces.
     internal static readonly bool EnableVectorTransposeFaces = EnvIsSet("LOKAD_ONNX_VECTOR_TRANSPOSE_FACES");
 
+    /// Drop dead dense Reshape view bindings before retrying their storage owners.
+    internal static readonly bool EnableReshapeViewRelease = EnvIsSet("LOKAD_ONNX_RELEASE_RESHAPE_VIEWS");
+
     /// When true, softmax over contiguous float rows routes to the preserved
     /// legacy kernel instead of the default span kernel. Default off; set
     /// LOKAD_ONNX_SOFTMAX_LEGACY=1 before process start to enable.

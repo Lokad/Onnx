@@ -21,6 +21,7 @@ public sealed class GraphExecution : ComputationalGraph
     internal GraphExecution(ComputationalGraph prepared, ExecutionOptions? options, bool preparedFlag, long preparedFingerprint, string? preparationError, bool borrowReleasedBuffers)
     {
         ReuseReleasedBuffers = prepared.ReuseReleasedBuffers;
+        ReleaseReshapeViews = prepared.ReleaseReshapeViews;
         if (borrowReleasedBuffers)
         {
             if (ReuseReleasedBuffers) ReleasedBuffers = prepared.GetReleasedBuffers();
