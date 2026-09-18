@@ -87,6 +87,8 @@ public static class OperatorSchemas
         [OpType.Less] = Def(OpType.Less, 2, 2),
         [OpType.ConstantOfShape] = Def(OpType.ConstantOfShape, 1, 1),
         [OpType.GlobalAveragePool] = Def(OpType.GlobalAveragePool, 1, 1),
+        [OpType.Identity] = Def(OpType.Identity, 1, 1),
+        [OpType.LSTM] = Def(OpType.LSTM, 3, 8, 1, 3, 1, false),
     };
 
     public static bool IsStandardDomain(string? domain) =>

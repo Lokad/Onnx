@@ -119,6 +119,8 @@ public class Model
         };
         foreach (var o in node.Outputs)
         {
+            // An empty output name omits an optional slot; it is not a value binding.
+            if (string.IsNullOrEmpty(o)) continue;
             if (!graph.Outputs.ContainsKey(o) && !graph.IntermediateOutputs.ContainsKey(o))
             {
                 graph.IntermediateOutputs.Add(o, null);

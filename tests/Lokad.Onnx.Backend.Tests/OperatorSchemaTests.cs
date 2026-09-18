@@ -184,20 +184,20 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void IdentityHonestlyUnsupported_FailsCleanly()
+    public void IdentityHonestlySupported_ExecutesCleanly()
     {
-        // C11: Identity has no schema, provider, or import folding; like
-        // Mod/Pad it must stay honestly unsupported with a clean
-        // reason-naming failure, never a throw.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Identity));
+        // Identity gained a schema entry and a view-alias kernel, so
+        // support and node execution must now succeed with pass-through
+        // values instead of the old honest refusal.
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.Identity));
         var node = Nod(OpType.Identity, "", 13,
             new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Identity", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 1f, 2f }, ((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
     [Fact]
@@ -1161,19 +1161,25 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void LSTMHonestlyUnsupported_FailsCleanly()
+    public void LSTMHonestlySupported_ExecutesCleanly()
     {
-        // C11: no LSTM schema, provider, kernel, or dispatch arm exists
-        // anywhere in src (recurrent architectures are out of scope); same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.LSTM));
-        var node = Nod(OpType.LSTM, "", 14,
-            new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
-        var graph = Graph(14);
-        Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f, 2f }));
+        // LSTM gained a schema entry, provider kernel, and dispatch arm, so
+        // a minimal single-step recurrence must now execute. All-zero inputs
+        // zero every gate pre-activation, pinning every output at zero.
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.LSTM));
+        var node = NodAttrs(OpType.LSTM, "", 17,
+            new[] { "x", "w", "r" }, new[] { "y", "h", "c" }, false,
+            new Dictionary<string, object> { ["hidden_size"] = 1L });
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
+        var graph = Graph(17);
+        Bind(graph, "x", new DenseTensor<float>(new float[] { 0f }, new[] { 1, 1, 1 }));
+        Bind(graph, "w", new DenseTensor<float>(new float[4], new[] { 1, 4, 1 }));
+        Bind(graph, "r", new DenseTensor<float>(new float[4], new[] { 1, 4, 1 }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("LSTM", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 0f }, ((Tensor<float>)r.Outputs[0]).ToArray());
+        Assert.Equal(new float[] { 0f }, ((Tensor<float>)r.Outputs[1]).ToArray());
+        Assert.Equal(new float[] { 0f }, ((Tensor<float>)r.Outputs[2]).ToArray());
     }
 
     [Fact]

@@ -45,6 +45,22 @@ public partial class CPUExecutionProvider
         }
     }
 
+    /// <summary>
+    /// Pass-through with the same shape, type and values, using Reshape's
+    /// storage-view semantics (layouts requiring materialization may copy).
+    /// The result is re-attributed from Reshape so failures name Identity.
+    /// </summary>
+    public static OpResult Identity(ITensor? input, ExecutionOptions? options)
+    {
+        var op = OpType.Identity;
+        if (input is null) return MissingInput(op, nameof(input));
+        if (input is not INumericTensor) return WrongInputType(op, nameof(input), "Only numeric tensors are supported.", input);
+        var shape = new DenseTensor<long>(Array.ConvertAll(input.Dims, v => (long)v), new[] { input.Rank });
+        var r = Reshape(input, shape, false, options);
+        r.Op = op;
+        return r;
+    }
+
     public static OpResult Add(ITensor? A, ITensor? B, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.Add;
