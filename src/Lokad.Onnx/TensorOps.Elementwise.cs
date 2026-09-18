@@ -2033,7 +2033,7 @@ where T : unmanaged
                     var yv0 = (Vector<float>*)(py + base0);
                     for (; expIndex0 <= block - w; expIndex0 += w)
                     {
-                        var activated0 = MathOps.ExpVectorEstrin((*xv0 + *mv0) - vmax0);
+                        var activated0 = MathOps.ExpVectorSoftmax((*xv0 + *mv0) - vmax0);
                         *yv0 = activated0;
                         vsum0 += activated0;
                         xv0++;
@@ -2059,7 +2059,7 @@ where T : unmanaged
                     var yv1 = (Vector<float>*)(py + base1);
                     for (; expIndex1 <= block - w; expIndex1 += w)
                     {
-                        var activated1 = MathOps.ExpVectorEstrin((*xv1 + *mv1) - vmax1);
+                        var activated1 = MathOps.ExpVectorSoftmax((*xv1 + *mv1) - vmax1);
                         *yv1 = activated1;
                         vsum1 += activated1;
                         xv1++;
@@ -2114,7 +2114,7 @@ where T : unmanaged
                     var yv = (Vector<float>*)(py + baseR);
                     for (; expIndex <= block - w; expIndex += w)
                     {
-                        var activated = MathOps.ExpVectorEstrin((*xv + *mv) - vmax);
+                        var activated = MathOps.ExpVectorSoftmax((*xv + *mv) - vmax);
                         *yv = activated;
                         vsum += activated;
                         xv++;
@@ -2172,7 +2172,7 @@ where T : unmanaged
                     var yv0 = (Vector<float>*)(py + base0);
                     for (; expIndex0 <= block - w; expIndex0 += w)
                     {
-                        var activated0 = MathOps.ExpVectorEstrin(*xv0 - vmax0);
+                        var activated0 = MathOps.ExpVectorSoftmax(*xv0 - vmax0);
                         *yv0 = activated0;
                         vsum0 += activated0;
                         xv0++;
@@ -2196,7 +2196,7 @@ where T : unmanaged
                     var yv1 = (Vector<float>*)(py + base1);
                     for (; expIndex1 <= block - w; expIndex1 += w)
                     {
-                        var activated1 = MathOps.ExpVectorEstrin(*xv1 - vmax1);
+                        var activated1 = MathOps.ExpVectorSoftmax(*xv1 - vmax1);
                         *yv1 = activated1;
                         vsum1 += activated1;
                         xv1++;
@@ -2249,7 +2249,7 @@ where T : unmanaged
                     var yv = (Vector<float>*)(py + baseR);
                     for (; expIndex <= block - w; expIndex += w)
                     {
-                        var activated = MathOps.ExpVectorEstrin(*xv - vmax);
+                        var activated = MathOps.ExpVectorSoftmax(*xv - vmax);
                         *yv = activated;
                         vsum += activated;
                         xv++;

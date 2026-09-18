@@ -3776,6 +3776,45 @@ public partial class MathOps
         yy = Vector.ConditionalSelect(underflow, Vector<float>.Zero, yy);
         return Vector.ConditionalSelect(isFinite, yy, new Vector<float>(float.NaN));
     }
+    // Only call after subtracting the maximum over the same row values. Finite
+    // arguments are nonpositive; exceptional rows produce NaN or -Infinity.
+    // The general exponential must retain its positive-input contract.
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static Vector<float> ExpVectorSoftmax(Vector<float> v) =>
+        AblationSwitches.EnableSoftmaxNonpositive
+            ? ExpVectorNonpositive(v)
+            : ExpVectorEstrin(v);
+
+    /// <summary>Exact Estrin arithmetic for nonpositive inputs, including signed
+    /// zero, NaN and negative infinity. Positive inputs are outside this contract.</summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static Vector<float> ExpVectorNonpositive(Vector<float> v)
+    {
+        var isNotNaN = Vector.Equals(v, v);
+        var underflow = Vector.LessThan(v, new Vector<float>(-88.722839f));
+        var x = Vector.ConditionalSelect(underflow, Vector<float>.Zero, v);
+        var scaled = x * new Vector<float>(1.44269504088896341f);
+        // Both +/-0.5 truncate to zero, including when the input is signed zero.
+        var shifted = scaled - new Vector<float>(0.5f);
+        var n = Vector.ConvertToInt32(shifted);
+        var clamped = Vector.Max(n, new Vector<int>(-126));
+        var nf = Vector.ConvertToSingle(clamped);
+        var r = Vector.FusedMultiplyAdd(nf, new Vector<float>(-0.693359375f), x);
+        r = Vector.FusedMultiplyAdd(nf, new Vector<float>(2.12194440e-4f), r);
+        var y = r * r;
+        var tHi = Vector.FusedMultiplyAdd(new Vector<float>(1f / 5040f), r, new Vector<float>(1f / 720f));
+        var tLo = Vector.FusedMultiplyAdd(new Vector<float>(1f / 6f), r, new Vector<float>(1f / 2f));
+        var tMid = Vector.FusedMultiplyAdd(new Vector<float>(1f / 120f), r, new Vector<float>(1f / 24f));
+        var tOne = Vector.FusedMultiplyAdd(new Vector<float>(1f), r, new Vector<float>(1f));
+        var uHi = Vector.FusedMultiplyAdd(tHi, y, tMid);
+        var uLo = Vector.FusedMultiplyAdd(tLo, y, tOne);
+        var y2 = y * y;
+        var p = Vector.FusedMultiplyAdd(uHi, y2, uLo);
+        var scale = Vector.AsVectorSingle(Vector.ShiftLeft(clamped + new Vector<int>(127), 23));
+        var yy = p * scale;
+        yy = Vector.ConditionalSelect(underflow, Vector<float>.Zero, yy);
+        return Vector.ConditionalSelect(isNotNaN, yy, new Vector<float>(float.NaN));
+    }
     /// <summary>Softmax-scoped 512-bit base-e exponential probe (E81): lane-for-lane port of
     /// ExpVectorEstrin to explicit Vector512 arithmetic with the same Cody-Waite reduction,
     /// clamps, reconstruction and guards. Same documented contract (order 1e-7 against

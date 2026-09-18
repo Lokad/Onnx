@@ -40,6 +40,9 @@ internal static class AblationSwitches
     /// Inline the pruned exponential without changing its arithmetic; requires exp pruning.
     internal static readonly bool EnableSoftmaxExpInline = EnvIsSet("LOKAD_ONNX_SOFTMAX_EXP_INLINE");
 
+    /// Specialize exponentiation after subtracting a softmax row maximum.
+    internal static readonly bool EnableSoftmaxNonpositive = EnvIsSet("LOKAD_ONNX_SOFTMAX_NONPOSITIVE");
+
     /// Normalize SIMD float softmax rows with one reciprocal and multiplication.
     internal static readonly bool EnableSoftmaxReciprocal = EnvIsSet("LOKAD_ONNX_SOFTMAX_RECIPROCAL");
 
