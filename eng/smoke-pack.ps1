@@ -45,8 +45,8 @@ New-Item -ItemType Directory -Force $work | Out-Null
 New-Item -ItemType Directory -Force $feed | Out-Null
 Copy-Item $nupkg.FullName $feed
 Set-Content (Join-Path $work "nuget.config") "<configuration><packageSources><clear /><add key=`"local`" value=`"feed`" /><add key=`"nuget.org`" value=`"https://api.nuget.org/v3/index.json`" /></packageSources></configuration>"
-$cacheDir = Join-Path ([System.Environment]::GetFolderPath("UserProfile")) ".nuget/packages/lokad.onnx/$version"
-if (Test-Path $cacheDir) { Remove-Item $cacheDir -Recurse -Force }
+$previousPackages = $env:NUGET_PACKAGES
+$env:NUGET_PACKAGES = Join-Path $work "packages"
 Push-Location $work
 try {
     & dotnet new console -f net10.0 --no-restore | Out-Null
@@ -97,7 +97,18 @@ try {
     if (-not ($out -match "SMOKE-IMPORT-OK True True True 1x10")) { Fail "fixture import check failed" }
     if (-not ($out -match "SMOKE-ROM-OK True True True")) { Fail "ROM import check failed" }
 }
-finally { Pop-Location }
-Remove-Item $work -Recurse -Force
+finally {
+    $env:NUGET_PACKAGES = $previousPackages
+    Pop-Location
+}
+# Clean only the scratch directory created above; never mutate the user's
+# global package cache to force the local package to be selected.
+$smokeRoot = [System.IO.Path]::GetFullPath((Join-Path $root "artifacts/smoke-pack"))
+$resolvedWork = [System.IO.Path]::GetFullPath($work)
+$prefix = $smokeRoot.TrimEnd([System.IO.Path]::DirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
+if (-not $resolvedWork.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+    Fail "scratch cleanup path is outside artifacts/smoke-pack"
+}
+Remove-Item -LiteralPath $resolvedWork -Recurse -Force
 Write-Host "PASS consume"
 Write-Host "PASS smoke-pack"
