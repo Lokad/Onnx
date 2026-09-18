@@ -246,6 +246,11 @@ public partial class CPUExecutionProvider
                     if (limit == 0) { Array.Clear(hv, 0, H); Array.Clear(cv, 0, H); }
                     // Hoist XW across valid rows: gather computation-order rows
                     // once, one shared MatMul into xwBuf, indexed per step below.
+                    // Route probe (W1): one token per direction-batch combining the XW choice below with the HR choice in the step loop; conditions mirror those sites, so keep them in sync. Inner MatMul lanes report separately.
+                    if (!useShared) Profiler.ReportKernelRoute("lstm-scalar");
+                    else if (wxPack is not null && UsePackedXW(tensorOpts, limit)) Profiler.ReportKernelRoute(rtPrep is not null && UseRecurrentPanel(H) ? "lstm-packed-panel" : "lstm-packed-rowdot");
+                    else Profiler.ReportKernelRoute(rtPrep is not null && UseRecurrentPanel(H) ? "lstm-shared-panel" : "lstm-shared-rowdot");
+                    Profiler.ReportKernelRoute(fastGates ? "lstm-gates-vector" : "lstm-gates-scalar");
                     if (useShared && limit > 0)
                     {
                         for (int gs = 0; gs < limit; gs++)
