@@ -82,29 +82,55 @@ where T : unmanaged
                 for (int ow = 0; ow < outW; ow++)
                 {
                     for (int mm = 0; mm < 16; mm++) acc[mm] = bd is null ? 0f : bs[mb * 16 + mm];
-                    for (int cb = 0; cb < Cb; cb++)
-                        for (int kh = 0; kh < 3; kh++)
-                        {
-                            int ih = oh + kh - padT;
-                            if ((uint)ih >= (uint)H) continue;
-                            for (int kw = 0; kw < 3; kw++)
+                    if (Avx512F.IsSupported && Fma.IsSupported)
+                    {
+                        var acc512 = Vector512.LoadUnsafe(ref acc[0]);
+                        for (int cb = 0; cb < Cb; cb++)
+                            for (int kh = 0; kh < 3; kh++)
                             {
-                                int iw = ow + kw - padL;
-                                if ((uint)iw >= (uint)W) continue;
-                                int io = ((cb * H) + ih) * W * 16 + iw * 16;
-                                for (int ccb = 0; ccb < 16; ccb++)
+                                int ih = oh + kh - padT;
+                                if ((uint)ih >= (uint)H) continue;
+                                for (int kw = 0; kw < 3; kw++)
                                 {
-                                    int wo = (((mb * C) + cb * 16 + ccb) * 9 + kh * 3 + kw) * 16;
-                                    var sv = new Vector<float>(packedX[io + ccb]);
-                                    for (int v = 0; v < 16; v += vw)
+                                    int iw = ow + kw - padL;
+                                    if ((uint)iw >= (uint)W) continue;
+                                    int io = ((cb * H) + ih) * W * 16 + iw * 16;
+                                    int woBase = (((mb * C) + cb * 16) * 9 + kh * 3 + kw) * 16;
+                                    for (int ccb = 0; ccb < 16; ccb++)
                                     {
-                                        var av = new Vector<float>(acc.Slice(v));
-                                        av += sv * new Vector<float>(packedW.AsSpan(wo + v, vw));
-                                        av.CopyTo(acc.Slice(v));
+                                        var sv = Vector512.Create(packedX[io + ccb]);
+                                        acc512 = Avx512F.FusedMultiplyAdd(sv, Vector512.LoadUnsafe(ref packedW[woBase + ccb * 144]), acc512);
                                     }
                                 }
                             }
-                        }
+                        acc512.StoreUnsafe(ref acc[0]);
+                    }
+                    else
+                    {
+                        for (int cb = 0; cb < Cb; cb++)
+                            for (int kh = 0; kh < 3; kh++)
+                            {
+                                int ih = oh + kh - padT;
+                                if ((uint)ih >= (uint)H) continue;
+                                for (int kw = 0; kw < 3; kw++)
+                                {
+                                    int iw = ow + kw - padL;
+                                    if ((uint)iw >= (uint)W) continue;
+                                    int io = ((cb * H) + ih) * W * 16 + iw * 16;
+                                    int woBase = (((mb * C) + cb * 16) * 9 + kh * 3 + kw) * 16;
+                                    for (int ccb = 0; ccb < 16; ccb++)
+                                    {
+                                        var sv = new Vector<float>(packedX[io + ccb]);
+                                        for (int v = 0; v < 16; v += vw)
+                                        {
+                                            var av = new Vector<float>(acc.Slice(v));
+                                            av += sv * new Vector<float>(packedW.AsSpan(woBase + ccb * 144 + v, vw));
+                                            av.CopyTo(acc.Slice(v));
+                                        }
+                                    }
+                                }
+                            }
+                    }
                     for (int mm = 0; mm < 16; mm++)
                     {
                         float v = acc[mm];
