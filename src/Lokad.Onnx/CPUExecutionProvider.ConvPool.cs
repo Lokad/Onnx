@@ -169,6 +169,7 @@ public partial class CPUExecutionProvider
                 && Tensor<float>.TryConvDepthwise1D((Tensor<float>)X, (Tensor<float>)W, (Tensor<float>?)B, group ?? 1, pads, kernel_shape, strides, dilations, (options ?? ExecutionOptions.Default).Validated().Tensor, fuseRelu, pool, out var dwConv)
                 && dwConv is not null)
             {
+                Profiler.ReportKernelRoute("conv-depthwise1d");
                 return Success(op, dwConv);
             }
             var xu = Unsqueeze(X, new[] { 2 }, options);
@@ -219,11 +220,13 @@ public partial class CPUExecutionProvider
                 {
                     if (Tensor<float>.TryConvDepthwise2D((Tensor<float>)X, (Tensor<float>)W, bias, group ?? 1, pads, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, pool, out var dwConv2D) && dwConv2D is not null)
                     {
+                        Profiler.ReportKernelRoute("conv-depthwise2d");
                         return Success(op, dwConv2D);
                     }
                     // B1 single-channel direct lane: C=1 shapes the depthwise lane declines outright.
                     if (Tensor<float>.TryConvSingleChannel2D((Tensor<float>)X, (Tensor<float>)W, bias, group ?? 1, pads, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, pool, out var scConv2D) && scConv2D is not null)
                     {
+                        Profiler.ReportKernelRoute("conv-singlechan");
                         return Success(op, scConv2D);
                     }
                     return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor, fuseRelu, pool));

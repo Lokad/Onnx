@@ -181,6 +181,7 @@ where T : unmanaged
             && outH == H && outW == W)
         {
             RunPointwiseBatchesFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, outH, outW, inBatch, outBatch, options, fuseRelu);
+            ReportKernelRoute("conv-pointwise");
             return output;
         }
         int tileN = outH * outW;
@@ -203,8 +204,10 @@ where T : unmanaged
         if (blockN < tileN)
         {
             RunTiledConvFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, dop, options, fuseRelu);
+            ReportKernelRoute("conv-tiledcols");
             return output;
         }
+        ReportKernelRoute("conv-fullpatch");
         if (dop > 1)
         {
             Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
@@ -307,7 +310,7 @@ where T : unmanaged
             fixed (float* pp = packMem.Span)
             {
                 PackPanelsB(tileK, cols, p + pOff, pp);
-                RunPackedRowGroups(tileM, tileK, cols, w + wOff, pp, o + oOff, overwrite: true, "trans");
+                RunPackedRowGroups(tileM, tileK, cols, w + wOff, pp, o + oOff, overwrite: true, "conv");
             }
         }
     }

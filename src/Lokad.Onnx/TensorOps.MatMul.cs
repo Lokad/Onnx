@@ -858,10 +858,10 @@ where T : unmanaged
         float* dr = dest;
             if (TryRunPackedRowGroupsTiled(m, n, k, x, packed, dest, overwrite))
             {
-                ReportKernelRoute(panel == "trans" ? "trans-tiled" : "prep-tiled");
+                ReportKernelRoute(panel == "trans" ? "trans-tiled" : panel == "conv" ? "conv-tiled" : "prep-tiled");
                 return;
             }
-            ReportKernelRoute(panel == "trans" ? "trans-grouped" : "prep-grouped");
+            ReportKernelRoute(panel == "trans" ? "trans-grouped" : panel == "conv" ? "conv-grouped" : "prep-grouped");
         if (Avx512F.IsSupported && rest >= 6)
         {
             int main = (rest / 12) * 12;
