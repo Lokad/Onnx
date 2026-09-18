@@ -727,6 +727,12 @@ where T : unmanaged
         {
             return;
         }
+        if (options.UseKBlockedPanels && m >= 2 && (batchCount == 1 || ySteps.All(s => s == 0)) && GraphPacking.ResolveKBlocked(options.KBlockedMatMulWeights, by) is { } kblocked)
+        {
+            RunKBlockedBatches(bx, z, batchDims, xSteps, zSteps, batchCount, dop, m, n, k, kblocked, options);
+            return;
+        }
+
         if (ResolvePackedKernel(options, by, m) is { } packedB && (batchCount == 1 || ySteps.All(s => s == 0)))
         {
             RunPackedBatches(bx, z, batchDims, xSteps, zSteps, batchCount, dop, m, n, k, packedB, overwrite: true);
@@ -1037,6 +1043,92 @@ where T : unmanaged
         }
     }
     /// <summary>
+    // Tier0-stuck leaf (see PLAN qdA2): force Tier1; few benchmark calls never trip promotion.
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    /// <summary>
+    /// Runs batched products through K-blocked panels (W3 prototype): per batch, one row-group pass per reduction block with overwrite-first and accumulate-rest semantics. Each batch gathers its block columns into its own scratch slice; batches partition across workers like the legacy path.
+    /// </summary>
+    static void RunKBlockedBatches(Tensor<float> bx, Tensor<float> z, int[] batchDims, int[] xSteps, int[] zSteps, int batchCount, int dop, int m, int n, int k, PackedMatMulWeightBlocked kbrec, TensorExecutionOptions options)
+    {
+        ReportKernelRoute("prep-kblocked");
+        using var xh = bx.Storage.Pin();
+        using var ph = kbrec.Packed.Buffer.Pin();
+        using var zh = z.Storage.Pin();
+        IntPtr xp0, zp0;
+        unsafe { xp0 = (IntPtr)xh.Pointer; zp0 = (IntPtr)zh.Pointer; }
+        int blocks = (n + GraphPacking.KBlockedRows - 1) / GraphPacking.KBlockedRows;
+        var gather = RentScratch<float>(batchCount * m * GraphPacking.KBlockedRows, options);
+        try
+        {
+            unsafe
+            {
+                float* pp = (float*)ph.Pointer;
+                fixed (float* gpBase = gather)
+                {
+                    IntPtr gp0 = (IntPtr)gpBase;
+                    if (dop > 1)
+                    {
+                        var xOff = new int[batchCount];
+                        var zOff = new int[batchCount];
+                        FillBatchOffsets(batchDims, xSteps, zSteps, zSteps, xOff, new int[batchCount], zOff);
+                        Parallel.For(0, batchCount, new ParallelOptions { MaxDegreeOfParallelism = dop }, bi =>
+                        {
+                            unsafe
+                            {
+                                float* gp = (float*)gp0 + bi * m * GraphPacking.KBlockedRows;
+                                for (int b = 0; b < blocks; b++)
+                                {
+                                    int cntN = n - b * GraphPacking.KBlockedRows;
+                                    if (cntN > GraphPacking.KBlockedRows) cntN = GraphPacking.KBlockedRows;
+                                    int col0 = b * GraphPacking.KBlockedRows;
+                                    for (int r = 0; r < m; r++)
+                                    {
+                                        new Span<float>((float*)xp0 + xOff[bi] + r * n + col0, cntN).CopyTo(new Span<float>(gp + r * cntN, cntN));
+                                    }
+                                    RunPackedRowGroups(m, cntN, k, gp, pp + GraphPacking.KBlockedChunkOffset(k, b), (float*)zp0 + zOff[bi], overwrite: b == 0, "kb");
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        var xp = (float*)xp0;
+                        var zp = (float*)zp0;
+                        int r = batchDims.Length;
+                        var coords = new int[r];
+                        int ox = 0, oz = 0;
+                        for (int bIdx = 0; bIdx < batchCount; bIdx++)
+                        {
+                            for (int b = 0; b < blocks; b++)
+                            {
+                                int cntN = n - b * GraphPacking.KBlockedRows;
+                                if (cntN > GraphPacking.KBlockedRows) cntN = GraphPacking.KBlockedRows;
+                                int col0 = b * GraphPacking.KBlockedRows;
+                                for (int rr = 0; rr < m; rr++)
+                                {
+                                    new Span<float>(xp + ox + rr * n + col0, cntN).CopyTo(new Span<float>(gpBase + bIdx * m * GraphPacking.KBlockedRows + rr * cntN, cntN));
+                                }
+                                RunPackedRowGroups(m, cntN, k, gpBase + bIdx * m * GraphPacking.KBlockedRows, pp + GraphPacking.KBlockedChunkOffset(k, b), zp + oz, overwrite: b == 0, "kb");
+                            }
+                            for (int d = r - 1; d >= 0; d--)
+                            {
+                                coords[d]++;
+                                ox += xSteps[d]; oz += zSteps[d];
+                                if (coords[d] < batchDims[d]) break;
+                                coords[d] = 0;
+                                ox -= xSteps[d] * batchDims[d]; oz -= zSteps[d] * batchDims[d];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        finally
+        {
+            ArrayPool<float>.Shared.Return(gather);
+        }
+    }
+
     /// Writes the float matrix product into an existing dense destination,
     /// overwriting it. The destination must not alias either input.
     /// Panel-packed kernels overwrite it; unpacked fallback lanes clear it first.
