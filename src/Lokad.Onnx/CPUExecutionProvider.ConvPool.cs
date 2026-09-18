@@ -9,7 +9,7 @@ using static OpResult;
 public partial class CPUExecutionProvider
 {
 
-    /// <summary>2D convolution, lowered through the shared matrix dispatcher.</summary>
+    /// <summary>1D or 2D convolution, lowered through the shared matrix dispatcher.</summary>
     public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options)
     {
         var op = OpType.Conv;
@@ -17,6 +17,34 @@ public partial class CPUExecutionProvider
         if (W is null) return MissingInput(op, nameof(W));
         if (W.ElementType != X.ElementType) return WrongInputType(op, nameof(W), X.ElementType, W, "The weights tensor must be the same type as the input tensor.");
         if (B is not null && B.ElementType != X.ElementType) return WrongInputType(op, nameof(B), X.ElementType, B, "The bias tensor must be the same type as the input tensor.");
+        if (X.Rank == 3)
+        {
+            // Adapted from voice 13e98bd, using the final branch's width-first
+            // layout. [N,C,L] -> [N,C,1,L] keeps the long axis contiguous.
+            // Preserve the existing 2D planner's padding/group/type validation.
+            if (W.Rank != 3) return WrongInputShape(op, nameof(W), 3, W);
+            if (kernel_shape is not null && kernel_shape.Length != 1)
+                return AttributeNotSupported(op, "kernel_shape", kernel_shape.Print(), "One-dimensional kernel_shape must hold one value.");
+            if (strides is not null && strides.Length != 1)
+                return AttributeNotSupported(op, "strides", strides.Print(), "One-dimensional strides must hold one value.");
+            if (dilations is not null && dilations.Length != 1)
+                return AttributeNotSupported(op, "dilations", dilations.Print(), "One-dimensional dilations must hold one value.");
+            if (pads is not null && pads.Length != 2)
+                return AttributeNotSupported(op, "pads", pads.Print(), "One-dimensional pads must hold two values [begin, end].");
+            var xu = Unsqueeze(X, new[] { 2 }, options);
+            if (xu.Status != OpStatus.Success) return xu;
+            var wu = Unsqueeze(W, new[] { 2 }, options);
+            if (wu.Status != OpStatus.Success) return wu;
+            int[]? ks4 = kernel_shape is null ? null : new[] { 1, kernel_shape[0] };
+            int[]? st4 = strides is null ? null : new[] { 1, strides[0] };
+            int[]? di4 = dilations is null ? null : new[] { 1, dilations[0] };
+            int[]? pa4 = pads is null ? null : new[] { 0, pads[0], 0, pads[1] };
+            var conv = Conv(xu.Outputs[0], wu.Outputs[0], B, auto_pad, di4, group, ks4, pa4, st4, options);
+            if (conv.Status != OpStatus.Success) return conv;
+            var squeezed = Squeeze(conv.Outputs[0], DenseTensor<long>.OfValues(new long[] { 2 }), options);
+            squeezed.Op = op;
+            return squeezed;
+        }
         if (X.Rank != 4)
         {
             return WrongInputShape(op, nameof(X), 4, X);
@@ -72,6 +100,30 @@ public partial class CPUExecutionProvider
         var op = OpType.MaxPool;
         if (X is null) return MissingInput(op, nameof(X));
         (options ?? ExecutionOptions.Default).Validated();
+        if (X.Rank == 3)
+        {
+            // A singleton width preserves the existing 2D pooling semantics;
+            // optional indices/storage_order retain the existing restrictions.
+            if (kernel_shape is not null && kernel_shape.Length != 1)
+                return AttributeNotSupported(op, "kernel_shape", kernel_shape.Print(), "One-dimensional kernel_shape must hold one value.");
+            if (strides is not null && strides.Length != 1)
+                return AttributeNotSupported(op, "strides", strides.Print(), "One-dimensional strides must hold one value.");
+            if (dilations is not null && dilations.Length != 1)
+                return AttributeNotSupported(op, "dilations", dilations.Print(), "One-dimensional dilations must hold one value.");
+            if (pads is not null && pads.Length != 2)
+                return AttributeNotSupported(op, "pads", pads.Print(), "One-dimensional pads must hold two values [begin, end].");
+            var xu = Unsqueeze(X, new[] { 3 }, options);
+            if (xu.Status != OpStatus.Success) return xu;
+            int[]? ks4 = kernel_shape is null ? null : new[] { kernel_shape[0], 1 };
+            int[]? st4 = strides is null ? null : new[] { strides[0], 1 };
+            int[]? di4 = dilations is null ? null : new[] { dilations[0], 1 };
+            int[]? pa4 = pads is null ? null : new[] { pads[0], 0, pads[1], 0 };
+            var pool = MaxPool(xu.Outputs[0], auto_pad, ceil_mode, di4, ks4, pa4, storage_order, st4, options);
+            if (pool.Status != OpStatus.Success) return pool;
+            var squeezed = Squeeze(pool.Outputs[0], DenseTensor<long>.OfValues(new long[] { 3 }), options);
+            squeezed.Op = op;
+            return squeezed;
+        }
         if (X.Rank != 4)
         {
             return WrongInputShape(op, nameof(X), 4, X);
