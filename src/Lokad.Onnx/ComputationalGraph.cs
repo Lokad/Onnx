@@ -57,6 +57,9 @@ public class ComputationalGraph
 
     public Stack<NodeProfile>? LastProfile { get; private set; }
 
+    /// <summary>Per-node wall times of the last run body, filled only in wall-profiling mode.</summary>
+    public IReadOnlyList<WallNode>? LastWallProfile { get; private set; }
+
     /// <summary>Wall time of the last run body on this instance.</summary>
     /// <remarks>
     /// Covers binding, node execution, and release, but not preparation,
@@ -273,6 +276,7 @@ public class ComputationalGraph
             LastFailedNodeOp = exec.LastFailedNodeOp;
             LastErrorCause = exec.LastErrorCause;
             LastProfile = exec.LastProfile;
+            LastWallProfile = exec.LastWallProfile;
             LastRunTime = exec.LastRunTime;
             LastAllocatedBytes = exec.LastAllocatedBytes;
             LastGcCollections = (int[])exec.LastGcCollections.Clone();
@@ -874,6 +878,7 @@ public class ComputationalGraph
         }
         NoteLivePeak();
         LastProfile = profilerScope.Profile;
+        LastWallProfile = profilerScope.Wall;
         op.Complete();
         return true;
     }
@@ -908,6 +913,7 @@ public class ComputationalGraph
         LastFailedNodeOp = null;
         LastErrorCause = null;
         LastProfile = null;
+        LastWallProfile = null;
         LastRunTime = TimeSpan.Zero;
         LastAllocatedBytes = 0;
         LastScratchBytes = 0;
