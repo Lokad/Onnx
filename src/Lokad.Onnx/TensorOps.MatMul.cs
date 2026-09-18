@@ -317,12 +317,7 @@ where T : unmanaged
             using var oh = destination.Buffer.Pin();
             unsafe
             {
-                // Three-row groups share each B vector at the same broadcast rate (P65);
-                // every other packed shape keeps the proven 2-row nest.
-                if ((m % 3) == 0)
-                    mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
-                else
-                    mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
+                RunPreparedPackedRows(m, n, k, (float*)xh.Pointer, (float*)ph.Pointer, (float*)oh.Pointer);
             }
             return destination;
         }
@@ -648,10 +643,19 @@ where T : unmanaged
     }
 
     /// <summary>
-    /// Batched float MatMul reading B from a panel-packed clone shared by
-    /// every batch. Mirrors RunBatchedFloatMatMul loop-for-loop with the
-    /// packed kernel; the shared buffer pins once outside the loops.
+    /// Prepared packed dispatch with an opt-in full-panel row-sharing candidate.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static unsafe void RunPreparedPackedRows(int m, int n, int k, float* x, float* packed, float* dest)
+    {
+        if (AblationSwitches.EnablePackedAvx512Rows && TryPackedAvx512Rows(m, n, k, x, packed, dest)) return;
+        if (m % 3 == 0)
+            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, packed, dest);
+        else
+            mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, x, packed, dest);
+    }
+
+    // B is shared by every batch; pins and batch geometry are unchanged.
     static void RunPackedBatches(Tensor<float> bx, Tensor<float> z, int[] batchDims, int[] xSteps, int[] zSteps, int batchCount, int dop, int m, int n, int k, DenseTensor<float> packed)
     {
         using var xh = bx.Storage.Pin();
@@ -671,19 +675,7 @@ where T : unmanaged
                 {
                     unsafe
                     {
-                        // P65: exact 3-row groups cover every row at the same broadcast rate;
-                        // other batch shapes keep the proven 2-row nest (odd counts only arrive
-                        // here in exact 3-row groups via the relaxed packed gate).
-                        if ((m % 3) == 0)
-                            mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k,
-                                (float*)xp0 + xOff[bi],
-                                pp,
-                                (float*)zp0 + zOff[bi]);
-                        else
-                            mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k,
-                                (float*)xp0 + xOff[bi],
-                                pp,
-                                (float*)zp0 + zOff[bi]);
+                        RunPreparedPackedRows(m, n, k, (float*)xp0 + xOff[bi], pp, (float*)zp0 + zOff[bi]);
                     }
                 });
             }
@@ -696,10 +688,7 @@ where T : unmanaged
                 int ox = 0, oz = 0;
                 for (int b = 0; b < batchCount; b++)
                 {
-                    if ((m % 3) == 0)
-                        mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, xp + ox, pp, zp + oz);
-                    else
-                        mm_unsafe_vectorized_intrinsics_2x4packed_bump(m, n, k, xp + ox, pp, zp + oz);
+                    RunPreparedPackedRows(m, n, k, xp + ox, pp, zp + oz);
                     for (int d = r - 1; d >= 0; d--)
                     {
                         coords[d]++;

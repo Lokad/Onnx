@@ -7,7 +7,7 @@ using System;
 /// so a set flag can reroute another thread public Softmax mid-test. Bitwise tests
 /// must call kernels directly, never flag-affected publics; tolerance-based
 /// agreement tests are immune. Test code setting these fields restores in finally.
-/// Each switch forces a legacy kernel path while the shipped default stays current.
+/// Legacy switches preserve comparison paths; experimental switches are off by default.
 /// Production code never sets these fields;
 /// unit tests set them directly and diagnostic harnesses set them through the
 /// documented environment variables before the process starts. The current
@@ -17,6 +17,10 @@ internal static class AblationSwitches
 {
     internal static bool EnvIsSet(string name) =>
         string.Equals(Environment.GetEnvironmentVariable(name), "1", StringComparison.Ordinal);
+
+    /// Opt-in row-sharing experiment for prepared full-column-panel MatMul only.
+    /// Read once at process startup; no production default changes before AMD qualification.
+    internal static readonly bool EnablePackedAvx512Rows = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_ROWS");
 
     /// When true, softmax over contiguous float rows routes to the preserved
     /// legacy kernel instead of the default span kernel. Default off; set

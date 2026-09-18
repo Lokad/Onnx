@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Lokad.Onnx;
 
-public class MathOps
+public partial class MathOps
 {
     public struct PadInfo
     {
