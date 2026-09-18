@@ -1,0 +1,12 @@
+{
+  "first": {
+    "path": "onnx/decoder_model.onnx",
+    "bytes": 687820062,
+    "sha256": "31aeaa936531239cc9d65b78cd603715f6462ffb404a4820d9da3935e340d053"
+  },
+  "past": {
+    "path": "onnx/decoder_with_past_model.onnx",
+    "bytes": 635362163,
+    "sha256": "16972348eb181304f80a5af5d9b40ca894ed016888162fbdf65a2ccd7f3bc0f5"
+  }
+}
