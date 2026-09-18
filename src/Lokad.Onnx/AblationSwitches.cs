@@ -22,6 +22,9 @@ internal static class AblationSwitches
     /// Read once at process startup; no production default changes before AMD qualification.
     internal static readonly bool EnablePackedAvx512Rows = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_ROWS");
 
+    /// Traverse each full packed panel across all row groups; requires packed AVX-512 rows.
+    internal static readonly bool EnablePackedAvx512Panels = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_PANELS");
+
     /// Opt-in memoization of failed deferred-release probes whose alias state is unchanged.
     internal static readonly bool EnableDeferredReleaseCache = EnvIsSet("LOKAD_ONNX_DEFERRED_RELEASE_CACHE");
 

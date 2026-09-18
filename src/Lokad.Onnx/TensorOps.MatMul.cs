@@ -648,7 +648,11 @@ where T : unmanaged
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static unsafe void RunPreparedPackedRows(int m, int n, int k, float* x, float* packed, float* dest)
     {
-        if (AblationSwitches.EnablePackedAvx512Rows && TryPackedAvx512Rows(m, n, k, x, packed, dest)) return;
+        if (AblationSwitches.EnablePackedAvx512Rows)
+        {
+            if (AblationSwitches.EnablePackedAvx512Panels && TryPackedAvx512Panels(m, n, k, x, packed, dest)) return;
+            if (TryPackedAvx512Rows(m, n, k, x, packed, dest)) return;
+        }
         if (m % 3 == 0)
             mm_unsafe_vectorized_intrinsics_3x4packed(m, n, k, x, packed, dest);
         else
