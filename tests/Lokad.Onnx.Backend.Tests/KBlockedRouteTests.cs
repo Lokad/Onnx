@@ -119,6 +119,23 @@ public class KBlockedRouteTests
     }
 
     [Fact]
+    public void SingleRow_FallsBackDespiteSwitch()
+    {
+        if (!System.Runtime.Intrinsics.X86.Fma.IsSupported) return;
+        var r = RunOne(new GemmShape("kb-m1sw", 1, 1024, 1024, true, "test"), KBlocked());
+        Assert.Equal("intrinsics", r.Route);
+        Assert.True(r.Pass, "maxScaled=" + r.MaxScaled);
+    }
+
+    [Fact]
+    public void OddM_PreparedBlockedAgrees()
+    {
+        var r = RunOne(new GemmShape("kb-m15", 15, 1024, 1024, true, "test"), KBlocked());
+        Assert.Equal("prep-kblocked", r.Route);
+        Assert.True(r.Pass, "maxScaled=" + r.MaxScaled);
+    }
+
+    [Fact]
     public void DynamicPath_UntouchedBySwitch()
     {
         var r = RunOne(new GemmShape("kb-dyn", 16, 128, 128, false, "test"), KBlocked());

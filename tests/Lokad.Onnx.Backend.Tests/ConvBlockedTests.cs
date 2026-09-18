@@ -68,6 +68,20 @@ public class ConvBlockedTests
     }
 
     [Fact]
+    public void PooledOutput_MatchesUnpooled()
+    {
+        var x = Fill(new[] { 1, 16, 6, 6 }, 0);
+        var w = Fill(new[] { 16, 16, 3, 3 }, 7);
+        var pool = new TensorBufferPool();
+        Tensor<float>? yPooled = null;
+        Assert.True(Tensor<float>.TryConvBlocked2D(x, w, null, 1, new[] { 0, 0, 0, 0 }, null, new[] { 1, 1 }, null, TensorExecutionOptions.Auto, false, pool, out yPooled));
+        Tensor<float>? yPlain = null;
+        Assert.True(Tensor<float>.TryConvBlocked2D(x, w, null, 1, new[] { 0, 0, 0, 0 }, null, new[] { 1, 1 }, null, TensorExecutionOptions.Auto, false, null, out yPlain));
+        Assert.Equal(yPlain!.ToArray(), yPooled!.ToArray());
+        Assert.Equal(1, pool.AllocatedNew);
+    }
+
+    [Fact]
     public void OutOfScopeDeclines()
     {
         Tensor<float>? y = new DenseTensor<float>(new float[1], new[] { 1 });

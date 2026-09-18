@@ -36,6 +36,18 @@ public class LstmRouteTests
     }
 
     [Fact]
+    public void ClippedGates_ReportsScalarGates()
+    {
+        if (!Fma.IsSupported) return;
+        var x = FillRank3(4, 1, 4);
+        var w = FillRank3(1, 32, 4);
+        var r = FillRank3(1, 32, 8);
+        var snap = RunLstmOp(() => CPU.Lstm(x, w, r, null, null, null, null, null, "forward", null, null, null, 0.1f, 8, false, 0, 1, null, null));
+        Assert.True(snap.TryGetValue("lstm-scalar", out long d) && d == 1, "scalar x1");
+        Assert.True(snap.TryGetValue("lstm-gates-scalar", out long g) && g == 1, "gates-scalar x1");
+    }
+
+    [Fact]
     public void UnpreparedShortSequence_ReportsScalar()
     {
         if (!Fma.IsSupported) return;
