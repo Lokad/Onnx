@@ -113,4 +113,25 @@ public class KBlockedRouteTests
         for (int i = 0; i < zf.Length; i++) worst = Math.Max(worst, Math.Abs(zf[i] - zd[i]) / Math.Max(1.0, Math.Abs(zd[i])));
         Assert.True(worst <= 1e-4, "worst=" + worst);
     }
+    [Fact]
+    public void PackingReport_CountsBlockedClones()
+    {
+        var x = DenseTensor<float>.OfShape(new int[] { 16, 1024 });
+        var w = DenseTensor<float>.OfShape(new int[] { 1024, 1024 });
+        var graph = new ComputationalGraph();
+        graph.Metadata["Name"] = "kb-report";
+        graph.Inputs["x"] = x;
+        graph.Initializers["w"] = w;
+        graph.Outputs["z"] = DenseTensor<float>.OfShape(new int[] { 16, 1024 });
+        graph.Nodes.Add(new Node { Name = "mm", Op = OpType.MatMul, Inputs = new[] { "x", "w" }, Outputs = new[] { "z" } });
+        graph.RefreshLifetimeAnalysis();
+        Assert.Equal(0, graph.PackingReport.KBlockedLive);
+        Assert.Equal(0, graph.PackingReport.KBlockedRetainedBytes);
+        Assert.Equal(1, graph.PackingReport.Live);
+        graph.Options = new ExecutionOptions(OptimizationMode.Speed, TensorExecutionOptions.Auto with { UseKBlockedPanels = true });
+        graph.RefreshLifetimeAnalysis();
+        Assert.Equal(1, graph.PackingReport.KBlockedLive);
+        Assert.Equal(4194304, graph.PackingReport.KBlockedRetainedBytes);
+        Assert.Equal(1, graph.PackingReport.Live);
+    }
 }

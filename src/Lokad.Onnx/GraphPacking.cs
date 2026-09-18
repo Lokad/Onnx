@@ -21,7 +21,13 @@ public sealed record PackedWeightsReport(
     int Live,
     long RetainedBytes,
     IReadOnlyList<PackedWeightShape> Shapes,
-    int Eligible);
+    int Eligible)
+{
+    /// <summary>Live K-blocked clones (W3 prototype, counted separately).</summary>
+    public int KBlockedLive { get; init; }
+    /// <summary>Retained K-blocked clone bytes (W3 prototype).</summary>
+    public long KBlockedRetainedBytes { get; init; }
+}
 
 /// <summary>Live packed-clone count for one packed clone shape (rows by columns).</summary>
 public sealed record PackedWeightShape(int Rows, int Cols, int Count);
@@ -568,6 +574,12 @@ internal static class GraphPacking
             graph.KBlockedWeights[kv.Value.array] = new PackedMatMulWeightBlocked(kv.Key, kv.Value.tensor, kv.Value.tensor.Length, kv.Value.array, packedName, packed, n, k);
             live++;
         }
+        long kbRetained = 0;
+        foreach (var rec in graph.KBlockedWeights.Values)
+        {
+            checked { kbRetained += KBlockedTotalBytes(rec.N, rec.K) * 4; }
+        }
+        graph.PackingReport = graph.PackingReport with { KBlockedLive = live, KBlockedRetainedBytes = kbRetained };
         return live;
     }
 
