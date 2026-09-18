@@ -7,7 +7,7 @@ namespace Lokad.Onnx.Bench;
 /// <summary>
 /// Optional observations around benchmark calls, never campaign evidence.
 /// Reads and record storage stay outside the existing headline stopwatch.
-/// GC observations are process-wide; CPU time belongs only to this thread.
+/// GC observations are process-wide; CPU has separate thread/process counters.
 /// Neither identifies a pause cause without comparing the actual samples.
 /// </summary>
 internal sealed class SampleDiagnostics
