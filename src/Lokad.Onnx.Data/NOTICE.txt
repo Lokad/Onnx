@@ -22,3 +22,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Community-1 clustering uses the PLDA/VBx equations from pyannote.audio 4.0.0:
+https://github.com/pyannote/pyannote-audio/blob/a1ed3bb0440d33d18622e1cb6b138431cfaf4f7a/src/pyannote/audio/utils/vbx.py
+
+VBx source is licensed under Apache License 2.0, included in Apache-2.0.txt.
+Original VBx work: Lukas Burget, Pavel Palka, BUTSpeechFIT; pyannote adaptations:
+Herve Bredin. The managed implementation changes storage, validation, cancellation
+and orchestration while preserving the model equations. Preparation precomputes
+the fixed covariance decomposition.
+
+Clustering orchestration follows pyannote.audio clustering.py and plda.py,
+Copyright (c) 2021-2025 CNRS and Copyright (c) 2025- pyannoteAI, under the MIT
+license reproduced above. The managed API adds explicit invalid/no-training-data
+behavior and owned results, and supports automatic speaker counts.

@@ -1,0 +1,12 @@
+{
+  "source_revision": "a1ed3bb0440d33d18622e1cb6b138431cfaf4f7a",
+  "source_hashes": {
+    "vbx.py": "812c8c4ba276ba0521689693f84690f6fc9af3d67dec232aac45c1fc2d41906f",
+    "clustering.py": "6031fb7c21277a7e9901ef2cdaed7d5cd69f7ef45508dc4b45e82ce0da3c8fba"
+  },
+  "numpy": "2.2.4",
+  "scipy": "1.16.3",
+  "cases": ["native-recorded", "native-diverse", "native-perturbed", "native-filtered", "managed-recorded", "managed-diverse", "managed-perturbed", "managed-filtered", "one-training", "duplicate", "random-2", "random-4", "random-16", "random-64", "random-128"],
+  "hierarchy": ["duplicate-0.0", "duplicate-0.6", "duplicate-0.9", "duplicate-1.0", "duplicate-1.1", "inversion-0.0", "inversion-0.6", "inversion-0.9", "inversion-1.0", "inversion-1.1", "square-0.0", "square-0.6", "square-0.9", "square-1.0", "square-1.1"],
+  "tolerance": 0.0001
+}

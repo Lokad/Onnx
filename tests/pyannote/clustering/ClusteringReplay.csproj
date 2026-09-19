@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Lokad.Onnx.Data/Lokad.Onnx.Data.csproj" />
+    <EmbeddedResource Include="pins.json" LogicalName="clustering-pins.json" />
+    <EmbeddedResource Include="generate_reference.py" LogicalName="clustering-generator.py" />
+    <EmbeddedResource Include="../../../eng/prepare-community1-plda.py" LogicalName="clustering-prepare.py" />
+  </ItemGroup>
+</Project>

@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Lokad.Onnx\Lokad.Onnx.csproj" />
     <None Update="NOTICE.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Apache-2.0.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
