@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><AllowUnsafeBlocks>true</AllowUnsafeBlocks><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
+  <ItemGroup><Compile Include="Program.cs"/><Compile Include="$(KernelSourceDirectory)/Kernels.cs"/><Reference Include="Lokad.Onnx"><HintPath>$(FrozenCorePath)</HintPath></Reference></ItemGroup>
+  <Target Name="Frozen" BeforeTargets="ResolveReferences"><Error Condition="'$(FrozenCorePath)'=='' or '$(KernelSourceDirectory)'==''" Text="Supply frozen core and generated kernel directory."/></Target>
+</Project>
