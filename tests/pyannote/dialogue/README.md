@@ -96,8 +96,8 @@ The full recording has 24.35 reference speaker-seconds. Its ordinary errors are
 recording forms two learned clusters; each short excerpt forms one, with some
 additional count-only overlap speakers. This sample supports retaining context
 across turns; it does not establish general accuracy or identify the speakers.
-Initial local process peaks stay below 3.70 GB in these finite runs. AMD replay
-and longer-recording resource qualification remain separate requirements.
+Initial local process peaks stay below 3.70 GB in these finite runs. Subsequent
+archive and AMD observations are recorded below.
 
 A clean SDK 10.0.204 source-archive build at `21f3e74` reproduces all 204 native
 arrays and repeats the 22 API requests with identical public and intermediate
@@ -105,3 +105,49 @@ results. Eighteen malformed-evidence refusals and the metric's exact examples
 pass. Its peak working set is 4,055,748,608 bytes; these finite observations are
 not a maximum-duration memory bound. The same 19 filterbank failures remain.
 Archive SHA256: `c9f21629dca5c56536b25d133362fe22eb83f9419420fa19f7f27da03ee0e4d6`.
+
+The same frozen archive also passes 22 API requests on AMD EPYC 9V74,
+runtime 10.0.8, confined to CPU 2. Default and preferred configurations have
+identical public results and intermediate bits within that host. All timelines
+and annotation scores match Windows and native; maximum AMD centroid error is
+`2.02656e-6`. Of 176 intermediate arrays, 56 are bit-identical across hosts.
+The strict numerical gate retains **24 failed filterbank values on AMD**,
+maximum `1.56314e-4`; every other stage passes. The Windows count remains 19.
+Sampled AMD process peaks are 4,276,449,280 bytes default and 3,123,036,160 bytes
+preferred. These are finite replay observations, not a general memory bound.
+Both settings use normal tiering and GC; no collection is forced.
+
+All four workers terminated before collection. The independent audit validates
+complete trace coverage, binary/model identities, affinity, resource records
+and human-annotation scoring. Local evidence is under
+`artifacts/pyannote-dialogue-20260919/receipt-all-hosts.json`; the earlier local
+receipt remains unchanged. AMD result archive SHA256:
+`1b158e852de3b2e8c180f7bc80e6b8d2cae71562ceb6dc16da22b67d3f79bffb`.
+
+## Finite ten-minute request
+
+A separate Windows/default probe at the same frozen source concatenates twenty
+exact copies of the 30-second PCM: 9,600,000 samples, 600 seconds and 591
+pipeline windows. It completes in 962.051 seconds, with a 3,420,536,832-byte
+peak working set. Over-limit and canceled inputs are refused; empty input,
+retained results, input ownership and a subsequent 30-second native-bound
+recovery request pass. No GC is forced. This is one synthetic resource
+observation; preferred settings and AMD have no maximum-duration result here.
+
+The pinned native generator reproduces all 4,146 arrays in a fresh run after
+their layouts are fixed. Managed public timelines match the declared
+deterministic tie policy, with maximum centroid error `1.70244e-6`. Both
+pipelines produce four learned clusters, 312 ordinary intervals and 317
+exclusive intervals. Repetition changes window contexts at artificial splices
+and the global clustering population; four clusters do not establish four
+people or a managed-only defect. The original native unstable tie selection
+differs from the declared policy at 98 exclusive frame values, which remain
+recorded; ordinary frames agree.
+
+The full managed intermediate trace was not captured for this long request,
+and repeated speech is not an independent labeled accuracy corpus. Resource
+and application receipts remain separate under
+`artifacts/pyannote-limit-20260919/default/receipt.json` and
+`artifacts/pyannote-limit-20260919/long-application-receipt.json`. The latter
+independently binds the original managed output to the new frozen reference;
+it does not rewrite the original result's short-reference identity.
