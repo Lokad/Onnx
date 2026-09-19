@@ -211,6 +211,15 @@ matches all native application decisions and measures 10 word errors in 559
 reference words (1.7889%) on clean English speech. This small subset does not
 resolve the full numerical gate or establish broader recognition accuracy.
 
+The [real-speech numerical localization](numerical-20260919.md) checks complete
+features, encoder states and logits on those twenty recordings plus a repeat.
+All 707 decoder-logit arrays pass when supplied the native encoder states; the
+fully managed path retains 21 failed encoder arrays and 405 failed logit arrays.
+Both paths independently advance their own caches and match all native token
+and application decisions. This identifies the differing encoder states as the
+source of the observed decoder disagreement, without distinguishing frontend
+perturbations from encoder arithmetic or replacing the failed full-model gate.
+
 The [shared recorded-audio recipe](../audio/README.md) recreates all five WAV,
 PCM and mel-feature fixtures with pinned source and output hashes. Its
 `audio.json` can be passed to `generate_transcription_reference.py --audio`.

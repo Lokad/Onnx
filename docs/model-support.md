@@ -36,6 +36,14 @@ The [labeled ASR observation](../tests/audio/accuracy/results-20260919.md)
 retains every error on its fixed twenty-recording subset. Its one-word
 difference between the recognizers is too small to establish a general ranking.
 
+The subsequent [Whisper numerical localization](../tests/whisper/numerical-20260919.md)
+retains the failed full-pipeline gate: 21 encoder arrays and 405 logit arrays
+exceed the tolerance. All 707 decoder-logit arrays pass in a separate diagnostic
+using native encoder states, with independently advanced managed caches. Both
+paths match every token decision. This narrows the remaining investigation to
+the source of the differing encoder states; diagnostic success does not qualify
+the complete managed pipeline.
+
 DINOv3, ResNet50 and GPT-2 also have complete-output shared-core regression
 fixtures, including independently carried GPT states and ownership/recovery
 checks. They exercise common kernels beyond e5 and audio; these fixtures are
