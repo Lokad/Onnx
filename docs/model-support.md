@@ -9,7 +9,7 @@ Release CLI and the assets described in each model's linked instructions.
 |---|---|---|
 | multilingual-e5-small | Embeddings through `ComputationalGraph` or `lonnx run` | Native output checks cover scalar, SIMD and intrinsic execution. The [fresh public-options / ORT comparison](../tests/e5/public-ort-20260919.md) retains three primary cases above the 5% latency target: observed Default gaps are 9.2–12.0%, or 7.5–8.1% with explicit Memory. Eight tokens are within the target margin. Results remain descriptive; historical timing calibration is unresolved. |
 | Parakeet TDT 0.6B V3 | `ParakeetTranscriber` and `lonnx transcribe --model-type parakeet`; multilingual greedy transcription of recordings up to 30 seconds | Recorded transcripts, tokens, durations, carried states and recovery agree with native decisions locally and on AMD. The complete AMD replay passes all 784 arrays; Windows retains three duration-logit discrepancies above the numerical gate. A separate twenty-recording clean-English check matches native and records 11/559 word errors (1.9678%). Longer recordings, broader accuracy and the Windows numerical failure remain open. [Usage and evidence](../tests/parakeet/transcribe/README.md). |
-| Whisper Large V3 Turbo | `WhisperTranscriber` and `lonnx transcribe --language en`; greedy transcription of recordings up to 30 seconds | Recorded token/text/stop decisions agree locally and on AMD; independent decoder/cache trajectories and position boundaries pass their tensor checks. A separate twenty-recording clean-English check matches native and records 10/559 word errors (1.7889%). Full encoder/logit numerical agreement remains unresolved. Language must be explicit; automatic language detection, translation, timestamps and long-recording orchestration are not implemented. [Usage and evidence](../tests/whisper/README.md). |
+| Whisper Large V3 Turbo | `WhisperTranscriber.Transcribe` for up to 30 seconds; `TranscribeRecording` and CLI `--recording` for bounded recordings up to ten minutes, with segment timestamps | Short recorded decisions agree locally and on AMD; decoder/cache components pass their tensor checks. The twenty-recording English check records 10/559 word errors. The new recording mode matches native tokens, timestamps, seek and stop decisions on two constructed 69/72-second Windows fixtures, plus work limits and CLI/API agreement. AMD recording mode, maximum-duration speech resources and broader long-conversation accuracy remain open. Full encoder/logit numerical agreement remains unresolved. Language is explicit; automatic detection, translation and word timestamps are not implemented. [Short usage](../tests/whisper/README.md), [recording policy and evidence](../tests/whisper/recording/README.md). |
 | pyannote Community-1 | `Community1Diarizer` and `lonnx diarize`; segmentation, speaker embeddings, automatic clustering and ordinary/exclusive speaker intervals | Connected recorded application decisions agree locally and on AMD. A labeled 30-second two-speaker example matches native scoring; it is a small accuracy sample. Filterbank and some earlier silence tensors still fail the full numerical gate. The API accepts up to ten minutes; one repeated-clip Windows request has finite resource/application proof, without a complete long intermediate trace or AMD maximum-duration proof. [Pipeline](../tests/pyannote/diarization/README.md), [dialogue and long-request evidence](../tests/pyannote/dialogue/README.md). |
 
 For example, after staging the pinned assets:
@@ -17,11 +17,14 @@ For example, after staging the pinned assets:
 ```powershell
 lonnx.cmd transcribe models/parakeet-tdt-0.6b-v3 recording.wav --model-type parakeet --json
 lonnx.cmd transcribe models/whisper-large-v3-turbo recording.wav --language en --json
+lonnx.cmd transcribe models/whisper-large-v3-turbo longer.wav --language en --recording --json
 ```
 
 Both transcription commands accept supported mono/stereo RIFF/WAVE files and
-convert them to mono 16 kHz PCM. Inputs longer than 30 seconds are rejected.
-Token limits produce an explicitly marked partial result. Cancellation takes
+convert them to mono 16 kHz PCM. Default transcription rejects inputs longer than
+30 seconds; Whisper's explicit recording mode accepts up to ten minutes and
+reports committed segments, observed windows and the processed position.
+Token/window limits produce an explicitly marked partial result. Cancellation takes
 effect between graph calls; an in-flight model call finishes first. The public
 PCM APIs expect callers to supply the required sample rate directly.
 

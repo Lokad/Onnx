@@ -61,6 +61,23 @@ dotnet tests/whisper/recording/bin/Release/net10.0/RecordingReplay.dll models/wh
 Prepare downloads only the pinned small original Python source files/license;
 models and speech inputs must already be local. Run native and managed inference
 sequentially with appropriate memory headroom. The public implementation never
-loads Python, Torch or native ONNX Runtime. Archive/native/managed qualification
-results are pending for this new mode. Existing full encoder/logit numerical
+loads Python, Torch or native ONNX Runtime. The [September 19 qualification](results-20260919.md)
+records exact native application agreement on both constructed recordings and
+limit cases, repeated/held results, CLI agreement and a short-API regression.
+Each complete recording has five word errors out of 160 under the existing fixed
+normalization; all errors are retained. AMD recording mode, ten-minute speech
+resources and independent long-conversation accuracy remain open.
+Existing full encoder/logit numerical
 failures remain documented in [the numerical report](../numerical-20260919.md).
+
+The independent auditors validate raw native choices and recording structure:
+
+```powershell
+python tests/whisper/recording/audit_native.py --native artifacts/recording-native-next/manifest.json --inputs artifacts/recording-inputs-next/inputs.json --models models/whisper-large-v3-turbo --output artifacts/recording-native-audit-next.json
+python -m unittest discover -s tests/whisper/recording -p test_audit.py
+```
+
+`audit.py` additionally compares the complete native/API decisions, reconstructs
+committed segments and seeks, scores labeled text, checks every native array and
+verifies the replay build against its frozen manifest. Its `--cli` input checks
+the independently captured CLI JSON. All audit output paths must be new.

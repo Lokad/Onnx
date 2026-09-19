@@ -74,6 +74,11 @@ does not establish encoder or transcription agreement.
 
 ## Managed transcription API
 
+For longer recordings, use the separate [recording API and CLI mode](recording/README.md).
+It adds segment timestamps and boundary recovery with explicit input/work limits.
+Its Windows application evidence is separate from the short-model and numerical
+qualifications described below.
+
 `WhisperTranscriber` in `Lokad.Onnx.Data` composes the frontend and three local
 FP32 split graphs. It accepts finite mono 16 kHz PCM up to 30 seconds:
 

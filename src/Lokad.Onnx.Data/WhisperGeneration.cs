@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 
-/// <summary>Explicit greedy transcription policy; timestamps and translation are not generated.</summary>
+/// <summary>Explicit greedy decoding limits, language and no-speech thresholds.</summary>
+/// <remarks>Transcribe emits plain text; TranscribeRecording includes segment timestamp tokens in its window decisions.</remarks>
 public sealed record WhisperTranscriptionOptions(string Language, int MaxNewTokens,
     double? NoSpeechThreshold, double? LogProbabilityThreshold)
 {
