@@ -57,6 +57,14 @@ improvement was only 0.81%, with mixed results overlapping control movement.
 The experiment does not justify pinned storage, padding or cache-accounting
 changes in production. Source alignment preferences alone were insufficient.
 
+The separate [packed overwrite experiment](../tests/e5/packed-overwrite-20260919.md)
+compared current accumulation with positive-zero accumulator initialization and
+removal of the destination clear. It preserves reduction order and all row
+remainders. Ten balanced AMD workers pass all bit/storage checks. The 128-row
+bank improves 1.23%, below the prospective 2% screen, while thirty-row timing
+swings affect unchanged controls. Keep this voice-branch cohort outside the
+product; no full-model speedup or default change follows from the prototype.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |
@@ -67,6 +75,7 @@ changes in production. Source alignment preferences alone were insufficient.
 | Executable If (`103fc3a`, `39e9375`) | Adapted in `057c12b` with scoped captures and capture-aware graph facts and lifetimes. Captures must count as consumers during fusion as well as release. |
 | Model cases, representative audio rows and decoder trajectories, including prefix fix `0025373` | Adapted into the Parakeet and pyannote qualification lanes (`6dbcc0c`, `96489c2`). Each engine carries its own recurrent states; complete saved arrays replace old spot checks. Model sidecars, inputs, references and loaded binaries have explicit identities. |
 | Multirow packed GEMM and panel traversal | Reused as separate guarded experiments (`4de53f4`, `e115718`), preserving master's masked tails and shape/offset checks. Retain the row-sharing mechanism; do not enable every composer or traversal variant. |
+| Overwrite destinations (`be97ba9`) | Separately tested on current packed projection code. Arithmetic/ownership checks pass, but the prospective primary performance screen fails; retain the artifact and existing product accumulation/clearing contracts. |
 | Persistent pool and Reset changes | Redesigned in `c1f943d` and subsequent ownership/lifetime work. The retained cache has aggregate byte/array limits. Early release of exposed dead views remains an explicit `ExecutionOptions.Memory` policy. |
 | Prepared recurrent maps, direct/depthwise convolution, tiled expansion, K-blocked projections and region fusions | Candidate material for measured bottlenecks after model correctness. Keep dependency-complete slices and their invalidation/alias tests; avoid importing successive superseded prototypes. No blanket performance acceptance. |
 | Paired runner, historical tables, SDK changes, reverted prefetch/gate experiments and duplicate optimization infrastructure | Do not replace the current runner, source identities, SDK contract or optimizer pipeline. Preserve useful regression cases and historical evidence, but regenerate results for integrated source. |
