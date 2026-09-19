@@ -1,4 +1,4 @@
-"""Read-only validation of prospective isolated-e5-v1 (schema 3) evidence.
+"""Read-only validation of isolated-e5-v1/v2 (schemas 3/4) evidence.
 
 Workers remain separate processes in the evidence. Only after verifying every
 binding do we assemble the logical role visits consumed by the existing scorer.
@@ -17,6 +17,9 @@ import campaign_processes as processes
 
 PROTOCOL = "isolated-e5-v1"
 CONTRACT = "public-execute-v1; all individual calls retained; reset/disposal outside; complete-request blocks separate"
+CONDITIONED_PROTOCOL = "isolated-e5-v2"
+CONDITIONED_CONTRACT = CONTRACT + "; conditioning=30s-execute; cap=20000-calls/60s-wall"
+PROTOCOLS = {PROTOCOL: (3, CONTRACT, "isolate"), CONDITIONED_PROTOCOL: (4, CONDITIONED_CONTRACT, "isolate-conditioned")}
 MODEL = "ca456c06b3a9505ddfd9131408916dd79290368331e7d76bb621f1cba6bc8665"
 CASES = base.CASES[:5]
 TOKENS = dict(zip(CASES, (8, 30, 128, 128, 512)))
@@ -102,11 +105,31 @@ def sample_ticks(value, label, count=None):
 
 
 def validate_measurements(record, smoke):
+    return _validate_measurements(record, smoke, PROTOCOL)
+
+
+def _validate_measurements(record, smoke, protocol):
     measured = record["measured"]
     if record["mode"] == "oracle":
         require(measured == {}, "oracle cannot contain timed samples")
         return []
     frequency = base.integer(record["stopwatch_frequency"], "stopwatch frequency", 1)
+    conditioning_fields = {"conditioning_ticks", "conditioning_wall_ticks", "conditioning_stop"}
+    conditioning_wall = 0
+    if protocol == CONDITIONED_PROTOCOL:
+        require(conditioning_fields <= measured.keys(), "conditioning fields missing")
+        conditioning_wall = base.integer(measured["conditioning_wall_ticks"], "conditioning wall ticks")
+        if smoke:
+            require(measured["conditioning_ticks"] == [] and conditioning_wall == 0
+                    and measured["conditioning_stop"] == "skipped-smoke", "smoke must skip conditioning")
+        else:
+            ticks = sample_ticks(measured["conditioning_ticks"], "conditioning")
+            require(len(ticks) <= 20000, "conditioning call cap exceeded")
+            require(sum(ticks[:-1]) < 30 * frequency <= sum(ticks), "conditioning must first reach 30s Execute target")
+            require(sum(ticks) <= conditioning_wall <= 60 * frequency, "conditioning wall duration/cap differs")
+            require(measured["conditioning_stop"] == "target-execute-30s", "conditioning stop differs")
+    else:
+        require(not conditioning_fields.intersection(measured), "legacy worker cannot contain conditioning")
     for field in ("pre_scaled_error", "post_scaled_error"):
         require(base.number(measured[field], field) <= 1e-4, "numerical agreement failed")
     warm = sample_ticks(measured["warmup_ticks"], "warmup")
@@ -130,7 +153,7 @@ def validate_measurements(record, smoke):
             base.integer(block[field], field)
         block_total += duration
         ticks.extend(raw)
-    total = sum(warm) + block_total + base.integer(record["load_ticks"], "load ticks", 1)
+    total = conditioning_wall + sum(warm) + block_total + base.integer(record["load_ticks"], "load ticks", 1)
     total += base.integer(measured["first_execute_ticks"], "first Execute ticks", 1)
     total += base.integer(measured["post_execute_ticks"], "post Execute ticks", 1)
     elapsed = (base.timestamp(record["completed_utc"]) - base.timestamp(record["started_utc"])).total_seconds()
@@ -139,10 +162,17 @@ def validate_measurements(record, smoke):
 
 
 def validate_process(directory, entry, smoke):
+    """Historical schema-3 entry point; callers must explicitly select v2."""
+    return validate_process_for_protocol(directory, entry, smoke, PROTOCOL)
+
+
+def validate_process_for_protocol(directory, entry, smoke, protocol):
+    require(protocol in PROTOCOLS, "unsupported isolated protocol")
+    _, contract, verb = PROTOCOLS[protocol]
     require(set(entry) == {"process", "supervision", "config", "log", "error", "before", "after"}, "process binding set differs")
     paths = {key: bound(directory, value) for key, value in entry.items()}
     record, supervision, config = (read_json(paths[key]) for key in ("process", "supervision", "config"))
-    require(record["producer"] == PROTOCOL and record["timing_contract"] == CONTRACT, "worker protocol differs")
+    require(record["producer"] == protocol and record["timing_contract"] == contract, "worker protocol differs")
     require(record["smoke"] is smoke and record["mode"] in ("oracle", "lok", "ort") and record["case"] in CASES, "worker scope differs")
     require(record["exit_code"] == supervision["exit_code"] == 0 and type(record["exit_code"]) is int, "worker failed")
     require(base.integer(record["process_id"], "process ID", 1) == supervision["pid"], "supervised PID differs")
@@ -159,7 +189,7 @@ def validate_process(directory, entry, smoke):
     require((config["fixture_sha256"] is None) if record["mode"] == "oracle" else
             (config["fixture_sha256"] == record["fixture_sha256"]), "configuration oracle digest differs")
     command = supervision["command"]
-    require(isinstance(command, list) and len(command) == 5 and command[0] == "dotnet" and command[2:4] == ["isolate", record["mode"]]
+    require(isinstance(command, list) and len(command) == 5 and command[0] == "dotnet" and command[2:4] == [verb, record["mode"]]
             and name_of(command[4]) == paths["config"].name and name_of(command[1]) == "Lokad.Onnx.Campaign.dll", "supervised command differs")
     before, after = read_json(paths["before"]), read_json(paths["after"])
     accounting = processes.foreign_fraction(before, after, base.integer(supervision["supervisor_pid"], "supervisor PID", 1))
@@ -186,15 +216,21 @@ def validate_process(directory, entry, smoke):
     wall, cpu, ratio = (base.number(confinement[field], field) for field in ("wall_ms", "cpu_ms", "ratio"))
     require(wall > 0 and cpu >= 0 and abs(cpu / wall - ratio) <= 0.02, "confinement counter arithmetic differs")
     require(smoke or (wall >= 1900 and cpu > 0 and 0.8 <= ratio <= 1.3), "confinement check failed")
-    samples = validate_measurements(record, smoke)
+    samples = _validate_measurements(record, smoke, protocol)
     return dict(record, raw=samples, launch=launch, exit=exit, accounting=accounting, evidence_path=str(paths["process"]))
 
 
 def validate_fixture(directory, value, oracle):
+    return validate_fixture_for_protocol(directory, value, oracle, PROTOCOL)
+
+
+def validate_fixture_for_protocol(directory, value, oracle, protocol):
+    require(protocol in PROTOCOLS, "unsupported isolated protocol")
     path = bound(directory, value)
     fixture = read_json(path)
     require(base.sha256(path) == oracle["fixture_sha256"], "oracle fixture binding differs")
-    require(fixture["protocol"] == PROTOCOL and fixture["case"] == oracle["case"], "oracle fixture scope differs")
+    require(fixture["protocol"] == protocol and oracle["producer"] == protocol
+            and fixture["case"] == oracle["case"], "oracle fixture scope differs")
     for field in ("model_sha256", "tokenizer_sha256", "input_sha256", "unmasked_tokens"):
         require(fixture[field] == oracle[field], "oracle fixture identity differs: " + field)
     require(fixture["oracle_version"] == oracle["ort_version"] and fixture["native"] == oracle["native_module"], "oracle native identity differs")
@@ -214,7 +250,9 @@ def validate_fixture(directory, value, oracle):
 def load(path, manifest, allow_smoke=False):
     path = Path(path).resolve()
     directory = path.parent
-    require(manifest["schema"] == 3 and manifest["scope"] == "e5" and manifest["protocol"] == PROTOCOL, "isolated campaign scope/protocol differs")
+    protocol, schema = manifest["protocol"], manifest["schema"]
+    require(isinstance(protocol, str) and protocol in PROTOCOLS and type(schema) is int
+            and schema == PROTOCOLS[protocol][0] and manifest["scope"] == "e5", "isolated campaign scope/protocol differs")
     smoke = manifest["kind"] == "smoke"
     require(manifest["kind"] in ("aa", "comparison") or (smoke and allow_smoke), "smoke cannot score")
     require(type(manifest["cooldown_seconds"]) is int and manifest["cooldown_seconds"] == (0 if smoke else 300), "pair cooldown contract differs")
@@ -236,7 +274,7 @@ def load(path, manifest, allow_smoke=False):
 
     def child(entry, expected_mode, expected_case):
         nonlocal previous_exit
-        row = validate_process(directory, entry, smoke)
+        row = validate_process_for_protocol(directory, entry, smoke, protocol)
         require(row["mode"] == expected_mode and row["case"] == expected_case, "worker order/mode/case differs")
         require(previous_exit is None or row["launch"] >= previous_exit, "worker intervals overlap or run out of order")
         previous_exit = row["exit"]
@@ -255,7 +293,7 @@ def load(path, manifest, allow_smoke=False):
         require(set(entry) == {"worker", "fixture"}, "oracle binding fields differ")
         row = child(entry["worker"], "oracle", name)
         oracles[name] = row
-        case_ids[name] = validate_fixture(directory, entry["fixture"], row)
+        case_ids[name] = validate_fixture_for_protocol(directory, entry["fixture"], row, protocol)
     count = 2 if smoke else 8
     require(isinstance(manifest["runs"], list) and len(manifest["runs"]) == count, "role visit count differs")
     visits = []
@@ -290,14 +328,14 @@ def load(path, manifest, allow_smoke=False):
     require(all((row["source_sha"], row["core_sha256"]) == identities["L0"] for row in oracles.values()), "oracles must use baseline runner/core stage")
     if manifest["kind"] == "aa":
         require(identities["L0"] == identities["L1"], "A/A cores differ")
-    signature = dict(signatures[0], schema=3, scope="e5", cases=case_ids, producer_files=producer_files)
-    return dict(manifest=str(path), manifest_sha256=base.sha256(path), kind=manifest["kind"], schema=3, scope="e5", cases=CASES,
+    signature = dict(signatures[0], schema=schema, scope="e5", cases=case_ids, producer_files=producer_files)
+    return dict(manifest=str(path), manifest_sha256=base.sha256(path), kind=manifest["kind"], schema=schema, scope="e5", cases=CASES,
                 runs=visits, signature=signature, identities=identities, start=campaign_start, end=previous_exit)
 
 
 def calibration_health(campaign):
     import score_campaign as scorer
-    require(campaign["kind"] == "aa" and campaign["schema"] == 3, "isolated calibration requires schema-3 A/A")
+    require(campaign["kind"] == "aa" and campaign["schema"] in (3, 4), "isolated calibration requires schema-3/4 A/A")
     problems = scorer.campaign_stability(campaign, "A/A")
     noise = {}
     for name in CASES:

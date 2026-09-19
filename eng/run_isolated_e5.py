@@ -1,7 +1,7 @@
-"""Supervise prospective schema-3 e5 evidence with separate inference engines.
+"""Supervise schema-3/4 e5 evidence with separate inference engines.
 
 Prepare with build-common-campaign.ps1. A/A uses the release core in both roles;
-comparison requires qualified schema-3 --aa evidence from this exact producer.
+comparison requires qualified matching --aa evidence from this exact producer.
 See isolated-evidence.md. No remote operations, asset downloads or overwrites.
 """
 import argparse
@@ -22,6 +22,14 @@ import score_campaign
 
 
 def child(build, output, role, rep, mode, name, fixture, cpu, smoke, env):
+    return _child(build, output, role, rep, mode, name, fixture, cpu, smoke, env, isolated.PROTOCOL)
+
+
+def child_conditioned(build, output, role, rep, mode, name, fixture, cpu, smoke, env):
+    return _child(build, output, role, rep, mode, name, fixture, cpu, smoke, env, isolated.CONDITIONED_PROTOCOL)
+
+
+def _child(build, output, role, rep, mode, name, fixture, cpu, smoke, env, protocol):
     stem = "%s-rep%d-%s-%s" % (role.lower(), rep, name, mode)
     paths = {key: output / (stem + suffix) for key, suffix in
              (("process", ".process.json"), ("supervision", ".supervision.json"), ("config", ".config.json"),
@@ -30,7 +38,7 @@ def child(build, output, role, rep, mode, name, fixture, cpu, smoke, env):
                   core_sha256=build["core_sha256"].lower(), fixture=str(fixture),
                   fixture_sha256=None if mode == "oracle" else evidence.sha256(fixture / "fixture.json"), smoke=smoke)
     common.save_json(paths["config"], config)
-    command = ["dotnet", str(build["runner"]), "isolate", mode, str(paths["config"])]
+    command = ["dotnet", str(build["runner"]), isolated.PROTOCOLS[protocol][2], mode, str(paths["config"])]
     before = processes.snapshot()
     common.save_json(paths["before"], before)
     launched = dt.datetime.now(dt.timezone.utc)
@@ -56,7 +64,7 @@ def child(build, output, role, rep, mode, name, fixture, cpu, smoke, env):
         raise failure
     evidence.require(code == 0, "child failed: " + str(paths["error"]))
     entry = {key: isolated.binding(path, output) for key, path in paths.items()}
-    record = isolated.validate_process(output, entry, smoke)
+    record = isolated.validate_process_for_protocol(output, entry, smoke, protocol)
     evidence.require(record["source_sha"] == config["source_sha"] and record["core_sha256"] == config["core_sha256"], "worker differs from staged core")
     evidence.require(record["environment"]["sdk"] == build["sdk"], "core/runner SDK mismatch")
     print("Finished %s foreign_cpu=%.4f" % (stem, accounting["foreign_cpu_fraction"]), flush=True)
@@ -81,16 +89,22 @@ def main(argv=None):
     parser.add_argument("--kind", choices=("aa", "comparison"), required=True)
     parser.add_argument("--aa", type=Path)
     parser.add_argument("--jit", choices=("default-tiered", "full-opts"), default="default-tiered")
+    parser.add_argument("--conditioning", choices=("none", "30s"), default="none",
+                        help="30s selects schema 4 with retained inference conditioning; none preserves schema 3")
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--root", type=Path, default=common.ROOT, help="repository with local models; defaults to this checkout")
     args = parser.parse_args(argv)
     output = args.output.resolve()
+    protocol = isolated.CONDITIONED_PROTOCOL if args.conditioning == "30s" else isolated.PROTOCOL
+    schema = isolated.PROTOCOLS[protocol][0]
+    launch_child = child_conditioned if args.conditioning == "30s" else child
     try:
         evidence.require(0 <= args.cpu < 64, "invalid CPU selector")
         evidence.require(args.kind != "comparison" or args.smoke or args.aa is not None, "comparison requires qualified --aa")
         evidence.require(args.kind != "aa" or args.aa is None, "A/A cannot consume another calibration")
         aa = evidence.load_campaign(args.aa) if args.aa else None
         if aa is not None:
+            evidence.require(aa["schema"] == schema, "A/A conditioning protocol/schema differs before launch")
             health = isolated.calibration_health(aa)
             evidence.require(health["qualified"], "A/A failed unchanged noise gates: " + json.dumps(health["problems"]))
         common.ROOT = args.root.resolve()
@@ -109,7 +123,7 @@ def main(argv=None):
         (output / "producer").mkdir()
         for name in isolated.SCRIPTS:
             shutil.copyfile(script_directory / name, output / "producer" / name)
-        manifest = dict(schema=3, scope="e5", protocol=isolated.PROTOCOL, kind="smoke" if args.smoke else args.kind,
+        manifest = dict(schema=schema, scope="e5", protocol=protocol, kind="smoke" if args.smoke else args.kind,
                         cooldown_seconds=0 if args.smoke else 300, oracles=[], runs=[],
                         producer_files={name: isolated.binding(output / "producer" / name, output) for name in isolated.SCRIPTS},
                         builds={role: {key: build[key] for key in ("source_sha", "core_sha256", "source_archive_sha256", "sdk")} for role, build in builds.items()})
@@ -118,9 +132,9 @@ def main(argv=None):
         for name in isolated.CASES:
             fixture = output / (name + "-oracle")
             fixtures[name] = fixture
-            entry, record = child(builds["L0"], output, "L0", 0, "oracle", name, fixture, args.cpu, args.smoke, env)
+            entry, record = launch_child(builds["L0"], output, "L0", 0, "oracle", name, fixture, args.cpu, args.smoke, env)
             fixture_binding = isolated.binding(fixture / "fixture.json", output)
-            case_identity = isolated.validate_fixture(output, fixture_binding, record)
+            case_identity = isolated.validate_fixture_for_protocol(output, fixture_binding, record, protocol)
             verify_oracle_against_aa(record, case_identity, aa)
             manifest["oracles"].append(dict(worker=entry, fixture=fixture_binding))
             if reference is None:
@@ -130,7 +144,7 @@ def main(argv=None):
         # Check both staged identities before beginning the long measured visits.
         # These probes initialize ORT but contain no inference/model timings.
         # They use the unchanged legacy probe producer solely for actual binary
-        # discovery. They are never included among schema-3 observations.
+        # discovery. They are never included among isolated observations.
         common.preflight(builds, output, args.cpu, env, None, "e5")
         for role in ("L0", "L1"):
             probe = isolated.read_json(output / (role.lower() + "-probe.process.json"))
@@ -146,7 +160,7 @@ def main(argv=None):
             engines = ("lok", "ort") if index % 2 == 0 else ("ort", "lok")
             for name in isolated.CASES:
                 for mode in engines:
-                    entry, record = child(builds[role], output, role, visit["rep"], mode, name, fixtures[name], args.cpu, args.smoke, env)
+                    entry, record = launch_child(builds[role], output, role, visit["rep"], mode, name, fixtures[name], args.cpu, args.smoke, env)
                     for key in ("environment", "runner_sha256", "oracle_native_sha256"):
                         evidence.require(record[key] == reference[key], "worker identity changed: " + key)
                     visit["workers"].append(entry)

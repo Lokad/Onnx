@@ -48,6 +48,7 @@ static class Bench
 #if CAMPAIGN_RUNNER
         if (args.Length == 1 && args[0] == "selftest") return CampaignSelfTests.Run();
         if (args.Length > 0 && args[0] == "isolate") return IsolatedE5.Run(args.Skip(1).ToArray());
+        if (args.Length > 0 && args[0] == "isolate-conditioned") return IsolatedE5.RunConditioned(args.Skip(1).ToArray());
 #endif
         var root = FindRoot();
         var assets = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)

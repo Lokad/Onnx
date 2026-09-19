@@ -11,6 +11,7 @@ from pathlib import Path
 import shutil
 
 import campaign_evidence as evidence
+import isolated_evidence as isolated
 import run_common_campaign as common
 
 
@@ -21,8 +22,11 @@ def main(argv=None):
     parser.add_argument("--source", required=True)
     parser.add_argument("--cpu", required=True, type=int)
     parser.add_argument("--cases", nargs="+", choices=evidence.CASES[:5], default=list(evidence.CASES[:5]))
+    parser.add_argument("--conditioning", choices=("none", "30s"), default="none")
     args = parser.parse_args(argv)
     runner, output = args.runner.resolve(), args.output.resolve()
+    protocol = isolated.CONDITIONED_PROTOCOL if args.conditioning == "30s" else isolated.PROTOCOL
+    _, contract, verb = isolated.PROTOCOLS[protocol]
     evidence.digest(args.source, "source", 40)
     evidence.require(not output.exists(), "output already exists")
     output.mkdir(parents=True)
@@ -36,21 +40,22 @@ def main(argv=None):
         config_path = output / (label + ".config.json")
         common.save_json(config_path, config)
         with (output / (label + ".log")).open("x", encoding="utf-8") as log, (output / (label + ".err.log")).open("x", encoding="utf-8") as error:
-            child = common.spawn_child(["dotnet", str(runner), "isolate", mode, str(config_path)], args.cpu,
+            child = common.spawn_child(["dotnet", str(runner), verb, mode, str(config_path)], args.cpu,
                                        cwd=common.ROOT, stdout=log, stderr=error, env=env)
             code = common.wait_child(child, label)
         if rejection:
             assert code != 0 and not Path(config["output"]).exists(), label
-            assert rejection in (output / (label + ".err.log")).read_text(), label
+            assert rejection in (output / (label + ".err.log")).read_text(encoding="utf-8"), label
             return None
         assert code == 0, label + ": see preserved error log"
-        record = json.loads(Path(config["output"]).read_text())
-        assert record["producer"] == "isolated-e5-v1" and record["core_sha256"] == core_hash
+        record = json.loads(Path(config["output"]).read_text(encoding="utf-8"))
+        assert record["producer"] == protocol and record["timing_contract"] == contract and record["core_sha256"] == core_hash
         assert record["configuration_sha256"] == evidence.sha256(config_path)
         assert record["mode"] == mode and record["case"] == config["case"] and record["smoke"] is True
         assert record["process_id"] == child.pid and record["inputs_intact"] is True
         assert int(record["environment"]["affinity"], 16) == 1 << args.cpu
         assert bool(record["native_module"]) == (mode != "lok")
+        isolated._validate_measurements(record, True, protocol)
         if mode != "oracle":
             measured = record["measured"]
             assert 0 <= measured["pre_scaled_error"] <= 1e-4 and 0 <= measured["post_scaled_error"] <= 1e-4
@@ -92,24 +97,31 @@ def main(argv=None):
     launch("lok", "corrupt-oracle", dict(original, fixture=str(corrupt), output=str(output / "corrupt.process.json")), "Oracle output bytes/digest differ")
     missing = output / "missing-outputs"
     shutil.copytree(original["fixture"], missing)
-    manifest = json.loads((missing / "fixture.json").read_text())
+    manifest = json.loads((missing / "fixture.json").read_text(encoding="utf-8"))
     manifest["outputs"] = []
     (missing / "fixture.json").write_text(json.dumps(manifest), encoding="utf-8")
     launch("lok", "missing-outputs", dict(original, fixture=str(missing), fixture_sha256=evidence.sha256(missing / "fixture.json"),
         output=str(output / "missing.process.json")), "Oracle outputs missing")
+    mixed = output / "mixed-protocol"
+    shutil.copytree(original["fixture"], mixed)
+    manifest = json.loads((mixed / "fixture.json").read_text(encoding="utf-8"))
+    manifest["protocol"] = isolated.PROTOCOL if protocol == isolated.CONDITIONED_PROTOCOL else isolated.CONDITIONED_PROTOCOL
+    (mixed / "fixture.json").write_text(json.dumps(manifest), encoding="utf-8")
+    launch("lok", "mixed-protocol", dict(original, fixture=str(mixed), fixture_sha256=evidence.sha256(mixed / "fixture.json"),
+        output=str(output / "mixed.process.json")), "Oracle workload identity differs")
     # Existing outputs are a refusal, not a retry that rewrites evidence.
     label = "existing-output"
     config_path = output / (label + ".config.json")
     common.save_json(config_path, original)
     completed_hash = evidence.sha256(original["output"])
-    with (output / (label + ".log")).open("x") as log, (output / (label + ".err.log")).open("x") as error:
-        child = common.spawn_child(["dotnet", str(runner), "isolate", "lok", str(config_path)], args.cpu, cwd=common.ROOT, stdout=log, stderr=error, env=env)
+    with (output / (label + ".log")).open("x", encoding="utf-8") as log, (output / (label + ".err.log")).open("x", encoding="utf-8") as error:
+        child = common.spawn_child(["dotnet", str(runner), verb, "lok", str(config_path)], args.cpu, cwd=common.ROOT, stdout=log, stderr=error, env=env)
         assert common.wait_child(child, label) != 0
-    assert "Process output already exists" in (output / (label + ".err.log")).read_text()
+    assert "Process output already exists" in (output / (label + ".err.log")).read_text(encoding="utf-8")
     assert evidence.sha256(original["output"]) == completed_hash
-    common.save_json(output / "summary.json", {"scope": "unscored live smoke", "cases": args.cases, "core_sha256": core_hash,
-                                               "negative_checks": 7, "records": records})
-    print("Isolated worker smoke and seven refusal checks passed; no timing verdict.")
+    common.save_json(output / "summary.json", {"scope": "unscored live smoke", "protocol": protocol, "cases": args.cases,
+                                               "core_sha256": core_hash, "negative_checks": 8, "records": records})
+    print("Isolated worker smoke and eight refusal checks passed; no timing verdict.")
 
 
 if __name__ == "__main__":

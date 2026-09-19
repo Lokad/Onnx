@@ -1,4 +1,4 @@
-# Isolated e5 evidence, prospective schema 3
+# Isolated e5 evidence, schemas 3 and 4
 
 This protocol runs one engine and one canonical e5 case per fresh process.
 It addresses measured interference from managed background GC during native ORT
@@ -80,6 +80,33 @@ Choose an allowed local CPU and a new output directory. A smoke pass establishes
 producer behavior, never performance. No historical experiment is reclassified
 as schema-3 evidence.
 
+Schema 4 adds a fixed preparation interval for sustained runtime measurements.
+Select it explicitly with `--conditioning 30s`; the default `none` retains
+schema 3. The corresponding runner command is
+`isolate-conditioned oracle|lok|ort config.json`, protocol `isolated-e5-v2`.
+Fixtures, supervised commands, process records, timing contracts and matching
+A/A evidence must all use the selected version. Relabeling old evidence does
+not supply this preparation interval.
+
+After first-output validation and before the unchanged warmup, each measured
+schema-4 worker runs until its retained Execute/Run ticks first total at least
+30 seconds. Reset/disposal stay outside those individual stopwatches. All
+`conditioning_ticks` are retained in order, together with
+`conditioning_wall_ticks` (including reset and bookkeeping) and
+`conditioning_stop=target-execute-30s`. At most 20,000 calls and 60 seconds of
+conditioning wall time are permitted; a failure produces no completed result.
+The last call may cross the 30-second target. Wall time must cover all calls and
+fits separately within the process lifetime, alongside load, first execution,
+warmup, measured blocks, post-validation execution and the confinement probe.
+
+Oracle processes remain untimed and do not condition. A schema-4 smoke records
+an empty conditioning array, zero wall ticks and `skipped-smoke`, and cannot
+score. First-call and load costs are still retained. This fixed condition does
+not assert that every runtime method has finished recompiling. No historical
+sample is discarded, and every numerical, raw-sample and calibration gate above
+is unchanged. The live worker smoke accepts the same `--conditioning` choice
+and checks both engines on all five cases, plus eight refusal scenarios.
+
 After preparation, the supervised commands are:
 
 ```powershell
@@ -88,6 +115,11 @@ python eng/run_isolated_e5.py --prepared artifacts/common-prepared-new --output 
 python eng/run_isolated_e5.py --prepared artifacts/common-prepared-new --output artifacts/isolated-aa-new --cpu 2 --kind aa --jit full-opts
 python eng/run_isolated_e5.py --prepared artifacts/common-prepared-new --output artifacts/isolated-comparison-new --cpu 2 --kind comparison --jit full-opts --aa artifacts/isolated-aa-new/evidence.json
 ```
+
+For schema 4 under normal tiering, use fresh output directories and append
+`--conditioning 30s --jit default-tiered` to both A/A and comparison commands.
+Use that same selection for the preceding smoke. A schema-3 calibration cannot
+qualify schema 4, or vice versa.
 
 Use `--root /absolute/repository` when the scripts live in an immutable artifact
 directory and models live in the repository. This reads the existing assets.

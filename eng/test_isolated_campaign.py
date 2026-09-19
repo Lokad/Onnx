@@ -1,4 +1,4 @@
-"""Synthetic end-to-end/adversarial schema-3 checks; no model or VM workload."""
+"""Synthetic end-to-end/adversarial schema-3/4 checks; no model or VM workload."""
 import copy
 import datetime as dt
 import hashlib
@@ -19,18 +19,21 @@ def save(path, value):
     Path(path).write_text(json.dumps(value), encoding="utf-8")
 
 
-def make_campaign(directory, kind):
+def make_campaign(directory, kind, schema=3):
     directory.mkdir()
+    protocol = isolated.PROTOCOL if schema == 3 else isolated.CONDITIONED_PROTOCOL
+    _, contract, verb = isolated.PROTOCOLS[protocol]
+    duration = 10 if schema == 3 else 38
     changed = kind == "comparison"
     builds = {role: dict(source_sha=("2" if changed and role == "L1" else "1") * 40,
                         core_sha256=("4" if changed and role == "L1" else "3") * 64,
                         source_archive_sha256=("6" if changed and role == "L1" else "5") * 64, sdk="10.0.204") for role in ("L0", "L1")}
-    manifest = dict(schema=3, scope="e5", protocol=isolated.PROTOCOL, kind=kind, cooldown_seconds=300, builds=builds, oracles=[], runs=[])
+    manifest = dict(schema=schema, scope="e5", protocol=protocol, kind=kind, cooldown_seconds=300, builds=builds, oracles=[], runs=[])
     (directory / "producer").mkdir()
     manifest["producer_files"] = {}
     for name in isolated.SCRIPTS:
         path = directory / "producer" / name
-        path.write_text("# synthetic producer fixture\n")
+        path.write_text("# synthetic producer fixture\n", encoding="utf-8")
         manifest["producer_files"][name] = isolated.binding(path, directory)
     env = dict(host="synthetic", cpu="synthetic AMD", os="synthetic Linux", architecture="x64", sdk="10.0.204", runtime=".NET 10.0.8",
                isa="AVX2,FMA", affinity="0x4", settings=dict(jit="full-opts", gc="workstation:Interactive", variables={"DOTNET_TieredCompilation": "0"}))
@@ -57,22 +60,24 @@ def make_campaign(directory, kind):
         before = dict(monotonic=offset, utc=(launch - dt.timedelta(seconds=1)).isoformat(), boot="synthetic", logical_cpus=4,
                       processes=[dict(id=1, parent=0, start=1, cpu=0, name="supervisor"), dict(id=99, parent=0, start=1, cpu=0, name="foreign")])
         after = copy.deepcopy(before)
-        after.update(monotonic=offset + 13, utc=(launch + dt.timedelta(seconds=12)).isoformat())
+        after.update(monotonic=offset + duration + 3, utc=(launch + dt.timedelta(seconds=duration + 2)).isoformat())
         save(paths["before"], before); save(paths["after"], after)
         accounting = processes.foreign_fraction(before, after, 1)
         supervision = dict(supervisor_pid=1, pid=1000 + serial, mode=mode, case=name, launched_utc=launch.isoformat(),
-                           exited_utc=(launch + dt.timedelta(seconds=11)).isoformat(), exit_code=0, accounting=accounting,
-                           command=["dotnet", "/synthetic/Lokad.Onnx.Campaign.dll", "isolate", mode, str(paths["config"])])
+                           exited_utc=(launch + dt.timedelta(seconds=duration + 1)).isoformat(), exit_code=0, accounting=accounting,
+                           command=["dotnet", "/synthetic/Lokad.Onnx.Campaign.dll", verb, mode, str(paths["config"])])
         save(paths["supervision"], supervision)
-        paths["log"].write_text("synthetic worker\n"); paths["error"].write_text("")
+        paths["log"].write_text("synthetic worker\n", encoding="utf-8"); paths["error"].write_text("", encoding="utf-8")
         tick = 10000 if mode == "ort" or (changed and role == "L1") else 20000
         measured = {} if mode == "oracle" else dict(pre_scaled_error=1e-6, post_scaled_error=1e-6, first_execute_ticks=tick,
                     post_execute_ticks=tick, warmup_ticks=[200000] * 9, warmup_stop="steady",
                     blocks=[dict(index=b, block_ticks=tick * 11 + 1000, execute_ticks=[tick] * 11,
                                  allocated_bytes=1000, thread_cpu_ns=100, process_cpu_ns=100, gen0=0, gen1=0, gen2=0, gc_pause_ticks=0) for b in range(3)])
-        record = dict(producer=isolated.PROTOCOL, timing_contract=isolated.CONTRACT, mode=mode, case=name, smoke=False,
+        if schema == 4 and mode != "oracle":
+            measured.update(conditioning_ticks=[1000000] * 30, conditioning_wall_ticks=30100000, conditioning_stop="target-execute-30s")
+        record = dict(producer=protocol, timing_contract=contract, mode=mode, case=name, smoke=False,
                       process_id=1000 + serial, started_utc=(launch + dt.timedelta(seconds=1)).isoformat(),
-                      completed_utc=(launch + dt.timedelta(seconds=10)).isoformat(), exit_code=0,
+                      completed_utc=(launch + dt.timedelta(seconds=duration)).isoformat(), exit_code=0,
                       configuration_sha256=evidence.sha256(paths["config"]), source_sha=config["source_sha"], core_sha256=config["core_sha256"],
                       core_path="/synthetic/Lokad.Onnx.dll", runner_sha256=runner_hash, runner_files=runner, environment=env,
                       native_module=None if mode == "lok" else native, fixture_sha256=evidence.sha256(fixture),
@@ -89,7 +94,7 @@ def make_campaign(directory, kind):
         directory_for_case.mkdir()
         data = directory_for_case / "output-0.f32"
         data.write_bytes(bytes(isolated.TOKENS[name] * 384 * 4))
-        fixture = dict(protocol=isolated.PROTOCOL, case=name, model_sha256=isolated.MODEL, tokenizer_sha256="9" * 64,
+        fixture = dict(protocol=protocol, case=name, model_sha256=isolated.MODEL, tokenizer_sha256="9" * 64,
                        input_sha256=hashlib.sha256(name.encode()).hexdigest(), unmasked_tokens=isolated.REAL[name], oracle_version="1.23.2", native=native,
                        outputs=[dict(name="last_hidden_state", dims=[1, isolated.TOKENS[name], 384], dtype="float32", file=data.name, sha256=evidence.sha256(data))])
         fixtures[name] = directory_for_case / "fixture.json"
@@ -105,11 +110,12 @@ def make_campaign(directory, kind):
 
 
 class IsolatedTests(unittest.TestCase):
+    schema = 3
     @classmethod
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()
         cls.directory = Path(cls.temp.name)
-        cls.original = {kind: make_campaign(cls.directory / kind, kind) for kind in ("aa", "comparison")}
+        cls.original = {kind: make_campaign(cls.directory / kind, kind, cls.schema) for kind in ("aa", "comparison")}
 
     @classmethod
     def tearDownClass(cls):
@@ -146,7 +152,7 @@ class IsolatedTests(unittest.TestCase):
     def test_all_raw_calls_score_with_existing_policy(self):
         aa, comparison = self.load("aa"), self.load()
         result, code = scorer.score(comparison, aa)
-        self.assertEqual((code, result["verdict"], result["policy"]), (0, "PASS", "amd-e5-v3"))
+        self.assertEqual((code, result["verdict"], result["policy"]), (0, "PASS", "amd-e5-v" + str(self.schema)))
         self.assertEqual(len(result["table"]), 5)
         self.assertEqual(result["table"][0]["L0"], 20)
         self.assertEqual(result["table"][0]["L1"], 10)
@@ -373,6 +379,141 @@ class IsolatedTests(unittest.TestCase):
             code = lane.main(["--prepared", "unused", "--output", "unused", "--cpu", "2", "--kind", "comparison", "--aa", "unused"])
         self.assertEqual(code, 2)
         stage.assert_not_called()
+
+
+class ConditionedTests(IsolatedTests):
+    # Every historical semantic attack above also runs against full schema 4.
+    schema = 4
+
+    def smoke_entry(self):
+        entry = self.first()
+        self.rewrite("comparison", entry["config"], lambda r: r.update(smoke=True))
+        def smoke(record):
+            record.update(smoke=True, configuration_sha256=entry["config"]["sha256"])
+            measured = record["measured"]
+            measured.update(conditioning_ticks=[], conditioning_wall_ticks=0, conditioning_stop="skipped-smoke",
+                            warmup_ticks=[100], warmup_stop="fixed-smoke", blocks=measured["blocks"][:1])
+            measured["blocks"][0]["execute_ticks"] = [100, 100]
+        self.change_record(smoke)
+        return entry
+
+    def test_smoke_explicitly_skips_conditioning(self):
+        entry = self.smoke_entry()
+        row = isolated.validate_process_for_protocol(self.directory / "comparison", entry, True, isolated.CONDITIONED_PROTOCOL)
+        self.assertEqual(row["raw"], [0.1, 0.1])
+
+    def test_smoke_cannot_hide_conditioning_samples(self):
+        entry = self.smoke_entry()
+        self.change_record(lambda r: r["measured"].update(conditioning_ticks=[1]))
+        with self.assertRaisesRegex(evidence.EvidenceError, "smoke must skip conditioning"):
+            isolated.validate_process_for_protocol(self.directory / "comparison", entry, True, isolated.CONDITIONED_PROTOCOL)
+
+    def test_smoke_cannot_hide_conditioning_time(self):
+        entry = self.smoke_entry()
+        self.change_record(lambda r: r["measured"].update(conditioning_wall_ticks=1))
+        with self.assertRaisesRegex(evidence.EvidenceError, "smoke must skip conditioning"):
+            isolated.validate_process_for_protocol(self.directory / "comparison", entry, True, isolated.CONDITIONED_PROTOCOL)
+
+    def test_full_worker_cannot_skip_conditioning(self):
+        self.change_record(lambda r: r["measured"].update(conditioning_ticks=[], conditioning_wall_ticks=0, conditioning_stop="skipped-smoke"))
+        self.reject("conditioning must be a nonempty")
+
+    def test_conditioning_missing(self):
+        self.change_record(lambda r: r["measured"].pop("conditioning_ticks"))
+        self.reject("conditioning fields missing")
+
+    def test_conditioning_empty(self):
+        self.change_record(lambda r: r["measured"].update(conditioning_ticks=[]))
+        self.reject("conditioning must be a nonempty")
+
+    def test_conditioning_shortened(self):
+        self.change_record(lambda r: r["measured"]["conditioning_ticks"].pop())
+        self.reject("first reach 30s")
+
+    def test_conditioning_continued_past_target(self):
+        self.change_record(lambda r: r["measured"]["conditioning_ticks"].append(1))
+        self.reject("first reach 30s")
+
+    def test_conditioning_zero_tick(self):
+        self.change_record(lambda r: r["measured"]["conditioning_ticks"].__setitem__(0, 0))
+        self.reject("conditioning must be an integer")
+
+    def test_conditioning_negative_tick(self):
+        self.change_record(lambda r: r["measured"]["conditioning_ticks"].__setitem__(0, -1))
+        self.reject("conditioning must be an integer")
+
+    def test_conditioning_noninteger_tick(self):
+        self.change_record(lambda r: r["measured"]["conditioning_ticks"].__setitem__(0, True))
+        self.reject("conditioning must be an integer")
+
+    def test_conditioning_nonfinite_tick(self):
+        self.change_record(lambda r: r["measured"]["conditioning_ticks"].__setitem__(0, float("inf")))
+        self.reject("non-finite JSON")
+
+    def test_conditioning_call_cap(self):
+        self.change_record(lambda r: r["measured"].update(conditioning_ticks=[1500] * 20001))
+        self.reject("call cap exceeded")
+
+    def test_conditioning_cannot_exceed_wall(self):
+        self.change_record(lambda r: r["measured"].update(conditioning_wall_ticks=29999999))
+        self.reject("wall duration/cap")
+
+    def test_conditioning_wall_cap(self):
+        self.change_record(lambda r: r["measured"].update(conditioning_wall_ticks=60000001))
+        self.reject("wall duration/cap")
+
+    def test_conditioning_stop_reason(self):
+        self.change_record(lambda r: r["measured"].update(conditioning_stop="steady"))
+        self.reject("conditioning stop differs")
+
+    def test_conditioning_wall_is_in_process_closure(self):
+        self.change_record(lambda r: r["measured"].update(conditioning_wall_ticks=35000000))
+        self.reject("timings exceed process")
+
+    def test_last_call_may_cross_target(self):
+        self.change_record(lambda r: r["measured"]["conditioning_ticks"].__setitem__(29, 1000100))
+        self.assertEqual(len(self.load()["runs"][0]["parsed"]["raw"]["e5-8tok"]["lok"]), 33)
+
+    def test_oracle_cannot_claim_conditioning(self):
+        entry = self.manifests["comparison"]["oracles"][0]["worker"]
+        self.rewrite("comparison", entry["process"], lambda r: r["measured"].update(conditioning_ticks=[30000000]))
+        self.reject("oracle cannot contain timed")
+
+    def test_old_command_cannot_claim_new_protocol(self):
+        self.rewrite("comparison", self.first()["supervision"], lambda r: r["command"].__setitem__(2, "isolate"))
+        self.reject("supervised command differs")
+
+    def test_old_worker_cannot_claim_new_manifest(self):
+        self.change_record(lambda r: r.update(producer=isolated.PROTOCOL, timing_contract=isolated.CONTRACT))
+        self.reject("worker protocol differs")
+
+    def test_old_timing_contract_cannot_claim_conditioning(self):
+        self.change_record(lambda r: r.update(timing_contract=isolated.CONTRACT))
+        self.reject("worker protocol differs")
+
+    def test_old_fixture_cannot_claim_new_protocol(self):
+        entry = self.manifests["comparison"]["oracles"][0]
+        self.rewrite("comparison", entry["fixture"], lambda r: r.update(protocol=isolated.PROTOCOL))
+        self.rewrite("comparison", entry["worker"]["process"], lambda r: r.update(fixture_sha256=entry["fixture"]["sha256"]))
+        self.reject("oracle fixture scope differs")
+
+    def test_conditioning_cannot_be_relabeled_schema3(self):
+        self.manifests["comparison"]["schema"] = 3
+        self.reject("scope/protocol differs")
+
+    def test_legacy_validator_requires_explicit_new_protocol(self):
+        with self.assertRaisesRegex(evidence.EvidenceError, "worker protocol differs"):
+            isolated.validate_process(self.directory / "comparison", self.first(), False)
+
+    def test_mixed_calibration_refused_before_staging_in_both_directions(self):
+        for selected, aa_schema in (("30s", 3), ("none", 4)):
+            with self.subTest(selected=selected), \
+                 mock.patch.object(lane.evidence, "load_campaign", return_value={"kind": "aa", "schema": aa_schema}), \
+                 mock.patch.object(lane.common, "stage") as stage:
+                code = lane.main(["--prepared", "unused", "--output", "unused", "--cpu", "2", "--kind", "comparison",
+                                  "--aa", "unused", "--conditioning", selected])
+                self.assertEqual(code, 2)
+                stage.assert_not_called()
 
 
 if __name__ == "__main__":

@@ -14,6 +14,8 @@ internal static class IsolatedE5
 {
     internal const string Protocol = "isolated-e5-v1";
     internal const string TimingContract = "public-execute-v1; all individual calls retained; reset/disposal outside; complete-request blocks separate";
+    internal const string ConditionedProtocol = "isolated-e5-v2";
+    internal const string ConditionedTimingContract = TimingContract + "; conditioning=30s-execute; cap=20000-calls/60s-wall";
     internal static readonly string[] Cases = ["e5-8tok", "e5-30tok", "e5-30pad128", "e5-128tok", "e5-512tok"];
     // This protocol targets the inspected, embedded-weight model. A different
     // export needs its own reviewed contract, including external-data identities.
@@ -224,9 +226,16 @@ internal static class IsolatedE5
         return values;
     }
 
-    internal static int Run(string[] args)
+    internal static int Run(string[] args) => Run(args, false);
+
+    internal static int RunConditioned(string[] args) => Run(args, true);
+
+    static int Run(string[] args, bool conditioned)
     {
-        Require(args.Length == 2 && args[0] is "oracle" or "lok" or "ort", "Usage: isolate oracle|lok|ort configuration.json");
+        string protocol = conditioned ? ConditionedProtocol : Protocol;
+        string timingContract = conditioned ? ConditionedTimingContract : TimingContract;
+        string command = conditioned ? "isolate-conditioned" : "isolate";
+        Require(args.Length == 2 && args[0] is "oracle" or "lok" or "ort", "Usage: " + command + " oracle|lok|ort configuration.json");
         Require(CampaignEvidence.Current == null, "Isolated producer cannot use legacy evidence options");
         string started = DateTime.UtcNow.ToString("O"), mode = args[0];
         string configPath = Path.GetFullPath(args[1]);
@@ -259,7 +268,7 @@ internal static class IsolatedE5
         {
             Require(CampaignEvidence.HashFile(fixturePath) == config.FixtureSha256, "Oracle manifest digest differs");
             fixture = ReadJson<Fixture>(fixturePath);
-            Require(fixture.Protocol == Protocol && fixture.Case == config.Case && fixture.ModelSha256 == ModelHash
+            Require(fixture.Protocol == protocol && fixture.Case == config.Case && fixture.ModelSha256 == ModelHash
                 && fixture.TokenizerSha256 == tokenizerHash && fixture.InputSha256 == inputHash && fixture.UnmaskedTokens == definition.Unmasked, "Oracle workload identity differs");
             Require(fixture.Outputs != null && fixture.Outputs.Length > 0, "Oracle outputs missing");
             expected = fixture.Outputs.Select((value, index) => ReadOutput(fixtureDirectory, value, index)).ToArray();
@@ -286,7 +295,7 @@ internal static class IsolatedE5
                 using (var stream = new FileStream(Path.Combine(fixtureDirectory, file), FileMode.CreateNew, FileAccess.Write)) stream.Write(bytes);
                 outputs.Add(new OutputIdentity(engine.Outputs[i], value.Dims, "float32", file, Hash(bytes)));
             }
-            fixture = new Fixture(Protocol, config.Case, ModelHash, tokenizerHash, inputHash, definition.Unmasked,
+            fixture = new Fixture(protocol, config.Case, ModelHash, tokenizerHash, inputHash, definition.Unmasked,
                 OrtEnv.Instance().GetVersionString(), native!, outputs.ToArray());
             WriteJson(fixturePath, fixture);
         }
@@ -309,6 +318,35 @@ internal static class IsolatedE5
                 return (worst, ticks);
             }
             var pre = Validate();
+            if (conditioned)
+            {
+                // Keep startup and every conditioning call. This is a fixed,
+                // prospective preparation interval, not a selected fast window.
+                var conditioningTicks = new List<long>();
+                long conditioningWall = 0;
+                if (!config.Smoke)
+                {
+                    long target = checked(30 * Stopwatch.Frequency);
+                    long wallCap = checked(60 * Stopwatch.Frequency);
+                    long phaseStart = Stopwatch.GetTimestamp(), total = 0;
+                    while (total < target)
+                    {
+                        Require(conditioningTicks.Count < 20000 && Stopwatch.GetTimestamp() - phaseStart < wallCap,
+                            "Conditioning exceeded 20000 calls/60 seconds; no timed result");
+                        engine.Reset();
+                        long start = Stopwatch.GetTimestamp(); engine.Execute();
+                        long ticks = Stopwatch.GetTimestamp() - start;
+                        engine.Reset();
+                        conditioningTicks.Add(ticks);
+                        total = checked(total + ticks);
+                    }
+                    conditioningWall = Stopwatch.GetTimestamp() - phaseStart;
+                    Require(conditioningWall <= wallCap, "Conditioning exceeded 60 seconds; no timed result");
+                }
+                measured.Add("conditioning_ticks", conditioningTicks);
+                measured.Add("conditioning_wall_ticks", conditioningWall);
+                measured.Add("conditioning_stop", config.Smoke ? "skipped-smoke" : "target-execute-30s");
+            }
             var warmTicks = new List<long>();
             var warmMs = new List<double>();
             var warmWatch = Stopwatch.StartNew();
@@ -374,7 +412,7 @@ internal static class IsolatedE5
         else Require(Native() == native, "Native ORT changed");
         WriteJson(output, new
         {
-            producer = Protocol, timing_contract = TimingContract, mode, @case = config.Case, smoke = config.Smoke,
+            producer = protocol, timing_contract = timingContract, mode, @case = config.Case, smoke = config.Smoke,
             process_id = Environment.ProcessId, started_utc = started, completed_utc = DateTime.UtcNow.ToString("O"), exit_code = 0,
             configuration_sha256 = configHash, source_sha = config.SourceSha, core_sha256 = config.CoreSha256, core_path = corePath,
             runner_sha256 = runner.Hash, runner_files = runner.Files, environment = host, native_module = native,
@@ -385,7 +423,7 @@ internal static class IsolatedE5
             confinement = new { wall_ms = confinement.wallMs, cpu_ms = confinement.cpuMs, ratio = confinement.ratio },
             stopwatch_frequency = Stopwatch.Frequency, load_ticks = loadTicks, measured
         });
-        Console.WriteLine(Protocol + " " + mode + " " + config.Case + " complete; inputs intact; output=" + output);
+        Console.WriteLine(protocol + " " + mode + " " + config.Case + " complete; inputs intact; output=" + output);
         return 0;
     }
 }
