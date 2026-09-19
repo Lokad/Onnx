@@ -55,3 +55,10 @@ an experimental override of the lifetime policy; prefer the public
 Historical benchmark reports identify their source and exact settings. Their
 experimental Speed configurations must not be relabeled as measurements of the
 current Default or Memory policy.
+
+The [public-options comparison](../tests/e5/public-options-20260919.md) records
+the actual Default and Memory configurations on AMD, including allocations,
+GC and retained-memory observations. The disabled-path control uses the same
+current core; its observed gains must not be relabeled as a new release/ORT
+comparison. [Functional qualification](../tests/e5/defaults-20260919.md) records
+shared-model and audio checks, including the known numerical failures.

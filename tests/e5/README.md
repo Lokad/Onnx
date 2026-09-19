@@ -41,7 +41,10 @@ process variation retained; they do not certify parity or change defaults.
 The [CPU defaults qualification](defaults-20260919.md) records full local/AMD
 regressions, audio decisions, resource observations and package consumption for
 the nine enabled mechanisms. It separates those checks from measurement of the
-actual public Default and Memory configurations.
+actual public Default and Memory configurations. The completed
+[public-options comparison](public-options-20260919.md) observes 17–41% lower
+primary mean latency with the nine mechanisms enabled on the same current core,
+with complete outputs unchanged.
 
 ## Tokenizer rule
 
