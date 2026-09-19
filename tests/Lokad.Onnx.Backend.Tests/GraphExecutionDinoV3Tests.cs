@@ -90,10 +90,17 @@ public class GraphExecutionDinoV3Tests
         // then freezes every output bit, so a defect in any unsampled element fails.
         var values = ModelFixture.CheckedOutput(graph, "last_hidden_state");
         ModelFixture.AssertMean(values, -0.0071360121, 1e-6, "dinov3");
-        Assert.Equal(2137279831586830888UL, HashBits(values));
         var poolerValues = ModelFixture.CheckedOutput(graph, "pooler_output");
         ModelFixture.AssertMean(poolerValues, 0.00842788, 1e-6, "dinov3 pooler");
-        Assert.Equal(6070936888732424120UL, HashBits(poolerValues));
+        // Independently native-validated .NET 10 x64 baselines: Windows/AVX2
+        // and Linux/AVX-512. The latter also matches archived outputs from
+        // before the default changes. Keep complete pairs; do not mix hashes
+        // from different runs. See tests/dinov3-hashes-20260919.md.
+        Assert.Contains((HashBits(values), HashBits(poolerValues)), new[]
+        {
+            (2137279831586830888UL, 6070936888732424120UL),
+            (12756423648221837382UL, 6147948217399512682UL)
+        });
     }
 
     static ulong HashBits(float[] values)
