@@ -57,7 +57,8 @@ durations, call counts and stop reasons. Six invalid/canceled requests are follo
 by successful recovery. Six actual CLI checks also agree, including stereo
 44.1/48 kHz WAV conversion, JSON, text and truncation diagnostics.
 
-Full numerical qualification remains **failed**. All 784 saved output arrays
+On the recorded Windows run, full numerical qualification remains **failed**.
+All 784 saved output arrays
 (3,090,494 values) are compared, including every recurrent state. Three arrays
 exceed the unchanged `abs(actual-reference)/max(1,abs(reference)) <= 1e-4` gate.
 They reproduce the same duration-zero logit at English decoder call 26 across
@@ -65,8 +66,9 @@ the normal, one-token-per-frame and repeat cases; maximum error is
 `2.321004867553711e-4`. All application decisions still agree. Native ORT given
 managed encoder output reproduces almost all of the discrepancy, localizing it
 to propagated frontend/encoder differences. This evidence does not establish
-general speech accuracy, long-audio behavior, INT8 support or AMD qualification
-of the complete pipeline. A local process peak near 6.3 GB is a finite observation.
+general speech accuracy, long-audio behavior or INT8 support. The later complete
+AMD qualification is recorded below. The initial local process peak near 6.3 GB
+is a finite observation.
 
 ## Reproduce the opt-in full-array replay
 
@@ -92,3 +94,47 @@ the numerical gate fails, even with `application_passed: true`.
 the report in `<result.json>.tensors`, with shapes, dtypes and hashes. The replay
 also verifies pinned fixtures, every native token/state transition, held tensor
 ownership, repeated-result ownership and absence of native ORT in its process.
+
+
+## Complete AMD pipeline qualification
+
+The SDK 10.0.204 source archive at
+`c6bf781816f3a45260f7a5eb33fb05d640a821e3` also passes the complete replay on
+AMD EPYC 9V74, runtime 10.0.8, confined to CPU 2. Both the nine enabled defaults
+and their exact-`0` comparison settings pass all seven application cases and
+six invalid/canceled-request recovery checks per process. Every engine carries
+its own recurrent states; caller inputs and retained tensors/results are checked.
+
+Both independent NumPy audits pass **all 784 arrays / 3,090,494 values** against
+the same reproduced native reference. Maximum scaled error is
+`3.830720152728115e-5`, with no failed arrays at the unchanged `1e-4` gate.
+All 784 arrays match bit for bit between the two AMD configurations. Application
+decisions also match Windows; 202 of 784 arrays match bits across hosts.
+
+This AMD pass does not erase the three recorded Windows duration-logit failures
+above. Their platform difference has not been attributed to one instruction or
+kernel. No arithmetic, model file, fixture or tolerance was changed for this
+replay. Broader accuracy and long-recording acceptance remain open.
+
+Sampled process-group peaks are 5,784,256,512 bytes with the nine mechanisms
+disabled and 6,712,479,744 bytes with defaults enabled. Both stay below the
+13 GiB guard on the 16 GiB/no-swap VM, with normal runtime settings and no forced
+GC. These are finite short-recording observations; the higher enabled peak is
+retained. Total supervised job durations of about 40 seconds include model
+verification/loading and evidence generation, and are not inference benchmarks.
+
+The six models were transferred individually and verified before reuse.
+The first launch stopped before inference because its assumed runner dependency
+was absent; that failed attempt remains archived. The corrected immutable
+payload includes all runner dependencies and both jobs completed before
+collection. The independent audit verifies the full schedule, binary/asset
+identities, actual affinity, resources and saved arrays.
+
+Ignored local evidence is under `artifacts/parakeet-amd-v2-20260919`, with
+`summary.json`, per-configuration audits, raw collection and the frozen recipe.
+Source/binary identities match the [CPU defaults qualification](../../e5/defaults-20260919.md).
+SHA-256 identities:
+
+- Reference manifest: `3bad7d262b8809b1265c84c8e66d02ee38e7d4cff2d92014448976a9e161103c`
+- Frozen bundle: `bbbcd25017621df4f1dd8ca59dd1801fef5c46ed73d9d771cb56be04318003dc`
+- Collected AMD results: `14e7513ff61d58565c2dcac15671377071e8f17a14471658af17863aaf2f53e9`
