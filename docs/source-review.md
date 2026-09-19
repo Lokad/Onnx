@@ -65,6 +65,14 @@ bank improves 1.23%, below the prospective 2% screen, while thirty-row timing
 swings affect unchanged controls. Keep this voice-branch cohort outside the
 product; no full-model speedup or default change follows from the prototype.
 
+The subsequent [runtime-event investigation](../tests/e5/projection-phase/results-20260919.md)
+finds background compilation of the probe's JSON validation and sample-list
+growth code overlapping slow timed calls. Direct storage verification and
+preallocated sample lists remove those specific events in a separate
+normal-tiering confirmation. Retain the corrected harness for future projection
+work. Other kernel/runtime compilation remains observable, so this finding does
+not qualify fine timing or retroactively promote an earlier kernel candidate.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |

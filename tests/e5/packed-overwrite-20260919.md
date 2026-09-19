@@ -134,3 +134,10 @@ No product code, defaults, numerical tolerance or e5 score changed. This closes
 the bounded prototype; it does not establish that overwrite is universally
 unhelpful. Any investigation of the newly observed phase-related timing swings
 must use a distinct diagnostic and retain these original results.
+
+The later [phase/JIT investigation](projection-phase/results-20260919.md)
+observes background compilation of the harness's JSON validation and sample-list
+growth code overlapping slow calls. A separate normal-tiering confirmation removes
+those specific events with direct storage checks and preallocated sample lists.
+It preserves this experiment and its failed promotion verdict; it does not
+retroactively attribute every untraced outlier or change the 128-row screen.
