@@ -71,7 +71,7 @@ of the complete pipeline. A local process peak near 6.3 GB is a finite observati
 ## Reproduce the opt-in full-array replay
 
 Install the pinned packages in `../requirements.txt`. Supply the recorded PCM
-manifest produced by the Whisper file-input lane and a checkout of
+manifest from the [shared recorded-audio recipe](../../audio/README.md) and a checkout of
 `https://github.com/istupakov/onnx-asr` at commit
 `675f0e68c24d846ee1775743e92d9b4ed452380e`. The generator checks source and asset
 hashes and executes the pinned upstream loop with independently carried native

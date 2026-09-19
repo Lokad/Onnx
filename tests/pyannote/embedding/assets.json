@@ -1,0 +1,16 @@
+{
+  "repository": "welcomyou/pyannote-community-1-onnx-split",
+  "revision": "cde44c2db938c8abb755853b9a87cb3179c47803",
+  "files": {
+    "embedding_encoder.onnx": {
+      "bytes": 21306024,
+      "sha256": "9903474d6230e5e858dc6b6382a0e3f6e402ea9b4210e1e2f2bee60a33830e7a"
+    }
+  },
+  "reference": {
+    "repository": "https://github.com/pyannote/pyannote-audio",
+    "revision": "b749285c5cdd4636b2edc7f766f1352c8dde9369",
+    "frontend": "src/pyannote/audio/models/embedding/wespeaker/__init__.py",
+    "frontend_lf_sha256": "a2c13a792c50d97f7a7583b69fcabd5eb5efc34d1374c2b6e5757bbcf3b62139"
+  }
+}

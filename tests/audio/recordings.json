@@ -1,0 +1,55 @@
+{
+  "recordings": {
+    "librispeech": {
+      "repository": "Xenova/transformers.js-docs",
+      "revision": "fbe92bd97d48f3ec17779d8d8f2964e1c6bc7634",
+      "path": "librispeech_asr_demo_validation_0.wav",
+      "sha256": "799f78ed4beb4de7ceae3a809262d4ce242394342ccd1d58cef7d49dbc2def46",
+      "pcm_sha256": "e6c20e3ff002c4ef2fb693e8cb178b03bdddf025b61c3242bf970c2a4af28ba3",
+      "language": "en"
+    },
+    "french": {
+      "repository": "Xenova/transformers.js-docs",
+      "revision": "fbe92bd97d48f3ec17779d8d8f2964e1c6bc7634",
+      "path": "french-audio.wav",
+      "sha256": "b1c09c0b5e03865daf98cda2c072f6fc69ed137588220b3168731d52c7c23dd6",
+      "pcm_sha256": "d862aff79afc9e4de7c7086282823f40dc9c01005dbe0178d4b7f00b8de6e6a2",
+      "language": "fr"
+    },
+    "jfk": {
+      "repository": "Xenova/transformers.js-docs",
+      "revision": "fbe92bd97d48f3ec17779d8d8f2964e1c6bc7634",
+      "path": "jfk.wav",
+      "sha256": "aa81c2552465568567e670f3823117e633900d16bd6202346a72f3c8464c74c8",
+      "pcm_sha256": "c6dc2709c862920971ef43732dabadd9e33b7c83c474140d8c954adeb7ab1995",
+      "language": "en"
+    }
+  },
+  "cases": {
+    "english-16k": {
+      "wav_sha256": "136d7ed0bd9b9080c24d40c0ba81a6dd6828ff3288473226d452b51185631a8f",
+      "pcm_sha256": "e6c20e3ff002c4ef2fb693e8cb178b03bdddf025b61c3242bf970c2a4af28ba3",
+      "features_sha256": "787f39c1399fd9ae5e7201e9cbfe4c53540e727bcb2a8d639f3a50bc4636fe44"
+    },
+    "french-44k-stereo": {
+      "wav_sha256": "70f26acde608d90591b405be14178f4fe112cfc059ab44f23a11e5b8b6fb67cd",
+      "pcm_sha256": "cadfccddcfe09f2fe4e7743af4a60a342b0adb8fc6eda67e10fcd74abec19b14",
+      "features_sha256": "8baa7ac4d1b2f5bc0056fecf99734b3db1392c2dc76ee1a9f4374fbec17f79e7"
+    },
+    "jfk-48k-stereo": {
+      "wav_sha256": "9a736912a5ba9a27715d614520b541474191ffa7fb8c0946e01e268b044956c4",
+      "pcm_sha256": "e9089b692e81d6dcd89755550fbaf99ec9f901434913befb825063721fbfad97",
+      "features_sha256": "059472253db736be81602de4f950b34cd1a9a89e85d65badca58078eab9dbc45"
+    },
+    "silence-32k": {
+      "wav_sha256": "970714b629ec4ed6f13f9e126af9b76039e07c1f671abe749c1964442d1787d3",
+      "pcm_sha256": "be4253eeb3b6778df63e42d110b4603d97850396fd0d2a5b0ceac76fee4a2c84",
+      "features_sha256": "cd7ebfd2517e5fe37660845032175e4603119a89a9636cc1be15faa01be49878"
+    },
+    "jfk-token-limit": {
+      "wav_sha256": "444c0071d2b5154b206d19c6eaa39d90ef942c9ed538db5a197fb65a2358183e",
+      "pcm_sha256": "c6dc2709c862920971ef43732dabadd9e33b7c83c474140d8c954adeb7ab1995",
+      "features_sha256": "056209ef61d70b20c66a6844a068842ef02524ee27b5c1d7a8f90d41c74a8340"
+    }
+  }
+}

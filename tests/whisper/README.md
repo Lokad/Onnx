@@ -205,3 +205,7 @@ Compare and deliberately replace `tests/Lokad.Onnx.Backend.Tests/fixtures/audio-
 when regenerating. This input-path validation and transcript agreement do not
 replace the unresolved full encoder/logit `1e-4` gate or broad held-out speech
 accuracy, long-audio, and sustained-memory qualification.
+
+The [shared recorded-audio recipe](../audio/README.md) recreates all five WAV,
+PCM and mel-feature fixtures with pinned source and output hashes. Its
+`audio.json` can be passed to `generate_transcription_reference.py --audio`.
