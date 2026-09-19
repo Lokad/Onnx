@@ -1,0 +1,1599 @@
+{
+  "source_revision": "a1ed3bb0440d33d18622e1cb6b138431cfaf4f7a",
+  "source_hashes": {
+    "pipelines/speaker_diarization.py": "9602de64056da50773cc6396e9a5448db9f19722b0378ddd234ba79f18bf9d9c",
+    "pipelines/utils/diarization.py": "859fba2577462140207a6e5c695f8a44c52271d0888d04b52dbd7d69aaec130b",
+    "core/inference.py": "cb4e90507433c2c18a178961c26629547b272fc309a1b1e3dcd1cf9ab7438a63",
+    "core/io.py": "b5f64e8e3f37d85e5ba0c89ac0d49206407b58186d3f606cfdca0e90c5677a53",
+    "core/model.py": "40ee2ea4847e06560b3c6f3813705e1f0ca045a17bbd5d947a41d45bbe3cc209",
+    "utils/signal.py": "a19f2ef7c02f4fb187584bc475ec81b00d294a6d0ed9bed1d325639c72682ed5",
+    "utils/powerset.py": "7eeb5691c20337bd24462f6a4ee2e56e279564bfef7875776df0a41f245b0325",
+    "utils/receptive_field.py": "021df3fc249a3c5146e15f879740a0ca02ad13fad6269191c8392a1ad61cd488",
+    "models/blocks/sincnet.py": "3f151a2482c3f8c266b1efd9bdcab297238c52b4792a7265261f2da063e5dade",
+    "models/segmentation/PyanNet.py": "50857f536a33d594dc8d14749e6dbfcd316771e466d0b45a0f3e1612bc12e682",
+    "pipelines/speaker_verification.py": "e383df1a4bdad0c8064f288e92e2e9eaf2f939df1491726269468d6febcc76dd",
+    "models/embedding/wespeaker/__init__.py": "a2c13a792c50d97f7a7583b69fcabd5eb5efc34d1374c2b6e5757bbcf3b62139",
+    "models/blocks/pooling.py": "8cb687441630e6759fb6ca545d649b41dbec1d42f869954c0a03ae191c7cbd82",
+    "utils/vbx.py": "812c8c4ba276ba0521689693f84690f6fc9af3d67dec232aac45c1fc2d41906f",
+    "pipelines/clustering.py": "6031fb7c21277a7e9901ef2cdaed7d5cd69f7ef45508dc4b45e82ce0da3c8fba"
+  },
+  "models": {
+    "segmentation": "af62796adfc46ab36fb27c183e7fe6530a745c665b64e949acd73bf01a18a31a",
+    "encoder": "9903474d6230e5e858dc6b6382a0e3f6e402ea9b4210e1e2f2bee60a33830e7a",
+    "projection": "070248b0bd9e67925f4a8befd70de27281b12fd9c6cf56f4539ee53ef1e2647a",
+    "plda": "8ab21d0e5769e41495e03088ca6fd9c9dddbda4a28aa4f27e6f585970c2b1702"
+  },
+  "versions": {
+    "numpy": "2.2.4",
+    "torch": "2.11.0+cpu",
+    "torchaudio": "2.11.0+cpu",
+    "onnxruntime": "1.29.0",
+    "scipy": "1.16.3",
+    "einops": "0.8.1",
+    "pyannote.core": "6.0.1",
+    "sortedcontainers": "2.4.0"
+  },
+  "kaldi_lf_sha256": "5cbea1a584ddea748f6f68a621d794e13334e88d9faa1d40986f7af32f196d29",
+  "assets": {
+    "resnet_seg_1_weight.npy": "ca91250bb69bea25bdc7c710e253a74450a415b3da587e53e04fd5a01abbe4da",
+    "resnet_seg_1_bias.npy": "51fcb6d0530993ad044a797310f4bfd6af266af0dbf364f6bc0008fdd63520cd",
+    "plda.npz": "9b77bcd840692710dd3496f62ecfeed8d8e5f002fd991b785079b244eab7d255",
+    "xvec_transform.npz": "325f1ce8e48f7e55e9c8aa47e05d2766b7c48c4b25b8de8dd751e7a4cc5fbe8f"
+  },
+  "cases": [
+    {
+      "name": "dialogue-30s",
+      "samples": 480000,
+      "windows": 21,
+      "pcm_sha256": "87fd4ab806ba329b07eec4ec2ac47c1d6bcf12e7eb39a56aafdbd121b82fa52f"
+    },
+    {
+      "name": "dialogue-0-10s",
+      "samples": 160000,
+      "windows": 1,
+      "pcm_sha256": "aa4b51d6e58ba8a58153496a46889f4d8d488178b279b190eb9367b58475c8b8"
+    },
+    {
+      "name": "dialogue-10-20s",
+      "samples": 160000,
+      "windows": 1,
+      "pcm_sha256": "f28b7a58372279dada00e296e4aded3c133139c712dcd8f8d66018eccfe2dc79"
+    },
+    {
+      "name": "dialogue-20-30s",
+      "samples": 160000,
+      "windows": 1,
+      "pcm_sha256": "95c72bf7448573a180022150169a736cfe3e066b34bc1b66f058b98f6a977873"
+    }
+  ],
+  "layout": {
+    "dialogue-30s-pcm.npy": {
+      "shape": [
+        480000
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-0-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-0-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-1-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-1-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-2-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-2-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-3-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-3-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-4-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-4-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-5-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-5-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-6-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-6-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-7-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-7-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-8-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-8-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-9-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-9-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-10-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-10-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-11-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-11-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-12-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-12-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-13-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-13-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-14-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-14-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-15-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-15-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-16-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-16-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-17-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-17-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-18-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-18-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-19-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-19-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-20-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-20-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-count.npy": {
+      "shape": [
+        1779,
+        1
+      ],
+      "dtype": "uint8"
+    },
+    "dialogue-30s-0-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-0-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-0-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-0-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-0-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-1-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-1-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-1-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-1-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-1-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-2-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-2-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-2-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-2-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-2-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-3-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-3-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-3-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-3-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-3-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-4-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-4-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-4-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-4-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-4-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-5-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-5-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-5-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-5-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-5-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-6-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-6-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-6-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-6-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-6-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-7-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-7-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-7-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-7-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-7-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-8-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-8-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-8-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-8-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-8-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-9-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-9-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-9-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-9-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-9-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-10-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-10-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-10-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-10-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-10-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-11-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-11-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-11-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-11-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-11-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-12-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-12-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-12-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-12-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-12-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-13-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-13-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-13-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-13-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-13-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-14-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-14-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-14-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-14-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-14-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-15-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-15-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-15-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-15-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-15-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-16-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-16-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-16-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-16-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-16-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-17-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-17-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-17-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-17-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-17-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-18-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-18-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-18-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-18-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-18-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-19-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-19-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-19-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-19-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-19-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-20-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-20-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-20-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-20-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-20-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-labels.npy": {
+      "shape": [
+        21,
+        3
+      ],
+      "dtype": "int64"
+    },
+    "dialogue-30s-original-labels.npy": {
+      "shape": [
+        21,
+        3
+      ],
+      "dtype": "int8"
+    },
+    "dialogue-30s-centroids.npy": {
+      "shape": [
+        2,
+        256
+      ],
+      "dtype": "float64"
+    },
+    "dialogue-30s-ordinary-native-frames.npy": {
+      "shape": [
+        1779,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-ordinary-frames.npy": {
+      "shape": [
+        1779,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-exclusive-native-frames.npy": {
+      "shape": [
+        1779,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-30s-exclusive-frames.npy": {
+      "shape": [
+        1779,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-pcm.npy": {
+      "shape": [
+        160000
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-0-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-0-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-count.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "uint8"
+    },
+    "dialogue-0-10s-0-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-0-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-0-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-0-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-0-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int64"
+    },
+    "dialogue-0-10s-original-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int8"
+    },
+    "dialogue-0-10s-centroids.npy": {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-ordinary-native-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-ordinary-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-exclusive-native-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-0-10s-exclusive-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-pcm.npy": {
+      "shape": [
+        160000
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-0-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-0-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-count.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "uint8"
+    },
+    "dialogue-10-20s-0-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-0-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-0-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-0-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-0-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int64"
+    },
+    "dialogue-10-20s-original-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int8"
+    },
+    "dialogue-10-20s-centroids.npy": {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "float64"
+    },
+    "dialogue-10-20s-ordinary-native-frames.npy": {
+      "shape": [
+        594,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-ordinary-frames.npy": {
+      "shape": [
+        594,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-exclusive-native-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-10-20s-exclusive-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-pcm.npy": {
+      "shape": [
+        160000
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-0-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-0-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-count.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "uint8"
+    },
+    "dialogue-20-30s-0-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-0-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-0-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-0-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-0-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int64"
+    },
+    "dialogue-20-30s-original-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int8"
+    },
+    "dialogue-20-30s-centroids.npy": {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "float64"
+    },
+    "dialogue-20-30s-ordinary-native-frames.npy": {
+      "shape": [
+        594,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-ordinary-frames.npy": {
+      "shape": [
+        594,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-exclusive-native-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "dialogue-20-30s-exclusive-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    }
+  },
+  "tolerance": 0.0001,
+  "repeats": 2,
+  "corpus": {
+    "revision": "a1ed3bb0440d33d18622e1cb6b138431cfaf4f7a",
+    "manifest_sha256": "064df771ded94b0c9f7cbc2899f7c5319d98570c01480236432fbac09d8d14fa",
+    "assets": {
+      "dialogue-0-10s-pcm.npy": "aa4b51d6e58ba8a58153496a46889f4d8d488178b279b190eb9367b58475c8b8",
+      "dialogue-10-20s-pcm.npy": "f28b7a58372279dada00e296e4aded3c133139c712dcd8f8d66018eccfe2dc79",
+      "dialogue-20-30s-pcm.npy": "95c72bf7448573a180022150169a736cfe3e066b34bc1b66f058b98f6a977873",
+      "dialogue-30s-pcm.npy": "87fd4ab806ba329b07eec4ec2ac47c1d6bcf12e7eb39a56aafdbd121b82fa52f",
+      "sample.rttm": "d78fe62c69d8e6dcbb42c26adfce83faccb374c5a1e6d987fe37f85f1c173c87",
+      "sample.wav": "c319b4abca767b124e41432d364fd7df006cb26bb79d09326c487d606a134e6e"
+    },
+    "fixed_windows": [
+      [
+        0,
+        30
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        10,
+        20
+      ],
+      [
+        20,
+        30
+      ]
+    ]
+  }
+}

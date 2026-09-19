@@ -60,7 +60,7 @@ def audit(reference,public,detail):
         for kind in ('ordinary','exclusive'):
             a=arrays[c[kind+'_native_frames']];b=arrays[c[kind+'_frames']]
             ties.append(dict(name=c['name'],kind=kind,changed=int(np.count_nonzero(a!=b))))
-    return dict(execution_complete=True,application_gate_passed=True,numerical_gate_passed=bad==0,public_requests=13,
+    return dict(execution_complete=True,application_gate_passed=True,numerical_gate_passed=bad==0,public_requests=2*len(m['cases'])+3,
         reference_sha256=digest,public_sha256=sha(public),detail_sha256=sha(detail/'result.json'),assemblies=r['assemblies'],
         maximum_centroid_error=maximum,numerical=dict(arrays=len(rows),values=values,bad=bad,maximum=maximum_numeric,rows=rows),native_tie_differences=ties)
 

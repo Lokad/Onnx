@@ -79,10 +79,19 @@ def save(name,a):
     a=np.ascontiguousarray(a);assert np.isfinite(a).all(),name;p=out/(name+'.npy');np.save(p,a,allow_pickle=False)
     files[p.name]=dict(sha256=sha(p),shape=list(a.shape),dtype=str(a.dtype),bytes=p.stat().st_size);return p.name
 speech_path=args.audio_manifest;speech=json.loads(speech_path.read_text());inputs=[]
-for name in ['english-16k','french-44k-stereo','jfk-48k-stereo']:
-    c=next(c for c in speech['cases'] if c['name']==name);p=speech_path.parent/c['pcm'];assert sha(p)==c['pcm_sha256'];inputs.append((name,np.load(p).reshape(-1)))
-inputs.append(('two-recordings',np.concatenate([inputs[0][1],np.zeros(8000,np.float32),inputs[1][1]])))
-inputs.append(('silence',np.zeros(16000,np.float32)))
+if 'corpus' in pins:
+    assert sha(speech_path)==pins['corpus']['manifest_sha256'], 'Corpus manifest'
+    assert speech['revision']==pins['corpus']['revision'], 'Corpus source'
+    assert [c['name'] for c in speech['cases']]==[c['name'] for c in pins['cases']], 'Corpus cases'
+    for c,pin in zip(speech['cases'],pins['cases']):
+        p=speech_path.parent/c['pcm'];assert sha(p)==c['pcm_sha256']==pin['pcm_sha256'], 'Corpus PCM'
+        pcm=np.load(p,allow_pickle=False);assert pcm.dtype==np.float32 and pcm.shape==(pin['samples'],), 'Corpus layout'
+        inputs.append((c['name'],pcm))
+else:
+    for name in ['english-16k','french-44k-stereo','jfk-48k-stereo']:
+        c=next(c for c in speech['cases'] if c['name']==name);p=speech_path.parent/c['pcm'];assert sha(p)==c['pcm_sha256'];inputs.append((name,np.load(p).reshape(-1)))
+    inputs.append(('two-recordings',np.concatenate([inputs[0][1],np.zeros(8000,np.float32),inputs[1][1]])))
+    inputs.append(('silence',np.zeros(16000,np.float32)))
 cases=[]
 for name,pcm in inputs:
     case=dict(name=name,pcm=save(name+'-pcm',pcm),seconds=len(pcm)/16000,windows=[],status='Completed');waveforms=windows(pcm);activity=[]
