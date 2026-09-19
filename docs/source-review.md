@@ -46,6 +46,17 @@ all node dispatch nor AMD model latency. The finding does not justify removing
 mutable-graph safeguards or a broad dispatcher rewrite; prepared MatMul remains
 the stronger optimization lead in the separately captured model attribution.
 
+ORT's [CPU allocator](https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/onnxruntime/core/framework/allocator.cc)
+honors the MLAS preferred buffer alignment, which is 64 bytes for the inspected
+AVX-512 path. Actual e5 observations found only nine of Lokad's 72 packed weights
+aligned to 64 bytes. The resulting [alignment experiment](../tests/e5/packed-alignment-20260919.md)
+kept arithmetic unchanged and compared explicit alignments with a duplicate
+using the same natural buffer. Ten balanced workers passed all correctness
+checks, but the thirty-row bank regressed 0.29% in aggregate and the 128-row
+improvement was only 0.81%, with mixed results overlapping control movement.
+The experiment does not justify pinned storage, padding or cache-accounting
+changes in production. Source alignment preferences alone were insufficient.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |
