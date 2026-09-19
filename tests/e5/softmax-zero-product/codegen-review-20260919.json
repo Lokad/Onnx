@@ -1,0 +1,12 @@
+{
+  "inspected": true,
+  "core_sha256": "187de61ad8f034b9b7ad2fb3490358443fa84334204720e81bc3546a31f3c8d4",
+  "codegen_sha256": "f6ebda33e3dc0656f425f0fc0940b161e631204d48abca2ae4a4e0154ccb9776",
+  "full_tier1_bytes": 3744,
+  "branches": [
+    "IG43 -> IG40 -> IG41; polynomial IG44",
+    "IG66 -> IG63 -> IG64; polynomial IG67",
+    "IG90 -> IG87 -> IG88; polynomial IG91"
+  ],
+  "scope": "Actual public padded128 graph, AMD .NET 10.0.8 full Tier1; static branches bypass polynomial on all-lane predicate. No dynamic taken-branch count claim. Codegen timing excluded."
+}
