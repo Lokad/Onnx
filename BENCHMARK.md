@@ -1,5 +1,125 @@
 # CPU benchmarks
 
+## Current results — 2026-09-19
+
+The tables here summarize retained measurements for e5, Parakeet, Whisper and
+pyannote. Each names its workload, hardware and timing boundary. Earlier tables
+below remain historical evidence; do not compare absolute times across hosts,
+revisions or protocols. [Model support](docs/model-support.md) describes the
+available APIs and their remaining qualification limits.
+
+### e5: public execution versus native ORT
+
+AMD EPYC 9V74, CPU 2, .NET 10.0.8, SDK 10.0.204, product `c6bf781`.
+Managed execution uses the nine qualified production defaults; Memory is the
+explicit intermediate-lifetime option. Native ORT 1.23.2 uses one inference
+thread and the same logical CPU. Values are mean public Execute/Run times,
+excluding loading and tokenization.
+
+| Tokens | Lokad Default ms | Lokad Memory ms | ORT ms | Default / ORT | Memory / ORT |
+|---|---:|---:|---:|---:|---:|
+| 8 | 6.1477 | 5.8677 | 6.0201 | 1.0212 | 0.9747 |
+| 30 | 16.9856 | 16.6011 | 15.3596 | 1.1059 | 1.0808 |
+| 30 padded to 128 | 66.3201 | 65.2998 | 60.7387 | 1.0919 | 1.0751 |
+| 128 | 67.8665 | 65.1282 | 60.6045 | 1.1198 | 1.0746 |
+| 512 | 347.2517 | 337.0893 | 284.5694 | 1.2203 | 1.1846 |
+
+These are descriptive results from ninety fresh processes and 5,940 measured
+calls, with every sample retained. All output checks pass, maximum scaled error
+`1.63913e-6`. Historical fine timing calibration remains unresolved, so these
+figures do not establish calibrated parity or confidence bounds. The
+[full comparison](tests/e5/public-ort-20260919.md) includes process ranges,
+complete-request boundaries, allocation, memory, conditioning and identities.
+
+### Audio: observed public API time and memory
+
+The ASR rows use the same twenty clean-English recordings: ten speakers,
+213.265 seconds of audio, individual durations 4.07–17.96 seconds. Each model
+runs in one fresh process on the Windows i7-14700KF, confined to CPU 2, with
+.NET 10.0.12 and product `c6bf781`. Timings cover the public PCM transcription
+call, including managed features and decoding. Model construction, file
+reading and external result checks are outside the stopwatch.
+
+**Real-time factor (RTF) = processing seconds / audio seconds; lower is faster.**
+An RTF below one means processing took less time than the supplied audio's
+duration. ASR totals include all twenty first-pass calls, including the first
+request's startup effects. The separately retained repeat is excluded from
+those totals. These are observations from an accuracy replay, without dedicated
+warmup or repeated performance trials.
+
+| Model / application | Workload | API seconds | RTF | Observed process peak GB |
+|---|---|---:|---:|---:|
+| Parakeet TDT 0.6B V3, transcription | 20 clips / 213.265 audio seconds | 61.260 | 0.287 | 9.594 |
+| Whisper Large V3 Turbo, English transcription | Same 20 clips / 213.265 audio seconds | 427.549 | 2.005 | 12.269 |
+| pyannote Community-1, complete diarization | One synthetic 600-second recording / 591 windows | 962.051 | 1.603 | 3.421 |
+
+GB are decimal. ASR peaks are sampled process-group RSS across loading, all
+twenty requests and the repeat. The pyannote peak is process peak working set
+for its resource/recovery sequence. They are finite observations, not memory
+ceilings. All models are FP32 and execute through Lokad.Onnx without native ORT.
+The Whisper frontend pads each short clip to its thirty-second encoder input;
+the ASR models therefore perform different amounts of work on these recordings.
+
+Parakeet and Whisper model construction took 0.981 and 3.897 seconds,
+respectively, after external asset verification. Their first recording took
+3.097 and 21.475 seconds; repeating it after the other nineteen took 2.217 and
+20.611 seconds. These pairs do not constitute warmed latency distributions.
+
+The pyannote row is a separate Windows observation at `21f3e74`, before the
+current default selection. It concatenates twenty copies of the same
+thirty-second dialogue. Its supervisor did **not** enforce or record CPU
+affinity; do not treat it as a matched single-CPU benchmark or compare its RTF
+directly with the ASR rows. The complete call includes segmentation, embeddings,
+automatic clustering and interval reconstruction. See the
+[long-request evidence](tests/pyannote/dialogue/README.md#finite-ten-minute-request).
+
+[Every retained ASR request time and source identity](tests/audio/accuracy/timing-20260919.json)
+is available, including the final repeat. Regenerate this summary from existing
+local artifacts with
+`python tests/audio/accuracy/summarize_timings.py --output <new-summary.json>`;
+the tool verifies the original receipts and does not run inference. The native
+audio reference generators also perform validation and evidence export, so their
+job durations are not comparable inference times. Matched native audio latency
+ratios and repeated steady-state audio benchmarks remain unmeasured.
+
+### Audio accuracy and numerical agreement
+
+| Model | Human-labeled observation | Result | Managed/native application agreement |
+|---|---|---|---|
+| Parakeet TDT 0.6B V3 | 20 clean-English clips, 559 reference words | 11 word errors; WER 1.9678%; CER 0.4309% | 21/21 requests, including repeat |
+| Whisper Large V3 Turbo | Same 20 clips and labels | 10 word errors; WER 1.7889%; CER 0.5966% | 21/21 requests, including repeat |
+| pyannote Community-1 | One annotated 30-second, two-speaker dialogue | Ordinary DER 5.2074%; exclusive DER 10.2909% | Exact timelines and scores on Windows and AMD |
+
+WER/CER are word/character edit error rates; DER measures missed, false-alarm
+and confused speaker time. The ASR subset and normalization were fixed before
+inference. It is a small LibriSpeech diagnostic, not the full test benchmark;
+the one-word difference does not establish a general recognizer ranking. The
+pyannote score includes overlap, with zero collar and optimal speaker-label
+mapping. Its three correlated ten-second excerpts have much worse ordinary DER
+(29.23–45.15%), retained in the report. Sources:
+[ASR results and every error](tests/audio/accuracy/results-20260919.md),
+[diarization metrics and scope](tests/pyannote/dialogue/README.md#recorded-qualification).
+
+Whisper's newer timestamp-guided recording mode separately matches native
+tokens, segments and seek decisions on constructed 69.455- and 71.825-second
+examples, three windows each. Both retain five errors in 160 words (3.125% WER);
+they share the same underlying speech and are not independent conversation
+tests. [Recording qualification](tests/whisper/recording/results-20260919.md)
+covers API/CLI agreement, work limits and finite resources, not a warmed latency
+comparison or maximum-duration speech qualification.
+
+Application agreement does not erase numerical discrepancies. Parakeet's
+[complete AMD replay](tests/parakeet/transcribe/README.md#complete-amd-pipeline-qualification)
+passes all 784 arrays at the unchanged `1e-4` scaled-error gate; three Windows
+duration-logit arrays still fail. Whisper's
+[full-pipeline numerical check](tests/whisper/numerical-20260919.md) retains
+21 encoder and 405 logit-array failures despite identical token choices.
+The labeled pyannote trace retains 19 failed filterbank values on Windows and
+24 on AMD. Broader multilingual, noisy and long-conversation accuracy and
+maximum-duration resource qualification remain open.
+
+## Historical results and methodology — through 2026-09-13
+
 **Review status — 2026-09-09:** the results below are historical and must not
 be used as a single-core performance baseline. The `defaults` rows compare
 Lokad's one-thread default with ORT's default thread pool; their ratios use

@@ -1,0 +1,351 @@
+{
+  "schema": 1,
+  "date": "2026-09-19",
+  "scope": "Retrospective descriptive summary of retained API stopwatch measurements; no new inference or matched native latency comparison",
+  "timing_boundary": "Public PCM Transcribe/Diarize call including managed frontend and decoding/postprocessing; excludes model construction, file IO and external validation",
+  "runtime": ".NET 10.0.12",
+  "operating_system": "Windows",
+  "cpu": "Intel Core i7-14700KF",
+  "asr_affinity": [
+    2
+  ],
+  "asr_receipt_sha256": "a4855ce825f4d5f1ea931440d031eb3a0aa5b3a0fee1fddbcf4d5b51500754b7",
+  "core_sha256": "7653c1686419d612e2624740908a44ffdee91b4239628a979bac44f5b6b863e9",
+  "data_sha256": "13899fea53b970594631dae62d43eaaee4695b3f1ff096bbb5dd059e0d21760f",
+  "asr": {
+    "parakeet": {
+      "product_source": "c6bf781816f3a45260f7a5eb33fb05d640a821e3",
+      "result_sha256": "2f3a95bf72ce629d11e7e3bb102e2e7400329dc0482ecd173f15151ed01da559",
+      "process_sha256": "bce0852b6b9dc073517aa69e8f326640215737114bd879eb0fc261a237b0d410",
+      "audio_seconds": 213.265,
+      "first_pass_requests": 20,
+      "first_pass_api_seconds": 61.2595488,
+      "first_pass_real_time_factor": 0.28724614353034955,
+      "load_seconds": 0.9809199,
+      "sampled_peak_rss_bytes": 9594392576,
+      "rows": [
+        {
+          "name": "121-121726-0000",
+          "repeat": false,
+          "audio_seconds": 8.46,
+          "api_seconds": 3.096797,
+          "real_time_factor": 0.3660516548463357
+        },
+        {
+          "name": "121-123852-0000",
+          "repeat": false,
+          "audio_seconds": 17.695,
+          "api_seconds": 5.2884428,
+          "real_time_factor": 0.298866504662334
+        },
+        {
+          "name": "237-126133-0002",
+          "repeat": false,
+          "audio_seconds": 8.92,
+          "api_seconds": 3.1130699,
+          "real_time_factor": 0.3489988677130045
+        },
+        {
+          "name": "237-126133-0000",
+          "repeat": false,
+          "audio_seconds": 13.29,
+          "api_seconds": 4.1563171,
+          "real_time_factor": 0.31274018811136195
+        },
+        {
+          "name": "260-123286-0000",
+          "repeat": false,
+          "audio_seconds": 7.04,
+          "api_seconds": 2.0851978,
+          "real_time_factor": 0.29619286931818184
+        },
+        {
+          "name": "260-123288-0005",
+          "repeat": false,
+          "audio_seconds": 12.55,
+          "api_seconds": 3.4394216,
+          "real_time_factor": 0.27405749800796814
+        },
+        {
+          "name": "672-122797-0000",
+          "repeat": false,
+          "audio_seconds": 4.07,
+          "api_seconds": 1.8382221,
+          "real_time_factor": 0.4516516216216216
+        },
+        {
+          "name": "672-122797-0001",
+          "repeat": false,
+          "audio_seconds": 15.13,
+          "api_seconds": 3.8422438,
+          "real_time_factor": 0.25394869795109054
+        },
+        {
+          "name": "908-157963-0005",
+          "repeat": false,
+          "audio_seconds": 7.035,
+          "api_seconds": 1.9187702,
+          "real_time_factor": 0.27274629708599857
+        },
+        {
+          "name": "908-157963-0000",
+          "repeat": false,
+          "audio_seconds": 12.62,
+          "api_seconds": 3.2316703,
+          "real_time_factor": 0.2560753011093503
+        },
+        {
+          "name": "1089-134686-0002",
+          "repeat": false,
+          "audio_seconds": 6.625,
+          "api_seconds": 2.020869,
+          "real_time_factor": 0.3050368301886792
+        },
+        {
+          "name": "1089-134686-0011",
+          "repeat": false,
+          "audio_seconds": 12.445,
+          "api_seconds": 3.1140118,
+          "real_time_factor": 0.25022192044997993
+        },
+        {
+          "name": "1188-133604-0001",
+          "repeat": false,
+          "audio_seconds": 9.04,
+          "api_seconds": 2.2560906,
+          "real_time_factor": 0.24956754424778763
+        },
+        {
+          "name": "1188-133604-0002",
+          "repeat": false,
+          "audio_seconds": 17.96,
+          "api_seconds": 4.3836967,
+          "real_time_factor": 0.24408110801781735
+        },
+        {
+          "name": "1221-135766-0002",
+          "repeat": false,
+          "audio_seconds": 4.825,
+          "api_seconds": 3.0743359,
+          "real_time_factor": 0.6371680621761657
+        },
+        {
+          "name": "1221-135766-0000",
+          "repeat": false,
+          "audio_seconds": 12.435,
+          "api_seconds": 3.0534452,
+          "real_time_factor": 0.245552488942501
+        },
+        {
+          "name": "1284-1180-0000",
+          "repeat": false,
+          "audio_seconds": 8.12,
+          "api_seconds": 2.0759483,
+          "real_time_factor": 0.25565865763546797
+        },
+        {
+          "name": "1284-1180-0018",
+          "repeat": false,
+          "audio_seconds": 12.005,
+          "api_seconds": 3.3066151,
+          "real_time_factor": 0.2754364931278634
+        },
+        {
+          "name": "1320-122612-0001",
+          "repeat": false,
+          "audio_seconds": 9.52,
+          "api_seconds": 2.3628384,
+          "real_time_factor": 0.24819731092436972
+        },
+        {
+          "name": "1320-122612-0000",
+          "repeat": false,
+          "audio_seconds": 13.48,
+          "api_seconds": 3.6015452,
+          "real_time_factor": 0.267176943620178
+        },
+        {
+          "name": "121-121726-0000",
+          "repeat": true,
+          "audio_seconds": 8.46,
+          "api_seconds": 2.2173806,
+          "real_time_factor": 0.26210172576832147
+        }
+      ]
+    },
+    "whisper": {
+      "product_source": "c6bf781816f3a45260f7a5eb33fb05d640a821e3",
+      "result_sha256": "f1292a50edfe79e64cdb0af185d156034c415537492bdb1e76991c00c429302e",
+      "process_sha256": "d0921e7d209d223e96bbd777e3668100835570471edcd21b0448567ca1e67b81",
+      "audio_seconds": 213.265,
+      "first_pass_requests": 20,
+      "first_pass_api_seconds": 427.5487997,
+      "first_pass_real_time_factor": 2.004777153775819,
+      "load_seconds": 3.8974177,
+      "sampled_peak_rss_bytes": 12269314048,
+      "rows": [
+        {
+          "name": "121-121726-0000",
+          "repeat": false,
+          "audio_seconds": 8.46,
+          "api_seconds": 21.4745853,
+          "real_time_factor": 2.5383670567375884
+        },
+        {
+          "name": "121-123852-0000",
+          "repeat": false,
+          "audio_seconds": 17.695,
+          "api_seconds": 21.5933678,
+          "real_time_factor": 1.2203090025430912
+        },
+        {
+          "name": "237-126133-0002",
+          "repeat": false,
+          "audio_seconds": 8.92,
+          "api_seconds": 22.1260182,
+          "real_time_factor": 2.4804953139013453
+        },
+        {
+          "name": "237-126133-0000",
+          "repeat": false,
+          "audio_seconds": 13.29,
+          "api_seconds": 22.3083638,
+          "real_time_factor": 1.6785826787057938
+        },
+        {
+          "name": "260-123286-0000",
+          "repeat": false,
+          "audio_seconds": 7.04,
+          "api_seconds": 20.4268277,
+          "real_time_factor": 2.9015380255681817
+        },
+        {
+          "name": "260-123288-0005",
+          "repeat": false,
+          "audio_seconds": 12.55,
+          "api_seconds": 21.8898298,
+          "real_time_factor": 1.744209545816733
+        },
+        {
+          "name": "672-122797-0000",
+          "repeat": false,
+          "audio_seconds": 4.07,
+          "api_seconds": 20.0148634,
+          "real_time_factor": 4.917656855036855
+        },
+        {
+          "name": "672-122797-0001",
+          "repeat": false,
+          "audio_seconds": 15.13,
+          "api_seconds": 21.548997,
+          "real_time_factor": 1.4242562458691341
+        },
+        {
+          "name": "908-157963-0005",
+          "repeat": false,
+          "audio_seconds": 7.035,
+          "api_seconds": 20.4497264,
+          "real_time_factor": 2.906855209665956
+        },
+        {
+          "name": "908-157963-0000",
+          "repeat": false,
+          "audio_seconds": 12.62,
+          "api_seconds": 21.5402769,
+          "real_time_factor": 1.7068365213946117
+        },
+        {
+          "name": "1089-134686-0002",
+          "repeat": false,
+          "audio_seconds": 6.625,
+          "api_seconds": 20.6266722,
+          "real_time_factor": 3.1134599547169812
+        },
+        {
+          "name": "1089-134686-0011",
+          "repeat": false,
+          "audio_seconds": 12.445,
+          "api_seconds": 21.6937838,
+          "real_time_factor": 1.7431726637203695
+        },
+        {
+          "name": "1188-133604-0001",
+          "repeat": false,
+          "audio_seconds": 9.04,
+          "api_seconds": 20.7191978,
+          "real_time_factor": 2.2919466592920354
+        },
+        {
+          "name": "1188-133604-0002",
+          "repeat": false,
+          "audio_seconds": 17.96,
+          "api_seconds": 22.7898221,
+          "real_time_factor": 1.26892105233853
+        },
+        {
+          "name": "1221-135766-0002",
+          "repeat": false,
+          "audio_seconds": 4.825,
+          "api_seconds": 20.5306552,
+          "real_time_factor": 4.25505807253886
+        },
+        {
+          "name": "1221-135766-0000",
+          "repeat": false,
+          "audio_seconds": 12.435,
+          "api_seconds": 21.3456752,
+          "real_time_factor": 1.7165802332127058
+        },
+        {
+          "name": "1284-1180-0000",
+          "repeat": false,
+          "audio_seconds": 8.12,
+          "api_seconds": 21.127119,
+          "real_time_factor": 2.601861945812808
+        },
+        {
+          "name": "1284-1180-0018",
+          "repeat": false,
+          "audio_seconds": 12.005,
+          "api_seconds": 22.1382742,
+          "real_time_factor": 1.8440878134110787
+        },
+        {
+          "name": "1320-122612-0001",
+          "repeat": false,
+          "audio_seconds": 9.52,
+          "api_seconds": 21.4726481,
+          "real_time_factor": 2.255530262605042
+        },
+        {
+          "name": "1320-122612-0000",
+          "repeat": false,
+          "audio_seconds": 13.48,
+          "api_seconds": 21.7320958,
+          "real_time_factor": 1.6121732789317507
+        },
+        {
+          "name": "121-121726-0000",
+          "repeat": true,
+          "audio_seconds": 8.46,
+          "api_seconds": 20.6107462,
+          "real_time_factor": 2.43625841607565
+        }
+      ]
+    }
+  },
+  "pyannote": {
+    "product_source": "21f3e74dd945dc9d10187817ad2e049aa577c0e0",
+    "receipt_sha256": "b6a33782882da61d6deccfa6d484a9d81b3c3ee7a353a47aa9c73ea0fe8287b3",
+    "result_sha256": "822045542d381ff3eef4185fd55011236d0f206af23e4b9462fc524ebb9d2f4b",
+    "requests": 1,
+    "audio_seconds": 600,
+    "api_seconds": 962.0510348,
+    "real_time_factor": 1.6034183913333333,
+    "peak_working_set_bytes": 3420536832,
+    "windows": 591,
+    "affinity": null,
+    "affinity_note": "This resource probe neither enforces nor records CPU affinity; it is not a single-CPU comparison",
+    "workload": "Twenty repetitions of the same thirty-second dialogue; synthetic resource observation"
+  }
+}
