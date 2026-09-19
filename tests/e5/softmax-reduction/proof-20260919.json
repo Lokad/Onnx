@@ -1,0 +1,137 @@
+{
+  "schema": 1,
+  "scope": "Local standalone correctness and optimized-loop code inspection; no performance or product claim",
+  "generated_source": {
+    "source": {
+      "src\\Lokad.Onnx\\TensorOps.Elementwise.cs": "78fb682e983598663e415e43460d70a97dea6e52ed5055870b7890fe52d946e8",
+      "src\\Lokad.Onnx\\MathOps.cs": "20a9d4d378bc9fc086b5104ae01dc22233a4bf34380f8ab05a5aac8e17ed30dd",
+      "tests\\e5\\softmax-zero-blocks\\generate.py": "86fcad1d7c7a949db3f939bd4164318f7d996116e78ca7d75a2e81eeda2aa283"
+    },
+    "generator_sha256": "fa3a01e5a83a1c3caf5ba302f6200ce741fc97a9a44e2f82813765e2cfcf0f6f",
+    "kernel_sha256": "14f016e185bdd7296faf19b9ac0717f6fc427f083a7603e428d523c54154d44d",
+    "changed_maximum_loop": 1,
+    "changed_validity_loop": 1,
+    "removed_unselected_wide_branches": 3,
+    "scope": "Standalone nonpositive-on/wide-off default kernel; no zero-block or pointer-max combination"
+  },
+  "records": [
+    {
+      "name": "initial",
+      "check": {
+        "schema": 1,
+        "scope": "Standalone exactness only; no timing claim",
+        "maximumCases": 109488,
+        "tensorCases": 1728,
+        "inPlaceCases": 3456,
+        "refusals": 3,
+        "independentMaximumError": 2.477703762160388e-07,
+        "width": 8,
+        "affinity": 16,
+        "runtime": ".NET 10.0.12",
+        "core_sha256": "187de61ad8f034b9b7ad2fb3490358443fa84334204720e81bc3546a31f3c8d4",
+        "probe_sha256": "807059d96a1f618f78149aec7fcdbfd46473bf45eea6990262b77b1e60b262ed",
+        "flags": {
+          "DOTNET_JitDisasm": "SoftmaxReduction.Kernels:*",
+          "DOTNET_JitStdOutFile": "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\softmax-reduction-20260919\\codegen.txt"
+        }
+      },
+      "identity_sha256": "9be9e7171b9b08cdb7b2fa36a758f646802475b3812a09eb55b1332e09b05a08",
+      "codegen_sha256": "ca99885fe1cd115218dfc1e51977614d83f59919e814d99a6b220437d7867798",
+      "pid": 38892,
+      "create_time": 1789849699.0699205,
+      "terminal": true,
+      "peak_rss": 54407168
+    },
+    {
+      "name": "conditioned",
+      "check": {
+        "schema": 1,
+        "scope": "Standalone exactness only; no timing claim",
+        "conditioned": true,
+        "maximumCases": 109488,
+        "tensorCases": 1728,
+        "inPlaceCases": 3456,
+        "refusals": 3,
+        "independentMaximumError": 2.477703762160388e-07,
+        "width": 8,
+        "affinity": 16,
+        "runtime": ".NET 10.0.12",
+        "core_sha256": "187de61ad8f034b9b7ad2fb3490358443fa84334204720e81bc3546a31f3c8d4",
+        "probe_sha256": "a9768769df771e6c558dc72c1ec34cc53edd6257f5424d89e5584a48a4668f26",
+        "flags": {
+          "DOTNET_JitDisasm": "SoftmaxReduction.Kernels:*",
+          "DOTNET_JitStdOutFile": "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\softmax-reduction-20260919\\conditioned\\codegen.txt"
+        }
+      },
+      "identity_sha256": "be23b082a95a7610d87241d046150d7b59c659e5447d66dfb3d22351df47d2b5",
+      "codegen_sha256": "2f02920a7b2c2546257b36c6463a4ae21140bcb663bc62e045c36e2d3c7b838f",
+      "pid": 31392,
+      "create_time": 1789850070.5828135,
+      "terminal": true,
+      "peak_rss": 56299520
+    },
+    {
+      "name": "yielded",
+      "check": {
+        "schema": 1,
+        "scope": "Standalone exactness only; no timing claim",
+        "conditioned": true,
+        "maximumCases": 109488,
+        "tensorCases": 1728,
+        "inPlaceCases": 3456,
+        "refusals": 3,
+        "independentMaximumError": 2.477703762160388e-07,
+        "width": 8,
+        "affinity": 16,
+        "runtime": ".NET 10.0.12",
+        "core_sha256": "187de61ad8f034b9b7ad2fb3490358443fa84334204720e81bc3546a31f3c8d4",
+        "probe_sha256": "38aae11faf1de9c209e950a47340416b80d7750f560e74ab6132db11763e1941",
+        "flags": {
+          "DOTNET_JitStdOutFile": "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\softmax-reduction-20260919\\yielded\\codegen.txt",
+          "DOTNET_JitDisasm": "SoftmaxReduction.Kernels:*"
+        }
+      },
+      "identity_sha256": "c8f4474b1a0dad559569fbfd0c8c1399dba40355e007e3ffa783df4a64d813ec",
+      "codegen_sha256": "4dad208ee3387ea169ad0707cf72b378e83a00c4e3a01e6702e20ae0886263cf",
+      "pid": 38960,
+      "create_time": 1789850152.1967523,
+      "terminal": true,
+      "peak_rss": 56233984
+    }
+  ],
+  "final_source": {
+    "generate.py": "fa3a01e5a83a1c3caf5ba302f6200ce741fc97a9a44e2f82813765e2cfcf0f6f",
+    "Probe.csproj": "8be2a5a6090092f6a79feb60098263f02fdeaf02f228e9a678261761abe68d05",
+    "Program.cs": "9ef9379ccdd58399f3d9afebb80dcf9fcc4432743b2818c543e4c0fbd0bf9054",
+    "run_check.py": "08e9c033279145c1d0bdc598afaf34873897137fc33cc7d3a608dbc9a85b8259"
+  },
+  "regeneration_identical": true,
+  "codegen": {
+    "capture": "yielded/codegen.txt",
+    "tier": "Tier1-OSR at entry 0x262; not final full Tier1",
+    "original_bytes": 4030,
+    "candidate_bytes": 4234,
+    "original_maximum_blocks": [
+      47,
+      58,
+      77,
+      87
+    ],
+    "original_validity_blocks": [
+      51,
+      81
+    ],
+    "candidate_validity_blocks": [
+      36,
+      74
+    ],
+    "final_tier1_present": false
+  },
+  "limitations": [
+    "No latency measurement",
+    "No AMD execution",
+    "Other vector widths not exercised",
+    "No product dispatch",
+    "No combination with zero-block skipping"
+  ]
+}

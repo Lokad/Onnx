@@ -74,8 +74,8 @@ copied. The VM checkout remains `172181fc5ab4eb2bdc2eb7f37e80d25e482a0887`.
 Run the independent tools from the repository root:
 
     python -m unittest discover -s tests/e5/softmax-zero-product -p test_*.py
-    python tests/e5/softmax-zero-product/audit.py --artifact artifacts/softmax-zero-product-20260919 --phase qual --output <new-audit.json>
-    python tests/e5/softmax-zero-product/audit.py --artifact artifacts/softmax-zero-product-20260919 --phase model --output <new-audit.json>
+    python -B tests/e5/softmax-zero-product/audit.py --artifact artifacts/softmax-zero-product-20260919 --phase qual --output <new-audit.json>
+    python -B tests/e5/softmax-zero-product/audit.py --artifact artifacts/softmax-zero-product-20260919 --phase model --output <new-audit.json>
 
 The model phase requires a successful qualification audit bound to the exact
 bundle and terminal supervisor identity. Observe a running process by its
