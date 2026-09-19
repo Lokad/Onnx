@@ -31,6 +31,14 @@ figures do not establish calibrated parity or confidence bounds. The
 [full comparison](tests/e5/public-ort-20260919.md) includes process ranges,
 complete-request boundaries, allocation, memory, conditioning and identities.
 
+A subsequent [opt-in zero-block comparison](tests/e5/softmax-zero-product/results-20260919.md)
+retains another 5,940 complete-model calls. Padded-128 Execute averages
+65.3973 ms for the controls and 64.7893 ms for the candidate: 0.93% lower,
+below its prospective 1% requirement. Identical controls also fail their
+stability limits in other cases. Correctness passes, but the performance
+conclusion is inconclusive and the switch remains off by default. That
+experiment supplies no fresh ORT timing and does not replace the table above.
+
 ### Audio: matched Microsoft ORT baselines
 
 Fresh complete-application measurements on **Windows i7-14700KF, logical CPU 2**,

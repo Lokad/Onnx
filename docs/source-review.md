@@ -79,9 +79,12 @@ passes exactness and duplicate controls, with a padded128 candidate/control rati
 of 0.631158. Product `087e280` adds that mechanism behind the default-off
 `LOKAD_ONNX_SOFTMAX_ZERO_BLOCKS` switch. Actual AMD product code contains branches
 that bypass the polynomial; local and AMD contract/shared-model checks pass.
-The [product protocol](../tests/e5/softmax-zero-product/README.md) treats complete
-graph latency as a separate qualification step. The earlier failed small-batch
-screen remains a failure, and the kernel gain is not an ORT or full-model ratio.
+The [complete-model comparison](../tests/e5/softmax-zero-product/results-20260919.md)
+now retains all 5,940 calls: padded128 Execute improves 0.93%, below its 1%
+requirement, while identical controls fail stability limits in other cases.
+The performance conclusion remains inconclusive and the switch stays off.
+The earlier failed small-batch screen remains a failure, and the kernel gain
+is not an ORT or full-model ratio.
 
 The same actual AMD capture exposes repeated vector stores in the final
 maximum and NaN-validity reductions. A [standalone exactness proof](../tests/e5/softmax-reduction/results-20260919.md)
@@ -91,7 +94,7 @@ validity test. Each retained local process passes 109,488 maximum cases and
 while growing the paired-row body from 4,030 to 4,234 bytes. Final Tier1 code
 and AMD performance remain unqualified; there is no product route or speed
 claim. This targets different instructions from the closed pointer-addressing
-experiment and does not change the running zero-block comparison.
+experiment and does not change the closed zero-block comparison.
 
 ## Valuable import units and their disposition
 
