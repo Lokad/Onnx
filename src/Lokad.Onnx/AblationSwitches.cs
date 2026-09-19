@@ -61,6 +61,9 @@ internal static class AblationSwitches
     // Scheduling experiment: preserve erf arithmetic while removing vector call spills.
     internal static readonly bool EnableBiasGeluInline = EnvIsSet("LOKAD_ONNX_BIAS_GELU_INLINE");
 
+    /// Interleave four exact erf streams on AVX-512 hosts; requires inline BiasGelu.
+    internal static readonly bool EnableBiasGeluInterleaved = EnvIsSet("LOKAD_ONNX_BIAS_GELU_INTERLEAVED");
+
     /// Use the existing exact-copy vector kernels for the two scalar attention faces.
     internal static readonly bool EnableVectorTransposeFaces = EnvIsSet("LOKAD_ONNX_VECTOR_TRANSPOSE_FACES");
 
