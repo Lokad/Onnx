@@ -20,7 +20,7 @@ def seek_program(source):
     tree=ast.parse(source.read_text(encoding='utf-8'))
     function=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='transcribe')
     loop=next(n for n in ast.walk(function) if isinstance(n,ast.While) and ast.unparse(n.test)=='clip_idx < len(seek_clips)')
-    first=next(i for i,n in enumerate(loop.body) if isinstance(n,ast.Assign) and ast.unparse(n.targets[0])=='timestamp_tokens')
+    first=next(i for i,n in enumerate(loop.body) if isinstance(n,ast.AnnAssign) and ast.unparse(n.target)=='timestamp_tokens')
     nodes=loop.body[first:first+5]
     assert isinstance(nodes[-1],ast.If) and ast.unparse(nodes[-1].test)=='len(consecutive) > 0'
     return compile(ast.Module(body=nodes,type_ignores=[]),str(source),'exec')
