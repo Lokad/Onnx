@@ -1,0 +1,14 @@
+{
+  "encoder_sha256": "9903474d6230e5e858dc6b6382a0e3f6e402ea9b4210e1e2f2bee60a33830e7a",
+  "frontend_source_lf_sha256": "a2c13a792c50d97f7a7583b69fcabd5eb5efc34d1374c2b6e5757bbcf3b62139",
+  "pooling_source_lf_sha256": "8cb687441630e6759fb6ca545d649b41dbec1d42f869954c0a03ae191c7cbd82",
+  "kaldi_source_lf_sha256": "5cbea1a584ddea748f6f68a621d794e13334e88d9faa1d40986f7af32f196d29",
+  "numpy": "2.2.4",
+  "torch": "2.11.0+cpu",
+  "torchaudio": "2.11.0+cpu",
+  "onnxruntime": "1.29.0",
+  "recordings": ["noise-16000", "noise-160000", "noise-480000", "silence-16000", "tones", "english-16k", "french-44k-stereo", "jfk-48k-stereo", "short-400", "short-1520", "short-1680"],
+  "masks": ["none", "alternating", "fractional", "zero", "one"],
+  "tolerance": 0.0001,
+  "repeats": 2
+}
