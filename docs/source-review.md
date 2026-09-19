@@ -100,6 +100,17 @@ no product route or model-speedup claim follows. This targets different
 instructions from the closed pointer-addressing experiment and does not change
 the closed zero-block comparison.
 
+A separate [activation-packing prototype](../tests/e5/projection-input-pack/results-20260919.md)
+copies twelve-row input groups into contiguous reduction order, including the
+copy and scratch rental/return in every timing. All four AMD workers preserve
+complete output bits, and duplicate controls pass their prospective limits.
+The 30/128-row banks nevertheless regress 3.18%/4.14% against the first control.
+Actual FullOpts code removes four scalar stack accesses but expands the hot
+index calculations from two to thirteen sign extensions and one to twelve
+LEAs. The intended literal displacements were not emitted. This rejects the
+tested implementation without claiming that every possible activation layout
+loses; it changes no production default or current model ratio.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |

@@ -1,5 +1,9 @@
 # E5 projection activation-packing experiment
 
+The [September 19 result](results-20260919.md) rejects this candidate: all
+correctness and duplicate-control checks pass, but the complete 30/128-row banks
+regress. [Every measured sample](observations-20260919.json) is retained.
+
 This standalone prototype copies each twelve-row activation group into
 contiguous reduction order before running the existing 32-column AVX-512
 kernel. Every candidate timing includes scratch rental, the complete activation

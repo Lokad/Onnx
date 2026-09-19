@@ -43,6 +43,11 @@ stability limits in other cases. Correctness passes, but the performance
 conclusion is inconclusive and the switch remains off by default. That
 experiment supplies no fresh ORT timing and does not replace the table above.
 
+The later [projection activation-packing experiment](tests/e5/projection-input-pack/results-20260919.md)
+passes correctness and duplicate controls but makes its 30/128-row matrix banks
+3.18%/4.14% slower, including input copying. It remains outside production;
+the complete-model scoreboard above is unchanged.
+
 ### Audio: matched Microsoft ONNX Runtime baselines
 
 Fresh complete-application measurements on **Windows i7-14700KF, logical CPU 2**,
