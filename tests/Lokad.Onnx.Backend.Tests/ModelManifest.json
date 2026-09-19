@@ -111,6 +111,54 @@
         "revision": "1975fb9b4a2a92bd99f457407337ee25ab6cfde0",
         "path": "onnx/model.onnx"
       }
+    },
+    {
+      "key": "parakeet-encoder",
+      "file": "models/parakeet-tdt-0.6b-v3/encoder-model.onnx",
+      "sha256": "98A74B21B4CC0017C1E7030319A4A96F4A9506E50F0708F3A516D02A77C96BB1",
+      "bytes": 41770866,
+      "opset": 17,
+      "generator": "tests/parakeet/generate_reference.py; NumPy 2.2.4, ONNX 1.22.0, ORT 1.29.0 sequential CPU, one thread, optimization all",
+      "test": "eng/test-parakeet.ps1: 60 full output comparisons, four failure/recovery cases, independently carried states and retained input/output integrity",
+      "inputs": "Encoder: batch 1/2, 64/65/128/256 frames. Decoder: batch 1/2, one/multiple frame/token requests and recurrent states.",
+      "oracle": "Complete finite floats at scaled error 1e-4; exact int32/int64 lengths, shapes and dtypes; model/sidecar hashes and bounds verified",
+      "source": {
+        "repo": "istupakov/parakeet-tdt-0.6b-v3-onnx",
+        "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
+        "path": "encoder-model.onnx"
+      }
+    },
+    {
+      "key": "parakeet-encoder-weights",
+      "file": "models/parakeet-tdt-0.6b-v3/encoder-model.onnx.data",
+      "sha256": "9A22D372C51455C34F13405DA2520BAEFB7125BD16981397561423ED32D24F36",
+      "bytes": 2435420160,
+      "opset": 0,
+      "generator": "tests/parakeet/generate_reference.py; NumPy 2.2.4, ONNX 1.22.0, ORT 1.29.0 sequential CPU, one thread, optimization all",
+      "test": "eng/test-parakeet.ps1: 60 full output comparisons, four failure/recovery cases, independently carried states and retained input/output integrity",
+      "inputs": "Encoder: batch 1/2, 64/65/128/256 frames. Decoder: batch 1/2, one/multiple frame/token requests and recurrent states.",
+      "oracle": "Complete finite floats at scaled error 1e-4; exact int32/int64 lengths, shapes and dtypes; model/sidecar hashes and bounds verified",
+      "source": {
+        "repo": "istupakov/parakeet-tdt-0.6b-v3-onnx",
+        "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
+        "path": "encoder-model.onnx.data"
+      }
+    },
+    {
+      "key": "parakeet-decoder",
+      "file": "models/parakeet-tdt-0.6b-v3/decoder_joint-model.onnx",
+      "sha256": "E978DDF6688527182C10FDE2EB4B83068421648985EF23F7A86BE732BE8706C1",
+      "bytes": 72520893,
+      "opset": 17,
+      "generator": "tests/parakeet/generate_reference.py; NumPy 2.2.4, ONNX 1.22.0, ORT 1.29.0 sequential CPU, one thread, optimization all",
+      "test": "eng/test-parakeet.ps1: 60 full output comparisons, four failure/recovery cases, independently carried states and retained input/output integrity",
+      "inputs": "Encoder: batch 1/2, 64/65/128/256 frames. Decoder: batch 1/2, one/multiple frame/token requests and recurrent states.",
+      "oracle": "Complete finite floats at scaled error 1e-4; exact int32/int64 lengths, shapes and dtypes; model/sidecar hashes and bounds verified",
+      "source": {
+        "repo": "istupakov/parakeet-tdt-0.6b-v3-onnx",
+        "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
+        "path": "decoder_joint-model.onnx"
+      }
     }
   ]
 }
