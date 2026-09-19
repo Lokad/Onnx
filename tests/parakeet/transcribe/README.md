@@ -18,7 +18,9 @@ lonnx.cmd transcribe models/parakeet-tdt-0.6b-v3 recording.wav --model-type para
 ```
 
 The CLI accepts mono/stereo PCM or floating-point WAV at 8–192 kHz, mixes to mono
-and resamples to 16 kHz. Recordings are limited to 30 seconds. Parakeet recognizes
+and resamples to 16 kHz. Default requests are limited to 30 seconds. The separate
+[`--recording` mode](../recording/README.md) accepts up to ten minutes in independent
+windows, exposing quiet/hard boundaries and partial progress. Parakeet recognizes
 languages without a language argument; passing `--language` is an error. Whisper
 remains the default model type and still requires that argument. Text or JSON goes
 to stdout and errors or a token-limit warning go to stderr. Ctrl-C returns 130;

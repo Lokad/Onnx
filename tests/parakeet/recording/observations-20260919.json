@@ -1,0 +1,1104 @@
+{
+  "schema": 1,
+  "scope": "Application and finite resource qualification; native reference timings include extra decoder checks and are not a baseline",
+  "implementation_commit": "f568132f63e375a43686dc83c5c983f905d2d493",
+  "audit": {
+    "schema": 1,
+    "complete": true,
+    "recording_requests": 10,
+    "concurrent_silent_requests": 2,
+    "cli_requests": 2,
+    "upstream_window_crosschecks": 38,
+    "refusals": 16,
+    "metrics": [
+      {
+        "name": "connected",
+        "reference": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+        "hypothesis": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOME TIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FALL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART THEN DEAR SAID MISSES WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+        "reference_words": 160,
+        "reference_characters": 882,
+        "word_errors": 4,
+        "character_errors": 3,
+        "substitutions": 3,
+        "deletions": 0,
+        "insertions": 1,
+        "word_error_rate": 0.025,
+        "character_error_rate": 0.003401360544217687,
+        "normalized_equal": false
+      },
+      {
+        "name": "shifted",
+        "reference": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+        "hypothesis": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOME TIME ABSENT FROM THY HEART THEN DEAR SAID MISSES WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+        "reference_words": 160,
+        "reference_characters": 882,
+        "word_errors": 18,
+        "character_errors": 88,
+        "substitutions": 2,
+        "deletions": 15,
+        "insertions": 1,
+        "word_error_rate": 0.1125,
+        "character_error_rate": 0.09977324263038549,
+        "normalized_equal": false
+      },
+      {
+        "name": "hard-boundary",
+        "reference": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+        "hypothesis": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOME TIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FALL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART THEN DEAR SAID MRS WHITNEY YOU MUST BE KIND TO WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+        "reference_words": 160,
+        "reference_characters": 882,
+        "word_errors": 84,
+        "character_errors": 431,
+        "substitutions": 4,
+        "deletions": 79,
+        "insertions": 1,
+        "word_error_rate": 0.525,
+        "character_error_rate": 0.4886621315192744,
+        "normalized_equal": false
+      }
+    ],
+    "core_sha256": "502bfbce5d4c3744894f4cb268fcf4a2f135918c0e5e585ad4718941425b49af",
+    "data_sha256": "ad15205047e23514151a20407a89f4ee0e0bb4f6614c15d6637da42d5164581b",
+    "runner_sha256": "916b65ad4472cbbdd773b0abda4f6e9a754fdc5c848bd9deef2102d403cfacb7",
+    "observed_managed_peak": 13272190976,
+    "managed_process_peak": 13362720768,
+    "audit_sha256": "f160d173f1649448ac8468e52bfedc70af3d0141149d105f3414ce7f5327984c",
+    "scorer_sha256": "282b24e75c3e9fb28ba07b928ad669e7c1e64593b0e4c3e30f2b318897a84085",
+    "audit_dependencies": {
+      "numpy": "2.2.4",
+      "psutil": "7.0.0",
+      "jiwer": "4.0.0"
+    },
+    "bindings": {
+      "frozen.json": "ac260bf953de00c189364a431a021c35cadc074b27157ae9ea887d3b8e7ad3cc",
+      "inputs\\inputs.json": "6d8ffa62867df831b1d0ab2091ed67de4956dcc8b88ff328797638a13a255c3c",
+      "native\\result.json": "3a3229628ac6f1f89521238505d85a8593531470f64574b560d154105e62ba38",
+      "managed\\result.json": "ed3f93465a051fb3cccac34e99441f14f130f240a5bf39145485bc7e88458ce2",
+      "processes.json": "5a0da0470891b4289d2372464aeaf3026ae8cdb7a7a682294f5de09d6a464045"
+    }
+  },
+  "audit_result_sha256": "d2000c27fe821e19e8267faa69928837d9103740ba16a312fabdb22b0ad53310",
+  "runtime": ".NET 10.0.12",
+  "os": "Microsoft Windows 10.0.26200",
+  "load_seconds": 1.0584197,
+  "flags": {},
+  "inputs": {
+    "schema": 1,
+    "sample_rate": 16000,
+    "scope": "Constructed correlated boundary and finite resource fixtures; no natural long-audio qualification",
+    "source": "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\whisper-recording-v2-20260919\\inputs\\inputs.json",
+    "source_sha256": "a745ebd4438bb682a792d1c065849db121e004b1144389375506e2441d34c354",
+    "selected": [
+      {
+        "name": "121-121726-0000",
+        "samples": 135360,
+        "pcm_sha256": "7af6fa9a748316ae49cb39bc2982e02f97becb9e8de3e280e85a5a1613c43948",
+        "reference_text": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON"
+      },
+      {
+        "name": "121-123852-0000",
+        "samples": 283120,
+        "pcm_sha256": "301c04551b25f8490b6e6bcde13c8c13fef8f302fc05f4e26650e28b57ffac0b",
+        "reference_text": "THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART"
+      },
+      {
+        "name": "237-126133-0002",
+        "samples": 142720,
+        "pcm_sha256": "31ef29cd1eb86311cb5060bd67dcbba62968d2a426d431df3cd4c6e2cb77d3c3",
+        "reference_text": "THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS"
+      },
+      {
+        "name": "237-126133-0000",
+        "samples": 212640,
+        "pcm_sha256": "f1b50505ddaa12112748b1659693c120769f6c45ba65fe34c50f7595ec2f2fdd",
+        "reference_text": "HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME"
+      },
+      {
+        "name": "260-123286-0000",
+        "samples": 112640,
+        "pcm_sha256": "5296f28c53060ba91266751c40fe23c86c16f7515dc907607605936c63e7eeb9",
+        "reference_text": "SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT"
+      },
+      {
+        "name": "260-123288-0005",
+        "samples": 200800,
+        "pcm_sha256": "7650fec1202942103da6f5d46a6245122910d87223bae00b326daed091f114f9",
+        "reference_text": "FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS"
+      }
+    ],
+    "generator_sha256": "5e57fc93e33a74e63690308938a68109d64b3dabdbe48e680174623366873a13",
+    "cases": [
+      {
+        "name": "connected",
+        "pcm": "connected.npy",
+        "pcm_sha256": "1664b4bcb5a399d0d4dd62a6d7c1b35f2c565125dd679109e97422d395f0c7ca",
+        "wave": "connected.wav",
+        "wave_sha256": "ff41dc1fcf0449dbdaedd1dcd4e5d1450e282d6af03ca24c749689a567ada1f2",
+        "samples": 1111280,
+        "reference_text": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+        "max_tokens": 4096,
+        "max_tokens_per_frame": 10,
+        "max_windows": 256
+      },
+      {
+        "name": "shifted",
+        "pcm": "shifted.npy",
+        "pcm_sha256": "c52724118e4b2df085566303be2f61c25e7e2f59496865b68c30530fbc0ca0ac",
+        "wave": "shifted.wav",
+        "wave_sha256": "7ab8db31fd1a0fb0fa61d2f7386887097f8afd837452d6d6eac356a1a6a528ba",
+        "samples": 1149200,
+        "reference_text": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+        "max_tokens": 4096,
+        "max_tokens_per_frame": 10,
+        "max_windows": 256
+      },
+      {
+        "name": "hard-boundary",
+        "pcm": "hard-boundary.npy",
+        "pcm_sha256": "da5d0d71a21eba52c10512eca0638afdb7de98a081a8ae2f19dcb7f02ea99b01",
+        "wave": "hard-boundary.wav",
+        "wave_sha256": "60566053c9f11740b72ca2d3a2fc615beb2a81b944a41226322ae28993e65e44",
+        "samples": 1111280,
+        "reference_text": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+        "max_tokens": 4096,
+        "max_tokens_per_frame": 10,
+        "max_windows": 256
+      },
+      {
+        "name": "token-limit",
+        "pcm": "token-limit.npy",
+        "pcm_sha256": "1664b4bcb5a399d0d4dd62a6d7c1b35f2c565125dd679109e97422d395f0c7ca",
+        "wave": "token-limit.wav",
+        "wave_sha256": "ff41dc1fcf0449dbdaedd1dcd4e5d1450e282d6af03ca24c749689a567ada1f2",
+        "samples": 1111280,
+        "reference_text": null,
+        "max_tokens": 2,
+        "max_tokens_per_frame": 10,
+        "max_windows": 256
+      },
+      {
+        "name": "window-limit",
+        "pcm": "window-limit.npy",
+        "pcm_sha256": "1664b4bcb5a399d0d4dd62a6d7c1b35f2c565125dd679109e97422d395f0c7ca",
+        "wave": "window-limit.wav",
+        "wave_sha256": "ff41dc1fcf0449dbdaedd1dcd4e5d1450e282d6af03ca24c749689a567ada1f2",
+        "samples": 1111280,
+        "reference_text": null,
+        "max_tokens": 4096,
+        "max_tokens_per_frame": 10,
+        "max_windows": 1
+      },
+      {
+        "name": "maximum-speech",
+        "pcm": "maximum-speech.npy",
+        "pcm_sha256": "902bb52da2d5038f060f3dcfd5e9ec82dcd998dbf93ec5e4ece165ee4663268f",
+        "wave": "maximum-speech.wav",
+        "wave_sha256": "a0585bce4d4ed16ec7fbcfae7fb7ec810802b3305b02d72f1ca21928e75ad2c7",
+        "samples": 9600000,
+        "reference_text": null,
+        "max_tokens": 4096,
+        "max_tokens_per_frame": 10,
+        "max_windows": 256
+      },
+      {
+        "name": "tiny-tail",
+        "pcm": "tiny-tail.npy",
+        "pcm_sha256": "77f03f03847707cd273033db9de5e310ff912fcf74fcc3516406a8da940e282a",
+        "wave": "tiny-tail.wav",
+        "wave_sha256": "6d9dd4777f2765321c172c021481a4cd255b3d8452b5ee9c8f0a5de27df58f91",
+        "samples": 480001,
+        "reference_text": null,
+        "max_tokens": 4096,
+        "max_tokens_per_frame": 10,
+        "max_windows": 256
+      },
+      {
+        "name": "maximum-silence",
+        "pcm": "maximum-silence.npy",
+        "pcm_sha256": "8a42709552ee6c6a073b998cc7830467f7e6219a7c21040f0ce4a7aaae87b2b0",
+        "wave": "maximum-silence.wav",
+        "wave_sha256": "eafb4bbf8904644956436ba1df1e5f0e174870f22ceadbb38e29b299ec87ab33",
+        "samples": 9600000,
+        "reference_text": null,
+        "max_tokens": 4096,
+        "max_tokens_per_frame": 10,
+        "max_windows": 256
+      },
+      {
+        "name": "empty",
+        "pcm": "empty.npy",
+        "pcm_sha256": "4e65bac20d7e3ce2d5f45a7e2a99fc25e1ca7ed28d2d729f4e598713da68639f",
+        "wave": "empty.wav",
+        "wave_sha256": "faa679114e345b63699357d41ab496e36642b5523bebdad0a018a45ac87baa39",
+        "samples": 0,
+        "reference_text": null,
+        "max_tokens": 4096,
+        "max_tokens_per_frame": 10,
+        "max_windows": 256
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "connected",
+      "repeat": false,
+      "seconds": 22.4921891,
+      "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art. Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+      "duration_seconds": 69.455,
+      "processed_seconds": 69.455,
+      "stop_reason": "Completed",
+      "windows": [
+        {
+          "start_seconds": 0,
+          "audio_seconds": 26.595,
+          "boundary": "Quiet",
+          "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art.",
+          "tokens": 92,
+          "encoded_frames": 333,
+          "decoder_calls": 122,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "9bcbc09d59c4482f0ba3622cff757ac01ce4b1bc7b7b0abd8010f2fa2102571c"
+        },
+        {
+          "start_seconds": 26.595,
+          "audio_seconds": 28.465,
+          "boundary": "Quiet",
+          "text": "Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round.",
+          "tokens": 148,
+          "encoded_frames": 356,
+          "decoder_calls": 169,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "536abd2815ba7ee74faad9982c465cf667a60b163cc3ca3228cb79c907100593"
+        },
+        {
+          "start_seconds": 55.06,
+          "audio_seconds": 14.395,
+          "boundary": "EndOfRecording",
+          "text": "no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+          "tokens": 72,
+          "encoded_frames": 180,
+          "decoder_calls": 78,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "25969dc33760d0d87d9821d0c48a50b367db0f05c3bfeee0422d77337798e567"
+        }
+      ]
+    },
+    {
+      "name": "shifted",
+      "repeat": false,
+      "seconds": 19.1131428,
+      "text": "Also a popular contrivance whereby love making may be suspended, but not stopped during the picnic season. Those pretty wrongs that liberty commits when I am some time absent from thy heart. Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+      "duration_seconds": 71.825,
+      "processed_seconds": 71.825,
+      "stop_reason": "Completed",
+      "windows": [
+        {
+          "start_seconds": 0,
+          "audio_seconds": 28.965,
+          "boundary": "Quiet",
+          "text": "Also a popular contrivance whereby love making may be suspended, but not stopped during the picnic season. Those pretty wrongs that liberty commits when I am some time absent from thy heart.",
+          "tokens": 61,
+          "encoded_frames": 363,
+          "decoder_calls": 125,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "ad0d87e1166dde10ea8a12e252fd02f3b946e2b6a4545326c8d9819ad55185ac"
+        },
+        {
+          "start_seconds": 28.965,
+          "audio_seconds": 28.465,
+          "boundary": "Quiet",
+          "text": "Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round.",
+          "tokens": 148,
+          "encoded_frames": 356,
+          "decoder_calls": 169,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "536abd2815ba7ee74faad9982c465cf667a60b163cc3ca3228cb79c907100593"
+        },
+        {
+          "start_seconds": 57.43,
+          "audio_seconds": 14.395,
+          "boundary": "EndOfRecording",
+          "text": "no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+          "tokens": 72,
+          "encoded_frames": 180,
+          "decoder_calls": 78,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "25969dc33760d0d87d9821d0c48a50b367db0f05c3bfeee0422d77337798e567"
+        }
+      ]
+    },
+    {
+      "name": "hard-boundary",
+      "repeat": false,
+      "seconds": 19.4731599,
+      "text": "Also a popular contrivance whereby love making may be suspended, but not stopped during the picnic season. Those pretty wrongs that liberty commits when I am some time absent from thy heart. Thy beauty and thy years fall well befits. For still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kind to with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+      "duration_seconds": 69.455,
+      "processed_seconds": 69.455,
+      "stop_reason": "Completed",
+      "windows": [
+        {
+          "start_seconds": 0,
+          "audio_seconds": 30,
+          "boundary": "HardLimit",
+          "text": "Also a popular contrivance whereby love making may be suspended, but not stopped during the picnic season. Those pretty wrongs that liberty commits when I am some time absent from thy heart. Thy beauty and thy years fall well befits. For still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kind to",
+          "tokens": 112,
+          "encoded_frames": 376,
+          "decoder_calls": 144,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "39ccb0b8558223228badb4b669d2c03760bc9a6e22fad8fd2af37b8f79e7a436"
+        },
+        {
+          "start_seconds": 30,
+          "audio_seconds": 30,
+          "boundary": "HardLimit",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 376,
+          "decoder_calls": 134,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "9f1735f6a47a2bf772a4d59137d2a903d81a6081d5491eb277cb70dfb0a27e41"
+        },
+        {
+          "start_seconds": 60,
+          "audio_seconds": 9.455,
+          "boundary": "EndOfRecording",
+          "text": "with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+          "tokens": 50,
+          "encoded_frames": 119,
+          "decoder_calls": 53,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "f16fd1b07e4ff7e77bbb4a3084f95918069ef5fc6fe1bf150ac9db6e29f8b1d3"
+        }
+      ]
+    },
+    {
+      "name": "token-limit",
+      "repeat": false,
+      "seconds": 6.0989446,
+      "text": "",
+      "duration_seconds": 69.455,
+      "processed_seconds": 0,
+      "stop_reason": "TokenLimit",
+      "windows": [
+        {
+          "start_seconds": 0,
+          "audio_seconds": 26.595,
+          "boundary": "Quiet",
+          "text": "also a",
+          "tokens": 2,
+          "encoded_frames": 333,
+          "decoder_calls": 5,
+          "stop_reason": "TokenLimit",
+          "decoding_sha256": "0295fc00baf254a970f42a7f70e90dd87e743bcef3213e9d427b20a22aa2d88d"
+        }
+      ]
+    },
+    {
+      "name": "window-limit",
+      "repeat": false,
+      "seconds": 7.2743362,
+      "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art.",
+      "duration_seconds": 69.455,
+      "processed_seconds": 26.595,
+      "stop_reason": "WindowLimit",
+      "windows": [
+        {
+          "start_seconds": 0,
+          "audio_seconds": 26.595,
+          "boundary": "Quiet",
+          "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art.",
+          "tokens": 92,
+          "encoded_frames": 333,
+          "decoder_calls": 122,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "9bcbc09d59c4482f0ba3622cff757ac01ce4b1bc7b7b0abd8010f2fa2102571c"
+        }
+      ]
+    },
+    {
+      "name": "maximum-speech",
+      "repeat": false,
+      "seconds": 173.9354481,
+      "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art. Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. Also a popular contrivance whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits. When I am some time absent from thy heart Thy beauty and thy years fall well befits for still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the Gardener, who since Polly's first rapturous entrance had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. No land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art. Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. Also a popular contrivance whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits. When I am some time absent from thy heart Thy beauty and thy years fall well befits for still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the Gardener, who since Polly's first rapturous entrance had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. No land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art. Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. Also a popular contrivance whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits. When I am some time absent from thy heart Thy beauty and thy years fall well befits for still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the Gardener, who since Polly's first rapturous entrance had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. No land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art. Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. Also a popular contrivance whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits. When I am some time absent from thy heart Thy beauty and thy years fall well befits for still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the Gardener, who since Polly's first rapturous entrance had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. No land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who since Polly's",
+      "duration_seconds": 600,
+      "processed_seconds": 600,
+      "stop_reason": "Completed",
+      "windows": [
+        {
+          "start_seconds": 0,
+          "audio_seconds": 26.595,
+          "boundary": "Quiet",
+          "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art.",
+          "tokens": 92,
+          "encoded_frames": 333,
+          "decoder_calls": 122,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "9bcbc09d59c4482f0ba3622cff757ac01ce4b1bc7b7b0abd8010f2fa2102571c"
+        },
+        {
+          "start_seconds": 26.595,
+          "audio_seconds": 28.465,
+          "boundary": "Quiet",
+          "text": "Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round.",
+          "tokens": 148,
+          "encoded_frames": 356,
+          "decoder_calls": 169,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "536abd2815ba7ee74faad9982c465cf667a60b163cc3ca3228cb79c907100593"
+        },
+        {
+          "start_seconds": 55.06,
+          "audio_seconds": 27.09,
+          "boundary": "Quiet",
+          "text": "no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. Also a popular contrivance whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits.",
+          "tokens": 122,
+          "encoded_frames": 339,
+          "decoder_calls": 139,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "159057ddc1c42854aa1070214c42ad3e51c2f0546d452c99088e6cff11b2fa9e"
+        },
+        {
+          "start_seconds": 82.15,
+          "audio_seconds": 28.195,
+          "boundary": "Quiet",
+          "text": "When I am some time absent from thy heart Thy beauty and thy years fall well befits for still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics,",
+          "tokens": 121,
+          "encoded_frames": 353,
+          "decoder_calls": 143,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "1b450b9fc11d6590b84e5d35c22035022707f87eb93baee5c9300fd48c0e8ee2"
+        },
+        {
+          "start_seconds": 110.345,
+          "audio_seconds": 28.4,
+          "boundary": "Quiet",
+          "text": "rejoicing the heart of old Turner the Gardener, who since Polly's first rapturous entrance had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. No land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+          "tokens": 142,
+          "encoded_frames": 356,
+          "decoder_calls": 164,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "36188a57314783df8bd019c9f7cbb47424b3ea1443280365414c8916e321c4c6"
+        },
+        {
+          "start_seconds": 138.745,
+          "audio_seconds": 26.765,
+          "boundary": "Quiet",
+          "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art.",
+          "tokens": 92,
+          "encoded_frames": 335,
+          "decoder_calls": 118,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "d636d95d75decbdca8f4c0bea2da0c0ea7cf748e7a8252e6d14bb5955dd3f15d"
+        },
+        {
+          "start_seconds": 165.51,
+          "audio_seconds": 28.45,
+          "boundary": "Quiet",
+          "text": "Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round.",
+          "tokens": 148,
+          "encoded_frames": 356,
+          "decoder_calls": 167,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "548a31a0894a1c7d4a74784d1ea0cde985e2d246350a54e5d9e588ac3e0332ce"
+        },
+        {
+          "start_seconds": 193.96,
+          "audio_seconds": 27.1,
+          "boundary": "Quiet",
+          "text": "no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. Also a popular contrivance whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits.",
+          "tokens": 122,
+          "encoded_frames": 339,
+          "decoder_calls": 140,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "361c17ba0c000db25e1f5c432549a53551f73cd5d696a4716acbc79c79ac6eec"
+        },
+        {
+          "start_seconds": 221.06,
+          "audio_seconds": 28.195,
+          "boundary": "Quiet",
+          "text": "When I am some time absent from thy heart Thy beauty and thy years fall well befits for still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics,",
+          "tokens": 121,
+          "encoded_frames": 353,
+          "decoder_calls": 143,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "1b450b9fc11d6590b84e5d35c22035022707f87eb93baee5c9300fd48c0e8ee2"
+        },
+        {
+          "start_seconds": 249.255,
+          "audio_seconds": 28.4,
+          "boundary": "Quiet",
+          "text": "rejoicing the heart of old Turner the Gardener, who since Polly's first rapturous entrance had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. No land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+          "tokens": 142,
+          "encoded_frames": 356,
+          "decoder_calls": 164,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "36188a57314783df8bd019c9f7cbb47424b3ea1443280365414c8916e321c4c6"
+        },
+        {
+          "start_seconds": 277.655,
+          "audio_seconds": 26.765,
+          "boundary": "Quiet",
+          "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art.",
+          "tokens": 92,
+          "encoded_frames": 335,
+          "decoder_calls": 118,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "d636d95d75decbdca8f4c0bea2da0c0ea7cf748e7a8252e6d14bb5955dd3f15d"
+        },
+        {
+          "start_seconds": 304.42,
+          "audio_seconds": 28.45,
+          "boundary": "Quiet",
+          "text": "Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round.",
+          "tokens": 148,
+          "encoded_frames": 356,
+          "decoder_calls": 167,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "548a31a0894a1c7d4a74784d1ea0cde985e2d246350a54e5d9e588ac3e0332ce"
+        },
+        {
+          "start_seconds": 332.87,
+          "audio_seconds": 27.1,
+          "boundary": "Quiet",
+          "text": "no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. Also a popular contrivance whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits.",
+          "tokens": 122,
+          "encoded_frames": 339,
+          "decoder_calls": 140,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "361c17ba0c000db25e1f5c432549a53551f73cd5d696a4716acbc79c79ac6eec"
+        },
+        {
+          "start_seconds": 359.97,
+          "audio_seconds": 28.195,
+          "boundary": "Quiet",
+          "text": "When I am some time absent from thy heart Thy beauty and thy years fall well befits for still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics,",
+          "tokens": 121,
+          "encoded_frames": 353,
+          "decoder_calls": 143,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "1b450b9fc11d6590b84e5d35c22035022707f87eb93baee5c9300fd48c0e8ee2"
+        },
+        {
+          "start_seconds": 388.165,
+          "audio_seconds": 28.4,
+          "boundary": "Quiet",
+          "text": "rejoicing the heart of old Turner the Gardener, who since Polly's first rapturous entrance had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. No land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+          "tokens": 142,
+          "encoded_frames": 356,
+          "decoder_calls": 164,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "36188a57314783df8bd019c9f7cbb47424b3ea1443280365414c8916e321c4c6"
+        },
+        {
+          "start_seconds": 416.565,
+          "audio_seconds": 26.765,
+          "boundary": "Quiet",
+          "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art.",
+          "tokens": 92,
+          "encoded_frames": 335,
+          "decoder_calls": 118,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "d636d95d75decbdca8f4c0bea2da0c0ea7cf748e7a8252e6d14bb5955dd3f15d"
+        },
+        {
+          "start_seconds": 443.33,
+          "audio_seconds": 28.45,
+          "boundary": "Quiet",
+          "text": "Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round.",
+          "tokens": 148,
+          "encoded_frames": 356,
+          "decoder_calls": 167,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "548a31a0894a1c7d4a74784d1ea0cde985e2d246350a54e5d9e588ac3e0332ce"
+        },
+        {
+          "start_seconds": 471.78,
+          "audio_seconds": 27.1,
+          "boundary": "Quiet",
+          "text": "no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass. Also a popular contrivance whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits.",
+          "tokens": 122,
+          "encoded_frames": 339,
+          "decoder_calls": 140,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "361c17ba0c000db25e1f5c432549a53551f73cd5d696a4716acbc79c79ac6eec"
+        },
+        {
+          "start_seconds": 498.88,
+          "audio_seconds": 28.195,
+          "boundary": "Quiet",
+          "text": "When I am some time absent from thy heart Thy beauty and thy years fall well befits for still temptation follows where thou art. Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics,",
+          "tokens": 121,
+          "encoded_frames": 353,
+          "decoder_calls": 143,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "1b450b9fc11d6590b84e5d35c22035022707f87eb93baee5c9300fd48c0e8ee2"
+        },
+        {
+          "start_seconds": 527.075,
+          "audio_seconds": 28.4,
+          "boundary": "Quiet",
+          "text": "rejoicing the heart of old Turner the Gardener, who since Polly's first rapturous entrance had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. No land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+          "tokens": 142,
+          "encoded_frames": 356,
+          "decoder_calls": 164,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "36188a57314783df8bd019c9f7cbb47424b3ea1443280365414c8916e321c4c6"
+        },
+        {
+          "start_seconds": 555.475,
+          "audio_seconds": 26.765,
+          "boundary": "Quiet",
+          "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art.",
+          "tokens": 92,
+          "encoded_frames": 335,
+          "decoder_calls": 118,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "d636d95d75decbdca8f4c0bea2da0c0ea7cf748e7a8252e6d14bb5955dd3f15d"
+        },
+        {
+          "start_seconds": 582.24,
+          "audio_seconds": 17.76,
+          "boundary": "EndOfRecording",
+          "text": "Then, dear, said Mrs. Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who since Polly's",
+          "tokens": 103,
+          "encoded_frames": 223,
+          "decoder_calls": 115,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "00ef4e10fd5a795ac87d4f55d30e5af3baaaaeddb49a6a906b4a1c53b133a18b"
+        }
+      ]
+    },
+    {
+      "name": "tiny-tail",
+      "repeat": false,
+      "seconds": 9.7764638,
+      "text": "",
+      "duration_seconds": 30.0000625,
+      "processed_seconds": 30.0000625,
+      "stop_reason": "Completed",
+      "windows": [
+        {
+          "start_seconds": 0,
+          "audio_seconds": 30,
+          "boundary": "HardLimit",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 376,
+          "decoder_calls": 349,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "a99c4f58899b08efc6bffabc51ee0617f79c2d4d348e8bed180d26614a4a1615"
+        },
+        {
+          "start_seconds": 30,
+          "audio_seconds": 6.25e-05,
+          "boundary": "EndOfRecording",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 1,
+          "decoder_calls": 1,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "a2c89d7446b01842855fa30271f289ffadfb3f0e9d9cbd8af205a65ee4677e75"
+        }
+      ]
+    },
+    {
+      "name": "maximum-silence",
+      "repeat": false,
+      "seconds": 0.0180925,
+      "text": "",
+      "duration_seconds": 600,
+      "processed_seconds": 600,
+      "stop_reason": "Completed",
+      "windows": [
+        {
+          "start_seconds": 0,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 27.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 55,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 82.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 110,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 137.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 165,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 192.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 220,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 247.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 275,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 302.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 330,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 357.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 385,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 412.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 440,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 467.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 495,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 522.5,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 550,
+          "audio_seconds": 27.5,
+          "boundary": "Quiet",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        },
+        {
+          "start_seconds": 577.5,
+          "audio_seconds": 22.5,
+          "boundary": "EndOfRecording",
+          "text": "",
+          "tokens": 0,
+          "encoded_frames": 0,
+          "decoder_calls": 0,
+          "stop_reason": "SilentInput",
+          "decoding_sha256": "7b9e0fd7560325609fe850bcad0ca7440cf714d90847a59cf27b832c83c6702b"
+        }
+      ]
+    },
+    {
+      "name": "empty",
+      "repeat": false,
+      "seconds": 7.28e-05,
+      "text": "",
+      "duration_seconds": 0,
+      "processed_seconds": 0,
+      "stop_reason": "Completed",
+      "windows": []
+    },
+    {
+      "name": "connected",
+      "repeat": true,
+      "seconds": 18.2297749,
+      "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art. Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round. no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+      "duration_seconds": 69.455,
+      "processed_seconds": 69.455,
+      "stop_reason": "Completed",
+      "windows": [
+        {
+          "start_seconds": 0,
+          "audio_seconds": 26.595,
+          "boundary": "Quiet",
+          "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season. Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits For still temptation follows where thou art.",
+          "tokens": 92,
+          "encoded_frames": 333,
+          "decoder_calls": 122,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "9bcbc09d59c4482f0ba3622cff757ac01ce4b1bc7b7b0abd8010f2fa2102571c"
+        },
+        {
+          "start_seconds": 26.595,
+          "audio_seconds": 28.465,
+          "boundary": "Quiet",
+          "text": "Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends. Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who, since Polly's first rapturous entrance, had taken her into his good graces for all time. Saturday, august fifteenth. The sea unbroken all round.",
+          "tokens": 148,
+          "encoded_frames": 356,
+          "decoder_calls": 169,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "536abd2815ba7ee74faad9982c465cf667a60b163cc3ca3228cb79c907100593"
+        },
+        {
+          "start_seconds": 55.06,
+          "audio_seconds": 14.395,
+          "boundary": "EndOfRecording",
+          "text": "no land in sight. From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+          "tokens": 72,
+          "encoded_frames": 180,
+          "decoder_calls": 78,
+          "stop_reason": "EndOfAudio",
+          "decoding_sha256": "25969dc33760d0d87d9821d0c48a50b367db0f05c3bfeee0422d77337798e567"
+        }
+      ]
+    }
+  ],
+  "processes": {
+    "supervisor": 6076,
+    "host": "Windows-11-10.0.26200-SP0",
+    "started": 1789841115.1894238,
+    "complete": true,
+    "runs": [
+      {
+        "name": "native",
+        "command": [
+          "C:\\Python313\\python.exe",
+          "-X",
+          "utf8",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\tests\\parakeet\\recording\\native.py",
+          "--models",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\models\\parakeet-tdt-0.6b-v3",
+          "--inputs",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\parakeet-recording-20260919\\inputs\\inputs.json",
+          "--source",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\external\\onnx-asr\\src\\onnx_asr\\asr.py",
+          "--output",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\parakeet-recording-20260919\\native"
+        ],
+        "started": 1789841115.2001271,
+        "code": 0,
+        "peak_rss": 2952675328,
+        "samples": 287,
+        "pid": 28732,
+        "create_time": 1789841115.201934,
+        "seconds": 145.9238628000021
+      },
+      {
+        "name": "managed",
+        "command": [
+          "dotnet",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\parakeet-recording-20260919\\bin\\ParakeetRecordingReplay.dll",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\models\\parakeet-tdt-0.6b-v3",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\parakeet-recording-20260919\\inputs\\inputs.json",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\parakeet-recording-20260919\\managed"
+        ],
+        "started": 1789841261.1411119,
+        "code": 0,
+        "peak_rss": 13272190976,
+        "samples": 552,
+        "pid": 49852,
+        "create_time": 1789841261.1429696,
+        "seconds": 280.98913979998906
+      },
+      {
+        "name": "cli-connected",
+        "command": [
+          "dotnet",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\parakeet-recording-20260919\\cli-bin\\Lokad.Onnx.CLI.dll",
+          "transcribe",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\models\\parakeet-tdt-0.6b-v3",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\parakeet-recording-20260919\\inputs\\connected.wav",
+          "--model-type=parakeet",
+          "--recording",
+          "--json"
+        ],
+        "started": 1789841542.1613545,
+        "code": 0,
+        "peak_rss": 8202199040,
+        "samples": 48,
+        "pid": 53660,
+        "create_time": 1789841542.163044,
+        "seconds": 24.39071559999138
+      },
+      {
+        "name": "cli-token-limit",
+        "command": [
+          "dotnet",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\parakeet-recording-20260919\\cli-bin\\Lokad.Onnx.CLI.dll",
+          "transcribe",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\models\\parakeet-tdt-0.6b-v3",
+          "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\parakeet-recording-20260919\\inputs\\connected.wav",
+          "--model-type=parakeet",
+          "--recording",
+          "--json",
+          "--max-tokens=2"
+        ],
+        "started": 1789841566.5688648,
+        "code": 0,
+        "peak_rss": 5065945088,
+        "samples": 19,
+        "pid": 35732,
+        "create_time": 1789841566.570413,
+        "seconds": 9.67473530001007
+      }
+    ],
+    "ended": 1789841576.2527976
+  },
+  "exporter_sha256": "4271c379510ce5df2a33d1c2a65c137dad9495bb9c989035f3be97fde28da8e4"
+}

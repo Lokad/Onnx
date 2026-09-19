@@ -138,6 +138,18 @@ mapping. Its three correlated ten-second excerpts have much worse ordinary DER
 [ASR results and every error](tests/audio/accuracy/results-20260919.md),
 [diarization metrics and scope](tests/pyannote/dialogue/README.md#recorded-qualification).
 
+Parakeet's new [recording mode](tests/parakeet/recording/results-20260919.md)
+matches ORT application decisions on constructed long inputs, limits and repeats.
+The connected 69.455-second example has 4/160 word errors (2.50%); adding 2.37
+seconds of leading silence raises this to 18/160 (11.25%) in both engines.
+A DC-offset stress case forcing hard cuts has 84/160 errors (52.50%); this
+also changes the waveform, so it does not isolate boundary effects. A separate
+600-second repeated-speech request completes 22 windows in 173.935 API seconds,
+with 13.27 GB sampled process-group peak across the full sequence. These are
+finite Windows observations at `f568132`, not a matched recording-latency
+comparison or independent natural long-speech qualification. The matched ORT
+performance ratios above remain based on their dedicated short-audio campaign.
+
 Whisper's newer timestamp-guided recording mode separately matches native
 tokens, segments and seek decisions on constructed 69.455- and 71.825-second
 examples, three windows each. Both retain five errors in 160 words (3.125% WER);

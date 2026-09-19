@@ -8,7 +8,9 @@ public class ParakeetRecordingTests
     delegate ParakeetRecording Policy(float[] pcm, int limit, Func<int, int, ParakeetTranscription> decode, CancellationToken cancellation);
     static readonly Policy Run = typeof(ParakeetTranscriber).Assembly.GetType("Lokad.Onnx.ParakeetRecordingPolicy", true)!
         .GetMethod("Run", BindingFlags.NonPublic | BindingFlags.Static)!.CreateDelegate<Policy>();
-    static ParakeetTranscription Result(string text = "speech", ParakeetStopReason stop = ParakeetStopReason.EndOfAudio)
+    static ParakeetTranscription Result() => Result("speech");
+    static ParakeetTranscription Result(string text) => Result(text, ParakeetStopReason.EndOfAudio);
+    static ParakeetTranscription Result(string text, ParakeetStopReason stop)
         => new(text, Array.AsReadOnly(new[] { 1 }), Array.AsReadOnly(new[] { 2 }), Array.AsReadOnly(new[] { 3 }), stop, 4, 5);
     static float[] Loud(int count) => Enumerable.Repeat(.1f, count).ToArray();
 

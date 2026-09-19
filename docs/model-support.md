@@ -8,7 +8,7 @@ Release CLI and the assets described in each model's linked instructions.
 | Model | Available application behavior | Qualification and remaining limits |
 |---|---|---|
 | multilingual-e5-small | Embeddings through `ComputationalGraph` or `lonnx run` | Native output checks cover scalar, SIMD and intrinsic execution. The [fresh public-options / ORT comparison](../tests/e5/public-ort-20260919.md) retains three primary cases above the 5% latency target: observed Default gaps are 9.2–12.0%, or 7.5–8.1% with explicit Memory. Eight tokens are within the target margin. Results remain descriptive; historical timing calibration is unresolved. |
-| Parakeet TDT 0.6B V3 | `ParakeetTranscriber` and `lonnx transcribe --model-type parakeet`; multilingual greedy transcription of recordings up to 30 seconds | Recorded transcripts, tokens, durations, carried states and recovery agree with native decisions locally and on AMD. The complete AMD replay passes all 784 arrays; Windows retains three duration-logit discrepancies above the numerical gate. A separate twenty-recording clean-English check matches native and records 11/559 word errors (1.9678%). Longer recordings, broader accuracy and the Windows numerical failure remain open. [Usage and evidence](../tests/parakeet/transcribe/README.md). |
+| Parakeet TDT 0.6B V3 | Short `Transcribe` API; `TranscribeRecording` and `lonnx transcribe --model-type parakeet --recording` for up to ten minutes with independent windows and explicit boundaries/limits | Short recorded decisions agree locally and on AMD; all 784 AMD arrays pass, while three Windows duration-logit arrays fail. Twenty clean-English clips have 11/559 word errors. New Windows recording cases match native, including a 600-second repeated-speech request. Accuracy is limited: connected/leading-silence variants have 4/160 and 18/160 word errors; DC-offset hard-cut stress has 84/160. AMD recording, independent long/noisy speech and Windows numerical acceptance remain open. [Short usage](../tests/parakeet/transcribe/README.md), [recording policy and evidence](../tests/parakeet/recording/README.md). |
 | Whisper Large V3 Turbo | `WhisperTranscriber.Transcribe` for up to 30 seconds; `TranscribeRecording` and CLI `--recording` for bounded recordings up to ten minutes, with segment timestamps | Short recorded decisions agree locally and on AMD; decoder/cache components pass their tensor checks. The twenty-recording English check records 10/559 word errors. The new recording mode matches native tokens, timestamps, seek and stop decisions on two constructed 69/72-second Windows fixtures, plus work limits and CLI/API agreement. AMD recording mode, maximum-duration speech resources and broader long-conversation accuracy remain open. Full encoder/logit numerical agreement remains unresolved. Language is explicit; automatic detection, translation and word timestamps are not implemented. [Short usage](../tests/whisper/README.md), [recording policy and evidence](../tests/whisper/recording/README.md). |
 | pyannote Community-1 | `Community1Diarizer` and `lonnx diarize`; segmentation, speaker embeddings, automatic clustering and ordinary/exclusive speaker intervals | Connected recorded application decisions agree locally and on AMD. A labeled 30-second two-speaker example matches native scoring; it is a small accuracy sample. Filterbank and some earlier silence tensors still fail the full numerical gate. The API accepts up to ten minutes; one repeated-clip Windows request has finite resource/application proof, without a complete long intermediate trace or AMD maximum-duration proof. [Pipeline](../tests/pyannote/diarization/README.md), [dialogue and long-request evidence](../tests/pyannote/dialogue/README.md). |
 
@@ -16,14 +16,16 @@ For example, after staging the pinned assets:
 
 ```powershell
 lonnx.cmd transcribe models/parakeet-tdt-0.6b-v3 recording.wav --model-type parakeet --json
+lonnx.cmd transcribe models/parakeet-tdt-0.6b-v3 longer.wav --model-type parakeet --recording --json
 lonnx.cmd transcribe models/whisper-large-v3-turbo recording.wav --language en --json
 lonnx.cmd transcribe models/whisper-large-v3-turbo longer.wav --language en --recording --json
 ```
 
 Both transcription commands accept supported mono/stereo RIFF/WAVE files and
 convert them to mono 16 kHz PCM. Default transcription rejects inputs longer than
-30 seconds; Whisper's explicit recording mode accepts up to ten minutes and
-reports committed segments, observed windows and the processed position.
+30 seconds; both explicit recording modes accept up to ten minutes and report
+observed windows and the processed position. Whisper reports committed timed
+segments; Parakeet exposes quiet/hard boundaries and joins completed window text.
 Token/window limits produce an explicitly marked partial result. Cancellation takes
 effect between graph calls; an in-flight model call finishes first. The public
 PCM APIs expect callers to supply the required sample rate directly.
