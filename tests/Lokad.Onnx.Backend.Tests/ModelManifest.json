@@ -159,6 +159,22 @@
         "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
         "path": "decoder_joint-model.onnx"
       }
+    },
+    {
+      "key": "parakeet-frontend",
+      "file": "models/parakeet-tdt-0.6b-v3/nemo128.onnx",
+      "sha256": "A9FDE1486EBFCC08F328D75AD4610C67835FEA58C73BA57E3209A6F6CF019E9F",
+      "bytes": 139764,
+      "opset": 17,
+      "generator": "tests/parakeet/frontend/generate_reference.py; NumPy2.2.4, ONNX1.22.0, ORT1.29.0 sequential CPU, one thread, optimization all",
+      "test": "tests/parakeet/frontend/FrontendReplay.csproj:26 complete outputs, invalid-rank/recovery, retained inputs/outputs",
+      "inputs": "Mono16kHz PCM: controlled noise, tones, impulses, silence, mixed-length batch and three recorded speech samples;257samples minimum",
+      "oracle": "Complete finite features at scaled error1e-4; exact int64 lengths, shapes, types and pinned graph/fixture/generator identities",
+      "source": {
+        "repo": "istupakov/parakeet-tdt-0.6b-v3-onnx",
+        "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
+        "path": "nemo128.onnx"
+      }
     }
   ]
 }

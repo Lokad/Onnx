@@ -233,18 +233,17 @@ public class OperatorSchemaTests
     }
 
     [Fact]
-    public void LogHonestlyUnsupported_FailsCleanly()
+    public void LogSupportMatchesExecution()
     {
-        // C11: no Log kernel exists anywhere in src; same honest contract.
-        Assert.False(CPUExecutionProvider.SupportsOp(OpType.Log));
+        Assert.True(CPUExecutionProvider.SupportsOp(OpType.Log));
         var node = Nod(OpType.Log, "", 13,
             new[] { "x" }, new[] { "z" }, false);
-        Assert.False(CPUExecutionProvider.SupportsNode(node));
+        Assert.True(CPUExecutionProvider.SupportsNode(node));
         var graph = Graph(13);
         Bind(graph, "x", DenseTensor<float>.OfValues(new float[] { 1f }));
         var r = node.Execute(graph, ExecutionProvider.CPU, null);
-        Assert.Equal(OpStatus.Failure, r.Status);
-        Assert.Contains("Log", r.Message ?? "");
+        Assert.Equal(OpStatus.Success, r.Status);
+        Assert.Equal(new float[] { 0f }, ((Tensor<float>)r.Outputs[0]).ToArray());
     }
 
     [Fact]

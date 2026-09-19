@@ -172,11 +172,14 @@ public class CpuExecutionProviderEncoderGapTests
     }
 
     [Fact]
-    public void Pad_ReflectModeRefused()
+    public void Pad_ReflectModeMirrorsEndpoints()
     {
         var d = new DenseTensor<float>(new float[] { 1f, 2f }, new[] { 2 });
         var p = new DenseTensor<long>(new long[] { 1, 1 }, new[] { 2 });
-        Assert.Equal(OpStatus.Failure, CPU.Pad(d, p, null, "reflect", null, null, null).Status);
+        var result = CPU.Pad(d, p, null, "reflect", null, null, null);
+        Assert.Equal(OpStatus.Success, result.Status);
+        Assert.Equal(new float[] { 2f, 1f, 2f, 1f }, ((Tensor<float>)result.Outputs[0]).ToArray());
+        Assert.Equal(OpStatus.Failure, CPU.Pad(d, p, null, "unsupported", null, null, null).Status);
     }
 
     [Fact]

@@ -380,6 +380,11 @@ public partial struct Node
             _ => CPU.Unsqueeze(InputTensor(graph, 0), RequiredInts("axes"), opt),
         }, 
 
+        OpType.Log => CPU.Log(InputTensor(graph, 0), opt),
+        OpType.STFT => CPU.STFT(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2), InputTensor(graph, 3), Int("onesided", null), opt),
+        OpType.ReduceSumSquare => ResolvedOpsetVersion(graph) >= 18
+            ? CPU.ReduceSumSquare(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), Int("noop_with_empty_axes", null), opt)
+            : CPU.ReduceSumSquare(InputTensor(graph, 0), Ints("axes")?.ToTensor<int>(), Int("keepdims", null), null, opt),
         OpType.ReduceSum => ResolvedOpsetVersion(graph) switch
         {
             int v when v >= 13 => CPU.ReduceSum(InputTensor(graph, 0), InputTensor(graph, 1), Int("keepdims", null), Int("noop_with_empty_axes", null), opt),

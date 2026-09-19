@@ -793,8 +793,8 @@ public partial class CPUExecutionProvider
     /// Constant padding: each dimension grows by its begin/end pads with the
     /// fill value (default zero), while negative pads crop. Accepts pads as
     /// an int32/int64 input (opset 11+) or attribute (older graphs), and the
-    /// fill as an optional scalar input or attribute tensor. Only constant
-    /// mode is supported.
+    /// fill as an optional scalar input or attribute tensor. Reflection crops
+    /// first, then mirrors the retained region without repeating endpoints.
     /// </summary>
     public static OpResult Pad(ITensor? data, ITensor? pads, ITensor? value, string? mode, int[]? padsAttr, ITensor? valueAttr, ExecutionOptions? options)
     {
@@ -802,8 +802,9 @@ public partial class CPUExecutionProvider
         if (data is null) return MissingInput(op, nameof(data));
         (options ?? ExecutionOptions.Default).Validated();
         if (data.Rank == 0) return WrongInputShape(op, nameof(data), data, "Pad requires at least one data dimension.");
-        if (!string.IsNullOrEmpty(mode) && mode != "constant")
-            return AttributeNotSupported(op, "mode", mode, "Only constant padding mode is supported.");
+        bool reflect = mode == "reflect";
+        if (!string.IsNullOrEmpty(mode) && mode != "constant" && !reflect)
+            return AttributeNotSupported(op, "mode", mode, "Only constant and reflect padding modes are supported.");
         int[] padVals;
         if (pads is not null && padsAttr is not null)
             return AttributeNotSupported(op, "pads", "input+attribute", "pads must not be given both as input and attribute.");
@@ -833,6 +834,12 @@ public partial class CPUExecutionProvider
             if (size < 0 || size > int.MaxValue)
                 return WrongInputShape(op, nameof(pads), data, "Padded dimensions must be nonnegative and fit int32.");
             outDims[i] = (int)size;
+            if (reflect)
+            {
+                long retained = (long)data.Dims[i] + Math.Min(padVals[i], 0) + Math.Min(padVals[data.Rank + i], 0);
+                if (retained < 0 || (retained == 0 && size > 0))
+                    return WrongInputShape(op, nameof(pads), data, "Reflection requires a nonempty retained dimension when producing values.");
+            }
         }
         if (!outDims.Contains(0))
         {
@@ -855,18 +862,18 @@ public partial class CPUExecutionProvider
         switch (data.ElementType)
         {
             case TensorElementType.Float:
-                return Success(op, PadCore((Tensor<float>)data, padVals, outDims, fill is null ? 0f : ((Tensor<float>)fill).ToArray()[0]));
+                return Success(op, PadCore((Tensor<float>)data, padVals, outDims, fill is null ? 0f : ((Tensor<float>)fill).ToArray()[0], reflect));
             case TensorElementType.Double:
-                return Success(op, PadCore((Tensor<double>)data, padVals, outDims, fill is null ? 0.0 : ((Tensor<double>)fill).ToArray()[0]));
+                return Success(op, PadCore((Tensor<double>)data, padVals, outDims, fill is null ? 0.0 : ((Tensor<double>)fill).ToArray()[0], reflect));
             case TensorElementType.Int32:
-                return Success(op, PadCore((Tensor<int>)data, padVals, outDims, fill is null ? 0 : ((Tensor<int>)fill).ToArray()[0]));
+                return Success(op, PadCore((Tensor<int>)data, padVals, outDims, fill is null ? 0 : ((Tensor<int>)fill).ToArray()[0], reflect));
             case TensorElementType.Int64:
-                return Success(op, PadCore((Tensor<long>)data, padVals, outDims, fill is null ? 0L : ((Tensor<long>)fill).ToArray()[0]));
+                return Success(op, PadCore((Tensor<long>)data, padVals, outDims, fill is null ? 0L : ((Tensor<long>)fill).ToArray()[0], reflect));
             default: return InputTypeNotSupported(op, nameof(data), data);
         }
     }
 
-    static DenseTensor<T> PadCore<T>(Tensor<T> data, int[] pads, int[] outDims, T fill) where T : unmanaged
+    static DenseTensor<T> PadCore<T>(Tensor<T> data, int[] pads, int[] outDims, T fill, bool reflect) where T : unmanaged
     {
         var dd = data.Dimensions.ToArray();
         int rank = dd.Length;
@@ -878,6 +885,32 @@ public partial class CPUExecutionProvider
         if (dst.Length == 0) return dst;
         var sStrides = ArrayUtilities.GetStrides(dd);
         var dStrides = ArrayUtilities.GetStrides(outDims);
+        if (reflect)
+        {
+            for (int flat = 0; flat < dVals.Length; flat++)
+            {
+                int remaining = flat, source = 0;
+                for (int d = 0; d < rank; d++)
+                {
+                    int coordinate = remaining / dStrides[d];
+                    remaining %= dStrides[d];
+                    long start = Math.Max(-(long)pads[d], 0);
+                    long count = dd[d] + (long)Math.Min(pads[d], 0) + Math.Min(pads[rank + d], 0);
+                    long relative = coordinate - (long)Math.Max(pads[d], 0);
+                    long reflected = 0;
+                    if (count > 1)
+                    {
+                        long period = 2 * (count - 1);
+                        reflected = relative % period;
+                        if (reflected < 0) reflected += period;
+                        if (reflected >= count) reflected = period - reflected;
+                    }
+                    source += (int)(start + reflected) * sStrides[d];
+                }
+                dVals[flat] = sVals[source];
+            }
+            return dst;
+        }
         for (int i = 0; i < sVals.Length; i++)
         {
             // Negative pads crop: source elements falling outside the

@@ -59,7 +59,7 @@ as little-endian raw arrays; the result records their shapes, dtypes and hashes
 for independent comparison with the native NPY files.
 
 This establishes component behavior on deterministic synthetic inputs. The audio
-frontend, vocabulary/text decoding, token/duration advancement, real speech,
+frontend has a separate [full-feature replay](frontend/README.md). Vocabulary/text decoding, token/duration advancement,
 long recordings and complete Parakeet transcription remain separate work. Passing
 this lane must not be reported as end-to-end ASR support or qualification of the
 INT8 exports.

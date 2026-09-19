@@ -137,9 +137,10 @@ where T : unmanaged
         for (int i = 0; i < os.Length; ++i)
         {
             int offset = i * r;
-            float sum = 0f;
-            for (int j = 0; j < r; ++j) sum += xs[offset + j];
-            os[i] = sum;
+            // Match the fixed four-lane reduction used by the native CPU
+            // reference. Linear summation amplifies error when a subsequent
+            // normalization subtracts a nearly constant mean.
+            os[i] = FloatReduction.Sum(xs.Slice(offset, r), Math.Min((-offset) & 3, r), 0, false);
         }
         return ApplyKeepDims(output, plan, keepDims);
     }

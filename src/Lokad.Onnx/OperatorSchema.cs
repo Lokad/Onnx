@@ -60,6 +60,9 @@ public static class OperatorSchemas
         [OpType.Resize] = Def(OpType.Resize, 1, 4),
         [OpType.Unsqueeze] = Def(OpType.Unsqueeze, 1, 2),
         [OpType.ReduceSum] = Def(OpType.ReduceSum, 1, 2),
+        [OpType.ReduceSumSquare] = Def(OpType.ReduceSumSquare, 1, 2),
+        [OpType.Log] = Def(OpType.Log, 1, 1),
+        [OpType.STFT] = Def(OpType.STFT, 2, 4, 1, 1, 17, false),
         [OpType.ReduceMean] = Def(OpType.ReduceMean, 1, 2),
         [OpType.ReduceMax] = Def(OpType.ReduceMax, 1, 2),
         [OpType.Softmax] = Def(OpType.Softmax, 1, 1),
@@ -118,6 +121,7 @@ public static class OperatorSchemas
         // form). Slice and Clip retain version-sensitive input bounds.
         OpType.Slice when version > 0 => version >= 10 ? (3, 5) : (1, 1),
         OpType.Clip when version > 0 => version >= 11 ? (1, 3) : (1, 1),
+        OpType.ReduceSumSquare when version > 0 => version >= 18 ? (1, 2) : (1, 1),
         _ => (schema.MinInputs, schema.MaxInputs),
     };
 
