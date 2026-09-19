@@ -8,6 +8,10 @@ below remain historical evidence; do not compare absolute times across hosts,
 revisions or protocols. [Model support](docs/model-support.md) describes the
 available APIs and their remaining qualification limits.
 
+For Parakeet, pyannote and Whisper Large V3 Turbo, see the
+[matched Microsoft ONNX Runtime baselines](#audio-matched-microsoft-onnx-runtime-baselines)
+below.
+
 ### e5: public execution versus native ORT
 
 AMD EPYC 9V74, CPU 2, .NET 10.0.8, SDK 10.0.204, product `c6bf781`.
@@ -39,7 +43,7 @@ stability limits in other cases. Correctness passes, but the performance
 conclusion is inconclusive and the switch remains off by default. That
 experiment supplies no fresh ORT timing and does not replace the table above.
 
-### Audio: matched Microsoft ORT baselines
+### Audio: matched Microsoft ONNX Runtime baselines
 
 Fresh complete-application measurements on **Windows i7-14700KF, logical CPU 2**,
 with .NET 10.0.12 and Microsoft ONNX Runtime **1.29.0**. Product source is
@@ -141,6 +145,15 @@ All ten sequential requests, two concurrent silence calls, two CLI calls and
 sixteen refusal/recovery checks pass. These are finite correctness/resource
 observations, without a fresh AMD ORT timing comparison or independent natural
 ten-minute accuracy claim.
+
+The separate [AMD Whisper recording replay](tests/whisper/recording-amd/results-20260919.md)
+also passes its API/CLI, limits, ownership and recovery checks against retained
+native application decisions. Its 69.455- and 71.825-second constructed speech
+requests take 99.768 and 100.789 API seconds; the sequence peaks at 12.230 GB
+sampled RSS. All nine recording calls, ten refusal/recovery checks and the
+short-API regression pass. This covers 600-second silence, with maximum-duration
+speech resources still open. These finite observations supply no fresh AMD ORT
+latency ratio.
 
 ### Audio accuracy and numerical agreement
 

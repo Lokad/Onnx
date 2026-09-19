@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "passed": true,
+  "recording_requests": 9,
+  "main_requests": 5,
+  "concurrent_silent_requests": 2,
+  "cli_requests": 1,
+  "refusals": 10,
+  "short_regressions": 1,
+  "fresh_native_inference": false,
+  "observations": [
+    {
+      "name": "connected",
+      "repeat": false,
+      "seconds": 99.7678351,
+      "audio_seconds": 69.455,
+      "processed_seconds": 69.455,
+      "windows": 3,
+      "segments": 11,
+      "tokens": 226,
+      "stop_reason": "Completed",
+      "maximum_native_confidence_difference": 2.2878859534669616e-06,
+      "maximum_windows_confidence_difference": 2.335899903782579e-07
+    },
+    {
+      "name": "shifted",
+      "repeat": false,
+      "seconds": 100.7890995,
+      "audio_seconds": 71.825,
+      "processed_seconds": 71.825,
+      "windows": 3,
+      "segments": 10,
+      "tokens": 224,
+      "stop_reason": "Completed",
+      "maximum_native_confidence_difference": 1.40300705971097e-06,
+      "maximum_windows_confidence_difference": 2.6245518314205185e-07
+    },
+    {
+      "name": "token-limit",
+      "repeat": false,
+      "seconds": 27.4021818,
+      "audio_seconds": 69.455,
+      "processed_seconds": 0,
+      "windows": 1,
+      "segments": 0,
+      "tokens": 2,
+      "stop_reason": "TokenLimit",
+      "maximum_native_confidence_difference": 6.155263825441404e-06,
+      "maximum_windows_confidence_difference": 1.8474765044185215e-07
+    },
+    {
+      "name": "window-limit",
+      "repeat": false,
+      "seconds": 32.379173,
+      "audio_seconds": 69.455,
+      "processed_seconds": 26.76,
+      "windows": 1,
+      "segments": 2,
+      "tokens": 58,
+      "stop_reason": "WindowLimit",
+      "maximum_native_confidence_difference": 1.0450842062303956e-06,
+      "maximum_windows_confidence_difference": 3.544071502936674e-08
+    },
+    {
+      "name": "connected",
+      "repeat": true,
+      "seconds": 99.2664608,
+      "audio_seconds": 69.455,
+      "processed_seconds": 69.455,
+      "windows": 3,
+      "segments": 11,
+      "tokens": 226,
+      "stop_reason": "Completed",
+      "maximum_native_confidence_difference": 2.2878859534669616e-06,
+      "maximum_windows_confidence_difference": 2.335899903782579e-07
+    }
+  ],
+  "resources": [
+    {
+      "name": "managed",
+      "seconds": 422.2407038320089,
+      "samples": 828,
+      "peak_rss": 12230443008,
+      "minimum_available": 3762737152
+    },
+    {
+      "name": "cli-connected",
+      "seconds": 105.62996583900531,
+      "samples": 207,
+      "peak_rss": 7606583296,
+      "minimum_available": 8375390208
+    }
+  ],
+  "load_seconds": 2.9092881,
+  "process_peak_working_set": 12230483968,
+  "maximum_cli_api_confidence_difference": 0.0,
+  "runtime": ".NET 10.0.8",
+  "os": "Ubuntu 24.04.4 LTS",
+  "core_sha256": "05884cfd524cc7130321f5dc1bcd0af17dddc7b97e8428d2d2f59e00edb795c2",
+  "data_sha256": "27598aa8d8c6b97a1415302cf3aaced1adcf53b20b64734c0c0e047492ca069d",
+  "runner_sha256": "fb7932f30ee5f6a5651632b5f24eab09b051fbc9c605a3e78f5b710285b67644",
+  "bundle_sha256": "cf5d7637cfaf4ab10d6952ac98feca697a39a84299b2943046b3e9f803d3dc1b",
+  "collection_sha256": "727bc849bfa692d8550df1c4a94dda0e2d507d580c4f3e4fca393213b1e1eb7a",
+  "audit_sha256": "6f99935ef3aea273392a4302bc828b272b4ad84618ea1cd2d39f9e93e5010cee"
+}

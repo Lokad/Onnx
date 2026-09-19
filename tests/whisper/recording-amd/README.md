@@ -1,5 +1,9 @@
 # Whisper recording API and CLI on AMD
 
+The [September 19 qualification](results-20260919.md) passes all API, CLI,
+ownership, refusal/recovery and process-resource checks. It retains
+[every main request time and resource summary](observations-20260919.json).
+
 This finite replay extends the existing timestamp-guided recording checks to
 Linux AMD using the exact Windows-qualified portable binaries and retained native
 application reference. It covers four constructed recordings and a repeat,
