@@ -136,11 +136,12 @@ class Program
             Console.WriteLine("  --language <code>   Required for Whisper, such as en or fr; omit for Parakeet.");
             Console.WriteLine("  --max-tokens <n>    Generated token limit: Whisper 1..444; Parakeet 1..4096 (defaults to maximum).");
             Console.WriteLine("  --json              Print text, tokens and stop/confidence metadata as JSON.");
-            Console.WriteLine("  --recording         Whisper only: up to ten minutes, with segment timestamps and boundary recovery.");
+            Console.WriteLine("  --recording         Up to ten minutes. Whisper uses segment timestamps; Parakeet prefers quiet boundaries.");
             Console.WriteLine("  --max-windows <n>   Recording work limit: 1..512 (default 256). --max-tokens applies per window.");
             Console.WriteLine("Accepts mono/stereo PCM or float WAV, 8000..192000 Hz, at most 30 seconds.");
             Console.WriteLine("Audio is mixed to mono and resampled to 16000 Hz. Uses local FP32 split model assets.");
             Console.WriteLine("Text/JSON goes to stdout; diagnostics go to stderr. Parakeet detects language and reports encoder-frame token positions.");
+            Console.WriteLine("Parakeet recording windows are independent, at most 30 seconds; JSON reports quiet or hard cuts and partial progress.");
         }
     }
 
@@ -175,9 +176,18 @@ class Program
             if (options.ModelType == "parakeet")
             {
                 var model = new ParakeetTranscriber(options.ModelDirectory);
-                var transcription = model.Transcribe(pcm, ParakeetTranscriber.SampleRate,
-                    ParakeetTranscriptionOptions.Default with { MaxTokens = options.MaxTokens }, Cts.Token);
-                result = transcription; text = transcription.Text; truncated = transcription.StopReason == ParakeetStopReason.TokenLimit;
+                var policy = ParakeetTranscriptionOptions.Default with { MaxTokens = options.MaxTokens };
+                if (options.Recording)
+                {
+                    var transcription = model.TranscribeRecording(pcm, ParakeetTranscriber.SampleRate,
+                        new ParakeetRecordingOptions(policy, options.MaxWindows), Cts.Token);
+                    result = transcription; text = transcription.Text; truncated = transcription.StopReason != ParakeetRecordingStopReason.Completed;
+                }
+                else
+                {
+                    var transcription = model.Transcribe(pcm, ParakeetTranscriber.SampleRate, policy, Cts.Token);
+                    result = transcription; text = transcription.Text; truncated = transcription.StopReason == ParakeetStopReason.TokenLimit;
+                }
             }
             else
             {

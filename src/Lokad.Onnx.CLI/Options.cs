@@ -391,7 +391,6 @@ public static class ArgsParser
         if (options.ModelType != "whisper" && options.ModelType != "parakeet") return Fail("--model-type must be whisper or parakeet.");
         if (options.ModelType == "whisper" && string.IsNullOrWhiteSpace(options.Language)) return Fail("Whisper transcription requires --language <code>.");
         if (options.ModelType == "parakeet" && seen.Contains("language")) return Fail("Parakeet recognizes language automatically; omit --language.");
-        if (options.ModelType != "whisper" && (seen.Contains("recording") || seen.Contains("max-windows"))) return Fail("Recording mode is supported only for Whisper.");
         if (seen.Contains("max-windows") && !options.Recording) return Fail("--max-windows requires --recording.");
         if (options.MaxWindows < 1 || options.MaxWindows > 512) return Fail("--max-windows must be between 1 and 512.");
         int maximum = options.ModelType == "parakeet" ? 4096 : 444;

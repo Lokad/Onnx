@@ -15,6 +15,7 @@ public sealed class ParakeetTranscriber
 {
     public const int SampleRate = 16000;
     public const int MaximumSamples = SampleRate * 30;
+    public const int MaximumRecordingSamples = SampleRate * 600;
     readonly ComputationalGraph frontend, encoder, decoder;
     readonly ParakeetGeneration generation;
     readonly object gate = new object();
@@ -97,6 +98,42 @@ public sealed class ParakeetTranscriber
                 return generation.Decode(hidden, frames, options, feeds => Execute(decoding, feeds), cancellation);
             }
             finally { preprocessing.Reset(); encoding.Reset(); decoding.Reset(); }
+        }
+    }
+
+    /// <summary>Transcribes up to ten minutes of finite mono 16 kHz PCM in independent windows.</summary>
+    /// <remarks>Non-final windows prefer the longest quiet run of at least 200 ms in seconds 25..30,
+    /// using 10 ms blocks with RMS at most 0.003; equal runs choose the later boundary. Otherwise
+    /// a hard thirty-second cut is reported. This is not voice activity detection or word alignment.
+    /// No samples are skipped. Cancellation is checked between graph calls, including windows.</remarks>
+    public ParakeetRecording TranscribeRecording(ReadOnlySpan<float> samples, int sampleRate,
+        ParakeetRecordingOptions options, CancellationToken cancellation)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ParakeetGeneration.Validate(options.Decoding);
+        if (options.MaxWindows < 1 || options.MaxWindows > 512)
+            throw new ArgumentOutOfRangeException(nameof(options), "Recording accepts 1..512 windows.");
+        if (sampleRate != SampleRate) throw new ArgumentOutOfRangeException(nameof(sampleRate), "Parakeet requires mono 16000 Hz PCM.");
+        if (samples.Length > MaximumRecordingSamples)
+            throw new ArgumentOutOfRangeException(nameof(samples), "Recording accepts at most ten minutes.");
+        cancellation.ThrowIfCancellationRequested();
+        foreach (float value in samples)
+            if (!float.IsFinite(value)) throw new ArgumentException("Audio samples must be finite.", nameof(samples));
+        var owned = samples.ToArray();
+        lock (gate)
+        {
+            cancellation.ThrowIfCancellationRequested();
+            return ParakeetRecordingPolicy.Run(owned, options.MaxWindows, (start, length) =>
+            {
+                var window = owned.AsSpan(start, length);
+                if (length < 257)
+                {
+                    var padded = new float[257];
+                    window.CopyTo(padded);
+                    return Transcribe(padded, sampleRate, options.Decoding, cancellation);
+                }
+                return Transcribe(window, sampleRate, options.Decoding, cancellation);
+            }, cancellation);
         }
     }
 

@@ -55,5 +55,22 @@ public class ParakeetCliTests
         var result = Run("transcribe", "--help");
         Assert.Equal(0, result.Code); Assert.Contains("--model-type", result.Output);
         Assert.Contains("4096", result.Output); Assert.Contains("444", result.Output); Assert.Empty(result.Error);
+        Assert.Contains("quiet or hard cuts", result.Output);
+    }
+
+    [Fact]
+    public void RecordingPolicyReachesAssetValidation()
+    {
+        string absent = Path.Combine(Path.GetTempPath(), "lonnx-parakeet-absent-" + Guid.NewGuid().ToString("N"));
+        var result = Run("transcribe", absent, "missing.wav", "--model-type=parakeet", "--recording", "--max-windows=1");
+        Assert.Equal(4, result.Code); Assert.Empty(result.Output); Assert.Contains("Model directory not found", result.Error);
+    }
+
+    [Theory]
+    [InlineData("--max-windows=0")] [InlineData("--max-windows=513")] [InlineData("--max-windows=bad")]
+    public void InvalidRecordingLimitIsRejected(string option)
+    {
+        var result = Run("transcribe", "model", "input.wav", "--model-type=parakeet", "--recording", option);
+        Assert.Equal(2, result.Code); Assert.Empty(result.Output); Assert.NotEmpty(result.Error);
     }
 }

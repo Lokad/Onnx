@@ -48,7 +48,6 @@ public class WhisperCliTests
     [InlineData("zero-tokens")]
     [InlineData("too-many-tokens")]
     [InlineData("noninteger-tokens")]
-    [InlineData("recording-parakeet")]
     [InlineData("windows-without-recording")]
     [InlineData("windows-zero")]
     [InlineData("windows-too-many")]
@@ -68,7 +67,6 @@ public class WhisperCliTests
             "bad-json" => ["transcribe", "model", "in.wav", "--language=en", "--json=maybe"],
             "zero-tokens" => ["transcribe", "model", "in.wav", "--language=en", "--max-tokens=0"],
             "too-many-tokens" => ["transcribe", "model", "in.wav", "--language=en", "--max-tokens=445"],
-            "recording-parakeet" => ["transcribe", "model", "in.wav", "--model-type=parakeet", "--recording"],
             "windows-without-recording" => ["transcribe", "model", "in.wav", "--language=en", "--max-windows=1"],
             "windows-zero" => ["transcribe", "model", "in.wav", "--language=en", "--recording", "--max-windows=0"],
             "windows-too-many" => ["transcribe", "model", "in.wav", "--language=en", "--recording", "--max-windows=513"],
