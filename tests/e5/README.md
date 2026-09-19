@@ -29,6 +29,15 @@ artifact and its three conformance tests skip instead of failing), then runs
 exact tokenizer inputs, full hidden states, pooled embeddings, and the
 semantic ranking margin (>= 0.10, measured 0.18).
 
+## Current AMD performance
+
+The [September 19 comparison](comparison-20260919.md) records the frozen
+release, current experimental configuration and native ORT on the designated
+AMD host. Current mean latency is 38–62% below release on the primary cases.
+Current/ORT mean ratios are 0.9472, 1.0831, 1.0740 and 1.0731 for 8, 30,
+30 padded to 128, and 128 tokens. These are descriptive observations with
+process variation retained; they do not certify parity or change defaults.
+
 ## Tokenizer rule
 
 The Python oracle reproduces the XLM-R fairseq framing independently with the
