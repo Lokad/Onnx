@@ -1,0 +1,67 @@
+# CPU engine review and selective voice-branch integration
+
+The review used Microsoft ONNX Runtime 1.23.2 at
+`a83fc4d58cb48eb68890dd689f94f28288cf2278`, and
+`feature/voice-model-cpu-benchmarks` at
+`2b1138fe6f5d085e3749f6867d1603b1131ff029`. The voice branch contains 149 commits
+after the common release ancestor `4495fc6`. Integration follows behaviors and
+their necessary fixes; it does not merge the branch or replay every experiment.
+
+## What the ORT source changes about the optimization priorities
+
+| Source finding | Consequence for Lokad.Onnx |
+|---|---|
+| [MLAS SGEMM](https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/onnxruntime/core/mlas/lib/sgemm.cpp) distinguishes packed constant weights from dynamic packing, adapts panels, and overwrites the first partial product before accumulating later blocks. | Measure packing plus computation for dynamic attention. For constant projections, reuse weights across more rows and measure panel traversal separately. A faster isolated consumer does not prove a faster model. |
+| The AVX-512 GEMM kernel can process twelve rows across 32 columns, requiring 24 accumulators. | Hardware guards and actual generated managed instructions matter. Keep AVX2 fallbacks; wider instructions alone do not establish a gain on the AMD VM. |
+| The float specialization of [SoftmaxCPU](https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/onnxruntime/core/providers/cpu/math/softmax_shared.cc) calls `MlasComputeSoftmax`. | The generic double implementation is not the float baseline. Focus on the actual exponential, reduction and data movement paths. Preserve the established numerical behavior. |
+| ORT has CPU BiasGelu and Attention implementations under `contrib_ops/cpu`; MLAS also has SIMD transpose. | Earlier claims that these implementations were absent were incorrect. The inspected optimized e5 graph contains FusedMatMul and Softmax, with no monolithic Attention node. Kernel existence does not prove dispatch in a measured graph. |
+| ORT's execution frame uses indexed values and planned allocation; recurrent kernels separately prepare input and recurrent weights. | Reduce repeated bookkeeping and allocation while preserving Lokad's observable intermediates, returned tensors, mutable-graph invalidation and independent contexts. Long LSTM sequences and one-step decoders need separate measurements. |
+
+The corresponding Lokad review covered `ComputationalGraph`, `GraphExecution`,
+`TensorBufferPool`, `GraphPacking`, `Optimization/GraphOptimizer`, graph facts,
+MatMul dispatch, elementwise kernels and profiling/benchmark boundaries. It led
+to prepared row sharing, fewer repeated release checks, bounded released-array
+reuse, private temporary release, vector transpose copies and exact softmax and
+erf scheduling. The [runtime options](runtime-options.md) describe the selected
+defaults and their diagnostic controls. Narrow projection tiles, interleaved
+GELU, wider/reciprocal softmax and dynamic/segmented experiments remain opt-in.
+
+The [frozen e5 comparison](../tests/e5/comparison-20260919.md) records the model
+results and remaining gap. The [interleaved GELU report](../tests/e5/interleaved-gelu-20260919.md)
+illustrates why a large microbenchmark improvement did not justify another
+default change. Source analysis, dispatch evidence and timing are separate forms
+of evidence.
+
+## Valuable import units and their disposition
+
+| Voice-branch material | Integration decision |
+|---|---|
+| Shared NPY reader (`d80ed3d`, `ce25752`) | Adapted in `bb727da`, with dtype, shape, byte order, payload and malformed-input validation. Shared fixture code avoids divergent audio parsers. |
+| Conv1D/MaxPool1D (`13e98bd`) and LSTM/Identity foundation (`7eca404`, `e9c48f5`, `5ce3c09`, `35159df`) | Adapted in `814d456` and `83b3451`. Native fixtures cover recurrence semantics, lengths, activation parameters, directions and optional outputs before adding performance specialization. |
+| Encoder elementwise/Pad (`eb36aa5`, `f96cd70`) and normalization/activation (`cb0d3b8`, `aa9e63a`) | Adapted in `97048f9`, `6c6ad6a`, `ce7e1a9` and `8113b55`, preserving broadcasting, dtype and opset-dependent behavior. Clip bounds and normalization arithmetic required independent reference checks. |
+| Executable If (`103fc3a`, `39e9375`) | Adapted in `057c12b` with scoped captures and capture-aware graph facts and lifetimes. Captures must count as consumers during fusion as well as release. |
+| Model cases, representative audio rows and decoder trajectories, including prefix fix `0025373` | Adapted into the Parakeet and pyannote qualification lanes (`6dbcc0c`, `96489c2`). Each engine carries its own recurrent states; complete saved arrays replace old spot checks. Model sidecars, inputs, references and loaded binaries have explicit identities. |
+| Multirow packed GEMM and panel traversal | Reused as separate guarded experiments (`4de53f4`, `e115718`), preserving master's masked tails and shape/offset checks. Retain the row-sharing mechanism; do not enable every composer or traversal variant. |
+| Persistent pool and Reset changes | Redesigned in `c1f943d` and subsequent ownership/lifetime work. The retained cache has aggregate byte/array limits. Early release of exposed dead views remains an explicit `ExecutionOptions.Memory` policy. |
+| Prepared recurrent maps, direct/depthwise convolution, tiled expansion, K-blocked projections and region fusions | Candidate material for measured bottlenecks after model correctness. Keep dependency-complete slices and their invalidation/alias tests; avoid importing successive superseded prototypes. No blanket performance acceptance. |
+| Paired runner, historical tables, SDK changes, reverted prefetch/gate experiments and duplicate optimization infrastructure | Do not replace the current runner, source identities, SDK contract or optimizer pipeline. Preserve useful regression cases and historical evidence, but regenerate results for integrated source. |
+
+Three concrete hazards made selective adaptation necessary. The branch's
+Conv/Relu fusion could ignore an If capture and change a valid result from
+`[-1, 8]` to `[0, 8]`. Clip had incorrect omitted/reversed-bound behavior in
+tested cases. Its persistent pool capped arrays per shape without an aggregate
+retained-byte budget, and reset diagnostics could grow without bound.
+
+The source review also found test portability and evidence issues: three
+composer tests invoked AVX-512 directly on an AVX2 workstation; model validation
+checked existence without hashing every external-data reference; a filename-only
+fixture cache could mix directories. Historical benchmark rows also predated
+the decoder prefix correction. These are reasons to adapt tests and provenance
+with each feature, not to inherit the branch's performance conclusions.
+
+Whisper Large V3 Turbo was added as a separate application family. It reuses
+the shared operator foundation but has its own 128-bin frontend, tokenizer,
+generation policy and attention-cache contract. Parakeet, Whisper and connected
+Community-1 diarization now have public APIs and CLI paths; the
+[support matrix](model-support.md) records their precise qualified scope and
+remaining numerical, accuracy and resource work.
