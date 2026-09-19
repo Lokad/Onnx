@@ -1,0 +1,778 @@
+{
+  "source_revision": "a1ed3bb0440d33d18622e1cb6b138431cfaf4f7a",
+  "source_hashes": {
+    "pipelines/speaker_diarization.py": "9602de64056da50773cc6396e9a5448db9f19722b0378ddd234ba79f18bf9d9c",
+    "pipelines/utils/diarization.py": "859fba2577462140207a6e5c695f8a44c52271d0888d04b52dbd7d69aaec130b",
+    "core/inference.py": "cb4e90507433c2c18a178961c26629547b272fc309a1b1e3dcd1cf9ab7438a63",
+    "core/io.py": "b5f64e8e3f37d85e5ba0c89ac0d49206407b58186d3f606cfdca0e90c5677a53",
+    "core/model.py": "40ee2ea4847e06560b3c6f3813705e1f0ca045a17bbd5d947a41d45bbe3cc209",
+    "utils/signal.py": "a19f2ef7c02f4fb187584bc475ec81b00d294a6d0ed9bed1d325639c72682ed5",
+    "utils/powerset.py": "7eeb5691c20337bd24462f6a4ee2e56e279564bfef7875776df0a41f245b0325",
+    "utils/receptive_field.py": "021df3fc249a3c5146e15f879740a0ca02ad13fad6269191c8392a1ad61cd488",
+    "models/blocks/sincnet.py": "3f151a2482c3f8c266b1efd9bdcab297238c52b4792a7265261f2da063e5dade",
+    "models/segmentation/PyanNet.py": "50857f536a33d594dc8d14749e6dbfcd316771e466d0b45a0f3e1612bc12e682",
+    "pipelines/speaker_verification.py": "e383df1a4bdad0c8064f288e92e2e9eaf2f939df1491726269468d6febcc76dd",
+    "models/embedding/wespeaker/__init__.py": "a2c13a792c50d97f7a7583b69fcabd5eb5efc34d1374c2b6e5757bbcf3b62139",
+    "models/blocks/pooling.py": "8cb687441630e6759fb6ca545d649b41dbec1d42f869954c0a03ae191c7cbd82",
+    "utils/vbx.py": "812c8c4ba276ba0521689693f84690f6fc9af3d67dec232aac45c1fc2d41906f",
+    "pipelines/clustering.py": "6031fb7c21277a7e9901ef2cdaed7d5cd69f7ef45508dc4b45e82ce0da3c8fba"
+  },
+  "models": {
+    "segmentation": "af62796adfc46ab36fb27c183e7fe6530a745c665b64e949acd73bf01a18a31a",
+    "encoder": "9903474d6230e5e858dc6b6382a0e3f6e402ea9b4210e1e2f2bee60a33830e7a",
+    "projection": "070248b0bd9e67925f4a8befd70de27281b12fd9c6cf56f4539ee53ef1e2647a",
+    "plda": "8ab21d0e5769e41495e03088ca6fd9c9dddbda4a28aa4f27e6f585970c2b1702"
+  },
+  "versions": {
+    "numpy": "2.2.4",
+    "torch": "2.11.0+cpu",
+    "torchaudio": "2.11.0+cpu",
+    "onnxruntime": "1.29.0",
+    "scipy": "1.16.3",
+    "einops": "0.8.1",
+    "pyannote.core": "6.0.1",
+    "sortedcontainers": "2.4.0"
+  },
+  "kaldi_lf_sha256": "5cbea1a584ddea748f6f68a621d794e13334e88d9faa1d40986f7af32f196d29",
+  "assets": {
+    "resnet_seg_1_weight.npy": "ca91250bb69bea25bdc7c710e253a74450a415b3da587e53e04fd5a01abbe4da",
+    "resnet_seg_1_bias.npy": "51fcb6d0530993ad044a797310f4bfd6af266af0dbf364f6bc0008fdd63520cd",
+    "plda.npz": "9b77bcd840692710dd3496f62ecfeed8d8e5f002fd991b785079b244eab7d255",
+    "xvec_transform.npz": "325f1ce8e48f7e55e9c8aa47e05d2766b7c48c4b25b8de8dd751e7a4cc5fbe8f"
+  },
+  "cases": [
+    {
+      "name": "english-16k",
+      "samples": 93680,
+      "windows": 1,
+      "pcm_sha256": "e6c20e3ff002c4ef2fb693e8cb178b03bdddf025b61c3242bf970c2a4af28ba3"
+    },
+    {
+      "name": "french-44k-stereo",
+      "samples": 99893,
+      "windows": 1,
+      "pcm_sha256": "cadfccddcfe09f2fe4e7743af4a60a342b0adb8fc6eda67e10fcd74abec19b14"
+    },
+    {
+      "name": "jfk-48k-stereo",
+      "samples": 176000,
+      "windows": 2,
+      "pcm_sha256": "e9089b692e81d6dcd89755550fbaf99ec9f901434913befb825063721fbfad97"
+    },
+    {
+      "name": "two-recordings",
+      "samples": 201573,
+      "windows": 4,
+      "pcm_sha256": "e10efb8a7c9688c91ee45f3060455a407cd1274718b9b7c040f249f48074564b"
+    },
+    {
+      "name": "silence",
+      "samples": 16000,
+      "windows": 1,
+      "pcm_sha256": "be4253eeb3b6778df63e42d110b4603d97850396fd0d2a5b0ceac76fee4a2c84"
+    }
+  ],
+  "layout": {
+    "english-16k-pcm.npy": {
+      "shape": [
+        93680
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-0-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-0-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-count.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "uint8"
+    },
+    "english-16k-0-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-0-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-0-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-0-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-0-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int64"
+    },
+    "english-16k-original-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int8"
+    },
+    "english-16k-centroids.npy": {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-ordinary-native-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-ordinary-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-exclusive-native-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "english-16k-exclusive-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-pcm.npy": {
+      "shape": [
+        99893
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-0-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-0-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-count.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "uint8"
+    },
+    "french-44k-stereo-0-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-0-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-0-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-0-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-0-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int64"
+    },
+    "french-44k-stereo-original-labels.npy": {
+      "shape": [
+        1,
+        3
+      ],
+      "dtype": "int8"
+    },
+    "french-44k-stereo-centroids.npy": {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-ordinary-native-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-ordinary-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-exclusive-native-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "french-44k-stereo-exclusive-frames.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-pcm.npy": {
+      "shape": [
+        176000
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-0-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-0-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-1-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-1-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-count.npy": {
+      "shape": [
+        653,
+        1
+      ],
+      "dtype": "uint8"
+    },
+    "jfk-48k-stereo-0-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-0-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-0-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-0-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-0-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-1-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-1-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-1-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-1-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-1-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-labels.npy": {
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "int64"
+    },
+    "jfk-48k-stereo-original-labels.npy": {
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "int8"
+    },
+    "jfk-48k-stereo-centroids.npy": {
+      "shape": [
+        1,
+        256
+      ],
+      "dtype": "float64"
+    },
+    "jfk-48k-stereo-ordinary-native-frames.npy": {
+      "shape": [
+        653,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-ordinary-frames.npy": {
+      "shape": [
+        653,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-exclusive-native-frames.npy": {
+      "shape": [
+        653,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "jfk-48k-stereo-exclusive-frames.npy": {
+      "shape": [
+        653,
+        1
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-pcm.npy": {
+      "shape": [
+        201573
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-0-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-0-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-1-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-1-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-2-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-2-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-3-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-3-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-count.npy": {
+      "shape": [
+        771,
+        1
+      ],
+      "dtype": "uint8"
+    },
+    "two-recordings-0-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-0-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-0-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-0-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-0-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-1-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-1-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-1-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-1-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-1-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-2-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-2-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-2-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-2-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-2-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-3-features.npy": {
+      "shape": [
+        1,
+        998,
+        80
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-3-encoded.npy": {
+      "shape": [
+        1,
+        2560,
+        125
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-3-masks.npy": {
+      "shape": [
+        3,
+        589
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-3-pooled.npy": {
+      "shape": [
+        3,
+        5120
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-3-vectors.npy": {
+      "shape": [
+        3,
+        256
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-labels.npy": {
+      "shape": [
+        4,
+        3
+      ],
+      "dtype": "int64"
+    },
+    "two-recordings-original-labels.npy": {
+      "shape": [
+        4,
+        3
+      ],
+      "dtype": "int8"
+    },
+    "two-recordings-centroids.npy": {
+      "shape": [
+        2,
+        256
+      ],
+      "dtype": "float64"
+    },
+    "two-recordings-ordinary-native-frames.npy": {
+      "shape": [
+        771,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-ordinary-frames.npy": {
+      "shape": [
+        771,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-exclusive-native-frames.npy": {
+      "shape": [
+        771,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "two-recordings-exclusive-frames.npy": {
+      "shape": [
+        771,
+        2
+      ],
+      "dtype": "float32"
+    },
+    "silence-pcm.npy": {
+      "shape": [
+        16000
+      ],
+      "dtype": "float32"
+    },
+    "silence-0-scores.npy": {
+      "shape": [
+        1,
+        589,
+        7
+      ],
+      "dtype": "float32"
+    },
+    "silence-0-activity.npy": {
+      "shape": [
+        589,
+        3
+      ],
+      "dtype": "float32"
+    },
+    "silence-count.npy": {
+      "shape": [
+        594,
+        1
+      ],
+      "dtype": "uint8"
+    },
+    "silence-centroids.npy": {
+      "shape": [
+        0,
+        256
+      ],
+      "dtype": "float64"
+    }
+  },
+  "tolerance": 0.0001,
+  "repeats": 2
+}

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Lokad.Onnx.Data/Lokad.Onnx.Data.csproj" />
+    <Compile Include="Program.cs" /><Compile Include="Evidence.cs" />
+    <Compile Include="../../Shared/NpySupport.cs" Link="NpySupport.cs" />
+    <EmbeddedResource Include="pins.json" LogicalName="pins.json" />
+    <EmbeddedResource Include="generate_reference.py" LogicalName="generate_reference.py" />
+    <EmbeddedResource Include="native_rules.py" LogicalName="native_rules.py" />
+    <EmbeddedResource Include="evidence.py" LogicalName="evidence.py" />
+  </ItemGroup>
+</Project>
