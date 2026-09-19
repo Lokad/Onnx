@@ -31,7 +31,43 @@ figures do not establish calibrated parity or confidence bounds. The
 [full comparison](tests/e5/public-ort-20260919.md) includes process ranges,
 complete-request boundaries, allocation, memory, conditioning and identities.
 
-### Audio: observed public API time and memory
+### Audio: matched Microsoft ORT baselines
+
+Fresh complete-application measurements on **Windows i7-14700KF, logical CPU 2**,
+with .NET 10.0.12 and Microsoft ONNX Runtime **1.29.0**. Product source is
+`8732831` (core execution unchanged from `c6bf781`). Both engines run the same
+FP32 models and PCM inputs on one logical CPU. ORT uses one intra-op/inter-op
+thread, sequential execution and all graph optimizations.
+
+Times include features, neural inference, decoding or automatic clustering,
+and owned output construction. Loading, file access and external validation are
+excluded. The pyannote baseline combines ORT segmentation/embedding/projection
+graphs with pinned Torch/NumPy/SciPy frontend, pooling and clustering code; it
+measures an ORT-backed application, not isolated ORT kernels.
+
+| Application / workload | Lokad seconds | ORT seconds | Lokad / ORT | Lokad RTF | ORT RTF |
+|---|---:|---:|---:|---:|---:|
+| Parakeet, all 20 clips (213.265 s audio) | 60.683 | 29.673 | 2.045 | 0.285 | 0.139 |
+| pyannote, full 30 s dialogue | 33.629 | 6.408 | 5.248 | 1.121 | 0.214 |
+| pyannote, 0–10 s crop | 1.641 | 0.305 | 5.388 | 0.164 | 0.030 |
+| pyannote, 10–20 s crop | 1.717 | 0.305 | 5.628 | 0.172 | 0.031 |
+| pyannote, 20–30 s crop | 1.609 | 0.306 | 5.255 | 0.161 | 0.031 |
+
+Lower is faster; **Lokad / ORT > 1 means Lokad.Onnx takes longer**. Parakeet times
+are the mean total for the complete twenty-clip corpus, not one average clip.
+Pyannote times are per request; its three crops overlap the full dialogue.
+RTF is processing time divided by audio duration.
+
+Each engine/model has two fresh processes, each with one complete corpus warmup
+and three measured passes: 120 measured Parakeet calls and 24 pyannote calls per
+engine. All 288 measured calls are retained. Every measured and warmup request
+passes the application checks, including held-output and input preservation.
+These are descriptive results on an active Windows workstation, without a
+calibrated confidence or parity claim. The [full report](tests/audio/comparison/results-20260919.md)
+includes process variation, memory, complete evidence identities and known
+numerical limitations. Whisper's observations below remain managed-only.
+
+### Audio: earlier public API observations
 
 The ASR rows use the same twenty clean-English recordings: ten speakers,
 213.265 seconds of audio, individual durations 4.07–17.96 seconds. Each model
@@ -79,8 +115,10 @@ local artifacts with
 `python tests/audio/accuracy/summarize_timings.py --output <new-summary.json>`;
 the tool verifies the original receipts and does not run inference. The native
 audio reference generators also perform validation and evidence export, so their
-job durations are not comparable inference times. Matched native audio latency
-ratios and repeated steady-state audio benchmarks remain unmeasured.
+job durations are not comparable inference times. The matched Parakeet and
+pyannote measurements above use dedicated runners and fresh samples; the older
+observations here are not used to calculate those ratios. Whisper has no matched
+ORT latency measurement in this report.
 
 ### Audio accuracy and numerical agreement
 
