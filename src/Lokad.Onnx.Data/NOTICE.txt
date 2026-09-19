@@ -36,3 +36,12 @@ Clustering orchestration follows pyannote.audio clustering.py and plda.py,
 Copyright (c) 2021-2025 CNRS and Copyright (c) 2025- pyannoteAI, under the MIT
 license reproduced above. The managed API adds explicit invalid/no-training-data
 behavior and owned results, and supports automatic speaker counts.
+
+Community-1 windows, masks, counting and timeline reconstruction follow
+pyannote.audio 4.0.0 core/inference.py, pipelines/speaker_diarization.py,
+pipelines/utils/diarization.py and utils/signal.py, Copyright (c) 2016-2025 CNRS
+and Copyright (c) 2025- pyannoteAI, under the MIT license reproduced above.
+The managed pipeline uses deterministic canonical-label vote ties and clips
+public intervals to the supplied PCM duration. Sparse masked statistics retain
+the original epsilon-regularized formulas independently of the standalone
+embedding API's stricter minimum-frame policy.

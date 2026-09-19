@@ -10,7 +10,15 @@ using System.Threading;
 internal static class WeSpeakerPooling
 {
     internal static DenseTensor<float> Pool(Tensor<float> encoded, float[] weights,
-        bool weighted, CancellationToken cancellation)
+        bool weighted, CancellationToken cancellation) => PoolCore(encoded, weights, weighted, false, cancellation);
+
+    // The Community-1 pipeline uses native epsilon-regularized statistics even for sparse masks.
+    // This is distinct from the public single-vector API's minimum-frame policy.
+    internal static DenseTensor<float> PoolPipeline(Tensor<float> encoded, float[] weights,
+        CancellationToken cancellation) => PoolCore(encoded, weights, true, true, cancellation);
+
+    static DenseTensor<float> PoolCore(Tensor<float> encoded, float[] weights,
+        bool weighted, bool sparseMasks, CancellationToken cancellation)
     {
         cancellation.ThrowIfCancellationRequested();
         if (encoded.Rank != 3 || encoded.Dimensions[0] != 1 || encoded.Dimensions[2] != weights.Length)
@@ -25,7 +33,7 @@ internal static class WeSpeakerPooling
             sum += weight;
             squares += (float)(weight * weight);
         }
-        if (positive < 2) throw new ArgumentException("At least two positive frame weights are required.", nameof(weights));
+        if (!sparseMasks && positive < 2) throw new ArgumentException("At least two positive frame weights are required.", nameof(weights));
         float v1 = (float)sum;
         if (weighted) v1 += 1e-8f;
         float denominator = weighted ? v1 - (float)squares / v1 + 1e-8f : frames - 1;

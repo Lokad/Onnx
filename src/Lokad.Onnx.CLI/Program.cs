@@ -41,7 +41,7 @@ class Program
     {
         bool debug = (args.Contains("--debug") || args.Contains("-d"));
         var parsed = ArgsParser.Parse(args);
-        UseConsoleLogging(debug, parsed.Verb == "transcribe");
+        UseConsoleLogging(debug, parsed.Verb is "transcribe" or "diarize");
         switch (parsed.Outcome)
         {
             case ParseOutcome.Version:
@@ -55,7 +55,7 @@ class Program
                 return;
             case ParseOutcome.Error:
                 Error(parsed.Message);
-                if (parsed.Verb != "transcribe") PrintGlobalHelp();
+                if (parsed.Verb is not ("transcribe" or "diarize")) PrintGlobalHelp();
                 Exit(parsed.Exit);
                 return;
             default:
@@ -72,6 +72,9 @@ class Program
             case "transcribe":
                 if (parsed.Value is TranscribeOptions transcribe) Exit(Transcribe(transcribe));
                 break;
+            case "diarize":
+                if (parsed.Value is DiarizeOptions diarize) Exit(Diarize(diarize));
+                break;
         }
     }
     #endregion
@@ -84,6 +87,7 @@ class Program
         Console.WriteLine("  info <file> [--ops] [--init] [--op-filter <type>]   Get information on an ONNX model.");
         Console.WriteLine("  run <file> <inputs...> [options]                    Run an ONNX model or node.");
         Console.WriteLine("  transcribe <model-directory> <audio.wav> [options]   Transcribe with Whisper Large V3 Turbo or Parakeet.");
+        Console.WriteLine("  diarize <audio.wav> [model options]                 Produce Community-1 speaker timelines.");
         Console.WriteLine("Common options:");
         Console.WriteLine("  --debug, -d   Enable debug mode.");
         Console.WriteLine("  --help        Show this help and exit.");
@@ -117,6 +121,14 @@ class Program
             Console.WriteLine("  --optimize-memory   Optimize memory usage at the cost of performance.");
             Console.WriteLine("  --threads <n>       Worker threads for batch-parallel kernels (default 1, sequential).");
         }
+        else if (verb == "diarize")
+        {
+            Console.WriteLine("Usage: lonnx diarize <audio.wav> --segmentation <model.onnx> --embedding <encoder.onnx> --projection <projection.onnx> --plda <plda.json> [--json]");
+            Console.WriteLine("Uses local FP32 Community-1 models and prepared projection/PLDA assets.");
+            Console.WriteLine("Accepts mono/stereo WAV, 8000..192000 Hz, at most ten minutes; mixes/resamples to mono 16000 Hz.");
+            Console.WriteLine("Prints start/end seconds and speaker labels. --json includes ordinary and exclusive timelines and speaker centroids.");
+            Console.WriteLine("Intervals are clipped to the recording; tied votes choose the earliest canonical speaker. Diagnostics go to stderr.");
+        }
         else if (verb == "transcribe")
         {
             Console.WriteLine("Usage: lonnx transcribe <model-directory> <audio.wav> [options]");
@@ -132,7 +144,7 @@ class Program
 
     static ExitResult Transcribe(TranscribeOptions options)
     {
-        Transcribing = true;
+        AudioInference = true;
         try
         {
             if (options.ModelDirectory.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
@@ -199,7 +211,43 @@ class Program
             Error(ex.Message);
             return ExitResult.INVALID_INPUT;
         }
-        finally { Transcribing = false; }
+        finally { AudioInference = false; }
+    }
+
+    static ExitResult Diarize(DiarizeOptions options)
+    {
+        AudioInference = true;
+        try
+        {
+            foreach (string path in new[] { options.AudioFile, options.Segmentation, options.Embedding, options.Projection, options.Plda })
+            {
+                if (path.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || path.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                    throw new ArgumentException("Diarization requires local model and WAV paths.");
+                if (!File.Exists(path)) throw new FileNotFoundException("Diarization input or model not found: " + path, path);
+            }
+            using var input = File.OpenRead(options.AudioFile);
+            var audio = WaveAudio.ReadMono(input, TimeSpan.FromMinutes(10));
+            Cts.Token.ThrowIfCancellationRequested();
+            var pcm = AudioResampler.Resample(audio.Samples, audio.SampleRate, Community1Diarizer.SampleRate);
+            Cts.Token.ThrowIfCancellationRequested();
+            var model = new Community1Diarizer(options.Segmentation, options.Embedding, options.Projection, options.Plda);
+            var result = model.Diarize(pcm, Community1Diarizer.SampleRate, Cts.Token);
+            if (options.Json)
+            {
+                var json = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+                json.Converters.Add(new JsonStringEnumConverter());
+                Console.WriteLine(JsonSerializer.Serialize(result, json));
+            }
+            else foreach (var interval in result.Intervals)
+                Console.WriteLine(FormattableString.Invariant($"{interval.Start:F6}\t{interval.End:F6}\tSPEAKER_{interval.Speaker:D2}"));
+            return ExitResult.SUCCESS;
+        }
+        catch (OperationCanceledException) { Console.Error.WriteLine("Diarization canceled."); return ExitResult.CANCELED; }
+        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException) { Error(ex.Message); return ExitResult.NOT_FOUND; }
+        catch (Exception ex) when (ex is InvalidDataException or IOException or ArgumentException or NotSupportedException or JsonException or UnauthorizedAccessException
+                                    or KeyNotFoundException or InvalidOperationException)
+        { Error(ex.Message); return ExitResult.INVALID_INPUT; }
+        finally { AudioInference = false; }
     }
 
     static void ShowInfo(InfoOptions io)
@@ -619,7 +667,7 @@ class Program
 
     private static void Console_CancelKeyPress(object? sender, ConsoleCancelEventArgs e)
     {
-        if (Transcribing)
+        if (AudioInference)
         {
             e.Cancel = true;
             Cts.Cancel();
@@ -633,6 +681,6 @@ class Program
     
     #region Fields
     static readonly CancellationTokenSource Cts = new CancellationTokenSource();
-    static volatile bool Transcribing;
+    static volatile bool AudioInference;
     #endregion
 }

@@ -51,3 +51,12 @@ The API rejects more than 30 seconds and retains token/stop/no-speech metadata.
 See [component and application qualification](../../tests/whisper/README.md)
 for the pinned export and the unresolved full encoder/logit numerical gate.
 
+## Speaker diarization
+
+`Community1Diarizer` accepts normalized mono 16 kHz PCM through ten minutes and
+local Community-1 segmentation, split WeSpeaker, projection and PLDA paths. It
+returns owned ordinary and exclusive speaker intervals with matching centroids.
+See [the API/CLI contract and qualification](../../tests/pyannote/diarization/README.md)
+for local asset preparation, deterministic vote ties, recording-bound intervals,
+explicit no-data results and the retained numerical failures.
+

@@ -80,6 +80,39 @@ public sealed class WeSpeakerEmbedder
         }
     }
 
+    // Share one backbone evaluation across the three local speakers. The native pipeline's
+    // sparse weighted masks are allowed here; Extract retains its explicit two-frame policy.
+    internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation)
+    {
+        if (samples.Length != Community1Timeline.WindowSamples || masks.Length != 3
+            || masks.Any(m => m is null || m.Length != Community1Timeline.LocalFrames || m.Any(v => v != 0 && v != 1)))
+            throw new ArgumentException("Pipeline embeddings require one full audio window and three binary masks.");
+        lock (gate)
+        {
+            cancellation.ThrowIfCancellationRequested();
+            var features = WeSpeakerAudio.LogMelFilterbank(samples, 16000, cancellation);
+            int frames = (features.Dimensions[1] + 7) / 8;
+            var encoding = encoder.CreateExecution(ExecutionOptions.Memory);
+            var projecting = projection.CreateExecution(ExecutionOptions.Memory);
+            try
+            {
+                var hidden = Execute(encoding, "fbank_features", features, EncodedName, new[] { 1, 2560, frames });
+                var results = new WeSpeakerEmbedding[3];
+                for (int s = 0; s < 3; s++)
+                {
+                    cancellation.ThrowIfCancellationRequested(); var weights = new float[frames]; int positive = 0;
+                    for (int t = 0; t < frames; t++) { weights[t] = masks[s][t * masks[s].Length / frames]; if (weights[t] > 0) positive++; }
+                    var pooled = WeSpeakerPooling.PoolPipeline(hidden, weights, cancellation);
+                    projecting.Reset();
+                    var vector = Execute(projecting, "pooled", pooled, "embedding", new[] { 1, 256 });
+                    results[s] = new WeSpeakerEmbedding(Array.AsReadOnly(vector.ToArray()), WeSpeakerEmbeddingStatus.Completed, frames, positive);
+                }
+                cancellation.ThrowIfCancellationRequested(); return results;
+            }
+            finally { encoding.Reset(); projecting.Reset(); }
+        }
+    }
+
     static ComputationalGraph Load(string path, long budget) => OnnxImport.Load(path, budget)
         ?? throw new InvalidDataException("Could not load WeSpeaker model: " + OnnxImport.LastErrorMessage, OnnxImport.LastErrorCause);
 

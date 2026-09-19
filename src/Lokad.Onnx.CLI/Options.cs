@@ -43,6 +43,16 @@ public class TranscribeOptions : Options
     public bool Json { get; set; }
 }
 
+public class DiarizeOptions : Options
+{
+    public string AudioFile { get; set; } = "";
+    public string Segmentation { get; set; } = "";
+    public string Embedding { get; set; } = "";
+    public string Projection { get; set; } = "";
+    public string Plda { get; set; } = "";
+    public bool Json { get; set; }
+}
+
 #endregion
 
 #region Bounded parser
@@ -107,7 +117,7 @@ public static class ArgsParser
             result.Exit = ExitResult.INVALID_OPTIONS;
             return result;
         }
-        if (verb != "info" && verb != "run" && verb != "transcribe")
+        if (verb != "info" && verb != "run" && verb != "transcribe" && verb != "diarize")
         {
             result.Outcome = ParseOutcome.Error;
             result.Message = "Unknown command: " + verb + ".";
@@ -121,7 +131,7 @@ public static class ArgsParser
             return result;
         }
         result.Verb = verb;
-        var parsed = verb == "info" ? ParseInfo(rest) : verb == "run" ? ParseRun(rest) : ParseTranscribe(rest);
+        var parsed = verb == "info" ? ParseInfo(rest) : verb == "run" ? ParseRun(rest) : verb == "diarize" ? ParseDiarize(rest) : ParseTranscribe(rest);
         parsed.Verb = verb;
         if (parsed.Outcome == ParseOutcome.Ok && parsed.Value is not null) parsed.Value.Debug = debug;
         return parsed;
@@ -294,6 +304,41 @@ public static class ArgsParser
         options.File = positionals[0];
         options.Inputs = positionals.GetRange(1, positionals.Count - 1);
         return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "run", Value = options };
+    }
+
+    static ParseResult ParseDiarize(List<string> rest)
+    {
+        var options = new DiarizeOptions(); var seen = new HashSet<string>(StringComparer.Ordinal); var positionals = new List<string>();
+        for (int i = 0; i < rest.Count; i++)
+        {
+            string token = rest[i];
+            if (IsFlag(token))
+            {
+                SplitFlag(token, out string name, out string? inline);
+                if (!seen.Add(name)) return Fail("Duplicate option: --" + name + ".");
+                if (name == "json")
+                {
+                    if (!TakeBool("diarize", name, inline, out bool json, out string? error)) return Fail(error);
+                    options.Json = json;
+                }
+                else if (name is "segmentation" or "embedding" or "projection" or "plda")
+                {
+                    if (!TakeString("diarize", name, rest, ref i, inline, out string value, out string? error) || string.IsNullOrWhiteSpace(value))
+                        return Fail(error ?? "Model paths cannot be empty.");
+                    if (name == "segmentation") options.Segmentation = value;
+                    else if (name == "embedding") options.Embedding = value;
+                    else if (name == "projection") options.Projection = value;
+                    else options.Plda = value;
+                }
+                else return Fail("Unknown option: " + token + ".");
+            }
+            else if (token.StartsWith("-", StringComparison.Ordinal)) return Fail("Unknown option: " + token + ".");
+            else positionals.Add(token);
+        }
+        if (positionals.Count != 1 || new[] { "segmentation", "embedding", "projection", "plda" }.Any(name => !seen.Contains(name)))
+            return Fail("Diarize requires one WAV file and --segmentation, --embedding, --projection and --plda local paths.");
+        options.AudioFile = positionals[0];
+        return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "diarize", Value = options };
     }
 
     static ParseResult ParseTranscribe(List<string> rest)
