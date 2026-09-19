@@ -128,6 +128,15 @@ pyannote measurements above use dedicated runners and fresh samples; the older
 observations here are not used to calculate those ratios. Whisper has no matched
 ORT latency measurement in this report.
 
+A separate [AMD Parakeet recording replay](tests/parakeet/recording-amd/results-20260919.md)
+qualifies the API and CLI against the retained native application reference.
+Its constructed 600-second repeated-speech request completes 22 windows in
+233.855 API seconds; the full API sequence peaks at 12.379 GB sampled RSS.
+All ten sequential requests, two concurrent silence calls, two CLI calls and
+sixteen refusal/recovery checks pass. These are finite correctness/resource
+observations, without a fresh AMD ORT timing comparison or independent natural
+ten-minute accuracy claim.
+
 ### Audio accuracy and numerical agreement
 
 | Model | Human-labeled observation | Result | Managed/native application agreement |

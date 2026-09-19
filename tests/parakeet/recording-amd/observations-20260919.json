@@ -1,0 +1,145 @@
+{
+  "schema": 1,
+  "passed": true,
+  "recording_requests": 10,
+  "concurrent_silent_requests": 2,
+  "cli_requests": 2,
+  "refusals": 16,
+  "retained_native_window_crosschecks": 38,
+  "fresh_native_inference": false,
+  "observations": [
+    {
+      "name": "connected",
+      "repeat": false,
+      "seconds": 29.1089639,
+      "audio_seconds": 69.455,
+      "processed_seconds": 69.455,
+      "windows": 3,
+      "tokens": 312,
+      "stop_reason": "Completed"
+    },
+    {
+      "name": "shifted",
+      "repeat": false,
+      "seconds": 27.3606262,
+      "audio_seconds": 71.825,
+      "processed_seconds": 71.825,
+      "windows": 3,
+      "tokens": 281,
+      "stop_reason": "Completed"
+    },
+    {
+      "name": "hard-boundary",
+      "repeat": false,
+      "seconds": 27.2882557,
+      "audio_seconds": 69.455,
+      "processed_seconds": 69.455,
+      "windows": 3,
+      "tokens": 162,
+      "stop_reason": "Completed"
+    },
+    {
+      "name": "token-limit",
+      "repeat": false,
+      "seconds": 8.7759829,
+      "audio_seconds": 69.455,
+      "processed_seconds": 0,
+      "windows": 1,
+      "tokens": 2,
+      "stop_reason": "TokenLimit"
+    },
+    {
+      "name": "window-limit",
+      "repeat": false,
+      "seconds": 10.1046798,
+      "audio_seconds": 69.455,
+      "processed_seconds": 26.595,
+      "windows": 1,
+      "tokens": 92,
+      "stop_reason": "WindowLimit"
+    },
+    {
+      "name": "maximum-speech",
+      "repeat": false,
+      "seconds": 233.8550629,
+      "audio_seconds": 600,
+      "processed_seconds": 600,
+      "windows": 22,
+      "tokens": 2695,
+      "stop_reason": "Completed"
+    },
+    {
+      "name": "tiny-tail",
+      "repeat": false,
+      "seconds": 13.6222225,
+      "audio_seconds": 30.0000625,
+      "processed_seconds": 30.0000625,
+      "windows": 2,
+      "tokens": 0,
+      "stop_reason": "Completed"
+    },
+    {
+      "name": "maximum-silence",
+      "repeat": false,
+      "seconds": 0.0221422,
+      "audio_seconds": 600,
+      "processed_seconds": 600,
+      "windows": 22,
+      "tokens": 0,
+      "stop_reason": "Completed"
+    },
+    {
+      "name": "empty",
+      "repeat": false,
+      "seconds": 0.0001592,
+      "audio_seconds": 0,
+      "processed_seconds": 0,
+      "windows": 0,
+      "tokens": 0,
+      "stop_reason": "Completed"
+    },
+    {
+      "name": "connected",
+      "repeat": true,
+      "seconds": 25.9303936,
+      "audio_seconds": 69.455,
+      "processed_seconds": 69.455,
+      "windows": 3,
+      "tokens": 312,
+      "stop_reason": "Completed"
+    }
+  ],
+  "resources": [
+    {
+      "name": "managed",
+      "seconds": 380.02329375300906,
+      "peak_rss": 12379119616,
+      "minimum_available": 3558379520,
+      "samples": 745
+    },
+    {
+      "name": "cli-connected",
+      "seconds": 36.20806707700831,
+      "peak_rss": 7826403328,
+      "minimum_available": 8107208704,
+      "samples": 71
+    },
+    {
+      "name": "cli-token-limit",
+      "seconds": 12.756015392020345,
+      "peak_rss": 5136650240,
+      "minimum_available": 10801991680,
+      "samples": 25
+    }
+  ],
+  "load_seconds": 0.813408,
+  "process_peak_working_set": 12398182400,
+  "runtime": ".NET 10.0.8",
+  "os": "Ubuntu 24.04.4 LTS",
+  "core_sha256": "502bfbce5d4c3744894f4cb268fcf4a2f135918c0e5e585ad4718941425b49af",
+  "data_sha256": "ad15205047e23514151a20407a89f4ee0e0bb4f6614c15d6637da42d5164581b",
+  "runner_sha256": "916b65ad4472cbbdd773b0abda4f6e9a754fdc5c848bd9deef2102d403cfacb7",
+  "bundle_sha256": "04ea92c5a625cb6e2128be6fca20aa388ed43f533879ce3dfb5b2415327ee068",
+  "collection_sha256": "eb5ea54c2a9812baa87cc89da2ce65a2cf3ede485965a345d4a7af106d70805a",
+  "audit_sha256": "17fec38df308036adc145ded1c1c1e53284362755f95c76addce7da711d5df43"
+}

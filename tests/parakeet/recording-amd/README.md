@@ -6,6 +6,9 @@ application reference. It runs ten sequential recording requests (including
 invalid/canceled requests with recovery, and two CLI calls. It does not generate
 new ORT latency measurements or qualify all intermediate numerical arrays.
 
+The [completed AMD report](results-20260919.md) retains all observations and
+resource summaries, including the ten-minute speech request.
+
 The source payload and reference are pinned through the original closed receipt.
 Only exact portable DLLs, required PCM files and one CLI WAV are staged. Sparse
 zero storage and hard links preserve full logical file hashes. Canonical model
