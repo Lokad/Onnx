@@ -92,9 +92,13 @@ replaces variable lane reads with literal ordered comparisons and a vector
 validity test. Each retained local process passes 109,488 maximum cases and
 1,728 complete tensors. Captured optimized loop code removes those stores,
 while growing the paired-row body from 4,030 to 4,234 bytes. Final Tier1 code
-and AMD performance remain unqualified; there is no product route or speed
-claim. This targets different instructions from the closed pointer-addressing
-experiment and does not change the closed zero-block comparison.
+remains unqualified. The subsequent [AMD kernel comparison](../tests/e5/softmax-reduction-bench/results-20260919.md)
+passes all correctness, control and resource criteria, retaining 3,456 batches.
+The thirty-column kernel improves 7.50% against its copy, but the 128-column
+gain is 2.77%, below its prospective 3% requirement. The complete screen fails;
+no product route or model-speedup claim follows. This targets different
+instructions from the closed pointer-addressing experiment and does not change
+the closed zero-block comparison.
 
 ## Valuable import units and their disposition
 
