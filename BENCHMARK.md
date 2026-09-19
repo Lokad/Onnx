@@ -1,6 +1,6 @@
 # CPU benchmarks
 
-## Current results — 2026-09-19
+## Current results — 2026-09-19 UTC
 
 The tables here summarize retained measurements for e5, Parakeet, Whisper and
 pyannote. Each names its workload, hardware and timing boundary. Earlier tables
@@ -51,29 +51,35 @@ Times include features, neural inference, decoding or automatic clustering,
 and owned output construction. Loading, file access and external validation are
 excluded. The pyannote baseline combines ORT segmentation/embedding/projection
 graphs with pinned Torch/NumPy/SciPy frontend, pooling and clustering code; it
-measures an ORT-backed application, not isolated ORT kernels.
+measures an ORT-backed application. Whisper combines a pinned Transformers
+NumPy frontend with ORT encoder and decoder graphs. These are complete
+application comparisons, not isolated ORT kernels.
 
 | Application / workload | Lokad seconds | ORT seconds | Lokad / ORT | Lokad RTF | ORT RTF |
 |---|---:|---:|---:|---:|---:|
 | Parakeet, all 20 clips (213.265 s audio) | 60.683 | 29.673 | 2.045 | 0.285 | 0.139 |
+| Whisper Large V3 Turbo, same 20 clips | 434.193 | 349.993 | 1.241 | 2.036 | 1.641 |
 | pyannote, full 30 s dialogue | 33.629 | 6.408 | 5.248 | 1.121 | 0.214 |
 | pyannote, 0–10 s crop | 1.641 | 0.305 | 5.388 | 0.164 | 0.030 |
 | pyannote, 10–20 s crop | 1.717 | 0.305 | 5.628 | 0.172 | 0.031 |
 | pyannote, 20–30 s crop | 1.609 | 0.306 | 5.255 | 0.161 | 0.031 |
 
-Lower is faster; **Lokad / ORT > 1 means Lokad.Onnx takes longer**. Parakeet times
+Lower is faster; **Lokad / ORT > 1 means Lokad.Onnx takes longer**. ASR times
 are the mean total for the complete twenty-clip corpus, not one average clip.
 Pyannote times are per request; its three crops overlap the full dialogue.
 RTF is processing time divided by audio duration.
 
 Each engine/model has two fresh processes, each with one complete corpus warmup
-and three measured passes: 120 measured Parakeet calls and 24 pyannote calls per
-engine. All 288 measured calls are retained. Every measured and warmup request
+and three measured passes: 120 measured calls for each ASR model and 24 pyannote
+calls per engine. All 528 measured calls are retained. Every measured and warmup request
 passes the application checks, including held-output and input preservation.
 These are descriptive results on an active Windows workstation, without a
-calibrated confidence or parity claim. The [full report](tests/audio/comparison/results-20260919.md)
-includes process variation, memory, complete evidence identities and known
-numerical limitations. Whisper's observations below remain managed-only.
+calibrated confidence or parity claim. The
+[Parakeet/pyannote report](tests/audio/comparison/results-20260919.md) and
+[Whisper report](tests/audio/whisper-comparison/results-20260919.md) include
+process variation, memory, complete evidence identities and known numerical
+limitations. Whisper recomputes its frontend from PCM inside every timed call;
+both engines pad each clip to the model's thirty-second encoder input.
 
 ### Audio: earlier public API observations
 
@@ -123,10 +129,9 @@ local artifacts with
 `python tests/audio/accuracy/summarize_timings.py --output <new-summary.json>`;
 the tool verifies the original receipts and does not run inference. The native
 audio reference generators also perform validation and evidence export, so their
-job durations are not comparable inference times. The matched Parakeet and
-pyannote measurements above use dedicated runners and fresh samples; the older
-observations here are not used to calculate those ratios. Whisper has no matched
-ORT latency measurement in this report.
+job durations are not comparable inference times. The matched audio measurements
+above use dedicated runners and fresh samples; the older observations here are
+not used to calculate those ratios.
 
 A separate [AMD Parakeet recording replay](tests/parakeet/recording-amd/results-20260919.md)
 qualifies the API and CLI against the retained native application reference.

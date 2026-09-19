@@ -4,6 +4,10 @@ This additive lane supplies fresh Lokad.Onnx and Microsoft ORT timings for the
 same twenty clean-English clips used by the Parakeet comparison: 213.265 seconds,
 ten speakers. It keeps the completed Parakeet/pyannote tools and evidence unchanged.
 
+The [completed comparison](results-20260919.md) reports 434.193 seconds for
+Lokad.Onnx and 349.993 seconds for the ORT-backed application per corpus,
+with all 240 measured requests retained.
+
 The timed request starts with decoded mono 16 kHz FP32 PCM and includes feature
 extraction, encoder inference, cached greedy decoding, no-speech decisions, text
 decoding and owned result construction. Model loading, file reads, hashes,
