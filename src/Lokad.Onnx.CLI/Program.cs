@@ -118,7 +118,7 @@ class Program
             Console.WriteLine("  --disable-simd      Disable CPU SIMD features.");
             Console.WriteLine("  --enable-intrinsics Enable CPU SIMD intrinsics.");
             Console.WriteLine("  --profile           Enable the profiler which logs detailed stats about ONNX node execution times.");
-            Console.WriteLine("  --optimize-memory   Optimize memory usage at the cost of performance.");
+            Console.WriteLine("  --optimize-memory   Allow earlier release of dead intermediate views.");
             Console.WriteLine("  --threads <n>       Worker threads for batch-parallel kernels (default 1, sequential).");
         }
         else if (verb == "diarize")

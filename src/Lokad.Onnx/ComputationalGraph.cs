@@ -115,7 +115,7 @@ public partial class ComputationalGraph
 
     internal TensorBufferPool? ActivePool { get; private set; }
 
-    // Per-owner opt-in also lets tests exercise both routes without global mutations.
+    // Per-owner overrides let tests exercise both routes without global mutations.
     internal bool ReuseReleasedBuffers { get; set; } = AblationSwitches.EnableReleasedBufferCache;
     internal bool ReleaseReshapeViews { get; set; } = AblationSwitches.EnableReshapeViewRelease;
     internal ReleasedBufferCache? ReleasedBuffers;

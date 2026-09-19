@@ -11,6 +11,11 @@
 
 ### Improved
 
+- Enable retained prepared-MatMul, exact softmax/BiasGelu, transpose and released-storage
+  reuse paths by default, with per-process `0` diagnostic fallbacks. Dead reshape-view
+  release remains an explicit `ExecutionOptions.Memory` choice. Released storage is
+  bounded to 128 MiB and 256 arrays per graph or execution context; this is not a
+  total-process memory limit. See `docs/runtime-options.md`.
 - Fused bias-plus-exact-GELU regions run a pointer fast path (identical arithmetic):
   roughly minus 25 percent on MLP activation tiles with tighter run-to-run stability.
 - Single-element broadcast operands (scales, biases, masks) take the SIMD scalar tier

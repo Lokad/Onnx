@@ -21,7 +21,7 @@ using System.Runtime.CompilerServices;
 /// Return contract: only single-dimensional (SZ) arrays are pooled. Null, multidimensional, and duplicate
 /// (already buffered) arrays are rejected with an exception. Foreign arrays (never rented from this pool)
 /// are adopted for reuse; release logic still only returns owned storage.
-/// The opt-in released-buffer cache supplies/retains only already-free arrays
+/// The bounded released-buffer cache supplies/retains only already-free arrays
 /// between executions. Ownership, live/outstanding records and metrics remain
 /// per execution; no still-checked-out array is exported when a run ends.
 /// </remarks>
@@ -32,7 +32,7 @@ public sealed class TensorBufferPool
     readonly ReleasedBufferCache? releasedCache;
     readonly Dictionary<Array, long>? reusableSizes;
 
-    // Per-pool override lets tests compare the experiment without global mutation.
+    // Per-pool override lets tests compare both routes without global mutation.
     internal bool ReleaseFusedTemporaries { get; set; } = AblationSwitches.EnableFusedTempRelease;
 
     public TensorBufferPool() { }

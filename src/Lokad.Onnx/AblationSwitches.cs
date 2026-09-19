@@ -7,7 +7,8 @@ using System;
 /// so a set flag can reroute another thread public Softmax mid-test. Bitwise tests
 /// must call kernels directly, never flag-affected publics; tolerance-based
 /// agreement tests are immune. Test code setting these fields restores in finally.
-/// Legacy switches preserve comparison paths; experimental switches are off by default.
+/// Enabled defaults accept an explicit environment value 0 to restore comparison paths;
+/// other experimental switches remain off by default and require value 1.
 /// Production code never sets these fields;
 /// unit tests set them directly and diagnostic harnesses set them through the
 /// documented environment variables before the process starts. The current
@@ -18,9 +19,11 @@ internal static class AblationSwitches
     internal static bool EnvIsSet(string name) =>
         string.Equals(Environment.GetEnvironmentVariable(name), "1", StringComparison.Ordinal);
 
-    /// Opt-in row-sharing experiment for prepared full-column-panel MatMul only.
-    /// Read once at process startup; no production default changes before AMD qualification.
-    internal static readonly bool EnablePackedAvx512Rows = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_ROWS");
+    internal static bool EnvDefaultOn(string name) =>
+        !string.Equals(Environment.GetEnvironmentVariable(name), "0", StringComparison.Ordinal);
+
+    /// Row sharing for prepared full-column-panel MatMul; set the variable to 0 to disable.
+    internal static readonly bool EnablePackedAvx512Rows = EnvDefaultOn("LOKAD_ONNX_PACKED_AVX512_ROWS");
 
     /// Reuse wide tiles for existing per-call packed products with large row/reduction axes.
     internal static readonly bool EnablePackedAvx512Dynamic = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_DYNAMIC");
@@ -34,23 +37,23 @@ internal static class AblationSwitches
     /// Use AVX-512 for prepared full-panel 2/3-row remainders; requires packed AVX-512 rows.
     internal static readonly bool EnablePackedAvx512Narrow = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_NARROW");
 
-    /// Opt-in memoization of failed deferred-release probes whose alias state is unchanged.
-    internal static readonly bool EnableDeferredReleaseCache = EnvIsSet("LOKAD_ONNX_DEFERRED_RELEASE_CACHE");
+    /// Memoization of failed deferred-release probes whose alias state is unchanged.
+    internal static readonly bool EnableDeferredReleaseCache = EnvDefaultOn("LOKAD_ONNX_DEFERRED_RELEASE_CACHE");
 
     /// Retain only already-released arrays across serialized calls, within strict bounds.
-    internal static readonly bool EnableReleasedBufferCache = EnvIsSet("LOKAD_ONNX_RELEASED_BUFFER_CACHE");
+    internal static readonly bool EnableReleasedBufferCache = EnvDefaultOn("LOKAD_ONNX_RELEASED_BUFFER_CACHE");
 
     /// Return the private MatMul result after the trailing Div composite finishes.
-    internal static readonly bool EnableFusedTempRelease = EnvIsSet("LOKAD_ONNX_FUSED_TEMP_RELEASE");
+    internal static readonly bool EnableFusedTempRelease = EnvDefaultOn("LOKAD_ONNX_FUSED_TEMP_RELEASE");
 
     /// Skip exponential polynomial work that the existing underflow guard discards.
-    internal static readonly bool EnableSoftmaxExpPrune = EnvIsSet("LOKAD_ONNX_SOFTMAX_EXP_PRUNE");
+    internal static readonly bool EnableSoftmaxExpPrune = EnvDefaultOn("LOKAD_ONNX_SOFTMAX_EXP_PRUNE");
 
     /// Inline the pruned exponential without changing its arithmetic; requires exp pruning.
-    internal static readonly bool EnableSoftmaxExpInline = EnvIsSet("LOKAD_ONNX_SOFTMAX_EXP_INLINE");
+    internal static readonly bool EnableSoftmaxExpInline = EnvDefaultOn("LOKAD_ONNX_SOFTMAX_EXP_INLINE");
 
     /// Specialize exponentiation after subtracting a softmax row maximum.
-    internal static readonly bool EnableSoftmaxNonpositive = EnvIsSet("LOKAD_ONNX_SOFTMAX_NONPOSITIVE");
+    internal static readonly bool EnableSoftmaxNonpositive = EnvDefaultOn("LOKAD_ONNX_SOFTMAX_NONPOSITIVE");
 
     /// Widen long-row exponentiation while preserving eight-lane sums; requires nonpositive exp.
     internal static readonly bool EnableSoftmaxWideExp = EnvIsSet("LOKAD_ONNX_SOFTMAX_WIDE_EXP");
@@ -58,14 +61,14 @@ internal static class AblationSwitches
     /// Normalize SIMD float softmax rows with one reciprocal and multiplication.
     internal static readonly bool EnableSoftmaxReciprocal = EnvIsSet("LOKAD_ONNX_SOFTMAX_RECIPROCAL");
 
-    // Scheduling experiment: preserve erf arithmetic while removing vector call spills.
-    internal static readonly bool EnableBiasGeluInline = EnvIsSet("LOKAD_ONNX_BIAS_GELU_INLINE");
+    // Preserve erf arithmetic while removing vector call spills.
+    internal static readonly bool EnableBiasGeluInline = EnvDefaultOn("LOKAD_ONNX_BIAS_GELU_INLINE");
 
     /// Interleave four exact erf streams on AVX-512 hosts; requires inline BiasGelu.
     internal static readonly bool EnableBiasGeluInterleaved = EnvIsSet("LOKAD_ONNX_BIAS_GELU_INTERLEAVED");
 
     /// Use the existing exact-copy vector kernels for the two scalar attention faces.
-    internal static readonly bool EnableVectorTransposeFaces = EnvIsSet("LOKAD_ONNX_VECTOR_TRANSPOSE_FACES");
+    internal static readonly bool EnableVectorTransposeFaces = EnvDefaultOn("LOKAD_ONNX_VECTOR_TRANSPOSE_FACES");
 
     /// Drop dead dense Reshape view bindings before retrying their storage owners.
     internal static readonly bool EnableReshapeViewRelease = EnvIsSet("LOKAD_ONNX_RELEASE_RESHAPE_VIEWS");

@@ -48,7 +48,8 @@ pieces kept. Validated ID-for-ID against the Hugging Face reference tokenizer.
 
 `LOKAD_ONNX_PACKED_AVX512_NARROW=1` enables AVX-512 two- and three-row
 remainders for prepared MatMul when `LOKAD_ONNX_PACKED_AVX512_ROWS=1` is also
-set before process startup. Both switches are off by default. The route keeps
+set before process startup. The row-sharing route is enabled by default; the
+narrow-remainder experiment remains off. The route keeps
 the existing 32-column packing, 12/8-row bulk tiles, accumulation order and
 destination behavior. Unsupported hardware, column tails and shapes without
 a narrow remainder use the existing routes. The separate packed-panel
@@ -80,6 +81,6 @@ measurement boundaries and separate scoring requirements.
 `LOKAD_ONNX_BIAS_GELU_INTERLEAVED=1`, together with
 `LOKAD_ONNX_BIAS_GELU_INLINE=1`, interleaves four exact erf streams on qualified
 AVX-512/FMA hosts. Other hardware and unsupported shapes use existing paths.
-Both switches remain off by default. See the
+Inline BiasGelu is enabled by default; interleaving remains off. See the
 [arithmetic proof and whole-model observations](interleaved-gelu-20260919.md)
 for the precise geometry, tests, process variation and retained evidence.

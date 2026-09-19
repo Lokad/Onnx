@@ -67,6 +67,10 @@ The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Re
 
 ## Implementation notes
 
+See [runtime defaults and intermediate lifetime](docs/runtime-options.md) for
+storage reuse limits, explicit `ExecutionOptions.Memory` usage and diagnostic
+controls.
+
 `Lokad.Onnx.Data` includes `WeSpeakerAudio.LogMelFilterbank` for pyannote
 Community-1 embedding inputs. See its [input contract and numerical qualification](tests/pyannote/frontend/README.md).
 `WeSpeakerEmbedder` connects local PCM, optional speaker masks and the split model
