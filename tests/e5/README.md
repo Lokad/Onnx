@@ -31,7 +31,15 @@ semantic ranking margin (>= 0.10, measured 0.18).
 
 ## Current AMD performance
 
-The [September 19 comparison](comparison-20260919.md) records the frozen
+The [fresh public-options / ORT comparison](public-ort-20260919.md) records the
+qualified production defaults in ninety processes and 5,940 measured calls.
+Default/ORT means are 1.0212, 1.1059, 1.0919 and 1.1198 for 8, 30,
+30 padded to 128, and 128 tokens. Explicit Memory ratios are 0.9747, 1.0808,
+1.0751 and 1.0746. Thus three primary cases still exceed the 5% target in
+these descriptive observations. Complete output/ownership checks pass;
+historical statistical qualification remains unresolved.
+
+The [earlier September 19 comparison](comparison-20260919.md) records the frozen
 release, current experimental configuration and native ORT on the designated
 AMD host. Current mean latency is 38–62% below release on the primary cases.
 Current/ORT mean ratios are 0.9472, 1.0831, 1.0740 and 1.0731 for 8, 30,

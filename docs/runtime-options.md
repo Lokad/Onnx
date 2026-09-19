@@ -62,3 +62,8 @@ GC and retained-memory observations. The disabled-path control uses the same
 current core; its observed gains must not be relabeled as a new release/ORT
 comparison. [Functional qualification](../tests/e5/defaults-20260919.md) records
 shared-model and audio checks, including the known numerical failures.
+
+The later [fresh native comparison](../tests/e5/public-ort-20260919.md) measures
+both public choices against ORT in ninety balanced, sequential processes.
+It reports all current per-case gaps and process ranges without claiming
+calibrated parity or combining historical timings.

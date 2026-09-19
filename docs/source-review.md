@@ -26,8 +26,9 @@ erf scheduling. The [runtime options](runtime-options.md) describe the selected
 defaults and their diagnostic controls. Narrow projection tiles, interleaved
 GELU, wider/reciprocal softmax and dynamic/segmented experiments remain opt-in.
 
-The [frozen e5 comparison](../tests/e5/comparison-20260919.md) records the model
-results and remaining gap. The [interleaved GELU report](../tests/e5/interleaved-gelu-20260919.md)
+The [fresh public-options / ORT comparison](../tests/e5/public-ort-20260919.md)
+records the current gap; the [earlier release comparison](../tests/e5/comparison-20260919.md)
+retains its historical source and experimental settings. The [interleaved GELU report](../tests/e5/interleaved-gelu-20260919.md)
 illustrates why a large microbenchmark improvement did not justify another
 default change. Source analysis, dispatch evidence and timing are separate forms
 of evidence.
