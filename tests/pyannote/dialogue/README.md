@@ -98,3 +98,10 @@ additional count-only overlap speakers. This sample supports retaining context
 across turns; it does not establish general accuracy or identify the speakers.
 Initial local process peaks stay below 3.70 GB in these finite runs. AMD replay
 and longer-recording resource qualification remain separate requirements.
+
+A clean SDK 10.0.204 source-archive build at `21f3e74` reproduces all 204 native
+arrays and repeats the 22 API requests with identical public and intermediate
+results. Eighteen malformed-evidence refusals and the metric's exact examples
+pass. Its peak working set is 4,055,748,608 bytes; these finite observations are
+not a maximum-duration memory bound. The same 19 filterbank failures remain.
+Archive SHA256: `c9f21629dca5c56536b25d133362fe22eb83f9419420fa19f7f27da03ee0e4d6`.
