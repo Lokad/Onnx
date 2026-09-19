@@ -38,6 +38,11 @@ Current/ORT mean ratios are 0.9472, 1.0831, 1.0740 and 1.0731 for 8, 30,
 30 padded to 128, and 128 tokens. These are descriptive observations with
 process variation retained; they do not certify parity or change defaults.
 
+The [CPU defaults qualification](defaults-20260919.md) records full local/AMD
+regressions, audio decisions, resource observations and package consumption for
+the nine enabled mechanisms. It separates those checks from measurement of the
+actual public Default and Memory configurations.
+
 ## Tokenizer rule
 
 The Python oracle reproduces the XLM-R fairseq framing independently with the
