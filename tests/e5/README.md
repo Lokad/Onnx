@@ -74,3 +74,12 @@ The successful result archive SHA-256 is
 `7b216fcf139f008aa94fc9ead98b1b999161731162cf1075ae6b2b40037190bd`.
 See [the isolated evidence protocol](../../eng/isolated-evidence.md) for the
 measurement boundaries and separate scoring requirements.
+
+## Experimental exact BiasGelu scheduling
+
+`LOKAD_ONNX_BIAS_GELU_INTERLEAVED=1`, together with
+`LOKAD_ONNX_BIAS_GELU_INLINE=1`, interleaves four exact erf streams on qualified
+AVX-512/FMA hosts. Other hardware and unsupported shapes use existing paths.
+Both switches remain off by default. See the
+[arithmetic proof and whole-model observations](interleaved-gelu-20260919.md)
+for the precise geometry, tests, process variation and retained evidence.
