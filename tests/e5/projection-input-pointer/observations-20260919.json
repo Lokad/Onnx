@@ -1,0 +1,7350 @@
+{
+  "schema": 1,
+  "source_commit": "788b8cbe44dd6739611e84d86774e654f84aee7e",
+  "correctness_pass": true,
+  "performance": {
+    "controls_pass": true,
+    "primary_gain_pass": false,
+    "other_rows_pass": false,
+    "nominated": false,
+    "bank": [
+      {
+        "m": 8,
+        "indexed_ratios": [
+          1.0085000971439673,
+          0.9867491573941548,
+          0.9953618033693014,
+          1.011160178562857
+        ],
+        "pointer_over_indexed": [
+          1.0062611376005395,
+          0.9684868051656373,
+          0.9982616253802694,
+          0.9888443189100663
+        ],
+        "duplicate_ratios": [
+          1.0080872352826888,
+          0.987095433768872,
+          1.0144432962437815,
+          1.0150482407718524
+        ],
+        "duplicate_geometric_mean": 1.0061041247022022,
+        "control_passes": true,
+        "median_ms": [
+          {
+            "0": 4.1176,
+            "1": 4.1509,
+            "2": 4.1526,
+            "3": 4.1786
+          },
+          {
+            "0": 4.3318,
+            "1": 4.2759,
+            "2": 4.2744,
+            "3": 4.1397
+          },
+          {
+            "0": 4.1611,
+            "1": 4.2212,
+            "2": 4.1418,
+            "3": 4.1346
+          },
+          {
+            "0": 4.1666,
+            "1": 4.2293,
+            "2": 4.2131,
+            "3": 4.1661
+          }
+        ],
+        "comparisons": [
+          {
+            "control": 0,
+            "ratios": [
+              1.014814455022343,
+              0.9556535389445496,
+              0.9936314916728749,
+              0.9998799980799693
+            ],
+            "geometric_mean": 0.9907522933436855,
+            "passes": true
+          },
+          {
+            "control": 1,
+            "ratios": [
+              1.006673251583994,
+              0.9681470567599805,
+              0.9794845067753246,
+              0.9850566287565318
+            ],
+            "geometric_mean": 0.9847413095905351,
+            "passes": true
+          }
+        ]
+      },
+      {
+        "m": 30,
+        "indexed_ratios": [
+          1.026116117572296,
+          1.027440503287338,
+          1.0441007436136025,
+          1.031729993439854
+        ],
+        "pointer_over_indexed": [
+          0.98189822414565,
+          0.9785220372468695,
+          1.0004193845531681,
+          0.9959364745262266
+        ],
+        "duplicate_ratios": [
+          0.9984457426364186,
+          0.9873058754169806,
+          1.0172649719678784,
+          0.9828380548790143
+        ],
+        "duplicate_geometric_mean": 0.9963755486887959,
+        "control_passes": true,
+        "median_ms": [
+          {
+            "0": 13.0609,
+            "1": 13.0406,
+            "2": 13.402,
+            "3": 13.1594
+          },
+          {
+            "0": 13.3999,
+            "1": 13.2298,
+            "2": 13.7676,
+            "3": 13.4719
+          },
+          {
+            "0": 12.7889,
+            "1": 13.0097,
+            "2": 13.3529,
+            "3": 13.3585
+          },
+          {
+            "0": 13.2619,
+            "1": 13.0343,
+            "2": 13.6827,
+            "3": 13.6271
+          }
+        ],
+        "comparisons": [
+          {
+            "control": 0,
+            "ratios": [
+              1.0075415936114662,
+              1.0053731744266747,
+              1.0445386233374254,
+              1.027537532329455
+            ],
+            "geometric_mean": 1.0211231413924526,
+            "passes": false
+          },
+          {
+            "control": 1,
+            "ratios": [
+              1.0091100102756008,
+              1.0182995963657804,
+              1.0268107642758864,
+              1.0454800027619435
+            ],
+            "geometric_mean": 1.0248376154314747,
+            "passes": false
+          }
+        ]
+      },
+      {
+        "m": 128,
+        "indexed_ratios": [
+          1.0381318825559958,
+          1.0276124861520433,
+          1.0137696237519216,
+          1.0320325909788894
+        ],
+        "pointer_over_indexed": [
+          0.9892867185126335,
+          1.0054885197988865,
+          1.0170596186763574,
+          0.9900590399295864
+        ],
+        "duplicate_ratios": [
+          0.9953001240109004,
+          1.0009720247022325,
+          0.9910751719747201,
+          0.9997758583739508
+        ],
+        "duplicate_geometric_mean": 0.9967731021242308,
+        "control_passes": true,
+        "median_ms": [
+          {
+            "0": 51.0439,
+            "1": 50.804,
+            "2": 52.9903,
+            "3": 52.4226
+          },
+          {
+            "0": 51.5419,
+            "1": 51.592,
+            "2": 52.9651,
+            "3": 53.2558
+          },
+          {
+            "0": 51.5192,
+            "1": 51.0594,
+            "2": 52.2286,
+            "3": 53.1196
+          },
+          {
+            "0": 50.8607,
+            "1": 50.8493,
+            "2": 52.4899,
+            "3": 51.9681
+          }
+        ],
+        "comparisons": [
+          {
+            "control": 0,
+            "ratios": [
+              1.0270100834771638,
+              1.0332525576278717,
+              1.0310641469588038,
+              1.0217731962006027
+            ],
+            "geometric_mean": 1.02826569466381,
+            "passes": false
+          },
+          {
+            "control": 1,
+            "ratios": [
+              1.0318596960869224,
+              1.0322491859202978,
+              1.0403490836163372,
+              1.0220022694511035
+            ],
+            "geometric_mean": 1.0315945449094335,
+            "passes": false
+          }
+        ]
+      },
+      {
+        "m": 512,
+        "indexed_ratios": [
+          1.0458778082142783,
+          1.0381439075510572,
+          1.032396249687927,
+          1.0583634773823267
+        ],
+        "pointer_over_indexed": [
+          0.9961173865936314,
+          1.001554156162871,
+          0.9953521892261391,
+          0.9859003333467515
+        ],
+        "duplicate_ratios": [
+          1.002453632359531,
+          0.9921874342079516,
+          0.9894303095020924,
+          1.0096908975453986
+        ],
+        "duplicate_geometric_mean": 0.9984076887980807,
+        "control_passes": true,
+        "median_ms": [
+          {
+            "0": 201.2934,
+            "1": 201.7873,
+            "2": 210.5283,
+            "3": 209.7109
+          },
+          {
+            "0": 201.8671,
+            "1": 200.29,
+            "2": 209.5671,
+            "3": 209.8928
+          },
+          {
+            "0": 202.2765,
+            "1": 200.1385,
+            "2": 208.8295,
+            "3": 207.8589
+          },
+          {
+            "0": 197.1644,
+            "1": 199.0751,
+            "2": 208.6716,
+            "3": 205.7294
+          }
+        ],
+        "comparisons": [
+          {
+            "control": 0,
+            "ratios": [
+              1.0418170690146822,
+              1.0397573453029245,
+              1.027597867275734,
+              1.043440905153263
+            ],
+            "geometric_mean": 1.0381345129732926,
+            "passes": false
+          },
+          {
+            "control": 1,
+            "ratios": [
+              1.0392670896533134,
+              1.0479444805032703,
+              1.0385752866140199,
+              1.0334260789018819
+            ],
+            "geometric_mean": 1.0397901825285787,
+            "passes": false
+          }
+        ]
+      }
+    ]
+  },
+  "measured_batches": 1792,
+  "code": {
+    "passed": true,
+    "methods": [
+      {
+        "method": "Kernels.PackedTile12",
+        "code_bytes": 1135,
+        "hot_loop": "G_M000_IG06:                ;; offset=0x0230\n       mov      r9d, edx\n       shl      r9d, 5\n       movsxd   r9, r9d\n       mov      r10, qword ptr [rbp-0x40]\n       lea      r9, [r10+4*r9]\n       vmovups  zmm24, zmmword ptr [r9]\n       vmovups  zmm25, zmmword ptr [r9+0x40]\n       movsxd   r9, edx\n       vbroadcastss zmm26, dword ptr [r8+4*r9]\n       vfmadd231ps zmm0, zmm24, zmm26\n       vfmadd231ps zmm1, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [rdi+4*r9]\n       vfmadd231ps zmm2, zmm24, zmm26\n       vfmadd231ps zmm3, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [rax+4*r9]\n       vfmadd231ps zmm4, zmm24, zmm26\n       vfmadd231ps zmm5, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r15+4*r9]\n       vfmadd231ps zmm6, zmm24, zmm26\n       vfmadd231ps zmm7, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r12+4*r9]\n       vfmadd231ps zmm8, zmm24, zmm26\n       vfmadd231ps zmm9, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r13+4*r9]\n       vfmadd231ps zmm10, zmm24, zmm26\n       vfmadd231ps zmm11, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r11+4*r9]\n       vfmadd231ps zmm12, zmm24, zmm26\n       vfmadd231ps zmm13, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r14+4*r9]\n       vfmadd231ps zmm14, zmm24, zmm26\n       vfmadd231ps zmm15, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [rbx+4*r9]\n       vfmadd231ps zmm16, zmm24, zmm26\n       vfmadd231ps zmm17, zmm25, zmm26\n       mov      r10, qword ptr [rbp-0x58]\n       vbroadcastss zmm26, dword ptr [r10+4*r9]\n       vfmadd231ps zmm18, zmm24, zmm26\n       vfmadd231ps zmm19, zmm25, zmm26\n       mov      r10, qword ptr [rbp-0x60]\n       vbroadcastss zmm26, dword ptr [r10+4*r9]\n       vfmadd231ps zmm20, zmm24, zmm26\n       vfmadd231ps zmm21, zmm25, zmm26\n       mov      r10, qword ptr [rbp-0x68]\n       vbroadcastss zmm26, dword ptr [r10+4*r9]\n       vfmadd231ps zmm22, zmm24, zmm26\n       vfmadd231ps zmm23, zmm25, zmm26\n       inc      edx\n       cmp      edx, esi\n       jl       G_M000_IG06",
+        "fma": 24,
+        "broadcasts": 12,
+        "movsxd": 2,
+        "lea": 1,
+        "hot_stack": [
+          "mov      r10, qword ptr [rbp-0x40]",
+          "mov      r10, qword ptr [rbp-0x58]",
+          "mov      r10, qword ptr [rbp-0x60]",
+          "mov      r10, qword ptr [rbp-0x68]"
+        ],
+        "vector_stack": [],
+        "calls": []
+      },
+      {
+        "method": "InputPacked.PackedTile12",
+        "code_bytes": 1009,
+        "hot_loop": "G_M000_IG05:                ;; offset=0x018F\n       mov      r12d, r15d\n       shl      r12d, 5\n       movsxd   r12, r12d\n       lea      r12, [rcx+4*r12]\n       vmovups  zmm24, zmmword ptr [r12]\n       vmovups  zmm25, zmmword ptr [r12+0x40]\n       lea      r12d, [r15+2*r15]\n       shl      r12d, 2\n       movsxd   r11, r12d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm0, zmm24, zmm26\n       vfmadd231ps zmm1, zmm25, zmm26\n       lea      r11d, [r12+0x01]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm2, zmm24, zmm26\n       vfmadd231ps zmm3, zmm25, zmm26\n       lea      r11d, [r12+0x02]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm4, zmm24, zmm26\n       vfmadd231ps zmm5, zmm25, zmm26\n       lea      r11d, [r12+0x03]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm6, zmm24, zmm26\n       vfmadd231ps zmm7, zmm25, zmm26\n       lea      r11d, [r12+0x04]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm8, zmm24, zmm26\n       vfmadd231ps zmm9, zmm25, zmm26\n       lea      r11d, [r12+0x05]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm10, zmm24, zmm26\n       vfmadd231ps zmm11, zmm25, zmm26\n       lea      r11d, [r12+0x06]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm12, zmm24, zmm26\n       vfmadd231ps zmm13, zmm25, zmm26\n       lea      r11d, [r12+0x07]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm14, zmm24, zmm26\n       vfmadd231ps zmm15, zmm25, zmm26\n       lea      r11d, [r12+0x08]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm16, zmm24, zmm26\n       vfmadd231ps zmm17, zmm25, zmm26\n       lea      r11d, [r12+0x09]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm18, zmm24, zmm26\n       vfmadd231ps zmm19, zmm25, zmm26\n       lea      r11d, [r12+0x0A]\n       movsxd   r11, r11d\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm20, zmm24, zmm26\n       vfmadd231ps zmm21, zmm25, zmm26\n       add      r12d, 11\n       movsxd   r11, r12d\n \nG_M000_IG06:                ;; offset=0x02DF\n       vbroadcastss zmm26, dword ptr [r8+4*r11]\n       vfmadd231ps zmm22, zmm24, zmm26\n       vfmadd231ps zmm23, zmm25, zmm26\n       inc      r15d\n       cmp      r15d, esi\n       jl       G_M000_IG05",
+        "fma": 24,
+        "broadcasts": 12,
+        "movsxd": 13,
+        "lea": 12,
+        "hot_stack": [],
+        "vector_stack": [],
+        "calls": []
+      },
+      {
+        "method": "InputPointer.PackedTile12",
+        "code_bytes": 903,
+        "hot_loop": "G_M000_IG05:                ;; offset=0x0188\n       mov      r12d, r15d\n       shl      r12d, 5\n       movsxd   r12, r12d\n       lea      r12, [rcx+4*r12]\n       vmovups  zmm24, zmmword ptr [r12]\n       vmovups  zmm25, zmmword ptr [r12+0x40]\n       vbroadcastss zmm26, dword ptr [r8]\n       vfmadd231ps zmm0, zmm24, zmm26\n       vfmadd231ps zmm1, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x04]\n       vfmadd231ps zmm2, zmm24, zmm26\n       vfmadd231ps zmm3, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x08]\n       vfmadd231ps zmm4, zmm24, zmm26\n       vfmadd231ps zmm5, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x0C]\n       vfmadd231ps zmm6, zmm24, zmm26\n       vfmadd231ps zmm7, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x10]\n       vfmadd231ps zmm8, zmm24, zmm26\n       vfmadd231ps zmm9, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x14]\n       vfmadd231ps zmm10, zmm24, zmm26\n       vfmadd231ps zmm11, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x18]\n       vfmadd231ps zmm12, zmm24, zmm26\n       vfmadd231ps zmm13, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x1C]\n       vfmadd231ps zmm14, zmm24, zmm26\n       vfmadd231ps zmm15, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x20]\n       vfmadd231ps zmm16, zmm24, zmm26\n       vfmadd231ps zmm17, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x24]\n       vfmadd231ps zmm18, zmm24, zmm26\n       vfmadd231ps zmm19, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x28]\n       vfmadd231ps zmm20, zmm24, zmm26\n       vfmadd231ps zmm21, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+0x2C]\n       vfmadd231ps zmm22, zmm24, zmm26\n       vfmadd231ps zmm23, zmm25, zmm26\n       inc      r15d\n       add      r8, 48\n       cmp      r15d, esi\n       jl       G_M000_IG05",
+        "fma": 24,
+        "broadcasts": 12,
+        "movsxd": 1,
+        "lea": 1,
+        "hot_stack": [],
+        "vector_stack": [],
+        "calls": []
+      }
+    ],
+    "pointer": {
+      "passed": true,
+      "base_register": "r8",
+      "byte_offsets": [
+        0,
+        4,
+        8,
+        12,
+        16,
+        20,
+        24,
+        28,
+        32,
+        36,
+        40,
+        44
+      ],
+      "advance_bytes": 48
+    }
+  },
+  "proof_closed_sha256": "3df78942c51c98176adf6c1356bc32263f546fc7b73a37950a5d7c0b8ec12611",
+  "proof_audit_sha256": "e8fe9e8e28918bcb6dfaba9d0aa5fa296e83bdc198117f341a42db176ef1beaa",
+  "proof_archive_sha256": "4dd439a51f33af7a17e3a843e5abd4d7242bda381b03d1197608bdcf3102a9ad",
+  "audit_sha256": "adb8d83bfc9498a69b5438fac37c32cd19a14c20d441377fcac177e3a7263029",
+  "archive_sha256": "0cb66313152a4484ad9d743b68ade03822730415c95d75e07a525d5208cabf02",
+  "collection_sha256": "b8cf09f6462062b8bff9d9982a5c73c2e857bf39aa45902f23987de892cd4687",
+  "bundle_sha256": "0aa381d8b584fb08338387d6812511434bf98777045f6a87f8a520ce582ae375",
+  "core_sha256": "05884cfd524cc7130321f5dc1bcd0af17dddc7b97e8428d2d2f59e00edb795c2",
+  "producer_sha256": "dae001d4a501c6a1dedc0e886ee40dbac326867e17fef5f86c5270178b054808",
+  "codegen_sha256": "bbb2b2b323012dde3669c11d20c2249449255fa4da127586dddadd259b8ad56c",
+  "resources": {
+    "proof": [
+      {
+        "name": "proof",
+        "seconds": 0.5583013450086582,
+        "samples": 5,
+        "peak_rss": 107528192,
+        "minimum_available": 15894482944,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0,
+          "foreign_cpu_seconds": 0.0,
+          "wall_seconds": 0.562928578001447,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      }
+    ],
+    "timing": [
+      {
+        "name": "1",
+        "seconds": 18.756641970016062,
+        "samples": 72,
+        "peak_rss": 224514048,
+        "minimum_available": 15780438016,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0005330055119460923,
+          "foreign_cpu_seconds": 0.03999999999999604,
+          "wall_seconds": 18.761532058997545,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "2",
+        "seconds": 19.014145199005725,
+        "samples": 73,
+        "peak_rss": 229986304,
+        "minimum_available": 15770415104,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0005257838251430956,
+          "foreign_cpu_seconds": 0.039999999999988906,
+          "wall_seconds": 19.01922334198025,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "3",
+        "seconds": 18.74879934900673,
+        "samples": 72,
+        "peak_rss": 224202752,
+        "minimum_available": 15768809472,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0005332272802859254,
+          "foreign_cpu_seconds": 0.04000000000000824,
+          "wall_seconds": 18.75372916899505,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      {
+        "name": "4",
+        "seconds": 18.780904090002878,
+        "samples": 72,
+        "peak_rss": 223952896,
+        "minimum_available": 15755608064,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0011977069441272763,
+          "foreign_cpu_seconds": 0.09000000000000741,
+          "wall_seconds": 18.785897594003472,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      }
+    ]
+  },
+  "timings": [
+    {
+      "order": 1,
+      "isolated": [
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0218234375,
+            0.021846875,
+            0.0216671875,
+            0.0221578125,
+            0.0218296875,
+            0.0217390625,
+            0.022053125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0220046875,
+            0.0221453125,
+            0.02184375,
+            0.0219671875,
+            0.0221984375,
+            0.0219375,
+            0.022278125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.021590625,
+            0.0216890625,
+            0.0217125,
+            0.0216890625,
+            0.0218921875,
+            0.0219546875,
+            0.0221328125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0219234375,
+            0.0216890625,
+            0.0219546875,
+            0.0218609375,
+            0.0215375,
+            0.0222640625,
+            0.0217328125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0874875,
+            0.087996875,
+            0.08945625,
+            0.0901390625,
+            0.0893765625,
+            0.089190625,
+            0.08795625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0882109375,
+            0.0883984375,
+            0.0886609375,
+            0.087859375,
+            0.0875578125,
+            0.0867484375,
+            0.086865625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0862734375,
+            0.0852390625,
+            0.08649375,
+            0.086246875,
+            0.085578125,
+            0.08636875,
+            0.0864109375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.08634375,
+            0.08661875,
+            0.086909375,
+            0.087484375,
+            0.0873359375,
+            0.0865859375,
+            0.0861390625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0833734375,
+            0.082571875,
+            0.081965625,
+            0.0822828125,
+            0.0822265625,
+            0.082759375,
+            0.08385625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0846796875,
+            0.0867484375,
+            0.08679375,
+            0.0875703125,
+            0.088640625,
+            0.0873390625,
+            0.086615625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0874765625,
+            0.0869140625,
+            0.0864015625,
+            0.08663125,
+            0.08633125,
+            0.086346875,
+            0.0857671875
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.086940625,
+            0.08875,
+            0.0870546875,
+            0.08721875,
+            0.086578125,
+            0.085715625,
+            0.0861453125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.1040625,
+            0.1047375,
+            0.105540625,
+            0.1079609375,
+            0.1066203125,
+            0.1054078125,
+            0.10383125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.10401875,
+            0.103790625,
+            0.10356875,
+            0.1037671875,
+            0.103040625,
+            0.102284375,
+            0.1012609375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.097571875,
+            0.0971765625,
+            0.098103125,
+            0.09839375,
+            0.098246875,
+            0.10088125,
+            0.1014953125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.1011828125,
+            0.100240625,
+            0.0998953125,
+            0.1011828125,
+            0.1022578125,
+            0.10215,
+            0.1019234375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.348346875,
+            0.345821875,
+            0.349553125,
+            0.3525328125,
+            0.35338125,
+            0.3530609375,
+            0.3467046875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.354403125,
+            0.349171875,
+            0.343109375,
+            0.3432921875,
+            0.3422125,
+            0.3395890625,
+            0.338190625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.346496875,
+            0.34574375,
+            0.342553125,
+            0.34126875,
+            0.3454,
+            0.34823125,
+            0.3434921875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.34780625,
+            0.3485984375,
+            0.3434109375,
+            0.3407875,
+            0.3454875,
+            0.343628125,
+            0.3450203125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3458078125,
+            0.3488015625,
+            0.675409375,
+            0.355846875,
+            0.354040625,
+            0.345053125,
+            0.34368125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3482953125,
+            0.348484375,
+            0.3454,
+            0.35010625,
+            0.35275625,
+            0.433690625,
+            0.4502984375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3404265625,
+            0.32524375,
+            0.32425,
+            0.3197875,
+            0.320603125,
+            0.32325,
+            0.32628125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3237765625,
+            0.3329109375,
+            0.322734375,
+            0.3209484375,
+            0.321771875,
+            0.3204546875,
+            0.321884375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.34760625,
+            0.3462125,
+            0.3448125,
+            0.3454,
+            0.3463125,
+            0.34574375,
+            0.34285
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.33900625,
+            0.34123125,
+            0.342225,
+            0.3567,
+            0.3429,
+            0.3406375,
+            0.336325
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3614875,
+            0.3583875,
+            0.35853125,
+            0.35848125,
+            0.36018125,
+            0.361425,
+            0.362075
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.36116875,
+            0.36271875,
+            0.39675625,
+            0.3612125,
+            0.46471875,
+            0.35539375,
+            0.3586375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.39511875,
+            1.3879125,
+            1.39593125,
+            1.367625,
+            1.373325,
+            1.40835625,
+            1.4163625
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 5568,
+          "samples_ms": [
+            1.40178125,
+            1.43186875,
+            1.4251,
+            1.402525,
+            1.4142,
+            1.42288125,
+            1.4285625
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.4036875,
+            1.36983125,
+            1.40215625,
+            1.39251875,
+            1.41339375,
+            1.40239375,
+            1.40129375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.410125,
+            1.41774375,
+            1.40140625,
+            1.39785625,
+            1.38225,
+            1.37028125,
+            1.3848875
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 976,
+          "samples_ms": [
+            1.3549625,
+            1.31450625,
+            1.31726875,
+            1.33258125,
+            1.3506375,
+            1.3595625,
+            1.361775
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 832,
+          "samples_ms": [
+            1.326775,
+            1.330525,
+            1.3260875,
+            1.33324375,
+            1.36661875,
+            1.37043125,
+            1.36271875
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 2280,
+          "samples_ms": [
+            1.43255625,
+            1.424225,
+            1.4301875,
+            1.41880625,
+            1.42885,
+            1.431875,
+            1.45798125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.42591875,
+            1.4166625,
+            1.41945,
+            1.41545,
+            1.42874375,
+            1.43129375,
+            1.43029375
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.403725,
+            1.40185,
+            1.40885,
+            1.401,
+            1.404,
+            1.418475,
+            1.425575
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.44475,
+            1.468975,
+            1.472525,
+            1.46425,
+            1.4555,
+            1.443975,
+            1.5054
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.38185,
+            1.3864,
+            1.394525,
+            1.408075,
+            1.3946,
+            1.38755,
+            1.386725
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.410575,
+            1.4075,
+            1.42485,
+            1.418375,
+            1.395575,
+            1.3935,
+            1.39685
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 1248,
+          "samples_ms": [
+            5.5223,
+            5.469,
+            5.461025,
+            5.50125,
+            5.538025,
+            5.6694,
+            5.58915
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 904,
+          "samples_ms": [
+            5.54525,
+            5.638275,
+            5.5595,
+            5.5595,
+            5.6587,
+            5.756675,
+            5.768275
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 760,
+          "samples_ms": [
+            5.5975,
+            5.75625,
+            5.674975,
+            5.703325,
+            5.71145,
+            5.719875,
+            5.6896
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 888,
+          "samples_ms": [
+            5.715575,
+            5.731075,
+            5.677675,
+            5.53005,
+            5.481125,
+            5.526825,
+            5.459825
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 4195416,
+          "samples_ms": [
+            5.724575,
+            5.7343,
+            5.722725,
+            5.7209,
+            5.673875,
+            5.7166,
+            5.704275
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 736,
+          "samples_ms": [
+            5.598875,
+            5.701,
+            5.7644,
+            5.82185,
+            5.813275,
+            5.7768,
+            5.8141
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 1360,
+          "samples_ms": [
+            5.519225,
+            5.5349,
+            5.5702,
+            5.56795,
+            5.48555,
+            5.5518,
+            5.56685
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 8152,
+          "samples_ms": [
+            5.712875,
+            5.684025,
+            5.767325,
+            5.6799,
+            5.5816,
+            5.645475,
+            5.53465
+          ]
+        }
+      ],
+      "bank": [
+        {
+          "m": 8,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 26784,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.224,
+            4.1692,
+            4.094,
+            4.1129,
+            4.1585,
+            4.1148,
+            4.1176
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32776,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.2153,
+            4.1377,
+            4.1509,
+            4.1853,
+            4.1756,
+            4.1207,
+            4.1211
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 30912,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.0978,
+            4.1558,
+            4.1242,
+            4.1612,
+            4.1335,
+            4.1604,
+            4.1526
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 25040,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.0635,
+            4.1786,
+            4.1542,
+            4.1844,
+            4.248,
+            4.2033,
+            4.1386
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 31568,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.1594,
+            13.1962,
+            13.0166,
+            13.1645,
+            13.1564,
+            13.143,
+            13.1659
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 33000,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.6058,
+            13.3659,
+            13.4377,
+            13.6292,
+            13.402,
+            13.3172,
+            13.2725
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 27048,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.2258,
+            13.0211,
+            12.9901,
+            13.113,
+            13.0406,
+            13.0667,
+            12.9848
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 30264,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.0638,
+            13.1898,
+            13.1834,
+            12.8893,
+            12.8279,
+            13.0602,
+            13.0609
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            50.2572,
+            51.1697,
+            50.1999,
+            49.6312,
+            51.2249,
+            51.0439,
+            51.4025
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 26512,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            52.0689,
+            51.3511,
+            51.0348,
+            50.804,
+            50.7995,
+            50.7937,
+            50.7016
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 38696,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            52.2468,
+            52.0411,
+            52.5923,
+            53.8858,
+            53.4841,
+            52.9903,
+            53.2659
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24600,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            52.6036,
+            52.5004,
+            52.008,
+            51.9629,
+            51.2218,
+            52.4226,
+            53.098
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            210.1307,
+            208.8736,
+            209.2075,
+            208.8172,
+            210.9719,
+            209.7109,
+            210.3327
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            211.0334,
+            208.4299,
+            209.7848,
+            211.1123,
+            210.5283,
+            210.3778,
+            210.6094
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 27864,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            199.7811,
+            201.6318,
+            202.5121,
+            205.8481,
+            202.7604,
+            201.7873,
+            200.6989
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24600,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            197.2301,
+            201.4689,
+            200.1511,
+            200.8496,
+            201.8965,
+            203.7396,
+            201.2934
+          ]
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "isolated": [
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0213859375,
+            0.0211421875,
+            0.0211359375,
+            0.02098125,
+            0.020859375,
+            0.02135625,
+            0.0209453125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.020975,
+            0.0212109375,
+            0.02101875,
+            0.021034375,
+            0.0213515625,
+            0.0213125,
+            0.0211109375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0211671875,
+            0.020915625,
+            0.0218078125,
+            0.0210703125,
+            0.0210546875,
+            0.0211484375,
+            0.021128125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0209875,
+            0.0210125,
+            0.0212625,
+            0.021146875,
+            0.0211671875,
+            0.021275,
+            0.0217140625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0863890625,
+            0.085734375,
+            0.0868609375,
+            0.0880015625,
+            0.0871421875,
+            0.0866578125,
+            0.086175
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.086840625,
+            0.0873984375,
+            0.086553125,
+            0.087034375,
+            0.0879484375,
+            0.086928125,
+            0.0861046875
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.08528125,
+            0.08568125,
+            0.084984375,
+            0.08515,
+            0.0858109375,
+            0.086296875,
+            0.0872734375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.08739375,
+            0.0873109375,
+            0.0872234375,
+            0.0855546875,
+            0.0865671875,
+            0.0872125,
+            0.0884234375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0855296875,
+            0.0846828125,
+            0.0847515625,
+            0.085690625,
+            0.085053125,
+            0.0840578125,
+            0.0845015625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.083821875,
+            0.08506875,
+            0.0855671875,
+            0.0854046875,
+            0.085103125,
+            0.085621875,
+            0.0850375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.08606875,
+            0.0862203125,
+            0.0872859375,
+            0.0873625,
+            0.086234375,
+            0.08729375,
+            0.0869296875
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.086103125,
+            0.0875265625,
+            0.0873265625,
+            0.086828125,
+            0.0874015625,
+            0.0863859375,
+            0.0862390625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0959984375,
+            0.0974359375,
+            0.095775,
+            0.0963734375,
+            0.096603125,
+            0.0967765625,
+            0.0982328125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0968546875,
+            0.095415625,
+            0.095440625,
+            0.0950578125,
+            0.095575,
+            0.0943734375,
+            0.0938875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0987203125,
+            0.0972578125,
+            0.0969296875,
+            0.09575625,
+            0.0965046875,
+            0.0966109375,
+            0.0965375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.097278125,
+            0.0978703125,
+            0.0999578125,
+            0.1032109375,
+            0.1025375,
+            0.1027,
+            0.1016765625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3582359375,
+            0.3588515625,
+            0.3466578125,
+            0.3555953125,
+            0.3567359375,
+            0.354628125,
+            0.35219375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3510921875,
+            0.3529296875,
+            0.353265625,
+            0.3497015625,
+            0.3521703125,
+            0.351284375,
+            0.3442734375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3397953125,
+            0.3447515625,
+            0.346615625,
+            0.3459875,
+            0.3466109375,
+            0.34700625,
+            0.344396875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.341734375,
+            0.3447640625,
+            0.339478125,
+            0.3373484375,
+            0.3317453125,
+            0.3365484375,
+            0.342409375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.344253125,
+            0.338790625,
+            0.6400546875,
+            0.3346109375,
+            0.3342390625,
+            0.3354734375,
+            0.3348828125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3425921875,
+            0.341990625,
+            0.33515,
+            0.333759375,
+            0.3337328125,
+            0.336853125,
+            0.398765625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.4277,
+            0.355025,
+            0.3347703125,
+            0.3384640625,
+            0.3428703125,
+            0.3388078125,
+            0.3350796875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.381278125,
+            0.3320125,
+            0.3378078125,
+            0.3287671875,
+            0.3323015625,
+            0.33456875,
+            0.3384828125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.36946875,
+            0.3667125,
+            0.3667375,
+            0.36495625,
+            0.36356875,
+            0.3701875,
+            0.37304375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.36479375,
+            0.3646875,
+            0.36533125,
+            0.36110625,
+            0.3722875,
+            0.358725,
+            0.36824375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.35561875,
+            0.39826875,
+            0.34785625,
+            0.354525,
+            0.3527,
+            0.3477875,
+            0.348125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.35081875,
+            0.3492625,
+            0.343925,
+            0.339725,
+            0.338575,
+            0.3419,
+            0.3357
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.38275625,
+            1.372225,
+            1.34986875,
+            1.36421875,
+            1.36579375,
+            1.35438125,
+            1.34189375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.37869375,
+            1.37395625,
+            1.3725,
+            1.36880625,
+            1.3583375,
+            1.36671875,
+            1.3574125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.3612375,
+            1.35676875,
+            1.37141875,
+            1.4305625,
+            1.4855375,
+            1.4581875,
+            1.41963125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.40925625,
+            1.3907875,
+            1.3989875,
+            1.39455,
+            1.39406875,
+            1.394675,
+            1.39335625
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.445775,
+            1.43420625,
+            1.41860625,
+            1.44195,
+            1.42738125,
+            1.444,
+            1.42674375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.43431875,
+            1.42385,
+            1.4336625,
+            1.4343625,
+            1.433925,
+            1.3967625,
+            1.3856125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.36008125,
+            1.38578125,
+            1.36954375,
+            1.35685625,
+            1.3950125,
+            1.38201875,
+            1.3596625
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.3565625,
+            1.36485625,
+            1.3894625,
+            1.37895625,
+            1.3751625,
+            1.36493125,
+            1.37145
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 8192,
+          "samples_ms": [
+            1.38985,
+            1.380725,
+            1.392575,
+            1.39885,
+            1.3808,
+            1.387225,
+            1.406175
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.38655,
+            1.3689,
+            1.382075,
+            1.388325,
+            1.3921,
+            1.399525,
+            1.39025
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.441175,
+            1.440075,
+            1.449925,
+            1.451,
+            1.468575,
+            1.452525,
+            1.44775
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.49505,
+            1.481425,
+            1.4718,
+            1.461475,
+            1.44945,
+            1.46735,
+            1.47495
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 976,
+          "samples_ms": [
+            5.545825,
+            5.457825,
+            5.5892,
+            5.6443,
+            5.7419,
+            5.805475,
+            5.716475
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 3296,
+          "samples_ms": [
+            5.809875,
+            5.749525,
+            5.8182,
+            5.758125,
+            5.819025,
+            5.79855,
+            5.73155
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            5.5326,
+            5.59945,
+            5.5152,
+            5.488025,
+            5.567625,
+            5.564025,
+            5.600275
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            5.55655,
+            5.43575,
+            5.377525,
+            5.449325,
+            5.5988,
+            5.614325,
+            5.89355
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 840,
+          "samples_ms": [
+            5.521475,
+            5.533375,
+            5.5615,
+            5.461825,
+            5.470625,
+            5.5299,
+            5.485275
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 888,
+          "samples_ms": [
+            5.475175,
+            5.479175,
+            5.488,
+            5.4612,
+            5.50135,
+            5.4794,
+            5.50625
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 4195232,
+          "samples_ms": [
+            5.761,
+            5.76485,
+            5.602325,
+            5.6202,
+            5.736225,
+            5.771475,
+            5.741975
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 888,
+          "samples_ms": [
+            5.766975,
+            5.817275,
+            5.811575,
+            5.852225,
+            5.8549,
+            5.8057,
+            5.919675
+          ]
+        }
+      ],
+      "bank": [
+        {
+          "m": 8,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 31192,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.1397,
+            4.2711,
+            4.1459,
+            4.1517,
+            4.0592,
+            4.0711,
+            4.1244
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 31768,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.2352,
+            4.2754,
+            4.2744,
+            4.2876,
+            4.2334,
+            4.3006,
+            4.2115
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 31264,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.1566,
+            4.254,
+            4.255,
+            4.3159,
+            4.3214,
+            4.2759,
+            4.3265
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 35952,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.2941,
+            4.2659,
+            4.3318,
+            4.3045,
+            4.3758,
+            4.3839,
+            4.4693
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.3999,
+            13.713,
+            13.5041,
+            13.6333,
+            13.3576,
+            13.3116,
+            13.1941
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32152,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.5384,
+            13.293,
+            13.0737,
+            12.9785,
+            13.043,
+            13.2496,
+            13.2298
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 29664,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.6622,
+            13.8224,
+            14.0887,
+            13.7676,
+            13.7493,
+            13.8207,
+            13.6543
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.3591,
+            13.2277,
+            13.3775,
+            13.4719,
+            13.6262,
+            13.6098,
+            13.6368
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 31312,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            53.0064,
+            52.9263,
+            53.3946,
+            53.2558,
+            53.6291,
+            51.9197,
+            61.0139
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24600,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            51.1488,
+            51.4453,
+            53.167,
+            52.9651,
+            52.6778,
+            53.2293,
+            53.275
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24488,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            51.328,
+            51.5916,
+            50.7977,
+            51.6833,
+            51.592,
+            53.8122,
+            52.9465
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 30736,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            51.6942,
+            52.561,
+            51.5419,
+            50.563,
+            50.8399,
+            51.592,
+            51.2116
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24600,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            203.3271,
+            201.8671,
+            200.909,
+            203.2914,
+            200.159,
+            198.2615,
+            203.7615
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            198.1359,
+            197.7723,
+            202.1333,
+            202.0263,
+            200.29,
+            201.4909,
+            199.2093
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            207.1167,
+            210.3743,
+            210.3951,
+            206.2979,
+            209.5671,
+            211.8598,
+            208.0835
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            211.7631,
+            218.2395,
+            207.6119,
+            209.8928,
+            210.1862,
+            206.8859,
+            208.9298
+          ]
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "isolated": [
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.02195625,
+            0.0218140625,
+            0.022071875,
+            0.021871875,
+            0.0224171875,
+            0.021740625,
+            0.0216390625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0224140625,
+            0.0220671875,
+            0.0221625,
+            0.0220765625,
+            0.0219625,
+            0.0220515625,
+            0.0218953125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0222046875,
+            0.0216609375,
+            0.0216,
+            0.021834375,
+            0.0220203125,
+            0.0218015625,
+            0.0217
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.021796875,
+            0.0218046875,
+            0.02169375,
+            0.0217703125,
+            0.0220359375,
+            0.021525,
+            0.021709375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0890234375,
+            0.087671875,
+            0.088625,
+            0.089634375,
+            0.0888984375,
+            0.0893125,
+            0.0897953125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0892828125,
+            0.0895390625,
+            0.0890609375,
+            0.08878125,
+            0.08898125,
+            0.089496875,
+            0.089415625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.089603125,
+            0.0885546875,
+            0.0876609375,
+            0.0880109375,
+            0.087509375,
+            0.0877859375,
+            0.08725
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0877875,
+            0.0877171875,
+            0.0875703125,
+            0.0884109375,
+            0.088540625,
+            0.08834375,
+            0.087959375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0860875,
+            0.085821875,
+            0.08553125,
+            0.08538125,
+            0.0847375,
+            0.0850734375,
+            0.085365625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.08421875,
+            0.08455,
+            0.085390625,
+            0.0867453125,
+            0.0864765625,
+            0.0856265625,
+            0.0856984375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.08555,
+            0.0854140625,
+            0.0856609375,
+            0.0862703125,
+            0.085684375,
+            0.0842296875,
+            0.0843546875
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0844765625,
+            0.08413125,
+            0.084665625,
+            0.084165625,
+            0.0855234375,
+            0.08519375,
+            0.0849640625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.097065625,
+            0.0973171875,
+            0.0971125,
+            0.0969375,
+            0.095984375,
+            0.0956359375,
+            0.0948234375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0955140625,
+            0.0950265625,
+            0.0947203125,
+            0.0948671875,
+            0.0952828125,
+            0.096703125,
+            0.0973796875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.09365625,
+            0.091684375,
+            0.0914453125,
+            0.092459375,
+            0.0926375,
+            0.0923734375,
+            0.0919921875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0915015625,
+            0.0910609375,
+            0.092096875,
+            0.0915640625,
+            0.09125625,
+            0.0919390625,
+            0.0918515625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3394953125,
+            0.3453578125,
+            0.348509375,
+            0.3499765625,
+            0.3481453125,
+            0.334934375,
+            0.3376609375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.339046875,
+            0.34091875,
+            0.3397140625,
+            0.339834375,
+            0.3379765625,
+            0.3372359375,
+            0.34125625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.344584375,
+            0.344715625,
+            0.3433859375,
+            0.3471,
+            0.350553125,
+            0.3533765625,
+            0.347390625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.354175,
+            0.357928125,
+            0.3496125,
+            0.33925,
+            0.3362265625,
+            0.3362171875,
+            0.3452125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.344303125,
+            0.3389484375,
+            0.6538390625,
+            0.3479984375,
+            0.34476875,
+            0.345615625,
+            0.343159375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.34633125,
+            0.3439859375,
+            0.3458125,
+            0.3455125,
+            0.3565578125,
+            0.3493234375,
+            0.43245625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3568046875,
+            0.31575,
+            0.320884375,
+            0.3174703125,
+            0.3144375,
+            0.3126,
+            0.316846875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3193453125,
+            0.3199546875,
+            0.324,
+            0.3188578125,
+            0.3143859375,
+            0.31078125,
+            0.318296875
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.349375,
+            0.343675,
+            0.3405625,
+            0.34168125,
+            0.34139375,
+            0.3391625,
+            0.34875
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.34969375,
+            0.34809375,
+            0.34836875,
+            0.34615,
+            0.36198125,
+            0.3462625,
+            0.347425
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.420125,
+            0.37186875,
+            0.37045,
+            0.3647625,
+            0.35984375,
+            0.36283125,
+            0.36149375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.35970625,
+            0.38970625,
+            0.35716875,
+            0.46131875,
+            0.35786875,
+            0.35836875,
+            0.35415625
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.38705,
+            1.38331875,
+            1.36414375,
+            1.36153125,
+            1.36661875,
+            1.39173125,
+            1.3784875
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.3687875,
+            1.388225,
+            1.4145375,
+            1.366475,
+            1.3635375,
+            1.37854375,
+            1.41683125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.36078125,
+            1.34268125,
+            1.32903125,
+            1.3486875,
+            1.366325,
+            1.37051875,
+            1.40368125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.36050625,
+            1.38125,
+            1.37446875,
+            1.36543125,
+            1.355075,
+            1.3586125,
+            1.36908125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.35745625,
+            1.359975,
+            1.345125,
+            1.36541875,
+            1.36480625,
+            1.37715625,
+            1.3888125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.36483125,
+            1.38509375,
+            1.377225,
+            1.36474375,
+            1.352325,
+            1.3664125,
+            1.34589375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.37733125,
+            1.3746625,
+            1.383375,
+            1.4000375,
+            1.4198375,
+            1.3972375,
+            1.4168375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.4116375,
+            1.4035875,
+            1.38969375,
+            1.38525625,
+            1.401225,
+            1.4114625,
+            1.40170625
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 8192,
+          "samples_ms": [
+            1.461675,
+            1.464225,
+            1.457125,
+            1.46235,
+            1.4991,
+            1.492275,
+            1.5027
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.48815,
+            1.4776,
+            1.462575,
+            1.4581,
+            1.439525,
+            1.45575,
+            1.45685
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.3796,
+            1.379925,
+            1.40005,
+            1.394325,
+            1.3887,
+            1.3886,
+            1.3834
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.402225,
+            1.3993,
+            1.387175,
+            1.39375,
+            1.401975,
+            1.38275,
+            1.3735
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 976,
+          "samples_ms": [
+            5.60695,
+            5.570575,
+            5.417775,
+            5.452075,
+            5.6337,
+            5.592625,
+            5.49645
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 3240,
+          "samples_ms": [
+            5.532325,
+            5.52565,
+            5.530275,
+            5.589575,
+            5.55755,
+            5.547325,
+            5.566225
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            5.624575,
+            5.6789,
+            5.69445,
+            5.643925,
+            5.579425,
+            5.568725,
+            5.561725
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            5.563775,
+            5.52275,
+            5.568225,
+            5.5172,
+            5.4415,
+            5.51925,
+            5.5477
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 4195168,
+          "samples_ms": [
+            5.6127,
+            5.666575,
+            5.725725,
+            5.6601,
+            5.680075,
+            5.746125,
+            5.689
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 888,
+          "samples_ms": [
+            5.78815,
+            5.76635,
+            5.770975,
+            5.66115,
+            5.70915,
+            5.712225,
+            5.6217
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 8624,
+          "samples_ms": [
+            5.394025,
+            5.443125,
+            5.4552,
+            5.3966,
+            5.269025,
+            5.242625,
+            5.3113
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            5.412175,
+            5.4967,
+            5.51005,
+            5.454125,
+            5.4109,
+            5.488075,
+            5.434575
+          ]
+        }
+      ],
+      "bank": [
+        {
+          "m": 8,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 31192,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.122,
+            4.2621,
+            4.1458,
+            4.1611,
+            4.1532,
+            4.18,
+            4.2119
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 31768,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.1909,
+            4.2106,
+            4.1835,
+            4.2894,
+            4.2212,
+            4.3442,
+            4.2967
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 31264,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.0912,
+            4.2032,
+            4.2979,
+            4.2493,
+            4.1279,
+            4.1326,
+            4.1418
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 35952,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.1346,
+            4.18,
+            4.1506,
+            4.1069,
+            4.1647,
+            4.1036,
+            4.0834
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.3519,
+            13.392,
+            13.3585,
+            13.4569,
+            13.3169,
+            13.321,
+            13.4303
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32152,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.3053,
+            13.3529,
+            13.2283,
+            13.2205,
+            13.4606,
+            13.4279,
+            13.3606
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 29664,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            12.8684,
+            13.0756,
+            12.9334,
+            13.0097,
+            12.894,
+            13.2108,
+            13.1992
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            12.8603,
+            12.8579,
+            12.7889,
+            12.7783,
+            12.7635,
+            12.6911,
+            12.8217
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 31312,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            52.2559,
+            50.7858,
+            50.9662,
+            52.2352,
+            51.5144,
+            51.5192,
+            52.1201
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24600,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            50.4994,
+            51.0594,
+            51.0662,
+            50.9911,
+            51.8756,
+            50.7784,
+            51.1805
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24488,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            52.1332,
+            52.2286,
+            52.2247,
+            53.1284,
+            51.4338,
+            52.5031,
+            52.4399
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 30736,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            53.1196,
+            53.3564,
+            52.9524,
+            53.7792,
+            53.1059,
+            51.9932,
+            53.1267
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24600,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            209.9922,
+            210.8615,
+            207.2645,
+            207.7868,
+            207.2073,
+            207.8589,
+            213.546
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            209.9485,
+            206.7559,
+            208.8295,
+            211.0815,
+            208.432,
+            206.9128,
+            212.1767
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            199.201,
+            199.8677,
+            199.8496,
+            200.1385,
+            202.023,
+            202.2551,
+            201.8654
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            196.1348,
+            202.2765,
+            200.7067,
+            202.6204,
+            200.6489,
+            204.0683,
+            204.2303
+          ]
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "isolated": [
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0212296875,
+            0.0213546875,
+            0.0212140625,
+            0.0211765625,
+            0.0215125,
+            0.021375,
+            0.0217640625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0213828125,
+            0.021278125,
+            0.021575,
+            0.021253125,
+            0.021203125,
+            0.0215359375,
+            0.02153125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0213546875,
+            0.0214125,
+            0.0212734375,
+            0.0214234375,
+            0.02133125,
+            0.0214015625,
+            0.0213734375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            21,
+            21,
+            21
+          ],
+          "gc_after": [
+            21,
+            21,
+            21
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0215578125,
+            0.0214296875,
+            0.0219265625,
+            0.02148125,
+            0.0214453125,
+            0.0216875,
+            0.0213578125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 768,
+          "samples_ms": [
+            0.0887671875,
+            0.089790625,
+            0.0894796875,
+            0.0883171875,
+            0.08716875,
+            0.08736875,
+            0.086871875
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0856796875,
+            0.086015625,
+            0.08545625,
+            0.0854875,
+            0.0857046875,
+            0.085609375,
+            0.0863203125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0840859375,
+            0.0841734375,
+            0.0851015625,
+            0.0850984375,
+            0.0855890625,
+            0.0874109375,
+            0.086478125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.086340625,
+            0.086078125,
+            0.086040625,
+            0.0871109375,
+            0.086846875,
+            0.0860796875,
+            0.0857578125
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.084740625,
+            0.0844515625,
+            0.084290625,
+            0.0845375,
+            0.0845203125,
+            0.0856703125,
+            0.0876890625
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.087303125,
+            0.08738125,
+            0.08705,
+            0.087403125,
+            0.0887015625,
+            0.087715625,
+            0.0881234375
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0875375,
+            0.0881515625,
+            0.0889078125,
+            0.0881140625,
+            0.087565625,
+            0.08754375,
+            0.0878875
+          ]
+        },
+        {
+          "m": 8,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0880390625,
+            0.0874984375,
+            0.086625,
+            0.0858,
+            0.0851515625,
+            0.085996875,
+            0.0856625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.100659375,
+            0.10041875,
+            0.100390625,
+            0.1011171875,
+            0.10120625,
+            0.103096875,
+            0.102784375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.1028609375,
+            0.10253125,
+            0.1023328125,
+            0.1016203125,
+            0.100165625,
+            0.1010625,
+            0.1002125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.097921875,
+            0.0969296875,
+            0.0961203125,
+            0.096515625,
+            0.096471875,
+            0.096703125,
+            0.098575
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.0987140625,
+            0.099865625,
+            0.098034375,
+            0.0990203125,
+            0.0977171875,
+            0.09824375,
+            0.09758125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3436078125,
+            0.344128125,
+            0.342790625,
+            0.34276875,
+            0.3426546875,
+            0.3402421875,
+            0.347740625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.364196875,
+            0.349053125,
+            0.34360625,
+            0.3349,
+            0.3459921875,
+            0.34955,
+            0.3474703125
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.34830625,
+            0.3474578125,
+            0.35119375,
+            0.3580625,
+            0.358896875,
+            0.3534109375,
+            0.3524015625
+          ]
+        },
+        {
+          "m": 30,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3518125,
+            0.3509078125,
+            0.3486984375,
+            0.3511,
+            0.3468171875,
+            0.3453984375,
+            0.3528171875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.3485703125,
+            0.3553359375,
+            0.6705828125,
+            0.348540625,
+            0.347765625,
+            0.3395921875,
+            0.3329046875
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.33014375,
+            0.3327734375,
+            0.3313296875,
+            0.3306328125,
+            0.3394421875,
+            0.34905625,
+            0.441884375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.36633125,
+            0.3859640625,
+            0.3324296875,
+            0.3318421875,
+            0.3284046875,
+            0.3324609375,
+            0.331284375
+          ]
+        },
+        {
+          "m": 30,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 64,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.35545625,
+            0.3596390625,
+            0.3315390625,
+            0.3324671875,
+            0.3300296875,
+            0.3308640625,
+            0.334815625
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.38314375,
+            0.358,
+            0.363125,
+            0.36076875,
+            0.35169375,
+            0.3519125,
+            0.35105625
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.34908125,
+            0.35026875,
+            0.35105,
+            0.3675375,
+            0.3531875,
+            0.35326875,
+            0.35419375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.33461875,
+            0.34200625,
+            0.33988125,
+            0.3410625,
+            0.3453125,
+            0.3415875,
+            0.34145
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            0.341975,
+            0.33750625,
+            0.3419625,
+            0.344875,
+            0.34525,
+            0.34545,
+            0.34476875
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.345825,
+            1.3592,
+            1.3619875,
+            1.37094375,
+            1.3851125,
+            1.39858125,
+            1.3908
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.35819375,
+            1.390475,
+            1.38955,
+            1.38314375,
+            1.37466875,
+            1.386225,
+            1.37368125
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.39065,
+            1.4042625,
+            1.3982625,
+            1.37625625,
+            1.404525,
+            1.4060125,
+            1.38190625
+          ]
+        },
+        {
+          "m": 128,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            22,
+            22,
+            22
+          ],
+          "gc_after": [
+            22,
+            22,
+            22
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.38948125,
+            1.4125125,
+            1.39689375,
+            1.38938125,
+            1.3812375,
+            1.41415,
+            1.38394375
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.41178125,
+            1.4195,
+            1.42855,
+            1.42194375,
+            1.41163125,
+            1.40456875,
+            1.394825
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.40251875,
+            1.409175,
+            1.4150375,
+            1.41971875,
+            1.4175,
+            1.4671625,
+            1.41585
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.35830625,
+            1.35073125,
+            1.35608125,
+            1.36621875,
+            1.3512375,
+            1.31909375,
+            1.3082875
+          ]
+        },
+        {
+          "m": 128,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 16,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.3341,
+            1.36895625,
+            1.35780625,
+            1.33426875,
+            1.312075,
+            1.346075,
+            1.37835625
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 520,
+          "samples_ms": [
+            1.391925,
+            1.39595,
+            1.387075,
+            1.387975,
+            1.387225,
+            1.3812,
+            1.377375
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.381325,
+            1.349725,
+            1.37455,
+            1.397675,
+            1.406775,
+            1.3925,
+            1.387225
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.479325,
+            1.457225,
+            1.455375,
+            1.440525,
+            1.462975,
+            1.48195,
+            1.47395
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 384,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            23,
+            23,
+            23
+          ],
+          "gc_after": [
+            23,
+            23,
+            23
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            1.4417,
+            1.432875,
+            1.41115,
+            1.39345,
+            1.4111,
+            1.401875,
+            1.413075
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 976,
+          "samples_ms": [
+            5.7744,
+            5.808775,
+            5.808575,
+            5.721175,
+            5.657625,
+            5.6912,
+            5.735225
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 8288,
+          "samples_ms": [
+            5.634025,
+            5.6056,
+            5.61465,
+            5.620875,
+            5.6398,
+            5.581275,
+            5.7446
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            5.612325,
+            5.65095,
+            5.603575,
+            5.4809,
+            5.45555,
+            5.61635,
+            5.633725
+          ]
+        },
+        {
+          "m": 512,
+          "n": 384,
+          "k": 1536,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            24,
+            24,
+            24
+          ],
+          "gc_after": [
+            24,
+            24,
+            24
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            5.597475,
+            5.6017,
+            5.616975,
+            5.547775,
+            5.64005,
+            5.5356,
+            5.586425
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 0,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 896,
+          "samples_ms": [
+            5.3203,
+            5.390525,
+            5.476575,
+            5.580725,
+            5.39185,
+            5.554975,
+            5.490025
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 1,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 9072,
+          "samples_ms": [
+            5.482525,
+            5.519175,
+            5.537,
+            5.468825,
+            5.47855,
+            5.5381,
+            5.68265
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 2,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 4194328,
+          "samples_ms": [
+            5.7933,
+            5.8176,
+            5.788175,
+            5.658625,
+            5.687475,
+            5.843375,
+            5.997725
+          ]
+        },
+        {
+          "m": 512,
+          "n": 1536,
+          "k": 384,
+          "mode": 3,
+          "iterations": 4,
+          "gc_before": [
+            26,
+            26,
+            26
+          ],
+          "gc_after": [
+            26,
+            26,
+            26
+          ],
+          "allocated_bytes": 0,
+          "samples_ms": [
+            5.988425,
+            5.905475,
+            5.75755,
+            5.7867,
+            5.79935,
+            5.6721,
+            5.53905
+          ]
+        }
+      ],
+      "bank": [
+        {
+          "m": 8,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 25456,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.0838,
+            4.1652,
+            4.2103,
+            4.1661,
+            4.1417,
+            4.176,
+            4.174
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 36160,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.1647,
+            4.1995,
+            4.2131,
+            4.2153,
+            4.2875,
+            4.1629,
+            4.2516
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24600,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.2013,
+            4.2496,
+            4.2139,
+            4.2568,
+            4.2293,
+            4.2212,
+            4.3227
+          ]
+        },
+        {
+          "m": 8,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 26368,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            4.1129,
+            4.1186,
+            4.1666,
+            4.1387,
+            4.2291,
+            4.1817,
+            4.1898
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.1888,
+            13.1974,
+            13.3099,
+            13.2619,
+            13.29,
+            13.3904,
+            13.1789
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24600,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.0343,
+            12.8608,
+            13.0148,
+            13.0522,
+            13.1567,
+            12.9498,
+            13.1028
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32104,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.6366,
+            13.5988,
+            13.5664,
+            13.7235,
+            13.7088,
+            13.6827,
+            13.8095
+          ]
+        },
+        {
+          "m": 30,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            13.8201,
+            13.7671,
+            13.7244,
+            13.4254,
+            13.6026,
+            13.6271,
+            13.3908
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            51.8023,
+            51.8353,
+            51.9681,
+            52.0931,
+            52.8643,
+            51.4781,
+            60.0523
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            53.0052,
+            52.4899,
+            52.7678,
+            52.6557,
+            52.4758,
+            51.7272,
+            51.9142
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 27808,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            50.5896,
+            51.9518,
+            51.7462,
+            50.7354,
+            50.8811,
+            50.8493,
+            49.797
+          ]
+        },
+        {
+          "m": 128,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            50.7845,
+            51.541,
+            51.6443,
+            50.8607,
+            50.5812,
+            49.8719,
+            50.9074
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 0,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 29024,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            195.6411,
+            196.8671,
+            197.1644,
+            197.1563,
+            204.2311,
+            203.5358,
+            200.1302
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 1,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24528,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            199.3064,
+            197.7114,
+            195.8453,
+            203.3981,
+            200.8334,
+            199.0751,
+            198.955
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 2,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 24600,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            210.0162,
+            208.6716,
+            210.5888,
+            210.1733,
+            207.9038,
+            205.3148,
+            207.0976
+          ]
+        },
+        {
+          "m": 512,
+          "mode": 3,
+          "gc_before": [
+            28,
+            28,
+            28
+          ],
+          "gc_after": [
+            28,
+            28,
+            28
+          ],
+          "allocated_bytes": 32800,
+          "matrices": 72,
+          "packed_bytes": 84934656,
+          "samples_ms": [
+            203.8359,
+            205.0024,
+            206.6994,
+            205.8037,
+            202.7498,
+            206.0711,
+            205.7294
+          ]
+        }
+      ]
+    }
+  ]
+}

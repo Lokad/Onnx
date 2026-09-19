@@ -111,6 +111,17 @@ LEAs. The intended literal displacements were not emitted. This rejects the
 tested implementation without claiming that every possible activation layout
 loses; it changes no production default or current model ratio.
 
+The subsequent [pointer-addressing proof and comparison](../tests/e5/projection-input-pointer/results-20260919.md)
+changes those reads to literal offsets with one pointer advance. Actual AMD
+FullOpts code passes the prospective instruction gate before timing: one sign
+extension, one LEA, no hot stack accesses and unchanged arithmetic. The same
+proof-qualified binary then retains all 1,792 timing batches. Duplicate controls
+pass, but complete 30/128-row banks still regress 2.11%/2.83% against the first
+original control. Removing the index instructions therefore does not justify
+this activation-packing strategy. The copy/pool costs remain included, with no
+claim that their individual contributions were isolated. Neither variant is
+promoted, and no unchanged follow-up is queued.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |

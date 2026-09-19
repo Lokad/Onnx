@@ -1,5 +1,10 @@
 # Packed-input pointer proof and complete-cost comparison
 
+The [September 19 report](results-20260919.md) passes the actual instruction
+proof but rejects promotion: complete 30/128-row costs still regress against
+both original controls. [All 1,792 measured batches](observations-20260919.json)
+are retained.
+
 The preceding [index-based experiment](../projection-input-pack/results-20260919.md)
 is closed and rejected. This separate prototype replaces twelve computed
 `input[j * 12 + row]` indexes with literal `input[row]` reads, advancing the

@@ -47,6 +47,9 @@ The later [projection activation-packing experiment](tests/e5/projection-input-p
 passes correctness and duplicate controls but makes its 30/128-row matrix banks
 3.18%/4.14% slower, including input copying. It remains outside production;
 the complete-model scoreboard above is unchanged.
+Its [pointer-addressing follow-up](tests/e5/projection-input-pointer/results-20260919.md)
+emits the intended simpler instructions but still regresses those banks by
+2.11%/2.83%, including copying. It also remains outside production.
 
 ### Audio: matched Microsoft ONNX Runtime baselines
 
