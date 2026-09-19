@@ -1,0 +1,7 @@
+numpy==2.2.4
+onnxruntime==1.29.0
+transformers==5.16.1
+tokenizers==0.23.2
+torch==2.11.0
+soundfile==0.13.1
+psutil==7.0.0

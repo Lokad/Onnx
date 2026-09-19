@@ -14,6 +14,8 @@ using System.Threading;
 /// Encoder numerical qualification is documented separately in tests/whisper/README.md.</remarks>
 public sealed class WhisperTranscriber
 {
+    /// <summary>Maximum duration accepted by TranscribeRecording: ten minutes at 16 kHz.</summary>
+    public const int MaximumRecordingSamples = WhisperAudio.SampleRate * 600;
     readonly ComputationalGraph encoder, firstDecoder, pastDecoder;
     readonly WhisperGeneration generation;
     readonly object gate = new object();
@@ -83,18 +85,56 @@ public sealed class WhisperTranscriber
         lock (gate)
         {
             cancellation.ThrowIfCancellationRequested();
-            var features = WhisperAudio.LogMelSpectrogram(samples, sampleRate);
-            var encoding = encoder.CreateExecution(ExecutionOptions.Memory);
-            var first = firstDecoder.CreateExecution(ExecutionOptions.Memory);
-            var past = pastDecoder.CreateExecution(ExecutionOptions.Memory);
-            try
-            {
-                var outputs = Execute(encoding, new Dictionary<string, ITensor> { ["input_features"] = features });
-                var hidden = WhisperGeneration.RequireFloat(outputs, "last_hidden_state", new[] { 1, 1500, 1280 });
-                return generation.Decode(hidden, options, (initial, feeds) => Execute(initial ? first : past, feeds), cancellation);
-            }
-            finally { encoding.Reset(); first.Reset(); past.Reset(); }
+            return TranscribeWindow(samples, sampleRate, options, false, cancellation);
         }
+    }
+
+    /// <summary>Transcribes up to ten minutes of finite mono 16 kHz PCM using segment timestamps.</summary>
+    /// <remarks>Windows advance to completed model timestamps, re-reading unfinished boundary audio.
+    /// The result retains every window decision and distinguishes completed processing from limits.
+    /// One instance serializes calls. Cancellation occurs between model calls, with no partial result.
+    /// Segment timing is estimated; numerical and broader long-audio qualification are documented separately.</remarks>
+    public WhisperRecording TranscribeRecording(ReadOnlySpan<float> samples, int sampleRate,
+        WhisperRecordingOptions options, CancellationToken cancellation)
+    {
+        generation.ValidateRecording(options);
+        if (sampleRate != WhisperAudio.SampleRate) throw new ArgumentOutOfRangeException(nameof(sampleRate), "Recording requires mono 16000 Hz PCM.");
+        if (samples.Length > MaximumRecordingSamples) throw new ArgumentOutOfRangeException(nameof(samples), "Recording accepts at most ten minutes.");
+        cancellation.ThrowIfCancellationRequested();
+        foreach (float sample in samples)
+            if (!float.IsFinite(sample)) throw new ArgumentException("Audio samples must be finite.", nameof(samples));
+        lock (gate)
+        {
+            cancellation.ThrowIfCancellationRequested();
+            float[] owned = samples.ToArray();
+            return WhisperRecordingPolicy.Run(owned.Length, options.MaxWindows, (start, count) =>
+            {
+                ReadOnlySpan<float> window = owned.AsSpan(start, count);
+                bool silent = true;
+                foreach (float sample in window) silent &= sample == 0;
+                if (silent) return new WhisperTranscription(string.Empty, Array.AsReadOnly(Array.Empty<int>()), WhisperStopReason.SilentInput, true, null, null);
+                return TranscribeWindow(window, sampleRate, options.Decoding, true, cancellation);
+            }, generation.DecodeText, cancellation);
+        }
+    }
+
+    WhisperTranscription TranscribeWindow(ReadOnlySpan<float> samples, int sampleRate,
+        WhisperTranscriptionOptions options, bool timestamps, CancellationToken cancellation)
+    {
+        var features = WhisperAudio.LogMelSpectrogram(samples, sampleRate);
+        var encoding = encoder.CreateExecution(ExecutionOptions.Memory);
+        var first = firstDecoder.CreateExecution(ExecutionOptions.Memory);
+        var past = pastDecoder.CreateExecution(ExecutionOptions.Memory);
+        try
+        {
+            var outputs = Execute(encoding, new Dictionary<string, ITensor> { ["input_features"] = features });
+            var hidden = WhisperGeneration.RequireFloat(outputs, "last_hidden_state", new[] { 1, 1500, 1280 });
+            cancellation.ThrowIfCancellationRequested();
+            return timestamps
+                ? generation.DecodeTimestamps(hidden, options, (initial, feeds) => Execute(initial ? first : past, feeds), cancellation)
+                : generation.Decode(hidden, options, (initial, feeds) => Execute(initial ? first : past, feeds), cancellation);
+        }
+        finally { encoding.Reset(); first.Reset(); past.Reset(); }
     }
 
     static IReadOnlyDictionary<string, ITensor> Execute(GraphExecution context, Dictionary<string, ITensor> feeds)

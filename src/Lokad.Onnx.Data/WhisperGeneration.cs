@@ -19,7 +19,7 @@ public sealed record WhisperTranscriptionOptions(string Language, int MaxNewToke
 public enum WhisperStopReason { EndToken, TokenLimit, SilentInput }
 
 /// <summary>Text and immutable token IDs from one independent transcription request.</summary>
-/// <remarks>Token IDs include EOS when generated. A no-speech decision empties Text,
+/// <remarks>Token IDs include EOS when generated and segment timestamps in recording mode. A no-speech decision empties Text,
 /// but retains tokens and probabilities so callers can inspect that decision.
 /// Empty or exactly zero PCM bypasses inference; its model probabilities are null.</remarks>
 public sealed record WhisperTranscription(string Text, IReadOnlyList<int> TokenIds,
@@ -88,8 +88,30 @@ internal sealed class WhisperGeneration
 
     internal WhisperTranscription Decode(Tensor<float> hidden, WhisperTranscriptionOptions options,
         Func<bool, Dictionary<string, ITensor>, IReadOnlyDictionary<string, ITensor>> execute, CancellationToken cancellation)
+        => DecodeCore(hidden, options, execute, false, cancellation);
+
+    internal void ValidateRecording(WhisperRecordingOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        Validate(options.Decoding);
+        if (options.MaxWindows < 1 || options.MaxWindows > 512)
+            throw new ArgumentOutOfRangeException(nameof(options), "Recording limits are 1..512 model windows.");
+        if (tokenizer.SpecialId("<|0.00|>") != WhisperTimestampRules.Begin
+            || tokenizer.SpecialId("<|30.00|>") != VocabularySize - 1 || noTimestamps + 1 != WhisperTimestampRules.Begin)
+            throw new InvalidDataException("Unexpected Whisper timestamp vocabulary.");
+    }
+
+    internal string DecodeText(IEnumerable<int> tokens) => tokenizer.Decode(tokens, end);
+
+    internal WhisperTranscription DecodeTimestamps(Tensor<float> hidden, WhisperTranscriptionOptions options,
+        Func<bool, Dictionary<string, ITensor>, IReadOnlyDictionary<string, ITensor>> execute, CancellationToken cancellation)
+        => DecodeCore(hidden, options, execute, true, cancellation);
+
+    WhisperTranscription DecodeCore(Tensor<float> hidden, WhisperTranscriptionOptions options,
+        Func<bool, Dictionary<string, ITensor>, IReadOnlyDictionary<string, ITensor>> execute, bool timestamps, CancellationToken cancellation)
     {
         Validate(options);
+        int prefixLength = timestamps ? 3 : 4;
         var tokens = new List<int>();
         var cross = new Dictionary<string, ITensor>();
         var self = new Dictionary<string, ITensor>();
@@ -99,7 +121,10 @@ internal sealed class WhisperGeneration
         {
             cancellation.ThrowIfCancellationRequested();
             bool first = step == 0;
-            long[] ids = first ? new long[] { start, languages[options.Language], transcribe, noTimestamps } : new long[] { tokens[tokens.Count - 1] };
+            long[] ids = first
+                ? timestamps ? new long[] { start, languages[options.Language], transcribe }
+                    : new long[] { start, languages[options.Language], transcribe, noTimestamps }
+                : new long[] { tokens[tokens.Count - 1] };
             var feeds = new Dictionary<string, ITensor> { ["input_ids"] = new DenseTensor<long>(ids, new[] { 1, ids.Length }) };
             if (first) feeds.Add("encoder_hidden_states", hidden);
             else
@@ -115,8 +140,9 @@ internal sealed class WhisperGeneration
             var last = logits.AsSpan(logits.Length - VocabularySize);
             foreach (int id in suppressed) last[id] = float.NegativeInfinity;
             if (first) foreach (int id in beginSuppressed) last[id] = float.NegativeInfinity;
-            // A plain text request cannot emit language/task markers or timestamps.
-            for (int id = end + 1; id < last.Length; id++) last[id] = float.NegativeInfinity;
+            // Language/task markers cannot appear in either output format.
+            for (int id = end + 1; id < (timestamps ? WhisperTimestampRules.Begin : last.Length); id++) last[id] = float.NegativeInfinity;
+            if (timestamps) WhisperTimestampRules.Apply(last, tokens, end);
             int chosen = 0;
             for (int id = 1; id < last.Length; id++) if (last[id] > last[chosen]) chosen = id;
             if (!float.IsFinite(last[chosen])) throw new InvalidDataException("Whisper suppression removed every token.");
@@ -129,7 +155,7 @@ internal sealed class WhisperGeneration
                 foreach (string kind in new[] { "key", "value" })
                 {
                     string decoder = layer + ".decoder." + kind;
-                    nextSelf.Add("past_key_values." + decoder, RequireFloat(outputs, "present." + decoder, new[] { 1, 20, 4 + step, 64 }));
+                    nextSelf.Add("past_key_values." + decoder, RequireFloat(outputs, "present." + decoder, new[] { 1, 20, prefixLength + step, 64 }));
                     if (first)
                     {
                         string encoder = layer + ".encoder." + kind;
@@ -143,7 +169,7 @@ internal sealed class WhisperGeneration
         double average = sumLogProbability / (textCount + 1);
         bool skipped = options.NoSpeechThreshold is double threshold && noSpeechProbability > threshold
             && !(options.LogProbabilityThreshold is double logThreshold && average > logThreshold);
-        string text = tokenizer.Decode(tokens, end);
+        string text = tokenizer.Decode(timestamps ? tokens.Where(id => id < WhisperTimestampRules.Begin) : tokens, end);
         return new WhisperTranscription(skipped ? string.Empty : text, Array.AsReadOnly(tokens.ToArray()), stop, skipped, noSpeechProbability, average);
     }
 

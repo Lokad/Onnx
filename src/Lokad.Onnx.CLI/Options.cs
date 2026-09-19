@@ -40,6 +40,8 @@ public class TranscribeOptions : Options
     public string AudioFile { get; set; } = "";
     public string Language { get; set; } = "";
     public int MaxTokens { get; set; } = 444;
+    public bool Recording { get; set; }
+    public int MaxWindows { get; set; } = 256;
     public bool Json { get; set; }
 }
 
@@ -367,6 +369,14 @@ public static class ArgsParser
                         if (!TakeInt("transcribe", name, rest, ref i, inline, out var tokens, out var e2)) return Fail(e2);
                         options.MaxTokens = tokens;
                         break;
+                    case "recording":
+                        if (!TakeBool("transcribe", name, inline, out var recording, out var e4)) return Fail(e4);
+                        options.Recording = recording;
+                        break;
+                    case "max-windows":
+                        if (!TakeInt("transcribe", name, rest, ref i, inline, out var windows, out var e5)) return Fail(e5);
+                        options.MaxWindows = windows;
+                        break;
                     case "json":
                         if (!TakeBool("transcribe", name, inline, out var json, out var e3)) return Fail(e3);
                         options.Json = json;
@@ -381,6 +391,9 @@ public static class ArgsParser
         if (options.ModelType != "whisper" && options.ModelType != "parakeet") return Fail("--model-type must be whisper or parakeet.");
         if (options.ModelType == "whisper" && string.IsNullOrWhiteSpace(options.Language)) return Fail("Whisper transcription requires --language <code>.");
         if (options.ModelType == "parakeet" && seen.Contains("language")) return Fail("Parakeet recognizes language automatically; omit --language.");
+        if (options.ModelType != "whisper" && (seen.Contains("recording") || seen.Contains("max-windows"))) return Fail("Recording mode is supported only for Whisper.");
+        if (seen.Contains("max-windows") && !options.Recording) return Fail("--max-windows requires --recording.");
+        if (options.MaxWindows < 1 || options.MaxWindows > 512) return Fail("--max-windows must be between 1 and 512.");
         int maximum = options.ModelType == "parakeet" ? 4096 : 444;
         if (!seen.Contains("max-tokens")) options.MaxTokens = maximum;
         if (options.MaxTokens < 1 || options.MaxTokens > maximum) return Fail("--max-tokens must be between 1 and " + maximum + ".");

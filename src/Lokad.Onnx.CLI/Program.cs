@@ -136,6 +136,8 @@ class Program
             Console.WriteLine("  --language <code>   Required for Whisper, such as en or fr; omit for Parakeet.");
             Console.WriteLine("  --max-tokens <n>    Generated token limit: Whisper 1..444; Parakeet 1..4096 (defaults to maximum).");
             Console.WriteLine("  --json              Print text, tokens and stop/confidence metadata as JSON.");
+            Console.WriteLine("  --recording         Whisper only: up to ten minutes, with segment timestamps and boundary recovery.");
+            Console.WriteLine("  --max-windows <n>   Recording work limit: 1..512 (default 256). --max-tokens applies per window.");
             Console.WriteLine("Accepts mono/stereo PCM or float WAV, 8000..192000 Hz, at most 30 seconds.");
             Console.WriteLine("Audio is mixed to mono and resampled to 16000 Hz. Uses local FP32 split model assets.");
             Console.WriteLine("Text/JSON goes to stdout; diagnostics go to stderr. Parakeet detects language and reports encoder-frame token positions.");
@@ -154,7 +156,7 @@ class Program
                 throw new ArgumentException("Transcription requires a local model directory and WAV file.");
             if (!Directory.Exists(options.ModelDirectory)) throw new DirectoryNotFoundException("Model directory not found: " + options.ModelDirectory);
             using var input = File.OpenRead(options.AudioFile);
-            var audio = WaveAudio.ReadMono(input, TimeSpan.FromSeconds(30));
+            var audio = WaveAudio.ReadMono(input, TimeSpan.FromSeconds(options.Recording ? 600 : 30));
             if (options.ModelType == "whisper")
             {
                 using var generation = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(options.ModelDirectory, "generation_config.json")));
@@ -181,8 +183,17 @@ class Program
             {
                 var model = new WhisperTranscriber(options.ModelDirectory);
                 var policy = WhisperTranscriptionOptions.ForLanguage(options.Language) with { MaxNewTokens = options.MaxTokens };
-                var transcription = model.Transcribe(pcm, WhisperAudio.SampleRate, policy, Cts.Token);
-                result = transcription; text = transcription.Text; truncated = transcription.StopReason == WhisperStopReason.TokenLimit;
+                if (options.Recording)
+                {
+                    var transcription = model.TranscribeRecording(pcm, WhisperAudio.SampleRate,
+                        new WhisperRecordingOptions(policy, options.MaxWindows), Cts.Token);
+                    result = transcription; text = transcription.Text; truncated = transcription.StopReason != WhisperRecordingStopReason.Completed;
+                }
+                else
+                {
+                    var transcription = model.Transcribe(pcm, WhisperAudio.SampleRate, policy, Cts.Token);
+                    result = transcription; text = transcription.Text; truncated = transcription.StopReason == WhisperStopReason.TokenLimit;
+                }
             }
             if (options.Json)
             {
@@ -192,7 +203,9 @@ class Program
             }
             else Console.WriteLine(text);
             if (truncated)
-                Console.Error.WriteLine("Transcription reached the token limit; the text may be incomplete.");
+                Console.Error.WriteLine(options.Recording
+                    ? "Recording transcription stopped before completion; inspect --json for the stop reason and processed duration."
+                    : "Transcription reached the token limit; the text may be incomplete.");
             return ExitResult.SUCCESS;
         }
         catch (OperationCanceledException)

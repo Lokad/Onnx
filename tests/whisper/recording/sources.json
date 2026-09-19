@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/openai/whisper",
+  "revision": "86098128c0b4f24f0e2aa2994de830614b474227",
+  "files": {
+    "whisper/decoding.py": { "bytes": 32155, "sha256": "94084fedc5af74cabf8e1883a85552700057081f00ea669ad49435ecb29039db" },
+    "whisper/transcribe.py": { "bytes": 30375, "sha256": "176f5ab30e961bec2a7872f5701a1f5bf3cbfc77946e50512f0f0cf00a1ceacf" },
+    "LICENSE": { "bytes": 1063, "sha256": "b5d65a59060e68c4ff940e1eddfa6f94b2d68fdf58ed7f4dd57721c997e35e9d" }
+  }
+}

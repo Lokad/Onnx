@@ -45,3 +45,9 @@ The managed pipeline uses deterministic canonical-label vote ties and clips
 public intervals to the supplied PCM duration. Sparse masked statistics retain
 the original epsilon-regularized formulas independently of the standalone
 embedding API's stricter minimum-frame policy.
+
+Whisper timestamp masking and segment/seek rules follow OpenAI Whisper:
+https://github.com/openai/whisper/tree/86098128c0b4f24f0e2aa2994de830614b474227
+Copyright (c) 2022 OpenAI, under the MIT license reproduced above.
+The managed implementation uses double log-space probability comparison,
+per-window features, owned results, explicit processing limits and cancellation.
