@@ -1,6 +1,6 @@
 """Prepare fixed constructed recordings from the already qualified labeled subset; no model download."""
 from pathlib import Path
-import argparse,hashlib,json,urllib.request
+import argparse,hashlib,json,struct,urllib.request
 import numpy as np
 import soundfile as sf
 
@@ -30,7 +30,12 @@ def main():
     rows=[]
     for name,pcm in [('connected',connected),('shifted',shifted)]:
         path=a.output/(name+'.npy');np.save(path,pcm,allow_pickle=False)
-        wave=a.output/(name+'.wav');sf.write(wave,pcm,16000,subtype='FLOAT')
+        wave=a.output/(name+'.wav')
+        # libsndfile's float WAV writer inserts a wall-clock PEAK timestamp.
+        # Write the standard IEEE-float header directly, then decode independently.
+        raw=pcm.astype('<f4',copy=False).tobytes()
+        header=struct.pack('<4sI4s4sIHHIIHH4sI',b'RIFF',36+len(raw),b'WAVE',b'fmt ',16,3,1,16000,64000,4,32,b'data',len(raw))
+        wave.write_bytes(header+raw)
         assert np.array_equal(sf.read(wave,dtype='float32')[0],pcm)
         rows.append(dict(name=name,pcm=path.name,pcm_sha256=sha(path),wave=wave.name,wave_sha256=sha(wave),samples=len(pcm),
                          reference_text=' '.join(v['reference_text'] for v in selected),language='en',max_new_tokens=444,max_windows=256))
