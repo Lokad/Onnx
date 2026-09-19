@@ -52,6 +52,16 @@ unless explicitly enabled with `1`. `LOKAD_ONNX_RELEASE_RESHAPE_VIEWS=1` remains
 an experimental override of the lifetime policy; prefer the public
 `ExecutionOptions.Memory` option for application code.
 
+`LOKAD_ONNX_SOFTMAX_ZERO_BLOCKS=1` is a separate experimental masked-softmax
+route, also off by default. It skips the exponential polynomial only when all
+eight computed arguments in a vector fall below the existing zero cutoff.
+It requires nonpositive exponentiation, enabled SIMD and an eight-float vector
+width; wider exponentiation selects the original fallback, and the reciprocal
+experiment takes precedence. Mask inspection selects a possible route but never
+substitutes for checking the actual score-plus-mask-minus-maximum values.
+See the [product qualification protocol](../tests/e5/softmax-zero-product/README.md)
+for correctness coverage and the separate complete-model comparison.
+
 Historical benchmark reports identify their source and exact settings. Their
 experimental Speed configurations must not be relabeled as measurements of the
 current Default or Memory policy.

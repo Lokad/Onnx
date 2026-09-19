@@ -73,6 +73,16 @@ normal-tiering confirmation. Retain the corrected harness for future projection
 work. Other kernel/runtime compilation remains observable, so this finding does
 not qualify fine timing or retroactively promote an earlier kernel candidate.
 
+Masked padding also exposes exponential work whose result is already zero under
+Lokad's existing cutoff. A [separate long-batch kernel experiment](../tests/e5/softmax-batch-control/results-20260919.md)
+passes exactness and duplicate controls, with a padded128 candidate/control ratio
+of 0.631158. Product `087e280` adds that mechanism behind the default-off
+`LOKAD_ONNX_SOFTMAX_ZERO_BLOCKS` switch. Actual AMD product code contains branches
+that bypass the polynomial; local and AMD contract/shared-model checks pass.
+The [product protocol](../tests/e5/softmax-zero-product/README.md) treats complete
+graph latency as a separate qualification step. The earlier failed small-batch
+screen remains a failure, and the kernel gain is not an ORT or full-model ratio.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |
