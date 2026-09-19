@@ -3,6 +3,8 @@ namespace Lokad.Onnx.CLI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 using static Lokad.Onnx.Data;
 using static Lokad.Onnx.Text;
@@ -16,7 +18,8 @@ public enum ExitResult
     INVALID_OPTIONS = 2,
     NOT_FOUND = 4,
     INVALID_INPUT = 5,
-    UNKNOWN_ERROR = 7
+    UNKNOWN_ERROR = 7,
+    CANCELED = 130
 }
 #endregion
 
@@ -37,8 +40,8 @@ class Program
     static void Main(string[] args)
     {
         bool debug = (args.Contains("--debug") || args.Contains("-d"));
-        UseConsoleLogging(debug);
         var parsed = ArgsParser.Parse(args);
+        UseConsoleLogging(debug, parsed.Verb == "transcribe");
         switch (parsed.Outcome)
         {
             case ParseOutcome.Version:
@@ -52,7 +55,7 @@ class Program
                 return;
             case ParseOutcome.Error:
                 Error(parsed.Message);
-                PrintGlobalHelp();
+                if (parsed.Verb != "transcribe") PrintGlobalHelp();
                 Exit(parsed.Exit);
                 return;
             default:
@@ -66,6 +69,9 @@ class Program
             case "run":
                 if (parsed.Value is RunOptions run) Run(run);
                 break;
+            case "transcribe":
+                if (parsed.Value is TranscribeOptions transcribe) Exit(Transcribe(transcribe));
+                break;
         }
     }
     #endregion
@@ -77,6 +83,7 @@ class Program
         Console.WriteLine("Commands:");
         Console.WriteLine("  info <file> [--ops] [--init] [--op-filter <type>]   Get information on an ONNX model.");
         Console.WriteLine("  run <file> <inputs...> [options]                    Run an ONNX model or node.");
+        Console.WriteLine("  transcribe <model-directory> <audio.wav> --language <code>   Transcribe with Whisper Large V3 Turbo.");
         Console.WriteLine("Common options:");
         Console.WriteLine("  --debug, -d   Enable debug mode.");
         Console.WriteLine("  --help        Show this help and exit.");
@@ -110,7 +117,73 @@ class Program
             Console.WriteLine("  --optimize-memory   Optimize memory usage at the cost of performance.");
             Console.WriteLine("  --threads <n>       Worker threads for batch-parallel kernels (default 1, sequential).");
         }
+        else if (verb == "transcribe")
+        {
+            Console.WriteLine("Usage: lonnx transcribe <model-directory> <audio.wav> --language <code> [options]");
+            Console.WriteLine("  --language <code>   Required language code, such as en or fr.");
+            Console.WriteLine("  --max-tokens <n>    Generated token limit, 1..444 (default 444).");
+            Console.WriteLine("  --json              Print text, tokens and stop/confidence metadata as JSON.");
+            Console.WriteLine("Accepts mono/stereo PCM or float WAV, 8000..192000 Hz, at most 30 seconds.");
+            Console.WriteLine("Audio is mixed to mono and resampled to 16000 Hz. Uses local FP32 split model assets.");
+            Console.WriteLine("Text/JSON goes to stdout; diagnostics go to stderr. No timestamps or automatic language detection.");
+        }
+    }
 
+    static ExitResult Transcribe(TranscribeOptions options)
+    {
+        Transcribing = true;
+        try
+        {
+            if (options.ModelDirectory.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                || options.ModelDirectory.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                || options.AudioFile.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                || options.AudioFile.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("Transcription requires a local model directory and WAV file.");
+            if (!Directory.Exists(options.ModelDirectory)) throw new DirectoryNotFoundException("Model directory not found: " + options.ModelDirectory);
+            using var input = File.OpenRead(options.AudioFile);
+            var audio = WaveAudio.ReadMono(input, TimeSpan.FromSeconds(30));
+            using (var generation = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(options.ModelDirectory, "generation_config.json"))))
+            {
+                if (!generation.RootElement.GetProperty("lang_to_id").TryGetProperty("<|" + options.Language + "|>", out _))
+                {
+                    Error("Use a language code from this model's generation configuration.");
+                    return ExitResult.INVALID_OPTIONS;
+                }
+            }
+            Cts.Token.ThrowIfCancellationRequested();
+            var pcm = AudioResampler.Resample(audio.Samples, audio.SampleRate, WhisperAudio.SampleRate);
+            Cts.Token.ThrowIfCancellationRequested();
+            var model = new WhisperTranscriber(options.ModelDirectory);
+            var policy = WhisperTranscriptionOptions.ForLanguage(options.Language) with { MaxNewTokens = options.MaxTokens };
+            var result = model.Transcribe(pcm, WhisperAudio.SampleRate, policy, Cts.Token);
+            if (options.Json)
+            {
+                var json = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+                json.Converters.Add(new JsonStringEnumConverter());
+                Console.WriteLine(JsonSerializer.Serialize(result, json));
+            }
+            else Console.WriteLine(result.Text);
+            if (result.StopReason == WhisperStopReason.TokenLimit)
+                Console.Error.WriteLine("Transcription reached the token limit; the text may be incomplete.");
+            return ExitResult.SUCCESS;
+        }
+        catch (OperationCanceledException)
+        {
+            Console.Error.WriteLine("Transcription canceled.");
+            return ExitResult.CANCELED;
+        }
+        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
+        {
+            Error(ex.Message);
+            return ExitResult.NOT_FOUND;
+        }
+        catch (Exception ex) when (ex is InvalidDataException or IOException or ArgumentException or NotSupportedException or JsonException or UnauthorizedAccessException
+                                    or KeyNotFoundException or InvalidOperationException)
+        {
+            Error(ex.Message);
+            return ExitResult.INVALID_INPUT;
+        }
+        finally { Transcribing = false; }
     }
 
     static void ShowInfo(InfoOptions io)
@@ -505,13 +578,16 @@ class Program
 
     public static void ExitWithSuccess() => Exit(ExitResult.SUCCESS);
 
-    public static void UseConsoleLogging(bool debug)
+    public static void UseConsoleLogging(bool debug) => UseConsoleLogging(debug, false);
+
+    static void UseConsoleLogging(bool debug, bool standardError)
     {
-        Log.MinLevel = debug ? Lokad.Onnx.LogLevel.Debug : Lokad.Onnx.LogLevel.Info;
+        Log.MinLevel = debug ? Lokad.Onnx.LogLevel.Debug : standardError ? Lokad.Onnx.LogLevel.Warn : Lokad.Onnx.LogLevel.Info;
         Log.Sink = (level, message) =>
         {
             var stamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff");
-            Console.WriteLine(stamp + " " + level.ToString().ToUpperInvariant().PadRight(5) + " " + message);
+            var writer = standardError ? Console.Error : Console.Out;
+            writer.WriteLine(stamp + " " + level.ToString().ToUpperInvariant().PadRight(5) + " " + message);
         };
     }
 
@@ -527,6 +603,12 @@ class Program
 
     private static void Console_CancelKeyPress(object? sender, ConsoleCancelEventArgs e)
     {
+        if (Transcribing)
+        {
+            e.Cancel = true;
+            Cts.Cancel();
+            return;
+        }
         Info("Ctrl-C pressed. Exiting.");
         Cts.Cancel();
         Exit(ExitResult.SUCCESS);
@@ -535,5 +617,6 @@ class Program
     
     #region Fields
     static readonly CancellationTokenSource Cts = new CancellationTokenSource();
+    static volatile bool Transcribing;
     #endregion
 }

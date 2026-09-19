@@ -33,6 +33,15 @@ public class RunOptions : Options
     public int Threads { get; set; } = 1;
 }
 
+public class TranscribeOptions : Options
+{
+    public string ModelDirectory { get; set; } = "";
+    public string AudioFile { get; set; } = "";
+    public string Language { get; set; } = "";
+    public int MaxTokens { get; set; } = 444;
+    public bool Json { get; set; }
+}
+
 #endregion
 
 #region Bounded parser
@@ -97,7 +106,7 @@ public static class ArgsParser
             result.Exit = ExitResult.INVALID_OPTIONS;
             return result;
         }
-        if (verb != "info" && verb != "run")
+        if (verb != "info" && verb != "run" && verb != "transcribe")
         {
             result.Outcome = ParseOutcome.Error;
             result.Message = "Unknown command: " + verb + ".";
@@ -111,7 +120,8 @@ public static class ArgsParser
             return result;
         }
         result.Verb = verb;
-        var parsed = verb == "info" ? ParseInfo(rest) : ParseRun(rest);
+        var parsed = verb == "info" ? ParseInfo(rest) : verb == "run" ? ParseRun(rest) : ParseTranscribe(rest);
+        parsed.Verb = verb;
         if (parsed.Outcome == ParseOutcome.Ok && parsed.Value is not null) parsed.Value.Debug = debug;
         return parsed;
     }
@@ -283,6 +293,46 @@ public static class ArgsParser
         options.File = positionals[0];
         options.Inputs = positionals.GetRange(1, positionals.Count - 1);
         return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "run", Value = options };
+    }
+
+    static ParseResult ParseTranscribe(List<string> rest)
+    {
+        var options = new TranscribeOptions();
+        var positionals = new List<string>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        for (int i = 0; i < rest.Count; i++)
+        {
+            string token = rest[i];
+            if (IsFlag(token))
+            {
+                SplitFlag(token, out var name, out var inline);
+                if (!seen.Add(name)) return Fail("Duplicate option: --" + name + ".");
+                switch (name)
+                {
+                    case "language":
+                        if (!TakeString("transcribe", name, rest, ref i, inline, out var language, out var e1)) return Fail(e1);
+                        options.Language = language;
+                        break;
+                    case "max-tokens":
+                        if (!TakeInt("transcribe", name, rest, ref i, inline, out var tokens, out var e2)) return Fail(e2);
+                        options.MaxTokens = tokens;
+                        break;
+                    case "json":
+                        if (!TakeBool("transcribe", name, inline, out var json, out var e3)) return Fail(e3);
+                        options.Json = json;
+                        break;
+                    default: return Fail("Unknown option: " + token + ".");
+                }
+            }
+            else if (token.StartsWith("-", StringComparison.Ordinal)) return Fail("Unknown option: " + token + ".");
+            else positionals.Add(token);
+        }
+        if (positionals.Count != 2) return Fail("The transcribe command requires a model directory and a WAV file.");
+        if (string.IsNullOrWhiteSpace(options.Language)) return Fail("The transcribe command requires --language <code>.");
+        if (options.MaxTokens < 1 || options.MaxTokens > 444) return Fail("--max-tokens must be between 1 and 444.");
+        options.ModelDirectory = positionals[0];
+        options.AudioFile = positionals[1];
+        return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "transcribe", Value = options };
     }
 }
 

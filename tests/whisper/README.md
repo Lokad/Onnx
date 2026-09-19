@@ -91,7 +91,8 @@ The generation configuration supplies the prefix and suppression lists. All non-
 control/timestamp tokens are excluded from generated text. The result preserves
 actual token IDs and distinguishes EOS, token-limit termination and exact digital
 silence. Requests longer than 30 seconds are rejected, not silently truncated.
-WAV decoding/resampling, CLI integration and a long-audio policy remain separate work.
+The WAV/CLI path below performs decoding and resampling before this API. A
+long-audio segmentation policy remains separate work.
 
 The three loaded graphs limit their optional packed weight copies to 256 MiB for
 the encoder and 64 MiB for each decoder. Original weights, folded transposes and
@@ -161,3 +162,46 @@ dotnet tests/whisper/bin/Release/net10.0/DecoderReplay.dll models/whisper-large-
 The ordinary generator still produces its original two scenarios and 106 output
 comparisons. Boundary fixtures add 43 complete output comparisons and two expected
 position-limit failures; the numerical tolerance remains `1e-4`.
+
+## Transcribing WAV files
+
+Build the Release CLI and stage the pinned local model directory, including the
+encoder sidecar and tokenizer/generation metadata. Then run:
+
+```powershell
+lonnx.cmd transcribe models/whisper-large-v3-turbo recording.wav --language en
+lonnx.cmd transcribe models/whisper-large-v3-turbo recording.wav --language fr --max-tokens 444 --json
+```
+
+The command accepts mono/stereo, little-endian RIFF/WAVE recordings up to 30
+seconds. PCM8/16/24/32 and IEEE float32/64 (including extensible subtypes) are
+supported at 8000..192000 Hz. Stereo channels are averaged and a managed,
+anti-aliasing FIR resampler converts to 16 kHz. It does not clip or normalize
+volume. Invalid/nonfinite, compressed, RF64 and big-endian files are rejected.
+No external audio executable or model download is invoked.
+
+Plain stdout contains the transcript. `--json` emits `text`, `token_ids`,
+`stop_reason`, `skipped_as_no_speech`, `no_speech_probability` and
+`average_log_probability`; diagnostics use stderr. Language is required and
+must occur in the model's generation configuration. There are no timestamps,
+translation or automatic language detection. Token-limit termination is a
+successful but potentially incomplete result, distinguished from EOS and silence.
+Long recordings are rejected, not truncated. Cancellation returns exit 130
+after the current conversion/model call finishes.
+
+The reader follows the [Microsoft RIFF container format](https://learn.microsoft.com/en-us/windows/win32/xaudio2/resource-interchange-file-format--riff-)
+and [extensible sample representation](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ksmedia/ns-ksmedia-waveformatextensible).
+The resampler's explicit centered FIR contract is checked against independent
+[SciPy polyphase conversion](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.resample_poly.html)
+and analytic passband/alias-rejection tests. Regenerate its small full-array
+fixture with the development-only pinned dependencies:
+
+```powershell
+python -m pip install -r tests/whisper/audio-requirements.txt
+python tests/whisper/generate_resampling_reference.py --output <new-reference.json>
+```
+
+Compare and deliberately replace `tests/Lokad.Onnx.Backend.Tests/fixtures/audio-resampling.json`
+when regenerating. This input-path validation and transcript agreement do not
+replace the unresolved full encoder/logit `1e-4` gate or broad held-out speech
+accuracy, long-audio, and sustained-memory qualification.
