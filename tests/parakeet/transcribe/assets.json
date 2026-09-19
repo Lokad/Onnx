@@ -1,0 +1,40 @@
+{
+  "repository": "istupakov/parakeet-tdt-0.6b-v3-onnx",
+  "revision": "8f23f0c03c8761650bdb5b40aaf3e40d2c15f1ce",
+  "graphs": {
+    "encoder": "encoder-model.onnx",
+    "decoder": "decoder_joint-model.onnx",
+    "frontend": "nemo128.onnx"
+  },
+  "files": {
+    "encoder-model.onnx": {
+      "bytes": 41770866,
+      "sha256": "98a74b21b4cc0017c1e7030319a4a96f4a9506e50f0708f3a516d02a77c96bb1"
+    },
+    "encoder-model.onnx.data": {
+      "bytes": 2435420160,
+      "sha256": "9a22d372c51455c34f13405da2520baefb7125bd16981397561423ed32d24f36"
+    },
+    "decoder_joint-model.onnx": {
+      "bytes": 72520893,
+      "sha256": "e978ddf6688527182c10fde2eb4b83068421648985ef23f7a86be732be8706c1"
+    },
+    "nemo128.onnx": {
+      "bytes": 139764,
+      "sha256": "a9fde1486ebfcc08f328d75ad4610c67835fea58c73ba57e3209a6f6cf019e9f"
+    },
+    "vocab.txt": {
+      "bytes": 93939,
+      "sha256": "d58544679ea4bc6ac563d1f545eb7d474bd6cfa467f0a6e2c1dc1c7d37e3c35d"
+    },
+    "config.json": {
+      "bytes": 97,
+      "sha256": "666903c76b9798caf2c210afd4f6cd60b08a8dbf9800ec8d7a3bc0d2148ac466"
+    }
+  },
+  "reference": {
+    "repository": "https://github.com/istupakov/onnx-asr",
+    "revision": "675f0e68c24d846ee1775743e92d9b4ed452380e",
+    "asr_lf_sha256": "90d79832a9f5073270e604dc19308a56927cecabcf29815de97825e19187a862"
+  }
+}

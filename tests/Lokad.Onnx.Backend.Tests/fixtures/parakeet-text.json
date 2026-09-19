@@ -1,0 +1,109 @@
+{
+  "source": "onnx-asr Unicode detokenization policy",
+  "reference_revision": "675f0e68c24d846ee1775743e92d9b4ed452380e",
+  "generator_lf_sha256": "95afc33e9bd3b13fe600db8fc1fdc8bbad960d9d6ed2513ee3c837002c79076e",
+  "pieces": [
+    "\u2581Bonjour",
+    "\u2581,",
+    "\u2581\u00e9t\u00e9",
+    "\u2581\ud801\udc00",
+    "\u2581!",
+    "\u2581",
+    "e",
+    "\u0301",
+    "\u2581\u00b3",
+    "\u2581_",
+    "\u2581\ud83d\ude00",
+    "<|nospeech|>",
+    "\u2581word",
+    "\u2581123"
+  ],
+  "cases": [
+    {
+      "tokens": [],
+      "text": ""
+    },
+    {
+      "tokens": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "text": "Bonjour, \u00e9t\u00e9 \ud801\udc00!"
+    },
+    {
+      "tokens": [
+        5,
+        0
+      ],
+      "text": " Bonjour"
+    },
+    {
+      "tokens": [
+        0,
+        5,
+        5,
+        2
+      ],
+      "text": "Bonjour \u00e9t\u00e9"
+    },
+    {
+      "tokens": [
+        6,
+        7
+      ],
+      "text": "e\u0301"
+    },
+    {
+      "tokens": [
+        5,
+        7
+      ],
+      "text": "\u0301"
+    },
+    {
+      "tokens": [
+        0,
+        8
+      ],
+      "text": "Bonjour \u00b3"
+    },
+    {
+      "tokens": [
+        0,
+        9
+      ],
+      "text": "Bonjour _"
+    },
+    {
+      "tokens": [
+        0,
+        10
+      ],
+      "text": "Bonjour\ud83d\ude00"
+    },
+    {
+      "tokens": [
+        11
+      ],
+      "text": "<|nospeech|>"
+    },
+    {
+      "tokens": [
+        0,
+        5
+      ],
+      "text": "Bonjour"
+    },
+    {
+      "tokens": [
+        12,
+        13
+      ],
+      "text": "word 123"
+    }
+  ]
+}

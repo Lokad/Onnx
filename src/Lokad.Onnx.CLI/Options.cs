@@ -35,6 +35,7 @@ public class RunOptions : Options
 
 public class TranscribeOptions : Options
 {
+    public string ModelType { get; set; } = "whisper";
     public string ModelDirectory { get; set; } = "";
     public string AudioFile { get; set; } = "";
     public string Language { get; set; } = "";
@@ -309,6 +310,10 @@ public static class ArgsParser
                 if (!seen.Add(name)) return Fail("Duplicate option: --" + name + ".");
                 switch (name)
                 {
+                    case "model-type":
+                        if (!TakeString("transcribe", name, rest, ref i, inline, out var modelType, out var e0)) return Fail(e0);
+                        options.ModelType = modelType;
+                        break;
                     case "language":
                         if (!TakeString("transcribe", name, rest, ref i, inline, out var language, out var e1)) return Fail(e1);
                         options.Language = language;
@@ -328,8 +333,12 @@ public static class ArgsParser
             else positionals.Add(token);
         }
         if (positionals.Count != 2) return Fail("The transcribe command requires a model directory and a WAV file.");
-        if (string.IsNullOrWhiteSpace(options.Language)) return Fail("The transcribe command requires --language <code>.");
-        if (options.MaxTokens < 1 || options.MaxTokens > 444) return Fail("--max-tokens must be between 1 and 444.");
+        if (options.ModelType != "whisper" && options.ModelType != "parakeet") return Fail("--model-type must be whisper or parakeet.");
+        if (options.ModelType == "whisper" && string.IsNullOrWhiteSpace(options.Language)) return Fail("Whisper transcription requires --language <code>.");
+        if (options.ModelType == "parakeet" && seen.Contains("language")) return Fail("Parakeet recognizes language automatically; omit --language.");
+        int maximum = options.ModelType == "parakeet" ? 4096 : 444;
+        if (!seen.Contains("max-tokens")) options.MaxTokens = maximum;
+        if (options.MaxTokens < 1 || options.MaxTokens > maximum) return Fail("--max-tokens must be between 1 and " + maximum + ".");
         options.ModelDirectory = positionals[0];
         options.AudioFile = positionals[1];
         return new ParseResult { Outcome = ParseOutcome.Ok, Verb = "transcribe", Value = options };

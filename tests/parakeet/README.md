@@ -59,7 +59,9 @@ as little-endian raw arrays; the result records their shapes, dtypes and hashes
 for independent comparison with the native NPY files.
 
 This establishes component behavior on deterministic synthetic inputs. The audio
-frontend has a separate [full-feature replay](frontend/README.md). Vocabulary/text decoding, token/duration advancement,
-long recordings and complete Parakeet transcription remain separate work. Passing
-this lane must not be reported as end-to-end ASR support or qualification of the
-INT8 exports.
+frontend has a separate [full-feature replay](frontend/README.md). The managed
+[transcription API and CLI](transcribe/README.md) connect the frontend, encoder,
+token/duration loop and vocabulary for recordings up to 30 seconds. That lane
+records exact application agreement and a remaining full-array numerical failure
+separately. Passing this component lane does not qualify complete transcription,
+long recordings or the INT8 exports.
