@@ -32,6 +32,19 @@ illustrates why a large microbenchmark improvement did not justify another
 default change. Source analysis, dispatch evidence and timing are separate forms
 of evidence.
 
+A later isolated bookkeeping probe on the qualified c6bf781 core measured the
+actual prepared e5 graph (347 nodes, 270 initializers and 1,244 intermediate
+bindings). On Windows/.NET 10.0.12, CPU 2, thirty retained blocks of one hundred
+calls after warm-up averaged 0.1066 ms for the structure fingerprint, 0.0387 ms
+for static alias-root discovery, 0.1157 ms for context construction including
+the fingerprint, and 0.0307 ms for copying context bindings and diagnostics.
+These overlapping operations must not be added together. The probe used bound
+delegates to the actual methods and preserved the graph fingerprint; its local
+receipt is `artifacts/graph-overhead-20260919/receipt.json`. It measures neither
+all node dispatch nor AMD model latency. The finding does not justify removing
+mutable-graph safeguards or a broad dispatcher rewrite; prepared MatMul remains
+the stronger optimization lead in the separately captured model attribution.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |
