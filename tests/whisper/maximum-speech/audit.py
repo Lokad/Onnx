@@ -68,9 +68,18 @@ def application(managed, native, inputs, short, validator, tokenizer):
     return rows
 
 
-def process(identity, samples, phase, frozen_sha):
-    assert identity['schema'] == 1 and identity['phase'] == phase and identity['complete'] is True
-    assert identity['code'] == 0 and 'error' not in identity and identity['frozen_sha256'] == frozen_sha
+def process(identity, samples, phase, frozen_sha, recovery=None):
+    assert identity['schema'] == 1 and identity['phase'] == phase
+    if recovery is None:
+        assert identity['complete'] is True and 'error' not in identity
+    else:
+        assert phase == 'native' and identity['complete'] is False and identity['code'] == 0
+        assert identity['error'].endswith('AssertionError: Owned descendant remains\n')
+        assert recovery['passed'] is True and recovery['original_identity'] == identity
+        assert recovery['terminal_check_time'] >= identity['ended']
+        expected = {(int(pid),birth) for pid,birth in identity['members'].items()}|{(identity['supervisor'],identity['supervisor_create_time'])}
+        assert expected == {(p['pid'],p['create_time']) for p in recovery['terminal_processes']}
+    assert identity['code'] == 0 and identity['frozen_sha256'] == frozen_sha
     assert identity['supervisor_affinity'] == [0]
     assert identity['limits'] == dict(rss=16*1024**3, seconds=7200, available_memory=1024**3)
     assert len(samples) == identity['samples'] and len(samples) > 1
@@ -167,7 +176,10 @@ def main():
     import psutil
     for phase in ('native','managed'):
         samples = [json.loads(line) for line in (base/(phase+'-samples.jsonl')).read_text(encoding='utf-8').splitlines()]
-        resource = process(read(base/(phase+'-process.json')),samples,phase,sha(base/'frozen.json'))
+        recovery = read(base/'native-terminal-recovery.json') if phase == 'native' and (base/'native-terminal-recovery.json').exists() else None
+        if recovery is not None:
+            assert recovery['native_sha256'] == sha(base/'native/manifest.json') and recovery['native_audit_sha256'] == sha(base/'native-audit.json')
+        resource = process(read(base/(phase+'-process.json')),samples,phase,sha(base/'frozen.json'),recovery)
         for identity in resource['terminal_processes']:
             try:
                 assert psutil.Process(identity['pid']).create_time() != identity['create_time'], 'Owned process remains'

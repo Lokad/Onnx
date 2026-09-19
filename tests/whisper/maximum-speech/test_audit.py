@@ -66,9 +66,10 @@ class EvidenceTests(unittest.TestCase):
         identity = read(self.base/'native-process.json')
         samples = [json.loads(line) for line in (self.base/'native-samples.jsonl').read_text(encoding='utf-8').splitlines()]
         digest = sha(self.base/'frozen.json')
-        self.assertGreater(audit.process(identity,samples,'native',digest)['samples'],1)
+        recovery = read(self.base/'native-terminal-recovery.json') if (self.base/'native-terminal-recovery.json').exists() else None
+        self.assertGreater(audit.process(identity,samples,'native',digest,recovery)['samples'],1)
         mutations = [
-            lambda j,s:j.update(complete=False),
+            lambda j,s:j.update(complete=not identity['complete']),
             lambda j,s:j.update(code=1),
             lambda j,s:j.update(samples=0),
             lambda j,s:j.update(peak_rss=0),
@@ -85,7 +86,7 @@ class EvidenceTests(unittest.TestCase):
                 damaged,values = copy.deepcopy(identity),copy.deepcopy(samples)
                 mutate(damaged,values)
                 with self.assertRaises((AssertionError,ValueError,KeyError)):
-                    audit.process(damaged,values,'native',digest)
+                    audit.process(damaged,values,'native',digest,recovery)
 
 
 if __name__ == '__main__':

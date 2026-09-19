@@ -15,7 +15,7 @@ from prepare import sha, read, write_new, pin
 
 def alive(pid, birth):
     try:
-        return psutil.Process(pid).create_time() == birth
+        return psutil.pid_exists(pid) and psutil.Process(pid).create_time() == birth
     except psutil.NoSuchProcess:
         return False
 
@@ -35,7 +35,15 @@ def main():
     phase = args.phase
     if phase == 'managed':
         native = read(base/'native-process.json')
-        assert native['complete'] and native['code'] == 0 and not alive(native['pid'], native['create_time'])
+        if not native['complete']:
+            recovery = read(base/'native-terminal-recovery.json')
+            assert recovery['passed'] and recovery['original_identity'] == native
+            assert recovery['native_process_sha256'] == sha(base/'native-process.json')
+            assert recovery['native_sha256'] == sha(base/'native/manifest.json')
+            assert recovery['native_audit_sha256'] == sha(base/'native-audit.json')
+            assert native['error'].endswith('AssertionError: Owned descendant remains\n')
+            assert all(not alive(p['pid'],p['create_time']) for p in recovery['terminal_processes'])
+        assert native['code'] == 0 and not alive(native['pid'], native['create_time'])
         assert not alive(native['supervisor'], native['supervisor_create_time'])
         audit = read(base/'native-audit.json')
         assert audit['passed'], audit
@@ -52,7 +60,7 @@ def main():
                ['dotnet', str(base/'bin/RecordingReplay.dll'), frozen['models'], str(base/'inputs/inputs.json'),
                 str(base/'short/manifest.json'), str(base/'managed')])
     identity = dict(schema=1, phase=phase, command=command, frozen_sha256=sha(base/'frozen.json'),
-        supervisor=parent.pid, supervisor_create_time=parent.create_time(), supervisor_affinity=[0],
+        supervisor=parent.pid, supervisor_create_time=parent.create_time(), supervisor_affinity=[0],supervisor_sha256=sha(Path(__file__)),
         started=time.time(), host=platform.platform(), complete=False, code=None, members={}, peak_rss=0,
         samples=0, minimum_available_memory=psutil.virtual_memory().available,
         limits=dict(rss=16*1024**3, seconds=7200, available_memory=1024**3))
@@ -113,7 +121,16 @@ def main():
                 time.sleep(.5)
             identity['code'] = child.wait()
             assert identity['code'] == 0, 'Worker failed; preserve original evidence'
-            assert all(not alive(int(pid), birth) for pid,birth in identity['members'].items()), 'Owned descendant remains'
+            deadline = time.monotonic()+10
+            identity['termination_checks'] = []
+            while True:
+                remaining = [dict(pid=int(pid),create_time=birth) for pid,birth in identity['members'].items() if alive(int(pid),birth)]
+                identity['termination_checks'].append(dict(time=time.time(),remaining=remaining))
+                save()
+                if not remaining:
+                    break
+                assert time.monotonic() < deadline, 'Owned descendant remains'
+                time.sleep(.05)
         verify()
         after = account.snapshot()
         write_new(base/(phase+'-post.json'), after)

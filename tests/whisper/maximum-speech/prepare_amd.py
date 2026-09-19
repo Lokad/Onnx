@@ -21,7 +21,13 @@ def main():
     result = native['cases'][0]['result']
     assert result['stop_reason'] == 'Completed' and result['processed_seconds'] == 600 and len(result['windows']) >= 20
     native_process = read(source/'native-process.json')
-    assert native_process['complete'] and native_process['code'] == 0
+    if not native_process['complete']:
+        recovery = read(source/'native-terminal-recovery.json')
+        assert recovery['passed'] and recovery['original_identity'] == native_process
+        assert recovery['native_process_sha256'] == sha(source/'native-process.json')
+        assert recovery['native_sha256'] == sha(source/'native/manifest.json')
+        assert recovery['native_audit_sha256'] == sha(source/'native-audit.json')
+    assert native_process['code'] == 0
     import psutil
     for pid,birth in list(native_process['members'].items())+[(native_process['supervisor'],native_process['supervisor_create_time'])]:
         try:
@@ -55,6 +61,8 @@ def main():
                           ('reference/windows-frozen.json','frozen.json'),('reference/assets.json','native-source/transcription-assets.json'),
                           ('reference/recording_audit.py','reference/recording_audit.py'),('reference/score.py','reference/score.py')]:
         add(source/filename,name)
+    if (source/'native-terminal-recovery.json').exists():
+        add(source/'native-terminal-recovery.json','reference/native-terminal-recovery.json')
     support = root/'tests/parakeet/recording-amd/remote.py'
     old = root/'artifacts/parakeet-recording-amd-20260919/closed.json'
     assert sha(old) == '7d2584e5fe5d78cd8b77ab884139c33fce516ac9b8ef85aa470bb4375a2892e0'
