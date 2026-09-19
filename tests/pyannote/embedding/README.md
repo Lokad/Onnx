@@ -17,6 +17,11 @@ Input `fbank_features` is float32 `[batch,frames,80]`; output
 features, **not final speaker embeddings**. Weighted statistics pooling, a final
 projection, speaker-mask validity and clustering remain separate work.
 
+The managed PCM frontend and its explicit numerical qualification limits are
+documented in [frontend/README.md](../frontend/README.md). This backbone lane
+continues to use pinned native filterbanks so that component and propagated
+pipeline errors remain distinguishable.
+
 Eight cases cover 200/201/400/800 frames, batch two, and recorded English, French
 and JFK audio. Native filterbank inputs come from the actual pinned
 `compute_fbank` method in [pyannote.audio](https://github.com/pyannote/pyannote-audio/blob/b749285c5cdd4636b2edc7f766f1352c8dde9369/src/pyannote/audio/models/embedding/wespeaker/__init__.py):

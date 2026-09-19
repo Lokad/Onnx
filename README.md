@@ -67,6 +67,9 @@ The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Re
 
 ## Implementation notes
 
+`Lokad.Onnx.Data` includes `WeSpeakerAudio.LogMelFilterbank` for pyannote
+Community-1 embedding inputs. See its [input contract and numerical qualification](tests/pyannote/frontend/README.md).
+
 ONNX `If` imports graph attributes and executes the selected branch in an isolated context. Branches can capture enclosing values, nest other `If` nodes, and return multiple tensor outputs; different branch shapes are supported from opset 11. The condition must contain exactly one boolean element. Sequence and optional outputs remain unsupported. `LastSubgraphExecutions` exposes child diagnostics separately: parent wall time and GC allocation include child work, while pool, scratch, copy and live-payload counters describe each scope independently.
 
 * The tensors library is pure managed C# implemented from the layout contracts. It was originally ported from [the ORT C# tensors](https://github.com/microsoft/onnxruntime/tree/main/csharp/src/Microsoft.ML.OnnxRuntime/Tensors) and has since been reimplemented from those contracts piece by piece (see CHANGELOG.md); no third-party notices ship.

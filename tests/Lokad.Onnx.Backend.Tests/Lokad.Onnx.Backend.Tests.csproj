@@ -41,6 +41,7 @@
     <None Update="fixtures\clip-ort.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="fixtures\normalization-ort.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="fixtures\whisper-frontend.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="fixtures\wespeaker-frontend.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="fixtures\whisper-text.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="fixtures\audio-resampling.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="fixtures\signal-reference.json" CopyToOutputDirectory="PreserveNewest" />

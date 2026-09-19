@@ -1,0 +1,46 @@
+{
+  "scope": "Full pinned pyannote WeSpeaker filterbank outputs",
+  "versions": {
+    "numpy": "2.2.4",
+    "torch": "2.11.0+cpu",
+    "torchaudio": "2.11.0+cpu"
+  },
+  "frontend_revision": "b749285c5cdd4636b2edc7f766f1352c8dde9369",
+  "frontend_lf_sha256": "a2c13a792c50d97f7a7583b69fcabd5eb5efc34d1374c2b6e5757bbcf3b62139",
+  "kaldi_lf_sha256": "5cbea1a584ddea748f6f68a621d794e13334e88d9faa1d40986f7af32f196d29",
+  "cases": [
+    "noise-400",
+    "noise-559",
+    "noise-560",
+    "noise-561",
+    "noise-16000",
+    "noise-160000",
+    "noise-480000",
+    "silence-400",
+    "dc-400",
+    "silence-560",
+    "dc-560",
+    "silence-16000",
+    "dc-16000",
+    "silence-160000",
+    "dc-160000",
+    "quiet",
+    "impulse",
+    "tones",
+    "english-16k",
+    "french-44k-stereo",
+    "jfk-48k-stereo"
+  ],
+  "settings": {
+    "num_mel_bins": 80,
+    "frame_length": 25.0,
+    "frame_shift": 10.0,
+    "round_to_power_of_two": true,
+    "snip_edges": true,
+    "dither": 0.0,
+    "sample_frequency": 16000,
+    "window_type": "hamming",
+    "use_energy": false
+  },
+  "tolerance": 0.0001
+}

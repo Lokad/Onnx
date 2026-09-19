@@ -25,7 +25,8 @@ the pinned Whisper feature extractor supplies the reference mel features.
 The resulting `audio.json` is accepted by `tests/whisper/generate_transcription_reference.py`
 (`--audio`), `tests/parakeet/transcribe/generate_reference.py` (`--speech`),
 `tests/parakeet/frontend/generate_reference.py` (`--speech-manifest`), and
-`tests/pyannote/embedding/generate_reference.py` (`--speech`). New manifest
+`tests/pyannote/embedding/generate_reference.py` and
+`tests/pyannote/frontend/generate_reference.py` (`--speech`). New manifest
 provenance changes its hash; generated WAV/PCM/feature bytes must reproduce the
 pinned historical inputs exactly. The helper rejects changes instead of silently
 substituting another waveform. These are small agreement fixtures, not a speech
