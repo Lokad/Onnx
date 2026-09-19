@@ -83,6 +83,16 @@ The [product protocol](../tests/e5/softmax-zero-product/README.md) treats comple
 graph latency as a separate qualification step. The earlier failed small-batch
 screen remains a failure, and the kernel gain is not an ORT or full-model ratio.
 
+The same actual AMD capture exposes repeated vector stores in the final
+maximum and NaN-validity reductions. A [standalone exactness proof](../tests/e5/softmax-reduction/results-20260919.md)
+replaces variable lane reads with literal ordered comparisons and a vector
+validity test. Each retained local process passes 109,488 maximum cases and
+1,728 complete tensors. Captured optimized loop code removes those stores,
+while growing the paired-row body from 4,030 to 4,234 bytes. Final Tier1 code
+and AMD performance remain unqualified; there is no product route or speed
+claim. This targets different instructions from the closed pointer-addressing
+experiment and does not change the running zero-block comparison.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |
