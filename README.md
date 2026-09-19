@@ -67,6 +67,8 @@ The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Re
 
 ## Implementation notes
 
+See the [model support and qualification matrix](https://github.com/Lokad/Onnx/blob/master/docs/model-support.md) for current audio capabilities and remaining limits.
+
 See [runtime defaults and intermediate lifetime](https://github.com/Lokad/Onnx/blob/master/docs/runtime-options.md) for
 storage reuse limits, explicit `ExecutionOptions.Memory` usage and diagnostic
 controls.
