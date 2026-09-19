@@ -49,12 +49,12 @@ def main():
         add(old/'inputs'/case['pcm'],'inputs/'+case['pcm'],case['pcm_sha256'],borrow=case['pcm'])
     first = inputs['cases'][0]
     add(old/'inputs'/first['wave'],'inputs/'+first['wave'],first['wave_sha256'],borrow=first['wave'])
-    assets = root/'tests/whisper/transcription-assets.json'
+    assets = old/'source/tests/whisper/transcription-assets.json'
     add(assets,'reference/assets.json',frozen['source']['tests/whisper/transcription-assets.json'])
     assert h.read(assets) == native['assets']
-    add(root/'tests/whisper/recording/Program.cs','reference/Program.cs',frozen['source']['tests/whisper/recording/Program.cs'])
+    add(old/'source/tests/whisper/recording/Program.cs','reference/Program.cs',frozen['source']['tests/whisper/recording/Program.cs'])
     add(root/'tests/whisper/recording/audit.py','reference/recording_audit.py',receipt['audit_sources']['audit.py'])
-    add(root/'tests/audio/accuracy/score.py','reference/score.py',frozen['source']['tests/audio/accuracy/score.py'])
+    add(old/'source/tests/audio/accuracy/score.py','reference/score.py',frozen['source']['tests/audio/accuracy/score.py'])
     short = root/'artifacts/asr-labeled-20260919/native-whisper/manifest.json'
     add(short,'short/manifest.json',windows['short_manifest_sha256'])
     short_case = h.read(short)['cases'][0]
