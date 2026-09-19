@@ -206,6 +206,11 @@ when regenerating. This input-path validation and transcript agreement do not
 replace the unresolved full encoder/logit `1e-4` gate or broad held-out speech
 accuracy, long-audio, and sustained-memory qualification.
 
+A separate [twenty-recording labeled check](../audio/accuracy/results-20260919.md)
+matches all native application decisions and measures 10 word errors in 559
+reference words (1.7889%) on clean English speech. This small subset does not
+resolve the full numerical gate or establish broader recognition accuracy.
+
 The [shared recorded-audio recipe](../audio/README.md) recreates all five WAV,
 PCM and mel-feature fixtures with pinned source and output hashes. Its
 `audio.json` can be passed to `generate_transcription_reference.py --audio`.

@@ -8,8 +8,8 @@ Release CLI and the assets described in each model's linked instructions.
 | Model | Available application behavior | Qualification and remaining limits |
 |---|---|---|
 | multilingual-e5-small | Embeddings through `ComputationalGraph` or `lonnx run` | Native output checks cover scalar, SIMD and intrinsic execution. The [recorded AMD comparison](../tests/e5/comparison-20260919.md) improves substantially over release, but three primary cases still exceed the 5% ORT latency target. Its experimental configuration differs from today's public defaults. |
-| Parakeet TDT 0.6B V3 | `ParakeetTranscriber` and `lonnx transcribe --model-type parakeet`; multilingual greedy transcription of recordings up to 30 seconds | Recorded transcripts, tokens, durations, carried states and recovery agree with native decisions locally and on AMD. The complete AMD replay passes all 784 arrays; Windows retains three duration-logit discrepancies above the numerical gate. Longer recordings, broader accuracy and the Windows numerical failure remain open. [Usage and evidence](../tests/parakeet/transcribe/README.md). |
-| Whisper Large V3 Turbo | `WhisperTranscriber` and `lonnx transcribe --language en`; greedy transcription of recordings up to 30 seconds | Recorded token/text/stop decisions agree locally and on AMD; independent decoder/cache trajectories and position boundaries pass their tensor checks. Full encoder/logit numerical agreement remains unresolved. Language must be explicit; automatic language detection, translation, timestamps and long-recording orchestration are not implemented. [Usage and evidence](../tests/whisper/README.md). |
+| Parakeet TDT 0.6B V3 | `ParakeetTranscriber` and `lonnx transcribe --model-type parakeet`; multilingual greedy transcription of recordings up to 30 seconds | Recorded transcripts, tokens, durations, carried states and recovery agree with native decisions locally and on AMD. The complete AMD replay passes all 784 arrays; Windows retains three duration-logit discrepancies above the numerical gate. A separate twenty-recording clean-English check matches native and records 11/559 word errors (1.9678%). Longer recordings, broader accuracy and the Windows numerical failure remain open. [Usage and evidence](../tests/parakeet/transcribe/README.md). |
+| Whisper Large V3 Turbo | `WhisperTranscriber` and `lonnx transcribe --language en`; greedy transcription of recordings up to 30 seconds | Recorded token/text/stop decisions agree locally and on AMD; independent decoder/cache trajectories and position boundaries pass their tensor checks. A separate twenty-recording clean-English check matches native and records 10/559 word errors (1.7889%). Full encoder/logit numerical agreement remains unresolved. Language must be explicit; automatic language detection, translation, timestamps and long-recording orchestration are not implemented. [Usage and evidence](../tests/whisper/README.md). |
 | pyannote Community-1 | `Community1Diarizer` and `lonnx diarize`; segmentation, speaker embeddings, automatic clustering and ordinary/exclusive speaker intervals | Connected recorded application decisions agree locally and on AMD. A labeled 30-second two-speaker example matches native scoring; it is a small accuracy sample. Filterbank and some earlier silence tensors still fail the full numerical gate. The API accepts up to ten minutes; one repeated-clip Windows request has finite resource/application proof, without a complete long intermediate trace or AMD maximum-duration proof. [Pipeline](../tests/pyannote/diarization/README.md), [dialogue and long-request evidence](../tests/pyannote/dialogue/README.md). |
 
 For example, after staging the pinned assets:
@@ -31,6 +31,10 @@ tensor agreement or accuracy against human annotations. The numerical gate is
 integer decisions and shape. Recorded failures remain failures under this rule.
 Broader multilingual, noisy, overlapping and long-recording accuracy needs
 separate evidence.
+
+The [labeled ASR observation](../tests/audio/accuracy/results-20260919.md)
+retains every error on its fixed twenty-recording subset. Its one-word
+difference between the recognizers is too small to establish a general ranking.
 
 DINOv3, ResNet50 and GPT-2 also have complete-output shared-core regression
 fixtures, including independently carried GPT states and ownership/recovery

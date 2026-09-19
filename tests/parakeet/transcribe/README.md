@@ -70,6 +70,11 @@ general speech accuracy, long-audio behavior or INT8 support. The later complete
 AMD qualification is recorded below. The initial local process peak near 6.3 GB
 is a finite observation.
 
+A separate [twenty-recording labeled check](../../audio/accuracy/results-20260919.md)
+matches all native application decisions and measures 11 word errors in 559
+reference words (1.9678%) on clean English speech. It leaves these numerical
+failures and broader multilingual/long-recording accuracy open.
+
 ## Reproduce the opt-in full-array replay
 
 Install the pinned packages in `../requirements.txt`. Supply the recorded PCM

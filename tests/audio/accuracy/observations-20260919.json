@@ -1,0 +1,1027 @@
+{
+  "schema": 1,
+  "scope": "Fixed 20-utterance, 10-speaker English read-speech diagnostic",
+  "date": "2026-09-19",
+  "dataset": {
+    "repository": "openslr/librispeech_asr",
+    "revision": "71cacbfb7e2354c4226d01e70d77d5fca3d04ba1",
+    "path": "clean/test/0000.parquet",
+    "bytes": 350452636,
+    "sha256": "7113aa4c3cf963fb54697145719a7725f984c8836d1c494a554cbb9f1a017df0",
+    "license": "CC-BY-4.0",
+    "rows": 2620,
+    "excluded_speakers": [
+      1272
+    ],
+    "speakers": 10,
+    "duration_bands_seconds": [
+      [
+        4,
+        10
+      ],
+      [
+        12,
+        25
+      ]
+    ],
+    "selection": "First ten numeric speaker IDs with both duration bands; first lexicographic utterance ID in each band. Selected before inference."
+  },
+  "source_commit": "ce8cdc327020fb9c7bd4a8b9868d0faf72492a51",
+  "product_source_commit": "c6bf781816f3a45260f7a5eb33fb05d640a821e3",
+  "core_sha256": "7653c1686419d612e2624740908a44ffdee91b4239628a979bac44f5b6b863e9",
+  "data_sha256": "13899fea53b970594631dae62d43eaaee4695b3f1ff096bbb5dd059e0d21760f",
+  "receipt_sha256": "a4855ce825f4d5f1ea931440d031eb3a0aa5b3a0fee1fddbcf4d5b51500754b7",
+  "score_sha256": "2372bca65aca73926eba958eea240dc0c40312dffadbb66409b158b2f55e25a1",
+  "normalization": "Unicode NFKC; uppercase; letters/numbers/internal ASCII apostrophes; other characters to space; collapse whitespace. CER includes normalized spaces.",
+  "utterances": 20,
+  "speakers": 10,
+  "seconds": 213.265,
+  "totals": {
+    "parakeet": {
+      "reference_words": 559,
+      "reference_characters": 3017,
+      "word_errors": 11,
+      "character_errors": 13,
+      "substitutions": 10,
+      "deletions": 0,
+      "insertions": 1,
+      "word_error_rate": 0.01967799642218247,
+      "character_error_rate": 0.004308916141862778,
+      "normalized_exact": 13
+    },
+    "whisper": {
+      "reference_words": 559,
+      "reference_characters": 3017,
+      "word_errors": 10,
+      "character_errors": 18,
+      "substitutions": 8,
+      "deletions": 1,
+      "insertions": 1,
+      "word_error_rate": 0.017889087656529516,
+      "character_error_rate": 0.005966191581040769,
+      "normalized_exact": 12
+    }
+  },
+  "cases": [
+    {
+      "name": "121-121726-0000",
+      "speaker": 121,
+      "seconds": 8.46,
+      "human_text": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON",
+      "models": {
+        "parakeet": {
+          "text": "also a popular contrivance, whereby love making may be suspended, but not stopped, during the picnic season.",
+          "token_count": 35,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON",
+            "hypothesis": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON",
+            "reference_words": 17,
+            "reference_characters": 104,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " Also, a popular contrivance whereby lovemaking may be suspended but not stopped during the picnic season.",
+          "token_count": 22,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVE MAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON",
+            "hypothesis": "ALSO A POPULAR CONTRIVANCE WHEREBY LOVEMAKING MAY BE SUSPENDED BUT NOT STOPPED DURING THE PICNIC SEASON",
+            "reference_words": 17,
+            "reference_characters": 104,
+            "word_errors": 2,
+            "character_errors": 1,
+            "substitutions": 1,
+            "deletions": 1,
+            "insertions": 0,
+            "word_error_rate": 0.11764705882352941,
+            "character_error_rate": 0.009615384615384616,
+            "normalized_equal": false
+          }
+        }
+      }
+    },
+    {
+      "name": "121-123852-0000",
+      "speaker": 121,
+      "seconds": 17.695,
+      "human_text": "THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART",
+      "models": {
+        "parakeet": {
+          "text": "Those pretty wrongs that liberty commits When I am some time absent from thy heart Thy beauty and thy years fall well befits, For still temptation follows where thou art.",
+          "token_count": 58,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART",
+            "hypothesis": "THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOME TIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FALL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART",
+            "reference_words": 29,
+            "reference_characters": 167,
+            "word_errors": 3,
+            "character_errors": 2,
+            "substitutions": 2,
+            "deletions": 0,
+            "insertions": 1,
+            "word_error_rate": 0.10344827586206896,
+            "character_error_rate": 0.011976047904191617,
+            "normalized_equal": false
+          }
+        },
+        "whisper": {
+          "text": " those pretty wrongs that liberty commits when i am some time absent from thy heart thy beauty and thy years full well befits for still temptation follows where thou art",
+          "token_count": 33,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOMETIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART",
+            "hypothesis": "THOSE PRETTY WRONGS THAT LIBERTY COMMITS WHEN I AM SOME TIME ABSENT FROM THY HEART THY BEAUTY AND THY YEARS FULL WELL BEFITS FOR STILL TEMPTATION FOLLOWS WHERE THOU ART",
+            "reference_words": 29,
+            "reference_characters": 167,
+            "word_errors": 2,
+            "character_errors": 1,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 1,
+            "word_error_rate": 0.06896551724137931,
+            "character_error_rate": 0.005988023952095809,
+            "normalized_equal": false
+          }
+        }
+      }
+    },
+    {
+      "name": "237-126133-0002",
+      "speaker": 237,
+      "seconds": 8.92,
+      "human_text": "THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS",
+      "models": {
+        "parakeet": {
+          "text": "Then, dear, said misses Whitney, you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends.",
+          "token_count": 49,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS",
+            "hypothesis": "THEN DEAR SAID MISSES WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS",
+            "reference_words": 30,
+            "reference_characters": 143,
+            "word_errors": 1,
+            "character_errors": 1,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.03333333333333333,
+            "character_error_rate": 0.006993006993006993,
+            "normalized_equal": false
+          }
+        },
+        "whisper": {
+          "text": " \"'Then, dear,' said Mrs. Whitney, \"'you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends.'",
+          "token_count": 41,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THEN DEAR SAID MISSUS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS",
+            "hypothesis": "THEN DEAR SAID MRS WHITNEY YOU MUST BE KINDER TO HER THAN EVER THINK WHAT IT WOULD BE FOR ONE OF YOU TO BE AWAY FROM HOME EVEN AMONG FRIENDS",
+            "reference_words": 30,
+            "reference_characters": 143,
+            "word_errors": 1,
+            "character_errors": 4,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.03333333333333333,
+            "character_error_rate": 0.027972027972027972,
+            "normalized_equal": false
+          }
+        }
+      }
+    },
+    {
+      "name": "237-126133-0000",
+      "speaker": 237,
+      "seconds": 13.29,
+      "human_text": "HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME",
+      "models": {
+        "parakeet": {
+          "text": "Here she would stay, comforted and soothed among the lovely plants and rich exotics, rejoicing the heart of old Turner the gardener, who since Polly's first rapturous entrance had taken her into his good graces for all time.",
+          "token_count": 75,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME",
+            "hypothesis": "HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME",
+            "reference_words": 38,
+            "reference_characters": 220,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " here she would stay comforted and soothed among the lovely plants and rich exotics rejoicing the heart of old turner the gardener who since polly's first rapturous entrance had taken her into his good graces for all time",
+          "token_count": 50,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME",
+            "hypothesis": "HERE SHE WOULD STAY COMFORTED AND SOOTHED AMONG THE LOVELY PLANTS AND RICH EXOTICS REJOICING THE HEART OF OLD TURNER THE GARDENER WHO SINCE POLLY'S FIRST RAPTUROUS ENTRANCE HAD TAKEN HER INTO HIS GOOD GRACES FOR ALL TIME",
+            "reference_words": 38,
+            "reference_characters": 220,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "260-123286-0000",
+      "speaker": 260,
+      "seconds": 7.04,
+      "human_text": "SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT",
+      "models": {
+        "parakeet": {
+          "text": "Saturday, august fifteenth. The sea unbroken all round. No land in sight,",
+          "token_count": 28,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT",
+            "hypothesis": "SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT",
+            "reference_words": 12,
+            "reference_characters": 69,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " Saturday, August 15th. The sea unbroken all round. No land in sight.",
+          "token_count": 19,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "SATURDAY AUGUST FIFTEENTH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT",
+            "hypothesis": "SATURDAY AUGUST 15TH THE SEA UNBROKEN ALL ROUND NO LAND IN SIGHT",
+            "reference_words": 12,
+            "reference_characters": 69,
+            "word_errors": 1,
+            "character_errors": 7,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.08333333333333333,
+            "character_error_rate": 0.10144927536231885,
+            "normalized_equal": false
+          }
+        }
+      }
+    },
+    {
+      "name": "260-123288-0005",
+      "speaker": 260,
+      "seconds": 12.55,
+      "human_text": "FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+      "models": {
+        "parakeet": {
+          "text": "From time to time a fleecy tuft of mist, with yet some gleaming light left upon it, drops down upon the dense floor of grey, and loses itself in the opaque and impenetrable mass.",
+          "token_count": 66,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+            "hypothesis": "FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+            "reference_words": 34,
+            "reference_characters": 174,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " from time to time a fleecy tuft of mist with yet some gleaming light left upon it drops down upon the dense floor of gray and loses itself in the opaque and impenetrable mass",
+          "token_count": 42,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GREY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+            "hypothesis": "FROM TIME TO TIME A FLEECY TUFT OF MIST WITH YET SOME GLEAMING LIGHT LEFT UPON IT DROPS DOWN UPON THE DENSE FLOOR OF GRAY AND LOSES ITSELF IN THE OPAQUE AND IMPENETRABLE MASS",
+            "reference_words": 34,
+            "reference_characters": 174,
+            "word_errors": 1,
+            "character_errors": 1,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.029411764705882353,
+            "character_error_rate": 0.005747126436781609,
+            "normalized_equal": false
+          }
+        }
+      }
+    },
+    {
+      "name": "672-122797-0000",
+      "speaker": 672,
+      "seconds": 4.07,
+      "human_text": "OUT IN THE WOODS STOOD A NICE LITTLE FIR TREE",
+      "models": {
+        "parakeet": {
+          "text": "Out in the woods stood a nice little fir tree.",
+          "token_count": 17,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "OUT IN THE WOODS STOOD A NICE LITTLE FIR TREE",
+            "hypothesis": "OUT IN THE WOODS STOOD A NICE LITTLE FIR TREE",
+            "reference_words": 10,
+            "reference_characters": 45,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " Out in the woods stood a nice little fir tree.",
+          "token_count": 12,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "OUT IN THE WOODS STOOD A NICE LITTLE FIR TREE",
+            "hypothesis": "OUT IN THE WOODS STOOD A NICE LITTLE FIR TREE",
+            "reference_words": 10,
+            "reference_characters": 45,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "672-122797-0001",
+      "speaker": 672,
+      "seconds": 15.13,
+      "human_text": "THE PLACE HE HAD WAS A VERY GOOD ONE THE SUN SHONE ON HIM AS TO FRESH AIR THERE WAS ENOUGH OF THAT AND ROUND HIM GREW MANY LARGE SIZED COMRADES PINES AS WELL AS FIRS",
+      "models": {
+        "parakeet": {
+          "text": "The place he had was a very good one. The sun shone on him. As to fresh air there was enough of that, and round him grew many large sized comrades, pines as well as firs.",
+          "token_count": 56,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THE PLACE HE HAD WAS A VERY GOOD ONE THE SUN SHONE ON HIM AS TO FRESH AIR THERE WAS ENOUGH OF THAT AND ROUND HIM GREW MANY LARGE SIZED COMRADES PINES AS WELL AS FIRS",
+            "hypothesis": "THE PLACE HE HAD WAS A VERY GOOD ONE THE SUN SHONE ON HIM AS TO FRESH AIR THERE WAS ENOUGH OF THAT AND ROUND HIM GREW MANY LARGE SIZED COMRADES PINES AS WELL AS FIRS",
+            "reference_words": 36,
+            "reference_characters": 165,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " the place he had was a very good one the sun shone on him as to fresh air there was enough of that and round him grew many large-sized comrades pines as well as firs",
+          "token_count": 41,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THE PLACE HE HAD WAS A VERY GOOD ONE THE SUN SHONE ON HIM AS TO FRESH AIR THERE WAS ENOUGH OF THAT AND ROUND HIM GREW MANY LARGE SIZED COMRADES PINES AS WELL AS FIRS",
+            "hypothesis": "THE PLACE HE HAD WAS A VERY GOOD ONE THE SUN SHONE ON HIM AS TO FRESH AIR THERE WAS ENOUGH OF THAT AND ROUND HIM GREW MANY LARGE SIZED COMRADES PINES AS WELL AS FIRS",
+            "reference_words": 36,
+            "reference_characters": 165,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "908-157963-0005",
+      "speaker": 908,
+      "seconds": 7.035,
+      "human_text": "LIKE THE DOVES VOICE LIKE TRANSIENT DAY LIKE MUSIC IN THE AIR AH",
+      "models": {
+        "parakeet": {
+          "text": "Like the dove's voice, like transient day, like music in the air. Ah",
+          "token_count": 25,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "LIKE THE DOVES VOICE LIKE TRANSIENT DAY LIKE MUSIC IN THE AIR AH",
+            "hypothesis": "LIKE THE DOVE'S VOICE LIKE TRANSIENT DAY LIKE MUSIC IN THE AIR AH",
+            "reference_words": 13,
+            "reference_characters": 64,
+            "word_errors": 1,
+            "character_errors": 1,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.07692307692307693,
+            "character_error_rate": 0.015625,
+            "normalized_equal": false
+          }
+        },
+        "whisper": {
+          "text": " Like the dove's voice, like transient day, like music in the air. Ah,",
+          "token_count": 19,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "LIKE THE DOVES VOICE LIKE TRANSIENT DAY LIKE MUSIC IN THE AIR AH",
+            "hypothesis": "LIKE THE DOVE'S VOICE LIKE TRANSIENT DAY LIKE MUSIC IN THE AIR AH",
+            "reference_words": 13,
+            "reference_characters": 64,
+            "word_errors": 1,
+            "character_errors": 1,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.07692307692307693,
+            "character_error_rate": 0.015625,
+            "normalized_equal": false
+          }
+        }
+      }
+    },
+    {
+      "name": "908-157963-0000",
+      "speaker": 908,
+      "seconds": 12.62,
+      "human_text": "TO FADE AWAY LIKE MORNING BEAUTY FROM HER MORTAL DAY DOWN BY THE RIVER OF ADONA HER SOFT VOICE IS HEARD AND THUS HER GENTLE LAMENTATION FALLS LIKE MORNING DEW",
+      "models": {
+        "parakeet": {
+          "text": "To fade away like morning beauty from her mortal day. Down by the river of Adonna her soft voice is heard, And thus her gentle lamentation falls like morning dew.",
+          "token_count": 57,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "TO FADE AWAY LIKE MORNING BEAUTY FROM HER MORTAL DAY DOWN BY THE RIVER OF ADONA HER SOFT VOICE IS HEARD AND THUS HER GENTLE LAMENTATION FALLS LIKE MORNING DEW",
+            "hypothesis": "TO FADE AWAY LIKE MORNING BEAUTY FROM HER MORTAL DAY DOWN BY THE RIVER OF ADONNA HER SOFT VOICE IS HEARD AND THUS HER GENTLE LAMENTATION FALLS LIKE MORNING DEW",
+            "reference_words": 30,
+            "reference_characters": 158,
+            "word_errors": 1,
+            "character_errors": 1,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.03333333333333333,
+            "character_error_rate": 0.006329113924050633,
+            "normalized_equal": false
+          }
+        },
+        "whisper": {
+          "text": " to fade away like morning beauty from her mortal day down by the river of adonna her soft voice is heard and thus her gentle lamentation falls like morning dew",
+          "token_count": 34,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "TO FADE AWAY LIKE MORNING BEAUTY FROM HER MORTAL DAY DOWN BY THE RIVER OF ADONA HER SOFT VOICE IS HEARD AND THUS HER GENTLE LAMENTATION FALLS LIKE MORNING DEW",
+            "hypothesis": "TO FADE AWAY LIKE MORNING BEAUTY FROM HER MORTAL DAY DOWN BY THE RIVER OF ADONNA HER SOFT VOICE IS HEARD AND THUS HER GENTLE LAMENTATION FALLS LIKE MORNING DEW",
+            "reference_words": 30,
+            "reference_characters": 158,
+            "word_errors": 1,
+            "character_errors": 1,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.03333333333333333,
+            "character_error_rate": 0.006329113924050633,
+            "normalized_equal": false
+          }
+        }
+      }
+    },
+    {
+      "name": "1089-134686-0002",
+      "speaker": 1089,
+      "seconds": 6.625,
+      "human_text": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS",
+      "models": {
+        "parakeet": {
+          "text": "After early nightfall the yellow lamps would light up here and there the squalid quarter of the brothels.",
+          "token_count": 37,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS",
+            "hypothesis": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS",
+            "reference_words": 18,
+            "reference_characters": 104,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " after early nightfall the yellow lamps would light up here and there the squalid quarter of the brothels",
+          "token_count": 22,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS",
+            "hypothesis": "AFTER EARLY NIGHTFALL THE YELLOW LAMPS WOULD LIGHT UP HERE AND THERE THE SQUALID QUARTER OF THE BROTHELS",
+            "reference_words": 18,
+            "reference_characters": 104,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "1089-134686-0011",
+      "speaker": 1089,
+      "seconds": 12.445,
+      "human_text": "ON SATURDAY MORNINGS WHEN THE SODALITY MET IN THE CHAPEL TO RECITE THE LITTLE OFFICE HIS PLACE WAS A CUSHIONED KNEELING DESK AT THE RIGHT OF THE ALTAR FROM WHICH HE LED HIS WING OF BOYS THROUGH THE RESPONSES",
+      "models": {
+        "parakeet": {
+          "text": "On Saturday mornings, when the sodality met in the chapel to recite the little office, his place was a cushioned kneeling desk at the right of the altar, from which he led his wing of boys through the responses.",
+          "token_count": 67,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "ON SATURDAY MORNINGS WHEN THE SODALITY MET IN THE CHAPEL TO RECITE THE LITTLE OFFICE HIS PLACE WAS A CUSHIONED KNEELING DESK AT THE RIGHT OF THE ALTAR FROM WHICH HE LED HIS WING OF BOYS THROUGH THE RESPONSES",
+            "hypothesis": "ON SATURDAY MORNINGS WHEN THE SODALITY MET IN THE CHAPEL TO RECITE THE LITTLE OFFICE HIS PLACE WAS A CUSHIONED KNEELING DESK AT THE RIGHT OF THE ALTAR FROM WHICH HE LED HIS WING OF BOYS THROUGH THE RESPONSES",
+            "reference_words": 39,
+            "reference_characters": 207,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " on saturday mornings when the sodality met in the chapel to recite the little office his place was a cushioned kneeling desk at the right of the altar from which he led his wing of boys through the responses",
+          "token_count": 44,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "ON SATURDAY MORNINGS WHEN THE SODALITY MET IN THE CHAPEL TO RECITE THE LITTLE OFFICE HIS PLACE WAS A CUSHIONED KNEELING DESK AT THE RIGHT OF THE ALTAR FROM WHICH HE LED HIS WING OF BOYS THROUGH THE RESPONSES",
+            "hypothesis": "ON SATURDAY MORNINGS WHEN THE SODALITY MET IN THE CHAPEL TO RECITE THE LITTLE OFFICE HIS PLACE WAS A CUSHIONED KNEELING DESK AT THE RIGHT OF THE ALTAR FROM WHICH HE LED HIS WING OF BOYS THROUGH THE RESPONSES",
+            "reference_words": 39,
+            "reference_characters": 207,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "1188-133604-0001",
+      "speaker": 1188,
+      "seconds": 9.04,
+      "human_text": "THEY UNITE EVERY QUALITY AND SOMETIMES YOU WILL FIND ME REFERRING TO THEM AS COLORISTS SOMETIMES AS CHIAROSCURISTS",
+      "models": {
+        "parakeet": {
+          "text": "They unite every quality, and sometimes you will find me referring to them as colourists, sometimes as chiaroscurists.",
+          "token_count": 42,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THEY UNITE EVERY QUALITY AND SOMETIMES YOU WILL FIND ME REFERRING TO THEM AS COLORISTS SOMETIMES AS CHIAROSCURISTS",
+            "hypothesis": "THEY UNITE EVERY QUALITY AND SOMETIMES YOU WILL FIND ME REFERRING TO THEM AS COLOURISTS SOMETIMES AS CHIAROSCURISTS",
+            "reference_words": 18,
+            "reference_characters": 114,
+            "word_errors": 1,
+            "character_errors": 1,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.05555555555555555,
+            "character_error_rate": 0.008771929824561403,
+            "normalized_equal": false
+          }
+        },
+        "whisper": {
+          "text": " They unite every quality. And sometimes you will find me referring to them as colorists, sometimes as chiaroscurists.",
+          "token_count": 26,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THEY UNITE EVERY QUALITY AND SOMETIMES YOU WILL FIND ME REFERRING TO THEM AS COLORISTS SOMETIMES AS CHIAROSCURISTS",
+            "hypothesis": "THEY UNITE EVERY QUALITY AND SOMETIMES YOU WILL FIND ME REFERRING TO THEM AS COLORISTS SOMETIMES AS CHIAROSCURISTS",
+            "reference_words": 18,
+            "reference_characters": 114,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "1188-133604-0002",
+      "speaker": 1188,
+      "seconds": 17.96,
+      "human_text": "BY BEING STUDIOUS OF COLOR THEY ARE STUDIOUS OF DIVISION AND WHILE THE CHIAROSCURIST DEVOTES HIMSELF TO THE REPRESENTATION OF DEGREES OF FORCE IN ONE THING UNSEPARATED LIGHT THE COLORISTS HAVE FOR THEIR FUNCTION THE ATTAINMENT OF BEAUTY BY ARRANGEMENT OF THE DIVISIONS OF LIGHT",
+      "models": {
+        "parakeet": {
+          "text": "By being studious of colour they are studious of division, and while the curoscurist devotes himself to the representation of degrees of force in one thing, unseparated light, the colourists have for their function the attainment of beauty by arrangement of the divisions of light.",
+          "token_count": 94,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "BY BEING STUDIOUS OF COLOR THEY ARE STUDIOUS OF DIVISION AND WHILE THE CHIAROSCURIST DEVOTES HIMSELF TO THE REPRESENTATION OF DEGREES OF FORCE IN ONE THING UNSEPARATED LIGHT THE COLORISTS HAVE FOR THEIR FUNCTION THE ATTAINMENT OF BEAUTY BY ARRANGEMENT OF THE DIVISIONS OF LIGHT",
+            "hypothesis": "BY BEING STUDIOUS OF COLOUR THEY ARE STUDIOUS OF DIVISION AND WHILE THE CUROSCURIST DEVOTES HIMSELF TO THE REPRESENTATION OF DEGREES OF FORCE IN ONE THING UNSEPARATED LIGHT THE COLOURISTS HAVE FOR THEIR FUNCTION THE ATTAINMENT OF BEAUTY BY ARRANGEMENT OF THE DIVISIONS OF LIGHT",
+            "reference_words": 45,
+            "reference_characters": 277,
+            "word_errors": 3,
+            "character_errors": 5,
+            "substitutions": 3,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.06666666666666667,
+            "character_error_rate": 0.018050541516245487,
+            "normalized_equal": false
+          }
+        },
+        "whisper": {
+          "text": " by being studious of color they are studious of division and while the chiaroscurist devotes himself to the representation of degrees of force in one thing unseparated light the colorists have for their function the attainment of beauty by arrangement of the divisions of light",
+          "token_count": 57,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "BY BEING STUDIOUS OF COLOR THEY ARE STUDIOUS OF DIVISION AND WHILE THE CHIAROSCURIST DEVOTES HIMSELF TO THE REPRESENTATION OF DEGREES OF FORCE IN ONE THING UNSEPARATED LIGHT THE COLORISTS HAVE FOR THEIR FUNCTION THE ATTAINMENT OF BEAUTY BY ARRANGEMENT OF THE DIVISIONS OF LIGHT",
+            "hypothesis": "BY BEING STUDIOUS OF COLOR THEY ARE STUDIOUS OF DIVISION AND WHILE THE CHIAROSCURIST DEVOTES HIMSELF TO THE REPRESENTATION OF DEGREES OF FORCE IN ONE THING UNSEPARATED LIGHT THE COLORISTS HAVE FOR THEIR FUNCTION THE ATTAINMENT OF BEAUTY BY ARRANGEMENT OF THE DIVISIONS OF LIGHT",
+            "reference_words": 45,
+            "reference_characters": 277,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "1221-135766-0002",
+      "speaker": 1221,
+      "seconds": 4.825,
+      "human_text": "YET THESE THOUGHTS AFFECTED HESTER PRYNNE LESS WITH HOPE THAN APPREHENSION",
+      "models": {
+        "parakeet": {
+          "text": "Yet these thoughts affected Hester Prynne less with hope than apprehension.",
+          "token_count": 28,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "YET THESE THOUGHTS AFFECTED HESTER PRYNNE LESS WITH HOPE THAN APPREHENSION",
+            "hypothesis": "YET THESE THOUGHTS AFFECTED HESTER PRYNNE LESS WITH HOPE THAN APPREHENSION",
+            "reference_words": 11,
+            "reference_characters": 74,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " Yet these thoughts affected Hester Prynne less with hope than apprehension.",
+          "token_count": 17,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "YET THESE THOUGHTS AFFECTED HESTER PRYNNE LESS WITH HOPE THAN APPREHENSION",
+            "hypothesis": "YET THESE THOUGHTS AFFECTED HESTER PRYNNE LESS WITH HOPE THAN APPREHENSION",
+            "reference_words": 11,
+            "reference_characters": 74,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "1221-135766-0000",
+      "speaker": 1221,
+      "seconds": 12.435,
+      "human_text": "HOW STRANGE IT SEEMED TO THE SAD WOMAN AS SHE WATCHED THE GROWTH AND THE BEAUTY THAT BECAME EVERY DAY MORE BRILLIANT AND THE INTELLIGENCE THAT THREW ITS QUIVERING SUNSHINE OVER THE TINY FEATURES OF THIS CHILD",
+      "models": {
+        "parakeet": {
+          "text": "How strange it seemed to the sad woman, as she watched the growth and the beauty that became every day more brilliant, and the intelligence that threw its quivering sunshine over the tiny features of this child.",
+          "token_count": 72,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "HOW STRANGE IT SEEMED TO THE SAD WOMAN AS SHE WATCHED THE GROWTH AND THE BEAUTY THAT BECAME EVERY DAY MORE BRILLIANT AND THE INTELLIGENCE THAT THREW ITS QUIVERING SUNSHINE OVER THE TINY FEATURES OF THIS CHILD",
+            "hypothesis": "HOW STRANGE IT SEEMED TO THE SAD WOMAN AS SHE WATCHED THE GROWTH AND THE BEAUTY THAT BECAME EVERY DAY MORE BRILLIANT AND THE INTELLIGENCE THAT THREW ITS QUIVERING SUNSHINE OVER THE TINY FEATURES OF THIS CHILD",
+            "reference_words": 37,
+            "reference_characters": 208,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " how strange it seemed to the sad woman as she watched the growth and the beauty that became every day more brilliant and the intelligence that threw its quivering sunshine over the tiny features of this child",
+          "token_count": 39,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "HOW STRANGE IT SEEMED TO THE SAD WOMAN AS SHE WATCHED THE GROWTH AND THE BEAUTY THAT BECAME EVERY DAY MORE BRILLIANT AND THE INTELLIGENCE THAT THREW ITS QUIVERING SUNSHINE OVER THE TINY FEATURES OF THIS CHILD",
+            "hypothesis": "HOW STRANGE IT SEEMED TO THE SAD WOMAN AS SHE WATCHED THE GROWTH AND THE BEAUTY THAT BECAME EVERY DAY MORE BRILLIANT AND THE INTELLIGENCE THAT THREW ITS QUIVERING SUNSHINE OVER THE TINY FEATURES OF THIS CHILD",
+            "reference_words": 37,
+            "reference_characters": 208,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "1284-1180-0000",
+      "speaker": 1284,
+      "seconds": 8.12,
+      "human_text": "HE WORE BLUE SILK STOCKINGS BLUE KNEE PANTS WITH GOLD BUCKLES A BLUE RUFFLED WAIST AND A JACKET OF BRIGHT BLUE BRAIDED WITH GOLD",
+      "models": {
+        "parakeet": {
+          "text": "He wore blue silk stockings, blue knee pants with gold buckles, a blue ruffled waist, and a jacket of bright blue braided with gold.",
+          "token_count": 55,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "HE WORE BLUE SILK STOCKINGS BLUE KNEE PANTS WITH GOLD BUCKLES A BLUE RUFFLED WAIST AND A JACKET OF BRIGHT BLUE BRAIDED WITH GOLD",
+            "hypothesis": "HE WORE BLUE SILK STOCKINGS BLUE KNEE PANTS WITH GOLD BUCKLES A BLUE RUFFLED WAIST AND A JACKET OF BRIGHT BLUE BRAIDED WITH GOLD",
+            "reference_words": 24,
+            "reference_characters": 128,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " He wore blue silk stockings, blue knee pants with gold buckles, a blue ruffled waist, and a jacket of bright blue braided with gold.",
+          "token_count": 33,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "HE WORE BLUE SILK STOCKINGS BLUE KNEE PANTS WITH GOLD BUCKLES A BLUE RUFFLED WAIST AND A JACKET OF BRIGHT BLUE BRAIDED WITH GOLD",
+            "hypothesis": "HE WORE BLUE SILK STOCKINGS BLUE KNEE PANTS WITH GOLD BUCKLES A BLUE RUFFLED WAIST AND A JACKET OF BRIGHT BLUE BRAIDED WITH GOLD",
+            "reference_words": 24,
+            "reference_characters": 128,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "1284-1180-0018",
+      "speaker": 1284,
+      "seconds": 12.005,
+      "human_text": "IT TAKES ME SEVERAL YEARS TO MAKE THIS MAGIC POWDER BUT AT THIS MOMENT I AM PLEASED TO SAY IT IS NEARLY DONE YOU SEE I AM MAKING IT FOR MY GOOD WIFE MARGOLOTTE WHO WANTS TO USE SOME OF IT FOR A PURPOSE OF HER OWN",
+      "models": {
+        "parakeet": {
+          "text": "It takes me several years to make this magic powder, but at this moment I am pleased to say it is nearly done. You see, I am making it for my good wife Margolot, who wants to use some of it for a purpose of her own.",
+          "token_count": 72,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "IT TAKES ME SEVERAL YEARS TO MAKE THIS MAGIC POWDER BUT AT THIS MOMENT I AM PLEASED TO SAY IT IS NEARLY DONE YOU SEE I AM MAKING IT FOR MY GOOD WIFE MARGOLOTTE WHO WANTS TO USE SOME OF IT FOR A PURPOSE OF HER OWN",
+            "hypothesis": "IT TAKES ME SEVERAL YEARS TO MAKE THIS MAGIC POWDER BUT AT THIS MOMENT I AM PLEASED TO SAY IT IS NEARLY DONE YOU SEE I AM MAKING IT FOR MY GOOD WIFE MARGOLOT WHO WANTS TO USE SOME OF IT FOR A PURPOSE OF HER OWN",
+            "reference_words": 47,
+            "reference_characters": 212,
+            "word_errors": 1,
+            "character_errors": 2,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.02127659574468085,
+            "character_error_rate": 0.009433962264150943,
+            "normalized_equal": false
+          }
+        },
+        "whisper": {
+          "text": " it takes me several years to make this magic powder but at this moment i am pleased to say it is nearly done you see i am making it for my good wife margolot who wants to use some of it for a purpose of her own",
+          "token_count": 51,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "IT TAKES ME SEVERAL YEARS TO MAKE THIS MAGIC POWDER BUT AT THIS MOMENT I AM PLEASED TO SAY IT IS NEARLY DONE YOU SEE I AM MAKING IT FOR MY GOOD WIFE MARGOLOTTE WHO WANTS TO USE SOME OF IT FOR A PURPOSE OF HER OWN",
+            "hypothesis": "IT TAKES ME SEVERAL YEARS TO MAKE THIS MAGIC POWDER BUT AT THIS MOMENT I AM PLEASED TO SAY IT IS NEARLY DONE YOU SEE I AM MAKING IT FOR MY GOOD WIFE MARGOLOT WHO WANTS TO USE SOME OF IT FOR A PURPOSE OF HER OWN",
+            "reference_words": 47,
+            "reference_characters": 212,
+            "word_errors": 1,
+            "character_errors": 2,
+            "substitutions": 1,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.02127659574468085,
+            "character_error_rate": 0.009433962264150943,
+            "normalized_equal": false
+          }
+        }
+      }
+    },
+    {
+      "name": "1320-122612-0001",
+      "speaker": 1320,
+      "seconds": 9.52,
+      "human_text": "THE DEWS WERE SUFFERED TO EXHALE AND THE SUN HAD DISPERSED THE MISTS AND WAS SHEDDING A STRONG AND CLEAR LIGHT IN THE FOREST WHEN THE TRAVELERS RESUMED THEIR JOURNEY",
+      "models": {
+        "parakeet": {
+          "text": "The dews were suffered to exhale, and the sun had dispersed the mists, and was shedding a strong and clear light in the forest when the travelers resumed their journey.",
+          "token_count": 58,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THE DEWS WERE SUFFERED TO EXHALE AND THE SUN HAD DISPERSED THE MISTS AND WAS SHEDDING A STRONG AND CLEAR LIGHT IN THE FOREST WHEN THE TRAVELERS RESUMED THEIR JOURNEY",
+            "hypothesis": "THE DEWS WERE SUFFERED TO EXHALE AND THE SUN HAD DISPERSED THE MISTS AND WAS SHEDDING A STRONG AND CLEAR LIGHT IN THE FOREST WHEN THE TRAVELERS RESUMED THEIR JOURNEY",
+            "reference_words": 30,
+            "reference_characters": 165,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " The dews were suffered to exhale, and the sun had dispersed the mists, and was shedding a strong and clear light in the forest when the travelers resumed their journey.",
+          "token_count": 37,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "THE DEWS WERE SUFFERED TO EXHALE AND THE SUN HAD DISPERSED THE MISTS AND WAS SHEDDING A STRONG AND CLEAR LIGHT IN THE FOREST WHEN THE TRAVELERS RESUMED THEIR JOURNEY",
+            "hypothesis": "THE DEWS WERE SUFFERED TO EXHALE AND THE SUN HAD DISPERSED THE MISTS AND WAS SHEDDING A STRONG AND CLEAR LIGHT IN THE FOREST WHEN THE TRAVELERS RESUMED THEIR JOURNEY",
+            "reference_words": 30,
+            "reference_characters": 165,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    },
+    {
+      "name": "1320-122612-0000",
+      "speaker": 1320,
+      "seconds": 13.48,
+      "human_text": "SINCE THE PERIOD OF OUR TALE THE ACTIVE SPIRIT OF THE COUNTRY HAS SURROUNDED IT WITH A BELT OF RICH AND THRIVING SETTLEMENTS THOUGH NONE BUT THE HUNTER OR THE SAVAGE IS EVER KNOWN EVEN NOW TO PENETRATE ITS WILD RECESSES",
+      "models": {
+        "parakeet": {
+          "text": "Since the period of our tale, the active spirit of the country has surrounded it with a belt of rich and thriving settlements, though none but the hunter or the savage is ever known even now to penetrate its wild recesses.",
+          "token_count": 74,
+          "stop_reason": "EndOfAudio",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "SINCE THE PERIOD OF OUR TALE THE ACTIVE SPIRIT OF THE COUNTRY HAS SURROUNDED IT WITH A BELT OF RICH AND THRIVING SETTLEMENTS THOUGH NONE BUT THE HUNTER OR THE SAVAGE IS EVER KNOWN EVEN NOW TO PENETRATE ITS WILD RECESSES",
+            "hypothesis": "SINCE THE PERIOD OF OUR TALE THE ACTIVE SPIRIT OF THE COUNTRY HAS SURROUNDED IT WITH A BELT OF RICH AND THRIVING SETTLEMENTS THOUGH NONE BUT THE HUNTER OR THE SAVAGE IS EVER KNOWN EVEN NOW TO PENETRATE ITS WILD RECESSES",
+            "reference_words": 41,
+            "reference_characters": 219,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        },
+        "whisper": {
+          "text": " Since the period of our tale, the active spirit of the country has surrounded it with a belt of rich and thriving settlements, though none but the hunter or the savage is ever known even now to penetrate its wild recesses.",
+          "token_count": 46,
+          "stop_reason": "EndToken",
+          "native_application_match": true,
+          "metrics": {
+            "reference": "SINCE THE PERIOD OF OUR TALE THE ACTIVE SPIRIT OF THE COUNTRY HAS SURROUNDED IT WITH A BELT OF RICH AND THRIVING SETTLEMENTS THOUGH NONE BUT THE HUNTER OR THE SAVAGE IS EVER KNOWN EVEN NOW TO PENETRATE ITS WILD RECESSES",
+            "hypothesis": "SINCE THE PERIOD OF OUR TALE THE ACTIVE SPIRIT OF THE COUNTRY HAS SURROUNDED IT WITH A BELT OF RICH AND THRIVING SETTLEMENTS THOUGH NONE BUT THE HUNTER OR THE SAVAGE IS EVER KNOWN EVEN NOW TO PENETRATE ITS WILD RECESSES",
+            "reference_words": 41,
+            "reference_characters": 219,
+            "word_errors": 0,
+            "character_errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "word_error_rate": 0.0,
+            "character_error_rate": 0.0,
+            "normalized_equal": true
+          }
+        }
+      }
+    }
+  ]
+}

@@ -6,6 +6,9 @@ recognition errors against human transcripts separately from agreement with
 native ONNX Runtime. It does not replace either model's complete numerical
 qualification, and is not the official full LibriSpeech benchmark.
 
+The [September 19 observation](results-20260919.md) records the completed
+twenty-recording run and every retained recognition error.
+
 [dataset.json](dataset.json) pins the CC-BY-4.0
 [LibriSpeech clean test data](https://huggingface.co/datasets/openslr/librispeech_asr/tree/71cacbfb7e2354c4226d01e70d77d5fca3d04ba1/clean/test).
 Selection uses speaker ID, recording ID and duration, before recognition:
