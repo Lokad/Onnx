@@ -31,6 +31,9 @@ internal static class AblationSwitches
     /// Traverse each full packed panel across all row groups; requires packed AVX-512 rows.
     internal static readonly bool EnablePackedAvx512Panels = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_PANELS");
 
+    /// Use AVX-512 for prepared full-panel 2/3-row remainders; requires packed AVX-512 rows.
+    internal static readonly bool EnablePackedAvx512Narrow = EnvIsSet("LOKAD_ONNX_PACKED_AVX512_NARROW");
+
     /// Opt-in memoization of failed deferred-release probes whose alias state is unchanged.
     internal static readonly bool EnableDeferredReleaseCache = EnvIsSet("LOKAD_ONNX_DEFERRED_RELEASE_CACHE");
 
