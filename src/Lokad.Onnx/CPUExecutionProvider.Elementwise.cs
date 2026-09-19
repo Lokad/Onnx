@@ -492,6 +492,8 @@ public partial class CPUExecutionProvider
                         Profiler.StartOpStage(OpStage.Math);
                         if (AblationSwitches.EnableSoftmaxReciprocal)
                             Tensor<float>.SoftmaxMaskedFloatSpanPtrReciprocal(ds.Buffer.Span, dm.Buffer.Span, output.Buffer.Span, rows, block, tensorOptions.UseSimd);
+                        else if (AblationSwitches.EnableSoftmaxZeroBlocks)
+                            Tensor<float>.SoftmaxMaskedFloatSpanPtrZeroBlocks(ds.Buffer.Span, dm.Buffer.Span, output.Buffer.Span, rows, block, tensorOptions.UseSimd);
                         else
                             Tensor<float>.SoftmaxMaskedFloatSpanPtr(ds.Buffer.Span, dm.Buffer.Span, output.Buffer.Span, rows, block, tensorOptions.UseSimd);
                         return Success(op, output);

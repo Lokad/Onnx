@@ -3785,6 +3785,14 @@ public partial class MathOps
             ? ExpVectorNonpositive(v)
             : ExpVectorEstrin(v);
 
+    // The cutoff is identical to ExpVectorNonpositive: this branch removes work
+    // whose final result is already positive zero. Any NaN lane takes the original path.
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static Vector<float> ExpVectorNonpositiveZeroBlocks(Vector<float> v) =>
+        Vector.LessThanAll(v, new Vector<float>(-88.722839f))
+            ? Vector<float>.Zero
+            : ExpVectorNonpositive(v);
+
     /// <summary>Exact Estrin arithmetic for nonpositive inputs, including signed
     /// zero, NaN and negative infinity. Positive inputs are outside this contract.</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
