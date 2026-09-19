@@ -15,8 +15,8 @@ It runs transformer and vision models end to end on CPU, with numeric parity aga
 
 - `lonnx info <model.onnx>`: model metadata; supports `--ops`, `--init`, `--op-filter`.
 - `lonnx run <model.onnx> <inputs...>`: image and text inputs, `--softmax`, `--print-input`, profiling, and SIMD toggles.
-- `lonnx transcribe <model-directory> <audio.wav> --language en`: managed Whisper Large V3 Turbo transcription of mono/stereo WAV files up to 30 seconds, with conversion to 16 kHz. See [audio usage and qualification](tests/whisper/README.md).
-- `lonnx transcribe <model-directory> <audio.wav> --model-type parakeet`: managed Parakeet TDT 0.6B V3 transcription with automatic multilingual recognition and the same WAV input limits. See [Parakeet usage and current numerical limits](tests/parakeet/transcribe/README.md).
+- `lonnx transcribe <model-directory> <audio.wav> --language en`: managed Whisper Large V3 Turbo transcription of mono/stereo WAV files up to 30 seconds, with conversion to 16 kHz. See [audio usage and qualification](https://github.com/Lokad/Onnx/blob/master/tests/whisper/README.md).
+- `lonnx transcribe <model-directory> <audio.wav> --model-type parakeet`: managed Parakeet TDT 0.6B V3 transcription with automatic multilingual recognition and the same WAV input limits. See [Parakeet usage and current numerical limits](https://github.com/Lokad/Onnx/blob/master/tests/parakeet/transcribe/README.md).
 - Microbenchmarks live in `tests/Lokad.Onnx.Bench` (`Bench micro <matmul2d|matmul|indexing|ops|oneop>`, with BenchmarkDotNet flags); the `oneop` lane runs five frozen one-op models through both a Lokad graph and a single-CPU ORT session with agreement before timing; model comparisons run through the Bench model harness (`dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 resnet50 dinov3 gpt2`, see BENCHMARK.md), while `bench.ps1` remains the startup-inclusive CLI benchmark.
 
 ### Mini-tutorial: MNIST (image)
@@ -67,18 +67,18 @@ The package ships `README.md`, `LICENSE.txt`, and `CHANGELOG.md` at its root. Re
 
 ## Implementation notes
 
-See [runtime defaults and intermediate lifetime](docs/runtime-options.md) for
+See [runtime defaults and intermediate lifetime](https://github.com/Lokad/Onnx/blob/master/docs/runtime-options.md) for
 storage reuse limits, explicit `ExecutionOptions.Memory` usage and diagnostic
 controls.
 
 `Lokad.Onnx.Data` includes `WeSpeakerAudio.LogMelFilterbank` for pyannote
-Community-1 embedding inputs. See its [input contract and numerical qualification](tests/pyannote/frontend/README.md).
+Community-1 embedding inputs. See its [input contract and numerical qualification](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/frontend/README.md).
 `WeSpeakerEmbedder` connects local PCM, optional speaker masks and the split model
-to owned 256-value vectors; see [embedding usage and limits](tests/pyannote/speaker/README.md).
+to owned 256-value vectors; see [embedding usage and limits](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/speaker/README.md).
 `Community1Clusterer` groups those vectors with the selected pyannote learned
-transform and VBx algorithm; see [clustering usage and qualification](tests/pyannote/clustering/README.md).
+transform and VBx algorithm; see [clustering usage and qualification](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/clustering/README.md).
 `Community1Diarizer` and `lonnx diarize` connect local WAV/PCM to ordinary and
-exclusive speaker timelines; see [diarization policies and qualification](tests/pyannote/diarization/README.md).
+exclusive speaker timelines; see [diarization policies and qualification](https://github.com/Lokad/Onnx/blob/master/tests/pyannote/diarization/README.md).
 
 ONNX `If` imports graph attributes and executes the selected branch in an isolated context. Branches can capture enclosing values, nest other `If` nodes, and return multiple tensor outputs; different branch shapes are supported from opset 11. The condition must contain exactly one boolean element. Sequence and optional outputs remain unsupported. `LastSubgraphExecutions` exposes child diagnostics separately: parent wall time and GC allocation include child work, while pool, scratch, copy and live-payload counters describe each scope independently.
 
