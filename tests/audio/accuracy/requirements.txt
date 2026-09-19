@@ -1,0 +1,8 @@
+numpy==2.2.4
+onnxruntime==1.29.0
+transformers==5.16.1
+tokenizers==0.23.2
+pyarrow==18.1.0
+soundfile==0.13.1
+jiwer==4.0.0
+rapidfuzz==3.14.6

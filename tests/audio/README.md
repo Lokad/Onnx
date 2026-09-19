@@ -31,3 +31,8 @@ provenance changes its hash; generated WAV/PCM/feature bytes must reproduce the
 pinned historical inputs exactly. The helper rejects changes instead of silently
 substituting another waveform. These are small agreement fixtures, not a speech
 accuracy benchmark.
+
+The separate [labeled accuracy lane](accuracy/README.md) selects twenty test
+recordings from ten speakers before inference and scores Parakeet and Whisper
+against human transcripts. It keeps native agreement and recognition error
+separate from the existing tensor checks.

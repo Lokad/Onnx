@@ -1,0 +1,13 @@
+{
+  "repository": "openslr/librispeech_asr",
+  "revision": "71cacbfb7e2354c4226d01e70d77d5fca3d04ba1",
+  "path": "clean/test/0000.parquet",
+  "bytes": 350452636,
+  "sha256": "7113aa4c3cf963fb54697145719a7725f984c8836d1c494a554cbb9f1a017df0",
+  "license": "CC-BY-4.0",
+  "rows": 2620,
+  "excluded_speakers": [1272],
+  "speakers": 10,
+  "duration_bands_seconds": [[4, 10], [12, 25]],
+  "selection": "First ten numeric speaker IDs with both duration bands; first lexicographic utterance ID in each band. Selected before inference."
+}

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable><EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Lokad.Onnx.Data/Lokad.Onnx.Data.csproj" />
+    <Compile Include="Program.cs" />
+    <Compile Include="../../Shared/NpySupport.cs" Link="NpySupport.cs" />
+    <EmbeddedResource Include="../../parakeet/transcribe/assets.json" LogicalName="parakeet-assets.json" />
+    <EmbeddedResource Include="../../whisper/transcription-assets.json" LogicalName="whisper-assets.json" />
+  </ItemGroup>
+</Project>
