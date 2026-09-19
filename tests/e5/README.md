@@ -34,3 +34,34 @@ semantic ranking margin (>= 0.10, measured 0.18).
 The Python oracle reproduces the XLM-R fairseq framing independently with the
 `sentencepiece` library: bos=0, piece ids shifted by +1, eos=2, first 510
 pieces kept. Validated ID-for-ID against the Hugging Face reference tokenizer.
+
+## Experimental packed MatMul remainders
+
+`LOKAD_ONNX_PACKED_AVX512_NARROW=1` enables AVX-512 two- and three-row
+remainders for prepared MatMul when `LOKAD_ONNX_PACKED_AVX512_ROWS=1` is also
+set before process startup. Both switches are off by default. The route keeps
+the existing 32-column packing, 12/8-row bulk tiles, accumulation order and
+destination behavior. Unsupported hardware, column tails and shapes without
+a narrow remainder use the existing routes. The separate packed-panel
+experiment takes precedence when enabled.
+
+Run the direct arithmetic, offset, accumulation and ownership checks with:
+
+    dotnet test tests/Lokad.Onnx.Backend.Tests -c Release --tl:off --nologo -v minimal --filter FullyQualifiedName~PackedAvx512NarrowTests
+
+The arithmetic tests require AVX-512F and FMA; refusal tests also run on other
+hosts. At source `8e93aa72388b404668434aaacfaf7a5ab1e7d42e`, actual AMD testing
+passed 45 active new tests and the existing affected operator/lifetime suite.
+Twenty fresh full-model workers passed native output agreement before and
+after measurement, with maximum scaled error `1.501e-6`.
+
+The September 19 diagnostic retained 660 measured calls and 26,706 conditioning
+calls with normal tiering and GC. The thirty-token mean was 1.55% lower with
+the switch enabled, while unchanged cases also moved. This is insufficient
+to establish a model speedup or promote the switch. Local evidence is retained
+under `artifacts/packed-narrow-product-v2-20260919`, including the failed first
+supervisor attempt under `artifacts/packed-narrow-product-20260919`.
+The successful result archive SHA-256 is
+`7b216fcf139f008aa94fc9ead98b1b999161731162cf1075ae6b2b40037190bd`.
+See [the isolated evidence protocol](../../eng/isolated-evidence.md) for the
+measurement boundaries and separate scoring requirements.
