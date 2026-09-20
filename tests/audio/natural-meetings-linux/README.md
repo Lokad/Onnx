@@ -22,10 +22,28 @@ proves that both borrowed decoder function bodies are identical. The portable
 body hash is `43272a768eadeac0fd6eba53bee1c79ec6cf5f86aab3db8af8b6e7cab34893d2`.
 Original generator and frontend file hashes are checked independently.
 
-Linux runner, input-only proof, executable freeze and recording results are still
-pending. The intended schedule remains ES2004a 600 seconds, IS1009a 600 seconds,
-and ES2004a 30-second recovery in one fresh native process, with unchanged recording
-options and explicit English. The VM profile requires 13 GiB available at launch,
-less than 14 GiB group RSS, at least 1 GiB available during execution, and at most
-two hours. Full public decisions and the previous Windows first result will be
-compared, with the same human-reference policy and no changed numerical tolerance.
+The Linux runner is prepared, its input-only proof passes, and the frozen recording
+sequence is running. Source is `4a768fd`; frozen manifest SHA256 is
+`9f866075940948a4d0d776188675fe255f10e2f2377e385afa7712462c1bc514`.
+The schedule remains ES2004a 600 seconds, IS1009a 600 seconds, and ES2004a
+30-second recovery in one fresh native process, with unchanged recording options
+and explicit English. The VM profile requires 13 GiB available at launch, less
+than 14 GiB group RSS, at least 1 GiB available during execution, and at most two
+hours. Recording results and final comparison remain pending.
+
+For a fresh artifact, `prepare.py --root <checkout> --artifact <new-artifact>
+--original <original-natural-ASR-artifact>` verifies every original frozen file,
+copies the immutable reference sources, and proves that every native `main()`
+syntax-tree node after platform setup remains identical. Run the saved supervisor
+with `run --artifact <artifact> --engine native --family whisper --mode inputs`,
+then `freeze.py --artifact <artifact> --source-commit <commit>` after those process
+births are terminal. Supply the isolated package and existing psutil directories
+through `PYTHONPATH`. Launch the frozen `runtime/supervise.py` with `launch
+--artifact <artifact> --engine native` once. All these writers have already
+completed for the current artifact and must not be restarted.
+
+Full public decisions and the previous Windows first result will be compared,
+with the same human-reference policy and no changed numerical tolerance. The
+first dependency-check failure from Python-version-dependent `ast.dump` formatting
+is retained; a separate portable tree comparison and exact generator/frontend
+file hashes resolve that check without changing decoder code.
