@@ -5,6 +5,11 @@ APIs use specific FP32 exports and local model files; they do not download model
 or delegate inference to native ONNX Runtime. The commands below require the
 Release CLI and the assets described in each model's linked instructions.
 
+Audio orchestration APIs live in the repository's `Lokad.Onnx.Data` project;
+the core `Lokad.Onnx` NuGet package does not include that assembly. The
+[current core package check](../tests/package-current-20260920.md) verifies a
+fresh package restore and real graph/import execution by an independent app.
+
 | Model | Available application behavior | Qualification and remaining limits |
 |---|---|---|
 | multilingual-e5-small | Embeddings through `ComputationalGraph` or `lonnx run` | Native output checks cover scalar, SIMD and intrinsic execution. The [fresh public-options / ORT comparison](../tests/e5/public-ort-20260919.md) retains three primary cases above the 5% latency target: observed Default gaps are 9.2–12.0%, or 7.5–8.1% with explicit Memory. Eight tokens are within the target margin. Results remain descriptive; historical timing calibration is unresolved. |
