@@ -92,6 +92,23 @@ both remain recorded, and retries passed under the same memory requirements.
 The runner builds with zero warnings/errors and the four label/resource test
 methods pass. These checks perform no new neural inference.
 
+After both campaigns finish, use the Python environment containing NumPy,
+psutil 7, JiWER 4.0.0, RapidFuzz 3.14.6 and tokenizers. `collect.py --artifact
+<artifact>` first verifies every owned AMD process birth is terminal, then
+retrieves an exact, hash-checked inventory. It preserves failed runs and refuses
+archive links, traversal paths, duplicate or missing entries. The two collection
+test methods bring the lane's unit-test total to six.
+
+Run `audit.py --artifact <artifact> --output <artifact>/audit.json`, then
+`audit_resources.py --artifact <artifact> --output <artifact>/resource-audit.json`.
+The first validates complete public objects and human word/character errors;
+the second validates all four workers, samples, accounting and terminal identities.
+`close.py --artifact <artifact>` independently rechecks recorded calls, scorers,
+alignments, source identities and damaged-record refusals before writing a receipt.
+`report.py --artifact <artifact>` renders only closed evidence. Every writer
+refuses existing outputs. Application disagreement is recorded as a failure;
+evidence closure does not turn it into a passing model qualification.
+
 Attribution: Carletta et al., *The AMI meeting corpus: A pre-announcement* (2006).
 Selection and diarization references use the pinned
 [pyannote/BUT Speech@FIT setup](https://github.com/pyannote/AMI-diarization-setup/tree/67c2d539286e89f68952d5dcf83912bd9f01dfae).
