@@ -59,3 +59,9 @@ The 128-token C/B max/min position contrast is 1.01135633 for Execute and
 the overall screen fails and no candidate phase runs. Correctness and resource
 checks pass; all twenty workers and the supervisor are terminal. The complete
 artifact is closed at `97e3ecd9230f3aa169da51805be565bc789569c3864f88cad0c2ecea727e3ce9`.
+
+A [read-only label-placement diagnostic](label-diagnostic-results-20260920.md)
+preserves every measured duration and compares 1,000 fixed anonymous assignments
+for three schedules. Balancing each six-cycle block improves conditional
+acceptance compared with the global shuffle. This nominates a different future
+design; it does not qualify it or revise the failed experiment.
