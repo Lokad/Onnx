@@ -82,7 +82,7 @@ def main():
                         core_sha256=pin(stage/'bin/Lokad.Onnx.dll')['sha256'],data_sha256=pin(stage/'bin/Lokad.Onnx.Data.dll')['sha256'])
         write(stage/'draft-manifests'/(family+'.json'),manifest);counts[family]=len(manifest['cases']);sizes[family]=sum(c['samples'] for c in manifest['cases'])
     assert counts==dict(parakeet=20,pyannote=4,whisper=20) and sizes['parakeet']==sizes['whisper']==3412240
-    for name in ['native.py','protocol.py']:shutil.copyfile(Path(__file__).with_name(name),stage/'runtime'/name)
+    for name in ['native.py','protocol.py','supervise.py','freeze_linux.py']:shutil.copyfile(Path(__file__).with_name(name),stage/'runtime'/name)
     shutil.copyfile(ROOT/'eng/campaign_processes.py',stage/'runtime/campaign_processes.py')
     shutil.copyfile(ROOT/'.agent/m5-audio-amd-baselines-20260920.md',stage/'prospective-plan.md')
     write(stage/'preparation.json',dict(source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),product_source='1d10d22',

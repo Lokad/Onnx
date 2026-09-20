@@ -48,18 +48,19 @@ def check_sample(sample):
     assert sample['available']>=LIMITS['available'] and sample['disk']>=LIMITS['disk']
     assert sample['members'] and sum(m['rss'] for m in sample['members'])<LIMITS['rss']
     assert all(m['affinity']==[2] and m['rss']>=0 for m in sample['members'])
+    assert all(m['threads'] and all(t['affinity']==[2] for t in m['threads']) for m in sample['members'])
 
 
 def validate_records(value,manifest,mode):
     assert value['schema']==1 and value['family']==manifest['family'] and value['engine'] in ('managed','ort')
-    assert value['conformance']==(mode=='conformance') and value['held_outputs_unchanged'] and value['affinity']==4
+    assert type(value['conformance']) is bool and value['conformance']==(mode=='conformance') and value['held_outputs_unchanged'] is True and value['affinity']==4
     assert math.isfinite(value['setup_seconds']) and value['setup_seconds']>=0
     assert not any(k.lower().startswith(('lokad_','dotnet_','complus_')) for k in value['flags'])
     wanted=[(iteration,case) for iteration in range(1 if mode=='conformance' else 4) for case in manifest['cases']]
     assert len(value['records'])==len(wanted);previous=0;first={}
     for row,(iteration,case) in zip(value['records'],wanted):
         assert row['name']==case['name'] and row['pass']==iteration and row['phase']==('warmup' if iteration==0 else 'measured')
-        assert row['ownership'] and row['input_sha256']==case['raw_sha256']
+        assert row['ownership'] is True and row['input_sha256']==case['raw_sha256']
         assert all(type(row[k]) is int for k in ['start_ticks','end_ticks','frequency']) and row['frequency']>0
         assert previous<=row['start_ticks']<row['end_ticks'];previous=row['end_ticks']
         assert math.isfinite(row['seconds']) and row['seconds']>0 and math.isclose(row['seconds'],(row['end_ticks']-row['start_ticks'])/row['frequency'],rel_tol=1e-14)
@@ -70,4 +71,3 @@ def validate_records(value,manifest,mode):
         if value['engine']=='ort' and manifest['family']=='whisper':
             feature=row['frontend'];assert feature['values']==384000 and feature['failed']==0 and 0<=feature['max_abs']<=1e-5
             assert len(feature['sha256'])==64 and type(feature['bits_equal']) is bool
-

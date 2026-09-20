@@ -32,7 +32,9 @@ class ProtocolTests(unittest.TestCase):
                      lambda v:v['records'][0].update(start_ticks=v['records'][0]['end_ticks']),
                      lambda v:v['records'][0].update(ownership=False),lambda v:v['records'][0].update(input_sha256='0'*64),
                      lambda v:v['records'][0].update(phase='measured'),lambda v:v.update(affinity=1),
-                     lambda v:v.update(held_outputs_unchanged=False),lambda v:v.update(flags={'DOTNET_TieredCompilation':'0'})]
+                     lambda v:v.update(held_outputs_unchanged=False),lambda v:v.update(held_outputs_unchanged=1),
+                     lambda v:v['records'][0].update(ownership=1),lambda v:v.update(conformance=1),
+                     lambda v:v.update(flags={'DOTNET_TieredCompilation':'0'})]
             for change in changes:
                 value=copy.deepcopy(original);change(value)
                 with self.assertRaises(AssertionError,msg=family):validate_records(value,manifest,'conformance')
@@ -53,7 +55,7 @@ class ProtocolTests(unittest.TestCase):
             with self.assertRaises(AssertionError):check_result(actual,expected,family='pyannote')
 
     def test_resource_refusals(self):
-        sample=dict(seconds=1.,available=2*1024**3,disk=64*1024**2,members=[dict(pid=1,birth=1,rss=1024,affinity=[2])])
+        sample=dict(seconds=1.,available=2*1024**3,disk=64*1024**2,members=[dict(pid=1,birth=1,rss=1024,affinity=[2],threads=[dict(tid=1,affinity=[2])])])
         check_sample(sample)
         for key,value in [('seconds',LIMITS['seconds']),('available',0),('disk',0),('members',[])]:
             row=copy.deepcopy(sample);row[key]=value
@@ -61,6 +63,8 @@ class ProtocolTests(unittest.TestCase):
         for key,value in [('rss',LIMITS['rss']),('affinity',[0])]:
             row=copy.deepcopy(sample);row['members'][0][key]=value
             with self.assertRaises(AssertionError):check_sample(row)
+        row=copy.deepcopy(sample);row['members'][0]['threads'][0]['affinity']=[0]
+        with self.assertRaises(AssertionError):check_sample(row)
 
 
 if __name__=='__main__':unittest.main()
