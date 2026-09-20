@@ -49,9 +49,12 @@ def report(base,destination):
     value=read(base/'audit.json');assert sha(base/'audit.json')==receipt['audit_sha256']
     value=dict(value,closed_sha256=sha(base/'closed.json'),reporter_sha256=sha(Path(__file__)),
                protocol_source=read(base/'frozen.json')['source_commit'],failed_attempt_receipt=receipt['failed_attempt_receipt'])
+    amd=value.get('profile')=='amd'
+    if amd:value['windows_memory_failure_receipt']=receipt['windows_memory_failure_receipt']
+    host='AMD' if amd else 'Windows'
     write_new(destination/names[1],value)
     lines=['# Multilingual and controlled-noise ASR results','',
-        'The fixed Windows comparison completes all **164 requests**: forty cases and one repeat for each recognizer/engine. '
+        f'The fixed {host} comparison completes all **164 requests**: forty cases and one repeat for each recognizer/engine. '
         'Execution, input/output ownership, repeat, process and resource checks pass. '
         f"The complete native/managed application gate **{'passes' if value['application_passed'] else 'fails'}**. "
         'Every recognition error and application disagreement is retained below and in the linked records.','',
@@ -88,10 +91,12 @@ def report(base,destination):
         'The two engines compute independently from PCM; neither consumes the other\'s results. These application checks '
         'do not change the existing failed full-pipeline tensor gates or their 1e-4 tolerance.','',
         '## Finite timing and resource observations','',
-        'Intel i7-14700KF, Windows logical CPU 2 inherited before startup; supervisor CPU 0. .NET 10.0.12 uses normal '
+        ('AMD EPYC 9V74, Linux logical CPU 2 inherited before startup; supervisor CPU 0. .NET 10.0.8 uses normal ' if amd else
+         'Intel i7-14700KF, Windows logical CPU 2 inherited before startup; supervisor CPU 0. .NET 10.0.12 uses normal ')+
         'runtime settings and qualified product defaults. ORT 1.29.0 uses one intra/inter-op thread, sequential execution, '
         'all graph optimizations and no thread spinning. Four fresh workers run in the fixed native/managed order. '
-        'The active workstation has unrelated activity. These are single-pass observations, with no warmed performance '
+        ('The VM is exclusively assigned to this campaign. ' if amd else 'The active workstation has unrelated activity. ')+
+        'These are single-pass observations, with no warmed performance '
         'estimate or confidence claim; use the separate repeated [audio baselines](../../../BENCHMARK.md#audio-matched-microsoft-onnx-runtime-baselines).','',
         '| Worker | 40 complete PCM requests (s) | Constructor (s) | First-case repeat (s) | Process duration (s) | Peak sampled group RSS (GB) | Minimum system available (GB) | Foreign CPU fraction |',
         '|---|---:|---:|---:|---:|---:|---:|---:|']
@@ -100,8 +105,8 @@ def report(base,destination):
         lines.append(f"| {resource['name']} | {sum(r['seconds'] for r in run['cases'][:40]):.6f} | {run['constructor_seconds']:.6f} | {run['cases'][40]['seconds']:.6f} | {resource['seconds']:.6f} | {resource['peak_rss']/1e9:.6f} | {resource['minimum_available']/1e9:.6f} | {resource['foreign_cpu_fraction']:.6f} |")
     lines+=['','Request timing includes features, neural inference, decoding and owned results. Model loading, file access '
         'and external validation are outside that timer. No calls are removed, no forced GC is used, and retained outputs '
-        'are checked after every request. All 20 GiB RSS, 3,600-second and 1 GiB available-memory guards pass; '
-        'managed creation requires 20 GiB available, with at most ten minutes of recorded waiting. Snapshot foreign '
+        'are checked after every request. All '+('14' if amd else '20')+' GiB RSS, 3,600-second and 1 GiB available-memory guards pass; '
+        'managed creation requires '+('13' if amd else '20')+' GiB available, with at most ten minutes of recorded waiting. Snapshot foreign '
         'CPU fractions miss some exited/short-lived activity. GB is decimal here; guard GiB is binary.','',
         '## Reproduction and retained failures','',
         'Data: Google [FLEURS](https://huggingface.co/datasets/google/fleurs), revision '
@@ -115,17 +120,26 @@ def report(base,destination):
         'replacement. That failure and all terminated process identities remain retained. The corrected writer retries '
         'that specific sharing failure for at most one second; an actual Windows file-lock test checks transient recovery '
         'and bounded refusal. The rerun uses identical input/replay bytes and unchanged selection, scoring and decoding. '
-        'Nine tooling test methods pass; forty damaged copies of real result records are rejected after execution, '
+        ('Ten' if amd else 'Nine')+' tooling test methods pass; forty damaged copies of real result records are rejected after execution, '
         'and process accounting and all grouped score arithmetic are independently reproduced. No product/default/tolerance changed.','',
         f"Frozen runtime source: `{value['protocol_source']}`. Qualified product source: `087e280b5ea0a6a610399ccffd1a1e5668def10e`; "
         'core `187de61ad8f034b9b7ad2fb3490358443fa84334204720e81bc3546a31f3c8d4`; '
         'Data `809242b58725c6ae47514cc3908ef59ffafae6be36bb6e2fba20144d9a975af5`. '
         'This newer qualified payload is distinct from the older matched audio timing binaries.','',
-        'Raw inputs, full API results, samples, manifests and frozen source are under `artifacts/asr-multilingual-v3-20260920`. '
+        'Raw inputs, full API results, samples, manifests and frozen source are under `artifacts/'+('asr-multilingual-amd-20260920' if amd else 'asr-multilingual-v3-20260920')+'`. '
         'The auditor checks all 164 records, every case/clock/ownership/decision contract, source identities, resource '
         'samples and absence of every observed worker/supervisor birth. All writers are closed and single-use.','',
         f"Closed receipt: `{value['closed_sha256']}`. Failed inference receipt: `{value['failed_attempt_receipt']['sha256']}`. "
         f"Frozen manifest: `{value['frozen_sha256']}`.",'']
+    if amd:
+        lines+=['The second Windows attempt completed both Parakeet workers (41 requests each, all decisions matching) '
+            'but stopped after twelve native Whisper requests when available system memory fell to 1,012,891,648 bytes, '
+            'below its unchanged 1 GiB guard. All seven observed process births are absent. That schedule remains failed; '
+            'the complete AMD schedule above reruns all fixed cases for both engines and recognizers. '
+            'Data, labels, noise, normalization and decoding are unchanged. The AMD 14 GiB RSS / 13 GiB managed preflight '
+            'policy was recorded before AMD inference and reflects the exclusive 16 GiB machine. Windows Parakeet had '
+            '26/418 clean and 36/418 noisy word errors in both engines; these are separate host observations. '
+            f"Windows memory-failure receipt: `{value['windows_memory_failure_receipt']['sha256']}`.",'']
     with (destination/names[0]).open('x',encoding='utf-8') as stream:stream.write('\n'.join(lines))
     lines=['# Every multilingual ASR transcript','',
         'References are FLEURS raw human transcripts (CC-BY-4.0). Errors use the fixed normalized policy, not raw '

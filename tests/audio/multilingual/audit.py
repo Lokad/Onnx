@@ -7,6 +7,7 @@ import math
 import psutil
 from common import CORE,DATA,LOCALES,pin,read,sha,write_new
 from scoring import metrics,total
+from profiles import policy,check_runtime
 
 
 def validate_decision(family,value):
@@ -55,9 +56,10 @@ def validate_records(family,engine,rows,cases):
 def audit(base):
     root=Path(__file__).resolve().parents[3]
     frozen=read(base/'frozen.json');identity=read(base/'run/identity.json')
+    profile=frozen['profile'];settings=policy(profile);assert identity['profile']==profile
     assert identity['complete'] is True and 'error' not in identity and len(identity['runs'])==4
     assert identity['frozen_sha256']==sha(base/'frozen.json')
-    assert identity['limits']==dict(rss=20*1024**3,seconds=3600,available=1024**3)
+    assert identity['limits']=={k:settings[k] for k in ('rss','seconds','available')}
     for name,wanted in frozen['files'].items():assert pin(root/name)==wanted,name
     for name,version in {'jiwer':'4.0.0','rapidfuzz':'3.14.6','psutil':'7.0.0'}.items():assert importlib.metadata.version(name)==version,name
     audio=read(base/'inputs/audio.json');input_audit=read(base/'input-audit.json')
@@ -69,23 +71,23 @@ def audit(base):
     for number,(row,(family,engine)) in enumerate(zip(identity['runs'],order,strict=True)):
         assert (row['name'],row['family'],row['engine'])==(f'{number:02d}-{family}-{engine}',family,engine)
         assert row['code']==0 and 0<row['seconds']<3600
-        if engine=='managed':assert row['preflight_available']>=20*1024**3
+        if engine=='managed':assert row['preflight_available']>=settings['preflight']
         preflight=identity['preflights'][number]
         assert (preflight['family'],preflight['engine'])==(family,engine)
         observations=preflight['observations'];assert observations
         assert observations[-1]['available']==row['preflight_available']
         assert [v['seconds'] for v in observations]==sorted(v['seconds'] for v in observations)
         assert all(0<=v['seconds']<603 and v['available']>=0 for v in observations)
-        if engine=='managed':assert all(v['available']<20*1024**3 for v in observations[:-1])
+        if engine=='managed':assert all(v['available']<settings['preflight'] for v in observations[:-1])
         else:assert len(observations)==1
         samples=[json.loads(line) for line in (base/'run'/(row['name']+'-samples.jsonl')).read_text().splitlines()]
         assert len(samples)==row['samples'] and len(samples)>1
         seen={};last=-1;peak=0;available=[]
         for sample in samples:
             assert last<=sample['seconds']<row['seconds'];last=sample['seconds']
-            assert sample['available']>=1024**3;available.append(sample['available'])
+            assert sample['available']>=settings['available'];available.append(sample['available'])
             assert len({m['pid'] for m in sample['members']})==len(sample['members'])
-            rss=sum(m['rss'] for m in sample['members']);assert 0<=rss<20*1024**3;peak=max(peak,rss)
+            rss=sum(m['rss'] for m in sample['members']);assert 0<=rss<settings['rss'];peak=max(peak,rss)
             for member in sample['members']:
                 assert member['affinity']==[2] and member['rss']>=0 and member['cpu_seconds']>=0
                 assert seen.get(str(member['pid']),member['birth'])==member['birth']
@@ -98,7 +100,8 @@ def audit(base):
         assert (result['family'],result['engine'])==(family,engine) and result['affinity']==4 and not result['flags']
         assert result['manifest_sha256']==sha(manifest_path) and result['audio_sha256']==sha(base/'inputs/audio.json')
         if engine=='managed':
-            assert result['core_sha256']==CORE and result['data_sha256']==DATA and result['runtime']=='.NET 10.0.12'
+            check_runtime(profile,result)
+            assert result['core_sha256']==CORE and result['data_sha256']==DATA
             assert result['runner_sha256']==sha(base/'bin/MultilingualReplay.dll')
         else:
             assert result['numpy']=='2.2.4' and result['onnxruntime']=='1.29.0'
@@ -125,7 +128,7 @@ def audit(base):
                 assert len(subset)==(20 if locale=='all' else 4)
                 groups.append(dict(locale=locale,condition=condition,recordings=len(subset),native=total([r['native_metrics'] for r in subset]),managed=total([r['managed_metrics'] for r in subset])))
         models[family]=dict(application_passed=all(a['decision']==b['decision'] for a,b in zip(native,managed,strict=True)),cases=rows,groups=groups)
-    return dict(schema=1,execution_passed=True,application_passed=all(m['application_passed'] for m in models.values()),
+    return dict(schema=1,profile=profile,execution_passed=True,application_passed=all(m['application_passed'] for m in models.values()),
         requests=164,recordings=20,cases=40,audio_seconds=input_audit['audio_seconds'],models=models,resources=resources,
         terminal_processes=[dict(pid=pid,birth=birth) for pid,birth in sorted(births)],
         frozen_sha256=sha(base/'frozen.json'),identity_sha256=sha(base/'run/identity.json'),auditor_sha256=sha(Path(__file__)))

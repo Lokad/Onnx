@@ -60,6 +60,15 @@ worker, then fails if the threshold remains unmet. All sampled
 process births, affinity, memory and foreign activity remain. Per-request times
 are single-pass observations, without performance confidence claims.
 
+The explicit `--profile amd` continuation uses the exclusive Linux EPYC 9V74 VM,
+.NET 10.0.8 and the same native versions, inputs, decoding and scoring. Its
+prospective limits are 14 GiB RSS, 3,600 seconds and 1 GiB available memory;
+managed preflight is 13 GiB. Those limits reflect the VM's 16 GiB capacity and
+do not rewrite the original Windows policy. Affinity remains CPU 2 / CPU 0.
+Staged `source/` contains all helpers/assets and a prospective plan; `staging.json`
+binds the committed tool source and every transferred file. The supervisor
+additionally freezes isolated Python dependencies and actual native libraries.
+
 Use the existing dataset/scoring environment and native interpreter. Required
 versions are those in [the earlier accuracy lane](../accuracy/requirements.txt),
 plus psutil 7.0.0. The retained Windows supervisor starts native workers with
@@ -103,3 +112,12 @@ reader temporarily denied replacement of the status file. Its complete failure
 and process termination are retained. The corrected writer retries that specific
 sharing failure for at most one second; a real-lock test checks transient recovery
 and bounded failure. Recognition cases and policies remain unchanged.
+
+The second Windows attempt completed all Parakeet requests but stopped after
+twelve native Whisper requests when available memory fell below 1 GiB. Both
+Windows attempts are retained as failed full schedules, with every process
+terminal. The AMD continuation reruns the entire fixed four-worker schedule.
+It uses `close_amd.py` after running the frozen auditor and `check_results.py`
+on the VM; collection must verify every closed file and its exact inventory
+before local report rendering. Neither partial results nor a host change justify
+changing labels, noise, normalization or application acceptance.
