@@ -46,6 +46,30 @@ all node dispatch nor AMD model latency. The finding does not justify removing
 mutable-graph safeguards or a broad dispatcher rewrite; prepared MatMul remains
 the stronger optimization lead in the separately captured model attribution.
 
+The retained current-model attribution also puts complete LayerNormalization
+at 0.2783/0.2717 ms in its two thirty-token visits and 1.0091/1.0014 ms at 128
+tokens. These are profiled managed node totals, not matched ORT timings. All
+nine entries in `artifacts/e5-current-attribution-20260919/receipt.json` were
+reverified, and the current [LayerNorm source](../src/Lokad.Onnx/TensorOps.Norm.cs)
+is unchanged from the attributed `8e93aa7` revision.
+
+That implementation uses three passes: double-precision mean, centered
+double-precision variance, and a double-precision scale/bias transform before
+narrowing to float. The pinned ORT [LayerNorm implementation](https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/onnxruntime/core/providers/cpu/nn/layer_norm_impl.cc)
+instead computes float sums and squared sums in its ordinary float path.
+Replacing the managed centered variance with subtraction of uncentered moments
+would change its numerical behavior, especially for nearly constant rows.
+
+A narrower untested opportunity is to widen only the final elementwise
+transform on AVX-512, keeping both statistics passes and each element's
+`((x - mean) * inv) * scale + bias` association unchanged. The current transform
+uses `Vector<double>` halves after widening float vectors. A prototype would
+need exact output/storage tests, actual AMD generated-code inspection and a
+complete LayerNorm-bank comparison including tails and both bias cases. No such
+prototype or timing result exists yet. The roughly one-millisecond complete
+LayerNorm cost at 128 tokens also bounds its possible contribution: this
+operator alone cannot account for the remaining roughly 1.5 ms target gap.
+
 ORT's [CPU allocator](https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/onnxruntime/core/framework/allocator.cc)
 honors the MLAS preferred buffer alignment, which is 64 bytes for the inspected
 AVX-512 path. Actual e5 observations found only nine of Lokad's 72 packed weights
