@@ -56,9 +56,22 @@ second. Both input-only attempts initially failed before spawning workers
 because psutil on Windows requires a string path. The corrected preflight and
 both independent input checks pass; those failed records remain preserved.
 
-Run the six policy/output/resource tests with the existing psutil7 environment:
+Run the seven policy/output/resource/collection tests with the existing psutil7 environment:
 `python -X utf8 -B -m unittest discover -s tests/pyannote/natural-meetings`.
 After both engines finish and all recorded process births are absent, safely
 collect results and run `audit.py --artifact <directory> --output <new-json>` in
 the pinned metric environment. Its strict comparison and human-label scores
 are separate fields. Successful writers are single-use.
+
+The execution payload is frozen at source `00e5ad7`, manifest SHA256
+`7de4bac72c5b6ac8788109322e020441db3f4f06657342917fbc38aaee01a1a9`.
+The first freeze's installed-package path assumption failed before any worker
+was created; the failed runtime snapshot is retained. Resolving the actual ORT
+package location fixes preparation without changing inference. Both accuracy
+workers are running; no results are published yet.
+
+`collect.py --artifact <directory>` requires terminal AMD processes and verifies
+all transferred files, preserving any failed run. `audit_resources.py --artifact
+<directory> --output <new-json>` independently checks raw request records,
+resource samples, process accounting, frozen native binaries and terminal
+identities. Run both resource and application/metric audits before closure.
