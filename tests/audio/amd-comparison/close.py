@@ -134,7 +134,12 @@ process variation, every ASR clip, memory, actual library identities and the
 remaining numerical limitations. Lower is faster; ratios above one favor ORT.
 
 '''
-    benchmark.write_text(old.replace(anchor,section+anchor),encoding='utf-8')
+    benchmark.write_text(old.replace(anchor,section+anchor).replace(
+        'The audio timing tables remain measurements of `8732831`.',
+        'The Windows audio timing tables measure `8732831`; the matched AMD table above measures `1d10d22`.'),encoding='utf-8')
+    support=ROOT/'docs/model-support.md';content=support.read_text(encoding='utf-8')
+    support.write_text(content.replace('The audio timing tables remain measurements of `8732831`.',
+        'The Windows audio timing tables measure `8732831`. The [matched AMD application comparison](../tests/audio/amd-comparison/results-20260920.md) measures `1d10d22` against ORT 1.29.0, retaining every conformance, warmup and measured request.'),encoding='utf-8')
     snapshots=BASE/'closure-tools';snapshots.mkdir()
     for p in folder.glob('*.py'):shutil.copyfile(p,snapshots/p.name)
     files={p.relative_to(ROOT).as_posix():pin(p) for p in sorted(BASE.rglob('*')) if p.is_file()}
