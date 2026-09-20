@@ -46,6 +46,9 @@ internal static class AblationSwitches
     /// Reuse exact prepared string-hash transitions while still traversing mutable graph structure.
     internal static readonly bool EnableFingerprintStrings = EnvIsSet("LOKAD_ONNX_FINGERPRINT_STRINGS");
 
+    /// Widen only the independent float LayerNorm output transform on qualified AVX-512 hosts.
+    internal static readonly bool EnableLayerNormWideOutput = EnvIsSet("LOKAD_ONNX_LAYERNORM_WIDE_OUTPUT");
+
     /// Return the private MatMul result after the trailing Div composite finishes.
     internal static readonly bool EnableFusedTempRelease = EnvDefaultOn("LOKAD_ONNX_FUSED_TEMP_RELEASE");
 

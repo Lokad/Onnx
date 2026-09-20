@@ -52,6 +52,16 @@ unless explicitly enabled with `1`. `LOKAD_ONNX_RELEASE_RESHAPE_VIEWS=1` remains
 an experimental override of the lifetime policy; prefer the public
 `ExecutionOptions.Memory` option for application code.
 
+`LOKAD_ONNX_LAYERNORM_WIDE_OUTPUT=1` enables an experimental AVX-512 output
+transform for float LayerNormalization. It remains off by default. Both
+statistics passes keep their existing double-precision arithmetic and reduction
+order; only the independent final transform processes sixteen floats at once.
+It requires hardware-accelerated `Vector512`, AVX-512F and an eight-float
+`Vector<float>` width. Other hosts and the remaining vector/scalar elements use
+the existing path. The allocating and destination overloads share this kernel.
+The [complete-bank component screen](../tests/e5/layernorm-minimum/results-20260920.md)
+passes; product integration and complete-model performance are separate checks.
+
 `LOKAD_ONNX_FINGERPRINT_STRINGS=1` enables an experimental cache of exact
 graph-name hash transitions. It remains off by default. Every structural field
 is still read; a cached transition requires the same incoming hash and ordinal
