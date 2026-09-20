@@ -41,6 +41,16 @@ Native agreement of a transcript or speaker timeline does not establish full
 tensor agreement or accuracy against human annotations. The numerical gate is
 `abs(actual-reference) / max(1, abs(reference)) <= 1e-4`, with exact checks for
 integer decisions and shape. Recorded failures remain failures under this rule.
+The [complete WeSpeaker filterbank reference](../tests/pyannote/filterbank-reference/results-20260920.md)
+checks all 711,680 values of the original 21-case frontend corpus against two
+independent double calculations with fixed saved coefficients. Managed outputs
+all stay within `1e-4` of both references, maximum `8.31940e-5`; the original native
+frontend exceeds that limit at two values, maximum `1.34618e-4`. Complete double
+stages agree within `4.36557e-11`, with independent scalar Fourier checks.
+The original three direct managed/native failures remain recorded. This result
+does not cover the later dialogue filterbanks or the separate segmentation
+silence discrepancy, and does not change their qualification status.
+
 The [five-language ASR check](../tests/audio/multilingual/results-20260920.md)
 adds twenty FLEURS read recordings and their deterministic 10 dB noise variants.
 Both recognizers match ORT on all public decisions. This small, partly correlated

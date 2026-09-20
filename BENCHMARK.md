@@ -494,7 +494,16 @@ the large diagonal differences at these stages. Local rounding still contributes
 to the complete difference vector, and this result does not qualify earlier
 layers or the full encoder. All reference values, repeats and 1,727 independent
 scalar checks are retained; this is not a timing measurement.
-The labeled pyannote trace retains 19 failed filterbank values on Windows and
+The [complete WeSpeaker reference check](tests/pyannote/filterbank-reference/results-20260920.md)
+compares all 711,680 values in the original 21-case frontend corpus against two
+independent double calculations using fixed saved coefficients. Managed values
+all pass `1e-4` against both references (maximum `8.31940e-5`); native values
+exceed that threshold twice (maximum `1.34618e-4`). Complete reference stages
+agree within `4.36557e-11`, with independent scalar Fourier checks. The original
+three direct managed/native failures remain recorded; this adds numerical
+evidence without changing a gate or measuring application speed.
+
+The separate labeled pyannote trace retains 19 failed filterbank values on Windows and
 24 on AMD. The five-language ASR check and two natural meetings for all three
 audio applications add bounded human-label accuracy evidence. Broader natural
 noise, language and conversation coverage remain open. Neither these observations
