@@ -583,6 +583,18 @@ tables does not explain these remaining failures. All 288 controlled arrays pass
 independent scalar checks. A separately labelled ideal-formula coefficient
 diagnostic is retained; it does not replace the numerical acceptance reference.
 
+The [frame-precision experiment](tests/pyannote/filterbank-precision/results-20260920.md)
+identifies intermediate frame rounding as the remaining frontend error source.
+Product `1d10d22` preserves frame preprocessing in double. Its
+[Windows qualification](tests/pyannote/frame-product/local-results-20260920.md)
+passes all 99 affected tests and all 53 complete inputs against both independent
+reference implementations, using either captured coefficient policy. Native FP32
+agreement still fails at 187 values; seven coordinates have disjoint native and
+reference tolerance intervals. The new frontend uses a prospective mathematical
+reference criterion at the unchanged `1e-4` bound, with native differences retained.
+AMD and connected-application qualification of this revision remain pending.
+The audio timing tables remain measurements of `8732831`.
+
 The original labeled pyannote direct comparison retains 19 failed filterbank values on Windows and
 24 on AMD. The five-language ASR check and two natural meetings for all three
 audio applications add bounded human-label accuracy evidence. Broader natural

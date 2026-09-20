@@ -67,6 +67,18 @@ leaves the same 36 dialogue failures and one earlier-window failure, with the
 same maxima. The remaining arithmetic needs further investigation; this result
 does not qualify a product change or attribute AMD coefficient behavior.
 
+The [frame-precision experiment](../tests/pyannote/filterbank-precision/results-20260920.md)
+identifies intermediate frame rounding as the remaining frontend error source.
+Product `1d10d22` preserves frame preprocessing in double. Its
+[Windows qualification](../tests/pyannote/frame-product/local-results-20260920.md)
+passes all 99 affected tests and all 53 complete inputs against both independent
+reference implementations, using either captured coefficient policy. Native FP32
+agreement still fails at 187 values; seven coordinates have disjoint native and
+reference tolerance intervals. The new frontend uses a prospective mathematical
+reference criterion at the unchanged `1e-4` bound, with native differences retained.
+AMD and connected-application qualification of this revision remain pending.
+The audio timing tables remain measurements of `8732831`.
+
 The [five-language ASR check](../tests/audio/multilingual/results-20260920.md)
 adds twenty FLEURS read recordings and their deterministic 10 dB noise variants.
 Both recognizers match ORT on all public decisions. This small, partly correlated
