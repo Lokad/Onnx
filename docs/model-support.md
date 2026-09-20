@@ -126,6 +126,17 @@ differences at these stages are reproduced by propagating the differing inputs.
 This narrows the investigation but leaves the full-encoder numerical failures
 and the accuracy of earlier arithmetic unresolved.
 
+The [complete encoder reference](../tests/whisper/full-reference/results-20260920.md)
+compares all twenty clips, both feature sources and the first-clip repeat with
+two float64 implementations. All 3,444 complete boundary arrays agree within
+`2.96624e-12`, including padding. Both original FP32 engines exceed `1e-4` on
+all 42 final arrays against each reference: Lokad has 456,704 failed values,
+maximum `0.00311033`; ORT has 264,648, maximum `0.00347588`, each out of 80,640,000.
+This provides independent implementation evidence about accumulated encoder
+error, without proving arbitrary-precision bounds or changing the native gate.
+The original FP32 runs were reused; existing transcript/token agreement and
+the remaining numerical limitations both stand.
+
 DINOv3, ResNet50 and GPT-2 also have complete-output shared-core regression
 fixtures, including independently carried GPT states and ownership/recovery
 checks. They exercise common kernels beyond e5 and audio; these fixtures are

@@ -523,6 +523,19 @@ the large diagonal differences at these stages. Local rounding still contributes
 to the complete difference vector, and this result does not qualify earlier
 layers or the full encoder. All reference values, repeats and 1,727 independent
 scalar checks are retained; this is not a timing measurement.
+
+The [complete Whisper encoder reference](tests/whisper/full-reference/results-20260920.md)
+then checks all twenty clips, both feature sources, the first-clip repeat and
+every padded frame. Two float64 implementations agree across all 3,444 boundary
+arrays, with maximum scaled difference `2.96624e-12`. Both original FP32 engines
+fail `1e-4` on all 42 final-output arrays against each reference. Lokad has
+456,704 failed values out of 80,640,000, maximum `0.00311033`; ORT has 264,648,
+maximum `0.00347588`. Counts are per reference and include the retained repeat.
+These are errors relative to independently agreeing double calculations, not
+formal arbitrary-precision bounds or a change to the native-agreement gate.
+Original FP32 inference and application timing were not rerun; recorded token
+agreement and the numerical failures remain separate results.
+
 The [complete WeSpeaker reference check](tests/pyannote/filterbank-reference/results-20260920.md)
 compares all 711,680 values in the original 21-case frontend corpus against two
 independent double calculations using fixed saved coefficients. Managed values
