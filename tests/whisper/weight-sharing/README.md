@@ -34,6 +34,9 @@ complete decoder initializer snapshots. Hashing occurs outside public call timer
 Three protocol tests accept valid metadata and reject thirteen corruptions.
 
 Use `observe.py` to inspect that existing launch and `collect.py` only after all
-actual process births are terminal. `audit.py` checks successful complete runs;
-failure evidence must be retained separately. These requests qualify finite
-application and memory behavior, not matched Microsoft ORT latency.
+actual process births are terminal. For successful complete runs, `audit.py`,
+`close.py` and `verify.py` check the evidence, report it, and independently verify
+the closure. The last verifier also compares every original serialized initializer
+against the saved runtime hashes. Failure evidence must be retained separately.
+These requests qualify finite application and memory behavior, not matched
+Microsoft ORT latency.
