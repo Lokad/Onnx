@@ -32,3 +32,28 @@ timing campaign runs. Supervise proof on CPU0 with fixed180seconds/2GiB sampled
 process-group RSS/1GiB available memory, retaining every sample and process birth.
 Timing is not implemented; a separate fixed protocol must precede candidate
 timing. See `.agent/m2-reduction-blocks-20260920.md`.
+
+The AMD proof reuses the closed v3 local binary rather than rebuilding or rerunning
+local checks. After committing tools, prefix these commands with
+`C:/Python313/python.exe -X utf8 -B`:
+
+    tests/e5/projection-reduction-blocks/prepare_proof.py --artifact artifacts/e5-reduction-blocks-proof-20260920
+    tests/e5/projection-reduction-blocks/vm.py launch --artifact artifacts/e5-reduction-blocks-proof-20260920
+    tests/e5/projection-reduction-blocks/vm.py poll --artifact artifacts/e5-reduction-blocks-proof-20260920
+    tests/e5/projection-reduction-blocks/vm.py collect --artifact artifacts/e5-reduction-blocks-proof-20260920
+    tests/e5/projection-reduction-blocks/audit_proof.py --artifact artifacts/e5-reduction-blocks-proof-20260920
+
+The plain and instrumented runs each execute all473 cases. Every candidate output
+and second accumulation is checked against the original inside the pinned probe;
+complete original first outputs and hashes of second outputs are retained.
+The independent auditor checks all saved bytes/guards and exact equality between
+the two processes. It does not pretend that candidate arrays were separately
+saved. Both twelve/eight-row bodies must be FullOpts, with24/16 FMAs and12/8
+broadcasts in the reduction loop, no loop calls or vector stack accesses.
+Scalar stack addressing remains visible in the complete dump. Original row
+stride versus separate reduction count also requires direct instruction review.
+
+Five local test methods cover source drift, block-boundary coverage, eleven
+damaged telemetry records and six damaged/missing code captures. The proof
+runner reuses the existing Linux process-group guard. Collection preserves all
+records and checks terminal PID/start ticks before writing its manifest.
