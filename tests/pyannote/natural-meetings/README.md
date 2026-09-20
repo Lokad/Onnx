@@ -1,7 +1,9 @@
 # Natural ten-minute meeting evaluation
 
 This lane adds uninterrupted, human-annotated conversations to the existing
-constructed long-request qualification. Results are pending. It changes no
+constructed long-request qualification. The [completed results](results-20260920.md)
+pass public compatibility against ORT on both meetings and recovery. Both engines
+have aggregate ordinary/exclusive DER of 21.4593%/24.7763%. It changes no
 production code, model parameter, speaker-count policy or numerical tolerance.
 
 Selection was fixed before inference: first session-a in the official AMI test
@@ -67,9 +69,12 @@ The execution payload is frozen at source `00e5ad7`, manifest SHA256
 `7de4bac72c5b6ac8788109322e020441db3f4f06657342917fbc38aaee01a1a9`.
 The first freeze's installed-package path assumption failed before any worker
 was created; the failed runtime snapshot is retained. Resolving the actual ORT
-package location fixes preparation without changing inference. The native reference has completed all three calls and its processes are
-terminal. The AMD managed worker is running; the comparison and human-label
-scores are pending.
+package location fixes preparation without changing inference. Both engines have
+completed all three calls, and all recorded process identities are terminal.
+Collection, resource/application audits, independent verification and reporting
+are complete. The closed receipt binds 193 artifact files with SHA256
+`3ada9904a98aa61ee7fd03db5ce65db206c8278fc13a0939a0ce20249fd5100d`.
+Do not rerun successful writers into this artifact.
 
 `collect.py --artifact <directory>` requires terminal AMD processes and verifies
 all transferred files, preserving any failed run. `audit_resources.py --artifact

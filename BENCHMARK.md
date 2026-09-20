@@ -200,7 +200,34 @@ comparison or independent long-conversation accuracy claim.
 
 ### Audio accuracy and numerical agreement
 
-The latest AMD check adds **five languages and controlled additive noise**, with
+A new pyannote comparison covers **two uninterrupted ten-minute AMI meetings**,
+each with four human-annotated speakers and overlapping speech. Both engines
+produce the same ordinary/exclusive timelines and human-label scores:
+
+| Meeting / aggregation | Lokad ordinary DER | Microsoft ORT ordinary DER | Lokad exclusive DER | Microsoft ORT exclusive DER |
+|---|---:|---:|---:|---:|
+| ES2004a, first 600 s | 22.5921% | 22.5921% | 25.7048% | 25.7048% |
+| IS1009a, first 600 s | 20.4693% | 20.4693% | 23.9648% | 23.9648% |
+| Summed error components, both meetings | 21.4593% | 21.4593% | 24.7763% | 24.7763% |
+
+DER counts missed, false-alarm and confused speaker time. These scores use the
+full recording region, zero collar, overlap included and optimal speaker-label
+mapping. The aggregate divides summed errors by 902.59 reference speaker-seconds;
+it is not a mean of percentages. Selection was fixed before inference, and the
+original PCM samples are unchanged. The correlated thirty-second recovery is
+excluded from accuracy aggregates.
+
+All three requests pass the existing public compatibility and ownership checks;
+maximum centroid scaled error is `8.93205e-7`. The managed AMD calls take
+1,284.984 and 1,316.065 API seconds, with 3.583 GB sampled peak RSS across the
+sequence. The ORT application runs on Windows for this accuracy replay, so its
+times do not form a matched speed ratio with AMD or replace the latency table
+at the top. Two excerpts provide natural long-conversation evidence, not a
+corpus-wide accuracy guarantee or full intermediate numerical qualification.
+[Every error component, public output and resource observation](tests/pyannote/natural-meetings/results-20260920.md)
+is retained; independent scoring and the complete evidence audit pass.
+
+A separate ASR check adds **five languages and controlled additive noise**, with
 both Lokad.Onnx and Microsoft ORT scored against the same human transcripts.
 It uses twenty FLEURS recordings (four each in English, French, German, Spanish
 and Italian; 232.06 seconds), plus a deterministic 10 dB noise version of each.
@@ -271,10 +298,10 @@ duration-logit arrays still fail. Whisper's
 [full-pipeline numerical check](tests/whisper/numerical-20260919.md) retains
 21 encoder and 405 logit-array failures despite identical token choices.
 The labeled pyannote trace retains 19 failed filterbank values on Windows and
-24 on AMD. The five-language check adds bounded clean/artificial-noise accuracy
-evidence. Natural noise, overlapping conversation and independent long-recording
-accuracy remain open; neither that check nor the maximum-duration application/
-resource checks close the numerical gaps.
+24 on AMD. The five-language ASR check and two natural pyannote meetings add
+bounded human-label accuracy evidence. Broader natural-noise coverage and
+independent natural long-conversation ASR remain open. Neither these observations
+nor the maximum-duration application/resource checks close the numerical gaps.
 
 ## Historical results and methodology — through 2026-09-13
 
