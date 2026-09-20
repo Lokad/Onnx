@@ -17,7 +17,9 @@ lonnx.cmd transcribe models/whisper-large-v3-turbo recording.wav --language en -
 
 The CLI mixes/resamples supported local WAV files and rejects files exceeding ten
 minutes before allocating PCM. `--max-tokens` limits each window;
-`--max-windows` requires `--recording`. Recording mode is currently Whisper-only.
+`--max-windows` requires `--recording`. Parakeet also supports recording mode
+with `--model-type parakeet`; its [window and boundary policy](../../parakeet/recording/README.md)
+differs from Whisper's timestamp-driven policy.
 
 The model supplies segment timestamps with 20 ms resolution. Consecutive
 timestamps divide segments; an unfinished suffix is decoded again starting at
@@ -65,8 +67,10 @@ loads Python, Torch or native ONNX Runtime. The [September 19 qualification](res
 records exact native application agreement on both constructed recordings and
 limit cases, repeated/held results, CLI agreement and a short-API regression.
 Each complete recording has five word errors out of 160 under the existing fixed
-normalization; all errors are retained. AMD recording mode, ten-minute speech
-resources and independent long-conversation accuracy remain open.
+normalization; all errors are retained. Subsequent qualification covers
+[AMD recording mode](../recording-amd/results-20260919.md) and
+[constructed ten-minute speech on Windows and AMD](../maximum-speech/results-20260919.md).
+Independent natural long-conversation accuracy remains open.
 Existing full encoder/logit numerical
 failures remain documented in [the numerical report](../numerical-20260919.md).
 
