@@ -5,8 +5,11 @@ Every graph field is still traversed. A prepared entry stores the incoming
 64-bit hash, immutable string value and outgoing hash. A hit requires the same
 position, incoming hash and ordinal string value; misses execute the original
 character loop. The complete fingerprint must match the qualified product bit
-for bit, including after mutable-graph changes. Product source is unchanged.
+for bit, including after mutable-graph changes. This experiment used unchanged
+product source. Later opt-in integration is qualified separately.
 
+Use the experiment's pinned checkout `038cf1e` when reproducing generation:
+later integration changes the source method that this prototype derives.
 `generate.py --artifact <new-directory>` derives two original copies, a training
 traversal and a cached traversal from `ComputationalGraph.cs`. It copies qualified
 Core087e280 and Google.Protobuf, records exact sources/model identities, and
