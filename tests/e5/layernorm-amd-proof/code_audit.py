@@ -12,7 +12,10 @@ def inspect(text):
     assert 'Lokad.Onnx.Tensor' in product.splitlines()[0] and 'LayerNormOutput.Kernels:' in wide.splitlines()[0]
     for opcode in ['vsubpd','vmulpd','vaddpd','vcvtps2pd']:
         assert re.search(r'\b'+opcode+r'\s+zmm\d+\s*,',wide),('Missing wide destination',opcode)
-    assert re.search(r'\bvcvtpd2ps\s+ymm\d+\s*,\s*zmm(?:\d+|word ptr)',wide),'Missing narrowing from wide doubles'
+    # .NET 10 emitDispIns prints both operands with idOpSize for this opcode,
+    # so its 512-bit conversion dump says zmm,zmm. Accept that printer spelling
+    # as well as architectural ymm,zmm; the double source must still be wide.
+    assert re.search(r'\bvcvtpd2ps\s+(?:ymm|zmm)\d+\s*,\s*zmm(?:\d+\b|word ptr)',wide),'Missing narrowing from wide doubles'
     for opcode in ['vsubpd','vmulpd','vaddpd']:
         assert re.search(r'\b'+opcode+r'\s+ymm\d+\s*,',product),('Missing product vector operation',opcode)
         assert not re.search(r'\b'+opcode+r'\s+[^\n;]*\bzmm\d+\b',product),'Unexpected wider product arithmetic'

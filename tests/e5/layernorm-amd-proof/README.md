@@ -31,3 +31,14 @@ Inspect the actual optimized disassembly and record `code-review.json` with
 Then run `close.py --artifact <directory>` and independently reverify its inventory.
 Successful writers are single-use. Preserve failed runs and transport attempts;
 an observation timeout never licenses restarting inference.
+
+The first AMD analysis stopped at a dump-parser assertion after the complete
+arithmetic checks. .NET 10.0.8 prints `vcvtpd2ps zmm10, zmm10`: its
+[`emitDispIns` implementation](https://github.com/dotnet/runtime/blob/v10.0.8/src/coreclr/jit/emitxarch.cpp#L13355)
+uses the instruction-size attribute for both register names in this opcode's
+default two-register case. The checker now accepts that spelling and the
+architectural `ymm, zmm` form, while still requiring a wide double source.
+Narrow sources, wrong arithmetic widths and fused arithmetic remain rejected.
+The original frozen checker, failed analysis and retrieved runtime source remain
+in the artifact. Only analysis was corrected; inference, model, kernel, binaries
+and numerical gates were unchanged.

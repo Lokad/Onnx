@@ -67,9 +67,13 @@ uses `Vector<double>` halves after widening float vectors. The standalone
 [local prototype](../tests/e5/layernorm-output/results-20260920.md) now passes
 915 arithmetic/storage cases, including all 125 real LayerNorm instances from
 the five e5 cases. Independent scalar checks agree with every saved real array.
-The local 512-bit path uses software fallback; actual AMD generated code and a
-complete LayerNorm-bank comparison including tails and both bias cases remain
-required. No timing result exists yet. The roughly one-millisecond complete
+The subsequent [actual AMD proof](../tests/e5/layernorm-amd-proof/results-20260920.md)
+passes the same complete arithmetic checks in clean and explicitly instrumented
+runs. Its inspected optimized code uses the intended 512-bit double transform,
+preserving the original statistics and association. A dump-parser correction is
+recorded separately; no inference was repeated. A complete LayerNorm-bank
+comparison including tails and both bias cases remains required. No timing
+result exists yet. The roughly one-millisecond complete
 LayerNorm cost at 128 tokens also bounds its possible contribution: this
 operator alone cannot account for the remaining roughly 1.5 ms target gap.
 

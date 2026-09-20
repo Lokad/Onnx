@@ -29,6 +29,16 @@ class AuditTests(unittest.TestCase):
         value['settings']['COMPlus_JitDisasm']='*'
         with self.assertRaises(AssertionError):identity(value,dict(sha256='probe'),'code')
 
+    def test_jit_conversion_spelling_and_narrow_source_refusal(self):
+        text=self.assembly()
+        # Actual .NET 10.0.8 dump uses the instruction size for both operands.
+        dumped=text.replace('vcvtps2pd zmm0, ymm1','vcvtps2pd zmm0, zmm1').replace('vcvtpd2ps ymm0, zmm1','vcvtpd2ps zmm0, zmm1')
+        self.assertTrue(inspect(dumped)['passed'])
+        for original in [text,dumped]:
+            for replacement in ['vcvtpd2ps ymm0, ymm1','vcvtpd2ps zmm0, ymm1','vcvtpd2ps xmm0, zmm1']:
+                damaged=original.replace('vcvtpd2ps ymm0, zmm1',replacement).replace('vcvtpd2ps zmm0, zmm1',replacement)
+                with self.subTest(replacement=replacement),self.assertRaises(AssertionError):inspect(damaged)
+
     def test_resource_births_and_bounds(self):
         state=dict(code=0,terminal_members=True,seconds=1.,samples=2,started=10.,ended=12.,members={'123':1.},child=dict(pid=123,birth=1.),peak_rss=400)
         rows=[dict(seconds=t,available=4*1024**3,members=[dict(pid=123,birth=1.,affinity=[2],rss=400)]) for t in [.1,.6]]

@@ -50,7 +50,32 @@ process variation, memory, complete evidence identities and known numerical
 limitations. Whisper recomputes its frontend from PCM inside every timed call;
 both engines pad each clip to the model's thirty-second encoder input.
 
-### e5: public execution versus native ORT
+### e5: latest independent deployment versus native ORT
+
+The [September 20 independent-deployment controls](tests/e5/fingerprint-deployment/aa-results-20260920.md)
+retain 160 fresh sequential processes, 89,088 measured calls and 225,149
+conditioning calls on AMD EPYC 9V74, CPU 2, .NET 10.0.8 / SDK 10.0.204.
+Product is archive-qualified `faf2844`; native ORT is 1.23.2. Times cover public
+Execute/Run, excluding loading and tokenization. The three managed roles use
+identical settings with the fingerprint cache disabled; their means are averaged
+below. Default and Memory each have their own matched native cohort.
+
+| Tokens | Lokad Default ms | Default-cohort ORT ms | Default / ORT | Lokad Memory ms | Memory-cohort ORT ms | Memory / ORT |
+|---|---:|---:|---:|---:|---:|---:|
+| 8 | 6.0518 | 6.1310 | 0.9871 | 5.8724 | 6.2068 | 0.9461 |
+| 30 | 16.8181 | 14.9664 | 1.1237 | 16.7382 | 15.0865 | 1.1095 |
+| 30 padded to 128 | 65.0102 | 60.7659 | 1.0698 | 64.6931 | 60.7185 | 1.0655 |
+| 128 | 64.9019 | 60.3736 | 1.0750 | 64.8490 | 60.7765 | 1.0670 |
+| 512 | 355.0930 | 284.9228 | 1.2463 | 343.2337 | 285.8061 | 1.2009 |
+
+All output, ownership, configuration and resource checks pass; maximum scaled
+native error is `1.63913e-6`. **Timing controls fail** across all ten case/policy
+cohorts and both measured boundaries. These are descriptive observations, not
+calibrated parity or evidence of a change from the earlier table. The conditional
+cache comparison was not run, and the cache remains off by default. All original
+processes are terminal and the complete evidence is closed.
+
+### e5: earlier public execution versus native ORT
 
 AMD EPYC 9V74, CPU 2, .NET 10.0.8, SDK 10.0.204, product `c6bf781`.
 Managed execution uses the nine qualified production defaults; Memory is the
@@ -103,13 +128,18 @@ passes exactness and duplicate controls but fails its fixed performance screen.
 It measures complete twelve-layer activation banks, supplies no new ORT or
 whole-model timing, and does not change the e5 table or production defaults.
 
+The [wider LayerNorm arithmetic/code proof](tests/e5/layernorm-amd-proof/results-20260920.md)
+passes all 915 cases on actual AMD hardware in both clean and disassembly runs.
+It establishes exact outputs and the intended AVX-512 code, with no latency
+comparison. Complete-bank timing remains required before product integration.
+
 The [exact graph-fingerprint cache](tests/e5/fingerprint-cache/results-20260920.md)
 reduces its complete validation component from 0.329823 ms to 0.006621 ms on AMD.
 Its [actual product implementation](tests/e5/fingerprint-product/results-20260920.md)
 passes full AMD suites and complete e5/shared-model output checks in both settings,
 with byte-identical outputs. The subsequent common-state whole-model comparison
-is reported below; isolated deployment evidence is still required, so the
-switch stays off and the ORT scoreboard above is unchanged.
+is reported below. The later independent-deployment controls above fail their
+timing screen, so the switch stays off; no deployment cache gain is established.
 
 The subsequent [single-graph control experiment](tests/e5/fingerprint-model/aa-results-20260920.md)
 retains 16,704 complete e5 measurements with three identical settings. It passes
@@ -137,8 +167,10 @@ also passes every predeclared timing, correctness and resource check across
 Both public Execute and enclosing Reset-plus-Execute pass, with byte-identical
 outputs. These roles share one prepared graph, weight buffers and a resident
 cache, including during disabled calls. This establishes a gain under that
-protocol; isolated deployment and a fresh native comparison remain pending.
-The cache stays off by default. No new ORT ratio follows from these measurements.
+protocol. The later independent-deployment campaign above supplies fresh native
+observations but fails its identical-control screen and stops before the cache
+comparison. The cache stays off by default. No ORT ratio follows from this
+common-state experiment itself.
 
 ### Audio: earlier public API observations
 
@@ -371,6 +403,11 @@ all 21 encoder comparisons still exceed `1e-4`: maximum scaled differences are
 the original native-output denominator. Frontend rounding alone therefore does
 not explain the discrepancy. This diagnostic does not establish which engine
 is closer to mathematical truth or supply new timings.
+The [selected natural-case traces](tests/whisper/trace-selected/results-20260920.md)
+then first cross the threshold at encoder layer 20 in all six case/feature
+comparisons. Managed final bits are unchanged by tracing; native instrumentation
+error is at most `6.41e-5`. This nominates a controlled layer investigation,
+without identifying a faulty operator or changing the full-corpus gate.
 The labeled pyannote trace retains 19 failed filterbank values on Windows and
 24 on AMD. The five-language ASR check and two natural meetings for all three
 audio applications add bounded human-label accuracy evidence. Broader natural
