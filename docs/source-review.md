@@ -60,13 +60,16 @@ instead computes float sums and squared sums in its ordinary float path.
 Replacing the managed centered variance with subtraction of uncentered moments
 would change its numerical behavior, especially for nearly constant rows.
 
-A narrower untested opportunity is to widen only the final elementwise
+A narrower opportunity is to widen only the final elementwise
 transform on AVX-512, keeping both statistics passes and each element's
 `((x - mean) * inv) * scale + bias` association unchanged. The current transform
-uses `Vector<double>` halves after widening float vectors. A prototype would
-need exact output/storage tests, actual AMD generated-code inspection and a
-complete LayerNorm-bank comparison including tails and both bias cases. No such
-prototype or timing result exists yet. The roughly one-millisecond complete
+uses `Vector<double>` halves after widening float vectors. The standalone
+[local prototype](../tests/e5/layernorm-output/results-20260920.md) now passes
+915 arithmetic/storage cases, including all 125 real LayerNorm instances from
+the five e5 cases. Independent scalar checks agree with every saved real array.
+The local 512-bit path uses software fallback; actual AMD generated code and a
+complete LayerNorm-bank comparison including tails and both bias cases remain
+required. No timing result exists yet. The roughly one-millisecond complete
 LayerNorm cost at 128 tokens also bounds its possible contribution: this
 operator alone cannot account for the remaining roughly 1.5 ms target gap.
 
