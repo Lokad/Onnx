@@ -140,8 +140,11 @@ across the primary cases actually take only the small-value branch. The final
 feed-forward layer is almost entirely small, which older first-layer captures
 would have missed. All sixty captured node outputs reproduce the product's
 bits, and independent float32 counts and complete native model checks pass.
-This justifies a bounded shortcut prototype, with branch overhead included;
-it does not yet establish a faster kernel, model gain or new default.
+The resulting [conditional prototype](../tests/e5/gelu-uniform-shortcut/README.md)
+passes 1,575 local arithmetic cases, including all sixty captured layers and
+exceptional floats, with exact product bits. Its next comparison must include
+branch overhead on the complete banks. No faster kernel, model gain or new
+default is established yet.
 
 ## Valuable import units and their disposition
 
