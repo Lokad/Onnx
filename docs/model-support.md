@@ -91,6 +91,14 @@ these selected cases. It does not establish which earlier arithmetic is more
 accurate or resolve the full encoder/logit numerical failures. All 384 complete
 arrays and the first-case repeats remain available.
 
+The [higher-precision K/fc1 diagnostic](../tests/whisper/natural-projection-reference/results-20260920.md)
+checks each projection against a float64 calculation on its own saved normalized
+input and original weights. All 64 comparisons stay below `1e-4`, with maximum
+`5.94843e-6`; all repeats match and 1,727 scalar checks pass. The larger diagonal
+differences at these stages are reproduced by propagating the differing inputs.
+This narrows the investigation but leaves the full-encoder numerical failures
+and the accuracy of earlier arithmetic unresolved.
+
 DINOv3, ResNet50 and GPT-2 also have complete-output shared-core regression
 fixtures, including independently carried GPT states and ownership/recovery
 checks. They exercise common kernels beyond e5 and audio; these fixtures are

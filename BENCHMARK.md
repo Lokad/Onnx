@@ -486,6 +486,14 @@ layer-end differences of approximately `6.6e-4` to `1.3e-3`. These selected case
 show amplification of existing input differences; they do not resolve the
 full-model numerical gap or identify the more accurate earlier arithmetic.
 All 384 arrays and both decomposition paths are retained.
+The subsequent [higher-precision projection check](tests/whisper/natural-projection-reference/results-20260920.md)
+computes 64 float64 K/fc1 references from each cell's actual normalized input.
+Every FP32 projection stays below `1e-4` against its own-input reference;
+the maximum is `5.94843e-6`. Projecting the differing saved inputs reproduces
+the large diagonal differences at these stages. Local rounding still contributes
+to the complete difference vector, and this result does not qualify earlier
+layers or the full encoder. All reference values, repeats and 1,727 independent
+scalar checks are retained; this is not a timing measurement.
 The labeled pyannote trace retains 19 failed filterbank values on Windows and
 24 on AMD. The five-language ASR check and two natural meetings for all three
 audio applications add bounded human-label accuracy evidence. Broader natural
