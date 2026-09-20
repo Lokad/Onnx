@@ -93,7 +93,8 @@ def main():
     assert previous<=state['ended']
     table=[]
     for family in FAMILIES:
-        manifest=read(base/'manifests'/(family+'.json'));groups=[(c['name'],[c]) for c in manifest['cases']] if family=='pyannote' else [('complete-corpus',manifest['cases'])]
+        manifest=read(base/'manifests'/(family+'.json'));groups=[(c['name'],[c]) for c in manifest['cases']]
+        if family!='pyannote':groups.insert(0,('complete-corpus',manifest['cases']))
         for name,cases in groups:
             row=dict(family=family,name=name,audio_seconds=sum(c['samples'] for c in cases)/16000)
             names={c['name'] for c in cases}
