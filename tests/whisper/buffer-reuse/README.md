@@ -26,5 +26,7 @@ Preparation and deployment create new evidence and refuse existing targets.
 Do not rerun a launched worker. `collect.py` requires all actual process births
 to be terminal and collects failures as well as successes. The artifact is
 `artifacts/whisper-buffer-reuse-20260920` on both local and AMD workspaces.
-Passing this experiment would justify broader production qualification, not
-resolve the separately recorded encoder/logit numerical differences.
+The experiment is [closed and independently verified](results-20260920.md): all
+100 requests and resource gates pass, and matching warm public allocations fall
+75.53%. This justifies broader production qualification; it does not resolve the
+separately recorded encoder/logit numerical differences or supply an ORT timing.

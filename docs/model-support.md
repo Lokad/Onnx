@@ -191,3 +191,9 @@ completes the same twenty short requests using explicit collections after reques
 8, 16 and 20, with unchanged results and ownership checks. It records managed-heap
 and RSS changes separately; it does not qualify normal repeated operation or add
 forced GC to production. The original AMD failure remains unchanged.
+
+The [private Whisper buffer-reuse prototype](../tests/whisper/buffer-reuse/results-20260920.md)
+completes twenty conformance and eighty endurance requests on AMD without forced
+collection. Allocation and resource gates pass for that fixed short-clip workload.
+It is not a production source change, a broader numerical qualification or an ORT
+latency comparison. Its report preserves the original normal-runtime failure.

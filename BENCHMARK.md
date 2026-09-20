@@ -38,6 +38,9 @@ below. The later two-family timing scope preserves that resource failure.
 A separate [collection diagnostic](tests/whisper/memory-collection/results-20260920.md)
 completes the twenty requests with explicit collections after requests 8, 16 and
 20. It measures reclaimability and does not supply normal-runtime timing.
+A later [private buffer-reuse prototype](tests/whisper/buffer-reuse/results-20260920.md)
+completes 20 conformance and 80 endurance requests without forced collection.
+It reduces allocations but does not supply a matched AMD Whisper timing result.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
 
