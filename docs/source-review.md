@@ -194,9 +194,13 @@ packed format and input rows, separating the full row stride from the reduction
 loop bound. Its fixed 128/256-position blocks add partial-accumulator stores
 between blocks while preserving each output's FMA order. This tests weight-panel
 reuse without importing scratch gathering, overwrite semantics or packing-cache
-changes. Source checks, compilation and AVX2 refusal pass locally; actual AMD
-arithmetic/code proof and subsequent timing remain pending. No performance gain
-or cache behavior is inferred from the source alone.
+changes. The subsequent [AMD proof](../tests/e5/projection-reduction-blocks/proof-results-20260920.md)
+passes all473 cases in both normal and instrumented processes, with exact
+candidate output bits and211,890 scalar-FMA checks per process. Actual FullOpts
+code keeps the separate reduction count and full row stride, with no loop calls
+or vector stack accesses. The twelve-row candidate adds scalar stack work for
+its count. A complete-cost timing test is therefore still needed; correctness
+and source structure establish no performance gain or cache behavior.
 
 The [paired managed A/A experiment](../tests/e5/paired-aa/results-20260920.md)
 now tests two separately loaded, byte-identical cores with real public Memory

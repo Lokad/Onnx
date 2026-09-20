@@ -1,0 +1,140 @@
+{
+  "audit": {
+    "passed": true,
+    "bundle": {
+      "bytes": 35124,
+      "sha256": "0a4c9c5773567185a2e8aafe810e5aa266e6761a4860e6d2d426de70dc59a151"
+    },
+    "resources": {
+      "births": [
+        {
+          "pid": 363368,
+          "start": 29503449
+        },
+        {
+          "pid": 363385,
+          "start": 29503473
+        },
+        {
+          "pid": 363394,
+          "start": 29503574
+        }
+      ],
+      "runs": [
+        {
+          "name": "plain",
+          "seconds": 0.9981470790226012,
+          "samples": 9,
+          "peak_rss": 99299328
+        },
+        {
+          "name": "code",
+          "seconds": 0.9952511260053143,
+          "samples": 9,
+          "peak_rss": 99381248
+        }
+      ]
+    },
+    "proofs": [
+      {
+        "name": "plain",
+        "cases": 473,
+        "values": 3433056,
+        "scalar_values": 211890
+      },
+      {
+        "name": "code",
+        "cases": 473,
+        "values": 3433056,
+        "scalar_values": 211890
+      }
+    ],
+    "code": {
+      "passed": true,
+      "methods": [
+        {
+          "method": "Original.PackedTile12",
+          "header": "; Assembly listing for method ReductionProbe.Original:PackedTile12(int,int,ptr,ptr,ptr,int,int) (FullOpts)",
+          "code_bytes": 1135,
+          "sha256": "65a199afd4dc29c7dec7216f6d0ab0954fb538d821262f0ee59a4fe684532980",
+          "hot_loop": "G_M000_IG06:                ;; offset=0x0230\n       mov      r9d, edx\n       shl      r9d, 5\n       movsxd   r9, r9d\n       mov      r10, qword ptr [rbp-0x40]\n       lea      r9, [r10+4*r9]\n       vmovups  zmm24, zmmword ptr [r9]\n       vmovups  zmm25, zmmword ptr [r9+0x40]\n       movsxd   r9, edx\n       vbroadcastss zmm26, dword ptr [r8+4*r9]\n       vfmadd231ps zmm0, zmm24, zmm26\n       vfmadd231ps zmm1, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [rdi+4*r9]\n       vfmadd231ps zmm2, zmm24, zmm26\n       vfmadd231ps zmm3, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [rax+4*r9]\n       vfmadd231ps zmm4, zmm24, zmm26\n       vfmadd231ps zmm5, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r15+4*r9]\n       vfmadd231ps zmm6, zmm24, zmm26\n       vfmadd231ps zmm7, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r12+4*r9]\n       vfmadd231ps zmm8, zmm24, zmm26\n       vfmadd231ps zmm9, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r13+4*r9]\n       vfmadd231ps zmm10, zmm24, zmm26\n       vfmadd231ps zmm11, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r11+4*r9]\n       vfmadd231ps zmm12, zmm24, zmm26\n       vfmadd231ps zmm13, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r14+4*r9]\n       vfmadd231ps zmm14, zmm24, zmm26\n       vfmadd231ps zmm15, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [rbx+4*r9]\n       vfmadd231ps zmm16, zmm24, zmm26\n       vfmadd231ps zmm17, zmm25, zmm26\n       mov      r10, qword ptr [rbp-0x58]\n       vbroadcastss zmm26, dword ptr [r10+4*r9]\n       vfmadd231ps zmm18, zmm24, zmm26\n       vfmadd231ps zmm19, zmm25, zmm26\n       mov      r10, qword ptr [rbp-0x60]\n       vbroadcastss zmm26, dword ptr [r10+4*r9]\n       vfmadd231ps zmm20, zmm24, zmm26\n       vfmadd231ps zmm21, zmm25, zmm26\n       mov      r10, qword ptr [rbp-0x68]\n       vbroadcastss zmm26, dword ptr [r10+4*r9]\n       vfmadd231ps zmm22, zmm24, zmm26\n       vfmadd231ps zmm23, zmm25, zmm26\n       inc      edx\n       cmp      edx, esi\n       jl       G_M000_IG06",
+          "fma": 24,
+          "broadcasts": 12
+        },
+        {
+          "method": "Original.PackedTile8",
+          "header": "; Assembly listing for method ReductionProbe.Original:PackedTile8(int,int,ptr,ptr,ptr,int,int) (FullOpts)",
+          "code_bytes": 907,
+          "sha256": "8b03586c384f7e528bfc24e64a53e1614d50f44a98466c5699eb38a7086e1bb1",
+          "hot_loop": "G_M000_IG05:                ;; offset=0x01FC\n       mov      eax, r9d\n       shl      eax, 5\n       cdqe     \n       lea      rax, [rcx+4*rax]\n       vmovups  zmm16, zmmword ptr [rax]\n       vmovups  zmm17, zmmword ptr [rax+0x40]\n       movsxd   rax, r9d\n       vbroadcastss zmm18, dword ptr [r14+4*rax]\n       vfmadd231ps zmm0, zmm16, zmm18\n       vfmadd231ps zmm1, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [r11+4*rax]\n       vfmadd231ps zmm2, zmm16, zmm18\n       vfmadd231ps zmm3, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [rdx+4*rax]\n       vfmadd231ps zmm4, zmm16, zmm18\n       vfmadd231ps zmm5, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [r8+4*rax]\n       vfmadd231ps zmm6, zmm16, zmm18\n       vfmadd231ps zmm7, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [rdi+4*rax]\n       vfmadd231ps zmm8, zmm16, zmm18\n       vfmadd231ps zmm9, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [r13+4*rax]\n       vfmadd231ps zmm10, zmm16, zmm18\n       vfmadd231ps zmm11, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [rbx+4*rax]\n       vfmadd231ps zmm12, zmm16, zmm18\n       vfmadd231ps zmm13, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [r12+4*rax]\n       vfmadd231ps zmm14, zmm16, zmm18\n       vfmadd231ps zmm15, zmm17, zmm18\n       inc      r9d\n       cmp      r9d, esi\n       jl       G_M000_IG05",
+          "fma": 16,
+          "broadcasts": 8
+        },
+        {
+          "method": "Blocked.PackedTile12",
+          "header": "; Assembly listing for method ReductionProbe.Blocked:PackedTile12(int,int,ptr,ptr,ptr,int,int,int) (FullOpts)",
+          "code_bytes": 1153,
+          "sha256": "086870224f644e809683d04305f393329baf8e32b871ed07d63255d13ea311c6",
+          "hot_loop": "G_M000_IG08:                ;; offset=0x0360\n       mov      eax, edi\n       shl      eax, 5\n       cdqe     \n       mov      r9, qword ptr [rbp-0x40]\n       lea      rax, [r9+4*rax]\n       vmovups  zmm24, zmmword ptr [rax]\n       vmovups  zmm25, zmmword ptr [rax+0x40]\n       movsxd   rax, edi\n       vbroadcastss zmm26, dword ptr [rdx+4*rax]\n       vfmadd231ps zmm0, zmm24, zmm26\n       vfmadd231ps zmm1, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [rsi+4*rax]\n       vfmadd231ps zmm2, zmm24, zmm26\n       vfmadd231ps zmm3, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r8+4*rax]\n       vfmadd231ps zmm4, zmm24, zmm26\n       vfmadd231ps zmm5, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r10+4*rax]\n       vfmadd231ps zmm6, zmm24, zmm26\n       vfmadd231ps zmm7, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r14+4*rax]\n       vfmadd231ps zmm8, zmm24, zmm26\n       vfmadd231ps zmm9, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r12+4*rax]\n       vfmadd231ps zmm10, zmm24, zmm26\n       vfmadd231ps zmm11, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [rbx+4*rax]\n       vfmadd231ps zmm12, zmm24, zmm26\n       vfmadd231ps zmm13, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r13+4*rax]\n       vfmadd231ps zmm14, zmm24, zmm26\n       vfmadd231ps zmm15, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r15+4*rax]\n       vfmadd231ps zmm16, zmm24, zmm26\n       vfmadd231ps zmm17, zmm25, zmm26\n       vbroadcastss zmm26, dword ptr [r11+4*rax]\n       vfmadd231ps zmm18, zmm24, zmm26\n       vfmadd231ps zmm19, zmm25, zmm26\n       mov      r9, qword ptr [rbp-0x58]\n       vbroadcastss zmm26, dword ptr [r9+4*rax]\n       vfmadd231ps zmm20, zmm24, zmm26\n       vfmadd231ps zmm21, zmm25, zmm26\n       mov      r9, qword ptr [rbp-0x60]\n       vbroadcastss zmm26, dword ptr [r9+4*rax]\n       vfmadd231ps zmm22, zmm24, zmm26\n       vfmadd231ps zmm23, zmm25, zmm26\n       inc      edi\n       mov      eax, dword ptr [rbp+0x18]\n       cmp      edi, eax\n       jge      G_M000_IG05\n \nG_M000_IG09:                ;; offset=0x0479\n       mov      dword ptr [rbp+0x18], eax\n       jmp      G_M000_IG08",
+          "fma": 24,
+          "broadcasts": 12
+        },
+        {
+          "method": "Blocked.PackedTile8",
+          "header": "; Assembly listing for method ReductionProbe.Blocked:PackedTile8(int,int,ptr,ptr,ptr,int,int,int) (FullOpts)",
+          "code_bytes": 923,
+          "sha256": "b98131405072c2cb8a2b6c3e990f08b7a68ef2036e5e9ce5291a336d231bd752",
+          "hot_loop": "G_M000_IG05:                ;; offset=0x0207\n       mov      r10d, r9d\n       shl      r10d, 5\n       movsxd   r10, r10d\n       lea      r10, [rcx+4*r10]\n       vmovups  zmm16, zmmword ptr [r10]\n       vmovups  zmm17, zmmword ptr [r10+0x40]\n       movsxd   r10, r9d\n       vbroadcastss zmm18, dword ptr [r14+4*r10]\n       vfmadd231ps zmm0, zmm16, zmm18\n       vfmadd231ps zmm1, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [rdx+4*r10]\n       vfmadd231ps zmm2, zmm16, zmm18\n       vfmadd231ps zmm3, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [r8+4*r10]\n       vfmadd231ps zmm4, zmm16, zmm18\n       vfmadd231ps zmm5, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [rdi+4*r10]\n       vfmadd231ps zmm6, zmm16, zmm18\n       vfmadd231ps zmm7, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [rsi+4*r10]\n       vfmadd231ps zmm8, zmm16, zmm18\n       vfmadd231ps zmm9, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [r13+4*r10]\n       vfmadd231ps zmm10, zmm16, zmm18\n       vfmadd231ps zmm11, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [r12+4*r10]\n       vfmadd231ps zmm12, zmm16, zmm18\n       vfmadd231ps zmm13, zmm17, zmm18\n       vbroadcastss zmm18, dword ptr [r15+4*r10]\n       vfmadd231ps zmm14, zmm16, zmm18\n       vfmadd231ps zmm15, zmm17, zmm18\n       inc      r9d\n       cmp      r9d, eax\n       jl       G_M000_IG05",
+          "fma": 16,
+          "broadcasts": 8
+        }
+      ]
+    }
+  },
+  "instruction_review": [
+    {
+      "method": "Blocked.PackedTile12",
+      "count": "eax loaded from eighth argument [rbp+0x18]",
+      "row_stride": "original esi retained in row-address multiplication",
+      "stack_instructions": [
+        "mov      r9, qword ptr [rbp-0x40]",
+        "mov      r9, qword ptr [rbp-0x58]",
+        "mov      r9, qword ptr [rbp-0x60]",
+        "mov      eax, dword ptr [rbp+0x18]",
+        "mov      dword ptr [rbp+0x18], eax"
+      ]
+    },
+    {
+      "method": "Blocked.PackedTile8",
+      "count": "eax loaded from eighth argument [rbp+0x18]",
+      "row_stride": "original esi retained in row-address multiplication",
+      "stack_instructions": []
+    }
+  ],
+  "terminal": [
+    {
+      "expected": {
+        "pid": 363368,
+        "start": 29503449
+      },
+      "actual": null,
+      "terminal": true
+    },
+    {
+      "expected": {
+        "pid": 363385,
+        "start": 29503473
+      },
+      "actual": null,
+      "terminal": true
+    },
+    {
+      "expected": {
+        "pid": 363394,
+        "start": 29503574
+      },
+      "actual": null,
+      "terminal": true
+    }
+  ]
+}
