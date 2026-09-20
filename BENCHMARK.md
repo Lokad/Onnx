@@ -8,14 +8,35 @@ below remain historical evidence; do not compare absolute times across hosts,
 revisions or protocols. [Model support](docs/model-support.md) describes the
 available APIs and their remaining qualification limits.
 
-### Audio: matched Microsoft ONNX Runtime baselines
+### Audio: matched AMD Parakeet and pyannote baselines
 
-The Windows comparisons below include explicit ORT baselines for both Parakeet
-and pyannote. The separate September 20 AMD all-family campaign stopped during
-managed Whisper conformance at its available-memory reserve, before timing.
-Parakeet and pyannote passed both engines' conformance checks; a separate matched
-AMD timing comparison is being prepared. The [resource-failure report](tests/audio/amd-comparison/resource-failure-20260920.md)
-retains the incomplete Whisper run. No AMD latency is inferred from those checks.
+AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ORT 1.29.0, product `1d10d22`.
+The same complete application workloads and one-thread settings as the Windows
+table below are used. Loading, file access and external validation are excluded.
+The differing host and product revision prevent a cross-table speedup claim.
+
+| Application / workload | Lokad seconds | Microsoft ORT seconds | Lokad / ORT | Lokad RTF | ORT RTF |
+|---|---:|---:|---:|---:|---:|
+| Parakeet, all 20 clips (213.265 s audio) | 79.362 | 40.764 | 1.947 | 0.372 | 0.191 |
+| pyannote, dialogue-30s | 46.561 | 9.270 | 5.023 | 1.552 | 0.309 |
+| pyannote, dialogue-0-10s | 2.239 | 0.441 | 5.075 | 0.224 | 0.044 |
+| pyannote, dialogue-10-20s | 2.230 | 0.446 | 4.994 | 0.223 | 0.045 |
+| pyannote, dialogue-20-30s | 2.236 | 0.444 | 5.039 | 0.224 | 0.044 |
+
+Two fresh processes per engine/model each run one full warmup and three measured
+passes. All 288 measured and 96 warmup calls pass application, ownership, input and
+resource checks. Forty-eight complete conformance calls are reused after verifying
+unchanged models, binaries and runtime libraries. Lower is faster; ratios above
+one mean Lokad takes longer. These descriptive results have no calibrated parity
+claim. The [complete report](tests/audio/amd-two-family/results-20260920.md)
+includes process variation, memory, every Parakeet clip and evidence identities.
+
+**Whisper has no AMD timing result:** the separate [all-family attempt](tests/audio/amd-comparison/resource-failure-20260920.md)
+stopped during managed conformance below its 1 GiB available-memory reserve, with
+16 of 20 requests completed, before timing. The Windows Whisper baseline remains
+below. The later two-family timing scope preserves that resource failure.
+
+### Audio: Windows Microsoft ONNX Runtime baselines
 
 Fresh complete-application measurements on **Windows i7-14700KF, logical CPU 2**,
 with .NET 10.0.12 and Microsoft ONNX Runtime **1.29.0**. Product source is
@@ -615,7 +636,7 @@ error is `9.24802e-7`, and ordinary/exclusive aggregate DER remains
 21.4593%/24.7763%. All 5,353 resource samples and 33 damaged-record refusals pass;
 the worker peaks at 3.647 GB. These one-pass accuracy/resource durations do not
 replace the matched application latency tables.
-The audio timing tables remain measurements of `8732831`.
+The Windows audio tables measure `8732831`; the AMD Parakeet/pyannote table measures `1d10d22`.
 
 The original labeled pyannote direct comparison retains 19 failed filterbank values on Windows and
 24 on AMD. The five-language ASR check and two natural meetings for all three

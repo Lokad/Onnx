@@ -87,7 +87,7 @@ error is `9.24802e-7`, and ordinary/exclusive aggregate DER remains
 21.4593%/24.7763%. All 5,353 resource samples and 33 damaged-record refusals pass;
 the worker peaks at 3.647 GB. These one-pass accuracy/resource durations do not
 replace the matched application latency tables.
-The audio timing tables remain measurements of `8732831`.
+The Windows audio tables measure `8732831`. The [matched AMD Parakeet/pyannote comparison](../tests/audio/amd-two-family/results-20260920.md) measures `1d10d22` against ORT 1.29.0. Whisper has no matched AMD timing result because its managed conformance worker failed the available-memory guard.
 
 The [five-language ASR check](../tests/audio/multilingual/results-20260920.md)
 adds twenty FLEURS read recordings and their deterministic 10 dB noise variants.
