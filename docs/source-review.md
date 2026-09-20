@@ -88,6 +88,13 @@ production is unchanged. The first bank's conditioning can end after only three
 complete cycles when initial calls are slow. A future startup investigation
 must distinguish minimum work from a time budget, without trimming those calls
 or claiming an unobserved JIT cause.
+The [minimum-work follow-up](../tests/e5/layernorm-minimum/results-20260920.md)
+then requires 128 complete conditioning cycles as well as three seconds. All
+original controls and candidate screens pass across all nine banks and four
+workers, with exact outputs and zero measured allocations or GC collections.
+The five real banks are 15.11–16.49% faster. This qualifies the component
+mechanism for production integration and full-model testing; it does not prove
+a new whole-model gain or explain the earlier startup behavior causally.
 The roughly one-millisecond complete
 LayerNorm cost at 128 tokens also bounds its possible contribution: this
 operator alone cannot account for the remaining roughly 1.5 ms target gap.

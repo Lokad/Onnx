@@ -1,5 +1,12 @@
 # Complete LayerNorm banks with minimum-work conditioning
 
+The [completed result](results-20260920.md) passes every original control, gain,
+regression, correctness and resource check. Real complete-bank means are
+15.11–16.49% lower. All 13,824 measured batches and 18,432 conditioning batches
+remain in the [observations](observations-20260920.json), with exact outputs and
+zero measured allocation/GC counts. This supports subsequent product integration
+and model qualification; it does not establish a whole-model or native ORT gain.
+
 The [preceding experiment](../layernorm-conditioned/results-20260920.md) passed
 duplicate controls but failed the candidate regression screen in one 8-token
 worker. Its time-only conditioning admitted only three complete startup cycles.

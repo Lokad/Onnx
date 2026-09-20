@@ -81,6 +81,16 @@ layer 20 for controlled same-input investigation. It does not identify a faulty
 operator or replace full-corpus qualification. All 656 intermediate arrays,
 including the repeated first case, are retained and independently checked.
 
+The [controlled layer-20 comparison](../tests/whisper/layer20-cross/results-20260920.md)
+then reproduces all sixteen same-engine traced boundaries bit for bit. Across
+all twelve intermediate outputs, both engines agree on identical incoming
+arrays: maximum scaled difference `4.33326e-5`. Changing only the saved incoming
+array produces layer-end differences of roughly `6.6e-4` to `1.3e-3` within
+either engine. This localizes amplification of existing input differences in
+these selected cases. It does not establish which earlier arithmetic is more
+accurate or resolve the full encoder/logit numerical failures. All 384 complete
+arrays and the first-case repeats remain available.
+
 DINOv3, ResNet50 and GPT-2 also have complete-output shared-core regression
 fixtures, including independently carried GPT states and ownership/recovery
 checks. They exercise common kernels beyond e5 and audio; these fixtures are

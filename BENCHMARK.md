@@ -173,6 +173,26 @@ The complete observations retain this unfavorable worker; aggregate gains do
 not override it. Production remains unchanged, and no new whole-model or ORT
 ratio is established.
 
+The next [minimum-work comparison](tests/e5/layernorm-minimum/results-20260920.md)
+adds a fixed minimum of 128 complete conditioning cycles alongside the
+three-second budget. It preserves all kernels, inputs, measured cycles and
+thresholds. **Every control, gain, regression, correctness and resource check
+passes**, including every worker and all four diagnostic banks.
+
+| Tokens | Product LayerNorm bank ms | Wider transform bank ms | Observed time reduction |
+|---|---:|---:|---:|
+| 8 | 0.060434 | 0.050575 | 16.31% |
+| 30 | 0.225313 | 0.188258 | 16.45% |
+| 30 padded to 128 | 0.953590 | 0.796350 | 16.49% |
+| 128 | 0.958063 | 0.801472 | 16.34% |
+| 512 | 3.900540 | 3.311146 | 15.11% |
+
+All 13,824 measured batches, 18,432 conditioning batches and 144 first calls are
+retained; measured allocations and GC counts are zero. These complete-kernel
+results support production integration and subsequent model qualification.
+They do not change the whole-model ORT ratios above or establish a new default.
+Both preceding unsuccessful experiments remain available unchanged.
+
 The [exact graph-fingerprint cache](tests/e5/fingerprint-cache/results-20260920.md)
 reduces its complete validation component from 0.329823 ms to 0.006621 ms on AMD.
 Its [actual product implementation](tests/e5/fingerprint-product/results-20260920.md)
@@ -448,6 +468,14 @@ then first cross the threshold at encoder layer 20 in all six case/feature
 comparisons. Managed final bits are unchanged by tracing; native instrumentation
 error is at most `6.41e-5`. This nominates a controlled layer investigation,
 without identifying a faulty operator or changing the full-corpus gate.
+The [controlled layer-20 input comparison](tests/whisper/layer20-cross/results-20260920.md)
+now reproduces all sixteen extraction boundaries bit for bit. Every intermediate
+comparison on identical incoming arrays stays below `1e-4`, with maximum
+`4.33326e-5`. Within either engine, swapping the saved incoming array recreates
+layer-end differences of approximately `6.6e-4` to `1.3e-3`. These selected cases
+show amplification of existing input differences; they do not resolve the
+full-model numerical gap or identify the more accurate earlier arithmetic.
+All 384 arrays and both decomposition paths are retained.
 The labeled pyannote trace retains 19 failed filterbank values on Windows and
 24 on AMD. The five-language ASR check and two natural meetings for all three
 audio applications add bounded human-label accuracy evidence. Broader natural
