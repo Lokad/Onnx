@@ -62,16 +62,27 @@ are single-pass observations, without performance confidence claims.
 
 Use the existing dataset/scoring environment and native interpreter. Required
 versions are those in [the earlier accuracy lane](../accuracy/requirements.txt),
-plus psutil 7.0.0. No new model download is needed. From the repository root:
+plus psutil 7.0.0. The retained Windows supervisor starts native workers with
+`C:/Python313/python.exe`; that interpreter must have the pinned native packages.
+The scoring environment also supplies PyArrow, SoundFile, JiWER and psutil.
+Preparation requires ffmpeg on PATH. The model/data pins are mandatory; no new
+model download is needed in this checkout. From the repository root, choose a
+new artifact path and restore the qualified product binaries before these steps:
 
 ```powershell
-python -X utf8 -B tests/audio/multilingual/prepare.py --dataset models/fleurs-accuracy --output <new-artifact>/inputs
-python -X utf8 -B tests/audio/multilingual/audit_inputs.py --dataset models/fleurs-accuracy --inputs <new-artifact>/inputs --output <new-artifact>/input-audit.json
-dotnet build tests/audio/multilingual/MultilingualReplay.csproj -c Release -o <new-artifact>/bin -p:FrozenProductDirectory=<qualified-product-directory> --tl:off --nologo -v minimal
-python -X utf8 -B -m unittest discover -s tests/audio/multilingual -p test_*.py -v
-python -X utf8 -B tests/audio/multilingual/prepare_runtime.py --artifact <new-artifact>
-python -X utf8 -B tests/audio/multilingual/supervise.py --artifact <new-artifact>
-python -X utf8 -B tests/audio/multilingual/audit.py --artifact <new-artifact> --output <new-artifact>/audit.json
+$scorePython = 'artifacts/asr-labeled-20260919/venv/Scripts/python.exe'
+$nativePython = 'C:/Python313/python.exe'
+$artifact = 'artifacts/asr-multilingual-new'
+$product = (Resolve-Path 'artifacts/softmax-zero-product-20260919/frozen').Path
+& $scorePython -X utf8 -B tests/audio/multilingual/prepare.py --dataset models/fleurs-accuracy --output "$artifact/inputs"
+& $scorePython -X utf8 -B tests/audio/multilingual/audit_inputs.py --dataset models/fleurs-accuracy --inputs "$artifact/inputs" --output "$artifact/input-audit.json"
+dotnet build tests/audio/multilingual/MultilingualReplay.csproj -c Release -o "$artifact/bin" "-p:FrozenProductDirectory=$product" --tl:off --nologo -v minimal
+& $scorePython -X utf8 -B -m unittest discover -s tests/audio/multilingual -p 'test_*.py' -v
+& $nativePython -X utf8 -B tests/audio/multilingual/prepare_runtime.py --artifact $artifact
+& $scorePython -X utf8 -B tests/audio/multilingual/supervise.py --artifact $artifact
+# Only after the supervisor and all recorded child births are absent:
+& $scorePython -X utf8 -B "$artifact/runtime-source/audit.py" --artifact $artifact --output "$artifact/audit.json"
+& $scorePython -X utf8 -B tests/audio/multilingual/check_results.py --artifact $artifact --output "$artifact/record-checks.json"
 ```
 
 The replay binds qualified production source `087e280`, core `187de61a` and
@@ -80,6 +91,12 @@ sources. Successful writers refuse existing destinations and execute once.
 Observe the same PID and creation time after tool timeouts. Preserve execution
 failures and application disagreements without dropping cases, changing labels
 or weakening the existing numerical gate.
+
+`close_report.py` closes and reports the retained dated campaign, including its
+specific failed-attempt and preparation-reuse provenance. It is not a generic
+closure command for a fresh reproduction. Its `close` and `report` actions both
+take `--artifact`; `report` also accepts a new `--destination`. Report destinations
+must not already contain the dated output files.
 
 The first inference attempt stopped after nine native requests because a Windows
 reader temporarily denied replacement of the status file. Its complete failure
