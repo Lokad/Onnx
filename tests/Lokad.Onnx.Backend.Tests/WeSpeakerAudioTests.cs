@@ -67,6 +67,29 @@ public class WeSpeakerAudioTests
         Assert.All(WeSpeakerAudio.LogMelFilterbank(samples, 16000, CancellationToken.None).ToArray(), value => Assert.Equal(0f, value));
     }
 
+    [Theory]
+    [InlineData(560)]
+    [InlineData(16000)]
+    public void FrameMeanRemovalPreservesSmallSignalUnderExactDcOffset(int length)
+    {
+        // Every value and its DC-shifted counterpart are exactly representable
+        // in float. Frame centering should remove the constant before the FFT.
+        uint state = 20260920;
+        var samples = new float[length];
+        for (int i = 0; i < length; i++)
+        {
+            state = unchecked(state * 1664525 + 1013904223);
+            samples[i] = ((int)(state >> 27) - 16) / 1048576f;
+        }
+        var shifted = samples.Select(value => value + .5f).ToArray();
+        Assert.Equal(samples, shifted.Select(value => value - .5f));
+        var expected = WeSpeakerAudio.LogMelFilterbank(samples, 16000, CancellationToken.None).ToArray();
+        var actual = WeSpeakerAudio.LogMelFilterbank(shifted, 16000, CancellationToken.None).ToArray();
+        for (int i = 0; i < expected.Length; i++)
+            Assert.True(double.IsFinite(actual[i]) && Math.Abs((double)actual[i] - expected[i]) / Math.Max(1, Math.Abs((double)expected[i])) <= 1e-4,
+                $"DC invariance at feature {i}: {actual[i]:R} versus {expected[i]:R}");
+    }
+
     [Fact]
     public async Task ResultsAndConcurrentScratchAreIndependent()
     {

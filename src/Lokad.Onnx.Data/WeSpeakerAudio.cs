@@ -36,7 +36,9 @@ public static class WeSpeakerAudio
         int frames = 1 + (samples.Length - WindowSize) / HopSize;
         var result = new DenseTensor<float>(new[] { 1, frames, MelBins });
         var output = result.Buffer.Span;
-        var centered = new float[WindowSize];
+        // Preserve frame precision until the FFT; rounding this preprocessing
+        // to float can dominate the error of low-energy spectral components.
+        var centered = new double[WindowSize];
         var spectrum = new Complex[FourierSize];
         var powers = new float[FourierSize / 2 + 1];
         for (int frame = 0; frame < frames; frame++)
@@ -45,13 +47,13 @@ public static class WeSpeakerAudio
             int start = frame * HopSize;
             double total = 0;
             for (int j = 0; j < WindowSize; j++) { centered[j] = samples[start + j] * 32768f; total += centered[j]; }
-            float mean = (float)(total / WindowSize);
+            double mean = total / WindowSize;
             for (int j = 0; j < WindowSize; j++) centered[j] -= mean;
             Array.Clear(spectrum, 0, spectrum.Length);
             for (int j = 0; j < WindowSize; j++)
             {
-                float previous = .97f * centered[j == 0 ? 0 : j - 1];
-                float value = (centered[j] - previous) * Window[j];
+                double previous = .97f * centered[j == 0 ? 0 : j - 1];
+                double value = (centered[j] - previous) * Window[j];
                 spectrum[j] = new Complex(value, 0);
             }
             Fourier(spectrum);
