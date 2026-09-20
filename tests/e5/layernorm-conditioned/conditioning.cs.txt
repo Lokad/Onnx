@@ -1,0 +1,21 @@
+            var warmup = new List<Sample>(); long conditioningTicks = 0;
+            int warmCycle = 0;
+            do
+            {
+                for (int position = 0; position < 4; position++)
+                {
+                    int variant = (visit + warmCycle + position) % 4;
+                    var sample = Measure(Methods[variant], bank, bank.Repeats, warmCycle, position, Variants[variant]);
+                    Require(sample.output_sha256 == expected, "Conditioning output bits: " + bank.Name);
+                    warmup.Add(sample); conditioningTicks += sample.ticks;
+                }
+                warmCycle++;
+            } while (conditioningTicks < 3 * Stopwatch.Frequency);
+            var measured = new Sample[384];
+            for (int cycle = 0; cycle < 96; cycle++) for (int position = 0; position < 4; position++)
+            {
+                int variant = (visit + cycle + position) % 4;
+                var sample = Measure(Methods[variant], bank, bank.Repeats, cycle, position, Variants[variant]);
+                Require(sample.output_sha256 == expected, "Complete timed bank differs: " + bank.Name + "/" + Variants[variant]);
+                measured[cycle * 4 + position] = sample;
+            }

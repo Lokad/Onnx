@@ -1,0 +1,19 @@
+    def test_conditioning_boundary_and_no_extra_cycles(self):
+        from timing import conditioning
+        # Exactly reaching the threshold is accepted; one tick short is not.
+        case=dict(warmup=[dict(ticks=75) for _ in range(4)],conditioning_ticks=300,conditioning_seconds=3)
+        self.assertEqual(conditioning(case,100),1)
+        short=copy.deepcopy(case);short['warmup'][-1]['ticks']=74;short['conditioning_ticks']=299
+        with self.assertRaises(AssertionError):conditioning(short,100)
+        extra=copy.deepcopy(case);extra['warmup']+=copy.deepcopy(case['warmup']);extra['conditioning_ticks']=600
+        with self.assertRaises(AssertionError):conditioning(extra,100)
+        overshoot=copy.deepcopy(case);overshoot['warmup'][-1]['ticks']=76;overshoot['conditioning_ticks']=301
+        self.assertEqual(conditioning(overshoot,100),1)
+        for mutate in [lambda c:c['warmup'].pop(),lambda c:c.update(conditioning_ticks=301),lambda c:c.update(conditioning_seconds=2)]:
+            broken=copy.deepcopy(case);mutate(broken)
+            with self.assertRaises(AssertionError):conditioning(broken,100)
+        value,descriptions=self.fixture()
+        for index in range(9):
+            broken=copy.deepcopy(value);case=broken['results'][index];case['warmup']=case['warmup'][:-4]
+            case['conditioning_ticks']=sum(r['ticks'] for r in case['warmup'])
+            with self.assertRaises(AssertionError):inspect_timing(broken,0,dict(sha256='probe'),descriptions)
