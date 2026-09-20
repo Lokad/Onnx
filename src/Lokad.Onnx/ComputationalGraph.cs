@@ -162,6 +162,12 @@ public partial class ComputationalGraph
     protected long _preparedFingerprint;
     protected string? _preparationError;
 
+    // Prepared snapshots contain immutable strings and hash states, never run bindings.
+    // Readers only reuse a transition when both its incoming state and string agree.
+    internal readonly record struct FingerprintString(ulong Before, string? Value, ulong After);
+    internal FingerprintString[]? FingerprintStrings;
+    internal bool CacheFingerprintStrings { get; set; } = AblationSwitches.EnableFingerprintStrings;
+
     /// <summary>
     /// Recomputes lifetime analysis for the current <see cref="Nodes"/> order.
     /// Execution entries re-analyze automatically when the structure changes,
@@ -204,6 +210,7 @@ public partial class ComputationalGraph
                 throw new InvalidOperationException("Graph preparation is not allowed while the graph is executing.");
             }
             _prepared = false;
+            FingerprintStrings = null;
             _ = GraphCaptures.FreeVariables(this); // Reject cycles before recursive invalidation.
             foreach (var node in Nodes)
                 if (node.Attributes is not null)
@@ -1276,7 +1283,17 @@ public partial class ComputationalGraph
         }
         LastUseIndex = lastUse;
         _prepared = true;
-        _preparedFingerprint = ComputeStructureFingerprint();
+        if (CacheFingerprintStrings)
+        {
+            var strings = new List<FingerprintString>();
+            _preparedFingerprint = ComputeStructureFingerprint(null, strings);
+            FingerprintStrings = strings.ToArray();
+        }
+        else
+        {
+            FingerprintStrings = null;
+            _preparedFingerprint = ComputeStructureFingerprint();
+        }
         _preparationError = ValidatePreparation();
     }
 
@@ -1327,12 +1344,17 @@ public partial class ComputationalGraph
     long ComputeStructureFingerprint() => ComputeStructureFingerprint(null);
 
     long ComputeStructureFingerprint(HashSet<ComputationalGraph>? visiting)
+        => ComputeStructureFingerprint(visiting, null);
+
+    long ComputeStructureFingerprint(HashSet<ComputationalGraph>? visiting, List<FingerprintString>? capture)
     {
         if (visiting is not null && !visiting.Add(this)) throw new InvalidOperationException("Cyclic graph attributes are not supported.");
         try
         {
             unchecked
             {
+                var strings = CacheFingerprintStrings ? FingerprintStrings : null;
+                int stringIndex = 0;
                 ulong h = 1469598103934665603UL;
                 void MixUlong(ulong v)
                 {
@@ -1342,13 +1364,28 @@ public partial class ComputationalGraph
                 void MixInt(int v) => MixUlong((ulong)(uint)v);
                 void MixString(string? v)
                 {
+                    ulong before = h;
+                    int position = stringIndex++;
+                    if (strings is not null && (uint)position < (uint)strings.Length)
+                    {
+                        var entry = strings[position];
+                        if (entry.Before == h && string.Equals(entry.Value, v, StringComparison.Ordinal))
+                        {
+                            h = entry.After;
+                            capture?.Add(entry);
+                            return;
+                        }
+                    }
                     if (v is null)
                     {
                         MixUlong(0x9E3779B97F4A7C15UL);
-                        return;
                     }
-                    MixInt(v.Length);
-                    foreach (char c in v) MixUlong((ulong)c);
+                    else
+                    {
+                        MixInt(v.Length);
+                        foreach (char c in v) MixUlong((ulong)c);
+                    }
+                    capture?.Add(new FingerprintString(before, v, h));
                 }
                 MixInt(Nodes.Count);
                 for (int i = 0; i < Nodes.Count; i++)

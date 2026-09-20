@@ -52,6 +52,16 @@ unless explicitly enabled with `1`. `LOKAD_ONNX_RELEASE_RESHAPE_VIEWS=1` remains
 an experimental override of the lifetime policy; prefer the public
 `ExecutionOptions.Memory` option for application code.
 
+`LOKAD_ONNX_FINGERPRINT_STRINGS=1` enables an experimental cache of exact
+graph-name hash transitions. It remains off by default. Every structural field
+is still read; a cached transition requires the same incoming hash and ordinal
+string value, otherwise the original hash loop runs. Prepared snapshots contain
+immutable strings and hash states, and execution contexts may share them.
+Explicit preparation invalidation releases the owner's snapshot. This cache
+does not share tensor storage or skip mutable-graph validation. The
+[component experiment](../tests/e5/fingerprint-cache/results-20260920.md) nominates
+the mechanism; complete-model performance qualification is still pending.
+
 `LOKAD_ONNX_SOFTMAX_ZERO_BLOCKS=1` is a separate experimental masked-softmax
 route, also off by default. It skips the exponential polynomial only when all
 eight computed arguments in a vector fall below the existing zero cutoff.

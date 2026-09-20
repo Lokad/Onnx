@@ -43,6 +43,9 @@ internal static class AblationSwitches
     /// Retain only already-released arrays across serialized calls, within strict bounds.
     internal static readonly bool EnableReleasedBufferCache = EnvDefaultOn("LOKAD_ONNX_RELEASED_BUFFER_CACHE");
 
+    /// Reuse exact prepared string-hash transitions while still traversing mutable graph structure.
+    internal static readonly bool EnableFingerprintStrings = EnvIsSet("LOKAD_ONNX_FINGERPRINT_STRINGS");
+
     /// Return the private MatMul result after the trailing Div composite finishes.
     internal static readonly bool EnableFusedTempRelease = EnvDefaultOn("LOKAD_ONNX_FUSED_TEMP_RELEASE");
 
