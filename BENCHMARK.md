@@ -596,8 +596,13 @@ The [source-archived AMD qualification](tests/pyannote/frame-product-amd/results
 also passes all 99 tests and all 53 inputs. Its actual tables differ at six
 entries, so both independent references were regenerated with those captured
 coefficients. Maximum product/reference error is `2.02761e-6`; direct-native
-comparison retains 186 failures. Connected natural-meeting qualification of
-this changed frontend remains pending.
+comparison retains 186 failures. The [connected natural-meeting replay](tests/pyannote/frame-meetings/results-20260920.md)
+now passes all three original public comparisons with this changed frontend.
+Both speaker timelines match the retained ORT outputs exactly, maximum centroid
+error is `9.24802e-7`, and ordinary/exclusive aggregate DER remains
+21.4593%/24.7763%. All 5,353 resource samples and 33 damaged-record refusals pass;
+the worker peaks at 3.647 GB. These one-pass accuracy/resource durations do not
+replace the matched application latency tables.
 The audio timing tables remain measurements of `8732831`.
 
 The original labeled pyannote direct comparison retains 19 failed filterbank values on Windows and
