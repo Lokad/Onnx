@@ -152,6 +152,16 @@ complete-model gain or new default follows.
 
 ## Valuable import units and their disposition
 
+A later [exact fingerprint-cache experiment](../tests/e5/fingerprint-cache/results-20260920.md)
+targets repeated preparation checks instead of another matrix tile. The complete
+graph walk still reads every mutable field; it reuses a string's original hash
+transition only when both the incoming accumulator and ordinal string match.
+This preserves the original fingerprint bits, including mutation and nested-graph
+checks. Four AMD workers reduce the isolated complete traversal from0.329823ms
+to0.006621ms, with stable duplicate controls and zero timed allocations. The
+prepared entry structs occupy55,920bytes for e5. This nominates a bounded
+preparation-cache change; it is not an observed whole-model or ORT speedup.
+
 | Voice-branch material | Integration decision |
 |---|---|
 | Shared NPY reader (`d80ed3d`, `ce25752`) | Adapted in `bb727da`, with dtype, shape, byte order, payload and malformed-input validation. Shared fixture code avoids divergent audio parsers. |
