@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "windows": {
+    "schema": 1,
+    "passed": true,
+    "scope": "Finite maximum-duration application and resource qualification; no natural long accuracy or full tensor claim",
+    "frozen_sha256": "02d14a9b04e30283419ea39113673214515b0670f846241110f8ac71d179d2a0",
+    "native_sha256": "c9f82104a76f35f3b277eb31e8a0981470987d18704f2b03f147b22f4df0ff2f",
+    "managed_sha256": "86f1528ed9cf6aa8f0d4bac51ffb728c2d7cdb8ed003c9b4539beaae62191ea4",
+    "native_audit_sha256": "232499c5095cbec518cc90e6f9dd7bd7fd89dccfb227f9f41d1946e5c18c8777",
+    "auditor_sha256": "6d224951bba9c4aee77524afa210d8dd12626097e8d3fabb9e31f99f7628e322",
+    "native_arrays": 1917,
+    "native_values": 159331122,
+    "native_steps": 1865,
+    "rows": [
+      {
+        "name": "maximum-speech",
+        "repeat": false,
+        "seconds": 627.3368135,
+        "audio_seconds": 600,
+        "windows": 26,
+        "segments": 64,
+        "tokens": 1865,
+        "stop_reason": "Completed",
+        "maximum_native_confidence_difference": 3.1338401487446266e-06
+      },
+      {
+        "name": "maximum-speech",
+        "repeat": true,
+        "seconds": 629.7606616,
+        "audio_seconds": 600,
+        "windows": 26,
+        "segments": 64,
+        "tokens": 1865,
+        "stop_reason": "Completed",
+        "maximum_native_confidence_difference": 3.1338401487446266e-06
+      }
+    ],
+    "resources": [
+      {
+        "phase": "native",
+        "seconds": 551.1937706000172,
+        "samples": 845,
+        "peak_rss": 5520179200,
+        "minimum_available_memory": 5396541440,
+        "terminal_processes": [
+          {
+            "pid": 765272,
+            "create_time": 1789859948.593779
+          },
+          {
+            "pid": 765280,
+            "create_time": 1789859948.5991447
+          },
+          {
+            "pid": 765308,
+            "create_time": 1789859948.6097012
+          },
+          {
+            "pid": 761656,
+            "create_time": 1789859946.067203
+          }
+        ]
+      },
+      {
+        "phase": "managed",
+        "seconds": 1311.664689199999,
+        "samples": 1967,
+        "peak_rss": 13851246592,
+        "minimum_available_memory": 3884417024,
+        "terminal_processes": [
+          {
+            "pid": 822092,
+            "create_time": 1789860785.2299993
+          },
+          {
+            "pid": 822100,
+            "create_time": 1789860785.2484615
+          },
+          {
+            "pid": 821752,
+            "create_time": 1789860782.963725
+          }
+        ]
+      }
+    ],
+    "recording_calls": 6,
+    "refusals": 10,
+    "short_regression": true,
+    "ownership": true,
+    "process_peak_working_set": 13856780288
+  },
+  "amd": {
+    "schema": 1,
+    "passed": true,
+    "rows": [
+      {
+        "name": "maximum-speech",
+        "repeat": false,
+        "seconds": 862.2037861,
+        "audio_seconds": 600,
+        "windows": 26,
+        "segments": 64,
+        "tokens": 1865,
+        "stop_reason": "Completed",
+        "maximum_native_confidence_difference": 2.6252772863527563e-06,
+        "maximum_windows_confidence_difference": 6.984734316900498e-07
+      },
+      {
+        "name": "maximum-speech",
+        "repeat": true,
+        "seconds": 861.3213722,
+        "audio_seconds": 600,
+        "windows": 26,
+        "segments": 64,
+        "tokens": 1865,
+        "stop_reason": "Completed",
+        "maximum_native_confidence_difference": 2.6252772863527563e-06,
+        "maximum_windows_confidence_difference": 6.984734316900498e-07
+      }
+    ],
+    "resources": {
+      "seconds": 1787.0202943340119,
+      "samples": 3506,
+      "peak_rss": 11719667712,
+      "minimum_available_memory": 4290015232,
+      "terminal_processes": [
+        {
+          "pid": 309805,
+          "start": 22653067
+        },
+        {
+          "pid": 309821,
+          "start": 22653093
+        }
+      ]
+    },
+    "windows_audit_sha256": "f468cfbc56e4e2063c105b5f998fee147f18d1197f230db6da8f7089f1920f30",
+    "collection_sha256": "a366ba2a885beabcc9da3e5e815f5a5e95d5dc6e5544eae3eed991cf7dad2f54",
+    "bundle_sha256": "00fc1f3bf92ef2f3a424e9f6f63ac56001152a044b7571b43c39348462de6b7c",
+    "auditor_sha256": "177df695477534074ce9bb00f9683fc460c981e5b375ffae7627fb324652aef6",
+    "managed_sha256": "a0cc74361d50b1dfe3ac60e46b075049a2b8f92c218c3797018fa22a930c1d07",
+    "recording_calls": 6,
+    "refusals": 10,
+    "short_regression": true,
+    "process_peak_working_set": 11720204288,
+    "scope": "Finite600-second cyclic speech API/resource and cross-host application proof; no full tensor/independent natural accuracy claim"
+  },
+  "windows_closed_sha256": "a0c3ba9a40d460c7bd761522ffdef55cbefd94ab926f6dd890d95c77a50f1459",
+  "amd_closed_sha256": "a8fc1cae6a43307c83542f0edc55eb5a11d3bafe0b21efe2c347bbdecfabd119",
+  "product_source": "8732831b52a97b009ab3edbd5319a56269e19449",
+  "runner_sha256": "f1e99469f326133a14d9d6f81f3b79a83b1fa1f549d0a3a321a49f2fd7e47a94",
+  "core_sha256": "05884cfd524cc7130321f5dc1bcd0af17dddc7b97e8428d2d2f59e00edb795c2",
+  "data_sha256": "27598aa8d8c6b97a1415302cf3aaced1adcf53b20b64734c0c0e047492ca069d",
+  "reporter_sha256": "f1c0085b871451aa5290d427cb2be07ba1337538aa9592b7cea121b484ec3993"
+}

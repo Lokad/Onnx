@@ -1,6 +1,6 @@
 # CPU benchmarks
 
-## Current results — 2026-09-19 UTC
+## Current results — 2026-09-20 UTC
 
 The tables here summarize retained measurements for e5, Parakeet, Whisper and
 pyannote. Each names its workload, hardware and timing boundary. Earlier tables
@@ -159,9 +159,26 @@ also passes its API/CLI, limits, ownership and recovery checks against retained
 native application decisions. Its 69.455- and 71.825-second constructed speech
 requests take 99.768 and 100.789 API seconds; the sequence peaks at 12.230 GB
 sampled RSS. All nine recording calls, ten refusal/recovery checks and the
-short-API regression pass. This covers 600-second silence, with maximum-duration
-speech resources still open. These finite observations supply no fresh AMD ORT
-latency ratio.
+short-API regression pass. That earlier replay covers 600-second silence.
+These finite observations supply no fresh AMD ORT latency ratio.
+
+The later [Whisper maximum-speech qualification](tests/whisper/maximum-speech/results-20260919.md)
+completes a constructed 600-second speech request and its repeat on both hosts,
+using the same product DLLs and PCM. Every token, timestamp, window advance and
+stop decision matches the independently audited native reference: 26 windows,
+64 segments and 1,865 generated tokens per request.
+
+| Whisper: 600-second repeated speech | First API seconds | Repeat API seconds | Sequence peak sampled GB |
+|---|---:|---:|---:|
+| Windows i7-14700KF, CPU 2 | 627.337 | 629.761 | 13.851 |
+| AMD EPYC 9V74, CPU 2 | 862.204 | 861.321 | 11.720 |
+
+Each sequence also passes maximum silence, concurrent silence, ten refusal and
+recovery checks, input/output ownership and short-API regression. Peaks cover
+the complete sequence; GB are decimal. These are finite resource observations
+on cyclic speech, without a matched long-request ORT latency comparison or
+independent natural ten-minute accuracy claim. Full numerical gates remain
+separate.
 
 ### Audio accuracy and numerical agreement
 
@@ -208,8 +225,8 @@ duration-logit arrays still fail. Whisper's
 [full-pipeline numerical check](tests/whisper/numerical-20260919.md) retains
 21 encoder and 405 logit-array failures despite identical token choices.
 The labeled pyannote trace retains 19 failed filterbank values on Windows and
-24 on AMD. Broader multilingual, noisy and long-conversation accuracy and
-maximum-duration resource qualification remain open.
+24 on AMD. Broader multilingual, noisy and long-conversation accuracy remain
+open, as does AMD maximum-duration resource qualification for pyannote.
 
 ## Historical results and methodology — through 2026-09-13
 
