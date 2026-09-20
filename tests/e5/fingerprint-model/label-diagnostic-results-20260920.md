@@ -59,4 +59,4 @@ per-call estimator on eighteen complete remappings, comparing every case,
 boundary, pair, worker and position. It also checks a synthetic linear drift.
 The verification is retained in
 `artifacts/e5-fingerprint-label-check-20260920.json`. No model inference, VM load,
-source/default change or benchmark-scoreboard change occurred.
+production-source/default change or benchmark-scoreboard change occurred.
