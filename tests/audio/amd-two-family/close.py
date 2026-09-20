@@ -125,12 +125,12 @@ retains the incomplete Whisper run. No AMD latency is inferred from those checks
 
 '''
     assert current.count(old)==1;current=current.replace(old,'')
-    marker='### e5: interleaved independent processes versus native ORT';assert current.count(marker)==1
+    marker='### Audio: matched Microsoft ONNX Runtime baselines';assert current.count(marker)==1
     section=f'''### Audio: matched AMD Parakeet and pyannote baselines
 
 AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ORT 1.29.0, product `1d10d22`.
 The same complete application workloads and one-thread settings as the Windows
-table above are used. Loading, file access and external validation are excluded.
+table below are used. Loading, file access and external validation are excluded.
 The differing host and product revision prevent a cross-table speedup claim.
 
 {table}
@@ -146,10 +146,10 @@ includes process variation, memory, every Parakeet clip and evidence identities.
 **Whisper has no AMD timing result:** the separate [all-family attempt](tests/audio/amd-comparison/resource-failure-20260920.md)
 stopped during managed conformance below its 1 GiB available-memory reserve, with
 16 of 20 requests completed, before timing. The Windows Whisper baseline remains
-above. The later two-family timing scope preserves that resource failure.
+below. The later two-family timing scope preserves that resource failure.
 
 '''
-    benchmark.write_text(current.replace(marker,section+marker).replace(
+    benchmark.write_text(current.replace(marker,section+'### Audio: Windows Microsoft ONNX Runtime baselines').replace(
         'The audio timing tables remain measurements of `8732831`.',
         'The Windows audio tables measure `8732831`; the AMD Parakeet/pyannote table measures `1d10d22`.'),encoding='utf-8')
     support=ROOT/'docs/model-support.md';content=support.read_text(encoding='utf-8')
