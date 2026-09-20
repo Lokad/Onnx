@@ -14,6 +14,9 @@ def close(base):
     value=read(base/'audit.json')
     assert value['execution_passed'] and value==audit(base)
     assert value['auditor_sha256']==sha(base/'runtime-source/audit.py')
+    checks=read(base/'record-checks.json')
+    assert checks['passed'] and len(checks['refusals'])==40 and checks['audit_sha256']==sha(base/'audit.json')
+    assert checks['checker_sha256']==sha(Path(__file__).with_name('check_results.py'))
     prior=root/'artifacts/asr-multilingual-v2-20260920'
     failed=read(prior/'failed-closed.json')
     assert failed['closed'] and not failed['execution_passed']
@@ -112,7 +115,8 @@ def report(base,destination):
         'replacement. That failure and all terminated process identities remain retained. The corrected writer retries '
         'that specific sharing failure for at most one second; an actual Windows file-lock test checks transient recovery '
         'and bounded refusal. The rerun uses identical input/replay bytes and unchanged selection, scoring and decoding. '
-        'Nine tooling test methods pass; no product/default/tolerance changed.','',
+        'Nine tooling test methods pass; forty damaged copies of real result records are rejected after execution, '
+        'and process accounting and all grouped score arithmetic are independently reproduced. No product/default/tolerance changed.','',
         f"Frozen runtime source: `{value['protocol_source']}`. Qualified product source: `087e280b5ea0a6a610399ccffd1a1e5668def10e`; "
         'core `187de61ad8f034b9b7ad2fb3490358443fa84334204720e81bc3546a31f3c8d4`; '
         'Data `809242b58725c6ae47514cc3908ef59ffafae6be36bb6e2fba20144d9a975af5`. '
