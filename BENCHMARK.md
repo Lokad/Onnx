@@ -195,6 +195,34 @@ comparison or independent long-conversation accuracy claim.
 
 ### Audio accuracy and numerical agreement
 
+The latest AMD check adds **five languages and controlled additive noise**, with
+both Lokad.Onnx and Microsoft ORT scored against the same human transcripts.
+It uses twenty FLEURS recordings (four each in English, French, German, Spanish
+and Italian; 232.06 seconds), plus a deterministic 10 dB noise version of each.
+Each condition has 418 reference words and 2,630 reference characters.
+
+| Recognizer / condition | Lokad word errors | Microsoft ORT word errors | Lokad WER | ORT WER | Lokad CER | ORT CER |
+|---|---:|---:|---:|---:|---:|---:|
+| Parakeet, clean | 26 | 26 | 6.2201% | 6.2201% | 2.1673% | 2.1673% |
+| Parakeet, 10 dB noise | 36 | 36 | 8.6124% | 8.6124% | 3.5361% | 3.5361% |
+| Whisper Large V3 Turbo, clean | 17 | 17 | 4.0670% | 4.0670% | 1.1787% | 1.1787% |
+| Whisper Large V3 Turbo, 10 dB noise | 38 | 38 | 9.0909% | 9.0909% | 4.1065% | 4.1065% |
+
+All 164 requests complete, including one repeat per recognizer/engine. Each
+recognizer matches ORT on all 41 complete public results, including token and
+stop decisions. The run uses AMD EPYC 9V74 CPU 2, .NET 10.0.8, ORT 1.29.0 and
+qualified product `087e280`. Whisper receives the declared language; Parakeet
+detects it automatically. Selection, noise and scoring rules were fixed before
+recognition. This small read-speech sample, with correlated parallel translations
+and artificial noise, does not establish a general model ranking or natural
+conversation accuracy. [Per-language scores and finite resource observations](tests/audio/multilingual/results-20260920.md),
+[every human reference and both transcripts](tests/audio/multilingual/transcripts-20260920.md),
+and [complete records](tests/audio/multilingual/observations-20260920.json) are retained.
+The single-pass timings in that report do not replace the repeated Microsoft
+ORT performance baselines at the top of this document.
+
+Earlier clean-English and diarization observations use different labeled data:
+
 | Model | Human-labeled observation | Result | Managed/native application agreement |
 |---|---|---|---|
 | Parakeet TDT 0.6B V3 | 20 clean-English clips, 559 reference words | 11 word errors; WER 1.9678%; CER 0.4309% | 21/21 requests, including repeat |
@@ -238,9 +266,10 @@ duration-logit arrays still fail. Whisper's
 [full-pipeline numerical check](tests/whisper/numerical-20260919.md) retains
 21 encoder and 405 logit-array failures despite identical token choices.
 The labeled pyannote trace retains 19 failed filterbank values on Windows and
-24 on AMD. Broader multilingual, noisy and long-conversation accuracy remain
-open; the separate maximum-duration application/resource checks do not close
-these numerical or accuracy gaps.
+24 on AMD. The five-language check adds bounded clean/artificial-noise accuracy
+evidence. Natural noise, overlapping conversation and independent long-recording
+accuracy remain open; neither that check nor the maximum-duration application/
+resource checks close the numerical gaps.
 
 ## Historical results and methodology — through 2026-09-13
 

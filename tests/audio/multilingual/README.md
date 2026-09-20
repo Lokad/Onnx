@@ -6,6 +6,12 @@ errors against human transcripts are separate from native/managed agreement.
 It does not replace full numerical qualification or the existing repeated
 audio performance comparison.
 
+The [completed AMD results](results-20260920.md) retain all 164 requests,
+per-language clean/noisy WER and CER, and complete application agreement with
+Microsoft ORT for both recognizers. [Every transcript](transcripts-20260920.md)
+and the [full observations](observations-20260920.json) are available alongside
+the protocol below. Both earlier Windows attempts remain failed schedules.
+
 The data is Google's [FLEURS](https://huggingface.co/datasets/google/fleurs),
 revision `70bb2e84b976b7e960aa89f1c648e09c59f894dd`, licensed CC-BY-4.0.
 See Conneau et al., [FLEURS: Few-shot Learning Evaluation of Universal
