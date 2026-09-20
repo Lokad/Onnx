@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "dataset": "google/fleurs",
+  "revision": "70bb2e84b976b7e960aa89f1c648e09c59f894dd",
+  "license": "CC-BY-4.0",
+  "locales": [
+    [
+      "en_us",
+      "en"
+    ],
+    [
+      "fr_fr",
+      "fr"
+    ],
+    [
+      "de_de",
+      "de"
+    ],
+    [
+      "es_419",
+      "es"
+    ],
+    [
+      "it_it",
+      "it"
+    ]
+  ],
+  "files": {
+    "README.md": {
+      "bytes": 385614,
+      "sha256": "688f79f2a5c731af3796e9f683eb02f9b3f09d040decd8c5625d0f37098e71c6",
+      "hub_etag": "dcc0872174e54ad416dee938651d777378d4ba4f"
+    },
+    "parquet-data/en_us/test-00000-of-00001.parquet": {
+      "bytes": 401722686,
+      "sha256": "6428a4d04d3aac29e16b45e039bb1470a8bd7aa334cf92f7984c9c520d1f234d",
+      "hub_etag": "6428a4d04d3aac29e16b45e039bb1470a8bd7aa334cf92f7984c9c520d1f234d"
+    },
+    "parquet-data/fr_fr/test-00000-of-00001.parquet": {
+      "bytes": 445464011,
+      "sha256": "99a08ff00edbc7b6f040e23b33e49bc4a1fce38f364d50c603227d612fd797ef",
+      "hub_etag": "99a08ff00edbc7b6f040e23b33e49bc4a1fce38f364d50c603227d612fd797ef"
+    },
+    "parquet-data/de_de/test-00000-of-00001.parquet": {
+      "bytes": 726207372,
+      "sha256": "3b40c214cabd603f1ddbf3da0499f7780975d6c56b75240f07a8990dbb7a6c07",
+      "hub_etag": "3b40c214cabd603f1ddbf3da0499f7780975d6c56b75240f07a8990dbb7a6c07"
+    },
+    "parquet-data/es_419/test-00000-of-00001.parquet": {
+      "bytes": 703040007,
+      "sha256": "f1e8b7f6eecb91d16b79d91bc1838d8b0e5ebc0b37b317e2b58eb8694c64d3c0",
+      "hub_etag": "f1e8b7f6eecb91d16b79d91bc1838d8b0e5ebc0b37b317e2b58eb8694c64d3c0"
+    },
+    "parquet-data/it_it/test-00000-of-00001.parquet": {
+      "bytes": 806437035,
+      "sha256": "6b648b2851cd0d0cf50254c9a7ecf8d91d7e41ecdb536f5614b10ef33b6b11a8",
+      "hub_etag": "6b648b2851cd0d0cf50254c9a7ecf8d91d7e41ecdb536f5614b10ef33b6b11a8"
+    }
+  }
+}
