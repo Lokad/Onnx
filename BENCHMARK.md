@@ -41,6 +41,9 @@ completes the twenty requests with explicit collections after requests 8, 16 and
 A later [private buffer-reuse prototype](tests/whisper/buffer-reuse/results-20260920.md)
 completes 20 conformance and 80 endurance requests without forced collection.
 It reduces allocations but does not supply a matched AMD Whisper timing result.
+A separate [decoder-weight sharing candidate](tests/whisper/weight-sharing/failure-20260920.md)
+completes twenty saved requests but fails its final decoder snapshot check;
+its endurance phase does not start. This candidate is not yet qualified.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
 
