@@ -134,6 +134,14 @@ retained results, input ownership and a subsequent 30-second native-bound
 recovery request pass. No GC is forced. This is one synthetic resource
 observation; preferred settings and AMD have no maximum-duration result here.
 
+A later [current-product AMD replay](../maximum-amd/results-20260919.md)
+completes the same constructed request in 1,277.149 API seconds on CPU 2,
+with 3.389 GB sampled peak RSS across the full request and recovery sequence.
+Native and retained Windows public outputs agree under the existing timeline
+and centroid gates; ownership, refusals and recovery pass. That result uses
+different hardware and product defaults, so the two times are not a matched
+performance comparison.
+
 The pinned native generator reproduces all 4,146 arrays in a fresh run after
 their layouts are fixed. Managed public timelines match the declared
 deterministic tie policy, with maximum centroid error `1.70244e-6`. Both

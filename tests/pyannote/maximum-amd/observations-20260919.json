@@ -1,0 +1,44 @@
+{
+  "request_seconds": 1277.1486204,
+  "recovery_seconds": 45.0495267,
+  "windows": 591,
+  "speakers": 4,
+  "ordinary_intervals": 312,
+  "exclusive_intervals": 317,
+  "maximum_native_centroid_error": 1.3638291748441222e-06,
+  "maximum_recovery_centroid_error": 1.2030801135876068e-06,
+  "maximum_windows_centroid_difference": 9.432070650905455e-07,
+  "schema": 1,
+  "passed": true,
+  "resources": {
+    "seconds": 1323.049931741989,
+    "samples": 2595,
+    "peak_rss": 3389087744,
+    "minimum_available_memory": 12580044800,
+    "terminal_processes": [
+      {
+        "pid": 312373,
+        "start": 22842511
+      },
+      {
+        "pid": 312389,
+        "start": 22842533
+      }
+    ]
+  },
+  "process_peak_working_set": 3388874752,
+  "bundle_sha256": "6629b59ab969505ca0922a4c1a51363068ec18477685610b33d6990a15ecbb45",
+  "collection_sha256": "5b8f911f399d1c2e400b1c1ea7537c508e4204cbeaa08356a5fb610299059afe",
+  "managed_sha256": "aafda189f207946b164f018af150bff412557196c01cdd64d0a528dbeb36ac05",
+  "auditor_sha256": "ae8ce88a552ae1e04d607c4810f4b782bef806730e1e7804d2fcb25b4f388a45",
+  "product_source": "8732831b52a97b009ab3edbd5319a56269e19449",
+  "previous_windows_product": "21f3e74dd945dc9d10187817ad2e049aa577c0e0",
+  "native_tie_differences": {
+    "ordinary": 0,
+    "exclusive": 98
+  },
+  "full_managed_tensor_gate": "not measured",
+  "scope": "One synthetic600-second AMD public API request with native/Windows public comparison and short recovery; no independent natural accuracy or calibrated timing claim",
+  "closed_sha256": "73fb1e5ad672177723d5caf1509f5b5ea9c4cc2ceb9624761fb361debbfd0681",
+  "reporter_sha256": "a4f66a1549728f0d0b93c8bb932b85a1f3960159585cc6934e4bd6c12d5e3fbf"
+}

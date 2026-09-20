@@ -176,6 +176,14 @@ on cyclic speech, without a matched long-request ORT latency comparison or
 independent natural ten-minute accuracy claim. Full numerical gates remain
 separate.
 
+A separate [AMD pyannote maximum-duration replay](tests/pyannote/maximum-amd/results-20260919.md)
+completes the constructed 600-second dialogue in 1,277.149 API seconds, with
+3.389 GB sampled peak RSS across the request and recovery sequence. The
+591-window result passes native timeline and centroid checks; refusals,
+input/output ownership and thirty-second recovery pass. This is finite
+application/resource evidence, without a matched long-request ORT latency
+comparison or independent long-conversation accuracy claim.
+
 ### Audio accuracy and numerical agreement
 
 | Model | Human-labeled observation | Result | Managed/native application agreement |
@@ -222,7 +230,8 @@ duration-logit arrays still fail. Whisper's
 21 encoder and 405 logit-array failures despite identical token choices.
 The labeled pyannote trace retains 19 failed filterbank values on Windows and
 24 on AMD. Broader multilingual, noisy and long-conversation accuracy remain
-open, as does AMD maximum-duration resource qualification for pyannote.
+open; the separate maximum-duration application/resource checks do not close
+these numerical or accuracy gaps.
 
 ## Historical results and methodology — through 2026-09-13
 
