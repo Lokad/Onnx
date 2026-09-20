@@ -159,6 +159,14 @@ error, without proving arbitrary-precision bounds or changing the native gate.
 The original FP32 runs were reused; existing transcript/token agreement and
 the remaining numerical limitations both stand.
 
+Comparing all 41 [saved selected-case trace boundaries against both float64
+references](../tests/whisper/trace-reference/results-20260920.md) confirms that
+both FP32 engines exceed the numerical limit. The first saved failure is layer
+20 for fifteen of sixteen engine/feature paths, and layer 22 for one managed
+path. All saved boundaries through layer 19 pass in those selected cases.
+This reuses three natural cases and a repeat, retains native trace-instrumentation
+effects, and does not identify an erroneous operator or qualify the full corpus.
+
 DINOv3, ResNet50 and GPT-2 also have complete-output shared-core regression
 fixtures, including independently carried GPT states and ownership/recovery
 checks. They exercise common kernels beyond e5 and audio; these fixtures are
@@ -169,3 +177,11 @@ controls and explicit intermediate-lifetime selection. Packed-weight and
 released-array cache limits bound those caches individually, not total process
 memory. Published resource observations apply to their stated recording,
 hardware, revision and request count.
+
+The September 20 AMD short-audio benchmark also records a [managed Whisper
+resource failure](../tests/audio/amd-comparison/resource-failure-20260920.md).
+Sixteen of twenty short requests completed correctly before available RAM fell
+below the unchanged 1 GiB reserve; peak sampled RSS was 14.978 GB. The worker
+did not finish conformance, so no AMD timing result or repeated-use memory
+qualification follows from that run. Earlier finite recording observations and
+the complete Windows timing comparison retain their original scope.
