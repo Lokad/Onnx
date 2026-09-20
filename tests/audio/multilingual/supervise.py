@@ -17,6 +17,20 @@ def verify(root,files):
     for name,wanted in files.items():assert pin(root/name)==wanted,name
 
 
+def save_status(path,value,timeout=1.):
+    temporary=path.with_suffix('.tmp')
+    temporary.write_text(json.dumps(value,indent=2)+'\n',encoding='utf-8')
+    deadline=time.monotonic()+timeout
+    while True:
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError as error:
+            # Windows readers can temporarily deny FILE_SHARE_DELETE.
+            if os.name!='nt' or error.winerror not in (5,32) or time.monotonic()>=deadline:raise
+            time.sleep(.01)
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--artifact',type=Path,required=True);a=p.parse_args()
     root=Path(__file__).resolve().parents[3];base=a.artifact.resolve();out=base/'run';out.mkdir()
@@ -51,7 +65,7 @@ def main():
     identity=dict(schema=1,supervisor=dict(pid=parent.pid,birth=parent.create_time()),started=time.time(),complete=False,runs=[],
                   frozen_sha256=sha(base/'frozen.json'),limits=dict(rss=20*1024**3,seconds=3600,available=1024**3))
     def save():
-        temporary=out/'identity.tmp';temporary.write_text(json.dumps(identity,indent=2)+'\n',encoding='utf-8');temporary.replace(out/'identity.json')
+        save_status(out/'identity.json',identity)
     env={k:v for k,v in os.environ.items() if not k.lower().startswith(('lokad_','dotnet_','complus_'))}
     env.update(PYTHONUTF8='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',NUMEXPR_NUM_THREADS='1')
     try:
