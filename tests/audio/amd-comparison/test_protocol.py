@@ -25,6 +25,19 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(len(schedule('conformance')),6);self.assertEqual(len(schedule('timing')),12)
         self.assertEqual(schedule('timing')[:4],[('parakeet',e) for e in ['managed','ort','ort','managed']])
 
+    def test_complete_original_timing_records(self):
+        processes=calls=0
+        for artifact in ['audio-ort-baseline-v2-20260919','whisper-ort-baseline-20260919']:
+            for path in (ROOT/'artifacts'/artifact/'timing').glob('*/result.json'):
+                value=read(path)
+                # The old native Whisper record lacks the new cross-host feature summary.
+                if value['family']=='whisper' and value['engine']=='ort':continue
+                validate_records(value,self.examples[value['family']][1],'timing')
+                processes+=1;calls+=len(value['records'])
+                damaged=copy.deepcopy(value);damaged['records'][0],damaged['records'][1]=damaged['records'][1],damaged['records'][0]
+                with self.assertRaises(AssertionError):validate_records(damaged,self.examples[value['family']][1],'timing')
+        self.assertEqual((processes,calls),(10,544))
+
     def test_corrupted_real_records(self):
         for family,(original,manifest) in self.examples.items():
             changes=[lambda v:v['records'].pop(),lambda v:v['records'].append(copy.deepcopy(v['records'][0])),
