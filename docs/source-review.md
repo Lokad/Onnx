@@ -185,6 +185,19 @@ this activation-packing strategy. The copy/pool costs remain included, with no
 claim that their individual contributions were isolated. Neither variant is
 promoted, and no unchanged follow-up is queued.
 
+A separate [reduction-blocking prototype](../tests/e5/projection-reduction-blocks/README.md)
+now tests a different part of the pinned SGEMM design. ORT's packed traversal
+uses 256-position reduction blocks and 128-column slices. The voice branch's
+`cbcfc65`, `529e78f` and `a09b0a3` introduce blocked packing, activation gathering
+and additional dispatch state. The new prototype retains Lokad's existing
+packed format and input rows, separating the full row stride from the reduction
+loop bound. Its fixed 128/256-position blocks add partial-accumulator stores
+between blocks while preserving each output's FMA order. This tests weight-panel
+reuse without importing scratch gathering, overwrite semantics or packing-cache
+changes. Source checks, compilation and AVX2 refusal pass locally; actual AMD
+arithmetic/code proof and subsequent timing remain pending. No performance gain
+or cache behavior is inferred from the source alone.
+
 The [paired managed A/A experiment](../tests/e5/paired-aa/results-20260920.md)
 now tests two separately loaded, byte-identical cores with real public Memory
 execution. Twenty AMD workers retain every measured call and pass all output,
