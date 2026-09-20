@@ -9,6 +9,7 @@ import re
 import wave
 import numpy as np
 from common import NAMES,load,pin,read,write
+from evidence import directory,failed_attempt,recovery_ready
 
 
 def original_functions(path,names,scope):
@@ -91,11 +92,12 @@ def main():
         path=root/case['audio']['path'];assert pin(path)=={k:case['audio'][k] for k in ['bytes','sha256']}
         with wave.open(str(path),'rb') as source:pcm=np.frombuffer(source.readframes(case['samples']),dtype='<i2').astype(np.float32)/np.float32(32768)
         assert hashlib.sha256(pcm.tobytes()).hexdigest()==case['pcm_sha256'];pcms.append(pcm)
+    recovery_ready(base)
     comparisons=[];scores=[];values={};cache={};complete=True
     for family in manifest['schedule']:
         values[family]={}
         for engine,folder in [('ort','native'),('managed','managed')]:
-            value=read(base/f'process-{folder}-{family}-run/worker/result.json');worker(value,manifest,base,engine,family);values[family][engine]=value
+            value=read(directory(base,folder,family)/'worker/result.json');worker(value,manifest,base,engine,family);values[family][engine]=value
             for i,(case,row) in enumerate(zip(manifest['cases'],value['records'],strict=True)):
                 result=row['result']
                 if family=='whisper':whisper['validate_recording'](result,case,tokenizer)
@@ -109,8 +111,11 @@ def main():
         for i,case in enumerate(manifest['cases']):
             comparisons.append(dict(family=family,name=case['name'],**compare(values[family]['managed']['records'][i]['result'],values[family]['ort']['records'][i]['result'],family)))
     aggregates=[dict(family=f,engine=e,**scoring['total']([r for r in scores if r['family']==f and r['engine']==e])) for f in manifest['schedule'] for e in ['ort','managed']]
+    failed=failed_attempt(base)
+    repeated=None if failed is None else compare(values['whisper']['ort']['records'][0]['result'],failed['completed_record']['result'],'whisper')
     output=dict(all_requests_completed=complete,public_comparison_passed=all(r['passed'] for r in comparisons),
-        application_passed=complete and all(r['passed'] for r in comparisons),comparisons=comparisons,scores=scores,aggregates=aggregates)
+        application_passed=complete and all(r['passed'] for r in comparisons) and (repeated is None or repeated['passed']),
+        retry_repeat=repeated,comparisons=comparisons,scores=scores,aggregates=aggregates)
     write(a.output,output);print('Audited',len(comparisons),'comparisons and',len(scores),'human-score rows; application pass',output['application_passed'])
 
 

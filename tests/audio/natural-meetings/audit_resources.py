@@ -6,6 +6,7 @@ import json
 import math
 import psutil
 from common import load,pin,read,write
+from evidence import directory as worker_directory,failed_attempt,recovery_ready
 
 
 def validate(state,samples,frozen,engine,family):
@@ -54,7 +55,7 @@ def damaged_checks(state,samples,frozen,engine,family):
 
 
 def inspect(base,engine,family,frozen):
-    directory=base/f'process-{engine}-{family}-run';state=read(directory/'identity.json')
+    directory=worker_directory(base,engine,family);state=read(directory/'identity.json')
     samples=[json.loads(line) for line in (directory/'samples.jsonl').read_text().splitlines()]
     validate(state,samples,dict(frozen,sha256=pin(base/'frozen.json')['sha256']),engine,family)
     assert read(directory/'complete.json')==dict(code=0)
@@ -76,6 +77,9 @@ def local_terminal(base):
             if item:births[item['pid']]=item['birth']
         births.update({int(pid):birth for pid,birth in state.get('members',{}).items()})
     item=read(base/'deployment-native.json');births[item['pid']]=item['birth']
+    for name in ['recovery-deployment.json','recovery-supervisor.json']:
+        if (base/name).exists():
+            item=read(base/name);births[item['pid']]=item['birth']
     for pid,birth in births.items():
         try:assert psutil.Process(pid).create_time()!=birth,('Owned process still live',pid,birth)
         except psutil.NoSuchProcess:pass
@@ -91,16 +95,17 @@ def main():
     assert collection['frozen']==pin(base/'frozen.json') and collection['verified_reusable_files']==frozen['files']
     assert {p.relative_to(base/'collected').as_posix() for p in (base/'collected').rglob('*') if p.is_file()}==set(collection['files'])|{'collection.json'}
     for name,wanted in collection['files'].items():assert pin(base/'collected'/name)==wanted,name
+    recovery_ready(base);failed=failed_attempt(base)
     resources=[];refusals=[]
     for engine in ['native','managed']:
         campaign=read(base/('collected' if engine=='managed' else '')/f'campaign-{engine}.json')
-        assert campaign==dict(complete=True,outcomes=[dict(family=f,code=0) for f in manifest['schedule']])
+        assert campaign==dict(complete=True,outcomes=[dict(family=f,code=2 if engine=='native' and f=='whisper' and failed else 0) for f in manifest['schedule']])
         for family in manifest['schedule']:
             resources.append(inspect(base,engine,family,frozen))
-            directory=base/f'process-{engine}-{family}-run';state=read(directory/'identity.json')
+            directory=worker_directory(base,engine,family);state=read(directory/'identity.json')
             samples=[json.loads(line) for line in (directory/'samples.jsonl').read_text().splitlines()]
             refusals.append(dict(engine=engine,family=family,count=damaged_checks(state,samples,dict(frozen,sha256=pin(base/'frozen.json')['sha256']),engine,family)))
-    result=dict(passed=True,resources=resources,refusals=refusals,native_terminal_processes=local_terminal(base),
+    result=dict(passed=True,resources=resources,refusals=refusals,failed_native_attempt=failed,native_terminal_processes=local_terminal(base),
         amd_terminal_processes=collection['terminal_processes'],frozen=pin(base/'frozen.json'),collection=pin(base/'collected/collection.json'))
     write(a.output,result);print('All four worker resource records pass; damaged records refused',sum(r['count'] for r in refusals))
 

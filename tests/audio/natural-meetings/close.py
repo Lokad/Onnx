@@ -18,6 +18,7 @@ from common import load,pin,read,write
 from audit import worker,compare,original_functions
 from audit_resources import inspect,local_terminal
 from collect import HOST,KEY
+from evidence import directory,failed_attempt,recovery_ready
 
 
 def refuses(action):
@@ -75,12 +76,14 @@ def main():
     assert {p.relative_to(base/'collected').as_posix() for p in (base/'collected').rglob('*') if p.is_file()}==set(collection['files'])|{'collection.json'}
     for name,wanted in collection['files'].items():assert pin(base/'collected'/name)==wanted,name
     for family in manifest['schedule']:
-        directory=base/f'process-managed-{family}-run'
-        expected={n for n in collection['files'] if n.startswith(directory.name+'/')}
-        assert {p.relative_to(base).as_posix() for p in directory.rglob('*') if p.is_file()}==expected
+        managed_directory=directory(base,'managed',family)
+        expected={n for n in collection['files'] if n.startswith(managed_directory.name+'/')}
+        assert {p.relative_to(base).as_posix() for p in managed_directory.rglob('*') if p.is_file()}==expected
         for name in expected:assert pin(base/name)==collection['files'][name]
     audit=read(base/'audit.json');resources=read(base/'resource-audit.json')
     assert resources['passed'] is True
+    recovery_ready(base);failed=failed_attempt(base)
+    assert resources['failed_native_attempt']==failed
     assert resources['resources']==[inspect(base,e,f,frozen) for e in ['native','managed'] for f in manifest['schedule']]
     normalizer=load('natural_asr_fixed_normalizer',base/'audit-source/common.py')
     assert pin(base/'audit-source/common.py')=={k:labels['normalizer'][k] for k in ['bytes','sha256']}
@@ -107,7 +110,7 @@ def main():
             if family=='whisper':whisper['validate_recording'](result,manifest['cases'][i],tokenizer)
             else:parakeet['validate'](result,manifest['cases'][i],pcms[i],vocab)
         for engine,folder in [('ort','native'),('managed','managed')]:
-            value=read(base/f'process-{folder}-{family}-run/worker/result.json');values[family][engine]=value
+            value=read(directory(base,folder,family)/'worker/result.json');values[family][engine]=value
             refusals.append(dict(family=family,engine=engine,count=damaged_worker(value,manifest,base,engine,family,validate)))
             complete=complete and all(r['result']['stop_reason']=='Completed' for r in value['records'])
             for i,row in enumerate(value['records'][:2]):
@@ -128,7 +131,12 @@ def main():
             comparisons.append(dict(family=family,name=case['name'],**compare(values[family]['managed']['records'][i]['result'],values[family]['ort']['records'][i]['result'],family)))
     assert audit['comparisons']==comparisons and audit['all_requests_completed']==complete
     assert audit['public_comparison_passed']==all(r['passed'] for r in comparisons)
-    assert audit['application_passed']==(complete and audit['public_comparison_passed'])
+    repeated=None
+    if failed:
+        whisper['validate_recording'](failed['completed_record']['result'],manifest['cases'][0],tokenizer)
+        repeated=compare(values['whisper']['ort']['records'][0]['result'],failed['completed_record']['result'],'whisper')
+    assert audit['retry_repeat']==repeated
+    assert audit['application_passed']==(complete and audit['public_comparison_passed'] and (repeated is None or repeated['passed']))
     assert audit['aggregates']==[dict(family=f,engine=e,**scoring['total']([r for r in audit['scores'] if r['family']==f and r['engine']==e])) for f in manifest['schedule'] for e in ['ort','managed']]
     local=local_terminal(base)
     script="""import json,sys,time

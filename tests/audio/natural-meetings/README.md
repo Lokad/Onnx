@@ -109,6 +109,20 @@ alignments, source identities and damaged-record refusals before writing a recei
 refuses existing outputs. Application disagreement is recorded as a failure;
 evidence closure does not turn it into a passing model qualification.
 
+The first native Whisper worker stopped after 838.742 seconds when available
+Windows memory fell to 1,024,626,688 bytes, below the fixed 1-GiB guard. Its
+first meeting completed; the second and recovery did not. Preserve the entire
+failed directory and original campaign status. `recover_native.py prepare
+--artifact <artifact>` declares one retry of the full three-call sequence,
+pins every failed-attempt file, and snapshots the recovery controller. Launch
+only that saved controller with `launch --artifact <artifact>`. It requires
+sixty consecutive seconds above the unchanged 20-GiB launch threshold, waiting
+at most fifteen minutes before refusing. The frozen runtime, limits, model
+options and human references remain identical. `evidence.py` selects this
+explicitly declared directory for the completed comparison, checks the failed
+attempt separately, and requires the repeated first meeting to match its
+preserved public result. No Parakeet or managed run is repeated.
+
 Attribution: Carletta et al., *The AMI meeting corpus: A pre-announcement* (2006).
 Selection and diarization references use the pinned
 [pyannote/BUT Speech@FIT setup](https://github.com/pyannote/AMI-diarization-setup/tree/67c2d539286e89f68952d5dcf83912bd9f01dfae).

@@ -2,6 +2,7 @@
 from pathlib import Path
 import argparse
 from common import pin,read,write
+from evidence import directory
 
 
 def main():
@@ -17,7 +18,7 @@ def main():
     assert pin(Path(__file__))==pin(base/'postprocessing-source/report.py')
     audit=read(base/'audit.json');resources=read(base/'resource-audit.json');manifest=read(base/'manifest.json')
     verification=read(base/'verification.json')
-    values={f:{e:read(base/f'process-{d}-{f}-run/worker/result.json') for e,d in [('ort','native'),('managed','managed')]} for f in manifest['schedule']}
+    values={f:{e:read(directory(base,d,f)/'worker/result.json') for e,d in [('ort','native'),('managed','managed')]} for f in manifest['schedule']}
     result=dict(schema=1,closed_receipt=pin(base/'closed.json'),frozen=pin(base/'frozen.json'),runtime_source_commit=receipt['source_commit'],
         reporter=pin(Path(__file__)),manifest=manifest,labels=read(base/'labels.json'),audit=audit,resources=resources,
         verification=verification,results=values,source_files=receipt['sources'],evidence_files=receipt['files'])
@@ -25,10 +26,12 @@ def main():
     names=dict(parakeet='Parakeet TDT 0.6B V3',whisper='Whisper Large V3 Turbo')
     engines=dict(ort='Microsoft ORT application',managed='Lokad.Onnx')
     status=lambda v:'PASS' if v else 'FAIL'
+    recovery_note=('The original native Whisper attempt failed the available-memory guard. The tables use its separately declared recovery sequence; the failed attempt and repeated first-meeting comparison are retained below.\n\n' if resources.get('failed_native_attempt') else '')
     text=f'''# Natural ten-minute meeting ASR — 2026-09-20
 
 Parakeet and Whisper each process two uninterrupted ten-minute AMI meetings and a thirty-second recovery, using Lokad.Onnx and an independently advancing native ORT reference. All requests completed: **{status(audit['all_requests_completed'])}**. Exact public decisions: **{status(audit['public_comparison_passed'])}**. Combined application qualification: **{status(audit['application_passed'])}**. Human word errors below are a separate observation, with no accuracy cutoff selected after recognition.
 
+{recovery_note}\
 The inputs are the first 600 seconds of ES2004a and IS1009a Mix-Headset audio, independently selected before inference as the first session-a at each ES/IS test site. Each contains four annotated speakers; labeled overlap is 52.71 and 55.47 seconds. Mono 16-kHz PCM16 is decoded without resampling, normalization, trimming or concatenation. A final request repeats the first thirty seconds of ES2004a and is excluded from accuracy aggregates.
 
 Audio and manual annotations v1.6.2 are from the [AMI corpus](https://groups.inf.ed.ac.uk/ami/download/), CC BY 4.0. Attribution: Carletta et al., *The AMI meeting corpus: A pre-announcement* (2006). Selection and words-only timing crosschecks use the [pinned pyannote/BUT Speech@FIT setup](https://github.com/pyannote/AMI-diarization-setup/tree/67c2d539286e89f68952d5dcf83912bd9f01dfae).
@@ -59,6 +62,9 @@ Text, tokens, windows, boundaries, timestamps, seeks and stop decisions must mat
 '''
     for row in audit['comparisons']:
         text+=f"| {names[row['family']]} | {row['name']} | {status(row['passed'])} | {row['mismatch_count']} | {row['maximum_observed_confidence_difference']:.12g} |\n"
+    if audit['retry_repeat'] is not None:
+        repeated=audit['retry_repeat']
+        text+=f"\nThe native Whisper recovery repeats the first meeting after the original worker's memory stop. Its completed public result compared with the earlier preserved result: **{status(repeated['passed'])}**, {repeated['mismatch_count']} reported mismatches; maximum confidence difference {repeated['maximum_observed_confidence_difference']:.12g}. This repeated excerpt is not counted twice in accuracy.\n"
     text+='''
 Every mismatch is preserved in the observations. A length mismatch reports the differing lengths without claiming unmatched elements were compared. Two meeting excerpts do not establish accuracy across AMI, languages or arbitrary conversations. No model parameter, segmentation rule, reference policy or tolerance was adjusted after inference.
 
@@ -79,14 +85,18 @@ These are single accuracy replays on different hosts. Native times include refer
     for row in resources['resources']:
         text+=f"| {names[row['family']]} | {'Windows native' if row['engine']=='native' else 'AMD managed'} | {row['seconds']:.6f} | {row['peak_rss']/1e9:.6f} | {row['minimum_available']/1e9:.6f} | {row['samples']} | {row['accounting']['foreign_cpu_fraction']:.9f} |\n"
     text+=f'''
-All four workers satisfy the fixed two-hour and 1-GiB available-memory guards. Windows requires 20 GiB available before each worker and permits less than 20 GiB group RSS; AMD requires 13 GiB before launch and permits less than 14 GiB RSS. Memory is sampled every half second; peaks are finite observations. Foreign CPU accounting uses process snapshot deltas divided by wall time and logical CPU count and can miss exited processes. Windows remained an active workstation.
+The four completed workers satisfy the fixed two-hour and 1-GiB available-memory guards. Windows requires 20 GiB available before each worker and permits less than 20 GiB group RSS; AMD requires 13 GiB before launch and permits less than 14 GiB RSS. Memory is sampled every half second; peaks are finite observations. Foreign CPU accounting uses process snapshot deltas divided by wall time and logical CPU count and can miss exited processes. Windows remained an active workstation.
 
 ## Evidence and reproduction
 
-All actual process births are terminal. Independent input checks reproduce human annotations and original PCM hashes. Four local and two AMD input-only workers pass. Two initial native input preflights refused before child creation because available memory was below 20 GiB; distinct retries passed with unchanged limits. Four offline Whisper wrapper cases exactly reproduce retained qualified outputs; fourteen retained native recordings pass the borrowed validators, and eight damaged Whisper copies refuse. On this new evidence, validators refuse {sum(r['count'] for r in verification['refusals'])} damaged application records and {sum(r['count'] for r in resources['refusals'])} damaged resource records. Each successful inference schedule ran once.
+All actual process births are terminal. Independent input checks reproduce human annotations and original PCM hashes. Four local and two AMD input-only workers pass. Two initial native input preflights refused before child creation because available memory was below 20 GiB; distinct retries passed with unchanged limits. Four offline Whisper wrapper cases exactly reproduce retained qualified outputs; fourteen retained native recordings pass the borrowed validators, and eight damaged Whisper copies refuse. On this new evidence, validators refuse {sum(r['count'] for r in verification['refusals'])} damaged application records and {sum(r['count'] for r in resources['refusals'])} damaged resource records.
 
 The artifact is `artifacts/asr-natural-meetings-20260920`, frozen source `{receipt['source_commit']}`, frozen SHA256 `{pin(base/'frozen.json')['sha256']}`. Final receipt SHA256 `{pin(base/'closed.json')['sha256']}` binds {len(receipt['files'])} files and external native/scorer identities. [Complete transcripts, edit alignments, public outputs, sources and evidence hashes](observations-20260920.json) are retained. [Reproduction instructions](README.md) document preparation, exact schedule, runners and limits. Existing numerical failures and the separate e5 performance objective remain unresolved.
 '''
+    failed=resources.get('failed_native_attempt')
+    if failed:
+        text+=f"\nThe original native Whisper worker **failed its resource guard** after {failed['seconds_before_stop']:.6f} seconds: available system memory fell to {failed['last_available']:,} bytes, below 1 GiB, while its peak sampled group RSS was {failed['peak_rss']:,} bytes. Only ES2004a completed; all original {failed['resource_samples']} samples and the partial output are preserved. A separately declared single retry repeats all three calls using the identical frozen executables, models, inputs, options and limits. It additionally requires sixty consecutive seconds above the original 20-GiB launch requirement. The report scores the complete retry sequence and separately compares its first meeting with the earlier result. Parakeet and managed Whisper were not repeated. The failed original campaign remains failed; recovery does not erase it.\n"
+    else:text+='\nEach inference schedule ran once.\n'
     with markdown.open('x',encoding='utf-8') as stream:stream.write(text)
     print('Rendered',len(audit['scores']),'human scores and',len(audit['comparisons']),'public comparisons.')
 
