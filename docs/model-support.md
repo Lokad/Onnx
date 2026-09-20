@@ -7,8 +7,9 @@ Release CLI and the assets described in each model's linked instructions.
 
 Audio orchestration APIs live in the repository's `Lokad.Onnx.Data` project;
 the core `Lokad.Onnx` NuGet package does not include that assembly. The
-[current core package check](../tests/package-current-20260920.md) verifies a
-fresh package restore and real graph/import execution by an independent app.
+[current core package check](../tests/package-fingerprint-20260920.md) verifies a
+fresh package restore and real graph/import execution by an independent app,
+with the fingerprint cache both disabled and enabled.
 
 | Model | Available application behavior | Qualification and remaining limits |
 |---|---|---|
