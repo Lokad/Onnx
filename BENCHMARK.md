@@ -79,6 +79,11 @@ off. These descriptive resident-process observations do not establish calibrated
 parity, isolated deployment latency or a performance change from earlier tables.
 All original processes are terminal and the complete evidence is closed.
 
+The [remaining-gap review](tests/e5/remaining-gap/results-20260920.md)
+recomputes each protocol's absolute reduction needed to reach 1.05 from
+unrounded data. It keeps component gains, historical profiles and failed timing
+controls separate; it changes no score or production default.
+
 ### e5: earlier independent deployment versus native ORT
 
 The [September 20 independent-deployment controls](tests/e5/fingerprint-deployment/aa-results-20260920.md)

@@ -7,6 +7,22 @@ The review used Microsoft ONNX Runtime 1.23.2 at
 after the common release ancestor `4495fc6`. Integration follows behaviors and
 their necessary fixes; it does not merge the branch or replay every experiment.
 
+The [remaining-gap review](../tests/e5/remaining-gap/results-20260920.md)
+recomputes the complete-model reduction still needed for the unchanged 1.05
+ratio, using unrounded retained observations. In the isolated public Memory
+comparison, the remaining budgets at 30/padded128/128 are 0.474/1.524/1.494 ms.
+The later resident-process Memory observations have separate budgets of
+0.500/1.081/1.053 ms; their complete timing controls fail. These protocols are
+not combined, and neither establishes calibrated parity.
+
+The review also retains both visits of the historical managed attribution and
+checks all 5,940 original public timing samples against their reported means.
+It documents a plateau in the tested kernel mechanisms, without claiming a
+hardware limit or that all possible improvements are exhausted. Fingerprint
+caching and wider LayerNorm have useful component evidence; adding their costs
+to historical model means would manufacture a result that was never measured.
+Their complete-model qualification remains unresolved and both stay off.
+
 ## What the ORT source changes about the optimization priorities
 
 | Source finding | Consequence for Lokad.Onnx |
