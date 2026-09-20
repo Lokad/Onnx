@@ -39,3 +39,9 @@ explicit missing-build message. The supervisor stopped before later workers.
 That complete failure is preserved under artifacts/e5-fingerprint-product-20260920;
 the corrected source builds and deploys the CLI with the same core before a
 new qualification under artifacts/e5-fingerprint-product-v2-20260920.
+
+The [completed AMD qualification](results-20260920.md) passes 3,126 backend tests
+(three skips), all 342 tensor tests, 60 complete e5 arrays and 106 shared-model
+arrays in each setting. Every on/off array is byte-identical. All eight workers
+are terminal; the independent closure retains 685 resource samples and refuses
+20 damaged records. This is correctness evidence; whole-model timing is pending.

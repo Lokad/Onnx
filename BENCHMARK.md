@@ -103,6 +103,13 @@ passes exactness and duplicate controls but fails its fixed performance screen.
 It measures complete twelve-layer activation banks, supplies no new ORT or
 whole-model timing, and does not change the e5 table or production defaults.
 
+The [exact graph-fingerprint cache](tests/e5/fingerprint-cache/results-20260920.md)
+reduces its complete validation component from 0.329823 ms to 0.006621 ms on AMD.
+Its [actual product implementation](tests/e5/fingerprint-product/results-20260920.md)
+passes full AMD suites and complete e5/shared-model output checks in both settings,
+with byte-identical outputs. Whole-model performance remains unmeasured, so the
+switch stays off and the e5 scoreboard above is unchanged.
+
 ### Audio: earlier public API observations
 
 The ASR rows use the same twenty clean-English recordings: ten speakers,

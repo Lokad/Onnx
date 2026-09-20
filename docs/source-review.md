@@ -162,6 +162,12 @@ to0.006621ms, with stable duplicate controls and zero timed allocations. The
 prepared entry structs occupy55,920bytes for e5. This nominates a bounded
 preparation-cache change; it is not an observed whole-model or ORT speedup.
 
+The guarded cache is now implemented behind a default-off switch. Its
+[archived product qualification](../tests/e5/fingerprint-product/results-20260920.md)
+passes full AMD suites and all 166 e5/shared-model output arrays per setting,
+with exact on/off bytes. Mutable-graph checks, nested graphs, context ownership,
+invalidation and held outputs remain covered. Whole-model timing is still needed.
+
 | Voice-branch material | Integration decision |
 |---|---|
 | Shared NPY reader (`d80ed3d`, `ce25752`) | Adapted in `bb727da`, with dtype, shape, byte order, payload and malformed-input validation. Shared fixture code avoids divergent audio parsers. |

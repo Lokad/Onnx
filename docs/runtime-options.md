@@ -60,7 +60,9 @@ immutable strings and hash states, and execution contexts may share them.
 Explicit preparation invalidation releases the owner's snapshot. This cache
 does not share tensor storage or skip mutable-graph validation. The
 [component experiment](../tests/e5/fingerprint-cache/results-20260920.md) nominates
-the mechanism; complete-model performance qualification is still pending.
+the mechanism. The [archived product qualification](../tests/e5/fingerprint-product/results-20260920.md)
+passes full AMD suites and complete e5/shared-model output checks with exact
+on/off output bytes; complete-model performance qualification is still pending.
 
 `LOKAD_ONNX_SOFTMAX_ZERO_BLOCKS=1` is a separate experimental masked-softmax
 route, also off by default. It skips the exponential polynomial only when all
