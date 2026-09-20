@@ -17,7 +17,7 @@ def main():
     source=ROOT/'artifacts/whisper-weight-sharing-20260920'
     closure=read(source/'failure-closed.json');assert closure['closure_passed'] and not closure['campaign_passed']
     for name,wanted in closure['files'].items():assert pin(ROOT/name)==wanted,name
-    folder=BASE/'amd';folder.mkdir()
+    folder=BASE/'amd-v2';folder.mkdir()
     uploads={f'bin/{p.name}':p for p in (BASE/'bin').iterdir() if p.suffix in ['.dll','.json']}
     for name in ['Program.cs','WhisperWeightMetadata.csproj']:uploads['source/'+name]=BASE/'source'/name
     uploads['prospective-plan.md']=ROOT/'.agent/m4-whisper-weight-metadata-20260920.md'
@@ -28,7 +28,7 @@ def main():
     archive=folder/'payload.tar.gz'
     with tarfile.open(archive,'w:gz') as tar:
         for name,path in uploads.items():tar.add(path,arcname=name,recursive=False)
-    remote_tar='/dev/shm/whisper-weight-metadata-20260920-payload.tar.gz'
+    remote_tar='/dev/shm/whisper-weight-metadata-20260920-payload-v2.tar.gz'
     subprocess.run(['scp','-i',KEY,'-o','BatchMode=yes',str(archive),HOST+':'+remote_tar],check=True)
     script='''from pathlib import Path
 import os,sys,json,hashlib,tarfile,subprocess,time,traceback
@@ -82,7 +82,7 @@ try:
       assert process.create_time()==row['child']['birth']
       sample=dict(seconds=time.monotonic()-start,rss=process.memory_info().rss,available=psutil.virtual_memory().available,disk=psutil.disk_usage(str(base)).free,affinity=process.cpu_affinity())
      except psutil.NoSuchProcess:break
-     samples.write(json.dumps(sample)+'\n');samples.flush();row['samples']+=1;row['peak_rss']=max(row['peak_rss'],sample['rss']);save()
+     samples.write(json.dumps(sample)+chr(10));samples.flush();row['samples']+=1;row['peak_rss']=max(row['peak_rss'],sample['rss']);save()
      assert sample['seconds']<limits['seconds'] and sample['rss']<limits['rss'] and sample['available']>=limits['available'] and sample['disk']>=limits['disk'] and sample['affinity']==[2]
      time.sleep(.5)
     row['code']=child.wait();assert row['code']==0
@@ -107,6 +107,7 @@ with tarfile.open(result,'w:gz') as tar:
 print(json.dumps(dict(archive=pin(result),collection=pin(base/'collection.json'),state=state)))
 '''%(REMOTE,OLD,remote_tar,pin(archive),closure['births'],pin(source/'collected/collection.json'),links,{n:pin(p) for n,p in uploads.items()},read(source/'weight-census.json')['models'])
     (folder/'remote-script.py').write_text(script,encoding='utf-8')
+    compile(script,'frozen-remote-diagnostic','exec')
     result=json.loads(ssh(script));write(folder/'transfer.json',result)
     archive=folder/'results.tar.gz';subprocess.run(['scp','-i',KEY,'-o','BatchMode=yes',HOST+':/dev/shm/whisper-weight-metadata-20260920-results.tar.gz',str(archive)],check=True)
     assert pin(archive)==result['archive'];collected=folder/'collected';collected.mkdir()
