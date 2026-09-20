@@ -40,6 +40,7 @@ def worker(folder,generation,binaries,timing):
     assert value['core_sha256']==CORE and value['model_sha256']==generation['model']['sha256']
     assert value['probe_sha256']==binaries['Probe.dll']['sha256'] and value['fixtures_sha256']==pin(folder/'fixtures.json')['sha256']
     assert value['settings']==[] and value['affinity']==4 and value['cycle_refusals']==4 and value['concurrent_checks']==128
+    assert value['runtime']==('.NET 10.0.8' if timing else '.NET 10.0.12')
     assert value['checks']==40*(1+160*2+3)+7+1+2*347+1 and value['nodes']==347 and value['initializers']==270
     assert len(fixtures)==40 and [r['name'] for r in fixtures]==['flat-'+str(i) for i in range(40)]
     transitions=sum(fixture(r) for r in fixtures)

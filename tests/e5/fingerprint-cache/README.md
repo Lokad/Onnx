@@ -44,3 +44,11 @@ A/A protocol. Product integration and a complete-model comparison remain separat
 requirements even if this component passes. Workers have120seconds,2GiB group
 RSS and1GiB minimum available memory guards. Successful writers are single-use;
 observation timeouts never restart a worker.
+
+The [AMD experiment](results-20260920.md) is complete: four workers pass all
+exactness/resource checks and the fixed component screen. Mean full fingerprint
+time is0.329823ms for the actual qualified core and0.006621ms for cached
+transitions. No production integration or complete-model speed claim follows
+from these component timings alone. `collect.py` verifies terminal process births
+and an exact archive inventory; `close_report.py` independently rechecks all
+workers, scalar fixtures and damaged-record refusals before closing the receipt.
