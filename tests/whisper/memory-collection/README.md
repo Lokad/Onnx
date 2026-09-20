@@ -1,6 +1,6 @@
 # Whisper collection diagnostic
 
-This is a prepared diagnostic consumer, not a benchmark configuration or a
+This is a completed diagnostic consumer, not a benchmark configuration or a
 production change. The normal-runtime AMD campaign stopped during request 17
 at its unchanged available-memory guard; its [closed failure](../../audio/amd-comparison/resource-failure-20260920.md)
 remains the observed result.
@@ -25,6 +25,7 @@ Run preparation from the repository root:
 Preparation is already complete in
 `artifacts/whisper-memory-collection-20260920`: SDK 10.0.204, zero build warnings
 or errors, 44 pinned files and unchanged private product binaries. The command
-refuses an existing output directory. No new VM execution has occurred.
-Deployment, the bounded process supervisor and independent result/resource audit
-must be completed under the focused plan before drawing a memory conclusion.
+refuses an existing output directory. The subsequent AMD run, collection and
+independent audit are complete: all twenty requests and three interventions pass
+the declared checks. See the [results](results-20260920.md) for the reclaimed heap,
+separate RSS observations and limits of this intervention.

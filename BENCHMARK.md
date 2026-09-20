@@ -35,6 +35,9 @@ includes process variation, memory, every Parakeet clip and evidence identities.
 stopped during managed conformance below its 1 GiB available-memory reserve, with
 16 of 20 requests completed, before timing. The Windows Whisper baseline remains
 below. The later two-family timing scope preserves that resource failure.
+A separate [collection diagnostic](tests/whisper/memory-collection/results-20260920.md)
+completes the twenty requests with explicit collections after requests 8, 16 and
+20. It measures reclaimability and does not supply normal-runtime timing.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
 

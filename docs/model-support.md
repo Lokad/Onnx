@@ -185,3 +185,9 @@ below the unchanged 1 GiB reserve; peak sampled RSS was 14.978 GB. The worker
 did not finish conformance, so no AMD timing result or repeated-use memory
 qualification follows from that run. Earlier finite recording observations and
 the complete Windows timing comparison retain their original scope.
+
+The subsequent [Whisper collection diagnostic](../tests/whisper/memory-collection/results-20260920.md)
+completes the same twenty short requests using explicit collections after requests
+8, 16 and 20, with unchanged results and ownership checks. It records managed-heap
+and RSS changes separately; it does not qualify normal repeated operation or add
+forced GC to production. The original AMD failure remains unchanged.
