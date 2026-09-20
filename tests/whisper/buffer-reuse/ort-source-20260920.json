@@ -1,0 +1,32 @@
+{
+  "tag": "v1.29.0",
+  "revision": "2e2543fbe9fae542f921d47a72d21d5a4ef0b710",
+  "files": {
+    "onnxruntime/core/framework/bfc_arena.cc": {
+      "bytes": 32520,
+      "sha256": "6856f5b46b1b9ea03489780a150e69b9a1bfb13524dd70bdbefd6488718299ac",
+      "url": "https://raw.githubusercontent.com/microsoft/onnxruntime/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/framework/bfc_arena.cc"
+    },
+    "onnxruntime/core/framework/bfc_arena.h": {
+      "bytes": 18199,
+      "sha256": "5c7cbb4459beb7db57eb38ff022b94e656cce407fa6287493c28e93ebb1ed6f5",
+      "url": "https://raw.githubusercontent.com/microsoft/onnxruntime/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/framework/bfc_arena.h"
+    },
+    "onnxruntime/core/framework/execution_frame.cc": {
+      "bytes": 44574,
+      "sha256": "d56914ebb7ff8c013c444ce554ed6734f6d681236129e81979c88af391edd871",
+      "url": "https://raw.githubusercontent.com/microsoft/onnxruntime/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/framework/execution_frame.cc"
+    },
+    "onnxruntime/core/framework/session_options.h": {
+      "bytes": 12099,
+      "sha256": "47468b6d889e617111e616c6edda249c8cbc2b55f6ca77e15c21d02a3dcee636",
+      "url": "https://raw.githubusercontent.com/microsoft/onnxruntime/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/framework/session_options.h"
+    },
+    "onnxruntime/core/session/inference_session.cc": {
+      "bytes": 211213,
+      "sha256": "031d1083292eb2bb671d67f86dfacee131e26c8a855ac6f5e56c66715546c4b7",
+      "url": "https://raw.githubusercontent.com/microsoft/onnxruntime/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/session/inference_session.cc"
+    }
+  },
+  "scope": "Source inspection; not a claim that these exact sources built the installed wheel"
+}

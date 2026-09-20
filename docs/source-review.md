@@ -42,6 +42,34 @@ erf scheduling. The [runtime options](runtime-options.md) describe the selected
 defaults and their diagnostic controls. Narrow projection tiles, interleaved
 GELU, wider/reciprocal softmax and dynamic/segmented experiments remain opt-in.
 
+The audio baselines use ORT 1.29.0, so its memory mechanisms were also inspected
+at tag commit `2e2543fbe9fae542f921d47a72d21d5a4ef0b710`, separately from the
+1.23.2 e5 review. Its [session options](https://github.com/microsoft/onnxruntime/blob/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/framework/session_options.h)
+enable CPU arenas, allocation patterns and planned buffer reuse by default.
+The [execution frame](https://github.com/microsoft/onnxruntime/blob/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/framework/execution_frame.cc)
+uses a cached allocation pattern when available and falls back when a block's
+size differs. Returned and externally allocated outputs are excluded from this
+temporary pattern storage. Those ownership distinctions also matter for Lokad's
+returned tensors and Whisper attention caches.
+
+ORT's [arena implementation](https://github.com/microsoft/onnxruntime/blob/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/framework/bfc_arena.cc)
+normally releases ordinary allocations into reusable chunks; it does not return
+each released tensor's storage immediately to the system. Its separate shrink
+operation releases eligible regions only when no chunk in the region is in use.
+[InferenceSession](https://github.com/microsoft/onnxruntime/blob/2e2543fbe9fae542f921d47a72d21d5a4ef0b710/onnxruntime/core/session/inference_session.cc)
+accepts an explicit run option selecting arenas to shrink. This is evidence for
+distinguishing live tensor payload, reusable storage and process RSS. It does
+not show which memory-pattern paths executed in a measured audio model, explain
+all of its performance gap, or imply that .NET should force collections.
+
+Five exact source files and their hashes are retained in
+`artifacts/ort-audio-memory-source-20260920/source.json`. The source tag is not
+claimed as a reconstruction of the installed wheel; each benchmark separately
+pins its actual native libraries. Lokad's [private Whisper reuse experiment](../tests/whisper/buffer-reuse/README.md)
+tests bounded retention of already-released arrays with normal runtime settings,
+preserving independent contexts and outputs. Its prospective resource and
+allocation gates must pass before broader product qualification.
+
 The [fresh public-options / ORT comparison](../tests/e5/public-ort-20260919.md)
 records the current gap; the [earlier release comparison](../tests/e5/comparison-20260919.md)
 retains its historical source and experimental settings. The [interleaved GELU report](../tests/e5/interleaved-gelu-20260919.md)
