@@ -81,6 +81,13 @@ from the CLI output without rerunning tests. Consumer build has zero warnings
 and errors. Three protocol tests cover eleven corruptions and exact allocation
 boundaries. The real-evidence audit rejects {value['refusals']} damaged records.
 
+The archive provenance check verifies all 341 Git blobs; 334 text files require
+only CRLF-to-LF normalization because Windows Git applies `core.autocrlf` during
+archive creation. The initial raw-byte check stopped at `CHANGELOG.md`; its
+finding and the narrow verification correction are retained. Exact archive and
+modified-source SHA-256 identities remain unchanged. Both deployed product DLLs
+match the copies actually exercised by the backend test process.
+
 The [original normal-runtime failure](../../audio/amd-comparison/resource-failure-20260920.md)
 and [explicit-collection diagnostic](../memory-collection/results-20260920.md)
 remain unchanged. Existing encoder/logit numerical differences also remain;

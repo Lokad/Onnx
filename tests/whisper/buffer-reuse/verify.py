@@ -40,14 +40,20 @@ def main():
     source=read(BASE/'source.json');cli=read(BASE/'cli-source.json')
     tree=subprocess.check_output(['git','ls-tree','-r',source['revision']],cwd=ROOT,text=True)
     git_blobs={line.split('\t',1)[1]:line.split()[2] for line in tree.splitlines()}
-    verified=0
+    verified=0;normalized=0
     for filename,receipt in [('original-source.tar',source),('cli-source.tar',cli)]:
         assert pin(BASE/filename)==receipt['archive']
         with tarfile.open(BASE/filename) as archive:
             for member in archive.getmembers():
                 if not member.isfile():continue
                 content=archive.extractfile(member).read()
-                assert hashlib.sha1(b'blob '+str(len(content)).encode()+b'\0'+content).hexdigest()==git_blobs[member.name],member.name
+                blob=lambda b:hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+                if blob(content)!=git_blobs[member.name]:
+                    # Windows git archive applies core.autocrlf to text. Retain exact
+                    # archive SHA256 separately; allow only CRLF-to-LF text conversion.
+                    content.decode('utf-8');assert b'\0' not in content
+                    assert blob(content.replace(b'\r\n',b'\n'))==git_blobs[member.name],member.name
+                    normalized+=1
                 verified+=1
     for receipt in [source,cli]:
         for name,wanted in receipt['files'].items():assert pin(BASE/'source'/name)==wanted,name
@@ -55,7 +61,7 @@ def main():
         assert pin(BASE/'source/tests/Lokad.Onnx.Backend.Tests/bin/Release/net10.0'/name)==pin(BASE/'bin'/name)==pin(base/'bin'/name)
     ort=read(folder/'ort-source-20260920.json')
     for name,wanted in ort['files'].items():assert pin(ROOT/'artifacts/ort-audio-memory-source-20260920'/name)=={k:wanted[k] for k in ['bytes','sha256']}
-    result=dict(passed=True,closure=pin(BASE/'closed.json'),pins=len(closed['files']),git_blobs=verified,calls=calls,displayed_rows=len(display),ort_source_files=len(ort['files']),births=closed['births'])
+    result=dict(passed=True,closure=pin(BASE/'closed.json'),pins=len(closed['files']),git_blobs=verified,git_crlf_text_normalizations=normalized,calls=calls,displayed_rows=len(display),ort_source_files=len(ort['files']),births=closed['births'])
     write(BASE/'final-verification.json',result);print(json.dumps(result))
 
 
