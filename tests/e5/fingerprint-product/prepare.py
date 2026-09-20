@@ -26,7 +26,8 @@ def main():
     with tarfile.open(archive) as tar:tar.extractall(source,filter='data')
     original={p.relative_to(source).as_posix():pin(p) for p in sorted(source.rglob('*')) if p.is_file()}
     write(base/'source-identity.json',dict(revision=revision,archive=pin(archive),files=original))
-    for label,project in [('backend','tests/Lokad.Onnx.Backend.Tests/Lokad.Onnx.Backend.Tests.csproj'),
+    for label,project in [('cli','src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj'),
+                          ('backend','tests/Lokad.Onnx.Backend.Tests/Lokad.Onnx.Backend.Tests.csproj'),
                           ('tensors','tests/Lokad.Onnx.Tensors.Tests/Lokad.Onnx.Tensors.Tests.csproj'),
                           ('replay','tests/e5/fingerprint-product/Replay.csproj')]:
         command=['dotnet','build',project,'-c','Release','--tl:off','--nologo','-v','minimal',
@@ -37,7 +38,8 @@ def main():
     payload=base/'payload';assert not payload.exists();payload.mkdir()
     for name in original:
         target=payload/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source/name,target)
-    paths={'backend':'tests/Lokad.Onnx.Backend.Tests/bin/Release/net10.0','tensors':'tests/Lokad.Onnx.Tensors.Tests/bin/Release/net10.0',
+    paths={'cli':'src/Lokad.Onnx.CLI/bin/Release/net10.0',
+           'backend':'tests/Lokad.Onnx.Backend.Tests/bin/Release/net10.0','tensors':'tests/Lokad.Onnx.Tensors.Tests/bin/Release/net10.0',
            'replay':'tests/e5/fingerprint-product/bin/Release/net10.0'}
     for path in paths.values():shutil.copytree(source/path,payload/path)
     cores=[pin(payload/path/'Lokad.Onnx.dll') for path in paths.values()];assert all(c==cores[0] for c in cores)

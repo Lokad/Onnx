@@ -6,9 +6,9 @@ this separate replay exercises the actual product, including graph mutation,
 context ownership and complete neural outputs. It supplies no latency ratio.
 
 `prepare.py --artifact <new-directory>` requires committed sources, archives
-the core, Data, test projects and every first-party C# file, and builds that
+the core, Data, CLI, test projects and every first-party C# file, and builds that
 extracted source with SDK10.0.204. The same core DLL must appear in both test
-outputs and the replay output. Existing models and native references are
+outputs, the CLI and the replay output. Existing models and native references are
 verified by complete SHA256 identities and are never overwritten or downloaded.
 
 Eight sequential AMD workers run full backend/tensor suites, e5 and shared
@@ -32,3 +32,10 @@ terminal and checks an exact archive inventory. Successful output writers are
 single-use. The switch stays off pending a separately declared complete-model
 comparison; correctness qualification does not repair earlier failed timing
 calibration or close unrelated audio numerical gaps.
+
+The first payload omitted CLI binaries. Its initial disabled backend worker
+passed3,069tests and skipped9, but all51CLI-dependent tests failed with the
+explicit missing-build message. The supervisor stopped before later workers.
+That complete failure is preserved under artifacts/e5-fingerprint-product-20260920;
+the corrected source builds and deploys the CLI with the same core before a
+new qualification under artifacts/e5-fingerprint-product-v2-20260920.
