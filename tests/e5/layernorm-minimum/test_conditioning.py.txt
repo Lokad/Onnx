@@ -1,0 +1,21 @@
+    def test_conditioning_boundary_and_no_extra_cycles(self):
+        from timing import conditioning
+        def fixture(cycles,ticks=1):
+            return dict(warmup=[dict(ticks=ticks) for _ in range(cycles*4)],conditioning_ticks=cycles*4*ticks,conditioning_seconds=3,conditioning_min_cycles=128)
+        self.assertEqual(conditioning(fixture(128),100),128)
+        # Time is met well before minimum work, but 127 cycles must refuse.
+        with self.assertRaises(AssertionError):conditioning(fixture(127),100)
+        with self.assertRaises(AssertionError):conditioning(fixture(129),100)
+        # Conversely, after 128 cycles the time requirement can still dominate.
+        with self.assertRaises(AssertionError):conditioning(fixture(128),200)
+        self.assertEqual(conditioning(fixture(150),200),150)
+        with self.assertRaises(AssertionError):conditioning(fixture(149),200)
+        with self.assertRaises(AssertionError):conditioning(fixture(151),200)
+        value,descriptions=self.fixture()
+        for index in range(9):
+            broken=copy.deepcopy(value);case=broken['results'][index];case['warmup']=case['warmup'][:-4]
+            case['conditioning_ticks']=sum(r['ticks'] for r in case['warmup'])
+            with self.assertRaises(AssertionError):inspect_timing(broken,0,dict(sha256='probe'),descriptions)
+        for key,wrong in [('conditioning_seconds',2),('conditioning_min_cycles',127),('conditioning_ticks',1)]:
+            broken=copy.deepcopy(value);broken['results'][0][key]=wrong
+            with self.subTest(key=key),self.assertRaises(AssertionError):inspect_timing(broken,0,dict(sha256='probe'),descriptions)
