@@ -76,7 +76,12 @@ reference implementations, using either captured coefficient policy. Native FP32
 agreement still fails at 187 values; seven coordinates have disjoint native and
 reference tolerance intervals. The new frontend uses a prospective mathematical
 reference criterion at the unchanged `1e-4` bound, with native differences retained.
-AMD and connected-application qualification of this revision remain pending.
+The [source-archived AMD qualification](../tests/pyannote/frame-product-amd/results-20260920.md)
+also passes all 99 tests and all 53 inputs. Its actual tables differ at six
+entries, so both independent references were regenerated with those captured
+coefficients. Maximum product/reference error is `2.02761e-6`; direct-native
+comparison retains 186 failures. Connected natural-meeting qualification of
+this changed frontend remains pending.
 The audio timing tables remain measurements of `8732831`.
 
 The [five-language ASR check](../tests/audio/multilingual/results-20260920.md)
