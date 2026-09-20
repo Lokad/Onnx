@@ -50,8 +50,9 @@ The retained current-model attribution also puts complete LayerNormalization
 at 0.2783/0.2717 ms in its two thirty-token visits and 1.0091/1.0014 ms at 128
 tokens. These are profiled managed node totals, not matched ORT timings. All
 nine entries in `artifacts/e5-current-attribution-20260919/receipt.json` were
-reverified, and the current [LayerNorm source](../src/Lokad.Onnx/TensorOps.Norm.cs)
-is unchanged from the attributed `8e93aa7` revision.
+reverified against the LayerNorm source at the attributed `8e93aa7` revision.
+The [current source](../src/Lokad.Onnx/TensorOps.Norm.cs) now also contains the
+guarded, default-off wider transform qualified below.
 
 That implementation uses three passes: double-precision mean, centered
 double-precision variance, and a double-precision scale/bias transform before
@@ -62,7 +63,7 @@ would change its numerical behavior, especially for nearly constant rows.
 
 A narrower opportunity is to widen only the final elementwise
 transform on AVX-512, keeping both statistics passes and each element's
-`((x - mean) * inv) * scale + bias` association unchanged. The current transform
+`((x - mean) * inv) * scale + bias` association unchanged. The original transform
 uses `Vector<double>` halves after widening float vectors. The standalone
 [local prototype](../tests/e5/layernorm-output/results-20260920.md) now passes
 915 arithmetic/storage cases, including all 125 real LayerNorm instances from
@@ -98,6 +99,15 @@ a new whole-model gain or explain the earlier startup behavior causally.
 The roughly one-millisecond complete
 LayerNorm cost at 128 tokens also bounds its possible contribution: this
 operator alone cannot account for the remaining roughly 1.5 ms target gap.
+
+The mechanism is now integrated in the shared float kernel behind
+`LOKAD_ONNX_LAYERNORM_WIDE_OUTPUT=1`, with the same hardware/vector-width guards
+as the AMD proof. Its [actual product qualification](../tests/e5/layernorm-product/results-20260920.md)
+passes complete Windows/AMD backend and tensor suites, 45 new public API cases,
+and all 166 e5/shared-model arrays per setting. Off/on bytes are identical on
+each host. Actual optimized product disassembly is 2,044 bytes and preserves
+the original statistics, wider double output arithmetic and unfused expression
+association. The default remains off until separate model timing qualifies it.
 
 ORT's [CPU allocator](https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/onnxruntime/core/framework/allocator.cc)
 honors the MLAS preferred buffer alignment, which is 64 bytes for the inspected

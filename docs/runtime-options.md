@@ -60,7 +60,10 @@ It requires hardware-accelerated `Vector512`, AVX-512F and an eight-float
 `Vector<float>` width. Other hosts and the remaining vector/scalar elements use
 the existing path. The allocating and destination overloads share this kernel.
 The [complete-bank component screen](../tests/e5/layernorm-minimum/results-20260920.md)
-passes; product integration and complete-model performance are separate checks.
+passes. The [archived product qualification](../tests/e5/layernorm-product/results-20260920.md)
+also passes full Windows/AMD suites and complete e5/shared-model checks, with
+exact off/on output bytes and actual AMD code inspection. Complete-model
+performance qualification is still pending.
 
 `LOKAD_ONNX_FINGERPRINT_STRINGS=1` enables an experimental cache of exact
 graph-name hash transitions. It remains off by default. Every structural field

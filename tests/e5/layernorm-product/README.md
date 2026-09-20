@@ -39,8 +39,9 @@ of 60 e5 and 106 shared arrays per setting must pass the unchanged native
 scaled 1e-4 gate; all off/on output bytes must be identical.
 
 An additional ninth AMD job disassembles the actual product kernel, using
-only declared JitDisasm/JitStdOutFile flags. It repeatedly executes both public
-paths with a tail width, bias/no-bias, for at least 128 pairs and three seconds.
+only declared JitDisasm/JitStdOutFile flags. It exercises both public paths and
+repeats the destination form with a tail width, bias/no-bias, for at least 128
+pairs and three seconds.
 `code_audit.py` requires an optimized actual product body, double zmm transform,
 original ymm arithmetic, narrowing from zmm doubles and no fused arithmetic.
 This instrumented job supplies no latency ratio.
@@ -57,3 +58,11 @@ collection or report outputs. Source, build and runtime identities, full tests,
 raw arrays, independent audit and terminal process proof are needed before a
 result is reported. Existing complete-model timing and audio numerical gaps
 are unaffected by this correctness lane.
+
+The [completed qualification](results-20260920.md) passes all 17 host workers.
+Windows passes 3,081 backend tests with 93 hardware skips; AMD passes 3,171
+with three skips. Both settings on both hosts pass all 342 tensor tests and
+all 45 new public API cases. Every off/on model array is byte-identical.
+The separate actual AMD product code check passes. The source archive at
+`4f10e8b` retains the exact original runner documentation; this paragraph
+records the completed result and clarifies the code probe's call schedule.

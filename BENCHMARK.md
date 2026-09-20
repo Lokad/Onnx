@@ -193,6 +193,16 @@ results support production integration and subsequent model qualification.
 They do not change the whole-model ORT ratios above or establish a new default.
 Both preceding unsuccessful experiments remain available unchanged.
 
+The subsequent [actual product qualification](tests/e5/layernorm-product/results-20260920.md)
+passes on Windows and AMD with the wider transform disabled and enabled.
+Each setting passes 3,081 Windows backend tests (93 hardware skips), 3,171 AMD
+backend tests (three skips), and all 342 tensor tests on each host. This includes
+45 new public API cases. All 60 e5 and 106 shared-model arrays per host/setting
+are byte-identical off/on and pass the unchanged native numerical gates.
+Separate AMD disassembly confirms the integrated wider double transform and
+unfused arithmetic. `LOKAD_ONNX_LAYERNORM_WIDE_OUTPUT` remains off by default;
+this correctness qualification supplies no new whole-model latency or ORT ratio.
+
 The [exact graph-fingerprint cache](tests/e5/fingerprint-cache/results-20260920.md)
 reduces its complete validation component from 0.329823 ms to 0.006621 ms on AMD.
 Its [actual product implementation](tests/e5/fingerprint-product/results-20260920.md)
