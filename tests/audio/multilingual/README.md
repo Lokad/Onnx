@@ -55,6 +55,8 @@ ORT 1.29.0 uses one intra/inter-op thread, sequential execution and all graph
 optimizations. .NET uses its ordinary runtime and qualified defaults. Each worker
 has a 20 GiB RSS / 3,600-second guard and requires at least 1 GiB system available
 memory throughout; managed preflight requires 20 GiB available. All sampled
+memory preflights are retained; the supervisor may wait up to ten minutes before
+creating a managed worker, then fails if the threshold remains unmet. All sampled
 process births, affinity, memory and foreign activity remain. Per-request times
 are single-pass observations, without performance confidence claims.
 

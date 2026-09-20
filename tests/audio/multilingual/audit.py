@@ -65,10 +65,19 @@ def audit(base):
     for name,wanted in input_audit['files'].items():assert pin(base/'inputs'/name)==wanted,name
     results={};resources=[];births={(identity['supervisor']['pid'],identity['supervisor']['birth'])}
     order=[('parakeet','ort'),('parakeet','managed'),('whisper','ort'),('whisper','managed')]
+    assert len(identity['preflights'])==4
     for number,(row,(family,engine)) in enumerate(zip(identity['runs'],order,strict=True)):
         assert (row['name'],row['family'],row['engine'])==(f'{number:02d}-{family}-{engine}',family,engine)
         assert row['code']==0 and 0<row['seconds']<3600
         if engine=='managed':assert row['preflight_available']>=20*1024**3
+        preflight=identity['preflights'][number]
+        assert (preflight['family'],preflight['engine'])==(family,engine)
+        observations=preflight['observations'];assert observations
+        assert observations[-1]['available']==row['preflight_available']
+        assert [v['seconds'] for v in observations]==sorted(v['seconds'] for v in observations)
+        assert all(0<=v['seconds']<603 and v['available']>=0 for v in observations)
+        if engine=='managed':assert all(v['available']<20*1024**3 for v in observations[:-1])
+        else:assert len(observations)==1
         samples=[json.loads(line) for line in (base/'run'/(row['name']+'-samples.jsonl')).read_text().splitlines()]
         assert len(samples)==row['samples'] and len(samples)>1
         seen={};last=-1;peak=0;available=[]

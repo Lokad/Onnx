@@ -59,8 +59,17 @@ def main():
         (out/'dotnet-info.txt').write_text(subprocess.check_output(['dotnet','--info'],text=True),encoding='utf-8')
         for number,(family,engine) in enumerate((('parakeet','ort'),('parakeet','managed'),('whisper','ort'),('whisper','managed'))):
             verify(root,files)
-            available=psutil.virtual_memory().available
-            if engine=='managed':assert available>=20*1024**3,('Managed preflight available memory',available)
+            # Wait before creating a worker; a busy workstation never weakens its guard.
+            preflight=dict(family=family,engine=engine,started=time.time(),observations=[])
+            identity.setdefault('preflights',[]).append(preflight)
+            preflight_start=time.monotonic()
+            while True:
+                available=psutil.virtual_memory().available
+                elapsed=time.monotonic()-preflight_start
+                preflight['observations'].append(dict(seconds=elapsed,available=available));save()
+                if engine!='managed' or available>=20*1024**3:break
+                assert elapsed<600,('Managed memory preflight timed out',available)
+                time.sleep(2)
             name=f'{number:02d}-{family}-{engine}'
             command=['dotnet',str(base/'bin/MultilingualReplay.dll')] if engine=='managed' else ['C:/Python313/python.exe','-X','utf8','-B',str(frozen/'native.py')]
             command.extend([str(root),str(base/'manifests'/(family+'.json')),str(out/name)])
