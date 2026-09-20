@@ -62,3 +62,15 @@ The new artifact is `artifacts/e5-fingerprint-balanced-20260920`.
 The orchestration and gates are derived from `../fingerprint-model` and preserved
 here as a distinct frozen protocol. Only ordering, fixed cycles, smoke coverage
 and protocol/assembly/artifact names change; no production source changes.
+
+The [completed identical-control phase](aa-results-20260920.md) passes every
+prospective timing, correctness and resource limit. It retains all 33,408
+measured calls, 28,838 conditioning calls and 3,179 resource samples. Across both
+boundaries, the largest aggregate pair deviation is 0.2414%, largest individual
+worker deviation 0.3967%, and largest position contrast 1.005445 (limit 1.01).
+All twenty original workers and their supervisor are terminal. The phase receipt
+is `50ef010f1870b056fcd0e8db993b6f0a88eb2ed8bfd58c407eaf1324d08b6333`.
+
+That complete passing receipt enabled the already frozen cache comparison,
+started September 20 at 09:51 UTC. Its results remain pending. Passing controls
+alone do not establish an enabled-cache speedup, confidence interval or ORT ratio.

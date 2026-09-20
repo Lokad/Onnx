@@ -117,6 +117,13 @@ position contrast reaches 1.011356 against its fixed 1.01 limit. The overall
 control screen fails, so the planned cache comparison is not run. No new cache
 speedup or ORT ratio is established.
 
+The distinct [locally balanced controls](tests/e5/fingerprint-balanced/aa-results-20260920.md)
+then pass every original timing limit across 33,408 measured calls, with all
+correctness and resource checks passing. Each worker uses eight balanced
+six-cycle blocks. The largest position contrast is 1.005445, below 1.01.
+This permits the already frozen cache comparison, now running; the enabled-cache
+result is still pending. These controls supply no new ORT ratio or cache speedup.
+
 ### Audio: earlier public API observations
 
 The ASR rows use the same twenty clean-English recordings: ten speakers,
