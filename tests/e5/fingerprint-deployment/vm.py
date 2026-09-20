@@ -124,4 +124,3 @@ with tarfile.open(fileobj=sys.stdout.buffer,mode='w|gz') as tar:
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('action',choices=['launch','poll','collect']);p.add_argument('--artifact',type=Path,required=True);p.add_argument('--phase',choices=['aa','compare'],required=True);args=p.parse_args()
     globals()[args.action](args.artifact.resolve(),args.phase)
-
