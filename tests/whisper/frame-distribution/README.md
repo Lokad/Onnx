@@ -19,3 +19,8 @@ after the PCM end is still a real output whose numerical check must pass.
 
 This is descriptive analysis selected after the full experiment, not a new
 prospective acceptance test. The original full-array failures remain failures.
+
+After analysis, run `verify.py --artifact <directory>` to reconstruct every
+metric and region independently from the raw arrays, then `report.py --artifact
+<directory>` to close the report and source/result inventory. All writers are
+single-use. The verifier imports no analyzer helpers.

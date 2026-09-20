@@ -68,6 +68,10 @@ features. All 21 cases still exceed `1e-4` with either feature source, so fronte
 rounding alone does not explain the encoder discrepancy. Its 42 finite workers
 complete within the unchanged resource guards; this does not qualify a
 long-lived transcriber process or identify the more accurate FP32 engine.
+The [saved-frame analysis](../tests/whisper/frame-distribution/results-20260920.md)
+places about 97% of failing values beyond the original recordings, but also
+retains thousands of failures before their ends. No encoder positions are
+excluded from qualification.
 
 DINOv3, ResNet50 and GPT-2 also have complete-output shared-core regression
 fixtures, including independently carried GPT states and ownership/recovery
