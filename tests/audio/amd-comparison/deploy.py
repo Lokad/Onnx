@@ -52,6 +52,12 @@ def stage():
     assert (meeting/'closed.json').exists()
     transfer=read(BASE/'transfer.json');assert pin(BASE/'payload.tar.gz')==transfer['archive']
     candidates=read(DEPS/'cleanup-candidates.json')['candidates']
+    # Additional verified backups leave room for all feature arrays and resource logs.
+    for folder,local_name,remote_name in [
+        ('e5-reduction-blocks-proof-20260920','results.tar.gz','e5-reduction-blocks-proof-20260920-results.tar.gz'),
+        ('parakeet-recording-amd-20260919','payload.tar.gz','parakeet-recording-amd-20260919.tar.gz')]:
+        backup=ROOT/'artifacts'/folder/local_name
+        candidates.append(dict(remote='/home/vermorel/Onnx/artifacts/'+remote_name,backup=str(backup),**pin(backup)))
     # The just-collected replay also has a complete verified local archive.
     replay_archive=meeting/'results.tar.gz'
     assert pin(replay_archive)==read(meeting/'collection-transfer.json')['archive']
