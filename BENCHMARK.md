@@ -503,7 +503,14 @@ agree within `4.36557e-11`, with independent scalar Fourier checks. The original
 three direct managed/native failures remain recorded; this adds numerical
 evidence without changing a gate or measuring application speed.
 
-The separate labeled pyannote trace retains 19 failed filterbank values on Windows and
+The [subsequent complete pipeline-window reference](tests/pyannote/filterbank-windows/results-20260920.md)
+checks every retained filterbank on both hosts. Against both double references,
+the dialogue has 36 Windows / 38 AMD failed managed values, with maxima
+`1.81312e-4` / `1.83761e-4`, and 164 failed native frontend values, maximum
+`2.40954e-4`. Earlier padded pipeline windows add one Windows failure and none
+on AMD. Both references agree throughout; no tolerance or product change follows.
+
+The original labeled pyannote direct comparison retains 19 failed filterbank values on Windows and
 24 on AMD. The five-language ASR check and two natural meetings for all three
 audio applications add bounded human-label accuracy evidence. Broader natural
 noise, language and conversation coverage remain open. Neither these observations

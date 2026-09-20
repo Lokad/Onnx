@@ -47,9 +47,18 @@ independent double calculations with fixed saved coefficients. Managed outputs
 all stay within `1e-4` of both references, maximum `8.31940e-5`; the original native
 frontend exceeds that limit at two values, maximum `1.34618e-4`. Complete double
 stages agree within `4.36557e-11`, with independent scalar Fourier checks.
-The original three direct managed/native failures remain recorded. This result
-does not cover the later dialogue filterbanks or the separate segmentation
-silence discrepancy, and does not change their qualification status.
+The original three direct managed/native failures remain recorded.
+
+The subsequent [complete pipeline-window check](../tests/pyannote/filterbank-windows/results-20260920.md)
+covers all 32 saved filterbanks and both configurations on both hosts. Against
+the same two double references, the dialogue has 36 failed Windows values and
+38 failed AMD values, with maxima `1.81312e-4` and `1.83761e-4`; its saved native
+frontend has 164 failures, maximum `2.40954e-4`. The earlier padded pipeline
+windows add one Windows failure and none on AMD. Both reference routes agree
+throughout. The original direct-comparison failures and separate segmentation
+silence issue remain open; the first corpus's managed pass does not generalize
+to every retained window. These checks support further arithmetic investigation,
+without changing the acceptance threshold or application results.
 
 The [five-language ASR check](../tests/audio/multilingual/results-20260920.md)
 adds twenty FLEURS read recordings and their deterministic 10 dB noise variants.
