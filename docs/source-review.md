@@ -77,8 +77,17 @@ recorded separately; no inference was repeated. The later
 four tail/no-bias banks and retains all 6,912 measured batches. The candidate
 passes the gain/regression screen, but three banks fail per-worker duplicate
 controls; the overall result remains inconclusive. All measured allocations
-and GC collection counts are zero. A prospective timing follow-up is needed;
-do not promote the prototype or discard its promising effect on this evidence.
+and GC collection counts are zero. A subsequent
+[conditioned comparison](../tests/e5/layernorm-conditioned/results-20260920.md)
+uses a fixed three-second execution budget per bank, fourfold batches and 96
+measured cycles. All duplicate controls now pass, along with exact outputs and
+resources, but the 8-token candidate regresses 10.95% against Product in one
+worker, exceeding its fixed 2% limit. The remaining real banks average 15–17%
+lower component times. All 13,824 samples remain in the rejected result;
+production is unchanged. The first bank's conditioning can end after only three
+complete cycles when initial calls are slow. A future startup investigation
+must distinguish minimum work from a time budget, without trimming those calls
+or claiming an unobserved JIT cause.
 The roughly one-millisecond complete
 LayerNorm cost at 128 tokens also bounds its possible contribution: this
 operator alone cannot account for the remaining roughly 1.5 ms target gap.

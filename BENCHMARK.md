@@ -151,6 +151,28 @@ exceed the per-worker limit at padded128 and two diagnostic banks. The overall
 result is **inconclusive**, despite passing aggregate controls. No product
 integration or whole-model gain follows; these are component observations.
 
+A distinct [conditioned comparison](tests/e5/layernorm-conditioned/results-20260920.md)
+retains the same kernels, nine banks and thresholds, with three seconds of
+conditioning per bank, fourfold batches and twice as many measured cycles.
+All 13,824 measured batches, 3,608 conditioning batches and 144 first calls are
+retained. Exact outputs, resource limits and every duplicate-control check pass.
+
+| Tokens | Product LayerNorm bank ms | Wider transform bank ms | Observed time reduction |
+|---|---:|---:|---:|
+| 8 | 0.059763 | 0.054174 | 9.35% |
+| 30 | 0.222555 | 0.186034 | 16.41% |
+| 30 padded to 128 | 0.948134 | 0.802645 | 15.34% |
+| 128 | 0.946487 | 0.789894 | 16.54% |
+| 512 | 3.813217 | 3.184570 | 16.49% |
+
+The candidate is **rejected by the fixed performance screen**: its 8-token
+mean in the second worker is 10.95% slower than Product and also exceeds both
+copy controls, above the allowed 2% worker regression. Every other bank passes
+the gain/regression screen. Measured allocations and GC counts remain zero.
+The complete observations retain this unfavorable worker; aggregate gains do
+not override it. Production remains unchanged, and no new whole-model or ORT
+ratio is established.
+
 The [exact graph-fingerprint cache](tests/e5/fingerprint-cache/results-20260920.md)
 reduces its complete validation component from 0.329823 ms to 0.006621 ms on AMD.
 Its [actual product implementation](tests/e5/fingerprint-product/results-20260920.md)

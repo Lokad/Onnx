@@ -1,5 +1,12 @@
 # LayerNorm banks after fixed conditioning
 
+The [completed result](results-20260920.md) passes every duplicate control and
+all output/resource checks, but fails the fixed candidate regression screen:
+the second worker's 8-token mean is 10.95% slower than Product. All other banks
+pass their gain/regression checks. The [complete observations](observations-20260920.json)
+retain all 13,824 measured batches, including the failing worker. Production
+remains unchanged; no whole-model or native ORT improvement is established.
+
 This distinct experiment retains every bank and threshold from the
 [inconclusive prior result](../layernorm-bank/results-20260920.md). It changes
 only measurement orchestration. Each bank first accumulates three seconds of
