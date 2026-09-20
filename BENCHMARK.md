@@ -110,6 +110,13 @@ passes full AMD suites and complete e5/shared-model output checks in both settin
 with byte-identical outputs. Whole-model performance remains unmeasured, so the
 switch stays off and the e5 scoreboard above is unchanged.
 
+The subsequent [single-graph control experiment](tests/e5/fingerprint-model/aa-results-20260920.md)
+retains 16,704 complete e5 measurements with three identical settings. It passes
+correctness and all aggregate/worker timing limits, but the 128-token C/B
+position contrast reaches 1.011356 against its fixed 1.01 limit. The overall
+control screen fails, so the planned cache comparison is not run. No new cache
+speedup or ORT ratio is established.
+
 ### Audio: earlier public API observations
 
 The ASR rows use the same twenty clean-English recordings: ten speakers,

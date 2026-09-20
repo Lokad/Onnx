@@ -51,3 +51,11 @@ tails. `prepare.py` freezes committed tools, binaries, inputs and both schedules
 `vm.py launch|poll|collect --artifact <artifact> --phase aa|compare` manages
 the exclusive VM; `audit.py` independently reconstructs all evidence and screens.
 The local artifact is `artifacts/e5-fingerprint-model-20260920`.
+
+The [closed A/A phase](aa-results-20260920.md) retains 16,704 measured and 28,633
+conditioning calls. All aggregate, worker and individual-position limits pass.
+The 128-token C/B max/min position contrast is 1.01135633 for Execute and
+1.01135543 for Reset-plus-Execute, exceeding the fixed 1.01 limit. Therefore
+the overall screen fails and no candidate phase runs. Correctness and resource
+checks pass; all twenty workers and the supervisor are terminal. The complete
+artifact is closed at `97e3ecd9230f3aa169da51805be565bc789569c3864f88cad0c2ecea727e3ce9`.
