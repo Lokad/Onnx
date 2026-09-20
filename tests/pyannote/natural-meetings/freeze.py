@@ -29,8 +29,8 @@ def main():
     for item in list(manifest['models'].values())+list(manifest['native_assets'].values())+list(manifest['upstream'].values())+list(manifest['native_sources'].values()):
         path=root/item['path'];wanted={k:item[k] for k in ['bytes','sha256']};assert pin(path)==wanted
         native_files[path.as_posix()]=wanted
-    package_root=Path('C:/Python313/Lib/site-packages')
-    binaries=list((package_root/'onnxruntime/capi').glob('*.dll'))+list((package_root/'onnxruntime/capi').glob('*.pyd'))
+    capi=Path(importlib.metadata.distribution('onnxruntime').locate_file('onnxruntime/capi'))
+    binaries=list(capi.glob('*.dll'))+list(capi.glob('*.pyd'))
     assert binaries
     for path in binaries:native_files[path.as_posix()]=pin(path)
     native_files['C:/Python313/python.exe']=pin(Path('C:/Python313/python.exe'))
