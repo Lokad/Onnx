@@ -62,6 +62,13 @@ paths match every token decision. This narrows the remaining investigation to
 the source of the differing encoder states; diagnostic success does not qualify
 the complete managed pipeline.
 
+The [full-corpus encoder input comparison](../tests/whisper/input-cross-isolated/results-20260920.md)
+then reproduces all 42 saved baselines and compares both engines on identical
+features. All 21 cases still exceed `1e-4` with either feature source, so frontend
+rounding alone does not explain the encoder discrepancy. Its 42 finite workers
+complete within the unchanged resource guards; this does not qualify a
+long-lived transcriber process or identify the more accurate FP32 engine.
+
 DINOv3, ResNet50 and GPT-2 also have complete-output shared-core regression
 fixtures, including independently carried GPT states and ownership/recovery
 checks. They exercise common kernels beyond e5 and audio; these fixtures are

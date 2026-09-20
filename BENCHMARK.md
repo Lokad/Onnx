@@ -364,6 +364,13 @@ passes all 784 arrays at the unchanged `1e-4` scaled-error gate; three Windows
 duration-logit arrays still fail. Whisper's
 [full-pipeline numerical check](tests/whisper/numerical-20260919.md) retains
 21 encoder and 405 logit-array failures despite identical token choices.
+The subsequent [full-corpus encoder comparison](tests/whisper/input-cross-isolated/results-20260920.md)
+reproduces all 42 saved managed/native baselines exactly. With identical features,
+all 21 encoder comparisons still exceed `1e-4`: maximum scaled differences are
+`0.00464895` with managed features and `0.00509071` with native features, using
+the original native-output denominator. Frontend rounding alone therefore does
+not explain the discrepancy. This diagnostic does not establish which engine
+is closer to mathematical truth or supply new timings.
 The labeled pyannote trace retains 19 failed filterbank values on Windows and
 24 on AMD. The five-language ASR check and two natural meetings for all three
 audio applications add bounded human-label accuracy evidence. Broader natural
