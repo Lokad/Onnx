@@ -67,8 +67,9 @@ The execution payload is frozen at source `00e5ad7`, manifest SHA256
 `7de4bac72c5b6ac8788109322e020441db3f4f06657342917fbc38aaee01a1a9`.
 The first freeze's installed-package path assumption failed before any worker
 was created; the failed runtime snapshot is retained. Resolving the actual ORT
-package location fixes preparation without changing inference. Both accuracy
-workers are running; no results are published yet.
+package location fixes preparation without changing inference. The native reference has completed all three calls and its processes are
+terminal. The AMD managed worker is running; the comparison and human-label
+scores are pending.
 
 `collect.py --artifact <directory>` requires terminal AMD processes and verifies
 all transferred files, preserving any failed run. `audit_resources.py --artifact
