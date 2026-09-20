@@ -94,7 +94,7 @@ def report(base,destination):
         ('AMD EPYC 9V74, Linux logical CPU 2 inherited before startup; supervisor CPU 0. .NET 10.0.8 uses normal ' if amd else
          'Intel i7-14700KF, Windows logical CPU 2 inherited before startup; supervisor CPU 0. .NET 10.0.12 uses normal ')+
         'runtime settings and qualified product defaults. ORT 1.29.0 uses one intra/inter-op thread, sequential execution, '
-        'all graph optimizations and no thread spinning. Four fresh workers run in the fixed native/managed order. '
+        'all graph optimizations and no thread spinning. Four fresh workers run in the fixed native/managed order. '+
         ('The VM is exclusively assigned to this campaign. ' if amd else 'The active workstation has unrelated activity. ')+
         'These are single-pass observations, with no warmed performance '
         'estimate or confidence claim; use the separate repeated [audio baselines](../../../BENCHMARK.md#audio-matched-microsoft-onnx-runtime-baselines).','',
@@ -119,7 +119,7 @@ def report(base,destination):
         'A later first inference attempt stopped after nine native requests because a Windows reader denied atomic status '
         'replacement. That failure and all terminated process identities remain retained. The corrected writer retries '
         'that specific sharing failure for at most one second; an actual Windows file-lock test checks transient recovery '
-        'and bounded refusal. The rerun uses identical input/replay bytes and unchanged selection, scoring and decoding. '
+        'and bounded refusal. The rerun uses identical input/replay bytes and unchanged selection, scoring and decoding. '+
         ('Ten' if amd else 'Nine')+' tooling test methods pass; forty damaged copies of real result records are rejected after execution, '
         'and process accounting and all grouped score arithmetic are independently reproduced. No product/default/tolerance changed.','',
         f"Frozen runtime source: `{value['protocol_source']}`. Qualified product source: `087e280b5ea0a6a610399ccffd1a1e5668def10e`; "
