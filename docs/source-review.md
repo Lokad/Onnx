@@ -199,8 +199,15 @@ passes all473 cases in both normal and instrumented processes, with exact
 candidate output bits and211,890 scalar-FMA checks per process. Actual FullOpts
 code keeps the separate reduction count and full row stride, with no loop calls
 or vector stack accesses. The twelve-row candidate adds scalar stack work for
-its count. A complete-cost timing test is therefore still needed; correctness
-and source structure establish no performance gain or cache behavior.
+its count. The subsequent
+[complete-cost comparison](../tests/e5/projection-reduction-timing/results-20260920.md)
+retains 3,840 measured calls across four AMD workers and all five e5 geometries.
+Output, resource, allocation and duplicate-original control checks pass. Both
+block sizes fail every bank's performance screen: block128 makes primary banks
+about 5–10% slower, block256 about 2–5% slower. The result rejects this complete
+implementation, without assigning the regression to accumulator stores, scalar
+stack traffic or cache behavior individually. Neither variant is promoted, and
+no unchanged repeat or blanket import of the branch's blocked packing follows.
 
 The [paired managed A/A experiment](../tests/e5/paired-aa/results-20260920.md)
 now tests two separately loaded, byte-identical cores with real public Memory

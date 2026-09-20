@@ -143,6 +143,28 @@ Its [pointer-addressing follow-up](tests/e5/projection-input-pointer/results-202
 emits the intended simpler instructions but still regresses those banks by
 2.11%/2.83%, including copying. It also remains outside production.
 
+The [reduction-block comparison](tests/e5/projection-reduction-timing/results-20260920.md)
+tests a separate mechanism that reuses existing packed weights without copying
+activations. All 3,840 measured bank calls are retained. Full output checks before
+and after timing, resource/allocation checks and duplicate-original controls
+pass. Both block sizes are
+**rejected**: they make every tested bank slower. Complete-bank means are:
+
+| Projection-bank rows | Original A ms | Identical original B ms | Block128 ms | Block256 ms |
+|---|---:|---:|---:|---:|
+| 8 | 4.2437 | 4.2493 | 4.6351 | 4.5521 |
+| 30 | 12.7235 | 12.7265 | 14.0091 | 13.3514 |
+| 30 padded to 128 geometry | 50.6082 | 50.6235 | 53.1947 | 51.6323 |
+| 128 | 50.3945 | 50.2657 | 52.9653 | 51.3446 |
+| 512 | 198.4334 | 198.4445 | 207.9600 | 202.9960 |
+
+Each visit clears outputs and computes all 72 projection matrices with independent
+synthetic weights, including dispatch and row remainders. The padded bank has
+128 rows and a separate input seed; it does not simulate attention masks. Four
+fresh AMD workers retain all 17,264 conditioning and 80 first-timed-bank calls.
+Measured allocation and GC counts are zero. These component observations supply
+no new full-model or ORT timing and leave production defaults unchanged.
+
 A subsequent [paired managed A/A experiment](tests/e5/paired-aa/results-20260920.md)
 retains 3,840 measured calls from twenty AMD workers using two identical engines
 per process. Output, ownership and resource checks pass. Aggregate A/A means
