@@ -1,5 +1,11 @@
 # AMD conditional GELU comparison
 
+The [completed AMD result](results-20260920.md) **fails the fixed kernel
+screen**. Exactness and duplicate controls pass, but gains against the actual
+product miss the 2% requirement at padded-128 and 128, and some workers regress.
+No product change follows. [All retained summaries](observations-20260920.json)
+include every case and visit.
+
 This experiment measures the exact all-small shortcut from the
 [local arithmetic proof](../gelu-uniform-shortcut/README.md), on the complete
 twelve-layer banks from the [e5 census](../gelu-branch-census/results-20260920.md).
@@ -42,3 +48,10 @@ the already verified data/binaries remain in the local payload.
 checks every record and reports the unchanged screen. `test_audit.py` exercises
 coverage/order/output/count refusals and failed-control/failed-case verdicts.
 Successful preparation, execution, collection and audit writers are single-use.
+
+`verify_results.py --artifact <local-artifact>` independently recomputes timing
+totals and decisions, verifies the original census bank hashes and collection,
+recomputes process accounting, tests corrupted real records and assembly, and
+checks actual remote process births before writing the local closed receipt.
+`report.py --artifact <local-artifact> --output <new-report-directory>` verifies
+that complete receipt and renders all results without running inference.

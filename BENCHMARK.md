@@ -98,6 +98,11 @@ AB/BA ratio contrast is 1.056734 against a 1.01 upper limit. This protocol is
 not qualified for the intended small performance decisions. It contains no
 native ORT timing and leaves the e5 scoreboard and optimization defaults unchanged.
 
+A later [conditional GELU kernel comparison](tests/e5/gelu-uniform-amd/results-20260920.md)
+passes exactness and duplicate controls but fails its fixed performance screen.
+It measures complete twelve-layer activation banks, supplies no new ORT or
+whole-model timing, and does not change the e5 table or production defaults.
+
 ### Audio: earlier public API observations
 
 The ASR rows use the same twenty clean-English recordings: ten speakers,

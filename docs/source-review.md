@@ -142,9 +142,13 @@ would have missed. All sixty captured node outputs reproduce the product's
 bits, and independent float32 counts and complete native model checks pass.
 The resulting [conditional prototype](../tests/e5/gelu-uniform-shortcut/README.md)
 passes 1,575 local arithmetic cases, including all sixty captured layers and
-exceptional floats, with exact product bits. Its next comparison must include
-branch overhead on the complete banks. No faster kernel, model gain or new
-default is established yet.
+exceptional floats, with exact product bits. Its [AMD comparison](../tests/e5/gelu-uniform-amd/results-20260920.md)
+also preserves bits and proves the optimized branch bypasses sixteen vector
+FMAs and exponential reconstruction. The complete-bank timing screen fails:
+despite passing duplicate controls, improvement against the actual product is
+only 1.22% at padded-128 and 1.60% at 128, below the fixed 2% requirement, and
+some workers regress. All samples and failures remain; no product integration,
+complete-model gain or new default follows.
 
 ## Valuable import units and their disposition
 
