@@ -209,6 +209,16 @@ protocol for its intended small contrasts without attributing the effect to a
 particular collector or cache mechanism. No candidate follows under the failed
 protocol, and earlier inconclusive kernel results remain unchanged.
 
+The subsequent [interleaved independent-process controls](../tests/e5/interleaved-processes/aa-results-20260920.md)
+retain 160 private runtimes and 89,088 measured calls, with inactive processes
+suspended. All numerical, ownership and resource checks pass. Timing controls
+still fail at 8, 30 and 512 tokens under both lifetime policies; padded-128 and
+128 pass individually. Some solo/resident bridges also fail. The complete
+protocol therefore stops before candidate comparison. Private runtimes and
+balanced batches did not suffice for the declared small-contrast timing screen;
+the data do not identify a single remaining cause. Both optional mechanisms
+remain off by default, with all prior gains and failed screens retained.
+
 The later [complete e5 GELU branch census](../tests/e5/gelu-branch-census/results-20260920.md)
 identifies a distinct conditional-evaluation opportunity. The current erf body
 evaluates both polynomials on every eight-lane vector; 10.31–12.01% of vectors

@@ -50,7 +50,36 @@ process variation, memory, complete evidence identities and known numerical
 limitations. Whisper recomputes its frontend from PCM inside every timed call;
 both engines pad each clip to the model's thirty-second encoder input.
 
-### e5: latest independent deployment versus native ORT
+### e5: interleaved independent processes versus native ORT
+
+The [complete interleaved-process control run](tests/e5/interleaved-processes/aa-results-20260920.md)
+uses the qualified `4f10e8b` core on AMD EPYC 9V74, CPU 2, .NET 10.0.8 and
+Microsoft ORT 1.23.2. Four independent processes remain resident; only the active
+one runs, with the others suspended. Three managed roles use identical defaults,
+with fingerprint caching and wider LayerNorm disabled. The table averages their
+public Execute times and uses each policy's matched native Run cohort.
+
+| Tokens | Lokad Default ms | Default-cohort ORT ms | Default / ORT | Lokad Memory ms | Memory-cohort ORT ms | Memory / ORT |
+|---|---:|---:|---:|---:|---:|---:|
+| 8 | 6.0651 | 6.2236 | 0.9745 | 5.7429 | 6.1661 | 0.9314 |
+| 30 | 16.6952 | 15.1902 | 1.0991 | 16.5846 | 15.3184 | 1.0827 |
+| 30 padded to 128 | 64.4056 | 60.2198 | 1.0695 | 64.0696 | 59.9888 | 1.0680 |
+| 128 | 64.2757 | 59.9801 | 1.0716 | 64.5301 | 60.4547 | 1.0674 |
+| 512 | 342.7666 | 280.5401 | 1.2218 | 344.9076 | 284.0081 | 1.2144 |
+
+All 160 workers, 89,088 measured calls, 227,583 conditioning calls and 5,120 solo
+calls are retained. Numerical, ownership, configuration and resource checks pass;
+maximum scaled native error is `1.63913e-6`. **Timing controls fail** at 8, 30 and
+512 tokens under both policies and both measured boundaries. Padded-128 and
+128 pass, but do not qualify the complete protocol. Solo/resident ratios range
+from 0.8956 to 1.0449, also violating the fixed bridge requirement.
+
+The conditional candidate comparison was not run; both optional switches remain
+off. These descriptive resident-process observations do not establish calibrated
+parity, isolated deployment latency or a performance change from earlier tables.
+All original processes are terminal and the complete evidence is closed.
+
+### e5: earlier independent deployment versus native ORT
 
 The [September 20 independent-deployment controls](tests/e5/fingerprint-deployment/aa-results-20260920.md)
 retain 160 fresh sequential processes, 89,088 measured calls and 225,149
