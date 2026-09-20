@@ -5,6 +5,11 @@ ONNX Runtime. It covers Parakeet TDT 0.6B V3 transcription and pyannote
 Community-1 diarization. Both engines receive the same decoded mono 16 kHz
 FP32 audio and must reproduce the retained application results on every call.
 
+The [measured Parakeet and pyannote results](results-20260919.md) include explicit
+Microsoft ORT times. The separate [Whisper comparison](../whisper-comparison/results-20260919.md)
+uses the same twenty ASR clips. [BENCHMARK.md](../../../BENCHMARK.md) summarizes
+all three comparisons in its first table.
+
 `Program.cs` times `ParakeetTranscriber.Transcribe` or
 `Community1Diarizer.Diarize`. `native_adapters.py` runs the corresponding
 graphs through ORT and implements the same request policy using pinned upstream
