@@ -45,6 +45,8 @@ def pin(p):
  with p.open('rb') as s:return dict(bytes=p.stat().st_size,sha256=hashlib.file_digest(s,'sha256').hexdigest())
 frozen=json.loads((base/'frozen.json').read_text())
 for name,wanted in frozen['files'].items():assert pin(base/name)==wanted,name
+manifest=json.loads((base/'manifest.json').read_text())
+for item in manifest['models'].values():assert pin(base.parents[1]/item['amd_path'])=={k:item[k] for k in ['bytes','sha256']},item['amd_path']
 births={}
 for name in ['process-managed-inputs','process-managed-run']:
  state=json.loads((base/name/'identity.json').read_text());assert (base/name/'complete.json').exists()

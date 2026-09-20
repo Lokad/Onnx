@@ -56,7 +56,7 @@ second. Both input-only attempts initially failed before spawning workers
 because psutil on Windows requires a string path. The corrected preflight and
 both independent input checks pass; those failed records remain preserved.
 
-Run the seven policy/output/resource/collection tests with the existing psutil7 environment:
+Run the ten policy/output/resource/collection/scoring tests with the existing psutil7 environment:
 `python -X utf8 -B -m unittest discover -s tests/pyannote/natural-meetings`.
 After both engines finish and all recorded process births are absent, safely
 collect results and run `audit.py --artifact <directory> --output <new-json>` in
@@ -76,3 +76,19 @@ all transferred files, preserving any failed run. `audit_resources.py --artifact
 <directory> --output <new-json>` independently checks raw request records,
 resource samples, process accounting, frozen native binaries and terminal
 identities. Run both resource and application/metric audits before closure.
+
+`close.py --artifact <directory>` rechecks original inputs, frozen files, complete
+collection, raw output/resource records and current process births on both hosts.
+It independently reproduces all eight human-score rows with an interval sweep
+and exact speaker assignment. Damaged copies of each engine's real records must
+be refused: nineteen application mutations and fourteen resource mutations.
+The closure receipt preserves the full artifact and copies of postprocessing
+sources. A valid completed run can close with failed public compatibility;
+disagreement remains explicit and is never changed into a pass.
+
+After closure, `report.py --artifact <directory>` writes the complete Markdown
+report and JSON observations beside these tools. It includes both engines'
+public outputs, every compatibility mismatch, per-meeting human error components,
+summed-component aggregates, descriptive times and process resources. Neither
+writer repeats inference. Both refuse existing outputs, and the closed artifact
+must remain unchanged.
