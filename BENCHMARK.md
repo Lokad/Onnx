@@ -107,8 +107,9 @@ The [exact graph-fingerprint cache](tests/e5/fingerprint-cache/results-20260920.
 reduces its complete validation component from 0.329823 ms to 0.006621 ms on AMD.
 Its [actual product implementation](tests/e5/fingerprint-product/results-20260920.md)
 passes full AMD suites and complete e5/shared-model output checks in both settings,
-with byte-identical outputs. Whole-model performance remains unmeasured, so the
-switch stays off and the e5 scoreboard above is unchanged.
+with byte-identical outputs. The subsequent common-state whole-model comparison
+is reported below; isolated deployment evidence is still required, so the
+switch stays off and the ORT scoreboard above is unchanged.
 
 The subsequent [single-graph control experiment](tests/e5/fingerprint-model/aa-results-20260920.md)
 retains 16,704 complete e5 measurements with three identical settings. It passes
@@ -121,8 +122,23 @@ The distinct [locally balanced controls](tests/e5/fingerprint-balanced/aa-result
 then pass every original timing limit across 33,408 measured calls, with all
 correctness and resource checks passing. Each worker uses eight balanced
 six-cycle blocks. The largest position contrast is 1.005445, below 1.01.
-This permits the already frozen cache comparison, now running; the enabled-cache
-result is still pending. These controls supply no new ORT ratio or cache speedup.
+The resulting [cache comparison](tests/e5/fingerprint-balanced/comparison-results-20260920.md)
+also passes every predeclared timing, correctness and resource check across
+33,408 measured calls. Execute means are:
+
+| Tokens | Cache disabled, mean of controls (ms) | Cache enabled (ms) | Time reduction |
+|---|---:|---:|---:|
+| 8 | 5.8885 | 5.5932 | 5.01% |
+| 30 | 16.8088 | 16.4503 | 2.13% |
+| 30 padded to 128 | 64.8264 | 64.4698 | 0.55% |
+| 128 | 64.7705 | 64.3865 | 0.59% |
+| 512 | 342.7759 | 342.3138 | 0.13% |
+
+Both public Execute and enclosing Reset-plus-Execute pass, with byte-identical
+outputs. These roles share one prepared graph, weight buffers and a resident
+cache, including during disabled calls. This establishes a gain under that
+protocol; isolated deployment and a fresh native comparison remain pending.
+The cache stays off by default. No new ORT ratio follows from these measurements.
 
 ### Audio: earlier public API observations
 

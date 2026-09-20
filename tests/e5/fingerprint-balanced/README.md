@@ -71,6 +71,19 @@ worker deviation 0.3967%, and largest position contrast 1.005445 (limit 1.01).
 All twenty original workers and their supervisor are terminal. The phase receipt
 is `50ef010f1870b056fcd0e8db993b6f0a88eb2ed8bfd58c407eaf1324d08b6333`.
 
-That complete passing receipt enabled the already frozen cache comparison,
-started September 20 at 09:51 UTC. Its results remain pending. Passing controls
-alone do not establish an enabled-cache speedup, confidence interval or ORT ratio.
+That complete passing receipt enabled the already frozen
+[cache comparison](comparison-results-20260920.md), which now also passes every
+declared timing, correctness and resource screen. All 33,408 measured calls and
+28,189 conditioning calls remain. Execute time falls 5.01% at eight tokens,
+2.13% at thirty, 0.55% at padded128, 0.59% at128 and 0.13% at512. The enclosing
+Reset-plus-Execute boundary also passes. Duplicate controls pass across every
+case and boundary; their largest position contrast is 1.005868 (limit1.01).
+
+All twenty comparison workers and their supervisor are terminal. The phase
+receipt is `3072e4561ab08ab01dfcd0f7307370d6947967a55fa94a5117dcfb2de5c67872`.
+Both phases are closed under full receipt
+`fd23f728c125d07269b0c0403a564a82cdb6ea5a5f96a86343b467e2fcbd908c`,
+binding 858 files; the complete inventory and bound reports were independently
+rehashed after closure. These common-state results require a separately
+declared isolated deployment/native comparison before default promotion.
+They establish no confidence interval or fresh ORT ratio.
