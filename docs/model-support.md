@@ -60,6 +60,13 @@ silence issue remain open; the first corpus's managed pass does not generalize
 to every retained window. These checks support further arithmetic investigation,
 without changing the acceptance threshold or application results.
 
+The [controlled coefficient check](../tests/pyannote/filterbank-coefficients/results-20260920.md)
+captures both archived Windows assemblies' actual mel tables and holds all 32
+saved double power spectra fixed. Substituting managed for native coefficients
+leaves the same 36 dialogue failures and one earlier-window failure, with the
+same maxima. The remaining arithmetic needs further investigation; this result
+does not qualify a product change or attribute AMD coefficient behavior.
+
 The [five-language ASR check](../tests/audio/multilingual/results-20260920.md)
 adds twenty FLEURS read recordings and their deterministic 10 dB noise variants.
 Both recognizers match ORT on all public decisions. This small, partly correlated

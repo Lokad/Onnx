@@ -510,6 +510,15 @@ the dialogue has 36 Windows / 38 AMD failed managed values, with maxima
 `2.40954e-4`. Earlier padded pipeline windows add one Windows failure and none
 on AMD. Both references agree throughout; no tolerance or product change follows.
 
+The [controlled mel-coefficient check](tests/pyannote/filterbank-coefficients/results-20260920.md)
+reads the actual tables from both archived Windows assemblies and changes only
+mel weights while keeping all 32 saved double power spectra fixed. Using managed
+instead of native weights leaves the same 36 dialogue failures and one earlier
+window failure, including the same maxima. Thus the difference between those
+tables does not explain these remaining failures. All 288 controlled arrays pass
+independent scalar checks. A separately labelled ideal-formula coefficient
+diagnostic is retained; it does not replace the numerical acceptance reference.
+
 The original labeled pyannote direct comparison retains 19 failed filterbank values on Windows and
 24 on AMD. The five-language ASR check and two natural meetings for all three
 audio applications add bounded human-label accuracy evidence. Broader natural
