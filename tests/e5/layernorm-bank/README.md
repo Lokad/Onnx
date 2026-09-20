@@ -1,5 +1,12 @@
 # Complete LayerNorm-bank timing
 
+The [completed result](results-20260920.md) is **inconclusive**: every candidate
+gain/regression check passes, but three banks fail per-worker duplicate controls.
+All aggregate controls and complete output/resource checks pass. Real-bank means
+are 13–17% lower with the wider transform. These are promising component
+observations, with no product integration or whole-model speedup established.
+All samples and visits remain in the [observations](observations-20260920.json).
+
 This experiment reuses the exact kernels and all 125 real captures from the
 [closed AMD arithmetic/code proof](../layernorm-amd-proof/results-20260920.md).
 It measures all 25 complete normalizations for each e5 case, including centered

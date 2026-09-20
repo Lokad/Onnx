@@ -71,9 +71,15 @@ The subsequent [actual AMD proof](../tests/e5/layernorm-amd-proof/results-202609
 passes the same complete arithmetic checks in clean and explicitly instrumented
 runs. Its inspected optimized code uses the intended 512-bit double transform,
 preserving the original statistics and association. A dump-parser correction is
-recorded separately; no inference was repeated. A complete LayerNorm-bank
-comparison including tails and both bias cases remains required. No timing
-result exists yet. The roughly one-millisecond complete
+recorded separately; no inference was repeated. The later
+[complete-bank comparison](../tests/e5/layernorm-bank/results-20260920.md) observes
+13–17% lower means across all five real e5 banks, with exact outputs. It includes
+four tail/no-bias banks and retains all 6,912 measured batches. The candidate
+passes the gain/regression screen, but three banks fail per-worker duplicate
+controls; the overall result remains inconclusive. All measured allocations
+and GC collection counts are zero. A prospective timing follow-up is needed;
+do not promote the prototype or discard its promising effect on this evidence.
+The roughly one-millisecond complete
 LayerNorm cost at 128 tokens also bounds its possible contribution: this
 operator alone cannot account for the remaining roughly 1.5 ms target gap.
 

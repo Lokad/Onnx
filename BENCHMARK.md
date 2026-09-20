@@ -131,7 +131,25 @@ whole-model timing, and does not change the e5 table or production defaults.
 The [wider LayerNorm arithmetic/code proof](tests/e5/layernorm-amd-proof/results-20260920.md)
 passes all 915 cases on actual AMD hardware in both clean and disassembly runs.
 It establishes exact outputs and the intended AVX-512 code, with no latency
-comparison. Complete-bank timing remains required before product integration.
+comparison. The subsequent
+[complete-bank comparison](tests/e5/layernorm-bank/results-20260920.md) retains
+6,912 measured batches across five real e5 banks and four tail/no-bias banks.
+Every output matches product bits; measured allocation and GC counts are zero.
+Observed complete-kernel means are:
+
+| Tokens | Product LayerNorm bank ms | Wider transform bank ms | Observed time reduction |
+|---|---:|---:|---:|
+| 8 | 0.060489 | 0.050224 | 16.97% |
+| 30 | 0.225100 | 0.188347 | 16.33% |
+| 30 padded to 128 | 1.074483 | 0.933427 | 13.13% |
+| 128 | 0.964695 | 0.804248 | 16.63% |
+| 512 | 3.854600 | 3.225941 | 16.31% |
+
+Each bank includes all 25 normalizations, including statistics and output writes.
+The candidate satisfies its gain/regression screen, but duplicate controls
+exceed the per-worker limit at padded128 and two diagnostic banks. The overall
+result is **inconclusive**, despite passing aggregate controls. No product
+integration or whole-model gain follows; these are component observations.
 
 The [exact graph-fingerprint cache](tests/e5/fingerprint-cache/results-20260920.md)
 reduces its complete validation component from 0.329823 ms to 0.006621 ms on AMD.
