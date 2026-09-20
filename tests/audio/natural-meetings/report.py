@@ -2,7 +2,7 @@
 from pathlib import Path
 import argparse
 from common import pin,read,write
-from evidence import directory
+from evidence import directory,profile
 
 
 def main():
@@ -19,14 +19,19 @@ def main():
     audit=read(base/'audit.json');resources=read(base/'resource-audit.json');manifest=read(base/'manifest.json')
     verification=read(base/'verification.json')
     values={f:{e:read(directory(base,d,f)/'worker/result.json') for e,d in [('ort','native'),('managed','managed')]} for f in manifest['schedule']}
+    selected,linux_manifest,linux_frozen=profile(base,'native','whisper')
+    linux=None if selected==base else dict(manifest=linux_manifest,frozen=linux_frozen,collection=read(selected/'collection.json'),
+        dependency_check=read(selected/'dependency-check.json'),preparation=read(selected/'preparation.json'),
+        original_windows_retry=read(base/'recovery-outcome.json'))
     result=dict(schema=1,closed_receipt=pin(base/'closed.json'),frozen=pin(base/'frozen.json'),runtime_source_commit=receipt['source_commit'],
         reporter=pin(Path(__file__)),manifest=manifest,labels=read(base/'labels.json'),audit=audit,resources=resources,
-        verification=verification,results=values,source_files=receipt['sources'],evidence_files=receipt['files'])
+        verification=verification,results=values,native_linux=linux,source_files=receipt['sources'],evidence_files=receipt['files'],
+        external_pins=receipt['external_pins'],remote_external_pins=receipt['remote_external_pins'])
     write(observations,result)
     names=dict(parakeet='Parakeet TDT 0.6B V3',whisper='Whisper Large V3 Turbo')
     engines=dict(ort='Microsoft ORT application',managed='Lokad.Onnx')
     status=lambda v:'PASS' if v else 'FAIL'
-    recovery_note=('The original native Whisper attempt failed the available-memory guard. The tables use its separately declared recovery sequence; the failed attempt and repeated first-meeting comparison are retained below.\n\n' if resources.get('failed_native_attempt') else '')
+    recovery_note=('The original Windows native Whisper attempt failed the available-memory guard, and its single declared Windows retry refused before inference because stable memory headroom was unavailable. The tables use the separately declared Linux reference sequence. Both Windows attempts and the repeated first-meeting comparison remain visible below.\n\n' if linux else '')
     text=f'''# Natural ten-minute meeting ASR — 2026-09-20
 
 Parakeet and Whisper each process two uninterrupted ten-minute AMI meetings and a thirty-second recovery, using Lokad.Onnx and an independently advancing native ORT reference. All requests completed: **{status(audit['all_requests_completed'])}**. Exact public decisions: **{status(audit['public_comparison_passed'])}**. Combined application qualification: **{status(audit['application_passed'])}**. Human word errors below are a separate observation, with no accuracy cutoff selected after recognition.
@@ -70,20 +75,20 @@ Every mismatch is preserved in the observations. A length mismatch reports the d
 
 ## Timing and resources
 
-Managed requests use qualified Core087e280/Dataf568132 on AMD EPYC 9V74 CPU 2, .NET 10.0.8. Native ORT 1.29.0 runs on Windows i7-14700KF CPU 2 with one intra-op/inter-op thread, sequential execution, all optimizations and disabled spinning. Models and PCM are identical. Whisper uses the pinned Transformers 5.16.1 NumPy frontend; the exact native dependencies and sources are in the observations.
+Managed requests use qualified Core087e280/Dataf568132 on AMD EPYC 9V74 CPU 2, .NET 10.0.8. Native ORT 1.29.0 uses Windows i7-14700KF CPU 2 for Parakeet and AMD EPYC 9V74 CPU 2 for Whisper, with one intra-op/inter-op thread, sequential execution, all optimizations and disabled spinning. Models and PCM are identical. Whisper uses the pinned Transformers 5.16.1 NumPy frontend; the exact native dependencies and sources are in the observations.
 
-These are single accuracy replays on different hosts. Native times include reference validation and Parakeet upstream trajectory crosschecks. They do not define an inference speed ratio and do not replace the [matched Windows baselines](../../../BENCHMARK.md#audio-matched-microsoft-onnx-runtime-baselines). Loading and file reads precede the call timers.
+These are single accuracy replays without matched warmups or a latency comparison protocol. Parakeet uses different hosts; Whisper uses the same AMD host. Native times include reference validation and Parakeet upstream trajectory crosschecks. They do not define an inference speed ratio and do not replace the [matched Windows baselines](../../../BENCHMARK.md#audio-matched-microsoft-onnx-runtime-baselines). Loading and file reads precede the call timers.
 
-| Model | Request | Lokad on AMD seconds | ORT application on Windows seconds | Lokad / ORT windows |
-|---|---|---:|---:|---:|
+| Model | Request | Lokad on AMD seconds | ORT reference host | ORT application seconds | Lokad / ORT windows |
+|---|---|---:|---|---:|---:|
 '''
     for family in manifest['schedule']:
         for i,case in enumerate(manifest['cases']):
             m=values[family]['managed']['records'][i];n=values[family]['ort']['records'][i]
-            text+=f"| {names[family]} | {case['name']} | {m['seconds']:.6f} | {n['seconds']:.6f} | {len(m['result']['windows'])} / {len(n['result']['windows'])} |\n"
+            text+=f"| {names[family]} | {case['name']} | {m['seconds']:.6f} | {'AMD Linux' if family=='whisper' else 'Windows'} | {n['seconds']:.6f} | {len(m['result']['windows'])} / {len(n['result']['windows'])} |\n"
     text+='\n| Model | Host / engine | Worker seconds | Peak sampled RSS GB | Minimum available GB | Samples | Foreign CPU fraction |\n|---|---|---:|---:|---:|---:|---:|\n'
     for row in resources['resources']:
-        text+=f"| {names[row['family']]} | {'Windows native' if row['engine']=='native' else 'AMD managed'} | {row['seconds']:.6f} | {row['peak_rss']/1e9:.6f} | {row['minimum_available']/1e9:.6f} | {row['samples']} | {row['accounting']['foreign_cpu_fraction']:.9f} |\n"
+        text+=f"| {names[row['family']]} | {row['host']} / {row['engine']} | {row['seconds']:.6f} | {row['peak_rss']/1e9:.6f} | {row['minimum_available']/1e9:.6f} | {row['samples']} | {row['accounting']['foreign_cpu_fraction']:.9f} |\n"
     text+=f'''
 The four completed workers satisfy the fixed two-hour and 1-GiB available-memory guards. Windows requires 20 GiB available before each worker and permits less than 20 GiB group RSS; AMD requires 13 GiB before launch and permits less than 14 GiB RSS. Memory is sampled every half second; peaks are finite observations. Foreign CPU accounting uses process snapshot deltas divided by wall time and logical CPU count and can miss exited processes. Windows remained an active workstation.
 
@@ -95,7 +100,9 @@ The artifact is `artifacts/asr-natural-meetings-20260920`, frozen source `{recei
 '''
     failed=resources.get('failed_native_attempt')
     if failed:
-        text+=f"\nThe original native Whisper worker **failed its resource guard** after {failed['seconds_before_stop']:.6f} seconds: available system memory fell to {failed['last_available']:,} bytes, below 1 GiB, while its peak sampled group RSS was {failed['peak_rss']:,} bytes. Only ES2004a completed; all original {failed['resource_samples']} samples and the partial output are preserved. A separately declared single retry repeats all three calls using the identical frozen executables, models, inputs, options and limits. It additionally requires sixty consecutive seconds above the original 20-GiB launch requirement. The report scores the complete retry sequence and separately compares its first meeting with the earlier result. Parakeet and managed Whisper were not repeated. The failed original campaign remains failed; recovery does not erase it.\n"
+        text+=f"\nThe original native Whisper worker **failed its resource guard** after {failed['seconds_before_stop']:.6f} seconds: available system memory fell to {failed['last_available']:,} bytes, below 1 GiB, while its peak sampled group RSS was {failed['peak_rss']:,} bytes. Only ES2004a completed; all original {failed['resource_samples']} samples and the partial output are preserved. The separately declared Windows retry required sixty consecutive seconds above the original 20-GiB launch requirement; it refused after its fifteen-minute preflight without creating an inference worker. A new Linux reference ran all three calls under the declared AMD limits, with identical models, inputs and decoding options. Exact generator/frontend bytes and a portable syntax-tree comparison prove the decoding bodies unchanged across Python versions. The report scores this complete sequence and separately compares its first meeting with the earlier Windows result. Parakeet and managed Whisper were not repeated. The failed original campaign remains failed.\n"
+    if linux:
+        text+=f"\nThe Linux reference is frozen at source `{linux_frozen['source_commit']}`, SHA256 `{pin(selected/'frozen.json')['sha256']}`. Its {len(linux_frozen['native_files'])} native dependency identities were checked remotely at collection and closure; wheel installation reports, the input-only smoke, runtime sources, raw outputs and failed preparation check are retained. [Linux continuation instructions](../natural-meetings-linux/README.md) describe the isolated CPU-only Torch installation and platform proof.\n"
     else:text+='\nEach inference schedule ran once.\n'
     with markdown.open('x',encoding='utf-8') as stream:stream.write(text)
     print('Rendered',len(audit['scores']),'human scores and',len(audit['comparisons']),'public comparisons.')

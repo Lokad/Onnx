@@ -6,7 +6,7 @@ import json
 import math
 import psutil
 from common import load,pin,read,write
-from evidence import directory as worker_directory,failed_attempt,recovery_ready
+from evidence import directory as worker_directory,failed_attempt,recovery_ready,profile
 
 
 def validate(state,samples,frozen,engine,family):
@@ -56,6 +56,7 @@ def damaged_checks(state,samples,frozen,engine,family):
 
 def inspect(base,engine,family,frozen):
     directory=worker_directory(base,engine,family);state=read(directory/'identity.json')
+    base,manifest,frozen=profile(base,engine,family)
     samples=[json.loads(line) for line in (directory/'samples.jsonl').read_text().splitlines()]
     validate(state,samples,dict(frozen,sha256=pin(base/'frozen.json')['sha256']),engine,family)
     assert read(directory/'complete.json')==dict(code=0)
@@ -64,7 +65,7 @@ def inspect(base,engine,family,frozen):
     result=read(directory/'worker/result.json');assert len(result['records'])==3
     assert {p.name for p in (directory/'worker').iterdir()}=={'00.json','01.json','02.json','result.json'}
     for i,row in enumerate(result['records']):assert row==read(directory/f'worker/{i:02d}.json')
-    return dict(engine=engine,family=family,seconds=state['seconds'],peak_rss=state['peak_rss'],
+    return dict(engine=engine,family=family,host=manifest['hosts'][engine],seconds=state['seconds'],peak_rss=state['peak_rss'],
         minimum_available=min(s['available'] for s in samples),samples=len(samples),accounting=state['accounting'])
 
 
@@ -95,7 +96,7 @@ def main():
     assert collection['frozen']==pin(base/'frozen.json') and collection['verified_reusable_files']==frozen['files']
     assert {p.relative_to(base/'collected').as_posix() for p in (base/'collected').rglob('*') if p.is_file()}==set(collection['files'])|{'collection.json'}
     for name,wanted in collection['files'].items():assert pin(base/'collected'/name)==wanted,name
-    recovery_ready(base);failed=failed_attempt(base)
+    continuation=recovery_ready(base);failed=failed_attempt(base)
     resources=[];refusals=[]
     for engine in ['native','managed']:
         campaign=read(base/('collected' if engine=='managed' else '')/f'campaign-{engine}.json')
@@ -104,9 +105,10 @@ def main():
             resources.append(inspect(base,engine,family,frozen))
             directory=worker_directory(base,engine,family);state=read(directory/'identity.json')
             samples=[json.loads(line) for line in (directory/'samples.jsonl').read_text().splitlines()]
-            refusals.append(dict(engine=engine,family=family,count=damaged_checks(state,samples,dict(frozen,sha256=pin(base/'frozen.json')['sha256']),engine,family)))
+            selected,_,selected_frozen=profile(base,engine,family)
+            refusals.append(dict(engine=engine,family=family,count=damaged_checks(state,samples,dict(selected_frozen,sha256=pin(selected/'frozen.json')['sha256']),engine,family)))
     result=dict(passed=True,resources=resources,refusals=refusals,failed_native_attempt=failed,native_terminal_processes=local_terminal(base),
-        amd_terminal_processes=collection['terminal_processes'],frozen=pin(base/'frozen.json'),collection=pin(base/'collected/collection.json'))
+        amd_terminal_processes=collection['terminal_processes'],native_linux_continuation=continuation,frozen=pin(base/'frozen.json'),collection=pin(base/'collected/collection.json'))
     write(a.output,result);print('All four worker resource records pass; damaged records refused',sum(r['count'] for r in refusals))
 
 

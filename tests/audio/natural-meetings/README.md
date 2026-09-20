@@ -123,6 +123,17 @@ explicitly declared directory for the completed comparison, checks the failed
 attempt separately, and requires the repeated first meeting to match its
 preserved public result. No Parakeet or managed run is repeated.
 
+That Windows retry refused at its preflight limit without creating an inference
+worker. The declared [Linux continuation](../natural-meetings-linux/README.md)
+therefore supplies the complete native Whisper reference. Its collector installs
+an independent `native-linux-collected` directory inside the original artifact;
+`evidence.py` verifies its own frozen manifest, runtime, input/model identities,
+unchanged decoder source and collection before selecting it. Parakeet retains its
+original Windows reference. Resource limits and host labels follow each selected
+worker. The original failed Windows attempt and refused retry remain in the
+closure receipt. The first Linux meeting is also compared with the preserved
+Windows result. Accuracy replay times do not replace matched latency baselines.
+
 Attribution: Carletta et al., *The AMI meeting corpus: A pre-announcement* (2006).
 Selection and diarization references use the pinned
 [pyannote/BUT Speech@FIT setup](https://github.com/pyannote/AMI-diarization-setup/tree/67c2d539286e89f68952d5dcf83912bd9f01dfae).

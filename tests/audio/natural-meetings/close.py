@@ -18,7 +18,7 @@ from common import load,pin,read,write
 from audit import worker,compare,original_functions
 from audit_resources import inspect,local_terminal
 from collect import HOST,KEY
-from evidence import directory,failed_attempt,recovery_ready
+from evidence import directory,failed_attempt,recovery_ready,profile
 
 
 def refuses(action):
@@ -82,7 +82,8 @@ def main():
         for name in expected:assert pin(base/name)==collection['files'][name]
     audit=read(base/'audit.json');resources=read(base/'resource-audit.json')
     assert resources['passed'] is True
-    recovery_ready(base);failed=failed_attempt(base)
+    continuation=recovery_ready(base);failed=failed_attempt(base)
+    assert resources['native_linux_continuation']==continuation
     assert resources['failed_native_attempt']==failed
     assert resources['resources']==[inspect(base,e,f,frozen) for e in ['native','managed'] for f in manifest['schedule']]
     normalizer=load('natural_asr_fixed_normalizer',base/'audit-source/common.py')
@@ -139,15 +140,24 @@ def main():
     assert audit['application_passed']==(complete and audit['public_comparison_passed'] and (repeated is None or repeated['passed']))
     assert audit['aggregates']==[dict(family=f,engine=e,**scoring['total']([r for r in audit['scores'] if r['family']==f and r['engine']==e])) for f in manifest['schedule'] for e in ['ort','managed']]
     local=local_terminal(base)
-    script="""import json,sys,time
+    selected,_,linux_frozen=profile(base,'native','whisper')
+    remote_pins={} if selected==base else linux_frozen['native_files']
+    remote_births=collection['terminal_processes']+([] if continuation is None else continuation['terminal_processes'])
+    script="""import json,sys,time,hashlib
+from pathlib import Path
 sys.path.insert(0,'/home/vermorel/Onnx/artifacts/asr-multilingual-amd-20260920/python')
 import psutil
 rows=json.loads(%r)
+pins=json.loads(%r)
+for name,wanted in pins.items():
+ p=Path(name)
+ with p.open('rb') as s:actual=dict(bytes=p.stat().st_size,sha256=hashlib.file_digest(s,'sha256').hexdigest())
+ assert actual==wanted,name
 for row in rows:
  try:assert psutil.Process(row['pid']).create_time()!=row['birth'],row
  except psutil.NoSuchProcess:pass
-print(json.dumps(dict(checked_at=time.time(),terminal_processes=rows)))
-""" % json.dumps(collection['terminal_processes'])
+print(json.dumps(dict(checked_at=time.time(),terminal_processes=rows,verified_native_files=pins)))
+""" % (json.dumps(remote_births),json.dumps(remote_pins))
     response=subprocess.run(['ssh','-i',KEY,'-o','BatchMode=yes',HOST,'python3 -B -'],input=script,text=True,encoding='utf-8',capture_output=True,check=True)
     terminal=dict(local=local,amd=json.loads(response.stdout))
     write(base/'verification.json',dict(passed=True,refusals=refusals,score_checks=score_checks,terminal=terminal,application_passed=audit['application_passed']))
@@ -155,9 +165,14 @@ print(json.dumps(dict(checked_at=time.time(),terminal_processes=rows)))
     for path in sorted(Path(__file__).parent.glob('*.py')):
         shutil.copyfile(path,snapshot/path.name);assert pin(path)==pin(snapshot/path.name)
         sources[path.relative_to(root).as_posix()]=pin(path)
+    linux_source=Path(__file__).parent.parent/'natural-meetings-linux'
+    (snapshot/'linux').mkdir()
+    for path in sorted(linux_source.glob('*.py')):
+        shutil.copyfile(path,snapshot/'linux'/path.name);assert pin(path)==pin(snapshot/'linux'/path.name)
+        sources[path.relative_to(root).as_posix()]=pin(path)
     record=dict(schema=1,closed=True,execution_passed=True,application_passed=audit['application_passed'],closed_at=time.time(),
         source_commit=frozen['source_commit'],all_owned_processes_terminal=True,terminal=terminal,sources=sources,
-        external_pins=dict(frozen['native_files'],**frozen['scorer_files']),
+        external_pins=dict(frozen['native_files'],**frozen['scorer_files']),remote_external_pins=remote_pins,
         files={p.relative_to(base).as_posix():pin(p) for p in sorted(base.rglob('*')) if p.is_file()})
     write(base/'closed.json',record);print('Closed',len(record['files']),'files; application pass',record['application_passed'],'receipt',pin(base/'closed.json')['sha256'])
 

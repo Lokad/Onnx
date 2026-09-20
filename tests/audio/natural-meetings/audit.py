@@ -9,7 +9,7 @@ import re
 import wave
 import numpy as np
 from common import NAMES,load,pin,read,write
-from evidence import directory,failed_attempt,recovery_ready
+from evidence import directory,failed_attempt,recovery_ready,profile
 
 
 def original_functions(path,names,scope):
@@ -40,6 +40,8 @@ def compare(actual,expected,family):
 
 
 def worker(value,manifest,base,engine,family):
+    selected,selected_manifest,_=profile(base,engine,family)
+    if selected!=base:base,manifest=selected,selected_manifest
     assert value['schema']==1 and value['engine']==engine and value['family']==family
     assert value['affinity']==4 and value['held_outputs_unchanged'] is True
     assert value['manifest_sha256']==pin(base/'manifest.json')['sha256']
@@ -59,14 +61,16 @@ def worker(value,manifest,base,engine,family):
             assert all(type(a) is int and type(b) is int and 0<=a<=b for a,b in zip(row['gc_before'],row['gc_after']))
     else:
         assert value['runner_sha256']==pin(base/'runtime/native.py')['sha256'] and value['versions']==manifest['versions']
-        assert value['python_binary']==manifest['native_files']['C:/Python313/python.exe']
+        python='/usr/bin/python3.12' if manifest.get('protocol')=='natural-meeting-native-linux-v1' else 'C:/Python313/python.exe'
+        assert value['python_binary']==manifest['native_files'][python]
         assert value['flags']==dict(OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1')
         assert value['native_settings']==dict(provider='CPUExecutionProvider',intra_threads=1,inter_threads=1,sequential=True,graph_optimizations='all',spinning=False)
         nonsilent=[w for row in value['records'] for w in row['result']['windows'] if w['decoding']['stop_reason']!='SilentInput']
         if family=='parakeet':assert value['reference_checks']['original_decoder_crosschecks']==len(nonsilent)
         else:
             assert value['reference_checks']['checked_arrays']==sum(2+len(w['decoding']['token_ids']) for w in nonsilent)
-            assert value['reference_checks']['borrowed_function_body_sha256']==read(base/'reference-wrapper-check.json')['borrowed_function_body_sha256']
+            body=manifest.get('borrowed_function_body_sha256') or read(base/'reference-wrapper-check.json')['borrowed_function_body_sha256']
+            assert value['reference_checks']['borrowed_function_body_sha256']==body
 
 
 def main():

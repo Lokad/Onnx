@@ -47,3 +47,20 @@ with the same human-reference policy and no changed numerical tolerance. The
 first dependency-check failure from Python-version-dependent `ast.dump` formatting
 is retained; a separate portable tree comparison and exact generator/frontend
 file hashes resolve that check without changing decoder code.
+
+After the actual worker and supervisor births are terminal, run
+`collect.py --artifact artifacts/asr-native-linux-20260920 --original
+artifacts/asr-natural-meetings-20260920` locally. It checks all frozen sources,
+model/audio identities and thirty installed native files remotely, then copies
+the complete metadata/process inventory into the original artifact's new
+`native-linux-collected` directory. The large installed `python` tree stays on
+the VM, bound by binary hashes and retained wheel installation reports. Local
+source proofs, failed dependency check and launch evidence are copied into
+`native-linux-local`. No existing collected evidence is overwritten.
+
+Use the original natural-meetings audit, resource audit, closure and report
+commands after collection. They select Linux only for native Whisper, retain the
+Windows memory failure and retry refusal, verify unchanged case/model/decoding
+policy, and separately compare the repeated first meeting. Closure freshly checks
+the Linux process births and native binary hashes over SSH. The final receipt
+includes both collection inventories and all postprocessing sources.
