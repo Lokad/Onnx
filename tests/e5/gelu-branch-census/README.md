@@ -6,6 +6,11 @@ often enough to justify a conditional prototype. It captures all twelve e5
 BiasGelu nodes on the five canonical inputs using the unchanged qualified core.
 It does not measure latency or implement an optimization.
 
+The [completed census](results-20260920.md) finds 10.31–12.01% all-small vectors
+across the primary cases, with almost all vectors in the final layer qualifying.
+It passes the investigation screen below; a conditional prototype is the next
+step. [All counts and identities](observations-20260920.json) are retained.
+
 The prioritization screen, frozen before the all-layer capture, requires at
 least 10% all-small vectors or 40% all-large vectors in at least one primary
 case. These are investigation thresholds, not speedup predictions. The smaller
@@ -24,8 +29,9 @@ The retained qualified binary is under
 Commit source, then use Python with psutil7.0.0:
 
 ```powershell
-python -X utf8 -B tests/e5/gelu-branch-census/run.py --artifact <new-artifact>
-python -X utf8 -B tests/e5/gelu-branch-census/audit.py --artifact <new-artifact> --output <new-artifact>/audit.json
+$censusPython = 'artifacts/asr-labeled-20260919/venv/Scripts/python.exe'
+& $censusPython -X utf8 -B tests/e5/gelu-branch-census/run.py --artifact <new-artifact>
+& $censusPython -X utf8 -B tests/e5/gelu-branch-census/audit.py --artifact <new-artifact> --output <new-artifact>/audit.json
 ```
 
 The auditor also requires NumPy (retained environment:2.2.4). The supervisor

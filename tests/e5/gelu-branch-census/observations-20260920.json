@@ -1,0 +1,591 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "name": "e5-8tok",
+      "max_native_error": 8.940696716308594e-07,
+      "values": 147456,
+      "vectors": 18432,
+      "small_lanes": 83798,
+      "all_small": 1973,
+      "all_large": 138,
+      "mixed": 16321,
+      "all_small_fraction": 0.10704210069444445,
+      "all_large_fraction": 0.007486979166666667
+    },
+    {
+      "name": "e5-30tok",
+      "max_native_error": 1.3709068298339844e-06,
+      "values": 552960,
+      "vectors": 69120,
+      "small_lanes": 317362,
+      "all_small": 7128,
+      "all_large": 376,
+      "mixed": 61616,
+      "all_small_fraction": 0.103125,
+      "all_large_fraction": 0.005439814814814815
+    },
+    {
+      "name": "e5-30pad128",
+      "max_native_error": 1.471489667892456e-06,
+      "values": 2359296,
+      "vectors": 294912,
+      "small_lanes": 1486266,
+      "all_small": 35411,
+      "all_large": 610,
+      "mixed": 258891,
+      "all_small_fraction": 0.12007310655381945,
+      "all_large_fraction": 0.002068413628472222
+    },
+    {
+      "name": "e5-128tok",
+      "max_native_error": 1.2442469596862793e-06,
+      "values": 2359296,
+      "vectors": 294912,
+      "small_lanes": 1407790,
+      "all_small": 33424,
+      "all_large": 1139,
+      "mixed": 260349,
+      "all_small_fraction": 0.11333550347222222,
+      "all_large_fraction": 0.0038621690538194445
+    },
+    {
+      "name": "e5-512tok",
+      "max_native_error": 1.6391277313232422e-06,
+      "values": 9437184,
+      "vectors": 1179648,
+      "small_lanes": 5689031,
+      "all_small": 137891,
+      "all_large": 4814,
+      "mixed": 1036943,
+      "all_small_fraction": 0.1168916490342882,
+      "all_large_fraction": 0.004080878363715278
+    }
+  ],
+  "prototype_screen_passed": true,
+  "interpretation": "Prioritization screen only; no speedup, optimality or full-model timing conclusion",
+  "process": {
+    "bytes": 1605,
+    "sha256": "bd6eb607c390f1e5584f13ecea742922d6484d24fb23a4ee4de7483b00f88120"
+  },
+  "capture": {
+    "bytes": 76321,
+    "sha256": "8136074a46198e3b9f5b83d358315042aae0eb12e9121f920e3aeeb0361e6a5f"
+  },
+  "frozen": {
+    "bytes": 4357,
+    "sha256": "0f2249206fb9baa8c246fb7387318616a8c2bee88c4d02d1148a90c78f6936d3"
+  },
+  "auditor": {
+    "bytes": 6314,
+    "sha256": "1b04db12d6efad3f928c3a3526782f67b492003f40b30867a7ae317713f9227b"
+  },
+  "numpy": "2.2.4",
+  "samples": 12,
+  "peak_rss": 2121388032,
+  "minimum_available": 27275333632,
+  "closed": {
+    "bytes": 34040,
+    "sha256": "9d23fb9f8b38b43ecbdb333707a7259698d0477533a279613d3bfaffc23a650b"
+  },
+  "source_commit": "1cecce04887036ddd7567d3bc7834b82789d79b4",
+  "refusals": [
+    "missing_case",
+    "missing_layer",
+    "wrong_count",
+    "wrong_probe",
+    "changed_raw_float_bit"
+  ],
+  "layers": {
+    "e5-8tok": [
+      {
+        "index": 0,
+        "name": "/encoder/layer.0/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 1,
+        "all_large": 28,
+        "mixed": 1507
+      },
+      {
+        "index": 1,
+        "name": "/encoder/layer.1/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 0,
+        "all_large": 21,
+        "mixed": 1515
+      },
+      {
+        "index": 2,
+        "name": "/encoder/layer.2/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 1,
+        "all_large": 13,
+        "mixed": 1522
+      },
+      {
+        "index": 3,
+        "name": "/encoder/layer.3/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 3,
+        "all_large": 16,
+        "mixed": 1517
+      },
+      {
+        "index": 4,
+        "name": "/encoder/layer.4/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 2,
+        "all_large": 11,
+        "mixed": 1523
+      },
+      {
+        "index": 5,
+        "name": "/encoder/layer.5/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 6,
+        "all_large": 14,
+        "mixed": 1516
+      },
+      {
+        "index": 6,
+        "name": "/encoder/layer.6/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 36,
+        "all_large": 20,
+        "mixed": 1480
+      },
+      {
+        "index": 7,
+        "name": "/encoder/layer.7/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 18,
+        "all_large": 15,
+        "mixed": 1503
+      },
+      {
+        "index": 8,
+        "name": "/encoder/layer.8/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 55,
+        "all_large": 0,
+        "mixed": 1481
+      },
+      {
+        "index": 9,
+        "name": "/encoder/layer.9/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 172,
+        "all_large": 0,
+        "mixed": 1364
+      },
+      {
+        "index": 10,
+        "name": "/encoder/layer.10/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 152,
+        "all_large": 0,
+        "mixed": 1384
+      },
+      {
+        "index": 11,
+        "name": "/encoder/layer.11/intermediate/dense/Add",
+        "vectors": 1536,
+        "all_small": 1527,
+        "all_large": 0,
+        "mixed": 9
+      }
+    ],
+    "e5-30tok": [
+      {
+        "index": 0,
+        "name": "/encoder/layer.0/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 1,
+        "all_large": 107,
+        "mixed": 5652
+      },
+      {
+        "index": 1,
+        "name": "/encoder/layer.1/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 4,
+        "all_large": 67,
+        "mixed": 5689
+      },
+      {
+        "index": 2,
+        "name": "/encoder/layer.2/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 18,
+        "all_large": 33,
+        "mixed": 5709
+      },
+      {
+        "index": 3,
+        "name": "/encoder/layer.3/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 15,
+        "all_large": 52,
+        "mixed": 5693
+      },
+      {
+        "index": 4,
+        "name": "/encoder/layer.4/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 24,
+        "all_large": 37,
+        "mixed": 5699
+      },
+      {
+        "index": 5,
+        "name": "/encoder/layer.5/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 39,
+        "all_large": 27,
+        "mixed": 5694
+      },
+      {
+        "index": 6,
+        "name": "/encoder/layer.6/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 93,
+        "all_large": 30,
+        "mixed": 5637
+      },
+      {
+        "index": 7,
+        "name": "/encoder/layer.7/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 72,
+        "all_large": 21,
+        "mixed": 5667
+      },
+      {
+        "index": 8,
+        "name": "/encoder/layer.8/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 161,
+        "all_large": 1,
+        "mixed": 5598
+      },
+      {
+        "index": 9,
+        "name": "/encoder/layer.9/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 508,
+        "all_large": 1,
+        "mixed": 5251
+      },
+      {
+        "index": 10,
+        "name": "/encoder/layer.10/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 439,
+        "all_large": 0,
+        "mixed": 5321
+      },
+      {
+        "index": 11,
+        "name": "/encoder/layer.11/intermediate/dense/Add",
+        "vectors": 5760,
+        "all_small": 5754,
+        "all_large": 0,
+        "mixed": 6
+      }
+    ],
+    "e5-30pad128": [
+      {
+        "index": 0,
+        "name": "/encoder/layer.0/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 1,
+        "all_large": 218,
+        "mixed": 24357
+      },
+      {
+        "index": 1,
+        "name": "/encoder/layer.1/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 22,
+        "all_large": 120,
+        "mixed": 24434
+      },
+      {
+        "index": 2,
+        "name": "/encoder/layer.2/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 113,
+        "all_large": 87,
+        "mixed": 24376
+      },
+      {
+        "index": 3,
+        "name": "/encoder/layer.3/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 133,
+        "all_large": 53,
+        "mixed": 24390
+      },
+      {
+        "index": 4,
+        "name": "/encoder/layer.4/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 140,
+        "all_large": 52,
+        "mixed": 24384
+      },
+      {
+        "index": 5,
+        "name": "/encoder/layer.5/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 503,
+        "all_large": 27,
+        "mixed": 24046
+      },
+      {
+        "index": 6,
+        "name": "/encoder/layer.6/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 665,
+        "all_large": 30,
+        "mixed": 23881
+      },
+      {
+        "index": 7,
+        "name": "/encoder/layer.7/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 511,
+        "all_large": 21,
+        "mixed": 24044
+      },
+      {
+        "index": 8,
+        "name": "/encoder/layer.8/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 2125,
+        "all_large": 1,
+        "mixed": 22450
+      },
+      {
+        "index": 9,
+        "name": "/encoder/layer.9/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 4175,
+        "all_large": 1,
+        "mixed": 20400
+      },
+      {
+        "index": 10,
+        "name": "/encoder/layer.10/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 2453,
+        "all_large": 0,
+        "mixed": 22123
+      },
+      {
+        "index": 11,
+        "name": "/encoder/layer.11/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 24570,
+        "all_large": 0,
+        "mixed": 6
+      }
+    ],
+    "e5-128tok": [
+      {
+        "index": 0,
+        "name": "/encoder/layer.0/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 5,
+        "all_large": 445,
+        "mixed": 24126
+      },
+      {
+        "index": 1,
+        "name": "/encoder/layer.1/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 22,
+        "all_large": 231,
+        "mixed": 24323
+      },
+      {
+        "index": 2,
+        "name": "/encoder/layer.2/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 60,
+        "all_large": 106,
+        "mixed": 24410
+      },
+      {
+        "index": 3,
+        "name": "/encoder/layer.3/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 50,
+        "all_large": 144,
+        "mixed": 24382
+      },
+      {
+        "index": 4,
+        "name": "/encoder/layer.4/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 105,
+        "all_large": 97,
+        "mixed": 24374
+      },
+      {
+        "index": 5,
+        "name": "/encoder/layer.5/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 175,
+        "all_large": 69,
+        "mixed": 24332
+      },
+      {
+        "index": 6,
+        "name": "/encoder/layer.6/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 414,
+        "all_large": 22,
+        "mixed": 24140
+      },
+      {
+        "index": 7,
+        "name": "/encoder/layer.7/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 572,
+        "all_large": 17,
+        "mixed": 23987
+      },
+      {
+        "index": 8,
+        "name": "/encoder/layer.8/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 1329,
+        "all_large": 3,
+        "mixed": 23244
+      },
+      {
+        "index": 9,
+        "name": "/encoder/layer.9/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 3334,
+        "all_large": 4,
+        "mixed": 21238
+      },
+      {
+        "index": 10,
+        "name": "/encoder/layer.10/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 2783,
+        "all_large": 1,
+        "mixed": 21792
+      },
+      {
+        "index": 11,
+        "name": "/encoder/layer.11/intermediate/dense/Add",
+        "vectors": 24576,
+        "all_small": 24575,
+        "all_large": 0,
+        "mixed": 1
+      }
+    ],
+    "e5-512tok": [
+      {
+        "index": 0,
+        "name": "/encoder/layer.0/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 27,
+        "all_large": 1655,
+        "mixed": 96622
+      },
+      {
+        "index": 1,
+        "name": "/encoder/layer.1/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 31,
+        "all_large": 1050,
+        "mixed": 97223
+      },
+      {
+        "index": 2,
+        "name": "/encoder/layer.2/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 179,
+        "all_large": 729,
+        "mixed": 97396
+      },
+      {
+        "index": 3,
+        "name": "/encoder/layer.3/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 85,
+        "all_large": 779,
+        "mixed": 97440
+      },
+      {
+        "index": 4,
+        "name": "/encoder/layer.4/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 540,
+        "all_large": 341,
+        "mixed": 97423
+      },
+      {
+        "index": 5,
+        "name": "/encoder/layer.5/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 1234,
+        "all_large": 122,
+        "mixed": 96948
+      },
+      {
+        "index": 6,
+        "name": "/encoder/layer.6/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 2143,
+        "all_large": 50,
+        "mixed": 96111
+      },
+      {
+        "index": 7,
+        "name": "/encoder/layer.7/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 1883,
+        "all_large": 64,
+        "mixed": 96357
+      },
+      {
+        "index": 8,
+        "name": "/encoder/layer.8/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 5926,
+        "all_large": 16,
+        "mixed": 92362
+      },
+      {
+        "index": 9,
+        "name": "/encoder/layer.9/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 14624,
+        "all_large": 7,
+        "mixed": 83673
+      },
+      {
+        "index": 10,
+        "name": "/encoder/layer.10/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 12930,
+        "all_large": 1,
+        "mixed": 85373
+      },
+      {
+        "index": 11,
+        "name": "/encoder/layer.11/intermediate/dense/Add",
+        "vectors": 98304,
+        "all_small": 98289,
+        "all_large": 0,
+        "mixed": 15
+      }
+    ]
+  }
+}

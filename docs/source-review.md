@@ -133,6 +133,16 @@ protocol for its intended small contrasts without attributing the effect to a
 particular collector or cache mechanism. No candidate follows under the failed
 protocol, and earlier inconclusive kernel results remain unchanged.
 
+The later [complete e5 GELU branch census](../tests/e5/gelu-branch-census/results-20260920.md)
+identifies a distinct conditional-evaluation opportunity. The current erf body
+evaluates both polynomials on every eight-lane vector; 10.31–12.01% of vectors
+across the primary cases actually take only the small-value branch. The final
+feed-forward layer is almost entirely small, which older first-layer captures
+would have missed. All sixty captured node outputs reproduce the product's
+bits, and independent float32 counts and complete native model checks pass.
+This justifies a bounded shortcut prototype, with branch overhead included;
+it does not yet establish a faster kernel, model gain or new default.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |
