@@ -83,3 +83,9 @@ The first failed local attempt and a bounded console-host diagnosis remain in
 `e5-interleaved-processes-20260920`; the second local attempt remains in `-v2-`.
 Neither failed attempt contains accepted timing evidence. The focused plan is
 `.agent/m2-interleaved-processes-20260920.md`.
+
+The first completed AMD cohort identified a timestamp-domain check in the
+offline auditor. The [source-backed correction](birth-clock-correction-20260920.md)
+preserves frozen tools, producer, samples and thresholds. Use
+`audit_birth_clock.py` and `close_phase_birth_clock.py` for final audit/closure;
+four tests cover the actual Linux records and continued identity/order refusal.
