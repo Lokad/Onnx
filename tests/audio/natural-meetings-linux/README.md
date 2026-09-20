@@ -22,14 +22,18 @@ proves that both borrowed decoder function bodies are identical. The portable
 body hash is `43272a768eadeac0fd6eba53bee1c79ec6cf5f86aab3db8af8b6e7cab34893d2`.
 Original generator and frontend file hashes are checked independently.
 
-The Linux runner is prepared, its input-only proof passes, and the frozen recording
-sequence is running. Source is `4a768fd`; frozen manifest SHA256 is
+The Linux runner and all three recording calls completed successfully. All actual
+worker/supervisor process identities are terminal. Source is `4a768fd`; frozen manifest SHA256 is
 `9f866075940948a4d0d776188675fe255f10e2f2377e385afa7712462c1bc514`.
 The schedule remains ES2004a 600 seconds, IS1009a 600 seconds, and ES2004a
 30-second recovery in one fresh native process, with unchanged recording options
 and explicit English. The VM profile requires 13 GiB available at launch, less
 than 14 GiB group RSS, at least 1 GiB available during execution, and at most two
-hours. Recording results and final comparison remain pending.
+hours. All three public comparisons pass, including exact text, tokens, timestamps,
+seek and stop decisions; the first meeting also agrees with the preserved Windows
+result. [Complete scores and evidence](../natural-meetings/results-20260920.md)
+are published locally. The combined receipt binds 316 files and preserves the
+Windows attempts, initial dependency-check failure and corrected closure writer.
 
 For a fresh artifact, `prepare.py --root <checkout> --artifact <new-artifact>
 --original <original-natural-ASR-artifact>` verifies every original frozen file,

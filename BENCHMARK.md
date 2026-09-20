@@ -200,7 +200,37 @@ comparison or independent long-conversation accuracy claim.
 
 ### Audio accuracy and numerical agreement
 
-A new pyannote comparison covers **two uninterrupted ten-minute AMI meetings**,
+Parakeet and Whisper now have complete native comparisons on **two uninterrupted
+ten-minute AMI meetings**, ES2004a and IS1009a. Each recognizer processes the same
+original PCM with Lokad.Onnx and Microsoft ORT 1.29.0, followed by a thirty-second
+recovery request. All twelve selected requests complete; all six comparisons
+match public text, tokens, windows, boundaries, timestamps, seek and stop decisions.
+
+| Recognizer, both meetings | Lokad word errors / reference | ORT word errors / reference | Lokad WER | ORT WER | Lokad CER | ORT CER |
+|---|---:|---:|---:|---:|---:|---:|
+| Parakeet TDT 0.6B V3 | 570 / 2,461 | 570 / 2,461 | 23.1613% | 23.1613% | 18.2018% | 18.2018% |
+| Whisper Large V3 Turbo | 668 / 2,461 | 668 / 2,461 | 27.1434% | 27.1434% | 20.6753% | 20.6753% |
+
+The first 600 seconds and scoring rules were fixed before recognition. Human
+references retain complete lexical words, fillers and truncated spellings, ordered
+by annotated time and speaker. This is a chronological mixed-speaker WER
+observation: overlapping speech makes reference ordering ambiguous, and these
+two excerpts are not an official AMI benchmark or a general recognizer ranking.
+The correlated recovery is excluded from scores. Both independent edit-distance
+and JiWER calculations agree; every transcript and word alignment is retained.
+
+Managed requests run on AMD; native Parakeet uses Windows and native Whisper
+uses AMD Linux. The original Windows Whisper worker stopped at its fixed memory
+guard, and its declared Windows retry refused before inference. Both remain
+recorded. The complete Linux sequence also matches the preserved Windows first
+meeting. These accuracy replays include native validation and do not replace the
+matched latency baselines above. Whisper confidence differences are diagnostic
+(maximum `3.2227563e-6`); existing intermediate numerical gates remain unchanged.
+[Per-meeting scores, both engines' timings, resources and failure history](tests/audio/natural-meetings/results-20260920.md)
+and [complete outputs and edit alignments](tests/audio/natural-meetings/observations-20260920.json)
+are available. All process identities are terminal and the evidence audit passes.
+
+The pyannote comparison covers the **same two ten-minute AMI meetings**,
 each with four human-annotated speakers and overlapping speech. Both engines
 produce the same ordinary/exclusive timelines and human-label scores:
 
@@ -298,9 +328,9 @@ duration-logit arrays still fail. Whisper's
 [full-pipeline numerical check](tests/whisper/numerical-20260919.md) retains
 21 encoder and 405 logit-array failures despite identical token choices.
 The labeled pyannote trace retains 19 failed filterbank values on Windows and
-24 on AMD. The five-language ASR check and two natural pyannote meetings add
-bounded human-label accuracy evidence. Broader natural-noise coverage and
-independent natural long-conversation ASR remain open. Neither these observations
+24 on AMD. The five-language ASR check and two natural meetings for all three
+audio applications add bounded human-label accuracy evidence. Broader natural
+noise, language and conversation coverage remain open. Neither these observations
 nor the maximum-duration application/resource checks close the numerical gaps.
 
 ## Historical results and methodology — through 2026-09-13

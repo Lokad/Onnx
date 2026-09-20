@@ -2,8 +2,11 @@
 
 This lane prepares human word references for the same two independently selected
 ten-minute AMI excerpts as the [diarization evaluation](../../pyannote/natural-meetings/README.md).
-Recognition results are pending. It changes no model, production policy or
-numerical tolerance.
+[Results are complete](results-20260920.md): all six public comparisons pass,
+and both engines have identical aggregate WER of 23.1613% for Parakeet and
+27.1434% for Whisper. This lane changes no model, production policy or numerical
+tolerance. The failed Windows Whisper attempt and refused retry remain recorded;
+the complete Whisper reference uses the separately qualified Linux continuation.
 
 Use the official [AMI manual annotations v1.6.2](https://groups.inf.ed.ac.uk/ami/download/),
 CC BY 4.0, archive SHA256
