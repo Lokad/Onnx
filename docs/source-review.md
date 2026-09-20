@@ -122,6 +122,17 @@ this activation-packing strategy. The copy/pool costs remain included, with no
 claim that their individual contributions were isolated. Neither variant is
 promoted, and no unchanged follow-up is queued.
 
+The [paired managed A/A experiment](../tests/e5/paired-aa/results-20260920.md)
+now tests two separately loaded, byte-identical cores with real public Memory
+execution. Twenty AMD workers retain every measured call and pass all output,
+ownership and resource checks. Aggregate B/A means pass, but individual visits
+and AB/BA order contrasts fail at some lengths; the eight-token request contrast
+is 1.056734 against the predeclared 1.01 limit. Separate product static state
+does not eliminate shared-runtime or ordering effects. This rejects the tested
+protocol for its intended small contrasts without attributing the effect to a
+particular collector or cache mechanism. No candidate follows under the failed
+protocol, and earlier inconclusive kernel results remain unchanged.
+
 ## Valuable import units and their disposition
 
 | Voice-branch material | Integration decision |

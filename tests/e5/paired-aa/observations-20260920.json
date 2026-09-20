@@ -1,0 +1,757 @@
+{
+  "schema": 1,
+  "execution_passed": true,
+  "timing": {
+    "passed": false,
+    "observations": [
+      {
+        "name": "e5-8tok",
+        "boundaries": {
+          "execute": {
+            "a_seconds": 0.00600472201171875,
+            "b_seconds": 0.00599891834375,
+            "ratio": 0.9990334826562456,
+            "visits": [
+              1.006982399309436,
+              0.9870852635009272,
+              1.0131911172882322,
+              0.9890375868094127
+            ],
+            "order_ratios": [
+              1.0132178175769582,
+              0.9850495256280825
+            ],
+            "order_contrast": 1.028595812917036,
+            "paired_solo": [
+              1.0164475415761287,
+              1.0248904349740302
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": false,
+              "order": false,
+              "paired_solo": true
+            }
+          },
+          "request": {
+            "a_seconds": 0.00616036614453125,
+            "b_seconds": 0.00615761341015625,
+            "ratio": 0.9995531540966207,
+            "visits": [
+              1.0084441584248087,
+              0.9872126149414528,
+              1.0144760800716035,
+              0.9882705618980787
+            ],
+            "order_ratios": [
+              1.027507949144956,
+              0.9723430614421126
+            ],
+            "order_contrast": 1.0567339757852816,
+            "paired_solo": [
+              1.032590390763611,
+              1.0415382594267877
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": false,
+              "order": false,
+              "paired_solo": true
+            }
+          }
+        }
+      },
+      {
+        "name": "e5-30tok",
+        "boundaries": {
+          "execute": {
+            "a_seconds": 0.01687585582421875,
+            "b_seconds": 0.01688207799609375,
+            "ratio": 1.0003687025973564,
+            "visits": [
+              1.0044716420381117,
+              1.0049659125090904,
+              1.000947902669413,
+              0.9910905959955012
+            ],
+            "order_ratios": [
+              1.0019947966747011,
+              0.9987473153468714
+            ],
+            "order_contrast": 1.003251554500251,
+            "paired_solo": [
+              0.9944966487834729,
+              0.9970932183052427
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": true,
+              "order": true,
+              "paired_solo": true
+            }
+          },
+          "request": {
+            "a_seconds": 0.017097462390625,
+            "b_seconds": 0.01710595287109375,
+            "ratio": 1.0004965930191727,
+            "visits": [
+              1.0046709548445263,
+              1.0050310538340976,
+              1.001021305221637,
+              0.991262219972216
+            ],
+            "order_ratios": [
+              1.008303125126908,
+              0.992761449865615
+            ],
+            "order_contrast": 1.0156549947254667,
+            "paired_solo": [
+              1.003735033743083,
+              1.0065559292667752
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": true,
+              "order": false,
+              "paired_solo": true
+            }
+          }
+        }
+      },
+      {
+        "name": "e5-30pad128",
+        "boundaries": {
+          "execute": {
+            "a_seconds": 0.06442458771875,
+            "b_seconds": 0.06440931189453125,
+            "ratio": 0.9997628882890888,
+            "visits": [
+              0.9977242921808623,
+              1.0043776096571788,
+              0.9948599729464905,
+              1.002211986779347
+            ],
+            "order_ratios": [
+              1.0005690499991173,
+              0.9989580448444682
+            ],
+            "order_contrast": 1.0016126855006209,
+            "paired_solo": [
+              0.9945061232673782,
+              1.0003259543184384
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": true,
+              "order": true,
+              "paired_solo": true
+            }
+          },
+          "request": {
+            "a_seconds": 0.0646456283828125,
+            "b_seconds": 0.06462908758203124,
+            "ratio": 0.9997441311780078,
+            "visits": [
+              0.9977991610363834,
+              1.0043044305613218,
+              0.9948404553777999,
+              1.0021536420257495
+            ],
+            "order_ratios": [
+              1.0025493458878032,
+              0.996949036503229
+            ],
+            "order_contrast": 1.0056174480134081,
+            "paired_solo": [
+              0.9969614541464085,
+              1.002728745503265
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": true,
+              "order": true,
+              "paired_solo": true
+            }
+          }
+        }
+      },
+      {
+        "name": "e5-128tok",
+        "boundaries": {
+          "execute": {
+            "a_seconds": 0.06454571233203125,
+            "b_seconds": 0.06461561719140625,
+            "ratio": 1.0010830287070875,
+            "visits": [
+              0.9977814812567888,
+              1.002823896203229,
+              1.0008775816265967,
+              1.0028542671447913
+            ],
+            "order_ratios": [
+              1.00189760545048,
+              1.0002677811053962
+            ],
+            "order_contrast": 1.0016293880257572,
+            "paired_solo": [
+              1.0026388403561446,
+              1.0029277746568772
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": true,
+              "order": true,
+              "paired_solo": true
+            }
+          },
+          "request": {
+            "a_seconds": 0.0647734013515625,
+            "b_seconds": 0.0648458496328125,
+            "ratio": 1.0011184881407844,
+            "visits": [
+              0.9978977785802137,
+              1.0027671740764676,
+              1.0009475481978953,
+              1.0028671931537856
+            ],
+            "order_ratios": [
+              1.0036950666260638,
+              0.9985444952655144
+            ],
+            "order_contrast": 1.0051580789689094,
+            "paired_solo": [
+              1.0051761329560682,
+              1.0054845005001956
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": true,
+              "order": true,
+              "paired_solo": true
+            }
+          }
+        }
+      },
+      {
+        "name": "e5-512tok",
+        "boundaries": {
+          "execute": {
+            "a_seconds": 0.34389016633203123,
+            "b_seconds": 0.34334886068359377,
+            "ratio": 0.9984259344946932,
+            "visits": [
+              0.9940987469956668,
+              1.0019904561716133,
+              1.0027902561719277,
+              0.9949829896114822
+            ],
+            "order_ratios": [
+              1.0037449052268708,
+              0.9931356136937186
+            ],
+            "order_contrast": 1.010682621171638,
+            "paired_solo": [
+              0.9992004643070334,
+              0.9951832812095718
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": true,
+              "order": false,
+              "paired_solo": true
+            }
+          },
+          "request": {
+            "a_seconds": 0.3441231916875,
+            "b_seconds": 0.343581793734375,
+            "ratio": 0.998426732152314,
+            "visits": [
+              0.9941085539403778,
+              1.0019755298653676,
+              1.002797109942873,
+              0.9949847935546408
+            ],
+            "order_ratios": [
+              1.004044416479544,
+              0.9928409318800306
+            ],
+            "order_contrast": 1.011284269453213,
+            "paired_solo": [
+              0.9996973689228333,
+              0.995673290230621
+            ],
+            "gates": {
+              "aggregate": true,
+              "visits": true,
+              "order": false,
+              "paired_solo": true
+            }
+          }
+        }
+      }
+    ],
+    "scope": "Prospective managed A/A eligibility screens, not confidence intervals or ORT parity"
+  },
+  "maximum_error": 1.6391277313232422e-06,
+  "resources": {
+    "peak_rss": 2951020544,
+    "minimum_available_memory": 13058396160,
+    "samples": 3245,
+    "terminal_processes": [
+      {
+        "pid": 314648,
+        "start": 23139928
+      },
+      {
+        "pid": 314664,
+        "start": 23139952
+      },
+      {
+        "pid": 314756,
+        "start": 23146531
+      },
+      {
+        "pid": 314768,
+        "start": 23153211
+      },
+      {
+        "pid": 314870,
+        "start": 23160761
+      },
+      {
+        "pid": 314969,
+        "start": 23168309
+      },
+      {
+        "pid": 315147,
+        "start": 23181315
+      },
+      {
+        "pid": 315240,
+        "start": 23194314
+      },
+      {
+        "pid": 315258,
+        "start": 23201858
+      },
+      {
+        "pid": 315362,
+        "start": 23209402
+      },
+      {
+        "pid": 315458,
+        "start": 23216132
+      },
+      {
+        "pid": 315470,
+        "start": 23222711
+      },
+      {
+        "pid": 315567,
+        "start": 23229290
+      },
+      {
+        "pid": 315587,
+        "start": 23235973
+      },
+      {
+        "pid": 315686,
+        "start": 23243573
+      },
+      {
+        "pid": 315701,
+        "start": 23251123
+      },
+      {
+        "pid": 315724,
+        "start": 23264022
+      },
+      {
+        "pid": 315836,
+        "start": 23277075
+      },
+      {
+        "pid": 315933,
+        "start": 23284624
+      },
+      {
+        "pid": 315948,
+        "start": 23292171
+      },
+      {
+        "pid": 316054,
+        "start": 23298856
+      }
+    ],
+    "maximum_foreign_cpu_fraction": 0.0010857365982965565
+  },
+  "measured_calls": 3840,
+  "conditioning_calls": 57666,
+  "bundle_sha256": "98fb0b6fb21911b0d03c57558b5e03e37339208abdbc1753011514957d68d806",
+  "collection_sha256": "de46dfbe25dafd3e27d0081d47a910f5954cefb8026b720205b0eab1bd042a4e",
+  "auditor_sha256": "76804c18b4f95d0ba7158bce087763562568a12c4d3278037586ec142caafca3",
+  "distributions": [
+    {
+      "name": "e5-8tok",
+      "phase": "paired",
+      "arms": [
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.0059958295,
+          "execute_maximum_seconds": 0.006710707,
+          "request_median_seconds": 0.0061690065,
+          "request_maximum_seconds": 0.006880094,
+          "mean_reset_seconds": 0.0001556441328125,
+          "mean_allocated_bytes": 707752.28125,
+          "calls_with_gc_delta": 14,
+          "collection_deltas": [
+            14,
+            0,
+            0
+          ]
+        },
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.005970793,
+          "execute_maximum_seconds": 0.006789266,
+          "request_median_seconds": 0.0061369665,
+          "request_maximum_seconds": 0.007076621,
+          "mean_reset_seconds": 0.00015869506640625,
+          "mean_allocated_bytes": 706333.6875,
+          "calls_with_gc_delta": 8,
+          "collection_deltas": [
+            8,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e5-8tok",
+      "phase": "solo",
+      "arms": [
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.0058799035,
+          "execute_maximum_seconds": 0.006593209,
+          "request_median_seconds": 0.0059315215,
+          "request_maximum_seconds": 0.00687779,
+          "mean_reset_seconds": 5.83768046875e-05,
+          "mean_allocated_bytes": 707703.9375,
+          "calls_with_gc_delta": 5,
+          "collection_deltas": [
+            5,
+            0,
+            0
+          ]
+        },
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.0058366525,
+          "execute_maximum_seconds": 0.006412876,
+          "request_median_seconds": 0.0058910325,
+          "request_maximum_seconds": 0.00664584,
+          "mean_reset_seconds": 5.88087265625e-05,
+          "mean_allocated_bytes": 706270.25,
+          "calls_with_gc_delta": 6,
+          "collection_deltas": [
+            6,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e5-30tok",
+      "phase": "paired",
+      "arms": [
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.0168102835,
+          "execute_maximum_seconds": 0.022106522,
+          "request_median_seconds": 0.017049325,
+          "request_maximum_seconds": 0.022378093,
+          "mean_reset_seconds": 0.00022160656640625,
+          "mean_allocated_bytes": 843650.8125,
+          "calls_with_gc_delta": 12,
+          "collection_deltas": [
+            12,
+            1,
+            0
+          ]
+        },
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.016844355,
+          "execute_maximum_seconds": 0.021745074,
+          "request_median_seconds": 0.017092299,
+          "request_maximum_seconds": 0.022019128,
+          "mean_reset_seconds": 0.000223874875,
+          "mean_allocated_bytes": 842696.65625,
+          "calls_with_gc_delta": 14,
+          "collection_deltas": [
+            14,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e5-30tok",
+      "phase": "solo",
+      "arms": [
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.016774844999999997,
+          "execute_maximum_seconds": 0.018182132,
+          "request_median_seconds": 0.0168442395,
+          "request_maximum_seconds": 0.018240651,
+          "mean_reset_seconds": 6.4596890625e-05,
+          "mean_allocated_bytes": 843588.875,
+          "calls_with_gc_delta": 6,
+          "collection_deltas": [
+            6,
+            1,
+            0
+          ]
+        },
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.016752364999999998,
+          "execute_maximum_seconds": 0.018400837,
+          "request_median_seconds": 0.016811679,
+          "request_maximum_seconds": 0.018514258,
+          "mean_reset_seconds": 6.32443125e-05,
+          "mean_allocated_bytes": 842635.1875,
+          "calls_with_gc_delta": 7,
+          "collection_deltas": [
+            7,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e5-30pad128",
+      "phase": "paired",
+      "arms": [
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.0642576515,
+          "execute_maximum_seconds": 0.071300798,
+          "request_median_seconds": 0.0644535195,
+          "request_maximum_seconds": 0.071639211,
+          "mean_reset_seconds": 0.00022104066406250001,
+          "mean_allocated_bytes": 1448468.125,
+          "calls_with_gc_delta": 8,
+          "collection_deltas": [
+            8,
+            1,
+            0
+          ]
+        },
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.064263663,
+          "execute_maximum_seconds": 0.070506268,
+          "request_median_seconds": 0.0644906355,
+          "request_maximum_seconds": 0.070565708,
+          "mean_reset_seconds": 0.0002197756875,
+          "mean_allocated_bytes": 1447517.125,
+          "calls_with_gc_delta": 12,
+          "collection_deltas": [
+            12,
+            3,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e5-30pad128",
+      "phase": "solo",
+      "arms": [
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.0645860075,
+          "execute_maximum_seconds": 0.067346642,
+          "request_median_seconds": 0.0646427135,
+          "request_maximum_seconds": 0.067406602,
+          "mean_reset_seconds": 6.21720546875e-05,
+          "mean_allocated_bytes": 1448431.9375,
+          "calls_with_gc_delta": 5,
+          "collection_deltas": [
+            5,
+            0,
+            0
+          ]
+        },
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.0642431795,
+          "execute_maximum_seconds": 0.070208618,
+          "request_median_seconds": 0.0642981975,
+          "request_maximum_seconds": 0.070267347,
+          "mean_reset_seconds": 6.48869296875e-05,
+          "mean_allocated_bytes": 1447459,
+          "calls_with_gc_delta": 4,
+          "collection_deltas": [
+            4,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e5-128tok",
+      "phase": "paired",
+      "arms": [
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.06449355500000001,
+          "execute_maximum_seconds": 0.069623862,
+          "request_median_seconds": 0.064698376,
+          "request_maximum_seconds": 0.069679597,
+          "mean_reset_seconds": 0.00022768901953125,
+          "mean_allocated_bytes": 1448947.46875,
+          "calls_with_gc_delta": 11,
+          "collection_deltas": [
+            11,
+            4,
+            0
+          ]
+        },
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.0645012395,
+          "execute_maximum_seconds": 0.07093077,
+          "request_median_seconds": 0.06472023,
+          "request_maximum_seconds": 0.07122156,
+          "mean_reset_seconds": 0.00023023244140625,
+          "mean_allocated_bytes": 1447517.78125,
+          "calls_with_gc_delta": 9,
+          "collection_deltas": [
+            9,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e5-128tok",
+      "phase": "solo",
+      "arms": [
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.06422122599999999,
+          "execute_maximum_seconds": 0.067482235,
+          "request_median_seconds": 0.0642766095,
+          "request_maximum_seconds": 0.067540963,
+          "mean_reset_seconds": 6.4017328125e-05,
+          "mean_allocated_bytes": 1448899,
+          "calls_with_gc_delta": 4,
+          "collection_deltas": [
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.064191024,
+          "execute_maximum_seconds": 0.069388685,
+          "request_median_seconds": 0.064246218,
+          "request_maximum_seconds": 0.069472422,
+          "mean_reset_seconds": 6.51529609375e-05,
+          "mean_allocated_bytes": 1447473,
+          "calls_with_gc_delta": 5,
+          "collection_deltas": [
+            5,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e5-512tok",
+      "phase": "paired",
+      "arms": [
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.3429544,
+          "execute_maximum_seconds": 0.376256412,
+          "request_median_seconds": 0.3432377285,
+          "request_maximum_seconds": 0.376531789,
+          "mean_reset_seconds": 0.00023302535546875002,
+          "mean_allocated_bytes": 3821594.8125,
+          "calls_with_gc_delta": 12,
+          "collection_deltas": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "calls": 256,
+          "execute_median_seconds": 0.3426313205,
+          "execute_maximum_seconds": 0.362171657,
+          "request_median_seconds": 0.3429099175,
+          "request_maximum_seconds": 0.362454465,
+          "mean_reset_seconds": 0.00023293305078125,
+          "mean_allocated_bytes": 3818246.4375,
+          "calls_with_gc_delta": 9,
+          "collection_deltas": [
+            9,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "e5-512tok",
+      "phase": "solo",
+      "arms": [
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.3435040895,
+          "execute_maximum_seconds": 0.383683904,
+          "request_median_seconds": 0.343559603,
+          "request_maximum_seconds": 0.383741952,
+          "mean_reset_seconds": 6.202678125e-05,
+          "mean_allocated_bytes": 3821559.9375,
+          "calls_with_gc_delta": 4,
+          "collection_deltas": [
+            4,
+            0,
+            0
+          ]
+        },
+        {
+          "calls": 128,
+          "execute_median_seconds": 0.34485869599999996,
+          "execute_maximum_seconds": 0.37291092,
+          "request_median_seconds": 0.34491683900000003,
+          "request_maximum_seconds": 0.372975558,
+          "mean_reset_seconds": 6.41522734375e-05,
+          "mean_allocated_bytes": 3818212.875,
+          "calls_with_gc_delta": 6,
+          "collection_deltas": [
+            6,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "closed_sha256": "66efc803b7fe177bec64a51e6239114318bbe398244824a3512f939ff072e9e9",
+  "reporter_sha256": "288b50a9b5207d59c466c148b1a40ca128ea796a876f0c712fdba8d38fa334ad"
+}

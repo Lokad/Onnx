@@ -89,6 +89,15 @@ Its [pointer-addressing follow-up](tests/e5/projection-input-pointer/results-202
 emits the intended simpler instructions but still regresses those banks by
 2.11%/2.83%, including copying. It also remains outside production.
 
+A subsequent [paired managed A/A experiment](tests/e5/paired-aa/results-20260920.md)
+retains 3,840 measured calls from twenty AMD workers using two identical engines
+per process. Output, ownership and resource checks pass. Aggregate A/A means
+are close, but worker or ordering screens fail at 8, 30 and 512 tokens across
+the two timing boundaries. In particular, the eight-token Reset-plus-Execute
+AB/BA ratio contrast is 1.056734 against a 1.01 upper limit. This protocol is
+not qualified for the intended small performance decisions. It contains no
+native ORT timing and leaves the e5 scoreboard and optimization defaults unchanged.
+
 ### Audio: earlier public API observations
 
 The ASR rows use the same twenty clean-English recordings: ten speakers,
