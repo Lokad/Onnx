@@ -1,0 +1,1251 @@
+{
+  "campaign_passed": false,
+  "closure_passed": true,
+  "reason": "available-memory reserve",
+  "completed": [
+    {
+      "name": "conformance-00-parakeet-ort",
+      "calls": 20,
+      "resource": {
+        "samples": 92,
+        "peak_rss": 2806886400,
+        "min_available": 13453160448,
+        "min_disk": 177201152,
+        "max_gap": 0.5575016490183771,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0007545866268330311,
+          "foreign_cpu_seconds": 0.1400000000000106,
+          "wall_seconds": 46.38301124802092,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      "result": {
+        "bytes": 64691,
+        "sha256": "9f3895ac505aa6c861564744548c2c35ef8ceded4257182456c89492d0fe7897"
+      }
+    },
+    {
+      "name": "conformance-01-parakeet-managed",
+      "calls": 20,
+      "resource": {
+        "samples": 178,
+        "peak_rss": 9227821056,
+        "min_available": 6763458560,
+        "min_disk": 176906240,
+        "max_gap": 0.5128792970208451,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.002007295042988952,
+          "foreign_cpu_seconds": 0.7199999999999978,
+          "wall_seconds": 89.67291611101246,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      "result": {
+        "bytes": 64990,
+        "sha256": "07a9416211906f67a5b0a3dea5eeab906dbbcd363c6f9bd93f8546ba657115b8"
+      }
+    },
+    {
+      "name": "conformance-02-pyannote-ort",
+      "calls": 4,
+      "resource": {
+        "samples": 35,
+        "peak_rss": 638078976,
+        "min_available": 15414775808,
+        "min_disk": 176635904,
+        "max_gap": 0.9254898650106043,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0002770470364826335,
+          "foreign_cpu_seconds": 0.01999999999999602,
+          "wall_seconds": 18.047476931998972,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 0,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      "result": {
+        "bytes": 84896,
+        "sha256": "543795a195ca8e95e175a473a0d06aac8dff2fca1792287ae77c4194805875ce"
+      }
+    },
+    {
+      "name": "conformance-03-pyannote-managed",
+      "calls": 4,
+      "resource": {
+        "samples": 110,
+        "peak_rss": 2799341568,
+        "min_available": 13092130816,
+        "min_disk": 176422912,
+        "max_gap": 0.5089525030343793,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0007217737661984837,
+          "foreign_cpu_seconds": 0.1599999999999973,
+          "wall_seconds": 55.41902722604573,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 2,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      "result": {
+        "bytes": 62318,
+        "sha256": "575703ae7724d83d51999a88ea18f1206771a7a0bd215820da98aacc2aad705d"
+      }
+    },
+    {
+      "name": "conformance-04-whisper-ort",
+      "calls": 20,
+      "resource": {
+        "samples": 1009,
+        "peak_rss": 5766012928,
+        "min_available": 10278957056,
+        "min_disk": 145059840,
+        "max_gap": 1.7190428259782493,
+        "accounting": {
+          "valid": true,
+          "foreign_cpu_fraction": 0.0006867240577009021,
+          "foreign_cpu_seconds": 1.4000000000000168,
+          "wall_seconds": 509.6661403879989,
+          "logical_cpus": 4,
+          "exited_foreign_processes": 16,
+          "vanished_during_snapshots": 0,
+          "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+        }
+      },
+      "result": {
+        "bytes": 34589,
+        "sha256": "2d5ace3fc70aeaeaa16432cf8574fdc9ec1b681af7742454e1ea0e4359a6f5c6"
+      }
+    }
+  ],
+  "partial_calls": 16,
+  "planned_managed_whisper_calls": 20,
+  "partial_records": [
+    {
+      "name": "121-121726-0000",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 29.851895086,
+      "start_ticks": 304483643080523,
+      "end_ticks": 304513494975609,
+      "frequency": 1000000000,
+      "result": {
+        "text": " Also, a popular contrivance whereby lovemaking may be suspended but not stopped during the picnic season.",
+        "token_ids": [
+          2743,
+          11,
+          257,
+          3743,
+          660,
+          29994,
+          719,
+          36998,
+          959,
+          12402,
+          815,
+          312,
+          23437,
+          457,
+          406,
+          5936,
+          1830,
+          264,
+          32137,
+          3196,
+          13,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "9ebd39badd6b11933c662b70e126bd2ec5f76e9fb2262ab2daf954d6454283b6",
+      "ownership": true,
+      "gc_before": [
+        101,
+        90,
+        19
+      ],
+      "gc_after": [
+        102,
+        91,
+        20
+      ],
+      "allocated_bytes": 700739248
+    },
+    {
+      "name": "121-123852-0000",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 30.44525435,
+      "start_ticks": 304513542857341,
+      "end_ticks": 304543988111691,
+      "frequency": 1000000000,
+      "result": {
+        "text": " those pretty wrongs that liberty commits when i am some time absent from thy heart thy beauty and thy years full well befits for still temptation follows where thou art",
+        "token_ids": [
+          729,
+          1238,
+          2085,
+          82,
+          300,
+          22849,
+          48311,
+          562,
+          741,
+          669,
+          512,
+          565,
+          25185,
+          490,
+          15196,
+          1917,
+          15196,
+          6643,
+          293,
+          15196,
+          924,
+          1577,
+          731,
+          312,
+          13979,
+          337,
+          920,
+          30423,
+          10002,
+          689,
+          24757,
+          1523,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "51823588c7f29e746cb0f40dc28914fe83f377e256339738b33902b47dbc91f4",
+      "ownership": true,
+      "gc_before": [
+        102,
+        91,
+        20
+      ],
+      "gc_after": [
+        103,
+        92,
+        20
+      ],
+      "allocated_bytes": 642164832
+    },
+    {
+      "name": "237-126133-0002",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 30.919402039,
+      "start_ticks": 304543991512039,
+      "end_ticks": 304574910914078,
+      "frequency": 1000000000,
+      "result": {
+        "text": " \"'Then, dear,' said Mrs. Whitney, \"'you must be kinder to her than ever. Think what it would be for one of you to be away from home, even among friends.'",
+        "token_ids": [
+          24543,
+          20371,
+          11,
+          6875,
+          12529,
+          848,
+          9814,
+          13,
+          39466,
+          11,
+          24543,
+          5616,
+          1633,
+          312,
+          733,
+          260,
+          281,
+          720,
+          813,
+          1562,
+          13,
+          6557,
+          437,
+          309,
+          576,
+          312,
+          337,
+          472,
+          295,
+          291,
+          281,
+          312,
+          1314,
+          490,
+          1280,
+          11,
+          754,
+          3654,
+          1855,
+          4443,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "36e7049cb32f9d453cd1e280d5f92dee449493a1aed7ebc2d56d0ad5207a22bf",
+      "ownership": true,
+      "gc_before": [
+        104,
+        92,
+        20
+      ],
+      "gc_after": [
+        105,
+        92,
+        20
+      ],
+      "allocated_bytes": 664275472
+    },
+    {
+      "name": "237-126133-0000",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 31.538473278,
+      "start_ticks": 304574914204788,
+      "end_ticks": 304606452678066,
+      "frequency": 1000000000,
+      "result": {
+        "text": " here she would stay comforted and soothed among the lovely plants and rich exotics rejoicing the heart of old turner the gardener who since polly's first rapturous entrance had taken her into his good graces for all time",
+        "token_ids": [
+          510,
+          750,
+          576,
+          1754,
+          3400,
+          292,
+          293,
+          370,
+          900,
+          292,
+          3654,
+          264,
+          7496,
+          5972,
+          293,
+          4593,
+          454,
+          42131,
+          22087,
+          5776,
+          264,
+          1917,
+          295,
+          1331,
+          1261,
+          260,
+          264,
+          7431,
+          260,
+          567,
+          1670,
+          6418,
+          88,
+          311,
+          700,
+          40142,
+          37867,
+          12014,
+          632,
+          2726,
+          720,
+          666,
+          702,
+          665,
+          677,
+          2116,
+          337,
+          439,
+          565,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "75c9a022a3c53f4251c8fb0257fe9ba94202d3f08814e18ed027360d0924b54c",
+      "ownership": true,
+      "gc_before": [
+        105,
+        92,
+        20
+      ],
+      "gc_after": [
+        107,
+        94,
+        20
+      ],
+      "allocated_bytes": 692885264
+    },
+    {
+      "name": "260-123286-0000",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 29.427818307,
+      "start_ticks": 304606455327045,
+      "end_ticks": 304635883145352,
+      "frequency": 1000000000,
+      "result": {
+        "text": " Saturday, August 15th. The sea unbroken all round. No land in sight.",
+        "token_ids": [
+          8803,
+          11,
+          6897,
+          2119,
+          392,
+          13,
+          440,
+          4158,
+          517,
+          37947,
+          439,
+          3098,
+          13,
+          883,
+          2117,
+          294,
+          7860,
+          13,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "d2e2a93e3ce888b0f87ae62a21f41636b5246947dc115350429924f8472c4e01",
+      "ownership": true,
+      "gc_before": [
+        107,
+        94,
+        20
+      ],
+      "gc_after": [
+        108,
+        94,
+        20
+      ],
+      "allocated_bytes": 609962104
+    },
+    {
+      "name": "260-123288-0005",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 31.499056106,
+      "start_ticks": 304635885458523,
+      "end_ticks": 304667384514629,
+      "frequency": 1000000000,
+      "result": {
+        "text": " from time to time a fleecy tuft of mist with yet some gleaming light left upon it drops down upon the dense floor of gray and loses itself in the opaque and impenetrable mass",
+        "token_ids": [
+          490,
+          565,
+          281,
+          565,
+          257,
+          25146,
+          1344,
+          2604,
+          844,
+          295,
+          3544,
+          365,
+          1939,
+          512,
+          48956,
+          5184,
+          1442,
+          1411,
+          3564,
+          309,
+          11438,
+          760,
+          3564,
+          264,
+          18011,
+          4123,
+          295,
+          10855,
+          293,
+          18293,
+          2564,
+          294,
+          264,
+          42687,
+          293,
+          704,
+          268,
+          302,
+          424,
+          638,
+          2758,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "6af88a9b3b74434f192c9bdd470776f92954554fe99f6cdd6e78aae92a63f075",
+      "ownership": true,
+      "gc_before": [
+        108,
+        94,
+        20
+      ],
+      "gc_after": [
+        110,
+        94,
+        20
+      ],
+      "allocated_bytes": 667226600
+    },
+    {
+      "name": "672-122797-0000",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 28.723455209,
+      "start_ticks": 304667386744325,
+      "end_ticks": 304696110199534,
+      "frequency": 1000000000,
+      "result": {
+        "text": " Out in the woods stood a nice little fir tree.",
+        "token_ids": [
+          5925,
+          294,
+          264,
+          15296,
+          9371,
+          257,
+          1481,
+          707,
+          12159,
+          4230,
+          13,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "5b07ce1aae5549a52630c37d65f97da5ad6c5341a23185db7da3e1054e14ff98",
+      "ownership": true,
+      "gc_before": [
+        110,
+        94,
+        20
+      ],
+      "gc_after": [
+        111,
+        94,
+        20
+      ],
+      "allocated_bytes": 597379496
+    },
+    {
+      "name": "672-122797-0001",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 30.864478709,
+      "start_ticks": 304696112620989,
+      "end_ticks": 304726977099698,
+      "frequency": 1000000000,
+      "result": {
+        "text": " the place he had was a very good one the sun shone on him as to fresh air there was enough of that and round him grew many large-sized comrades pines as well as firs",
+        "token_ids": [
+          264,
+          1081,
+          415,
+          632,
+          390,
+          257,
+          588,
+          665,
+          472,
+          264,
+          3295,
+          402,
+          546,
+          322,
+          796,
+          382,
+          281,
+          4451,
+          1988,
+          456,
+          390,
+          1547,
+          295,
+          300,
+          293,
+          3098,
+          796,
+          6109,
+          867,
+          2416,
+          12,
+          20614,
+          42249,
+          280,
+          1652,
+          382,
+          731,
+          382,
+          12159,
+          82,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "05e0ef849eda5d3ba0d78cb1f5b3b4a849ecc6843a41b05fd0e90508810b6e36",
+      "ownership": true,
+      "gc_before": [
+        111,
+        94,
+        20
+      ],
+      "gc_after": [
+        113,
+        95,
+        20
+      ],
+      "allocated_bytes": 664232824
+    },
+    {
+      "name": "908-157963-0005",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 29.299289213,
+      "start_ticks": 304726979411908,
+      "end_ticks": 304756278701121,
+      "frequency": 1000000000,
+      "result": {
+        "text": " Like the dove's voice, like transient day, like music in the air. Ah,",
+        "token_ids": [
+          1743,
+          264,
+          23287,
+          311,
+          3177,
+          11,
+          411,
+          41998,
+          786,
+          11,
+          411,
+          1318,
+          294,
+          264,
+          1988,
+          13,
+          2438,
+          11,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "d5d07d880800d5c4d9b2cb6f3385f7561f29c8064ad11899cc0a415d3cbe3aaa",
+      "ownership": true,
+      "gc_before": [
+        113,
+        95,
+        20
+      ],
+      "gc_after": [
+        114,
+        95,
+        20
+      ],
+      "allocated_bytes": 609958928
+    },
+    {
+      "name": "908-157963-0000",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 30.762178949,
+      "start_ticks": 304756284319366,
+      "end_ticks": 304787046498315,
+      "frequency": 1000000000,
+      "result": {
+        "text": " to fade away like morning beauty from her mortal day down by the river of adonna her soft voice is heard and thus her gentle lamentation falls like morning dew",
+        "token_ids": [
+          281,
+          21626,
+          1314,
+          411,
+          2446,
+          6643,
+          490,
+          720,
+          27624,
+          786,
+          760,
+          538,
+          264,
+          6810,
+          295,
+          614,
+          266,
+          629,
+          720,
+          2787,
+          3177,
+          307,
+          2198,
+          293,
+          8807,
+          720,
+          6424,
+          35888,
+          399,
+          8804,
+          411,
+          2446,
+          48745,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "5114ae0cab2e84817b98f33dd783fecf3a26e02f74c9943ac9a123e75256799f",
+      "ownership": true,
+      "gc_before": [
+        114,
+        95,
+        20
+      ],
+      "gc_after": [
+        115,
+        96,
+        20
+      ],
+      "allocated_bytes": 644529968
+    },
+    {
+      "name": "1089-134686-0002",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 29.648600122,
+      "start_ticks": 304787048739687,
+      "end_ticks": 304816697339809,
+      "frequency": 1000000000,
+      "result": {
+        "text": " after early nightfall the yellow lamps would light up here and there the squalid quarter of the brothels",
+        "token_ids": [
+          934,
+          2440,
+          1818,
+          6691,
+          264,
+          5566,
+          34887,
+          576,
+          1442,
+          493,
+          510,
+          293,
+          456,
+          264,
+          2339,
+          31509,
+          6555,
+          295,
+          264,
+          18872,
+          1625,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "bbf9920ca49230e1dbe59aa87427028ce254bcb4d0110fec331778a6acdf27e7",
+      "ownership": true,
+      "gc_before": [
+        115,
+        96,
+        20
+      ],
+      "gc_after": [
+        116,
+        97,
+        20
+      ],
+      "allocated_bytes": 616039912
+    },
+    {
+      "name": "1089-134686-0011",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 31.354325363,
+      "start_ticks": 304816701268265,
+      "end_ticks": 304848055593628,
+      "frequency": 1000000000,
+      "result": {
+        "text": " on saturday mornings when the sodality met in the chapel to recite the little office his place was a cushioned kneeling desk at the right of the altar from which he led his wing of boys through the responses",
+        "token_ids": [
+          322,
+          3227,
+          8486,
+          37143,
+          562,
+          264,
+          15047,
+          1860,
+          1131,
+          294,
+          264,
+          42617,
+          281,
+          39434,
+          264,
+          707,
+          3398,
+          702,
+          1081,
+          390,
+          257,
+          21908,
+          292,
+          32704,
+          11031,
+          10026,
+          412,
+          264,
+          558,
+          295,
+          264,
+          31435,
+          490,
+          597,
+          415,
+          4684,
+          702,
+          11162,
+          295,
+          6347,
+          807,
+          264,
+          13019,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "7c9b6716e80116816706dacb919acf9920c338b715a0b6c3750cb618537b27b6",
+      "ownership": true,
+      "gc_before": [
+        116,
+        97,
+        20
+      ],
+      "gc_after": [
+        118,
+        98,
+        20
+      ],
+      "allocated_bytes": 673371224
+    },
+    {
+      "name": "1188-133604-0001",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 29.557238592,
+      "start_ticks": 304848059081087,
+      "end_ticks": 304877616319679,
+      "frequency": 1000000000,
+      "result": {
+        "text": " They unite every quality. And sometimes you will find me referring to them as colorists, sometimes as chiaroscurists.",
+        "token_ids": [
+          814,
+          29320,
+          633,
+          3125,
+          13,
+          400,
+          2171,
+          291,
+          486,
+          915,
+          385,
+          13761,
+          281,
+          552,
+          382,
+          2017,
+          1751,
+          11,
+          2171,
+          382,
+          47454,
+          10466,
+          374,
+          1751,
+          13,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "ed6831a8e9d280b8f4a0e461de626b774ca00c7b2602809a49938c22f038e42b",
+      "ownership": true,
+      "gc_before": [
+        118,
+        98,
+        20
+      ],
+      "gc_after": [
+        120,
+        99,
+        20
+      ],
+      "allocated_bytes": 624799016
+    },
+    {
+      "name": "1188-133604-0002",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 32.280062869,
+      "start_ticks": 304877620132631,
+      "end_ticks": 304909900195500,
+      "frequency": 1000000000,
+      "result": {
+        "text": " by being studious of color they are studious of division and while the chiaroscurist devotes himself to the representation of degrees of force in one thing unseparated light the colorists have for their function the attainment of beauty by arrangement of the divisions of light",
+        "token_ids": [
+          538,
+          885,
+          972,
+          851,
+          295,
+          2017,
+          436,
+          366,
+          972,
+          851,
+          295,
+          10044,
+          293,
+          1339,
+          264,
+          47454,
+          10466,
+          374,
+          468,
+          13697,
+          279,
+          3647,
+          281,
+          264,
+          10290,
+          295,
+          5310,
+          295,
+          3464,
+          294,
+          472,
+          551,
+          517,
+          405,
+          2181,
+          770,
+          1442,
+          264,
+          2017,
+          1751,
+          362,
+          337,
+          641,
+          2445,
+          264,
+          23766,
+          518,
+          295,
+          6643,
+          538,
+          17620,
+          295,
+          264,
+          24328,
+          295,
+          1442,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "fc7e92b28c91d1069d001c3101135ff0cab7913957c9ab7d1a7e01c99f6707a9",
+      "ownership": true,
+      "gc_before": [
+        120,
+        99,
+        20
+      ],
+      "gc_after": [
+        122,
+        101,
+        20
+      ],
+      "allocated_bytes": 717756480
+    },
+    {
+      "name": "1221-135766-0002",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 29.120400122,
+      "start_ticks": 304909902669385,
+      "end_ticks": 304939023069507,
+      "frequency": 1000000000,
+      "result": {
+        "text": " Yet these thoughts affected Hester Prynne less with hope than apprehension.",
+        "token_ids": [
+          10890,
+          613,
+          4598,
+          8028,
+          389,
+          3011,
+          430,
+          32532,
+          716,
+          1570,
+          365,
+          1454,
+          813,
+          38675,
+          3378,
+          13,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "2bdfccbd89c0d00095bea2c936681da9d12f3ff801f1233fac5b8986d2b08da5",
+      "ownership": true,
+      "gc_before": [
+        122,
+        101,
+        20
+      ],
+      "gc_after": [
+        123,
+        101,
+        20
+      ],
+      "allocated_bytes": 606124200
+    },
+    {
+      "name": "1221-135766-0000",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 30.768515602,
+      "start_ticks": 304939025366294,
+      "end_ticks": 304969793881896,
+      "frequency": 1000000000,
+      "result": {
+        "text": " how strange it seemed to the sad woman as she watched the growth and the beauty that became every day more brilliant and the intelligence that threw its quivering sunshine over the tiny features of this child",
+        "token_ids": [
+          577,
+          5861,
+          309,
+          6576,
+          281,
+          264,
+          4227,
+          3059,
+          382,
+          750,
+          6337,
+          264,
+          4599,
+          293,
+          264,
+          6643,
+          300,
+          3062,
+          633,
+          786,
+          544,
+          10248,
+          293,
+          264,
+          7599,
+          300,
+          11918,
+          1080,
+          421,
+          48940,
+          25219,
+          670,
+          264,
+          5870,
+          4122,
+          295,
+          341,
+          1440,
+          50257
+        ],
+        "stop_reason": "EndToken",
+        "skipped_as_no_speech": false
+      },
+      "maximum_centroid_error": 0,
+      "input_sha256": "588a84ecaadb118f5a09766aa8e20f36c2c373dd3fea106b4e6c53b7a3004422",
+      "ownership": true,
+      "gc_before": [
+        123,
+        101,
+        20
+      ],
+      "gc_after": [
+        124,
+        101,
+        20
+      ],
+      "allocated_bytes": 658365168
+    }
+  ],
+  "last_sample": {
+    "seconds": 492.5399991090526,
+    "available": 1027723264,
+    "disk": 144576512,
+    "members": [
+      {
+        "pid": 371475,
+        "birth": 1789938765.39,
+        "rss": 14977687552,
+        "affinity": [
+          2
+        ],
+        "threads": [
+          {
+            "tid": 371475,
+            "affinity": [
+              2
+            ]
+          },
+          {
+            "tid": 371476,
+            "affinity": [
+              2
+            ]
+          },
+          {
+            "tid": 371477,
+            "affinity": [
+              2
+            ]
+          },
+          {
+            "tid": 371478,
+            "affinity": [
+              2
+            ]
+          },
+          {
+            "tid": 371479,
+            "affinity": [
+              2
+            ]
+          },
+          {
+            "tid": 371480,
+            "affinity": [
+              2
+            ]
+          },
+          {
+            "tid": 371568,
+            "affinity": [
+              2
+            ]
+          },
+          {
+            "tid": 371569,
+            "affinity": [
+              2
+            ]
+          },
+          {
+            "tid": 371696,
+            "affinity": [
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "failed_worker_samples": 979,
+  "peak_rss": 14977687552,
+  "limits": {
+    "seconds": 3600,
+    "rss": 15032385536,
+    "available": 1073741824,
+    "preflight": 13958643712,
+    "disk": 33554432,
+    "preflight_disk": 67108864,
+    "campaign_seconds": 14400
+  },
+  "births": [
+    {
+      "pid": 371093,
+      "birth": 1789938040.6
+    },
+    {
+      "pid": 371094,
+      "birth": 1789938046.17
+    },
+    {
+      "pid": 371112,
+      "birth": 1789938092.56
+    },
+    {
+      "pid": 371209,
+      "birth": 1789938182.24
+    },
+    {
+      "pid": 371217,
+      "birth": 1789938200.3
+    },
+    {
+      "pid": 371310,
+      "birth": 1789938255.72
+    },
+    {
+      "pid": 371475,
+      "birth": 1789938765.39
+    }
+  ],
+  "frozen": {
+    "bytes": 4309575,
+    "sha256": "fc9f53cb64d7bc2e61ad637c84629114d56152f4fe212d4e9f010aeba7f6f6d9"
+  },
+  "timing_calls": 0
+}

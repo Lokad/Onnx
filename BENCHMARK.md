@@ -10,6 +10,13 @@ available APIs and their remaining qualification limits.
 
 ### Audio: matched Microsoft ONNX Runtime baselines
 
+The Windows comparisons below include explicit ORT baselines for both Parakeet
+and pyannote. The separate September 20 AMD all-family campaign stopped during
+managed Whisper conformance at its available-memory reserve, before timing.
+Parakeet and pyannote passed both engines' conformance checks; a separate matched
+AMD timing comparison is being prepared. The [resource-failure report](tests/audio/amd-comparison/resource-failure-20260920.md)
+retains the incomplete Whisper run. No AMD latency is inferred from those checks.
+
 Fresh complete-application measurements on **Windows i7-14700KF, logical CPU 2**,
 with .NET 10.0.12 and Microsoft ONNX Runtime **1.29.0**. Product source is
 `8732831` (core execution unchanged from `c6bf781`). Both engines run the same
