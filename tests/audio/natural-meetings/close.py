@@ -162,10 +162,10 @@ print(json.dumps(dict(checked_at=time.time(),terminal_processes=rows,verified_na
     terminal=dict(local=local,amd=json.loads(response.stdout))
     write(base/'verification.json',dict(passed=True,refusals=refusals,score_checks=score_checks,terminal=terminal,application_passed=audit['application_passed']))
     snapshot=base/'postprocessing-source';snapshot.mkdir();sources={}
-    for path in sorted(Path(__file__).parent.glob('*.py')):
+    for path in sorted(Path(__file__).resolve().parent.glob('*.py')):
         shutil.copyfile(path,snapshot/path.name);assert pin(path)==pin(snapshot/path.name)
         sources[path.relative_to(root).as_posix()]=pin(path)
-    linux_source=Path(__file__).parent.parent/'natural-meetings-linux'
+    linux_source=Path(__file__).resolve().parent.parent/'natural-meetings-linux'
     (snapshot/'linux').mkdir()
     for path in sorted(linux_source.glob('*.py')):
         shutil.copyfile(path,snapshot/'linux'/path.name);assert pin(path)==pin(snapshot/'linux'/path.name)
