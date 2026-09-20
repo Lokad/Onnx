@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "private_prototype": true,
+  "inference": false,
+  "tests": {
+    "passed": 3101,
+    "skipped": 93,
+    "new": 12
+  },
+  "logical_shared_bytes": 635187200,
+  "unique_initializer_bytes_before": 1985006252,
+  "unique_initializer_bytes_after": 1349819052,
+  "arrays_before": 587,
+  "arrays_after": 499,
+  "resource": {
+    "samples": 13,
+    "peak_rss": 3959349248,
+    "min_available": 14715432960,
+    "seconds": 7.208785200025886
+  },
+  "result": {
+    "bytes": 966179,
+    "sha256": "28ba8444f043a2eb507ddb958860e36f7ea9781f6247985f8085f156adbc7a11"
+  },
+  "child": {
+    "pid": 1155208,
+    "birth": 1789945747.839471
+  },
+  "scope": "Actual prepared initializer storage and local contracts only; no inference, RSS saving or production qualification claimed"
+}
