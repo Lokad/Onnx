@@ -1,0 +1,13 @@
+# Public WeSpeaker frame precision — Windows qualification, September20,2026
+
+**The public frontend now preserves frame preprocessing in double.** Source `1d10d22` changes four declarations, retaining the coefficients, FFT, spectrum/log/centering arithmetic, float output and API contracts. All53 actual public outputs (3,266,560 values) match the proven Frame variant bit for bit and pass both independent managed-table and native-table double references at the unchanged1e-4 threshold. Maximum scaled error is1.99571e-6 against managed tables and5.82965e-5 against native tables.
+
+A separate regression uses small exactly representable float signals and an exactly representable0.5 DC offset. Frame mean removal should eliminate that constant. The archived original DLL has6/160 and256/7,840 failing feature values for560/16,000 samples, with maxima0.003742218/0.045996666. The new public API produces identical features in both offset settings: zero differing error and zero failures. Both new unit cases pass.
+
+**99 affected WeSpeaker/Community-1 tests pass**, including ownership, concurrency, cancellation, invalid inputs, pooling and clustering contracts. The first test command exited0 but its inner console summary was absent. That attempt is retained; a separate no-build/no-restore invocation adds a TRX logger, which independently records all99 cases and both new regression tests. No inference corpus was repeated for that logging repair.
+
+The corpus consumer verifies complete shapes, immutable inputs, all held outputs after subsequent calls and exact coefficient tables. It loads the actual built Data/core assemblies through the public method; it does not execute the generated diagnostic variant. All source, binaries, raw outputs, command logs, resource samples and TRX records are retained. Every observed process birth is terminal. These are local working-tree builds on Windows/.NET10.0.12, CPU0; source-archive/AMD and connected natural-meeting qualification remain required.
+
+Direct native float comparison still has187 failures for the new frontend, versus32 historically. This is not labelled passing native conformance. The [complete precision proof](../filterbank-precision/results-20260920.md) retains all comparisons and seven coordinates where native/reference1e-4 intervals are disjoint. The new mathematical frontend criterion is prospective; historical failures and all other model gates remain unchanged. No new application timing, DER or e5 result follows.
+
+[Complete local observations](local-observations-20260920.json). Artifact `artifacts/wespeaker-frame-product-local-20260920`; the separate TRX recovery is retained there and at `artifacts/wespeaker-frame-tests-trx-20260920`.

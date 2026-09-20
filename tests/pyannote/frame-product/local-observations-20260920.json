@@ -1,0 +1,3892 @@
+{
+  "passed": true,
+  "source": "1d10d22f73282bb00630371887ca3719d2e1553b",
+  "product": {
+    "bytes": 6558,
+    "sha256": "770736ddb406201a630d3e316ca64a949f2d6b99517fc325e5800c84bb028931"
+  },
+  "test_counters": {
+    "total": "99",
+    "executed": "99",
+    "passed": "99",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "regression_tests": [
+    {
+      "executionId": "3f2296a7-77ce-4626-b3f9-64b3ae9464c6",
+      "testId": "092e42d9-c30d-a7a1-8e58-6c142dc53f97",
+      "testName": "Lokad.Onnx.Backend.Tests.WeSpeakerAudioTests.FrameMeanRemovalPreservesSmallSignalUnderExactDcOffset(length: 16000)",
+      "computerName": "LOKAD-0399",
+      "duration": "00:00:00.0222553",
+      "startTime": "2026-09-20T21:38:15.5876003+02:00",
+      "endTime": "2026-09-20T21:38:15.5876005+02:00",
+      "testType": "13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b",
+      "outcome": "Passed",
+      "testListId": "8c84fa94-04c1-424b-9868-57a2d4851a1d",
+      "relativeResultsDirectory": "3f2296a7-77ce-4626-b3f9-64b3ae9464c6"
+    },
+    {
+      "executionId": "22965ee6-94c5-4395-85de-391bdbcbb99e",
+      "testId": "362aa5c8-a7fa-8494-109b-ff078324b054",
+      "testName": "Lokad.Onnx.Backend.Tests.WeSpeakerAudioTests.FrameMeanRemovalPreservesSmallSignalUnderExactDcOffset(length: 560)",
+      "computerName": "LOKAD-0399",
+      "duration": "00:00:00.0031246",
+      "startTime": "2026-09-20T21:38:15.5652199+02:00",
+      "endTime": "2026-09-20T21:38:15.5652202+02:00",
+      "testType": "13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b",
+      "outcome": "Passed",
+      "testListId": "8c84fa94-04c1-424b-9868-57a2d4851a1d",
+      "relativeResultsDirectory": "22965ee6-94c5-4395-85de-391bdbcbb99e"
+    }
+  ],
+  "exact_arrays": 53,
+  "values": 3266560,
+  "checks": [
+    {
+      "name": "unit-noise-400",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-noise-400",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-noise-400",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-noise-400",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-noise-559",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-noise-559",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-noise-559",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-noise-559",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-noise-560",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 160,
+      "max_scaled": 1.6771137474336228e-06,
+      "max_absolute": 1.6771137474336228e-06,
+      "rms": 7.457353945823632e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        78
+      ],
+      "actual": 0.06660079956054688,
+      "expected": 0.06659912244679944
+    },
+    {
+      "name": "unit-noise-560",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 160,
+      "max_scaled": 2.7085362326317863e-06,
+      "max_absolute": 3.2519717674261983e-06,
+      "rms": 9.77706583707787e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        1,
+        30
+      ],
+      "actual": -0.3551979064941406,
+      "expected": -0.355195197957908
+    },
+    {
+      "name": "unit-noise-560",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 160,
+      "max_scaled": 1.6771137474336228e-06,
+      "max_absolute": 1.6771137474336228e-06,
+      "rms": 7.457353943488831e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        78
+      ],
+      "actual": 0.06660079956054688,
+      "expected": 0.06659912244679944
+    },
+    {
+      "name": "unit-noise-560",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 160,
+      "max_scaled": 2.7085362326317863e-06,
+      "max_absolute": 3.251971779860696e-06,
+      "rms": 9.777065847721772e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        1,
+        30
+      ],
+      "actual": -0.3551979064941406,
+      "expected": -0.355195197957908
+    },
+    {
+      "name": "unit-noise-561",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 160,
+      "max_scaled": 1.6771137474336228e-06,
+      "max_absolute": 1.6771137474336228e-06,
+      "rms": 7.457353945823632e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        78
+      ],
+      "actual": 0.06660079956054688,
+      "expected": 0.06659912244679944
+    },
+    {
+      "name": "unit-noise-561",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 160,
+      "max_scaled": 2.7085362326317863e-06,
+      "max_absolute": 3.2519717674261983e-06,
+      "rms": 9.77706583707787e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        1,
+        30
+      ],
+      "actual": -0.3551979064941406,
+      "expected": -0.355195197957908
+    },
+    {
+      "name": "unit-noise-561",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 160,
+      "max_scaled": 1.6771137474336228e-06,
+      "max_absolute": 1.6771137474336228e-06,
+      "rms": 7.457353943488831e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        78
+      ],
+      "actual": 0.06660079956054688,
+      "expected": 0.06659912244679944
+    },
+    {
+      "name": "unit-noise-561",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 160,
+      "max_scaled": 2.7085362326317863e-06,
+      "max_absolute": 3.251971779860696e-06,
+      "rms": 9.777065847721772e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        1,
+        30
+      ],
+      "actual": -0.3551979064941406,
+      "expected": -0.355195197957908
+    },
+    {
+      "name": "unit-noise-16000",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 1.908499882574688e-06,
+      "max_absolute": 1.908499882574688e-06,
+      "rms": 7.670449745618726e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        86,
+        23
+      ],
+      "actual": -0.6866741180419922,
+      "expected": -0.6866722095421096
+    },
+    {
+      "name": "unit-noise-16000",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 1.1403697014404262e-05,
+      "max_absolute": 3.924943828970129e-05,
+      "rms": 1.2218360039614577e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        2,
+        12
+      ],
+      "actual": -2.6145753860473633,
+      "expected": -2.6146052022129016
+    },
+    {
+      "name": "unit-noise-16000",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 1.908499871916547e-06,
+      "max_absolute": 1.908499871916547e-06,
+      "rms": 7.670449752284924e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        86,
+        23
+      ],
+      "actual": -0.6866741180419922,
+      "expected": -0.6866722095421203
+    },
+    {
+      "name": "unit-noise-16000",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 1.140369701100731e-05,
+      "max_absolute": 3.9249438196442554e-05,
+      "rms": 1.2218360039595383e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        2,
+        12
+      ],
+      "actual": -2.6145753860473633,
+      "expected": -2.6146052022128927
+    },
+    {
+      "name": "unit-noise-160000",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.9937467428121636e-06,
+      "max_absolute": 1.9937467428121636e-06,
+      "rms": 7.628029196731401e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        806,
+        23
+      ],
+      "actual": 0.7489128112792969,
+      "expected": 0.7489148050260397
+    },
+    {
+      "name": "unit-noise-160000",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.1441202358030408e-05,
+      "max_absolute": 3.9650690924375454e-05,
+      "rms": 1.1941739412563888e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        563,
+        12
+      ],
+      "actual": -1.1826915740966797,
+      "expected": -1.1827169329697718
+    },
+    {
+      "name": "unit-noise-160000",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.9937467428121636e-06,
+      "max_absolute": 1.9937467428121636e-06,
+      "rms": 7.628029191093405e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        806,
+        23
+      ],
+      "actual": 0.7489128112792969,
+      "expected": 0.7489148050260397
+    },
+    {
+      "name": "unit-noise-160000",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.1441202373049376e-05,
+      "max_absolute": 3.9650690839998504e-05,
+      "rms": 1.1941739411639123e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        563,
+        12
+      ],
+      "actual": -1.1826915740966797,
+      "expected": -1.1827169329697895
+    },
+    {
+      "name": "unit-noise-480000",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 239840,
+      "max_scaled": 1.9957063912556805e-06,
+      "max_absolute": 1.9957063912556805e-06,
+      "rms": 7.386342990724659e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        1565,
+        33
+      ],
+      "actual": -0.4634990692138672,
+      "expected": -0.46350106492025844
+    },
+    {
+      "name": "unit-noise-480000",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 239840,
+      "max_scaled": 1.9965312915321532e-05,
+      "max_absolute": 3.930016095843314e-05,
+      "rms": 1.1461106939866181e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        563,
+        12
+      ],
+      "actual": -1.2720088958740234,
+      "expected": -1.272034292436711
+    },
+    {
+      "name": "unit-noise-480000",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 239840,
+      "max_scaled": 1.9957063805975395e-06,
+      "max_absolute": 1.9957063805975395e-06,
+      "rms": 7.386342991375204e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        1565,
+        33
+      ],
+      "actual": -0.4634990692138672,
+      "expected": -0.4635010649202478
+    },
+    {
+      "name": "unit-noise-480000",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 239840,
+      "max_scaled": 1.996531289018559e-05,
+      "max_absolute": 3.930016089714883e-05,
+      "rms": 1.1461106917705995e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        563,
+        12
+      ],
+      "actual": -1.2720088958740234,
+      "expected": -1.272034292436679
+    },
+    {
+      "name": "unit-silence-400",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-silence-400",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-silence-400",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-silence-400",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-dc-400",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-dc-400",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-dc-400",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-dc-400",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 80,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-silence-560",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 160,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-silence-560",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 160,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-silence-560",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 160,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-silence-560",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 160,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-dc-560",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 160,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-dc-560",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 160,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-dc-560",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 160,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-dc-560",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 160,
+      "max_scaled": 0.0,
+      "max_absolute": 0.0,
+      "rms": 0.0,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 0.0
+    },
+    {
+      "name": "unit-silence-16000",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 2.4868995751603507e-14,
+      "max_absolute": 2.4868995751603507e-14,
+      "rms": 2.4868995751603507e-14,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 2.4868995751603507e-14
+    },
+    {
+      "name": "unit-silence-16000",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 2.4868995751603507e-14,
+      "max_absolute": 2.4868995751603507e-14,
+      "rms": 2.4868995751603507e-14,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 2.4868995751603507e-14
+    },
+    {
+      "name": "unit-silence-16000",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 8.881784197001252e-15,
+      "max_absolute": 8.881784197001252e-15,
+      "rms": 8.881784197001252e-15,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": -8.881784197001252e-15
+    },
+    {
+      "name": "unit-silence-16000",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 8.881784197001252e-15,
+      "max_absolute": 8.881784197001252e-15,
+      "rms": 8.881784197001252e-15,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": -8.881784197001252e-15
+    },
+    {
+      "name": "unit-dc-16000",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 2.4868995751603507e-14,
+      "max_absolute": 2.4868995751603507e-14,
+      "rms": 2.4868995751603507e-14,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 2.4868995751603507e-14
+    },
+    {
+      "name": "unit-dc-16000",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 2.4868995751603507e-14,
+      "max_absolute": 2.4868995751603507e-14,
+      "rms": 2.4868995751603507e-14,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 2.4868995751603507e-14
+    },
+    {
+      "name": "unit-dc-16000",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 8.881784197001252e-15,
+      "max_absolute": 8.881784197001252e-15,
+      "rms": 8.881784197001252e-15,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": -8.881784197001252e-15
+    },
+    {
+      "name": "unit-dc-16000",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 8.881784197001252e-15,
+      "max_absolute": 8.881784197001252e-15,
+      "rms": 8.881784197001252e-15,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": -8.881784197001252e-15
+    },
+    {
+      "name": "unit-silence-160000",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 2.327027459614328e-13,
+      "max_absolute": 2.327027459614328e-13,
+      "rms": 2.327027459614328e-13,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 2.327027459614328e-13
+    },
+    {
+      "name": "unit-silence-160000",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.327027459614328e-13,
+      "max_absolute": 2.327027459614328e-13,
+      "rms": 2.327027459614328e-13,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 2.327027459614328e-13
+    },
+    {
+      "name": "unit-silence-160000",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.2434497875801753e-14,
+      "max_absolute": 1.2434497875801753e-14,
+      "rms": 1.2434497875801753e-14,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": -1.2434497875801753e-14
+    },
+    {
+      "name": "unit-silence-160000",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 1.2434497875801753e-14,
+      "max_absolute": 1.2434497875801753e-14,
+      "rms": 1.2434497875801753e-14,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": -1.2434497875801753e-14
+    },
+    {
+      "name": "unit-dc-160000",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 2.327027459614328e-13,
+      "max_absolute": 2.327027459614328e-13,
+      "rms": 2.327027459614328e-13,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 2.327027459614328e-13
+    },
+    {
+      "name": "unit-dc-160000",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.327027459614328e-13,
+      "max_absolute": 2.327027459614328e-13,
+      "rms": 2.327027459614328e-13,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": 2.327027459614328e-13
+    },
+    {
+      "name": "unit-dc-160000",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.2434497875801753e-14,
+      "max_absolute": 1.2434497875801753e-14,
+      "rms": 1.2434497875801753e-14,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": -1.2434497875801753e-14
+    },
+    {
+      "name": "unit-dc-160000",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 1.2434497875801753e-14,
+      "max_absolute": 1.2434497875801753e-14,
+      "rms": 1.2434497875801753e-14,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        0
+      ],
+      "actual": 0.0,
+      "expected": -1.2434497875801753e-14
+    },
+    {
+      "name": "unit-quiet",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 9.807995766664135e-07,
+      "max_absolute": 9.807995766664135e-07,
+      "rms": 2.494086575136557e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        76,
+        16
+      ],
+      "actual": 0.6006755828857422,
+      "expected": 0.6006746020861655
+    },
+    {
+      "name": "unit-quiet",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 1.2173236178192326e-05,
+      "max_absolute": 2.8825896848161392e-05,
+      "rms": 8.646555492820492e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        96,
+        52
+      ],
+      "actual": -0.21915149688720703,
+      "expected": -0.21916367012338522
+    },
+    {
+      "name": "unit-quiet",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 9.807995766664135e-07,
+      "max_absolute": 9.807995766664135e-07,
+      "rms": 2.4940865778611715e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        76,
+        16
+      ],
+      "actual": 0.6006755828857422,
+      "expected": 0.6006746020861655
+    },
+    {
+      "name": "unit-quiet",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 1.2173236178192326e-05,
+      "max_absolute": 2.8825896851714106e-05,
+      "rms": 8.646555493276742e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        96,
+        52
+      ],
+      "actual": -0.21915149688720703,
+      "expected": -0.21916367012338522
+    },
+    {
+      "name": "unit-impulse",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 2.5327824591668684e-07,
+      "max_absolute": 3.5531976010361177e-06,
+      "rms": 3.945293802161589e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        3,
+        1
+      ],
+      "actual": -1.758596420288086,
+      "expected": -1.7585968657024154
+    },
+    {
+      "name": "unit-impulse",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 3.5621532497362035e-07,
+      "max_absolute": 9.855462892005562e-06,
+      "rms": 4.4866823722177685e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        12
+      ],
+      "actual": 27.667160034179688,
+      "expected": 27.667150178716795
+    },
+    {
+      "name": "unit-impulse",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 2.5327825702777244e-07,
+      "max_absolute": 3.5531975797198356e-06,
+      "rms": 3.9452938013101895e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        3,
+        1
+      ],
+      "actual": -1.758596420288086,
+      "expected": -1.758596865702435
+    },
+    {
+      "name": "unit-impulse",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 3.562153257440752e-07,
+      "max_absolute": 9.855462913321844e-06,
+      "rms": 4.4866823706115574e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        12
+      ],
+      "actual": 27.667160034179688,
+      "expected": 27.667150178716774
+    },
+    {
+      "name": "unit-tones",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 1.658772788459828e-06,
+      "max_absolute": 1.658772788459828e-06,
+      "rms": 4.6184636473194845e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        68,
+        29
+      ],
+      "actual": -0.04186058044433594,
+      "expected": -0.0418622392171244
+    },
+    {
+      "name": "unit-tones",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 3.2653614443489687e-06,
+      "max_absolute": 3.2653614443489687e-06,
+      "rms": 6.072363388555697e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        69,
+        9
+      ],
+      "actual": 0.16574573516845703,
+      "expected": 0.16574900052990138
+    },
+    {
+      "name": "unit-tones",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 7840,
+      "max_scaled": 1.658772799117969e-06,
+      "max_absolute": 1.658772799117969e-06,
+      "rms": 4.6184636508164166e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        68,
+        29
+      ],
+      "actual": -0.04186058044433594,
+      "expected": -0.041862239217135055
+    },
+    {
+      "name": "unit-tones",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 7840,
+      "max_scaled": 3.265361463888894e-06,
+      "max_absolute": 3.265361463888894e-06,
+      "rms": 6.072363387562852e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        69,
+        9
+      ],
+      "actual": 0.16574573516845703,
+      "expected": 0.16574900052992092
+    },
+    {
+      "name": "unit-english-16k",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 46720,
+      "max_scaled": 1.9219720250873706e-06,
+      "max_absolute": 1.9219720250873706e-06,
+      "rms": 5.209238032256391e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        436,
+        79
+      ],
+      "actual": -0.4467506408691406,
+      "expected": -0.44674871889711554
+    },
+    {
+      "name": "unit-english-16k",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 46720,
+      "max_scaled": 3.285063741919267e-05,
+      "max_absolute": 4.0656535061245336e-05,
+      "rms": 1.2307311953483286e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        130,
+        65
+      ],
+      "actual": 1.2376585006713867,
+      "expected": 1.2376178441363255
+    },
+    {
+      "name": "unit-english-16k",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 46720,
+      "max_scaled": 1.9219720250873706e-06,
+      "max_absolute": 1.9219720250873706e-06,
+      "rms": 5.209238035881847e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        436,
+        79
+      ],
+      "actual": -0.4467506408691406,
+      "expected": -0.44674871889711554
+    },
+    {
+      "name": "unit-english-16k",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 46720,
+      "max_scaled": 3.285063742206337e-05,
+      "max_absolute": 4.065653506479805e-05,
+      "rms": 1.2307311946763378e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        130,
+        65
+      ],
+      "actual": 1.2376585006713867,
+      "expected": 1.237617844136322
+    },
+    {
+      "name": "unit-french-44k-stereo",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 49760,
+      "max_scaled": 1.3104212275294458e-06,
+      "max_absolute": 1.5282895393653462e-06,
+      "rms": 4.789745588512829e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        396,
+        45
+      ],
+      "actual": 0.6770057678222656,
+      "expected": 0.6770070782434932
+    },
+    {
+      "name": "unit-french-44k-stereo",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 49760,
+      "max_scaled": 3.260464612075964e-05,
+      "max_absolute": 4.817616501462396e-05,
+      "rms": 2.139913897378281e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        196,
+        79
+      ],
+      "actual": -0.32409095764160156,
+      "expected": -0.3240583529954808
+    },
+    {
+      "name": "unit-french-44k-stereo",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 49760,
+      "max_scaled": 1.3104212399639437e-06,
+      "max_absolute": 1.5282895251544915e-06,
+      "rms": 4.789745585968811e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        396,
+        45
+      ],
+      "actual": 0.6770057678222656,
+      "expected": 0.6770070782435056
+    },
+    {
+      "name": "unit-french-44k-stereo",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 49760,
+      "max_scaled": 3.260464606391622e-05,
+      "max_absolute": 4.817616500929489e-05,
+      "rms": 2.1399138975663444e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        196,
+        79
+      ],
+      "actual": -0.32409095764160156,
+      "expected": -0.32405835299553765
+    },
+    {
+      "name": "unit-jfk-48k-stereo",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 87840,
+      "max_scaled": 1.915463865742595e-06,
+      "max_absolute": 1.972101344449584e-06,
+      "rms": 6.209356821485584e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        950,
+        55
+      ],
+      "actual": 0.9033050537109375,
+      "expected": 0.9033031382470718
+    },
+    {
+      "name": "unit-jfk-48k-stereo",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 87840,
+      "max_scaled": 5.829088574493824e-05,
+      "max_absolute": 5.829088574493824e-05,
+      "rms": 1.7364490454392748e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        116,
+        65
+      ],
+      "actual": 0.11191177368164062,
+      "expected": 0.11185348279589569
+    },
+    {
+      "name": "unit-jfk-48k-stereo",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 87840,
+      "max_scaled": 1.9154638728480222e-06,
+      "max_absolute": 1.972101351555011e-06,
+      "rms": 6.209356834755687e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        950,
+        55
+      ],
+      "actual": 0.9033050537109375,
+      "expected": 0.9033031382470647
+    },
+    {
+      "name": "unit-jfk-48k-stereo",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 87840,
+      "max_scaled": 5.829088575559638e-05,
+      "max_absolute": 5.829088575559638e-05,
+      "rms": 1.7364490451649765e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        116,
+        65
+      ],
+      "actual": 0.11191177368164062,
+      "expected": 0.11185348279588503
+    },
+    {
+      "name": "five-english-16k-w00",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 2.919769803710892e-07,
+      "max_absolute": 2.168739044350332e-06,
+      "rms": 5.66419696697906e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        26,
+        14
+      ],
+      "actual": 0.5771747827529907,
+      "expected": 0.5771750747299711
+    },
+    {
+      "name": "five-english-16k-w00",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 1.4459780312148386e-05,
+      "max_absolute": 4.125784222175355e-05,
+      "rms": 1.1025717445532597e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        585,
+        12
+      ],
+      "actual": -1.1254940032958984,
+      "expected": -1.1255102779272563
+    },
+    {
+      "name": "five-english-16k-w00",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 2.9197689288551487e-07,
+      "max_absolute": 2.1687389590852035e-06,
+      "rms": 5.664196984772993e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        26,
+        14
+      ],
+      "actual": 0.5771747827529907,
+      "expected": 0.5771750747298836
+    },
+    {
+      "name": "five-english-16k-w00",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 1.4459780390074241e-05,
+      "max_absolute": 4.125784231767682e-05,
+      "rms": 1.1025717452426152e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        585,
+        12
+      ],
+      "actual": -1.1254940032958984,
+      "expected": -1.125510277927344
+    },
+    {
+      "name": "five-french-44k-stereo-w00",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 3.0157592467716654e-07,
+      "max_absolute": 2.1565493959485593e-06,
+      "rms": 5.830329331673701e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        76
+      ],
+      "actual": -0.5491433143615723,
+      "expected": -0.5491430127856476
+    },
+    {
+      "name": "five-french-44k-stereo-w00",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 9.052466610966265e-06,
+      "max_absolute": 5.1304628475357106e-05,
+      "rms": 1.907969638902827e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        306,
+        79
+      ],
+      "actual": 5.667423725128174,
+      "expected": 5.667475029756649
+    },
+    {
+      "name": "five-french-44k-stereo-w00",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 3.015758469615548e-07,
+      "max_absolute": 2.15654930002529e-06,
+      "rms": 5.830329362632811e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        0,
+        76
+      ],
+      "actual": -0.5491433143615723,
+      "expected": -0.5491430127857253
+    },
+    {
+      "name": "five-french-44k-stereo-w00",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 9.052466606734998e-06,
+      "max_absolute": 5.130462845137629e-05,
+      "rms": 1.9079696401923965e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        306,
+        79
+      ],
+      "actual": 5.667423725128174,
+      "expected": 5.667475029756625
+    },
+    {
+      "name": "five-jfk-48k-stereo-w00",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.92677486055004e-06,
+      "max_absolute": 1.9287304660053906e-06,
+      "rms": 6.519217751890023e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        972,
+        30
+      ],
+      "actual": 0.19356536865234375,
+      "expected": 0.1935672954272043
+    },
+    {
+      "name": "five-jfk-48k-stereo-w00",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 5.812131635174467e-05,
+      "max_absolute": 5.812131635174467e-05,
+      "rms": 1.776614025222302e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        116,
+        65
+      ],
+      "actual": 0.11159324645996094,
+      "expected": 0.11153512514360919
+    },
+    {
+      "name": "five-jfk-48k-stereo-w00",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.9267748641027538e-06,
+      "max_absolute": 1.9287304660053906e-06,
+      "rms": 6.519217735824564e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        972,
+        30
+      ],
+      "actual": 0.19356536865234375,
+      "expected": 0.19356729542720785
+    },
+    {
+      "name": "five-jfk-48k-stereo-w00",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 5.8121316358850095e-05,
+      "max_absolute": 5.8121316358850095e-05,
+      "rms": 1.7766140255122205e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        116,
+        65
+      ],
+      "actual": 0.11159324645996094,
+      "expected": 0.11153512514360209
+    },
+    {
+      "name": "five-jfk-48k-stereo-w01",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.9715232220107737e-06,
+      "max_absolute": 2.0063402139669506e-06,
+      "rms": 6.142125849211293e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        504,
+        21
+      ],
+      "actual": -0.4632701873779297,
+      "expected": -0.4632682158547077
+    },
+    {
+      "name": "five-jfk-48k-stereo-w01",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 5.829654570455034e-05,
+      "max_absolute": 5.829654570455034e-05,
+      "rms": 1.6967514636488605e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        16,
+        65
+      ],
+      "actual": 0.2064228057861328,
+      "expected": 0.20636450924042826
+    },
+    {
+      "name": "five-jfk-48k-stereo-w01",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.9715232326689147e-06,
+      "max_absolute": 2.006340210414237e-06,
+      "rms": 6.142125840831684e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        504,
+        21
+      ],
+      "actual": -0.4632701873779297,
+      "expected": -0.463268215854697
+    },
+    {
+      "name": "five-jfk-48k-stereo-w01",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 5.82965457063267e-05,
+      "max_absolute": 5.82965457063267e-05,
+      "rms": 1.696751464096191e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        16,
+        65
+      ],
+      "actual": 0.2064228057861328,
+      "expected": 0.20636450924042649
+    },
+    {
+      "name": "five-two-recordings-w00",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0335570124198057e-06,
+      "max_absolute": 1.8141806563676255e-06,
+      "rms": 5.049380723018647e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        218,
+        64
+      ],
+      "actual": 0.16228961944580078,
+      "expected": 0.16228858588878836
+    },
+    {
+      "name": "five-two-recordings-w00",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.091521478815196e-05,
+      "max_absolute": 4.7533475904693034e-05,
+      "rms": 1.714605520047057e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        668,
+        12
+      ],
+      "actual": 0.5374555587768555,
+      "expected": 0.5374246435620673
+    },
+    {
+      "name": "five-two-recordings-w00",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0335570479469425e-06,
+      "max_absolute": 1.8141806705784802e-06,
+      "rms": 5.049380724928409e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        218,
+        64
+      ],
+      "actual": 0.16228961944580078,
+      "expected": 0.16228858588875283
+    },
+    {
+      "name": "five-two-recordings-w00",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.0915214816573666e-05,
+      "max_absolute": 4.753347589048218e-05,
+      "rms": 1.714605519998246e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        668,
+        12
+      ],
+      "actual": 0.5374555587768555,
+      "expected": 0.5374246435620389
+    },
+    {
+      "name": "five-two-recordings-w01",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0409080726248021e-06,
+      "max_absolute": 1.8228903044814615e-06,
+      "rms": 4.957153818830171e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        311,
+        8
+      ],
+      "actual": -0.8475246429443359,
+      "expected": -0.8475236020362633
+    },
+    {
+      "name": "five-two-recordings-w01",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.0215547177192548e-05,
+      "max_absolute": 4.66328957360318e-05,
+      "rms": 1.8284365686503579e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        568,
+        12
+      ],
+      "actual": 0.26691436767578125,
+      "expected": 0.26688415212860406
+    },
+    {
+      "name": "five-two-recordings-w01",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0409080495321632e-06,
+      "max_absolute": 1.8228903257977436e-06,
+      "rms": 4.957153818267414e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        311,
+        8
+      ],
+      "actual": -0.8475246429443359,
+      "expected": -0.8475236020362864
+    },
+    {
+      "name": "five-two-recordings-w01",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.0215547200285187e-05,
+      "max_absolute": 4.6632895727150014e-05,
+      "rms": 1.8284365684226028e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        568,
+        12
+      ],
+      "actual": 0.26691436767578125,
+      "expected": 0.26688415212858096
+    },
+    {
+      "name": "five-two-recordings-w02",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0434394805969305e-06,
+      "max_absolute": 1.8493554634346765e-06,
+      "rms": 5.121043584919534e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        946,
+        19
+      ],
+      "actual": -0.5568037033081055,
+      "expected": -0.5568026598686249
+    },
+    {
+      "name": "five-two-recordings-w02",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.9535131593760866e-05,
+      "max_absolute": 4.635173513012347e-05,
+      "rms": 1.8710200170494316e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        468,
+        12
+      ],
+      "actual": 0.6053495407104492,
+      "expected": 0.6053200055788555
+    },
+    {
+      "name": "five-two-recordings-w02",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0434394592806484e-06,
+      "max_absolute": 1.8493554563292491e-06,
+      "rms": 5.121043587704526e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        946,
+        19
+      ],
+      "actual": -0.5568037033081055,
+      "expected": -0.5568026598686462
+    },
+    {
+      "name": "five-two-recordings-w02",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.9535131609748078e-05,
+      "max_absolute": 4.6351735112359904e-05,
+      "rms": 1.8710200175502858e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        468,
+        12
+      ],
+      "actual": 0.6053495407104492,
+      "expected": 0.6053200055788395
+    },
+    {
+      "name": "five-two-recordings-w03",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0581633294037829e-06,
+      "max_absolute": 1.7874274718110428e-06,
+      "rms": 5.145083830343048e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        661,
+        11
+      ],
+      "actual": -0.3577423095703125,
+      "expected": -0.3577412514069831
+    },
+    {
+      "name": "five-two-recordings-w03",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.964664968414411e-05,
+      "max_absolute": 4.633591472380516e-05,
+      "rms": 1.8855577361721095e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        849,
+        79
+      ],
+      "actual": -0.31736087799072266,
+      "expected": -0.3173212313410385
+    },
+    {
+      "name": "five-two-recordings-w03",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0581633240747124e-06,
+      "max_absolute": 1.7874274718110428e-06,
+      "rms": 5.145083814720965e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        661,
+        11
+      ],
+      "actual": -0.3577423095703125,
+      "expected": -0.3577412514069884
+    },
+    {
+      "name": "five-two-recordings-w03",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.964664966460418e-05,
+      "max_absolute": 4.633591469538345e-05,
+      "rms": 1.8855577359981115e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        849,
+        79
+      ],
+      "actual": -0.31736087799072266,
+      "expected": -0.31732123134105805
+    },
+    {
+      "name": "dialogue-dialogue-30s-w00",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.149629312635625e-06,
+      "max_absolute": 1.554310930629299e-06,
+      "rms": 3.5468881598428346e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        156,
+        9
+      ],
+      "actual": -0.11418628692626953,
+      "expected": -0.11418743655558217
+    },
+    {
+      "name": "dialogue-dialogue-30s-w00",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.491304008955808e-05,
+      "max_absolute": 4.144807802797246e-05,
+      "rms": 1.0380108622265289e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        986,
+        12
+      ],
+      "actual": 0.29525184631347656,
+      "expected": 0.295226933273387
+    },
+    {
+      "name": "dialogue-dialogue-30s-w00",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.1496293144119818e-06,
+      "max_absolute": 1.5543109324056559e-06,
+      "rms": 3.5468881585075624e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        156,
+        9
+      ],
+      "actual": -0.11418628692626953,
+      "expected": -0.11418743655558394
+    },
+    {
+      "name": "dialogue-dialogue-30s-w00",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.491304009488715e-05,
+      "max_absolute": 4.1448079687533834e-05,
+      "rms": 1.038010862791722e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        986,
+        12
+      ],
+      "actual": 0.29525184631347656,
+      "expected": 0.2952269332733817
+    },
+    {
+      "name": "dialogue-dialogue-30s-w01",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 9.871240891357047e-07,
+      "max_absolute": 1.5234161789834388e-06,
+      "rms": 3.738149303710379e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        624,
+        47
+      ],
+      "actual": -0.8455677032470703,
+      "expected": -0.8455667161229812
+    },
+    {
+      "name": "dialogue-dialogue-30s-w01",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.635413872693505e-05,
+      "max_absolute": 4.1422075525598956e-05,
+      "rms": 1.2699326717771264e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        779,
+        12
+      ],
+      "actual": 0.9766321182250977,
+      "expected": 0.9765957640863707
+    },
+    {
+      "name": "dialogue-dialogue-30s-w01",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 9.871240820302773e-07,
+      "max_absolute": 1.5234161843125094e-06,
+      "rms": 3.738149315256885e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        624,
+        47
+      ],
+      "actual": -0.8455677032470703,
+      "expected": -0.8455667161229883
+    },
+    {
+      "name": "dialogue-dialogue-30s-w01",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.6354138751804044e-05,
+      "max_absolute": 4.14220771824958e-05,
+      "rms": 1.2699326721316165e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        779,
+        12
+      ],
+      "actual": 0.9766321182250977,
+      "expected": 0.9765957640863459
+    },
+    {
+      "name": "dialogue-dialogue-30s-w02",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0089152979730898e-06,
+      "max_absolute": 1.5169861260488915e-06,
+      "rms": 3.796546598835992e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        783,
+        47
+      ],
+      "actual": 0.639312744140625,
+      "expected": 0.639311735225327
+    },
+    {
+      "name": "dialogue-dialogue-30s-w02",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.635458487138976e-05,
+      "max_absolute": 4.1410565440269664e-05,
+      "rms": 1.2947994442089444e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        679,
+        12
+      ],
+      "actual": 0.3869314193725586,
+      "expected": 0.3868950647876872
+    },
+    {
+      "name": "dialogue-dialogue-30s-w02",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0089153121839445e-06,
+      "max_absolute": 1.5169861384833894e-06,
+      "rms": 3.796546603464679e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        783,
+        47
+      ],
+      "actual": 0.639312744140625,
+      "expected": 0.6393117352253128
+    },
+    {
+      "name": "dialogue-dialogue-30s-w02",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.635458488915333e-05,
+      "max_absolute": 4.1410567103383755e-05,
+      "rms": 1.2947994446156773e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        679,
+        12
+      ],
+      "actual": 0.3869314193725586,
+      "expected": 0.38689506478766944
+    },
+    {
+      "name": "dialogue-dialogue-30s-w03",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0141587818424114e-06,
+      "max_absolute": 1.4978228026762963e-06,
+      "rms": 3.6436812803363257e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        404,
+        29
+      ],
+      "actual": -0.04744720458984375,
+      "expected": -0.04744619043106191
+    },
+    {
+      "name": "dialogue-dialogue-30s-w03",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.712470474681595e-05,
+      "max_absolute": 4.1532400012922466e-05,
+      "rms": 1.3442159422715266e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        757,
+        12
+      ],
+      "actual": 0.6183567047119141,
+      "expected": 0.6183195800071672
+    },
+    {
+      "name": "dialogue-dialogue-30s-w03",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0141587996059798e-06,
+      "max_absolute": 1.4978228186635079e-06,
+      "rms": 3.643681295380848e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        404,
+        29
+      ],
+      "actual": -0.04744720458984375,
+      "expected": -0.047446190431044144
+    },
+    {
+      "name": "dialogue-dialogue-30s-w03",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.712470475214502e-05,
+      "max_absolute": 4.153240167603656e-05,
+      "rms": 1.3442159431193024e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        757,
+        12
+      ],
+      "actual": 0.6183567047119141,
+      "expected": 0.6183195800071619
+    },
+    {
+      "name": "dialogue-dialogue-30s-w04",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0292833891867303e-06,
+      "max_absolute": 1.5327589792946128e-06,
+      "rms": 4.0051373335866283e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        536,
+        53
+      ],
+      "actual": 0.014277458190917969,
+      "expected": 0.014278487474307155
+    },
+    {
+      "name": "dialogue-dialogue-30s-w04",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.820151947309114e-05,
+      "max_absolute": 4.154900888009294e-05,
+      "rms": 1.3746297690631868e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        663,
+        12
+      ],
+      "actual": 0.9116945266723633,
+      "expected": 0.9116563251528902
+    },
+    {
+      "name": "dialogue-dialogue-30s-w04",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0292833962921577e-06,
+      "max_absolute": 1.5327589864000402e-06,
+      "rms": 4.005137333437219e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        536,
+        53
+      ],
+      "actual": 0.014277458190917969,
+      "expected": 0.014278487474314261
+    },
+    {
+      "name": "dialogue-dialogue-30s-w04",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.820151947664385e-05,
+      "max_absolute": 4.154901054320703e-05,
+      "rms": 1.3746297694066178e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        663,
+        12
+      ],
+      "actual": 0.9116945266723633,
+      "expected": 0.9116563251528866
+    },
+    {
+      "name": "dialogue-dialogue-30s-w05",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0730274446757448e-06,
+      "max_absolute": 1.5135346149719453e-06,
+      "rms": 3.8725196884502195e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        931,
+        10
+      ],
+      "actual": -0.818995475769043,
+      "expected": -0.8189944027415983
+    },
+    {
+      "name": "dialogue-dialogue-30s-w05",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8718243843050004e-05,
+      "max_absolute": 4.164368455583656e-05,
+      "rms": 1.4530830753679768e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        996,
+        12
+      ],
+      "actual": 0.6614208221435547,
+      "expected": 0.6613821038997116
+    },
+    {
+      "name": "dialogue-dialogue-30s-w05",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0730274571102427e-06,
+      "max_absolute": 1.5135346131955885e-06,
+      "rms": 3.8725196865479233e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        931,
+        10
+      ],
+      "actual": -0.818995475769043,
+      "expected": -0.8189944027415859
+    },
+    {
+      "name": "dialogue-dialogue-30s-w05",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8718243837720934e-05,
+      "max_absolute": 4.16436862167302e-05,
+      "rms": 1.4530830758955965e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        996,
+        12
+      ],
+      "actual": 0.6614208221435547,
+      "expected": 0.661382103899717
+    },
+    {
+      "name": "dialogue-dialogue-30s-w06",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0134824890428717e-06,
+      "max_absolute": 1.4949943523134834e-06,
+      "rms": 3.9655092159895165e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        335,
+        19
+      ],
+      "actual": 0.5041170120239258,
+      "expected": 0.5041180255064148
+    },
+    {
+      "name": "dialogue-dialogue-30s-w06",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.799823049099871e-05,
+      "max_absolute": 4.135822765327646e-05,
+      "rms": 1.5760588023255189e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        896,
+        12
+      ],
+      "actual": -0.00838470458984375,
+      "expected": -0.008422702820334749
+    },
+    {
+      "name": "dialogue-dialogue-30s-w06",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0134824943719423e-06,
+      "max_absolute": 1.4949943540898403e-06,
+      "rms": 3.9655092182901565e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        335,
+        19
+      ],
+      "actual": 0.5041170120239258,
+      "expected": 0.5041180255064202
+    },
+    {
+      "name": "dialogue-dialogue-30s-w06",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.799823047145878e-05,
+      "max_absolute": 4.1358229312393746e-05,
+      "rms": 1.5760588028901983e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        896,
+        12
+      ],
+      "actual": -0.00838470458984375,
+      "expected": -0.008422702820315209
+    },
+    {
+      "name": "dialogue-dialogue-30s-w07",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.1902047443565565e-06,
+      "max_absolute": 1.5119867562418676e-06,
+      "rms": 4.1051397689024704e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        225,
+        39
+      ],
+      "actual": 1.109715461730957,
+      "expected": 1.1097167825211365
+    },
+    {
+      "name": "dialogue-dialogue-30s-w07",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.889576479133955e-05,
+      "max_absolute": 4.137218232713735e-05,
+      "rms": 1.597338425408268e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        802,
+        12
+      ],
+      "actual": 1.0039148330688477,
+      "expected": 1.0038757865523742
+    },
+    {
+      "name": "dialogue-dialogue-30s-w07",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.1902047555616526e-06,
+      "max_absolute": 1.5119867615709381e-06,
+      "rms": 4.105139767777045e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        225,
+        39
+      ],
+      "actual": 1.109715461730957,
+      "expected": 1.109716782521149
+    },
+    {
+      "name": "dialogue-dialogue-30s-w07",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8895764773643874e-05,
+      "max_absolute": 4.1372183984478283e-05,
+      "rms": 1.597338425718669e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        802,
+        12
+      ],
+      "actual": 1.0039148330688477,
+      "expected": 1.003875786552392
+    },
+    {
+      "name": "dialogue-dialogue-30s-w08",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0838643170043296e-06,
+      "max_absolute": 1.4971803476981904e-06,
+      "rms": 3.9552836617060784e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        78,
+        44
+      ],
+      "actual": 1.3292932510375977,
+      "expected": 1.329294691812681
+    },
+    {
+      "name": "dialogue-dialogue-30s-w08",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.876532016455769e-05,
+      "max_absolute": 4.19206209105738e-05,
+      "rms": 1.592411666466326e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        702,
+        12
+      ],
+      "actual": 0.9182729721069336,
+      "expected": 0.918234206786769
+    },
+    {
+      "name": "dialogue-dialogue-30s-w08",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.083864303641191e-06,
+      "max_absolute": 1.4971803441454767e-06,
+      "rms": 3.9552836770258233e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        78,
+        44
+      ],
+      "actual": 1.3292932510375977,
+      "expected": 1.3292946918126631
+    },
+    {
+      "name": "dialogue-dialogue-30s-w08",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.876532014857048e-05,
+      "max_absolute": 4.19206225652502e-05,
+      "rms": 1.5924116666671663e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        702,
+        12
+      ],
+      "actual": 0.9182729721069336,
+      "expected": 0.918234206786785
+    },
+    {
+      "name": "dialogue-dialogue-30s-w09",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.2184116009450463e-06,
+      "max_absolute": 1.5293544777250645e-06,
+      "rms": 3.978907764379081e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        414,
+        42
+      ],
+      "actual": 0.9682540893554688,
+      "expected": 0.9682528709438678
+    },
+    {
+      "name": "dialogue-dialogue-30s-w09",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.753577650300599e-05,
+      "max_absolute": 3.865193157892577e-05,
+      "rms": 1.5789202552451323e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        596,
+        12
+      ],
+      "actual": -0.3600187301635742,
+      "expected": -0.3600562659400772
+    },
+    {
+      "name": "dialogue-dialogue-30s-w09",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.21841160449776e-06,
+      "max_absolute": 1.5293544848304919e-06,
+      "rms": 3.97890776674695e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        414,
+        42
+      ],
+      "actual": 0.9682540893554688,
+      "expected": 0.9682528709438643
+    },
+    {
+      "name": "dialogue-dialogue-30s-w09",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.753577650300599e-05,
+      "max_absolute": 3.865193157892577e-05,
+      "rms": 1.578920255044082e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        596,
+        12
+      ],
+      "actual": -0.3600187301635742,
+      "expected": -0.3600562659400772
+    },
+    {
+      "name": "dialogue-dialogue-30s-w10",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0923321962508226e-06,
+      "max_absolute": 1.512094195632585e-06,
+      "rms": 3.9600595268430256e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        218,
+        7
+      ],
+      "actual": -0.20466899871826172,
+      "expected": -0.20466790638606547
+    },
+    {
+      "name": "dialogue-dialogue-30s-w10",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.7143868581779316e-05,
+      "max_absolute": 3.8260023657699094e-05,
+      "rms": 1.6335937760030972e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        496,
+        12
+      ],
+      "actual": 0.2626781463623047,
+      "expected": 0.2626410024937229
+    },
+    {
+      "name": "dialogue-dialogue-30s-w10",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0923321944744657e-06,
+      "max_absolute": 1.512094184974444e-06,
+      "rms": 3.9600595268044607e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        218,
+        7
+      ],
+      "actual": -0.20466899871826172,
+      "expected": -0.20466790638606724
+    },
+    {
+      "name": "dialogue-dialogue-30s-w10",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.7143868571121175e-05,
+      "max_absolute": 3.826002364704095e-05,
+      "rms": 1.6335937759827002e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        496,
+        12
+      ],
+      "actual": 0.2626781463623047,
+      "expected": 0.26264100249373357
+    },
+    {
+      "name": "dialogue-dialogue-30s-w11",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0301665156475792e-06,
+      "max_absolute": 1.483475008612345e-06,
+      "rms": 3.936177838394814e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        433,
+        57
+      ],
+      "actual": -0.8456821441650391,
+      "expected": -0.8456811139985234
+    },
+    {
+      "name": "dialogue-dialogue-30s-w11",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.875249846707618e-05,
+      "max_absolute": 3.986865354299596e-05,
+      "rms": 1.5061478077734353e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        396,
+        12
+      ],
+      "actual": 0.12026023864746094,
+      "expected": 0.12022148614899386
+    },
+    {
+      "name": "dialogue-dialogue-30s-w11",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0301665085421519e-06,
+      "max_absolute": 1.4834749997305607e-06,
+      "rms": 3.936177837206642e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        433,
+        57
+      ],
+      "actual": -0.8456821441650391,
+      "expected": -0.8456811139985305
+    },
+    {
+      "name": "dialogue-dialogue-30s-w11",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8752498468852536e-05,
+      "max_absolute": 3.9868653544772314e-05,
+      "rms": 1.506147807856797e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        396,
+        12
+      ],
+      "actual": 0.12026023864746094,
+      "expected": 0.12022148614899208
+    },
+    {
+      "name": "dialogue-dialogue-30s-w12",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0416878719610168e-06,
+      "max_absolute": 1.5588836550506358e-06,
+      "rms": 3.935966017222732e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        755,
+        57
+      ],
+      "actual": 0.43758201599121094,
+      "expected": 0.437580974303339
+    },
+    {
+      "name": "dialogue-dialogue-30s-w12",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8929292188072395e-05,
+      "max_absolute": 4.004544726399217e-05,
+      "rms": 1.4885352969920905e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        296,
+        12
+      ],
+      "actual": 0.2375469207763672,
+      "expected": 0.23750799148417912
+    },
+    {
+      "name": "dialogue-dialogue-30s-w12",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0416878755137304e-06,
+      "max_absolute": 1.5588836443924947e-06,
+      "rms": 3.935966011718673e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        755,
+        57
+      ],
+      "actual": 0.43758201599121094,
+      "expected": 0.4375809743033354
+    },
+    {
+      "name": "dialogue-dialogue-30s-w12",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8929292205835964e-05,
+      "max_absolute": 4.004544728175574e-05,
+      "rms": 1.4885352970748142e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        296,
+        12
+      ],
+      "actual": 0.2375469207763672,
+      "expected": 0.23750799148416135
+    },
+    {
+      "name": "dialogue-dialogue-30s-w13",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0008619799606322e-06,
+      "max_absolute": 1.5037728449129872e-06,
+      "rms": 3.8345965087540137e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        714,
+        56
+      ],
+      "actual": 0.06763362884521484,
+      "expected": 0.0676346297071948
+    },
+    {
+      "name": "dialogue-dialogue-30s-w13",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8095070904020645e-05,
+      "max_absolute": 3.9121123624141774e-05,
+      "rms": 1.5553368833778618e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        977,
+        12
+      ],
+      "actual": -0.5229883193969727,
+      "expected": -0.5230264144678767
+    },
+    {
+      "name": "dialogue-dialogue-30s-w13",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0008619870660596e-06,
+      "max_absolute": 1.503772859123842e-06,
+      "rms": 3.834596525711491e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        714,
+        56
+      ],
+      "actual": 0.06763362884521484,
+      "expected": 0.06763462970720191
+    },
+    {
+      "name": "dialogue-dialogue-30s-w13",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.809507092178421e-05,
+      "max_absolute": 3.9121123640128985e-05,
+      "rms": 1.5553368831265887e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        977,
+        12
+      ],
+      "actual": -0.5229883193969727,
+      "expected": -0.5230264144678944
+    },
+    {
+      "name": "dialogue-dialogue-30s-w14",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0394576683836476e-06,
+      "max_absolute": 1.4898733358137406e-06,
+      "rms": 4.000725309849611e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        420,
+        27
+      ],
+      "actual": -0.9005727767944336,
+      "expected": -0.900573816252102
+    },
+    {
+      "name": "dialogue-dialogue-30s-w14",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8040766035862816e-05,
+      "max_absolute": 3.9066818755983945e-05,
+      "rms": 1.5553483654734581e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        877,
+        12
+      ],
+      "actual": -0.26253509521484375,
+      "expected": -0.2625731359808796
+    },
+    {
+      "name": "dialogue-dialogue-30s-w14",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0394576577255066e-06,
+      "max_absolute": 1.4898733411428111e-06,
+      "rms": 4.000725312865157e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        420,
+        27
+      ],
+      "actual": -0.9005727767944336,
+      "expected": -0.9005738162520913
+    },
+    {
+      "name": "dialogue-dialogue-30s-w14",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8040766058955455e-05,
+      "max_absolute": 3.906681877730023e-05,
+      "rms": 1.5553483655614803e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        877,
+        12
+      ],
+      "actual": -0.26253509521484375,
+      "expected": -0.2625731359809027
+    },
+    {
+      "name": "dialogue-dialogue-30s-w15",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.054952708301471e-06,
+      "max_absolute": 1.4928861951091221e-06,
+      "rms": 3.890518486015927e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        33,
+        57
+      ],
+      "actual": -0.4038095474243164,
+      "expected": -0.4038084924716081
+    },
+    {
+      "name": "dialogue-dialogue-30s-w15",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8574481360242885e-05,
+      "max_absolute": 3.9600534080364014e-05,
+      "rms": 1.4894083041381616e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        777,
+        12
+      ],
+      "actual": -0.34660816192626953,
+      "expected": -0.3466467364076298
+    },
+    {
+      "name": "dialogue-dialogue-30s-w15",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0549527100778278e-06,
+      "max_absolute": 1.4928862146490474e-06,
+      "rms": 3.8905184874858304e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        33,
+        57
+      ],
+      "actual": -0.4038095474243164,
+      "expected": -0.40380849247160633
+    },
+    {
+      "name": "dialogue-dialogue-30s-w15",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.857448137445374e-05,
+      "max_absolute": 3.960053409279851e-05,
+      "rms": 1.4894083036625094e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        777,
+        12
+      ],
+      "actual": -0.34660816192626953,
+      "expected": -0.346646736407644
+    },
+    {
+      "name": "dialogue-dialogue-30s-w16",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0828590770728397e-06,
+      "max_absolute": 1.5615489896703139e-06,
+      "rms": 4.0697069848496595e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        770,
+        18
+      ],
+      "actual": -0.044918060302734375,
+      "expected": -0.04491914316181145
+    },
+    {
+      "name": "dialogue-dialogue-30s-w16",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.922296792957525e-05,
+      "max_absolute": 3.956792185633162e-05,
+      "rms": 1.3976218067352768e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        677,
+        12
+      ],
+      "actual": -0.556126594543457,
+      "expected": -0.5561658175113866
+    },
+    {
+      "name": "dialogue-dialogue-30s-w16",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0828590610856281e-06,
+      "max_absolute": 1.5615489825648865e-06,
+      "rms": 4.0697069844942095e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        770,
+        18
+      ],
+      "actual": -0.044918060302734375,
+      "expected": -0.04491914316179546
+    },
+    {
+      "name": "dialogue-dialogue-30s-w16",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.9222967931351604e-05,
+      "max_absolute": 3.956792185633162e-05,
+      "rms": 1.397621806715558e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        677,
+        12
+      ],
+      "actual": -0.556126594543457,
+      "expected": -0.5561658175113884
+    },
+    {
+      "name": "dialogue-dialogue-30s-w17",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0817495521564524e-06,
+      "max_absolute": 1.5091425158431093e-06,
+      "rms": 4.0805788157199527e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        108,
+        49
+      ],
+      "actual": -0.574833869934082,
+      "expected": -0.5748327881845299
+    },
+    {
+      "name": "dialogue-dialogue-30s-w17",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.9423199215349314e-05,
+      "max_absolute": 3.976815314210569e-05,
+      "rms": 1.3935844814986553e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        577,
+        12
+      ],
+      "actual": -0.6108236312866211,
+      "expected": -0.6108630544858364
+    },
+    {
+      "name": "dialogue-dialogue-30s-w17",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0817495699200208e-06,
+      "max_absolute": 1.5091425318303209e-06,
+      "rms": 4.0805788333009426e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        108,
+        49
+      ],
+      "actual": -0.574833869934082,
+      "expected": -0.5748327881845121
+    },
+    {
+      "name": "dialogue-dialogue-30s-w17",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.942319920646753e-05,
+      "max_absolute": 3.976815313144755e-05,
+      "rms": 1.3935844816290833e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        577,
+        12
+      ],
+      "actual": -0.6108236312866211,
+      "expected": -0.6108630544858276
+    },
+    {
+      "name": "dialogue-dialogue-30s-w18",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.016046583757202e-06,
+      "max_absolute": 1.492150765614042e-06,
+      "rms": 3.815245025486229e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        990,
+        13
+      ],
+      "actual": 0.21574020385742188,
+      "expected": 0.21574121990400563
+    },
+    {
+      "name": "dialogue-dialogue-30s-w18",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.954501586100889e-05,
+      "max_absolute": 3.988996978776527e-05,
+      "rms": 1.4024534614900123e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        477,
+        12
+      ],
+      "actual": -0.6094436645507812,
+      "expected": -0.6094832095666423
+    },
+    {
+      "name": "dialogue-dialogue-30s-w18",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.016046581980845e-06,
+      "max_absolute": 1.4921507727194694e-06,
+      "rms": 3.8152450279123345e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        990,
+        13
+      ],
+      "actual": 0.21574020385742188,
+      "expected": 0.21574121990400386
+    },
+    {
+      "name": "dialogue-dialogue-30s-w18",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.9545015848574394e-05,
+      "max_absolute": 3.988996977355441e-05,
+      "rms": 1.4024534614827067e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        477,
+        12
+      ],
+      "actual": -0.6094436645507812,
+      "expected": -0.6094832095666298
+    },
+    {
+      "name": "dialogue-dialogue-30s-w19",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0857139312037134e-06,
+      "max_absolute": 1.53028782357012e-06,
+      "rms": 4.0306994246731853e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        578,
+        23
+      ],
+      "actual": 0.8239831924438477,
+      "expected": 0.8239842781577789
+    },
+    {
+      "name": "dialogue-dialogue-30s-w19",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.8583340966624746e-05,
+      "max_absolute": 3.8855787648728324e-05,
+      "rms": 1.5308112110670966e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        993,
+        12
+      ],
+      "actual": 0.3424348831176758,
+      "expected": 0.34239629977670916
+    },
+    {
+      "name": "dialogue-dialogue-30s-w19",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0857139418618544e-06,
+      "max_absolute": 1.5302878217937632e-06,
+      "rms": 4.03069942045775e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        578,
+        23
+      ],
+      "actual": 0.8239831924438477,
+      "expected": 0.8239842781577895
+    },
+    {
+      "name": "dialogue-dialogue-30s-w19",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.858334095951932e-05,
+      "max_absolute": 3.8855787641622896e-05,
+      "rms": 1.5308112112351803e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        993,
+        12
+      ],
+      "actual": 0.3424348831176758,
+      "expected": 0.34239629977671626
+    },
+    {
+      "name": "dialogue-dialogue-30s-w20",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.3270501995066297e-06,
+      "max_absolute": 1.5281494398777795e-06,
+      "rms": 4.0032502868869406e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        582,
+        18
+      ],
+      "actual": 0.9740486145019531,
+      "expected": 0.9740472874517536
+    },
+    {
+      "name": "dialogue-dialogue-30s-w20",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.904502567664281e-05,
+      "max_absolute": 3.9317472358746386e-05,
+      "rms": 1.5093882335153326e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        893,
+        12
+      ],
+      "actual": -0.2464599609375,
+      "expected": -0.24649900596317664
+    },
+    {
+      "name": "dialogue-dialogue-30s-w20",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.3270501977302729e-06,
+      "max_absolute": 1.5281494381014227e-06,
+      "rms": 4.003250295489342e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        582,
+        18
+      ],
+      "actual": 0.9740486145019531,
+      "expected": 0.9740472874517554
+    },
+    {
+      "name": "dialogue-dialogue-30s-w20",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.9045025655326526e-05,
+      "max_absolute": 3.9317472337430104e-05,
+      "rms": 1.50938823347633e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        893,
+        12
+      ],
+      "actual": -0.2464599609375,
+      "expected": -0.24649900596315533
+    },
+    {
+      "name": "dialogue-dialogue-0-10s-w00",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.149629312635625e-06,
+      "max_absolute": 1.554310930629299e-06,
+      "rms": 3.5468881598428346e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        156,
+        9
+      ],
+      "actual": -0.11418628692626953,
+      "expected": -0.11418743655558217
+    },
+    {
+      "name": "dialogue-dialogue-0-10s-w00",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.491304008955808e-05,
+      "max_absolute": 4.144807802797246e-05,
+      "rms": 1.0380108622265289e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        986,
+        12
+      ],
+      "actual": 0.29525184631347656,
+      "expected": 0.295226933273387
+    },
+    {
+      "name": "dialogue-dialogue-0-10s-w00",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.1496293144119818e-06,
+      "max_absolute": 1.5543109324056559e-06,
+      "rms": 3.5468881585075624e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        156,
+        9
+      ],
+      "actual": -0.11418628692626953,
+      "expected": -0.11418743655558394
+    },
+    {
+      "name": "dialogue-dialogue-0-10s-w00",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 2.491304009488715e-05,
+      "max_absolute": 4.1448079687533834e-05,
+      "rms": 1.038010862791722e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        986,
+        12
+      ],
+      "actual": 0.29525184631347656,
+      "expected": 0.2952269332733817
+    },
+    {
+      "name": "dialogue-dialogue-10-20s-w00",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0923321962508226e-06,
+      "max_absolute": 1.512094195632585e-06,
+      "rms": 3.9600595268430256e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        218,
+        7
+      ],
+      "actual": -0.20466899871826172,
+      "expected": -0.20466790638606547
+    },
+    {
+      "name": "dialogue-dialogue-10-20s-w00",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.7143868581779316e-05,
+      "max_absolute": 3.8260023657699094e-05,
+      "rms": 1.6335937760030972e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        496,
+        12
+      ],
+      "actual": 0.2626781463623047,
+      "expected": 0.2626410024937229
+    },
+    {
+      "name": "dialogue-dialogue-10-20s-w00",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.0923321944744657e-06,
+      "max_absolute": 1.512094184974444e-06,
+      "rms": 3.9600595268044607e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        218,
+        7
+      ],
+      "actual": -0.20466899871826172,
+      "expected": -0.20466790638606724
+    },
+    {
+      "name": "dialogue-dialogue-10-20s-w00",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.7143868571121175e-05,
+      "max_absolute": 3.826002364704095e-05,
+      "rms": 1.6335937759827002e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        496,
+        12
+      ],
+      "actual": 0.2626781463623047,
+      "expected": 0.26264100249373357
+    },
+    {
+      "name": "dialogue-dialogue-20-30s-w00",
+      "engine": "numpy",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.3270501995066297e-06,
+      "max_absolute": 1.5281494398777795e-06,
+      "rms": 4.0032502868869406e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        582,
+        18
+      ],
+      "actual": 0.9740486145019531,
+      "expected": 0.9740472874517536
+    },
+    {
+      "name": "dialogue-dialogue-20-30s-w00",
+      "engine": "numpy",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.904502567664281e-05,
+      "max_absolute": 3.9317472358746386e-05,
+      "rms": 1.5093882335153326e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        893,
+        12
+      ],
+      "actual": -0.2464599609375,
+      "expected": -0.24649900596317664
+    },
+    {
+      "name": "dialogue-dialogue-20-30s-w00",
+      "engine": "torch",
+      "coefficients": "managed",
+      "values": 79840,
+      "max_scaled": 1.3270501977302729e-06,
+      "max_absolute": 1.5281494381014227e-06,
+      "rms": 4.003250295489342e-07,
+      "failed": 0,
+      "coordinate": [
+        0,
+        582,
+        18
+      ],
+      "actual": 0.9740486145019531,
+      "expected": 0.9740472874517554
+    },
+    {
+      "name": "dialogue-dialogue-20-30s-w00",
+      "engine": "torch",
+      "coefficients": "native",
+      "values": 79840,
+      "max_scaled": 3.9045025655326526e-05,
+      "max_absolute": 3.9317472337430104e-05,
+      "rms": 1.50938823347633e-06,
+      "failed": 0,
+      "coordinate": [
+        0,
+        893,
+        12
+      ],
+      "actual": -0.2464599609375,
+      "expected": -0.24649900596315533
+    }
+  ],
+  "dc": {
+    "old-dc": [
+      {
+        "length": 560,
+        "values": 160,
+        "failed": 6,
+        "maximum": 0.003742218017578125
+      },
+      {
+        "length": 16000,
+        "values": 7840,
+        "failed": 256,
+        "maximum": 0.045996665954589844
+      }
+    ],
+    "new-dc": [
+      {
+        "length": 560,
+        "values": 160,
+        "failed": 0,
+        "maximum": 0
+      },
+      {
+        "length": 16000,
+        "values": 7840,
+        "failed": 0,
+        "maximum": 0
+      }
+    ]
+  },
+  "resources": [
+    {
+      "name": "test",
+      "seconds": 35.29654130002018,
+      "samples": 126,
+      "peak_rss": 563679232
+    },
+    {
+      "name": "consumer-build",
+      "seconds": 3.5270655000349507,
+      "samples": 13,
+      "peak_rss": 270745600
+    },
+    {
+      "name": "old-dc",
+      "seconds": 0.2622603999916464,
+      "samples": 1,
+      "peak_rss": 2060288
+    },
+    {
+      "name": "new-dc",
+      "seconds": 0.26124930003425106,
+      "samples": 1,
+      "peak_rss": 2056192
+    },
+    {
+      "name": "corpus",
+      "seconds": 2.2827384999836795,
+      "samples": 8,
+      "peak_rss": 81850368
+    },
+    {
+      "name": "test-trx",
+      "seconds": 4.29015979997348,
+      "samples": 16,
+      "peak_rss": 309641216
+    }
+  ],
+  "births": [
+    {
+      "pid": 609784,
+      "birth": 1789932944.3241696
+    },
+    {
+      "pid": 607284,
+      "birth": 1789932944.4900231
+    },
+    {
+      "pid": 598512,
+      "birth": 1789932945.5962024
+    },
+    {
+      "pid": 598236,
+      "birth": 1789932945.6095512
+    },
+    {
+      "pid": 606256,
+      "birth": 1789932953.855905
+    },
+    {
+      "pid": 588992,
+      "birth": 1789932953.8611379
+    },
+    {
+      "pid": 599852,
+      "birth": 1789932956.7620792
+    },
+    {
+      "pid": 607136,
+      "birth": 1789932956.7653985
+    },
+    {
+      "pid": 613144,
+      "birth": 1789932974.838964
+    },
+    {
+      "pid": 613240,
+      "birth": 1789932974.8424177
+    },
+    {
+      "pid": 595444,
+      "birth": 1789932975.109511
+    },
+    {
+      "pid": 605568,
+      "birth": 1789932975.1221552
+    },
+    {
+      "pid": 607696,
+      "birth": 1789932977.3755534
+    },
+    {
+      "pid": 330440,
+      "birth": 1789932977.386371
+    },
+    {
+      "pid": 588552,
+      "birth": 1789932977.64855
+    },
+    {
+      "pid": 583024,
+      "birth": 1789932977.6524844
+    },
+    {
+      "pid": 609800,
+      "birth": 1789932977.9030151
+    },
+    {
+      "pid": 608676,
+      "birth": 1789932977.906739
+    },
+    {
+      "pid": 603148,
+      "birth": 1789932979.7869415
+    },
+    {
+      "pid": 622344,
+      "birth": 1789932980.8016005
+    },
+    {
+      "pid": 622144,
+      "birth": 1789932980.807324
+    },
+    {
+      "pid": 504980,
+      "birth": 1789932983.315469
+    },
+    {
+      "pid": 541492,
+      "birth": 1789932983.5785284
+    },
+    {
+      "pid": 550584,
+      "birth": 1789932983.8418498
+    },
+    {
+      "pid": 639364,
+      "birth": 1789933091.3336632
+    },
+    {
+      "pid": 638416,
+      "birth": 1789933091.4564705
+    },
+    {
+      "pid": 639872,
+      "birth": 1789933092.0296638
+    },
+    {
+      "pid": 639880,
+      "birth": 1789933092.0337913
+    },
+    {
+      "pid": 626444,
+      "birth": 1789933092.2874172
+    },
+    {
+      "pid": 626800,
+      "birth": 1789933092.29203
+    },
+    {
+      "pid": 638900,
+      "birth": 1789933093.5762389
+    },
+    {
+      "pid": 552028,
+      "birth": 1789933093.5797436
+    }
+  ],
+  "loaded": [
+    {
+      "name": "Lokad.Onnx.Data",
+      "file": "C:\\Users\\JoannesVermorel\\code\\Onnx\\tests\\Lokad.Onnx.Backend.Tests\\bin\\Release\\net10.0\\Lokad.Onnx.Data.dll",
+      "pin": {
+        "bytes": 140288,
+        "sha256": "1611fdfb705754790f825242fab4ba856f5590de1cf9f7dcffe680383a55862e"
+      }
+    },
+    {
+      "name": "Lokad.Onnx",
+      "file": "C:\\Users\\JoannesVermorel\\code\\Onnx\\tests\\Lokad.Onnx.Backend.Tests\\bin\\Release\\net10.0\\Lokad.Onnx.dll",
+      "pin": {
+        "bytes": 726528,
+        "sha256": "58bf0188ae7bf91a22f89b2417964192c4b77d9b260acf4eebc93d45c04842fe"
+      }
+    }
+  ],
+  "assemblies": {
+    "Lokad.Onnx.Backend.Tests.dll": {
+      "bytes": 1170944,
+      "sha256": "ca20e5e4cdfdbc866bf031629c9e97a345e733ba6989116f2f4bbe1fc5c346e0"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 140288,
+      "sha256": "1611fdfb705754790f825242fab4ba856f5590de1cf9f7dcffe680383a55862e"
+    },
+    "Lokad.Onnx.dll": {
+      "bytes": 726528,
+      "sha256": "58bf0188ae7bf91a22f89b2417964192c4b77d9b260acf4eebc93d45c04842fe"
+    }
+  }
+}
