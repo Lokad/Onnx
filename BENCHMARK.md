@@ -14,6 +14,16 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
+
+The latest accepted **Windows pyannote candidate** completes the 30-second
+dialogue in **11.549 s versus Microsoft ORT 6.334 s (1.823×)**. Its immediate
+predecessor takes 12.325 s in the same comparison, a 6.3% reduction. On the
+**AMD target**, the retained production baselines are **pyannote 46.561 s versus
+ORT 9.270 s (5.023×)** and **Parakeet 79.362 s versus ORT 40.764 s (1.947×)**
+for twenty clips totaling 213.265 seconds. New AMD candidate timing is pending.
+Each comparison uses complete application timers; compare engines within a
+row, preserving the hardware and implementation distinctions below.
+
 The [Parakeet packing-admission candidate](tests/parakeet/packing-admission/results-20260921.md)
 now preserves 28.8 million captured values bit-for-bit and all twenty public
 controls at the current 256 MiB encoder cap. Separate load-only checks establish
@@ -119,8 +129,10 @@ The next [vector-bias candidate](tests/pyannote/vector-bias/results-20260921.md)
 changes one convolution method and passes 358 focused tests, 144 tests with
 hardware intrinsics disabled, all 108 captured graph calls, shared-model native
 checks and exact Parakeet regression. All 17.5 million graph values retain their
-bits. Full public application and timing qualification are in progress; this
-candidate has no accepted speed result yet.
+bits. Its [complete application qualification](tests/pyannote/vector-bias-qualification/results-20260921.md)
+passes 3,366 backend and 342 tensor tests, all dialogue calls, both ten-minute
+meetings and recovery with exact predecessor results and native timelines.
+Fresh matched timing is running; this candidate has no accepted speed result yet.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 

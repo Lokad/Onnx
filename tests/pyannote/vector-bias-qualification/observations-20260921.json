@@ -1,0 +1,613 @@
+{
+  "closure": {
+    "bytes": 2793197,
+    "sha256": "9aff4c320d67e47cc3ca9e9c193a21ffc451f050092cba05cb2d78bfae813f3c"
+  },
+  "verified_suite_outcomes": [
+    {
+      "name": "request-focused",
+      "outcomes": {
+        "Passed": 2
+      }
+    },
+    {
+      "name": "backend-full",
+      "outcomes": {
+        "Passed": 3366,
+        "NotExecuted": 93
+      }
+    },
+    {
+      "name": "tensors-full",
+      "outcomes": {
+        "Passed": 342
+      }
+    }
+  ],
+  "passed": true,
+  "public_calls": 16,
+  "meeting_calls": 3,
+  "exact_predecessor_results": true,
+  "allocation_reduced": false,
+  "dialogue": [
+    {
+      "name": "dialogue-30s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 1101369306.6666667,
+      "candidate_allocated_mean": 1097206290.6666667,
+      "allocation_ratio": 0.9962201452548196,
+      "candidate_seconds": [
+        11.3799131,
+        10.912482,
+        12.6998467
+      ]
+    },
+    {
+      "name": "dialogue-0-10s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 111804792.0,
+      "candidate_allocated_mean": 112012256.0,
+      "allocation_ratio": 1.0018555913059612,
+      "candidate_seconds": [
+        0.5306365,
+        0.5287732,
+        0.5226986
+      ]
+    },
+    {
+      "name": "dialogue-10-20s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 109217888.0,
+      "candidate_allocated_mean": 110681834.66666667,
+      "allocation_ratio": 1.0134039093181024,
+      "candidate_seconds": [
+        0.5258819,
+        0.5139619,
+        0.5130745
+      ]
+    },
+    {
+      "name": "dialogue-20-30s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 109728933.33333333,
+      "candidate_allocated_mean": 111105813.33333333,
+      "allocation_ratio": 1.0125480122532253,
+      "candidate_seconds": [
+        0.5234813,
+        0.5903605,
+        0.5327053
+      ]
+    }
+  ],
+  "meetings": [
+    {
+      "name": "ES2004a",
+      "passed": true,
+      "maximum_centroid_error": 8.981409564540188e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 29180824688,
+      "prior_allocated_bytes": 29026030600,
+      "allocation_ratio": 1.005332940288432,
+      "seconds": 346.0844586
+    },
+    {
+      "name": "IS1009a",
+      "passed": true,
+      "maximum_centroid_error": 5.764390146878462e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 29115527688,
+      "prior_allocated_bytes": 29033588104,
+      "allocation_ratio": 1.002822234155368,
+      "seconds": 319.5194443
+    },
+    {
+      "name": "ES2004a-recovery30",
+      "passed": true,
+      "maximum_centroid_error": 5.18795691045737e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 1086354376,
+      "prior_allocated_bytes": 1086359064,
+      "allocation_ratio": 0.9999956846680298,
+      "seconds": 15.2913785
+    }
+  ],
+  "suites": [
+    {
+      "name": "request-focused",
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "2",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    },
+    {
+      "name": "backend-full",
+      "counters": {
+        "total": "3459",
+        "executed": "3366",
+        "passed": "3366",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    },
+    {
+      "name": "tensors-full",
+      "counters": {
+        "total": "342",
+        "executed": "342",
+        "passed": "342",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "cli-restore",
+      "samples": 4,
+      "peak_rss": 105431040,
+      "seconds": 1.0385474999784492,
+      "preflight": {
+        "seconds": 0.0006983000203035772,
+        "available": 10826309632,
+        "disk": 160376451072
+      }
+    },
+    {
+      "name": "cli-build",
+      "samples": 12,
+      "peak_rss": 263368704,
+      "seconds": 3.1201691000023857,
+      "preflight": {
+        "seconds": 0.001138300052843988,
+        "available": 10742681600,
+        "disk": 160375865344
+      }
+    },
+    {
+      "name": "backend-restore",
+      "samples": 7,
+      "peak_rss": 128299008,
+      "seconds": 1.8217428000061773,
+      "preflight": {
+        "seconds": 0.002264800015836954,
+        "available": 10068119552,
+        "disk": 160370409472
+      }
+    },
+    {
+      "name": "backend-build",
+      "samples": 61,
+      "peak_rss": 531828736,
+      "seconds": 15.87748460000148,
+      "preflight": {
+        "seconds": 0.0007328999927267432,
+        "available": 10191462400,
+        "disk": 160291913728
+      }
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 3,
+      "peak_rss": 97386496,
+      "seconds": 0.7765575000084937,
+      "preflight": {
+        "seconds": 0.0011562000145204365,
+        "available": 12555649024,
+        "disk": 160274116608
+      }
+    },
+    {
+      "name": "tensors-build",
+      "samples": 18,
+      "peak_rss": 313913344,
+      "seconds": 4.66928969998844,
+      "preflight": {
+        "seconds": 0.0006837999681010842,
+        "available": 17014996992,
+        "disk": 160273993728
+      }
+    },
+    {
+      "name": "request-focused",
+      "samples": 9,
+      "peak_rss": 290013184,
+      "seconds": 2.3250199999893084,
+      "preflight": {
+        "seconds": 0.0011504999711178243,
+        "available": 19412090880,
+        "disk": 160259051520
+      }
+    },
+    {
+      "name": "backend-full",
+      "samples": 201,
+      "peak_rss": 4873994240,
+      "seconds": 52.55793499998981,
+      "preflight": {
+        "seconds": 0.0007825000211596489,
+        "available": 19118686208,
+        "disk": 160259022848
+      }
+    },
+    {
+      "name": "tensors-full",
+      "samples": 20,
+      "peak_rss": 282710016,
+      "seconds": 5.187199099978898,
+      "preflight": {
+        "seconds": 0.0008384999819099903,
+        "available": 13820502016,
+        "disk": 160246910976
+      }
+    },
+    {
+      "name": "dialogue",
+      "samples": 224,
+      "peak_rss": 653975552,
+      "seconds": 58.77266859996598,
+      "preflight": {
+        "seconds": 0.0008505000150762498,
+        "available": 12854972416,
+        "disk": 160196079616
+      }
+    },
+    {
+      "name": "meetings-inputs",
+      "samples": 3,
+      "peak_rss": 109785088,
+      "seconds": 0.7783943999675103,
+      "preflight": {
+        "seconds": 15.002442099968903,
+        "available": 15117033472,
+        "disk": 160164278272
+      }
+    },
+    {
+      "name": "meetings-run",
+      "samples": 2602,
+      "peak_rss": 852398080,
+      "seconds": 681.9103079999913,
+      "preflight": {
+        "seconds": 0.002917699981480837,
+        "available": 16782413824,
+        "disk": 160162897920
+      }
+    }
+  ],
+  "resource_samples": 3164,
+  "peak_rss": 4873994240,
+  "identities": [
+    {
+      "pid": 246908,
+      "birth": 1790023793.9550571
+    },
+    {
+      "pid": 1051800,
+      "birth": 1790023809.0541837
+    },
+    {
+      "pid": 151272,
+      "birth": 1790023810.1021695
+    },
+    {
+      "pid": 157100,
+      "birth": 1790023810.7290432
+    },
+    {
+      "pid": 242464,
+      "birth": 1790023810.7494383
+    },
+    {
+      "pid": 187188,
+      "birth": 1790023813.7334912
+    },
+    {
+      "pid": 207560,
+      "birth": 1790023815.5618591
+    },
+    {
+      "pid": 1047332,
+      "birth": 1790023816.24331
+    },
+    {
+      "pid": 190160,
+      "birth": 1790023816.2474134
+    },
+    {
+      "pid": 261400,
+      "birth": 1790023831.9530652
+    },
+    {
+      "pid": 174100,
+      "birth": 1790023832.7379272
+    },
+    {
+      "pid": 289764,
+      "birth": 1790023833.370876
+    },
+    {
+      "pid": 149312,
+      "birth": 1790023833.37573
+    },
+    {
+      "pid": 286388,
+      "birth": 1790023841.944402
+    },
+    {
+      "pid": 282884,
+      "birth": 1790023842.399449
+    },
+    {
+      "pid": 266912,
+      "birth": 1790023842.4031124
+    },
+    {
+      "pid": 266468,
+      "birth": 1790023842.6686752
+    },
+    {
+      "pid": 284056,
+      "birth": 1790023842.6760814
+    },
+    {
+      "pid": 299900,
+      "birth": 1790023844.288579
+    },
+    {
+      "pid": 249108,
+      "birth": 1790023844.783262
+    },
+    {
+      "pid": 286976,
+      "birth": 1790023844.7871003
+    },
+    {
+      "pid": 281372,
+      "birth": 1790023845.0167675
+    },
+    {
+      "pid": 174344,
+      "birth": 1790023845.0209775
+    },
+    {
+      "pid": 184860,
+      "birth": 1790023848.910898
+    },
+    {
+      "pid": 188208,
+      "birth": 1790023848.914471
+    },
+    {
+      "pid": 302248,
+      "birth": 1790023849.230452
+    },
+    {
+      "pid": 258980,
+      "birth": 1790023849.2343285
+    },
+    {
+      "pid": 278184,
+      "birth": 1790023849.464198
+    },
+    {
+      "pid": 226356,
+      "birth": 1790023849.4682105
+    },
+    {
+      "pid": 278416,
+      "birth": 1790023849.7586977
+    },
+    {
+      "pid": 132564,
+      "birth": 1790023849.7625902
+    },
+    {
+      "pid": 266304,
+      "birth": 1790023850.0195036
+    },
+    {
+      "pid": 288960,
+      "birth": 1790023850.0232444
+    },
+    {
+      "pid": 245028,
+      "birth": 1790023850.247605
+    },
+    {
+      "pid": 277520,
+      "birth": 1790023850.2514951
+    },
+    {
+      "pid": 286828,
+      "birth": 1790023850.5729673
+    },
+    {
+      "pid": 244800,
+      "birth": 1790023850.9055722
+    },
+    {
+      "pid": 273532,
+      "birth": 1790023852.733245
+    },
+    {
+      "pid": 278580,
+      "birth": 1790023852.7371953
+    },
+    {
+      "pid": 253992,
+      "birth": 1790023853.0341358
+    },
+    {
+      "pid": 303876,
+      "birth": 1790023853.037734
+    },
+    {
+      "pid": 296260,
+      "birth": 1790023853.2621765
+    },
+    {
+      "pid": 1026784,
+      "birth": 1790023853.2665565
+    },
+    {
+      "pid": 304644,
+      "birth": 1790023853.5201478
+    },
+    {
+      "pid": 274284,
+      "birth": 1790023853.5257864
+    },
+    {
+      "pid": 264600,
+      "birth": 1790023853.778499
+    },
+    {
+      "pid": 292156,
+      "birth": 1790023853.782996
+    },
+    {
+      "pid": 274144,
+      "birth": 1790023854.0834754
+    },
+    {
+      "pid": 305720,
+      "birth": 1790023854.0867836
+    },
+    {
+      "pid": 297948,
+      "birth": 1790023858.9133048
+    },
+    {
+      "pid": 169340,
+      "birth": 1790023859.2597578
+    },
+    {
+      "pid": 272576,
+      "birth": 1790023861.4260807
+    },
+    {
+      "pid": 269756,
+      "birth": 1790023861.4480665
+    },
+    {
+      "pid": 306372,
+      "birth": 1790023861.823517
+    },
+    {
+      "pid": 294824,
+      "birth": 1790023861.8275073
+    },
+    {
+      "pid": 307500,
+      "birth": 1790023896.9450507
+    },
+    {
+      "pid": 34604,
+      "birth": 1790023897.4395208
+    },
+    {
+      "pid": 302816,
+      "birth": 1790023897.4433289
+    },
+    {
+      "pid": 295736,
+      "birth": 1790023897.6739032
+    },
+    {
+      "pid": 140292,
+      "birth": 1790023897.68058
+    },
+    {
+      "pid": 263668,
+      "birth": 1790023906.5898547
+    },
+    {
+      "pid": 290228,
+      "birth": 1790023983.765106
+    },
+    {
+      "pid": 328332,
+      "birth": 1790023988.1715596
+    }
+  ],
+  "instruction_changes": [
+    {
+      "assembly": "Lokad.Onnx.dll",
+      "compiler_rename": null,
+      "methods": 3107,
+      "before_sha256": "5c0ae2aa7c3cce58f3ffcb190df451e053a449a3e0dbc920d7b6d0b2bc66020c",
+      "after_sha256": "1ecc211f3448009097e15e46d54a07de73d42b3dc456cdb673cb3c01c99e283f",
+      "corrected_nullable_annotation": null,
+      "unchanged_methods": 3106,
+      "removed": [],
+      "added": [],
+      "differences": [
+        "Lokad.Onnx.Tensor`1[T]::RunTiledBatchFloat::Void RunTiledBatchFloat(System.Memory`1[System.Single], System.Memory`1[System.Single], System.Memory`1[System.Single], Boolean, System.Memory`1[System.Single], Single[], Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, PadInfo, Int32, Int32, Int32, Int32, Int32, Int32, Lokad.Onnx.TensorExecutionOptions)"
+      ],
+      "equal_except_vector_bias": true
+    },
+    {
+      "assembly": "Lokad.Onnx.Data.dll",
+      "compiler_rename": null,
+      "methods": 696,
+      "before_sha256": "1d34666456a5da749dc3b40ee25621af0bed806c9167f3ad12e96d0736dca662",
+      "after_sha256": "1d34666456a5da749dc3b40ee25621af0bed806c9167f3ad12e96d0736dca662",
+      "corrected_nullable_annotation": true,
+      "unchanged_methods": 696,
+      "removed": [],
+      "added": [],
+      "differences": [],
+      "equal_except_vector_bias": true
+    }
+  ],
+  "scope": "Output/allocation qualification only; historical timings are not a matched performance comparison; no AMD or production promotion."
+}
