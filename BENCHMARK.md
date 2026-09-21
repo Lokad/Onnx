@@ -170,6 +170,14 @@ These new binaries have no fresh timing result; the table below still names
 the exact measured candidate. AMD selection and production integration remain
 pending.
 
+The exact rebuilt candidate also passes
+[complete application qualification](tests/pyannote/portable-applications/results-20260922.md):
+16 dialogue requests, both ten-minute meetings and recovery preserve every
+predecessor output. Ordinary and exclusive speaker timelines match retained
+ORT references exactly; maximum meeting centroid error is 8.98e-7. All 2,558
+resource samples pass. This is correctness and ownership evidence for the
+integrated build, without a new matched timing claim.
+
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
 Fresh matched measurements on Windows i7-14700KF, CPU2, .NET 10.0.12 and

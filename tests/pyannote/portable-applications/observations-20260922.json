@@ -1,0 +1,234 @@
+{
+  "closure": {
+    "bytes": 16527,
+    "sha256": "9d62d3d21a174e9be7105e4224b4b4b986b89dc6085ec60cc99b3aa2fdd7da77"
+  },
+  "build_closure": {
+    "bytes": 322837,
+    "sha256": "c07358dee34e3983ab7c212488772deaf0c973cc45274c5b505ac766e27753b4"
+  },
+  "test_closure": {
+    "bytes": 190837,
+    "sha256": "bf9822426cd75a86cc8c02c065005f0005e1a80b4ee63d5c53313fed145235f6"
+  },
+  "passed": true,
+  "core": {
+    "bytes": 735232,
+    "sha256": "e9c87932b2184c2f6bfef72faabb1719bdbceadc779a15fe1ffd3f3056d02838"
+  },
+  "data": {
+    "bytes": 143872,
+    "sha256": "85d166b59e2beef18ca7664f76faf445bf3cd81509f8f1d1c4b3c5354f53757a"
+  },
+  "public_calls": 16,
+  "meeting_calls": 3,
+  "exact_predecessor_results": true,
+  "exact_native_timelines": true,
+  "held_outputs_unchanged": true,
+  "dialogue": [
+    {
+      "name": "dialogue-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 15.5169972,
+      "allocated_bytes": 1089534664,
+      "maximum_centroid_error": 1.4823727150781174e-06
+    },
+    {
+      "name": "dialogue-0-10s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5231904,
+      "allocated_bytes": 111289648,
+      "maximum_centroid_error": 3.0249357223510742e-06
+    },
+    {
+      "name": "dialogue-10-20s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5157312,
+      "allocated_bytes": 108941120,
+      "maximum_centroid_error": 1.2218952180620413e-06
+    },
+    {
+      "name": "dialogue-20-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5042399,
+      "allocated_bytes": 112622032,
+      "maximum_centroid_error": 1.5050172805786133e-06
+    },
+    {
+      "name": "dialogue-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 11.1430818,
+      "allocated_bytes": 1101414608,
+      "maximum_centroid_error": 1.4823727150781174e-06
+    },
+    {
+      "name": "dialogue-0-10s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5318326,
+      "allocated_bytes": 112802312,
+      "maximum_centroid_error": 3.0249357223510742e-06
+    },
+    {
+      "name": "dialogue-10-20s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.4991747,
+      "allocated_bytes": 111309168,
+      "maximum_centroid_error": 1.2218952180620413e-06
+    },
+    {
+      "name": "dialogue-20-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.4878601,
+      "allocated_bytes": 108169984,
+      "maximum_centroid_error": 1.5050172805786133e-06
+    },
+    {
+      "name": "dialogue-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 10.8471735,
+      "allocated_bytes": 1094087792,
+      "maximum_centroid_error": 1.4823727150781174e-06
+    },
+    {
+      "name": "dialogue-0-10s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5004597,
+      "allocated_bytes": 111314096,
+      "maximum_centroid_error": 3.0249357223510742e-06
+    },
+    {
+      "name": "dialogue-10-20s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.493847,
+      "allocated_bytes": 108161048,
+      "maximum_centroid_error": 1.2218952180620413e-06
+    },
+    {
+      "name": "dialogue-20-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.4988229,
+      "allocated_bytes": 108168816,
+      "maximum_centroid_error": 1.5050172805786133e-06
+    },
+    {
+      "name": "dialogue-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 10.7538769,
+      "allocated_bytes": 1083471856,
+      "maximum_centroid_error": 1.4823727150781174e-06
+    },
+    {
+      "name": "dialogue-0-10s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5095197,
+      "allocated_bytes": 108155592,
+      "maximum_centroid_error": 3.0249357223510742e-06
+    },
+    {
+      "name": "dialogue-10-20s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.51149,
+      "allocated_bytes": 108163128,
+      "maximum_centroid_error": 1.2218952180620413e-06
+    },
+    {
+      "name": "dialogue-20-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5098905,
+      "allocated_bytes": 108170000,
+      "maximum_centroid_error": 1.5050172805786133e-06
+    }
+  ],
+  "meetings": [
+    {
+      "name": "ES2004a",
+      "passed": true,
+      "maximum_centroid_error": 8.981409564540188e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "seconds": 299.8571496,
+      "allocated_bytes": 29128121160
+    },
+    {
+      "name": "IS1009a",
+      "passed": true,
+      "maximum_centroid_error": 5.764390146878462e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "seconds": 297.0160734,
+      "allocated_bytes": 29155963488
+    },
+    {
+      "name": "ES2004a-recovery30",
+      "passed": true,
+      "maximum_centroid_error": 5.18795691045737e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "seconds": 10.2409777,
+      "allocated_bytes": 1086360200
+    }
+  ],
+  "identities": [
+    {
+      "pid": 966408,
+      "birth": 1790030443.008335
+    },
+    {
+      "pid": 1162012,
+      "birth": 1790030541.237736
+    },
+    {
+      "pid": 1128536,
+      "birth": 1790030596.248622
+    },
+    {
+      "pid": 40472,
+      "birth": 1790030597.0889003
+    }
+  ],
+  "resources": [
+    {
+      "name": "dialogue",
+      "seconds": 54.953983500017785,
+      "samples": 211,
+      "peak_rss": 584880128
+    },
+    {
+      "name": "meetings-inputs",
+      "seconds": 0.7779521999764256,
+      "samples": 3,
+      "peak_rss": 108068864
+    },
+    {
+      "name": "meetings-run",
+      "seconds": 608.2244547000155,
+      "samples": 2344,
+      "peak_rss": 869425152
+    }
+  ],
+  "resource_samples": 2558,
+  "peak_rss": 869425152,
+  "scope": "Complete public output/ownership/resource qualification; fixed integrated product and existing package; no new benchmark or AMD promotion."
+}
