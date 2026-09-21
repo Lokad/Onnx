@@ -129,6 +129,11 @@ bit-for-bit, including the same three numerical failures. Public peak RSS is
 9,725,456,384 / 11,964,985,344 bytes for 512 / 2,032 MiB caches. A fresh complete
 application comparison remains required; these checks establish no speed gain
 or production promotion.
+The subsequent [application comparison](../tests/parakeet/packing-comparison/results-20260921.md)
+stops at the available-memory guard during the first candidate worker. All136
+retained requests pass their available public-output checks, but no complete
+control pair or native worker exists. No budget is selected and no timing
+gain is attributed to the source change.
 
 
 | Source finding | Consequence for Lokad.Onnx |

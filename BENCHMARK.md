@@ -20,8 +20,12 @@ controls at the current 256 MiB encoder cap. Separate load-only checks establish
 bounded residency up to all 217 constant weights at 2,032 MiB. Both larger
 budgets now pass [complete local inference and memory regression](tests/parakeet/packing-budgets/results-20260921.md),
 including exact preservation of the original native numerical failures. The
-2,032 MiB public run peaks at 11.14 GiB RSS. Speed and AMD qualification remain
-pending; the ORT timing tables below are unchanged.
+2,032 MiB public run peaks at 11.14 GiB RSS. The subsequent
+[application timing attempt](tests/parakeet/packing-comparison/results-20260921.md)
+stopped at the available-memory guard after 80 production and 56 candidate
+requests. No ORT worker started; there is no valid speed comparison or budget
+selection. Speed and AMD qualification remain pending; the ORT tables below
+are unchanged.
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
