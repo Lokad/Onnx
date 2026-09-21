@@ -1,6 +1,6 @@
 # CPU benchmarks
 
-## Current results — 2026-09-20 UTC
+## Current results — 2026-09-21 UTC
 
 The tables here summarize retained measurements for e5, Parakeet, Whisper and
 pyannote. Each names its workload, hardware and timing boundary. Earlier tables
@@ -8,9 +8,13 @@ below remain historical evidence; do not compare absolute times across hosts,
 revisions or protocols. [Model support](docs/model-support.md) describes the
 available APIs and their remaining qualification limits.
 
-### Audio: matched AMD Parakeet and pyannote baselines
+Microsoft ONNX Runtime audio baselines are listed below for
+[Parakeet and pyannote on the AMD VM](#audio-amd-microsoft-onnx-runtime-baselines-parakeet-and-pyannote)
+and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-runtime-baselines).
 
-AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ORT 1.29.0, product `1d10d22`.
+### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
+
+AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ONNX Runtime 1.29.0, product `1d10d22`.
 The same complete application workloads and one-thread settings as the Windows
 table below are used. Loading, file access and external validation are excluded.
 The differing host and product revision prevent a cross-table speedup claim.
@@ -32,7 +36,7 @@ claim. The [complete report](tests/audio/amd-two-family/results-20260920.md)
 includes process variation, memory, every Parakeet clip and evidence identities.
 
 **Whisper's matched AMD comparison is incomplete:** the final managed process
-hit the disk-space guard after34/80 calls. The [failure report](tests/audio/whisper-amd/disk-failure-20260921.md)
+hit the disk-space guard after 34/80 calls. The [failure report](tests/audio/whisper-amd/disk-failure-20260921.md)
 retains all three completed timing workers, partial results and the coincident
 automatic package-cache activity. Memory remained above its guard. No complete
 AMD Whisper comparison is claimed; the Windows baseline is below.
