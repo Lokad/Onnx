@@ -99,6 +99,21 @@ column/reduction blocking. Next measure packing plus multiplication on the
 observed wide encoder shapes, then qualify candidates through full trajectories
 and complete API timing.
 
+The [first wide encoder probe](../tests/parakeet/wide-matmul/results-20260921.md)
+preserves all actual-operand and accumulation-test bits, but identical fallback
+controls differ by 4.8–9.2%; its timings do not establish a kernel improvement.
+The conditioned successor balances preceding roles and restores each role's
+working set immediately before measurement, with control limits fixed in advance.
+
+Voice-branch `c679bf99` directly addresses the observed K=4096 exclusion. Its
+inclusive admission boundary is useful candidate material. Current master
+already centralizes eligibility and compares elements against a byte-derived
+limit without overflow, so importing the branch's reporting and uncapped
+aggregate policy is unnecessary. Any adaptation should retain the current
+per-graph cap, stale-weight safeguards and checked accounting, then separately
+compare explicit Parakeet residency budgets and complete application latency.
+The commit's historical speed claims are not reproduced current-product results.
+
 
 | Source finding | Consequence for Lokad.Onnx |
 |---|---|

@@ -76,6 +76,11 @@ prepares 37 of 217 constant MatMul weights within its 256 MiB budget. These
 diagnostic observations add no new ORT ratio; the matched baselines below retain
 their original scope and numerical limitations.
 
+The first [wide encoder kernel probe](tests/parakeet/wide-matmul/results-20260921.md)
+preserves all tested output bits, but its identical fallback controls differ by
+4.8–9.2%. Timing attribution is rejected; no kernel gain or product change is
+claimed from that grid.
+
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
 AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ONNX Runtime 1.29.0, product `1d10d22`.
