@@ -99,6 +99,12 @@ as 55–57% of selected full-request thread time in two captures. The tiled
 convolution caller accounts for another 10%. These are sampled managed thread
 weights, with process CPU and diagnostic overhead reported separately. They
 identify the next computation target without changing the timing tables.
+An [offline GC analysis of those same captures](tests/pyannote/retained-gc/results-20260922.md)
+reconciles all 24 measured requests with the saved collection counters. GC
+suspension intervals cover upper bounds of 1.11% and 1.26% of full-request
+wall time. Other runtime suspension reasons are kept separate. This does not
+measure background GC CPU cost or explain the unprofiled timing variability;
+it applies to the older captured Core0d/Data1d, not the current candidate or AMD.
 Its [portable row-group probe](tests/pyannote/portable-row-groups/results-20260921.md)
 preserves 790,900 tested values and passes the fixed kernel gates after complete
 workload warmup: packing-inclusive geometric mean is 17.8% lower across sixteen

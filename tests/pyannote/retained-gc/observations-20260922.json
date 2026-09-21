@@ -1,0 +1,1754 @@
+{
+  "closure": {
+    "bytes": 12156,
+    "sha256": "4191974e3e6863ef3359412ec6a1c50f8bfde65eb89a078652ccd8f4aedbc8c1"
+  },
+  "analysis": {
+    "bytes": 1352981,
+    "sha256": "afa381ad7502a208ef55c3ef7ddb5f41a01b4423b40581e2f6734524c84adf86"
+  },
+  "captures": [
+    {
+      "name": "sampled-a",
+      "captured_core": "0d098ba5fd3fd8799bb1dd018148123f296802c769db5f6148a1a5fa9d80118e",
+      "captured_data": "1d34666456a5da749dc3b40ee25621af0bed806c9167f3ad12e96d0736dca662",
+      "summary": {
+        "complete": true,
+        "input_sha256": "a8d5d8ec51de9417b5d01e98b06f7fba8fbe443484a901bbc07b594ee4f7b2cd",
+        "runtime": "10.0.12",
+        "exporter_pid": 1162664,
+        "lost": 0,
+        "clr_events": 7351,
+        "recorded": 6849,
+        "counts": {
+          "AppDomainResourceManagement/ThreadCreated": 5,
+          "AssemblyLoader/Start": 2,
+          "AssemblyLoader/Stop": 2,
+          "GC/SuspendEEStart": 1538,
+          "GC/SuspendEEStop": 1538,
+          "GC/RestartEEStart": 1538,
+          "GC/RestartEEStop": 1538,
+          "GC/CreateSegment": 27,
+          "TieredCompilation/Resume": 5,
+          "TieredCompilation/BackgroundJitStart": 214,
+          "TieredCompilation/BackgroundJitStop": 214,
+          "TieredCompilation/Pause": 5,
+          "GC/Triggered": 59,
+          "GC/Start": 59,
+          "GC/MarkWithType": 197,
+          "GC/GlobalHeapHistory": 59,
+          "GC/PerHeapHistory": 59,
+          "GC/Stop": 59,
+          "GC/HeapStats": 59,
+          "GC/FinalizersStart": 34,
+          "GC/FinalizersStop": 34,
+          "Method/UnloadVerbose": 2,
+          "GC/FreeSegment": 27,
+          "AssemblyLoader/KnownPathProbed": 1,
+          "AssemblyLoader/ResolutionAttempted": 2,
+          "Loader/AssemblyLoad": 1,
+          "Loader/ModuleLoad": 1,
+          "Loader/DomainModuleLoad": 1,
+          "Loader/ModuleUnload": 35,
+          "Loader/AssemblyUnload": 35,
+          "Loader/AppDomainUnload": 1
+        }
+      },
+      "reason_counts": {
+        "SuspendOther": 1448,
+        "SuspendForGC": 59,
+        "SuspendForGCPrep": 31
+      },
+      "requests": [
+        {
+          "name": "dialogue-30s",
+          "pass_index": 1,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 197.1963,
+          "end_ms": 16173.239,
+          "indices": [
+            392,
+            2403
+          ],
+          "wall_seconds": 15.9760066,
+          "marker_extra_ms": 0.036099999999350985,
+          "gc_generation_delta": [
+            15,
+            7,
+            7
+          ],
+          "completed_generation_counts": [
+            15,
+            7,
+            7
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 154.77329999999574,
+          "gc_envelope_to_wall": 0.00968785904232136,
+          "all_suspension_envelope_ms": 8491.539899999994,
+          "reason_overlap_ms": 32.47059999999874,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 15,
+              "envelope_ms": 16.51629999999659,
+              "suspension_handshake_ms": 5.851299999997536,
+              "suspended_until_restart_ms": 10.644500000002608,
+              "restart_ms": 0.020499999996445695,
+              "summed_envelope_ms": 16.51629999999659,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 7,
+              "envelope_ms": 138.25699999999915,
+              "suspension_handshake_ms": 14.605999999999767,
+              "suspended_until_restart_ms": 2.5601000000001477,
+              "restart_ms": 121.09089999999924,
+              "summed_envelope_ms": 138.25699999999915,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 436,
+              "envelope_ms": 8369.237199999998,
+              "suspension_handshake_ms": 1067.4846000000039,
+              "suspended_until_restart_ms": 6.911899999993807,
+              "restart_ms": 7294.840700000001,
+              "summed_envelope_ms": 8369.237199999998,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-0-10s",
+          "pass_index": 1,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 16177.6195,
+          "end_ms": 16853.6946,
+          "indices": [
+            2407,
+            2519
+          ],
+          "wall_seconds": 0.676041,
+          "marker_extra_ms": 0.03409999999814772,
+          "gc_generation_delta": [
+            2,
+            2,
+            2
+          ],
+          "completed_generation_counts": [
+            2,
+            2,
+            2
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 39.86280000000261,
+          "gc_envelope_to_wall": 0.05896506276986544,
+          "all_suspension_envelope_ms": 379.9149999999936,
+          "reason_overlap_ms": 3.896500000002561,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 2,
+              "envelope_ms": 2.09860000000117,
+              "suspension_handshake_ms": 0.028500000002168235,
+              "suspended_until_restart_ms": 2.0670999999983906,
+              "restart_ms": 0.0030000000006111804,
+              "summed_envelope_ms": 2.09860000000117,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 2,
+              "envelope_ms": 37.76420000000144,
+              "suspension_handshake_ms": 3.8804999999993015,
+              "suspended_until_restart_ms": 0.47220000000197615,
+              "restart_ms": 33.41150000000016,
+              "summed_envelope_ms": 37.76420000000144,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 20,
+              "envelope_ms": 343.94869999999355,
+              "suspension_handshake_ms": 36.23119999998744,
+              "suspended_until_restart_ms": 0.2872000000115804,
+              "restart_ms": 307.43029999999453,
+              "summed_envelope_ms": 343.94869999999355,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-10-20s",
+          "pass_index": 1,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 16857.1551,
+          "end_ms": 17499.3358,
+          "indices": [
+            2524,
+            2615
+          ],
+          "wall_seconds": 0.64214,
+          "marker_extra_ms": 0.0407000000006974,
+          "gc_generation_delta": [
+            1,
+            0,
+            0
+          ],
+          "completed_generation_counts": [
+            1,
+            0,
+            0
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 1.281299999998737,
+          "gc_envelope_to_wall": 0.0019953592674474985,
+          "all_suspension_envelope_ms": 339.63399999998364,
+          "reason_overlap_ms": 0.0,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 1,
+              "envelope_ms": 1.281299999998737,
+              "suspension_handshake_ms": 0.0017000000007101335,
+              "suspended_until_restart_ms": 1.2784999999967113,
+              "restart_ms": 0.0011000000013154931,
+              "summed_envelope_ms": 1.281299999998737,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 18,
+              "envelope_ms": 338.3526999999849,
+              "suspension_handshake_ms": 37.322999999993044,
+              "suspended_until_restart_ms": 0.29759999999805586,
+              "restart_ms": 300.7320999999938,
+              "summed_envelope_ms": 338.3526999999849,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-20-30s",
+          "pass_index": 1,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 17503.1492,
+          "end_ms": 18154.948,
+          "indices": [
+            2624,
+            2703
+          ],
+          "wall_seconds": 0.6517611,
+          "marker_extra_ms": 0.03770000000054097,
+          "gc_generation_delta": [
+            0,
+            0,
+            0
+          ],
+          "completed_generation_counts": [
+            0,
+            0,
+            0
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 0.0,
+          "gc_envelope_to_wall": 0.0,
+          "all_suspension_envelope_ms": 319.137999999999,
+          "reason_overlap_ms": 0.0,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 19,
+              "envelope_ms": 319.137999999999,
+              "suspension_handshake_ms": 35.29029999999693,
+              "suspended_until_restart_ms": 0.3113000000012107,
+              "restart_ms": 283.53640000000087,
+              "summed_envelope_ms": 319.137999999999,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-30s",
+          "pass_index": 2,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 18159.3553,
+          "end_ms": 31470.3437,
+          "indices": [
+            2708,
+            4477
+          ],
+          "wall_seconds": 13.3109598,
+          "marker_extra_ms": 0.02860000000328,
+          "gc_generation_delta": [
+            17,
+            9,
+            9
+          ],
+          "completed_generation_counts": [
+            16,
+            8,
+            8
+          ],
+          "crossing_collections": [
+            {
+              "count": 64,
+              "depth": 2,
+              "type": "BackgroundGC",
+              "reason": "AllocLarge",
+              "start_ms": 31463.2067,
+              "end_ms": 31483.2703,
+              "indices": [
+                4474,
+                4487
+              ]
+            }
+          ],
+          "gc_envelope_ms": 168.58640000000014,
+          "gc_envelope_to_wall": 0.012665232450029647,
+          "all_suspension_envelope_ms": 7105.6484000000055,
+          "reason_overlap_ms": 15.599100000006729,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 17,
+              "envelope_ms": 13.4742999999944,
+              "suspension_handshake_ms": 2.163300000000163,
+              "suspended_until_restart_ms": 11.28610000000117,
+              "restart_ms": 0.024899999993067468,
+              "summed_envelope_ms": 13.4742999999944,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 8,
+              "envelope_ms": 155.11210000000574,
+              "suspension_handshake_ms": 16.304000000003725,
+              "suspended_until_restart_ms": 2.451999999997497,
+              "restart_ms": 136.35610000000452,
+              "summed_envelope_ms": 155.11210000000574,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 369,
+              "envelope_ms": 6952.661100000012,
+              "suspension_handshake_ms": 790.841599999967,
+              "suspended_until_restart_ms": 6.007100000006176,
+              "restart_ms": 6155.812400000039,
+              "summed_envelope_ms": 6952.661100000012,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-0-10s",
+          "pass_index": 2,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 31476.0737,
+          "end_ms": 32106.1579,
+          "indices": [
+            4478,
+            4590
+          ],
+          "wall_seconds": 0.6300374,
+          "marker_extra_ms": 0.04679999999757456,
+          "gc_generation_delta": [
+            2,
+            1,
+            1
+          ],
+          "completed_generation_counts": [
+            3,
+            2,
+            2
+          ],
+          "crossing_collections": [
+            {
+              "count": 64,
+              "depth": 2,
+              "type": "BackgroundGC",
+              "reason": "AllocLarge",
+              "start_ms": 31463.2067,
+              "end_ms": 31483.2703,
+              "indices": [
+                4474,
+                4487
+              ]
+            }
+          ],
+          "gc_envelope_ms": 19.771800000005896,
+          "gc_envelope_to_wall": 0.03138194653207238,
+          "all_suspension_envelope_ms": 355.9936999999918,
+          "reason_overlap_ms": 1.887300000002142,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 2,
+              "envelope_ms": 0.30680000000211294,
+              "suspension_handshake_ms": 0.029800000000250293,
+              "suspended_until_restart_ms": 0.2746999999981199,
+              "restart_ms": 0.0023000000037427526,
+              "summed_envelope_ms": 0.30680000000211294,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 2,
+              "envelope_ms": 19.465000000003783,
+              "suspension_handshake_ms": 1.6660000000010768,
+              "suspended_until_restart_ms": 1.0885999999991327,
+              "restart_ms": 16.710400000003574,
+              "summed_envelope_ms": 19.465000000003783,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 17,
+              "envelope_ms": 338.10919999998805,
+              "suspension_handshake_ms": 35.213000000007014,
+              "suspended_until_restart_ms": 0.2738999999855878,
+              "restart_ms": 302.62229999999545,
+              "summed_envelope_ms": 338.10919999998805,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-10-20s",
+          "pass_index": 2,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 32110.5299,
+          "end_ms": 32739.7335,
+          "indices": [
+            4594,
+            4691
+          ],
+          "wall_seconds": 0.6291753,
+          "marker_extra_ms": 0.028299999997102532,
+          "gc_generation_delta": [
+            2,
+            2,
+            2
+          ],
+          "completed_generation_counts": [
+            1,
+            1,
+            1
+          ],
+          "crossing_collections": [
+            {
+              "count": 68,
+              "depth": 2,
+              "type": "BackgroundGC",
+              "reason": "AllocLarge",
+              "start_ms": 32735.6076,
+              "end_ms": 32742.7325,
+              "indices": [
+                4687,
+                4701
+              ]
+            }
+          ],
+          "gc_envelope_ms": 19.83640000000014,
+          "gc_envelope_to_wall": 0.031527620362719486,
+          "all_suspension_envelope_ms": 345.30259999999544,
+          "reason_overlap_ms": 0.29989999999816064,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 2,
+              "envelope_ms": 0.29989999999816064,
+              "suspension_handshake_ms": 0.06070000000181608,
+              "suspended_until_restart_ms": 0.23669999999765423,
+              "restart_ms": 0.0024999999986903276,
+              "summed_envelope_ms": 0.29989999999816064,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 1,
+              "envelope_ms": 19.53650000000198,
+              "suspension_handshake_ms": 2.0940000000009604,
+              "suspended_until_restart_ms": 0.3643999999985681,
+              "restart_ms": 17.07810000000245,
+              "summed_envelope_ms": 19.53650000000198,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 19,
+              "envelope_ms": 325.76609999999346,
+              "suspension_handshake_ms": 36.9017000000058,
+              "suspended_until_restart_ms": 0.2845999999844935,
+              "restart_ms": 288.57980000000316,
+              "summed_envelope_ms": 325.76609999999346,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-20-30s",
+          "pass_index": 2,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 32746.3546,
+          "end_ms": 33372.4927,
+          "indices": [
+            4707,
+            4798
+          ],
+          "wall_seconds": 0.6260998,
+          "marker_extra_ms": 0.03830000000380096,
+          "gc_generation_delta": [
+            1,
+            0,
+            0
+          ],
+          "completed_generation_counts": [
+            1,
+            0,
+            0
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 3.862199999995937,
+          "gc_envelope_to_wall": 0.006168665123349244,
+          "all_suspension_envelope_ms": 329.56659999999465,
+          "reason_overlap_ms": 3.862199999995937,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 1,
+              "envelope_ms": 3.862199999995937,
+              "suspension_handshake_ms": 0.02509999999892898,
+              "suspended_until_restart_ms": 3.834100000000035,
+              "restart_ms": 0.0029999999969732016,
+              "summed_envelope_ms": 3.862199999995937,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 18,
+              "envelope_ms": 329.56659999999465,
+              "suspension_handshake_ms": 37.387299999994866,
+              "suspended_until_restart_ms": 0.2778000000107568,
+              "restart_ms": 291.901499999989,
+              "summed_envelope_ms": 329.56659999999465,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-30s",
+          "pass_index": 3,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 33377.6685,
+          "end_ms": 46487.6992,
+          "indices": [
+            4800,
+            6528
+          ],
+          "wall_seconds": 13.109997,
+          "marker_extra_ms": 0.03370000000359141,
+          "gc_generation_delta": [
+            15,
+            7,
+            7
+          ],
+          "completed_generation_counts": [
+            15,
+            7,
+            7
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 147.75550000001385,
+          "gc_envelope_to_wall": 0.011270444989424014,
+          "all_suspension_envelope_ms": 6889.746299999919,
+          "reason_overlap_ms": 22.66830000000482,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 15,
+              "envelope_ms": 9.492500000014843,
+              "suspension_handshake_ms": 1.380200000028708,
+              "suspended_until_restart_ms": 8.093299999978626,
+              "restart_ms": 0.019000000007508788,
+              "summed_envelope_ms": 9.492500000014843,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 7,
+              "envelope_ms": 138.262999999999,
+              "suspension_handshake_ms": 14.200600000011036,
+              "suspended_until_restart_ms": 2.7083999999958905,
+              "restart_ms": 121.35399999999208,
+              "summed_envelope_ms": 138.262999999999,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 368,
+              "envelope_ms": 6764.65909999991,
+              "suspension_handshake_ms": 793.8954000001177,
+              "suspended_until_restart_ms": 6.078899999971327,
+              "restart_ms": 5964.684799999821,
+              "summed_envelope_ms": 6764.65909999991,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-0-10s",
+          "pass_index": 3,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 46492.0028,
+          "end_ms": 47184.9494,
+          "indices": [
+            6534,
+            6626
+          ],
+          "wall_seconds": 0.6929201,
+          "marker_extra_ms": 0.026499999995621693,
+          "gc_generation_delta": [
+            1,
+            1,
+            1
+          ],
+          "completed_generation_counts": [
+            1,
+            1,
+            1
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 30.27479999999923,
+          "gc_envelope_to_wall": 0.043691617547245674,
+          "all_suspension_envelope_ms": 378.7515999999887,
+          "reason_overlap_ms": 10.38190000000759,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 1,
+              "envelope_ms": 0.06629999999859137,
+              "suspension_handshake_ms": 0.004899999999906868,
+              "suspended_until_restart_ms": 0.0603999999948428,
+              "restart_ms": 0.0010000000038417056,
+              "summed_envelope_ms": 0.06629999999859137,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 1,
+              "envelope_ms": 30.20850000000064,
+              "suspension_handshake_ms": 8.379399999997986,
+              "suspended_until_restart_ms": 0.19239999999990687,
+              "restart_ms": 21.636700000002747,
+              "summed_envelope_ms": 30.20850000000064,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 19,
+              "envelope_ms": 358.85869999999704,
+              "suspension_handshake_ms": 45.55680000000575,
+              "suspended_until_restart_ms": 0.29020000000309665,
+              "restart_ms": 313.0116999999882,
+              "summed_envelope_ms": 358.85869999999704,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-10-20s",
+          "pass_index": 3,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 47188.4311,
+          "end_ms": 47851.1874,
+          "indices": [
+            6628,
+            6758
+          ],
+          "wall_seconds": 0.6627183,
+          "marker_extra_ms": 0.03800000000092041,
+          "gc_generation_delta": [
+            3,
+            2,
+            2
+          ],
+          "completed_generation_counts": [
+            3,
+            2,
+            2
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 41.1391999999978,
+          "gc_envelope_to_wall": 0.0620764508841808,
+          "all_suspension_envelope_ms": 380.28019999997923,
+          "reason_overlap_ms": 5.9055999999982305,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 3,
+              "envelope_ms": 4.160700000000361,
+              "suspension_handshake_ms": 0.05659999999625143,
+              "suspended_until_restart_ms": 4.099999999998545,
+              "restart_ms": 0.004100000005564652,
+              "summed_envelope_ms": 4.160700000000361,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 2,
+              "envelope_ms": 36.97849999999744,
+              "suspension_handshake_ms": 3.9622999999992317,
+              "suspended_until_restart_ms": 0.7167999999946915,
+              "restart_ms": 32.299400000003516,
+              "summed_envelope_ms": 36.97849999999744,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 19,
+              "envelope_ms": 345.04659999997966,
+              "suspension_handshake_ms": 38.943899999976566,
+              "suspended_until_restart_ms": 0.3098000000100001,
+              "restart_ms": 305.7928999999931,
+              "summed_envelope_ms": 345.04659999997966,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-20-30s",
+          "pass_index": 3,
+          "pid": 912076,
+          "thread": 921520,
+          "start_ms": 47854.8731,
+          "end_ms": 48475.8303,
+          "indices": [
+            6763,
+            6835
+          ],
+          "wall_seconds": 0.6209188,
+          "marker_extra_ms": 0.03840000000434429,
+          "gc_generation_delta": [
+            0,
+            0,
+            0
+          ],
+          "completed_generation_counts": [
+            0,
+            0,
+            0
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 0.0,
+          "gc_envelope_to_wall": 0.0,
+          "all_suspension_envelope_ms": 328.19439999999304,
+          "reason_overlap_ms": 0.0,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 18,
+              "envelope_ms": 328.19439999999304,
+              "suspension_handshake_ms": 39.22289999998611,
+              "suspended_until_restart_ms": 0.2838000000047032,
+              "restart_ms": 288.6877000000022,
+              "summed_envelope_ms": 328.19439999999304,
+              "overlap_ms": 0.0
+            }
+          }
+        }
+      ],
+      "totals": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 42.3969634,
+          "gc_envelope_ms": 471.11520000000974,
+          "gc_envelope_to_wall": 0.01111200336578845,
+          "other_envelope_ms": 22086.557399999918
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 1.9989985,
+          "gc_envelope_ms": 89.90940000000774,
+          "gc_envelope_to_wall": 0.044977222344092675,
+          "other_envelope_ms": 1040.9165999999786
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 1.9340336,
+          "gc_envelope_ms": 62.256899999996676,
+          "gc_envelope_to_wall": 0.03219018532046014,
+          "other_envelope_ms": 1009.165399999958
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 1.8987797,
+          "gc_envelope_ms": 3.862199999995937,
+          "gc_envelope_to_wall": 0.0020340432331333314,
+          "other_envelope_ms": 976.8989999999867
+        }
+      ]
+    },
+    {
+      "name": "sampled-b",
+      "captured_core": "0d098ba5fd3fd8799bb1dd018148123f296802c769db5f6148a1a5fa9d80118e",
+      "captured_data": "1d34666456a5da749dc3b40ee25621af0bed806c9167f3ad12e96d0736dca662",
+      "summary": {
+        "complete": true,
+        "input_sha256": "a9d0bfda5f76a5850176b4c9c5cb16b45f08e1bb61284e1ea35f18d4cd1096db",
+        "runtime": "10.0.12",
+        "exporter_pid": 70944,
+        "lost": 0,
+        "clr_events": 6860,
+        "recorded": 6412,
+        "counts": {
+          "AppDomainResourceManagement/ThreadCreated": 5,
+          "AssemblyLoader/Start": 2,
+          "AssemblyLoader/Stop": 2,
+          "GC/SuspendEEStart": 1427,
+          "GC/SuspendEEStop": 1427,
+          "GC/RestartEEStart": 1427,
+          "GC/RestartEEStop": 1427,
+          "GC/CreateSegment": 27,
+          "GC/Triggered": 60,
+          "GC/Start": 60,
+          "GC/MarkWithType": 196,
+          "GC/GlobalHeapHistory": 60,
+          "GC/PerHeapHistory": 60,
+          "GC/Stop": 60,
+          "GC/HeapStats": 60,
+          "GC/FinalizersStart": 35,
+          "GC/FinalizersStop": 35,
+          "Method/UnloadVerbose": 2,
+          "GC/FreeSegment": 27,
+          "TieredCompilation/Resume": 4,
+          "TieredCompilation/BackgroundJitStart": 188,
+          "TieredCompilation/BackgroundJitStop": 188,
+          "AssemblyLoader/KnownPathProbed": 1,
+          "AssemblyLoader/ResolutionAttempted": 2,
+          "Loader/AssemblyLoad": 1,
+          "Loader/ModuleLoad": 1,
+          "Loader/DomainModuleLoad": 1,
+          "TieredCompilation/Pause": 4,
+          "Loader/ModuleUnload": 35,
+          "Loader/AssemblyUnload": 35,
+          "Loader/AppDomainUnload": 1
+        }
+      },
+      "reason_counts": {
+        "SuspendOther": 1335,
+        "SuspendForGC": 60,
+        "SuspendForGCPrep": 32
+      },
+      "requests": [
+        {
+          "name": "dialogue-30s",
+          "pass_index": 1,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 181.6455,
+          "end_ms": 13615.5738,
+          "indices": [
+            372,
+            2121
+          ],
+          "wall_seconds": 13.4338908,
+          "marker_extra_ms": 0.03749999999854481,
+          "gc_generation_delta": [
+            16,
+            8,
+            8
+          ],
+          "completed_generation_counts": [
+            16,
+            8,
+            8
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 157.91699999999912,
+          "gc_envelope_to_wall": 0.011755120117546222,
+          "all_suspension_envelope_ms": 7148.03110000001,
+          "reason_overlap_ms": 15.768700000000536,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 16,
+              "envelope_ms": 12.905100000000743,
+              "suspension_handshake_ms": 0.17309999999986303,
+              "suspended_until_restart_ms": 12.707099999999059,
+              "restart_ms": 0.024900000001821354,
+              "summed_envelope_ms": 12.905100000000743,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 8,
+              "envelope_ms": 145.01189999999838,
+              "suspension_handshake_ms": 17.103599999998778,
+              "suspended_until_restart_ms": 4.368099999998776,
+              "restart_ms": 123.54020000000082,
+              "summed_envelope_ms": 145.01189999999838,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 367,
+              "envelope_ms": 7005.882800000011,
+              "suspension_handshake_ms": 779.6122000000046,
+              "suspended_until_restart_ms": 6.03530000002246,
+              "restart_ms": 6220.235299999985,
+              "summed_envelope_ms": 7005.882800000011,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-0-10s",
+          "pass_index": 1,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 13619.843,
+          "end_ms": 14209.7956,
+          "indices": [
+            2123,
+            2192
+          ],
+          "wall_seconds": 0.5899172,
+          "marker_extra_ms": 0.03539999999873089,
+          "gc_generation_delta": [
+            0,
+            0,
+            0
+          ],
+          "completed_generation_counts": [
+            0,
+            0,
+            0
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 0.0,
+          "gc_envelope_to_wall": 0.0,
+          "all_suspension_envelope_ms": 315.289799999995,
+          "reason_overlap_ms": 0.0,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 17,
+              "envelope_ms": 315.289799999995,
+              "suspension_handshake_ms": 42.16739999999845,
+              "suspended_until_restart_ms": 0.29029999999693246,
+              "restart_ms": 272.8320999999996,
+              "summed_envelope_ms": 315.289799999995,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-10-20s",
+          "pass_index": 1,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 14213.2159,
+          "end_ms": 14839.5722,
+          "indices": [
+            2197,
+            2318
+          ],
+          "wall_seconds": 0.6263093,
+          "marker_extra_ms": 0.04700000000127602,
+          "gc_generation_delta": [
+            3,
+            2,
+            2
+          ],
+          "completed_generation_counts": [
+            3,
+            2,
+            2
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 41.27800000000025,
+          "gc_envelope_to_wall": 0.06590673330253957,
+          "all_suspension_envelope_ms": 365.32060000000456,
+          "reason_overlap_ms": 0.22229999999944994,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 3,
+              "envelope_ms": 4.573099999999613,
+              "suspension_handshake_ms": 0.0625,
+              "suspended_until_restart_ms": 4.506500000001324,
+              "restart_ms": 0.004099999998288695,
+              "summed_envelope_ms": 4.573099999999613,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 2,
+              "envelope_ms": 36.704900000000634,
+              "suspension_handshake_ms": 4.055899999999383,
+              "suspended_until_restart_ms": 0.4677000000010594,
+              "restart_ms": 32.18130000000019,
+              "summed_envelope_ms": 36.704900000000634,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 17,
+              "envelope_ms": 324.26490000000376,
+              "suspension_handshake_ms": 35.0525000000016,
+              "suspended_until_restart_ms": 0.2875000000003638,
+              "restart_ms": 288.9249000000018,
+              "summed_envelope_ms": 324.26490000000376,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-20-30s",
+          "pass_index": 1,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 14843.4578,
+          "end_ms": 15449.1109,
+          "indices": [
+            2326,
+            2396
+          ],
+          "wall_seconds": 0.6056144,
+          "marker_extra_ms": 0.03869999999949414,
+          "gc_generation_delta": [
+            0,
+            0,
+            0
+          ],
+          "completed_generation_counts": [
+            0,
+            0,
+            0
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 0.0,
+          "gc_envelope_to_wall": 0.0,
+          "all_suspension_envelope_ms": 314.40429999999833,
+          "reason_overlap_ms": 0.0,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 18,
+              "envelope_ms": 314.40429999999833,
+              "suspension_handshake_ms": 43.81520000000455,
+              "suspended_until_restart_ms": 0.2951000000011845,
+              "restart_ms": 270.2939999999926,
+              "summed_envelope_ms": 314.40429999999833,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-30s",
+          "pass_index": 2,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 15453.4491,
+          "end_ms": 28610.5344,
+          "indices": [
+            2401,
+            4182
+          ],
+          "wall_seconds": 13.1570574,
+          "marker_extra_ms": 0.027900000000954606,
+          "gc_generation_delta": [
+            19,
+            11,
+            11
+          ],
+          "completed_generation_counts": [
+            18,
+            10,
+            10
+          ],
+          "crossing_collections": [
+            {
+              "count": 66,
+              "depth": 2,
+              "type": "BackgroundGC",
+              "reason": "AllocLarge",
+              "start_ms": 28596.3633,
+              "end_ms": 28616.0084,
+              "indices": [
+                4179,
+                4191
+              ]
+            }
+          ],
+          "gc_envelope_ms": 201.41209999999774,
+          "gc_envelope_to_wall": 0.015308293783076278,
+          "all_suspension_envelope_ms": 7050.344399999985,
+          "reason_overlap_ms": 13.92920000000231,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 19,
+              "envelope_ms": 16.353299999997034,
+              "suspension_handshake_ms": 2.606999999998152,
+              "suspended_until_restart_ms": 13.721799999993891,
+              "restart_ms": 0.024500000004991307,
+              "summed_envelope_ms": 16.353299999997034,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 10,
+              "envelope_ms": 185.0588000000007,
+              "suspension_handshake_ms": 18.42189999999937,
+              "suspended_until_restart_ms": 2.926499999999578,
+              "restart_ms": 163.71040000000175,
+              "summed_envelope_ms": 185.0588000000007,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 366,
+              "envelope_ms": 6862.86149999999,
+              "suspension_handshake_ms": 762.870199999963,
+              "suspended_until_restart_ms": 6.295400000037262,
+              "restart_ms": 6093.69589999999,
+              "summed_envelope_ms": 6862.86149999999,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-0-10s",
+          "pass_index": 2,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 28620.981,
+          "end_ms": 29214.0088,
+          "indices": [
+            4201,
+            4302
+          ],
+          "wall_seconds": 0.592989,
+          "marker_extra_ms": 0.0387999999998101,
+          "gc_generation_delta": [
+            2,
+            1,
+            1
+          ],
+          "completed_generation_counts": [
+            2,
+            1,
+            1
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 19.69510000000082,
+          "gc_envelope_to_wall": 0.033213263652446874,
+          "all_suspension_envelope_ms": 328.03899999999703,
+          "reason_overlap_ms": 0.11650000000008731,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 2,
+              "envelope_ms": 0.4242000000012922,
+              "suspension_handshake_ms": 0.035800000001472654,
+              "suspended_until_restart_ms": 0.3850999999958731,
+              "restart_ms": 0.0033000000039464794,
+              "summed_envelope_ms": 0.4242000000012922,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 1,
+              "envelope_ms": 19.27089999999953,
+              "suspension_handshake_ms": 2.0767000000014377,
+              "suspended_until_restart_ms": 0.3852000000006228,
+              "restart_ms": 16.808999999997468,
+              "summed_envelope_ms": 19.27089999999953,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 17,
+              "envelope_ms": 308.4603999999963,
+              "suspension_handshake_ms": 34.73659999999654,
+              "suspended_until_restart_ms": 0.27379999999902793,
+              "restart_ms": 273.4500000000007,
+              "summed_envelope_ms": 308.4603999999963,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-10-20s",
+          "pass_index": 2,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 29218.3161,
+          "end_ms": 29808.7785,
+          "indices": [
+            4304,
+            4396
+          ],
+          "wall_seconds": 0.5904374,
+          "marker_extra_ms": 0.025000000000318323,
+          "gc_generation_delta": [
+            2,
+            2,
+            2
+          ],
+          "completed_generation_counts": [
+            1,
+            1,
+            1
+          ],
+          "crossing_collections": [
+            {
+              "count": 70,
+              "depth": 2,
+              "type": "BackgroundGC",
+              "reason": "AllocLarge",
+              "start_ms": 29804.9221,
+              "end_ms": 29828.8057,
+              "indices": [
+                4392,
+                4407
+              ]
+            }
+          ],
+          "gc_envelope_ms": 19.56499999999869,
+          "gc_envelope_to_wall": 0.03313645104459624,
+          "all_suspension_envelope_ms": 328.2019000000073,
+          "reason_overlap_ms": 2.150599999997212,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 2,
+              "envelope_ms": 0.28399999999965075,
+              "suspension_handshake_ms": 0.02990000000136206,
+              "suspended_until_restart_ms": 0.2518999999992957,
+              "restart_ms": 0.0021999999989930075,
+              "summed_envelope_ms": 0.28399999999965075,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 1,
+              "envelope_ms": 19.28099999999904,
+              "suspension_handshake_ms": 1.9919000000008964,
+              "suspended_until_restart_ms": 0.4146999999975378,
+              "restart_ms": 16.874400000000605,
+              "summed_envelope_ms": 19.28099999999904,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 17,
+              "envelope_ms": 310.7875000000058,
+              "suspension_handshake_ms": 36.6179000000011,
+              "suspended_until_restart_ms": 0.2955999999976484,
+              "restart_ms": 273.8740000000071,
+              "summed_envelope_ms": 310.7875000000058,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-20-30s",
+          "pass_index": 2,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 29813.51,
+          "end_ms": 30393.9214,
+          "indices": [
+            4397,
+            4494
+          ],
+          "wall_seconds": 0.5803645,
+          "marker_extra_ms": 0.04690000000096006,
+          "gc_generation_delta": [
+            1,
+            0,
+            0
+          ],
+          "completed_generation_counts": [
+            2,
+            1,
+            1
+          ],
+          "crossing_collections": [
+            {
+              "count": 70,
+              "depth": 2,
+              "type": "BackgroundGC",
+              "reason": "AllocLarge",
+              "start_ms": 29804.9221,
+              "end_ms": 29828.8057,
+              "indices": [
+                4392,
+                4407
+              ]
+            }
+          ],
+          "gc_envelope_ms": 7.9025000000001455,
+          "gc_envelope_to_wall": 0.013616442770018061,
+          "all_suspension_envelope_ms": 296.5142000000087,
+          "reason_overlap_ms": 2.3021999999982654,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 1,
+              "envelope_ms": 0.34879999999975553,
+              "suspension_handshake_ms": 0.02600000000165892,
+              "suspended_until_restart_ms": 0.32180000000153086,
+              "restart_ms": 0.000999999996565748,
+              "summed_envelope_ms": 0.34879999999975553,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 1,
+              "envelope_ms": 7.55370000000039,
+              "suspension_handshake_ms": 1.9631999999983236,
+              "suspended_until_restart_ms": 0.5727000000006228,
+              "restart_ms": 5.0178000000014435,
+              "summed_envelope_ms": 7.55370000000039,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 18,
+              "envelope_ms": 290.91390000000683,
+              "suspension_handshake_ms": 31.072599999995873,
+              "suspended_until_restart_ms": 0.2681000000120548,
+              "restart_ms": 259.5731999999989,
+              "summed_envelope_ms": 290.91390000000683,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-30s",
+          "pass_index": 3,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 30399.1897,
+          "end_ms": 42825.3437,
+          "indices": [
+            4499,
+            6133
+          ],
+          "wall_seconds": 12.426121,
+          "marker_extra_ms": 0.03299999999762804,
+          "gc_generation_delta": [
+            14,
+            6,
+            6
+          ],
+          "completed_generation_counts": [
+            14,
+            6,
+            6
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 131.9605000000265,
+          "gc_envelope_to_wall": 0.010619605265394285,
+          "all_suspension_envelope_ms": 6621.303099999979,
+          "reason_overlap_ms": 24.291300000022602,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 14,
+              "envelope_ms": 10.413300000025629,
+              "suspension_handshake_ms": 0.3227000000042608,
+              "suspended_until_restart_ms": 10.065900000008696,
+              "restart_ms": 0.024700000012671808,
+              "summed_envelope_ms": 10.413300000025629,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 6,
+              "envelope_ms": 121.54720000000088,
+              "suspension_handshake_ms": 23.112600000004022,
+              "suspended_until_restart_ms": 2.283099999996921,
+              "restart_ms": 96.15149999999994,
+              "summed_envelope_ms": 121.54720000000088,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 345,
+              "envelope_ms": 6513.633899999975,
+              "suspension_handshake_ms": 760.3925000000236,
+              "suspended_until_restart_ms": 5.776699999889388,
+              "restart_ms": 5747.464700000062,
+              "summed_envelope_ms": 6513.633899999975,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-0-10s",
+          "pass_index": 3,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 42829.4205,
+          "end_ms": 43419.8208,
+          "indices": [
+            6138,
+            6235
+          ],
+          "wall_seconds": 0.5903701,
+          "marker_extra_ms": 0.030200000001173066,
+          "gc_generation_delta": [
+            2,
+            2,
+            2
+          ],
+          "completed_generation_counts": [
+            1,
+            1,
+            1
+          ],
+          "crossing_collections": [
+            {
+              "count": 87,
+              "depth": 2,
+              "type": "BackgroundGC",
+              "reason": "AllocLarge",
+              "start_ms": 43410.7858,
+              "end_ms": 43423.581,
+              "indices": [
+                6226,
+                6244
+              ]
+            }
+          ],
+          "gc_envelope_ms": 9.906500000004598,
+          "gc_envelope_to_wall": 0.01678015197586158,
+          "all_suspension_envelope_ms": 311.96809999999095,
+          "reason_overlap_ms": 0.09890000000450527,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 2,
+              "envelope_ms": 3.01940000000468,
+              "suspension_handshake_ms": 0.031200000004901085,
+              "suspended_until_restart_ms": 2.9844999999986612,
+              "restart_ms": 0.003700000001117587,
+              "summed_envelope_ms": 3.01940000000468,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 1,
+              "envelope_ms": 6.8870999999999185,
+              "suspension_handshake_ms": 2.073499999998603,
+              "suspended_until_restart_ms": 0.4242000000012922,
+              "restart_ms": 4.389400000000023,
+              "summed_envelope_ms": 6.8870999999999185,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 18,
+              "envelope_ms": 302.16049999999086,
+              "suspension_handshake_ms": 34.45279999999184,
+              "suspended_until_restart_ms": 0.2912999999898602,
+              "restart_ms": 267.41640000000916,
+              "summed_envelope_ms": 302.16049999999086,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-10-20s",
+          "pass_index": 3,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 43424.5709,
+          "end_ms": 44002.7001,
+          "indices": [
+            6246,
+            6332
+          ],
+          "wall_seconds": 0.5781088,
+          "marker_extra_ms": 0.020400000003064633,
+          "gc_generation_delta": [
+            1,
+            0,
+            0
+          ],
+          "completed_generation_counts": [
+            1,
+            0,
+            0
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 0.26939999999740394,
+          "gc_envelope_to_wall": 0.00046600224732334803,
+          "all_suspension_envelope_ms": 292.0851000000039,
+          "reason_overlap_ms": 0.26939999999740394,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 1,
+              "envelope_ms": 0.26939999999740394,
+              "suspension_handshake_ms": 0.032100000003993046,
+              "suspended_until_restart_ms": 0.2360999999946216,
+              "restart_ms": 0.0011999999987892807,
+              "summed_envelope_ms": 0.26939999999740394,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 18,
+              "envelope_ms": 292.0851000000039,
+              "suspension_handshake_ms": 32.21729999999661,
+              "suspended_until_restart_ms": 0.2897000000011758,
+              "restart_ms": 259.5781000000061,
+              "summed_envelope_ms": 292.0851000000039,
+              "overlap_ms": 0.0
+            }
+          }
+        },
+        {
+          "name": "dialogue-20-30s",
+          "pass_index": 3,
+          "pid": 915112,
+          "thread": 800788,
+          "start_ms": 44006.4457,
+          "end_ms": 44588.1961,
+          "indices": [
+            6334,
+            6402
+          ],
+          "wall_seconds": 0.581706,
+          "marker_extra_ms": 0.04440000000454347,
+          "gc_generation_delta": [
+            0,
+            0,
+            0
+          ],
+          "completed_generation_counts": [
+            0,
+            0,
+            0
+          ],
+          "crossing_collections": [],
+          "gc_envelope_ms": 0.0,
+          "gc_envelope_to_wall": 0.0,
+          "all_suspension_envelope_ms": 307.4013999999879,
+          "reason_overlap_ms": 0.0,
+          "by_reason": {
+            "SuspendForGC": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendForGCPrep": {
+              "envelopes": 0,
+              "envelope_ms": 0.0,
+              "suspension_handshake_ms": 0.0,
+              "suspended_until_restart_ms": 0.0,
+              "restart_ms": 0.0,
+              "summed_envelope_ms": 0,
+              "overlap_ms": 0.0
+            },
+            "SuspendOther": {
+              "envelopes": 17,
+              "envelope_ms": 307.4013999999879,
+              "suspension_handshake_ms": 34.764599999987695,
+              "suspended_until_restart_ms": 0.27400000000488944,
+              "restart_ms": 272.36279999999533,
+              "summed_envelope_ms": 307.4013999999879,
+              "overlap_ms": 0.0
+            }
+          }
+        }
+      ],
+      "totals": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 39.0170692,
+          "gc_envelope_ms": 491.28960000002337,
+          "gc_envelope_to_wall": 0.012591658217117533,
+          "other_envelope_ms": 20382.378199999977
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 1.7732763,
+          "gc_envelope_ms": 29.60160000000542,
+          "gc_envelope_to_wall": 0.016693168458860822,
+          "other_envelope_ms": 925.9106999999822
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 1.7948555,
+          "gc_envelope_ms": 61.11239999999634,
+          "gc_envelope_to_wall": 0.03404864625592219,
+          "other_envelope_ms": 927.1375000000135
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 1.7676849,
+          "gc_envelope_ms": 7.9025000000001455,
+          "gc_envelope_to_wall": 0.004470536575834384,
+          "other_envelope_ms": 912.7195999999931
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "name": "restore",
+      "samples": 4,
+      "peak_rss": 107036672,
+      "seconds": 1.036127800005488
+    },
+    {
+      "name": "build",
+      "samples": 11,
+      "peak_rss": 243187712,
+      "seconds": 2.8492834999924526
+    },
+    {
+      "name": "sampled-a",
+      "samples": 1,
+      "peak_rss": 9752576,
+      "seconds": 0.2601059000007808
+    },
+    {
+      "name": "sampled-b",
+      "samples": 1,
+      "peak_rss": 9895936,
+      "seconds": 0.25989270000718534
+    }
+  ],
+  "resource_samples": 17,
+  "peak_rss": 243187712,
+  "identities": [
+    {
+      "pid": 152704,
+      "birth": 1790031521.5699496
+    },
+    {
+      "pid": 71288,
+      "birth": 1790031539.415516
+    },
+    {
+      "pid": 145776,
+      "birth": 1790031540.4587913
+    },
+    {
+      "pid": 86424,
+      "birth": 1790031541.0880368
+    },
+    {
+      "pid": 117840,
+      "birth": 1790031541.11157
+    },
+    {
+      "pid": 1162664,
+      "birth": 1790031543.4128008
+    },
+    {
+      "pid": 70944,
+      "birth": 1790031543.6798987
+    },
+    {
+      "pid": 180520,
+      "birth": 1790032080.1471677
+    }
+  ],
+  "tests": {
+    "passed": true,
+    "tests": 17,
+    "errors": 0,
+    "failures": 0,
+    "skips": 0,
+    "output": "test_background_gc_can_overlap_a_lower_generation_collection (__main__.SuccessorTests.test_background_gc_can_overlap_a_lower_generation_collection) ... ok\ntest_complete_requests_preserve_identity_and_boundaries (__main__.SuccessorTests.test_complete_requests_preserve_identity_and_boundaries) ... ok\ntest_complete_suspension_preserves_components (__main__.SuccessorTests.test_complete_suspension_preserves_components) ... ok\ntest_crossing_background_gc_is_counted_once_at_start (__main__.SuccessorTests.test_crossing_background_gc_is_counted_once_at_start) ... ok\ntest_distinct_emitters_can_overlap_resume_envelopes (__main__.SuccessorTests.test_distinct_emitters_can_overlap_resume_envelopes) ... ok\ntest_gc_duration_is_not_suspension_duration (__main__.SuccessorTests.test_gc_duration_is_not_suspension_duration) ... ok\ntest_interval_clips_both_boundaries (__main__.SuccessorTests.test_interval_clips_both_boundaries) ... ok\ntest_missing_collection_stop_is_refused (__main__.SuccessorTests.test_missing_collection_stop_is_refused) ... ok\ntest_missing_request_end_is_refused (__main__.SuccessorTests.test_missing_request_end_is_refused) ... ok\ntest_missing_suspend_phase_is_refused (__main__.SuccessorTests.test_missing_suspend_phase_is_refused) ... ok\ntest_nested_suspension_is_refused (__main__.SuccessorTests.test_nested_suspension_is_refused) ... ok\ntest_overlap_does_not_allow_a_missing_emitter_end (__main__.SuccessorTests.test_overlap_does_not_allow_a_missing_emitter_end) ... ok\ntest_overlapping_and_nested_intervals_do_not_double_count (__main__.SuccessorTests.test_overlapping_and_nested_intervals_do_not_double_count) ... ok\ntest_partition_conserves_interval_measure (__main__.SuccessorTests.test_partition_conserves_interval_measure) ... ok\ntest_reversed_interval_is_refused (__main__.SuccessorTests.test_reversed_interval_is_refused) ... ok\ntest_unsorted_event_stream_is_refused (__main__.SuccessorTests.test_unsorted_event_stream_is_refused) ... ok\ntest_wrong_request_end_is_refused (__main__.SuccessorTests.test_wrong_request_end_is_refused) ... ok\n\n----------------------------------------------------------------------\nRan 17 tests in 0.000s\n\nOK\n",
+    "identity": {
+      "pid": 180520,
+      "birth": 1790032080.1471677
+    },
+    "analysis": {
+      "bytes": 13742,
+      "sha256": "49e460bf906001ebd3f3ddc1a1e451db2fc47410320254da014d040a49adfd90"
+    },
+    "tests_source": {
+      "bytes": 2962,
+      "sha256": "1f0404eda2cb8687767915b08430af472367257a3aa1b3d41b91165432afe895"
+    }
+  },
+  "scope": "Request-aligned GC suspension upper envelopes from two retained older Windows captures; no new inference, current-build/AMD attribution, or latency comparison."
+}
