@@ -89,6 +89,16 @@ semantics and mutable weights. Before production integration, make the optional
 combined panel-size admission explicit and retain scalar fallback when that
 storage cannot be represented. The frozen AMD comparison remains unchanged.
 
+The [full Parakeet profile and preparation census](../tests/parakeet/performance-profile/results-20260921.md)
+finds encoder MatMul at 60.4% of graph time and decoder LSTM at 7.3% across all
+twenty clips. Actual encoder preparation holds 37 of 217 constant MatMul weights
+in 256 MiB; the reduction-axis admission excludes all 49 weights shaped
+`[4096,1024]`. This establishes mappings, not kernel dispatch or packing cost.
+ORT 1.29's pinned MatMul/Gemm/MLAS source confirms constant-B packing and
+column/reduction blocking. Next measure packing plus multiplication on the
+observed wide encoder shapes, then qualify candidates through full trajectories
+and complete API timing.
+
 
 | Source finding | Consequence for Lokad.Onnx |
 |---|---|

@@ -68,6 +68,14 @@ no AMD timing result or production promotion. The runner now builds its required
 CLI and drains CLI test output. The separate [LSTM scratch-admission check](tests/pyannote/lstm-panel-admission/results-20260921.md)
 passes complete local suites without changing the frozen timing candidates.
 
+The [complete Parakeet attribution and preparation census](tests/parakeet/performance-profile/results-20260921.md)
+identifies encoder MatMul as the next Parakeet target: 60.4% of local profiled
+graph time, versus 7.3% for decoder LSTM. All 2,480 graph calls preserve tensor
+bits and all twenty separate public controls match native decisions. The encoder
+prepares 37 of 217 constant MatMul weights within its 256 MiB budget. These
+diagnostic observations add no new ORT ratio; the matched baselines below retain
+their original scope and numerical limitations.
+
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
 AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ONNX Runtime 1.29.0, product `1d10d22`.

@@ -1,0 +1,872 @@
+{
+  "scope": "Local full-corpus attribution; public controls and graph profiles have different instrumentation; no new matched native timing or tensor-native verdict",
+  "profile_closure": {
+    "path": "artifacts\\parakeet-performance-profile-v2-20260921\\closed.json",
+    "sha256": "6d8ce878f99acf291cb20348bba948bd1de7f128298c774cf94adf84e855700d"
+  },
+  "packing_closure": {
+    "path": "artifacts/parakeet-packing-census-20260921/closed.json",
+    "sha256": "ec95e2635ba5423d76370d0ff0fbb4373fdc926efd02d740e8908eeb952a802b"
+  },
+  "graph_seconds": {
+    "frontend": 0.4216918,
+    "encoder": 52.0413369,
+    "decoder": 6.4494839
+  },
+  "graph_shares": {
+    "frontend": 0.00715793269357179,
+    "encoder": 0.8833664463328288,
+    "decoder": 0.10947562097359942
+  },
+  "operators": [
+    {
+      "graph": "encoder",
+      "op": "MatMul",
+      "seconds": 35.5848996,
+      "share_of_graph": 0.6837814268372494,
+      "share_of_all_graphs": 0.6040295690936122
+    },
+    {
+      "graph": "encoder",
+      "op": "Conv",
+      "seconds": 5.84035,
+      "share_of_graph": 0.112225210724746,
+      "share_of_all_graphs": 0.09913598558687174
+    },
+    {
+      "graph": "decoder",
+      "op": "LSTM",
+      "seconds": 4.2972785,
+      "share_of_graph": 0.6662980428558012,
+      "share_of_all_graphs": 0.07294339199513279
+    },
+    {
+      "graph": "encoder",
+      "op": "Where",
+      "seconds": 2.1497465,
+      "share_of_graph": 0.04130844109809946,
+      "share_of_all_graphs": 0.0364904908163771
+    },
+    {
+      "graph": "encoder",
+      "op": "Pad",
+      "seconds": 2.0497884,
+      "share_of_graph": 0.039387696821447334,
+      "share_of_all_graphs": 0.03479376977039679
+    },
+    {
+      "graph": "decoder",
+      "op": "MatMul",
+      "seconds": 1.8807046,
+      "share_of_graph": 0.29160544148346507,
+      "share_of_all_graphs": 0.03192368678568294
+    },
+    {
+      "graph": "encoder",
+      "op": "Reshape",
+      "seconds": 1.7730344,
+      "share_of_graph": 0.03406973197877244,
+      "share_of_all_graphs": 0.030096058065600142
+    },
+    {
+      "graph": "encoder",
+      "op": "Sigmoid",
+      "seconds": 1.5662687,
+      "share_of_graph": 0.030096626898914274,
+      "share_of_all_graphs": 0.026586350350298927
+    },
+    {
+      "graph": "encoder",
+      "op": "Add",
+      "seconds": 1.0103526,
+      "share_of_graph": 0.01941442438232212,
+      "share_of_all_graphs": 0.01715005107420932
+    },
+    {
+      "graph": "encoder",
+      "op": "ConvRelu",
+      "seconds": 0.621249,
+      "share_of_graph": 0.011937606468368802,
+      "share_of_all_graphs": 0.010545281003682738
+    },
+    {
+      "graph": "encoder",
+      "op": "Transpose",
+      "seconds": 0.4707718,
+      "share_of_graph": 0.009046112725824305,
+      "share_of_all_graphs": 0.007991032451737596
+    },
+    {
+      "graph": "encoder",
+      "op": "Mul",
+      "seconds": 0.2708479,
+      "share_of_graph": 0.0052044762132158065,
+      "share_of_all_graphs": 0.004597459657492185
+    },
+    {
+      "graph": "encoder",
+      "op": "LayerNormalization",
+      "seconds": 0.1853526,
+      "share_of_graph": 0.0035616417840334154,
+      "share_of_all_graphs": 0.0031462348458721145
+    },
+    {
+      "graph": "frontend",
+      "op": "STFT",
+      "seconds": 0.1071526,
+      "share_of_graph": 0.2541016922785788,
+      "share_of_all_graphs": 0.0018188428106527576
+    },
+    {
+      "graph": "encoder",
+      "op": "Constant",
+      "seconds": 0.1006072,
+      "share_of_graph": 0.0019332170538455171,
+      "share_of_all_graphs": 0.0017077390788455354
+    },
+    {
+      "graph": "decoder",
+      "op": "Transpose",
+      "seconds": 0.0940169,
+      "share_of_graph": 0.014577429986297043,
+      "share_of_all_graphs": 0.0015958731999490376
+    },
+    {
+      "graph": "encoder",
+      "op": "Softmax",
+      "seconds": 0.0852049,
+      "share_of_graph": 0.0016372542497077934,
+      "share_of_all_graphs": 0.0014462954683076954
+    },
+    {
+      "graph": "encoder",
+      "op": "Split",
+      "seconds": 0.0759682,
+      "share_of_graph": 0.001459766495737353,
+      "share_of_all_graphs": 0.001289508741815232
+    },
+    {
+      "graph": "frontend",
+      "op": "Where",
+      "seconds": 0.0686234,
+      "share_of_graph": 0.1627335414157923,
+      "share_of_all_graphs": 0.0011648357364408186
+    },
+    {
+      "graph": "frontend",
+      "op": "Sub",
+      "seconds": 0.0540808,
+      "share_of_graph": 0.1282472175176278,
+      "share_of_all_graphs": 0.0009179849511290408
+    },
+    {
+      "graph": "frontend",
+      "op": "Concat",
+      "seconds": 0.0453309,
+      "share_of_graph": 0.10749770329894962,
+      "share_of_all_graphs": 0.0007694613249274315
+    },
+    {
+      "graph": "frontend",
+      "op": "ReduceSumSquare",
+      "seconds": 0.0299988,
+      "share_of_graph": 0.07113915897819213,
+      "share_of_all_graphs": 0.0005092093118432026
+    },
+    {
+      "graph": "encoder",
+      "op": "Slice",
+      "seconds": 0.0248657,
+      "share_of_graph": 0.0004778067106112334,
+      "share_of_all_graphs": 0.0004220784159866235
+    },
+    {
+      "graph": "frontend",
+      "op": "Mul",
+      "seconds": 0.0241158,
+      "share_of_graph": 0.05718821186468411,
+      "share_of_all_graphs": 0.00040934937139313254
+    },
+    {
+      "graph": "frontend",
+      "op": "Div",
+      "seconds": 0.0238453,
+      "share_of_graph": 0.05654674812268107,
+      "share_of_all_graphs": 0.00040475781710250805
+    },
+    {
+      "graph": "frontend",
+      "op": "Pad",
+      "seconds": 0.0234134,
+      "share_of_graph": 0.055522540395615945,
+      "share_of_all_graphs": 0.00039742660712793976
+    },
+    {
+      "graph": "encoder",
+      "op": "Cast",
+      "seconds": 0.0228915,
+      "share_of_graph": 0.0004398714822408799,
+      "share_of_all_graphs": 0.00038856770811028014
+    },
+    {
+      "graph": "decoder",
+      "op": "Slice",
+      "seconds": 0.018381,
+      "share_of_graph": 0.0028499954856852964,
+      "share_of_all_graphs": 0.0003120050255673529
+    },
+    {
+      "graph": "decoder",
+      "op": "Add",
+      "seconds": 0.0162704,
+      "share_of_graph": 0.002522744494330779,
+      "share_of_all_graphs": 0.00027617902007459106
+    },
+    {
+      "graph": "encoder",
+      "op": "Concat",
+      "seconds": 0.0139853,
+      "share_of_graph": 0.00026873444905678434,
+      "share_of_all_graphs": 0.0002373909952705022
+    },
+    {
+      "graph": "encoder",
+      "op": "Div",
+      "seconds": 0.0138369,
+      "share_of_graph": 0.0002658828697384982,
+      "share_of_all_graphs": 0.0002348720057816716
+    },
+    {
+      "graph": "encoder",
+      "op": "Unsqueeze",
+      "seconds": 0.012385,
+      "share_of_graph": 0.00023798389391491593,
+      "share_of_all_graphs": 0.0002102269866520682
+    },
+    {
+      "graph": "frontend",
+      "op": "Cast",
+      "seconds": 0.0123781,
+      "share_of_graph": 0.029353428262062484,
+      "share_of_all_graphs": 0.0002101098638254312
+    },
+    {
+      "graph": "decoder",
+      "op": "Squeeze",
+      "seconds": 0.0119042,
+      "share_of_graph": 0.0018457600925246126,
+      "share_of_all_graphs": 0.0002020657322974203
+    },
+    {
+      "graph": "frontend",
+      "op": "MatMul",
+      "seconds": 0.011436,
+      "share_of_graph": 0.02711933217577387,
+      "share_of_all_graphs": 0.00019411835440880516
+    },
+    {
+      "graph": "frontend",
+      "op": "Log",
+      "seconds": 0.0105867,
+      "share_of_graph": 0.025105302023895177,
+      "share_of_all_graphs": 0.0001797020621388333
+    },
+    {
+      "graph": "decoder",
+      "op": "Concat",
+      "seconds": 0.0075028,
+      "share_of_graph": 0.0011633178896686602,
+      "share_of_all_graphs": 0.00012735494836117379
+    },
+    {
+      "graph": "encoder",
+      "op": "And",
+      "seconds": 0.0069257,
+      "share_of_graph": 0.00013308074720117346,
+      "share_of_all_graphs": 0.00011755906673041815
+    },
+    {
+      "graph": "encoder",
+      "op": "Gather",
+      "seconds": 0.0066568,
+      "share_of_graph": 0.00012791370084883427,
+      "share_of_all_graphs": 0.00011299467135611527
+    },
+    {
+      "graph": "encoder",
+      "op": "Shape",
+      "seconds": 0.0058607,
+      "share_of_graph": 0.00011261624602883712,
+      "share_of_all_graphs": 9.94814130538374e-05
+    },
+    {
+      "graph": "decoder",
+      "op": "Unsqueeze",
+      "seconds": 0.0057412,
+      "share_of_graph": 0.0008901797553134446,
+      "share_of_all_graphs": 9.745298149106613e-05
+    },
+    {
+      "graph": "encoder",
+      "op": "Tile",
+      "seconds": 0.0054918,
+      "share_of_graph": 0.00010552765027064475,
+      "share_of_all_graphs": 9.321958540943304e-05
+    },
+    {
+      "graph": "decoder",
+      "op": "Cast",
+      "seconds": 0.0054731,
+      "share_of_graph": 0.0008486105376586799,
+      "share_of_all_graphs": 9.290216557492406e-05
+    },
+    {
+      "graph": "decoder",
+      "op": "Identity",
+      "seconds": 0.0049879,
+      "share_of_graph": 0.0007733797118246934,
+      "share_of_all_graphs": 8.466622420039168e-05
+    },
+    {
+      "graph": "frontend",
+      "op": "Transpose",
+      "seconds": 0.0045262,
+      "share_of_graph": 0.010733431382825087,
+      "share_of_all_graphs": 7.682917940933315e-05
+    },
+    {
+      "graph": "encoder",
+      "op": "ConstantOfShape",
+      "seconds": 0.004423,
+      "share_of_graph": 8.4990130220886e-05,
+      "share_of_all_graphs": 7.507742930658843e-05
+    },
+    {
+      "graph": "decoder",
+      "op": "Gather",
+      "seconds": 0.0041403,
+      "share_of_graph": 0.0006419583433644977,
+      "share_of_all_graphs": 7.027878827901154e-05
+    },
+    {
+      "graph": "decoder",
+      "op": "Constant",
+      "seconds": 0.0033389,
+      "share_of_graph": 0.0005177003387821466,
+      "share_of_all_graphs": 5.667556606641829e-05
+    },
+    {
+      "graph": "encoder",
+      "op": "Squeeze",
+      "seconds": 0.0027399,
+      "share_of_graph": 5.264853217097119e-05,
+      "share_of_all_graphs": 4.650794676851043e-05
+    },
+    {
+      "graph": "frontend",
+      "op": "Add",
+      "seconds": 0.0013848,
+      "share_of_graph": 0.00328391493503075,
+      "share_of_all_graphs": 2.3506042076365285e-05
+    },
+    {
+      "graph": "decoder",
+      "op": "Relu",
+      "seconds": 0.0012964,
+      "share_of_graph": 0.00020100833184497134,
+      "share_of_all_graphs": 2.2005511949595577e-05
+    },
+    {
+      "graph": "frontend",
+      "op": "Slice",
+      "seconds": 0.0010136,
+      "share_of_graph": 0.0024036511973910806,
+      "share_of_all_graphs": 1.7205173489748594e-05
+    },
+    {
+      "graph": "frontend",
+      "op": "Less",
+      "seconds": 0.0007595,
+      "share_of_graph": 0.0018010784179346149,
+      "share_of_all_graphs": 1.2891998091420734e-05
+    },
+    {
+      "graph": "frontend",
+      "op": "ReduceSum",
+      "seconds": 0.0007071,
+      "share_of_graph": 0.0016768170497979803,
+      "share_of_all_graphs": 1.200254358188756e-05
+    },
+    {
+      "graph": "encoder",
+      "op": "Not",
+      "seconds": 0.0005909,
+      "share_of_graph": 1.135443543918642e-05,
+      "share_of_all_graphs": 1.003012728402964e-05
+    },
+    {
+      "graph": "frontend",
+      "op": "Range",
+      "seconds": 0.0001325,
+      "share_of_graph": 0.0003142105205745049,
+      "share_of_all_graphs": 2.24909775788446e-06
+    },
+    {
+      "graph": "encoder",
+      "op": "Less",
+      "seconds": 0.0001248,
+      "share_of_graph": 2.3980936585047643e-06,
+      "share_of_all_graphs": 2.1183954730866463e-06
+    },
+    {
+      "graph": "encoder",
+      "op": "Sub",
+      "seconds": 9.08e-05,
+      "share_of_graph": 1.7447668605146844e-06,
+      "share_of_all_graphs": 1.5412685012521432e-06
+    },
+    {
+      "graph": "frontend",
+      "op": "Unsqueeze",
+      "seconds": 8.63e-05,
+      "share_of_graph": 0.00020465183340060206,
+      "share_of_all_graphs": 1.4648840490975765e-06
+    },
+    {
+      "graph": "frontend",
+      "op": "Sqrt",
+      "seconds": 8.32e-05,
+      "share_of_graph": 0.00019730049291923627,
+      "share_of_all_graphs": 1.4122636487244307e-06
+    },
+    {
+      "graph": "encoder",
+      "op": "Expand",
+      "seconds": 7.95e-05,
+      "share_of_graph": 1.5276317776532754e-06,
+      "share_of_all_graphs": 1.349458654730676e-06
+    },
+    {
+      "graph": "encoder",
+      "op": "Range",
+      "seconds": 7.78e-05,
+      "share_of_graph": 1.4949654377537714e-06,
+      "share_of_all_graphs": 1.3206023061389509e-06
+    },
+    {
+      "graph": "encoder",
+      "op": "Floor",
+      "seconds": 6.96e-05,
+      "share_of_graph": 1.337398386473811e-06,
+      "share_of_all_graphs": 1.1814128599906296e-06
+    },
+    {
+      "graph": "encoder",
+      "op": "Equal",
+      "seconds": 6.07e-05,
+      "share_of_graph": 1.1663804893528782e-06,
+      "share_of_all_graphs": 1.030341387951598e-06
+    },
+    {
+      "graph": "frontend",
+      "op": "Shape",
+      "seconds": 3.49e-05,
+      "share_of_graph": 8.276186541924694e-05,
+      "share_of_all_graphs": 5.924038622654163e-07
+    }
+  ],
+  "packing": {
+    "passed": true,
+    "graphs": {
+      "frontend": {
+        "maximum_packed_bytes": 0,
+        "retained_packed_bytes": 0,
+        "packed_weights": 0
+      },
+      "encoder": {
+        "maximum_packed_bytes": 268435456,
+        "retained_packed_bytes": 268435456,
+        "packed_weights": 37
+      },
+      "decoder": {
+        "maximum_packed_bytes": 67108864,
+        "retained_packed_bytes": 25246720,
+        "packed_weights": 3
+      }
+    },
+    "matmul": [
+      {
+        "graph": "decoder",
+        "shape": [
+          640,
+          640
+        ],
+        "nodes": 1,
+        "weights": 1,
+        "bytes": 1638400,
+        "packed_weights": 1,
+        "packed_bytes": 1638400,
+        "seconds": 0.1019953,
+        "packed_seconds": 0.1019953
+      },
+      {
+        "graph": "decoder",
+        "shape": [
+          640,
+          8198
+        ],
+        "nodes": 1,
+        "weights": 1,
+        "bytes": 20986880,
+        "packed_weights": 1,
+        "packed_bytes": 20986880,
+        "seconds": 1.6075946,
+        "packed_seconds": 1.6075946
+      },
+      {
+        "graph": "decoder",
+        "shape": [
+          1024,
+          640
+        ],
+        "nodes": 1,
+        "weights": 1,
+        "bytes": 2621440,
+        "packed_weights": 1,
+        "packed_bytes": 2621440,
+        "seconds": 0.1711147,
+        "packed_seconds": 0.1711147
+      },
+      {
+        "graph": "encoder",
+        "shape": [],
+        "nodes": 72,
+        "weights": 0,
+        "bytes": 0,
+        "packed_weights": 0,
+        "packed_bytes": 0,
+        "seconds": 0.8381292,
+        "packed_seconds": 0.0
+      },
+      {
+        "graph": "encoder",
+        "shape": [
+          1024,
+          1024
+        ],
+        "nodes": 120,
+        "weights": 120,
+        "bytes": 503316480,
+        "packed_weights": 28,
+        "packed_bytes": 117440512,
+        "seconds": 9.6125528,
+        "packed_seconds": 1.9885932
+      },
+      {
+        "graph": "encoder",
+        "shape": [
+          1024,
+          4096
+        ],
+        "nodes": 48,
+        "weights": 48,
+        "bytes": 805306368,
+        "packed_weights": 9,
+        "packed_bytes": 150994944,
+        "seconds": 12.3404814,
+        "packed_seconds": 1.9788616
+      },
+      {
+        "graph": "encoder",
+        "shape": [
+          4096,
+          1024
+        ],
+        "nodes": 49,
+        "weights": 49,
+        "bytes": 822083584,
+        "packed_weights": 0,
+        "packed_bytes": 0,
+        "seconds": 12.7937362,
+        "packed_seconds": 0.0
+      },
+      {
+        "graph": "frontend",
+        "shape": [
+          257,
+          128
+        ],
+        "nodes": 1,
+        "weights": 1,
+        "bytes": 131584,
+        "packed_weights": 0,
+        "packed_bytes": 0,
+        "seconds": 0.011436,
+        "packed_seconds": 0.0
+      }
+    ],
+    "scope": "Actual prepared mapping presence joined to profiled node cost; mapping presence does not prove packed kernel dispatch"
+  },
+  "clips": [
+    {
+      "name": "121-121726-0000",
+      "audio_seconds": 8.46,
+      "encoded_frames": 106,
+      "decoder_calls": 43,
+      "frontend_seconds": 0.0158469,
+      "encoder_seconds": 1.9942827,
+      "decoder_seconds": 0.2254268,
+      "encoder_matmul_seconds": 1.4210133,
+      "encoder_matmul_share_of_all_graphs": 0.6356418921034602,
+      "decoder_lstm_seconds": 0.1536317,
+      "separate_public_seconds": 3.0462464
+    },
+    {
+      "name": "121-123852-0000",
+      "audio_seconds": 17.695,
+      "encoded_frames": 222,
+      "decoder_calls": 75,
+      "frontend_seconds": 0.0433801,
+      "encoder_seconds": 3.8083814,
+      "decoder_seconds": 0.4094066,
+      "encoder_matmul_seconds": 2.2299728,
+      "encoder_matmul_share_of_all_graphs": 0.5233242969222454,
+      "decoder_lstm_seconds": 0.2737809,
+      "separate_public_seconds": 5.6374049
+    },
+    {
+      "name": "237-126133-0002",
+      "audio_seconds": 8.92,
+      "encoded_frames": 112,
+      "decoder_calls": 53,
+      "frontend_seconds": 0.0164148,
+      "encoder_seconds": 2.1229795,
+      "decoder_seconds": 0.275988,
+      "encoder_matmul_seconds": 1.5241904,
+      "encoder_matmul_share_of_all_graphs": 0.631034846947417,
+      "decoder_lstm_seconds": 0.187449,
+      "separate_public_seconds": 3.116489
+    },
+    {
+      "name": "237-126133-0000",
+      "audio_seconds": 13.29,
+      "encoded_frames": 167,
+      "decoder_calls": 85,
+      "frontend_seconds": 0.0238515,
+      "encoder_seconds": 3.1297572,
+      "decoder_seconds": 0.4583776,
+      "encoder_matmul_seconds": 2.1294935,
+      "encoder_matmul_share_of_all_graphs": 0.5895630058176025,
+      "decoder_lstm_seconds": 0.3051282,
+      "separate_public_seconds": 4.5098809
+    },
+    {
+      "name": "260-123286-0000",
+      "audio_seconds": 7.04,
+      "encoded_frames": 89,
+      "decoder_calls": 37,
+      "frontend_seconds": 0.014754,
+      "encoder_seconds": 1.9176946,
+      "decoder_seconds": 0.1965636,
+      "encoder_matmul_seconds": 1.3853289,
+      "encoder_matmul_share_of_all_graphs": 0.6506909166607876,
+      "decoder_lstm_seconds": 0.1329741,
+      "separate_public_seconds": 2.0928956
+    },
+    {
+      "name": "260-123288-0005",
+      "audio_seconds": 12.55,
+      "encoded_frames": 157,
+      "decoder_calls": 71,
+      "frontend_seconds": 0.0254867,
+      "encoder_seconds": 3.1717358,
+      "decoder_seconds": 0.3766102,
+      "encoder_matmul_seconds": 2.1888536,
+      "encoder_matmul_share_of_all_graphs": 0.612466722351049,
+      "decoder_lstm_seconds": 0.2540664,
+      "separate_public_seconds": 3.5206324
+    },
+    {
+      "name": "672-122797-0000",
+      "audio_seconds": 4.07,
+      "encoded_frames": 51,
+      "decoder_calls": 21,
+      "frontend_seconds": 0.0074419,
+      "encoder_seconds": 1.8731097,
+      "decoder_seconds": 0.1082236,
+      "encoder_matmul_seconds": 1.5901156,
+      "encoder_matmul_share_of_all_graphs": 0.7995451672969374,
+      "decoder_lstm_seconds": 0.074083,
+      "separate_public_seconds": 2.0300282
+    },
+    {
+      "name": "672-122797-0001",
+      "audio_seconds": 15.13,
+      "encoded_frames": 190,
+      "decoder_calls": 66,
+      "frontend_seconds": 0.0271321,
+      "encoder_seconds": 3.4784493,
+      "decoder_seconds": 0.3395609,
+      "encoder_matmul_seconds": 2.2817086,
+      "encoder_matmul_share_of_all_graphs": 0.5934003014660861,
+      "decoder_lstm_seconds": 0.2314309,
+      "separate_public_seconds": 3.9481496
+    },
+    {
+      "name": "908-157963-0005",
+      "audio_seconds": 7.035,
+      "encoded_frames": 88,
+      "decoder_calls": 32,
+      "frontend_seconds": 0.012658,
+      "encoder_seconds": 1.8041746,
+      "decoder_seconds": 0.1690685,
+      "encoder_matmul_seconds": 1.2913114,
+      "encoder_matmul_share_of_all_graphs": 0.6502395310622469,
+      "decoder_lstm_seconds": 0.1139946,
+      "separate_public_seconds": 1.9297477
+    },
+    {
+      "name": "908-157963-0000",
+      "audio_seconds": 12.62,
+      "encoded_frames": 158,
+      "decoder_calls": 65,
+      "frontend_seconds": 0.0228899,
+      "encoder_seconds": 2.9029618,
+      "decoder_seconds": 0.3425898,
+      "encoder_matmul_seconds": 1.9342381,
+      "encoder_matmul_share_of_all_graphs": 0.5917921737317312,
+      "decoder_lstm_seconds": 0.2312802,
+      "separate_public_seconds": 3.2706462
+    },
+    {
+      "name": "1089-134686-0002",
+      "audio_seconds": 6.625,
+      "encoded_frames": 83,
+      "decoder_calls": 43,
+      "frontend_seconds": 0.0127127,
+      "encoder_seconds": 1.8043665,
+      "decoder_seconds": 0.2277453,
+      "encoder_matmul_seconds": 1.303289,
+      "encoder_matmul_share_of_all_graphs": 0.6373598321029507,
+      "decoder_lstm_seconds": 0.1542416,
+      "separate_public_seconds": 2.0753852
+    },
+    {
+      "name": "1089-134686-0011",
+      "audio_seconds": 12.445,
+      "encoded_frames": 156,
+      "decoder_calls": 74,
+      "frontend_seconds": 0.0231056,
+      "encoder_seconds": 2.9293606,
+      "decoder_seconds": 0.393977,
+      "encoder_matmul_seconds": 1.8099142,
+      "encoder_matmul_share_of_all_graphs": 0.5408471298720983,
+      "decoder_lstm_seconds": 0.2643054,
+      "separate_public_seconds": 3.0458195
+    },
+    {
+      "name": "1188-133604-0001",
+      "audio_seconds": 9.04,
+      "encoded_frames": 114,
+      "decoder_calls": 50,
+      "frontend_seconds": 0.0263465,
+      "encoder_seconds": 2.0251721,
+      "decoder_seconds": 0.2654154,
+      "encoder_matmul_seconds": 1.3604662,
+      "encoder_matmul_share_of_all_graphs": 0.5871838386419295,
+      "decoder_lstm_seconds": 0.1797397,
+      "separate_public_seconds": 2.2670332
+    },
+    {
+      "name": "1188-133604-0002",
+      "audio_seconds": 17.96,
+      "encoded_frames": 225,
+      "decoder_calls": 101,
+      "frontend_seconds": 0.0338418,
+      "encoder_seconds": 3.7881562,
+      "decoder_seconds": 0.5323355,
+      "encoder_matmul_seconds": 2.2439494,
+      "encoder_matmul_share_of_all_graphs": 0.5153370544539135,
+      "decoder_lstm_seconds": 0.3588871,
+      "separate_public_seconds": 4.356814
+    },
+    {
+      "name": "1221-135766-0002",
+      "audio_seconds": 4.825,
+      "encoded_frames": 61,
+      "decoder_calls": 32,
+      "frontend_seconds": 0.0110988,
+      "encoder_seconds": 2.4586299,
+      "decoder_seconds": 0.2498201,
+      "encoder_matmul_seconds": 2.0966286,
+      "encoder_matmul_share_of_all_graphs": 0.7709472247749332,
+      "decoder_lstm_seconds": 0.1155402,
+      "separate_public_seconds": 2.8835393
+    },
+    {
+      "name": "1221-135766-0000",
+      "audio_seconds": 12.435,
+      "encoded_frames": 156,
+      "decoder_calls": 75,
+      "frontend_seconds": 0.0234279,
+      "encoder_seconds": 2.5778216,
+      "decoder_seconds": 0.3972817,
+      "encoder_matmul_seconds": 1.6723307,
+      "encoder_matmul_share_of_all_graphs": 0.5577166247261326,
+      "decoder_lstm_seconds": 0.2671862,
+      "separate_public_seconds": 3.0360787
+    },
+    {
+      "name": "1284-1180-0000",
+      "audio_seconds": 8.12,
+      "encoded_frames": 102,
+      "decoder_calls": 58,
+      "frontend_seconds": 0.0148508,
+      "encoder_seconds": 1.7804986,
+      "decoder_seconds": 0.305003,
+      "encoder_matmul_seconds": 1.2741033,
+      "encoder_matmul_share_of_all_graphs": 0.6066140615260562,
+      "decoder_lstm_seconds": 0.2067427,
+      "separate_public_seconds": 2.0653637
+    },
+    {
+      "name": "1284-1180-0018",
+      "audio_seconds": 12.005,
+      "encoded_frames": 151,
+      "decoder_calls": 76,
+      "frontend_seconds": 0.0228011,
+      "encoder_seconds": 3.0437278,
+      "decoder_seconds": 0.4018894,
+      "encoder_matmul_seconds": 2.1579996,
+      "encoder_matmul_share_of_all_graphs": 0.6221855074400916,
+      "decoder_lstm_seconds": 0.2714751,
+      "separate_public_seconds": 3.2418432
+    },
+    {
+      "name": "1320-122612-0001",
+      "audio_seconds": 9.52,
+      "encoded_frames": 120,
+      "decoder_calls": 62,
+      "frontend_seconds": 0.0168513,
+      "encoder_seconds": 2.114815,
+      "decoder_seconds": 0.3365578,
+      "encoder_matmul_seconds": 1.4097456,
+      "encoder_matmul_share_of_all_graphs": 0.5711578620434019,
+      "decoder_lstm_seconds": 0.2249327,
+      "separate_public_seconds": 2.346258
+    },
+    {
+      "name": "1320-122612-0000",
+      "audio_seconds": 13.48,
+      "encoded_frames": 169,
+      "decoder_calls": 81,
+      "frontend_seconds": 0.0267994,
+      "encoder_seconds": 3.315262,
+      "decoder_seconds": 0.4376431,
+      "encoder_matmul_seconds": 2.2802468,
+      "encoder_matmul_share_of_all_graphs": 0.60328705590609,
+      "decoder_lstm_seconds": 0.2964088,
+      "separate_public_seconds": 3.8078623
+    }
+  ]
+}

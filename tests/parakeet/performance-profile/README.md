@@ -1,5 +1,14 @@
 # Complete Parakeet wall attribution
 
+The [completed result](results-20260921.md) qualifies the full trace and public
+controls, identifies encoder MatMul as the main target, and links the actual
+prepared-weight census. The original 8 GiB public attempts failed and remain
+preserved. The sibling `performance-profile-public-v2` successor uses 12 GiB
+RSS / 14 GiB available-memory preflight for public controls only; its auditor
+verifies the unchanged successful trace and both prior public failures.
+The commands below document the original frozen protocol, not restart orders
+for closed output directories.
+
 This diagnostic lane profiles the retained twenty-clip Parakeet corpus using
 unchanged production Core/Data assemblies. It does not run Microsoft ORT or
 modify the pending AMD comparison. Pyannote remains the first optimization
