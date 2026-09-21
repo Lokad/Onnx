@@ -32,6 +32,9 @@ def render(analysis, meta, state):
             f"Maximum native scaled output error: {analysis['maximum_native_error']:.9g}. The largest single-cohort share "
             'of observed contrast variation must be at most20%; this operational guard does not prove regularity '
             'of unobserved potential outcomes. Passing this report does not change product defaults.', '']
+    if not analysis['diagnostic_screen']:
+        text += ['The observed dominance guard fails. Interval values are retained as diagnostics; '
+                 'their confidence interpretation is withheld.', '']
     summaries = {(r['case'], r['policy'], r['role']): r for r in analysis['summaries']}
     for boundary in ('execute', 'request'):
         text += [f'## {boundary.capitalize()} boundary', '',

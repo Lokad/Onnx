@@ -96,6 +96,10 @@ The runner and raw-output/resource auditor are implemented and locally exercised
 The deployment, collection and full-report tools are implemented. Eleven tests
 pass, including full-count synthetic tick reports for both phases and independent
 80-digit Decimal interval calculations. No model inference occurs in those tests.
+Three further controller tests verify that a passing A/A starts comparison once,
+a failed A/A is reported without comparison, and predecessor/collection failures
+never start comparison. [Preparation results](preparation-results-20260921.md)
+record the completed payload and its identities.
 
 The worker measurement contract can reuse the already verified
 `ProcessUncertainty.dll` unchanged. Its raw specification retains the v1 worker
@@ -106,7 +110,7 @@ of conditioning. The ongoing Whisper comparison remains the sole VM workload.
 
 ## Deployment and reporting
 
-Commit tools before running `prepare.py`. It copies the qualified worker and
+`prepare.py` is complete; do not rerun it. It copies the qualified worker and
 inputs unchanged, verifies the existing qualification receipts, and writes the
 local payload once. `stage.py` refuses to launch until the existing Whisper
 completion monitor and its final verification have succeeded and all preceding
@@ -116,7 +120,6 @@ cannot accommodate the complete evidence.
 
 From the repository root, use these commands sequentially:
 
-    C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/prepare.py
     C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/stage.py
     C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/observe.py --phase aa
 
@@ -141,3 +144,14 @@ the same commands with `--phase compare`. No script changes product defaults.
 Writers refuse existing paths. A timeout is not termination: inspect the actual
 recorded process and preserve completed stages before recovering a failed transfer
 or report. Never restart completed inference to recover reporting.
+
+`finish.py` automates this same sequence after Whisper's verified closure. It
+owns stage, observations, collection, reports and the conditional comparison;
+do not invoke those writers manually while its recorded process is live. Its
+state and logs are under `artifacts/e5-randomized-processes-finish-20260921`,
+outside the evidence directory. It verifies its source identities before each
+action, never retries inference, and leaves actual process identities recorded
+if a reporting timeout requires inspection. `update_benchmark.py` adds each
+verified complete phase to `BENCHMARK.md` and retains before/after snapshots.
+
+    C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/finish.py
