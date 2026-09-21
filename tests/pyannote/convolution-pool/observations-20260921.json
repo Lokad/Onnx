@@ -1,0 +1,199 @@
+{
+  "passed": true,
+  "calls": 108,
+  "values": 17502642,
+  "predecessor_comparisons": [
+    {
+      "order": "forward",
+      "predecessor": {
+        "order": "forward",
+        "graph": "embedding",
+        "mode": "reuse",
+        "phase": "repeat",
+        "calls": 6,
+        "allocated_mean": 166860713.33333334,
+        "pool_new_mean": 1280000.0,
+        "pool_reused_mean": 69336960.0,
+        "seconds_mean": 0.5234583833333334,
+        "pause_seconds_sum": 0.011767,
+        "gc_delta_sum": [
+          7,
+          4,
+          4
+        ]
+      },
+      "candidate": {
+        "order": "forward",
+        "graph": "embedding",
+        "mode": "reuse",
+        "phase": "repeat",
+        "calls": 6,
+        "allocated_mean": 6672872.0,
+        "pool_new_mean": 1280000.0,
+        "pool_reused_mean": 229101440.0,
+        "seconds_mean": 0.5795790833333333,
+        "pause_seconds_sum": 0.000596,
+        "gc_delta_sum": [
+          2,
+          0,
+          0
+        ]
+      },
+      "allocation_ratio": 0.03999067166079876
+    },
+    {
+      "order": "reverse",
+      "predecessor": {
+        "order": "reverse",
+        "graph": "embedding",
+        "mode": "reuse",
+        "phase": "repeat",
+        "calls": 6,
+        "allocated_mean": 166867712.0,
+        "pool_new_mean": 1280000.0,
+        "pool_reused_mean": 69336960.0,
+        "seconds_mean": 0.64382475,
+        "pause_seconds_sum": 0.009469,
+        "gc_delta_sum": [
+          4,
+          4,
+          2
+        ]
+      },
+      "candidate": {
+        "order": "reverse",
+        "graph": "embedding",
+        "mode": "reuse",
+        "phase": "repeat",
+        "calls": 6,
+        "allocated_mean": 6673208.0,
+        "pool_new_mean": 1280000.0,
+        "pool_reused_mean": 229101440.0,
+        "seconds_mean": 0.6187519166666666,
+        "pause_seconds_sum": 0.000508,
+        "gc_delta_sum": [
+          2,
+          0,
+          0
+        ]
+      },
+      "allocation_ratio": 0.03999100796683783
+    }
+  ],
+  "application_qualification_admitted": true,
+  "resource_samples": 186,
+  "peak_rss": 947507200,
+  "scope": "Graph diagnostic with precise process allocations and cumulative pause counters. No public/ORT latency claim.",
+  "focused_suites": [
+    {
+      "name": "focused",
+      "counters": {
+        "total": "164",
+        "executed": "164",
+        "passed": "164",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    },
+    {
+      "name": "hardware-disabled",
+      "counters": {
+        "total": "31",
+        "executed": "31",
+        "passed": "31",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    }
+  ],
+  "preparation_resource_samples": 105,
+  "shared": {
+    "passed": true,
+    "arrays": 166,
+    "values": 5000814,
+    "resources": [
+      {
+        "name": "shared",
+        "samples": 12,
+        "peak_rss": 1643335680
+      },
+      {
+        "name": "e5",
+        "samples": 65,
+        "peak_rss": 2372632576
+      }
+    ],
+    "scope": "Full native shared outputs, no timing or production promotion"
+  },
+  "parakeet": {
+    "passed": true,
+    "arrays": 784,
+    "values": 3090494,
+    "bit_identical_arrays": 784,
+    "native": {
+      "audit_consistent": true,
+      "application_passed": true,
+      "numeric_gate_passed": false,
+      "manifest_sha256": "3bad7d262b8809b1265c84c8e66d02ee38e7d4cff2d92014448976a9e161103c",
+      "result_sha256": "d7652de175ef2d2bd08a0b7fcbad26224b1c084dea6f06aca4d2f81d89535a83",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 0.0002321004867553711,
+      "failures": [
+        {
+          "case": "english-16k",
+          "label": "step-26",
+          "output": "outputs",
+          "maximum": 0.0002321004867553711,
+          "worst_index": 8193
+        },
+        {
+          "case": "english-frame-limit",
+          "label": "step-26",
+          "output": "outputs",
+          "maximum": 0.0002321004867553711,
+          "worst_index": 8193
+        },
+        {
+          "case": "english-repeat",
+          "label": "step-26",
+          "output": "outputs",
+          "maximum": 0.0002321004867553711,
+          "worst_index": 8193
+        }
+      ]
+    },
+    "resources": [
+      {
+        "name": "parakeet",
+        "samples": 119,
+        "peak_rss": 6028939264,
+        "seconds": 30.878885999962222
+      }
+    ],
+    "samples": 119,
+    "scope": "Affected Parakeet application regression; same three native numerical failures; no speed claim."
+  }
+}

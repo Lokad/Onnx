@@ -67,6 +67,12 @@ full request and one ORT crop. Observed full-request means are 13.623 s,
 A [source and shape census](tests/pyannote/convolution-allocation/results-20260921.md)
 identifies 159.8 MB of unpooled convolution output payload per embedding call
 as the next allocation target. This is not a measured optimization gain.
+The [pooled-output graph candidate](tests/pyannote/convolution-pool/results-20260921.md)
+now reduces repeated embedding allocations from 166.9 MB to 6.67 MB in both
+process orders. All 17.5 million graph values, 166 shared-model arrays and
+784 Parakeet trajectory arrays are unchanged. Full application qualification
+and matched latency measurement remain pending; this 96.0% graph allocation
+reduction does not change the ORT timing tables.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 

@@ -1,0 +1,20 @@
+    object? compilerRename = null;
+    if (name == "Lokad.Onnx.dll")
+    {
+        const string oldLambda = "<.cctor>b__528_0";
+        const string newLambda = "<.cctor>b__530_0";
+        string oldKey = oldMethods.Keys.Single(k => k.StartsWith("Lokad.Onnx.Tensor`1+<>c[T]::" + oldLambda + "::"));
+        string newKey = newMethods.Keys.Single(k => k.StartsWith("Lokad.Onnx.Tensor`1+<>c[T]::" + newLambda + "::"));
+        const string constructor = "Lokad.Onnx.Tensor`1[T]::.cctor::Void .cctor()";
+        string beforeConstructor = oldMethods[constructor], afterConstructor = newMethods[constructor];
+        const string oldOperand = @"\u003C.cctor\u003Eb__528_0";
+        const string newOperand = @"\u003C.cctor\u003Eb__530_0";
+        if (oldMethods[oldKey] != newMethods[newKey] || newMethods.ContainsKey(oldKey) || oldMethods.ContainsKey(newKey)
+            || beforeConstructor.Split(oldOperand).Length != 2
+            || beforeConstructor.Replace(oldOperand, newOperand) != afterConstructor)
+            throw new InvalidDataException("Static initializer differs beyond one proven generated-method rename.");
+        compilerRename = new { oldKey, newKey, identical_lambda_body = oldMethods[oldKey], beforeConstructor, afterConstructor };
+        newMethods.Add(oldKey, newMethods[newKey]);
+        newMethods.Remove(newKey);
+        newMethods[constructor] = beforeConstructor;
+    }

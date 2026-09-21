@@ -1,0 +1,148 @@
+--- a/src/Lokad.Onnx/CPUExecutionProvider.ConvPool.cs
++++ b/src/Lokad.Onnx/CPUExecutionProvider.ConvPool.cs
+@@ -10,7 +10,7 @@
+ {
+ 
+     /// <summary>1D or 2D convolution, lowered through the shared matrix dispatcher.</summary>
+-    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options)
++    internal static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, TensorBufferPool? pool)
+     {
+         var op = OpType.Conv;
+         if (X is null) return MissingInput(op, nameof(X));
+@@ -77,9 +77,9 @@
+                 var bias = B is null ? null : (Tensor<float>)B;
+                 if (padmode is null)
+                 {
+-                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor));
++                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor, pool));
+                 }
+-                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor));
++                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor, pool));
+             }
+             case TensorElementType.Double:
+             {
+@@ -185,4 +185,6 @@
+             default: return InputTypeNotSupported(op, nameof(X), X);
+         }
+     }
++
++
+ }
+--- a/src/Lokad.Onnx/CPUExecutionProvider.Fusion.cs
++++ b/src/Lokad.Onnx/CPUExecutionProvider.Fusion.cs
+@@ -13,10 +13,10 @@
+     /// holds by construction (same computation, same per-element function);
+     /// exotic layouts fall back to the allocating public Relu path.
+     /// </summary>
+-    public static OpResult ConvRelu(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options)
++    internal static OpResult ConvRelu(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, TensorBufferPool? pool)
+     {
+         var op = OpType.ConvRelu;
+-        var inner = Conv(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options);
++        var inner = Conv(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, pool);
+         if (inner.Status != OpStatus.Success || inner.Outputs is null || inner.Outputs.Length != 1 || inner.Outputs[0] is null)
+             return inner;
+         return FinishRelu(op, inner.Outputs[0], options);
+@@ -104,4 +104,6 @@
+             return relu;
+         return Success(op, relu.Outputs);
+     }
++
++
+ }
+--- a/src/Lokad.Onnx/Node.cs
++++ b/src/Lokad.Onnx/Node.cs
+@@ -298,12 +298,12 @@
+         OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0), opt),
+ 
+         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+-            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt),
++            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, graph.ActivePool),
+ 
+         OpType.Relu => ReluIntGate(graph) ?? CPU.Relu(InputTensor(graph, 0), opt),
+ 
+         OpType.ConvRelu => CPU.ConvRelu(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+-            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt),
++            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, graph.ActivePool),
+ 
+         OpType.AddRelu => Sub32Gate(graph, OpType.Add) ?? CPU.AddRelu(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+ 
+--- a/src/Lokad.Onnx/TensorOps.ConvPool.cs
++++ b/src/Lokad.Onnx/TensorOps.ConvPool.cs
+@@ -143,7 +143,7 @@
+     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
+     {
+         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
++        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, null);
+ 
+     }
+ 
+@@ -154,14 +154,18 @@
+     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
+     {
+         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
+-
+-    }
+-
+-    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options)
++        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, null);
++
++    }
++
++    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options, TensorBufferPool? pool)
+     {
+         options.Validate();
+-        var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outH, outW });
++        var dimensions = new int[] { N, M, outH, outW };
++        // Preserve the fresh array's zero-initialization for every kernel path.
++        var output = pool is null
++            ? new DenseTensor<float>((ReadOnlySpan<int>)dimensions)
++            : new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>(checked(N * M * outH * outW))), dimensions);
+         if (output.Length == 0) return output;
+         var xd = input.ToDenseTensor();
+         var wd = weight.ToDenseTensor();
+@@ -893,4 +897,8 @@
+             if (weightLength != expectWeight) throw new ArgumentException("Conv weight backing length does not match shape.");
+         }
+     }
++
++
++
++
+ }
+--- a/src/Lokad.Onnx/Zzz.ConvolutionPool.cs
++++ b/src/Lokad.Onnx/Zzz.ConvolutionPool.cs
+@@ -0,0 +1,31 @@
++namespace Lokad.Onnx;
++
++using static Lokad.Onnx.MathOps;
++
++// Compile new overloads after existing partial-class methods to keep the
++// isolated candidate's unrelated compiler-generated method identities stable.
++public partial class CPUExecutionProvider
++{
++    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options) =>
++        Conv(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, null);
++
++    public static OpResult ConvRelu(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options) =>
++        ConvRelu(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, null);
++}
++
++public abstract partial class Tensor<T> where T : unmanaged
++{
++    internal static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, TensorBufferPool? pool)
++    {
++        var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
++        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, pool);
++
++    }
++
++    internal static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, TensorBufferPool? pool)
++    {
++        var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
++        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, pool);
++
++    }
++}
