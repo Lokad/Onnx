@@ -24,6 +24,12 @@ new artifact; observation is read-only. Never restart an observed worker or
 overwrite completed evidence. On failure collect the intact records before
 diagnosis; success-only reporting does not accept failed campaigns.
 
+Alternatively, after a successful launch, run `finish.py` once to monitor the
+existing process identities and perform terminal collection/audit/report/verification.
+Its changing state and logs live separately in `artifacts/audio-whisper-amd-finish-20260921`,
+so they cannot invalidate the closed evidence inventory. Do not run reporting
+scripts manually while that monitor is active. It never launches model inference.
+
 Results are descriptive application measurements, without a calibrated parity
 claim. Existing encoder/logit numerical failures remain open. Raw source, binaries,
 inputs, timings and resource evidence live in `artifacts/audio-whisper-amd-20260921`.
