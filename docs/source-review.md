@@ -438,7 +438,18 @@ still requires actual optimized-graph and final-output controls.
 The unmodified-model controls complete a two-by-two input substitution. Feeding
 native features into the managed encoder reduces the fixed-state native decoder
 error to `6.091594696e-5`, versus `2.268552780e-4` with managed features. This
-is one selected decoder call, not a complete transcription qualification. The
-next investigation needs identical-input stem calculations and independent
-higher-precision references before selecting a production change. Existing
-full-model failures and performance results are unchanged.
+is one selected decoder call, not a complete transcription qualification.
+
+The subsequent [independent stem references](../tests/parakeet/stem-reference-v3/results-20260921.md)
+complete that higher-precision check. NumPy and PyTorch agree across all 11 saved
+stages within `5.534e-13`, with 9,216 independently reconstructed scalar dot
+checks. On both retained feature inputs, the original managed and native stems
+each fail `1e-4` against both references. Managed has 200/203 failing values and
+native has 57/69; managed RMS is about 3.3 times native RMS on these inputs.
+Neither original FP32 result is the independent reference.
+
+The verified original graph's five stem convolutions reduce 9 or 256 terms,
+whereas its final projection reduces 4,096. The next distinct test should use
+the actual pre-projection input to separate projection accumulation from inherited
+convolution error. The whole-stem comparison alone cannot make that attribution.
+Existing full-model failures, production arithmetic and performance results are unchanged.

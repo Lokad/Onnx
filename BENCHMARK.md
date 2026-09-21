@@ -557,7 +557,14 @@ comparison or maximum-duration speech qualification.
 Application agreement does not erase numerical discrepancies. Parakeet's
 [complete AMD replay](tests/parakeet/transcribe/README.md#complete-amd-pipeline-qualification)
 passes all 784 arrays at the unchanged `1e-4` scaled-error gate; three Windows
-duration-logit arrays still fail. Whisper's
+duration-logit arrays still fail. A separate [Windows stem reference check](tests/parakeet/stem-reference-v3/results-20260921.md)
+on one selected English clip finds that both original float32 engines exceed
+`1e-4` against two independent float64 calculations. Managed maximum errors are
+`4.79–5.06e-4`, versus ORT's `2.52–3.06e-4`, across the two retained feature
+inputs. The references agree within `5.534e-13`; this diagnoses accuracy and
+does not change the matched timing baselines.
+
+Whisper's
 [full-pipeline numerical check](tests/whisper/numerical-20260919.md) retains
 21 encoder and 405 logit-array failures despite identical token choices.
 The subsequent [full-corpus encoder comparison](tests/whisper/input-cross-isolated/results-20260920.md)
