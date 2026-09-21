@@ -1,0 +1,44 @@
+using System;
+using System.Runtime.Intrinsics.X86;
+
+namespace Lokad.Onnx;
+
+public abstract partial class Tensor<T> where T : unmanaged
+{
+    // Adapt voice cdeae16 to the current composer. This selection is confined
+    // to convolution; generic packed matrix experiment switches are unchanged.
+    static bool CanUseConvPackedRows(int rows, int reduction, int columns, TensorExecutionOptions options) =>
+        options.UseSimd && options.UseIntrinsics && Avx512F.IsSupported && Fma.IsSupported
+        && rows >= 8 && reduction > 0 && columns > 0 && columns % 32 == 0;
+
+    internal static int ConvPackedScratchLength(int rows, int reduction, int columns,
+        int existingLength, TensorExecutionOptions options)
+    {
+        if (!CanUseConvPackedRows(rows, reduction, columns, options)) return 0;
+        long length = (long)reduction * columns;
+        // Packing is optional; a valid existing rental must still work when
+        // the extra panel cannot fit the supported combined array length.
+        return existingLength >= 0 && length <= (long)Array.MaxLength - existingLength ? (int)length : 0;
+    }
+
+    internal static unsafe bool TryConvPackedTile(ReadOnlySpan<float> weights,
+        ReadOnlySpan<float> patch, Span<float> destination, Span<float> packed,
+        int rows, int reduction, int columns, TensorExecutionOptions options)
+    {
+        if (!CanUseConvPackedRows(rows, reduction, columns, options)) return false;
+        long packedLength = (long)reduction * columns;
+        if (packedLength > packed.Length) return false;
+        if ((long)rows * reduction > weights.Length || packedLength > patch.Length
+            || (long)rows * columns > destination.Length)
+            throw new ArgumentException("Convolution tile buffers do not match the product dimensions.");
+        fixed (float* w = weights)
+        fixed (float* p = patch)
+        fixed (float* output = destination)
+        fixed (float* panel = packed)
+        {
+            MathOps.PackPanelsB(reduction, columns, p, panel);
+            destination.Slice(0, checked(rows * columns)).Clear();
+            return MathOps.TryPackedAvx512Rows(rows, reduction, columns, w, panel, output);
+        }
+    }
+}
