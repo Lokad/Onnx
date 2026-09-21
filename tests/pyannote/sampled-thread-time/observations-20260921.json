@@ -1,0 +1,3161 @@
+{
+  "passed": true,
+  "calls": 48,
+  "measured_calls": 36,
+  "exact_qualified_results": true,
+  "observations": [
+    {
+      "name": "dialogue-30s",
+      "roles": {
+        "control": {
+          "wall_mean": 12.870465433333331,
+          "process_cpu_mean": 12.723958333333334,
+          "allocated_mean": 1115907525.3333333
+        },
+        "sampled-a": {
+          "wall_mean": 14.132321133333333,
+          "process_cpu_mean": 14.03125,
+          "allocated_mean": 1128666770.6666667
+        },
+        "sampled-b": {
+          "wall_mean": 13.005689733333334,
+          "process_cpu_mean": 12.885416666666666,
+          "allocated_mean": 1125549554.6666667
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.098042740298413,
+        "sampled-b": 1.0105065586555855
+      }
+    },
+    {
+      "name": "dialogue-0-10s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.5930952,
+          "process_cpu_mean": 0.578125,
+          "allocated_mean": 109697880.0
+        },
+        "sampled-a": {
+          "wall_mean": 0.6663328333333333,
+          "process_cpu_mean": 0.6510416666666666,
+          "allocated_mean": 114031690.66666667
+        },
+        "sampled-b": {
+          "wall_mean": 0.5910921,
+          "process_cpu_mean": 0.5833333333333334,
+          "allocated_mean": 112554642.66666667
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1234837734875163,
+        "sampled-b": 0.9966226332635975
+      }
+    },
+    {
+      "name": "dialogue-10-20s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.5845859333333333,
+          "process_cpu_mean": 0.5729166666666666,
+          "allocated_mean": 109716845.33333333
+        },
+        "sampled-a": {
+          "wall_mean": 0.6446778666666667,
+          "process_cpu_mean": 0.6302083333333334,
+          "allocated_mean": 113707845.33333333
+        },
+        "sampled-b": {
+          "wall_mean": 0.5982851666666666,
+          "process_cpu_mean": 0.5989583333333334,
+          "allocated_mean": 111874058.66666667
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1027940118071038,
+        "sampled-b": 1.0234340796659607
+      }
+    },
+    {
+      "name": "dialogue-20-30s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.5758367666666667,
+          "process_cpu_mean": 0.5572916666666666,
+          "allocated_mean": 109712624.0
+        },
+        "sampled-a": {
+          "wall_mean": 0.6329265666666667,
+          "process_cpu_mean": 0.625,
+          "allocated_mean": 112153082.66666667
+        },
+        "sampled-b": {
+          "wall_mean": 0.5892282999999999,
+          "process_cpu_mean": 0.5885416666666666,
+          "allocated_mean": 110764629.33333333
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.0991423321759644,
+        "sampled-b": 1.0232557802983864
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "consumer-restore",
+      "samples": 3,
+      "peak_rss": 96219136,
+      "seconds": 0.7768957000225782
+    },
+    {
+      "name": "consumer-build",
+      "samples": 25,
+      "peak_rss": 300986368,
+      "seconds": 6.462581100000534
+    },
+    {
+      "name": "control",
+      "samples": 254,
+      "peak_rss": 617000960,
+      "seconds": 65.81156679999549
+    },
+    {
+      "name": "sampled-a",
+      "samples": 264,
+      "peak_rss": 601235456,
+      "seconds": 69.7369214000064
+    },
+    {
+      "name": "sampled-b",
+      "samples": 241,
+      "peak_rss": 663953408,
+      "seconds": 63.85861910000676
+    },
+    {
+      "name": "sampled-a-speedscope",
+      "samples": 2,
+      "peak_rss": 69345280,
+      "seconds": 0.5209445999935269
+    },
+    {
+      "name": "sampled-a-chromium",
+      "samples": 2,
+      "peak_rss": 82296832,
+      "seconds": 0.5194632000057027
+    },
+    {
+      "name": "sampled-b-speedscope",
+      "samples": 2,
+      "peak_rss": 9478144,
+      "seconds": 0.5206951000145636
+    },
+    {
+      "name": "sampled-b-chromium",
+      "samples": 2,
+      "peak_rss": 39550976,
+      "seconds": 0.5229292000294663
+    }
+  ],
+  "resource_samples": 795,
+  "terminal_identities": 15,
+  "analysis": {
+    "bytes": 274104,
+    "sha256": "e73175d5822e6b67c888d0ccdc76131061ef1cb84c82274d0afa9dac271192d1"
+  },
+  "scope": "Sampled managed thread-time attribution, with process CPU separately measured; no speedup, ORT ratio or AMD admission.",
+  "diagnostics": [
+    {
+      "name": "sampled-a",
+      "exports": {
+        "passed": true,
+        "profiles": 1,
+        "events": 11002
+      },
+      "coverage": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 42.3969634,
+          "sampled_thread_seconds": 42.389604533914174,
+          "process_cpu_seconds": 42.09375,
+          "sampled_to_wall": 0.9998264294068329,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 1.9989985,
+          "sampled_thread_seconds": 1.9680209588630702,
+          "process_cpu_seconds": 1.953125,
+          "sampled_to_wall": 0.9845034695439092,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 1.9340336,
+          "sampled_thread_seconds": 1.8961797915222196,
+          "process_cpu_seconds": 1.890625,
+          "sampled_to_wall": 0.9804275331732704,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 1.8987797,
+          "sampled_thread_seconds": 1.8824971366455063,
+          "process_cpu_seconds": 1.875,
+          "sampled_to_wall": 0.991424722228443,
+          "marker_intervals": 3
+        }
+      ],
+      "selected_seconds": {
+        "dialogue-30s": 42.389604533914174,
+        "dialogue-0-10s": 1.9680209588630702,
+        "dialogue-10-20s": 1.8961797915222196,
+        "dialogue-20-30s": 1.8824971366455063
+      },
+      "outside_marker_seconds": 0.35247557908782734,
+      "exclusive": [
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 23.336849294415305
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 4.495176114141839
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 3.7462381750152542
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 2.115941696670539
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 1.724205756201163
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 1.4758643778137177
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 1.210064082736186
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 1.1146932886596805
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 1.1077141889465312
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.9448133659698433
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.<PollGC>g__PollGCWorker|70_0()",
+          "bucket": "CPU_TIME",
+          "seconds": 0.5392053383667011
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "CPU_TIME",
+          "seconds": 0.4987212178985701
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.38598168361206076
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.32032200200805894
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.3106921955139142
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.Fourier(value class System.Span`1<value class System.Numerics.Complex>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.2957788177856401
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPoolSpanFloat(value class System.Span`1<float32>,value class System.Span`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.25613499832153325
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.24713560254516412
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.23844649305114765
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.2144268035888672
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.2025147018432617
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.1825161940673934
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolCore(class Lokad.Onnx.Tensor`1<float32>,float32[],bool,bool,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.16206055531310903
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.1612853880920393
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.14239030227966212
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.1346540968383779
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.AddRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.12635039277038596
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.1196384961364747
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Runtime.CompilerServices.RuntimeHelpers.<GetHashCode>g__GetHashCodeWorker|15_0(class System.Object)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.11082968515319817
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.11042399820556603
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.10730289369506864
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.1065982003356912
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.10606939324951054
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.BulkMoveWithWriteBarrier(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.10169321152954125
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.09434199905395507
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.09352429102172756
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.0893937973571774
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.08742639875793429
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Create(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.07805530003662717
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.AddRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.07308920026854684
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.ClearWithoutReferences(unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.07294660186767578
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.07088280057067822
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.06995779441528793
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.04959130042724428
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Abs(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.04223770141601563
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Apply(class System.Func`2<!0,!0>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03878419873657231
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.037670797570805006
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.FloatReduction.Sum(value class System.ReadOnlySpan`1<float32>,int32,float32,bool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.036895998431396494
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Abs(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03672559945678949
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Apply(class System.Func`2<!0,!0>,class Lokad.Onnx.Tensor`1<!0>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.036044284698486334
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035808399200439454
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffers.SharedArrayPool`1[System.Single].Rent(int32)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035575900814816125
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03549710083007813
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03545909708862018
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.GraphPacking.ResolvePacked(class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03542039797973484
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Transpose(value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>,int32,int32,int32)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035358299255371095
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ClipGate(float32,value class System.Nullable`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03534960174560547
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.HasLiveAliasIndexed(class System.Array,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03533579040527547
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035187196197512094
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035137401580810544
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].ToDenseTensor()",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03474330139160156
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.034619898852539334
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.032441200152585226
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CheckDescriptorDims(class Lokad.Onnx.OnnxValueInfo,class Lokad.Onnx.ITensor,class System.Collections.Generic.Dictionary`2<class System.String,int32>,class System.String&)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.031373263101195335
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Object.MemberwiseClone()",
+          "bucket": "CPU_TIME",
+          "seconds": 0.027166200637817384
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.PollGC()",
+          "bucket": "CPU_TIME",
+          "seconds": 0.02034749904785167
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.01990329933166504
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolCore(class Lokad.Onnx.Tensor`1<float32>,float32[],bool,bool,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.019530689746097778
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].PlanConvExplicit(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,int32,int32[],int32[],int32[],int32[],int32)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.019403799057006836
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.01878019905090332
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.MemmoveInternal(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.016563199996948243
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CheckDescriptorDims(class Lokad.Onnx.OnnxValueInfo,class Lokad.Onnx.ITensor,class System.Collections.Generic.Dictionary`2<class System.String,int32>,class System.String&)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.015628481918334727
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CheckDescriptorDims(class Lokad.Onnx.OnnxValueInfo,class Lokad.Onnx.ITensor,class System.Collections.Generic.Dictionary`2<class System.String,int32>,class System.String&)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.01393189875488315
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Clusterer.Cluster(class System.Collections.Generic.IReadOnlyList`1<class Lokad.Onnx.WeSpeakerEmbedding>,class Lokad.Onnx.Tensor`1<bool>,value class System.Threading.CancellationToken)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.01301362546691962
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Clusterer.Cluster(class System.Collections.Generic.IReadOnlyList`1<class Lokad.Onnx.WeSpeakerEmbedding>,class Lokad.Onnx.Tensor`1<bool>,value class System.Threading.CancellationToken)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.004409569312287203
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.ExtractPipeline(float32[],float32[][],value class System.Threading.CancellationToken,class PipelineRequest)",
+          "bucket": "managed",
+          "seconds": 1.4005972287122856e-05
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 1.033169563697811e-06
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 3.580291913749533e-07
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 1.6815184540064362e-07
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 6.400757229130249e-08
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.ExtractPipeline(float32[],float32[][],value class System.Threading.CancellationToken,class PipelineRequest)",
+          "bucket": "managed",
+          "seconds": 5.858764961885754e-08
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 5.819092257297598e-08
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 5.467529626912437e-08
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 3.6700432247016575e-08
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.ExtractPipeline(float32[],float32[][],value class System.Threading.CancellationToken,class PipelineRequest)",
+          "bucket": "managed",
+          "seconds": 3.3566284400876615e-08
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 2.7874753868673e-08
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 2.7557374323805558e-08
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 2.3043823603074995e-08
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 2.2167969291331245e-08
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 1.7486570868641137e-08
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 9.936520655173808e-09
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 8.874514605849983e-09
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2DFloatCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 6.420908903237432e-09
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 6.29273199592717e-09
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 5.059813702246175e-09
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 4.07104380428791e-09
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 3.814697265625e-09
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2D(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32[],class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 1.9073486328125e-09
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.ExtractPipeline(float32[],float32[][],value class System.Threading.CancellationToken,class PipelineRequest)",
+          "bucket": "managed",
+          "seconds": 1.898195478133857e-09
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.AddRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 1.6845660866238177e-09
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 1.2878408597316594e-09
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 1.2451164366211742e-09
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+          "bucket": "managed",
+          "seconds": 9.76560841081664e-10
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 5.187976057641208e-10
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "SampledAudio!SampledRequests.Full(class Lokad.Onnx.Community1Diarizer,float32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Abs(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Abs(class Lokad.Onnx.Tensor`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Apply(class System.Func`2<!0,!0>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Apply(class System.Func`2<!0,!0>,class Lokad.Onnx.Tensor`1<!0>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.AddLiveRefs(class Lokad.Onnx.ITensor)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Collections.Generic.Dictionary`2[System.__Canon,System.Int32].FindValue(!0)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Runtime.CompilerServices.RuntimeHelpers.<GetHashCode>g__GetHashCodeWorker|15_0(class System.Object)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPool2D(class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],int32[],bool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPoolFloatCore(class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPoolSpanFloat(value class System.Span`1<float32>,value class System.Span`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledConvFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.BulkMoveWithWriteBarrier(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.TryReleaseValue(class System.String,class System.Collections.Generic.HashSet`1<class System.Array>&)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.TensorBufferPool.Return(class System.Array)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Collections.il!System.Collections.Generic.Stack`1[System.__Canon].PushWithResize(!0)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.PollGC()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.InstanceNorm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,value class System.Nullable`1<float32>,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.FloatReduction.Sum(value class System.ReadOnlySpan`1<float32>,int32,float32,bool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Create(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Transpose(value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>,int32,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MatMul(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMulInto(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunBatchedFloatMatMul(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunFloatMatMulKernel(int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ClipGate(float32,value class System.Nullable`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Squeeze(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Lokad.Onnx.ITensor.get_Dims()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Object.MemberwiseClone()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.<PollGC>g__PollGCWorker|70_0()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteIf(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.GraphExecution.Execute(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCore(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.Fourier(value class System.Span`1<value class System.Numerics.Complex>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolPipeline(class Lokad.Onnx.Tensor`1<float32>,float32[],value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolCore(class Lokad.Onnx.Tensor`1<float32>,float32[],bool,bool,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Gemm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,float32,float32,class Lokad.Onnx.ExecutionOptions,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.AddRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Add(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Clusterer.Cluster(class System.Collections.Generic.IReadOnlyList`1<class Lokad.Onnx.WeSpeakerEmbedding>,class Lokad.Onnx.Tensor`1<bool>,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "SampledAudio!SampledRequests.FirstCrop(class Lokad.Onnx.Community1Diarizer,float32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2D(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32[],class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2DFloatCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledConvFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Clusterer.Cluster(class System.Collections.Generic.IReadOnlyList`1<class Lokad.Onnx.WeSpeakerEmbedding>,class Lokad.Onnx.Tensor`1<bool>,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "SampledAudio!SampledRequests.SecondCrop(class Lokad.Onnx.Community1Diarizer,float32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteIf(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.GraphExecution.Execute(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCore(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2D(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32[],class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2DFloatCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledConvFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MatMul(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMulInto(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunBatchedFloatMatMul(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.GraphPacking.ResolvePacked(class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "SampledAudio!SampledRequests.ThirdCrop(class Lokad.Onnx.Community1Diarizer,float32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2D(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32[],class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2DFloatCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledConvFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.MemmoveInternal(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RequireContiguous(class Lokad.Onnx.Tensor`1<!!0>,class System.String,class Lokad.Onnx.ICopyAccountant)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].ToDenseTensor()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.ClearWithoutReferences(unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteIf(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.GraphExecution.Execute(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCore(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.AddRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Add(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.TryReleaseValue(class System.String,class System.Collections.Generic.HashSet`1<class System.Array>&)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.HasLiveAliasIndexed(class System.Array,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolCore(class Lokad.Onnx.Tensor`1<float32>,float32[],bool,bool,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].PlanConvExplicit(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,int32,int32[],int32[],int32[],int32[],int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CheckDescriptorDims(class Lokad.Onnx.OnnxValueInfo,class Lokad.Onnx.ITensor,class System.Collections.Generic.Dictionary`2<class System.String,int32>,class System.String&)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffers.SharedArrayPool`1[System.Single].Rent(int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CheckDescriptorDims(class Lokad.Onnx.OnnxValueInfo,class Lokad.Onnx.ITensor,class System.Collections.Generic.Dictionary`2<class System.String,int32>,class System.String&)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Abs(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Add(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteIf(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CheckDescriptorDims(class Lokad.Onnx.OnnxValueInfo,class Lokad.Onnx.ITensor,class System.Collections.Generic.Dictionary`2<class System.String,int32>,class System.String&)",
+          "bucket": "managed",
+          "seconds": 0.0
+        }
+      ],
+      "rounding_adjustments_ms": []
+    },
+    {
+      "name": "sampled-b",
+      "exports": {
+        "passed": true,
+        "profiles": 1,
+        "events": 11444
+      },
+      "coverage": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 39.0170692,
+          "sampled_thread_seconds": 39.02125522118526,
+          "process_cpu_seconds": 38.65625,
+          "sampled_to_wall": 1.0001072869200862,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 1.7732763,
+          "sampled_thread_seconds": 1.7906574301971423,
+          "process_cpu_seconds": 1.75,
+          "sampled_to_wall": 1.0098017044479433,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 1.7948555,
+          "sampled_thread_seconds": 1.779181604547124,
+          "process_cpu_seconds": 1.796875,
+          "sampled_to_wall": 0.9912673218245837,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 1.7676849,
+          "sampled_thread_seconds": 1.7055390595947246,
+          "process_cpu_seconds": 1.765625,
+          "sampled_to_wall": 0.9648433720255939,
+          "marker_intervals": 3
+        }
+      ],
+      "selected_seconds": {
+        "dialogue-30s": 39.02125522118526,
+        "dialogue-0-10s": 1.7906574301971423,
+        "dialogue-10-20s": 1.779181604547124,
+        "dialogue-20-30s": 1.7055390595947246
+      },
+      "outside_marker_seconds": 0.3029015843589714,
+      "exclusive": [
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 22.307663547628767
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 3.8446018114715454
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 2.2762140764465295
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 2.1619967641784643
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 1.8652508702056845
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 1.684752460620122
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 1.2052654084289562
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 1.0902318814269982
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.9329673018585198
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.9002273037445065
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.<PollGC>g__PollGCWorker|70_0()",
+          "bucket": "CPU_TIME",
+          "seconds": 0.5905456257415791
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "CPU_TIME",
+          "seconds": 0.5493351679382287
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.3226849903747552
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.24898499556884052
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.21323560021056595
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.20987458507385554
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.AddRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.17871650158080957
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.17639959714355424
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.15214579085388322
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPoolSpanFloat(value class System.Span`1<float32>,value class System.Span`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.15015449773559555
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.14470399674071996
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.14309109212646218
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.14238629429931643
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.13928929269408763
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.13927396726073857
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.10876250053100375
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.Fourier(value class System.Span`1<value class System.Numerics.Complex>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.10834349534911963
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.10806699902954095
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.10706050077514373
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.10531479863891582
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.Runtime.CompilerServices.RuntimeHelpers.<GetHashCode>g__GetHashCodeWorker|15_0(class System.Object)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.10393364137573735
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.BulkMoveWithWriteBarrier(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.09709038506774892
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.09684500461426068
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.07311419677734375
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.07232239732666129
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.0722965001098637
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.MemmoveInternal(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.07123648494873122
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.InstanceNorm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,value class System.Nullable`1<float32>,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.07119620062866204
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.07068289451904275
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Create(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.06540659487304946
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.060944002078247655
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.0533763976715054
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+          "bucket": "CPU_TIME",
+          "seconds": 0.041967689093020455
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Apply(class System.Func`2<!0,!0>,class Lokad.Onnx.Tensor`1<!0>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03950139985656756
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "CPU_TIME",
+          "seconds": 0.0379660668518045
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03694150161743164
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03666419982910156
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03657229995727539
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.036441198504637215
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Transpose(value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>,int32,int32,int32)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03597169690551755
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035925797418211
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03585819831542904
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035734401116944356
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03559057904052861
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Squeeze(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03556959915161133
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Object.MemberwiseClone()",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03549789480590834
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035435199163817745
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.Fourier(value class System.Span`1<value class System.Numerics.Complex>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035301298657228475
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Concat(class Lokad.Onnx.Tensor`1<!0>[],int32)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.035151796667480084
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03511840053405831
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Create(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03491784696045215
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Runtime.CompilerServices.RuntimeHelpers.<GetHashCode>g__GetHashCodeWorker|15_0(class System.Object)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.034777099609375
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.Fourier(value class System.Span`1<value class System.Numerics.Complex>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.034724799102783435
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.034454700340269484
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.GraphPacking.ResolvePacked(class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03360599682006796
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CheckDescriptorDims(class Lokad.Onnx.OnnxValueInfo,class Lokad.Onnx.ITensor,class System.Collections.Generic.Dictionary`2<class System.String,int32>,class System.String&)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.03331556629028637
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.<PollGC>g__PollGCWorker|70_0()",
+          "bucket": "CPU_TIME",
+          "seconds": 0.029561799191284082
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "CPU_TIME",
+          "seconds": 0.026173968145751132
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Abs(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.025747900009155274
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.<PollGC>g__PollGCWorker|70_0()",
+          "bucket": "CPU_TIME",
+          "seconds": 0.024152399063110352
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolCore(class Lokad.Onnx.Tensor`1<float32>,float32[],bool,bool,value class System.Threading.CancellationToken)",
+          "bucket": "CPU_TIME",
+          "seconds": 0.020839099884033204
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.PollGC()",
+          "bucket": "CPU_TIME",
+          "seconds": 0.019670900344848634
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.TensorBufferPool.Rent(int32)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.018631099700927734
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.018417297732543376
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "UNMANAGED_CODE_TIME",
+          "seconds": 0.01830769920349121
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "CPU_TIME",
+          "seconds": 0.01612957410888339
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.ExtractPipeline(float32[],float32[][],value class System.Threading.CancellationToken,class PipelineRequest)",
+          "bucket": "managed",
+          "seconds": 7.68440553702021e-06
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 1.1090789899128603e-06
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 3.071945452575164e-07
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 1.6990966150842722e-07
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.ExtractPipeline(float32[],float32[][],value class System.Threading.CancellationToken,class PipelineRequest)",
+          "bucket": "managed",
+          "seconds": 1.1440429807407781e-07
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 9.353027053293772e-08
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 8.970947965281082e-08
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 8.421631173405329e-08
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 8.375548850381166e-08
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 2.8164673494757155e-08
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+          "bucket": "managed",
+          "seconds": 2.330932329641655e-08
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 2.2912595227353448e-08
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 2.1520994778256862e-08
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.ExtractPipeline(float32[],float32[][],value class System.Threading.CancellationToken,class PipelineRequest)",
+          "bucket": "managed",
+          "seconds": 2.1362307961680926e-08
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 1.3949578715255482e-08
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 1.3555911209550686e-08
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 1.1877446468133712e-08
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2DFloatCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 9.64661012403667e-09
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 7.214359357021749e-09
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 6.726080755470321e-09
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 5.706788215320557e-09
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2DFloatCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 3.814697265625e-09
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 2.343751475564204e-09
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 1.7791753634810447e-09
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.ExtractPipeline(float32[],float32[][],value class System.Threading.CancellationToken,class PipelineRequest)",
+          "bucket": "managed",
+          "seconds": 1.538086507935077e-09
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 1.0314906830899417e-09
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 9.368905011797324e-10
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.BulkMoveWithWriteBarrier(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 9.338377822132315e-10
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2DFloatCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 7.293710950762033e-10
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 3.6621167964767664e-10
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 1.2817326933145523e-10
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 1.0986332199536265e-10
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "SampledAudio!SampledRequests.Full(class Lokad.Onnx.Community1Diarizer,float32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteIf(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.GraphExecution.Execute(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCore(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2D(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32[],class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledConvFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPool2D(class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],int32[],bool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPoolFloatCore(class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPoolSpanFloat(value class System.Span`1<float32>,value class System.Span`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Create(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Transpose(value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>,int32,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.InstanceNorm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,value class System.Nullable`1<float32>,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Input(int32,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Abs(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Abs(class Lokad.Onnx.Tensor`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Apply(class System.Func`2<!0,!0>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Apply(class System.Func`2<!0,!0>,class Lokad.Onnx.Tensor`1<!0>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.PollGC()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.<PollGC>g__PollGCWorker|70_0()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Unsqueeze(class Lokad.Onnx.ITensor,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.INumericTensor.Unsqueeze(int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Object.MemberwiseClone()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Gemm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,float32,float32,class Lokad.Onnx.ExecutionOptions,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Transpose(class Lokad.Onnx.Tensor`1<!0>,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.AddRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Add(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.Fourier(value class System.Span`1<value class System.Numerics.Complex>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolPipeline(class Lokad.Onnx.Tensor`1<float32>,float32[],value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolCore(class Lokad.Onnx.Tensor`1<float32>,float32[],bool,bool,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.MemmoveInternal(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "SampledAudio!SampledRequests.FirstCrop(class Lokad.Onnx.Community1Diarizer,float32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2D(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32[],class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledConvFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "System.Private.CoreLib.il!System.Buffer.BulkMoveWithWriteBarrier(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.<PollGC>g__PollGCWorker|70_0()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "SampledAudio!SampledRequests.SecondCrop(class Lokad.Onnx.Community1Diarizer,float32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteIf(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.GraphExecution.Execute(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCore(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2D(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32[],class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledConvFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.AddRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Add(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "SampledAudio!SampledRequests.ThirdCrop(class Lokad.Onnx.Community1Diarizer,float32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.BulkMoveWithWriteBarrier(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Threading.Thread.<PollGC>g__PollGCWorker|70_0()",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2D(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32[],class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2DFloatCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledConvFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.TryReleaseValue(class System.String,class System.Collections.Generic.HashSet`1<class System.Array>&)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.TensorBufferPool.Return(class System.Array)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Collections.il!System.Collections.Generic.Stack`1[System.__Canon].PushWithResize(!0)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.AddLiveRefs(class Lokad.Onnx.ITensor)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Collections.Generic.Dictionary`2[System.__Canon,System.Int32].FindValue(!0)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Collections.Generic.ObjectEqualityComparer`1[System.__Canon].GetHashCode(!0)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "System.Private.CoreLib.il!System.Runtime.CompilerServices.RuntimeHelpers.<GetHashCode>g__GetHashCodeWorker|15_0(class System.Object)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Concat(class Lokad.Onnx.ITensor[],value class System.Nullable`1<int32>,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Concat(class Lokad.Onnx.Tensor`1<!0>[],int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.GraphPacking.ResolvePacked(class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolCore(class Lokad.Onnx.Tensor`1<float32>,float32[],bool,bool,value class System.Threading.CancellationToken)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.AddLiveRefs(class Lokad.Onnx.ITensor)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.Collections.Generic.Dictionary`2[System.__Canon,System.Int32].FindValue(!0)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.Collections.Generic.ObjectEqualityComparer`1[System.__Canon].GetHashCode(!0)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.Runtime.CompilerServices.RuntimeHelpers.<GetHashCode>g__GetHashCodeWorker|15_0(class System.Object)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.Fourier(value class System.Span`1<value class System.Numerics.Complex>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.TensorBufferPool.Rent(int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.Collections.Generic.HashSet`1[System.__Canon].AddIfNotPresent(!0,int32&)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Gemm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,float32,float32,class Lokad.Onnx.ExecutionOptions,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.Fourier(value class System.Span`1<value class System.Numerics.Complex>)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(int32,int32,int32,float32*,float32*,float32*)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Squeeze(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CheckDescriptorDims(class Lokad.Onnx.OnnxValueInfo,class Lokad.Onnx.ITensor,class System.Collections.Generic.Dictionary`2<class System.String,int32>,class System.String&)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteIf(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.TensorBufferPool.Rent(int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Gemm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,float32,float32,class Lokad.Onnx.ExecutionOptions,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-0-10s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Create(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-10-20s",
+          "method": "System.Private.CoreLib.il!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "System.Private.CoreLib.il!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Gemm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,float32,float32,class Lokad.Onnx.ExecutionOptions,int32,int32)",
+          "bucket": "managed",
+          "seconds": 0.0
+        },
+        {
+          "marker": "dialogue-20-30s",
+          "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+          "bucket": "managed",
+          "seconds": 0.0
+        }
+      ],
+      "rounding_adjustments_ms": []
+    }
+  ]
+}

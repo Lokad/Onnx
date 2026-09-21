@@ -83,6 +83,13 @@ Observed full-request means are 12.526 s predecessor, 12.671 s candidate and
 6.433 s ORT. No speedup is established; the accepted ORT timing tables and
 AMD payload are unchanged.
 
+A [complete-request stack diagnostic](tests/pyannote/sampled-thread-time/results-20260921.md)
+preserves all 48 public calls and identifies the packed two-row matrix kernel
+as 55–57% of selected full-request thread time in two captures. The tiled
+convolution caller accounts for another 10%. These are sampled managed thread
+weights, with process CPU and diagnostic overhead reported separately. They
+identify the next computation target without changing the timing tables.
+
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
 Fresh matched measurements on Windows i7-14700KF, CPU2, .NET 10.0.12 and
