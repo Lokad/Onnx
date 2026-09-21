@@ -10,7 +10,7 @@ using System.Threading;
 /// <summary>Managed greedy transcription using the FP32 Whisper Large V3 Turbo split export.</summary>
 /// <remarks>Loads local encoder_model.onnx, decoder_model.onnx and decoder_with_past_model.onnx
 /// under the model directory's onnx subdirectory. Requests on one instance serialize to bound
-/// memory. Each request has independent execution contexts and attention caches.
+/// memory. Execution contexts are reused; each request creates independent attention-cache state.
 /// Encoder numerical qualification is documented separately in tests/whisper/README.md.</remarks>
 public sealed class WhisperTranscriber
 {
@@ -18,6 +18,8 @@ public sealed class WhisperTranscriber
     public const int MaximumRecordingSamples = WhisperAudio.SampleRate * 600;
     readonly ComputationalGraph encoder, firstDecoder, pastDecoder;
     readonly WhisperGeneration generation;
+    internal long SharedDecoderWeightBytes { get; }
+    readonly GraphExecution encodingExecution, firstExecution, pastExecution;
     readonly object gate = new object();
 
     /// <summary>Loads the local models and metadata; never downloads or loads native ORT.</summary>
@@ -49,6 +51,10 @@ public sealed class WhisperTranscriber
             foreach (string attention in new[] { "decoder", "encoder" })
                 foreach (string kind in new[] { "key", "value" }) pastNames.Add($"past_key_values.{layer}.{attention}.{kind}");
         RequireInputs(pastDecoder, pastNames);
+        SharedDecoderWeightBytes = WhisperDecoderWeights.Share(firstDecoder, pastDecoder);
+        encodingExecution = encoder.CreateExecution(ExecutionOptions.Memory, 512L * 1024 * 1024);
+        firstExecution = firstDecoder.CreateExecution(ExecutionOptions.Memory, 128L * 1024 * 1024);
+        pastExecution = pastDecoder.CreateExecution(ExecutionOptions.Memory, 128L * 1024 * 1024);
     }
 
     static ComputationalGraph Load(string directory, string name, long packedWeightBytes) => OnnxImport.Load(Path.Combine(directory, "onnx", name), packedWeightBytes)
@@ -122,9 +128,9 @@ public sealed class WhisperTranscriber
         WhisperTranscriptionOptions options, bool timestamps, CancellationToken cancellation)
     {
         var features = WhisperAudio.LogMelSpectrogram(samples, sampleRate);
-        var encoding = encoder.CreateExecution(ExecutionOptions.Memory);
-        var first = firstDecoder.CreateExecution(ExecutionOptions.Memory);
-        var past = pastDecoder.CreateExecution(ExecutionOptions.Memory);
+        var encoding = encodingExecution;
+        var first = firstExecution;
+        var past = pastExecution;
         try
         {
             var outputs = Execute(encoding, new Dictionary<string, ITensor> { ["input_features"] = features });

@@ -284,4 +284,61 @@ public class ReleasedBufferCacheTests
         Assert.True(graph.Execute(Feed(8, 200), false));
         foreach (var old in held) Assert.Equal(old.Values, old.Tensor.ToArray());
     }
+
+    [Theory]
+    [InlineData(0, false)]
+    [InlineData(31, false)]
+    [InlineData(32, true)]
+    [InlineData(64, true)]
+    public void ExplicitContextBudgetControlsRetentionWithoutChangingOwnedOutputs(long budget, bool reuse)
+    {
+        var context = Chain(true, false).CreateExecution(ExecutionOptions.Memory, budget);
+        var first = Feed(8, 1);
+        Assert.True(context.Execute(first, false));
+        long cold = context.LastPoolAllocatedNewBytes;
+        var held = (Tensor<float>)context.Outputs["y"];
+        var expected = held.ToArray();
+        context.Reset();
+        var next = Feed(8, 20);
+        Assert.True(context.Execute(next, false));
+        Assert.Equal(cold - (reuse ? 32 : 0), context.LastPoolAllocatedNewBytes);
+        Assert.Equal(expected, held.ToArray());
+        Assert.Equal(Enumerable.Range(20, 8).Select(x => 4f*x), ((Tensor<float>)context.Outputs["y"]).ToArray());
+        Assert.Equal(Enumerable.Range(20, 8).Select(x => (float)x), ((Tensor<float>)next["x"]).ToArray());
+        Assert.InRange(context.ReleasedBuffers!.Bytes, 0, budget);
+        Assert.InRange(context.ReleasedBuffers.Count, 0, ReleasedBufferCache.DefaultCountLimit);
+    }
+
+    [Fact]
+    public void ExplicitContextBudgetsStayIndependentAndSurviveInvalidation()
+    {
+        var graph = Chain(true, false);
+        var one = graph.CreateExecution(ExecutionOptions.Memory, 32);
+        var two = graph.CreateExecution(ExecutionOptions.Memory, 0);
+        foreach (var context in new[] { one, two })
+        {
+            Assert.True(context.Execute(Feed(8, 1), false));
+            context.Reset();
+            Assert.True(context.Execute(Feed(8, 2), false));
+        }
+        Assert.NotSame(one.ReleasedBuffers, two.ReleasedBuffers);
+        Assert.Equal(32, one.ReleasedBuffers!.Bytes);
+        Assert.Equal(0, two.ReleasedBuffers!.Bytes);
+        var cache = one.ReleasedBuffers;
+        one.Reset();one.RefreshLifetimeAnalysis();
+        Assert.Same(cache, one.ReleasedBuffers);Assert.Equal(0, cache.Bytes);
+        Assert.True(one.Execute(Feed(13, 1), false)); // 52-byte buffers exceed this context's budget.
+        Assert.Equal(0, cache.Bytes);
+        one.Reset();Assert.True(one.Execute(Feed(8, 3), false));Assert.Equal(32, cache.Bytes);
+        var noPool = ExecutionOptions.Memory with { Tensor = ExecutionOptions.Memory.Tensor with { DisableBufferPool = true } };
+        one.Reset();Assert.True(one.Execute(Feed(8, 4), false, ExecutionProvider.CPU, noPool));Assert.Equal(0, cache.Bytes);
+    }
+
+    [Fact]
+    public void NegativeExplicitContextBudgetIsRejected()
+    {
+        var graph = Chain(true, false);
+        Assert.Throws<ArgumentOutOfRangeException>(() => graph.CreateExecution(null, -1));
+        Assert.Null(graph.ReleasedBuffers);
+    }
 }

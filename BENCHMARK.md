@@ -52,7 +52,9 @@ now passes all 100 requests and its full weight, allocation and resource checks.
 The same private candidate also passes recording, concurrent speech and recovery
 contracts on [Windows](tests/whisper/memory-contracts-v2/local-results-20260921.md)
 and [AMD](tests/whisper/memory-contracts-amd/results-20260921.md).
-Production integration and matched AMD Whisper timing remain pending.
+The qualified memory changes are now integrated; matched AMD Whisper timing
+remains pending. These allocation and request-contract results are not latency
+comparisons against ORT.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
 

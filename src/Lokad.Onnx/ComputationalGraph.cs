@@ -294,6 +294,17 @@ public partial class ComputationalGraph
         }
     }
 
+    /// <summary>Creates an isolated context with an explicit budget for already-released arrays.</summary>
+    /// <remarks>The limit bounds cached payload, not process memory. Zero disables between-run
+    /// retention. Existing outputs, inputs and live aliases are never adopted into this cache.</remarks>
+    public GraphExecution CreateExecution(ExecutionOptions? options, long maximumReleasedBufferBytes)
+    {
+        if (maximumReleasedBufferBytes < 0) throw new ArgumentOutOfRangeException(nameof(maximumReleasedBufferBytes));
+        var execution = CreateExecution(options);
+        execution.ReleasedBuffers = new ReleasedBufferCache(maximumReleasedBufferBytes, ReleasedBufferCache.DefaultCountLimit);
+        return execution;
+    }
+
     protected void EnsurePrepared()
     {
         lock (PrepareLock)

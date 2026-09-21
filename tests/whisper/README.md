@@ -89,8 +89,14 @@ var result = model.Transcribe(samples, 16000,
 Console.WriteLine(result.Text);
 ```
 
-The same instance serializes requests and creates independent execution contexts
-and attention caches per request. It never downloads assets or loads native ORT.
+The same instance serializes requests and reuses three execution contexts. Each
+request creates independent attention-cache state, and returned results remain
+owned by the caller. Released-array caches retain at most 512 MiB for the encoder
+and 128 MiB for each decoder; these are payload budgets, not a process-memory
+ceiling. Identical private decoder weights share backing storage after exact byte
+comparison. The [AMD endurance qualification](weight-sharing-v2/results-20260920.md)
+and [recording/concurrency/recovery checks](memory-contracts-amd/results-20260921.md)
+cover this behavior. The API never downloads assets or loads native ORT.
 Language is explicit; the initial policy is greedy transcription without timestamps.
 The generation configuration supplies the prefix and suppression lists. All non-text
 control/timestamp tokens are excluded from generated text. The result preserves

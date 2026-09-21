@@ -206,3 +206,14 @@ pass recording, concurrent speech and recovery checks. AMD public contracts,
 production integration, numerical gaps and matched AMD latency remain open.
 
 The same private memory candidate also passes [AMD public contracts](../tests/whisper/memory-contracts-amd/results-20260921.md): thirteen requests and sixteen refusal/cancellation checks, including recording, overlapping speech and exact recovery. Production integration, numerical gaps and matched AMD Whisper latency remain pending.
+
+The qualified Whisper memory changes are now integrated: a transcriber reuses
+its execution contexts with 512/128/128 MiB released-array budgets and shares
+635,187,200 bytes of identical private decoder weights on the pinned export.
+Each request keeps independent attention state; inputs and previously returned
+outputs remain valid. These budgets do not bound total process memory. The
+[coherent build and package qualification](../tests/whisper/memory-product-v2/results-20260921.md)
+passes both full suites and public cache-budget checks. The prior Windows/AMD
+recording, concurrency and endurance evidence applies through verified source
+and executable-method equivalence. Existing numerical limits remain open, and
+matched AMD Whisper latency still requires a separate comparison.

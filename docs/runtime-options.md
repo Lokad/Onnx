@@ -19,11 +19,25 @@ graph outputs and previously returned tensors remain valid. Memory mode does
 not impose a total process memory ceiling.
 
 A bounded cache retains only arrays that an execution has already released.
-Each serialized graph or explicit execution context retains at most 128 MiB
+By default, each serialized graph or explicit execution context retains at most 128 MiB
 and 256 arrays, with at most 32 per element-type/length pair. Separate explicit
 contexts do not share caches. Model weights, packed weights, live outputs and
 other runtime allocations are outside these limits. Set the released-buffer
 control below to `0` before process startup to disable retention between runs.
+
+An explicit context can select its own released-array payload budget:
+
+```csharp
+var execution = graph.CreateExecution(ExecutionOptions.Memory,
+    maximumReleasedBufferBytes: 512L * 1024 * 1024);
+```
+
+Zero disables retention between runs; negative budgets are rejected. The 256-array
+and 32-per-type/length caps still apply. This budget covers already-released arrays,
+not live tensors or total process memory. Reset preserves eligible cached arrays;
+preparation invalidation clears them. Inputs and previously returned outputs keep
+their original contents. The [package consumer qualification](../tests/whisper/memory-product-v2/results-20260921.md)
+checks reuse at the byte boundary and output ownership through the public API.
 
 ## Diagnostic controls
 
