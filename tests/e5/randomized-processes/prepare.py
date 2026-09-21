@@ -34,8 +34,13 @@ def main():
     assert runtime['host'] == '/home/vermorel/.dotnet/dotnet'
     native = ROOT/'artifacts/e5-public-ort-20260919/bin/libonnxruntime.so'
     assert pin(native)['sha256'] == '13ab8084954fa4a47c777880180b90810d6020f021441395712b48a75b74c68b'
+    # NumPy comes from the interpreter's user site, not one of the three
+    # additional audio package paths. Bind its already recorded files too.
+    numpy_roots = {str(Path(path).parent.parent).replace('\\', '/') for path in inherited['external']
+                   if path.endswith('/site-packages/numpy/__init__.py')}
+    assert len(numpy_roots) == 1
     python_files = {}
-    for prefix in inherited['python_paths']:
+    for prefix in set(inherited['python_paths']) | numpy_roots:
         for path, identity in inherited['external'].items():
             if path.startswith(prefix+'/'):
                 package = path[len(prefix)+1:].split('/')[0]
