@@ -74,6 +74,14 @@ without a new persistent cache; gate arithmetic stays unchanged. Remaining
 candidate graph attribution is mostly convolution, making AMD row sharing the
 next measured target after the broader audio/meeting qualification.
 
+The [two complete meetings and recovery](../tests/pyannote/optimized-meetings/results-20260921.md)
+now preserve both native speaker timelines exactly. The [full Parakeet check](../tests/pyannote/optimized-parakeet/results-20260921.md)
+retains all 784 arrays bit-for-bit and its three existing Windows numerical
+failures. A [convolution-only row-sharing successor](../tests/pyannote/conv-row-sharing/prepared-20260921.md)
+is prepared using `cdeae16`'s mechanism and the current composer, with checked
+packing space and existing tail fallback. Local guards/fallback tests pass;
+actual AVX-512 execution and AMD application benefit remain unqualified.
+
 
 | Source finding | Consequence for Lokad.Onnx |
 |---|---|
