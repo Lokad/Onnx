@@ -72,6 +72,9 @@ regression/stretch coverage. No statistical screen alone changes defaults.
 The [sensitivity report](design-results-20260921.md) retains fourteen thousand
 trials and all draws, plus independent Decimal recomputation. No actual VM
 timings were used to select the method, assignment draws, counts or thresholds.
+The [runner report](runner-results-20260921.md) records twelve passing local
+workers, ten manifest refusals, the terminal failure-path test and nine passing
+mathematical/contract tests.
 
 Run the read-only tests from the repository root:
 
@@ -79,10 +82,12 @@ Run the read-only tests from the repository root:
 
 The completed simulation and verification outputs are under
 `artifacts/e5-randomized-processes-20260921`. Their writers refuse existing paths;
-do not rerun them into that artifact. `freeze_assignments.py` will record one
-independent draw per cohort/case/policy/phase after tools are committed, with no
-seed or balance search. It freezes assignments only; complete payload, runtime,
-raw-output/resource auditing and report verification remain required.
+do not rerun them into that artifact. `freeze_assignments.py` has recorded both
+actual schedules once, after commit3558c8c, with no seed or balance search. The
+manifest SHA256 is2ac2bd42acfc811b39f2df099c7e93f31789bea18236e0e507d74e60ba5b16f5.
+The runner and raw-output/resource auditor are implemented and locally exercised.
+Complete payload/runtime binding, collection and independent full-report
+verification remain required before a scored deployment.
 
 The worker measurement contract can reuse the already verified
 `ProcessUncertainty.dll` unchanged. Its raw specification retains the v1 worker

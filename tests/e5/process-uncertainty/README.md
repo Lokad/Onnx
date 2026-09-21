@@ -1,5 +1,10 @@
 # Prospective e5 comparison across fresh processes
 
+The locally balanced campaign proposal below was superseded before deployment
+by the [independent-assignment design](../randomized-processes/README.md).
+Its qualified worker and exact estimator are reused there; the completed local
+evidence and sensitivity failures here remain unchanged.
+
 This is preparation for a distinct experiment, `e5-fresh-process-uncertainty-v1`.
 **No new e5 VM comparison has run under this protocol.** The old failed
 [sequential](../fingerprint-deployment/aa-results-20260920.md) and
