@@ -102,7 +102,7 @@ public class ConvPackedRowsTests
             var result = Tensor<float>.Conv2D(x, w, group, new[] { pad, pad, pad, pad }, bias, null,
                 new[] { stride, stride }, new[] { dilation, dilation }, options);
             var actual = result.ToArray();
-            Assert.Equal(new[] { batches, filters, outH, outW }, result.Dims.ToArray());
+            Assert.Equal(new[] { batches, filters, outH, outW }, result.Dimensions.ToArray());
             for (int b = 0; b < batches; b++)
             for (int m = 0; m < filters; m++)
             for (int y = 0; y < outH; y++)
