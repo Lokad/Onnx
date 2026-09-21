@@ -12,6 +12,9 @@ Microsoft ONNX Runtime audio baselines are listed below for
 [Parakeet and pyannote on the AMD VM](#audio-amd-microsoft-onnx-runtime-baselines-parakeet-and-pyannote)
 and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-runtime-baselines).
 
+The current optimization priority is **pyannote, then Parakeet**. Whisper work
+is deferred; its existing results and unresolved limitations remain below.
+
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
 AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ONNX Runtime 1.29.0, product `1d10d22`.
@@ -40,6 +43,8 @@ hit the disk-space guard after 34/80 calls. The [failure report](tests/audio/whi
 retains all three completed timing workers, partial results and the coincident
 automatic package-cache activity. Memory remained above its guard. No complete
 AMD Whisper comparison is claimed; the Windows baseline is below.
+The prepared replacement run was removed from the queue before deployment
+following the September 21 priority change.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
 
@@ -122,6 +127,9 @@ avoids creating discarded callbacks for all 347 e5 nodes, saving a median
 55,520 bytes per unprofiled request in nine of ten case/policy combinations.
 All 1,920 executions preserve outputs and profile contents. This is an isolated
 allocation improvement; AMD latency and production promotion remain unqualified.
+The [shared-model follow-up](tests/e5/profiler-shared/results-20260921.md)
+also passes all 664 output-array comparisons for e5, DINOv3, ResNet50 and GPT-2,
+including graph mutation, state ownership and both fingerprint-cache settings.
 
 A later [analysis of the retained resident-process data](tests/e5/resident-variation/results-20260921.md)
 finds that all forty failed Execute visit contrasts keep their direction in both
