@@ -1,0 +1,5053 @@
+{
+  "passed": true,
+  "inference_executed": false,
+  "onnx": "1.22.0",
+  "cases": [
+    {
+      "name": "dialogue-0-10s",
+      "input_shape": [
+        1,
+        998,
+        80
+      ],
+      "convolution_payload_bytes": 159764480,
+      "rows": [
+        {
+          "name": "/resnet/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            1,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            1,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.0/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.0/conv2/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.1/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.1/conv2/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.2/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.2/conv2/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.0/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.0/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/shortcut/shortcut.0/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.0/shortcut/shortcut.0/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.1/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.1/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.2/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.2/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.3/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.3/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.0/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.0/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/shortcut/shortcut.0/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.0/shortcut/shortcut.0/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.1/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.1/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.2/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.2/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.3/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.3/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.4/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.4/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.5/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.5/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.0/conv1/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.0/conv2/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/shortcut/shortcut.0/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.0/shortcut/shortcut.0/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.1/conv1/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.1/conv2/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.2/conv1/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.2/conv2/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        }
+      ],
+      "groups": [
+        {
+          "shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "each_payload_bytes": 10219520,
+          "count": 7,
+          "total_payload_bytes": 71536640
+        },
+        {
+          "shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "each_payload_bytes": 5109760,
+          "count": 9,
+          "total_payload_bytes": 45987840
+        },
+        {
+          "shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "each_payload_bytes": 2560000,
+          "count": 13,
+          "total_payload_bytes": 33280000
+        },
+        {
+          "shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "each_payload_bytes": 1280000,
+          "count": 7,
+          "total_payload_bytes": 8960000
+        }
+      ]
+    },
+    {
+      "name": "dialogue-10-20s",
+      "input_shape": [
+        1,
+        998,
+        80
+      ],
+      "convolution_payload_bytes": 159764480,
+      "rows": [
+        {
+          "name": "/resnet/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            1,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            1,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.0/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.0/conv2/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.1/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.1/conv2/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.2/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.2/conv2/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.0/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.0/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/shortcut/shortcut.0/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.0/shortcut/shortcut.0/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.1/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.1/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.2/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.2/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.3/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.3/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.0/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.0/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/shortcut/shortcut.0/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.0/shortcut/shortcut.0/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.1/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.1/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.2/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.2/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.3/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.3/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.4/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.4/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.5/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.5/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.0/conv1/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.0/conv2/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/shortcut/shortcut.0/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.0/shortcut/shortcut.0/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.1/conv1/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.1/conv2/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.2/conv1/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.2/conv2/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        }
+      ],
+      "groups": [
+        {
+          "shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "each_payload_bytes": 10219520,
+          "count": 7,
+          "total_payload_bytes": 71536640
+        },
+        {
+          "shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "each_payload_bytes": 5109760,
+          "count": 9,
+          "total_payload_bytes": 45987840
+        },
+        {
+          "shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "each_payload_bytes": 2560000,
+          "count": 13,
+          "total_payload_bytes": 33280000
+        },
+        {
+          "shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "each_payload_bytes": 1280000,
+          "count": 7,
+          "total_payload_bytes": 8960000
+        }
+      ]
+    },
+    {
+      "name": "dialogue-20-30s",
+      "input_shape": [
+        1,
+        998,
+        80
+      ],
+      "convolution_payload_bytes": 159764480,
+      "rows": [
+        {
+          "name": "/resnet/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            1,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            1,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.0/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.0/conv2/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.1/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.1/conv2/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.2/conv1/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "output": "/resnet/layer1/layer1.2/conv2/Conv_output_0",
+          "payload_bytes": 10219520,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.0/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.0/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/shortcut/shortcut.0/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.0/shortcut/shortcut.0/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.1/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.1/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.2/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.2/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.3/conv1/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "output": "/resnet/layer2/layer2.3/conv2/Conv_output_0",
+          "payload_bytes": 5109760,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.0/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.0/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/shortcut/shortcut.0/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.0/shortcut/shortcut.0/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.1/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.1/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.2/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.2/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.3/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.3/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.4/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.4/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.5/conv1/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "output": "/resnet/layer3/layer3.5/conv2/Conv_output_0",
+          "payload_bytes": 2560000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.0/conv1/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.0/conv2/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/shortcut/shortcut.0/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.0/shortcut/shortcut.0/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.1/conv1/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.1/conv2/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv1/Conv",
+          "executed_op": "ConvRelu",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.2/conv1/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv2/Conv",
+          "executed_op": "Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "output": "/resnet/layer4/layer4.2/conv2/Conv_output_0",
+          "payload_bytes": 1280000,
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          }
+        }
+      ],
+      "groups": [
+        {
+          "shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "each_payload_bytes": 10219520,
+          "count": 7,
+          "total_payload_bytes": 71536640
+        },
+        {
+          "shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "each_payload_bytes": 5109760,
+          "count": 9,
+          "total_payload_bytes": 45987840
+        },
+        {
+          "shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "each_payload_bytes": 2560000,
+          "count": 13,
+          "total_payload_bytes": 33280000
+        },
+        {
+          "shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "each_payload_bytes": 1280000,
+          "count": 7,
+          "total_payload_bytes": 8960000
+        }
+      ]
+    }
+  ],
+  "retained_allocation": [
+    {
+      "order": "forward",
+      "calls": 6,
+      "measured_allocation_mean": 166860713.33333334,
+      "static_conv_payload_fraction": 0.9574721143666851
+    },
+    {
+      "order": "reverse",
+      "calls": 6,
+      "measured_allocation_mean": 166867712.0,
+      "static_conv_payload_fraction": 0.9574319566388014
+    }
+  ],
+  "scope": "Static output payload with independent Conv geometry and retained executed-node coverage; no new allocation measurement or speed claim."
+}

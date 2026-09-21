@@ -59,9 +59,14 @@ all 17.5 million output values unchanged. The subsequent
 passes all 16 dialogue calls, both ten-minute meetings and recovery with exact
 predecessor results. Cumulative allocations fall 14.4% on the full dialogue
 and 15.0–15.1% on the meetings, from about 146.4 GB to 124.3–124.4 GB each.
-Both meeting timelines still match ORT exactly. Full suites pass; a fresh
-matched latency comparison is running. These allocation results add no new
-ORT speedup or AMD promotion.
+Both meeting timelines still match ORT exactly. Full suites pass. The subsequent
+[comparison against the predecessor and ORT](tests/pyannote/request-comparison/results-20260921.md)
+passes all 96 calls, but fails fixed repeatability limits for the predecessor's
+full request and one ORT crop. Observed full-request means are 13.623 s,
+12.939 s and 6.576 s respectively; they establish no speedup or AMD promotion.
+A [source and shape census](tests/pyannote/convolution-allocation/results-20260921.md)
+identifies 159.8 MB of unpooled convolution output payload per embedding call
+as the next allocation target. This is not a measured optimization gain.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
