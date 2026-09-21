@@ -89,6 +89,12 @@ as 55–57% of selected full-request thread time in two captures. The tiled
 convolution caller accounts for another 10%. These are sampled managed thread
 weights, with process CPU and diagnostic overhead reported separately. They
 identify the next computation target without changing the timing tables.
+Its [portable row-group probe](tests/pyannote/portable-row-groups/results-20260921.md)
+preserves 790,900 tested values and passes the fixed kernel gates after complete
+workload warmup: packing-inclusive geometric mean is 17.8% lower across sixteen
+tile shapes, with no measured shape regression. Two earlier failed variants
+remain documented. This admits a separate convolution experiment; it establishes
+no complete-application speedup or new ORT ratio.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 

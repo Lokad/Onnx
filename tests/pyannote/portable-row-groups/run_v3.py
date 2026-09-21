@@ -1,0 +1,5 @@
+import common
+common.BASE = common.ROOT / 'artifacts/pyannote-portable-row-groups-v3-20260921'
+common.monitor.BASE = common.BASE
+from run import main
+if __name__ == '__main__': main()
