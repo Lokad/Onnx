@@ -132,7 +132,11 @@ checks and exact Parakeet regression. All 17.5 million graph values retain their
 bits. Its [complete application qualification](tests/pyannote/vector-bias-qualification/results-20260921.md)
 passes 3,366 backend and 342 tensor tests, all dialogue calls, both ten-minute
 meetings and recovery with exact predecessor results and native timelines.
-Fresh matched timing is running; this candidate has no accepted speed result yet.
+Its [fresh matched timing trial](tests/pyannote/vector-bias-comparison/results-20260921.md)
+passes all 96 requests and 1,156 resource samples, but fails two ORT crop
+repeatability controls (1.307 and 1.208 versus the fixed 1.20 limit). Observed
+full-request means are 11.949 s predecessor, 11.435 s candidate and 6.544 s ORT.
+No timing admission follows; the accepted Windows table remains unchanged.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 

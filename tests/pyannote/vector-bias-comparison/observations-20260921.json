@@ -1,0 +1,2238 @@
+{
+  "closure": {
+    "bytes": 43133,
+    "sha256": "f58f2d8c28031cb04853d47d2155995a16ac9e1f6dd06fbaaee9ea9cf0029b62"
+  },
+  "finish_closure": {
+    "bytes": 4965,
+    "sha256": "5b7bef7bc9fb648062438a0014a2afedd5dfe359697c49484685208e271c4210"
+  },
+  "passed": true,
+  "attribution_valid": false,
+  "qualifies_for_later_amd": false,
+  "calls": 96,
+  "warmup_calls": 24,
+  "measured_calls": 72,
+  "controls": {
+    "predecessor": {
+      "fixture_max_min": {
+        "dialogue-30s": 1.0697228857667942,
+        "dialogue-0-10s": 1.0186942136193362,
+        "dialogue-10-20s": 1.0277406583240165,
+        "dialogue-20-30s": 1.0397443881294446
+      },
+      "passed": true
+    },
+    "candidate": {
+      "fixture_max_min": {
+        "dialogue-30s": 1.0061671258499514,
+        "dialogue-0-10s": 1.0262592264883597,
+        "dialogue-10-20s": 1.0371588417988868,
+        "dialogue-20-30s": 1.0524651294913636
+      },
+      "passed": true
+    },
+    "ort": {
+      "fixture_max_min": {
+        "dialogue-30s": 1.029293916994933,
+        "dialogue-0-10s": 1.3074664343819697,
+        "dialogue-10-20s": 1.0110604345385241,
+        "dialogue-20-30s": 1.2083134317991215
+      },
+      "passed": false
+    }
+  },
+  "table": [
+    {
+      "name": "dialogue-30s",
+      "audio_seconds": 30.0,
+      "seconds": {
+        "predecessor": 11.9490034,
+        "candidate": 11.434957216666668,
+        "ort": 6.543568933333334
+      },
+      "candidate_to_predecessor": 0.95697999522426,
+      "candidate_to_ort": 1.7475107748030754,
+      "allocations": {
+        "predecessor": 1097566861.3333333,
+        "candidate": 1088485936.0
+      },
+      "allocation_ratio": 0.9917263123976778
+    },
+    {
+      "name": "dialogue-0-10s",
+      "audio_seconds": 10.0,
+      "seconds": {
+        "predecessor": 0.5553631333333333,
+        "candidate": 0.5353347833333333,
+        "ort": 0.3557178333333333
+      },
+      "candidate_to_predecessor": 0.9639364790388798,
+      "candidate_to_ort": 1.5049422130930556,
+      "allocations": {
+        "predecessor": 111853237.33333333,
+        "candidate": 109560392.0
+      },
+      "allocation_ratio": 0.9795013055679342
+    },
+    {
+      "name": "dialogue-10-20s",
+      "audio_seconds": 10.0,
+      "seconds": {
+        "predecessor": 0.5527740333333333,
+        "candidate": 0.53736125,
+        "ort": 0.3258662666666666
+      },
+      "candidate_to_predecessor": 0.9721173890162834,
+      "candidate_to_ort": 1.6490238633680814,
+      "allocations": {
+        "predecessor": 110960137.33333333,
+        "candidate": 110114314.66666667
+      },
+      "allocation_ratio": 0.9923772384660472
+    },
+    {
+      "name": "dialogue-20-30s",
+      "audio_seconds": 10.0,
+      "seconds": {
+        "predecessor": 0.5428479166666667,
+        "candidate": 0.5298592666666666,
+        "ort": 0.34336565
+      },
+      "candidate_to_predecessor": 0.9760731328218845,
+      "candidate_to_ort": 1.54313416809942,
+      "allocations": {
+        "predecessor": 109516964.0,
+        "candidate": 109215652.0
+      },
+      "allocation_ratio": 0.9972487184725098
+    }
+  ],
+  "workers": [
+    {
+      "index": 0,
+      "role": "predecessor",
+      "samples": 225,
+      "peak_rss": 638353408,
+      "means": {
+        "dialogue-30s": 12.351530233333333,
+        "dialogue-0-10s": 0.5502201666666666,
+        "dialogue-10-20s": 0.5603363,
+        "dialogue-20-30s": 0.5534252999999999
+      }
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "samples": 216,
+      "peak_rss": 498573312,
+      "means": {
+        "dialogue-30s": 11.470109233333332,
+        "dialogue-0-10s": 0.5422724333333333,
+        "dialogue-10-20s": 0.547163,
+        "dialogue-20-30s": 0.5434035333333334
+      }
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "samples": 146,
+      "peak_rss": 619925504,
+      "means": {
+        "dialogue-30s": 6.638028766666667,
+        "dialogue-0-10s": 0.4031167,
+        "dialogue-10-20s": 0.32407406666666666,
+        "dialogue-20-30s": 0.37575583333333334
+      }
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "samples": 125,
+      "peak_rss": 620224512,
+      "means": {
+        "dialogue-30s": 6.4491091,
+        "dialogue-0-10s": 0.30831896666666664,
+        "dialogue-10-20s": 0.32765846666666665,
+        "dialogue-20-30s": 0.3109754666666667
+      }
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "samples": 222,
+      "peak_rss": 627699712,
+      "means": {
+        "dialogue-30s": 11.399805200000001,
+        "dialogue-0-10s": 0.5283971333333334,
+        "dialogue-10-20s": 0.5275595000000001,
+        "dialogue-20-30s": 0.516315
+      }
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "samples": 222,
+      "peak_rss": 605970432,
+      "means": {
+        "dialogue-30s": 11.546476566666668,
+        "dialogue-0-10s": 0.5605061,
+        "dialogue-10-20s": 0.5452117666666666,
+        "dialogue-20-30s": 0.5322705333333334
+      }
+    }
+  ],
+  "observations": [
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 15.0008671,
+      "start_ticks": 3918641098038,
+      "end_ticks": 3918791106709,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        7,
+        5,
+        5
+      ],
+      "gc_after": [
+        22,
+        16,
+        14
+      ],
+      "allocated_bytes": 1092913760
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-0-10s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5822853,
+      "start_ticks": 3918791445874,
+      "end_ticks": 3918797268727,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        22,
+        16,
+        14
+      ],
+      "gc_after": [
+        24,
+        18,
+        16
+      ],
+      "allocated_bytes": 112412760
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-10-20s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5588088,
+      "start_ticks": 3918797298423,
+      "end_ticks": 3918802886511,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        24,
+        18,
+        16
+      ],
+      "gc_after": [
+        25,
+        18,
+        16
+      ],
+      "allocated_bytes": 111318696
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-20-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5541563,
+      "start_ticks": 3918802917122,
+      "end_ticks": 3918808458685,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        25,
+        18,
+        16
+      ],
+      "gc_after": [
+        25,
+        18,
+        16
+      ],
+      "allocated_bytes": 108170232
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 12.1876281,
+      "start_ticks": 3918808496675,
+      "end_ticks": 3918930372956,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        25,
+        18,
+        16
+      ],
+      "gc_after": [
+        41,
+        28,
+        26
+      ],
+      "allocated_bytes": 1104717992
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-0-10s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5556854,
+      "start_ticks": 3918930420233,
+      "end_ticks": 3918935977087,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        41,
+        28,
+        26
+      ],
+      "gc_after": [
+        43,
+        30,
+        28
+      ],
+      "allocated_bytes": 111319136
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-10-20s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5536574,
+      "start_ticks": 3918936011101,
+      "end_ticks": 3918941547675,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        43,
+        30,
+        28
+      ],
+      "gc_after": [
+        44,
+        30,
+        28
+      ],
+      "allocated_bytes": 108162960
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-20-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5594962,
+      "start_ticks": 3918941584090,
+      "end_ticks": 3918947179052,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        44,
+        30,
+        28
+      ],
+      "gc_after": [
+        44,
+        30,
+        28
+      ],
+      "allocated_bytes": 108162672
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 11.8188851,
+      "start_ticks": 3918947220343,
+      "end_ticks": 3919065409194,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        44,
+        30,
+        28
+      ],
+      "gc_after": [
+        56,
+        36,
+        34
+      ],
+      "allocated_bytes": 1093536048
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-0-10s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5484416,
+      "start_ticks": 3919065463137,
+      "end_ticks": 3919070947553,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        56,
+        36,
+        34
+      ],
+      "gc_after": [
+        58,
+        38,
+        36
+      ],
+      "allocated_bytes": 112070328
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-10-20s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5492497,
+      "start_ticks": 3919071023811,
+      "end_ticks": 3919076516308,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        59,
+        38,
+        36
+      ],
+      "gc_after": [
+        59,
+        38,
+        36
+      ],
+      "allocated_bytes": 112367848
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-20-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5410786,
+      "start_ticks": 3919076563821,
+      "end_ticks": 3919081974607,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        59,
+        38,
+        36
+      ],
+      "gc_after": [
+        59,
+        38,
+        36
+      ],
+      "allocated_bytes": 108167912
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 13.0480775,
+      "start_ticks": 3919082025789,
+      "end_ticks": 3919212506564,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        59,
+        38,
+        36
+      ],
+      "gc_after": [
+        71,
+        44,
+        42
+      ],
+      "allocated_bytes": 1091414720
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-0-10s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5465335,
+      "start_ticks": 3919212550387,
+      "end_ticks": 3919218015722,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        71,
+        44,
+        42
+      ],
+      "gc_after": [
+        73,
+        45,
+        43
+      ],
+      "allocated_bytes": 111282144
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-10-20s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5781018,
+      "start_ticks": 3919218048835,
+      "end_ticks": 3919223829853,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        73,
+        45,
+        43
+      ],
+      "gc_after": [
+        74,
+        46,
+        44
+      ],
+      "allocated_bytes": 112607288
+    },
+    {
+      "index": 0,
+      "role": "predecessor",
+      "name": "dialogue-20-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5597011,
+      "start_ticks": 3919223862951,
+      "end_ticks": 3919229459962,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        74,
+        46,
+        44
+      ],
+      "gc_after": [
+        76,
+        48,
+        46
+      ],
+      "allocated_bytes": 112084448
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 14.827725,
+      "start_ticks": 3919833659244,
+      "end_ticks": 3919981936494,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        7,
+        5,
+        5
+      ],
+      "gc_after": [
+        22,
+        16,
+        14
+      ],
+      "allocated_bytes": 1110636256
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-0-10s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5797985,
+      "start_ticks": 3919982300670,
+      "end_ticks": 3919988098655,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        22,
+        16,
+        14
+      ],
+      "gc_after": [
+        24,
+        18,
+        16
+      ],
+      "allocated_bytes": 111313480
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-10-20s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5428162,
+      "start_ticks": 3919988128253,
+      "end_ticks": 3919993556415,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        24,
+        18,
+        16
+      ],
+      "gc_after": [
+        25,
+        18,
+        16
+      ],
+      "allocated_bytes": 108173816
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-20-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5287089,
+      "start_ticks": 3919993587036,
+      "end_ticks": 3919998874125,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        25,
+        18,
+        16
+      ],
+      "gc_after": [
+        25,
+        18,
+        16
+      ],
+      "allocated_bytes": 108166480
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 11.6094135,
+      "start_ticks": 3919998912973,
+      "end_ticks": 3920115007108,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        25,
+        18,
+        16
+      ],
+      "gc_after": [
+        39,
+        26,
+        24
+      ],
+      "allocated_bytes": 1083498168
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-0-10s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5276704,
+      "start_ticks": 3920115050578,
+      "end_ticks": 3920120327282,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        39,
+        26,
+        24
+      ],
+      "gc_after": [
+        41,
+        28,
+        26
+      ],
+      "allocated_bytes": 108164168
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-10-20s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5423101,
+      "start_ticks": 3920120359657,
+      "end_ticks": 3920125782758,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        41,
+        28,
+        26
+      ],
+      "gc_after": [
+        42,
+        28,
+        26
+      ],
+      "allocated_bytes": 108163048
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-20-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5730568,
+      "start_ticks": 3920125819122,
+      "end_ticks": 3920131549690,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        42,
+        28,
+        26
+      ],
+      "gc_after": [
+        42,
+        28,
+        26
+      ],
+      "allocated_bytes": 108169512
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 11.3993103,
+      "start_ticks": 3920131591391,
+      "end_ticks": 3920245584494,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        42,
+        28,
+        26
+      ],
+      "gc_after": [
+        57,
+        37,
+        35
+      ],
+      "allocated_bytes": 1083459408
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-0-10s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5310337,
+      "start_ticks": 3920245641357,
+      "end_ticks": 3920250951694,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        57,
+        37,
+        35
+      ],
+      "gc_after": [
+        59,
+        39,
+        37
+      ],
+      "allocated_bytes": 108163936
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-10-20s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5559646,
+      "start_ticks": 3920250992546,
+      "end_ticks": 3920256552192,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        59,
+        39,
+        37
+      ],
+      "gc_after": [
+        60,
+        39,
+        37
+      ],
+      "allocated_bytes": 108159160
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-20-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5327938,
+      "start_ticks": 3920256598586,
+      "end_ticks": 3920261926524,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        60,
+        39,
+        37
+      ],
+      "gc_after": [
+        60,
+        39,
+        37
+      ],
+      "allocated_bytes": 108160808
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 11.4016039,
+      "start_ticks": 3920261976954,
+      "end_ticks": 3920375992993,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        60,
+        39,
+        37
+      ],
+      "gc_after": [
+        76,
+        49,
+        47
+      ],
+      "allocated_bytes": 1083473616
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-0-10s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5681132,
+      "start_ticks": 3920376066983,
+      "end_ticks": 3920381748115,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        76,
+        49,
+        47
+      ],
+      "gc_after": [
+        77,
+        49,
+        47
+      ],
+      "allocated_bytes": 108142376
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-10-20s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5432143,
+      "start_ticks": 3920381789596,
+      "end_ticks": 3920387221739,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        77,
+        49,
+        47
+      ],
+      "gc_after": [
+        79,
+        51,
+        49
+      ],
+      "allocated_bytes": 112316904
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "name": "dialogue-20-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.52436,
+      "start_ticks": 3920387254964,
+      "end_ticks": 3920392498564,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        79,
+        51,
+        49
+      ],
+      "gc_after": [
+        79,
+        51,
+        49
+      ],
+      "allocated_bytes": 111316040
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 7.6807469,
+      "start_ticks": 392045252567200,
+      "end_ticks": 392052933314100,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.7081297104825097e-07,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-0-10s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.3154086,
+      "start_ticks": 392052936508700,
+      "end_ticks": 392053251917300,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 3.2782554626464844e-07,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-10-20s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.3105506,
+      "start_ticks": 392053253739300,
+      "end_ticks": 392053564289900,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.2165477275848389e-07,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-20-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.3141943,
+      "start_ticks": 392053566364200,
+      "end_ticks": 392053880558500,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.0861625672080608e-07,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 6.4934028,
+      "start_ticks": 392053883587100,
+      "end_ticks": 392060376989900,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.7081297104825097e-07,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-0-10s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.601896,
+      "start_ticks": 392060380572400,
+      "end_ticks": 392060982468400,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 3.2782554626464844e-07,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-10-20s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.3609068,
+      "start_ticks": 392060988172500,
+      "end_ticks": 392061349079300,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.2165477275848389e-07,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-20-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5142037,
+      "start_ticks": 392061351719400,
+      "end_ticks": 392061865923100,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.0861625672080608e-07,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 6.9382941,
+      "start_ticks": 392061869111100,
+      "end_ticks": 392068807405200,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.7081297104825097e-07,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-0-10s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.3045195,
+      "start_ticks": 392068811657300,
+      "end_ticks": 392069116176800,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 3.2782554626464844e-07,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-10-20s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.3068744,
+      "start_ticks": 392069118775300,
+      "end_ticks": 392069425649700,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.2165477275848389e-07,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-20-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.3069982,
+      "start_ticks": 392069428569700,
+      "end_ticks": 392069735567900,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.0861625672080608e-07,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 6.4823894,
+      "start_ticks": 392069738957400,
+      "end_ticks": 392076221346800,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.7081297104825097e-07,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-0-10s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.3029346,
+      "start_ticks": 392076225547000,
+      "end_ticks": 392076528481600,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 3.2782554626464844e-07,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-10-20s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.304441,
+      "start_ticks": 392076531446300,
+      "end_ticks": 392076835887300,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.2165477275848389e-07,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "name": "dialogue-20-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.3060656,
+      "start_ticks": 392076839350600,
+      "end_ticks": 392077145416200,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.0861625672080608e-07,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 7.0595583,
+      "start_ticks": 392079276189400,
+      "end_ticks": 392086335747700,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.7081297104825097e-07,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-0-10s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.3014922,
+      "start_ticks": 392086338797300,
+      "end_ticks": 392086640289500,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 3.2782554626464844e-07,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-10-20s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.3055537,
+      "start_ticks": 392086642049800,
+      "end_ticks": 392086947603500,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.2165477275848389e-07,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-20-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.3039913,
+      "start_ticks": 392086949667800,
+      "end_ticks": 392087253659100,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.0861625672080608e-07,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 6.4729305,
+      "start_ticks": 392087256381100,
+      "end_ticks": 392093729311600,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.7081297104825097e-07,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-0-10s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.3090462,
+      "start_ticks": 392093732882600,
+      "end_ticks": 392094041928800,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 3.2782554626464844e-07,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-10-20s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.3604206,
+      "start_ticks": 392094044937500,
+      "end_ticks": 392094405358100,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.2165477275848389e-07,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-20-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.3080371,
+      "start_ticks": 392094407702800,
+      "end_ticks": 392094715739900,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.0861625672080608e-07,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 6.366524,
+      "start_ticks": 392094719013400,
+      "end_ticks": 392101085537400,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.7081297104825097e-07,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-0-10s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.3084496,
+      "start_ticks": 392101089858000,
+      "end_ticks": 392101398307600,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 3.2782554626464844e-07,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-10-20s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.3173026,
+      "start_ticks": 392101400836000,
+      "end_ticks": 392101718138600,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.2165477275848389e-07,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-20-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.3185293,
+      "start_ticks": 392101721073700,
+      "end_ticks": 392102039603000,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.0861625672080608e-07,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 6.5078728,
+      "start_ticks": 392102042927800,
+      "end_ticks": 392108550800600,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.7081297104825097e-07,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-0-10s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.3074611,
+      "start_ticks": 392108555053900,
+      "end_ticks": 392108862515000,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 3.2782554626464844e-07,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-10-20s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.3052522,
+      "start_ticks": 392108865480800,
+      "end_ticks": 392109170733000,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.2165477275848389e-07,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "name": "dialogue-20-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.30636,
+      "start_ticks": 392109173946900,
+      "end_ticks": 392109480306900,
+      "frequency": 1000000000,
+      "maximum_centroid_error": 2.0861625672080608e-07,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 16.5008701,
+      "start_ticks": 3921406125604,
+      "end_ticks": 3921571134305,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        7,
+        5,
+        5
+      ],
+      "gc_after": [
+        23,
+        16,
+        15
+      ],
+      "allocated_bytes": 1098580376
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-0-10s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5523495,
+      "start_ticks": 3921571480940,
+      "end_ticks": 3921577004435,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        23,
+        16,
+        15
+      ],
+      "gc_after": [
+        25,
+        18,
+        17
+      ],
+      "allocated_bytes": 108170648
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-10-20s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5250934,
+      "start_ticks": 3921577033561,
+      "end_ticks": 3921582284495,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        25,
+        18,
+        17
+      ],
+      "gc_after": [
+        25,
+        18,
+        17
+      ],
+      "allocated_bytes": 108171280
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-20-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5255435,
+      "start_ticks": 3921582330110,
+      "end_ticks": 3921587585545,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        26,
+        18,
+        17
+      ],
+      "gc_after": [
+        26,
+        18,
+        17
+      ],
+      "allocated_bytes": 108165504
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 11.5002255,
+      "start_ticks": 3921587623570,
+      "end_ticks": 3921702625825,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        26,
+        18,
+        17
+      ],
+      "gc_after": [
+        37,
+        23,
+        22
+      ],
+      "allocated_bytes": 1083465616
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-0-10s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5249284,
+      "start_ticks": 3921702668276,
+      "end_ticks": 3921707917560,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        37,
+        23,
+        22
+      ],
+      "gc_after": [
+        39,
+        25,
+        24
+      ],
+      "allocated_bytes": 108159608
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-10-20s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5195014,
+      "start_ticks": 3921707950957,
+      "end_ticks": 3921713145971,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        39,
+        25,
+        24
+      ],
+      "gc_after": [
+        40,
+        25,
+        24
+      ],
+      "allocated_bytes": 108173200
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-20-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5184431,
+      "start_ticks": 3921713182744,
+      "end_ticks": 3921718367175,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        40,
+        25,
+        24
+      ],
+      "gc_after": [
+        40,
+        25,
+        24
+      ],
+      "allocated_bytes": 108165544
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 11.1015516,
+      "start_ticks": 3921718409358,
+      "end_ticks": 3921829424874,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        40,
+        25,
+        24
+      ],
+      "gc_after": [
+        56,
+        35,
+        34
+      ],
+      "allocated_bytes": 1087611048
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-0-10s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5288842,
+      "start_ticks": 3921829478959,
+      "end_ticks": 3921834767801,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        56,
+        35,
+        34
+      ],
+      "gc_after": [
+        58,
+        37,
+        36
+      ],
+      "allocated_bytes": 112402056
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-10-20s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5199159,
+      "start_ticks": 3921834813024,
+      "end_ticks": 3921840012183,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        58,
+        37,
+        36
+      ],
+      "gc_after": [
+        59,
+        37,
+        36
+      ],
+      "allocated_bytes": 111305096
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-20-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5163322,
+      "start_ticks": 3921840058321,
+      "end_ticks": 3921845221643,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        59,
+        37,
+        36
+      ],
+      "gc_after": [
+        59,
+        37,
+        36
+      ],
+      "allocated_bytes": 108169072
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 11.5976385,
+      "start_ticks": 3921845273084,
+      "end_ticks": 3921961249469,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        59,
+        37,
+        36
+      ],
+      "gc_after": [
+        76,
+        48,
+        47
+      ],
+      "allocated_bytes": 1109407760
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-0-10s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5313788,
+      "start_ticks": 3921961298116,
+      "end_ticks": 3921966611904,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        76,
+        48,
+        47
+      ],
+      "gc_after": [
+        78,
+        49,
+        48
+      ],
+      "allocated_bytes": 112330208
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-10-20s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5432612,
+      "start_ticks": 3921966645379,
+      "end_ticks": 3921972077991,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        78,
+        49,
+        48
+      ],
+      "gc_after": [
+        80,
+        51,
+        50
+      ],
+      "allocated_bytes": 112568480
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "name": "dialogue-20-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5141697,
+      "start_ticks": 3921972111435,
+      "end_ticks": 3921977253132,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        80,
+        51,
+        50
+      ],
+      "gc_after": [
+        80,
+        51,
+        50
+      ],
+      "allocated_bytes": 111312936
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 15.7629544,
+      "start_ticks": 3921983560956,
+      "end_ticks": 3922141190500,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        7,
+        5,
+        5
+      ],
+      "gc_after": [
+        22,
+        16,
+        14
+      ],
+      "allocated_bytes": 1109360632
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-0-10s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5536959,
+      "start_ticks": 3922141552457,
+      "end_ticks": 3922147089416,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        22,
+        16,
+        14
+      ],
+      "gc_after": [
+        22,
+        16,
+        14
+      ],
+      "allocated_bytes": 111291744
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-10-20s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5706946,
+      "start_ticks": 3922147117832,
+      "end_ticks": 3922152824778,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        22,
+        16,
+        14
+      ],
+      "gc_after": [
+        25,
+        18,
+        16
+      ],
+      "allocated_bytes": 108192896
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-20-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5564312,
+      "start_ticks": 3922152858448,
+      "end_ticks": 3922158422760,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        25,
+        18,
+        16
+      ],
+      "gc_after": [
+        25,
+        18,
+        16
+      ],
+      "allocated_bytes": 108166680
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 11.728637,
+      "start_ticks": 3922158478295,
+      "end_ticks": 3922275764665,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        25,
+        18,
+        16
+      ],
+      "gc_after": [
+        41,
+        28,
+        26
+      ],
+      "allocated_bytes": 1104524016
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-0-10s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5742247,
+      "start_ticks": 3922275808326,
+      "end_ticks": 3922281550573,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        41,
+        28,
+        26
+      ],
+      "gc_after": [
+        41,
+        28,
+        26
+      ],
+      "allocated_bytes": 111290152
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-10-20s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5683362,
+      "start_ticks": 3922281585403,
+      "end_ticks": 3922287268765,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        41,
+        28,
+        26
+      ],
+      "gc_after": [
+        44,
+        30,
+        28
+      ],
+      "allocated_bytes": 108954560
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-20-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5146383,
+      "start_ticks": 3922287304646,
+      "end_ticks": 3922292451029,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        44,
+        30,
+        28
+      ],
+      "gc_after": [
+        44,
+        30,
+        28
+      ],
+      "allocated_bytes": 112352328
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 11.4509903,
+      "start_ticks": 3922292491651,
+      "end_ticks": 3922407001554,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        44,
+        30,
+        28
+      ],
+      "gc_after": [
+        57,
+        37,
+        35
+      ],
+      "allocated_bytes": 1095373768
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-0-10s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5448423,
+      "start_ticks": 3922407054304,
+      "end_ticks": 3922412502727,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        57,
+        37,
+        35
+      ],
+      "gc_after": [
+        60,
+        39,
+        37
+      ],
+      "allocated_bytes": 112340704
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-10-20s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5354987,
+      "start_ticks": 3922412545619,
+      "end_ticks": 3922417900606,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        60,
+        39,
+        37
+      ],
+      "gc_after": [
+        60,
+        39,
+        37
+      ],
+      "allocated_bytes": 112353080
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-20-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5521016,
+      "start_ticks": 3922417946401,
+      "end_ticks": 3922423467417,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        60,
+        39,
+        37
+      ],
+      "gc_after": [
+        60,
+        39,
+        37
+      ],
+      "allocated_bytes": 108167824
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 11.4598024,
+      "start_ticks": 3922423518202,
+      "end_ticks": 3922538116226,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.4823727150781174e-06,
+      "input_sha256": "a1bae7f486734b5e7e51cee72a9da27c7dfb07d9fe1a7579de04b9dfe6b1317e",
+      "ownership": true,
+      "gc_before": [
+        60,
+        39,
+        37
+      ],
+      "gc_after": [
+        73,
+        46,
+        44
+      ],
+      "allocated_bytes": 1095834624
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-0-10s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5624513,
+      "start_ticks": 3922538154166,
+      "end_ticks": 3922543778679,
+      "frequency": 10000000,
+      "maximum_centroid_error": 3.0249357223510742e-06,
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true,
+      "gc_before": [
+        73,
+        46,
+        44
+      ],
+      "gc_after": [
+        76,
+        48,
+        46
+      ],
+      "allocated_bytes": 112816960
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-10-20s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5318004,
+      "start_ticks": 3922543810546,
+      "end_ticks": 3922549128550,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.2218952180620413e-06,
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true,
+      "gc_before": [
+        76,
+        48,
+        46
+      ],
+      "gc_after": [
+        76,
+        48,
+        46
+      ],
+      "allocated_bytes": 111315088
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "name": "dialogue-20-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5300717,
+      "start_ticks": 3922549161394,
+      "end_ticks": 3922554462111,
+      "frequency": 10000000,
+      "maximum_centroid_error": 1.5050172805786133e-06,
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true,
+      "gc_before": [
+        76,
+        48,
+        46
+      ],
+      "gc_after": [
+        76,
+        48,
+        46
+      ],
+      "allocated_bytes": 108166600
+    }
+  ],
+  "resource_samples": 1156,
+  "peak_rss": 638353408,
+  "scope": "Descriptive Windows whole-application comparison; no calibrated parity or production promotion"
+}
