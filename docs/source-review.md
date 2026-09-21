@@ -341,7 +341,7 @@ generation policy and attention-cache contract. Parakeet, Whisper and connected
 Community-1 diarization now have public APIs and CLI paths; the
 [support matrix](model-support.md) records their precise qualified scope and
 remaining numerical, accuracy and resource work.
-# Prepared decoder metadata during execution
+## Prepared decoder metadata during execution
 
 The [controlled Whisper decoder checks](../tests/whisper/weight-metadata/results-20260920.md)
 expose mutable naming metadata in an otherwise unchanged prepared payload.
