@@ -81,7 +81,7 @@ def main():
     for path in sorted(Path(__file__).parent.glob('*')):
         if path.is_file(): bind(path)
     bind(ROOT/'tests/Shared/NpySupport.cs')
-    for path in sorted((SITE/'onnxruntime/capi').iterdir()):
+    for path in sorted((Path(ort.__file__).resolve().parent/'capi').iterdir()):
         if path.suffix in ('.dll', '.pyd'): bind(path)
     jobs = [dict(id=f'{engine}-{kind}-{mode}{"-repeat" if repeat else ""}', engine=engine, input=kind, mode=mode, repeat=repeat)
             for engine in ('managed', 'native') for kind in ('native', 'managed')

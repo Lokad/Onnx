@@ -10,7 +10,7 @@ SITE = ROOT/'artifacts/asr-labeled-20260919/venv/Lib/site-packages'
 sys.path.append(str(SITE))
 for key in ('OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'MKL_NUM_THREADS'):
     os.environ[key] = '1'
-BASE = ROOT/'artifacts/parakeet-layer-trace-20260921'
+BASE = ROOT/'artifacts/parakeet-layer-trace-v2-20260921'
 OLD = ROOT/'artifacts/parakeet-transcription-20260919'
 PRODUCT = ROOT/'artifacts/whisper-memory-product-v2-20260921/source/src/Lokad.Onnx.CLI/bin/Release/net10.0'
 CORE = 'd1f86a7346dcd70ebcc9ef7d9cd9633f05ad3a5275ca39f035c72325a0531fa4'
@@ -42,7 +42,13 @@ def save(path, data):
 
 
 def rel(path):
-    return Path(path).resolve().relative_to(ROOT).as_posix()
+    path = Path(path).resolve()
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        # The loaded native package may live in the interpreter installation.
+        # Keep that exact absolute identity instead of guessing a vendored path.
+        return path.as_posix()
 
 
 def verify(spec):
