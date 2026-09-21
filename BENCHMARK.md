@@ -117,6 +117,12 @@ recomputes each protocol's absolute reduction needed to reach 1.05 from
 unrounded data. It keeps component gains, historical profiles and failed timing
 controls separate; it changes no score or production default.
 
+A local [disabled-profiler allocation candidate](tests/e5/profiler-allocation/results-20260921.md)
+avoids creating discarded callbacks for all 347 e5 nodes, saving a median
+55,520 bytes per unprofiled request in nine of ten case/policy combinations.
+All 1,920 executions preserve outputs and profile contents. This is an isolated
+allocation improvement; AMD latency and production promotion remain unqualified.
+
 A later [analysis of the retained resident-process data](tests/e5/resident-variation/results-20260921.md)
 finds that all forty failed Execute visit contrasts keep their direction in both
 balanced halves. It explains why more within-process samples alone are insufficient;
