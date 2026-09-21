@@ -142,9 +142,13 @@ An isolated [sparse mel frontend](tests/pyannote/sparse-mel/results-20260921.md)
 now visits 501 of 20,480 filter coefficients per frame while preserving all
 4.312 million compared real-audio feature values bit-for-bit. Both normal and
 hardware-disabled frontend suites pass 89 tests. Core is unchanged; this is
-correctness evidence for a new Data candidate, with complete application and
-fresh ORT timing qualification still pending. No speedup is inferred from the
-coefficient count, and the accepted timing tables remain unchanged.
+correctness evidence for a new Data candidate. Its
+[complete application qualification](tests/pyannote/sparse-mel-qualification/results-20260921.md)
+passes 3,280 backend and 342 tensor tests, all 16 dialogue requests, both
+ten-minute meetings and recovery. Public results match the predecessor and
+meeting timelines match ORT exactly; all 2,965 resource samples pass. The fresh
+ORT timing comparison is running. No speedup is inferred from coefficient
+counts or historical meeting times; the accepted timing tables remain unchanged.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
