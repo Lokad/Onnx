@@ -28,11 +28,16 @@ public class CliExitCodeTests
         psi.ArgumentList.Add(CliDll());
         foreach (var a in args) psi.ArgumentList.Add(a);
         using var p = Process.Start(psi)!;
+        // Drain both pipes while the CLI runs; verbose output can exceed their
+        // capacity before the process reaches its exit-code assertion.
+        var stdout = p.StandardOutput.ReadToEndAsync();
+        var stderr = p.StandardError.ReadToEndAsync();
         if (!p.WaitForExit(180000))
         {
             try { p.Kill(true); } catch { }
             Assert.Fail("CLI timed out: " + string.Join(" ", args));
         }
+        Task.WhenAll(stdout, stderr).GetAwaiter().GetResult();
         return p.ExitCode;
     }
 

@@ -5,7 +5,7 @@ from pathlib import Path
 import tarfile
 
 ROOT = Path(__file__).resolve().parents[3]
-BASE = ROOT/'artifacts/pyannote-amd-candidates-v2-20260921'
+BASE = ROOT/'artifacts/pyannote-amd-candidates-v3-20260921'
 
 
 def pin(path):
@@ -42,8 +42,27 @@ def main():
     assert pin(ROOT/failure['path']) == {k: failure[k] for k in ('bytes', 'sha256')}
     assert read(ROOT/failure['path'])['inference_executed'] is False
     rows = ROOT/'artifacts/pyannote-conv-row-sharing-v2-20260921/candidate-source'
+    correction = spec['test_harness_adaptation']
+    assert correction == prepared['test_harness_adaptation']
+    assert correction['path'] == 'tests/Lokad.Onnx.Backend.Tests/CliExitCodeTests.cs'
+    assert pin(rows/correction['path']) == correction['before']
+    before = (rows/correction['path']).read_text()
+    expected_source = before.replace('        if (!p.WaitForExit(180000))',
+        '        // Drain both pipes while the CLI runs; verbose output can exceed their\n'
+        '        // capacity before the process reaches its exit-code assertion.\n'
+        '        var stdout = p.StandardOutput.ReadToEndAsync();\n'
+        '        var stderr = p.StandardError.ReadToEndAsync();\n'
+        '        if (!p.WaitForExit(180000))').replace('        return p.ExitCode;',
+        '        Task.WhenAll(stdout, stderr).GetAwaiter().GetResult();\n        return p.ExitCode;')
+    assert (payload/'source'/correction['path']).read_text() == expected_source
+    old_base = ROOT/'artifacts/pyannote-amd-candidates-v2-20260921'
+    assert pin(old_base/'prepared.json') == correction['predecessor']
+    old_spec = read(old_base/'payload/payload.json')
+    assert set(spec['files']) == set(old_spec['files'])
+    assert [n for n in spec['files'] if spec['files'][n] != old_spec['files'][n]] == ['source/'+correction['path']]
     for name, wanted in spec['source_files'].items():
-        assert pin(rows/name) == pin(payload/'source'/name) == wanted, name
+        assert pin(payload/'source'/name) == wanted, name
+        assert (correction['after'] if name == correction['path'] else pin(rows/name)) == wanted, name
     adaptation = spec['graph_consumer_adaptation']
     original = ROOT/'artifacts/pyannote-spatial-panels-20260921/consumer/Program.cs'
     assert pin(original) == adaptation['original']
@@ -60,7 +79,7 @@ def main():
         assert row['after_sha256'] == pin(payload/'source/tests/Lokad.Onnx.Backend.Tests/bin/Release/net10.0'/name)['sha256']
         methods[name] = row['methods']
     builds = read(BASE/'local-builds.json')
-    assert [r['name'] for r in builds] == [n+s for n in ('backend', 'tensors', 'graph-consumer', 'il-bridge')
+    assert [r['name'] for r in builds] == [n+s for n in ('backend', 'tensors', 'cli', 'il-bridge')
                                          for s in ('-restore', '-build')]+['il-bridge']
     assert all(r['code'] == 0 for r in builds)
     for row in builds[:-1]:

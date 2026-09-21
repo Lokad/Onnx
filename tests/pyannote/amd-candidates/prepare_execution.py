@@ -43,6 +43,14 @@ def main():
     assert pin(cancelled_base/'execution/execution.json') == cancelled_prepared['execution']
     for name, wanted in read(cancelled_base/'execution/execution.json')['files'].items():
         assert pin(cancelled_base/'execution'/name) == wanted, name
+    second_base = ROOT/'artifacts/pyannote-amd-execution-v3-20260921'
+    second = read(second_base/'cancelled-for-cli-output-drain.json')
+    assert second['cancelled'] and not second['vm_deployed'] and second['stages_started'] == 0
+    assert pin(second_base/'controller/state.json') == second['state']
+    assert read(second_base/'controller/state.json')['stages'] == []
+    try: assert psutil.Process(second['identity']['pid']).create_time() != second['identity']['birth']
+    except psutil.NoSuchProcess: pass
+    assert pin(second_base/'execution.tar.gz') == read(second_base/'prepared.json')['archive']
     BASE.mkdir(); target = BASE/'execution'; target.mkdir()
     local_tools = {}
     for path in sorted(TOOLS.glob('*.py')):
@@ -67,6 +75,7 @@ def main():
                      local_tools=local_tools, files={p.name: pin(p) for p in target.iterdir() if p.is_file()}, external=external,
                      native_predecessor=pin(old), failed_predecessor=pin(failure_path), selftest=pin(BASE/'selftest.log'),
                      cancelled_predecessor=pin(cancelled_base/'cancelled-for-cli-prerequisite.json'),
+                     second_cancelled_predecessor=pin(second_base/'cancelled-for-cli-output-drain.json'),
                      scope='Tested offline execution tools; AMD inference has not run. Existing e5 owns the VM until terminal.')
     write(target/'execution.json', execution)
     with tarfile.open(BASE/'execution.tar.gz', 'w:gz') as archive:
