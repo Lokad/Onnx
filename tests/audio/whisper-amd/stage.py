@@ -6,6 +6,8 @@ def execute(script):
     compile(script,'checked-whisper-staging','exec');return ssh(script)
 
 def main():
+    resume=sys.argv[1:]==['--resume-runtime-binding']
+    assert not sys.argv[1:] or resume
     prepared=read(BASE/'prepared.json');assert prepared['passed']
     for name,wanted in prepared['qualified'].items():assert pin(ROOT/name)==wanted,name
     for name,wanted in prepared['source_bridge'].items():assert pin(ROOT/name)==wanted,name
@@ -36,6 +38,8 @@ def main():
         else:uploads[target]=BASE/'bin'/name
     uploads.update({'runtime/supervise.py':Path(__file__).parent/'supervise.py','manifests/whisper.json':BASE/'manifests/whisper.json','prior-native-gate.json':BASE/'prior-native-gate.json','prepared.json':BASE/'prepared.json','prospective-plan.md':BASE/'prospective-plan.md'})
     remote_external=dict(original['external'])
+    runtime=read(CONTRACTS/'frozen.json')['managed_runtime']
+    remote_external.update(runtime['files'])
     remote_external.update({PRIOR_REMOTE+'/'+n:w for n,w in native_files.items()})
     for n in ['frozen.json','manifests/whisper.json']:remote_external[PRIOR_REMOTE+'/'+n]=pin(prior/n)
     identities=read(CONTRACTS/'closed.json')['births']+receipt['births']
@@ -52,11 +56,16 @@ for name in %r:
 for name in %r:(base/name).parent.mkdir(parents=True,exist_ok=True)
 print(json.dumps(dict(staged=True,links=%r,available=psutil.virtual_memory().available,disk=psutil.disk_usage(str(base)).free)))
 '''%(identities,gate['frozen'],links,remote_external,list(links),list(uploads),len(links))
-    write(BASE/'stage.json',json.loads(execute(script)))
-    for name,path in uploads.items():subprocess.run(['scp','-i',KEY,'-o','BatchMode=yes',str(path),HOST+':'+REMOTE+'/'+name],check=True)
+    if resume:
+        assert read(BASE/'stage.json')['staged'] and not (BASE/'freeze-receipt.json').exists()
+        assert read(BASE/'staging-refusal.json')['inference_started'] is False
+        execute(PRELUDE+"assert base.exists() and not (base/'frozen.json').exists() and not (base/'deployment.json').exists()\n")
+    else:
+        write(BASE/'stage.json',json.loads(execute(script)))
+        for name,path in uploads.items():subprocess.run(['scp','-i',KEY,'-o','BatchMode=yes',str(path),HOST+':'+REMOTE+'/'+name],check=True)
     upload_pins={n:pin(p) for n,p in uploads.items()}
     frozen={k:v for k,v in original.items() if k not in ['files','external','source','product_source']}
-    frozen.update(source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),product_source=prepared['product_source'],scope=['whisper'],external=remote_external,files=links|upload_pins,prior_native=pin(BASE/'prior-native-gate.json'),dotnet='/home/vermorel/.dotnet10.0.8/dotnet')
+    frozen.update(source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),product_source=prepared['product_source'],scope=['whisper'],external=remote_external,files=links|upload_pins,prior_native=pin(BASE/'prior-native-gate.json'),dotnet=runtime['host'],managed_runtime=runtime)
     script=PRELUDE+'''
 os.sched_setaffinity(0,{0});frozen=%r
 for name,wanted in frozen['files'].items():assert pin(base/name)==wanted,name
