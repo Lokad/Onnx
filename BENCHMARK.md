@@ -115,6 +115,13 @@ passes every fixed control: the full request falls from 12.325 to 11.549 seconds
 (6.3%), and the three crops improve 7.5–9.9%. The current Windows candidate table
 below reflects this result. AMD qualification and production promotion remain pending.
 
+The next [vector-bias candidate](tests/pyannote/vector-bias/results-20260921.md)
+changes one convolution method and passes 358 focused tests, 144 tests with
+hardware intrinsics disabled, all 108 captured graph calls, shared-model native
+checks and exact Parakeet regression. All 17.5 million graph values retain their
+bits. Full public application and timing qualification are in progress; this
+candidate has no accepted speed result yet.
+
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
 Fresh matched measurements on Windows i7-14700KF, CPU2, .NET 10.0.12 and
