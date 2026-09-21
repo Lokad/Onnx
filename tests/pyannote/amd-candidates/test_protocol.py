@@ -71,6 +71,15 @@ class ProtocolTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaises(AssertionError): below(Path(tmp), '../escape')
 
+    def test_native_inventory_selects_package_root_not_nested_directory_names(self):
+        from prepare_execution import selected_native_files
+        retained = read(ROOT/'artifacts/audio-amd-two-family-20260920/collected/frozen.json')
+        selected = selected_native_files(retained['external'])
+        self.assertEqual(len(selected), 16117)
+        self.assertTrue(any('/onnxruntime/transformers/' in name for name in selected))
+        self.assertTrue(any('/torch/include/ATen/native/transformers/' in name for name in selected))
+        self.assertFalse(any('/python/transformers/' in name or '/site-packages/transformers/' in name for name in selected))
+
     def test_remote_e5_guard_uses_actual_worker_birth_and_ended_receipt(self):
         sys.path.insert(0, str(transport.SITE))
         import supervise

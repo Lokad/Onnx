@@ -33,7 +33,7 @@ observes, collects and audits one campaign. Commands are:
     C:/Python313/python.exe -X utf8 -B tests/pyannote/amd-candidates/finish.py
 
 Each command creates a new artifact and refuses to overwrite it. Do not rerun a
-started controller. Inspect `artifacts/pyannote-amd-execution-20260921/controller/state.json`
+started controller. Inspect `artifacts/pyannote-amd-execution-v2-20260921/controller/state.json`
 and actual PID/birth identities first. After deployment, read-only observation is:
 
     C:/Python313/python.exe -X utf8 -B tests/pyannote/amd-candidates/transport.py observe

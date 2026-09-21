@@ -11,7 +11,7 @@ from candidate_protocol import pin, read, write, verified_files
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = Path(__file__).resolve().parent
 PREPARED = ROOT/'artifacts/pyannote-amd-candidates-v2-20260921'
-BASE = ROOT/'artifacts/pyannote-amd-execution-20260921'
+BASE = ROOT/'artifacts/pyannote-amd-execution-v2-20260921'
 REMOTE = '/dev/shm/lokad-pyannote-candidates-20260921'
 E5_CONTROL = ROOT/'artifacts/e5-randomized-processes-finish-v2-20260921/state.json'
 SITE = ROOT/'artifacts/asr-labeled-20260919/venv/Lib/site-packages'
