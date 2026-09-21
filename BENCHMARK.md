@@ -100,6 +100,9 @@ now passes 214 focused tests, 50 hardware-disabled tests and all 108 captured
 graph calls, preserving 17.5 million values bit for bit. All 166 shared-model
 arrays and 784 Parakeet arrays are also unchanged. Complete public-application
 and performance qualification remain pending.
+Full suites now pass 3,222 backend and 342 tensor tests, and all 16 dialogue
+requests preserve predecessor outputs. Long-meeting qualification and the
+subsequent matched ORT comparison are still running or queued.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
