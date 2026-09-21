@@ -415,3 +415,30 @@ for bit. Disabling this fusion is insufficient to resolve the encoder error.
 The experiment changes the combined fusion arithmetic and observable lifetimes,
 so it neither isolates reciprocal rounding alone nor supplies a latency claim.
 Production arithmetic and defaults remain unchanged.
+
+## Parakeet stem and encoder error propagation
+
+The [complete Windows boundary diagnostic](../tests/parakeet/layer-trace/results-20260921.md)
+captures the subsampling stem and all 24 encoder layers on the retained English
+failure case. Both encoders receive each of the two original feature arrays.
+The stem already exceeds the unchanged `1e-4` comparison limit on identical
+inputs. With each engine's own features, layer 22 reaches `8.155703545e-4`,
+while the final encoder output returns to `6.839632988e-6`. These accumulated
+differences do not identify an incorrect operator or establish either FP32
+engine as an independent mathematical reference.
+
+The original trace incorrectly supplied fixed dimensions for its added outputs.
+ORT then specialized dynamic shape work, reducing its optimized graph from
+1,993 to 1,350 nodes and changing final values. Those failed controls remain
+retained. Declaring unknown dimensions restores all 1,993 original native nodes,
+including attribute hashes, and bit-identical final outputs and repeats. Managed
+traces retain all 2,856 original nodes. This is why an output-only graph edit
+still requires actual optimized-graph and final-output controls.
+
+The unmodified-model controls complete a two-by-two input substitution. Feeding
+native features into the managed encoder reduces the fixed-state native decoder
+error to `6.091594696e-5`, versus `2.268552780e-4` with managed features. This
+is one selected decoder call, not a complete transcription qualification. The
+next investigation needs identical-input stem calculations and independent
+higher-precision references before selecting a production change. Existing
+full-model failures and performance results are unchanged.
