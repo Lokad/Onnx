@@ -564,6 +564,13 @@ on one selected English clip finds that both original float32 engines exceed
 inputs. The references agree within `5.534e-13`; this diagnoses accuracy and
 does not change the matched timing baselines.
 
+The [actual-input projection check](tests/parakeet/projection/results-20260921.md)
+preserves both engines' original outputs and optimized graphs. Lokad's local
+projection RMS error is about 4.8 times ORT's on these inputs. Independently
+recomputing the projection still leaves 106–112 managed stem values above
+`1e-4` because of inherited convolution error. Both sources require attention;
+this local diagnosis leaves the timing tables and support limits unchanged.
+
 Whisper's
 [full-pipeline numerical check](tests/whisper/numerical-20260919.md) retains
 21 encoder and 405 logit-array failures despite identical token choices.

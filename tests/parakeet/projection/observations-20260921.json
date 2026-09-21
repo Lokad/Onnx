@@ -1,0 +1,915 @@
+{
+  "qualified": true,
+  "manifest": {
+    "bytes": 45235,
+    "sha256": "40cbabffa600279d14f16f9bbf2d35d9582055c5763f7e7cbb33a86fabcbb3b5"
+  },
+  "checks": [
+    {
+      "name": "complete-managed-native",
+      "passed": true
+    },
+    {
+      "name": "ownership-managed-native",
+      "passed": true
+    },
+    {
+      "name": "coverage-managed-native",
+      "passed": true
+    },
+    {
+      "name": "manifest-managed-native",
+      "passed": true
+    },
+    {
+      "name": "core-managed-native",
+      "passed": true
+    },
+    {
+      "name": "runtime-managed-native",
+      "passed": true
+    },
+    {
+      "name": "nodes-managed-native",
+      "passed": true
+    },
+    {
+      "name": "original-managed-native-outputs",
+      "passed": true
+    },
+    {
+      "name": "original-managed-native-encoded_lengths",
+      "passed": true
+    },
+    {
+      "name": "original-managed-native-/pre_encode/out/Add_output_0",
+      "passed": true
+    },
+    {
+      "name": "reshape-managed-native",
+      "passed": true
+    },
+    {
+      "name": "complete-native-native",
+      "passed": true
+    },
+    {
+      "name": "ownership-native-native",
+      "passed": true
+    },
+    {
+      "name": "coverage-native-native",
+      "passed": true
+    },
+    {
+      "name": "manifest-native-native",
+      "passed": true
+    },
+    {
+      "name": "runtime-native-native",
+      "passed": true
+    },
+    {
+      "name": "original-native-native-outputs",
+      "passed": true
+    },
+    {
+      "name": "original-native-native-encoded_lengths",
+      "passed": true
+    },
+    {
+      "name": "original-native-native-/pre_encode/out/Add_output_0",
+      "passed": true
+    },
+    {
+      "name": "reshape-native-native",
+      "passed": true
+    },
+    {
+      "name": "complete-managed-managed",
+      "passed": true
+    },
+    {
+      "name": "ownership-managed-managed",
+      "passed": true
+    },
+    {
+      "name": "coverage-managed-managed",
+      "passed": true
+    },
+    {
+      "name": "manifest-managed-managed",
+      "passed": true
+    },
+    {
+      "name": "core-managed-managed",
+      "passed": true
+    },
+    {
+      "name": "runtime-managed-managed",
+      "passed": true
+    },
+    {
+      "name": "nodes-managed-managed",
+      "passed": true
+    },
+    {
+      "name": "original-managed-managed-outputs",
+      "passed": true
+    },
+    {
+      "name": "original-managed-managed-encoded_lengths",
+      "passed": true
+    },
+    {
+      "name": "original-managed-managed-/pre_encode/out/Add_output_0",
+      "passed": true
+    },
+    {
+      "name": "reshape-managed-managed",
+      "passed": true
+    },
+    {
+      "name": "complete-native-managed",
+      "passed": true
+    },
+    {
+      "name": "ownership-native-managed",
+      "passed": true
+    },
+    {
+      "name": "coverage-native-managed",
+      "passed": true
+    },
+    {
+      "name": "manifest-native-managed",
+      "passed": true
+    },
+    {
+      "name": "runtime-native-managed",
+      "passed": true
+    },
+    {
+      "name": "original-native-managed-outputs",
+      "passed": true
+    },
+    {
+      "name": "original-native-managed-encoded_lengths",
+      "passed": true
+    },
+    {
+      "name": "original-native-managed-/pre_encode/out/Add_output_0",
+      "passed": true
+    },
+    {
+      "name": "reshape-native-managed",
+      "passed": true
+    },
+    {
+      "name": "complete-managed-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "ownership-managed-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "coverage-managed-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "manifest-managed-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "core-managed-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "runtime-managed-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "nodes-managed-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "original-managed-native-repeat-outputs",
+      "passed": true
+    },
+    {
+      "name": "original-managed-native-repeat-encoded_lengths",
+      "passed": true
+    },
+    {
+      "name": "original-managed-native-repeat-/pre_encode/out/Add_output_0",
+      "passed": true
+    },
+    {
+      "name": "reshape-managed-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "complete-native-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "ownership-native-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "coverage-native-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "manifest-native-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "runtime-native-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "original-native-native-repeat-outputs",
+      "passed": true
+    },
+    {
+      "name": "original-native-native-repeat-encoded_lengths",
+      "passed": true
+    },
+    {
+      "name": "original-native-native-repeat-/pre_encode/out/Add_output_0",
+      "passed": true
+    },
+    {
+      "name": "reshape-native-native-repeat",
+      "passed": true
+    },
+    {
+      "name": "repeat-managed-outputs",
+      "passed": true
+    },
+    {
+      "name": "repeat-managed-encoded_lengths",
+      "passed": true
+    },
+    {
+      "name": "repeat-managed-/pre_encode/out/Add_output_0",
+      "passed": true
+    },
+    {
+      "name": "repeat-managed-/pre_encode/Reshape_output_0",
+      "passed": true
+    },
+    {
+      "name": "repeat-native-outputs",
+      "passed": true
+    },
+    {
+      "name": "repeat-native-encoded_lengths",
+      "passed": true
+    },
+    {
+      "name": "repeat-native-/pre_encode/out/Add_output_0",
+      "passed": true
+    },
+    {
+      "name": "repeat-native-/pre_encode/Reshape_output_0",
+      "passed": true
+    },
+    {
+      "name": "native-optimized-nodes",
+      "passed": true
+    }
+  ],
+  "agreements": [
+    {
+      "route": "managed-native",
+      "stage": "projection",
+      "values": 75776,
+      "max_scaled": 2.078337502098293e-13,
+      "failed": 0,
+      "rms": 1.1281000032233567e-13,
+      "max_absolute": 3.637978807091713e-12,
+      "coordinate": [
+        0,
+        3,
+        668
+      ]
+    },
+    {
+      "route": "managed-native",
+      "stage": "stem",
+      "values": 75776,
+      "max_scaled": 2.078337502098293e-13,
+      "failed": 0,
+      "rms": 1.1280770894967034e-13,
+      "max_absolute": 3.637978807091713e-12,
+      "coordinate": [
+        0,
+        3,
+        668
+      ]
+    },
+    {
+      "route": "native-native",
+      "stage": "projection",
+      "values": 75776,
+      "max_scaled": 5.950795411990839e-13,
+      "failed": 0,
+      "rms": 1.1329787651833497e-13,
+      "max_absolute": 3.183231456205249e-12,
+      "coordinate": [
+        0,
+        36,
+        942
+      ]
+    },
+    {
+      "route": "native-native",
+      "stage": "stem",
+      "values": 75776,
+      "max_scaled": 2.1671553440683056e-13,
+      "failed": 0,
+      "rms": 1.1330444410832748e-13,
+      "max_absolute": 3.183231456205249e-12,
+      "coordinate": [
+        0,
+        55,
+        214
+      ]
+    },
+    {
+      "route": "managed-managed",
+      "stage": "projection",
+      "values": 75776,
+      "max_scaled": 2.1528279413114504e-13,
+      "failed": 0,
+      "rms": 1.098633942676173e-13,
+      "max_absolute": 2.7284841053187847e-12,
+      "coordinate": [
+        0,
+        35,
+        277
+      ]
+    },
+    {
+      "route": "managed-managed",
+      "stage": "stem",
+      "values": 75776,
+      "max_scaled": 2.4158453015843406e-13,
+      "failed": 0,
+      "rms": 1.098658574260358e-13,
+      "max_absolute": 2.7284841053187847e-12,
+      "coordinate": [
+        0,
+        35,
+        481
+      ]
+    },
+    {
+      "route": "native-managed",
+      "stage": "projection",
+      "values": 75776,
+      "max_scaled": 4.3520742565306136e-13,
+      "failed": 0,
+      "rms": 1.1001026322383654e-13,
+      "max_absolute": 2.7284841053187847e-12,
+      "coordinate": [
+        0,
+        36,
+        942
+      ]
+    },
+    {
+      "route": "native-managed",
+      "stage": "stem",
+      "values": 75776,
+      "max_scaled": 2.0605739337042905e-13,
+      "failed": 0,
+      "rms": 1.100085494583544e-13,
+      "max_absolute": 2.7284841053187847e-12,
+      "coordinate": [
+        0,
+        17,
+        635
+      ]
+    }
+  ],
+  "scalar_checks": 2048,
+  "max_scalar_error": 1.0946799022804043e-13,
+  "rows": [
+    {
+      "reference": "numpy",
+      "route": "managed-native",
+      "metrics": {
+        "convolution-input": {
+          "values": 303104,
+          "max_scaled": 2.9579471928276035e-05,
+          "failed": 0,
+          "rms": 3.163942557560141e-06,
+          "max_absolute": 7.481833344513689e-05,
+          "coordinate": [
+            0,
+            6,
+            2962
+          ]
+        },
+        "local-projection": {
+          "values": 75776,
+          "max_scaled": 0.0004831081843370555,
+          "failed": 88,
+          "rms": 0.00027308008675257207,
+          "max_absolute": 0.011353022839102778,
+          "coordinate": [
+            0,
+            30,
+            972
+          ]
+        },
+        "inherited-convolution": {
+          "values": 75776,
+          "max_scaled": 0.0002402627161401938,
+          "failed": 112,
+          "rms": 9.489182871238671e-05,
+          "max_absolute": 0.0008062917941060732,
+          "coordinate": [
+            0,
+            12,
+            192
+          ]
+        },
+        "total": {
+          "values": 75776,
+          "max_scaled": 0.0004793645766909549,
+          "failed": 200,
+          "rms": 0.0002887850456314573,
+          "max_absolute": 0.011181919942828245,
+          "coordinate": [
+            0,
+            55,
+            214
+          ]
+        }
+      },
+      "maximum_decomposition_residual": 0.0,
+      "local_mean_square": 7.45727337807923e-08,
+      "inherited_mean_square": 9.00445915638094e-09,
+      "interaction": -1.8039035681036536e-10,
+      "total_mean_square": 8.339680258036286e-08
+    },
+    {
+      "reference": "numpy",
+      "route": "native-native",
+      "metrics": {
+        "convolution-input": {
+          "values": 303104,
+          "max_scaled": 1.7634763617380145e-05,
+          "failed": 0,
+          "rms": 2.21108803533758e-06,
+          "max_absolute": 3.652990420022206e-05,
+          "coordinate": [
+            0,
+            58,
+            592
+          ]
+        },
+        "local-projection": {
+          "values": 75776,
+          "max_scaled": 0.00018440149238540068,
+          "failed": 4,
+          "rms": 5.722290075241522e-05,
+          "max_absolute": 0.0012317299665483006,
+          "coordinate": [
+            0,
+            35,
+            277
+          ]
+        },
+        "inherited-convolution": {
+          "values": 75776,
+          "max_scaled": 0.0002103492252096828,
+          "failed": 39,
+          "rms": 6.611183216462533e-05,
+          "max_absolute": 0.0006250923852348933,
+          "coordinate": [
+            0,
+            64,
+            464
+          ]
+        },
+        "total": {
+          "values": 75776,
+          "max_scaled": 0.00025165001267921815,
+          "failed": 57,
+          "rms": 8.737818515810192e-05,
+          "max_absolute": 0.0013030980862822616,
+          "coordinate": [
+            0,
+            35,
+            277
+          ]
+        }
+      },
+      "maximum_decomposition_residual": 0.0,
+      "local_mean_square": 3.2744603705207624e-09,
+      "inherited_mean_square": 4.370774352163588e-09,
+      "interaction": -1.028748116080685e-11,
+      "total_mean_square": 7.634947241523544e-09
+    },
+    {
+      "reference": "numpy",
+      "route": "managed-managed",
+      "metrics": {
+        "convolution-input": {
+          "values": 303104,
+          "max_scaled": 2.7292568859138555e-05,
+          "failed": 0,
+          "rms": 3.1689208803080966e-06,
+          "max_absolute": 7.132942027965328e-05,
+          "coordinate": [
+            0,
+            21,
+            3467
+          ]
+        },
+        "local-projection": {
+          "values": 75776,
+          "max_scaled": 0.00042306582815143656,
+          "failed": 101,
+          "rms": 0.000271114993596731,
+          "max_absolute": 0.01088770271417161,
+          "coordinate": [
+            0,
+            35,
+            518
+          ]
+        },
+        "inherited-convolution": {
+          "values": 75776,
+          "max_scaled": 0.00032832134252913647,
+          "failed": 106,
+          "rms": 9.447721122187786e-05,
+          "max_absolute": 0.0008150537869369145,
+          "coordinate": [
+            0,
+            20,
+            610
+          ]
+        },
+        "total": {
+          "values": 75776,
+          "max_scaled": 0.0005055164031944059,
+          "failed": 203,
+          "rms": 0.00028651178445746766,
+          "max_absolute": 0.010911274021964346,
+          "coordinate": [
+            0,
+            35,
+            518
+          ]
+        }
+      },
+      "maximum_decomposition_residual": 0.0,
+      "local_mean_square": 7.350333975295549e-08,
+      "inherited_mean_square": 8.925943440263324e-09,
+      "interaction": -3.4028056021639505e-10,
+      "total_mean_square": 8.208900263300242e-08
+    },
+    {
+      "reference": "numpy",
+      "route": "native-managed",
+      "metrics": {
+        "convolution-input": {
+          "values": 303104,
+          "max_scaled": 2.0569089006272634e-05,
+          "failed": 0,
+          "rms": 2.222945933359646e-06,
+          "max_absolute": 5.416157253534948e-05,
+          "coordinate": [
+            0,
+            8,
+            3194
+          ]
+        },
+        "local-projection": {
+          "values": 75776,
+          "max_scaled": 0.0001933149742754381,
+          "failed": 7,
+          "rms": 5.6637410765625425e-05,
+          "max_absolute": 0.0014263541725085815,
+          "coordinate": [
+            0,
+            35,
+            481
+          ]
+        },
+        "inherited-convolution": {
+          "values": 75776,
+          "max_scaled": 0.00018874783011806255,
+          "failed": 46,
+          "rms": 6.635189196594123e-05,
+          "max_absolute": 0.0006727003074047389,
+          "coordinate": [
+            0,
+            17,
+            344
+          ]
+        },
+        "total": {
+          "values": 75776,
+          "max_scaled": 0.0003056732780812865,
+          "failed": 69,
+          "rms": 8.74886284966175e-05,
+          "max_absolute": 0.001840951656049583,
+          "coordinate": [
+            0,
+            35,
+            481
+          ]
+        }
+      },
+      "maximum_decomposition_residual": 0.0,
+      "local_mean_square": 3.207796298234183e-09,
+      "inherited_mean_square": 4.402573567459935e-09,
+      "interaction": 4.3890250525034875e-11,
+      "total_mean_square": 7.654260116219153e-09
+    },
+    {
+      "reference": "torch",
+      "route": "managed-native",
+      "metrics": {
+        "convolution-input": {
+          "values": 303104,
+          "max_scaled": 2.9579471905183397e-05,
+          "failed": 0,
+          "rms": 3.1639425576719377e-06,
+          "max_absolute": 7.481833341671518e-05,
+          "coordinate": [
+            0,
+            6,
+            2962
+          ]
+        },
+        "local-projection": {
+          "values": 75776,
+          "max_scaled": 0.0004831081843867935,
+          "failed": 88,
+          "rms": 0.0002730800867562354,
+          "max_absolute": 0.011353022841831262,
+          "coordinate": [
+            0,
+            30,
+            972
+          ]
+        },
+        "inherited-convolution": {
+          "values": 75776,
+          "max_scaled": 0.00024026271641020003,
+          "failed": 112,
+          "rms": 9.489182872028108e-05,
+          "max_absolute": 0.0008062917941060732,
+          "coordinate": [
+            0,
+            12,
+            192
+          ]
+        },
+        "total": {
+          "values": 75776,
+          "max_scaled": 0.00047936457698938284,
+          "failed": 200,
+          "rms": 0.00028878504563139944,
+          "max_absolute": 0.011181919942828245,
+          "coordinate": [
+            0,
+            55,
+            214
+          ]
+        }
+      },
+      "maximum_decomposition_residual": 0.0,
+      "local_mean_square": 7.457273378279307e-08,
+      "inherited_mean_square": 9.004459157879159e-09,
+      "interaction": -1.8039036034274904e-10,
+      "total_mean_square": 8.339680258032946e-08
+    },
+    {
+      "reference": "torch",
+      "route": "native-native",
+      "metrics": {
+        "convolution-input": {
+          "values": 303104,
+          "max_scaled": 1.763476361804628e-05,
+          "failed": 0,
+          "rms": 2.2110880353631355e-06,
+          "max_absolute": 3.6529904193116636e-05,
+          "coordinate": [
+            0,
+            58,
+            592
+          ]
+        },
+        "local-projection": {
+          "values": 75776,
+          "max_scaled": 0.00018440149233132837,
+          "failed": 4,
+          "rms": 5.7222900754273655e-05,
+          "max_absolute": 0.0012317299660935532,
+          "coordinate": [
+            0,
+            35,
+            277
+          ]
+        },
+        "inherited-convolution": {
+          "values": 75776,
+          "max_scaled": 0.00021034922524520994,
+          "failed": 39,
+          "rms": 6.611183216184177e-05,
+          "max_absolute": 0.0006250923870538827,
+          "coordinate": [
+            0,
+            64,
+            464
+          ]
+        },
+        "total": {
+          "values": 75776,
+          "max_scaled": 0.00025165001279340025,
+          "failed": 57,
+          "rms": 8.737818515571245e-05,
+          "max_absolute": 0.0013030980835537775,
+          "coordinate": [
+            0,
+            35,
+            277
+          ]
+        }
+      },
+      "maximum_decomposition_residual": 0.0,
+      "local_mean_square": 3.2744603707334524e-09,
+      "inherited_mean_square": 4.370774351795537e-09,
+      "interaction": -1.028748142302133e-11,
+      "total_mean_square": 7.634947241105968e-09
+    },
+    {
+      "reference": "torch",
+      "route": "managed-managed",
+      "metrics": {
+        "convolution-input": {
+          "values": 303104,
+          "max_scaled": 2.729256885702913e-05,
+          "failed": 0,
+          "rms": 3.1689208803434102e-06,
+          "max_absolute": 7.132942030807499e-05,
+          "coordinate": [
+            0,
+            21,
+            3467
+          ]
+        },
+        "local-projection": {
+          "values": 75776,
+          "max_scaled": 0.00042306582818874006,
+          "failed": 101,
+          "rms": 0.0002711149935984218,
+          "max_absolute": 0.010887702715081105,
+          "coordinate": [
+            0,
+            35,
+            518
+          ]
+        },
+        "inherited-convolution": {
+          "values": 75776,
+          "max_scaled": 0.00032832134271565394,
+          "failed": 106,
+          "rms": 9.447721123006112e-05,
+          "max_absolute": 0.0008150537869369145,
+          "coordinate": [
+            0,
+            20,
+            610
+          ]
+        },
+        "total": {
+          "values": 75776,
+          "max_scaled": 0.0005055164031055881,
+          "failed": 203,
+          "rms": 0.00028651178445862727,
+          "max_absolute": 0.010911274021054851,
+          "coordinate": [
+            0,
+            35,
+            518
+          ]
+        }
+      },
+      "maximum_decomposition_residual": 0.0,
+      "local_mean_square": 7.350333975387227e-08,
+      "inherited_mean_square": 8.925943441809588e-09,
+      "interaction": -3.402805620149525e-10,
+      "total_mean_square": 8.208900263366689e-08
+    },
+    {
+      "reference": "torch",
+      "route": "native-managed",
+      "metrics": {
+        "convolution-input": {
+          "values": 303104,
+          "max_scaled": 2.0569089025146425e-05,
+          "failed": 0,
+          "rms": 2.2229459334000185e-06,
+          "max_absolute": 5.41615725921929e-05,
+          "coordinate": [
+            0,
+            8,
+            3194
+          ]
+        },
+        "local-projection": {
+          "values": 75776,
+          "max_scaled": 0.00019331497438557221,
+          "failed": 7,
+          "rms": 5.663741076410073e-05,
+          "max_absolute": 0.0014263541715990868,
+          "coordinate": [
+            0,
+            35,
+            481
+          ]
+        },
+        "inherited-convolution": {
+          "values": 75776,
+          "max_scaled": 0.00018874782995133564,
+          "failed": 46,
+          "rms": 6.635189196893264e-05,
+          "max_absolute": 0.0006727003064952441,
+          "coordinate": [
+            0,
+            17,
+            344
+          ]
+        },
+        "total": {
+          "values": 75776,
+          "max_scaled": 0.0003056732781061555,
+          "failed": 69,
+          "rms": 8.748862849856768e-05,
+          "max_absolute": 0.0018409516569590778,
+          "coordinate": [
+            0,
+            35,
+            481
+          ]
+        }
+      },
+      "maximum_decomposition_residual": 0.0,
+      "local_mean_square": 3.2077962980614734e-09,
+      "inherited_mean_square": 4.4025735678569066e-09,
+      "interaction": 4.389025064201091e-11,
+      "total_mean_square": 7.65426011656039e-09
+    }
+  ],
+  "samples": 167,
+  "peak_rss": 3222872064,
+  "identities": [
+    {
+      "pid": 653344,
+      "birth": 1789974631.7983873
+    },
+    {
+      "pid": 640948,
+      "birth": 1789974633.4718792
+    },
+    {
+      "pid": 543588,
+      "birth": 1789974639.1728225
+    },
+    {
+      "pid": 602980,
+      "birth": 1789974646.4204755
+    },
+    {
+      "pid": 630124,
+      "birth": 1789974652.1169264
+    },
+    {
+      "pid": 478876,
+      "birth": 1789974657.811556
+    },
+    {
+      "pid": 349332,
+      "birth": 1789974663.243341
+    },
+    {
+      "pid": 641896,
+      "birth": 1789974668.983096
+    },
+    {
+      "pid": 624288,
+      "birth": 1789974672.099341
+    }
+  ]
+}
