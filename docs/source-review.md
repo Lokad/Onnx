@@ -67,8 +67,12 @@ Five exact source files and their hashes are retained in
 claimed as a reconstruction of the installed wheel; each benchmark separately
 pins its actual native libraries. Lokad's [private Whisper reuse experiment](../tests/whisper/buffer-reuse/README.md)
 tests bounded retention of already-released arrays with normal runtime settings,
-preserving independent contexts and outputs. Its prospective resource and
-allocation gates must pass before broader product qualification.
+preserving independent contexts and outputs. The subsequent implementation is
+integrated in `0f86c5d` after [100 AMD requests](../tests/whisper/weight-sharing-v2/results-20260920.md),
+[public request contracts](../tests/whisper/memory-contracts-amd/results-20260921.md)
+and [coherent source/package qualification](../tests/whisper/memory-product-v2/results-20260921.md).
+Matched ORT timing is a separate measurement; allocation savings do not imply
+an application latency improvement.
 
 The [fresh public-options / ORT comparison](../tests/e5/public-ort-20260919.md)
 records the current gap; the [earlier release comparison](../tests/e5/comparison-20260919.md)

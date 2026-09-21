@@ -178,42 +178,24 @@ released-array cache limits bound those caches individually, not total process
 memory. Published resource observations apply to their stated recording,
 hardware, revision and request count.
 
-The September 20 AMD short-audio benchmark also records a [managed Whisper
-resource failure](../tests/audio/amd-comparison/resource-failure-20260920.md).
-Sixteen of twenty short requests completed correctly before available RAM fell
-below the unchanged 1 GiB reserve; peak sampled RSS was 14.978 GB. The worker
-did not finish conformance, so no AMD timing result or repeated-use memory
-qualification follows from that run. Earlier finite recording observations and
-the complete Windows timing comparison retain their original scope.
+Whisper now reuses its execution contexts with 512/128/128 MiB released-array
+budgets and shares 635,187,200 bytes of identical private decoder weights on the
+pinned export. Each request keeps independent attention state; caller inputs and
+previously returned outputs remain valid. These budgets bound cached payload,
+not total process memory.
 
-The subsequent [Whisper collection diagnostic](../tests/whisper/memory-collection/results-20260920.md)
-completes the same twenty short requests using explicit collections after requests
-8, 16 and 20, with unchanged results and ownership checks. It records managed-heap
-and RSS changes separately; it does not qualify normal repeated operation or add
-forced GC to production. The original AMD failure remains unchanged.
-
-The [private Whisper buffer-reuse prototype](../tests/whisper/buffer-reuse/results-20260920.md)
-completes twenty conformance and eighty endurance requests on AMD without forced
-collection. Allocation and resource gates pass for that fixed short-clip workload.
-It is not a production source change, a broader numerical qualification or an ORT
-latency comparison. Its report preserves the original normal-runtime failure.
-
-The [private Whisper decoder-weight sharing candidate](../tests/whisper/weight-sharing-v2/results-20260920.md)
-also passes 20 conformance and 80 endurance requests on AMD, including complete
-decoder payload and explicit cached-name transition checks. Separate
-[Windows public contracts](../tests/whisper/memory-contracts-v2/local-results-20260921.md)
-pass recording, concurrent speech and recovery checks. AMD public contracts,
-production integration, numerical gaps and matched AMD latency remain open.
-
-The same private memory candidate also passes [AMD public contracts](../tests/whisper/memory-contracts-amd/results-20260921.md): thirteen requests and sixteen refusal/cancellation checks, including recording, overlapping speech and exact recovery. Production integration, numerical gaps and matched AMD Whisper latency remain pending.
-
-The qualified Whisper memory changes are now integrated: a transcriber reuses
-its execution contexts with 512/128/128 MiB released-array budgets and shares
-635,187,200 bytes of identical private decoder weights on the pinned export.
-Each request keeps independent attention state; inputs and previously returned
-outputs remain valid. These budgets do not bound total process memory. The
+The integrated changes pass [100 AMD requests](../tests/whisper/weight-sharing-v2/results-20260920.md),
+with warm allocations 75.5% below the original implementation, and recording,
+concurrent speech and recovery checks on [Windows](../tests/whisper/memory-contracts-v2/local-results-20260921.md)
+and [AMD](../tests/whisper/memory-contracts-amd/results-20260921.md). The
 [coherent build and package qualification](../tests/whisper/memory-product-v2/results-20260921.md)
-passes both full suites and public cache-budget checks. The prior Windows/AMD
-recording, concurrency and endurance evidence applies through verified source
-and executable-method equivalence. Existing numerical limits remain open, and
-matched AMD Whisper latency still requires a separate comparison.
+passes both full test suites and public cache-budget checks. Source and executable
+method comparisons connect the integrated files to those tested artifacts.
+
+The [original AMD resource failure](../tests/audio/amd-comparison/resource-failure-20260920.md),
+[collection diagnostic](../tests/whisper/memory-collection/results-20260920.md) and
+[failed snapshot assertion](../tests/whisper/weight-sharing/failure-20260920.md)
+remain recorded in their reports. The successful candidate uses normal collection.
+Existing numerical and broader accuracy limits remain open. A separate
+[matched AMD Whisper comparison](../tests/audio/whisper-amd/README.md) is running;
+allocation and endurance observations are not ORT latency measurements.

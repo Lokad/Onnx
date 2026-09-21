@@ -31,30 +31,12 @@ one mean Lokad takes longer. These descriptive results have no calibrated parity
 claim. The [complete report](tests/audio/amd-two-family/results-20260920.md)
 includes process variation, memory, every Parakeet clip and evidence identities.
 
-**Whisper has no AMD timing result:** the separate [all-family attempt](tests/audio/amd-comparison/resource-failure-20260920.md)
-stopped during managed conformance below its 1 GiB available-memory reserve, with
-16 of 20 requests completed, before timing. The Windows Whisper baseline remains
-below. The later two-family timing scope preserves that resource failure.
-A separate [collection diagnostic](tests/whisper/memory-collection/results-20260920.md)
-completes the twenty requests with explicit collections after requests 8, 16 and
-20. It measures reclaimability and does not supply normal-runtime timing.
-A later [private buffer-reuse prototype](tests/whisper/buffer-reuse/results-20260920.md)
-completes 20 conformance and 80 endurance requests without forced collection.
-It reduces allocations but does not supply a matched AMD Whisper timing result.
-A separate [decoder-weight sharing candidate](tests/whisper/weight-sharing/failure-20260920.md)
-completes twenty saved requests but fails its final decoder snapshot check;
-its endurance phase does not start. This candidate is not yet qualified.
-The [controlled decoder diagnosis](tests/whisper/weight-metadata/results-20260920.md)
-reproduces two cached tensor-name changes on Windows and AMD, with every weight
-byte unchanged in both shared and unshared controls. The separate
-[corrected sharing campaign](tests/whisper/weight-sharing-v2/results-20260920.md)
-now passes all 100 requests and its full weight, allocation and resource checks.
-The same private candidate also passes recording, concurrent speech and recovery
-contracts on [Windows](tests/whisper/memory-contracts-v2/local-results-20260921.md)
-and [AMD](tests/whisper/memory-contracts-amd/results-20260921.md).
-The qualified memory changes are now integrated; matched AMD Whisper timing
-remains pending. These allocation and request-contract results are not latency
-comparisons against ORT.
+**Whisper has no AMD timing result:** its earlier [conformance attempt](tests/audio/amd-comparison/resource-failure-20260920.md)
+stopped at the available-memory guard before timing. The qualified memory changes
+are now integrated in `0f86c5d`, after [100 AMD requests](tests/whisper/weight-sharing-v2/results-20260920.md)
+and [recording, concurrency and recovery checks](tests/whisper/memory-contracts-amd/results-20260921.md).
+A fresh [matched comparison](tests/audio/whisper-amd/README.md) is running. Its
+results will be added after the complete audit; the Windows baseline is below.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
 
