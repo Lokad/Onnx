@@ -1,0 +1,23 @@
+    // Validate expanded storage independently of the input/weight backing sizes.
+    // The spatial planner keeps the first candidate's 32-column minimum panel.
+    internal static (int columns, int reduction, int blockColumns, int scratchElements)
+        PlanConvSpatialScratch(int channels, int kh, int kw, int filters, int height, int width)
+    {
+        int columns = checked(height * width);
+        int reduction = checked(channels * kh * kw);
+        int blockColumns = columns;
+        if ((long)reduction * columns > ConvTileBudgetBytes / sizeof(float))
+        {
+            long perColumn = ((long)reduction + filters) * sizeof(float);
+            long fit = ConvTileBudgetBytes / perColumn;
+            const int panel = 32;
+            long aligned = Math.Max(panel, fit / panel * panel);
+            blockColumns = (int)Math.Min(columns, aligned);
+        }
+        long elements = (long)reduction * blockColumns;
+        if (blockColumns < columns) elements += (long)filters * blockColumns;
+        if (elements > Array.MaxLength)
+            throw new ArgumentException("Convolution scratch exceeds the supported array length.");
+        return (columns, reduction, blockColumns, (int)elements);
+    }
+

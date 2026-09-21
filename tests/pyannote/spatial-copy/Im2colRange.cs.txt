@@ -1,0 +1,52 @@
+    // Spatial row sharing follows voice de60581/e802581. Span copies preserve
+    // all payload bits and let the runtime choose a supported copy instruction.
+    internal static unsafe void Im2colRange(float* src, int srcC, int srcH, int srcW,
+        int kernelY, int kernelX, int dilationY, int dilationX, int strideY, int strideX,
+        int padY, int padX, int padH, int padW, int dstW, int colStart, int colCount, float* buf)
+    {
+        if (colCount == 0) return;
+        int end = checked(colStart + colCount);
+        int dyFirst = colStart / dstW, dyLast = (end - 1) / dstW;
+        for (int sc = 0; sc < srcC; sc++)
+        for (int ky = 0; ky < kernelY; ky++)
+        for (int dy = dyFirst; dy <= dyLast; dy++)
+        {
+            long sy = (long)ky * dilationY - padY + (long)dy * strideY;
+            float* line = sy >= 0 && sy < srcH ? src + (sc * srcH + (int)sy) * srcW : null;
+            int first = dy == dyFirst ? colStart - dy * dstW : 0;
+            int last = dy == dyLast ? end - dy * dstW : dstW;
+            int count = last - first, offset = dy * dstW + first - colStart;
+            for (int kx = 0; kx < kernelX; kx++)
+            {
+                int patchRow = (sc * kernelY + ky) * kernelX + kx;
+                // The pointer always denotes this tile's allocated destination.
+                var output = new Span<float>(buf + patchRow * colCount + offset, count);
+                if (line == null)
+                {
+                    output.Clear();
+                    continue;
+                }
+                long col0 = (long)kx * dilationX - padX;
+                if (strideX == 1)
+                {
+                    // Clamp BOTH boundaries. A complete tile may lie in padding.
+                    int begin = (int)Math.Clamp(-col0 - first, 0L, count);
+                    int finish = (int)Math.Clamp((long)srcW - col0 - first, 0L, count);
+                    output[..begin].Clear();
+                    if (finish > begin)
+                        new ReadOnlySpan<float>(line + (int)(col0 + first + begin), finish - begin)
+                            .CopyTo(output[begin..finish]);
+                    output[finish..].Clear();
+                }
+                else
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        long sx = col0 + (long)(first + i) * strideX;
+                        output[i] = sx >= 0 && sx < srcW ? line[(int)sx] : 0f;
+                    }
+                }
+            }
+        }
+    }
+
