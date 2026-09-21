@@ -184,6 +184,14 @@ ORT references exactly; maximum meeting centroid error is 8.98e-7. All 2,558
 resource samples pass. This is correctness and ownership evidence for the
 integrated build, without a new matched timing claim.
 
+A [profile of that exact integrated build](tests/pyannote/integrated-profile/results-20260922.md)
+passes all 48 public requests and both independent captures. The three-row
+matrix kernel accounts for 53.7–54.3% of sampled full-request managed thread
+time; its tiled-convolution caller accounts for 15.3–15.5%. Inlining prevents
+assigning that caller share to individual operations. GC suspension envelopes
+are 1.63% and 1.29% of captured full-request wall time. These measurements guide
+the next experiment; they establish neither a new speedup nor an ORT ratio.
+
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
 Fresh matched measurements on Windows i7-14700KF, CPU2, .NET 10.0.12 and
