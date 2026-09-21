@@ -16,8 +16,8 @@ The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
 
 The latest accepted **Windows pyannote candidate** completes the 30-second
-dialogue in **11.549 s versus Microsoft ORT 6.334 s (1.823×)**. Its immediate
-predecessor takes 12.325 s in the same comparison, a 6.3% reduction. On the
+dialogue in **10.493 s versus Microsoft ORT 6.320 s (1.660×)**. Its immediate
+predecessor takes 11.482 s in the same comparison, an 8.6% reduction. On the
 **AMD target**, the retained production baselines are **pyannote 46.561 s versus
 ORT 9.270 s (5.023×)** and **Parakeet 79.362 s versus ORT 40.764 s (1.947×)**
 for twenty clips totaling 213.265 seconds. New AMD candidate timing is pending.
@@ -146,32 +146,40 @@ correctness evidence for a new Data candidate. Its
 [complete application qualification](tests/pyannote/sparse-mel-qualification/results-20260921.md)
 passes 3,280 backend and 342 tensor tests, all 16 dialogue requests, both
 ten-minute meetings and recovery. Public results match the predecessor and
-meeting timelines match ORT exactly; all 2,965 resource samples pass. The fresh
-ORT timing comparison is running. No speedup is inferred from coefficient
-counts or historical meeting times; the accepted timing tables remain unchanged.
+meeting timelines match ORT exactly; all 2,965 resource samples pass. Its
+[fresh matched ORT comparison](tests/pyannote/sparse-mel-comparison/results-20260921.md)
+passes all 96 requests, 1,091 resource samples and every fixed timing control.
+Complete 30-second dialogue latency falls from 11.482 to 10.493 seconds (8.6%);
+fresh ORT takes 6.320 seconds, a 1.660 ratio. The three crops improve 6.7–7.0%.
+This qualifies the candidate for later AMD evaluation; production integration
+and target performance remain pending.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
 Fresh matched measurements on Windows i7-14700KF, CPU2, .NET 10.0.12 and
 Microsoft ORT 1.29.0. This is isolated convolution candidate Core `5c0ae2aa`
-with request-scoped Data `1d346664`, including the earlier convolution/LSTM work;
+with sparse-mel Data `e9e4c28e`, including the earlier convolution/LSTM and
+request-scoped execution work;
 production promotion and AMD qualification remain pending. Timers include the
 complete application: features, graphs, clustering and owned results.
 
 | Workload | Candidate seconds | Microsoft ORT seconds | Candidate / ORT | Candidate RTF | ORT RTF |
 |---|---:|---:|---:|---:|---:|
-| pyannote, dialogue-30s | 11.549 | 6.334 | 1.823 | 0.385 | 0.211 |
-| pyannote, dialogue-0-10s | 0.538 | 0.306 | 1.757 | 0.054 | 0.031 |
-| pyannote, dialogue-10-20s | 0.530 | 0.306 | 1.729 | 0.053 | 0.031 |
-| pyannote, dialogue-20-30s | 0.525 | 0.303 | 1.733 | 0.053 | 0.030 |
+| pyannote, dialogue-30s | 10.493 | 6.320 | 1.660 | 0.350 | 0.211 |
+| pyannote, dialogue-0-10s | 0.493 | 0.303 | 1.627 | 0.049 | 0.030 |
+| pyannote, dialogue-10-20s | 0.489 | 0.303 | 1.615 | 0.049 | 0.030 |
+| pyannote, dialogue-20-30s | 0.486 | 0.303 | 1.604 | 0.049 | 0.030 |
 
 Two fresh processes per role (predecessor, candidate and ORT) run one warmup and
 three measured passes each. All 96 requests pass public-output, ownership and
-input checks; all 1,159 resource samples pass. Every timing sample is retained.
+input checks; all 1,091 resource samples pass. Every timing sample is retained.
 These descriptive local ratios do not establish calibrated parity or an AMD
-speedup. The [complete report](tests/pyannote/convolution-portable-comparison/results-20260921.md)
+speedup. The [complete report](tests/pyannote/sparse-mel-comparison/results-20260921.md)
 includes timing boundaries, process variation and numerical limits. The
-[previous Windows comparison](tests/pyannote/optimized-ort/results-20260921.md)
+[preceding convolution comparison](tests/pyannote/convolution-portable-comparison/results-20260921.md)
+retains Core `5c0ae2aa`/Data `1d346664` at 11.549 versus ORT 6.334 seconds
+(1.823 ratio), a 6.3% improvement in its own matched trial. The
+[earlier Windows comparison](tests/pyannote/optimized-ort/results-20260921.md)
 retains Core `469cb2d6` at 12.446 versus ORT 6.584 seconds (1.890 ratio).
 
 Three isolated pyannote candidates have completed local four-process comparisons

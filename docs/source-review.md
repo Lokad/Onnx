@@ -23,6 +23,15 @@ separately; combining the AMD and portable convolution routes requires explicit
 dispatch selection and qualification of the resulting build. This review
 prepares integration without changing the frozen AMD experiment.
 
+The separate [sparse-mel adaptation](../tests/pyannote/sparse-mel/results-20260921.md)
+now passes complete dialogue and meeting qualification. Its
+[fresh matched comparison](../tests/pyannote/sparse-mel-comparison/results-20260921.md)
+reduces full-dialogue latency 8.6%, from 11.482 to 10.493 seconds, with ORT at
+6.320 seconds (1.660 ratio) on Windows. Every original repeatability control
+passes. The change skips zero coefficients while preserving all feature bits;
+it joins the accepted local integration candidate, with AMD performance still
+to be established.
+
 The [remaining-gap review](../tests/e5/remaining-gap/results-20260920.md)
 recomputes the complete-model reduction still needed for the unchanged 1.05
 ratio, using unrounded retained observations. In the isolated public Memory
