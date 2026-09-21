@@ -394,5 +394,24 @@ The inspected ORT1.23.2 [BiasGelu source](https://github.com/microsoft/onnxrunti
 also multiplies by a float conversion of `M_SQRT1_2` before `MlasComputeErf`.
 This source observation is not a dispatch claim for the separate ORT1.29.0 audio
 baseline. Neither the scalar example nor the unfused diagnostics establishes
-that GELU fusion causes Whisper's full-model discrepancy. A managed comparison
-that changes only this fusion behavior is the next distinct numerical question.
+that GELU fusion causes Whisper's full-model discrepancy.
+
+The [actual managed comparison](../tests/whisper/managed-gelu-v2/results-20260921.md)
+now isolates this transformation on the qualified current core. Exposing only
+the Erf outputs initially allowed 32 ScaledMatMul fusions to replace the final
+activation multiplication and following matrix operation. That first design is
+retained as a failure. Also exposing the final activation outputs prevents this
+secondary transformation: all 837 unaffected optimized nodes remain identical,
+while 34 fused activations expand to 202 original nodes. All original model
+operators, constants and external weights are preserved.
+
+Across three selected clips and an exact repeat, disabling fusion lowers final
+maximum error by about 7–15% against both retained independent double references.
+Every final output still fails the unchanged `1e-4` gate, and the first clip has
+more failing values. The fixed requirement to halve maximum error on every clip
+fails. All 592 arrays, ownership/resource checks and repeats pass structural
+validation; the current baseline matches all 164 older managed trace arrays bit
+for bit. Disabling this fusion is insufficient to resolve the encoder error.
+The experiment changes the combined fusion arithmetic and observable lifetimes,
+so it neither isolates reciprocal rounding alone nor supplies a latency claim.
+Production arithmetic and defaults remain unchanged.
