@@ -114,6 +114,11 @@ recomputes each protocol's absolute reduction needed to reach 1.05 from
 unrounded data. It keeps component gains, historical profiles and failed timing
 controls separate; it changes no score or production default.
 
+A later [analysis of the retained resident-process data](tests/e5/resident-variation/results-20260921.md)
+finds that all forty failed Execute visit contrasts keep their direction in both
+balanced halves. It explains why more within-process samples alone are insufficient;
+it does not revise the failed timing screen or any reported latency.
+
 ### e5: earlier independent deployment versus native ORT
 
 The [September 20 independent-deployment controls](tests/e5/fingerprint-deployment/aa-results-20260920.md)

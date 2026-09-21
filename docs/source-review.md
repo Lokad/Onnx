@@ -23,6 +23,16 @@ caching and wider LayerNorm have useful component evidence; adding their costs
 to historical model means would manufacture a result that was never measured.
 Their complete-model qualification remains unresolved and both stay off.
 
+The [resident-process variation analysis](../tests/e5/resident-variation/results-20260921.md)
+now checks all 89,088 retained calls from the later interleaved experiment.
+Every one of forty Execute pairs that violated the original per-visit 1% limit
+keeps its direction in both balanced halves; thirty-one fail in both halves.
+Exact decomposition distinguishes persistent process means from common cycle
+movement, without assigning a runtime cause or correcting any latency. This
+supports fresh-process replication in the next design. More calls inside the
+same processes cannot by themselves resolve the observed persistent differences.
+Original failed timing screens and optional defaults remain unchanged.
+
 ## What the ORT source changes about the optimization priorities
 
 | Source finding | Consequence for Lokad.Onnx |
