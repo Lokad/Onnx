@@ -97,37 +97,47 @@ remain documented. This admits a separate convolution experiment; it establishes
 no complete-application speedup or new ORT ratio.
 The subsequent [coverage correction](tests/pyannote/portable-row-groups/coverage-correction-20260921.md)
 finds six omitted tile geometries from three strided 1×1 layers. The 17.8%
-figure covers only sixteen of the model's twenty-two tile geometries; complete
-kernel coverage needs a successor. The full graph and public tests include
-those layers, so their output qualification remains applicable.
+figure covers only sixteen of the model's twenty-two tile geometries. The
+[complete-coverage successor](tests/pyannote/complete-row-coverage/results-20260921.md)
+passes all 1,034 numerical cases and 1.22 million values, but fails its fixed
+process-repeatability controls for three shapes. It establishes no aggregate
+kernel gain. The separately qualified graph and public workloads include every
+layer; the application comparison below passes its own original controls.
 The [isolated convolution implementation](tests/pyannote/convolution-portable-rows/results-20260921.md)
 now passes 214 focused tests, 50 hardware-disabled tests and all 108 captured
 graph calls, preserving 17.5 million values bit for bit. All 166 shared-model
 arrays and 784 Parakeet arrays are also unchanged. Complete public-application
-and performance qualification remain pending.
-Full suites now pass 3,222 backend and 342 tensor tests, and all 16 dialogue
-requests preserve predecessor outputs. Long-meeting qualification and the
-subsequent matched ORT comparison are still running or queued.
+qualification now [passes](tests/pyannote/convolution-portable-qualification/results-20260921.md):
+3,222 backend tests, 342 tensor tests, all 16 dialogue requests, both ten-minute
+meetings and recovery preserve predecessor outputs and exact native timelines.
+The [fresh matched ORT comparison](tests/pyannote/convolution-portable-comparison/results-20260921.md)
+passes every fixed control: the full request falls from 12.325 to 11.549 seconds
+(6.3%), and the three crops improve 7.5–9.9%. The current Windows candidate table
+below reflects this result. AMD qualification and production promotion remain pending.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
 Fresh matched measurements on Windows i7-14700KF, CPU2, .NET 10.0.12 and
-Microsoft ORT 1.29.0. This is the isolated convolution/LSTM candidate `469cb2d6`;
+Microsoft ORT 1.29.0. This is isolated convolution candidate Core `5c0ae2aa`
+with request-scoped Data `1d346664`, including the earlier convolution/LSTM work;
 production promotion and AMD qualification remain pending. Timers include the
 complete application: features, graphs, clustering and owned results.
 
 | Workload | Candidate seconds | Microsoft ORT seconds | Candidate / ORT | Candidate RTF | ORT RTF |
 |---|---:|---:|---:|---:|---:|
-| pyannote, dialogue-30s | 12.446 | 6.584 | 1.890 | 0.415 | 0.219 |
-| pyannote, dialogue-0-10s | 0.573 | 0.302 | 1.898 | 0.057 | 0.030 |
-| pyannote, dialogue-10-20s | 0.564 | 0.307 | 1.839 | 0.056 | 0.031 |
-| pyannote, dialogue-20-30s | 0.596 | 0.305 | 1.955 | 0.060 | 0.031 |
+| pyannote, dialogue-30s | 11.549 | 6.334 | 1.823 | 0.385 | 0.211 |
+| pyannote, dialogue-0-10s | 0.538 | 0.306 | 1.757 | 0.054 | 0.031 |
+| pyannote, dialogue-10-20s | 0.530 | 0.306 | 1.729 | 0.053 | 0.031 |
+| pyannote, dialogue-20-30s | 0.525 | 0.303 | 1.733 | 0.053 | 0.030 |
 
-Two fresh processes per engine run one warmup and three measured passes each.
-All 64 requests pass public-output, ownership and input checks; all 382 resource
-samples pass. Every timing sample is retained. These descriptive local ratios
-do not establish calibrated parity or an AMD speedup. The [complete report](tests/pyannote/optimized-ort/results-20260921.md)
-includes timing boundaries, process variation and numerical limits.
+Two fresh processes per role (predecessor, candidate and ORT) run one warmup and
+three measured passes each. All 96 requests pass public-output, ownership and
+input checks; all 1,159 resource samples pass. Every timing sample is retained.
+These descriptive local ratios do not establish calibrated parity or an AMD
+speedup. The [complete report](tests/pyannote/convolution-portable-comparison/results-20260921.md)
+includes timing boundaries, process variation and numerical limits. The
+[previous Windows comparison](tests/pyannote/optimized-ort/results-20260921.md)
+retains Core `469cb2d6` at 12.446 versus ORT 6.584 seconds (1.890 ratio).
 
 Three isolated pyannote candidates have completed local four-process comparisons
 on Windows i7-14700KF, CPU2. Each row measures the new candidate against its

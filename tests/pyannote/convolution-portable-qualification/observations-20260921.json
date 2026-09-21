@@ -1,0 +1,309 @@
+{
+  "passed": true,
+  "public_calls": 16,
+  "meeting_calls": 3,
+  "exact_predecessor_results": true,
+  "allocation_reduced": true,
+  "dialogue": [
+    {
+      "name": "dialogue-30s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 1120939317.3333333,
+      "candidate_allocated_mean": 1101369306.6666667,
+      "allocation_ratio": 0.9825414182872783,
+      "candidate_seconds": [
+        11.6018417,
+        11.7547738,
+        11.0602403
+      ]
+    },
+    {
+      "name": "dialogue-0-10s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 112056917.33333333,
+      "candidate_allocated_mean": 111804792.0,
+      "allocation_ratio": 0.9977500243685685,
+      "candidate_seconds": [
+        0.5377238,
+        0.5335813,
+        0.5310523
+      ]
+    },
+    {
+      "name": "dialogue-10-20s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 111024840.0,
+      "candidate_allocated_mean": 109217888.0,
+      "allocation_ratio": 0.9837247952800472,
+      "candidate_seconds": [
+        0.542212,
+        0.5215516,
+        0.5215615
+      ]
+    },
+    {
+      "name": "dialogue-20-30s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 111016682.66666667,
+      "candidate_allocated_mean": 109728933.33333333,
+      "allocation_ratio": 0.98840039800865,
+      "candidate_seconds": [
+        0.541994,
+        0.5160816,
+        0.5314867
+      ]
+    }
+  ],
+  "meetings": [
+    {
+      "name": "ES2004a",
+      "passed": true,
+      "maximum_centroid_error": 8.981409564540188e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 29026030600,
+      "prior_allocated_bytes": 30058081440,
+      "allocation_ratio": 0.965664779967407,
+      "seconds": 320.9352227
+    },
+    {
+      "name": "IS1009a",
+      "passed": true,
+      "maximum_centroid_error": 5.764390146878462e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 29033588104,
+      "prior_allocated_bytes": 30008978328,
+      "allocation_ratio": 0.9674967200369528,
+      "seconds": 313.4040789
+    },
+    {
+      "name": "ES2004a-recovery30",
+      "passed": true,
+      "maximum_centroid_error": 5.18795691045737e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 1086359064,
+      "prior_allocated_bytes": 1135129064,
+      "allocation_ratio": 0.9570357225916295,
+      "seconds": 11.738441
+    }
+  ],
+  "suites": [
+    {
+      "name": "request-focused",
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "2",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    },
+    {
+      "name": "backend-full",
+      "counters": {
+        "total": "3315",
+        "executed": "3222",
+        "passed": "3222",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    },
+    {
+      "name": "tensors-full",
+      "counters": {
+        "total": "342",
+        "executed": "342",
+        "passed": "342",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "cli-restore",
+      "samples": 3,
+      "peak_rss": 91648000,
+      "seconds": 0.7898453999659978,
+      "preflight": {
+        "seconds": 0.0005936000379733741,
+        "available": 16612663296,
+        "disk": 160921481216
+      }
+    },
+    {
+      "name": "cli-build",
+      "samples": 11,
+      "peak_rss": 257814528,
+      "seconds": 2.853267099999357,
+      "preflight": {
+        "seconds": 0.0005938999820500612,
+        "available": 16972333056,
+        "disk": 160921423872
+      }
+    },
+    {
+      "name": "backend-restore",
+      "samples": 6,
+      "peak_rss": 126332928,
+      "seconds": 1.5516930000158027,
+      "preflight": {
+        "seconds": 0.0008862999966368079,
+        "available": 17270108160,
+        "disk": 160916705280
+      }
+    },
+    {
+      "name": "backend-build",
+      "samples": 59,
+      "peak_rss": 534024192,
+      "seconds": 15.309654499986209,
+      "preflight": {
+        "seconds": 0.0006674000178463757,
+        "available": 16579878912,
+        "disk": 160839122944
+      }
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 3,
+      "peak_rss": 98631680,
+      "seconds": 0.7787693999707699,
+      "preflight": {
+        "seconds": 0.0007521999650634825,
+        "available": 13187801088,
+        "disk": 160823623680
+      }
+    },
+    {
+      "name": "tensors-build",
+      "samples": 18,
+      "peak_rss": 324960256,
+      "seconds": 4.670583800005261,
+      "preflight": {
+        "seconds": 0.0006027999916113913,
+        "available": 12837609472,
+        "disk": 160823500800
+      }
+    },
+    {
+      "name": "request-focused",
+      "samples": 11,
+      "peak_rss": 302411776,
+      "seconds": 2.8537054999615066,
+      "preflight": {
+        "seconds": 0.0006463000318035483,
+        "available": 12323426304,
+        "disk": 160808980480
+      }
+    },
+    {
+      "name": "backend-full",
+      "samples": 186,
+      "peak_rss": 2890432512,
+      "seconds": 48.257000100042205,
+      "preflight": {
+        "seconds": 0.0006318000378087163,
+        "available": 11544625152,
+        "disk": 160808927232
+      }
+    },
+    {
+      "name": "tensors-full",
+      "samples": 20,
+      "peak_rss": 294424576,
+      "seconds": 5.188227099948563,
+      "preflight": {
+        "seconds": 30.00695240002824,
+        "available": 16655192064,
+        "disk": 160802361344
+      }
+    },
+    {
+      "name": "dialogue",
+      "samples": 215,
+      "peak_rss": 511041536,
+      "seconds": 55.99132070003543,
+      "preflight": {
+        "seconds": 0.0008597999694757164,
+        "available": 14888501248,
+        "disk": 160756633600
+      }
+    },
+    {
+      "name": "meetings-inputs",
+      "samples": 3,
+      "peak_rss": 108912640,
+      "seconds": 0.7833816000493243,
+      "preflight": {
+        "seconds": 0.0009719000081531703,
+        "available": 15676010496,
+        "disk": 160755474432
+      }
+    },
+    {
+      "name": "meetings-run",
+      "samples": 2487,
+      "peak_rss": 1053917184,
+      "seconds": 647.2806722000241,
+      "preflight": {
+        "seconds": 0.0013732999796047807,
+        "available": 16246808576,
+        "disk": 160755470336
+      }
+    }
+  ],
+  "resource_samples": 3022,
+  "peak_rss": 2890432512,
+  "scope": "Output/allocation qualification only; historical timings are not a matched performance comparison; no AMD or production promotion.",
+  "terminal_identities": 58,
+  "analysis": {
+    "bytes": 18171,
+    "sha256": "ca244c73a6a641281aa79334743c2c6fb0bd9dc8753127eeb45b66e204565609"
+  }
+}
