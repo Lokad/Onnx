@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 import numpy as np
 from prepare import ROOT, BASE, MANIFEST, SITE, pin, read, save, verify
+OUTPUT = BASE/'trace-output'
 
 
 def clocks(row, graph):
@@ -84,11 +85,22 @@ def main():
     assert not (BASE/'analysis.json').exists()
     frozen = read(BASE/'frozen.json'); verify(frozen['files'])
     assert frozen['prepared'] == pin(BASE/'prepared.json')
-    state = read(BASE/'state.json'); assert state['complete'] and state['passed'] and state['code'] == 0
-    for identity in (state['supervisor'], state['worker']):
-        try: assert psutil.Process(identity['pid']).create_time() != identity['birth']
-        except psutil.NoSuchProcess: pass
-    result = read(BASE/'output/result.json'); spec = read(MANIFEST); graphs = read(BASE/'output/graphs.json')
+    states = [read(BASE/(mode+'-state.json')) for mode in ('trace', 'public')]; identities = []
+    for state in states:
+        assert state['complete'] and state['passed'] and state['code'] == 0
+        for identity in (state['supervisor'], state['worker']):
+            try: assert psutil.Process(identity['pid']).create_time() != identity['birth']
+            except psutil.NoSuchProcess: pass
+            identities.append(identity)
+    result = read(OUTPUT/'result.json'); public = read(BASE/'public-output/result.json')
+    assert result['mode'] == 'trace' and result['applications'] == []
+    assert public['mode'] == 'public' and public['call_files'] == [] and public['traced'] == []
+    assert public['passed'] and public['error'] is None and public['inputs_and_held_outputs_unchanged']
+    for key in ('runtime', 'affinity', 'processor_count', 'flags', 'manifest_sha256', 'core_sha256', 'data_sha256', 'runner_sha256'):
+        assert public[key] == result[key]
+    result['applications'] = public['applications']
+    spec = read(MANIFEST); graphs = read(OUTPUT/'graphs.json')
+    assert read(BASE/'public-output/graphs.json') == graphs
     assert result['passed'] and result['error'] is None and result['inputs_and_held_outputs_unchanged']
     assert result['runtime'] == '.NET 10.0.12' and result['affinity'] == 4 and result['processor_count'] == 1 and result['flags'] == {}
     assert result['manifest_sha256'] == pin(MANIFEST)['sha256']
@@ -99,7 +111,7 @@ def main():
     for index, line in enumerate((ROOT/spec['models']['vocab.txt']['path']).read_text(encoding='utf-8-sig').splitlines()):
         piece, number = line.rsplit(' ', 1); assert int(number) == index; pieces.append(piece)
     assert len(pieces) == 8193 and pieces[-1] == '<blk>'
-    calls = [read(BASE/'output'/name) for name in result['call_files']]
+    calls = [read(OUTPUT/name) for name in result['call_files']]
     assert result['call_files'] == [f'{i:04}.json' for i in range(2480)]
     wanted = [(p, c['name'], graph, step) for p in range(2) for c in spec['cases']
               for graph, step in [('frontend', -1), ('encoder', -1)]+[('decoder', i) for i in range(c['expected']['decoder_calls'])]]
@@ -108,7 +120,7 @@ def main():
     saved = {}; baseline = {}; values = 0; output_arrays = 0; input_arrays = 0
     def tensor(info):
         nonlocal values
-        name = info['file']; path = (BASE/'output'/name).resolve(); assert path.is_relative_to((BASE/'output/arrays').resolve()) and name not in saved
+        name = info['file']; path = (OUTPUT/name).resolve(); assert path.is_relative_to((OUTPUT/'arrays').resolve()) and name not in saved
         assert info['dtype'] in ('<f4', '<i4', '<i8') and all(isinstance(d, int) and d >= 0 for d in info['shape'])
         value = np.fromfile(path, dtype=info['dtype']); assert value.size == info['values'] == int(np.prod(info['shape']))
         assert np.isfinite(value).all() and pin(path)['sha256'] == info['sha256']
@@ -127,7 +139,7 @@ def main():
             for name, info in descriptors.items():
                 old = baseline[key][name]
                 assert (old['dtype'], old['shape'], old['values']) == (info['dtype'], info['shape'], info['values'])
-                assert (BASE/'output'/old['file']).read_bytes() == (BASE/'output'/info['file']).read_bytes(), (key, name)
+                assert (OUTPUT/old['file']).read_bytes() == (OUTPUT/info['file']).read_bytes(), (key, name)
             elapsed = Fraction(row['end_ticks']-row['start_ticks'], row['frequency'])
             by_graph[row['graph']] += elapsed; cell = per_clip[(row['name'], row['graph'])]; cell['seconds'] += elapsed
             cell['resets'] += Fraction(row['reset_end_ticks']-row['reset_start_ticks'], row['frequency'])
@@ -153,14 +165,17 @@ def main():
         assert row['input_sha256'] == __import__('hashlib').sha256(np.load(ROOT/case['pcm']['path'], allow_pickle=False).tobytes()).hexdigest()
         public_seconds += Fraction(row['end_ticks']-row['start_ticks'], row['frequency'])
     expected_files = set(saved) | set(result['call_files']) | {'graphs.json', 'result.json'}
-    assert {p.relative_to(BASE/'output').as_posix() for p in (BASE/'output').rglob('*') if p.is_file()} == expected_files
-    assert sum((BASE/'output'/n).stat().st_size for n in expected_files) <= 1024**3
-    samples = [json.loads(line) for line in (BASE/'samples.jsonl').read_text().splitlines()]
-    assert len(samples) == state['samples'] > 0 and max(s['rss'] for s in samples) == state['peak_rss']
-    assert state['preflight']['available'] >= 10*1024**3 and state['preflight']['disk'] >= 20*1024**3
-    for s in samples:
-        assert s['seconds'] < 1800 and s['rss'] < 8*1024**3 and s['available'] >= 1024**3 and s['disk'] >= 20*1024**3 and s['affinity'] == [2] and s['artifact_bytes'] <= 1024**3
-    gaps = [b['seconds']-a['seconds'] for a, b in zip(samples, samples[1:])]; assert all(0 <= g < 10 for g in gaps)
+    assert {p.relative_to(OUTPUT).as_posix() for p in OUTPUT.rglob('*') if p.is_file()} == expected_files
+    assert sum((OUTPUT/n).stat().st_size for n in expected_files) <= 1024**3
+    assert {p.relative_to(BASE/'public-output').as_posix() for p in (BASE/'public-output').rglob('*') if p.is_file()} == {'graphs.json', 'result.json'}
+    sample_count = 0
+    for state in states:
+        samples = [json.loads(line) for line in (BASE/(state['mode']+'-samples.jsonl')).read_text().splitlines()]
+        assert len(samples) == state['samples'] > 0 and max(s['rss'] for s in samples) == state['peak_rss']; sample_count += len(samples)
+        assert state['preflight']['available'] >= 10*1024**3 and state['preflight']['disk'] >= 20*1024**3
+        for s in samples:
+            assert s['seconds'] < 1800 and s['rss'] < 8*1024**3 and s['available'] >= 1024**3 and s['disk'] >= 20*1024**3 and s['affinity'] == [2] and s['artifact_bytes'] <= 1024**3
+        gaps = [b['seconds']-a['seconds'] for a, b in zip(samples, samples[1:])]; assert all(0 <= g < 10 for g in gaps)
     total = sum(by_graph.values()); metadata = {(g, n['id']): n for g, rows in graphs.items() for n in rows}
     profile = dict(passed=True, graph_calls=2480, decoder_calls=2400, graph_output_arrays=output_arrays, input_arrays=input_arrays,
         captured_values=values, traced_requests=40, public_requests=20, nodes_per_graph={g: len(rows) for g, rows in graphs.items()},
@@ -168,13 +183,14 @@ def main():
         operators=[dict(graph=g, op=op, seconds=float(v), share_of_graph=float(v/by_graph[g]), share_of_all_graphs=float(v/total)) for (g, op), v in sorted(by_op.items(), key=lambda item: item[1], reverse=True)],
         top_nodes=[dict(graph=g, **metadata[(g, identifier)], seconds=float(v), share_of_graph=float(v/by_graph[g])) for (g, identifier), v in sorted(by_node.items(), key=lambda item: item[1], reverse=True)[:30]],
         clips=[dict(name=name, graph=g, seconds=float(v['seconds']), reset_seconds=float(v['resets']), operators={k: float(n) for k, n in v['operators'].items()}, outside_nodes_seconds=float(v['seconds']-sum(v['operators'].values()))) for (name, g), v in per_clip.items()],
-        separate_public_control_seconds=float(public_seconds), samples=len(samples), peak_rss=state['peak_rss'],
+        separate_public_control_seconds=float(public_seconds), samples=sample_count, peak_rss=max(s['peak_rss'] for s in states),
+        worker_resources={s['mode']: dict(samples=s['samples'], peak_rss=s['peak_rss']) for s in states},
         scope='Local full-corpus attribution; public controls and graph profiles have different instrumentation; no new matched native timing or tensor-native verdict')
     save(BASE/'analysis.json', profile)
     files = dict(frozen['files'])
     for path in BASE.rglob('*'):
         if path.is_file() and not {'obj', 'packages'}.intersection(path.relative_to(BASE).parts): files[path.relative_to(ROOT).as_posix()] = pin(path)
-    save(BASE/'closed.json', dict(passed=True, files=files, identities=[state['supervisor'], state['worker']], analysis=pin(BASE/'analysis.json')))
+    save(BASE/'closed.json', dict(passed=True, files=files, identities=identities, analysis=pin(BASE/'analysis.json')))
     print(json.dumps({k: v for k, v in profile.items() if k not in ('clips', 'top_nodes', 'operators')}))
     print(json.dumps(profile['operators'][:12])); print(json.dumps(dict(closure=pin(BASE/'closed.json'), files=len(files))))
 

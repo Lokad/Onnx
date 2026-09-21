@@ -9,7 +9,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = Path(__file__).resolve().parent
-BASE = ROOT/'artifacts/parakeet-performance-profile-20260921'
+BASE = ROOT/'artifacts/parakeet-performance-profile-v2-20260921'
 PRODUCT = ROOT/'artifacts/whisper-memory-product-v2-20260921/source/src/Lokad.Onnx.CLI/bin/Release/net10.0'
 MANIFEST = ROOT/'artifacts/audio-ort-baseline-v2-20260919/inputs/parakeet.json'
 SITE = ROOT/'artifacts/asr-labeled-20260919/venv/Lib/site-packages'
@@ -32,6 +32,10 @@ def verify(files):
 
 
 def main():
+    failed_base = ROOT/'artifacts/parakeet-performance-profile-20260921'
+    assert pin(failed_base/'failed-preparation.json')['sha256'] == 'be4260963f877c9e5cd75d7e6d999de12bb63ae3f196ffc82e275fca6c0dcbc1'
+    failure = read(failed_base/'failed-preparation.json'); assert not failure['passed']
+    for name, wanted in failure['files'].items(): assert pin(failed_base/name) == wanted, name
     receipt_path = ROOT/'artifacts/asr-labeled-20260919/receipt.json'
     assert pin(receipt_path)['sha256'] == 'a4855ce825f4d5f1ea931440d031eb3a0aa5b3a0fee1fddbcf4d5b51500754b7'
     prior = read(receipt_path); spec = read(MANIFEST)
@@ -61,6 +65,10 @@ def main():
         assert code == 0, label
     shutil.copytree(source/'bin/Release/net10.0', BASE/'bin')
     for path in PRODUCT.glob('*.dll'): shutil.copy2(path, BASE/'bin'/path.name)
+    with (BASE/'logs/capture-selftest.log').open('x') as log:
+        code = subprocess.run(['dotnet', str(BASE/'bin/Profile.dll'), 'selftest'], cwd=ROOT, env=env,
+                              stdout=log, stderr=subprocess.STDOUT, timeout=30).returncode
+    assert code == 0, 'Capture selftest failed'
     for folder in (source, BASE/'bin'):
         for path in folder.iterdir():
             if path.is_file(): files[path.relative_to(ROOT).as_posix()] = pin(path)
@@ -68,6 +76,7 @@ def main():
     for path in TOOLS.glob('*.cs*'): files[path.relative_to(ROOT).as_posix()] = pin(path)
     verify(files)
     save(BASE/'prepared.json', dict(passed=True, files=files, builds=pin(BASE/'builds.json'), cases=20, decoder_calls_per_pass=1200,
+        failed_predecessor=pin(failed_base/'failed-preparation.json'), capture_selftest=pin(BASE/'logs/capture-selftest.log'),
         graph_calls=2480, graph_output_arrays=9760, input_arrays=12160, public_controls=20,
         source=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
         scope='Consumer build and original native public-fixture provenance; no inference yet'))

@@ -8,9 +8,11 @@ using System.Text.Json.Nodes;
 using Lokad.Onnx;
 using Lokad.Onnx.Tests.Support;
 
-if (args.Length != 3) throw new ArgumentException("root manifest new-output");
+if (args.Length == 1 && args[0] == "selftest") return CaptureSelfTest();
+if (args.Length != 4 || args[3] is not ("trace" or "public")) throw new ArgumentException("root manifest new-output trace|public");
 if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Local Windows attribution");
 string root = Path.GetFullPath(args[0]), manifestPath = Path.GetFullPath(args[1]), output = Path.GetFullPath(args[2]);
+string mode = args[3];
 Require(!Directory.Exists(output) && !File.Exists(output), "Output already exists");
 using var process = Process.GetCurrentProcess();
 Require(process.ProcessorAffinity.ToInt64() == 4 && Environment.ProcessorCount == 1, "CPU2 required before CLR startup");
@@ -64,7 +66,7 @@ try
         initializers = n.Inputs.Where(i => p.Value.Initializers.ContainsKey(i)).Distinct().ToDictionary(i => i,
             i => new { shape = p.Value.Initializers[i].Dims.ToArray(), dtype = p.Value.Initializers[i].ElementType.ToString() })
     }).ToArray()));
-    for (int pass = 0; pass < 2; pass++) foreach (var c in cases)
+    if (mode == "trace") for (int pass = 0; pass < 2; pass++) foreach (var c in cases)
     {
         CheckHeld(); var executions = graphs.ToDictionary(p => p.Key, p => p.Value.CreateExecution(ExecutionOptions.Memory));
         int step = 0;
@@ -75,8 +77,9 @@ try
             string stem = files.Count.ToString("D4"); int array = 0;
             TensorRecord Save(ITensor tensor)
             {
-                byte[] bytes = Bytes(tensor); string file = "arrays/" + stem + "-" + (array++).ToString("D2") + ".bin";
-                File.WriteAllBytes(Path.Combine(output, file), bytes);
+                ReadOnlySpan<byte> bytes = Bytes(tensor); string file = "arrays/" + stem + "-" + (array++).ToString("D2") + ".bin";
+                using var stream = new FileStream(Path.Combine(output, file), FileMode.CreateNew, FileAccess.Write);
+                stream.Write(bytes);
                 return new TensorRecord(file, Dtype(tensor), tensor.Dims.ToArray(), tensor.Length, Hash(bytes));
             }
             var input = feeds.ToDictionary(p => p.Key, p => Save(p.Value));
@@ -138,7 +141,7 @@ try
         finally { foreach (var context in executions.Values) context.Reset(); }
         CheckHeld(); Console.WriteLine(c.Name + " " + (pass == 0 ? "unprofiled" : "wall") + " complete; decoder calls=" + step);
     }
-    foreach (var c in cases)
+    if (mode == "public") foreach (var c in cases)
     {
         CheckHeld(); long allocation = GC.GetTotalAllocatedBytes(); long start = Stopwatch.GetTimestamp();
         var result = model.Transcribe(c.Pcm, 16000, ParakeetTranscriptionOptions.Default, CancellationToken.None);
@@ -149,11 +152,12 @@ try
             frequency = Stopwatch.Frequency, allocated_bytes = allocated, input_sha256 = c.Hash });
         Console.WriteLine(c.Name + " public control complete");
     }
-    Require(files.Count == 2480 && held.Count == 9760 && traced.Count == 40 && applications.Count == 20, "Complete scope");
+    Require(mode == "trace" ? files.Count == 2480 && held.Count == 9760 && traced.Count == 40 && applications.Count == 0
+        : files.Count == 0 && held.Count == 0 && traced.Count == 0 && applications.Count == 20, "Complete scope");
     CheckHeld(); NoNative(); passed = true;
 }
 catch (Exception ex) { error = ex.ToString(); Console.Error.WriteLine(error); }
-Write("result.json", new { passed, error, call_files = files, traced, applications,
+Write("result.json", new { passed, error, mode, call_files = files, traced, applications,
     inputs_and_held_outputs_unchanged = passed, manifest_sha256 = Sha(manifestPath),
     core_sha256 = Sha(typeof(ComputationalGraph).Assembly.Location), data_sha256 = Sha(typeof(ParakeetTranscriber).Assembly.Location),
     runner_sha256 = Sha(Assembly.GetExecutingAssembly().Location), runtime = RuntimeInformation.FrameworkDescription,
@@ -162,10 +166,39 @@ Write("result.json", new { passed, error, call_files = files, traced, applicatio
     scope = "Local full-corpus graph attribution and separate public controls; no matched native timing or new tensor-native verdict" });
 return passed ? 0 : 1;
 
-static byte[] Bytes(ITensor tensor) => tensor switch {
-    Tensor<float> f => FloatBytes(f), Tensor<int> i => MemoryMarshal.AsBytes(i.ToArray().AsSpan()).ToArray(),
-    Tensor<long> l => MemoryMarshal.AsBytes(l.ToArray().AsSpan()).ToArray(), _ => throw new InvalidDataException("Unsupported tensor dtype") };
-static byte[] FloatBytes(Tensor<float> tensor) { var values = tensor.ToArray(); Require(values.All(float.IsFinite), "Nonfinite tensor"); return MemoryMarshal.AsBytes(values.AsSpan()).ToArray(); }
+static ReadOnlySpan<T> Values<T>(Tensor<T> tensor) where T : unmanaged =>
+    tensor is DenseTensor<T> dense && !dense.IsReversedStride ? dense.Buffer.Span : tensor.ToArray().AsSpan();
+static ReadOnlySpan<byte> Bytes(ITensor tensor)
+{
+    if (tensor is Tensor<float> f)
+    {
+        var values = Values(f); foreach (float value in values) Require(float.IsFinite(value), "Nonfinite tensor");
+        return MemoryMarshal.AsBytes(values);
+    }
+    if (tensor is Tensor<int> i) return MemoryMarshal.AsBytes(Values(i));
+    if (tensor is Tensor<long> l) return MemoryMarshal.AsBytes(Values(l));
+    throw new InvalidDataException("Unsupported tensor dtype");
+}
+static int CaptureSelfTest()
+{
+    var seed = new DenseTensor<float>(new float[] { 1, -2, 3 }, new[] { 1, 3 });
+    ITensor[] tensors = [seed, seed.BroadcastDim(0, 2),
+        new DenseTensor<float>(new float[] { 1, 2, 3, 4, 5, 6 }, new[] { 2, 3 }, true),
+        new DenseTensor<int>(new[] { 1, -2, 3, 4, 5, 6 }, new[] { 2, 3 }),
+        new DenseTensor<int>(new[] { 1, -2, 3, 4, 5, 6 }, new[] { 2, 3 }, true),
+        new DenseTensor<long>(new long[] { 1, long.MinValue, long.MaxValue, 4, 5, 6 }, new[] { 2, 3 }),
+        new DenseTensor<long>(new long[] { 1, long.MinValue, long.MaxValue, 4, 5, 6 }, new[] { 2, 3 }, true)];
+    foreach (var tensor in tensors)
+    {
+        byte[] expected = tensor switch { Tensor<float> f => MemoryMarshal.AsBytes(f.ToArray().AsSpan()).ToArray(),
+            Tensor<int> i => MemoryMarshal.AsBytes(i.ToArray().AsSpan()).ToArray(), Tensor<long> l => MemoryMarshal.AsBytes(l.ToArray().AsSpan()).ToArray(), _ => throw new InvalidDataException() };
+        Require(Bytes(tensor).SequenceEqual(expected), "Capture changed logical order");
+    }
+    bool rejected = false;
+    try { Bytes(new DenseTensor<float>(new[] { float.NaN }, new[] { 1 })); }
+    catch (InvalidDataException) { rejected = true; }
+    Require(rejected, "Nonfinite capture accepted"); Console.WriteLine("Capture selftest: seven layouts and nonfinite refusal passed"); return 0;
+}
 static string Dtype(ITensor tensor) => tensor is Tensor<float> ? "<f4" : tensor is Tensor<int> ? "<i4" : tensor is Tensor<long> ? "<i8" : throw new InvalidDataException();
 static string Sha(string path) { using var stream = File.OpenRead(path); return Convert.ToHexStringLower(SHA256.HashData(stream)); }
 static string Hash(ReadOnlySpan<byte> bytes) => Convert.ToHexStringLower(SHA256.HashData(bytes));
