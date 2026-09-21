@@ -44,6 +44,10 @@ It reduces allocations but does not supply a matched AMD Whisper timing result.
 A separate [decoder-weight sharing candidate](tests/whisper/weight-sharing/failure-20260920.md)
 completes twenty saved requests but fails its final decoder snapshot check;
 its endurance phase does not start. This candidate is not yet qualified.
+The [controlled decoder diagnosis](tests/whisper/weight-metadata/results-20260920.md)
+reproduces two cached tensor-name changes on Windows and AMD, with every weight
+byte unchanged in both shared and unshared controls. A corrected consumer is
+prepared; its full application/endurance qualification remains pending.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
 

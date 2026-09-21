@@ -341,3 +341,20 @@ generation policy and attention-cache contract. Parakeet, Whisper and connected
 Community-1 diarization now have public APIs and CLI paths; the
 [support matrix](model-support.md) records their precise qualified scope and
 remaining numerical, accuracy and resource work.
+# Prepared decoder metadata during execution
+
+The [controlled Whisper decoder checks](../tests/whisper/weight-metadata/results-20260920.md)
+expose mutable naming metadata in an otherwise unchanged prepared payload.
+`Node.TransposePrepared` returns the cached transpose tensor directly; output
+binding in `ComputationalGraph.RunCore` assigns that object's `Name`. In both
+shared and unshared decoder graphs, two folded embedding tensors therefore acquire
+their node-output names on first use. Windows and AMD reproduce exactly those two
+changes, with unchanged payload hashes, shapes, graph bindings and storage totals.
+All 208 repeated/control output comparisons pass.
+
+A diagnostic that demands equality of every initializer metadata field before
+and after first execution rejects this existing behavior. The failed full Whisper
+campaign remains failed because it did not retain the differing snapshots. Its
+replacement saves them before assertion and permits only the two verified name
+transitions, preserving exact checks of all weight bytes and other metadata.
+This finding changes the diagnostic, not product arithmetic or numerical tolerances.

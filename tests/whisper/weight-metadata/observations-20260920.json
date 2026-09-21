@@ -1,0 +1,331 @@
+{
+  "passed": true,
+  "scope": "Controlled decoder-only metadata diagnosis; original AMD sharing campaign remains failed",
+  "hosts": [
+    {
+      "host": "windows",
+      "workers": [
+        {
+          "mode": "unshared",
+          "changes": [
+            {
+              "stage": "after-first-0",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-0",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-0",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-first-1",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-first-1",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-1",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-1",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            }
+          ],
+          "calls": 4,
+          "samples": 18,
+          "peak_rss": 3522240512,
+          "min_available": 9544024064,
+          "result": {
+            "bytes": 2565731,
+            "sha256": "f9aaf1e5c24e1161b3720240c5dc4c1295db499ffd5d20b1420f87a693bdbb48"
+          }
+        },
+        {
+          "mode": "shared",
+          "changes": [
+            {
+              "stage": "after-first-0",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-0",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-0",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-first-1",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-first-1",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-1",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-1",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            }
+          ],
+          "calls": 4,
+          "samples": 21,
+          "peak_rss": 4120006656,
+          "min_available": 12395032576,
+          "result": {
+            "bytes": 2565737,
+            "sha256": "7610ce92f8ec5546a57a61411d683bb23b914769d5e9abf7ed2470e4c58b727c"
+          }
+        }
+      ]
+    },
+    {
+      "host": "amd",
+      "workers": [
+        {
+          "mode": "unshared",
+          "changes": [
+            {
+              "stage": "after-first-0",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-0",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-0",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-first-1",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-first-1",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-1",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-1",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            }
+          ],
+          "calls": 4,
+          "samples": 21,
+          "peak_rss": 3511377920,
+          "min_available": 12475977728,
+          "result": {
+            "bytes": 2497350,
+            "sha256": "45cfc43b425b225f52ae7510ff8dcb682c17820cdf14ffd67c5a105f71a5a719"
+          }
+        },
+        {
+          "mode": "shared",
+          "changes": [
+            {
+              "stage": "after-first-0",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-0",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-0",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-first-1",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-first-1",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-1",
+              "graph": "first",
+              "name": "folded:Transpose_1010",
+              "field": "tensor_name",
+              "before": "folded:Transpose_1010",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            },
+            {
+              "stage": "after-past-1",
+              "graph": "past",
+              "name": "folded:Transpose_801",
+              "field": "tensor_name",
+              "before": "folded:Transpose_801",
+              "after": "model.decoder.embed_tokens.weight_transposed"
+            }
+          ],
+          "calls": 4,
+          "samples": 23,
+          "peak_rss": 4107812864,
+          "min_available": 11874029568,
+          "result": {
+            "bytes": 2497356,
+            "sha256": "649bce9f771d94a31cf94164bddf8a5ca6bf16eb68a6ce178ff6623b65d0c3ce"
+          }
+        }
+      ]
+    }
+  ],
+  "original_initializer_checks": 11360,
+  "exact_output_pairs": 208,
+  "calls": 16,
+  "births": [
+    {
+      "host": "windows",
+      "births": [
+        {
+          "pid": 324816,
+          "birth": 1789948373.4471393
+        },
+        {
+          "pid": 224364,
+          "birth": 1789948377.1012905
+        },
+        {
+          "pid": 348568,
+          "birth": 1789948386.1591592
+        }
+      ]
+    },
+    {
+      "host": "amd",
+      "births": [
+        {
+          "pid": 381589,
+          "birth": 1789948572.0
+        },
+        {
+          "pid": 381590,
+          "birth": 1789948573.06
+        },
+        {
+          "pid": 381598,
+          "birth": 1789948583.59
+        }
+      ]
+    }
+  ]
+}
