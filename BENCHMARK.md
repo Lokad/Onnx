@@ -70,9 +70,14 @@ as the next allocation target. This is not a measured optimization gain.
 The [pooled-output graph candidate](tests/pyannote/convolution-pool/results-20260921.md)
 now reduces repeated embedding allocations from 166.9 MB to 6.67 MB in both
 process orders. All 17.5 million graph values, 166 shared-model arrays and
-784 Parakeet trajectory arrays are unchanged. Full application qualification
-and matched latency measurement remain pending; this 96.0% graph allocation
-reduction does not change the ORT timing tables.
+784 Parakeet trajectory arrays are unchanged. Its
+[complete application qualification](tests/pyannote/convolution-pool-qualification/results-20260921.md)
+now passes 3,172 backend tests, 342 tensor tests, all 16 dialogue calls, both
+ten-minute meetings and recovery. Full-dialogue allocations fall from 4.45 GB
+to 1.12 GB (74.8%); meeting allocations fall from 124.3–124.4 GB to 30.0–30.1 GB
+(75.8–75.9%). Exact predecessor outputs and ORT speaker timelines are preserved.
+These are cumulative allocations. Matched latency measurement remains pending;
+the ORT timing tables are unchanged.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 

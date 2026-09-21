@@ -1,0 +1,314 @@
+{
+  "passed": true,
+  "public_calls": 16,
+  "meeting_calls": 3,
+  "exact_predecessor_results": true,
+  "allocation_reduced": true,
+  "dialogue": [
+    {
+      "name": "dialogue-30s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 4452974466.666667,
+      "candidate_allocated_mean": 1120939317.3333333,
+      "allocation_ratio": 0.25172821576325527,
+      "candidate_seconds": [
+        12.245605,
+        12.5357893,
+        12.5442719
+      ]
+    },
+    {
+      "name": "dialogue-0-10s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 251335037.33333334,
+      "candidate_allocated_mean": 112056917.33333333,
+      "allocation_ratio": 0.44584678094331004,
+      "candidate_seconds": [
+        0.6035543,
+        0.607352,
+        0.5889442
+      ]
+    },
+    {
+      "name": "dialogue-10-20s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 250319333.33333334,
+      "candidate_allocated_mean": 111024840.0,
+      "allocation_ratio": 0.44353282074363676,
+      "candidate_seconds": [
+        0.5897454,
+        0.6016865,
+        0.5897236
+      ]
+    },
+    {
+      "name": "dialogue-20-30s",
+      "prior_calls": 3,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 250727853.33333334,
+      "candidate_allocated_mean": 111016682.66666667,
+      "allocation_ratio": 0.4427776219942909,
+      "candidate_seconds": [
+        0.5961392,
+        0.5959624,
+        0.5911382
+      ]
+    }
+  ],
+  "meetings": [
+    {
+      "name": "ES2004a",
+      "passed": true,
+      "maximum_centroid_error": 8.981409564540188e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 30058081440,
+      "prior_allocated_bytes": 124394327536,
+      "allocation_ratio": 0.2416354671100346,
+      "seconds": 346.1388664
+    },
+    {
+      "name": "IS1009a",
+      "passed": true,
+      "maximum_centroid_error": 5.764390146878462e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 30008978328,
+      "prior_allocated_bytes": 124298997496,
+      "allocation_ratio": 0.24142574704969524,
+      "seconds": 347.9136754
+    },
+    {
+      "name": "ES2004a-recovery30",
+      "passed": true,
+      "maximum_centroid_error": 5.18795691045737e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 1135129064,
+      "prior_allocated_bytes": 4454729128,
+      "allocation_ratio": 0.25481438520362487,
+      "seconds": 11.952157
+    }
+  ],
+  "suites": [
+    {
+      "name": "request-focused",
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "2",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    },
+    {
+      "name": "backend-full",
+      "counters": {
+        "total": "3265",
+        "executed": "3172",
+        "passed": "3172",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    },
+    {
+      "name": "tensors-full",
+      "counters": {
+        "total": "342",
+        "executed": "342",
+        "passed": "342",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "cli-restore",
+      "samples": 3,
+      "peak_rss": 98627584,
+      "seconds": 0.7847913000150584,
+      "preflight": {
+        "seconds": 0.0005845999694429338,
+        "available": 14199369728,
+        "disk": 161644417024
+      }
+    },
+    {
+      "name": "cli-build",
+      "samples": 12,
+      "peak_rss": 258850816,
+      "seconds": 3.1423304000054486,
+      "preflight": {
+        "seconds": 0.0024523999891243875,
+        "available": 14074257408,
+        "disk": 161644359680
+      }
+    },
+    {
+      "name": "backend-restore",
+      "samples": 6,
+      "peak_rss": 125845504,
+      "seconds": 1.5681347000063397,
+      "preflight": {
+        "seconds": 0.0009692999883554876,
+        "available": 16543059968,
+        "disk": 161647501312
+      }
+    },
+    {
+      "name": "backend-build",
+      "samples": 59,
+      "peak_rss": 533237760,
+      "seconds": 15.409241000015754,
+      "preflight": {
+        "seconds": 0.0007096999906934798,
+        "available": 23535480832,
+        "disk": 172306550784
+      }
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 3,
+      "peak_rss": 95129600,
+      "seconds": 0.7765973000205122,
+      "preflight": {
+        "seconds": 0.0010454999865032732,
+        "available": 19473719296,
+        "disk": 161554341888
+      }
+    },
+    {
+      "name": "tensors-build",
+      "samples": 18,
+      "peak_rss": 309321728,
+      "seconds": 4.676818799984176,
+      "preflight": {
+        "seconds": 0.0007427999516949058,
+        "available": 19208753152,
+        "disk": 161554219008
+      }
+    },
+    {
+      "name": "request-focused",
+      "samples": 9,
+      "peak_rss": 320413696,
+      "seconds": 2.3330895000253804,
+      "preflight": {
+        "seconds": 0.0007879000040702522,
+        "available": 14606766080,
+        "disk": 161543577600
+      }
+    },
+    {
+      "name": "backend-full",
+      "samples": 181,
+      "peak_rss": 3246366720,
+      "seconds": 46.958182899979874,
+      "preflight": {
+        "seconds": 0.0007892000139690936,
+        "available": 13942521856,
+        "disk": 161543598080
+      }
+    },
+    {
+      "name": "tensors-full",
+      "samples": 20,
+      "peak_rss": 281526272,
+      "seconds": 5.180008900002576,
+      "preflight": {
+        "seconds": 0.000982099969405681,
+        "available": 15619506176,
+        "disk": 161532624896
+      }
+    },
+    {
+      "name": "dialogue",
+      "samples": 230,
+      "peak_rss": 644673536,
+      "seconds": 59.61506390001159,
+      "preflight": {
+        "seconds": 0.00091409997548908,
+        "available": 14147604480,
+        "disk": 161487151104
+      }
+    },
+    {
+      "name": "meetings-inputs",
+      "samples": 3,
+      "peak_rss": 134336512,
+      "seconds": 0.7779122999636456,
+      "preflight": {
+        "seconds": 0.0012942000175826252,
+        "available": 15678361600,
+        "disk": 161485770752
+      }
+    },
+    {
+      "name": "meetings-run",
+      "samples": 2719,
+      "peak_rss": 880234496,
+      "seconds": 707.1755143000046,
+      "preflight": {
+        "seconds": 0.0011858000070787966,
+        "available": 15322324992,
+        "disk": 161485766656
+      }
+    }
+  ],
+  "resource_samples": 3263,
+  "peak_rss": 3246366720,
+  "scope": "Output/allocation qualification only; historical timings are not a matched performance comparison; no AMD or production promotion.",
+  "terminal_identities": 61,
+  "closure": {
+    "bytes": 1596319,
+    "sha256": "e3fa3f17df5ec4731bc75ebf519389c571cc4f8d9537d6098f9e9f4ce0a28a7a"
+  },
+  "analysis": {
+    "bytes": 20723,
+    "sha256": "c69c5c4402f658bf6f30b7173ce55d5f2bf6cd33df8d4b3541384feda48390f5"
+  },
+  "bound_files": 6866
+}
