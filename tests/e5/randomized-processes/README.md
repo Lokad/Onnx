@@ -60,6 +60,13 @@ The synthetic tests include explicit violations of both assumptions; their
 intervals fail badly. Observed diagnostics cannot reveal all unobserved potential
 outcomes, so these limitations must accompany any confidence statement.
 
+Before deployment, the observed-variance guard is fixed at 20%: no one cohort
+may contribute more than one fifth of the sum of squared fitted contrast
+residuals. A failure withholds the confidence interpretation and stops the
+conditional comparison. Passing this operational guard cannot establish the
+regularity of unobserved potential outcomes. Assignment draws, worker counts
+and performance thresholds are unchanged.
+
 The approximate family confidence remains95%, using Bonferroni for twenty A/A
 contrasts and sixty comparison contrasts. Every A/A C/A interval must contain1
 and lie within[.99,1.01]. Candidate C/A upper bounds remain.98at8tokens,.99at30,
@@ -86,8 +93,9 @@ do not rerun them into that artifact. `freeze_assignments.py` has recorded both
 actual schedules once, after commit3558c8c, with no seed or balance search. The
 manifest SHA256 is2ac2bd42acfc811b39f2df099c7e93f31789bea18236e0e507d74e60ba5b16f5.
 The runner and raw-output/resource auditor are implemented and locally exercised.
-Complete payload/runtime binding, collection and independent full-report
-verification remain required before a scored deployment.
+The deployment, collection and full-report tools are implemented. Eleven tests
+pass, including full-count synthetic tick reports for both phases and independent
+80-digit Decimal interval calculations. No model inference occurs in those tests.
 
 The worker measurement contract can reuse the already verified
 `ProcessUncertainty.dll` unchanged. Its raw specification retains the v1 worker
@@ -95,3 +103,41 @@ identifier; the enclosing v2 campaign explicitly supplies the new assignment
 manifest. This avoids rebuilding or repeating unchanged producer qualification.
 Each full phase still has1,800workers,334,080measured calls and at least15hours
 of conditioning. The ongoing Whisper comparison remains the sole VM workload.
+
+## Deployment and reporting
+
+Commit tools before running `prepare.py`. It copies the qualified worker and
+inputs unchanged, verifies the existing qualification receipts, and writes the
+local payload once. `stage.py` refuses to launch until the existing Whisper
+completion monitor and its final verification have succeeded and all preceding
+process identities are terminal. It binds actual runtime files and deploys into
+the new `/dev/shm/lokad-e5-independent-20260921` directory; ordinary VM disk space
+cannot accommodate the complete evidence.
+
+From the repository root, use these commands sequentially:
+
+    C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/prepare.py
+    C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/stage.py
+    C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/observe.py --phase aa
+
+Observe the existing job until its recorded PID and birth time are terminal.
+Then collect and verify all raw arrays and calls:
+
+    C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/collect.py --phase aa
+    C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/report.py --phase aa
+    C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/verify_report.py --phase aa
+
+Collection streams the archive to local disk. It does not duplicate the complete
+raw evidence on the VM. The report supplies all means, medians, tails, process
+and position diagnostics, allocations and GC counts. The independent verifier
+recomputes intervals from integer ticks and checks every displayed table row.
+A failed raw audit is retained without a scored report. A complete report with
+failed statistical or diagnostic screens remains publishable as a failure.
+
+Only an independently verified passing A/A produces `aa-gate.json`.
+`start_compare.py` checks that gate and all retained identities before launching
+the already frozen comparison. Observe, collect, report and verify it using
+the same commands with `--phase compare`. No script changes product defaults.
+Writers refuse existing paths. A timeout is not termination: inspect the actual
+recorded process and preserve completed stages before recovering a failed transfer
+or report. Never restart completed inference to recover reporting.
