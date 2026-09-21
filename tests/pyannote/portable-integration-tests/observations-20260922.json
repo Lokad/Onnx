@@ -1,0 +1,611 @@
+{
+  "closure": {
+    "bytes": 190837,
+    "sha256": "bf9822426cd75a86cc8c02c065005f0005e1a80b4ee63d5c53313fed145235f6"
+  },
+  "root_commit": "b8d827519ee63c5760bd1a6deb34cfc7b882f881",
+  "patch": {
+    "bytes": 102459,
+    "sha256": "a86c8e6cc6eca4119a2fdfabacd4359d1bc5984f5abf5b398d2615e606ddc720"
+  },
+  "apply_check_passed": true,
+  "patch_files": [
+    {
+      "path": "src/Lokad.Onnx.Data/Community1Diarizer.cs",
+      "before": {
+        "bytes": 9038,
+        "sha256": "15b906b1f691d08436057c474662cac8583409414b7f8f7db569d4aae19f2084"
+      },
+      "after": {
+        "bytes": 9285,
+        "sha256": "6dc610650414e3d2e28a279d66e39362d3707f07130a110c660f7a2c823202e2"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx.Data/WeSpeakerAudio.cs",
+      "before": {
+        "bytes": 6558,
+        "sha256": "770736ddb406201a630d3e316ca64a949f2d6b99517fc325e5800c84bb028931"
+      },
+      "after": {
+        "bytes": 7570,
+        "sha256": "e433f19b90cebf02fd5d1a0caa5cf2acd3e8130ad52f4b7411f63e81464bb655"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx.Data/WeSpeakerEmbedder.cs",
+      "before": {
+        "bytes": 8205,
+        "sha256": "d13ebe7169b7e65f5b0eda9f421bb0b1acb05058b60fc77acdd89d330650aa31"
+      },
+      "after": {
+        "bytes": 9840,
+        "sha256": "dcb9217d391909e4c2d74259ab5a4927259fc83b570fd32db22bfdf4c029a163"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx/CPUExecutionProvider.ConvPool.cs",
+      "before": {
+        "bytes": 11534,
+        "sha256": "4456ef06a7c860ed03fa14de1552ff73e1bc8c469f2f3808096f84bd361f0574"
+      },
+      "after": {
+        "bytes": 11634,
+        "sha256": "bf9aa06399239f785ed225bdececeb45a5e8d35a100c27b5381a84a30244b3e4"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx/CPUExecutionProvider.Fusion.cs",
+      "before": {
+        "bytes": 5417,
+        "sha256": "7c5bec19f13c156a142e8b6992f3e7edff0d3a698c51f5319b3db7c319ef76ea"
+      },
+      "after": {
+        "bytes": 5560,
+        "sha256": "6356fa3dbaf9c42f4b8d80219fee8c9d2970fb6ca9d7a03aeb2c9905a4e15cda"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs",
+      "before": null,
+      "after": {
+        "bytes": 5257,
+        "sha256": "e5b4e789c1460b68cce729abc10c80238f2511448cab39c5bfff60003694c0b0"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx/CPUExecutionProvider.Recurrent.cs",
+      "before": {
+        "bytes": 17251,
+        "sha256": "2adf65948caa826def55cbf0fb0827d053d7b4eb01d3bc10ce641caa434bb57e"
+      },
+      "after": {
+        "bytes": 17998,
+        "sha256": "48d5b24d425f8a643be5e46eb177091fceb95cef7760b3126008ddbda5a87047"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx/MathOps.cs",
+      "before": {
+        "bytes": 211192,
+        "sha256": "20a9d4d378bc9fc086b5104ae01dc22233a4bf34380f8ab05a5aac8e17ed30dd"
+      },
+      "after": {
+        "bytes": 215579,
+        "sha256": "f09ec95f8ba1aba3e235988ebddab54032dc69fac5013cc288ffae5f4ebfe30b"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx/Node.cs",
+      "before": {
+        "bytes": 24102,
+        "sha256": "af80cb8dcf6656fb0994f3023f2f9770a5484657243d087114685444a7e83091"
+      },
+      "after": {
+        "bytes": 24144,
+        "sha256": "95abe4580a0722a2d663b42f92db586884bd981a3244e0afd587bc101c0392b2"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx/TensorOps.ConvPool.cs",
+      "before": {
+        "bytes": 40962,
+        "sha256": "0c7c3a289fd3c45bb98f08839af56603e9d9ea7b978c02e5e2b78c3720be85c5"
+      },
+      "after": {
+        "bytes": 48374,
+        "sha256": "85f6cd3585a315e57398feaaf99def752139e62d5247b24aa8428a94ce71e57c"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx/Zzz.ConvPortableRows.cs",
+      "before": null,
+      "after": {
+        "bytes": 2172,
+        "sha256": "1066b56fdc1d85b33f6783de9a4812129f0b5b658278a7ce3f7ceea98f63f314"
+      }
+    },
+    {
+      "path": "src/Lokad.Onnx/Zzz.ConvolutionPool.cs",
+      "before": null,
+      "after": {
+        "bytes": 2116,
+        "sha256": "3d04abf2598b38d128f68e6f5fee250f7eba635b9ef08d75389b92fc4ffdeb09"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/ConvPortableRowsTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 4609,
+        "sha256": "a84ab30c7b83bbb5745a00f7af35959f61b25064c6dea071e0de18315ebb7f9c"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/ConvTiledTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 8200,
+        "sha256": "ee493c5d7e14d40fb3d1628911b81d0ddee34cc2d3ae11122e4cee04b2f8f875"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/ConvolutionPoolTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 10057,
+        "sha256": "e79af0431b2e05118b7c1cc7695aa8e308e6c0c8e4e465ff9f7d4c7bf40f4472"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/DenseWeSpeakerReference.cs",
+      "before": null,
+      "after": {
+        "bytes": 6718,
+        "sha256": "bc8658b6875922c37a870ff375ba13f8d7ea64a30d7d7d5642b06e43c3048c23"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/LstmOutputLaneTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 4611,
+        "sha256": "18f1d1566e41a2e8d6abab1352aa257168af887538ac0150cc6ada91a2fc1173"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/LstmPanelAdmissionTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 1276,
+        "sha256": "e942cccd45ed6c329c8b1bae590c59d469899be12a03f57667f8efdd59d7bab1"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/LstmPanelOverflowRefusalTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 1299,
+        "sha256": "f7377e78dd5b7c9bf7a748b457307bb50425a4f4b01bbbb6c340f7d95e3ba731"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/PipelineRequestTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 8188,
+        "sha256": "350237d7b8bfd76d48563877c3dd230e7e16e98951ab164a1c1a023b19a8f237"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/SparseMelTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 4334,
+        "sha256": "917e98d5b4ffefb1d6bdb050a792bff88d524146fdc9bf16959f4694186f209e"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/SpatialCopyTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 4631,
+        "sha256": "6c53dcbcd4315b4d7e84c27a517e543c9525280d9dd96e3be797786cd0119440"
+      }
+    },
+    {
+      "path": "tests/Lokad.Onnx.Backend.Tests/SpatialPanelTests.cs",
+      "before": null,
+      "after": {
+        "bytes": 4721,
+        "sha256": "6d67beb6d384a1deb16b5d5c241484e15008d9e4c43084dbfeb530d13ba6120e"
+      }
+    }
+  ],
+  "passed": true,
+  "changed_test_files": [
+    "tests/Lokad.Onnx.Backend.Tests/DenseWeSpeakerReference.cs",
+    "tests/Lokad.Onnx.Backend.Tests/SparseMelTests.cs"
+  ],
+  "normal_project_references": true,
+  "dense_reference_source": {
+    "bytes": 6558,
+    "sha256": "770736ddb406201a630d3e316ca64a949f2d6b99517fc325e5800c84bb028931"
+  },
+  "dense_reference_namespace_and_type_only": true,
+  "prior_numerical_assertions_preserved": true,
+  "historical_dll_absent": true,
+  "products_unchanged": true,
+  "core": {
+    "bytes": 735232,
+    "sha256": "e9c87932b2184c2f6bfef72faabb1719bdbceadc779a15fe1ffd3f3056d02838"
+  },
+  "data": {
+    "bytes": 143872,
+    "sha256": "85d166b59e2beef18ca7664f76faf445bf3cd81509f8f1d1c4b3c5354f53757a"
+  },
+  "suites": [
+    {
+      "name": "focused",
+      "counters": {
+        "total": "89",
+        "executed": "89",
+        "passed": "89",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 89
+      },
+      "trx": {
+        "bytes": 140448,
+        "sha256": "a45d14919dc763176d0d3519b969fd97a232544ee1835d037e701c2fe09906af"
+      }
+    },
+    {
+      "name": "hardware-disabled",
+      "counters": {
+        "total": "89",
+        "executed": "89",
+        "passed": "89",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 89
+      },
+      "trx": {
+        "bytes": 140448,
+        "sha256": "4984655147791729561acbf9819922a637d80a966081058f629639bb9daf1ea6"
+      }
+    },
+    {
+      "name": "backend-full",
+      "counters": {
+        "total": "3383",
+        "executed": "3290",
+        "passed": "3290",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 3290,
+        "NotExecuted": 93
+      },
+      "trx": {
+        "bytes": 5341627,
+        "sha256": "b1d6464c671c57aa6884fad5b96d9010cac97c017269c6680340f9b09578967b"
+      }
+    },
+    {
+      "name": "tensors-full",
+      "counters": {
+        "total": "342",
+        "executed": "342",
+        "passed": "342",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 342
+      },
+      "trx": {
+        "bytes": 520781,
+        "sha256": "97635b31f8b89414f54be56d2804c8b95b97c4110c4b8c91bb28b818d25d1e81"
+      }
+    }
+  ],
+  "identities": [
+    {
+      "pid": 1088780,
+      "birth": 1790030216.7191403
+    },
+    {
+      "pid": 1107800,
+      "birth": 1790030221.8643656
+    },
+    {
+      "pid": 1080972,
+      "birth": 1790030222.4740107
+    },
+    {
+      "pid": 1129216,
+      "birth": 1790030222.4843965
+    },
+    {
+      "pid": 1146384,
+      "birth": 1790030222.9532032
+    },
+    {
+      "pid": 1069584,
+      "birth": 1790030222.9671948
+    },
+    {
+      "pid": 1000432,
+      "birth": 1790030238.472567
+    },
+    {
+      "pid": 915624,
+      "birth": 1790030238.9381013
+    },
+    {
+      "pid": 1050224,
+      "birth": 1790030238.9420567
+    },
+    {
+      "pid": 928952,
+      "birth": 1790030239.1678782
+    },
+    {
+      "pid": 992108,
+      "birth": 1790030239.174348
+    },
+    {
+      "pid": 804660,
+      "birth": 1790030244.49211
+    },
+    {
+      "pid": 686708,
+      "birth": 1790030245.783663
+    },
+    {
+      "pid": 781100,
+      "birth": 1790030245.7876475
+    },
+    {
+      "pid": 1126272,
+      "birth": 1790030246.3556783
+    },
+    {
+      "pid": 942832,
+      "birth": 1790030246.3617833
+    },
+    {
+      "pid": 895088,
+      "birth": 1790030252.5471911
+    },
+    {
+      "pid": 1153928,
+      "birth": 1790030253.0187602
+    },
+    {
+      "pid": 927836,
+      "birth": 1790030253.0224893
+    },
+    {
+      "pid": 1042820,
+      "birth": 1790030253.2521489
+    },
+    {
+      "pid": 1021732,
+      "birth": 1790030253.2565558
+    },
+    {
+      "pid": 1113364,
+      "birth": 1790030258.72581
+    },
+    {
+      "pid": 1081392,
+      "birth": 1790030258.7309136
+    },
+    {
+      "pid": 1149996,
+      "birth": 1790030259.0240493
+    },
+    {
+      "pid": 1109544,
+      "birth": 1790030259.027804
+    },
+    {
+      "pid": 942236,
+      "birth": 1790030260.7758071
+    },
+    {
+      "pid": 1017108,
+      "birth": 1790030260.7935865
+    },
+    {
+      "pid": 1130620,
+      "birth": 1790030264.7454543
+    },
+    {
+      "pid": 878232,
+      "birth": 1790030264.7492416
+    },
+    {
+      "pid": 1030464,
+      "birth": 1790030264.9989257
+    },
+    {
+      "pid": 1105404,
+      "birth": 1790030265.0024967
+    },
+    {
+      "pid": 1136984,
+      "birth": 1790030265.2461507
+    },
+    {
+      "pid": 1116712,
+      "birth": 1790030265.2499185
+    },
+    {
+      "pid": 1026476,
+      "birth": 1790030269.022574
+    },
+    {
+      "pid": 1166416,
+      "birth": 1790030269.4217772
+    },
+    {
+      "pid": 1031044,
+      "birth": 1790030269.692346
+    },
+    {
+      "pid": 1124928,
+      "birth": 1790030289.1799133
+    },
+    {
+      "pid": 1129864,
+      "birth": 1790030289.183816
+    },
+    {
+      "pid": 1134932,
+      "birth": 1790030289.417186
+    },
+    {
+      "pid": 1125396,
+      "birth": 1790030289.42036
+    },
+    {
+      "pid": 978924,
+      "birth": 1790030289.6459656
+    },
+    {
+      "pid": 1133936,
+      "birth": 1790030289.6494582
+    },
+    {
+      "pid": 851464,
+      "birth": 1790030289.8900456
+    },
+    {
+      "pid": 994000,
+      "birth": 1790030289.9113295
+    },
+    {
+      "pid": 953672,
+      "birth": 1790030290.1716857
+    },
+    {
+      "pid": 982840,
+      "birth": 1790030290.175465
+    },
+    {
+      "pid": 1143936,
+      "birth": 1790030291.2413428
+    },
+    {
+      "pid": 1170240,
+      "birth": 1790030291.2453413
+    },
+    {
+      "pid": 814912,
+      "birth": 1790030323.4859653
+    },
+    {
+      "pid": 789800,
+      "birth": 1790030323.9619431
+    },
+    {
+      "pid": 969656,
+      "birth": 1790030323.9655032
+    },
+    {
+      "pid": 977908,
+      "birth": 1790030324.198474
+    },
+    {
+      "pid": 956440,
+      "birth": 1790030324.2046487
+    }
+  ],
+  "resources": [
+    {
+      "name": "backend-build",
+      "seconds": 16.37804270000197,
+      "samples": 63,
+      "peak_rss": 614711296
+    },
+    {
+      "name": "focused",
+      "seconds": 5.974349599971902,
+      "samples": 23,
+      "peak_rss": 304640000
+    },
+    {
+      "name": "hardware-disabled",
+      "seconds": 8.021999099990353,
+      "samples": 31,
+      "peak_rss": 332832768
+    },
+    {
+      "name": "backend-full",
+      "seconds": 55.80683079996379,
+      "samples": 215,
+      "peak_rss": 3583750144
+    },
+    {
+      "name": "tensors-full",
+      "seconds": 5.685682000010274,
+      "samples": 22,
+      "peak_rss": 280215552
+    }
+  ],
+  "resource_samples": 354,
+  "peak_rss": 3583750144,
+  "scope": "Self-contained test source qualified against byte-identical integrated product; no new product build, package or timing."
+}

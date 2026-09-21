@@ -1,6 +1,6 @@
 # CPU benchmarks
 
-## Current results — 2026-09-21 UTC
+## Current results — 2026-09-22 UTC
 
 The tables here summarize retained measurements for e5, Parakeet, Whisper and
 pyannote. Each names its workload, hardware and timing boundary. Earlier tables
@@ -162,9 +162,13 @@ now combines these changes with the LSTM storage guard through ordinary project
 references. All 697 Data methods and the other 3,106 Core methods match the
 accepted candidate, as do the checked public declarations. It passes 3,290
 backend tests with 93 skips, 342 tensor tests and a separate NuGet consumer.
+The [self-contained test successor](tests/pyannote/portable-integration-tests/results-20260922.md)
+removes the old artifact DLL dependency and passes the same complete suites,
+plus 89 frontend cases in both normal and hardware-disabled modes. Product
+and package bytes stay fixed. A single reviewed source/test patch is available.
 These new binaries have no fresh timing result; the table below still names
-the exact measured candidate. Final test-source portability and AMD selection
-remain pending.
+the exact measured candidate. AMD selection and production integration remain
+pending.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
