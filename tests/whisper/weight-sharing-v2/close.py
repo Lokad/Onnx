@@ -107,8 +107,10 @@ saves both snapshots before assertion and permits only those exact transitions;
 it preserves every other field, public call and resource gate. This is a separate
 qualified campaign, not retroactive acceptance of the earlier run.
 
-Production integration, broader cancellation/recovery/concurrent speech and
-recording qualification, and an AMD native timing comparison remain separate work.
+The separate [Windows public-contract replay](../memory-contracts-v2/local-results-20260921.md)
+passes thirteen requests and sixteen refusal/cancellation checks, including
+overlapping speech and exact recovery. Its corresponding AMD qualification,
+production integration and an AMD native timing comparison remain separate work.
 This report does not replace any earlier failed memory or numerical observation.
 '''
     with report.open('x',encoding='utf-8') as f:f.write(text)
@@ -117,7 +119,7 @@ This report does not replace any earlier failed memory or numerical observation.
     s=s.replace(marker,'byte unchanged in both shared and unshared controls. The separate\n[corrected sharing campaign](tests/whisper/weight-sharing-v2/results-20260920.md)\nnow passes all 100 requests and its full weight, allocation and resource checks.\nProduction integration and matched AMD Whisper timing remain pending.\n')
     benchmark.write_text(s,encoding='utf-8')
     support=ROOT/'docs/model-support.md';s=support.read_text(encoding='utf-8')
-    s+='\nThe [private Whisper decoder-weight sharing candidate](../tests/whisper/weight-sharing-v2/results-20260920.md)\nalso passes 20 conformance and 80 endurance requests on AMD, including complete\ndecoder payload and explicit cached-name transition checks. Production integration, broader recovery\nand recording qualification, numerical gaps and matched AMD latency remain open.\n';support.write_text(s,encoding='utf-8')
+    s+='\nThe [private Whisper decoder-weight sharing candidate](../tests/whisper/weight-sharing-v2/results-20260920.md)\nalso passes 20 conformance and 80 endurance requests on AMD, including complete\ndecoder payload and explicit cached-name transition checks. Separate\n[Windows public contracts](../tests/whisper/memory-contracts-v2/local-results-20260921.md)\npass recording, concurrent speech and recovery checks. AMD public contracts,\nproduction integration, numerical gaps and matched AMD latency remain open.\n';support.write_text(s,encoding='utf-8')
     snapshots=BASE/'closure-snapshots';snapshots.mkdir()
     for path in [benchmark,support,*sorted(folder.glob('*.py'))]:
         target=snapshots/path.relative_to(ROOT);target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(path,target)
