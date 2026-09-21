@@ -82,6 +82,13 @@ is prepared using `cdeae16`'s mechanism and the current composer, with checked
 packing space and existing tail fallback. Local guards/fallback tests pass;
 actual AVX-512 execution and AMD application benefit remain unqualified.
 
+The [follow-up ORT 1.29 recurrent review](../tests/pyannote/lstm-output-lanes/source-review-20260921.md)
+confirms separate W/R packing and an input projection batched across time before
+recurrent steps. A later Lokad adaptation must preserve its existing accumulation
+semantics and mutable weights. Before production integration, make the optional
+combined panel-size admission explicit and retain scalar fallback when that
+storage cannot be represented. The frozen AMD comparison remains unchanged.
+
 
 | Source finding | Consequence for Lokad.Onnx |
 |---|---|
