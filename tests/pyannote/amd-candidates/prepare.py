@@ -61,15 +61,20 @@ def main():
     source=payload/'source';shutil.copytree(ROWS/'candidate-source',source,ignore=shutil.ignore_patterns('bin','obj'))
     assert (source/'Lokad.Onnx.slnx').exists()
     source_files={p.relative_to(source).as_posix():pin(p) for p in source.rglob('*') if p.is_file()}
-    assets=read(ROWS/'candidate-source/tests/Lokad.Onnx.Backend.Tests/obj/project.assets.json')
     packages={};unpacked=0
-    for library in assets['libraries'].values():
-        if library['type']!='package':continue
-        filename=library['path'].replace('/','.')+'.nupkg'
-        path=next(p for folder in assets['packageFolders'] if (p:=Path(folder)/library['path']/filename).is_file())
-        copy(path,payload/'nuget-feed'/filename);packages[filename]=pin(path)
-        with zipfile.ZipFile(path) as archive:unpacked+=sum(info.file_size for info in archive.infolist())
-    assert len(packages)==20 and sum(p['bytes'] for p in packages.values())==23601190
+    # Private core build dependencies do not propagate to the backend assets
+    # file. Collect every restored project's package list, including SourceLink.
+    for assets_path in (ROWS/'candidate-source').rglob('project.assets.json'):
+        assets=read(assets_path)
+        for library in assets['libraries'].values():
+            if library['type']!='package':continue
+            filename=library['path'].replace('/','.')+'.nupkg'
+            path=next(p for folder in assets['packageFolders'] if (p:=Path(folder)/library['path']/filename).is_file())
+            if filename in packages:
+                assert pin(path)==packages[filename];continue
+            copy(path,payload/'nuget-feed'/filename);packages[filename]=pin(path)
+            with zipfile.ZipFile(path) as archive:unpacked+=sum(info.file_size for info in archive.infolist())
+    assert len(packages)==23 and sum(p['bytes'] for p in packages.values())==24743799
     cores={}
     for role,directory in [('production',PRODUCT),('portable',PORTABLE/'runtimes/candidate'),('rows',ROWS/'runtime')]:
         target=payload/'runtimes'/role;target.mkdir(parents=True)
