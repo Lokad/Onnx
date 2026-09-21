@@ -1,0 +1,676 @@
+{
+  "passed": true,
+  "public_calls": 16,
+  "meeting_calls": 3,
+  "exact_predecessor_results": true,
+  "allocation_reduced": true,
+  "dialogue": [
+    {
+      "name": "dialogue-30s",
+      "prior_calls": 6,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 5201313326.666667,
+      "candidate_allocated_mean": 4452974466.666667,
+      "allocation_ratio": 0.8561250182404252,
+      "candidate_seconds": [
+        13.2272843,
+        13.3372791,
+        12.8101818
+      ]
+    },
+    {
+      "name": "dialogue-0-10s",
+      "prior_calls": 6,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 251343633.33333334,
+      "candidate_allocated_mean": 251335037.33333334,
+      "allocation_ratio": 0.9999657998100608,
+      "candidate_seconds": [
+        0.599751,
+        0.651544,
+        0.5920403
+      ]
+    },
+    {
+      "name": "dialogue-10-20s",
+      "prior_calls": 6,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 250478566.66666666,
+      "candidate_allocated_mean": 250319333.33333334,
+      "allocation_ratio": 0.9993642835973857,
+      "candidate_seconds": [
+        0.5899146,
+        0.6322479,
+        0.5855088
+      ]
+    },
+    {
+      "name": "dialogue-20-30s",
+      "prior_calls": 6,
+      "candidate_calls": 3,
+      "prior_allocated_mean": 251608818.66666666,
+      "candidate_allocated_mean": 250727853.33333334,
+      "allocation_ratio": 0.9964986706825232,
+      "candidate_seconds": [
+        0.5972883,
+        0.6888891,
+        0.599082
+      ]
+    }
+  ],
+  "meetings": [
+    {
+      "name": "ES2004a",
+      "passed": true,
+      "maximum_centroid_error": 8.981409564540188e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 124394327536,
+      "prior_allocated_bytes": 146395652120,
+      "allocation_ratio": 0.8497132649406446,
+      "seconds": 359.8690781
+    },
+    {
+      "name": "IS1009a",
+      "passed": true,
+      "maximum_centroid_error": 5.764390146878462e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 124298997496,
+      "prior_allocated_bytes": 146425527616,
+      "allocation_ratio": 0.8488888482749628,
+      "seconds": 349.7650222
+    },
+    {
+      "name": "ES2004a-recovery30",
+      "passed": true,
+      "maximum_centroid_error": 5.18795691045737e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "allocated_bytes": 4454729128,
+      "prior_allocated_bytes": 5202521616,
+      "allocation_ratio": 0.856263453918151,
+      "seconds": 12.2702831
+    }
+  ],
+  "suites": [
+    {
+      "name": "request-focused",
+      "counters": {
+        "total": "2",
+        "executed": "2",
+        "passed": "2",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    },
+    {
+      "name": "backend-full",
+      "counters": {
+        "total": "3234",
+        "executed": "3141",
+        "passed": "3141",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    },
+    {
+      "name": "tensors-full",
+      "counters": {
+        "total": "342",
+        "executed": "342",
+        "passed": "342",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "data-restore",
+      "samples": 4,
+      "peak_rss": 114913280,
+      "seconds": 1.0389134000288323,
+      "preflight": {
+        "seconds": 0.0032266000052914023,
+        "available": 16157642752,
+        "disk": 162821844992
+      }
+    },
+    {
+      "name": "data-build",
+      "samples": 16,
+      "peak_rss": 272769024,
+      "seconds": 4.382769799965899,
+      "preflight": {
+        "seconds": 0.0005851999740116298,
+        "available": 16032317440,
+        "disk": 162806763520
+      }
+    },
+    {
+      "name": "bridge-restore",
+      "samples": 3,
+      "peak_rss": 95703040,
+      "seconds": 0.7905321000143886,
+      "preflight": {
+        "seconds": 0.0006376999663189054,
+        "available": 15342866432,
+        "disk": 162805055488
+      }
+    },
+    {
+      "name": "bridge-build",
+      "samples": 10,
+      "peak_rss": 248205312,
+      "seconds": 2.5869703000062145,
+      "preflight": {
+        "seconds": 0.0006656000041402876,
+        "available": 15773700096,
+        "disk": 162804912128
+      }
+    },
+    {
+      "name": "instructions",
+      "samples": 3,
+      "peak_rss": 89243648,
+      "seconds": 0.7773226000135764,
+      "preflight": {
+        "seconds": 0.0007157999789342284,
+        "available": 15178108928,
+        "disk": 162804514816
+      }
+    },
+    {
+      "name": "cli-restore",
+      "samples": 3,
+      "peak_rss": 96370688,
+      "seconds": 0.7813748000189662,
+      "preflight": {
+        "seconds": 0.0006156000308692455,
+        "available": 21616734208,
+        "disk": 162773405696
+      }
+    },
+    {
+      "name": "cli-build",
+      "samples": 12,
+      "peak_rss": 257052672,
+      "seconds": 3.1142751000006683,
+      "preflight": {
+        "seconds": 0.0009885000181384385,
+        "available": 21503791104,
+        "disk": 162773344256
+      }
+    },
+    {
+      "name": "backend-restore",
+      "samples": 6,
+      "peak_rss": 125612032,
+      "seconds": 1.5512003999901935,
+      "preflight": {
+        "seconds": 0.0007514999597333372,
+        "available": 20690825216,
+        "disk": 162768576512
+      }
+    },
+    {
+      "name": "backend-build",
+      "samples": 60,
+      "peak_rss": 526635008,
+      "seconds": 15.599699999962468,
+      "preflight": {
+        "seconds": 0.0008126000175252557,
+        "available": 20332441600,
+        "disk": 162690207744
+      }
+    },
+    {
+      "name": "tensors-restore",
+      "samples": 3,
+      "peak_rss": 97746944,
+      "seconds": 0.7768880000221543,
+      "preflight": {
+        "seconds": 0.0008348000119440258,
+        "available": 15508135936,
+        "disk": 162675269632
+      }
+    },
+    {
+      "name": "tensors-build",
+      "samples": 18,
+      "peak_rss": 318681088,
+      "seconds": 4.661090500012506,
+      "preflight": {
+        "seconds": 0.000667200016323477,
+        "available": 15141498880,
+        "disk": 162675150848
+      }
+    },
+    {
+      "name": "request-focused",
+      "samples": 9,
+      "peak_rss": 301826048,
+      "seconds": 2.33513199997833,
+      "preflight": {
+        "seconds": 0.000707699975464493,
+        "available": 12602503168,
+        "disk": 162662617088
+      }
+    },
+    {
+      "name": "backend-full",
+      "samples": 213,
+      "peak_rss": 4136755200,
+      "seconds": 55.56699290004326,
+      "preflight": {
+        "seconds": 0.000950500019825995,
+        "available": 12395708416,
+        "disk": 162663546880
+      }
+    },
+    {
+      "name": "tensors-full",
+      "samples": 21,
+      "peak_rss": 288411648,
+      "seconds": 5.4532860000035726,
+      "preflight": {
+        "seconds": 0.0026141999987885356,
+        "available": 12241043456,
+        "disk": 162651054080
+      }
+    },
+    {
+      "name": "dialogue",
+      "samples": 244,
+      "peak_rss": 1224720384,
+      "seconds": 63.96604470000602,
+      "preflight": {
+        "seconds": 0.0008501000120304525,
+        "available": 12916015104,
+        "disk": 162606632960
+      }
+    },
+    {
+      "name": "meetings-inputs",
+      "samples": 3,
+      "peak_rss": 110510080,
+      "seconds": 0.7779383000452071,
+      "preflight": {
+        "seconds": 0.0010365999769419432,
+        "available": 13299175424,
+        "disk": 162604924928
+      }
+    },
+    {
+      "name": "meetings-run",
+      "samples": 2773,
+      "peak_rss": 1808900096,
+      "seconds": 722.940446899971,
+      "preflight": {
+        "seconds": 0.0010277999681420624,
+        "available": 13025738752,
+        "disk": 162604916736
+      }
+    }
+  ],
+  "resource_samples": 3401,
+  "peak_rss": 4136755200,
+  "identities": [
+    {
+      "pid": 155324,
+      "birth": 1790011363.9452767
+    },
+    {
+      "pid": 114836,
+      "birth": 1790011364.399953
+    },
+    {
+      "pid": 85352,
+      "birth": 1790011365.4503677
+    },
+    {
+      "pid": 113252,
+      "birth": 1790011366.0547976
+    },
+    {
+      "pid": 171132,
+      "birth": 1790011366.0589924
+    },
+    {
+      "pid": 104076,
+      "birth": 1790011369.8425257
+    },
+    {
+      "pid": 135120,
+      "birth": 1790011370.6396945
+    },
+    {
+      "pid": 161356,
+      "birth": 1790011371.2234747
+    },
+    {
+      "pid": 172036,
+      "birth": 1790011371.2277927
+    },
+    {
+      "pid": 176840,
+      "birth": 1790011373.2352042
+    },
+    {
+      "pid": 1112428,
+      "birth": 1790011448.966506
+    },
+    {
+      "pid": 130924,
+      "birth": 1790011449.2830355
+    },
+    {
+      "pid": 165296,
+      "birth": 1790011450.0714347
+    },
+    {
+      "pid": 1088604,
+      "birth": 1790011450.6705997
+    },
+    {
+      "pid": 1036228,
+      "birth": 1790011450.6747067
+    },
+    {
+      "pid": 1092500,
+      "birth": 1790011453.70531
+    },
+    {
+      "pid": 69536,
+      "birth": 1790011455.2632525
+    },
+    {
+      "pid": 169792,
+      "birth": 1790011455.9452677
+    },
+    {
+      "pid": 103064,
+      "birth": 1790011455.949632
+    },
+    {
+      "pid": 147708,
+      "birth": 1790011471.3621547
+    },
+    {
+      "pid": 161228,
+      "birth": 1790011472.1450608
+    },
+    {
+      "pid": 97012,
+      "birth": 1790011472.7591343
+    },
+    {
+      "pid": 90180,
+      "birth": 1790011472.7627647
+    },
+    {
+      "pid": 188808,
+      "birth": 1790011481.5201309
+    },
+    {
+      "pid": 189460,
+      "birth": 1790011481.9850533
+    },
+    {
+      "pid": 69308,
+      "birth": 1790011481.9889479
+    },
+    {
+      "pid": 149532,
+      "birth": 1790011482.2099888
+    },
+    {
+      "pid": 187812,
+      "birth": 1790011482.2188487
+    },
+    {
+      "pid": 112924,
+      "birth": 1790011483.872538
+    },
+    {
+      "pid": 183044,
+      "birth": 1790011484.34977
+    },
+    {
+      "pid": 1120988,
+      "birth": 1790011484.3534963
+    },
+    {
+      "pid": 61316,
+      "birth": 1790011484.5651908
+    },
+    {
+      "pid": 170096,
+      "birth": 1790011484.5707774
+    },
+    {
+      "pid": 171636,
+      "birth": 1790011489.8064628
+    },
+    {
+      "pid": 184148,
+      "birth": 1790011489.913036
+    },
+    {
+      "pid": 86416,
+      "birth": 1790011492.148991
+    },
+    {
+      "pid": 1152372,
+      "birth": 1790011492.1573386
+    },
+    {
+      "pid": 64340,
+      "birth": 1790011492.4402854
+    },
+    {
+      "pid": 149748,
+      "birth": 1790011492.4436927
+    },
+    {
+      "pid": 1083684,
+      "birth": 1790011492.681576
+    },
+    {
+      "pid": 182700,
+      "birth": 1790011492.6855464
+    },
+    {
+      "pid": 193016,
+      "birth": 1790011492.9833975
+    },
+    {
+      "pid": 186496,
+      "birth": 1790011492.9871583
+    },
+    {
+      "pid": 179072,
+      "birth": 1790011498.4672272
+    },
+    {
+      "pid": 140432,
+      "birth": 1790011498.4708948
+    },
+    {
+      "pid": 840576,
+      "birth": 1790011498.7073393
+    },
+    {
+      "pid": 1086212,
+      "birth": 1790011498.7110353
+    },
+    {
+      "pid": 1020404,
+      "birth": 1790011499.00179
+    },
+    {
+      "pid": 956988,
+      "birth": 1790011499.2342095
+    },
+    {
+      "pid": 1158920,
+      "birth": 1790011499.2377217
+    },
+    {
+      "pid": 61276,
+      "birth": 1790011499.4742637
+    },
+    {
+      "pid": 70384,
+      "birth": 1790011499.4778883
+    },
+    {
+      "pid": 123412,
+      "birth": 1790011499.7435124
+    },
+    {
+      "pid": 194544,
+      "birth": 1790011499.7471755
+    },
+    {
+      "pid": 1159992,
+      "birth": 1790011506.449628
+    },
+    {
+      "pid": 105916,
+      "birth": 1790011506.455135
+    },
+    {
+      "pid": 163492,
+      "birth": 1790011506.8388567
+    },
+    {
+      "pid": 99948,
+      "birth": 1790011506.8423696
+    },
+    {
+      "pid": 136068,
+      "birth": 1790011525.5898485
+    },
+    {
+      "pid": 985172,
+      "birth": 1790011525.594373
+    },
+    {
+      "pid": 1000616,
+      "birth": 1790011525.845182
+    },
+    {
+      "pid": 1049892,
+      "birth": 1790011525.8488424
+    },
+    {
+      "pid": 146812,
+      "birth": 1790011539.5426242
+    },
+    {
+      "pid": 190876,
+      "birth": 1790011540.020108
+    },
+    {
+      "pid": 185312,
+      "birth": 1790011540.02377
+    },
+    {
+      "pid": 138200,
+      "birth": 1790011540.2583437
+    },
+    {
+      "pid": 1166016,
+      "birth": 1790011540.2655706
+    },
+    {
+      "pid": 186868,
+      "birth": 1790011548.3263116
+    },
+    {
+      "pid": 1050620,
+      "birth": 1790011612.5215309
+    },
+    {
+      "pid": 33084,
+      "birth": 1790011613.5190313
+    }
+  ],
+  "instruction_changes": [
+    {
+      "assembly": "Lokad.Onnx.dll",
+      "methods": 3101,
+      "before_sha256": "469cb2d6a4558d917266434bd1f968c8b9f2762795b963800b2d945083852edd",
+      "after_sha256": "469cb2d6a4558d917266434bd1f968c8b9f2762795b963800b2d945083852edd",
+      "corrected_nullable_annotation": null,
+      "unchanged_methods": 3101,
+      "removed": [],
+      "added": [],
+      "differences": [],
+      "equal_except_request_lifetime": true
+    },
+    {
+      "assembly": "Lokad.Onnx.Data.dll",
+      "methods": 691,
+      "before_sha256": "e7fe1668e3aa08fb07b1e5a687ef2b1e4af54567f6a458db09d411eb69f99aeb",
+      "after_sha256": "1d34666456a5da749dc3b40ee25621af0bed806c9167f3ad12e96d0736dca662",
+      "corrected_nullable_annotation": true,
+      "unchanged_methods": 689,
+      "removed": [],
+      "added": [
+        "Lokad.Onnx.WeSpeakerEmbedder::ExtractPipeline::Lokad.Onnx.WeSpeakerEmbedding[] ExtractPipeline(Single[], Single[][], System.Threading.CancellationToken, PipelineRequest)",
+        "Lokad.Onnx.WeSpeakerEmbedder::CreatePipelineRequest::PipelineRequest CreatePipelineRequest()",
+        "Lokad.Onnx.WeSpeakerEmbedder+PipelineRequest::ExtractPipeline::Lokad.Onnx.WeSpeakerEmbedding[] ExtractPipeline(Single[], Single[][], System.Threading.CancellationToken)",
+        "Lokad.Onnx.WeSpeakerEmbedder+PipelineRequest::Dispose::Void Dispose()",
+        "Lokad.Onnx.WeSpeakerEmbedder+PipelineRequest::.ctor::Void .ctor(Lokad.Onnx.WeSpeakerEmbedder)"
+      ],
+      "differences": [
+        "Lokad.Onnx.Community1Diarizer::Diarize::Lokad.Onnx.Community1Diarization Diarize(System.ReadOnlySpan`1[System.Single], Int32, System.Threading.CancellationToken)",
+        "Lokad.Onnx.WeSpeakerEmbedder::ExtractPipeline::Lokad.Onnx.WeSpeakerEmbedding[] ExtractPipeline(Single[], Single[][], System.Threading.CancellationToken)"
+      ],
+      "equal_except_request_lifetime": true
+    }
+  ],
+  "scope": "Output/allocation qualification only; historical timings are not a matched performance comparison; no AMD or production promotion."
+}

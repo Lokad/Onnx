@@ -54,8 +54,14 @@ finds about 5.20 GB of cumulative managed allocations per optimized pyannote
 totals, not resident memory. Reusing embedding contexts within a request is
 now supported by a [bounded graph experiment](tests/pyannote/context-reuse-probe/results-20260921.md):
 repeated embedding allocations fall 18.1–18.3% in both process orders, with
-all 17.5 million output values unchanged. Complete application qualification
-and latency measurement remain pending; no new ORT speedup is claimed.
+all 17.5 million output values unchanged. The subsequent
+[request-scoped application candidate](tests/pyannote/request-contexts/results-20260921.md)
+passes all 16 dialogue calls, both ten-minute meetings and recovery with exact
+predecessor results. Cumulative allocations fall 14.4% on the full dialogue
+and 15.0–15.1% on the meetings, from about 146.4 GB to 124.3–124.4 GB each.
+Both meeting timelines still match ORT exactly. Full suites pass; a fresh
+matched latency comparison is running. These allocation results add no new
+ORT speedup or AMD promotion.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
