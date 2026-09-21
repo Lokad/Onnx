@@ -1,0 +1,81 @@
+--- a/src/Lokad.Onnx.Data/WeSpeakerEmbedder.cs
++++ b/src/Lokad.Onnx.Data/WeSpeakerEmbedder.cs
+@@ -82,18 +82,21 @@
+ 
+     // Share one backbone evaluation across the three local speakers. The native pipeline's
+     // sparse weighted masks are allowed here; Extract retains its explicit two-frame policy.
+-    internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation)
++    internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation, PipelineRequest? request = null)
+     {
+         if (samples.Length != Community1Timeline.WindowSamples || masks.Length != 3
+             || masks.Any(m => m is null || m.Length != Community1Timeline.LocalFrames || m.Any(v => v != 0 && v != 1)))
+             throw new ArgumentException("Pipeline embeddings require one full audio window and three binary masks.");
+         lock (gate)
+         {
++            if (request is not null) ObjectDisposedException.ThrowIf(request.Disposed, request);
+             cancellation.ThrowIfCancellationRequested();
+             var features = WeSpeakerAudio.LogMelFilterbank(samples, 16000, cancellation);
+             int frames = (features.Dimensions[1] + 7) / 8;
+-            var encoding = encoder.CreateExecution(ExecutionOptions.Memory);
+-            var projecting = projection.CreateExecution(ExecutionOptions.Memory);
++            var encoding = request is null ? encoder.CreateExecution(ExecutionOptions.Memory)
++                : (request.Encoding ??= encoder.CreateExecution(ExecutionOptions.Memory));
++            var projecting = request is null ? projection.CreateExecution(ExecutionOptions.Memory)
++                : (request.Projecting ??= projection.CreateExecution(ExecutionOptions.Memory));
+             try
+             {
+                 var hidden = Execute(encoding, "fbank_features", features, EncodedName, new[] { 1, 2560, frames });
+@@ -136,4 +139,30 @@
+             if (!float.IsFinite(value)) throw new InvalidDataException("Nonfinite WeSpeaker output: " + outputName);
+         return tensor;
+     }
++
++    // Contexts belong to one diarization embedding loop, never to the model instance.
++    internal PipelineRequest CreatePipelineRequest() => new PipelineRequest(this);
++
++    internal sealed class PipelineRequest : IDisposable
++    {
++        readonly WeSpeakerEmbedder owner;
++        internal GraphExecution? Encoding, Projecting;
++        internal bool Disposed;
++
++        internal PipelineRequest(WeSpeakerEmbedder owner) => this.owner = owner;
++
++        internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation) =>
++            owner.ExtractPipeline(samples, masks, cancellation, this);
++
++        public void Dispose()
++        {
++            lock (owner.gate)
++            {
++                if (Disposed) return;
++                try { Encoding?.Reset(); Projecting?.Reset(); }
++                finally { Encoding = null; Projecting = null; Disposed = true; }
++            }
++        }
++    }
++
+ }
+--- a/src/Lokad.Onnx.Data/Community1Diarizer.cs
++++ b/src/Lokad.Onnx.Data/Community1Diarizer.cs
+@@ -85,12 +85,15 @@
+             var count = Community1Timeline.Count(activity, chunks, cancellation);
+             if (count.All(v => v == 0)) return Empty(Community1DiarizationStatus.NoSpeech, duration, chunks);
+             var embeddings = new WeSpeakerEmbedding[chunks * 3];
+-            for (int c = 0; c < chunks; c++)
++            using (var request = embedder.CreatePipelineRequest())
+             {
+-                cancellation.ThrowIfCancellationRequested(); var binary = new bool[Community1Timeline.LocalFrames * 3];
+-                Array.Copy(activity, c * binary.Length, binary, 0, binary.Length);
+-                var result = embedder.ExtractPipeline(Community1Timeline.Window(pcm, c), Community1Timeline.EmbeddingMasks(binary), cancellation);
+-                Array.Copy(result, 0, embeddings, c * 3, 3);
++                for (int c = 0; c < chunks; c++)
++                {
++                    cancellation.ThrowIfCancellationRequested(); var binary = new bool[Community1Timeline.LocalFrames * 3];
++                    Array.Copy(activity, c * binary.Length, binary, 0, binary.Length);
++                    var result = request.ExtractPipeline(Community1Timeline.Window(pcm, c), Community1Timeline.EmbeddingMasks(binary), cancellation);
++                    Array.Copy(result, 0, embeddings, c * 3, 3);
++                }
+             }
+             var clustered = clusterer.Cluster(embeddings, new DenseTensor<bool>(activity, new[] { chunks, Community1Timeline.LocalFrames, 3 }), cancellation);
+             if (clustered.Centroids.Count == 0) return Empty(Community1DiarizationStatus.NoUsableEmbeddings, duration, chunks);
