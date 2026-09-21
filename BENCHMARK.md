@@ -14,6 +14,9 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
+The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
+identifies embedding convolution as the first target and segmentation LSTM as
+the next. Its local profiling does not change the matched AMD timings below.
 
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 

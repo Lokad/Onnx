@@ -35,6 +35,18 @@ Original failed timing screens and optional defaults remain unchanged.
 
 ## What the ORT source changes about the optimization priorities
 
+The September21 user priority is pyannote, then Parakeet; Whisper is deferred.
+New [current-product pyannote attribution](../tests/pyannote/performance-profile/results-20260921.md)
+puts embedding convolution at 66-73% of the combined segmentation/embedding
+graph wall time on the three retained dialogue crops, and LSTM at 23-31%.
+This selects bounded spatial patch expansion as the first branch adaptation:
+`8af223e` and panel alignment `e35653a`, evaluating later packing changes only
+as needed. Keep the full reduction order, current output ownership and generic
+fallback. This differs from the earlier reduction-segmented convolution that
+regressed on segmentation. Complete application and AMD improvement remain to
+be demonstrated; the current native baseline is unchanged.
+
+
 | Source finding | Consequence for Lokad.Onnx |
 |---|---|
 | [MLAS SGEMM](https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/onnxruntime/core/mlas/lib/sgemm.cpp) distinguishes packed constant weights from dynamic packing, adapts panels, and overwrites the first partial product before accumulating later blocks. | Measure packing plus computation for dynamic attention. For constant projections, reuse weights across more rows and measure panel traversal separately. A faster isolated consumer does not prove a faster model. |
