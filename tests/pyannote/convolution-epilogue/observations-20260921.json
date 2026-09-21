@@ -1,0 +1,6236 @@
+{
+  "passed": true,
+  "inference_executed": false,
+  "onnx": "1.22.0",
+  "cases": [
+    {
+      "name": "dialogue-0-10s",
+      "rows": [
+        {
+          "name": "/resnet/conv1/Conv",
+          "input_shape": [
+            1,
+            1,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            1,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_385",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 1568,
+          "tile_widths": [
+            1568,
+            1440
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_388",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv2/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_391",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_394",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv2/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_397",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_400",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv2/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_403",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_406",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 160,
+          "tile_widths": [
+            160,
+            120
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_409",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/shortcut/shortcut.0/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_412",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 672,
+          "tile_widths": [
+            672,
+            472
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_415",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_418",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_421",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_424",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_427",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_430",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_433",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 64,
+          "tile_widths": [
+            64,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_436",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/shortcut/shortcut.0/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_439",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 320,
+          "tile_widths": [
+            320,
+            200
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_442",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_445",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_448",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_451",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_454",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_457",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_460",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_463",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_466",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_469",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_472",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv2/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_475",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/shortcut/shortcut.0/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_478",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 160,
+          "tile_widths": [
+            160,
+            130
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv1/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_481",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv2/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_484",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv1/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_487",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv2/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_490",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        }
+      ],
+      "tiled_nodes": 36,
+      "biased_nodes": 36,
+      "bias_additions": 39941120,
+      "tiled_copy_values": 39941120
+    },
+    {
+      "name": "dialogue-10-20s",
+      "rows": [
+        {
+          "name": "/resnet/conv1/Conv",
+          "input_shape": [
+            1,
+            1,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            1,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_385",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 1568,
+          "tile_widths": [
+            1568,
+            1440
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_388",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv2/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_391",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_394",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv2/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_397",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_400",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv2/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_403",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_406",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 160,
+          "tile_widths": [
+            160,
+            120
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_409",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/shortcut/shortcut.0/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_412",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 672,
+          "tile_widths": [
+            672,
+            472
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_415",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_418",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_421",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_424",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_427",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_430",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_433",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 64,
+          "tile_widths": [
+            64,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_436",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/shortcut/shortcut.0/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_439",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 320,
+          "tile_widths": [
+            320,
+            200
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_442",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_445",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_448",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_451",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_454",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_457",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_460",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_463",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_466",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_469",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_472",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv2/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_475",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/shortcut/shortcut.0/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_478",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 160,
+          "tile_widths": [
+            160,
+            130
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv1/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_481",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv2/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_484",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv1/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_487",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv2/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_490",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        }
+      ],
+      "tiled_nodes": 36,
+      "biased_nodes": 36,
+      "bias_additions": 39941120,
+      "tiled_copy_values": 39941120
+    },
+    {
+      "name": "dialogue-20-30s",
+      "rows": [
+        {
+          "name": "/resnet/conv1/Conv",
+          "input_shape": [
+            1,
+            1,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            1,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_385",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 1568,
+          "tile_widths": [
+            1568,
+            1440
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_388",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.0/conv2/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_391",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_394",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.1/conv2/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_397",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_400",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer1/layer1.2/conv2/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            32,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_403",
+          "bias_shape": [
+            32
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 192,
+          "tile_widths": [
+            192,
+            160
+          ],
+          "output_values": 2554880,
+          "bias_additions": 2554880,
+          "tiled_copy_values": 2554880
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv1/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_406",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 160,
+          "tile_widths": [
+            160,
+            120
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_409",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.0/shortcut/shortcut.0/Conv",
+          "input_shape": [
+            1,
+            32,
+            80,
+            998
+          ],
+          "weight_shape": [
+            64,
+            32,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_412",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 672,
+          "tile_widths": [
+            672,
+            472
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_415",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.1/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_418",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_421",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.2/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_424",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_427",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer2/layer2.3/conv2/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            64,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_430",
+          "bias_shape": [
+            64
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 96,
+          "tile_widths": [
+            96,
+            88
+          ],
+          "output_values": 1277440,
+          "bias_additions": 1277440,
+          "tiled_copy_values": 1277440
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv1/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_433",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 64,
+          "tile_widths": [
+            64,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_436",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.0/shortcut/shortcut.0/Conv",
+          "input_shape": [
+            1,
+            64,
+            40,
+            499
+          ],
+          "weight_shape": [
+            128,
+            64,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_439",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 320,
+          "tile_widths": [
+            320,
+            200
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_442",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.1/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_445",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_448",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.2/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_451",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_454",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.3/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_457",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_460",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.4/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_463",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_466",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer3/layer3.5/conv2/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            128,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_469",
+          "bias_shape": [
+            128
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            8
+          ],
+          "output_values": 640000,
+          "bias_additions": 640000,
+          "tiled_copy_values": 640000
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv1/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_472",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/conv2/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_475",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.0/shortcut/shortcut.0/Conv",
+          "input_shape": [
+            1,
+            128,
+            20,
+            250
+          ],
+          "weight_shape": [
+            256,
+            128,
+            1,
+            1
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              1,
+              1
+            ],
+            "pads": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "strides": [
+              2,
+              2
+            ]
+          },
+          "bias": "onnx::Conv_478",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 160,
+          "tile_widths": [
+            160,
+            130
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv1/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_481",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.1/conv2/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_484",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv1/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_487",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        },
+        {
+          "name": "/resnet/layer4/layer4.2/conv2/Conv",
+          "input_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "weight_shape": [
+            256,
+            256,
+            3,
+            3
+          ],
+          "output_shape": [
+            1,
+            256,
+            10,
+            125
+          ],
+          "attributes": {
+            "dilations": [
+              1,
+              1
+            ],
+            "group": 1,
+            "kernel_shape": [
+              3,
+              3
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "strides": [
+              1,
+              1
+            ]
+          },
+          "bias": "onnx::Conv_490",
+          "bias_shape": [
+            256
+          ],
+          "pointwise": false,
+          "tiled": true,
+          "block_columns": 32,
+          "tile_widths": [
+            32,
+            2
+          ],
+          "output_values": 320000,
+          "bias_additions": 320000,
+          "tiled_copy_values": 320000
+        }
+      ],
+      "tiled_nodes": 36,
+      "biased_nodes": 36,
+      "bias_additions": 39941120,
+      "tiled_copy_values": 39941120
+    }
+  ],
+  "all_tile_shapes": [
+    {
+      "m": 32,
+      "n": 9,
+      "k": 1440
+    },
+    {
+      "m": 32,
+      "n": 9,
+      "k": 1568
+    },
+    {
+      "m": 32,
+      "n": 288,
+      "k": 160
+    },
+    {
+      "m": 32,
+      "n": 288,
+      "k": 192
+    },
+    {
+      "m": 64,
+      "n": 32,
+      "k": 472
+    },
+    {
+      "m": 64,
+      "n": 32,
+      "k": 672
+    },
+    {
+      "m": 64,
+      "n": 288,
+      "k": 120
+    },
+    {
+      "m": 64,
+      "n": 288,
+      "k": 160
+    },
+    {
+      "m": 64,
+      "n": 576,
+      "k": 88
+    },
+    {
+      "m": 64,
+      "n": 576,
+      "k": 96
+    },
+    {
+      "m": 128,
+      "n": 64,
+      "k": 200
+    },
+    {
+      "m": 128,
+      "n": 64,
+      "k": 320
+    },
+    {
+      "m": 128,
+      "n": 576,
+      "k": 8
+    },
+    {
+      "m": 128,
+      "n": 576,
+      "k": 64
+    },
+    {
+      "m": 128,
+      "n": 1152,
+      "k": 8
+    },
+    {
+      "m": 128,
+      "n": 1152,
+      "k": 32
+    },
+    {
+      "m": 256,
+      "n": 128,
+      "k": 130
+    },
+    {
+      "m": 256,
+      "n": 128,
+      "k": 160
+    },
+    {
+      "m": 256,
+      "n": 1152,
+      "k": 2
+    },
+    {
+      "m": 256,
+      "n": 1152,
+      "k": 32
+    },
+    {
+      "m": 256,
+      "n": 2304,
+      "k": 2
+    },
+    {
+      "m": 256,
+      "n": 2304,
+      "k": 32
+    }
+  ],
+  "missing_from_original_kernel_probe": [
+    {
+      "m": 64,
+      "n": 32,
+      "k": 472
+    },
+    {
+      "m": 64,
+      "n": 32,
+      "k": 672
+    },
+    {
+      "m": 128,
+      "n": 64,
+      "k": 200
+    },
+    {
+      "m": 128,
+      "n": 64,
+      "k": 320
+    },
+    {
+      "m": 256,
+      "n": 128,
+      "k": 130
+    },
+    {
+      "m": 256,
+      "n": 128,
+      "k": 160
+    }
+  ],
+  "scope": "Static workload coverage and bias/copy census; no JIT instruction or latency attribution.",
+  "supervisor": {
+    "pid": 1101240,
+    "birth": 1790021812.329662
+  },
+  "affinity": [
+    0
+  ],
+  "resident_bytes_at_end": 72175616,
+  "available_bytes_at_end": 13423140864
+}

@@ -95,6 +95,11 @@ workload warmup: packing-inclusive geometric mean is 17.8% lower across sixteen
 tile shapes, with no measured shape regression. Two earlier failed variants
 remain documented. This admits a separate convolution experiment; it establishes
 no complete-application speedup or new ORT ratio.
+The subsequent [coverage correction](tests/pyannote/portable-row-groups/coverage-correction-20260921.md)
+finds six omitted tile geometries from three strided 1×1 layers. The 17.8%
+figure covers only sixteen of the model's twenty-two tile geometries; complete
+kernel coverage needs a successor. The full graph and public tests include
+those layers, so their output qualification remains applicable.
 The [isolated convolution implementation](tests/pyannote/convolution-portable-rows/results-20260921.md)
 now passes 214 focused tests, 50 hardware-disabled tests and all 108 captured
 graph calls, preserving 17.5 million values bit for bit. All 166 shared-model
