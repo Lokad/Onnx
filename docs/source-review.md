@@ -154,6 +154,12 @@ tensor dispatcher, preserving existing AVX-512 precedence. All784Parakeet and
 changed DinoV3 output was independently checked against ORT before accepting
 an additional frozen hash pair in the isolated suite copy. AMD and valid
 application timing still precede promotion.
+The [complete arithmetic comparison](../tests/parakeet/arithmetic-comparison/results-20260921.md)
+retains all 480 public requests and fresh ORT results, but managed per-clip
+repeatability controls fail while ORT's controls pass. The cause is unassigned:
+sampled RSS alone does not establish allocation or GC-pause attribution.
+Investigate those mechanisms with separate diagnostic consumers before another
+local timing comparison; retain the original numerical and public contracts.
 
 
 | Source finding | Consequence for Lokad.Onnx |

@@ -115,6 +115,10 @@ being accepted in the isolated test copy. These results apply to the candidate;
 AMD, performance qualification and production promotion remain pending.
 The affected pyannote replay preserves all 18 graph arrays / 2,917,107 values
 bit-for-bit and passes sixteen complete public requests against native results.
+The corrected Parakeet candidate's [full application comparison](../tests/parakeet/arithmetic-comparison/results-20260921.md)
+passes all 480 public requests and resource guards, but managed repeatability
+controls fail. Numerical qualification remains valid; no speedup or production
+promotion follows that trial.
 
 The Windows audio tables measure `8732831`. The [matched AMD Parakeet/pyannote comparison](../tests/audio/amd-two-family/results-20260920.md) measures `1d10d22` against ORT 1.29.0.
 Whisper's later memory implementation passes AMD conformance and endurance.

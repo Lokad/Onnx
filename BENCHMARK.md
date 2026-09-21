@@ -40,6 +40,11 @@ remain pending; the candidate is not promoted and production timing tables are
 unchanged.
 Its affected pyannote check preserves all 2.9 million graph values bit-for-bit;
 all sixteen public diarization requests pass native checks.
+The subsequent [complete arithmetic timing trial](tests/parakeet/arithmetic-comparison/results-20260921.md)
+passes all 480 requests and resource checks, including two fresh ORT runs, but
+fails the fixed repeatability controls for both managed roles. Observed corpus
+means are 63.311 s production, 62.148 s candidate and 29.060 s ORT. These do not
+establish a speedup or select a performance candidate; accepted tables stay unchanged.
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
