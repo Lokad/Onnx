@@ -1,0 +1,186 @@
+{
+  "passed": true,
+  "attribution_valid": false,
+  "qualifies_for_later_amd": false,
+  "calls": 96,
+  "warmup_calls": 24,
+  "measured_calls": 72,
+  "controls": {
+    "predecessor": {
+      "fixture_max_min": {
+        "dialogue-30s": 1.0266154633965054,
+        "dialogue-0-10s": 1.0322083139913705,
+        "dialogue-10-20s": 1.0026138671163074,
+        "dialogue-20-30s": 1.0153294700528182
+      },
+      "passed": true
+    },
+    "candidate": {
+      "fixture_max_min": {
+        "dialogue-30s": 1.0379504789747172,
+        "dialogue-0-10s": 1.1586625739355336,
+        "dialogue-10-20s": 1.0120694998583677,
+        "dialogue-20-30s": 1.0677180413828
+      },
+      "passed": true
+    },
+    "ort": {
+      "fixture_max_min": {
+        "dialogue-30s": 1.010679273339277,
+        "dialogue-0-10s": 1.522265838009676,
+        "dialogue-10-20s": 1.0431513933295649,
+        "dialogue-20-30s": 1.0193165837470708
+      },
+      "passed": false
+    }
+  },
+  "table": [
+    {
+      "name": "dialogue-30s",
+      "audio_seconds": 30.0,
+      "seconds": {
+        "predecessor": 12.525653866666666,
+        "candidate": 12.6708388,
+        "ort": 6.433171150000001
+      },
+      "candidate_to_predecessor": 1.0115910063361804,
+      "candidate_to_ort": 1.969610088797342,
+      "allocations": {
+        "predecessor": 4470040100.0,
+        "candidate": 1121382317.3333333
+      },
+      "allocation_ratio": 0.2508662768670315
+    },
+    {
+      "name": "dialogue-0-10s",
+      "audio_seconds": 10.0,
+      "seconds": {
+        "predecessor": 0.5943600333333334,
+        "candidate": 0.6269716000000001,
+        "ort": 0.3804411333333333
+      },
+      "candidate_to_predecessor": 1.0548683707478985,
+      "candidate_to_ort": 1.6480121234700003,
+      "allocations": {
+        "predecessor": 253822856.0,
+        "candidate": 111005544.0
+      },
+      "allocation_ratio": 0.4373347055869547
+    },
+    {
+      "name": "dialogue-10-20s",
+      "audio_seconds": 10.0,
+      "seconds": {
+        "predecessor": 0.5863983166666666,
+        "candidate": 0.5913373333333334,
+        "ort": 0.30988531666666663
+      },
+      "candidate_to_predecessor": 1.0084226310449562,
+      "candidate_to_ort": 1.9082457332736915,
+      "allocations": {
+        "predecessor": 251392008.0,
+        "candidate": 111071693.33333333
+      },
+      "allocation_ratio": 0.4418266683057535
+    },
+    {
+      "name": "dialogue-20-30s",
+      "audio_seconds": 10.0,
+      "seconds": {
+        "predecessor": 0.5898208666666667,
+        "candidate": 0.5990530333333333,
+        "ort": 0.30635028333333336
+      },
+      "candidate_to_predecessor": 1.0156524924573143,
+      "candidate_to_ort": 1.9554512136080389,
+      "allocations": {
+        "predecessor": 252025150.66666666,
+        "candidate": 109713876.0
+      },
+      "allocation_ratio": 0.4353290761250638
+    }
+  ],
+  "workers": [
+    {
+      "index": 0,
+      "role": "predecessor",
+      "samples": 234,
+      "peak_rss": 1224413184,
+      "means": {
+        "dialogue-30s": 12.361154933333333,
+        "dialogue-0-10s": 0.5849400666666668,
+        "dialogue-10-20s": 0.5871637,
+        "dialogue-20-30s": 0.5943073
+      }
+    },
+    {
+      "index": 1,
+      "role": "candidate",
+      "samples": 239,
+      "peak_rss": 648720384,
+      "means": {
+        "dialogue-30s": 12.4348839,
+        "dialogue-0-10s": 0.5808889333333334,
+        "dialogue-10-20s": 0.5877901666666667,
+        "dialogue-20-30s": 0.5794339666666667
+      }
+    },
+    {
+      "index": 2,
+      "role": "ort",
+      "samples": 142,
+      "peak_rss": 619712512,
+      "means": {
+        "dialogue-30s": 6.399002800000001,
+        "dialogue-0-10s": 0.3016661666666667,
+        "dialogue-10-20s": 0.30334053333333333,
+        "dialogue-20-30s": 0.30341976666666665
+      }
+    },
+    {
+      "index": 3,
+      "role": "ort",
+      "samples": 124,
+      "peak_rss": 619769856,
+      "means": {
+        "dialogue-30s": 6.4673395000000005,
+        "dialogue-0-10s": 0.45921609999999996,
+        "dialogue-10-20s": 0.3164301,
+        "dialogue-20-30s": 0.3092808
+      }
+    },
+    {
+      "index": 4,
+      "role": "candidate",
+      "samples": 251,
+      "peak_rss": 621285376,
+      "means": {
+        "dialogue-30s": 12.9067937,
+        "dialogue-0-10s": 0.6730542666666667,
+        "dialogue-10-20s": 0.5948845,
+        "dialogue-20-30s": 0.6186721
+      }
+    },
+    {
+      "index": 5,
+      "role": "predecessor",
+      "samples": 238,
+      "peak_rss": 1204387840,
+      "means": {
+        "dialogue-30s": 12.6901528,
+        "dialogue-0-10s": 0.60378,
+        "dialogue-10-20s": 0.5856329333333333,
+        "dialogue-20-30s": 0.5853344333333333
+      }
+    }
+  ],
+  "resource_samples": 1228,
+  "peak_rss": 1224413184,
+  "scope": "Descriptive Windows whole-application comparison; no calibrated parity or production promotion",
+  "closure": {
+    "bytes": 43959,
+    "sha256": "85ba78db5241f724f3a3537ace6b9c4cfe68a358f81655fe1d1979fcc9476182"
+  },
+  "bound_files": 204,
+  "terminal_identities": 7
+}

@@ -76,8 +76,12 @@ now passes 3,172 backend tests, 342 tensor tests, all 16 dialogue calls, both
 ten-minute meetings and recovery. Full-dialogue allocations fall from 4.45 GB
 to 1.12 GB (74.8%); meeting allocations fall from 124.3–124.4 GB to 30.0–30.1 GB
 (75.8–75.9%). Exact predecessor outputs and ORT speaker timelines are preserved.
-These are cumulative allocations. Matched latency measurement remains pending;
-the ORT timing tables are unchanged.
+These are cumulative allocations. The subsequent
+[fresh ORT comparison](tests/pyannote/convolution-pool-comparison/results-20260921.md)
+passes all 96 requests, but fails ORT's first-crop repeatability control.
+Observed full-request means are 12.526 s predecessor, 12.671 s candidate and
+6.433 s ORT. No speedup is established; the accepted ORT timing tables and
+AMD payload are unchanged.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
