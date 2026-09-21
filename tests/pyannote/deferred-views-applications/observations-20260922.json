@@ -1,0 +1,275 @@
+{
+  "closure": {
+    "bytes": 17737,
+    "sha256": "08532437c44358ee276042d49a654e34c6bee029e1e86baea1963a20efe84172"
+  },
+  "passed": true,
+  "core": {
+    "bytes": 735232,
+    "sha256": "4f22824a7c315334982907f8846dc7e67dd0fddb1aadba4d908c89684285bbd9"
+  },
+  "data": {
+    "bytes": 143872,
+    "sha256": "92194232cd60979548cfe480db07a6f7a2e07d9f21dc8c69e133919c31ab4f2d"
+  },
+  "public_calls": 16,
+  "meeting_calls": 3,
+  "exact_predecessor_results": true,
+  "exact_native_timelines": true,
+  "held_outputs_unchanged": true,
+  "dialogue": [
+    {
+      "name": "dialogue-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 16.0775475,
+      "allocated_bytes": 1035302224,
+      "maximum_centroid_error": 1.4823727150781174e-06
+    },
+    {
+      "name": "dialogue-0-10s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.6540161,
+      "allocated_bytes": 108386432,
+      "maximum_centroid_error": 3.0249357223510742e-06
+    },
+    {
+      "name": "dialogue-10-20s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5959023,
+      "allocated_bytes": 109047752,
+      "maximum_centroid_error": 1.2218952180620413e-06
+    },
+    {
+      "name": "dialogue-20-30s",
+      "pass": 0,
+      "phase": "warmup",
+      "seconds": 0.5983843,
+      "allocated_bytes": 107583176,
+      "maximum_centroid_error": 1.5050172805786133e-06
+    },
+    {
+      "name": "dialogue-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 14.1455171,
+      "allocated_bytes": 1023343248,
+      "maximum_centroid_error": 1.4823727150781174e-06
+    },
+    {
+      "name": "dialogue-0-10s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.7337779,
+      "allocated_bytes": 108815168,
+      "maximum_centroid_error": 3.0249357223510742e-06
+    },
+    {
+      "name": "dialogue-10-20s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.6531951,
+      "allocated_bytes": 107570968,
+      "maximum_centroid_error": 1.2218952180620413e-06
+    },
+    {
+      "name": "dialogue-20-30s",
+      "pass": 1,
+      "phase": "measured",
+      "seconds": 0.5960029,
+      "allocated_bytes": 104421760,
+      "maximum_centroid_error": 1.5050172805786133e-06
+    },
+    {
+      "name": "dialogue-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 12.0334302,
+      "allocated_bytes": 1009157224,
+      "maximum_centroid_error": 1.4823727150781174e-06
+    },
+    {
+      "name": "dialogue-0-10s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5365075,
+      "allocated_bytes": 104404152,
+      "maximum_centroid_error": 3.0249357223510742e-06
+    },
+    {
+      "name": "dialogue-10-20s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5725211,
+      "allocated_bytes": 104436664,
+      "maximum_centroid_error": 1.2218952180620413e-06
+    },
+    {
+      "name": "dialogue-20-30s",
+      "pass": 2,
+      "phase": "measured",
+      "seconds": 0.5265536,
+      "allocated_bytes": 104435616,
+      "maximum_centroid_error": 1.5050172805786133e-06
+    },
+    {
+      "name": "dialogue-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 11.4448522,
+      "allocated_bytes": 1004942088,
+      "maximum_centroid_error": 1.4823727150781174e-06
+    },
+    {
+      "name": "dialogue-0-10s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5603573,
+      "allocated_bytes": 104400600,
+      "maximum_centroid_error": 3.0249357223510742e-06
+    },
+    {
+      "name": "dialogue-10-20s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5626439,
+      "allocated_bytes": 104441048,
+      "maximum_centroid_error": 1.2218952180620413e-06
+    },
+    {
+      "name": "dialogue-20-30s",
+      "pass": 3,
+      "phase": "measured",
+      "seconds": 0.5474431,
+      "allocated_bytes": 104424208,
+      "maximum_centroid_error": 1.5050172805786133e-06
+    }
+  ],
+  "meetings": [
+    {
+      "name": "ES2004a",
+      "passed": true,
+      "maximum_centroid_error": 8.981409564540188e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "seconds": 313.5419481,
+      "allocated_bytes": 26719644320
+    },
+    {
+      "name": "IS1009a",
+      "passed": true,
+      "maximum_centroid_error": 5.764390146878462e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "seconds": 297.3681386,
+      "allocated_bytes": 26958259488
+    },
+    {
+      "name": "ES2004a-recovery30",
+      "passed": true,
+      "maximum_centroid_error": 5.18795691045737e-07,
+      "mismatch_count": 0,
+      "mismatches": [],
+      "exact_predecessor": true,
+      "exact_native_timelines": true,
+      "seconds": 10.5994948,
+      "allocated_bytes": 1024964336
+    }
+  ],
+  "identities": [
+    {
+      "pid": 348468,
+      "birth": 1790034173.81007
+    },
+    {
+      "pid": 1026872,
+      "birth": 1790034179.550428
+    },
+    {
+      "pid": 543456,
+      "birth": 1790034241.0119796
+    },
+    {
+      "pid": 588040,
+      "birth": 1790034242.1243582
+    }
+  ],
+  "resources": [
+    {
+      "name": "dialogue",
+      "seconds": 61.38956820004387,
+      "samples": 229,
+      "peak_rss": 639918080
+    },
+    {
+      "name": "meetings-inputs",
+      "seconds": 1.0497845000354573,
+      "samples": 4,
+      "peak_rss": 107175936
+    },
+    {
+      "name": "meetings-run",
+      "seconds": 622.6398091000156,
+      "samples": 2369,
+      "peak_rss": 902230016
+    }
+  ],
+  "resource_samples": 2602,
+  "peak_rss": 902230016,
+  "scope": "Complete public output/ownership/resource qualification of deferred views; no benchmark or AMD promotion.",
+  "allocation_comparison": [
+    {
+      "name": "dialogue-30s",
+      "predecessor_bytes": 1092991418.6666667,
+      "candidate_bytes": 1012480853.3333334,
+      "ratio": 0.9263392521127497
+    },
+    {
+      "name": "dialogue-0-10s",
+      "predecessor_bytes": 110757333.33333333,
+      "candidate_bytes": 105873306.66666667,
+      "ratio": 0.955903356286416
+    },
+    {
+      "name": "dialogue-10-20s",
+      "predecessor_bytes": 109211114.66666667,
+      "candidate_bytes": 105482893.33333333,
+      "ratio": 0.9658622536294718
+    },
+    {
+      "name": "dialogue-20-30s",
+      "predecessor_bytes": 108169600.0,
+      "candidate_bytes": 104427194.66666667,
+      "ratio": 0.9654024297646167
+    }
+  ],
+  "meeting_allocations": [
+    {
+      "name": "ES2004a",
+      "predecessor_bytes": 29128121160,
+      "candidate_bytes": 26719644320,
+      "ratio": 0.9173143771693925,
+      "seconds": 313.5419481
+    },
+    {
+      "name": "IS1009a",
+      "predecessor_bytes": 29155963488,
+      "candidate_bytes": 26958259488,
+      "ratio": 0.924622487577729,
+      "seconds": 297.3681386
+    },
+    {
+      "name": "ES2004a-recovery30",
+      "predecessor_bytes": 1086360200,
+      "candidate_bytes": 1024964336,
+      "ratio": 0.9434847999770242,
+      "seconds": 10.5994948
+    }
+  ]
+}

@@ -197,8 +197,12 @@ changes one convolution method and passes the complete suites and captured
 graph regression. Repeated embedding allocations are 1.5–1.6 MB, compared with
 5.2 MB in the retained portable-row run. All 166 shared-model and 784 Parakeet
 arrays stay unchanged, including Parakeet's three existing native discrepancies.
-Complete public qualification and a fresh matched timing comparison remain
-separate; these allocation counters do not change the accepted table below.
+It also passes [complete public qualification](tests/pyannote/deferred-views-applications/results-20260922.md):
+all 16 dialogue calls, both ten-minute meetings and recovery retain exact
+predecessor outputs and ORT speaker timelines. Cumulative allocations are 7.4%
+lower on the full dialogue and 7.5–8.3% lower on the meetings than in the prior
+qualification. A fresh matched timing comparison remains separate; these
+allocation counters do not change the accepted table below.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
