@@ -197,5 +197,15 @@ The [original AMD resource failure](../tests/audio/amd-comparison/resource-failu
 [failed snapshot assertion](../tests/whisper/weight-sharing/failure-20260920.md)
 remain recorded in their reports. The successful candidate uses normal collection.
 Existing numerical and broader accuracy limits remain open. A separate
-[matched AMD Whisper comparison](../tests/audio/whisper-amd/README.md) is running;
+[matched AMD Whisper comparison](../tests/audio/whisper-amd/disk-failure-20260921.md) stopped at a disk-space guard in its final timing process;
 allocation and endurance observations are not ORT latency measurements.
+
+The [whole-layer float64 reference diagnostic](../tests/whisper/layer20-reference/results-20260921.md)
+now separates inherited and local error for the same selected layer-20 cases.
+All 768 comparisons of local rounding against the exact saved input's reference
+pass `1e-4` (maximum `4.77353e-5`), while both float64 routes agree within
+`4.81837e-14`. All 64 final-output comparisons of inherited error exceed `1e-4`.
+Thus even computing this layer in float64 on these unchanged incoming FP32 states
+does not by itself meet the full-reference boundary limit. This points toward
+earlier accumulated error; it neither identifies its first cause nor changes the
+existing full-encoder gate or application support claims.

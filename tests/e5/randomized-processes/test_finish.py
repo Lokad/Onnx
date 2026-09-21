@@ -12,7 +12,7 @@ import finish
 
 
 class FinishTests(unittest.TestCase):
-    def scenario(self, aa_pass, whisper_code=0, collect_code=0):
+    def scenario(self, aa_pass, whisper_code=0, collect_code=0, allow_failed=False):
         with tempfile.TemporaryDirectory(prefix='e5-controller-') as temporary:
             root = Path(temporary)
             base, monitor, whisper, control = [root/name for name in ['base', 'whisper-monitor', 'whisper', 'control']]
@@ -23,6 +23,12 @@ class FinishTests(unittest.TestCase):
             put(base/'prepared.json', dict(passed=True))
             put(monitor/'state.json', dict(complete=True, code=whisper_code, supervisor=dict(pid=2, birth=1)))
             put(whisper/'final-verification.json', dict(passed=True))
+            failed_sha = None
+            if allow_failed:
+                path = whisper/'failure-closed-v2.json'
+                put(path, dict(closure_passed=True, campaign_passed=False))
+                failed_sha = finish.pin(path)['sha256']
+                control = base.with_name('e5-randomized-processes-finish-v2-20260921')
             for name in ['tests/e5/process-uncertainty/estimator.py', 'tests/e5/process-uncertainty/protocol.py',
                          'tests/e5/process-uncertainty/worker_audit.py', 'eng/campaign_processes.py']:
                 p = root/name; p.parent.mkdir(parents=True, exist_ok=True); p.write_text('# synthetic fixture')
@@ -37,7 +43,9 @@ class FinishTests(unittest.TestCase):
                     pass
             def spawn(command, **kwargs):
                 name = Path(command[4]).name
-                phase = command[6] if len(command) == 7 else None
+                phase = command[6] if len(command) == 7 and command[5] == '--phase' else None
+                if name == 'stage.py' and allow_failed:
+                    self.assertEqual(command[5:], ['--failed-predecessor-closure', failed_sha])
                 actions.append((name, phase))
                 if name == 'verify_report.py':
                     put(base/(phase+'-verification.json'), dict(passed=True,
@@ -55,14 +63,14 @@ class FinishTests(unittest.TestCase):
                 stack.enter_context(patch.object(finish.subprocess, 'Popen', spawn))
                 stack.enter_context(patch.object(finish.subprocess, 'run', observe))
                 stack.enter_context(contextlib.redirect_stdout(io.StringIO()))
-                if whisper_code or collect_code:
+                if (whisper_code and not allow_failed) or collect_code:
                     with self.assertRaises(AssertionError):
                         finish.main()
                 else:
-                    finish.main()
+                    finish.main(failed_sha)
             state = json.loads((control/'state.json').read_text())
             self.assertTrue(state['complete'])
-            self.assertEqual(state['code'], 1 if whisper_code or collect_code else 0)
+            self.assertEqual(state['code'], 1 if (whisper_code and not allow_failed) or collect_code else 0)
             return actions
 
     def test_failed_aa_publishes_without_comparison(self):
@@ -79,6 +87,11 @@ class FinishTests(unittest.TestCase):
     def test_failed_predecessor_or_collection_never_starts_comparison(self):
         self.assertEqual(self.scenario(True, whisper_code=1), [])
         self.assertEqual(self.scenario(True, collect_code=1), [('stage.py', None), ('collect.py', 'aa')])
+
+    def test_explicit_failed_predecessor_still_requires_aa(self):
+        actions = self.scenario(False, whisper_code=1, allow_failed=True)
+        self.assertEqual(actions[0], ('stage.py', None))
+        self.assertNotIn(('start_compare.py', None), actions)
 
 
 if __name__ == '__main__':

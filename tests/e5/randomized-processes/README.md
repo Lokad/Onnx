@@ -155,3 +155,19 @@ if a reporting timeout requires inspection. `update_benchmark.py` adds each
 verified complete phase to `BENCHMARK.md` and retains before/after snapshots.
 
     C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/finish.py
+
+The first controller stopped without deploying: Whisper's final timing worker
+hit a disk guard during automatic package-cache activity. Its complete failure
+closure is independently verified. e5 depends on terminal VM ownership and its
+own correctness/A/A gates; it does not require a successful Whisper latency
+comparison. The explicit continuation accepts only that audited failure receipt,
+checks all retained files and process identities, and uses a new controller log
+directory. Counts, assignments, binaries and e5 acceptance limits are unchanged:
+
+    C:/Python313/python.exe -X utf8 -B tests/e5/randomized-processes/finish.py --failed-predecessor-closure 123487c72b74bede3d2ad5b04e3b9178f2ef14e3eab35cfb901660f289edfd99
+
+Its state is under `artifacts/e5-randomized-processes-finish-v2-20260921`.
+Four controller tests pass, including the explicit failed-predecessor route
+still withholding comparison after a failed A/A. Temporary system update-service
+masks must be restored after the exclusive benchmark window, as recorded in the
+Whisper failure action receipt and `PLAN.md`.

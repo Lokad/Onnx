@@ -18,7 +18,10 @@ def save(path, value):
     temporary.replace(path)
 
 
-def main():
+def main(failed_predecessor_sha256=None):
+    global CONTROL
+    if failed_predecessor_sha256:
+        CONTROL = BASE.with_name('e5-randomized-processes-finish-v2-20260921')
     assert not CONTROL.exists() and not (BASE/'deployment-aa.json').exists()
     prepared = pin(BASE/'prepared.json'); assert read(BASE/'prepared.json')['passed'] is True
     sys.path.insert(0, str(SITE)); import psutil
@@ -46,7 +49,7 @@ def main():
         for name, wanted in tools.items():
             assert pin(ROOT/name) == wanted, ('Controller source changed', name)
 
-    def step(name, phase=None):
+    def step(name, phase=None, extra=()):
         nonlocal child
         unchanged()
         label = name+('' if phase is None else '-'+phase)
@@ -55,6 +58,7 @@ def main():
         command = [sys.executable, '-X', 'utf8', '-B', str(folder/name)]
         if phase is not None:
             command += ['--phase', phase]
+        command += list(extra)
         with (CONTROL/(label+'.stdout')).open('x') as out, (CONTROL/(label+'.stderr')).open('x') as err:
             child = subprocess.Popen(command, env=env, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)
             stage['child'] = dict(pid=child.pid, birth=psutil.Process(child.pid).create_time()); save(state_path, state)
@@ -101,14 +105,21 @@ def main():
             assert time.monotonic()-started < 5*3600, 'Whisper wait ceiling; inspect its original monitor'
             prior = read(MONITOR/'state.json')
             if prior['complete']:
-                assert prior['code'] == 0, 'Whisper completion failed; no e5 launch'
+                if failed_predecessor_sha256:
+                    closure = WHISPER/'failure-closed-v2.json'
+                    assert pin(closure)['sha256'] == failed_predecessor_sha256 and prior['code'] == 1
+                    failure = read(closure)
+                    assert failure['closure_passed'] is True and failure['campaign_passed'] is False
+                else:
+                    assert prior['code'] == 0, 'Whisper completion failed; no e5 launch'
                 if not live(prior['supervisor']):
-                    assert read(WHISPER/'final-verification.json')['passed'] is True
+                    if not failed_predecessor_sha256:
+                        assert read(WHISPER/'final-verification.json')['passed'] is True
                     break
             else:
                 assert live(prior['supervisor']), 'Whisper monitor disappeared; inspect, do not duplicate reporting'
             time.sleep(30)
-        unchanged(); step('stage.py')
+        unchanged(); step('stage.py', extra=('--failed-predecessor-closure', failed_predecessor_sha256) if failed_predecessor_sha256 else ())
         for phase in ['aa', 'compare']:
             state['phase'] = phase; save(state_path, state)
             if phase == 'compare':
@@ -137,4 +148,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--failed-predecessor-closure')
+    main(parser.parse_args().failed_predecessor_closure)

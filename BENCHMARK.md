@@ -31,12 +31,11 @@ one mean Lokad takes longer. These descriptive results have no calibrated parity
 claim. The [complete report](tests/audio/amd-two-family/results-20260920.md)
 includes process variation, memory, every Parakeet clip and evidence identities.
 
-**Whisper has no AMD timing result:** its earlier [conformance attempt](tests/audio/amd-comparison/resource-failure-20260920.md)
-stopped at the available-memory guard before timing. The qualified memory changes
-are now integrated in `0f86c5d`, after [100 AMD requests](tests/whisper/weight-sharing-v2/results-20260920.md)
-and [recording, concurrency and recovery checks](tests/whisper/memory-contracts-amd/results-20260921.md).
-A fresh [matched comparison](tests/audio/whisper-amd/README.md) is running. Its
-results will be added after the complete audit; the Windows baseline is below.
+**Whisper's matched AMD comparison is incomplete:** the final managed process
+hit the disk-space guard after34/80 calls. The [failure report](tests/audio/whisper-amd/disk-failure-20260921.md)
+retains all three completed timing workers, partial results and the coincident
+automatic package-cache activity. Memory remained above its guard. No complete
+AMD Whisper comparison is claimed; the Windows baseline is below.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
 
