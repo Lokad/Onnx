@@ -1,0 +1,2708 @@
+{
+  "closures": {
+    "focused": {
+      "bytes": 305364,
+      "sha256": "3c33d3fa6e9d2cde8877b500c7c2a68d73386040b1a1bc44b8636fea0828afd4"
+    },
+    "graphs": {
+      "bytes": 418689,
+      "sha256": "b5cc0073f90318566af2531252095c349afc23173731909c7f98a26a62ec40ae"
+    },
+    "shared": {
+      "bytes": 73370,
+      "sha256": "8fa3ab729ff7299c955b46aa0ddf62ed4b433c6eae67e7c614b16af87d136358"
+    },
+    "parakeet": {
+      "bytes": 761090,
+      "sha256": "ee54425508380b6b7ec212e3a4f86175fd9dbcf2adc218617d3fe289a62b84ff"
+    }
+  },
+  "core": {
+    "bytes": 735232,
+    "sha256": "4f22824a7c315334982907f8846dc7e67dd0fddb1aadba4d908c89684285bbd9"
+  },
+  "data": {
+    "bytes": 143872,
+    "sha256": "92194232cd60979548cfe480db07a6f7a2e07d9f21dc8c69e133919c31ab4f2d"
+  },
+  "suites": [
+    {
+      "name": "focused",
+      "counters": {
+        "total": "214",
+        "executed": "214",
+        "passed": "214",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 214
+      },
+      "trx": {
+        "bytes": 325678,
+        "sha256": "70b6ad17895e6e4d3ebca8abaa28260ae10ed0c4976d63b6af1bd77c93164af3"
+      }
+    },
+    {
+      "name": "hardware-disabled",
+      "counters": {
+        "total": "50",
+        "executed": "50",
+        "passed": "50",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 50
+      },
+      "trx": {
+        "bytes": 82645,
+        "sha256": "0bb5a91f4b0fcc66ac8a27b2ff6e83c26d963ebff01cf1f46b8b83790f5905fe"
+      }
+    },
+    {
+      "name": "backend-full",
+      "counters": {
+        "total": "3383",
+        "executed": "3290",
+        "passed": "3290",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 3290,
+        "NotExecuted": 93
+      },
+      "trx": {
+        "bytes": 5260327,
+        "sha256": "307c82812c2af0a14999da09382ed90584e319d158beb34d74f3878befdb69b3"
+      }
+    },
+    {
+      "name": "tensors-full",
+      "counters": {
+        "total": "342",
+        "executed": "342",
+        "passed": "342",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 342
+      },
+      "trx": {
+        "bytes": 512573,
+        "sha256": "e7fdc1af58d7ee925cb633291207a112ffa13d2466a43de1c041c76ea2bd6fba"
+      }
+    }
+  ],
+  "graph_summaries": [
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 26499290.666666668,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.2469661,
+      "pause_seconds_sum": 0.00257,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 58724744.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.6150079,
+      "pause_seconds_sum": 0.002393,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 23606200.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.25102596666666666,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 58261981.333333336,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.4727134333333333,
+      "pause_seconds_sum": 0.005857,
+      "gc_delta_sum": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 22365808.0,
+      "pool_new_mean": 726528.0,
+      "pool_reused_mean": 6449476.0,
+      "seconds_mean": 0.1823614,
+      "pause_seconds_sum": 0.003108,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 20604762.666666668,
+      "pool_new_mean": 20129066.666666668,
+      "pool_reused_mean": 210252373.33333334,
+      "seconds_mean": 0.40638223333333334,
+      "pause_seconds_sum": 0.000585,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 22014324.0,
+      "pool_new_mean": 16492.0,
+      "pool_reused_mean": 7159512.0,
+      "seconds_mean": 0.2006763,
+      "pause_seconds_sum": 7e-05,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 1635197.3333333333,
+      "pool_new_mean": 1280000.0,
+      "pool_reused_mean": 229101440.0,
+      "seconds_mean": 0.4125633166666667,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 23017045.333333332,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.23748956666666665,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 58011912.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.43168433333333334,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 24064430.666666668,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.2515241,
+      "pause_seconds_sum": 0.000365,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 58268909.333333336,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.5403153833333333,
+      "pause_seconds_sum": 0.004938,
+      "gc_delta_sum": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 25447925.333333332,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.2547235666666667,
+      "pause_seconds_sum": 0.002509,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 58558773.333333336,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.6082902,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 24728084.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.23424868333333335,
+      "pause_seconds_sum": 0.002813,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 58391548.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.43480460000000004,
+      "pause_seconds_sum": 0.007655,
+      "gc_delta_sum": [
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 24907197.333333332,
+      "pool_new_mean": 726528.0,
+      "pool_reused_mean": 6449476.0,
+      "seconds_mean": 0.21008380000000001,
+      "pause_seconds_sum": 0.000953,
+      "gc_delta_sum": [
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 20845104.0,
+      "pool_new_mean": 20129066.666666668,
+      "pool_reused_mean": 210252373.33333334,
+      "seconds_mean": 0.4091086,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 20884852.0,
+      "pool_new_mean": 16492.0,
+      "pool_reused_mean": 7159512.0,
+      "seconds_mean": 0.20084275,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 1462840.0,
+      "pool_new_mean": 1280000.0,
+      "pool_reused_mean": 229101440.0,
+      "seconds_mean": 0.43068406666666664,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 23023552.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.21214246666666667,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 58016344.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.4491780666666667,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 24071536.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.17158211666666667,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 58273109.333333336,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.42977401666666665,
+      "pause_seconds_sum": 0.005286,
+      "gc_delta_sum": [
+        3,
+        2,
+        2
+      ]
+    }
+  ],
+  "graph_calls": 108,
+  "graph_values": 17502642,
+  "shared": {
+    "passed": true,
+    "arrays": 166,
+    "values": 5000814,
+    "rows": [
+      {
+        "mode": "shared",
+        "model": "dinov3",
+        "scenario": "constant",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 77184,
+        "maximum": 6.198883056640625e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "dinov3",
+        "scenario": "constant",
+        "step": 0,
+        "name": "pooler_output",
+        "values": 384,
+        "maximum": 6.198883056640625e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "dinov3",
+        "scenario": "ramp",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 77184,
+        "maximum": 1.9885599613189697e-05,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "dinov3",
+        "scenario": "ramp",
+        "step": 0,
+        "name": "pooler_output",
+        "values": 384,
+        "maximum": 2.7418136596679688e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "resnet50",
+        "scenario": "constant",
+        "step": 0,
+        "name": "output",
+        "values": 2048,
+        "maximum": 3.2782554626464844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "resnet50",
+        "scenario": "ramp",
+        "step": 0,
+        "name": "output",
+        "values": 2048,
+        "maximum": 4.291534423828125e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "logits",
+        "values": 201028,
+        "maximum": 7.547453851144423e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.0.key",
+        "values": 3072,
+        "maximum": 2.0966189084834232e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.0.value",
+        "values": 3072,
+        "maximum": 6.784782377681187e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.1.key",
+        "values": 3072,
+        "maximum": 2.9206275939941406e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.1.value",
+        "values": 3072,
+        "maximum": 1.7209652228495077e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.2.key",
+        "values": 3072,
+        "maximum": 3.7550926208496094e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.2.value",
+        "values": 3072,
+        "maximum": 2.294778823852539e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.3.key",
+        "values": 3072,
+        "maximum": 6.9141387939453125e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.3.value",
+        "values": 3072,
+        "maximum": 2.6971101760864258e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.4.key",
+        "values": 3072,
+        "maximum": 6.198883056640625e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.4.value",
+        "values": 3072,
+        "maximum": 3.873019633931297e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.5.key",
+        "values": 3072,
+        "maximum": 6.079673767089844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.5.value",
+        "values": 3072,
+        "maximum": 4.172325134277344e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.6.key",
+        "values": 3072,
+        "maximum": 6.467103958129883e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.6.value",
+        "values": 3072,
+        "maximum": 4.675239324569702e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.7.key",
+        "values": 3072,
+        "maximum": 6.4373016357421875e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.7.value",
+        "values": 3072,
+        "maximum": 5.487352609634399e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.8.key",
+        "values": 3072,
+        "maximum": 5.442071280722859e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.8.value",
+        "values": 3072,
+        "maximum": 4.9173831939697266e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.9.key",
+        "values": 3072,
+        "maximum": 4.5299530029296875e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.9.value",
+        "values": 3072,
+        "maximum": 4.827976226806641e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.10.key",
+        "values": 3072,
+        "maximum": 5.662441253662109e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.10.value",
+        "values": 3072,
+        "maximum": 5.4836273193359375e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.11.key",
+        "values": 3072,
+        "maximum": 5.3942203521728516e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 0,
+        "name": "present.11.value",
+        "values": 3072,
+        "maximum": 5.564217874988099e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "logits",
+        "values": 50257,
+        "maximum": 2.1092458985713503e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.0.key",
+        "values": 3840,
+        "maximum": 2.0966189084834232e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.0.value",
+        "values": 3840,
+        "maximum": 7.152557373046875e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.1.key",
+        "values": 3840,
+        "maximum": 3.039836883544922e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.1.value",
+        "values": 3840,
+        "maximum": 2.2649765014648438e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.2.key",
+        "values": 3840,
+        "maximum": 3.7550926208496094e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.2.value",
+        "values": 3840,
+        "maximum": 2.294778823852539e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.3.key",
+        "values": 3840,
+        "maximum": 6.9141387939453125e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.3.value",
+        "values": 3840,
+        "maximum": 2.6971101760864258e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.4.key",
+        "values": 3840,
+        "maximum": 6.198883056640625e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.4.value",
+        "values": 3840,
+        "maximum": 3.873019633931297e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.5.key",
+        "values": 3840,
+        "maximum": 6.079673767089844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.5.value",
+        "values": 3840,
+        "maximum": 4.172325134277344e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.6.key",
+        "values": 3840,
+        "maximum": 6.467103958129883e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.6.value",
+        "values": 3840,
+        "maximum": 4.675239324569702e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.7.key",
+        "values": 3840,
+        "maximum": 6.4373016357421875e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.7.value",
+        "values": 3840,
+        "maximum": 5.487352609634399e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.8.key",
+        "values": 3840,
+        "maximum": 5.543231964111328e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.8.value",
+        "values": 3840,
+        "maximum": 4.9173831939697266e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.9.key",
+        "values": 3840,
+        "maximum": 4.5299530029296875e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.9.value",
+        "values": 3840,
+        "maximum": 4.827976226806641e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.10.key",
+        "values": 3840,
+        "maximum": 5.662441253662109e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.10.value",
+        "values": 3840,
+        "maximum": 5.4836273193359375e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.11.key",
+        "values": 3840,
+        "maximum": 5.3942203521728516e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 1,
+        "name": "present.11.value",
+        "values": 3840,
+        "maximum": 5.564217874988099e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "logits",
+        "values": 50257,
+        "maximum": 2.2333946905348493e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.0.key",
+        "values": 4608,
+        "maximum": 2.3624325968449714e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.0.value",
+        "values": 4608,
+        "maximum": 7.642616315525244e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.1.key",
+        "values": 4608,
+        "maximum": 3.039836883544922e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.1.value",
+        "values": 4608,
+        "maximum": 2.2649765014648438e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.2.key",
+        "values": 4608,
+        "maximum": 3.7550926208496094e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.2.value",
+        "values": 4608,
+        "maximum": 2.294778823852539e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.3.key",
+        "values": 4608,
+        "maximum": 6.9141387939453125e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.3.value",
+        "values": 4608,
+        "maximum": 2.6971101760864258e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.4.key",
+        "values": 4608,
+        "maximum": 8.398289175180692e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.4.value",
+        "values": 4608,
+        "maximum": 3.873019633931297e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.5.key",
+        "values": 4608,
+        "maximum": 6.4373016357421875e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.5.value",
+        "values": 4608,
+        "maximum": 5.066394805908203e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.6.key",
+        "values": 4608,
+        "maximum": 6.467103958129883e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.6.value",
+        "values": 4608,
+        "maximum": 4.675239324569702e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.7.key",
+        "values": 4608,
+        "maximum": 6.4373016357421875e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.7.value",
+        "values": 4608,
+        "maximum": 5.487352609634399e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.8.key",
+        "values": 4608,
+        "maximum": 5.543231964111328e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.8.value",
+        "values": 4608,
+        "maximum": 4.9173831939697266e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.9.key",
+        "values": 4608,
+        "maximum": 4.6131450330042395e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.9.value",
+        "values": 4608,
+        "maximum": 6.426125764846802e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.10.key",
+        "values": 4608,
+        "maximum": 5.662441253662109e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.10.value",
+        "values": 4608,
+        "maximum": 5.4836273193359375e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.11.key",
+        "values": 4608,
+        "maximum": 5.3942203521728516e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill4-decode2",
+        "step": 2,
+        "name": "present.11.value",
+        "values": 4608,
+        "maximum": 6.720423698425293e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "logits",
+        "values": 402056,
+        "maximum": 7.547453851144423e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.0.key",
+        "values": 6144,
+        "maximum": 2.3624325968449714e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.0.value",
+        "values": 6144,
+        "maximum": 1.4177291759212877e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.1.key",
+        "values": 6144,
+        "maximum": 3.2782554626464844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.1.value",
+        "values": 6144,
+        "maximum": 2.384185791015625e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.2.key",
+        "values": 6144,
+        "maximum": 3.490521383409975e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.2.value",
+        "values": 6144,
+        "maximum": 2.3245811462402344e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.3.key",
+        "values": 6144,
+        "maximum": 6.735324859619141e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.3.value",
+        "values": 6144,
+        "maximum": 3.3425859295277833e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.4.key",
+        "values": 6144,
+        "maximum": 8.940696716308594e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.4.value",
+        "values": 6144,
+        "maximum": 5.245208740234375e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.5.key",
+        "values": 6144,
+        "maximum": 6.973743438720703e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.5.value",
+        "values": 6144,
+        "maximum": 5.185604095458984e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.6.key",
+        "values": 6144,
+        "maximum": 6.854534149169922e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.6.value",
+        "values": 6144,
+        "maximum": 7.912516593933105e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.7.key",
+        "values": 6144,
+        "maximum": 6.735324859619141e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.7.value",
+        "values": 6144,
+        "maximum": 7.987022399902344e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.8.key",
+        "values": 6144,
+        "maximum": 6.4373016357421875e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.8.value",
+        "values": 6144,
+        "maximum": 6.020069122314453e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.9.key",
+        "values": 6144,
+        "maximum": 6.186896236263544e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.9.value",
+        "values": 6144,
+        "maximum": 6.496906280517578e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.10.key",
+        "values": 6144,
+        "maximum": 5.066394805908203e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.10.value",
+        "values": 6144,
+        "maximum": 6.16908073425293e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.11.key",
+        "values": 6144,
+        "maximum": 5.125999450683594e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "shared",
+        "model": "gpt2",
+        "scenario": "prefill8",
+        "step": 0,
+        "name": "present.11.value",
+        "values": 6144,
+        "maximum": 6.794929504394531e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "default-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "default-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "default-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "default-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "default-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "default-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "memory-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "memory-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "memory-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "memory-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "memory-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-8tok",
+        "scenario": "memory-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 3072,
+        "maximum": 8.940696716308594e-07,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "default-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "default-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "default-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "default-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "default-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "default-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "memory-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "memory-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "memory-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "memory-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "memory-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30tok",
+        "scenario": "memory-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 11520,
+        "maximum": 1.3709068298339844e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "default-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "default-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "default-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "default-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "default-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "default-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "memory-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "memory-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "memory-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "memory-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "memory-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-30pad128",
+        "scenario": "memory-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.471489667892456e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "default-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "default-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "default-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "default-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "default-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "default-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "memory-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "memory-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "memory-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "memory-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "memory-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-128tok",
+        "scenario": "memory-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 49152,
+        "maximum": 1.2442469596862793e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "default-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "default-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "default-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "default-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "default-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "default-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "memory-facade",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "memory-facade",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "memory-facade",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "memory-context",
+        "step": 0,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "memory-context",
+        "step": 1,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      },
+      {
+        "mode": "e5",
+        "model": "e5-512tok",
+        "scenario": "memory-context",
+        "step": 2,
+        "name": "last_hidden_state",
+        "values": 196608,
+        "maximum": 1.6391277313232422e-06,
+        "changed_bits": false
+      }
+    ],
+    "dino_hashes": [
+      {
+        "scenario": "constant",
+        "step": 0,
+        "name": "last_hidden_state",
+        "hash": 2137279831586830888,
+        "maximum": 6.198883056640625e-06,
+        "values": 77184,
+        "sha256": "225ce75542087bb4dc11fb09a74af28b833cd74296c40e82dc14739c6442b651"
+      },
+      {
+        "scenario": "constant",
+        "step": 0,
+        "name": "pooler_output",
+        "hash": 6070936888732424120,
+        "maximum": 6.198883056640625e-06,
+        "values": 384,
+        "sha256": "c92f7def45ead6d21d81b6720758e2f5a8c92f5acaa97f6e8eab18f34f28d15f"
+      },
+      {
+        "scenario": "ramp",
+        "step": 0,
+        "name": "last_hidden_state",
+        "hash": 11054769662848074365,
+        "maximum": 1.9885599613189697e-05,
+        "values": 77184,
+        "sha256": "b92b8fd63fddc31161dbd56ba932b4dc3e3ef380b0f5f6c396ff91c501d730ae"
+      },
+      {
+        "scenario": "ramp",
+        "step": 0,
+        "name": "pooler_output",
+        "hash": 14288915937160026397,
+        "maximum": 2.7418136596679688e-06,
+        "values": 384,
+        "sha256": "a0f5c2c984c9f22bb67c864ea49192ed6dc6f3a90164e60d187465c60322a96b"
+      }
+    ],
+    "resources": [
+      {
+        "name": "shared",
+        "samples": 12,
+        "peak_rss": 1497993216
+      },
+      {
+        "name": "e5",
+        "samples": 73,
+        "peak_rss": 2504564736
+      }
+    ],
+    "terminal_identities": [
+      {
+        "pid": 516092,
+        "birth": 1790033933.948748
+      },
+      {
+        "pid": 526872,
+        "birth": 1790034009.94555
+      },
+      {
+        "pid": 398028,
+        "birth": 1790034013.0870929
+      }
+    ],
+    "scope": "Full native shared outputs, no timing or production promotion"
+  },
+  "parakeet": {
+    "passed": true,
+    "arrays": 784,
+    "values": 3090494,
+    "bit_identical_arrays": 784,
+    "native": {
+      "audit_consistent": true,
+      "application_passed": true,
+      "numeric_gate_passed": false,
+      "manifest_sha256": "3bad7d262b8809b1265c84c8e66d02ee38e7d4cff2d92014448976a9e161103c",
+      "result_sha256": "a9a1143f0ff4c6b3d3a4004d12b2186a2541e9e46eff22e4c3698c4a02935eff",
+      "arrays": 784,
+      "values": 3090494,
+      "maximum": 0.0002321004867553711,
+      "failures": [
+        {
+          "case": "english-16k",
+          "label": "step-26",
+          "output": "outputs",
+          "maximum": 0.0002321004867553711,
+          "worst_index": 8193
+        },
+        {
+          "case": "english-frame-limit",
+          "label": "step-26",
+          "output": "outputs",
+          "maximum": 0.0002321004867553711,
+          "worst_index": 8193
+        },
+        {
+          "case": "english-repeat",
+          "label": "step-26",
+          "output": "outputs",
+          "maximum": 0.0002321004867553711,
+          "worst_index": 8193
+        }
+      ]
+    },
+    "identities": [
+      {
+        "pid": 552592,
+        "birth": 1790034106.5415711
+      },
+      {
+        "pid": 516812,
+        "birth": 1790034108.1787465
+      }
+    ],
+    "resources": [
+      {
+        "name": "parakeet",
+        "samples": 123,
+        "peak_rss": 6365646848,
+        "seconds": 38.98045589996036
+      }
+    ],
+    "samples": 123,
+    "scope": "Affected Parakeet application regression; same three native numerical failures; no speed claim."
+  },
+  "allocations": [
+    {
+      "order": "forward",
+      "retained_predecessor_bytes": 5151288.0,
+      "candidate_bytes": 1635197.3333333333,
+      "ratio": 0.3174346558245886
+    },
+    {
+      "order": "reverse",
+      "retained_predecessor_bytes": 5151260.0,
+      "candidate_bytes": 1462840.0,
+      "ratio": 0.2839771240434379
+    }
+  ],
+  "resource_samples": 811,
+  "terminal_identities": [
+    {
+      "pid": 357960,
+      "birth": 1790033625.776883
+    },
+    {
+      "pid": 191984,
+      "birth": 1790033635.4495738
+    },
+    {
+      "pid": 314872,
+      "birth": 1790033635.937441
+    },
+    {
+      "pid": 387924,
+      "birth": 1790033635.9523027
+    },
+    {
+      "pid": 446544,
+      "birth": 1790033637.283018
+    },
+    {
+      "pid": 428240,
+      "birth": 1790033637.8543184
+    },
+    {
+      "pid": 370264,
+      "birth": 1790033637.8663564
+    },
+    {
+      "pid": 145020,
+      "birth": 1790033638.3515248
+    },
+    {
+      "pid": 362740,
+      "birth": 1790033638.409055
+    },
+    {
+      "pid": 317356,
+      "birth": 1790033645.820538
+    },
+    {
+      "pid": 391716,
+      "birth": 1790033645.82559
+    },
+    {
+      "pid": 407240,
+      "birth": 1790033649.3575273
+    },
+    {
+      "pid": 282828,
+      "birth": 1790033649.3609157
+    },
+    {
+      "pid": 98628,
+      "birth": 1790033652.3071935
+    },
+    {
+      "pid": 444344,
+      "birth": 1790033652.790066
+    },
+    {
+      "pid": 323440,
+      "birth": 1790033652.8034918
+    },
+    {
+      "pid": 425280,
+      "birth": 1790033654.3942888
+    },
+    {
+      "pid": 401796,
+      "birth": 1790033654.9545276
+    },
+    {
+      "pid": 432196,
+      "birth": 1790033654.965126
+    },
+    {
+      "pid": 403300,
+      "birth": 1790033655.6504264
+    },
+    {
+      "pid": 384516,
+      "birth": 1790033655.6547196
+    },
+    {
+      "pid": 443380,
+      "birth": 1790033670.4578035
+    },
+    {
+      "pid": 403312,
+      "birth": 1790033671.4999034
+    },
+    {
+      "pid": 369676,
+      "birth": 1790033672.2405965
+    },
+    {
+      "pid": 425220,
+      "birth": 1790033672.244943
+    },
+    {
+      "pid": 359640,
+      "birth": 1790033676.4570067
+    },
+    {
+      "pid": 255036,
+      "birth": 1790033677.2477028
+    },
+    {
+      "pid": 422528,
+      "birth": 1790033677.8379788
+    },
+    {
+      "pid": 944080,
+      "birth": 1790033677.842949
+    },
+    {
+      "pid": 261644,
+      "birth": 1790033680.82815
+    },
+    {
+      "pid": 420200,
+      "birth": 1790033681.6855628
+    },
+    {
+      "pid": 452428,
+      "birth": 1790033682.1629276
+    },
+    {
+      "pid": 357988,
+      "birth": 1790033682.1663487
+    },
+    {
+      "pid": 346792,
+      "birth": 1790033682.4548151
+    },
+    {
+      "pid": 109396,
+      "birth": 1790033682.4621625
+    },
+    {
+      "pid": 440876,
+      "birth": 1790033685.1254797
+    },
+    {
+      "pid": 418432,
+      "birth": 1790033686.4057364
+    },
+    {
+      "pid": 406396,
+      "birth": 1790033686.409664
+    },
+    {
+      "pid": 932360,
+      "birth": 1790033687.0103853
+    },
+    {
+      "pid": 441744,
+      "birth": 1790033687.016808
+    },
+    {
+      "pid": 371428,
+      "birth": 1790033688.7668989
+    },
+    {
+      "pid": 424812,
+      "birth": 1790033689.2271848
+    },
+    {
+      "pid": 359604,
+      "birth": 1790033689.2307997
+    },
+    {
+      "pid": 391972,
+      "birth": 1790033689.446879
+    },
+    {
+      "pid": 393676,
+      "birth": 1790033689.4517984
+    },
+    {
+      "pid": 436384,
+      "birth": 1790033691.8352537
+    },
+    {
+      "pid": 406768,
+      "birth": 1790033691.8386836
+    },
+    {
+      "pid": 449888,
+      "birth": 1790033704.5657978
+    },
+    {
+      "pid": 440608,
+      "birth": 1790033704.7794583
+    },
+    {
+      "pid": 456652,
+      "birth": 1790033705.537457
+    },
+    {
+      "pid": 440400,
+      "birth": 1790033705.5406492
+    },
+    {
+      "pid": 453992,
+      "birth": 1790033708.982913
+    },
+    {
+      "pid": 952976,
+      "birth": 1790033708.986361
+    },
+    {
+      "pid": 967500,
+      "birth": 1790033709.2748313
+    },
+    {
+      "pid": 361200,
+      "birth": 1790033709.2783897
+    },
+    {
+      "pid": 424032,
+      "birth": 1790033709.5263386
+    },
+    {
+      "pid": 267488,
+      "birth": 1790033709.5297287
+    },
+    {
+      "pid": 446840,
+      "birth": 1790033709.7740834
+    },
+    {
+      "pid": 445100,
+      "birth": 1790033709.7775092
+    },
+    {
+      "pid": 442432,
+      "birth": 1790033725.076638
+    },
+    {
+      "pid": 409252,
+      "birth": 1790033725.080298
+    },
+    {
+      "pid": 450808,
+      "birth": 1790033725.3344722
+    },
+    {
+      "pid": 459772,
+      "birth": 1790033725.3375328
+    },
+    {
+      "pid": 310676,
+      "birth": 1790033725.569321
+    },
+    {
+      "pid": 425396,
+      "birth": 1790033725.5736904
+    },
+    {
+      "pid": 445188,
+      "birth": 1790033726.1048691
+    },
+    {
+      "pid": 440348,
+      "birth": 1790033726.1095603
+    },
+    {
+      "pid": 315248,
+      "birth": 1790033726.3680615
+    },
+    {
+      "pid": 452736,
+      "birth": 1790033726.371706
+    },
+    {
+      "pid": 374452,
+      "birth": 1790033743.821798
+    },
+    {
+      "pid": 438496,
+      "birth": 1790033744.2888873
+    },
+    {
+      "pid": 441816,
+      "birth": 1790033744.292509
+    },
+    {
+      "pid": 402268,
+      "birth": 1790033744.5124743
+    },
+    {
+      "pid": 450976,
+      "birth": 1790033744.51919
+    },
+    {
+      "pid": 407408,
+      "birth": 1790033818.3274724
+    },
+    {
+      "pid": 480680,
+      "birth": 1790033821.9837165
+    },
+    {
+      "pid": 455924,
+      "birth": 1790033822.775284
+    },
+    {
+      "pid": 484312,
+      "birth": 1790033823.4365058
+    },
+    {
+      "pid": 460040,
+      "birth": 1790033823.4526613
+    },
+    {
+      "pid": 429264,
+      "birth": 1790033827.6757677
+    },
+    {
+      "pid": 454712,
+      "birth": 1790033863.3024428
+    },
+    {
+      "pid": 516092,
+      "birth": 1790033933.948748
+    },
+    {
+      "pid": 526872,
+      "birth": 1790034009.94555
+    },
+    {
+      "pid": 398028,
+      "birth": 1790034013.0870929
+    },
+    {
+      "pid": 552592,
+      "birth": 1790034106.5415711
+    },
+    {
+      "pid": 516812,
+      "birth": 1790034108.1787465
+    }
+  ],
+  "scope": "Source/test/graph regression qualification only; full public and fresh timing remain separate."
+}

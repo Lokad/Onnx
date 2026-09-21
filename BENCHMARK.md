@@ -192,6 +192,14 @@ assigning that caller share to individual operations. GC suspension envelopes
 are 1.63% and 1.29% of captured full-request wall time. These measurements guide
 the next experiment; they establish neither a new speedup nor an ORT ratio.
 
+The resulting [deferred-view experiment](tests/pyannote/deferred-views/results-20260922.md)
+changes one convolution method and passes the complete suites and captured
+graph regression. Repeated embedding allocations are 1.5–1.6 MB, compared with
+5.2 MB in the retained portable-row run. All 166 shared-model and 784 Parakeet
+arrays stay unchanged, including Parakeet's three existing native discrepancies.
+Complete public qualification and a fresh matched timing comparison remain
+separate; these allocation counters do not change the accepted table below.
+
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
 Fresh matched measurements on Windows i7-14700KF, CPU2, .NET 10.0.12 and
@@ -338,6 +346,29 @@ calibrated confidence or parity claim. The
 process variation, memory, complete evidence identities and known numerical
 limitations. Whisper recomputes its frontend from PCM inside every timed call;
 both engines pad each clip to the model's thirty-second encoder input.
+
+### e5: independently randomized fresh processes (aa)
+
+AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ORT 1.23.2. All 1,800 fresh workers and 334,080 measured calls pass raw-output and resource checks. Times below are mean public Execute/Run milliseconds; reset is outside this boundary.
+
+A uses current managed defaults. C repeats those defaults in this A/A control.
+
+| Case | Policy | A ms | C ms | ORT ms | C/A interval | A/ORT (descriptive) |
+|---|---|---:|---:|---:|---|---|
+| e5-8tok | default | 5.863415 | 5.862848 | 5.698567 | 0.9999 [0.9948, 1.0050] | 1.0289 |
+| e5-8tok | memory | 5.588426 | 5.596479 | 5.675393 | 1.0014 [0.9958, 1.0071] | 0.9847 |
+| e5-30tok | default | 16.423683 | 16.435872 | 14.615637 | 1.0007 [0.9956, 1.0059] | 1.1237 |
+| e5-30tok | memory | 16.127080 | 16.071208 | 14.643851 | 0.9965 [0.9918, 1.0013] | 1.1013 |
+| e5-30pad128 | default | 63.887747 | 63.904592 | 59.550571 | 1.0003 [0.9958, 1.0047] | 1.0728 |
+| e5-30pad128 | memory | 63.632889 | 63.619765 | 59.403696 | 0.9998 [0.9958, 1.0038] | 1.0712 |
+| e5-128tok | default | 63.837326 | 63.952979 | 59.555432 | 1.0018 [0.9986, 1.0051] | 1.0719 |
+| e5-128tok | memory | 63.609108 | 63.698414 | 59.492152 | 1.0014 [0.9985, 1.0043] | 1.0692 |
+| e5-512tok | default | 342.586749 | 342.416503 | 281.087994 | 0.9995 [0.9900, 1.0092] | 1.2188 |
+| e5-512tok | memory | 342.003910 | 341.740434 | 281.207137 | 0.9992 [0.9910, 1.0075] | 1.2162 |
+
+The statistical screen **fails**; the observed-variance guard **fails**. No comparison is authorized by this failed A/A.
+
+Intervals are approximate 95% family intervals for this finite campaign, conditional on independent assignments, no interference and large-sample regularity. The observed dominance guard fails, so the confidence interpretation is withheld. The [complete report](tests/e5/randomized-processes/aa-results.md) retains request timings, all medians/tails, process diagnostics, allocations, GC and the original assignments. Lower ratios mean faster execution; none of these assumptions guarantees future parity.
 
 ### e5: interleaved independent processes versus native ORT
 
