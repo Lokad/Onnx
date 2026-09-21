@@ -1,0 +1,686 @@
+{
+  "closure": {
+    "bytes": 322837,
+    "sha256": "c07358dee34e3983ab7c212488772deaf0c973cc45274c5b505ac766e27753b4"
+  },
+  "preserved_failure": {
+    "bytes": 314346,
+    "sha256": "22310d63dd7e720c95a61222095fcb71fbe86af826f0847907f288ef00b5afd3"
+  },
+  "passed": true,
+  "root_commit": "ad586f69252598db47e037ea4eff981041413b6b",
+  "changed_source_files": [
+    "tests/Lokad.Onnx.Backend.Tests/ConvolutionPoolTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/ConvPortableRowsTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/ConvTiledTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/LstmOutputLaneTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/LstmPanelAdmissionTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/LstmPanelOverflowRefusalTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/PipelineRequestTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/SparseMelTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/SpatialCopyTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/SpatialPanelTests.cs",
+    "src/Lokad.Onnx/CPUExecutionProvider.ConvPool.cs",
+    "src/Lokad.Onnx/CPUExecutionProvider.Fusion.cs",
+    "src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs",
+    "src/Lokad.Onnx/CPUExecutionProvider.Recurrent.cs",
+    "src/Lokad.Onnx/MathOps.cs",
+    "src/Lokad.Onnx/Node.cs",
+    "src/Lokad.Onnx/TensorOps.ConvPool.cs",
+    "src/Lokad.Onnx/Zzz.ConvolutionPool.cs",
+    "src/Lokad.Onnx/Zzz.ConvPortableRows.cs",
+    "src/Lokad.Onnx.Data/Community1Diarizer.cs",
+    "src/Lokad.Onnx.Data/WeSpeakerAudio.cs",
+    "src/Lokad.Onnx.Data/WeSpeakerEmbedder.cs"
+  ],
+  "normal_project_references": true,
+  "methods": [
+    {
+      "public_surface_equal": true,
+      "assembly": "Lokad.Onnx.dll",
+      "compiler_rename": null,
+      "methods": 3107,
+      "before_sha256": "5c0ae2aa7c3cce58f3ffcb190df451e053a449a3e0dbc920d7b6d0b2bc66020c",
+      "after_sha256": "e9c87932b2184c2f6bfef72faabb1719bdbceadc779a15fe1ffd3f3056d02838",
+      "corrected_nullable_annotation": null,
+      "unchanged_methods": 3106,
+      "removed": [],
+      "added": [
+        "Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels::StorageLength::Int32 StorageLength(Int32, Int32)"
+      ],
+      "differences": [
+        "Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels::Create::LstmProjectionPanels Create(System.ReadOnlySpan`1[System.Single], System.ReadOnlySpan`1[System.Single], Int32, Int32, Int32, Int32, Lokad.Onnx.TensorExecutionOptions)"
+      ],
+      "equal_except_storage_admission": true,
+      "public_declaration_records": 9168
+    },
+    {
+      "public_surface_equal": true,
+      "assembly": "Lokad.Onnx.Data.dll",
+      "compiler_rename": null,
+      "methods": 697,
+      "before_sha256": "e9e4c28e2f7277ea226556f692d95de3d9d4a5f94eed79a9235268137dcd4775",
+      "after_sha256": "85d166b59e2beef18ca7664f76faf445bf3cd81509f8f1d1c4b3c5354f53757a",
+      "corrected_nullable_annotation": true,
+      "unchanged_methods": 697,
+      "removed": [],
+      "added": [],
+      "differences": [],
+      "equal_except_storage_admission": true,
+      "public_declaration_records": 1626
+    }
+  ],
+  "suites": [
+    {
+      "name": "focused",
+      "counters": {
+        "total": "203",
+        "executed": "203",
+        "passed": "203",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 203
+      },
+      "trx": {
+        "bytes": 318934,
+        "sha256": "2f9c54e1e30bfc157e2d3405758c7d1467c5989e516cc1bda3baddd5b31fadaa"
+      }
+    },
+    {
+      "name": "hardware-disabled",
+      "counters": {
+        "total": "109",
+        "executed": "109",
+        "passed": "109",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 109
+      },
+      "trx": {
+        "bytes": 171439,
+        "sha256": "53bbbeb739c0a64a25e4e6e8acceb2a54e96e05f357ac72878d4c6d8a9aa38f9"
+      }
+    },
+    {
+      "name": "backend-full",
+      "counters": {
+        "total": "3383",
+        "executed": "3290",
+        "passed": "3290",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 3290,
+        "NotExecuted": 93
+      },
+      "trx": {
+        "bytes": 5300977,
+        "sha256": "a1934695920b2afa3b89dd2af8faae86ee7c166b0a21451a72cee95ceb0f742c"
+      }
+    },
+    {
+      "name": "tensors-full",
+      "counters": {
+        "total": "342",
+        "executed": "342",
+        "passed": "342",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 342
+      },
+      "trx": {
+        "bytes": 516677,
+        "sha256": "1f4ce4334888f7fedb7490f238bc26edeb0931f7a275a629dd15298299489044"
+      }
+    }
+  ],
+  "core": {
+    "bytes": 735232,
+    "sha256": "e9c87932b2184c2f6bfef72faabb1719bdbceadc779a15fe1ffd3f3056d02838"
+  },
+  "data": {
+    "bytes": 143872,
+    "sha256": "85d166b59e2beef18ca7664f76faf445bf3cd81509f8f1d1c4b3c5354f53757a"
+  },
+  "package": {
+    "bytes": 551572,
+    "sha256": "526362edb8da97217b8ac1962effcee72fbc2a59ca7e5a1cfcf96b1613e3020b"
+  },
+  "package_dependencies": [
+    {
+      "id": "Google.Protobuf",
+      "version": "3.33.5",
+      "exclude": "Build,Analyzers"
+    }
+  ],
+  "consumer": {
+    "passed": true,
+    "pid": 546516,
+    "runtime": ".NET 10.0.12",
+    "processor_count": 1,
+    "core": "e9c87932b2184c2f6bfef72faabb1719bdbceadc779a15fe1ffd3f3056d02838",
+    "loaded_core_path": "C:\\Users\\JoannesVermorel\\code\\Onnx\\artifacts\\pyannote-portable-integration-completion-20260922\\package-consumer\\bin\\Release\\net10.0\\Lokad.Onnx.dll",
+    "executable": "6fc3caaf50e7abdcd27e17d4cf836c099bda24e181d1bcbed83b2edccbe81773",
+    "model": "2f06e72de813a8635c9bc0397ac447a601bdbfa7df4bebc278723b958831c9bf",
+    "product": [
+      5,
+      11,
+      14,
+      23
+    ],
+    "convolution": [
+      -3,
+      3,
+      -7,
+      7
+    ],
+    "activated": [
+      0,
+      3,
+      0,
+      7
+    ],
+    "input_and_held_outputs_unchanged": true,
+    "model_imported": true
+  },
+  "resources": [
+    {
+      "name": "cli-restore",
+      "seconds": 1.8251693000202067,
+      "samples": 7,
+      "peak_rss": 216535040
+    },
+    {
+      "name": "cli-build",
+      "seconds": 14.564765299961437,
+      "samples": 56,
+      "peak_rss": 518627328
+    },
+    {
+      "name": "backend-restore",
+      "seconds": 2.085095199989155,
+      "samples": 8,
+      "peak_rss": 222285824
+    },
+    {
+      "name": "backend-build",
+      "seconds": 16.125855799997225,
+      "samples": 62,
+      "peak_rss": 627609600
+    },
+    {
+      "name": "tensors-restore",
+      "seconds": 1.0354192000231706,
+      "samples": 4,
+      "peak_rss": 119820288
+    },
+    {
+      "name": "tensors-build",
+      "seconds": 4.956990199978463,
+      "samples": 19,
+      "peak_rss": 313810944
+    },
+    {
+      "name": "bridge-restore",
+      "seconds": 0.784150600025896,
+      "samples": 3,
+      "peak_rss": 98258944
+    },
+    {
+      "name": "bridge-build",
+      "seconds": 2.8687687999918126,
+      "samples": 11,
+      "peak_rss": 248946688
+    },
+    {
+      "name": "instructions",
+      "seconds": 0.785086499992758,
+      "samples": 3,
+      "peak_rss": 141791232
+    },
+    {
+      "name": "focused",
+      "seconds": 6.540518400026485,
+      "samples": 25,
+      "peak_rss": 307130368
+    },
+    {
+      "name": "hardware-disabled",
+      "seconds": 7.530133499996737,
+      "samples": 29,
+      "peak_rss": 331681792
+    },
+    {
+      "name": "backend-full",
+      "seconds": 53.70044039998902,
+      "samples": 206,
+      "peak_rss": 2603810816
+    },
+    {
+      "name": "tensors-full",
+      "seconds": 5.185572099988349,
+      "samples": 20,
+      "peak_rss": 279769088
+    },
+    {
+      "name": "package",
+      "seconds": 1.0330250000115484,
+      "samples": 4,
+      "peak_rss": 120881152
+    },
+    {
+      "name": "consumer-restore",
+      "seconds": 1.0371964999940246,
+      "samples": 4,
+      "peak_rss": 115384320
+    },
+    {
+      "name": "consumer-build",
+      "seconds": 2.853635899955407,
+      "samples": 11,
+      "peak_rss": 242475008
+    },
+    {
+      "name": "consumer",
+      "seconds": 0.26109589997213334,
+      "samples": 1,
+      "peak_rss": 9580544
+    }
+  ],
+  "resource_samples": 473,
+  "peak_rss": 2603810816,
+  "identities": [
+    {
+      "pid": 977264,
+      "birth": 1790028727.9587395
+    },
+    {
+      "pid": 986612,
+      "birth": 1790028765.7315397
+    },
+    {
+      "pid": 988116,
+      "birth": 1790028766.3096087
+    },
+    {
+      "pid": 978868,
+      "birth": 1790028766.3229887
+    },
+    {
+      "pid": 971492,
+      "birth": 1790028767.5641081
+    },
+    {
+      "pid": 1005960,
+      "birth": 1790028768.108033
+    },
+    {
+      "pid": 949548,
+      "birth": 1790028768.1182969
+    },
+    {
+      "pid": 938852,
+      "birth": 1790028768.6642897
+    },
+    {
+      "pid": 898664,
+      "birth": 1790028768.6956253
+    },
+    {
+      "pid": 957764,
+      "birth": 1790028776.2101707
+    },
+    {
+      "pid": 931356,
+      "birth": 1790028776.2137797
+    },
+    {
+      "pid": 911468,
+      "birth": 1790028779.1963089
+    },
+    {
+      "pid": 956644,
+      "birth": 1790028779.1996555
+    },
+    {
+      "pid": 971524,
+      "birth": 1790028782.1371083
+    },
+    {
+      "pid": 939476,
+      "birth": 1790028782.6291928
+    },
+    {
+      "pid": 901688,
+      "birth": 1790028782.6427948
+    },
+    {
+      "pid": 977632,
+      "birth": 1790028784.229352
+    },
+    {
+      "pid": 1010764,
+      "birth": 1790028784.7894878
+    },
+    {
+      "pid": 1008704,
+      "birth": 1790028784.8000016
+    },
+    {
+      "pid": 971012,
+      "birth": 1790028785.512544
+    },
+    {
+      "pid": 884236,
+      "birth": 1790028785.5168989
+    },
+    {
+      "pid": 837640,
+      "birth": 1790028800.3626475
+    },
+    {
+      "pid": 868292,
+      "birth": 1790028801.4069896
+    },
+    {
+      "pid": 969924,
+      "birth": 1790028802.1740887
+    },
+    {
+      "pid": 860488,
+      "birth": 1790028802.1792169
+    },
+    {
+      "pid": 1015556,
+      "birth": 1790028807.1599913
+    },
+    {
+      "pid": 940544,
+      "birth": 1790028807.9516053
+    },
+    {
+      "pid": 1019712,
+      "birth": 1790028808.557922
+    },
+    {
+      "pid": 1034872,
+      "birth": 1790028808.5618365
+    },
+    {
+      "pid": 1020284,
+      "birth": 1790028810.827793
+    },
+    {
+      "pid": 735656,
+      "birth": 1790028811.6888285
+    },
+    {
+      "pid": 1034760,
+      "birth": 1790028812.1626616
+    },
+    {
+      "pid": 997820,
+      "birth": 1790028812.1661708
+    },
+    {
+      "pid": 955148,
+      "birth": 1790028812.4248188
+    },
+    {
+      "pid": 1022288,
+      "birth": 1790028812.4322681
+    },
+    {
+      "pid": 1020236,
+      "birth": 1790028818.2908847
+    },
+    {
+      "pid": 1050400,
+      "birth": 1790028819.571674
+    },
+    {
+      "pid": 946192,
+      "birth": 1790028819.576084
+    },
+    {
+      "pid": 978304,
+      "birth": 1790028820.1561787
+    },
+    {
+      "pid": 961400,
+      "birth": 1790028820.1634576
+    },
+    {
+      "pid": 969036,
+      "birth": 1790028825.8410587
+    },
+    {
+      "pid": 846068,
+      "birth": 1790028826.314256
+    },
+    {
+      "pid": 933272,
+      "birth": 1790028826.3178403
+    },
+    {
+      "pid": 1051008,
+      "birth": 1790028826.552935
+    },
+    {
+      "pid": 850508,
+      "birth": 1790028826.557566
+    },
+    {
+      "pid": 943600,
+      "birth": 1790028828.408792
+    },
+    {
+      "pid": 819244,
+      "birth": 1790028828.412187
+    },
+    {
+      "pid": 1001616,
+      "birth": 1790028828.6522543
+    },
+    {
+      "pid": 864580,
+      "birth": 1790028828.6558723
+    },
+    {
+      "pid": 1023900,
+      "birth": 1790028828.903018
+    },
+    {
+      "pid": 864588,
+      "birth": 1790028828.906497
+    },
+    {
+      "pid": 912756,
+      "birth": 1790028829.1604939
+    },
+    {
+      "pid": 1050516,
+      "birth": 1790028829.1639931
+    },
+    {
+      "pid": 839080,
+      "birth": 1790028852.0696409
+    },
+    {
+      "pid": 1040264,
+      "birth": 1790028852.0728104
+    },
+    {
+      "pid": 1043148,
+      "birth": 1790028853.8159263
+    },
+    {
+      "pid": 975116,
+      "birth": 1790028854.0349157
+    },
+    {
+      "pid": 1028456,
+      "birth": 1790028854.1452775
+    },
+    {
+      "pid": 849052,
+      "birth": 1790028861.5809941
+    },
+    {
+      "pid": 997600,
+      "birth": 1790028861.5860896
+    },
+    {
+      "pid": 1039252,
+      "birth": 1790028861.8705056
+    },
+    {
+      "pid": 979688,
+      "birth": 1790028862.1054149
+    },
+    {
+      "pid": 948980,
+      "birth": 1790028862.1261094
+    },
+    {
+      "pid": 1046536,
+      "birth": 1790028862.355873
+    },
+    {
+      "pid": 954892,
+      "birth": 1790028862.3594773
+    },
+    {
+      "pid": 1043184,
+      "birth": 1790028862.5948365
+    },
+    {
+      "pid": 1008652,
+      "birth": 1790028862.5987043
+    },
+    {
+      "pid": 747764,
+      "birth": 1790028862.892045
+    },
+    {
+      "pid": 923808,
+      "birth": 1790028862.89555
+    },
+    {
+      "pid": 942520,
+      "birth": 1790028863.3679037
+    },
+    {
+      "pid": 610664,
+      "birth": 1790028863.371405
+    },
+    {
+      "pid": 1038460,
+      "birth": 1790028863.6738148
+    },
+    {
+      "pid": 868528,
+      "birth": 1790028863.6771064
+    },
+    {
+      "pid": 1029380,
+      "birth": 1790029270.163378
+    },
+    {
+      "pid": 1073452,
+      "birth": 1790029270.4776468
+    },
+    {
+      "pid": 668244,
+      "birth": 1790029270.9858167
+    },
+    {
+      "pid": 1019536,
+      "birth": 1790029270.9901192
+    },
+    {
+      "pid": 526796,
+      "birth": 1790029271.2340589
+    },
+    {
+      "pid": 1018236,
+      "birth": 1790029271.241426
+    },
+    {
+      "pid": 1030784,
+      "birth": 1790029275.807704
+    },
+    {
+      "pid": 1080536,
+      "birth": 1790029276.9769433
+    },
+    {
+      "pid": 1090260,
+      "birth": 1790029278.1338232
+    },
+    {
+      "pid": 1041548,
+      "birth": 1790029278.7229912
+    },
+    {
+      "pid": 873244,
+      "birth": 1790029278.7467012
+    },
+    {
+      "pid": 546516,
+      "birth": 1790029281.218376
+    }
+  ],
+  "scope": "Normal source build, exact method/public declarations, complete suites and local package consumption; original checker refusal retained. No new model timing or AMD/production promotion."
+}

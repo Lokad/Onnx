@@ -146,13 +146,25 @@ correctness evidence for a new Data candidate. Its
 [complete application qualification](tests/pyannote/sparse-mel-qualification/results-20260921.md)
 passes 3,280 backend and 342 tensor tests, all 16 dialogue requests, both
 ten-minute meetings and recovery. Public results match the predecessor and
-meeting timelines match ORT exactly; all 2,965 resource samples pass. Its
+meeting timelines match ORT exactly; all 2,965 resource samples pass. The backend
+retains 93 skipped cases; the [reporting correction](tests/pyannote/sparse-mel-qualification/trx-skip-correction-20260922.md)
+fixes the original report's skipped-count column without changing its qualification.
+Its
 [fresh matched ORT comparison](tests/pyannote/sparse-mel-comparison/results-20260921.md)
 passes all 96 requests, 1,091 resource samples and every fixed timing control.
 Complete 30-second dialogue latency falls from 11.482 to 10.493 seconds (8.6%);
 fresh ORT takes 6.320 seconds, a 1.660 ratio. The three crops improve 6.7–7.0%.
 This qualifies the candidate for later AMD evaluation; production integration
 and target performance remain pending.
+
+The [normal source/package integration](tests/pyannote/portable-integration/results-20260922.md)
+now combines these changes with the LSTM storage guard through ordinary project
+references. All 697 Data methods and the other 3,106 Core methods match the
+accepted candidate, as do the checked public declarations. It passes 3,290
+backend tests with 93 skips, 342 tensor tests and a separate NuGet consumer.
+These new binaries have no fresh timing result; the table below still names
+the exact measured candidate. Final test-source portability and AMD selection
+remain pending.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
