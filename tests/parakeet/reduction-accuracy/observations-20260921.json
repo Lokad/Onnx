@@ -1,0 +1,942 @@
+{
+  "passed": true,
+  "scalar_dots": 512,
+  "selftests": 160,
+  "metrics": [
+    {
+      "route": "managed-native",
+      "block": 0,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0004831081843370555,
+        "failed": 88,
+        "rms": 0.00027308008675257207
+      },
+      "total": {
+        "max_scaled": 0.0004793645766909549,
+        "failed": 200,
+        "rms": 0.0002887850456314573
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-native",
+      "block": 0,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.0004831081843867935,
+        "failed": 88,
+        "rms": 0.0002730800867562354
+      },
+      "total": {
+        "max_scaled": 0.00047936457698938284,
+        "failed": 200,
+        "rms": 0.00028878504563139944
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-native",
+      "block": 128,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.00012323757937338087,
+        "failed": 1,
+        "rms": 5.4147842494916274e-05
+      },
+      "total": {
+        "max_scaled": 0.00028818082471104844,
+        "failed": 115,
+        "rms": 0.00010938897631659814
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-native",
+      "block": 128,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00012323757945509328,
+        "failed": 1,
+        "rms": 5.414784249216132e-05
+      },
+      "total": {
+        "max_scaled": 0.0002881808249135531,
+        "failed": 115,
+        "rms": 0.00010938897632340094
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-native",
+      "block": 256,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.00024033761708016607,
+        "failed": 9,
+        "rms": 5.661997738446868e-05
+      },
+      "total": {
+        "max_scaled": 0.0003001832056347938,
+        "failed": 124,
+        "rms": 0.00011032423870500956
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-native",
+      "block": 256,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00024033761698897526,
+        "failed": 9,
+        "rms": 5.6619977381546656e-05
+      },
+      "total": {
+        "max_scaled": 0.00030018320574897036,
+        "failed": 124,
+        "rms": 0.00011032423871178746
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-native",
+      "block": 512,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0003232006207483096,
+        "failed": 19,
+        "rms": 7.470435529859791e-05
+      },
+      "total": {
+        "max_scaled": 0.0003593993885431246,
+        "failed": 147,
+        "rms": 0.00012112170918329515
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-native",
+      "block": 512,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.0003232006208833127,
+        "failed": 19,
+        "rms": 7.470435529639474e-05
+      },
+      "total": {
+        "max_scaled": 0.0003593993883539426,
+        "failed": 147,
+        "rms": 0.00012112170918983261
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-native",
+      "block": 4096,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0004831081843370555,
+        "failed": 88,
+        "rms": 0.00027308008675257207
+      },
+      "total": {
+        "max_scaled": 0.0004793645766909549,
+        "failed": 200,
+        "rms": 0.0002887850456314573
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-native",
+      "block": 4096,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.0004831081843867935,
+        "failed": 88,
+        "rms": 0.0002730800867562354
+      },
+      "total": {
+        "max_scaled": 0.00047936457698938284,
+        "failed": 200,
+        "rms": 0.00028878504563139944
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "native-native",
+      "block": 0,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0003744132247227583,
+        "failed": 90,
+        "rms": 0.0002720256835345582
+      },
+      "total": {
+        "max_scaled": 0.00040457784825065346,
+        "failed": 145,
+        "rms": 0.00027967433108119674
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149238540068,
+        "failed": 4,
+        "rms": 5.722290075241522e-05
+      }
+    },
+    {
+      "route": "native-native",
+      "block": 0,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.0003744132247192056,
+        "failed": 90,
+        "rms": 0.0002720256835378494
+      },
+      "total": {
+        "max_scaled": 0.00040457784847802714,
+        "failed": 145,
+        "rms": 0.0002796743310776257
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149233132837,
+        "failed": 4,
+        "rms": 5.7222900754273655e-05
+      }
+    },
+    {
+      "route": "native-native",
+      "block": 128,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0003071387164439443,
+        "failed": 5,
+        "rms": 5.4960383219134915e-05
+      },
+      "total": {
+        "max_scaled": 0.0003455122458575488,
+        "failed": 58,
+        "rms": 8.630306461009987e-05
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149238540068,
+        "failed": 4,
+        "rms": 5.722290075241522e-05
+      }
+    },
+    {
+      "route": "native-native",
+      "block": 128,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.0003071387162556505,
+        "failed": 5,
+        "rms": 5.496038321960117e-05
+      },
+      "total": {
+        "max_scaled": 0.0003455122453637216,
+        "failed": 58,
+        "rms": 8.630306460709791e-05
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149233132837,
+        "failed": 4,
+        "rms": 5.7222900754273655e-05
+      }
+    },
+    {
+      "route": "native-native",
+      "block": 256,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.00018440149238540068,
+        "failed": 4,
+        "rms": 5.722290075241522e-05
+      },
+      "total": {
+        "max_scaled": 0.00025165001267921815,
+        "failed": 57,
+        "rms": 8.737818515810192e-05
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149238540068,
+        "failed": 4,
+        "rms": 5.722290075241522e-05
+      }
+    },
+    {
+      "route": "native-native",
+      "block": 256,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00018440149233132837,
+        "failed": 4,
+        "rms": 5.7222900754273655e-05
+      },
+      "total": {
+        "max_scaled": 0.00025165001279340025,
+        "failed": 57,
+        "rms": 8.737818515571245e-05
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149233132837,
+        "failed": 4,
+        "rms": 5.7222900754273655e-05
+      }
+    },
+    {
+      "route": "native-native",
+      "block": 512,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0001984198443736318,
+        "failed": 21,
+        "rms": 7.473233530311768e-05
+      },
+      "total": {
+        "max_scaled": 0.0002367933737872363,
+        "failed": 81,
+        "rms": 0.00010029223070423673
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149238540068,
+        "failed": 4,
+        "rms": 5.722290075241522e-05
+      }
+    },
+    {
+      "route": "native-native",
+      "block": 512,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00019841984418533798,
+        "failed": 21,
+        "rms": 7.473233530312748e-05
+      },
+      "total": {
+        "max_scaled": 0.0002367933732934091,
+        "failed": 81,
+        "rms": 0.00010029223070110168
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149233132837,
+        "failed": 4,
+        "rms": 5.7222900754273655e-05
+      }
+    },
+    {
+      "route": "native-native",
+      "block": 4096,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0003744132247227583,
+        "failed": 90,
+        "rms": 0.0002720256835345582
+      },
+      "total": {
+        "max_scaled": 0.00040457784825065346,
+        "failed": 145,
+        "rms": 0.00027967433108119674
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149238540068,
+        "failed": 4,
+        "rms": 5.722290075241522e-05
+      }
+    },
+    {
+      "route": "native-native",
+      "block": 4096,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.0003744132247192056,
+        "failed": 90,
+        "rms": 0.0002720256835378494
+      },
+      "total": {
+        "max_scaled": 0.00040457784847802714,
+        "failed": 145,
+        "rms": 0.0002796743310776257
+      },
+      "native_original_local": {
+        "max_scaled": 0.00018440149233132837,
+        "failed": 4,
+        "rms": 5.7222900754273655e-05
+      }
+    },
+    {
+      "route": "managed-managed",
+      "block": 0,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.00042306582815143656,
+        "failed": 101,
+        "rms": 0.000271114993596731
+      },
+      "total": {
+        "max_scaled": 0.0005055164031944059,
+        "failed": 203,
+        "rms": 0.00028651178445746766
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-managed",
+      "block": 0,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00042306582818874006,
+        "failed": 101,
+        "rms": 0.0002711149935984218
+      },
+      "total": {
+        "max_scaled": 0.0005055164031055881,
+        "failed": 203,
+        "rms": 0.00028651178445862727
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-managed",
+      "block": 128,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.00011914222824316312,
+        "failed": 1,
+        "rms": 5.429563943714158e-05
+      },
+      "total": {
+        "max_scaled": 0.0003545882163535907,
+        "failed": 121,
+        "rms": 0.00010866431810947007
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-managed",
+      "block": 128,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.0001191422282564858,
+        "failed": 1,
+        "rms": 5.429563943657841e-05
+      },
+      "total": {
+        "max_scaled": 0.0003545882165223446,
+        "failed": 121,
+        "rms": 0.00010866431811797307
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-managed",
+      "block": 256,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.00023034937229661704,
+        "failed": 9,
+        "rms": 5.644378294982873e-05
+      },
+      "total": {
+        "max_scaled": 0.0003622176108848407,
+        "failed": 136,
+        "rms": 0.00011008987529669745
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-managed",
+      "block": 256,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00023034937244428657,
+        "failed": 9,
+        "rms": 5.6443782950098826e-05
+      },
+      "total": {
+        "max_scaled": 0.0003622176110535946,
+        "failed": 136,
+        "rms": 0.00011008987530467884
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-managed",
+      "block": 512,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0003100408231873075,
+        "failed": 25,
+        "rms": 7.510120484917846e-05
+      },
+      "total": {
+        "max_scaled": 0.00044339913706892276,
+        "failed": 147,
+        "rms": 0.00012084002775934933
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-managed",
+      "block": 512,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.0003100408231357932,
+        "failed": 25,
+        "rms": 7.510120485030282e-05
+      },
+      "total": {
+        "max_scaled": 0.00044339913723767665,
+        "failed": 147,
+        "rms": 0.0001208400277664863
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-managed",
+      "block": 4096,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.00042306582815143656,
+        "failed": 101,
+        "rms": 0.000271114993596731
+      },
+      "total": {
+        "max_scaled": 0.0005055164031944059,
+        "failed": 203,
+        "rms": 0.00028651178445746766
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "managed-managed",
+      "block": 4096,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00042306582818874006,
+        "failed": 101,
+        "rms": 0.0002711149935984218
+      },
+      "total": {
+        "max_scaled": 0.0005055164031055881,
+        "failed": 203,
+        "rms": 0.00028651178445862727
+      },
+      "native_original_local": null
+    },
+    {
+      "route": "native-managed",
+      "block": 0,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0004006132800213891,
+        "failed": 97,
+        "rms": 0.0002690538390062096
+      },
+      "total": {
+        "max_scaled": 0.0004908287096938579,
+        "failed": 144,
+        "rms": 0.00027670262548868665
+      },
+      "native_original_local": {
+        "max_scaled": 0.0001933149742754381,
+        "failed": 7,
+        "rms": 5.6637410765625425e-05
+      }
+    },
+    {
+      "route": "native-managed",
+      "block": 0,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00040061328005069896,
+        "failed": 97,
+        "rms": 0.0002690538390115925
+      },
+      "total": {
+        "max_scaled": 0.0004908287096458963,
+        "failed": 144,
+        "rms": 0.00027670262548726776
+      },
+      "native_original_local": {
+        "max_scaled": 0.00019331497438557221,
+        "failed": 7,
+        "rms": 5.663741076410073e-05
+      }
+    },
+    {
+      "route": "native-managed",
+      "block": 128,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0001914076256426256,
+        "failed": 4,
+        "rms": 5.461951991226672e-05
+      },
+      "total": {
+        "max_scaled": 0.000303765929448474,
+        "failed": 61,
+        "rms": 8.589436550147895e-05
+      },
+      "native_original_local": {
+        "max_scaled": 0.0001933149742754381,
+        "failed": 7,
+        "rms": 5.6637410765625425e-05
+      }
+    },
+    {
+      "route": "native-managed",
+      "block": 128,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00019140762575275971,
+        "failed": 4,
+        "rms": 5.4619519910928945e-05
+      },
+      "total": {
+        "max_scaled": 0.000303765929473343,
+        "failed": 61,
+        "rms": 8.589436550401952e-05
+      },
+      "native_original_local": {
+        "max_scaled": 0.00019331497438557221,
+        "failed": 7,
+        "rms": 5.663741076410073e-05
+      }
+    },
+    {
+      "route": "native-managed",
+      "block": 256,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0001933149742754381,
+        "failed": 7,
+        "rms": 5.6637410765625425e-05
+      },
+      "total": {
+        "max_scaled": 0.0003056732780812865,
+        "failed": 69,
+        "rms": 8.74886284966175e-05
+      },
+      "native_original_local": {
+        "max_scaled": 0.0001933149742754381,
+        "failed": 7,
+        "rms": 5.6637410765625425e-05
+      }
+    },
+    {
+      "route": "native-managed",
+      "block": 256,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00019331497438557221,
+        "failed": 7,
+        "rms": 5.663741076410073e-05
+      },
+      "total": {
+        "max_scaled": 0.0003056732781061555,
+        "failed": 69,
+        "rms": 8.748862849856768e-05
+      },
+      "native_original_local": {
+        "max_scaled": 0.00019331497438557221,
+        "failed": 7,
+        "rms": 5.663741076410073e-05
+      }
+    },
+    {
+      "route": "native-managed",
+      "block": 512,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0003840498375566881,
+        "failed": 23,
+        "rms": 7.533400075948024e-05
+      },
+      "total": {
+        "max_scaled": 0.0004964081413625365,
+        "failed": 86,
+        "rms": 0.0001008158510163777
+      },
+      "native_original_local": {
+        "max_scaled": 0.0001933149742754381,
+        "failed": 7,
+        "rms": 5.6637410765625425e-05
+      }
+    },
+    {
+      "route": "native-managed",
+      "block": 512,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.0003840498376668222,
+        "failed": 23,
+        "rms": 7.533400075993359e-05
+      },
+      "total": {
+        "max_scaled": 0.0004964081413874055,
+        "failed": 86,
+        "rms": 0.00010081585101811243
+      },
+      "native_original_local": {
+        "max_scaled": 0.00019331497438557221,
+        "failed": 7,
+        "rms": 5.663741076410073e-05
+      }
+    },
+    {
+      "route": "native-managed",
+      "block": 4096,
+      "reference": "numpy",
+      "local": {
+        "max_scaled": 0.0004006132800213891,
+        "failed": 97,
+        "rms": 0.0002690538390062096
+      },
+      "total": {
+        "max_scaled": 0.0004908287096938579,
+        "failed": 144,
+        "rms": 0.00027670262548868665
+      },
+      "native_original_local": {
+        "max_scaled": 0.0001933149742754381,
+        "failed": 7,
+        "rms": 5.6637410765625425e-05
+      }
+    },
+    {
+      "route": "native-managed",
+      "block": 4096,
+      "reference": "torch",
+      "local": {
+        "max_scaled": 0.00040061328005069896,
+        "failed": 97,
+        "rms": 0.0002690538390115925
+      },
+      "total": {
+        "max_scaled": 0.0004908287096458963,
+        "failed": 144,
+        "rms": 0.00027670262548726776
+      },
+      "native_original_local": {
+        "max_scaled": 0.00019331497438557221,
+        "failed": 7,
+        "rms": 5.663741076410073e-05
+      }
+    }
+  ],
+  "decisions": {
+    "128": {
+      "qualifies_for_full_model": true,
+      "comparisons": [
+        {
+          "route": "managed-native",
+          "reference": "numpy",
+          "rms_reduction": 5.043231164348062,
+          "passed": true
+        },
+        {
+          "route": "managed-native",
+          "reference": "torch",
+          "rms_reduction": 5.043231164672307,
+          "passed": true
+        },
+        {
+          "route": "native-native",
+          "reference": "numpy",
+          "rms_reduction": 4.949486659326097,
+          "passed": true
+        },
+        {
+          "route": "native-native",
+          "reference": "torch",
+          "rms_reduction": 4.949486659343992,
+          "passed": true
+        },
+        {
+          "route": "managed-managed",
+          "reference": "numpy",
+          "rms_reduction": 4.993310630600504,
+          "passed": true
+        },
+        {
+          "route": "managed-managed",
+          "reference": "torch",
+          "rms_reduction": 4.993310630683436,
+          "passed": true
+        },
+        {
+          "route": "native-managed",
+          "reference": "numpy",
+          "rms_reduction": 4.925964919471659,
+          "passed": true
+        },
+        {
+          "route": "native-managed",
+          "reference": "torch",
+          "rms_reduction": 4.925964919690862,
+          "passed": true
+        }
+      ]
+    },
+    "256": {
+      "qualifies_for_full_model": true,
+      "comparisons": [
+        {
+          "route": "managed-native",
+          "reference": "numpy",
+          "rms_reduction": 4.823034189827849,
+          "passed": true
+        },
+        {
+          "route": "managed-native",
+          "reference": "torch",
+          "rms_reduction": 4.823034190141456,
+          "passed": true
+        },
+        {
+          "route": "native-native",
+          "reference": "numpy",
+          "rms_reduction": 4.753790527179396,
+          "passed": true
+        },
+        {
+          "route": "native-native",
+          "reference": "torch",
+          "rms_reduction": 4.753790527082522,
+          "passed": true
+        },
+        {
+          "route": "managed-managed",
+          "reference": "numpy",
+          "rms_reduction": 4.803274681955981,
+          "passed": true
+        },
+        {
+          "route": "managed-managed",
+          "reference": "torch",
+          "rms_reduction": 4.803274681962951,
+          "passed": true
+        },
+        {
+          "route": "native-managed",
+          "reference": "numpy",
+          "rms_reduction": 4.750461494781197,
+          "passed": true
+        },
+        {
+          "route": "native-managed",
+          "reference": "torch",
+          "rms_reduction": 4.750461495004122,
+          "passed": true
+        }
+      ]
+    },
+    "512": {
+      "qualifies_for_full_model": true,
+      "comparisons": [
+        {
+          "route": "managed-native",
+          "reference": "numpy",
+          "rms_reduction": 3.6554774572520454,
+          "passed": true
+        },
+        {
+          "route": "managed-native",
+          "reference": "torch",
+          "rms_reduction": 3.65547745740889,
+          "passed": true
+        },
+        {
+          "route": "native-native",
+          "reference": "numpy",
+          "rms_reduction": 3.639999772939115,
+          "passed": true
+        },
+        {
+          "route": "native-native",
+          "reference": "torch",
+          "rms_reduction": 3.6399997729826774,
+          "passed": true
+        },
+        {
+          "route": "managed-managed",
+          "reference": "numpy",
+          "rms_reduction": 3.609995260944163,
+          "passed": true
+        },
+        {
+          "route": "managed-managed",
+          "reference": "torch",
+          "rms_reduction": 3.60999526091263,
+          "passed": true
+        },
+        {
+          "route": "native-managed",
+          "reference": "numpy",
+          "rms_reduction": 3.571479495231124,
+          "passed": true
+        },
+        {
+          "route": "native-managed",
+          "reference": "torch",
+          "rms_reduction": 3.5714794952810855,
+          "passed": true
+        }
+      ]
+    }
+  },
+  "selected_for_full_model": 256,
+  "resources": [
+    {
+      "name": "build-0",
+      "samples": 3,
+      "peak_rss": 96993280
+    },
+    {
+      "name": "build-1",
+      "samples": 11,
+      "peak_rss": 255942656
+    },
+    {
+      "name": "arithmetic",
+      "samples": 2,
+      "peak_rss": 106913792
+    }
+  ],
+  "identities": [
+    {
+      "pid": 78288,
+      "birth": 1790002122.8566828
+    },
+    {
+      "pid": 1153884,
+      "birth": 1790002127.9479935
+    },
+    {
+      "pid": 172372,
+      "birth": 1790002128.7359684
+    },
+    {
+      "pid": 191264,
+      "birth": 1790002129.3413827
+    },
+    {
+      "pid": 5692,
+      "birth": 1790002129.3539033
+    },
+    {
+      "pid": 139028,
+      "birth": 1790002139.460014
+    },
+    {
+      "pid": 188728,
+      "birth": 1790002142.439599
+    }
+  ],
+  "scalar_library": {
+    "path": "C:\\Windows\\System32\\ucrtbase.dll",
+    "bytes": 1377512,
+    "sha256": "5c52e3a303baaac0e0af8bd9b96134993da34bc9d834a31ef37e1d2cdc7fe192"
+  },
+  "scope": "Projection-only arithmetic; retained original failures still open; no native/model/timing promotion"
+}

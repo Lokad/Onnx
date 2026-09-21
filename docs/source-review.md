@@ -135,6 +135,12 @@ retained requests pass their available public-output checks, but no complete
 control pair or native worker exists. No budget is selected and no timing
 gain is attributed to the source change.
 
+The independent [partial-sum arithmetic experiment](../tests/parakeet/reduction-accuracy/results-20260921.md)
+now reduces actual-input projection RMS error by4.75–4.82x with256-term sums.
+On the two native-convolution inputs it reproduces all151,552 originalORTstem
+values bitwise. Whole-stem errors remain, so this selects a complete-model
+arithmetic investigation without qualifying native duration logits or timing.
+
 
 | Source finding | Consequence for Lokad.Onnx |
 |---|---|

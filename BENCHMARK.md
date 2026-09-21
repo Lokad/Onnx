@@ -26,6 +26,9 @@ stopped at the available-memory guard after 80 production and 56 candidate
 requests. No ORT worker started; there is no valid speed comparison or budget
 selection. Speed and AMD qualification remain pending; the ORT tables below
 are unchanged.
+An independent [Parakeet arithmetic study](tests/parakeet/reduction-accuracy/results-20260921.md)
+reduces projection rounding error with shorter partial sums. Full-model
+numerical qualification is still pending; it supplies no latency result.
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
