@@ -1,0 +1,116 @@
+"""Four fresh matched timing workers with verified reused conformance and tmpfs evidence."""
+from pathlib import Path
+import importlib.util, json, os, subprocess, sys, time, traceback
+import psutil
+from protocol import pin,read,write,LIMITS,check_sample,validate_records
+from storage_contract import STORAGE, observe_storage, validate_storage
+
+
+def schedule(mode):
+    return [('whisper',e) for e in (['managed'] if mode=='conformance' else ['managed','ort','ort','managed'])]
+
+
+def absent(pid,birth):
+    try:return psutil.Process(pid).create_time()!=birth
+    except psutil.NoSuchProcess:return True
+
+
+def verify(base,frozen):
+    for name,wanted in frozen['files'].items():assert pin(base/name)==wanted,name
+    for name,wanted in frozen['external'].items():assert pin(Path(name))==wanted,name
+
+
+def run(base):
+    assert psutil.__version__=='7.0.0' and os.name=='posix'
+    own=psutil.Process();own.cpu_affinity([0]);frozen=read(base/'frozen.json')
+    assert frozen['limits']==LIMITS;verify(base,frozen)
+    prior=read(base/'conformance-gate.json');assert prior['passed'] and prior['calls']==40
+    assert frozen['protocol']=='whisper-amd-storage-v1' and frozen['storage']==STORAGE
+    assert frozen['prior_conformance']==pin(base/'conformance-gate.json')
+    validate_storage(observe_storage(base), preflight=True)
+    (base/'campaign').mkdir();state=dict(complete=False,code=None,started=time.time(),supervisor=dict(pid=own.pid,birth=own.create_time()),
+                                       frozen=pin(base/'frozen.json'),limits=LIMITS,runs=[])
+    def save():
+        target=base/'campaign/identity.tmp';target.write_text(json.dumps(state,indent=2));target.replace(base/'campaign/identity.json')
+    accounting_spec=importlib.util.spec_from_file_location('audio_process_accounting',base/'runtime/campaign_processes.py')
+    account=importlib.util.module_from_spec(accounting_spec);accounting_spec.loader.exec_module(account)
+    env={k:v for k,v in os.environ.items() if not k.lower().startswith(('lokad_','dotnet_','complus_'))}
+    env.update(PYTHONPATH=os.pathsep.join(frozen['python_paths']),PYTHONDONTWRITEBYTECODE='1',PYTHONUTF8='1')
+    env.update({key:'1' for key in ['OMP_NUM_THREADS','MKL_NUM_THREADS','OPENBLAS_NUM_THREADS','BLIS_NUM_THREADS','NUMEXPR_NUM_THREADS']})
+    (base/'tmp').mkdir();(base/'cache').mkdir()
+    env.update(TMPDIR=str(base/'tmp'),TMP=str(base/'tmp'),TEMP=str(base/'tmp'),XDG_CACHE_HOME=str(base/'cache'))
+    state['storage']=observe_storage(base);state['prior_conformance']=frozen['prior_conformance']
+    campaign_start=time.monotonic();save()
+    try:
+        for phase in ['timing']:
+            (base/'campaign'/phase).mkdir()
+            for index,(family,engine) in enumerate(schedule(phase)):
+                assert time.monotonic()-campaign_start<LIMITS['campaign_seconds']
+                storage=observe_storage(base);validate_storage(storage,preflight=True)
+                available=psutil.virtual_memory().available;disk=storage['free']
+                assert available>=LIMITS['preflight'] and disk>=LIMITS['preflight_disk']
+                name=f'{phase}-{index:02}-{family}-{engine}';relative=Path('campaign')/phase/f'{index:02}-{family}-{engine}';out=base/relative;out.mkdir()
+                manifest=read(base/'manifests'/(family+'.json'))
+                command=(['python3','-B',str(base/'runtime/native.py')] if engine=='ort' else [frozen['dotnet'],str(base/'bin'/('WhisperBenchmark.dll' if family=='whisper' else 'AudioBenchmark.dll'))])
+                command += [str(base/'assets'),str(base/'manifests'/(family+'.json')),str(out/'worker'),phase]
+                run=dict(name=name,phase=phase,family=family,engine=engine,command=command,output=relative.as_posix(),started=time.time(),
+                         preflight_available=available,preflight_disk=disk,storage_preflight=storage,members={},samples=0,peak_rss=0,complete=False,code=None)
+                state['runs'].append(run);save();child=None;start=time.monotonic();before=account.snapshot();write(out/'pre.json',before)
+                try:
+                    with (out/'stdout.txt').open('x') as stdout,(out/'stderr.txt').open('x') as stderr,(out/'samples.jsonl').open('x') as stream:
+                        own.cpu_affinity([2])
+                        try:child=subprocess.Popen(command,cwd=base,env=env,stdout=stdout,stderr=stderr,stdin=subprocess.DEVNULL,start_new_session=True)
+                        finally:own.cpu_affinity([0])
+                        process=psutil.Process(child.pid);run['child']=dict(pid=child.pid,birth=process.create_time())
+                        run['members'][str(child.pid)]=run['child']['birth'];save()
+                        while child.poll() is None:
+                            members=[]
+                            try:
+                                assert process.create_time()==run['child']['birth']
+                                for p in [process]+process.children(recursive=True):
+                                    try:
+                                        birth=p.create_time();assert run['members'].get(str(p.pid),birth)==birth;run['members'][str(p.pid)]=birth
+                                        threads=[]
+                                        for thread in p.threads():
+                                            try:threads.append(dict(tid=thread.id,affinity=sorted(os.sched_getaffinity(thread.id))))
+                                            except ProcessLookupError:pass
+                                        members.append(dict(pid=p.pid,birth=birth,rss=p.memory_info().rss,affinity=p.cpu_affinity(),threads=threads))
+                                    except psutil.NoSuchProcess:pass
+                            except psutil.NoSuchProcess:pass
+                            if not members and child.poll() is not None:break
+                            storage=observe_storage(base)
+                            row=dict(seconds=time.monotonic()-start,available=psutil.virtual_memory().available,disk=storage['free'],storage=storage,members=members)
+                            stream.write(json.dumps(row)+'\n');stream.flush();run['samples']+=1;run['peak_rss']=max(run['peak_rss'],sum(m['rss'] for m in members));save()
+                            check_sample(row);validate_storage(storage);assert time.monotonic()-campaign_start<LIMITS['campaign_seconds'];time.sleep(.5)
+                        run['code']=child.wait();assert run['code']==0
+                    deadline=time.monotonic()+10
+                    while not all(absent(int(pid),birth) for pid,birth in run['members'].items()):
+                        assert time.monotonic()<deadline;time.sleep(.1)
+                    value=read(out/'worker/result.json');validate_records(value,manifest,phase)
+                    assert value['manifest_sha256']==pin(base/'manifests'/(family+'.json'))['sha256']
+                    if engine=='managed':
+                        assert value['runtime']=='.NET 10.0.8' and value['processor_count']==1
+                        for key in ['core_sha256','data_sha256']:assert value[key]==manifest[key]
+                        assert value['runner_sha256']==pin(Path(command[1]))['sha256']
+                    else:
+                        assert value['versions']==manifest['native_versions'] and value['native_binaries']==manifest['native_binaries']
+                        assert value['python_binary']==frozen['interpreter']
+                        for path,wanted in value['numeric_libraries'].items():assert frozen['external'][path]==wanted==pin(Path(path)),path
+                    after=account.snapshot();write(out/'post.json',after);run['accounting']=account.foreign_fraction(before,after,own.pid)
+                except BaseException as error:
+                    run['error']=repr(error)
+                    for pid,birth in reversed(list(run['members'].items())):
+                        if not absent(int(pid),birth):
+                            try:psutil.Process(int(pid)).kill()
+                            except psutil.NoSuchProcess:pass
+                    if child is not None:child.wait(timeout=10)
+                    raise
+                finally:run.update(complete=True,seconds=time.monotonic()-start,ended=time.time());save()
+                print(json.dumps(dict(name=name,seconds=run['seconds'],code=run['code'])),flush=True)
+        verify(base,frozen);state['code']=0
+    except BaseException as error:state.update(code=1,error=repr(error));traceback.print_exc()
+    finally:state.update(complete=True,ended=time.time(),seconds=time.monotonic()-campaign_start);save()
+    return state['code']
+
+
+if __name__=='__main__':sys.exit(run(Path(sys.argv[1]).resolve()))
