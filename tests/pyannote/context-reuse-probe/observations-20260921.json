@@ -1,0 +1,5199 @@
+{
+  "passed": true,
+  "calls": 108,
+  "values": 17502642,
+  "rows": [
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3766831313380,
+      "end_ticks": 3766834832430,
+      "frequency": 10000000,
+      "allocated_before": 91033336,
+      "allocated_after": 118076608,
+      "allocated_bytes": 27043272,
+      "gc_before": [
+        4,
+        4,
+        3
+      ],
+      "gc_after": [
+        4,
+        4,
+        3
+      ],
+      "pause_before_ticks": 50110,
+      "pause_after_ticks": 50110,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "000.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3766835051863,
+      "end_ticks": 3766847439551,
+      "frequency": 10000000,
+      "allocated_before": 118334544,
+      "allocated_after": 323459272,
+      "allocated_bytes": 205124728,
+      "gc_before": [
+        4,
+        4,
+        3
+      ],
+      "gc_after": [
+        5,
+        5,
+        4
+      ],
+      "pause_before_ticks": 50110,
+      "pause_after_ticks": 76640,
+      "pause_ticks": 26530,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "001.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3766847513513,
+      "end_ticks": 3766849756826,
+      "frequency": 10000000,
+      "allocated_before": 323621792,
+      "allocated_after": 349868328,
+      "allocated_bytes": 26246536,
+      "gc_before": [
+        5,
+        5,
+        4
+      ],
+      "gc_after": [
+        5,
+        5,
+        4
+      ],
+      "pause_before_ticks": 76640,
+      "pause_after_ticks": 76640,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "002.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3766849800088,
+      "end_ticks": 3766861531859,
+      "frequency": 10000000,
+      "allocated_before": 349876344,
+      "allocated_after": 554479520,
+      "allocated_bytes": 204603176,
+      "gc_before": [
+        5,
+        5,
+        4
+      ],
+      "gc_after": [
+        6,
+        6,
+        5
+      ],
+      "pause_before_ticks": 76640,
+      "pause_after_ticks": 103000,
+      "pause_ticks": 26360,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "003.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3766861613162,
+      "end_ticks": 3766863969666,
+      "frequency": 10000000,
+      "allocated_before": 554653640,
+      "allocated_after": 580900176,
+      "allocated_bytes": 26246536,
+      "gc_before": [
+        6,
+        6,
+        5
+      ],
+      "gc_after": [
+        6,
+        6,
+        5
+      ],
+      "pause_before_ticks": 103000,
+      "pause_after_ticks": 103000,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "004.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3766864020648,
+      "end_ticks": 3766871153175,
+      "frequency": 10000000,
+      "allocated_before": 580909272,
+      "allocated_after": 786046416,
+      "allocated_bytes": 205137144,
+      "gc_before": [
+        6,
+        6,
+        5
+      ],
+      "gc_after": [
+        9,
+        8,
+        7
+      ],
+      "pause_before_ticks": 103000,
+      "pause_after_ticks": 145540,
+      "pause_ticks": 42540,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "005.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766871249237,
+      "end_ticks": 3766873463350,
+      "frequency": 10000000,
+      "allocated_before": 786174120,
+      "allocated_after": 812420656,
+      "allocated_bytes": 26246536,
+      "gc_before": [
+        9,
+        8,
+        7
+      ],
+      "gc_after": [
+        9,
+        8,
+        7
+      ],
+      "pause_before_ticks": 145540,
+      "pause_after_ticks": 145540,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "006.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766873526681,
+      "end_ticks": 3766879460148,
+      "frequency": 10000000,
+      "allocated_before": 812430344,
+      "allocated_after": 1016255912,
+      "allocated_bytes": 203825568,
+      "gc_before": [
+        9,
+        8,
+        7
+      ],
+      "gc_after": [
+        9,
+        8,
+        7
+      ],
+      "pause_before_ticks": 145540,
+      "pause_after_ticks": 145540,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "007.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766879539607,
+      "end_ticks": 3766881623151,
+      "frequency": 10000000,
+      "allocated_before": 1016266024,
+      "allocated_after": 1039360808,
+      "allocated_bytes": 23094784,
+      "gc_before": [
+        9,
+        8,
+        7
+      ],
+      "gc_after": [
+        9,
+        8,
+        7
+      ],
+      "pause_before_ticks": 145540,
+      "pause_after_ticks": 145540,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "008.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766881696626,
+      "end_ticks": 3766888757181,
+      "frequency": 10000000,
+      "allocated_before": 1039372024,
+      "allocated_after": 1244244856,
+      "allocated_bytes": 204872832,
+      "gc_before": [
+        9,
+        8,
+        7
+      ],
+      "gc_after": [
+        12,
+        10,
+        9
+      ],
+      "pause_before_ticks": 145540,
+      "pause_after_ticks": 191850,
+      "pause_ticks": 46310,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "009.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766888867502,
+      "end_ticks": 3766890948688,
+      "frequency": 10000000,
+      "allocated_before": 1244421480,
+      "allocated_after": 1270668016,
+      "allocated_bytes": 26246536,
+      "gc_before": [
+        12,
+        10,
+        9
+      ],
+      "gc_after": [
+        12,
+        10,
+        9
+      ],
+      "pause_before_ticks": 191850,
+      "pause_after_ticks": 191850,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "010.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766891030521,
+      "end_ticks": 3766898073290,
+      "frequency": 10000000,
+      "allocated_before": 1270679376,
+      "allocated_after": 1474504944,
+      "allocated_bytes": 203825568,
+      "gc_before": [
+        12,
+        10,
+        9
+      ],
+      "gc_after": [
+        12,
+        10,
+        9
+      ],
+      "pause_before_ticks": 191850,
+      "pause_after_ticks": 191850,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "011.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766898171827,
+      "end_ticks": 3766900258332,
+      "frequency": 10000000,
+      "allocated_before": 1474516736,
+      "allocated_after": 1497611520,
+      "allocated_bytes": 23094784,
+      "gc_before": [
+        12,
+        10,
+        9
+      ],
+      "gc_after": [
+        12,
+        10,
+        9
+      ],
+      "pause_before_ticks": 191850,
+      "pause_after_ticks": 191850,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "012.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766900348612,
+      "end_ticks": 3766908091201,
+      "frequency": 10000000,
+      "allocated_before": 1497623712,
+      "allocated_after": 1702225656,
+      "allocated_bytes": 204601944,
+      "gc_before": [
+        12,
+        10,
+        9
+      ],
+      "gc_after": [
+        13,
+        11,
+        10
+      ],
+      "pause_before_ticks": 191850,
+      "pause_after_ticks": 223430,
+      "pause_ticks": 31580,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "013.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766908227602,
+      "end_ticks": 3766910681796,
+      "frequency": 10000000,
+      "allocated_before": 1702393368,
+      "allocated_after": 1728639904,
+      "allocated_bytes": 26246536,
+      "gc_before": [
+        13,
+        11,
+        10
+      ],
+      "gc_after": [
+        13,
+        11,
+        10
+      ],
+      "pause_before_ticks": 223430,
+      "pause_after_ticks": 223430,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "014.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766910782236,
+      "end_ticks": 3766917668973,
+      "frequency": 10000000,
+      "allocated_before": 1728652936,
+      "allocated_after": 1933525568,
+      "allocated_bytes": 204872632,
+      "gc_before": [
+        13,
+        11,
+        10
+      ],
+      "gc_after": [
+        16,
+        13,
+        12
+      ],
+      "pause_before_ticks": 223430,
+      "pause_after_ticks": 276020,
+      "pause_ticks": 52590,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "015.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766917802427,
+      "end_ticks": 3766920273221,
+      "frequency": 10000000,
+      "allocated_before": 1933657448,
+      "allocated_after": 1959903984,
+      "allocated_bytes": 26246536,
+      "gc_before": [
+        16,
+        13,
+        12
+      ],
+      "gc_after": [
+        16,
+        13,
+        12
+      ],
+      "pause_before_ticks": 276020,
+      "pause_after_ticks": 276020,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "016.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3766920390869,
+      "end_ticks": 3766927061995,
+      "frequency": 10000000,
+      "allocated_before": 1959918664,
+      "allocated_after": 2163744232,
+      "allocated_bytes": 203825568,
+      "gc_before": [
+        16,
+        13,
+        12
+      ],
+      "gc_after": [
+        16,
+        13,
+        12
+      ],
+      "pause_before_ticks": 276020,
+      "pause_after_ticks": 276020,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "017.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3766927260288,
+      "end_ticks": 3766929702409,
+      "frequency": 10000000,
+      "allocated_before": 2163765296,
+      "allocated_after": 2186860216,
+      "allocated_bytes": 23094920,
+      "gc_before": [
+        16,
+        13,
+        12
+      ],
+      "gc_after": [
+        16,
+        13,
+        12
+      ],
+      "pause_before_ticks": 276020,
+      "pause_after_ticks": 276020,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "018.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3766929821841,
+      "end_ticks": 3766936766401,
+      "frequency": 10000000,
+      "allocated_before": 2186874904,
+      "allocated_after": 2391681424,
+      "allocated_bytes": 204806520,
+      "gc_before": [
+        16,
+        13,
+        12
+      ],
+      "gc_after": [
+        18,
+        15,
+        14
+      ],
+      "pause_before_ticks": 276020,
+      "pause_after_ticks": 326710,
+      "pause_ticks": 50690,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "019.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3766936927135,
+      "end_ticks": 3766939409555,
+      "frequency": 10000000,
+      "allocated_before": 2391862216,
+      "allocated_after": 2415971720,
+      "allocated_bytes": 24109504,
+      "gc_before": [
+        18,
+        15,
+        14
+      ],
+      "gc_after": [
+        19,
+        15,
+        14
+      ],
+      "pause_before_ticks": 326710,
+      "pause_after_ticks": 329930,
+      "pause_ticks": 3220,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "020.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3766939547997,
+      "end_ticks": 3766946256170,
+      "frequency": 10000000,
+      "allocated_before": 2416074120,
+      "allocated_after": 2582516048,
+      "allocated_bytes": 166441928,
+      "gc_before": [
+        19,
+        15,
+        14
+      ],
+      "gc_after": [
+        19,
+        15,
+        14
+      ],
+      "pause_before_ticks": 329930,
+      "pause_after_ticks": 329930,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "021.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3766946425224,
+      "end_ticks": 3766949029269,
+      "frequency": 10000000,
+      "allocated_before": 2582532264,
+      "allocated_after": 2603488320,
+      "allocated_bytes": 20956056,
+      "gc_before": [
+        19,
+        15,
+        14
+      ],
+      "gc_after": [
+        19,
+        15,
+        14
+      ],
+      "pause_before_ticks": 329930,
+      "pause_after_ticks": 329930,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "022.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3766949172616,
+      "end_ticks": 3766954049208,
+      "frequency": 10000000,
+      "allocated_before": 2603504672,
+      "allocated_after": 2769945616,
+      "allocated_bytes": 166440944,
+      "gc_before": [
+        19,
+        15,
+        14
+      ],
+      "gc_after": [
+        19,
+        15,
+        14
+      ],
+      "pause_before_ticks": 329930,
+      "pause_after_ticks": 329930,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "023.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766954205548,
+      "end_ticks": 3766956255974,
+      "frequency": 10000000,
+      "allocated_before": 2769962400,
+      "allocated_after": 2790918456,
+      "allocated_bytes": 20956056,
+      "gc_before": [
+        19,
+        15,
+        14
+      ],
+      "gc_after": [
+        19,
+        15,
+        14
+      ],
+      "pause_before_ticks": 329930,
+      "pause_after_ticks": 329930,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "024.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766956405909,
+      "end_ticks": 3766961294912,
+      "frequency": 10000000,
+      "allocated_before": 2790935640,
+      "allocated_after": 2957376752,
+      "allocated_bytes": 166441112,
+      "gc_before": [
+        19,
+        15,
+        14
+      ],
+      "gc_after": [
+        20,
+        15,
+        14
+      ],
+      "pause_before_ticks": 329930,
+      "pause_after_ticks": 333200,
+      "pause_ticks": 3270,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "025.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766961480261,
+      "end_ticks": 3766963590485,
+      "frequency": 10000000,
+      "allocated_before": 2957539512,
+      "allocated_after": 2978496888,
+      "allocated_bytes": 20957376,
+      "gc_before": [
+        20,
+        15,
+        14
+      ],
+      "gc_after": [
+        20,
+        15,
+        14
+      ],
+      "pause_before_ticks": 333200,
+      "pause_after_ticks": 333200,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "026.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766963752572,
+      "end_ticks": 3766968776179,
+      "frequency": 10000000,
+      "allocated_before": 2978514912,
+      "allocated_after": 3145732736,
+      "allocated_bytes": 167217824,
+      "gc_before": [
+        20,
+        15,
+        14
+      ],
+      "gc_after": [
+        21,
+        16,
+        15
+      ],
+      "pause_before_ticks": 333200,
+      "pause_after_ticks": 359930,
+      "pause_ticks": 26730,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "027.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766968961260,
+      "end_ticks": 3766971441278,
+      "frequency": 10000000,
+      "allocated_before": 3145858760,
+      "allocated_after": 3169966568,
+      "allocated_bytes": 24107808,
+      "gc_before": [
+        21,
+        16,
+        15
+      ],
+      "gc_after": [
+        21,
+        16,
+        15
+      ],
+      "pause_before_ticks": 359930,
+      "pause_after_ticks": 359930,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "028.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766971614033,
+      "end_ticks": 3766978071062,
+      "frequency": 10000000,
+      "allocated_before": 3169985688,
+      "allocated_after": 3337197024,
+      "allocated_bytes": 167211336,
+      "gc_before": [
+        21,
+        16,
+        15
+      ],
+      "gc_after": [
+        22,
+        17,
+        16
+      ],
+      "pause_before_ticks": 359930,
+      "pause_after_ticks": 387160,
+      "pause_ticks": 27230,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "029.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766978318404,
+      "end_ticks": 3766980254477,
+      "frequency": 10000000,
+      "allocated_before": 3337334728,
+      "allocated_after": 3361439752,
+      "allocated_bytes": 24105024,
+      "gc_before": [
+        22,
+        17,
+        16
+      ],
+      "gc_after": [
+        22,
+        17,
+        16
+      ],
+      "pause_before_ticks": 387160,
+      "pause_after_ticks": 387160,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "030.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766980439470,
+      "end_ticks": 3766985410745,
+      "frequency": 10000000,
+      "allocated_before": 3361459432,
+      "allocated_after": 3528876472,
+      "allocated_bytes": 167417040,
+      "gc_before": [
+        22,
+        17,
+        16
+      ],
+      "gc_after": [
+        25,
+        19,
+        18
+      ],
+      "pause_before_ticks": 387160,
+      "pause_after_ticks": 444360,
+      "pause_ticks": 57200,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "031.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766985622309,
+      "end_ticks": 3766987526977,
+      "frequency": 10000000,
+      "allocated_before": 3529015008,
+      "allocated_after": 3553120032,
+      "allocated_bytes": 24105024,
+      "gc_before": [
+        25,
+        19,
+        18
+      ],
+      "gc_after": [
+        25,
+        19,
+        18
+      ],
+      "pause_before_ticks": 444360,
+      "pause_after_ticks": 444360,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "032.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766987717159,
+      "end_ticks": 3766992585535,
+      "frequency": 10000000,
+      "allocated_before": 3553142136,
+      "allocated_after": 3719580488,
+      "allocated_bytes": 166438352,
+      "gc_before": [
+        25,
+        19,
+        18
+      ],
+      "gc_after": [
+        25,
+        19,
+        18
+      ],
+      "pause_before_ticks": 444360,
+      "pause_after_ticks": 444360,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "033.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766992805899,
+      "end_ticks": 3766994691464,
+      "frequency": 10000000,
+      "allocated_before": 3719601432,
+      "allocated_after": 3740554704,
+      "allocated_bytes": 20953272,
+      "gc_before": [
+        25,
+        19,
+        18
+      ],
+      "gc_after": [
+        25,
+        19,
+        18
+      ],
+      "pause_before_ticks": 444360,
+      "pause_after_ticks": 444360,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "034.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3766994888788,
+      "end_ticks": 3767000087001,
+      "frequency": 10000000,
+      "allocated_before": 3740576056,
+      "allocated_after": 3907014672,
+      "allocated_bytes": 166438616,
+      "gc_before": [
+        25,
+        19,
+        18
+      ],
+      "gc_after": [
+        26,
+        19,
+        18
+      ],
+      "pause_before_ticks": 444360,
+      "pause_after_ticks": 447600,
+      "pause_ticks": 3240,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "035.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767000428868,
+      "end_ticks": 3767002299668,
+      "frequency": 10000000,
+      "allocated_before": 3907179904,
+      "allocated_after": 3930271528,
+      "allocated_bytes": 23091624,
+      "gc_before": [
+        26,
+        19,
+        18
+      ],
+      "gc_after": [
+        26,
+        19,
+        18
+      ],
+      "pause_before_ticks": 447600,
+      "pause_after_ticks": 447600,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "036.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767002509687,
+      "end_ticks": 3767007255434,
+      "frequency": 10000000,
+      "allocated_before": 3930293712,
+      "allocated_after": 4134115784,
+      "allocated_bytes": 203822072,
+      "gc_before": [
+        26,
+        19,
+        18
+      ],
+      "gc_after": [
+        26,
+        19,
+        18
+      ],
+      "pause_before_ticks": 447600,
+      "pause_after_ticks": 447600,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "037.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767007481525,
+      "end_ticks": 3767009353581,
+      "frequency": 10000000,
+      "allocated_before": 4134138400,
+      "allocated_after": 4157221488,
+      "allocated_bytes": 23083088,
+      "gc_before": [
+        26,
+        19,
+        18
+      ],
+      "gc_after": [
+        26,
+        19,
+        18
+      ],
+      "pause_before_ticks": 447600,
+      "pause_after_ticks": 447600,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "038.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767009574422,
+      "end_ticks": 3767015816385,
+      "frequency": 10000000,
+      "allocated_before": 4157244512,
+      "allocated_after": 4361840296,
+      "allocated_bytes": 204595784,
+      "gc_before": [
+        26,
+        19,
+        18
+      ],
+      "gc_after": [
+        27,
+        20,
+        19
+      ],
+      "pause_before_ticks": 447600,
+      "pause_after_ticks": 479830,
+      "pause_ticks": 32230,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "039.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767016181069,
+      "end_ticks": 3767017313372,
+      "frequency": 10000000,
+      "allocated_before": 4362029416,
+      "allocated_after": 4388264256,
+      "allocated_bytes": 26234840,
+      "gc_before": [
+        27,
+        20,
+        19
+      ],
+      "gc_after": [
+        27,
+        20,
+        19
+      ],
+      "pause_before_ticks": 479830,
+      "pause_after_ticks": 479830,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "040.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767017563823,
+      "end_ticks": 3767022951664,
+      "frequency": 10000000,
+      "allocated_before": 4388288112,
+      "allocated_after": 4592105192,
+      "allocated_bytes": 203817080,
+      "gc_before": [
+        27,
+        20,
+        19
+      ],
+      "gc_after": [
+        28,
+        20,
+        19
+      ],
+      "pause_before_ticks": 479830,
+      "pause_after_ticks": 486450,
+      "pause_ticks": 6620,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "041.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767023210660,
+      "end_ticks": 3767023983560,
+      "frequency": 10000000,
+      "allocated_before": 4592216520,
+      "allocated_after": 4618933840,
+      "allocated_bytes": 26717320,
+      "gc_before": [
+        28,
+        20,
+        19
+      ],
+      "gc_after": [
+        29,
+        21,
+        20
+      ],
+      "pause_before_ticks": 486450,
+      "pause_after_ticks": 504310,
+      "pause_ticks": 17860,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "042.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767024235040,
+      "end_ticks": 3767030097411,
+      "frequency": 10000000,
+      "allocated_before": 4619076872,
+      "allocated_after": 4823451688,
+      "allocated_bytes": 204374816,
+      "gc_before": [
+        29,
+        21,
+        20
+      ],
+      "gc_after": [
+        29,
+        21,
+        20
+      ],
+      "pause_before_ticks": 504310,
+      "pause_after_ticks": 504310,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "043.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767030443480,
+      "end_ticks": 3767031640441,
+      "frequency": 10000000,
+      "allocated_before": 4823477064,
+      "allocated_after": 4846560128,
+      "allocated_bytes": 23083064,
+      "gc_before": [
+        29,
+        21,
+        20
+      ],
+      "gc_after": [
+        29,
+        21,
+        20
+      ],
+      "pause_before_ticks": 504310,
+      "pause_after_ticks": 504310,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "044.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767031902182,
+      "end_ticks": 3767038220053,
+      "frequency": 10000000,
+      "allocated_before": 4846585648,
+      "allocated_after": 5050399368,
+      "allocated_bytes": 203813720,
+      "gc_before": [
+        29,
+        21,
+        20
+      ],
+      "gc_after": [
+        29,
+        21,
+        20
+      ],
+      "pause_before_ticks": 504310,
+      "pause_after_ticks": 504310,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "045.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767038549446,
+      "end_ticks": 3767039503753,
+      "frequency": 10000000,
+      "allocated_before": 5050425312,
+      "allocated_after": 5073509144,
+      "allocated_bytes": 23083832,
+      "gc_before": [
+        29,
+        21,
+        20
+      ],
+      "gc_after": [
+        30,
+        21,
+        20
+      ],
+      "pause_before_ticks": 504310,
+      "pause_after_ticks": 506610,
+      "pause_ticks": 2300,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "046.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767039834943,
+      "end_ticks": 3767044581882,
+      "frequency": 10000000,
+      "allocated_before": 5073669624,
+      "allocated_after": 5277484328,
+      "allocated_bytes": 203814704,
+      "gc_before": [
+        30,
+        21,
+        20
+      ],
+      "gc_after": [
+        30,
+        21,
+        20
+      ],
+      "pause_before_ticks": 506610,
+      "pause_after_ticks": 506610,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "047.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767044855031,
+      "end_ticks": 3767045587184,
+      "frequency": 10000000,
+      "allocated_before": 5277511104,
+      "allocated_after": 5300594000,
+      "allocated_bytes": 23082896,
+      "gc_before": [
+        30,
+        21,
+        20
+      ],
+      "gc_after": [
+        30,
+        21,
+        20
+      ],
+      "pause_before_ticks": 506610,
+      "pause_after_ticks": 506610,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "048.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767045850894,
+      "end_ticks": 3767050783198,
+      "frequency": 10000000,
+      "allocated_before": 5300621184,
+      "allocated_after": 5505208248,
+      "allocated_bytes": 204587064,
+      "gc_before": [
+        30,
+        21,
+        20
+      ],
+      "gc_after": [
+        31,
+        22,
+        21
+      ],
+      "pause_before_ticks": 506610,
+      "pause_after_ticks": 537470,
+      "pause_ticks": 30860,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "049.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767051083827,
+      "end_ticks": 3767051931864,
+      "frequency": 10000000,
+      "allocated_before": 5505401528,
+      "allocated_after": 5531636176,
+      "allocated_bytes": 26234648,
+      "gc_before": [
+        31,
+        22,
+        21
+      ],
+      "gc_after": [
+        31,
+        22,
+        21
+      ],
+      "pause_before_ticks": 537470,
+      "pause_after_ticks": 537470,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "050.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767052206498,
+      "end_ticks": 3767056913887,
+      "frequency": 10000000,
+      "allocated_before": 5531664456,
+      "allocated_after": 5736252160,
+      "allocated_bytes": 204587704,
+      "gc_before": [
+        31,
+        22,
+        21
+      ],
+      "gc_after": [
+        33,
+        23,
+        22
+      ],
+      "pause_before_ticks": 537470,
+      "pause_after_ticks": 563200,
+      "pause_ticks": 25730,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "051.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767057236032,
+      "end_ticks": 3767058157831,
+      "frequency": 10000000,
+      "allocated_before": 5736399024,
+      "allocated_after": 5762633672,
+      "allocated_bytes": 26234648,
+      "gc_before": [
+        33,
+        23,
+        22
+      ],
+      "gc_after": [
+        33,
+        23,
+        22
+      ],
+      "pause_before_ticks": 563200,
+      "pause_after_ticks": 563200,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "052.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "forward",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767058445394,
+      "end_ticks": 3767064021262,
+      "frequency": 10000000,
+      "allocated_before": 5762662520,
+      "allocated_after": 5966475952,
+      "allocated_bytes": 203813432,
+      "gc_before": [
+        33,
+        23,
+        22
+      ],
+      "gc_after": [
+        33,
+        23,
+        22
+      ],
+      "pause_before_ticks": 563200,
+      "pause_after_ticks": 563200,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "053.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767368444984,
+      "end_ticks": 3767372045667,
+      "frequency": 10000000,
+      "allocated_before": 91033336,
+      "allocated_after": 118050288,
+      "allocated_bytes": 27016952,
+      "gc_before": [
+        4,
+        4,
+        3
+      ],
+      "gc_after": [
+        4,
+        4,
+        3
+      ],
+      "pause_before_ticks": 51200,
+      "pause_after_ticks": 51200,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "000.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767372271150,
+      "end_ticks": 3767383903094,
+      "frequency": 10000000,
+      "allocated_before": 118332848,
+      "allocated_after": 323459176,
+      "allocated_bytes": 205126328,
+      "gc_before": [
+        4,
+        4,
+        3
+      ],
+      "gc_after": [
+        5,
+        5,
+        4
+      ],
+      "pause_before_ticks": 51200,
+      "pause_after_ticks": 76980,
+      "pause_ticks": 25780,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "001.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767383976348,
+      "end_ticks": 3767386036269,
+      "frequency": 10000000,
+      "allocated_before": 323621704,
+      "allocated_after": 349859328,
+      "allocated_bytes": 26237624,
+      "gc_before": [
+        5,
+        5,
+        4
+      ],
+      "gc_after": [
+        5,
+        5,
+        4
+      ],
+      "pause_before_ticks": 76980,
+      "pause_after_ticks": 76980,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "002.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767386080348,
+      "end_ticks": 3767398771750,
+      "frequency": 10000000,
+      "allocated_before": 349867352,
+      "allocated_after": 553685968,
+      "allocated_bytes": 203818616,
+      "gc_before": [
+        5,
+        5,
+        4
+      ],
+      "gc_after": [
+        5,
+        5,
+        4
+      ],
+      "pause_before_ticks": 76980,
+      "pause_after_ticks": 76980,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "003.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767398845138,
+      "end_ticks": 3767402580487,
+      "frequency": 10000000,
+      "allocated_before": 553694424,
+      "allocated_after": 576780296,
+      "allocated_bytes": 23085872,
+      "gc_before": [
+        5,
+        5,
+        4
+      ],
+      "gc_after": [
+        5,
+        5,
+        4
+      ],
+      "pause_before_ticks": 76980,
+      "pause_after_ticks": 76980,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "004.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767402634493,
+      "end_ticks": 3767412921371,
+      "frequency": 10000000,
+      "allocated_before": 576789392,
+      "allocated_after": 781880992,
+      "allocated_bytes": 205091600,
+      "gc_before": [
+        5,
+        5,
+        4
+      ],
+      "gc_after": [
+        8,
+        7,
+        6
+      ],
+      "pause_before_ticks": 76980,
+      "pause_after_ticks": 117090,
+      "pause_ticks": 40110,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "005.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767413017410,
+      "end_ticks": 3767416222329,
+      "frequency": 10000000,
+      "allocated_before": 782055952,
+      "allocated_after": 808768808,
+      "allocated_bytes": 26712856,
+      "gc_before": [
+        8,
+        7,
+        6
+      ],
+      "gc_after": [
+        8,
+        7,
+        6
+      ],
+      "pause_before_ticks": 117090,
+      "pause_after_ticks": 117090,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "006.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767416284776,
+      "end_ticks": 3767424206036,
+      "frequency": 10000000,
+      "allocated_before": 808778504,
+      "allocated_after": 1012597120,
+      "allocated_bytes": 203818616,
+      "gc_before": [
+        8,
+        7,
+        6
+      ],
+      "gc_after": [
+        8,
+        7,
+        6
+      ],
+      "pause_before_ticks": 117090,
+      "pause_after_ticks": 117090,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "007.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767424286875,
+      "end_ticks": 3767427493388,
+      "frequency": 10000000,
+      "allocated_before": 1012607240,
+      "allocated_after": 1035693112,
+      "allocated_bytes": 23085872,
+      "gc_before": [
+        8,
+        7,
+        6
+      ],
+      "gc_after": [
+        8,
+        7,
+        6
+      ],
+      "pause_before_ticks": 117090,
+      "pause_after_ticks": 117090,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "008.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767427565984,
+      "end_ticks": 3767435832421,
+      "frequency": 10000000,
+      "allocated_before": 1035704336,
+      "allocated_after": 1239522952,
+      "allocated_bytes": 203818616,
+      "gc_before": [
+        8,
+        7,
+        6
+      ],
+      "gc_after": [
+        8,
+        7,
+        6
+      ],
+      "pause_before_ticks": 117090,
+      "pause_after_ticks": 117090,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "009.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767435925633,
+      "end_ticks": 3767438938716,
+      "frequency": 10000000,
+      "allocated_before": 1239533912,
+      "allocated_after": 1262620688,
+      "allocated_bytes": 23086776,
+      "gc_before": [
+        8,
+        7,
+        6
+      ],
+      "gc_after": [
+        9,
+        7,
+        6
+      ],
+      "pause_before_ticks": 117090,
+      "pause_after_ticks": 120950,
+      "pause_ticks": 3860,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "010.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767439038856,
+      "end_ticks": 3767447058964,
+      "frequency": 10000000,
+      "allocated_before": 1262766176,
+      "allocated_after": 1466585776,
+      "allocated_bytes": 203819600,
+      "gc_before": [
+        9,
+        7,
+        6
+      ],
+      "gc_after": [
+        9,
+        7,
+        6
+      ],
+      "pause_before_ticks": 120950,
+      "pause_after_ticks": 120950,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "011.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767447157614,
+      "end_ticks": 3767450457057,
+      "frequency": 10000000,
+      "allocated_before": 1466597568,
+      "allocated_after": 1489683440,
+      "allocated_bytes": 23085872,
+      "gc_before": [
+        9,
+        7,
+        6
+      ],
+      "gc_after": [
+        9,
+        7,
+        6
+      ],
+      "pause_before_ticks": 120950,
+      "pause_after_ticks": 120950,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "012.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767450558006,
+      "end_ticks": 3767458870151,
+      "frequency": 10000000,
+      "allocated_before": 1489695632,
+      "allocated_after": 1694288200,
+      "allocated_bytes": 204592568,
+      "gc_before": [
+        9,
+        7,
+        6
+      ],
+      "gc_after": [
+        10,
+        8,
+        7
+      ],
+      "pause_before_ticks": 120950,
+      "pause_after_ticks": 143950,
+      "pause_ticks": 23000,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "013.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767459072576,
+      "end_ticks": 3767462014100,
+      "frequency": 10000000,
+      "allocated_before": 1694466760,
+      "allocated_after": 1720701600,
+      "allocated_bytes": 26234840,
+      "gc_before": [
+        10,
+        8,
+        7
+      ],
+      "gc_after": [
+        10,
+        8,
+        7
+      ],
+      "pause_before_ticks": 143950,
+      "pause_after_ticks": 143950,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "014.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767462126083,
+      "end_ticks": 3767468341811,
+      "frequency": 10000000,
+      "allocated_before": 1720714632,
+      "allocated_after": 1925779336,
+      "allocated_bytes": 205064704,
+      "gc_before": [
+        10,
+        8,
+        7
+      ],
+      "gc_after": [
+        13,
+        10,
+        9
+      ],
+      "pause_before_ticks": 143950,
+      "pause_after_ticks": 187210,
+      "pause_ticks": 43260,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "015.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767468485338,
+      "end_ticks": 3767471429423,
+      "frequency": 10000000,
+      "allocated_before": 1925911224,
+      "allocated_after": 1952146064,
+      "allocated_bytes": 26234840,
+      "gc_before": [
+        13,
+        10,
+        9
+      ],
+      "gc_after": [
+        13,
+        10,
+        9
+      ],
+      "pause_before_ticks": 187210,
+      "pause_after_ticks": 187210,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "016.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767471565093,
+      "end_ticks": 3767478230258,
+      "frequency": 10000000,
+      "allocated_before": 1952160744,
+      "allocated_after": 2155976768,
+      "allocated_bytes": 203816024,
+      "gc_before": [
+        13,
+        10,
+        9
+      ],
+      "gc_after": [
+        13,
+        10,
+        9
+      ],
+      "pause_before_ticks": 187210,
+      "pause_after_ticks": 187210,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "017.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767478512581,
+      "end_ticks": 3767481501037,
+      "frequency": 10000000,
+      "allocated_before": 2155997840,
+      "allocated_after": 2179089976,
+      "allocated_bytes": 23092136,
+      "gc_before": [
+        13,
+        10,
+        9
+      ],
+      "gc_after": [
+        13,
+        10,
+        9
+      ],
+      "pause_before_ticks": 187210,
+      "pause_after_ticks": 187210,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "018.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767481622850,
+      "end_ticks": 3767487325397,
+      "frequency": 10000000,
+      "allocated_before": 2179104664,
+      "allocated_after": 2382927640,
+      "allocated_bytes": 203822976,
+      "gc_before": [
+        13,
+        10,
+        9
+      ],
+      "gc_after": [
+        13,
+        10,
+        9
+      ],
+      "pause_before_ticks": 187210,
+      "pause_after_ticks": 187210,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "019.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767487484548,
+      "end_ticks": 3767490101101,
+      "frequency": 10000000,
+      "allocated_before": 2382942752,
+      "allocated_after": 2403896024,
+      "allocated_bytes": 20953272,
+      "gc_before": [
+        13,
+        10,
+        9
+      ],
+      "gc_after": [
+        13,
+        10,
+        9
+      ],
+      "pause_before_ticks": 187210,
+      "pause_after_ticks": 187210,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "020.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767490245031,
+      "end_ticks": 3767496774109,
+      "frequency": 10000000,
+      "allocated_before": 2403911544,
+      "allocated_after": 2570350160,
+      "allocated_bytes": 166438616,
+      "gc_before": [
+        13,
+        10,
+        9
+      ],
+      "gc_after": [
+        14,
+        10,
+        9
+      ],
+      "pause_before_ticks": 187210,
+      "pause_after_ticks": 192470,
+      "pause_ticks": 5260,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "021.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767496964772,
+      "end_ticks": 3767500122322,
+      "frequency": 10000000,
+      "allocated_before": 2570500664,
+      "allocated_after": 2593759728,
+      "allocated_bytes": 23259064,
+      "gc_before": [
+        14,
+        10,
+        9
+      ],
+      "gc_after": [
+        15,
+        11,
+        10
+      ],
+      "pause_before_ticks": 192470,
+      "pause_after_ticks": 235880,
+      "pause_ticks": 43410,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "022.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 0,
+      "phase": "first",
+      "context_created": false,
+      "start_ticks": 3767500290005,
+      "end_ticks": 3767506230700,
+      "frequency": 10000000,
+      "allocated_before": 2593894504,
+      "allocated_after": 2761170224,
+      "allocated_bytes": 167275720,
+      "gc_before": [
+        15,
+        11,
+        10
+      ],
+      "gc_after": [
+        15,
+        11,
+        10
+      ],
+      "pause_before_ticks": 235880,
+      "pause_after_ticks": 235880,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "023.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767506414138,
+      "end_ticks": 3767509577464,
+      "frequency": 10000000,
+      "allocated_before": 2761187008,
+      "allocated_after": 2782140448,
+      "allocated_bytes": 20953440,
+      "gc_before": [
+        15,
+        11,
+        10
+      ],
+      "gc_after": [
+        15,
+        11,
+        10
+      ],
+      "pause_before_ticks": 235880,
+      "pause_after_ticks": 235880,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "024.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767509780067,
+      "end_ticks": 3767516325709,
+      "frequency": 10000000,
+      "allocated_before": 2782157632,
+      "allocated_after": 2949367088,
+      "allocated_bytes": 167209456,
+      "gc_before": [
+        15,
+        11,
+        10
+      ],
+      "gc_after": [
+        16,
+        12,
+        10
+      ],
+      "pause_before_ticks": 235880,
+      "pause_after_ticks": 243280,
+      "pause_ticks": 7400,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "025.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767516530667,
+      "end_ticks": 3767519132404,
+      "frequency": 10000000,
+      "allocated_before": 2949519000,
+      "allocated_after": 2973624024,
+      "allocated_bytes": 24105024,
+      "gc_before": [
+        16,
+        12,
+        10
+      ],
+      "gc_after": [
+        16,
+        12,
+        10
+      ],
+      "pause_before_ticks": 243280,
+      "pause_after_ticks": 243280,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "026.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767519313531,
+      "end_ticks": 3767524887439,
+      "frequency": 10000000,
+      "allocated_before": 2973642048,
+      "allocated_after": 3140853488,
+      "allocated_bytes": 167211440,
+      "gc_before": [
+        16,
+        12,
+        10
+      ],
+      "gc_after": [
+        17,
+        13,
+        11
+      ],
+      "pause_before_ticks": 243280,
+      "pause_after_ticks": 281410,
+      "pause_ticks": 38130,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "027.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767525086572,
+      "end_ticks": 3767527721221,
+      "frequency": 10000000,
+      "allocated_before": 3140990360,
+      "allocated_after": 3165095384,
+      "allocated_bytes": 24105024,
+      "gc_before": [
+        17,
+        13,
+        11
+      ],
+      "gc_after": [
+        17,
+        13,
+        11
+      ],
+      "pause_before_ticks": 281410,
+      "pause_after_ticks": 281410,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "028.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767527909596,
+      "end_ticks": 3767533708890,
+      "frequency": 10000000,
+      "allocated_before": 3165114240,
+      "allocated_after": 3332586568,
+      "allocated_bytes": 167472328,
+      "gc_before": [
+        17,
+        13,
+        11
+      ],
+      "gc_after": [
+        18,
+        14,
+        12
+      ],
+      "pause_before_ticks": 281410,
+      "pause_after_ticks": 302950,
+      "pause_ticks": 21540,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "029.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767533921019,
+      "end_ticks": 3767536542369,
+      "frequency": 10000000,
+      "allocated_before": 3332713688,
+      "allocated_after": 3356818712,
+      "allocated_bytes": 24105024,
+      "gc_before": [
+        18,
+        14,
+        12
+      ],
+      "gc_after": [
+        18,
+        14,
+        12
+      ],
+      "pause_before_ticks": 302950,
+      "pause_after_ticks": 302950,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "030.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767536745381,
+      "end_ticks": 3767542579836,
+      "frequency": 10000000,
+      "allocated_before": 3356838392,
+      "allocated_after": 3523276912,
+      "allocated_bytes": 166438520,
+      "gc_before": [
+        18,
+        14,
+        12
+      ],
+      "gc_after": [
+        19,
+        15,
+        12
+      ],
+      "pause_before_ticks": 302950,
+      "pause_after_ticks": 330570,
+      "pause_ticks": 27620,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "031.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767542817821,
+      "end_ticks": 3767545923623,
+      "frequency": 10000000,
+      "allocated_before": 3523394920,
+      "allocated_after": 3544349512,
+      "allocated_bytes": 20954592,
+      "gc_before": [
+        19,
+        15,
+        12
+      ],
+      "gc_after": [
+        19,
+        15,
+        12
+      ],
+      "pause_before_ticks": 330570,
+      "pause_after_ticks": 330570,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "032.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767546179176,
+      "end_ticks": 3767553346065,
+      "frequency": 10000000,
+      "allocated_before": 3544371616,
+      "allocated_after": 3710809968,
+      "allocated_bytes": 166438352,
+      "gc_before": [
+        19,
+        15,
+        12
+      ],
+      "gc_after": [
+        19,
+        15,
+        12
+      ],
+      "pause_before_ticks": 330570,
+      "pause_after_ticks": 330570,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "033.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767553620564,
+      "end_ticks": 3767554991373,
+      "frequency": 10000000,
+      "allocated_before": 3710830912,
+      "allocated_after": 3731784184,
+      "allocated_bytes": 20953272,
+      "gc_before": [
+        19,
+        15,
+        12
+      ],
+      "gc_after": [
+        19,
+        15,
+        12
+      ],
+      "pause_before_ticks": 330570,
+      "pause_after_ticks": 330570,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 16492,
+      "pool_reused_bytes": 7159512,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "034.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "reuse",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": false,
+      "start_ticks": 3767555215673,
+      "end_ticks": 3767562924970,
+      "frequency": 10000000,
+      "allocated_before": 3731805536,
+      "allocated_after": 3898241712,
+      "allocated_bytes": 166436176,
+      "gc_before": [
+        19,
+        15,
+        12
+      ],
+      "gc_after": [
+        19,
+        15,
+        12
+      ],
+      "pause_before_ticks": 330570,
+      "pause_after_ticks": 330570,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 1280000,
+      "pool_reused_bytes": 69336960,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "035.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767563349995,
+      "end_ticks": 3767564756202,
+      "frequency": 10000000,
+      "allocated_before": 3898272384,
+      "allocated_after": 3921365096,
+      "allocated_bytes": 23092712,
+      "gc_before": [
+        19,
+        15,
+        12
+      ],
+      "gc_after": [
+        20,
+        15,
+        12
+      ],
+      "pause_before_ticks": 330570,
+      "pause_after_ticks": 333730,
+      "pause_ticks": 3160,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "036.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767564993279,
+      "end_ticks": 3767571904978,
+      "frequency": 10000000,
+      "allocated_before": 3921521400,
+      "allocated_after": 4126379464,
+      "allocated_bytes": 204858064,
+      "gc_before": [
+        20,
+        15,
+        12
+      ],
+      "gc_after": [
+        21,
+        16,
+        13
+      ],
+      "pause_before_ticks": 333730,
+      "pause_after_ticks": 351080,
+      "pause_ticks": 17350,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "037.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767572242809,
+      "end_ticks": 3767573613294,
+      "frequency": 10000000,
+      "allocated_before": 4126520760,
+      "allocated_after": 4152764320,
+      "allocated_bytes": 26243560,
+      "gc_before": [
+        21,
+        16,
+        13
+      ],
+      "gc_after": [
+        21,
+        16,
+        13
+      ],
+      "pause_before_ticks": 351080,
+      "pause_after_ticks": 351080,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "038.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767573865573,
+      "end_ticks": 3767580701119,
+      "frequency": 10000000,
+      "allocated_before": 4152787336,
+      "allocated_after": 4357386680,
+      "allocated_bytes": 204599344,
+      "gc_before": [
+        21,
+        16,
+        13
+      ],
+      "gc_after": [
+        22,
+        17,
+        14
+      ],
+      "pause_before_ticks": 351080,
+      "pause_after_ticks": 367620,
+      "pause_ticks": 16540,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "039.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767580941019,
+      "end_ticks": 3767581870791,
+      "frequency": 10000000,
+      "allocated_before": 4357517696,
+      "allocated_after": 4383761256,
+      "allocated_bytes": 26243560,
+      "gc_before": [
+        22,
+        17,
+        14
+      ],
+      "gc_after": [
+        22,
+        17,
+        14
+      ],
+      "pause_before_ticks": 367620,
+      "pause_after_ticks": 367620,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "040.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 0,
+      "phase": "first",
+      "context_created": true,
+      "start_ticks": 3767582104182,
+      "end_ticks": 3767588453757,
+      "frequency": 10000000,
+      "allocated_before": 4383785104,
+      "allocated_after": 4588640376,
+      "allocated_bytes": 204855272,
+      "gc_before": [
+        22,
+        17,
+        14
+      ],
+      "gc_after": [
+        24,
+        18,
+        15
+      ],
+      "pause_before_ticks": 367620,
+      "pause_after_ticks": 439160,
+      "pause_ticks": 71540,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "041.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767588709441,
+      "end_ticks": 3767590479131,
+      "frequency": 10000000,
+      "allocated_before": 4588783072,
+      "allocated_after": 4615026632,
+      "allocated_bytes": 26243560,
+      "gc_before": [
+        24,
+        18,
+        15
+      ],
+      "gc_after": [
+        24,
+        18,
+        15
+      ],
+      "pause_before_ticks": 439160,
+      "pause_after_ticks": 439160,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "042.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767590718062,
+      "end_ticks": 3767597016079,
+      "frequency": 10000000,
+      "allocated_before": 4615051312,
+      "allocated_after": 4818871984,
+      "allocated_bytes": 203820672,
+      "gc_before": [
+        24,
+        18,
+        15
+      ],
+      "gc_after": [
+        24,
+        18,
+        15
+      ],
+      "pause_before_ticks": 439160,
+      "pause_after_ticks": 439160,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "043.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767597341435,
+      "end_ticks": 3767599759756,
+      "frequency": 10000000,
+      "allocated_before": 4818897088,
+      "allocated_after": 4841988896,
+      "allocated_bytes": 23091808,
+      "gc_before": [
+        24,
+        18,
+        15
+      ],
+      "gc_after": [
+        24,
+        18,
+        15
+      ],
+      "pause_before_ticks": 439160,
+      "pause_after_ticks": 439160,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "044.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767600070701,
+      "end_ticks": 3767612588427,
+      "frequency": 10000000,
+      "allocated_before": 4842014408,
+      "allocated_after": 5045835080,
+      "allocated_bytes": 203820672,
+      "gc_before": [
+        24,
+        18,
+        15
+      ],
+      "gc_after": [
+        24,
+        18,
+        15
+      ],
+      "pause_before_ticks": 439160,
+      "pause_after_ticks": 439160,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "045.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767612932488,
+      "end_ticks": 3767615103877,
+      "frequency": 10000000,
+      "allocated_before": 5045861280,
+      "allocated_after": 5068961904,
+      "allocated_bytes": 23100624,
+      "gc_before": [
+        24,
+        18,
+        15
+      ],
+      "gc_after": [
+        26,
+        19,
+        16
+      ],
+      "pause_before_ticks": 439160,
+      "pause_after_ticks": 457160,
+      "pause_ticks": 18000,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "046.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 1,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767615446875,
+      "end_ticks": 3767621330847,
+      "frequency": 10000000,
+      "allocated_before": 5069133392,
+      "allocated_after": 5272963336,
+      "allocated_bytes": 203829944,
+      "gc_before": [
+        26,
+        19,
+        16
+      ],
+      "gc_after": [
+        27,
+        20,
+        17
+      ],
+      "pause_before_ticks": 457160,
+      "pause_after_ticks": 475300,
+      "pause_ticks": 18140,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "047.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767621826431,
+      "end_ticks": 3767626371039,
+      "frequency": 10000000,
+      "allocated_before": 5273077152,
+      "allocated_after": 5296170280,
+      "allocated_bytes": 23093128,
+      "gc_before": [
+        27,
+        20,
+        17
+      ],
+      "gc_after": [
+        27,
+        20,
+        17
+      ],
+      "pause_before_ticks": 475300,
+      "pause_after_ticks": 475300,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "048.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "36a520042b4416e77546594dce2392f1c30e7b9075eb111b9bf070ef4df629d9"
+      },
+      "input_sha256": "6a12151c60c239d67aad3f08995fbbf38d2f1c3c15d1775e8ee61c8537704ac9",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-0-10s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767626858170,
+      "end_ticks": 3767639658057,
+      "frequency": 10000000,
+      "allocated_before": 5296197456,
+      "allocated_after": 5500017840,
+      "allocated_bytes": 203820384,
+      "gc_before": [
+        27,
+        20,
+        17
+      ],
+      "gc_after": [
+        27,
+        20,
+        17
+      ],
+      "pause_before_ticks": 475300,
+      "pause_after_ticks": 475300,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "049.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "53b10289356236a4a5c5066f936fb2840ec81eb48dd4e0e485bc141c654a3130"
+      },
+      "input_sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767640173063,
+      "end_ticks": 3767643679162,
+      "frequency": 10000000,
+      "allocated_before": 5500045704,
+      "allocated_after": 5523136376,
+      "allocated_bytes": 23090672,
+      "gc_before": [
+        27,
+        20,
+        17
+      ],
+      "gc_after": [
+        27,
+        20,
+        17
+      ],
+      "pause_before_ticks": 475300,
+      "pause_after_ticks": 475300,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "050.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "0552c2bc887276eed38b358f589cb525c5b094fb21b2fa1757041576b1127941"
+      },
+      "input_sha256": "73de718fe7a14ff911455e004798b51018cccda5f3d82540e63ad676977b8076",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-10-20s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767644259897,
+      "end_ticks": 3767651183569,
+      "frequency": 10000000,
+      "allocated_before": 5523164384,
+      "allocated_after": 5726984760,
+      "allocated_bytes": 203820376,
+      "gc_before": [
+        27,
+        20,
+        17
+      ],
+      "gc_after": [
+        28,
+        20,
+        17
+      ],
+      "pause_before_ticks": 475300,
+      "pause_after_ticks": 477640,
+      "pause_ticks": 2340,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "051.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f8780bfa8225fbf0ad12e694526d44578be26f8df7dd5ad0f1208ec3e5075ef0"
+      },
+      "input_sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767651551976,
+      "end_ticks": 3767653278978,
+      "frequency": 10000000,
+      "allocated_before": 5727157440,
+      "allocated_after": 5750248624,
+      "allocated_bytes": 23091184,
+      "gc_before": [
+        28,
+        20,
+        17
+      ],
+      "gc_after": [
+        28,
+        20,
+        17
+      ],
+      "pause_before_ticks": 477640,
+      "pause_after_ticks": 477640,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 2146600,
+      "pool_reused_bytes": 5029404,
+      "pool_peak_outstanding_bytes": 1208320,
+      "output": {
+        "file": "052.f32",
+        "shape": [
+          1,
+          589,
+          7
+        ],
+        "values": 4123,
+        "sha256": "1009eeb2d49de18a72c7706c909928e6797871788136b05f666190dd1ae88dd0"
+      },
+      "input_sha256": "e23c26e6510b1a7d613a4786a6f7a54f68fb56fe6004545780770afc5bbfea90",
+      "ownership": true
+    },
+    {
+      "order": "reverse",
+      "name": "dialogue-20-30s",
+      "graph": "embedding",
+      "mode": "fresh",
+      "pass": 2,
+      "phase": "repeat",
+      "context_created": true,
+      "start_ticks": 3767653567377,
+      "end_ticks": 3767658594860,
+      "frequency": 10000000,
+      "allocated_before": 5750277464,
+      "allocated_after": 5954097608,
+      "allocated_bytes": 203820144,
+      "gc_before": [
+        28,
+        20,
+        17
+      ],
+      "gc_after": [
+        28,
+        20,
+        17
+      ],
+      "pause_before_ticks": 477640,
+      "pause_after_ticks": 477640,
+      "pause_ticks": 0,
+      "pause_frequency": 10000000,
+      "pool_new_bytes": 38657920,
+      "pool_reused_bytes": 31959040,
+      "pool_peak_outstanding_bytes": 20439040,
+      "output": {
+        "file": "053.f32",
+        "shape": [
+          1,
+          2560,
+          125
+        ],
+        "values": 320000,
+        "sha256": "f3986a4acff6d35dab9dcc5217a70f0835e201e44f5ab1ed02280caaac1a2b86"
+      },
+      "input_sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+      "ownership": true
+    }
+  ],
+  "summaries": [
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 26512114.666666668,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.2706289,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 204955016.0,
+      "pool_new_mean": 38657920.0,
+      "pool_reused_mean": 31959040.0,
+      "seconds_mean": 1.0417328666666668,
+      "pause_seconds_sum": 0.009543,
+      "gc_delta_sum": [
+        5,
+        4,
+        4
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 25195952.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.22317226666666667,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 204304018.66666666,
+      "pool_new_mean": 38657920.0,
+      "pool_reused_mean": 31959040.0,
+      "seconds_mean": 0.68895405,
+      "pause_seconds_sum": 0.013048,
+      "gc_delta_sum": [
+        7,
+        5,
+        5
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 22720160.0,
+      "pool_new_mean": 726528.0,
+      "pool_reused_mean": 6449476.0,
+      "seconds_mean": 0.25095286666666666,
+      "pause_seconds_sum": 0.000322,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 179229797.33333334,
+      "pool_new_mean": 13739306.666666666,
+      "pool_reused_mean": 56877653.333333336,
+      "seconds_mean": 0.6176441666666667,
+      "pause_seconds_sum": 0.005069,
+      "gc_delta_sum": [
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 22530760.0,
+      "pool_new_mean": 16492.0,
+      "pool_reused_mean": 7159512.0,
+      "seconds_mean": 0.20611623333333332,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 166860713.33333334,
+      "pool_new_mean": 1280000.0,
+      "pool_reused_mean": 69336960.0,
+      "seconds_mean": 0.5234583833333334,
+      "pause_seconds_sum": 0.011767,
+      "gc_delta_sum": [
+        7,
+        4,
+        4
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 24136517.333333332,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.1625053,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 204078312.0,
+      "pool_new_mean": 38657920.0,
+      "pool_reused_mean": 31959040.0,
+      "seconds_mean": 0.5458517,
+      "pause_seconds_sum": 0.003885,
+      "gc_delta_sum": [
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 24739401.333333332,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.09043595,
+      "pause_seconds_sum": 0.002016,
+      "gc_delta_sum": [
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 204165240.0,
+      "pool_new_mean": 38657920.0,
+      "pool_reused_mean": 31959040.0,
+      "seconds_mean": 0.5357123666666667,
+      "pause_seconds_sum": 0.005659,
+      "gc_delta_sum": [
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 25446816.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.31319843333333336,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 204678848.0,
+      "pool_new_mean": 38657920.0,
+      "pool_reused_mean": 31959040.0,
+      "seconds_mean": 1.1536741333333334,
+      "pause_seconds_sum": 0.006589,
+      "gc_delta_sum": [
+        4,
+        3,
+        3
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 24740176.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.31015945,
+      "pause_seconds_sum": 0.000386,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 204155021.33333334,
+      "pool_new_mean": 38657920.0,
+      "pool_reused_mean": 31959040.0,
+      "seconds_mean": 0.7566807166666667,
+      "pause_seconds_sum": 0.006626,
+      "gc_delta_sum": [
+        4,
+        3,
+        3
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 22434824.0,
+      "pool_new_mean": 726528.0,
+      "pool_reused_mean": 6449476.0,
+      "seconds_mean": 0.2920853,
+      "pause_seconds_sum": 0.004341,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 179179104.0,
+      "pool_new_mean": 13739306.666666666,
+      "pool_reused_mean": 56877653.333333336,
+      "seconds_mean": 0.6057440000000001,
+      "pause_seconds_sum": 0.000526,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 22529396.0,
+      "pool_new_mean": 16492.0,
+      "pool_reused_mean": 7159512.0,
+      "seconds_mean": 0.25829455,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 166867712.0,
+      "pool_new_mean": 1280000.0,
+      "pool_reused_mean": 69336960.0,
+      "seconds_mean": 0.64382475,
+      "pause_seconds_sum": 0.009469,
+      "gc_delta_sum": [
+        4,
+        4,
+        2
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 25193277.333333332,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.1235488,
+      "pause_seconds_sum": 0.000316,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 204770893.33333334,
+      "pool_new_mean": 38657920.0,
+      "pool_reused_mean": 31959040.0,
+      "seconds_mean": 0.6698939999999999,
+      "pause_seconds_sum": 0.010543,
+      "gc_delta_sum": [
+        4,
+        3,
+        3
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 23618496.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.2689518166666667,
+      "pause_seconds_sum": 0.0018,
+      "gc_delta_sum": [
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 203822032.0,
+      "pool_new_mean": 38657920.0,
+      "pool_reused_mean": 31959040.0,
+      "seconds_mean": 0.8241792833333333,
+      "pause_seconds_sum": 0.002048,
+      "gc_delta_sum": [
+        2,
+        1,
+        1
+      ]
+    }
+  ],
+  "request_scoped_prototype_admitted": true,
+  "resource_samples": 213,
+  "peak_rss": 1378553856,
+  "identities": [
+    {
+      "pid": 1001024,
+      "birth": 1790009519.5187793
+    },
+    {
+      "pid": 962568,
+      "birth": 1790009520.8764672
+    },
+    {
+      "pid": 999056,
+      "birth": 1790009521.8393955
+    },
+    {
+      "pid": 1072224,
+      "birth": 1790009521.8509176
+    },
+    {
+      "pid": 1079772,
+      "birth": 1790009525.6565328
+    },
+    {
+      "pid": 1080324,
+      "birth": 1790009579.3665092
+    }
+  ],
+  "scope": "Graph diagnostic with precise process allocations and cumulative pause counters. No public/ORT latency claim."
+}

@@ -52,7 +52,10 @@ An [analysis of the retained allocation counters](tests/audio/retained-allocatio
 finds about 5.20 GB of cumulative managed allocations per optimized pyannote
 30-second request and 146.4 GB per ten-minute meeting. These are allocation
 totals, not resident memory. Reusing embedding contexts within a request is
-the next hypothesis to test; no new speedup or GC-pause attribution is claimed.
+now supported by a [bounded graph experiment](tests/pyannote/context-reuse-probe/results-20260921.md):
+repeated embedding allocations fall 18.1–18.3% in both process orders, with
+all 17.5 million output values unchanged. Complete application qualification
+and latency measurement remain pending; no new ORT speedup is claimed.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
