@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <AssemblyName>WhisperManagedGeluV2</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Lokad.Onnx"><HintPath>$(FrozenProductDirectory)/Lokad.Onnx.dll</HintPath></Reference>
+    <Reference Include="Google.Protobuf"><HintPath>$(FrozenProductDirectory)/Google.Protobuf.dll</HintPath></Reference>
+    <Compile Include="../../Shared/NpySupport.cs" Link="NpySupport.cs" />
+  </ItemGroup>
+</Project>
