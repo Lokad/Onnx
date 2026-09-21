@@ -1,11 +1,27 @@
 # CPU engine review and selective voice-branch integration
 
-The review used Microsoft ONNX Runtime 1.23.2 at
-`a83fc4d58cb48eb68890dd689f94f28288cf2278`, and
+The original e5 review used Microsoft ONNX Runtime 1.23.2 at
+`a83fc4d58cb48eb68890dd689f94f28288cf2278`. The later audio review uses ORT 1.29
+at `2e2543fbe9fae542f921d47a72d21d5a4ef0b710`, matching the audio baseline
+version. Its [convolution/activation review](../tests/pyannote/convolution-epilogue/results-20260921.md)
+and [recurrent review](../tests/pyannote/lstm-output-lanes/source-review-20260921.md)
+retain the source identities. Source mechanisms do not prove which kernel the
+installed wheel dispatches for a particular request.
+
+The selective import review uses
 `feature/voice-model-cpu-benchmarks` at
 `2b1138fe6f5d085e3749f6867d1603b1131ff029`. The voice branch contains 149 commits
 after the common release ancestor `4495fc6`. Integration follows behaviors and
 their necessary fixes; it does not merge the branch or replay every experiment.
+
+The [current integration inventory](../tests/pyannote/integration-review/results-20260921.md)
+reduces the isolated pyannote changes to eleven Core/request-context files and
+the separate sparse-mel frontend. It excludes fifty encoding-only differences
+and the experiment's absolute assembly references. Both proposed patches apply
+cleanly to the current product tree. The LSTM storage guard must be carried
+separately; combining the AMD and portable convolution routes requires explicit
+dispatch selection and qualification of the resulting build. This review
+prepares integration without changing the frozen AMD experiment.
 
 The [remaining-gap review](../tests/e5/remaining-gap/results-20260920.md)
 recomputes the complete-model reduction still needed for the unchanged 1.05
