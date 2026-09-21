@@ -18,6 +18,13 @@ The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.m
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
 
+A subsequent [isolated convolution candidate](tests/pyannote/spatial-panels/results-20260921.md)
+reduces the complete 30-second dialogue mean from **38.643 to 30.914 seconds
+(20.0%)** in a four-process Windows comparison. All 64 application requests,
+72 pyannote graph outputs and the affected-model regression pass. Process
+variation is retained in the report; AMD timing and production promotion
+remain pending. The native baseline tables below retain their original scope.
+
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
 AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ONNX Runtime 1.29.0, product `1d10d22`.

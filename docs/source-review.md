@@ -43,8 +43,17 @@ This selects bounded spatial patch expansion as the first branch adaptation:
 `8af223e` and panel alignment `e35653a`, evaluating later packing changes only
 as needed. Keep the full reduction order, current output ownership and generic
 fallback. This differs from the earlier reduction-segmented convolution that
-regressed on segmentation. Complete application and AMD improvement remain to
-be demonstrated; the current native baseline is unchanged.
+regressed on segmentation. Matched AMD improvement and production promotion
+remain to be demonstrated; the current native baseline is unchanged.
+
+The [isolated adaptation](../tests/pyannote/spatial-panels/results-20260921.md)
+now passes all captured pyannote outputs bitwise, the native graph/application
+contracts, 3,115 backend tests and 342 tensor tests. Mean complete dialogue
+latency falls 20.0% in its local four-process comparison, with substantial
+variation retained. Current source requires no activation, cache or JIT changes
+for that result. Further work is convolution-specific packed row sharing,
+checked scratch-size handling, broader audio qualification and matched AMD
+timing before production promotion.
 
 
 | Source finding | Consequence for Lokad.Onnx |
