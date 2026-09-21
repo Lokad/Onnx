@@ -10,7 +10,7 @@ phases until its actual processes finish; this runner checks that handoff before
 writing to the VM. It never terminates or relaunches e5.
 
 The immutable offline payload is in
-`artifacts/pyannote-amd-candidates-v2-20260921`. It contains three separately
+`artifacts/pyannote-amd-candidates-v3-20260921`. It contains three separately
 pinned Core assemblies, identical Data assemblies, original complete application
 consumers, the row candidate's source and 23 cached NuGet packages. The graph
 consumer only changes its platform guard to allow Linux. Source, generated
@@ -20,20 +20,24 @@ Local preparation passes nine offline restore/build/instruction-comparison
 commands. Its independent audit checks 1,335 archive entries, 401 source files
 and 3,795 Core/Data methods. This does not qualify AMD hardware execution.
 The initial missing-SourceLink restore failure remains preserved separately.
+The successor changes one test file to drain redirected CLI output. Model,
+runtime, consumer and fixture bytes remain identical to the prior payload.
+Offline builds now include the Release CLI required by the full backend suite.
 
 From the repository root, the local runner tests are:
 
     C:/Python313/python.exe -X utf8 -B -m unittest discover -s tests/pyannote/amd-candidates -p test_*.py -v
 
-`prepare_execution.py` freezes a separate execution bundle without changing the
-payload. `finish.py` waits for the existing e5 controller, then stages, launches,
+`prepare_cli.py` and `verify_prepared.py` prepare and verify the test-only payload
+successor. `prepare_execution.py` freezes a separate execution bundle without
+changing that payload. `finish.py` waits for the existing e5 controller, then stages, launches,
 observes, collects and audits one campaign. Commands are:
 
     C:/Python313/python.exe -X utf8 -B tests/pyannote/amd-candidates/prepare_execution.py
     C:/Python313/python.exe -X utf8 -B tests/pyannote/amd-candidates/finish.py
 
 Each command creates a new artifact and refuses to overwrite it. Do not rerun a
-started controller. Inspect `artifacts/pyannote-amd-execution-v2-20260921/controller/state.json`
+started controller. Inspect `artifacts/pyannote-amd-execution-v4-20260921/controller/state.json`
 and actual PID/birth identities first. After deployment, read-only observation is:
 
     C:/Python313/python.exe -X utf8 -B tests/pyannote/amd-candidates/transport.py observe
@@ -47,7 +51,8 @@ starts; the supervisor runs on CPU 0. The campaign permits four hours overall,
 one hour per worker, less than 12 GiB aggregate worker RSS, at least 1 GiB
 available memory/free temporary storage, and at most 2 GiB campaign files.
 
-The campaign first rebuilds and compares Core/Data instructions, then runs full
+The campaign first builds the backend, tensor, CLI and instruction-comparison
+projects and compares Core/Data instructions, then runs full
 backend/tensor tests. Three specific AVX-512 tests must execute successfully;
 a skip is not qualification. Each of the three cores must then pass all 18
 pyannote output tensors and 16 full public requests, followed by all 784 Parakeet
@@ -70,3 +75,9 @@ writing a second results archive on the VM. The local auditor recomputes tensor
 and public checks and timing means from integer clocks. It does not promote a
 candidate or edit `BENCHMARK.md`: publish the audited results and assess remaining
 meeting/model/package qualification before integrating production source.
+
+The two preceding waiting controllers were cancelled before any child or VM
+deployment when local validation exposed the missing CLI prerequisite and the
+CLI test's undrained output pipes. Their preparations and cancellation receipts
+remain in execution-v2 and execution-v3. Only the execution-v4 controller owns
+the pending handoff; historical waiting states are not restart instructions.

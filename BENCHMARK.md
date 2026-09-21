@@ -64,7 +64,9 @@ preserves all 784 output arrays bit-for-bit; the three existing Windows native
 numerical failures remain unchanged.
 The [AMD qualification payload and runner](tests/pyannote/amd-candidates/prepared-20260921.md)
 are prepared; execution follows the existing e5 campaign. This preparation adds
-no AMD timing result or production promotion.
+no AMD timing result or production promotion. The runner now builds its required
+CLI and drains CLI test output. The separate [LSTM scratch-admission check](tests/pyannote/lstm-panel-admission/results-20260921.md)
+passes complete local suites without changing the frozen timing candidates.
 
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
