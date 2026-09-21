@@ -3,6 +3,8 @@ using Onnx;
 
 namespace Lokad.Onnx.Backend.Tests;
 
+// The invalid-budget contract reads OnnxImport's process-wide error state.
+[Collection("SequentialLogSink")]
 public class PackedWeightBudgetTests
 {
     static ComputationalGraph Graph(long budget, params int[] widths)
