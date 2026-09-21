@@ -1,9 +1,15 @@
 using System;
+using System.Reflection;
 
 namespace Lokad.Onnx.Backend.Tests;
 
 public class LstmPanelAdmissionTests
 {
+    static readonly Func<int, int, int> StorageLength = typeof(CPUExecutionProvider)
+        .GetNestedType("LstmProjectionPanels", BindingFlags.NonPublic)!
+        .GetMethod("StorageLength", BindingFlags.Static | BindingFlags.NonPublic)!
+        .CreateDelegate<Func<int, int, int>>();
+
     [Theory]
     [InlineData(0, 0, 0)]
     [InlineData(0, 1024, 1024)]
@@ -15,7 +21,7 @@ public class LstmPanelAdmissionTests
     [InlineData(32, -1, 0)]
     public void ActualPyannoteSizesAndOverflowRefusal(int input, int recurrent, int expected)
     {
-        Assert.Equal(expected, CPUExecutionProvider.LstmPanelStorageLength(input, recurrent));
+        Assert.Equal(expected, StorageLength(input, recurrent));
     }
 
     [Fact]
@@ -23,8 +29,8 @@ public class LstmPanelAdmissionTests
     {
         const int recurrent = 131072;
         int inputAtLimit = Array.MaxLength - recurrent;
-        Assert.Equal(Array.MaxLength, CPUExecutionProvider.LstmPanelStorageLength(inputAtLimit, recurrent));
-        Assert.Equal(0, CPUExecutionProvider.LstmPanelStorageLength(inputAtLimit + 1, recurrent));
-        Assert.Equal(0, CPUExecutionProvider.LstmPanelStorageLength(Array.MaxLength, recurrent));
+        Assert.Equal(Array.MaxLength, StorageLength(inputAtLimit, recurrent));
+        Assert.Equal(0, StorageLength(inputAtLimit + 1, recurrent));
+        Assert.Equal(0, StorageLength(Array.MaxLength, recurrent));
     }
 }

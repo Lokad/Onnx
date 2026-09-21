@@ -13,15 +13,16 @@ import traceback
 ROOT = Path(__file__).resolve().parents[3]
 TOOLS = Path(__file__).resolve().parent
 BASE = ROOT/'artifacts/pyannote-lstm-panel-admission-20260921'
+BASELINE_PROOF = None
 ROWS = ROOT/'artifacts/pyannote-conv-row-sharing-v2-20260921'
 PAYLOAD = ROOT/'artifacts/pyannote-amd-candidates-v2-20260921/payload'
-HELPER = '''    internal static int LstmPanelStorageLength(int inputWeights, int recurrentWeights)
-    {
-        if (inputWeights < 0 || recurrentWeights < 0) return 0;
-        long count = (long)inputWeights + recurrentWeights;
-        return count <= Array.MaxLength ? (int)count : 0;
-    }
-
+HELPER = '''
+        internal static int StorageLength(int inputWeights, int recurrentWeights)
+        {
+            if (inputWeights < 0 || recurrentWeights < 0) return 0;
+            long count = (long)inputWeights + recurrentWeights;
+            return count <= Array.MaxLength ? (int)count : 0;
+        }
 '''
 
 
@@ -49,8 +50,14 @@ def main():
     spec = read(PAYLOAD/'payload.json')
     assert pin(PAYLOAD/'payload.json')['sha256'] == 'b5dee4ba28e64f62008d76fa763d51730ed9ccbc440335cd9688b0b6a2e233d0'
     for name, wanted in spec['nuget']['archives'].items(): assert pin(PAYLOAD/'nuget-feed'/name) == wanted
+    if BASELINE_PROOF is not None:
+        failure_path = BASELINE_PROOF/'failed-preparation.json'
+        assert pin(failure_path)['sha256'] == '570ed87cfdb0aa0781ea9b89887fe1a8718b7495973a2dab1545816bea771466'
+        failure = read(failure_path); assert failure['negative_control_passed'] and not failure['passed']
+        for name, wanted in failure['files'].items(): assert pin(BASELINE_PROOF/name) == wanted, name
+        assert pin(TOOLS/'LstmPanelOverflowRefusalTests.cs') == pin(BASELINE_PROOF/'failed-tools/LstmPanelOverflowRefusalTests.cs')
     BASE.mkdir(); (BASE/'logs').mkdir()
-    for role in ('baseline', 'candidate'):
+    for role in (('candidate',) if BASELINE_PROOF is not None else ('baseline', 'candidate')):
         source = BASE/(role+'-source')
         shutil.copytree(ROWS/'candidate-source', source, ignore=shutil.ignore_patterns('bin', 'obj'))
         assert (source/'Lokad.Onnx.slnx').exists()
@@ -58,10 +65,10 @@ def main():
     source = BASE/'candidate-source'; path = source/'src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs'
     before = path.read_text(); old = '            int count = checked(w.Length + r.Length);'
     assert before.count(old) == 1
-    after = before.replace(old, '            int count = LstmPanelStorageLength(w.Length, r.Length);\n            if (count == 0) return null;')
-    needle = '    internal static void LstmProjectOrdered('
+    after = before.replace(old, '            int count = StorageLength(w.Length, r.Length);\n            if (count == 0) return null;')
+    needle = '        public void Dispose() => ArrayPool<float>.Shared.Return(storage);\n'
     assert after.count(needle) == 1
-    after = after.replace(needle, HELPER+needle); path.write_text(after, encoding='utf8')
+    after = after.replace(needle, needle+HELPER); path.write_text(after, encoding='utf8')
     (BASE/'candidate.patch').write_text(''.join(difflib.unified_diff(before.splitlines(True), after.splitlines(True),
         fromfile='a/src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs', tofile='b/src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs')), encoding='utf8')
     shutil.copy2(TOOLS/'LstmPanelAdmissionTests.cs', source/'tests/Lokad.Onnx.Backend.Tests/LstmPanelAdmissionTests.cs')
@@ -75,7 +82,7 @@ def main():
     new = '''    var added = newMethods.Keys.Except(oldMethods.Keys).Order().ToArray();
     if (oldMethods.Count == 0 || oldMethods.Keys.Except(newMethods.Keys).Any()) throw new InvalidDataException("Removed methods");
     var differences = oldMethods.Keys.Where(k => oldMethods[k] != newMethods[k]).Order().ToArray();
-    string[] expectedAdded = name == "Lokad.Onnx.dll" ? ["Lokad.Onnx.CPUExecutionProvider::LstmPanelStorageLength::Int32 LstmPanelStorageLength(Int32, Int32)"] : [];
+    string[] expectedAdded = name == "Lokad.Onnx.dll" ? ["Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels::StorageLength::Int32 StorageLength(Int32, Int32)"] : [];
     string[] expectedChanged = name == "Lokad.Onnx.dll" ? ["Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels::Create::LstmProjectionPanels Create(System.ReadOnlySpan`1[System.Single], System.ReadOnlySpan`1[System.Single], Int32, Int32, Int32, Int32, Lokad.Onnx.TensorExecutionOptions)"] : [];
     if (!added.SequenceEqual(expectedAdded) || !differences.SequenceEqual(expectedChanged)) throw new InvalidDataException("Unexpected method changes: " + string.Join("; ", added.Concat(differences)));'''
     assert program.count(old) == 1; program = program.replace(old, new)
@@ -153,10 +160,14 @@ def main():
         command(label, args, cwd, environment, expected)
     try:
         backend = Path('tests/Lokad.Onnx.Backend.Tests/Lokad.Onnx.Backend.Tests.csproj')
-        baseline = BASE/'baseline-source'
-        restore_build('baseline', backend, baseline)
-        test('baseline-refusal', backend, baseline, 'FullyQualifiedName~LstmPanelOverflowRefusalTests', expected=1)
-        assert 'System.OverflowException' in (BASE/'logs/baseline-refusal.log').read_text(), 'Negative control must fail at the original checked addition'
+        if BASELINE_PROOF is None:
+            baseline = BASE/'baseline-source'
+            restore_build('baseline', backend, baseline)
+            test('baseline-refusal', backend, baseline, 'FullyQualifiedName~LstmPanelOverflowRefusalTests', expected=1)
+            assert 'System.OverflowException' in (BASE/'logs/baseline-refusal.log').read_text(), 'Negative control must fail at the original checked addition'
+        else:
+            save(BASE/'negative-control-reuse.json', dict(failed_predecessor=pin(BASELINE_PROOF/'failed-preparation.json'),
+                original_negative_control=pin(BASELINE_PROOF/'test-results/baseline-refusal.trx'), unchanged_test=pin(TOOLS/'LstmPanelOverflowRefusalTests.cs')))
         restore_build('candidate', backend, source)
         test('candidate-lstm', backend, source, 'FullyQualifiedName~Lstm')
         test('candidate-fallback', backend, source, 'FullyQualifiedName~LstmOutputLane|FullyQualifiedName~LstmPanel',
@@ -181,6 +192,7 @@ def main():
     receipt = dict(passed=True, parent_core=pin(ROWS/'runtime/Lokad.Onnx.dll'),
                    candidate_core=pin(source/'tests/Lokad.Onnx.Backend.Tests/bin/Release/net10.0/Lokad.Onnx.dll'),
                    instructions=pin(BASE/'instructions.json'), source_files=original_sources, original_bridge=pin(original_bridge),
+                   negative_control_predecessor=None if BASELINE_PROOF is None else pin(BASELINE_PROOF/'failed-preparation.json'),
                    tools={p.name: pin(p) for p in TOOLS.iterdir() if p.is_file()},
                    scope='Local optional-admission correctness only; no new model timing, AMD qualification or production promotion')
     save(BASE/'prepared.json', receipt); print(json.dumps({k: v for k, v in receipt.items() if k not in ('source_files', 'tools')}))
