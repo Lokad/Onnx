@@ -1,0 +1,24 @@
+    object? compilerRename = null;
+    if (name == "Lokad.Onnx.dll")
+    {
+        const string prefix = "Lokad.Onnx.Tensor`1+<>c[T]::<.cctor>b__";
+        string oldKey = oldMethods.Keys.Single(k => k.StartsWith(prefix));
+        string newKey = newMethods.Keys.Single(k => k.StartsWith(prefix));
+        if (oldKey != newKey)
+        {
+            string oldName = System.Text.RegularExpressions.Regex.Match(oldKey, @"<\.cctor>b__\d+_0").Value;
+            string newName = System.Text.RegularExpressions.Regex.Match(newKey, @"<\.cctor>b__\d+_0").Value;
+            const string constructor = "Lokad.Onnx.Tensor`1[T]::.cctor::Void .cctor()";
+            string oldOperand = JsonSerializer.Serialize(oldName)[1..^1];
+            string newOperand = JsonSerializer.Serialize(newName)[1..^1];
+            string beforeConstructor = oldMethods[constructor], afterConstructor = newMethods[constructor];
+            if (oldName.Length == 0 || newName.Length == 0 || newKey.Replace(newName, oldName) != oldKey
+                || oldMethods[oldKey] != newMethods[newKey] || newMethods.ContainsKey(oldKey) || oldMethods.ContainsKey(newKey)
+                || beforeConstructor.Split(oldOperand).Length != 2
+                || beforeConstructor.Replace(oldOperand, newOperand) != afterConstructor)
+                throw new InvalidDataException("Initializer differs beyond one proven generated-method rename.");
+            compilerRename = new { oldKey, newKey, identical_lambda_body = oldMethods[oldKey], beforeConstructor, afterConstructor };
+            newMethods.Add(oldKey, newMethods[newKey]); newMethods.Remove(newKey); newMethods[constructor] = beforeConstructor;
+        }
+    }
+

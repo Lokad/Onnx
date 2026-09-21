@@ -1,0 +1,592 @@
+{
+  "passed": true,
+  "calls": 108,
+  "values": 17502642,
+  "captured_model_qualification_admitted": true,
+  "resource_samples": 173,
+  "peak_rss": 712814592,
+  "preparation": {
+    "passed": true,
+    "identities": [
+      {
+        "pid": 883968,
+        "birth": 1790020535.327582
+      },
+      {
+        "pid": 931264,
+        "birth": 1790020536.2798743
+      },
+      {
+        "pid": 1073432,
+        "birth": 1790020537.597198
+      },
+      {
+        "pid": 872308,
+        "birth": 1790020538.212454
+      },
+      {
+        "pid": 1071756,
+        "birth": 1790020538.217078
+      },
+      {
+        "pid": 535764,
+        "birth": 1790020545.9482303
+      },
+      {
+        "pid": 1031264,
+        "birth": 1790020546.7344856
+      },
+      {
+        "pid": 1000972,
+        "birth": 1790020547.3252811
+      },
+      {
+        "pid": 1016752,
+        "birth": 1790020547.3297954
+      },
+      {
+        "pid": 947152,
+        "birth": 1790020549.7219284
+      },
+      {
+        "pid": 1046636,
+        "birth": 1790020550.5895307
+      },
+      {
+        "pid": 1015728,
+        "birth": 1790020552.4356658
+      },
+      {
+        "pid": 1073704,
+        "birth": 1790020553.1221764
+      },
+      {
+        "pid": 1040180,
+        "birth": 1790020553.1268668
+      },
+      {
+        "pid": 869916,
+        "birth": 1790020590.7344112
+      },
+      {
+        "pid": 782216,
+        "birth": 1790020591.2504692
+      },
+      {
+        "pid": 1099992,
+        "birth": 1790020591.2540717
+      },
+      {
+        "pid": 880960,
+        "birth": 1790020591.5422893
+      },
+      {
+        "pid": 883596,
+        "birth": 1790020591.5506616
+      },
+      {
+        "pid": 945216,
+        "birth": 1790020608.6302686
+      },
+      {
+        "pid": 1057996,
+        "birth": 1790020610.0445352
+      },
+      {
+        "pid": 1068360,
+        "birth": 1790020610.0491736
+      },
+      {
+        "pid": 600728,
+        "birth": 1790020610.6713054
+      },
+      {
+        "pid": 561236,
+        "birth": 1790020610.6772127
+      }
+    ],
+    "resource_samples": 153,
+    "suites": [
+      {
+        "name": "focused",
+        "counters": {
+          "total": "214",
+          "executed": "214",
+          "passed": "214",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        }
+      },
+      {
+        "name": "hardware-disabled",
+        "counters": {
+          "total": "50",
+          "executed": "50",
+          "passed": "50",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        }
+      }
+    ]
+  },
+  "summaries": [
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 24391960.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.27022216666666665,
+      "pause_seconds_sum": 0.002664,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 62066920.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.6310670666666667,
+      "pause_seconds_sum": 0.002595,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 23074612.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.10991329999999999,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 61708068.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.6643082333333333,
+      "pause_seconds_sum": 0.004525,
+      "gc_delta_sum": [
+        4,
+        2,
+        2
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 21651197.333333332,
+      "pool_new_mean": 726528.0,
+      "pool_reused_mean": 6449476.0,
+      "seconds_mean": 0.0928402,
+      "pause_seconds_sum": 0.002447,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 24002749.333333332,
+      "pool_new_mean": 20129066.666666668,
+      "pool_reused_mean": 210252373.33333334,
+      "seconds_mean": 0.6350980666666667,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 20936649.333333332,
+      "pool_new_mean": 16492.0,
+      "pool_reused_mean": 7159512.0,
+      "seconds_mean": 0.0901285,
+      "pause_seconds_sum": 0.002652,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 5151288.0,
+      "pool_new_mean": 1280000.0,
+      "pool_reused_mean": 229101440.0,
+      "seconds_mean": 0.5695026333333334,
+      "pause_seconds_sum": 0.000823,
+      "gc_delta_sum": [
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 23068237.333333332,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.08760593333333333,
+      "pause_seconds_sum": 0.004495,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 61700800.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.5544737333333333,
+      "pause_seconds_sum": 0.000559,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 23065920.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.09405714999999999,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "forward",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 61700724.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.5255393166666666,
+      "pause_seconds_sum": 0.005524,
+      "gc_delta_sum": [
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 24372192.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.2433948,
+      "pause_seconds_sum": 0.002749,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 62061373.333333336,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.6198629666666666,
+      "pause_seconds_sum": 0.000838,
+      "gc_delta_sum": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 23065284.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.2168282,
+      "pause_seconds_sum": 5.9e-05,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "no-cache",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 61701208.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.54373795,
+      "pause_seconds_sum": 0.003156,
+      "gc_delta_sum": [
+        3,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 21648618.666666668,
+      "pool_new_mean": 726528.0,
+      "pool_reused_mean": 6449476.0,
+      "seconds_mean": 0.1837404,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 24002717.333333332,
+      "pool_new_mean": 20129066.666666668,
+      "pool_reused_mean": 210252373.33333334,
+      "seconds_mean": 0.42683103333333333,
+      "pause_seconds_sum": 0.000487,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 20936902.666666668,
+      "pool_new_mean": 16492.0,
+      "pool_reused_mean": 7159512.0,
+      "seconds_mean": 0.23127093333333335,
+      "pause_seconds_sum": 0.002463,
+      "gc_delta_sum": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "reuse",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 5151260.0,
+      "pool_new_mean": 1280000.0,
+      "pool_reused_mean": 229101440.0,
+      "seconds_mean": 0.43907366666666664,
+      "pause_seconds_sum": 0.000331,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 23074392.0,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.22482126666666669,
+      "pause_seconds_sum": 0.0,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "first",
+      "calls": 3,
+      "allocated_mean": 61708141.333333336,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.4690806,
+      "pause_seconds_sum": 0.002932,
+      "gc_delta_sum": [
+        2,
+        1,
+        1
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "segmentation",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 23074290.666666668,
+      "pool_new_mean": 2146600.0,
+      "pool_reused_mean": 5029404.0,
+      "seconds_mean": 0.22194266666666665,
+      "pause_seconds_sum": 0.000318,
+      "gc_delta_sum": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "order": "reverse",
+      "graph": "embedding",
+      "mode": "fresh",
+      "phase": "repeat",
+      "calls": 6,
+      "allocated_mean": 61705080.0,
+      "pool_new_mean": 57827200.0,
+      "pool_reused_mean": 172554240.0,
+      "seconds_mean": 0.45079106666666663,
+      "pause_seconds_sum": 0.004711,
+      "gc_delta_sum": [
+        3,
+        2,
+        2
+      ]
+    }
+  ],
+  "analysis": {
+    "bytes": 142111,
+    "sha256": "955cd0dac560e2f1c5a2dfd81ee11ca3f54d65f53508278d194cd676c38d70be"
+  },
+  "terminal_identities": 31,
+  "instructions": [
+    {
+      "assembly": "Lokad.Onnx.dll",
+      "methods": 3105,
+      "unchanged_methods": 3104,
+      "removed": [],
+      "added": [
+        "Lokad.Onnx.Tensor`1[T]::CanUseConvPortableRows::Boolean CanUseConvPortableRows(Int32, Int32, Int32, Lokad.Onnx.TensorExecutionOptions)",
+        "Lokad.Onnx.Tensor`1[T]::TryConvPortableRows::Boolean TryConvPortableRows(System.ReadOnlySpan`1[System.Single], System.ReadOnlySpan`1[System.Single], System.Span`1[System.Single], Int32, Int32, Int32, Lokad.Onnx.TensorExecutionOptions)"
+      ],
+      "differences": [
+        "Lokad.Onnx.Tensor`1[T]::RunTiledBatchFloat::Void RunTiledBatchFloat(System.Memory`1[System.Single], System.Memory`1[System.Single], System.Memory`1[System.Single], Boolean, System.Memory`1[System.Single], Single[], Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, PadInfo, Int32, Int32, Int32, Int32, Int32, Int32, Lokad.Onnx.TensorExecutionOptions)"
+      ]
+    },
+    {
+      "assembly": "Lokad.Onnx.Data.dll",
+      "methods": 696,
+      "unchanged_methods": 696,
+      "removed": [],
+      "added": [],
+      "differences": []
+    }
+  ]
+}
