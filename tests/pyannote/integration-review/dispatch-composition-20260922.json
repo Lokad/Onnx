@@ -1,0 +1,225 @@
+{
+  "passed": true,
+  "inference_executed": false,
+  "files": {
+    "artifacts/pyannote-portable-integration-tests-20260922/closed.json": {
+      "bytes": 190837,
+      "sha256": "bf9822426cd75a86cc8c02c065005f0005e1a80b4ee63d5c53313fed145235f6"
+    },
+    "artifacts/pyannote-convolution-epilogue-20260921/closed.json": {
+      "bytes": 2239,
+      "sha256": "aaf2a6457d49f087b536b1966427ce1ab580554a568652f79c23a40b85ea4b84"
+    },
+    "artifacts/pyannote-portable-integration-tests-20260922/source/src/Lokad.Onnx/Zzz.ConvPortableRows.cs": {
+      "bytes": 2172,
+      "sha256": "1066b56fdc1d85b33f6783de9a4812129f0b5b658278a7ce3f7ceea98f63f314"
+    },
+    "artifacts/pyannote-amd-candidates-v3-20260921/payload/source/src/Lokad.Onnx/TensorOps.ConvPackedRows.cs": {
+      "bytes": 2248,
+      "sha256": "d0d2107bfef246085082a2c856a5a9e7564f5eed3f065f3e2b510c091e24f609"
+    },
+    "artifacts/pyannote-amd-candidates-v3-20260921/payload/payload.json": {
+      "bytes": 370990,
+      "sha256": "0ddd2554fe779f42f77c19ba9bf40cbd89a64b2fde1081daae3a91f11b24b5c9"
+    },
+    "tests/pyannote/convolution-epilogue/observations-20260921.json": {
+      "bytes": 131933,
+      "sha256": "9998a460b3ab181d2dd9ce496cea1d23717ca06540ce60b179a625f05894ac77"
+    },
+    "tests/pyannote/integration-review/dispatch_composition.py": {
+      "bytes": 4662,
+      "sha256": "0e0d98cad59b43eb09980008904371ef219d41fae88255b2c2f5834cd15c4df9"
+    }
+  },
+  "shapes": [
+    {
+      "rows": 32,
+      "reduction": 9,
+      "columns": 1440,
+      "admission": "avx512_only"
+    },
+    {
+      "rows": 32,
+      "reduction": 9,
+      "columns": 1568,
+      "admission": "avx512_only"
+    },
+    {
+      "rows": 32,
+      "reduction": 288,
+      "columns": 160,
+      "admission": "both"
+    },
+    {
+      "rows": 32,
+      "reduction": 288,
+      "columns": 192,
+      "admission": "both"
+    },
+    {
+      "rows": 64,
+      "reduction": 32,
+      "columns": 472,
+      "admission": "neither"
+    },
+    {
+      "rows": 64,
+      "reduction": 32,
+      "columns": 672,
+      "admission": "avx512_only"
+    },
+    {
+      "rows": 64,
+      "reduction": 288,
+      "columns": 120,
+      "admission": "portable_only"
+    },
+    {
+      "rows": 64,
+      "reduction": 288,
+      "columns": 160,
+      "admission": "both"
+    },
+    {
+      "rows": 64,
+      "reduction": 576,
+      "columns": 88,
+      "admission": "portable_only"
+    },
+    {
+      "rows": 64,
+      "reduction": 576,
+      "columns": 96,
+      "admission": "both"
+    },
+    {
+      "rows": 128,
+      "reduction": 64,
+      "columns": 200,
+      "admission": "portable_only"
+    },
+    {
+      "rows": 128,
+      "reduction": 64,
+      "columns": 320,
+      "admission": "both"
+    },
+    {
+      "rows": 128,
+      "reduction": 576,
+      "columns": 8,
+      "admission": "portable_only"
+    },
+    {
+      "rows": 128,
+      "reduction": 576,
+      "columns": 64,
+      "admission": "both"
+    },
+    {
+      "rows": 128,
+      "reduction": 1152,
+      "columns": 8,
+      "admission": "portable_only"
+    },
+    {
+      "rows": 128,
+      "reduction": 1152,
+      "columns": 32,
+      "admission": "both"
+    },
+    {
+      "rows": 256,
+      "reduction": 128,
+      "columns": 130,
+      "admission": "portable_only"
+    },
+    {
+      "rows": 256,
+      "reduction": 128,
+      "columns": 160,
+      "admission": "both"
+    },
+    {
+      "rows": 256,
+      "reduction": 1152,
+      "columns": 2,
+      "admission": "portable_only"
+    },
+    {
+      "rows": 256,
+      "reduction": 1152,
+      "columns": 32,
+      "admission": "both"
+    },
+    {
+      "rows": 256,
+      "reduction": 2304,
+      "columns": 2,
+      "admission": "portable_only"
+    },
+    {
+      "rows": 256,
+      "reduction": 2304,
+      "columns": 32,
+      "admission": "both"
+    }
+  ],
+  "shape_counts": {
+    "avx512_only": 3,
+    "both": 10,
+    "neither": 1,
+    "portable_only": 8
+  },
+  "cases": [
+    {
+      "name": "dialogue-0-10s",
+      "tile_products": {
+        "avx512_only": 80,
+        "both": 6119,
+        "portable_only": 28,
+        "neither": 1
+      },
+      "scalar_product_terms": {
+        "avx512_only": 62905344,
+        "both": 22498181120,
+        "portable_only": 50872320,
+        "neither": 966656
+      },
+      "overlap_term_share": 0.9949257197922287
+    },
+    {
+      "name": "dialogue-10-20s",
+      "tile_products": {
+        "avx512_only": 80,
+        "both": 6119,
+        "portable_only": 28,
+        "neither": 1
+      },
+      "scalar_product_terms": {
+        "avx512_only": 62905344,
+        "both": 22498181120,
+        "portable_only": 50872320,
+        "neither": 966656
+      },
+      "overlap_term_share": 0.9949257197922287
+    },
+    {
+      "name": "dialogue-20-30s",
+      "tile_products": {
+        "avx512_only": 80,
+        "both": 6119,
+        "portable_only": 28,
+        "neither": 1
+      },
+      "scalar_product_terms": {
+        "avx512_only": 62905344,
+        "both": 22498181120,
+        "portable_only": 50872320,
+        "neither": 966656
+      },
+      "overlap_term_share": 0.9949257197922287
+    }
+  ],
+  "scope": "Static eligibility under explicit hypothetical hardware/options; no emitted-code, actual runtime dispatch or performance claim. No composition selected."
+}

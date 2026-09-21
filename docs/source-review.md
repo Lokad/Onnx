@@ -494,6 +494,15 @@ Conv/Relu fusion could ignore an If capture and change a valid result from
 tested cases. Its persistent pool capped arrays per shape without an aggregate
 retained-byte budget, and reset diagnostics could grow without bound.
 
+The later [convolution dispatch review](../tests/pyannote/integration-review/dispatch-composition-20260922.md)
+also finds that the accepted portable row path and queued AVX-512 row-sharing
+path overlap on ten of the model's twenty-two tile geometries. Those shapes
+cover 99.49% of its scalar product terms. Portable admission checks the generic
+AVX-512 experiment switch, not absence of AVX-512 hardware, so ordering must be
+chosen explicitly when integrating the two paths. These are static operation
+counts; the queued AMD comparison must inform selection, followed by actual
+qualification and timing of any newer combined build.
+
 The source review also found test portability and evidence issues: three
 composer tests invoked AVX-512 directly on an AVX2 workstation; model validation
 checked existence without hashing every external-data reference; a filename-only
