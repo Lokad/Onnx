@@ -1,0 +1,25 @@
+
+    // Contexts belong to one diarization embedding loop, never to the model instance.
+    internal PipelineRequest CreatePipelineRequest() => new PipelineRequest(this);
+
+    internal sealed class PipelineRequest : IDisposable
+    {
+        readonly WeSpeakerEmbedder owner;
+        internal GraphExecution? Encoding, Projecting;
+        internal bool Disposed;
+
+        internal PipelineRequest(WeSpeakerEmbedder owner) => this.owner = owner;
+
+        internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation) =>
+            owner.ExtractPipeline(samples, masks, cancellation, this);
+
+        public void Dispose()
+        {
+            lock (owner.gate)
+            {
+                if (Disposed) return;
+                try { Encoding?.Reset(); Projecting?.Reset(); }
+                finally { Encoding = null; Projecting = null; Disposed = true; }
+            }
+        }
+    }
