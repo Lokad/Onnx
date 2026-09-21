@@ -16,6 +16,10 @@ From the repository root, use `C:/Python313/python.exe -X utf8 -B`:
 4. Once every recorded process is terminal, `collect.py` retrieves all raw records.
 5. `audit.py` independently checks application decisions, recording timelines,
    original initializer hashes, resource and thread-affinity samples.
+6. On success, `close.py` writes the complete report and seals all evidence;
+   `verify.py` independently recomputes displayed results, overlap, initializer
+   checks and resource totals. A failed run must retain its failure and must not
+   use these success-only report tools.
 
 The new artifact is `artifacts/whisper-memory-contracts-amd-20260921`. Every writer
 creates new evidence and refuses an existing destination. Reuse verified hardlinks
