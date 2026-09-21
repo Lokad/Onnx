@@ -46,8 +46,10 @@ completes twenty saved requests but fails its final decoder snapshot check;
 its endurance phase does not start. This candidate is not yet qualified.
 The [controlled decoder diagnosis](tests/whisper/weight-metadata/results-20260920.md)
 reproduces two cached tensor-name changes on Windows and AMD, with every weight
-byte unchanged in both shared and unshared controls. A corrected consumer is
-prepared; its full application/endurance qualification remains pending.
+byte unchanged in both shared and unshared controls. The separate
+[corrected sharing campaign](tests/whisper/weight-sharing-v2/results-20260920.md)
+now passes all 100 requests and its full weight, allocation and resource checks.
+Production integration and matched AMD Whisper timing remain pending.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
 

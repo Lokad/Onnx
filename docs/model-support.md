@@ -197,3 +197,10 @@ completes twenty conformance and eighty endurance requests on AMD without forced
 collection. Allocation and resource gates pass for that fixed short-clip workload.
 It is not a production source change, a broader numerical qualification or an ORT
 latency comparison. Its report preserves the original normal-runtime failure.
+
+The [private Whisper decoder-weight sharing candidate](../tests/whisper/weight-sharing-v2/results-20260920.md)
+also passes 20 conformance and 80 endurance requests on AMD, including complete
+decoder payload and explicit cached-name transition checks. Separate
+[Windows public contracts](../tests/whisper/memory-contracts-v2/local-results-20260921.md)
+pass recording, concurrent speech and recovery checks. AMD public contracts,
+production integration, numerical gaps and matched AMD latency remain open.
