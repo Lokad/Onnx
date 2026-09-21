@@ -13,7 +13,7 @@ for key in ('OPENBLAS_NUM_THREADS','OMP_NUM_THREADS','MKL_NUM_THREADS','BLIS_NUM
 import numpy as np
 import psutil
 
-BASE=ROOT/'artifacts/parakeet-stem-reference-20260921'
+BASE=ROOT/'artifacts/parakeet-stem-reference-v2-20260921'
 TRACE=ROOT/'artifacts/parakeet-layer-trace-v2-20260921'
 DYNAMIC=ROOT/'artifacts/parakeet-layer-trace-dynamic-20260921'
 PRIOR=ROOT/'artifacts/parakeet-layer-trace-final-20260921/verified.json'

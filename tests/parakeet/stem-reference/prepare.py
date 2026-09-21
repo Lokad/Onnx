@@ -5,6 +5,27 @@ import subprocess
 import torch
 
 
+def initializer_array(tensor,directory,verified_files):
+    """Read only declared slices from the already fully verified model sidecar.
+
+    The retained trace uses intentional hardlinks; ONNX's generic external-file
+    loader refuses them. No link-count policy is disabled and no path is inferred
+    from an unverified model. Bounds and expected float32 byte lengths are exact.
+    """
+    if tensor.data_location!=onnx.TensorProto.EXTERNAL:
+        return onnx.numpy_helper.to_array(tensor)
+    fields={p.key:p.value for p in tensor.external_data}
+    assert set(fields)<= {'location','offset','length','checksum'}
+    assert fields['location']=='encoder-model.onnx.data'
+    path=directory/fields['location'];assert pin(path)==verified_files[rel(path)]
+    assert tensor.data_type==onnx.TensorProto.FLOAT
+    offset=int(fields.get('offset','0'));length=int(fields['length'])
+    assert offset>=0 and length==int(np.prod(tensor.dims))*4 and offset+length<=path.stat().st_size
+    with path.open('rb') as f:f.seek(offset);data=f.read(length)
+    assert len(data)==length
+    return np.frombuffer(data,dtype='<f4').reshape(tuple(tensor.dims)).copy()
+
+
 def normalized(node):
     attributes={}
     for a in node.attribute:
@@ -71,7 +92,7 @@ def main():
             assert pin(ROOT/path)==expected;bind(ROOT/path)
     tensors={t.name:t for t in model.graph.initializer};weights={}
     for key,name in names.items():
-        value=onnx.numpy_helper.to_array(tensors[name],base_dir=str(original.parent))
+        value=initializer_array(tensors[name],original.parent,files)
         assert value.dtype==np.float32 and np.isfinite(value).all()
         path=BASE/'weights'/(key+'.npy');np.save(path,value,allow_pickle=False)
         weights[key]=dict(file=bind(path),shape=list(value.shape),source=name,raw_sha256=hashlib.sha256(value.tobytes()).hexdigest())
