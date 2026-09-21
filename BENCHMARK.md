@@ -34,6 +34,15 @@ retain all process variation; their reductions are not compounded into an ORT
 ratio. Matched AMD timing, broader audio qualification and production promotion
 remain pending. The native baseline tables below keep their original scope.
 
+The combined candidate also passes the [two ten-minute meeting replays and
+recovery](tests/pyannote/optimized-meetings/results-20260921.md). Both complete
+speaker timelines match ORT exactly, preserving ordinary/exclusive DER of
+21.4593%/24.7763%; centroid errors stay below `9e-7`. This is additional
+correctness evidence, without a new matched latency or parity claim.
+Its [Parakeet regression](tests/pyannote/optimized-parakeet/results-20260921.md)
+preserves all 784 output arrays bit-for-bit; the three existing Windows native
+numerical failures remain unchanged.
+
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
 AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ONNX Runtime 1.29.0, product `1d10d22`.

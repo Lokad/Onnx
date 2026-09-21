@@ -88,6 +88,18 @@ error is `9.24802e-7`, and ordinary/exclusive aggregate DER remains
 21.4593%/24.7763%. All 5,353 resource samples and 33 damaged-record refusals pass;
 the worker peaks at 3.647 GB. These one-pass accuracy/resource durations do not
 replace the matched application latency tables.
+
+The isolated [convolution/LSTM optimization candidate](../tests/pyannote/optimized-meetings/results-20260921.md)
+also passes both complete ten-minute meetings and recovery on Windows. Its
+ordinary and exclusive timelines match the retained ORT results exactly,
+preserving the same aggregate DER; maximum centroid error is `8.98141e-7`.
+All 1,460 resource samples pass, with 1.778 GB peak sampled RSS. This candidate
+has not yet been promoted to production or measured against ORT on AMD.
+Its [complete Parakeet regression](../tests/pyannote/optimized-parakeet/results-20260921.md)
+preserves all 784 arrays / 3,090,494 values bit-for-bit and all public contracts.
+The same three Windows duration-logit failures remain, with unchanged maximum
+scaled native error `2.321004867553711e-4`.
+
 The Windows audio tables measure `8732831`. The [matched AMD Parakeet/pyannote comparison](../tests/audio/amd-two-family/results-20260920.md) measures `1d10d22` against ORT 1.29.0.
 Whisper's later memory implementation passes AMD conformance and endurance.
 Its [subsequent matched timing attempt](../tests/audio/whisper-amd/disk-failure-20260921.md)
