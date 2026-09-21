@@ -94,7 +94,11 @@ also passes both complete ten-minute meetings and recovery on Windows. Its
 ordinary and exclusive timelines match the retained ORT results exactly,
 preserving the same aggregate DER; maximum centroid error is `8.98141e-7`.
 All 1,460 resource samples pass, with 1.778 GB peak sampled RSS. This candidate
-has not yet been promoted to production or measured against ORT on AMD.
+has not yet been promoted to production or measured against ORT on AMD. Its
+[fresh matched Windows comparison](../tests/pyannote/optimized-ort/results-20260921.md)
+takes 12.446 seconds versus ORT's 6.584 seconds for the full 30-second dialogue,
+a 1.890 ratio, with all 64 public calls passing. These descriptive measurements
+retain process variation and do not establish calibrated parity.
 Its [complete Parakeet regression](../tests/pyannote/optimized-parakeet/results-20260921.md)
 preserves all 784 arrays / 3,090,494 values bit-for-bit and all public contracts.
 The same three Windows duration-logit failures remain, with unchanged maximum

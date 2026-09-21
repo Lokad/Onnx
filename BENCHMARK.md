@@ -18,6 +18,26 @@ The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.m
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
 
+### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
+
+Fresh matched measurements on Windows i7-14700KF, CPU2, .NET 10.0.12 and
+Microsoft ORT 1.29.0. This is the isolated convolution/LSTM candidate `469cb2d6`;
+production promotion and AMD qualification remain pending. Timers include the
+complete application: features, graphs, clustering and owned results.
+
+| Workload | Candidate seconds | Microsoft ORT seconds | Candidate / ORT | Candidate RTF | ORT RTF |
+|---|---:|---:|---:|---:|---:|
+| pyannote, dialogue-30s | 12.446 | 6.584 | 1.890 | 0.415 | 0.219 |
+| pyannote, dialogue-0-10s | 0.573 | 0.302 | 1.898 | 0.057 | 0.030 |
+| pyannote, dialogue-10-20s | 0.564 | 0.307 | 1.839 | 0.056 | 0.031 |
+| pyannote, dialogue-20-30s | 0.596 | 0.305 | 1.955 | 0.060 | 0.031 |
+
+Two fresh processes per engine run one warmup and three measured passes each.
+All 64 requests pass public-output, ownership and input checks; all 382 resource
+samples pass. Every timing sample is retained. These descriptive local ratios
+do not establish calibrated parity or an AMD speedup. The [complete report](tests/pyannote/optimized-ort/results-20260921.md)
+includes timing boundaries, process variation and numerical limits.
+
 Three isolated pyannote candidates have completed local four-process comparisons
 on Windows i7-14700KF, CPU2. Each row measures the new candidate against its
 immediate predecessor on the complete 30-second dialogue:
