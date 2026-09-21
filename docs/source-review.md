@@ -66,6 +66,14 @@ an output-lane projection prototype can target them while preserving master's
 separate multiply/add order. The branch's `03af0bf` uses FMA and therefore
 needs adaptation rather than a literal arithmetic import.
 
+That [ordered projection prototype](../tests/pyannote/lstm-output-lanes/results-20260921.md)
+now reduces complete local dialogue latency 39.3% against the qualified copy
+core, 21.289 to 12.914 seconds. It preserves every captured graph output bit and
+passes the complete local suites. Per-call pooled panels handle mutable weights
+without a new persistent cache; gate arithmetic stays unchanged. Remaining
+candidate graph attribution is mostly convolution, making AMD row sharing the
+next measured target after the broader audio/meeting qualification.
+
 
 | Source finding | Consequence for Lokad.Onnx |
 |---|---|

@@ -18,18 +18,21 @@ The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.m
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
 
-A subsequent [isolated convolution candidate](tests/pyannote/spatial-panels/results-20260921.md)
-reduces the complete 30-second dialogue mean from **38.643 to 30.914 seconds
-(20.0%)** in a four-process Windows comparison. All 64 application requests,
-72 pyannote graph outputs and the affected-model regression pass. Process
-variation is retained in the report; AMD timing and production promotion
-remain pending. The native baseline tables below retain their original scope.
+Three isolated pyannote candidates have completed local four-process comparisons
+on Windows i7-14700KF, CPU2. Each row measures the new candidate against its
+immediate predecessor on the complete 30-second dialogue:
 
-The [contiguous-copy successor](tests/pyannote/spatial-copy/results-20260921.md)
-improves on that exact spatial candidate by **21.8%** in a new matched local
-comparison: **26.800 → 20.964 seconds**. All captured outputs remain bit-identical
-and broader regression passes. These successive experiments have separate
-timing conditions; their reductions are not combined into an ORT ratio.
+| Candidate and evidence | Predecessor seconds | Candidate seconds | Reduction |
+|---|---:|---:|---:|
+| [Spatial convolution panels](tests/pyannote/spatial-panels/results-20260921.md) | 38.643 | 30.914 | 20.0% |
+| [Contiguous copies](tests/pyannote/spatial-copy/results-20260921.md) | 26.800 | 20.964 | 21.8% |
+| [Ordered LSTM output lanes](tests/pyannote/lstm-output-lanes/results-20260921.md) | 21.289 | 12.914 | 39.3% |
+
+Every comparison preserves all 64 public requests and 72 graph outputs, with
+bit-identical outputs and passing local regression. These separate experiments
+retain all process variation; their reductions are not compounded into an ORT
+ratio. Matched AMD timing, broader audio qualification and production promotion
+remain pending. The native baseline tables below keep their original scope.
 
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
