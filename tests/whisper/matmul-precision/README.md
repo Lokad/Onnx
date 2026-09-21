@@ -6,6 +6,10 @@ all original operator boundaries. It asks whether matrix reduction error is a
 useful target for a later managed-kernel prototype. It is not a product variant,
 a latency benchmark or a new numerical acceptance contract.
 
+The [completed result](results-20260921.md) improves final errors but fails the
+prospective mechanism screen and every full-output `1e-4` check. It does not
+justify a production kernel change on its own.
+
 The fixed three previously selected natural recordings plus a repeat use managed
 features. Both variants retain all 41 encoder boundaries and compare every value
 with both previously qualified float64 reference routes. Original native and

@@ -7,10 +7,11 @@ Release CLI and the assets described in each model's linked instructions.
 
 Audio orchestration APIs live in the repository's `Lokad.Onnx.Data` project;
 the core `Lokad.Onnx` NuGet package does not include that assembly. The
-[current core package check](../tests/package-layernorm-20260920.md) verifies a
+[current core package check](../tests/whisper/memory-product-v2/results-20260921.md) verifies a
 fresh package restore and real graph/import execution by an independent app,
-including LayerNorm and all four combinations of the fingerprint-cache and
-wider-LayerNorm switches. Both remain disabled by default.
+including released-buffer budgets, LayerNorm and all four combinations of the
+fingerprint-cache and wider-LayerNorm switches. Both switches remain disabled
+by default.
 
 | Model | Available application behavior | Qualification and remaining limits |
 |---|---|---|
@@ -87,7 +88,12 @@ error is `9.24802e-7`, and ordinary/exclusive aggregate DER remains
 21.4593%/24.7763%. All 5,353 resource samples and 33 damaged-record refusals pass;
 the worker peaks at 3.647 GB. These one-pass accuracy/resource durations do not
 replace the matched application latency tables.
-The Windows audio tables measure `8732831`. The [matched AMD Parakeet/pyannote comparison](../tests/audio/amd-two-family/results-20260920.md) measures `1d10d22` against ORT 1.29.0. Whisper has no matched AMD timing result because its managed conformance worker failed the available-memory guard.
+The Windows audio tables measure `8732831`. The [matched AMD Parakeet/pyannote comparison](../tests/audio/amd-two-family/results-20260920.md) measures `1d10d22` against ORT 1.29.0.
+Whisper's later memory implementation passes AMD conformance and endurance.
+Its [subsequent matched timing attempt](../tests/audio/whisper-amd/disk-failure-20260921.md)
+stops at the disk-space guard in its final timing worker, so the matched AMD
+Whisper latency result remains incomplete. The earlier memory failure is
+preserved separately below.
 
 The [five-language ASR check](../tests/audio/multilingual/results-20260920.md)
 adds twenty FLEURS read recordings and their deterministic 10 dB noise variants.
@@ -209,3 +215,12 @@ Thus even computing this layer in float64 on these unchanged incoming FP32 state
 does not by itself meet the full-reference boundary limit. This points toward
 earlier accumulated error; it neither identifies its first cause nor changes the
 existing full-encoder gate or application support claims.
+
+A subsequent [matrix-precision diagnostic](../tests/whisper/matmul-precision/results-20260921.md)
+changes only matrix accumulation to float64 in an otherwise identical unfused
+float32 interpreter. Final maximum errors fall by 19%, 57% and 41% across the
+three selected recordings, but every full output still fails `1e-4`, and the
+prospective halving screen fails. All 328 arrays and the repeated case are
+verified. This identifies a contribution from matrix rounding in that operator
+sequence; it does not qualify an unimplemented managed kernel or alter existing
+model acceptance.

@@ -1,0 +1,6219 @@
+{
+  "protocol": "whisper-fp32-matmul-accumulation-v1",
+  "structural_passed": true,
+  "useful_signal": false,
+  "jobs": [
+    {
+      "job": {
+        "id": "00-float32",
+        "request": 0,
+        "mode": "float32"
+      },
+      "name": "121-121726-0000",
+      "boundaries": [
+        {
+          "index": 0,
+          "name": "/conv1/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.877302793218405e-06,
+              "failed_values": 0,
+              "squared_error": 2.7776450982559057e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.877302793218405e-06,
+              "failed_values": 0,
+              "squared_error": 2.7776450982559057e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 1,
+          "name": "/Mul_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.08634153453513e-06,
+              "failed_values": 0,
+              "squared_error": 7.393451832939041e-09,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 2.0863415344241076e-06,
+              "failed_values": 0,
+              "squared_error": 7.393451833109361e-09,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 2,
+          "name": "/conv2/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.1545481970641305e-06,
+              "failed_values": 0,
+              "squared_error": 4.4498502826625786e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.1545481970641305e-06,
+              "failed_values": 0,
+              "squared_error": 4.44985028274457e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 3,
+          "name": "/Mul_3_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.528480256707583e-07,
+              "failed_values": 0,
+              "squared_error": 3.221237524229295e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.528480256707583e-07,
+              "failed_values": 0,
+              "squared_error": 3.2212375244169857e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 4,
+          "name": "/Add_2_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.97155479509226e-07,
+              "failed_values": 0,
+              "squared_error": 4.028199268092035e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.97155479509226e-07,
+              "failed_values": 0,
+              "squared_error": 4.028199268329286e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 5,
+          "name": "/layers.0/self_attn_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.5079929411674573e-07,
+              "failed_values": 0,
+              "squared_error": 6.531553340280288e-10,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.507992939258671e-07,
+              "failed_values": 0,
+              "squared_error": 6.531553340685473e-10,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 6,
+          "name": "/layers.0/Add_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.277317744270313e-06,
+              "failed_values": 0,
+              "squared_error": 2.9582186747033127e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.2773177438262238e-06,
+              "failed_values": 0,
+              "squared_error": 2.95821867478698e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 7,
+          "name": "/layers.0/final_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.496911175111193e-06,
+              "failed_values": 0,
+              "squared_error": 1.5190956872639438e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.4969111756663045e-06,
+              "failed_values": 0,
+              "squared_error": 1.5190956873539973e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 8,
+          "name": "/layers.0/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3025676300081344e-06,
+              "failed_values": 0,
+              "squared_error": 5.6306932433318915e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.302567629564045e-06,
+              "failed_values": 0,
+              "squared_error": 5.6306932434090456e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 9,
+          "name": "/layers.1/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3296583033793894e-06,
+              "failed_values": 0,
+              "squared_error": 5.7121371016088334e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.3296583030463225e-06,
+              "failed_values": 0,
+              "squared_error": 5.7121371016766794e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 10,
+          "name": "/layers.2/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3443141969892167e-06,
+              "failed_values": 0,
+              "squared_error": 6.032069252985975e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.3443141965451275e-06,
+              "failed_values": 0,
+              "squared_error": 6.032069253050037e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 11,
+          "name": "/layers.3/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.8767269560914244e-06,
+              "failed_values": 0,
+              "squared_error": 6.804664179409659e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.876726956757558e-06,
+              "failed_values": 0,
+              "squared_error": 6.804664179485178e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 12,
+          "name": "/layers.4/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.7853762485929856e-06,
+              "failed_values": 0,
+              "squared_error": 6.963266694517744e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.785376247649296e-06,
+              "failed_values": 0,
+              "squared_error": 6.963266694608296e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 13,
+          "name": "/layers.5/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.748695244636501e-06,
+              "failed_values": 0,
+              "squared_error": 6.655749904131283e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.7486952437483225e-06,
+              "failed_values": 0,
+              "squared_error": 6.655749904236674e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 14,
+          "name": "/layers.6/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.7241110851505823e-06,
+              "failed_values": 0,
+              "squared_error": 5.953697893741519e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.724111085705694e-06,
+              "failed_values": 0,
+              "squared_error": 5.9536978938343e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 15,
+          "name": "/layers.7/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3551942285870986e-06,
+              "failed_values": 0,
+              "squared_error": 5.659115744388573e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.3551942280874982e-06,
+              "failed_values": 0,
+              "squared_error": 5.659115744475737e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 16,
+          "name": "/layers.8/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.1640610943229888e-06,
+              "failed_values": 0,
+              "squared_error": 5.3059772932711905e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.1640610943229888e-06,
+              "failed_values": 0,
+              "squared_error": 5.3059772933702576e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 17,
+          "name": "/layers.9/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.189109700401204e-06,
+              "failed_values": 0,
+              "squared_error": 4.9003770490880924e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.1891096997905812e-06,
+              "failed_values": 0,
+              "squared_error": 4.900377049206956e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 18,
+          "name": "/layers.10/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.122090284221381e-06,
+              "failed_values": 0,
+              "squared_error": 4.393247762615819e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.1220902834328876e-06,
+              "failed_values": 0,
+              "squared_error": 4.393247762715197e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 19,
+          "name": "/layers.11/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3707026170273093e-06,
+              "failed_values": 0,
+              "squared_error": 4.139312722848416e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.370702620729067e-06,
+              "failed_values": 0,
+              "squared_error": 4.139312722969722e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 20,
+          "name": "/layers.12/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.64640625946555e-06,
+              "failed_values": 0,
+              "squared_error": 3.9434056618885866e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.646406263462353e-06,
+              "failed_values": 0,
+              "squared_error": 3.94340566200682e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 21,
+          "name": "/layers.13/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.5973307548055047e-06,
+              "failed_values": 0,
+              "squared_error": 3.692107947655168e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.59733075891333e-06,
+              "failed_values": 0,
+              "squared_error": 3.692107947774748e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 22,
+          "name": "/layers.14/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.396051797777133e-06,
+              "failed_values": 0,
+              "squared_error": 3.3234207185057556e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.3960518029951814e-06,
+              "failed_values": 0,
+              "squared_error": 3.32342071864166e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 23,
+          "name": "/layers.15/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.892529162552449e-06,
+              "failed_values": 0,
+              "squared_error": 3.156440952255373e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.8925291684366314e-06,
+              "failed_values": 0,
+              "squared_error": 3.1564409523993526e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 24,
+          "name": "/layers.16/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.54713365061199e-06,
+              "failed_values": 0,
+              "squared_error": 3.162862715373822e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.54713365738435e-06,
+              "failed_values": 0,
+              "squared_error": 3.162862715502415e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 25,
+          "name": "/layers.17/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.871909198540415e-06,
+              "failed_values": 0,
+              "squared_error": 3.2526591417329873e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.871909207089132e-06,
+              "failed_values": 0,
+              "squared_error": 3.252659141673611e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 26,
+          "name": "/layers.18/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.7551683312699545e-06,
+              "failed_values": 0,
+              "squared_error": 3.247564523521426e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.7551683397029476e-06,
+              "failed_values": 0,
+              "squared_error": 3.247564523161759e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 27,
+          "name": "/layers.19/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.446049734134143e-06,
+              "failed_values": 0,
+              "squared_error": 3.277640186196803e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.446049691316308e-06,
+              "failed_values": 0,
+              "squared_error": 3.277640185535675e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 28,
+          "name": "/layers.20/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.442811692717541e-05,
+              "failed_values": 0,
+              "squared_error": 3.3551874701534893e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.442811712546124e-05,
+              "failed_values": 0,
+              "squared_error": 3.355187479633283e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 29,
+          "name": "/layers.21/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.470746901119593e-05,
+              "failed_values": 0,
+              "squared_error": 3.3710030961123303e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.4707469210925055e-05,
+              "failed_values": 0,
+              "squared_error": 3.371003105698566e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 30,
+          "name": "/layers.22/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.5403334973492804e-05,
+              "failed_values": 0,
+              "squared_error": 3.4135362123402685e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.540333517644157e-05,
+              "failed_values": 0,
+              "squared_error": 3.4135362220495403e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 31,
+          "name": "/layers.23/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.526858970482772e-05,
+              "failed_values": 0,
+              "squared_error": 3.4518764683124295e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.5268589906943824e-05,
+              "failed_values": 0,
+              "squared_error": 3.4518764780762363e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 32,
+          "name": "/layers.24/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.574196321566355e-05,
+              "failed_values": 0,
+              "squared_error": 3.5467739620795244e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.5741963421598515e-05,
+              "failed_values": 0,
+              "squared_error": 3.54677397194003e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 33,
+          "name": "/layers.25/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.839461701876682e-05,
+              "failed_values": 0,
+              "squared_error": 3.6321172014250678e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.839461723663701e-05,
+              "failed_values": 0,
+              "squared_error": 3.6321172113697746e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 34,
+          "name": "/layers.26/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.997134213243856e-05,
+              "failed_values": 0,
+              "squared_error": 3.7656077262131193e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.997134235771647e-05,
+              "failed_values": 0,
+              "squared_error": 3.7656077361548437e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 35,
+          "name": "/layers.27/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.4425251130393046e-05,
+              "failed_values": 0,
+              "squared_error": 4.064431246883833e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.442525137572805e-05,
+              "failed_values": 0,
+              "squared_error": 4.064431256893771e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 36,
+          "name": "/layers.28/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.669454852309287e-05,
+              "failed_values": 0,
+              "squared_error": 4.90293795240061e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.66945488320047e-05,
+              "failed_values": 0,
+              "squared_error": 4.902937963388682e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 37,
+          "name": "/layers.29/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.98181599470398e-05,
+              "failed_values": 0,
+              "squared_error": 6.406607541910385e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.981816026246557e-05,
+              "failed_values": 0,
+              "squared_error": 6.406607554154063e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 38,
+          "name": "/layers.30/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00011769547539119962,
+              "failed_values": 2,
+              "squared_error": 1.1755974248773168e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00011769547529261182,
+              "failed_values": 2,
+              "squared_error": 1.1755974263604903e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 39,
+          "name": "/layers.31/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0004753988241134483,
+              "failed_values": 209,
+              "squared_error": 3.829086317924495e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00047539882371005994,
+              "failed_values": 209,
+              "squared_error": 3.82908631928995e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 40,
+          "name": "last_hidden_state",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00041109681772272255,
+              "failed_values": 2246,
+              "squared_error": 0.00013932124705211263,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00041109681736128945,
+              "failed_values": 2246,
+              "squared_error": 0.00013932124707922893,
+              "values": 1920000
+            }
+          }
+        }
+      ],
+      "original_fp32_final": {
+        "MM": {
+          "max_scaled": 0.0016905367374420166,
+          "failed_values": 21123,
+          "squared_error": 0.0016464419803620873,
+          "values": 1920000
+        },
+        "NM": {
+          "max_scaled": 0.001284286379814148,
+          "failed_values": 15220,
+          "squared_error": 0.0010404979634977957,
+          "values": 1920000
+        }
+      },
+      "diagnostic_seconds": 33.075316399976145,
+      "scalar_coordinates": 0
+    },
+    {
+      "job": {
+        "id": "00-wide-matmul",
+        "request": 0,
+        "mode": "wide-matmul"
+      },
+      "name": "121-121726-0000",
+      "boundaries": [
+        {
+          "index": 0,
+          "name": "/conv1/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.877302793218405e-06,
+              "failed_values": 0,
+              "squared_error": 2.7776450982559057e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.877302793218405e-06,
+              "failed_values": 0,
+              "squared_error": 2.7776450982559057e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 1,
+          "name": "/Mul_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.08634153453513e-06,
+              "failed_values": 0,
+              "squared_error": 7.393451832939041e-09,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 2.0863415344241076e-06,
+              "failed_values": 0,
+              "squared_error": 7.393451833109361e-09,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 2,
+          "name": "/conv2/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.1545481970641305e-06,
+              "failed_values": 0,
+              "squared_error": 4.4498502826625786e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.1545481970641305e-06,
+              "failed_values": 0,
+              "squared_error": 4.44985028274457e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 3,
+          "name": "/Mul_3_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.528480256707583e-07,
+              "failed_values": 0,
+              "squared_error": 3.221237524229295e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.528480256707583e-07,
+              "failed_values": 0,
+              "squared_error": 3.2212375244169857e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 4,
+          "name": "/Add_2_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.97155479509226e-07,
+              "failed_values": 0,
+              "squared_error": 4.028199268092035e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.97155479509226e-07,
+              "failed_values": 0,
+              "squared_error": 4.028199268329286e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 5,
+          "name": "/layers.0/self_attn_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.5079929411674573e-07,
+              "failed_values": 0,
+              "squared_error": 6.531553340280288e-10,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.507992939258671e-07,
+              "failed_values": 0,
+              "squared_error": 6.531553340685473e-10,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 6,
+          "name": "/layers.0/Add_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.098933053033662e-07,
+              "failed_values": 0,
+              "squared_error": 5.793243877741748e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.098933051923439e-07,
+              "failed_values": 0,
+              "squared_error": 5.7932438785618535e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 7,
+          "name": "/layers.0/final_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.43902948299835e-07,
+              "failed_values": 0,
+              "squared_error": 4.265510880438902e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.439029481888127e-07,
+              "failed_values": 0,
+              "squared_error": 4.2655108808779834e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 8,
+          "name": "/layers.0/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.179346557231236e-07,
+              "failed_values": 0,
+              "squared_error": 6.3068019181521696e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.179346557231236e-07,
+              "failed_values": 0,
+              "squared_error": 6.3068019188549075e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 9,
+          "name": "/layers.1/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.03852790606696e-07,
+              "failed_values": 0,
+              "squared_error": 6.521154731221821e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.038527909397629e-07,
+              "failed_values": 0,
+              "squared_error": 6.52115473182387e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 10,
+          "name": "/layers.2/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.983160437679103e-07,
+              "failed_values": 0,
+              "squared_error": 6.990089212762335e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.983160441009773e-07,
+              "failed_values": 0,
+              "squared_error": 6.990089213261241e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 11,
+          "name": "/layers.3/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.123943748243988e-07,
+              "failed_values": 0,
+              "squared_error": 7.3861094857787e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.123943748243988e-07,
+              "failed_values": 0,
+              "squared_error": 7.386109486308485e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 12,
+          "name": "/layers.4/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.998466679508653e-07,
+              "failed_values": 0,
+              "squared_error": 7.772022834552041e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.998466679508653e-07,
+              "failed_values": 0,
+              "squared_error": 7.772022835160337e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 13,
+          "name": "/layers.5/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.092213517636338e-07,
+              "failed_values": 0,
+              "squared_error": 8.0190557992481e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.09221357314749e-07,
+              "failed_values": 0,
+              "squared_error": 8.019055799899665e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 14,
+          "name": "/layers.6/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.72428438994477e-07,
+              "failed_values": 0,
+              "squared_error": 7.95165163358117e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.72428444878659e-07,
+              "failed_values": 0,
+              "squared_error": 7.951651634181282e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 15,
+          "name": "/layers.7/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.2381825738039254e-06,
+              "failed_values": 0,
+              "squared_error": 8.137601103168314e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.2381825817975312e-06,
+              "failed_values": 0,
+              "squared_error": 8.137601103850607e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 16,
+          "name": "/layers.8/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.474821737845744e-06,
+              "failed_values": 0,
+              "squared_error": 8.149578544438159e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.4748217478377512e-06,
+              "failed_values": 0,
+              "squared_error": 8.149578545339607e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 17,
+          "name": "/layers.9/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.5512991405897125e-06,
+              "failed_values": 0,
+              "squared_error": 8.059475662763474e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.551299150692742e-06,
+              "failed_values": 0,
+              "squared_error": 8.059475663715367e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 18,
+          "name": "/layers.10/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.7080812948488955e-06,
+              "failed_values": 0,
+              "squared_error": 8.035265345792552e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.708081306395215e-06,
+              "failed_values": 0,
+              "squared_error": 8.035265346733689e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 19,
+          "name": "/layers.11/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.929365193387156e-06,
+              "failed_values": 0,
+              "squared_error": 8.303032289515958e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.9293652063767652e-06,
+              "failed_values": 0,
+              "squared_error": 8.303032290612242e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 20,
+          "name": "/layers.12/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.0384534722417413e-06,
+              "failed_values": 0,
+              "squared_error": 8.325482651440116e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.0384534857864622e-06,
+              "failed_values": 0,
+              "squared_error": 8.325482652501145e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 21,
+          "name": "/layers.13/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.0005778181841904e-06,
+              "failed_values": 0,
+              "squared_error": 8.063413600095952e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.0005778315068667e-06,
+              "failed_values": 0,
+              "squared_error": 8.063413601029744e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 22,
+          "name": "/layers.14/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.6831501064306096e-06,
+              "failed_values": 0,
+              "squared_error": 7.538849031536122e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.6831501244162226e-06,
+              "failed_values": 0,
+              "squared_error": 7.538849033017664e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 23,
+          "name": "/layers.15/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.1990279857341264e-06,
+              "failed_values": 0,
+              "squared_error": 7.494575627233149e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.199028006828364e-06,
+              "failed_values": 0,
+              "squared_error": 7.494575629304757e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 24,
+          "name": "/layers.16/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.697279559400357e-06,
+              "failed_values": 0,
+              "squared_error": 7.927718496702815e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.697279583936286e-06,
+              "failed_values": 0,
+              "squared_error": 7.927718499347074e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 25,
+          "name": "/layers.17/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.274404753063955e-06,
+              "failed_values": 0,
+              "squared_error": 8.50682222365808e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.274404787480869e-06,
+              "failed_values": 0,
+              "squared_error": 8.506822228537067e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 26,
+          "name": "/layers.18/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.85163521195048e-06,
+              "failed_values": 0,
+              "squared_error": 9.284764772966526e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.851635263825977e-06,
+              "failed_values": 0,
+              "squared_error": 9.284764786093138e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 27,
+          "name": "/layers.19/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.151893869634284e-06,
+              "failed_values": 0,
+              "squared_error": 1.0345464238647576e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.151893930391803e-06,
+              "failed_values": 0,
+              "squared_error": 1.0345464265276986e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 28,
+          "name": "/layers.20/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.7528749651945e-05,
+              "failed_values": 0,
+              "squared_error": 9.05482917716585e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.752874910604834e-05,
+              "failed_values": 0,
+              "squared_error": 9.054829203161244e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 29,
+          "name": "/layers.21/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.177016948654245e-05,
+              "failed_values": 0,
+              "squared_error": 9.078267770205295e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.1770169121834186e-05,
+              "failed_values": 0,
+              "squared_error": 9.078267796611549e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 30,
+          "name": "/layers.22/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.854358407873182e-05,
+              "failed_values": 0,
+              "squared_error": 9.163854163953125e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.854358380717127e-05,
+              "failed_values": 0,
+              "squared_error": 9.163854190540552e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 31,
+          "name": "/layers.23/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.6226597189003016e-05,
+              "failed_values": 0,
+              "squared_error": 9.177418867583973e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.6226596862597447e-05,
+              "failed_values": 0,
+              "squared_error": 9.177418893921037e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 32,
+          "name": "/layers.24/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.8612222724453424e-05,
+              "failed_values": 0,
+              "squared_error": 9.369396677628857e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.8612222380173264e-05,
+              "failed_values": 0,
+              "squared_error": 9.369396702956751e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 33,
+          "name": "/layers.25/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.9067460875962254e-05,
+              "failed_values": 0,
+              "squared_error": 9.73494427112174e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.906746052746325e-05,
+              "failed_values": 0,
+              "squared_error": 9.734944296677456e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 34,
+          "name": "/layers.26/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.37024390167462e-05,
+              "failed_values": 0,
+              "squared_error": 1.0332277687943992e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.3702438706105795e-05,
+              "failed_values": 0,
+              "squared_error": 1.033227771349525e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 35,
+          "name": "/layers.27/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.535676612420602e-05,
+              "failed_values": 0,
+              "squared_error": 1.1403767803760413e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.535676587640424e-05,
+              "failed_values": 0,
+              "squared_error": 1.1403767827445138e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 36,
+          "name": "/layers.28/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.756231739160398e-05,
+              "failed_values": 0,
+              "squared_error": 1.359927132872885e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.756231744200811e-05,
+              "failed_values": 0,
+              "squared_error": 1.3599271344033258e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 37,
+          "name": "/layers.29/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.789864004988264e-05,
+              "failed_values": 0,
+              "squared_error": 1.7860898867045117e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.789864010073085e-05,
+              "failed_values": 0,
+              "squared_error": 1.786089886584156e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 38,
+          "name": "/layers.30/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.474765303294717e-05,
+              "failed_values": 0,
+              "squared_error": 3.5826170900083354e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.474765247900139e-05,
+              "failed_values": 0,
+              "squared_error": 3.5826170807076765e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 39,
+          "name": "/layers.31/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00022413014960176447,
+              "failed_values": 99,
+              "squared_error": 1.565440335310016e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00022413014795164,
+              "failed_values": 99,
+              "squared_error": 1.565440324191229e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 40,
+          "name": "last_hidden_state",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0003336388562087539,
+              "failed_values": 667,
+              "squared_error": 4.761000073008853e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00033363885679063565,
+              "failed_values": 667,
+              "squared_error": 4.761000065369918e-05,
+              "values": 1920000
+            }
+          }
+        }
+      ],
+      "original_fp32_final": {
+        "MM": {
+          "max_scaled": 0.0016527622938156128,
+          "failed_values": 17097,
+          "squared_error": 0.001379567183627517,
+          "values": 1920000
+        },
+        "NM": {
+          "max_scaled": 0.001577824354171753,
+          "failed_values": 16387,
+          "squared_error": 0.0011485897473664766,
+          "values": 1920000
+        }
+      },
+      "diagnostic_seconds": 55.487226800003555,
+      "scalar_coordinates": 768
+    },
+    {
+      "job": {
+        "id": "01-float32",
+        "request": 1,
+        "mode": "float32"
+      },
+      "name": "1089-134686-0002",
+      "boundaries": [
+        {
+          "index": 0,
+          "name": "/conv1/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.3160727867500555e-06,
+              "failed_values": 0,
+              "squared_error": 2.95335457281278e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.3160727867500555e-06,
+              "failed_values": 0,
+              "squared_error": 2.95335457281278e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 1,
+          "name": "/Mul_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.83582850833109e-07,
+              "failed_values": 0,
+              "squared_error": 1.3023596430700388e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 9.83582850833109e-07,
+              "failed_values": 0,
+              "squared_error": 1.3023596430641126e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 2,
+          "name": "/conv2/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.892303550110057e-07,
+              "failed_values": 0,
+              "squared_error": 4.916168224708723e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.892303548999834e-07,
+              "failed_values": 0,
+              "squared_error": 4.916168224699989e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 3,
+          "name": "/Mul_3_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.658655689051329e-07,
+              "failed_values": 0,
+              "squared_error": 4.568774854316573e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.658655683500214e-07,
+              "failed_values": 0,
+              "squared_error": 4.5687748540178086e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 4,
+          "name": "/Add_2_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.658655689051329e-07,
+              "failed_values": 0,
+              "squared_error": 5.341502504815117e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.658655683500214e-07,
+              "failed_values": 0,
+              "squared_error": 5.341502504465231e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 5,
+          "name": "/layers.0/self_attn_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.5167864634549007e-07,
+              "failed_values": 0,
+              "squared_error": 7.311150856336456e-10,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.516786465409598e-07,
+              "failed_values": 0,
+              "squared_error": 7.311150856529346e-10,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 6,
+          "name": "/layers.0/Add_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.2695558846708153e-06,
+              "failed_values": 0,
+              "squared_error": 3.0599816492719334e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.2695558851149045e-06,
+              "failed_values": 0,
+              "squared_error": 3.0599816492194425e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 7,
+          "name": "/layers.0/final_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.193743807026415e-06,
+              "failed_values": 0,
+              "squared_error": 1.5410035329845997e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.1937438054721028e-06,
+              "failed_values": 0,
+              "squared_error": 1.5410035330085393e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 8,
+          "name": "/layers.0/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.204529400473554e-06,
+              "failed_values": 0,
+              "squared_error": 5.676116518628209e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.204529400973154e-06,
+              "failed_values": 0,
+              "squared_error": 5.676116518550585e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 9,
+          "name": "/layers.1/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.20290543700985e-06,
+              "failed_values": 0,
+              "squared_error": 5.7145591877379484e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.2029054375649615e-06,
+              "failed_values": 0,
+              "squared_error": 5.714559187692014e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 10,
+          "name": "/layers.2/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.1902402374540664e-06,
+              "failed_values": 0,
+              "squared_error": 6.035098704303602e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.1902402379536667e-06,
+              "failed_values": 0,
+              "squared_error": 6.035098704250291e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 11,
+          "name": "/layers.3/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.6947397624432767e-06,
+              "failed_values": 0,
+              "squared_error": 6.819804724073817e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.6947397619991875e-06,
+              "failed_values": 0,
+              "squared_error": 6.819804724025257e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 12,
+          "name": "/layers.4/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.675040584709798e-06,
+              "failed_values": 0,
+              "squared_error": 6.981353120836685e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.6750405842657088e-06,
+              "failed_values": 0,
+              "squared_error": 6.981353120790682e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 13,
+          "name": "/layers.5/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.689043129500135e-06,
+              "failed_values": 0,
+              "squared_error": 6.669137266243299e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.6890431289450234e-06,
+              "failed_values": 0,
+              "squared_error": 6.669137266219013e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 14,
+          "name": "/layers.6/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.5510254517691067e-06,
+              "failed_values": 0,
+              "squared_error": 5.994057206385461e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.5510254513250175e-06,
+              "failed_values": 0,
+              "squared_error": 5.994057206381406e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 15,
+          "name": "/layers.7/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.470417045041806e-06,
+              "failed_values": 0,
+              "squared_error": 5.702510284834204e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.470417044597717e-06,
+              "failed_values": 0,
+              "squared_error": 5.702510284842744e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 16,
+          "name": "/layers.8/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.484055447338207e-06,
+              "failed_values": 0,
+              "squared_error": 5.334146517537633e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.484055447282696e-06,
+              "failed_values": 0,
+              "squared_error": 5.3341465175305744e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 17,
+          "name": "/layers.9/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.4934059766890115e-06,
+              "failed_values": 0,
+              "squared_error": 4.940690063790222e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.4934059763559446e-06,
+              "failed_values": 0,
+              "squared_error": 4.940690063777492e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 18,
+          "name": "/layers.10/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.482950891002922e-06,
+              "failed_values": 0,
+              "squared_error": 4.444095479622966e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.4829508908918996e-06,
+              "failed_values": 0,
+              "squared_error": 4.4440954796207714e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 19,
+          "name": "/layers.11/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.27094693816543e-06,
+              "failed_values": 0,
+              "squared_error": 4.173543533961035e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.270946930393869e-06,
+              "failed_values": 0,
+              "squared_error": 4.17354353397166e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 20,
+          "name": "/layers.12/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3347339931367728e-06,
+              "failed_values": 0,
+              "squared_error": 3.963858159392413e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.3347339850321447e-06,
+              "failed_values": 0,
+              "squared_error": 3.963858159397775e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 21,
+          "name": "/layers.13/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.4101299991308167e-06,
+              "failed_values": 0,
+              "squared_error": 3.685237479059093e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.410129991137211e-06,
+              "failed_values": 0,
+              "squared_error": 3.685237479068671e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 22,
+          "name": "/layers.14/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.806062342597393e-06,
+              "failed_values": 0,
+              "squared_error": 3.283915495588109e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.8060623331604972e-06,
+              "failed_values": 0,
+              "squared_error": 3.2839154955942475e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 23,
+          "name": "/layers.15/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.930683031589485e-06,
+              "failed_values": 0,
+              "squared_error": 3.0974932837958626e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.9306830348727237e-06,
+              "failed_values": 0,
+              "squared_error": 3.097493283815872e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 24,
+          "name": "/layers.16/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.1541785178168524e-06,
+              "failed_values": 0,
+              "squared_error": 3.0368724201758116e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.154178506936667e-06,
+              "failed_values": 0,
+              "squared_error": 3.0368724202210386e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 25,
+          "name": "/layers.17/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.4213301010650784e-06,
+              "failed_values": 0,
+              "squared_error": 2.936952971635988e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.4213301045851694e-06,
+              "failed_values": 0,
+              "squared_error": 2.936952971760519e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 26,
+          "name": "/layers.18/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.222155503218428e-06,
+              "failed_values": 0,
+              "squared_error": 2.7761769067562805e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.22215550742021e-06,
+              "failed_values": 0,
+              "squared_error": 2.776176906872179e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 27,
+          "name": "/layers.19/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.142248152014474e-06,
+              "failed_values": 0,
+              "squared_error": 2.7491705314009272e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.142248154456965e-06,
+              "failed_values": 0,
+              "squared_error": 2.7491705312881203e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 28,
+          "name": "/layers.20/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00010608162064329463,
+              "failed_values": 2,
+              "squared_error": 3.992130009945796e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00010608162029224211,
+              "failed_values": 2,
+              "squared_error": 3.99212999957086e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 29,
+          "name": "/layers.21/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.189854788880456e-05,
+              "failed_values": 0,
+              "squared_error": 4.004071394391587e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.189854765088377e-05,
+              "failed_values": 0,
+              "squared_error": 4.00407138400375e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 30,
+          "name": "/layers.22/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.910207414338119e-05,
+              "failed_values": 0,
+              "squared_error": 3.996385123919413e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.910207398073352e-05,
+              "failed_values": 0,
+              "squared_error": 3.996385113550453e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 31,
+          "name": "/layers.23/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.503316655970259e-05,
+              "failed_values": 0,
+              "squared_error": 4.050009234935624e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.503316634431933e-05,
+              "failed_values": 0,
+              "squared_error": 4.050009224549066e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 32,
+          "name": "/layers.24/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.067767797197533e-05,
+              "failed_values": 0,
+              "squared_error": 4.087479021665081e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.067767773683009e-05,
+              "failed_values": 0,
+              "squared_error": 4.087479011217074e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 33,
+          "name": "/layers.25/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.452044060118901e-05,
+              "failed_values": 0,
+              "squared_error": 4.147362748215785e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.452044035249905e-05,
+              "failed_values": 0,
+              "squared_error": 4.1473627377119356e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 34,
+          "name": "/layers.26/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.399556052400946e-05,
+              "failed_values": 0,
+              "squared_error": 4.339816243494465e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.399556027487542e-05,
+              "failed_values": 0,
+              "squared_error": 4.339816232574034e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 35,
+          "name": "/layers.27/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.147273351184371e-05,
+              "failed_values": 0,
+              "squared_error": 5.049796270929876e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.147273320392335e-05,
+              "failed_values": 0,
+              "squared_error": 5.049796257225046e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 36,
+          "name": "/layers.28/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00013441188686780237,
+              "failed_values": 11,
+              "squared_error": 7.055432658399361e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00013441188641566404,
+              "failed_values": 11,
+              "squared_error": 7.055432635492923e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 37,
+          "name": "/layers.29/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00016142734683344262,
+              "failed_values": 26,
+              "squared_error": 9.111474829311591e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00016142734629009947,
+              "failed_values": 26,
+              "squared_error": 9.111474801382206e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 38,
+          "name": "/layers.30/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00021532105790778022,
+              "failed_values": 157,
+              "squared_error": 1.8323353768902414e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00021532105716659533,
+              "failed_values": 157,
+              "squared_error": 1.8323353711244844e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 39,
+          "name": "/layers.31/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0006952473514183488,
+              "failed_values": 1019,
+              "squared_error": 7.111347836038644e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0006952473510035695,
+              "failed_values": 1019,
+              "squared_error": 7.111347812241942e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 40,
+          "name": "last_hidden_state",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0006606323662921576,
+              "failed_values": 3600,
+              "squared_error": 0.00022494734867083244,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0006606323639679057,
+              "failed_values": 3600,
+              "squared_error": 0.00022494734821411447,
+              "values": 1920000
+            }
+          }
+        }
+      ],
+      "original_fp32_final": {
+        "MM": {
+          "max_scaled": 0.0011268258094787598,
+          "failed_values": 15700,
+          "squared_error": 0.001045179152268233,
+          "values": 1920000
+        },
+        "NM": {
+          "max_scaled": 0.003611266613006592,
+          "failed_values": 16868,
+          "squared_error": 0.002457336340576034,
+          "values": 1920000
+        }
+      },
+      "diagnostic_seconds": 32.68187199998647,
+      "scalar_coordinates": 0
+    },
+    {
+      "job": {
+        "id": "01-wide-matmul",
+        "request": 1,
+        "mode": "wide-matmul"
+      },
+      "name": "1089-134686-0002",
+      "boundaries": [
+        {
+          "index": 0,
+          "name": "/conv1/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.3160727867500555e-06,
+              "failed_values": 0,
+              "squared_error": 2.95335457281278e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.3160727867500555e-06,
+              "failed_values": 0,
+              "squared_error": 2.95335457281278e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 1,
+          "name": "/Mul_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.83582850833109e-07,
+              "failed_values": 0,
+              "squared_error": 1.3023596430700388e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 9.83582850833109e-07,
+              "failed_values": 0,
+              "squared_error": 1.3023596430641126e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 2,
+          "name": "/conv2/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.892303550110057e-07,
+              "failed_values": 0,
+              "squared_error": 4.916168224708723e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.892303548999834e-07,
+              "failed_values": 0,
+              "squared_error": 4.916168224699989e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 3,
+          "name": "/Mul_3_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.658655689051329e-07,
+              "failed_values": 0,
+              "squared_error": 4.568774854316573e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.658655683500214e-07,
+              "failed_values": 0,
+              "squared_error": 4.5687748540178086e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 4,
+          "name": "/Add_2_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.658655689051329e-07,
+              "failed_values": 0,
+              "squared_error": 5.341502504815117e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.658655683500214e-07,
+              "failed_values": 0,
+              "squared_error": 5.341502504465231e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 5,
+          "name": "/layers.0/self_attn_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.5167864634549007e-07,
+              "failed_values": 0,
+              "squared_error": 7.311150856336456e-10,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.516786465409598e-07,
+              "failed_values": 0,
+              "squared_error": 7.311150856529346e-10,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 6,
+          "name": "/layers.0/Add_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.400882551771403e-07,
+              "failed_values": 0,
+              "squared_error": 6.525910536411428e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.400882548440734e-07,
+              "failed_values": 0,
+              "squared_error": 6.525910536051738e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 7,
+          "name": "/layers.0/final_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.581784002841374e-07,
+              "failed_values": 0,
+              "squared_error": 4.416226038241611e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.581784002286263e-07,
+              "failed_values": 0,
+              "squared_error": 4.4162260383654836e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 8,
+          "name": "/layers.0/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.868034958529279e-07,
+              "failed_values": 0,
+              "squared_error": 7.2576387217608515e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.868034956308833e-07,
+              "failed_values": 0,
+              "squared_error": 7.257638720922427e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 9,
+          "name": "/layers.1/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.557155252052857e-07,
+              "failed_values": 0,
+              "squared_error": 7.1345789225075245e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.557155252052857e-07,
+              "failed_values": 0,
+              "squared_error": 7.134578922064031e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 10,
+          "name": "/layers.2/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.713074486919208e-07,
+              "failed_values": 0,
+              "squared_error": 7.61956244547107e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.713074486919208e-07,
+              "failed_values": 0,
+              "squared_error": 7.61956244501267e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 11,
+          "name": "/layers.3/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.181013857466723e-07,
+              "failed_values": 0,
+              "squared_error": 8.022825937978164e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.181013857466723e-07,
+              "failed_values": 0,
+              "squared_error": 8.022825937522702e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 12,
+          "name": "/layers.4/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.074791112422375e-07,
+              "failed_values": 0,
+              "squared_error": 8.392847734218489e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.074791113532598e-07,
+              "failed_values": 0,
+              "squared_error": 8.392847733812295e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 13,
+          "name": "/layers.5/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.869202109933582e-07,
+              "failed_values": 0,
+              "squared_error": 8.682463212394057e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.869202111043805e-07,
+              "failed_values": 0,
+              "squared_error": 8.682463211928365e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 14,
+          "name": "/layers.6/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.026756804502266e-07,
+              "failed_values": 0,
+              "squared_error": 8.62704855346843e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.026756779799804e-07,
+              "failed_values": 0,
+              "squared_error": 8.627048553035696e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 15,
+          "name": "/layers.7/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.934704436886932e-07,
+              "failed_values": 0,
+              "squared_error": 8.823258355989346e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.934704413572248e-07,
+              "failed_values": 0,
+              "squared_error": 8.82325835542765e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 16,
+          "name": "/layers.8/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.172971619278762e-06,
+              "failed_values": 0,
+              "squared_error": 8.896981592262443e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.1729716163921822e-06,
+              "failed_values": 0,
+              "squared_error": 8.896981591383576e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 17,
+          "name": "/layers.9/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.1978325484829355e-06,
+              "failed_values": 0,
+              "squared_error": 8.86241064281555e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.1978325454853334e-06,
+              "failed_values": 0,
+              "squared_error": 8.862410641838377e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 18,
+          "name": "/layers.10/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.5159946399848017e-06,
+              "failed_values": 0,
+              "squared_error": 8.848389521228127e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.5159946358483595e-06,
+              "failed_values": 0,
+              "squared_error": 8.848389520309216e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 19,
+          "name": "/layers.11/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.4276277449738168e-06,
+              "failed_values": 0,
+              "squared_error": 9.104082212749156e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.4276277408315093e-06,
+              "failed_values": 0,
+              "squared_error": 9.104082211462291e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 20,
+          "name": "/layers.12/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.3480381425012844e-06,
+              "failed_values": 0,
+              "squared_error": 9.187711903441465e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.3480381390040819e-06,
+              "failed_values": 0,
+              "squared_error": 9.187711902282812e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 21,
+          "name": "/layers.13/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.241491329018185e-06,
+              "failed_values": 0,
+              "squared_error": 8.990005833781709e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.2414913257152715e-06,
+              "failed_values": 0,
+              "squared_error": 8.990005832571137e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 22,
+          "name": "/layers.14/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.5243476422444204e-06,
+              "failed_values": 0,
+              "squared_error": 8.431455867646835e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.5243476376101041e-06,
+              "failed_values": 0,
+              "squared_error": 8.431455866273394e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 23,
+          "name": "/layers.15/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.543437318840546e-06,
+              "failed_values": 0,
+              "squared_error": 8.400634943769481e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.5434373201728135e-06,
+              "failed_values": 0,
+              "squared_error": 8.400634942199687e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 24,
+          "name": "/layers.16/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.7370784168857512e-06,
+              "failed_values": 0,
+              "squared_error": 8.779042814206166e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.7370784184400634e-06,
+              "failed_values": 0,
+              "squared_error": 8.779042812421966e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 25,
+          "name": "/layers.17/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.9957991101993144e-06,
+              "failed_values": 0,
+              "squared_error": 9.06953702963532e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.9957991119756713e-06,
+              "failed_values": 0,
+              "squared_error": 9.069537027062722e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 26,
+          "name": "/layers.18/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.8436678442032882e-06,
+              "failed_values": 0,
+              "squared_error": 8.98751739481921e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.8436678457718473e-06,
+              "failed_values": 0,
+              "squared_error": 8.98751739256354e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 27,
+          "name": "/layers.19/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.0891323072879118e-06,
+              "failed_values": 0,
+              "squared_error": 9.245369505805851e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.0891323097304024e-06,
+              "failed_values": 0,
+              "squared_error": 9.245369502670642e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 28,
+          "name": "/layers.20/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.3333643486344045e-05,
+              "failed_values": 0,
+              "squared_error": 2.3591271904691247e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.3333643837396565e-05,
+              "failed_values": 0,
+              "squared_error": 2.359127193621556e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 29,
+          "name": "/layers.21/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.2515209435414185e-05,
+              "failed_values": 0,
+              "squared_error": 2.3646816377900384e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.251520967333498e-05,
+              "failed_values": 0,
+              "squared_error": 2.3646816409031106e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 30,
+          "name": "/layers.22/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.1646234596602045e-05,
+              "failed_values": 0,
+              "squared_error": 2.3505882236698203e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.164623457888038e-05,
+              "failed_values": 0,
+              "squared_error": 2.350588226773573e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 31,
+          "name": "/layers.23/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.422225253733716e-05,
+              "failed_values": 0,
+              "squared_error": 2.394959260023994e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.4222252517658774e-05,
+              "failed_values": 0,
+              "squared_error": 2.394959263123519e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 32,
+          "name": "/layers.24/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.5875943712905905e-05,
+              "failed_values": 0,
+              "squared_error": 2.420794985507666e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.5875943691713283e-05,
+              "failed_values": 0,
+              "squared_error": 2.4207949884909803e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 33,
+          "name": "/layers.25/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.7297734925157968e-05,
+              "failed_values": 0,
+              "squared_error": 2.4430558441831792e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.7297734902842485e-05,
+              "failed_values": 0,
+              "squared_error": 2.4430558472165774e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 34,
+          "name": "/layers.26/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.7183089419846596e-05,
+              "failed_values": 0,
+              "squared_error": 2.4975866912246722e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.7183089397753157e-05,
+              "failed_values": 0,
+              "squared_error": 2.497586694368342e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 35,
+          "name": "/layers.27/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.9584300026974653e-05,
+              "failed_values": 0,
+              "squared_error": 2.6300003709129665e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.958430033489501e-05,
+              "failed_values": 0,
+              "squared_error": 2.6300003748832234e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 36,
+          "name": "/layers.28/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.371659404345252e-05,
+              "failed_values": 0,
+              "squared_error": 2.9378694952722667e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.3716594495590844e-05,
+              "failed_values": 0,
+              "squared_error": 2.9378695022564333e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 37,
+          "name": "/layers.29/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.288115345647437e-05,
+              "failed_values": 0,
+              "squared_error": 3.2859733401182355e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.288115399981752e-05,
+              "failed_values": 0,
+              "squared_error": 3.2859733485872067e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 38,
+          "name": "/layers.30/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.211255529027127e-05,
+              "failed_values": 0,
+              "squared_error": 4.750213863583016e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.211255603278843e-05,
+              "failed_values": 0,
+              "squared_error": 4.750213881139688e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 39,
+          "name": "/layers.31/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00019819374908491838,
+              "failed_values": 55,
+              "squared_error": 1.3090982094607937e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00019819375112328785,
+              "failed_values": 55,
+              "squared_error": 1.309098216827432e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 40,
+          "name": "last_hidden_state",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00028371512571545576,
+              "failed_values": 326,
+              "squared_error": 4.2291480156801626e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00028371512589009384,
+              "failed_values": 326,
+              "squared_error": 4.229148027985113e-05,
+              "values": 1920000
+            }
+          }
+        }
+      ],
+      "original_fp32_final": {
+        "MM": {
+          "max_scaled": 0.0019269883632659912,
+          "failed_values": 16847,
+          "squared_error": 0.0012530009024099287,
+          "values": 1920000
+        },
+        "NM": {
+          "max_scaled": 0.0027219653129577637,
+          "failed_values": 12663,
+          "squared_error": 0.0015483237979781361,
+          "values": 1920000
+        }
+      },
+      "diagnostic_seconds": 55.468558399996255,
+      "scalar_coordinates": 768
+    },
+    {
+      "job": {
+        "id": "02-float32",
+        "request": 2,
+        "mode": "float32"
+      },
+      "name": "908-157963-0000",
+      "boundaries": [
+        {
+          "index": 0,
+          "name": "/conv1/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.3535179674046362e-06,
+              "failed_values": 0,
+              "squared_error": 1.3099185805637443e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.3535179674046362e-06,
+              "failed_values": 0,
+              "squared_error": 1.3099185805637443e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 1,
+          "name": "/Mul_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.0750843091322793e-06,
+              "failed_values": 0,
+              "squared_error": 3.577099460312666e-09,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.0750843091322793e-06,
+              "failed_values": 0,
+              "squared_error": 3.577099460374618e-09,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 2,
+          "name": "/conv2/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.46225474067297e-07,
+              "failed_values": 0,
+              "squared_error": 4.8576534284246326e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.46225474067297e-07,
+              "failed_values": 0,
+              "squared_error": 4.857653428509483e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 3,
+          "name": "/Mul_3_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.727722799970692e-07,
+              "failed_values": 0,
+              "squared_error": 2.640799781359019e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.727722799970692e-07,
+              "failed_values": 0,
+              "squared_error": 2.6407997815604767e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 4,
+          "name": "/Add_2_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.727722799970692e-07,
+              "failed_values": 0,
+              "squared_error": 3.3828426535057712e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.727722799970692e-07,
+              "failed_values": 0,
+              "squared_error": 3.3828426537199763e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 5,
+          "name": "/layers.0/self_attn_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.292881816655802e-07,
+              "failed_values": 0,
+              "squared_error": 5.8449036122973e-10,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.2928818147014354e-07,
+              "failed_values": 0,
+              "squared_error": 5.844903612294961e-10,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 6,
+          "name": "/layers.0/Add_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.5856047329853027e-06,
+              "failed_values": 0,
+              "squared_error": 2.971258512847277e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.585604731986102e-06,
+              "failed_values": 0,
+              "squared_error": 2.971258512905283e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 7,
+          "name": "/layers.0/final_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.3493033076406036e-06,
+              "failed_values": 0,
+              "squared_error": 1.597865205821788e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.349303308528782e-06,
+              "failed_values": 0,
+              "squared_error": 1.5978652058475345e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 8,
+          "name": "/layers.0/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.6393430715421218e-06,
+              "failed_values": 0,
+              "squared_error": 5.610595152248673e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.6393430706539434e-06,
+              "failed_values": 0,
+              "squared_error": 5.610595152292721e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 9,
+          "name": "/layers.1/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.6177454783837817e-06,
+              "failed_values": 0,
+              "squared_error": 5.657773399076253e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.6177454774956033e-06,
+              "failed_values": 0,
+              "squared_error": 5.657773399136701e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 10,
+          "name": "/layers.2/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.551519989624218e-06,
+              "failed_values": 0,
+              "squared_error": 6.00492027929808e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.551519988847062e-06,
+              "failed_values": 0,
+              "squared_error": 6.004920279337131e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 11,
+          "name": "/layers.3/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.5704917239188774e-06,
+              "failed_values": 0,
+              "squared_error": 6.828213512795715e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.570491723419277e-06,
+              "failed_values": 0,
+              "squared_error": 6.828213512826517e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 12,
+          "name": "/layers.4/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.4010580094445686e-06,
+              "failed_values": 0,
+              "squared_error": 7.002932345102018e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.401058009167013e-06,
+              "failed_values": 0,
+              "squared_error": 7.002932345120183e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 13,
+          "name": "/layers.5/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.471341035510278e-06,
+              "failed_values": 0,
+              "squared_error": 6.677123779983133e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.4713410353437446e-06,
+              "failed_values": 0,
+              "squared_error": 6.677123779980624e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 14,
+          "name": "/layers.6/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.4975050141605735e-06,
+              "failed_values": 0,
+              "squared_error": 5.966227895727784e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.497505014049551e-06,
+              "failed_values": 0,
+              "squared_error": 5.966227895698656e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 15,
+          "name": "/layers.7/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.5080728409409012e-06,
+              "failed_values": 0,
+              "squared_error": 5.666927593594221e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.508072840829879e-06,
+              "failed_values": 0,
+              "squared_error": 5.6669275935473505e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 16,
+          "name": "/layers.8/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.254241042041664e-06,
+              "failed_values": 0,
+              "squared_error": 5.2656186026081175e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.2542410418248695e-06,
+              "failed_values": 0,
+              "squared_error": 5.265618602541773e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 17,
+          "name": "/layers.9/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.354236892438767e-06,
+              "failed_values": 0,
+              "squared_error": 4.852644764565992e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.354236889547241e-06,
+              "failed_values": 0,
+              "squared_error": 4.8526447644974284e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 18,
+          "name": "/layers.10/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.477752442610145e-06,
+              "failed_values": 0,
+              "squared_error": 4.3450610109194145e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.4777524396499036e-06,
+              "failed_values": 0,
+              "squared_error": 4.345061010848802e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 19,
+          "name": "/layers.11/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.731989448868807e-06,
+              "failed_values": 0,
+              "squared_error": 4.09562735967589e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.7319894454471195e-06,
+              "failed_values": 0,
+              "squared_error": 4.09562735956883e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 20,
+          "name": "/layers.12/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.1212461080844346e-06,
+              "failed_values": 0,
+              "squared_error": 3.878061448569448e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.121246104297177e-06,
+              "failed_values": 0,
+              "squared_error": 3.8780614484642194e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 21,
+          "name": "/layers.13/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.389730309716865e-06,
+              "failed_values": 0,
+              "squared_error": 3.566201771413644e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.3897303055662365e-06,
+              "failed_values": 0,
+              "squared_error": 3.5662017713256786e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 22,
+          "name": "/layers.14/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.966145221010416e-06,
+              "failed_values": 0,
+              "squared_error": 3.136315835974165e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.966145216414874e-06,
+              "failed_values": 0,
+              "squared_error": 3.136315835863681e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 23,
+          "name": "/layers.15/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.326268211940228e-06,
+              "failed_values": 0,
+              "squared_error": 2.9161385956166564e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.326268207069313e-06,
+              "failed_values": 0,
+              "squared_error": 2.916138595487214e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 24,
+          "name": "/layers.16/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.717893588009881e-06,
+              "failed_values": 0,
+              "squared_error": 2.8397690533470073e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.717893582588848e-06,
+              "failed_values": 0,
+              "squared_error": 2.8397690532059737e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 25,
+          "name": "/layers.17/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.10261143517279e-06,
+              "failed_values": 0,
+              "squared_error": 2.7248047697297238e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.102611429444787e-06,
+              "failed_values": 0,
+              "squared_error": 2.724804769367658e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 26,
+          "name": "/layers.18/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.531641990543364e-06,
+              "failed_values": 0,
+              "squared_error": 2.551742818618483e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.53164198564558e-06,
+              "failed_values": 0,
+              "squared_error": 2.5517428183244544e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 27,
+          "name": "/layers.19/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.484687125771991e-06,
+              "failed_values": 0,
+              "squared_error": 2.3402819102425113e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.484687121331099e-06,
+              "failed_values": 0,
+              "squared_error": 2.340281910032246e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 28,
+          "name": "/layers.20/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.174850191495379e-05,
+              "failed_values": 0,
+              "squared_error": 1.9408961252683385e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.174850195055721e-05,
+              "failed_values": 0,
+              "squared_error": 1.9408961222283707e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 29,
+          "name": "/layers.21/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00010037329628024839,
+              "failed_values": 1,
+              "squared_error": 1.9763512719808754e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00010037329631933049,
+              "failed_values": 1,
+              "squared_error": 1.9763512689598383e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 30,
+          "name": "/layers.22/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00011430847277226353,
+              "failed_values": 2,
+              "squared_error": 1.9847815902439836e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00011430847281671101,
+              "failed_values": 2,
+              "squared_error": 1.9847815872340782e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 31,
+          "name": "/layers.23/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0001263834777633272,
+              "failed_values": 2,
+              "squared_error": 2.0093409273141115e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00012638347781237318,
+              "failed_values": 2,
+              "squared_error": 2.009340924290487e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 32,
+          "name": "/layers.24/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00013892700723506946,
+              "failed_values": 3,
+              "squared_error": 2.0918584062861526e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00013892700728908313,
+              "failed_values": 3,
+              "squared_error": 2.0918584032896914e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 33,
+          "name": "/layers.25/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00014544848923192505,
+              "failed_values": 3,
+              "squared_error": 2.1743820482518377e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00014544848928827267,
+              "failed_values": 3,
+              "squared_error": 2.1743820452376756e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 34,
+          "name": "/layers.26/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00015644330440384987,
+              "failed_values": 3,
+              "squared_error": 2.240893757252289e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00015644330446348842,
+              "failed_values": 3,
+              "squared_error": 2.240893754175254e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 35,
+          "name": "/layers.27/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00016393528767454798,
+              "failed_values": 3,
+              "squared_error": 2.4150988368392114e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0001639352877370206,
+              "failed_values": 3,
+              "squared_error": 2.4150988336522754e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 36,
+          "name": "/layers.28/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.000175677562240093,
+              "failed_values": 7,
+              "squared_error": 3.423189262412626e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00017567756230713025,
+              "failed_values": 7,
+              "squared_error": 3.4231892580205087e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 37,
+          "name": "/layers.29/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00017832512872202835,
+              "failed_values": 12,
+              "squared_error": 4.861345453473581e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0001783251287900117,
+              "failed_values": 12,
+              "squared_error": 4.8613454471485295e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 38,
+          "name": "/layers.30/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00022813397273910296,
+              "failed_values": 10,
+              "squared_error": 7.707455450559675e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00022813397266346902,
+              "failed_values": 10,
+              "squared_error": 7.707455441696995e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 39,
+          "name": "/layers.31/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0005148535124259168,
+              "failed_values": 154,
+              "squared_error": 2.1459399680373276e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.000514853512239899,
+              "failed_values": 154,
+              "squared_error": 2.145939966742018e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 40,
+          "name": "last_hidden_state",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0007829044351473913,
+              "failed_values": 225,
+              "squared_error": 4.6774732866208295e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0007829044348508507,
+              "failed_values": 225,
+              "squared_error": 4.677473287726765e-05,
+              "values": 1920000
+            }
+          }
+        }
+      ],
+      "original_fp32_final": {
+        "MM": {
+          "max_scaled": 0.00099945068359375,
+          "failed_values": 4857,
+          "squared_error": 0.0003676218062547566,
+          "values": 1920000
+        },
+        "NM": {
+          "max_scaled": 0.003833472728729248,
+          "failed_values": 4250,
+          "squared_error": 0.000446686846534715,
+          "values": 1920000
+        }
+      },
+      "diagnostic_seconds": 32.47818129998632,
+      "scalar_coordinates": 0
+    },
+    {
+      "job": {
+        "id": "02-wide-matmul",
+        "request": 2,
+        "mode": "wide-matmul"
+      },
+      "name": "908-157963-0000",
+      "boundaries": [
+        {
+          "index": 0,
+          "name": "/conv1/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.3535179674046362e-06,
+              "failed_values": 0,
+              "squared_error": 1.3099185805637443e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.3535179674046362e-06,
+              "failed_values": 0,
+              "squared_error": 1.3099185805637443e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 1,
+          "name": "/Mul_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.0750843091322793e-06,
+              "failed_values": 0,
+              "squared_error": 3.577099460312666e-09,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.0750843091322793e-06,
+              "failed_values": 0,
+              "squared_error": 3.577099460374618e-09,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 2,
+          "name": "/conv2/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.46225474067297e-07,
+              "failed_values": 0,
+              "squared_error": 4.8576534284246326e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.46225474067297e-07,
+              "failed_values": 0,
+              "squared_error": 4.857653428509483e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 3,
+          "name": "/Mul_3_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.727722799970692e-07,
+              "failed_values": 0,
+              "squared_error": 2.640799781359019e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.727722799970692e-07,
+              "failed_values": 0,
+              "squared_error": 2.6407997815604767e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 4,
+          "name": "/Add_2_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.727722799970692e-07,
+              "failed_values": 0,
+              "squared_error": 3.3828426535057712e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.727722799970692e-07,
+              "failed_values": 0,
+              "squared_error": 3.3828426537199763e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 5,
+          "name": "/layers.0/self_attn_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.292881816655802e-07,
+              "failed_values": 0,
+              "squared_error": 5.8449036122973e-10,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.2928818147014354e-07,
+              "failed_values": 0,
+              "squared_error": 5.844903612294961e-10,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 6,
+          "name": "/layers.0/Add_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.997565257312276e-07,
+              "failed_values": 0,
+              "squared_error": 5.058440553708534e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.997565257312276e-07,
+              "failed_values": 0,
+              "squared_error": 5.058440554306191e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 7,
+          "name": "/layers.0/final_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.423753008468537e-07,
+              "failed_values": 0,
+              "squared_error": 4.22319131167416e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.423753005137868e-07,
+              "failed_values": 0,
+              "squared_error": 4.223191311678921e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 8,
+          "name": "/layers.0/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.166215169070236e-07,
+              "failed_values": 0,
+              "squared_error": 5.649164444716507e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.166215169070236e-07,
+              "failed_values": 0,
+              "squared_error": 5.649164445139829e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 9,
+          "name": "/layers.1/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.697671327113941e-07,
+              "failed_values": 0,
+              "squared_error": 6.0162165743590226e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.697671327113941e-07,
+              "failed_values": 0,
+              "squared_error": 6.0162165748247865e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 10,
+          "name": "/layers.2/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.956058251288318e-07,
+              "failed_values": 0,
+              "squared_error": 6.5913057356450935e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.956058251288318e-07,
+              "failed_values": 0,
+              "squared_error": 6.591305736044977e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 11,
+          "name": "/layers.3/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.54636619460948e-07,
+              "failed_values": 0,
+              "squared_error": 7.085581034082622e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.546366196796498e-07,
+              "failed_values": 0,
+              "squared_error": 7.085581034505397e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 12,
+          "name": "/layers.4/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.0450207328180985e-06,
+              "failed_values": 0,
+              "squared_error": 7.540567611366956e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.0450207330378798e-06,
+              "failed_values": 0,
+              "squared_error": 7.540567611776392e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 13,
+          "name": "/layers.5/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.829084950313901e-07,
+              "failed_values": 0,
+              "squared_error": 7.874431092704206e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.829084950313901e-07,
+              "failed_values": 0,
+              "squared_error": 7.874431093100448e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 14,
+          "name": "/layers.6/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.475945308864633e-07,
+              "failed_values": 0,
+              "squared_error": 7.910981384124456e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.475945308864633e-07,
+              "failed_values": 0,
+              "squared_error": 7.910981384508326e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 15,
+          "name": "/layers.7/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.664699429061784e-07,
+              "failed_values": 0,
+              "squared_error": 8.17119896897737e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.664699429061784e-07,
+              "failed_values": 0,
+              "squared_error": 8.171198969299904e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 16,
+          "name": "/layers.8/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.146361490408594e-07,
+              "failed_values": 0,
+              "squared_error": 8.189825328183287e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.146361525935731e-07,
+              "failed_values": 0,
+              "squared_error": 8.189825328499987e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 17,
+          "name": "/layers.9/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.70430123148347e-07,
+              "failed_values": 0,
+              "squared_error": 8.168772515459546e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.704301185964326e-07,
+              "failed_values": 0,
+              "squared_error": 8.168772515735203e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 18,
+          "name": "/layers.10/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.0358177524594225e-06,
+              "failed_values": 0,
+              "squared_error": 8.210206874627117e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.0358177473523966e-06,
+              "failed_values": 0,
+              "squared_error": 8.210206874830635e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 19,
+          "name": "/layers.11/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.1616142083781256e-06,
+              "failed_values": 0,
+              "squared_error": 8.456118178402906e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.1616142028270104e-06,
+              "failed_values": 0,
+              "squared_error": 8.456118178567368e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 20,
+          "name": "/layers.12/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.2238543309894823e-06,
+              "failed_values": 0,
+              "squared_error": 8.492489407778005e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.2238543252163225e-06,
+              "failed_values": 0,
+              "squared_error": 8.492489407897209e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 21,
+          "name": "/layers.13/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.256760177925642e-06,
+              "failed_values": 0,
+              "squared_error": 8.167043888767933e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.2567601721524824e-06,
+              "failed_values": 0,
+              "squared_error": 8.167043888895157e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 22,
+          "name": "/layers.14/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.5146984129188468e-06,
+              "failed_values": 0,
+              "squared_error": 7.477689973184338e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.5146984190250734e-06,
+              "failed_values": 0,
+              "squared_error": 7.47768997330722e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 23,
+          "name": "/layers.15/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.6936348171681104e-06,
+              "failed_values": 0,
+              "squared_error": 7.327937867100158e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.6936348240514931e-06,
+              "failed_values": 0,
+              "squared_error": 7.327937867182187e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 24,
+          "name": "/layers.16/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.8812593020841642e-06,
+              "failed_values": 0,
+              "squared_error": 7.541932947855562e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.8812593097900653e-06,
+              "failed_values": 0,
+              "squared_error": 7.541932947775986e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 25,
+          "name": "/layers.17/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.292102976702309e-06,
+              "failed_values": 0,
+              "squared_error": 7.327407822967156e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.292102985675588e-06,
+              "failed_values": 0,
+              "squared_error": 7.327407822534844e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 26,
+          "name": "/layers.18/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.677922207205974e-06,
+              "failed_values": 0,
+              "squared_error": 7.14042661578936e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.6779222405126646e-06,
+              "failed_values": 0,
+              "squared_error": 7.140426615898886e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 27,
+          "name": "/layers.19/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.5806324584775062e-06,
+              "failed_values": 0,
+              "squared_error": 6.9233664293033814e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.5806325032750053e-06,
+              "failed_values": 0,
+              "squared_error": 6.923366430191834e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 28,
+          "name": "/layers.20/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00011766976294136007,
+              "failed_values": 2,
+              "squared_error": 2.7846526426885486e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0001176697629057492,
+              "failed_values": 2,
+              "squared_error": 2.784652640809042e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 29,
+          "name": "/layers.21/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0001287792146889149,
+              "failed_values": 2,
+              "squared_error": 2.851093530545882e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00012877921464982386,
+              "failed_values": 2,
+              "squared_error": 2.851093528649016e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 30,
+          "name": "/layers.22/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.000146669986057474,
+              "failed_values": 3,
+              "squared_error": 2.8746634874195e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0001466699860130149,
+              "failed_values": 3,
+              "squared_error": 2.874663485495246e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 31,
+          "name": "/layers.23/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0001622007255169306,
+              "failed_values": 4,
+              "squared_error": 2.900667503680978e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00016220072546787047,
+              "failed_values": 4,
+              "squared_error": 2.900667501739913e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 32,
+          "name": "/layers.24/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00017830926982430377,
+              "failed_values": 4,
+              "squared_error": 2.9807240206158798e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00017830926977027294,
+              "failed_values": 4,
+              "squared_error": 2.980724018640308e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 33,
+          "name": "/layers.25/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00018662940999995223,
+              "failed_values": 4,
+              "squared_error": 3.0570576284972434e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00018662940994358595,
+              "failed_values": 4,
+              "squared_error": 3.057057626473766e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 34,
+          "name": "/layers.26/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00020053020781326535,
+              "failed_values": 4,
+              "squared_error": 3.0954231225480408e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0002005302077536055,
+              "failed_values": 4,
+              "squared_error": 3.0954231204896097e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 35,
+          "name": "/layers.27/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00020986986929202712,
+              "failed_values": 4,
+              "squared_error": 3.1232770999422545e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00020986986922953113,
+              "failed_values": 4,
+              "squared_error": 3.123277097892288e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 36,
+          "name": "/layers.28/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0002249457261446438,
+              "failed_values": 4,
+              "squared_error": 3.226602144992756e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00022494572607757967,
+              "failed_values": 4,
+              "squared_error": 3.226602142865772e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 37,
+          "name": "/layers.29/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00022828406742235309,
+              "failed_values": 4,
+              "squared_error": 3.327364993872635e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00022828406735434209,
+              "failed_values": 4,
+              "squared_error": 3.3273649917392326e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 38,
+          "name": "/layers.30/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00023215067176339275,
+              "failed_values": 4,
+              "squared_error": 3.703874439515094e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0002321506716941421,
+              "failed_values": 4,
+              "squared_error": 3.703874437607588e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 39,
+          "name": "/layers.31/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00021484543910040176,
+              "failed_values": 5,
+              "squared_error": 5.461734229393407e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00021484543903553722,
+              "failed_values": 5,
+              "squared_error": 5.461734231106011e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 40,
+          "name": "last_hidden_state",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00045923149603444013,
+              "failed_values": 13,
+              "squared_error": 1.1335926015687622e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.0004592314959009913,
+              "failed_values": 13,
+              "squared_error": 1.1335926030959068e-05,
+              "values": 1920000
+            }
+          }
+        }
+      ],
+      "original_fp32_final": {
+        "MM": {
+          "max_scaled": 0.0018813610076904297,
+          "failed_values": 5618,
+          "squared_error": 0.00040100278497337365,
+          "values": 1920000
+        },
+        "NM": {
+          "max_scaled": 0.003016650676727295,
+          "failed_values": 3671,
+          "squared_error": 0.0003515249580691467,
+          "values": 1920000
+        }
+      },
+      "diagnostic_seconds": 54.771236500004306,
+      "scalar_coordinates": 768
+    },
+    {
+      "job": {
+        "id": "03-float32",
+        "request": 3,
+        "mode": "float32"
+      },
+      "name": "121-121726-0000",
+      "boundaries": [
+        {
+          "index": 0,
+          "name": "/conv1/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.877302793218405e-06,
+              "failed_values": 0,
+              "squared_error": 2.7776450982559057e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.877302793218405e-06,
+              "failed_values": 0,
+              "squared_error": 2.7776450982559057e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 1,
+          "name": "/Mul_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.08634153453513e-06,
+              "failed_values": 0,
+              "squared_error": 7.393451832939041e-09,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 2.0863415344241076e-06,
+              "failed_values": 0,
+              "squared_error": 7.393451833109361e-09,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 2,
+          "name": "/conv2/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.1545481970641305e-06,
+              "failed_values": 0,
+              "squared_error": 4.4498502826625786e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.1545481970641305e-06,
+              "failed_values": 0,
+              "squared_error": 4.44985028274457e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 3,
+          "name": "/Mul_3_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.528480256707583e-07,
+              "failed_values": 0,
+              "squared_error": 3.221237524229295e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.528480256707583e-07,
+              "failed_values": 0,
+              "squared_error": 3.2212375244169857e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 4,
+          "name": "/Add_2_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.97155479509226e-07,
+              "failed_values": 0,
+              "squared_error": 4.028199268092035e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.97155479509226e-07,
+              "failed_values": 0,
+              "squared_error": 4.028199268329286e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 5,
+          "name": "/layers.0/self_attn_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.5079929411674573e-07,
+              "failed_values": 0,
+              "squared_error": 6.531553340280288e-10,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.507992939258671e-07,
+              "failed_values": 0,
+              "squared_error": 6.531553340685473e-10,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 6,
+          "name": "/layers.0/Add_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.277317744270313e-06,
+              "failed_values": 0,
+              "squared_error": 2.9582186747033127e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.2773177438262238e-06,
+              "failed_values": 0,
+              "squared_error": 2.95821867478698e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 7,
+          "name": "/layers.0/final_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.496911175111193e-06,
+              "failed_values": 0,
+              "squared_error": 1.5190956872639438e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.4969111756663045e-06,
+              "failed_values": 0,
+              "squared_error": 1.5190956873539973e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 8,
+          "name": "/layers.0/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3025676300081344e-06,
+              "failed_values": 0,
+              "squared_error": 5.6306932433318915e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.302567629564045e-06,
+              "failed_values": 0,
+              "squared_error": 5.6306932434090456e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 9,
+          "name": "/layers.1/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3296583033793894e-06,
+              "failed_values": 0,
+              "squared_error": 5.7121371016088334e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.3296583030463225e-06,
+              "failed_values": 0,
+              "squared_error": 5.7121371016766794e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 10,
+          "name": "/layers.2/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3443141969892167e-06,
+              "failed_values": 0,
+              "squared_error": 6.032069252985975e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.3443141965451275e-06,
+              "failed_values": 0,
+              "squared_error": 6.032069253050037e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 11,
+          "name": "/layers.3/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.8767269560914244e-06,
+              "failed_values": 0,
+              "squared_error": 6.804664179409659e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.876726956757558e-06,
+              "failed_values": 0,
+              "squared_error": 6.804664179485178e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 12,
+          "name": "/layers.4/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.7853762485929856e-06,
+              "failed_values": 0,
+              "squared_error": 6.963266694517744e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.785376247649296e-06,
+              "failed_values": 0,
+              "squared_error": 6.963266694608296e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 13,
+          "name": "/layers.5/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.748695244636501e-06,
+              "failed_values": 0,
+              "squared_error": 6.655749904131283e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.7486952437483225e-06,
+              "failed_values": 0,
+              "squared_error": 6.655749904236674e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 14,
+          "name": "/layers.6/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.7241110851505823e-06,
+              "failed_values": 0,
+              "squared_error": 5.953697893741519e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.724111085705694e-06,
+              "failed_values": 0,
+              "squared_error": 5.9536978938343e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 15,
+          "name": "/layers.7/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3551942285870986e-06,
+              "failed_values": 0,
+              "squared_error": 5.659115744388573e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.3551942280874982e-06,
+              "failed_values": 0,
+              "squared_error": 5.659115744475737e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 16,
+          "name": "/layers.8/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.1640610943229888e-06,
+              "failed_values": 0,
+              "squared_error": 5.3059772932711905e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.1640610943229888e-06,
+              "failed_values": 0,
+              "squared_error": 5.3059772933702576e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 17,
+          "name": "/layers.9/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.189109700401204e-06,
+              "failed_values": 0,
+              "squared_error": 4.9003770490880924e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.1891096997905812e-06,
+              "failed_values": 0,
+              "squared_error": 4.900377049206956e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 18,
+          "name": "/layers.10/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.122090284221381e-06,
+              "failed_values": 0,
+              "squared_error": 4.393247762615819e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.1220902834328876e-06,
+              "failed_values": 0,
+              "squared_error": 4.393247762715197e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 19,
+          "name": "/layers.11/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.3707026170273093e-06,
+              "failed_values": 0,
+              "squared_error": 4.139312722848416e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.370702620729067e-06,
+              "failed_values": 0,
+              "squared_error": 4.139312722969722e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 20,
+          "name": "/layers.12/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.64640625946555e-06,
+              "failed_values": 0,
+              "squared_error": 3.9434056618885866e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.646406263462353e-06,
+              "failed_values": 0,
+              "squared_error": 3.94340566200682e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 21,
+          "name": "/layers.13/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.5973307548055047e-06,
+              "failed_values": 0,
+              "squared_error": 3.692107947655168e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.59733075891333e-06,
+              "failed_values": 0,
+              "squared_error": 3.692107947774748e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 22,
+          "name": "/layers.14/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.396051797777133e-06,
+              "failed_values": 0,
+              "squared_error": 3.3234207185057556e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.3960518029951814e-06,
+              "failed_values": 0,
+              "squared_error": 3.32342071864166e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 23,
+          "name": "/layers.15/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.892529162552449e-06,
+              "failed_values": 0,
+              "squared_error": 3.156440952255373e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.8925291684366314e-06,
+              "failed_values": 0,
+              "squared_error": 3.1564409523993526e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 24,
+          "name": "/layers.16/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.54713365061199e-06,
+              "failed_values": 0,
+              "squared_error": 3.162862715373822e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.54713365738435e-06,
+              "failed_values": 0,
+              "squared_error": 3.162862715502415e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 25,
+          "name": "/layers.17/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.871909198540415e-06,
+              "failed_values": 0,
+              "squared_error": 3.2526591417329873e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.871909207089132e-06,
+              "failed_values": 0,
+              "squared_error": 3.252659141673611e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 26,
+          "name": "/layers.18/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.7551683312699545e-06,
+              "failed_values": 0,
+              "squared_error": 3.247564523521426e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.7551683397029476e-06,
+              "failed_values": 0,
+              "squared_error": 3.247564523161759e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 27,
+          "name": "/layers.19/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.446049734134143e-06,
+              "failed_values": 0,
+              "squared_error": 3.277640186196803e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.446049691316308e-06,
+              "failed_values": 0,
+              "squared_error": 3.277640185535675e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 28,
+          "name": "/layers.20/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.442811692717541e-05,
+              "failed_values": 0,
+              "squared_error": 3.3551874701534893e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.442811712546124e-05,
+              "failed_values": 0,
+              "squared_error": 3.355187479633283e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 29,
+          "name": "/layers.21/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.470746901119593e-05,
+              "failed_values": 0,
+              "squared_error": 3.3710030961123303e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.4707469210925055e-05,
+              "failed_values": 0,
+              "squared_error": 3.371003105698566e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 30,
+          "name": "/layers.22/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.5403334973492804e-05,
+              "failed_values": 0,
+              "squared_error": 3.4135362123402685e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.540333517644157e-05,
+              "failed_values": 0,
+              "squared_error": 3.4135362220495403e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 31,
+          "name": "/layers.23/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.526858970482772e-05,
+              "failed_values": 0,
+              "squared_error": 3.4518764683124295e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.5268589906943824e-05,
+              "failed_values": 0,
+              "squared_error": 3.4518764780762363e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 32,
+          "name": "/layers.24/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.574196321566355e-05,
+              "failed_values": 0,
+              "squared_error": 3.5467739620795244e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.5741963421598515e-05,
+              "failed_values": 0,
+              "squared_error": 3.54677397194003e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 33,
+          "name": "/layers.25/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.839461701876682e-05,
+              "failed_values": 0,
+              "squared_error": 3.6321172014250678e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.839461723663701e-05,
+              "failed_values": 0,
+              "squared_error": 3.6321172113697746e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 34,
+          "name": "/layers.26/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.997134213243856e-05,
+              "failed_values": 0,
+              "squared_error": 3.7656077262131193e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.997134235771647e-05,
+              "failed_values": 0,
+              "squared_error": 3.7656077361548437e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 35,
+          "name": "/layers.27/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.4425251130393046e-05,
+              "failed_values": 0,
+              "squared_error": 4.064431246883833e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.442525137572805e-05,
+              "failed_values": 0,
+              "squared_error": 4.064431256893771e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 36,
+          "name": "/layers.28/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.669454852309287e-05,
+              "failed_values": 0,
+              "squared_error": 4.90293795240061e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.66945488320047e-05,
+              "failed_values": 0,
+              "squared_error": 4.902937963388682e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 37,
+          "name": "/layers.29/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.98181599470398e-05,
+              "failed_values": 0,
+              "squared_error": 6.406607541910385e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.981816026246557e-05,
+              "failed_values": 0,
+              "squared_error": 6.406607554154063e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 38,
+          "name": "/layers.30/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00011769547539119962,
+              "failed_values": 2,
+              "squared_error": 1.1755974248773168e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00011769547529261182,
+              "failed_values": 2,
+              "squared_error": 1.1755974263604903e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 39,
+          "name": "/layers.31/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0004753988241134483,
+              "failed_values": 209,
+              "squared_error": 3.829086317924495e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00047539882371005994,
+              "failed_values": 209,
+              "squared_error": 3.82908631928995e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 40,
+          "name": "last_hidden_state",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00041109681772272255,
+              "failed_values": 2246,
+              "squared_error": 0.00013932124705211263,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00041109681736128945,
+              "failed_values": 2246,
+              "squared_error": 0.00013932124707922893,
+              "values": 1920000
+            }
+          }
+        }
+      ],
+      "original_fp32_final": {
+        "MM": {
+          "max_scaled": 0.0016905367374420166,
+          "failed_values": 21123,
+          "squared_error": 0.0016464419803620873,
+          "values": 1920000
+        },
+        "NM": {
+          "max_scaled": 0.001284286379814148,
+          "failed_values": 15220,
+          "squared_error": 0.0010404979634977957,
+          "values": 1920000
+        }
+      },
+      "diagnostic_seconds": 32.84555269998964,
+      "scalar_coordinates": 0
+    },
+    {
+      "job": {
+        "id": "03-wide-matmul",
+        "request": 3,
+        "mode": "wide-matmul"
+      },
+      "name": "121-121726-0000",
+      "boundaries": [
+        {
+          "index": 0,
+          "name": "/conv1/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.877302793218405e-06,
+              "failed_values": 0,
+              "squared_error": 2.7776450982559057e-08,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 1.877302793218405e-06,
+              "failed_values": 0,
+              "squared_error": 2.7776450982559057e-08,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 1,
+          "name": "/Mul_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.08634153453513e-06,
+              "failed_values": 0,
+              "squared_error": 7.393451832939041e-09,
+              "values": 3840000
+            },
+            "ort": {
+              "max_scaled": 2.0863415344241076e-06,
+              "failed_values": 0,
+              "squared_error": 7.393451833109361e-09,
+              "values": 3840000
+            }
+          }
+        },
+        {
+          "index": 2,
+          "name": "/conv2/Conv_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.1545481970641305e-06,
+              "failed_values": 0,
+              "squared_error": 4.4498502826625786e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.1545481970641305e-06,
+              "failed_values": 0,
+              "squared_error": 4.44985028274457e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 3,
+          "name": "/Mul_3_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.528480256707583e-07,
+              "failed_values": 0,
+              "squared_error": 3.221237524229295e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.528480256707583e-07,
+              "failed_values": 0,
+              "squared_error": 3.2212375244169857e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 4,
+          "name": "/Add_2_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.97155479509226e-07,
+              "failed_values": 0,
+              "squared_error": 4.028199268092035e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.97155479509226e-07,
+              "failed_values": 0,
+              "squared_error": 4.028199268329286e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 5,
+          "name": "/layers.0/self_attn_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.5079929411674573e-07,
+              "failed_values": 0,
+              "squared_error": 6.531553340280288e-10,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.507992939258671e-07,
+              "failed_values": 0,
+              "squared_error": 6.531553340685473e-10,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 6,
+          "name": "/layers.0/Add_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.098933053033662e-07,
+              "failed_values": 0,
+              "squared_error": 5.793243877741748e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.098933051923439e-07,
+              "failed_values": 0,
+              "squared_error": 5.7932438785618535e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 7,
+          "name": "/layers.0/final_layer_norm/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 8.43902948299835e-07,
+              "failed_values": 0,
+              "squared_error": 4.265510880438902e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 8.439029481888127e-07,
+              "failed_values": 0,
+              "squared_error": 4.2655108808779834e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 8,
+          "name": "/layers.0/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.179346557231236e-07,
+              "failed_values": 0,
+              "squared_error": 6.3068019181521696e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.179346557231236e-07,
+              "failed_values": 0,
+              "squared_error": 6.3068019188549075e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 9,
+          "name": "/layers.1/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.03852790606696e-07,
+              "failed_values": 0,
+              "squared_error": 6.521154731221821e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.038527909397629e-07,
+              "failed_values": 0,
+              "squared_error": 6.52115473182387e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 10,
+          "name": "/layers.2/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.983160437679103e-07,
+              "failed_values": 0,
+              "squared_error": 6.990089212762335e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.983160441009773e-07,
+              "failed_values": 0,
+              "squared_error": 6.990089213261241e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 11,
+          "name": "/layers.3/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.123943748243988e-07,
+              "failed_values": 0,
+              "squared_error": 7.3861094857787e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.123943748243988e-07,
+              "failed_values": 0,
+              "squared_error": 7.386109486308485e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 12,
+          "name": "/layers.4/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 6.998466679508653e-07,
+              "failed_values": 0,
+              "squared_error": 7.772022834552041e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 6.998466679508653e-07,
+              "failed_values": 0,
+              "squared_error": 7.772022835160337e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 13,
+          "name": "/layers.5/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.092213517636338e-07,
+              "failed_values": 0,
+              "squared_error": 8.0190557992481e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.09221357314749e-07,
+              "failed_values": 0,
+              "squared_error": 8.019055799899665e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 14,
+          "name": "/layers.6/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.72428438994477e-07,
+              "failed_values": 0,
+              "squared_error": 7.95165163358117e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.72428444878659e-07,
+              "failed_values": 0,
+              "squared_error": 7.951651634181282e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 15,
+          "name": "/layers.7/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.2381825738039254e-06,
+              "failed_values": 0,
+              "squared_error": 8.137601103168314e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.2381825817975312e-06,
+              "failed_values": 0,
+              "squared_error": 8.137601103850607e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 16,
+          "name": "/layers.8/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.474821737845744e-06,
+              "failed_values": 0,
+              "squared_error": 8.149578544438159e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.4748217478377512e-06,
+              "failed_values": 0,
+              "squared_error": 8.149578545339607e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 17,
+          "name": "/layers.9/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.5512991405897125e-06,
+              "failed_values": 0,
+              "squared_error": 8.059475662763474e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.551299150692742e-06,
+              "failed_values": 0,
+              "squared_error": 8.059475663715367e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 18,
+          "name": "/layers.10/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.7080812948488955e-06,
+              "failed_values": 0,
+              "squared_error": 8.035265345792552e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.708081306395215e-06,
+              "failed_values": 0,
+              "squared_error": 8.035265346733689e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 19,
+          "name": "/layers.11/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 1.929365193387156e-06,
+              "failed_values": 0,
+              "squared_error": 8.303032289515958e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 1.9293652063767652e-06,
+              "failed_values": 0,
+              "squared_error": 8.303032290612242e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 20,
+          "name": "/layers.12/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.0384534722417413e-06,
+              "failed_values": 0,
+              "squared_error": 8.325482651440116e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.0384534857864622e-06,
+              "failed_values": 0,
+              "squared_error": 8.325482652501145e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 21,
+          "name": "/layers.13/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.0005778181841904e-06,
+              "failed_values": 0,
+              "squared_error": 8.063413600095952e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.0005778315068667e-06,
+              "failed_values": 0,
+              "squared_error": 8.063413601029744e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 22,
+          "name": "/layers.14/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 2.6831501064306096e-06,
+              "failed_values": 0,
+              "squared_error": 7.538849031536122e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 2.6831501244162226e-06,
+              "failed_values": 0,
+              "squared_error": 7.538849033017664e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 23,
+          "name": "/layers.15/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.1990279857341264e-06,
+              "failed_values": 0,
+              "squared_error": 7.494575627233149e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.199028006828364e-06,
+              "failed_values": 0,
+              "squared_error": 7.494575629304757e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 24,
+          "name": "/layers.16/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.697279559400357e-06,
+              "failed_values": 0,
+              "squared_error": 7.927718496702815e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.697279583936286e-06,
+              "failed_values": 0,
+              "squared_error": 7.927718499347074e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 25,
+          "name": "/layers.17/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.274404753063955e-06,
+              "failed_values": 0,
+              "squared_error": 8.50682222365808e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.274404787480869e-06,
+              "failed_values": 0,
+              "squared_error": 8.506822228537067e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 26,
+          "name": "/layers.18/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.85163521195048e-06,
+              "failed_values": 0,
+              "squared_error": 9.284764772966526e-09,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.851635263825977e-06,
+              "failed_values": 0,
+              "squared_error": 9.284764786093138e-09,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 27,
+          "name": "/layers.19/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 9.151893869634284e-06,
+              "failed_values": 0,
+              "squared_error": 1.0345464238647576e-08,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 9.151893930391803e-06,
+              "failed_values": 0,
+              "squared_error": 1.0345464265276986e-08,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 28,
+          "name": "/layers.20/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.7528749651945e-05,
+              "failed_values": 0,
+              "squared_error": 9.05482917716585e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.752874910604834e-05,
+              "failed_values": 0,
+              "squared_error": 9.054829203161244e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 29,
+          "name": "/layers.21/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 5.177016948654245e-05,
+              "failed_values": 0,
+              "squared_error": 9.078267770205295e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 5.1770169121834186e-05,
+              "failed_values": 0,
+              "squared_error": 9.078267796611549e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 30,
+          "name": "/layers.22/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.854358407873182e-05,
+              "failed_values": 0,
+              "squared_error": 9.163854163953125e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.854358380717127e-05,
+              "failed_values": 0,
+              "squared_error": 9.163854190540552e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 31,
+          "name": "/layers.23/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.6226597189003016e-05,
+              "failed_values": 0,
+              "squared_error": 9.177418867583973e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.6226596862597447e-05,
+              "failed_values": 0,
+              "squared_error": 9.177418893921037e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 32,
+          "name": "/layers.24/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.8612222724453424e-05,
+              "failed_values": 0,
+              "squared_error": 9.369396677628857e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.8612222380173264e-05,
+              "failed_values": 0,
+              "squared_error": 9.369396702956751e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 33,
+          "name": "/layers.25/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.9067460875962254e-05,
+              "failed_values": 0,
+              "squared_error": 9.73494427112174e-07,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.906746052746325e-05,
+              "failed_values": 0,
+              "squared_error": 9.734944296677456e-07,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 34,
+          "name": "/layers.26/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 4.37024390167462e-05,
+              "failed_values": 0,
+              "squared_error": 1.0332277687943992e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 4.3702438706105795e-05,
+              "failed_values": 0,
+              "squared_error": 1.033227771349525e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 35,
+          "name": "/layers.27/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.535676612420602e-05,
+              "failed_values": 0,
+              "squared_error": 1.1403767803760413e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.535676587640424e-05,
+              "failed_values": 0,
+              "squared_error": 1.1403767827445138e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 36,
+          "name": "/layers.28/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.756231739160398e-05,
+              "failed_values": 0,
+              "squared_error": 1.359927132872885e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.756231744200811e-05,
+              "failed_values": 0,
+              "squared_error": 1.3599271344033258e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 37,
+          "name": "/layers.29/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 3.789864004988264e-05,
+              "failed_values": 0,
+              "squared_error": 1.7860898867045117e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 3.789864010073085e-05,
+              "failed_values": 0,
+              "squared_error": 1.786089886584156e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 38,
+          "name": "/layers.30/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 7.474765303294717e-05,
+              "failed_values": 0,
+              "squared_error": 3.5826170900083354e-06,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 7.474765247900139e-05,
+              "failed_values": 0,
+              "squared_error": 3.5826170807076765e-06,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 39,
+          "name": "/layers.31/Add_1_output_0",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.00022413014960176447,
+              "failed_values": 99,
+              "squared_error": 1.565440335310016e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00022413014795164,
+              "failed_values": 99,
+              "squared_error": 1.565440324191229e-05,
+              "values": 1920000
+            }
+          }
+        },
+        {
+          "index": 40,
+          "name": "last_hidden_state",
+          "references": {
+            "numpy": {
+              "max_scaled": 0.0003336388562087539,
+              "failed_values": 667,
+              "squared_error": 4.761000073008853e-05,
+              "values": 1920000
+            },
+            "ort": {
+              "max_scaled": 0.00033363885679063565,
+              "failed_values": 667,
+              "squared_error": 4.761000065369918e-05,
+              "values": 1920000
+            }
+          }
+        }
+      ],
+      "original_fp32_final": {
+        "MM": {
+          "max_scaled": 0.0016527622938156128,
+          "failed_values": 17097,
+          "squared_error": 0.001379567183627517,
+          "values": 1920000
+        },
+        "NM": {
+          "max_scaled": 0.001577824354171753,
+          "failed_values": 16387,
+          "squared_error": 0.0011485897473664766,
+          "values": 1920000
+        }
+      },
+      "diagnostic_seconds": 54.735540400026366,
+      "scalar_coordinates": 768
+    }
+  ],
+  "screening": [
+    {
+      "request": 0,
+      "reference": "numpy",
+      "maximum_ratio": 0.8115821914091957,
+      "passed": false
+    },
+    {
+      "request": 0,
+      "reference": "ort",
+      "maximum_ratio": 0.8115821935381698,
+      "passed": false
+    },
+    {
+      "request": 1,
+      "reference": "numpy",
+      "maximum_ratio": 0.4294599238420992,
+      "passed": true
+    },
+    {
+      "request": 1,
+      "reference": "ort",
+      "maximum_ratio": 0.4294599256173848,
+      "passed": true
+    },
+    {
+      "request": 2,
+      "reference": "numpy",
+      "maximum_ratio": 0.5865741403648891,
+      "passed": false
+    },
+    {
+      "request": 2,
+      "reference": "ort",
+      "maximum_ratio": 0.5865741404166122,
+      "passed": false
+    },
+    {
+      "request": 3,
+      "reference": "numpy",
+      "maximum_ratio": 0.8115821914091957,
+      "passed": false
+    },
+    {
+      "request": 3,
+      "reference": "ort",
+      "maximum_ratio": 0.8115821935381698,
+      "passed": false
+    }
+  ],
+  "arrays": 328,
+  "comparisons": 672,
+  "metric_checks": 2688,
+  "scalar_coordinates": 3072,
+  "samples": 1378,
+  "peak_rss": 664526848,
+  "births": [
+    {
+      "pid": 838032,
+      "birth": 1789964094.6774626
+    },
+    {
+      "pid": 848620,
+      "birth": 1789964099.38723
+    },
+    {
+      "pid": 836044,
+      "birth": 1789964132.940965
+    },
+    {
+      "pid": 854188,
+      "birth": 1789964188.9305596
+    },
+    {
+      "pid": 866976,
+      "birth": 1789964222.2212288
+    },
+    {
+      "pid": 871848,
+      "birth": 1789964278.182432
+    },
+    {
+      "pid": 838884,
+      "birth": 1789964311.2307963
+    },
+    {
+      "pid": 877364,
+      "birth": 1789964366.6885953
+    },
+    {
+      "pid": 843604,
+      "birth": 1789964400.0485623
+    }
+  ],
+  "manifest": {
+    "bytes": 221544,
+    "sha256": "860264c10f73872a65c7bd89a8a8a5a0a89fb34032c471bf7423f2171611b369"
+  },
+  "source_revision": "0d050855f34b187784329ec03f29185125dee674",
+  "utc": "2026-09-21T04:21:47.292475+00:00"
+}
