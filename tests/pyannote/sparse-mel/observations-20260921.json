@@ -1,0 +1,1409 @@
+{
+  "closures": [
+    {
+      "path": "artifacts/pyannote-sparse-mel-20260921/focused-closed.json",
+      "bytes": 135819,
+      "sha256": "35cba7a867ee2faff0fb8c3b94431c6f3ffa390648242188da2cd6515856cb6b"
+    },
+    {
+      "path": "artifacts/pyannote-sparse-mel-frontend-20260921/closed.json",
+      "bytes": 30476,
+      "sha256": "71ac5283b789ff9ea4c8e55f18b12c54352656b020b323eb75dc4fc63a86a40d"
+    }
+  ],
+  "focused": {
+    "passed": true,
+    "identities": [
+      {
+        "pid": 593296,
+        "birth": 1790025643.915326
+      },
+      {
+        "pid": 618508,
+        "birth": 1790025650.5047112
+      },
+      {
+        "pid": 531904,
+        "birth": 1790025651.8083658
+      },
+      {
+        "pid": 659916,
+        "birth": 1790025652.4307768
+      },
+      {
+        "pid": 661340,
+        "birth": 1790025652.453324
+      },
+      {
+        "pid": 492560,
+        "birth": 1790025655.6930263
+      },
+      {
+        "pid": 470004,
+        "birth": 1790025656.4768307
+      },
+      {
+        "pid": 500088,
+        "birth": 1790025657.0594368
+      },
+      {
+        "pid": 648804,
+        "birth": 1790025657.0634096
+      },
+      {
+        "pid": 151808,
+        "birth": 1790025659.0696063
+      },
+      {
+        "pid": 419156,
+        "birth": 1790025659.9240687
+      },
+      {
+        "pid": 653912,
+        "birth": 1790025661.488089
+      },
+      {
+        "pid": 615184,
+        "birth": 1790025662.1524825
+      },
+      {
+        "pid": 648084,
+        "birth": 1790025662.156844
+      },
+      {
+        "pid": 636064,
+        "birth": 1790025684.7107959
+      },
+      {
+        "pid": 569492,
+        "birth": 1790025685.1890965
+      },
+      {
+        "pid": 632132,
+        "birth": 1790025685.1930137
+      },
+      {
+        "pid": 622508,
+        "birth": 1790025685.4564097
+      },
+      {
+        "pid": 633996,
+        "birth": 1790025685.4637012
+      },
+      {
+        "pid": 143004,
+        "birth": 1790025704.6415129
+      },
+      {
+        "pid": 659648,
+        "birth": 1790025705.927186
+      },
+      {
+        "pid": 1165660,
+        "birth": 1790025705.9316409
+      },
+      {
+        "pid": 582820,
+        "birth": 1790025706.5049176
+      },
+      {
+        "pid": 160636,
+        "birth": 1790025706.5253704
+      }
+    ],
+    "resource_samples": 158,
+    "suites": [
+      {
+        "name": "focused",
+        "counters": {
+          "total": "89",
+          "executed": "89",
+          "passed": "89",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        }
+      },
+      {
+        "name": "hardware-disabled",
+        "counters": {
+          "total": "89",
+          "executed": "89",
+          "passed": "89",
+          "failed": "0",
+          "error": "0",
+          "timeout": "0",
+          "aborted": "0",
+          "inconclusive": "0",
+          "passedButRunAborted": "0",
+          "notRunnable": "0",
+          "notExecuted": "0",
+          "disconnected": "0",
+          "warning": "0",
+          "completed": "0",
+          "inProgress": "0",
+          "pending": "0"
+        }
+      }
+    ]
+  },
+  "frontend": {
+    "passed": true,
+    "pairs": 50,
+    "calls": 100,
+    "values": 4312000,
+    "coefficients": {
+      "coefficient_sha256": "93362b4a8f1179b6f78dde8644c1df8bbdbfe344db5d0d045f36a4c0194a0b0d",
+      "dense_terms_per_frame": 20480,
+      "retained_terms_per_frame": 501,
+      "nonzero_terms_per_frame": 501,
+      "ranges": [
+        {
+          "band": 0,
+          "first": 1,
+          "last": 3,
+          "nonzero": 2
+        },
+        {
+          "band": 1,
+          "first": 2,
+          "last": 3,
+          "nonzero": 1
+        },
+        {
+          "band": 2,
+          "first": 3,
+          "last": 4,
+          "nonzero": 1
+        },
+        {
+          "band": 3,
+          "first": 3,
+          "last": 5,
+          "nonzero": 2
+        },
+        {
+          "band": 4,
+          "first": 4,
+          "last": 6,
+          "nonzero": 2
+        },
+        {
+          "band": 5,
+          "first": 5,
+          "last": 7,
+          "nonzero": 2
+        },
+        {
+          "band": 6,
+          "first": 6,
+          "last": 8,
+          "nonzero": 2
+        },
+        {
+          "band": 7,
+          "first": 7,
+          "last": 8,
+          "nonzero": 1
+        },
+        {
+          "band": 8,
+          "first": 8,
+          "last": 9,
+          "nonzero": 1
+        },
+        {
+          "band": 9,
+          "first": 8,
+          "last": 10,
+          "nonzero": 2
+        },
+        {
+          "band": 10,
+          "first": 9,
+          "last": 11,
+          "nonzero": 2
+        },
+        {
+          "band": 11,
+          "first": 10,
+          "last": 12,
+          "nonzero": 2
+        },
+        {
+          "band": 12,
+          "first": 11,
+          "last": 14,
+          "nonzero": 3
+        },
+        {
+          "band": 13,
+          "first": 12,
+          "last": 15,
+          "nonzero": 3
+        },
+        {
+          "band": 14,
+          "first": 14,
+          "last": 16,
+          "nonzero": 2
+        },
+        {
+          "band": 15,
+          "first": 15,
+          "last": 17,
+          "nonzero": 2
+        },
+        {
+          "band": 16,
+          "first": 16,
+          "last": 18,
+          "nonzero": 2
+        },
+        {
+          "band": 17,
+          "first": 17,
+          "last": 19,
+          "nonzero": 2
+        },
+        {
+          "band": 18,
+          "first": 18,
+          "last": 21,
+          "nonzero": 3
+        },
+        {
+          "band": 19,
+          "first": 19,
+          "last": 22,
+          "nonzero": 3
+        },
+        {
+          "band": 20,
+          "first": 21,
+          "last": 23,
+          "nonzero": 2
+        },
+        {
+          "band": 21,
+          "first": 22,
+          "last": 25,
+          "nonzero": 3
+        },
+        {
+          "band": 22,
+          "first": 23,
+          "last": 26,
+          "nonzero": 3
+        },
+        {
+          "band": 23,
+          "first": 25,
+          "last": 28,
+          "nonzero": 3
+        },
+        {
+          "band": 24,
+          "first": 26,
+          "last": 29,
+          "nonzero": 3
+        },
+        {
+          "band": 25,
+          "first": 28,
+          "last": 31,
+          "nonzero": 3
+        },
+        {
+          "band": 26,
+          "first": 29,
+          "last": 33,
+          "nonzero": 4
+        },
+        {
+          "band": 27,
+          "first": 31,
+          "last": 34,
+          "nonzero": 3
+        },
+        {
+          "band": 28,
+          "first": 33,
+          "last": 36,
+          "nonzero": 3
+        },
+        {
+          "band": 29,
+          "first": 34,
+          "last": 38,
+          "nonzero": 4
+        },
+        {
+          "band": 30,
+          "first": 36,
+          "last": 40,
+          "nonzero": 4
+        },
+        {
+          "band": 31,
+          "first": 38,
+          "last": 42,
+          "nonzero": 4
+        },
+        {
+          "band": 32,
+          "first": 40,
+          "last": 44,
+          "nonzero": 4
+        },
+        {
+          "band": 33,
+          "first": 42,
+          "last": 46,
+          "nonzero": 4
+        },
+        {
+          "band": 34,
+          "first": 44,
+          "last": 48,
+          "nonzero": 4
+        },
+        {
+          "band": 35,
+          "first": 46,
+          "last": 50,
+          "nonzero": 4
+        },
+        {
+          "band": 36,
+          "first": 48,
+          "last": 52,
+          "nonzero": 4
+        },
+        {
+          "band": 37,
+          "first": 50,
+          "last": 55,
+          "nonzero": 5
+        },
+        {
+          "band": 38,
+          "first": 52,
+          "last": 57,
+          "nonzero": 5
+        },
+        {
+          "band": 39,
+          "first": 55,
+          "last": 59,
+          "nonzero": 4
+        },
+        {
+          "band": 40,
+          "first": 57,
+          "last": 62,
+          "nonzero": 5
+        },
+        {
+          "band": 41,
+          "first": 59,
+          "last": 65,
+          "nonzero": 6
+        },
+        {
+          "band": 42,
+          "first": 62,
+          "last": 67,
+          "nonzero": 5
+        },
+        {
+          "band": 43,
+          "first": 65,
+          "last": 70,
+          "nonzero": 5
+        },
+        {
+          "band": 44,
+          "first": 67,
+          "last": 73,
+          "nonzero": 6
+        },
+        {
+          "band": 45,
+          "first": 70,
+          "last": 76,
+          "nonzero": 6
+        },
+        {
+          "band": 46,
+          "first": 73,
+          "last": 79,
+          "nonzero": 6
+        },
+        {
+          "band": 47,
+          "first": 76,
+          "last": 82,
+          "nonzero": 6
+        },
+        {
+          "band": 48,
+          "first": 79,
+          "last": 85,
+          "nonzero": 6
+        },
+        {
+          "band": 49,
+          "first": 82,
+          "last": 89,
+          "nonzero": 7
+        },
+        {
+          "band": 50,
+          "first": 85,
+          "last": 92,
+          "nonzero": 7
+        },
+        {
+          "band": 51,
+          "first": 89,
+          "last": 96,
+          "nonzero": 7
+        },
+        {
+          "band": 52,
+          "first": 92,
+          "last": 99,
+          "nonzero": 7
+        },
+        {
+          "band": 53,
+          "first": 96,
+          "last": 103,
+          "nonzero": 7
+        },
+        {
+          "band": 54,
+          "first": 99,
+          "last": 107,
+          "nonzero": 8
+        },
+        {
+          "band": 55,
+          "first": 103,
+          "last": 111,
+          "nonzero": 8
+        },
+        {
+          "band": 56,
+          "first": 107,
+          "last": 115,
+          "nonzero": 8
+        },
+        {
+          "band": 57,
+          "first": 111,
+          "last": 120,
+          "nonzero": 9
+        },
+        {
+          "band": 58,
+          "first": 115,
+          "last": 124,
+          "nonzero": 9
+        },
+        {
+          "band": 59,
+          "first": 120,
+          "last": 129,
+          "nonzero": 9
+        },
+        {
+          "band": 60,
+          "first": 124,
+          "last": 133,
+          "nonzero": 9
+        },
+        {
+          "band": 61,
+          "first": 129,
+          "last": 138,
+          "nonzero": 9
+        },
+        {
+          "band": 62,
+          "first": 133,
+          "last": 143,
+          "nonzero": 10
+        },
+        {
+          "band": 63,
+          "first": 138,
+          "last": 148,
+          "nonzero": 10
+        },
+        {
+          "band": 64,
+          "first": 143,
+          "last": 154,
+          "nonzero": 11
+        },
+        {
+          "band": 65,
+          "first": 148,
+          "last": 159,
+          "nonzero": 11
+        },
+        {
+          "band": 66,
+          "first": 154,
+          "last": 165,
+          "nonzero": 11
+        },
+        {
+          "band": 67,
+          "first": 159,
+          "last": 171,
+          "nonzero": 12
+        },
+        {
+          "band": 68,
+          "first": 165,
+          "last": 177,
+          "nonzero": 12
+        },
+        {
+          "band": 69,
+          "first": 171,
+          "last": 183,
+          "nonzero": 12
+        },
+        {
+          "band": 70,
+          "first": 177,
+          "last": 189,
+          "nonzero": 12
+        },
+        {
+          "band": 71,
+          "first": 183,
+          "last": 196,
+          "nonzero": 13
+        },
+        {
+          "band": 72,
+          "first": 189,
+          "last": 203,
+          "nonzero": 14
+        },
+        {
+          "band": 73,
+          "first": 196,
+          "last": 210,
+          "nonzero": 14
+        },
+        {
+          "band": 74,
+          "first": 203,
+          "last": 217,
+          "nonzero": 14
+        },
+        {
+          "band": 75,
+          "first": 210,
+          "last": 224,
+          "nonzero": 14
+        },
+        {
+          "band": 76,
+          "first": 217,
+          "last": 232,
+          "nonzero": 15
+        },
+        {
+          "band": 77,
+          "first": 224,
+          "last": 240,
+          "nonzero": 16
+        },
+        {
+          "band": 78,
+          "first": 232,
+          "last": 248,
+          "nonzero": 16
+        },
+        {
+          "band": 79,
+          "first": 240,
+          "last": 256,
+          "nonzero": 16
+        }
+      ]
+    },
+    "records": [
+      {
+        "order": "dense-first",
+        "ordinal": 0,
+        "name": "dialogue-30s",
+        "shape": [
+          1,
+          2998,
+          80
+        ],
+        "values": 239840,
+        "sha256": "43762f4090113ae4f0f8a867c2f9f7bbc679f7cc2285def94a646c8d2c3b085c",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 1,
+        "name": "dialogue-0-10s",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 2,
+        "name": "dialogue-10-20s",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 3,
+        "name": "dialogue-20-30s",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 4,
+        "name": "full-window-0",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 5,
+        "name": "full-window-1",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "e2fb74005086da1d58c359239c53b1c276a48fdaf96872051c4ab0fefabe9a4a",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 6,
+        "name": "full-window-2",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "a989af376c3e0ad419f5a8d5e4c2f54564f0670332622785b68946e084c71342",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 7,
+        "name": "full-window-3",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "11660c353110f4e38b9753b5d043d95270655e6f8e3fe2e0f6df1293663ad694",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 8,
+        "name": "full-window-4",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "2538ea682b516bb2c0e34e511e2177598839abb501f8694ae11dc7259239406a",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 9,
+        "name": "full-window-5",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "08282131238510d0bfe6610cf119ee331dc3d55c49ed59faef147f645837ef4e",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 10,
+        "name": "full-window-6",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "b036935f8339a3d6e332a36b14d98bc2009a2b9f2bb4abdbcca775de65931820",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 11,
+        "name": "full-window-7",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "1b76aa5213652d0507c11e7d458ddd4c33803cbfef6bbcce819ccf58af17036e",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 12,
+        "name": "full-window-8",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "0eab55b61acd8a6e983fe9621de0af59e470a0dd9babc161acce878f5da2d9e9",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 13,
+        "name": "full-window-9",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "251062df13d29f4ea24317c0e34c4dfdf672bbe6070f25ee7baa69f7f3680fc0",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 14,
+        "name": "full-window-10",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 15,
+        "name": "full-window-11",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "c1a39b1059d3eb1424c0fbca520d228df75b8adba4a02cd27a527e8a7c8e3897",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 16,
+        "name": "full-window-12",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "edd7b689552a7af8e619eb9f798ae4fb4ca38e81d0434557a312880fa7853ba9",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 17,
+        "name": "full-window-13",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "58e6513a30eb3d775070c408f3e0fa709a4934da662c617d5a3f395a9ab53a9b",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 18,
+        "name": "full-window-14",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "4890e44429a8eb7fda4b90e39fb07b8287fa3dea64f14f0e66e0da0149cff7b8",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 19,
+        "name": "full-window-15",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "f5b27f23bf593b42683a70e9b04dd7e17a18f7fd4c63cefe7267d25f8aca0083",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 20,
+        "name": "full-window-16",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "e16155800ec3d0b5cca16bfcddfcdfe7dd5b54a4881149f0e235a5d4755a658d",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 21,
+        "name": "full-window-17",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "8055b870be94e7e823f02691843478f184e252175f641d5001c01ea148b6f050",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 22,
+        "name": "full-window-18",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "8d8046a5011cdc6a3c766a0a3e6833a9a7a0301725afeafd2d0a69c7c51ae1bd",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 23,
+        "name": "full-window-19",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "43e42aded84b46303b46f1514d0090be4822093e9fea05b0b21803c4ceae8b25",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "dense-first",
+        "ordinal": 24,
+        "name": "full-window-20",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 0,
+        "name": "dialogue-30s",
+        "shape": [
+          1,
+          2998,
+          80
+        ],
+        "values": 239840,
+        "sha256": "43762f4090113ae4f0f8a867c2f9f7bbc679f7cc2285def94a646c8d2c3b085c",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 1,
+        "name": "dialogue-0-10s",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 2,
+        "name": "dialogue-10-20s",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 3,
+        "name": "dialogue-20-30s",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 4,
+        "name": "full-window-0",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "a9675f9b583b05001457c519c443e240422b284198809803025cb49d486f5590",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 5,
+        "name": "full-window-1",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "e2fb74005086da1d58c359239c53b1c276a48fdaf96872051c4ab0fefabe9a4a",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 6,
+        "name": "full-window-2",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "a989af376c3e0ad419f5a8d5e4c2f54564f0670332622785b68946e084c71342",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 7,
+        "name": "full-window-3",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "11660c353110f4e38b9753b5d043d95270655e6f8e3fe2e0f6df1293663ad694",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 8,
+        "name": "full-window-4",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "2538ea682b516bb2c0e34e511e2177598839abb501f8694ae11dc7259239406a",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 9,
+        "name": "full-window-5",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "08282131238510d0bfe6610cf119ee331dc3d55c49ed59faef147f645837ef4e",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 10,
+        "name": "full-window-6",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "b036935f8339a3d6e332a36b14d98bc2009a2b9f2bb4abdbcca775de65931820",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 11,
+        "name": "full-window-7",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "1b76aa5213652d0507c11e7d458ddd4c33803cbfef6bbcce819ccf58af17036e",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 12,
+        "name": "full-window-8",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "0eab55b61acd8a6e983fe9621de0af59e470a0dd9babc161acce878f5da2d9e9",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 13,
+        "name": "full-window-9",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "251062df13d29f4ea24317c0e34c4dfdf672bbe6070f25ee7baa69f7f3680fc0",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 14,
+        "name": "full-window-10",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "b2b5c7a00ee5eece0b452d4d5e1f54c0ea4dd25915c19eb97225c87429581d24",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 15,
+        "name": "full-window-11",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "c1a39b1059d3eb1424c0fbca520d228df75b8adba4a02cd27a527e8a7c8e3897",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 16,
+        "name": "full-window-12",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "edd7b689552a7af8e619eb9f798ae4fb4ca38e81d0434557a312880fa7853ba9",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 17,
+        "name": "full-window-13",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "58e6513a30eb3d775070c408f3e0fa709a4934da662c617d5a3f395a9ab53a9b",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 18,
+        "name": "full-window-14",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "4890e44429a8eb7fda4b90e39fb07b8287fa3dea64f14f0e66e0da0149cff7b8",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 19,
+        "name": "full-window-15",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "f5b27f23bf593b42683a70e9b04dd7e17a18f7fd4c63cefe7267d25f8aca0083",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 20,
+        "name": "full-window-16",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "e16155800ec3d0b5cca16bfcddfcdfe7dd5b54a4881149f0e235a5d4755a658d",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 21,
+        "name": "full-window-17",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "8055b870be94e7e823f02691843478f184e252175f641d5001c01ea148b6f050",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 22,
+        "name": "full-window-18",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "8d8046a5011cdc6a3c766a0a3e6833a9a7a0301725afeafd2d0a69c7c51ae1bd",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 23,
+        "name": "full-window-19",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "43e42aded84b46303b46f1514d0090be4822093e9fea05b0b21803c4ceae8b25",
+        "inputs_unchanged": true
+      },
+      {
+        "order": "sparse-first",
+        "ordinal": 24,
+        "name": "full-window-20",
+        "shape": [
+          1,
+          998,
+          80
+        ],
+        "values": 79840,
+        "sha256": "7558d29e6e852899c4bc5417a9355c01948b5e57e394011910b8862601b1d9cf",
+        "inputs_unchanged": true
+      }
+    ],
+    "resources": [
+      {
+        "name": "restore",
+        "samples": 3,
+        "peak_rss": 95195136
+      },
+      {
+        "name": "build",
+        "samples": 11,
+        "peak_rss": 247758848
+      },
+      {
+        "name": "dense-first",
+        "samples": 6,
+        "peak_rss": 111812608
+      },
+      {
+        "name": "sparse-first",
+        "samples": 6,
+        "peak_rss": 104325120
+      }
+    ],
+    "resource_samples": 26,
+    "identities": [
+      {
+        "pid": 671312,
+        "birth": 1790026019.3178067
+      },
+      {
+        "pid": 585984,
+        "birth": 1790026019.5638485
+      },
+      {
+        "pid": 625740,
+        "birth": 1790026020.419818
+      },
+      {
+        "pid": 565632,
+        "birth": 1790026021.0331843
+      },
+      {
+        "pid": 707800,
+        "birth": 1790026021.0475156
+      },
+      {
+        "pid": 618224,
+        "birth": 1790026314.7448776
+      },
+      {
+        "pid": 716028,
+        "birth": 1790026314.8309827
+      },
+      {
+        "pid": 706928,
+        "birth": 1790026316.418832
+      }
+    ],
+    "scope": "Exact real-audio frontend qualification and coefficient census, no timing result."
+  },
+  "instructions": [
+    {
+      "assembly": "Lokad.Onnx.dll",
+      "compiler_rename": null,
+      "methods": 3107,
+      "before_sha256": "5c0ae2aa7c3cce58f3ffcb190df451e053a449a3e0dbc920d7b6d0b2bc66020c",
+      "after_sha256": "5c0ae2aa7c3cce58f3ffcb190df451e053a449a3e0dbc920d7b6d0b2bc66020c",
+      "corrected_nullable_annotation": null,
+      "unchanged_methods": 3107,
+      "removed": [],
+      "added": [],
+      "differences": [],
+      "equal_except_sparse_mel": true
+    },
+    {
+      "assembly": "Lokad.Onnx.Data.dll",
+      "compiler_rename": null,
+      "methods": 696,
+      "before_sha256": "1d34666456a5da749dc3b40ee25621af0bed806c9167f3ad12e96d0736dca662",
+      "after_sha256": "e9e4c28e2f7277ea226556f692d95de3d9d4a5f94eed79a9235268137dcd4775",
+      "corrected_nullable_annotation": true,
+      "unchanged_methods": 694,
+      "removed": [],
+      "added": [
+        "Lokad.Onnx.WeSpeakerAudio::CreateMelSupport::System.ValueTuple`2[System.Int32,System.Int32][] CreateMelSupport()"
+      ],
+      "differences": [
+        "Lokad.Onnx.WeSpeakerAudio::LogMelFilterbank::Lokad.Onnx.DenseTensor`1[System.Single] LogMelFilterbank(System.ReadOnlySpan`1[System.Single], Int32, System.Threading.CancellationToken)",
+        "Lokad.Onnx.WeSpeakerAudio::.cctor::Void .cctor()"
+      ],
+      "equal_except_sparse_mel": true
+    }
+  ],
+  "core": {
+    "bytes": 735232,
+    "sha256": "5c0ae2aa7c3cce58f3ffcb190df451e053a449a3e0dbc920d7b6d0b2bc66020c"
+  },
+  "data": {
+    "bytes": 143872,
+    "sha256": "e9e4c28e2f7277ea226556f692d95de3d9d4a5f94eed79a9235268137dcd4775"
+  },
+  "patch": {
+    "bytes": 1987,
+    "sha256": "df34ad62b5826a1e626e77543b1e5ced933e2e9566f1def26399a30caec19faf"
+  }
+}

@@ -138,6 +138,14 @@ repeatability controls (1.307 and 1.208 versus the fixed 1.20 limit). Observed
 full-request means are 11.949 s predecessor, 11.435 s candidate and 6.544 s ORT.
 No timing admission follows; the accepted Windows table remains unchanged.
 
+An isolated [sparse mel frontend](tests/pyannote/sparse-mel/results-20260921.md)
+now visits 501 of 20,480 filter coefficients per frame while preserving all
+4.312 million compared real-audio feature values bit-for-bit. Both normal and
+hardware-disabled frontend suites pass 89 tests. Core is unchanged; this is
+correctness evidence for a new Data candidate, with complete application and
+fresh ORT timing qualification still pending. No speedup is inferred from the
+coefficient count, and the accepted timing tables remain unchanged.
+
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
 Fresh matched measurements on Windows i7-14700KF, CPU2, .NET 10.0.12 and
