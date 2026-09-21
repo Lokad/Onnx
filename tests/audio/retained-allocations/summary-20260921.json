@@ -1,0 +1,5432 @@
+{
+  "passed": true,
+  "sources": {
+    "pyannote-optimized-ort-20260921": {
+      "closure": {
+        "bytes": 35663,
+        "sha256": "c2e1d5da4746a6fb4cd4fe582663d922e074cb6bb4e03234757274cdfcf11a26"
+      },
+      "file_pins": 145,
+      "external_pins": 0,
+      "analysis": {
+        "bytes": 23097,
+        "sha256": "4e47ce7179999e6bdf4c1d779a9fa723d42e4e0cbe6dbf20f9d4d88df91ac16a"
+      }
+    },
+    "pyannote-optimized-meetings-20260921": {
+      "closure": {
+        "bytes": 9283,
+        "sha256": "f9978dd22cec3091e640030e1db8b8e70aeb3c111c43d704c11f679ca5a89c1c"
+      },
+      "file_pins": 46,
+      "external_pins": 0,
+      "analysis": {
+        "bytes": 4232,
+        "sha256": "295f54f3252a801cc3a29ec0c7cc438cadefe64376c2fa5dc0fdc694bd8ae134"
+      }
+    },
+    "parakeet-arithmetic-comparison-20260921": {
+      "closure": {
+        "bytes": 116232,
+        "sha256": "b7ed78b2c582fba0ef43c411540f501f3c997eeb73b77e1f8dc9a8574ea0b27b"
+      },
+      "file_pins": 574,
+      "external_pins": 4,
+      "analysis": {
+        "bytes": 14486,
+        "sha256": "caee2fd8750fb136af51e18bda69832364b7ab34ef869428607060a071d43909"
+      }
+    },
+    "parakeet-performance-profile-v2-20260921": {
+      "closure": {
+        "bytes": 5029112,
+        "sha256": "6d8ce878f99acf291cb20348bba948bd1de7f128298c774cf94adf84e855700d"
+      },
+      "file_pins": 24499,
+      "external_pins": 0,
+      "analysis": {
+        "bytes": 84085,
+        "sha256": "db5c16907eebfade4386a4198a5974f01b3a88e80e583b52ab8cdcdab76512f7"
+      }
+    }
+  },
+  "unique_verified_files": 25231,
+  "observations": 3047,
+  "with_allocation": 2855,
+  "with_gc_counts": 2835,
+  "groups": [
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "dialogue-30s",
+      "calls": 2,
+      "seconds_sum": 34.5553234,
+      "seconds_mean": 17.2776617,
+      "seconds_min": 15.8417328,
+      "seconds_max": 18.7135906,
+      "allocated_bytes_sum": 10409857760,
+      "allocated_bytes_mean": 5204928880.0,
+      "allocated_bytes_min": 5204926752,
+      "allocated_bytes_max": 5204931008,
+      "gc_delta_sum": [
+        57,
+        44,
+        41
+      ],
+      "gc_delta_min": [
+        28,
+        21,
+        20
+      ],
+      "gc_delta_max": [
+        29,
+        23,
+        21
+      ],
+      "calls_without_gen2": 0
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "dialogue-0-10s",
+      "calls": 2,
+      "seconds_sum": 1.1888586,
+      "seconds_mean": 0.5944293,
+      "seconds_min": 0.5729723,
+      "seconds_max": 0.6158863,
+      "allocated_bytes_sum": 500613568,
+      "allocated_bytes_mean": 250306784.0,
+      "allocated_bytes_min": 250306160,
+      "allocated_bytes_max": 250307408,
+      "gc_delta_sum": [
+        4,
+        4,
+        4
+      ],
+      "gc_delta_min": [
+        2,
+        2,
+        2
+      ],
+      "gc_delta_max": [
+        2,
+        2,
+        2
+      ],
+      "calls_without_gen2": 0
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "dialogue-10-20s",
+      "calls": 2,
+      "seconds_sum": 1.1361203,
+      "seconds_mean": 0.56806015,
+      "seconds_min": 0.5458578,
+      "seconds_max": 0.5902625,
+      "allocated_bytes_sum": 500624504,
+      "allocated_bytes_mean": 250312252.0,
+      "allocated_bytes_min": 250309920,
+      "allocated_bytes_max": 250314584,
+      "gc_delta_sum": [
+        2,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        1,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        1,
+        1,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "dialogue-20-30s",
+      "calls": 2,
+      "seconds_sum": 1.1226894,
+      "seconds_mean": 0.5613447,
+      "seconds_min": 0.5406874,
+      "seconds_max": 0.582002,
+      "allocated_bytes_sum": 500610472,
+      "allocated_bytes_mean": 250305236.0,
+      "allocated_bytes_min": 250303960,
+      "allocated_bytes_max": 250306512,
+      "gc_delta_sum": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        0,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "dialogue-30s",
+      "calls": 6,
+      "seconds_sum": 74.6752997,
+      "seconds_mean": 12.445883283333332,
+      "seconds_min": 11.7305361,
+      "seconds_max": 13.7190622,
+      "allocated_bytes_sum": 31207879960,
+      "allocated_bytes_mean": 5201313326.666667,
+      "allocated_bytes_min": 5199599200,
+      "allocated_bytes_max": 5205783136,
+      "gc_delta_sum": [
+        160,
+        112,
+        112
+      ],
+      "gc_delta_min": [
+        23,
+        15,
+        15
+      ],
+      "gc_delta_max": [
+        30,
+        22,
+        22
+      ],
+      "calls_without_gen2": 0
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "dialogue-0-10s",
+      "calls": 6,
+      "seconds_sum": 3.4379329,
+      "seconds_mean": 0.5729888166666667,
+      "seconds_min": 0.5534703,
+      "seconds_max": 0.6002261,
+      "allocated_bytes_sum": 1508061800,
+      "allocated_bytes_mean": 251343633.33333334,
+      "allocated_bytes_min": 250292488,
+      "allocated_bytes_max": 253437896,
+      "gc_delta_sum": [
+        9,
+        7,
+        7
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        2,
+        2
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "dialogue-10-20s",
+      "calls": 6,
+      "seconds_sum": 3.3835369,
+      "seconds_mean": 0.5639228166666667,
+      "seconds_min": 0.5346759,
+      "seconds_max": 0.5976158,
+      "allocated_bytes_sum": 1502871400,
+      "allocated_bytes_mean": 250478566.66666666,
+      "allocated_bytes_min": 250295104,
+      "allocated_bytes_max": 251327552,
+      "gc_delta_sum": [
+        7,
+        5,
+        5
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        2,
+        2
+      ],
+      "calls_without_gen2": 3
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "dialogue-20-30s",
+      "calls": 6,
+      "seconds_sum": 3.5777992,
+      "seconds_mean": 0.5962998666666667,
+      "seconds_min": 0.5356171,
+      "seconds_max": 0.7539691,
+      "allocated_bytes_sum": 1509652912,
+      "allocated_bytes_mean": 251608818.66666666,
+      "allocated_bytes_min": 250303024,
+      "allocated_bytes_max": 254952096,
+      "gc_delta_sum": [
+        7,
+        4,
+        4
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        2,
+        2
+      ],
+      "calls_without_gen2": 4
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "dialogue-30s",
+      "calls": 2,
+      "seconds_sum": 14.2619113,
+      "seconds_mean": 7.13095565,
+      "seconds_min": 6.9307127,
+      "seconds_max": 7.3311986
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "dialogue-0-10s",
+      "calls": 2,
+      "seconds_sum": 0.6103266,
+      "seconds_mean": 0.3051633,
+      "seconds_min": 0.3042787,
+      "seconds_max": 0.3060479
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "dialogue-10-20s",
+      "calls": 2,
+      "seconds_sum": 0.605057,
+      "seconds_mean": 0.3025285,
+      "seconds_min": 0.3019639,
+      "seconds_max": 0.3030931
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "dialogue-20-30s",
+      "calls": 2,
+      "seconds_sum": 0.6038283,
+      "seconds_mean": 0.30191415,
+      "seconds_min": 0.3011528,
+      "seconds_max": 0.3026755
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "dialogue-30s",
+      "calls": 6,
+      "seconds_sum": 39.5039372,
+      "seconds_mean": 6.583989533333334,
+      "seconds_min": 6.2865396,
+      "seconds_max": 7.7519967
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "dialogue-0-10s",
+      "calls": 6,
+      "seconds_sum": 1.8114389,
+      "seconds_mean": 0.3019064833333333,
+      "seconds_min": 0.2988723,
+      "seconds_max": 0.3077885
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "dialogue-10-20s",
+      "calls": 6,
+      "seconds_sum": 1.8395609,
+      "seconds_mean": 0.3065934833333333,
+      "seconds_min": 0.2998572,
+      "seconds_max": 0.3301798
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "dialogue-20-30s",
+      "calls": 6,
+      "seconds_sum": 1.830212,
+      "seconds_mean": 0.3050353333333333,
+      "seconds_min": 0.3002275,
+      "seconds_max": 0.3115323
+    },
+    {
+      "source": "pyannote-optimized-meetings-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "single",
+      "name": "ES2004a",
+      "calls": 1,
+      "seconds_sum": 383.5465575,
+      "seconds_mean": 383.5465575,
+      "seconds_min": 383.5465575,
+      "seconds_max": 383.5465575,
+      "allocated_bytes_sum": 146395652120,
+      "allocated_bytes_mean": 146395652120.0,
+      "allocated_bytes_min": 146395652120,
+      "allocated_bytes_max": 146395652120,
+      "gc_delta_sum": [
+        594,
+        372,
+        370
+      ],
+      "gc_delta_min": [
+        594,
+        372,
+        370
+      ],
+      "gc_delta_max": [
+        594,
+        372,
+        370
+      ],
+      "calls_without_gen2": 0
+    },
+    {
+      "source": "pyannote-optimized-meetings-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "single",
+      "name": "IS1009a",
+      "calls": 1,
+      "seconds_sum": 346.9975485,
+      "seconds_mean": 346.9975485,
+      "seconds_min": 346.9975485,
+      "seconds_max": 346.9975485,
+      "allocated_bytes_sum": 146425527616,
+      "allocated_bytes_mean": 146425527616.0,
+      "allocated_bytes_min": 146425527616,
+      "allocated_bytes_max": 146425527616,
+      "gc_delta_sum": [
+        573,
+        350,
+        348
+      ],
+      "gc_delta_min": [
+        573,
+        350,
+        348
+      ],
+      "gc_delta_max": [
+        573,
+        350,
+        348
+      ],
+      "calls_without_gen2": 0
+    },
+    {
+      "source": "pyannote-optimized-meetings-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "single",
+      "name": "ES2004a-recovery30",
+      "calls": 1,
+      "seconds_sum": 12.6271569,
+      "seconds_mean": 12.6271569,
+      "seconds_min": 12.6271569,
+      "seconds_max": 12.6271569,
+      "allocated_bytes_sum": 5202521616,
+      "allocated_bytes_mean": 5202521616.0,
+      "allocated_bytes_min": 5202521616,
+      "allocated_bytes_max": 5202521616,
+      "gc_delta_sum": [
+        23,
+        15,
+        15
+      ],
+      "gc_delta_min": [
+        23,
+        15,
+        15
+      ],
+      "gc_delta_max": [
+        23,
+        15,
+        15
+      ],
+      "calls_without_gen2": 0
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "121-121726-0000",
+      "calls": 2,
+      "seconds_sum": 6.557103,
+      "seconds_mean": 3.2785515,
+      "seconds_min": 3.237962,
+      "seconds_max": 3.319141,
+      "allocated_bytes_sum": 1115393352,
+      "allocated_bytes_mean": 557696676.0,
+      "allocated_bytes_min": 557691080,
+      "allocated_bytes_max": 557702272,
+      "gc_delta_sum": [
+        6,
+        4,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        2,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        2,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "121-123852-0000",
+      "calls": 2,
+      "seconds_sum": 12.5123782,
+      "seconds_mean": 6.2561891,
+      "seconds_min": 5.6892652,
+      "seconds_max": 6.823113,
+      "allocated_bytes_sum": 2490668080,
+      "allocated_bytes_mean": 1245334040.0,
+      "allocated_bytes_min": 1229408720,
+      "allocated_bytes_max": 1261259360,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "237-126133-0002",
+      "calls": 2,
+      "seconds_sum": 6.8130549,
+      "seconds_mean": 3.40652745,
+      "seconds_min": 3.3876346,
+      "seconds_max": 3.4254203,
+      "allocated_bytes_sum": 1037666424,
+      "allocated_bytes_mean": 518833212.0,
+      "allocated_bytes_min": 484485520,
+      "allocated_bytes_max": 553180904,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "237-126133-0000",
+      "calls": 2,
+      "seconds_sum": 8.971363,
+      "seconds_mean": 4.4856815,
+      "seconds_min": 4.1282033,
+      "seconds_max": 4.8431597,
+      "allocated_bytes_sum": 1511060040,
+      "allocated_bytes_mean": 755530020.0,
+      "allocated_bytes_min": 755503824,
+      "allocated_bytes_max": 755556216,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "260-123286-0000",
+      "calls": 2,
+      "seconds_sum": 5.1053396,
+      "seconds_mean": 2.5526698,
+      "seconds_min": 2.1566302,
+      "seconds_max": 2.9487094,
+      "allocated_bytes_sum": 765047912,
+      "allocated_bytes_mean": 382523956.0,
+      "allocated_bytes_min": 382523776,
+      "allocated_bytes_max": 382524136,
+      "gc_delta_sum": [
+        4,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "260-123288-0005",
+      "calls": 2,
+      "seconds_sum": 8.534441300000001,
+      "seconds_mean": 4.2672206500000005,
+      "seconds_min": 3.5019671,
+      "seconds_max": 5.0324742,
+      "allocated_bytes_sum": 1444056920,
+      "allocated_bytes_mean": 722028460.0,
+      "allocated_bytes_min": 713639064,
+      "allocated_bytes_max": 730417856,
+      "gc_delta_sum": [
+        6,
+        2,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        1,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "672-122797-0000",
+      "calls": 2,
+      "seconds_sum": 5.507838899999999,
+      "seconds_mean": 2.7539194499999997,
+      "seconds_min": 2.2069361,
+      "seconds_max": 3.3009028,
+      "allocated_bytes_sum": 537962248,
+      "allocated_bytes_mean": 268981124.0,
+      "allocated_bytes_min": 268976552,
+      "allocated_bytes_max": 268985696,
+      "gc_delta_sum": [
+        6,
+        2,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        1,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "672-122797-0001",
+      "calls": 2,
+      "seconds_sum": 9.518345700000001,
+      "seconds_mean": 4.759172850000001,
+      "seconds_min": 4.0262813,
+      "seconds_max": 5.4920644,
+      "allocated_bytes_sum": 2152588048,
+      "allocated_bytes_mean": 1076294024.0,
+      "allocated_bytes_min": 1076290464,
+      "allocated_bytes_max": 1076297584,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "908-157963-0005",
+      "calls": 2,
+      "seconds_sum": 5.0203340999999995,
+      "seconds_mean": 2.5101670499999997,
+      "seconds_min": 1.964868,
+      "seconds_max": 3.0554661,
+      "allocated_bytes_sum": 895978720,
+      "allocated_bytes_mean": 447989360.0,
+      "allocated_bytes_min": 445529648,
+      "allocated_bytes_max": 450449072,
+      "gc_delta_sum": [
+        5,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 1
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "908-157963-0000",
+      "calls": 2,
+      "seconds_sum": 7.1732973,
+      "seconds_mean": 3.58664865,
+      "seconds_min": 3.441931,
+      "seconds_max": 3.7313663,
+      "allocated_bytes_sum": 1588117576,
+      "allocated_bytes_mean": 794058788.0,
+      "allocated_bytes_min": 704800944,
+      "allocated_bytes_max": 883316632,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1089-134686-0002",
+      "calls": 2,
+      "seconds_sum": 4.5268774,
+      "seconds_mean": 2.2634387,
+      "seconds_min": 2.1743722,
+      "seconds_max": 2.3525052,
+      "allocated_bytes_sum": 887054168,
+      "allocated_bytes_mean": 443527084.0,
+      "allocated_bytes_min": 428484384,
+      "allocated_bytes_max": 458569784,
+      "gc_delta_sum": [
+        5,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 1
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1089-134686-0011",
+      "calls": 2,
+      "seconds_sum": 6.401759800000001,
+      "seconds_mean": 3.2008799000000003,
+      "seconds_min": 3.1045413,
+      "seconds_max": 3.2972185,
+      "allocated_bytes_sum": 1563922336,
+      "allocated_bytes_mean": 781961168.0,
+      "allocated_bytes_min": 696896224,
+      "allocated_bytes_max": 867026112,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1188-133604-0001",
+      "calls": 2,
+      "seconds_sum": 4.7388519,
+      "seconds_mean": 2.36942595,
+      "seconds_min": 2.3081943,
+      "seconds_max": 2.4306576,
+      "allocated_bytes_sum": 1027491944,
+      "allocated_bytes_mean": 513745972.0,
+      "allocated_bytes_min": 505358592,
+      "allocated_bytes_max": 522133352,
+      "gc_delta_sum": [
+        6,
+        3,
+        2
+      ],
+      "gc_delta_min": [
+        3,
+        1,
+        1
+      ],
+      "gc_delta_max": [
+        3,
+        2,
+        1
+      ],
+      "calls_without_gen2": 0
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1188-133604-0002",
+      "calls": 2,
+      "seconds_sum": 9.0886993,
+      "seconds_mean": 4.54434965,
+      "seconds_min": 4.4878552,
+      "seconds_max": 4.6008441,
+      "allocated_bytes_sum": 2508464576,
+      "allocated_bytes_mean": 1254232288.0,
+      "allocated_bytes_min": 1254232096,
+      "allocated_bytes_max": 1254232480,
+      "gc_delta_sum": [
+        8,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        4,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1221-135766-0002",
+      "calls": 2,
+      "seconds_sum": 5.9087954,
+      "seconds_mean": 2.9543977,
+      "seconds_min": 2.9196812,
+      "seconds_max": 2.9891142,
+      "allocated_bytes_sum": 682239056,
+      "allocated_bytes_mean": 341119528.0,
+      "allocated_bytes_min": 341116760,
+      "allocated_bytes_max": 341122296,
+      "gc_delta_sum": [
+        4,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1221-135766-0000",
+      "calls": 2,
+      "seconds_sum": 6.5850740000000005,
+      "seconds_mean": 3.2925370000000003,
+      "seconds_min": 3.1471895,
+      "seconds_max": 3.4378845,
+      "allocated_bytes_sum": 1393976416,
+      "allocated_bytes_mean": 696988208.0,
+      "allocated_bytes_min": 696986368,
+      "allocated_bytes_max": 696990048,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1284-1180-0000",
+      "calls": 2,
+      "seconds_sum": 4.2854595,
+      "seconds_mean": 2.14272975,
+      "seconds_min": 2.1398984,
+      "seconds_max": 2.1455611,
+      "allocated_bytes_sum": 884606560,
+      "allocated_bytes_mean": 442303280.0,
+      "allocated_bytes_min": 442302888,
+      "allocated_bytes_max": 442303672,
+      "gc_delta_sum": [
+        5,
+        2,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        1,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1284-1180-0018",
+      "calls": 2,
+      "seconds_sum": 6.751291999999999,
+      "seconds_mean": 3.3756459999999997,
+      "seconds_min": 3.3566575,
+      "seconds_max": 3.3946345,
+      "allocated_bytes_sum": 1344305616,
+      "allocated_bytes_mean": 672152808.0,
+      "allocated_bytes_min": 672149248,
+      "allocated_bytes_max": 672156368,
+      "gc_delta_sum": [
+        7,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1320-122612-0001",
+      "calls": 2,
+      "seconds_sum": 5.0226375,
+      "seconds_mean": 2.51131875,
+      "seconds_min": 2.4473624,
+      "seconds_max": 2.5752751,
+      "allocated_bytes_sum": 1057147704,
+      "allocated_bytes_mean": 528573852.0,
+      "allocated_bytes_min": 521915936,
+      "allocated_bytes_max": 535231768,
+      "gc_delta_sum": [
+        5,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 1
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1320-122612-0000",
+      "calls": 2,
+      "seconds_sum": 7.8872778,
+      "seconds_mean": 3.9436389,
+      "seconds_min": 3.9002252,
+      "seconds_max": 3.9870526,
+      "allocated_bytes_sum": 1700451240,
+      "allocated_bytes_mean": 850225620.0,
+      "allocated_bytes_min": 765160240,
+      "allocated_bytes_max": 935291000,
+      "gc_delta_sum": [
+        7,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "121-121726-0000",
+      "calls": 6,
+      "seconds_sum": 14.572933299999999,
+      "seconds_mean": 2.4288222166666666,
+      "seconds_min": 2.3157829,
+      "seconds_max": 2.6115792,
+      "allocated_bytes_sum": 3012665328,
+      "allocated_bytes_mean": 502110888.0,
+      "allocated_bytes_min": 455752680,
+      "allocated_bytes_max": 528834288,
+      "gc_delta_sum": [
+        16,
+        4,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        2,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "121-123852-0000",
+      "calls": 6,
+      "seconds_sum": 28.0822559,
+      "seconds_mean": 4.680375983333334,
+      "seconds_min": 4.320686,
+      "seconds_max": 5.4084697,
+      "allocated_bytes_sum": 6746695448,
+      "allocated_bytes_mean": 1124449241.3333333,
+      "allocated_bytes_min": 1059260232,
+      "allocated_bytes_max": 1258886280,
+      "gc_delta_sum": [
+        23,
+        5,
+        3
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 3
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "237-126133-0002",
+      "calls": 6,
+      "seconds_sum": 15.843945999999999,
+      "seconds_mean": 2.6406576666666663,
+      "seconds_min": 2.4709278,
+      "seconds_max": 2.9871556,
+      "allocated_bytes_sum": 3110432544,
+      "allocated_bytes_mean": 518405424.0,
+      "allocated_bytes_min": 484301280,
+      "allocated_bytes_max": 553055552,
+      "gc_delta_sum": [
+        15,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "237-126133-0000",
+      "calls": 6,
+      "seconds_sum": 22.946246000000002,
+      "seconds_mean": 3.8243743333333335,
+      "seconds_min": 3.6235396,
+      "seconds_max": 4.2157223,
+      "allocated_bytes_sum": 4872756576,
+      "allocated_bytes_mean": 812126096.0,
+      "allocated_bytes_min": 755501944,
+      "allocated_bytes_max": 925373832,
+      "gc_delta_sum": [
+        18,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "260-123286-0000",
+      "calls": 6,
+      "seconds_sum": 13.2532224,
+      "seconds_mean": 2.2088704,
+      "seconds_min": 2.163019,
+      "seconds_max": 2.2879041,
+      "allocated_bytes_sum": 2316869376,
+      "allocated_bytes_mean": 386144896.0,
+      "allocated_bytes_min": 382522248,
+      "allocated_bytes_max": 404229936,
+      "gc_delta_sum": [
+        15,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "260-123288-0005",
+      "calls": 6,
+      "seconds_sum": 21.522634500000002,
+      "seconds_mean": 3.5871057500000005,
+      "seconds_min": 3.4589272,
+      "seconds_max": 3.7426929,
+      "allocated_bytes_sum": 4382474656,
+      "allocated_bytes_mean": 730412442.6666666,
+      "allocated_bytes_min": 700656640,
+      "allocated_bytes_max": 879175568,
+      "gc_delta_sum": [
+        18,
+        5,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "672-122797-0000",
+      "calls": 6,
+      "seconds_sum": 17.1804367,
+      "seconds_mean": 2.863406116666667,
+      "seconds_min": 2.0654258,
+      "seconds_max": 4.4703471,
+      "allocated_bytes_sum": 1408947744,
+      "allocated_bytes_mean": 234824624.0,
+      "allocated_bytes_min": 234821824,
+      "allocated_bytes_max": 234828688,
+      "gc_delta_sum": [
+        17,
+        6,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        1,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "672-122797-0001",
+      "calls": 6,
+      "seconds_sum": 26.11993,
+      "seconds_mean": 4.353321666666667,
+      "seconds_min": 3.9574077,
+      "seconds_max": 5.0923436,
+      "allocated_bytes_sum": 5343472848,
+      "allocated_bytes_mean": 890578808.0,
+      "allocated_bytes_min": 873531808,
+      "allocated_bytes_max": 903294496,
+      "gc_delta_sum": [
+        22,
+        4,
+        4
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        1
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "908-157963-0005",
+      "calls": 6,
+      "seconds_sum": 12.2005037,
+      "seconds_mean": 2.0334172833333333,
+      "seconds_min": 1.9213475,
+      "seconds_max": 2.293418,
+      "allocated_bytes_sum": 2626067128,
+      "allocated_bytes_mean": 437677854.6666667,
+      "allocated_bytes_min": 377307256,
+      "allocated_bytes_max": 466647192,
+      "gc_delta_sum": [
+        14,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "908-157963-0000",
+      "calls": 6,
+      "seconds_sum": 20.3938984,
+      "seconds_mean": 3.3989830666666667,
+      "seconds_min": 3.3147514,
+      "seconds_max": 3.6377936,
+      "allocated_bytes_sum": 5107904768,
+      "allocated_bytes_mean": 851317461.3333334,
+      "allocated_bytes_min": 704799784,
+      "allocated_bytes_max": 904161784,
+      "gc_delta_sum": [
+        19,
+        4,
+        2
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 4
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1089-134686-0002",
+      "calls": 6,
+      "seconds_sum": 12.976681,
+      "seconds_mean": 2.1627801666666664,
+      "seconds_min": 2.0638434,
+      "seconds_max": 2.4784138,
+      "allocated_bytes_sum": 2299121984,
+      "allocated_bytes_mean": 383186997.3333333,
+      "allocated_bytes_min": 360322904,
+      "allocated_bytes_max": 429334336,
+      "gc_delta_sum": [
+        14,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1089-134686-0011",
+      "calls": 6,
+      "seconds_sum": 19.0083882,
+      "seconds_mean": 3.1680647,
+      "seconds_min": 3.0339973,
+      "seconds_max": 3.3164502,
+      "allocated_bytes_sum": 4351235048,
+      "allocated_bytes_mean": 725205841.3333334,
+      "allocated_bytes_min": 696887576,
+      "allocated_bytes_max": 866763200,
+      "gc_delta_sum": [
+        19,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1188-133604-0001",
+      "calls": 6,
+      "seconds_sum": 14.0738773,
+      "seconds_mean": 2.3456462166666667,
+      "seconds_min": 2.23194,
+      "seconds_max": 2.4283706,
+      "allocated_bytes_sum": 2952307408,
+      "allocated_bytes_mean": 492051234.6666667,
+      "allocated_bytes_min": 492045008,
+      "allocated_bytes_max": 492055128,
+      "gc_delta_sum": [
+        16,
+        3,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1188-133604-0002",
+      "calls": 6,
+      "seconds_sum": 26.7719054,
+      "seconds_mean": 4.461984233333333,
+      "seconds_min": 4.3837186,
+      "seconds_max": 4.56376,
+      "allocated_bytes_sum": 6504597752,
+      "allocated_bytes_mean": 1084099625.3333333,
+      "allocated_bytes_min": 1084094944,
+      "allocated_bytes_max": 1084108528,
+      "gc_delta_sum": [
+        25,
+        4,
+        1
+      ],
+      "gc_delta_min": [
+        4,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        5,
+        2,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1221-135766-0002",
+      "calls": 6,
+      "seconds_sum": 18.6853763,
+      "seconds_mean": 3.1142293833333334,
+      "seconds_min": 2.7201354,
+      "seconds_max": 4.6380034,
+      "allocated_bytes_sum": 1637760720,
+      "allocated_bytes_mean": 272960120.0,
+      "allocated_bytes_min": 272956624,
+      "allocated_bytes_max": 272963704,
+      "gc_delta_sum": [
+        12,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1221-135766-0000",
+      "calls": 6,
+      "seconds_sum": 19.0226587,
+      "seconds_mean": 3.1704431166666667,
+      "seconds_min": 3.0883304,
+      "seconds_max": 3.2856471,
+      "allocated_bytes_sum": 4194908528,
+      "allocated_bytes_mean": 699151421.3333334,
+      "allocated_bytes_min": 696984960,
+      "allocated_bytes_max": 709970544,
+      "gc_delta_sum": [
+        18,
+        3,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1284-1180-0000",
+      "calls": 6,
+      "seconds_sum": 13.6312411,
+      "seconds_mean": 2.2718735166666666,
+      "seconds_min": 2.0673297,
+      "seconds_max": 3.0219909,
+      "allocated_bytes_sum": 2722089376,
+      "allocated_bytes_mean": 453681562.6666667,
+      "allocated_bytes_min": 442307160,
+      "allocated_bytes_max": 510530496,
+      "gc_delta_sum": [
+        16,
+        3,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        2,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1284-1180-0018",
+      "calls": 6,
+      "seconds_sum": 21.2515725,
+      "seconds_mean": 3.5419287500000003,
+      "seconds_min": 3.4041405,
+      "seconds_max": 3.7447165,
+      "allocated_bytes_sum": 4228354456,
+      "allocated_bytes_mean": 704725742.6666666,
+      "allocated_bytes_min": 672150048,
+      "allocated_bytes_max": 842025576,
+      "gc_delta_sum": [
+        20,
+        3,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1320-122612-0001",
+      "calls": 6,
+      "seconds_sum": 15.144763,
+      "seconds_mean": 2.5241271666666667,
+      "seconds_min": 2.4884199,
+      "seconds_max": 2.5733301,
+      "allocated_bytes_sum": 3348306896,
+      "allocated_bytes_mean": 558051149.3333334,
+      "allocated_bytes_min": 521914184,
+      "allocated_bytes_max": 692371480,
+      "gc_delta_sum": [
+        18,
+        3,
+        2
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 4
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "production",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1320-122612-0000",
+      "calls": 6,
+      "seconds_sum": 27.18083,
+      "seconds_mean": 4.530138333333333,
+      "seconds_min": 3.6428875,
+      "seconds_max": 8.352268,
+      "allocated_bytes_sum": 4973692176,
+      "allocated_bytes_mean": 828948696.0,
+      "allocated_bytes_min": 765156352,
+      "allocated_bytes_max": 948005816,
+      "gc_delta_sum": [
+        19,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "121-121726-0000",
+      "calls": 2,
+      "seconds_sum": 6.1834107,
+      "seconds_mean": 3.09170535,
+      "seconds_min": 3.0877862,
+      "seconds_max": 3.0956245,
+      "allocated_bytes_sum": 1136570552,
+      "allocated_bytes_mean": 568285276.0,
+      "allocated_bytes_min": 557698320,
+      "allocated_bytes_max": 578872232,
+      "gc_delta_sum": [
+        6,
+        4,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        2,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        2,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "121-123852-0000",
+      "calls": 2,
+      "seconds_sum": 11.6704635,
+      "seconds_mean": 5.83523175,
+      "seconds_min": 5.7608368,
+      "seconds_max": 5.9096267,
+      "allocated_bytes_sum": 2490670720,
+      "allocated_bytes_mean": 1245335360.0,
+      "allocated_bytes_min": 1229408720,
+      "allocated_bytes_max": 1261262000,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "237-126133-0002",
+      "calls": 2,
+      "seconds_sum": 7.225924900000001,
+      "seconds_mean": 3.6129624500000004,
+      "seconds_min": 3.1558641,
+      "seconds_max": 4.0700608,
+      "allocated_bytes_sum": 1037790032,
+      "allocated_bytes_mean": 518895016.0,
+      "allocated_bytes_min": 484556016,
+      "allocated_bytes_max": 553234016,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "237-126133-0000",
+      "calls": 2,
+      "seconds_sum": 8.122307,
+      "seconds_mean": 4.0611535,
+      "seconds_min": 3.9482623,
+      "seconds_max": 4.1740447,
+      "allocated_bytes_sum": 1511009856,
+      "allocated_bytes_mean": 755504928.0,
+      "allocated_bytes_min": 755502232,
+      "allocated_bytes_max": 755507624,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "260-123286-0000",
+      "calls": 2,
+      "seconds_sum": 4.1744049,
+      "seconds_mean": 2.08720245,
+      "seconds_min": 2.0527595,
+      "seconds_max": 2.1216454,
+      "allocated_bytes_sum": 765045472,
+      "allocated_bytes_mean": 382522736.0,
+      "allocated_bytes_min": 382521592,
+      "allocated_bytes_max": 382523880,
+      "gc_delta_sum": [
+        4,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "260-123288-0005",
+      "calls": 2,
+      "seconds_sum": 7.0525822,
+      "seconds_mean": 3.5262911,
+      "seconds_min": 3.5260453,
+      "seconds_max": 3.5265369,
+      "allocated_bytes_sum": 1431082176,
+      "allocated_bytes_mean": 715541088.0,
+      "allocated_bytes_min": 700662944,
+      "allocated_bytes_max": 730419232,
+      "gc_delta_sum": [
+        6,
+        2,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        1,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "672-122797-0000",
+      "calls": 2,
+      "seconds_sum": 4.3935518,
+      "seconds_mean": 2.1967759,
+      "seconds_min": 2.1230717,
+      "seconds_max": 2.2704801,
+      "allocated_bytes_sum": 503810968,
+      "allocated_bytes_mean": 251905484.0,
+      "allocated_bytes_min": 234834456,
+      "allocated_bytes_max": 268976512,
+      "gc_delta_sum": [
+        6,
+        2,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        1,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "672-122797-0001",
+      "calls": 2,
+      "seconds_sum": 7.958057800000001,
+      "seconds_mean": 3.9790289000000003,
+      "seconds_min": 3.775108,
+      "seconds_max": 4.1829498,
+      "allocated_bytes_sum": 2149447512,
+      "allocated_bytes_mean": 1074723756.0,
+      "allocated_bytes_min": 1073149968,
+      "allocated_bytes_max": 1076297544,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "908-157963-0005",
+      "calls": 2,
+      "seconds_sum": 4.1004532000000005,
+      "seconds_mean": 2.0502266000000002,
+      "seconds_min": 1.8142773,
+      "seconds_max": 2.2861759,
+      "allocated_bytes_sum": 891056288,
+      "allocated_bytes_mean": 445528144.0,
+      "allocated_bytes_min": 445526680,
+      "allocated_bytes_max": 445529608,
+      "gc_delta_sum": [
+        4,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "908-157963-0000",
+      "calls": 2,
+      "seconds_sum": 6.8211997,
+      "seconds_mean": 3.41059985,
+      "seconds_min": 3.1981217,
+      "seconds_max": 3.623078,
+      "allocated_bytes_sum": 1439355152,
+      "allocated_bytes_mean": 719677576.0,
+      "allocated_bytes_min": 704795776,
+      "allocated_bytes_max": 734559376,
+      "gc_delta_sum": [
+        6,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 1
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1089-134686-0002",
+      "calls": 2,
+      "seconds_sum": 4.3701015,
+      "seconds_mean": 2.18505075,
+      "seconds_min": 2.0103918,
+      "seconds_max": 2.3597097,
+      "allocated_bytes_sum": 811104336,
+      "allocated_bytes_mean": 405552168.0,
+      "allocated_bytes_min": 382019672,
+      "allocated_bytes_max": 429084664,
+      "gc_delta_sum": [
+        5,
+        2,
+        2
+      ],
+      "gc_delta_min": [
+        2,
+        1,
+        1
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 0
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1089-134686-0011",
+      "calls": 2,
+      "seconds_sum": 6.7893837999999995,
+      "seconds_mean": 3.3946918999999998,
+      "seconds_min": 3.1248931,
+      "seconds_max": 3.6644907,
+      "allocated_bytes_sum": 1774032224,
+      "allocated_bytes_mean": 887016112.0,
+      "allocated_bytes_min": 875419128,
+      "allocated_bytes_max": 898613096,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1188-133604-0001",
+      "calls": 2,
+      "seconds_sum": 4.9277296,
+      "seconds_mean": 2.4638648,
+      "seconds_min": 2.3840935,
+      "seconds_max": 2.5436361,
+      "allocated_bytes_sum": 1150572320,
+      "allocated_bytes_mean": 575286160.0,
+      "allocated_bytes_min": 560798520,
+      "allocated_bytes_max": 589773800,
+      "gc_delta_sum": [
+        7,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        1
+      ],
+      "calls_without_gen2": 1
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1188-133604-0002",
+      "calls": 2,
+      "seconds_sum": 9.4145373,
+      "seconds_mean": 4.70726865,
+      "seconds_min": 4.5010375,
+      "seconds_max": 4.9134998,
+      "allocated_bytes_sum": 2338329408,
+      "allocated_bytes_mean": 1169164704.0,
+      "allocated_bytes_min": 1084094632,
+      "allocated_bytes_max": 1254234776,
+      "gc_delta_sum": [
+        7,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1221-135766-0002",
+      "calls": 2,
+      "seconds_sum": 5.8003028,
+      "seconds_mean": 2.9001514,
+      "seconds_min": 2.7422733,
+      "seconds_max": 3.0580295,
+      "allocated_bytes_sum": 614080608,
+      "allocated_bytes_mean": 307040304.0,
+      "allocated_bytes_min": 272963184,
+      "allocated_bytes_max": 341117424,
+      "gc_delta_sum": [
+        5,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1221-135766-0000",
+      "calls": 2,
+      "seconds_sum": 7.14199,
+      "seconds_mean": 3.570995,
+      "seconds_min": 3.1671876,
+      "seconds_max": 3.9748024,
+      "allocated_bytes_sum": 1423738304,
+      "allocated_bytes_mean": 711869152.0,
+      "allocated_bytes_min": 696994256,
+      "allocated_bytes_max": 726744048,
+      "gc_delta_sum": [
+        6,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 1
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1284-1180-0000",
+      "calls": 2,
+      "seconds_sum": 4.4803717,
+      "seconds_mean": 2.24018585,
+      "seconds_min": 2.151798,
+      "seconds_max": 2.3285737,
+      "allocated_bytes_sum": 953361880,
+      "allocated_bytes_mean": 476680940.0,
+      "allocated_bytes_min": 442305264,
+      "allocated_bytes_max": 511056616,
+      "gc_delta_sum": [
+        5,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1284-1180-0018",
+      "calls": 2,
+      "seconds_sum": 6.6406336,
+      "seconds_mean": 3.3203168,
+      "seconds_min": 3.178958,
+      "seconds_max": 3.4616756,
+      "allocated_bytes_sum": 1514170352,
+      "allocated_bytes_mean": 757085176.0,
+      "allocated_bytes_min": 672154344,
+      "allocated_bytes_max": 842016008,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1320-122612-0001",
+      "calls": 2,
+      "seconds_sum": 5.054796,
+      "seconds_mean": 2.527398,
+      "seconds_min": 2.4388347,
+      "seconds_max": 2.6159613,
+      "allocated_bytes_sum": 1043831272,
+      "allocated_bytes_mean": 521915636.0,
+      "allocated_bytes_min": 521913720,
+      "allocated_bytes_max": 521917552,
+      "gc_delta_sum": [
+        6,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1320-122612-0000",
+      "calls": 2,
+      "seconds_sum": 7.395466900000001,
+      "seconds_mean": 3.6977334500000003,
+      "seconds_min": 3.5068337,
+      "seconds_max": 3.8886332,
+      "allocated_bytes_sum": 1560074360,
+      "allocated_bytes_mean": 780037180.0,
+      "allocated_bytes_min": 765162400,
+      "allocated_bytes_max": 794911960,
+      "gc_delta_sum": [
+        7,
+        2,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 1
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "121-121726-0000",
+      "calls": 6,
+      "seconds_sum": 13.5183366,
+      "seconds_mean": 2.2530561,
+      "seconds_min": 2.1813196,
+      "seconds_max": 2.310076,
+      "allocated_bytes_sum": 3008346408,
+      "allocated_bytes_mean": 501391068.0,
+      "allocated_bytes_min": 455752976,
+      "allocated_bytes_max": 524510200,
+      "gc_delta_sum": [
+        15,
+        2,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "121-123852-0000",
+      "calls": 6,
+      "seconds_sum": 28.754131,
+      "seconds_mean": 4.792355166666667,
+      "seconds_min": 4.5223899,
+      "seconds_max": 5.5880224,
+      "allocated_bytes_sum": 6750627520,
+      "allocated_bytes_mean": 1125104586.6666667,
+      "allocated_bytes_min": 1059255864,
+      "allocated_bytes_max": 1254696880,
+      "gc_delta_sum": [
+        19,
+        3,
+        2
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        1
+      ],
+      "calls_without_gen2": 4
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "237-126133-0002",
+      "calls": 6,
+      "seconds_sum": 14.4659138,
+      "seconds_mean": 2.410985633333333,
+      "seconds_min": 2.2970454,
+      "seconds_max": 2.668145,
+      "allocated_bytes_sum": 3065022416,
+      "allocated_bytes_mean": 510837069.3333333,
+      "allocated_bytes_min": 484300840,
+      "allocated_bytes_max": 553056264,
+      "gc_delta_sum": [
+        19,
+        2,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "237-126133-0000",
+      "calls": 6,
+      "seconds_sum": 21.9450413,
+      "seconds_mean": 3.6575068833333333,
+      "seconds_min": 3.5256559,
+      "seconds_max": 3.9079959,
+      "allocated_bytes_sum": 5077266728,
+      "allocated_bytes_mean": 846211121.3333334,
+      "allocated_bytes_min": 755510120,
+      "allocated_bytes_max": 934027784,
+      "gc_delta_sum": [
+        20,
+        4,
+        2
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 4
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "260-123286-0000",
+      "calls": 6,
+      "seconds_sum": 12.4643068,
+      "seconds_mean": 2.0773844666666665,
+      "seconds_min": 1.9809161,
+      "seconds_max": 2.2305798,
+      "allocated_bytes_sum": 2505715088,
+      "allocated_bytes_mean": 417619181.3333333,
+      "allocated_bytes_min": 382522976,
+      "allocated_bytes_max": 455597760,
+      "gc_delta_sum": [
+        14,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "260-123288-0005",
+      "calls": 6,
+      "seconds_sum": 20.9079845,
+      "seconds_mean": 3.4846640833333336,
+      "seconds_min": 3.3459016,
+      "seconds_max": 3.9261092,
+      "allocated_bytes_sum": 4752018000,
+      "allocated_bytes_mean": 792003000.0,
+      "allocated_bytes_min": 700664096,
+      "allocated_bytes_max": 879183608,
+      "gc_delta_sum": [
+        19,
+        4,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "672-122797-0000",
+      "calls": 6,
+      "seconds_sum": 14.4659582,
+      "seconds_mean": 2.4109930333333334,
+      "seconds_min": 2.0902676,
+      "seconds_max": 2.7808993,
+      "allocated_bytes_sum": 1452195880,
+      "allocated_bytes_mean": 242032646.66666666,
+      "allocated_bytes_min": 234821912,
+      "allocated_bytes_max": 268973576,
+      "gc_delta_sum": [
+        18,
+        7,
+        2
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        3,
+        1
+      ],
+      "calls_without_gen2": 4
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "672-122797-0001",
+      "calls": 6,
+      "seconds_sum": 24.3417326,
+      "seconds_mean": 4.056955433333333,
+      "seconds_min": 3.7100645,
+      "seconds_max": 5.1291612,
+      "allocated_bytes_sum": 5767865824,
+      "allocated_bytes_mean": 961310970.6666666,
+      "allocated_bytes_min": 873533784,
+      "allocated_bytes_max": 1068705384,
+      "gc_delta_sum": [
+        18,
+        2,
+        0
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "908-157963-0005",
+      "calls": 6,
+      "seconds_sum": 11.4647669,
+      "seconds_mean": 1.9107944833333335,
+      "seconds_min": 1.8292669,
+      "seconds_max": 2.0264481,
+      "allocated_bytes_sum": 2557646568,
+      "allocated_bytes_mean": 426274428.0,
+      "allocated_bytes_min": 377307552,
+      "allocated_bytes_max": 466639512,
+      "gc_delta_sum": [
+        13,
+        2,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "908-157963-0000",
+      "calls": 6,
+      "seconds_sum": 20.1958157,
+      "seconds_mean": 3.3659692833333335,
+      "seconds_min": 3.135609,
+      "seconds_max": 3.6361563,
+      "allocated_bytes_sum": 4428667888,
+      "allocated_bytes_mean": 738111314.6666666,
+      "allocated_bytes_min": 704794296,
+      "allocated_bytes_max": 874926552,
+      "gc_delta_sum": [
+        19,
+        2,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1089-134686-0002",
+      "calls": 6,
+      "seconds_sum": 12.0759116,
+      "seconds_mean": 2.0126519333333333,
+      "seconds_min": 1.876012,
+      "seconds_max": 2.1673749,
+      "allocated_bytes_sum": 2298327176,
+      "allocated_bytes_mean": 383054529.3333333,
+      "allocated_bytes_min": 360321072,
+      "allocated_bytes_max": 428550952,
+      "gc_delta_sum": [
+        13,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1089-134686-0011",
+      "calls": 6,
+      "seconds_sum": 21.2304796,
+      "seconds_mean": 3.5384132666666663,
+      "seconds_min": 3.2891464,
+      "seconds_max": 4.0316874,
+      "allocated_bytes_sum": 4410758280,
+      "allocated_bytes_mean": 735126380.0,
+      "allocated_bytes_min": 696892832,
+      "allocated_bytes_max": 866764504,
+      "gc_delta_sum": [
+        21,
+        4,
+        2
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        1
+      ],
+      "calls_without_gen2": 4
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1188-133604-0001",
+      "calls": 6,
+      "seconds_sum": 18.2505617,
+      "seconds_mean": 3.0417602833333333,
+      "seconds_min": 2.3991162,
+      "seconds_max": 5.8196108,
+      "allocated_bytes_sum": 3155858696,
+      "allocated_bytes_mean": 525976449.3333333,
+      "allocated_bytes_min": 492049544,
+      "allocated_bytes_max": 593828624,
+      "gc_delta_sum": [
+        16,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1188-133604-0002",
+      "calls": 6,
+      "seconds_sum": 28.9508303,
+      "seconds_mean": 4.825138383333333,
+      "seconds_min": 4.5621631,
+      "seconds_max": 5.4871267,
+      "allocated_bytes_sum": 6913048280,
+      "allocated_bytes_mean": 1152174713.3333333,
+      "allocated_bytes_min": 1084096880,
+      "allocated_bytes_max": 1250177224,
+      "gc_delta_sum": [
+        26,
+        8,
+        4
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        5,
+        3,
+        1
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1221-135766-0002",
+      "calls": 6,
+      "seconds_sum": 16.0701952,
+      "seconds_mean": 2.6783658666666668,
+      "seconds_min": 2.5585188,
+      "seconds_max": 2.8600909,
+      "allocated_bytes_sum": 1910392464,
+      "allocated_bytes_mean": 318398744.0,
+      "allocated_bytes_min": 272958800,
+      "allocated_bytes_max": 341122064,
+      "gc_delta_sum": [
+        13,
+        0,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        0,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1221-135766-0000",
+      "calls": 6,
+      "seconds_sum": 21.152965599999998,
+      "seconds_mean": 3.525494266666666,
+      "seconds_min": 3.3049942,
+      "seconds_max": 4.1339991,
+      "allocated_bytes_sum": 4706618200,
+      "allocated_bytes_mean": 784436366.6666666,
+      "allocated_bytes_min": 696984752,
+      "allocated_bytes_max": 866859184,
+      "gc_delta_sum": [
+        19,
+        4,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1284-1180-0000",
+      "calls": 6,
+      "seconds_sum": 14.049936500000001,
+      "seconds_mean": 2.3416560833333335,
+      "seconds_min": 2.1380278,
+      "seconds_max": 2.7004181,
+      "allocated_bytes_sum": 2746073008,
+      "allocated_bytes_mean": 457678834.6666667,
+      "allocated_bytes_min": 442306384,
+      "allocated_bytes_max": 511061056,
+      "gc_delta_sum": [
+        17,
+        4,
+        1
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1284-1180-0018",
+      "calls": 6,
+      "seconds_sum": 20.4446577,
+      "seconds_mean": 3.40744295,
+      "seconds_min": 3.2799154,
+      "seconds_max": 3.6194399,
+      "allocated_bytes_sum": 4591812976,
+      "allocated_bytes_mean": 765302162.6666666,
+      "allocated_bytes_min": 672145144,
+      "allocated_bytes_max": 869685008,
+      "gc_delta_sum": [
+        20,
+        5,
+        2
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 4
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1320-122612-0001",
+      "calls": 6,
+      "seconds_sum": 15.7218173,
+      "seconds_mean": 2.6203028833333333,
+      "seconds_min": 2.479526,
+      "seconds_max": 2.7926472,
+      "allocated_bytes_sum": 3302015896,
+      "allocated_bytes_mean": 550335982.6666666,
+      "allocated_bytes_min": 521909680,
+      "allocated_bytes_max": 692372424,
+      "gc_delta_sum": [
+        15,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        1,
+        0
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "candidate",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1320-122612-0000",
+      "calls": 6,
+      "seconds_sum": 22.4159019,
+      "seconds_mean": 3.73598365,
+      "seconds_min": 3.5437062,
+      "seconds_max": 3.8191217,
+      "allocated_bytes_sum": 4621772408,
+      "allocated_bytes_mean": 770295401.3333334,
+      "allocated_bytes_min": 765157344,
+      "allocated_bytes_max": 795970928,
+      "gc_delta_sum": [
+        22,
+        3,
+        1
+      ],
+      "gc_delta_min": [
+        3,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        1,
+        1
+      ],
+      "calls_without_gen2": 5
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "121-121726-0000",
+      "calls": 2,
+      "seconds_sum": 2.4824804,
+      "seconds_mean": 1.2412402,
+      "seconds_min": 1.2035971,
+      "seconds_max": 1.2788833
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "121-123852-0000",
+      "calls": 2,
+      "seconds_sum": 4.6848879,
+      "seconds_mean": 2.34244395,
+      "seconds_min": 2.2827119,
+      "seconds_max": 2.402176
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "237-126133-0002",
+      "calls": 2,
+      "seconds_sum": 2.4440465,
+      "seconds_mean": 1.22202325,
+      "seconds_min": 1.1782502,
+      "seconds_max": 1.2657963
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "237-126133-0000",
+      "calls": 2,
+      "seconds_sum": 3.6540397000000002,
+      "seconds_mean": 1.8270198500000001,
+      "seconds_min": 1.7631438,
+      "seconds_max": 1.8908959
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "260-123286-0000",
+      "calls": 2,
+      "seconds_sum": 2.4646903,
+      "seconds_mean": 1.23234515,
+      "seconds_min": 0.9564552,
+      "seconds_max": 1.5082351
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "260-123288-0005",
+      "calls": 2,
+      "seconds_sum": 3.6650831,
+      "seconds_mean": 1.83254155,
+      "seconds_min": 1.6561407,
+      "seconds_max": 2.0089424
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "672-122797-0000",
+      "calls": 2,
+      "seconds_sum": 1.629521,
+      "seconds_mean": 0.8147605,
+      "seconds_min": 0.5970276,
+      "seconds_max": 1.0324934
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "672-122797-0001",
+      "calls": 2,
+      "seconds_sum": 4.838903,
+      "seconds_mean": 2.4194515,
+      "seconds_min": 1.9785139,
+      "seconds_max": 2.8603891
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "908-157963-0005",
+      "calls": 2,
+      "seconds_sum": 1.9516363,
+      "seconds_mean": 0.97581815,
+      "seconds_min": 0.9511297,
+      "seconds_max": 1.0005066
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "908-157963-0000",
+      "calls": 2,
+      "seconds_sum": 3.6961535999999997,
+      "seconds_mean": 1.8480767999999999,
+      "seconds_min": 1.6846276,
+      "seconds_max": 2.011526
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1089-134686-0002",
+      "calls": 2,
+      "seconds_sum": 1.9843462,
+      "seconds_mean": 0.9921731,
+      "seconds_min": 0.9217909,
+      "seconds_max": 1.0625553
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1089-134686-0011",
+      "calls": 2,
+      "seconds_sum": 3.4063511,
+      "seconds_mean": 1.70317555,
+      "seconds_min": 1.6677362,
+      "seconds_max": 1.7386149
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1188-133604-0001",
+      "calls": 2,
+      "seconds_sum": 2.5756202000000004,
+      "seconds_mean": 1.2878101000000002,
+      "seconds_min": 1.2374008,
+      "seconds_max": 1.3382194
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1188-133604-0002",
+      "calls": 2,
+      "seconds_sum": 4.8753534,
+      "seconds_mean": 2.4376767,
+      "seconds_min": 2.394857,
+      "seconds_max": 2.4804964
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1221-135766-0002",
+      "calls": 2,
+      "seconds_sum": 1.4103508,
+      "seconds_mean": 0.7051754,
+      "seconds_min": 0.6952104,
+      "seconds_max": 0.7151404
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1221-135766-0000",
+      "calls": 2,
+      "seconds_sum": 3.3282562999999996,
+      "seconds_mean": 1.6641281499999998,
+      "seconds_min": 1.6430949,
+      "seconds_max": 1.6851614
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1284-1180-0000",
+      "calls": 2,
+      "seconds_sum": 2.293052,
+      "seconds_mean": 1.146526,
+      "seconds_min": 1.1206485,
+      "seconds_max": 1.1724035
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1284-1180-0018",
+      "calls": 2,
+      "seconds_sum": 3.3292685,
+      "seconds_mean": 1.66463425,
+      "seconds_min": 1.6413232,
+      "seconds_max": 1.6879453
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1320-122612-0001",
+      "calls": 2,
+      "seconds_sum": 2.6321919,
+      "seconds_mean": 1.31609595,
+      "seconds_min": 1.3147581,
+      "seconds_max": 1.3174338
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "warmup",
+      "name": "1320-122612-0000",
+      "calls": 2,
+      "seconds_sum": 3.701276,
+      "seconds_mean": 1.850638,
+      "seconds_min": 1.8475165,
+      "seconds_max": 1.8537595
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "121-121726-0000",
+      "calls": 6,
+      "seconds_sum": 6.9043387,
+      "seconds_mean": 1.1507231166666667,
+      "seconds_min": 1.1040817,
+      "seconds_max": 1.1997808
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "121-123852-0000",
+      "calls": 6,
+      "seconds_sum": 14.6388643,
+      "seconds_mean": 2.4398107166666665,
+      "seconds_min": 2.2534418,
+      "seconds_max": 3.1122958
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "237-126133-0002",
+      "calls": 6,
+      "seconds_sum": 7.4109648,
+      "seconds_mean": 1.2351608,
+      "seconds_min": 1.1964245,
+      "seconds_max": 1.3384905
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "237-126133-0000",
+      "calls": 6,
+      "seconds_sum": 11.3311616,
+      "seconds_mean": 1.8885269333333332,
+      "seconds_min": 1.7706577,
+      "seconds_max": 2.1267767
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "260-123286-0000",
+      "calls": 6,
+      "seconds_sum": 5.7969972,
+      "seconds_mean": 0.9661662,
+      "seconds_min": 0.9503074,
+      "seconds_max": 1.0041497
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "260-123288-0005",
+      "calls": 6,
+      "seconds_sum": 10.3670326,
+      "seconds_mean": 1.7278387666666666,
+      "seconds_min": 1.6570786,
+      "seconds_max": 1.8553518
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "672-122797-0000",
+      "calls": 6,
+      "seconds_sum": 3.6400578,
+      "seconds_mean": 0.6066763000000001,
+      "seconds_min": 0.5855005,
+      "seconds_max": 0.6587763
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "672-122797-0001",
+      "calls": 6,
+      "seconds_sum": 11.8373865,
+      "seconds_mean": 1.9728977499999998,
+      "seconds_min": 1.9477607,
+      "seconds_max": 2.0113041
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "908-157963-0005",
+      "calls": 6,
+      "seconds_sum": 5.6401432,
+      "seconds_mean": 0.9400238666666666,
+      "seconds_min": 0.9226461,
+      "seconds_max": 0.9645954
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "908-157963-0000",
+      "calls": 6,
+      "seconds_sum": 10.0893183,
+      "seconds_mean": 1.68155305,
+      "seconds_min": 1.6330484,
+      "seconds_max": 1.7300306
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1089-134686-0002",
+      "calls": 6,
+      "seconds_sum": 5.5331068,
+      "seconds_mean": 0.9221844666666666,
+      "seconds_min": 0.9030553,
+      "seconds_max": 0.9637688
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1089-134686-0011",
+      "calls": 6,
+      "seconds_sum": 10.0525248,
+      "seconds_mean": 1.6754208000000002,
+      "seconds_min": 1.6312452,
+      "seconds_max": 1.705169
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1188-133604-0001",
+      "calls": 6,
+      "seconds_sum": 7.354978,
+      "seconds_mean": 1.2258296666666666,
+      "seconds_min": 1.1940435,
+      "seconds_max": 1.2415815
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1188-133604-0002",
+      "calls": 6,
+      "seconds_sum": 14.4090278,
+      "seconds_mean": 2.4015046333333334,
+      "seconds_min": 2.3635533,
+      "seconds_max": 2.4476212
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1221-135766-0002",
+      "calls": 6,
+      "seconds_sum": 4.2223742,
+      "seconds_mean": 0.7037290333333334,
+      "seconds_min": 0.6886824,
+      "seconds_max": 0.723759
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1221-135766-0000",
+      "calls": 6,
+      "seconds_sum": 9.98287,
+      "seconds_mean": 1.6638116666666667,
+      "seconds_min": 1.6328448,
+      "seconds_max": 1.7123117
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1284-1180-0000",
+      "calls": 6,
+      "seconds_sum": 6.6570480000000005,
+      "seconds_mean": 1.1095080000000002,
+      "seconds_min": 1.0945024,
+      "seconds_max": 1.1362855
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1284-1180-0018",
+      "calls": 6,
+      "seconds_sum": 9.751716,
+      "seconds_mean": 1.625286,
+      "seconds_min": 1.5807331,
+      "seconds_max": 1.6787071
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1320-122612-0001",
+      "calls": 6,
+      "seconds_sum": 7.7557807,
+      "seconds_mean": 1.2926301166666667,
+      "seconds_min": 1.2526148,
+      "seconds_max": 1.3444244
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "role": "ort",
+      "scope": "public",
+      "phase": "measured",
+      "name": "1320-122612-0000",
+      "calls": 6,
+      "seconds_sum": 10.985329,
+      "seconds_mean": 1.8308881666666668,
+      "seconds_min": 1.7930202,
+      "seconds_max": 1.8815784
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "graph",
+      "phase": "unprofiled",
+      "name": "frontend",
+      "calls": 20,
+      "seconds_sum": 0.6858294,
+      "seconds_mean": 0.034291470000000004,
+      "seconds_min": 0.0085616,
+      "seconds_max": 0.1307681,
+      "allocated_bytes_sum": 596762200,
+      "allocated_bytes_mean": 29838110.0,
+      "allocated_bytes_min": 11435168,
+      "allocated_bytes_max": 50090152,
+      "gc_delta_sum": [
+        10,
+        3,
+        1
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        2,
+        1
+      ],
+      "calls_without_gen2": 19
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "graph",
+      "phase": "unprofiled",
+      "name": "encoder",
+      "calls": 20,
+      "seconds_sum": 56.1814318,
+      "seconds_mean": 2.80907159,
+      "seconds_min": 1.7679049,
+      "seconds_max": 5.2571422,
+      "allocated_bytes_sum": 12208220304,
+      "allocated_bytes_mean": 610411015.2,
+      "allocated_bytes_min": 216945768,
+      "allocated_bytes_max": 1188407888,
+      "gc_delta_sum": [
+        29,
+        5,
+        2
+      ],
+      "gc_delta_min": [
+        1,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        1,
+        1
+      ],
+      "calls_without_gen2": 18
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "graph",
+      "phase": "unprofiled",
+      "name": "decoder",
+      "calls": 1200,
+      "seconds_sum": 6.6755251,
+      "seconds_mean": 0.0055629375833333335,
+      "seconds_min": 0.0049941,
+      "seconds_max": 0.0213901,
+      "allocated_bytes_sum": 208379920,
+      "allocated_bytes_mean": 173649.93333333332,
+      "allocated_bytes_min": 167432,
+      "allocated_bytes_max": 229704,
+      "gc_delta_sum": [
+        7,
+        4,
+        1
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        1,
+        1
+      ],
+      "calls_without_gen2": 1199
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "graph",
+      "phase": "wall",
+      "name": "frontend",
+      "calls": 20,
+      "seconds_sum": 0.4216918,
+      "seconds_mean": 0.02108459,
+      "seconds_min": 0.0074419,
+      "seconds_max": 0.0433801,
+      "allocated_bytes_sum": 596259256,
+      "allocated_bytes_mean": 29812962.8,
+      "allocated_bytes_min": 11443608,
+      "allocated_bytes_max": 50096800,
+      "gc_delta_sum": [
+        10,
+        1,
+        0
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        1,
+        1,
+        0
+      ],
+      "calls_without_gen2": 20
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "graph",
+      "phase": "wall",
+      "name": "encoder",
+      "calls": 20,
+      "seconds_sum": 52.0413369,
+      "seconds_mean": 2.602066845,
+      "seconds_min": 1.7804986,
+      "seconds_max": 3.8083814,
+      "allocated_bytes_sum": 12125756288,
+      "allocated_bytes_mean": 606287814.4,
+      "allocated_bytes_min": 250290456,
+      "allocated_bytes_max": 1016788976,
+      "gc_delta_sum": [
+        32,
+        11,
+        3
+      ],
+      "gc_delta_min": [
+        1,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        2,
+        1
+      ],
+      "calls_without_gen2": 17
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "graph",
+      "phase": "wall",
+      "name": "decoder",
+      "calls": 1200,
+      "seconds_sum": 6.4494839,
+      "seconds_mean": 0.005374569916666666,
+      "seconds_min": 0.0049568,
+      "seconds_max": 0.0850354,
+      "allocated_bytes_sum": 212535784,
+      "allocated_bytes_mean": 177113.15333333332,
+      "allocated_bytes_min": 170128,
+      "allocated_bytes_max": 230088,
+      "gc_delta_sum": [
+        11,
+        1,
+        1
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        1,
+        1,
+        1
+      ],
+      "calls_without_gen2": 1199
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "121-121726-0000",
+      "calls": 1,
+      "seconds_sum": 3.0462464,
+      "seconds_mean": 3.0462464,
+      "seconds_min": 3.0462464,
+      "seconds_max": 3.0462464,
+      "allocated_bytes_sum": 578831840,
+      "allocated_bytes_mean": 578831840.0,
+      "allocated_bytes_min": 578831840,
+      "allocated_bytes_max": 578831840
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "121-123852-0000",
+      "calls": 1,
+      "seconds_sum": 5.6374049,
+      "seconds_mean": 5.6374049,
+      "seconds_min": 5.6374049,
+      "seconds_max": 5.6374049,
+      "allocated_bytes_sum": 1261255112,
+      "allocated_bytes_mean": 1261255112.0,
+      "allocated_bytes_min": 1261255112,
+      "allocated_bytes_max": 1261255112
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "237-126133-0002",
+      "calls": 1,
+      "seconds_sum": 3.116489,
+      "seconds_mean": 3.116489,
+      "seconds_min": 3.116489,
+      "seconds_max": 3.116489,
+      "allocated_bytes_sum": 553292576,
+      "allocated_bytes_mean": 553292576.0,
+      "allocated_bytes_min": 553292576,
+      "allocated_bytes_max": 553292576
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "237-126133-0000",
+      "calls": 1,
+      "seconds_sum": 4.5098809,
+      "seconds_mean": 4.5098809,
+      "seconds_min": 4.5098809,
+      "seconds_max": 4.5098809,
+      "allocated_bytes_sum": 755566712,
+      "allocated_bytes_mean": 755566712.0,
+      "allocated_bytes_min": 755566712,
+      "allocated_bytes_max": 755566712
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "260-123286-0000",
+      "calls": 1,
+      "seconds_sum": 2.0928956,
+      "seconds_mean": 2.0928956,
+      "seconds_min": 2.0928956,
+      "seconds_max": 2.0928956,
+      "allocated_bytes_sum": 382524704,
+      "allocated_bytes_mean": 382524704.0,
+      "allocated_bytes_min": 382524704,
+      "allocated_bytes_max": 382524704
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "260-123288-0005",
+      "calls": 1,
+      "seconds_sum": 3.5206324,
+      "seconds_mean": 3.5206324,
+      "seconds_min": 3.5206324,
+      "seconds_max": 3.5206324,
+      "allocated_bytes_sum": 700662144,
+      "allocated_bytes_mean": 700662144.0,
+      "allocated_bytes_min": 700662144,
+      "allocated_bytes_max": 700662144
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "672-122797-0000",
+      "calls": 1,
+      "seconds_sum": 2.0300282,
+      "seconds_mean": 2.0300282,
+      "seconds_min": 2.0300282,
+      "seconds_max": 2.0300282,
+      "allocated_bytes_sum": 234837824,
+      "allocated_bytes_mean": 234837824.0,
+      "allocated_bytes_min": 234837824,
+      "allocated_bytes_max": 234837824
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "672-122797-0001",
+      "calls": 1,
+      "seconds_sum": 3.9481496,
+      "seconds_mean": 3.9481496,
+      "seconds_min": 3.9481496,
+      "seconds_max": 3.9481496,
+      "allocated_bytes_sum": 1073149672,
+      "allocated_bytes_mean": 1073149672.0,
+      "allocated_bytes_min": 1073149672,
+      "allocated_bytes_max": 1073149672
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "908-157963-0005",
+      "calls": 1,
+      "seconds_sum": 1.9297477,
+      "seconds_mean": 1.9297477,
+      "seconds_min": 1.9297477,
+      "seconds_max": 1.9297477,
+      "allocated_bytes_sum": 445527440,
+      "allocated_bytes_mean": 445527440.0,
+      "allocated_bytes_min": 445527440,
+      "allocated_bytes_max": 445527440
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "908-157963-0000",
+      "calls": 1,
+      "seconds_sum": 3.2706462,
+      "seconds_mean": 3.2706462,
+      "seconds_min": 3.2706462,
+      "seconds_max": 3.2706462,
+      "allocated_bytes_sum": 704793368,
+      "allocated_bytes_mean": 704793368.0,
+      "allocated_bytes_min": 704793368,
+      "allocated_bytes_max": 704793368
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1089-134686-0002",
+      "calls": 1,
+      "seconds_sum": 2.0753852,
+      "seconds_mean": 2.0753852,
+      "seconds_min": 2.0753852,
+      "seconds_max": 2.0753852,
+      "allocated_bytes_sum": 457527856,
+      "allocated_bytes_mean": 457527856.0,
+      "allocated_bytes_min": 457527856,
+      "allocated_bytes_max": 457527856
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1089-134686-0011",
+      "calls": 1,
+      "seconds_sum": 3.0458195,
+      "seconds_mean": 3.0458195,
+      "seconds_min": 3.0458195,
+      "seconds_max": 3.0458195,
+      "allocated_bytes_sum": 867023624,
+      "allocated_bytes_mean": 867023624.0,
+      "allocated_bytes_min": 867023624,
+      "allocated_bytes_max": 867023624
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1188-133604-0001",
+      "calls": 1,
+      "seconds_sum": 2.2670332,
+      "seconds_mean": 2.2670332,
+      "seconds_min": 2.2670332,
+      "seconds_max": 2.2670332,
+      "allocated_bytes_sum": 506415576,
+      "allocated_bytes_mean": 506415576.0,
+      "allocated_bytes_min": 506415576,
+      "allocated_bytes_max": 506415576
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1188-133604-0002",
+      "calls": 1,
+      "seconds_sum": 4.356814,
+      "seconds_mean": 4.356814,
+      "seconds_min": 4.356814,
+      "seconds_max": 4.356814,
+      "allocated_bytes_sum": 1254229312,
+      "allocated_bytes_mean": 1254229312.0,
+      "allocated_bytes_min": 1254229312,
+      "allocated_bytes_max": 1254229312
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1221-135766-0002",
+      "calls": 1,
+      "seconds_sum": 2.8835393,
+      "seconds_mean": 2.8835393,
+      "seconds_min": 2.8835393,
+      "seconds_max": 2.8835393,
+      "allocated_bytes_sum": 341113808,
+      "allocated_bytes_mean": 341113808.0,
+      "allocated_bytes_min": 341113808,
+      "allocated_bytes_max": 341113808
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1221-135766-0000",
+      "calls": 1,
+      "seconds_sum": 3.0360787,
+      "seconds_mean": 3.0360787,
+      "seconds_min": 3.0360787,
+      "seconds_max": 3.0360787,
+      "allocated_bytes_sum": 696992208,
+      "allocated_bytes_mean": 696992208.0,
+      "allocated_bytes_min": 696992208,
+      "allocated_bytes_max": 696992208
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1284-1180-0000",
+      "calls": 1,
+      "seconds_sum": 2.0653637,
+      "seconds_mean": 2.0653637,
+      "seconds_min": 2.0653637,
+      "seconds_max": 2.0653637,
+      "allocated_bytes_sum": 442310944,
+      "allocated_bytes_mean": 442310944.0,
+      "allocated_bytes_min": 442310944,
+      "allocated_bytes_max": 442310944
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1284-1180-0018",
+      "calls": 1,
+      "seconds_sum": 3.2418432,
+      "seconds_mean": 3.2418432,
+      "seconds_min": 3.2418432,
+      "seconds_max": 3.2418432,
+      "allocated_bytes_sum": 672158160,
+      "allocated_bytes_mean": 672158160.0,
+      "allocated_bytes_min": 672158160,
+      "allocated_bytes_max": 672158160
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1320-122612-0001",
+      "calls": 1,
+      "seconds_sum": 2.346258,
+      "seconds_mean": 2.346258,
+      "seconds_min": 2.346258,
+      "seconds_max": 2.346258,
+      "allocated_bytes_sum": 521911752,
+      "allocated_bytes_mean": 521911752.0,
+      "allocated_bytes_min": 521911752,
+      "allocated_bytes_max": 521911752
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "role": "production",
+      "scope": "public-control",
+      "phase": "single",
+      "name": "1320-122612-0000",
+      "calls": 1,
+      "seconds_sum": 3.8078623,
+      "seconds_mean": 3.8078623,
+      "seconds_min": 3.8078623,
+      "seconds_max": 3.8078623,
+      "allocated_bytes_sum": 765161208,
+      "allocated_bytes_mean": 765161208.0,
+      "allocated_bytes_min": 765161208,
+      "allocated_bytes_max": 765161208
+    }
+  ],
+  "workers": [
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "worker": "0-candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 4,
+      "seconds_sum": 17.501250300000002,
+      "seconds_mean": 4.375312575000001,
+      "seconds_min": 0.5406874,
+      "seconds_max": 15.8417328,
+      "allocated_bytes_sum": 5955858264,
+      "allocated_bytes_mean": 1488964566.0,
+      "allocated_bytes_min": 250306160,
+      "allocated_bytes_max": 5204931008,
+      "gc_delta_sum": [
+        31,
+        24,
+        22
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        28,
+        21,
+        20
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "worker": "0-candidate",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 12,
+      "seconds_sum": 40.5693443,
+      "seconds_mean": 3.3807786916666664,
+      "seconds_min": 0.5346759,
+      "seconds_max": 11.9827058,
+      "allocated_bytes_sum": 17865161104,
+      "allocated_bytes_mean": 1488763425.3333333,
+      "allocated_bytes_min": 250295104,
+      "allocated_bytes_max": 5205783136,
+      "gc_delta_sum": [
+        93,
+        66,
+        66
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        30,
+        22,
+        22
+      ],
+      "calls_without_gen2": 6
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "worker": "1-ort",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 4,
+      "seconds_sum": 8.2401167,
+      "seconds_mean": 2.060029175,
+      "seconds_min": 0.3019639,
+      "seconds_max": 7.3311986
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "worker": "1-ort",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 12,
+      "seconds_sum": 21.900579999999998,
+      "seconds_mean": 1.8250483333333332,
+      "seconds_min": 0.2988723,
+      "seconds_max": 6.5723635
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "worker": "2-ort",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 4,
+      "seconds_sum": 7.8410065,
+      "seconds_mean": 1.960251625,
+      "seconds_min": 0.3011528,
+      "seconds_max": 6.9307127
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "worker": "2-ort",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 12,
+      "seconds_sum": 23.084569000000002,
+      "seconds_mean": 1.9237140833333335,
+      "seconds_min": 0.2996963,
+      "seconds_max": 7.7519967
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "worker": "3-candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 4,
+      "seconds_sum": 20.5017414,
+      "seconds_mean": 5.12543535,
+      "seconds_min": 0.582002,
+      "seconds_max": 18.7135906,
+      "allocated_bytes_sum": 5955848040,
+      "allocated_bytes_mean": 1488962010.0,
+      "allocated_bytes_min": 250303960,
+      "allocated_bytes_max": 5204926752,
+      "gc_delta_sum": [
+        32,
+        25,
+        23
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        29,
+        23,
+        21
+      ],
+      "calls_without_gen2": 2
+    },
+    {
+      "source": "pyannote-optimized-ort-20260921",
+      "worker": "3-candidate",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 12,
+      "seconds_sum": 44.5052244,
+      "seconds_mean": 3.7087687000000003,
+      "seconds_min": 0.535874,
+      "seconds_max": 13.7190622,
+      "allocated_bytes_sum": 17863304968,
+      "allocated_bytes_mean": 1488608747.3333333,
+      "allocated_bytes_min": 250292488,
+      "allocated_bytes_max": 5203495792,
+      "gc_delta_sum": [
+        90,
+        62,
+        62
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        27,
+        19,
+        19
+      ],
+      "calls_without_gen2": 3
+    },
+    {
+      "source": "pyannote-optimized-meetings-20260921",
+      "worker": "run",
+      "scope": "public",
+      "phase": "single",
+      "calls": 3,
+      "seconds_sum": 743.1712629,
+      "seconds_mean": 247.7237543,
+      "seconds_min": 12.6271569,
+      "seconds_max": 383.5465575,
+      "allocated_bytes_sum": 298023701352,
+      "allocated_bytes_mean": 99341233784.0,
+      "allocated_bytes_min": 5202521616,
+      "allocated_bytes_max": 146425527616,
+      "gc_delta_sum": [
+        1190,
+        737,
+        733
+      ],
+      "gc_delta_min": [
+        23,
+        15,
+        15
+      ],
+      "gc_delta_max": [
+        594,
+        372,
+        370
+      ],
+      "calls_without_gen2": 0
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "0-production",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 20,
+      "seconds_sum": 72.9711098,
+      "seconds_mean": 3.6485554899999997,
+      "seconds_min": 2.1398984,
+      "seconds_max": 6.823113,
+      "allocated_bytes_sum": 13343925784,
+      "allocated_bytes_mean": 667196289.2,
+      "allocated_bytes_min": 268985696,
+      "allocated_bytes_max": 1254232480,
+      "gc_delta_sum": [
+        58,
+        8,
+        3
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 17
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "0-production",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 60,
+      "seconds_sum": 194.8067513,
+      "seconds_mean": 3.2467791883333335,
+      "seconds_min": 1.9213475,
+      "seconds_max": 8.352268,
+      "allocated_bytes_sum": 37990691448,
+      "allocated_bytes_mean": 633178190.8,
+      "allocated_bytes_min": 234821824,
+      "allocated_bytes_max": 1237777144,
+      "gc_delta_sum": [
+        178,
+        28,
+        11
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 49
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "1-candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 20,
+      "seconds_sum": 68.0613965,
+      "seconds_mean": 3.403069825,
+      "seconds_min": 2.1216454,
+      "seconds_max": 5.9096267,
+      "allocated_bytes_sum": 13429370792,
+      "allocated_bytes_mean": 671468539.6,
+      "allocated_bytes_min": 268976512,
+      "allocated_bytes_max": 1261262000,
+      "gc_delta_sum": [
+        59,
+        10,
+        4
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 16
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "1-candidate",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 60,
+      "seconds_sum": 189.6131978,
+      "seconds_mean": 3.160219963333333,
+      "seconds_min": 1.894646,
+      "seconds_max": 5.8196108,
+      "allocated_bytes_sum": 39355706416,
+      "allocated_bytes_mean": 655928440.2666667,
+      "allocated_bytes_min": 234830128,
+      "allocated_bytes_max": 1229125048,
+      "gc_delta_sum": [
+        180,
+        29,
+        12
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        5,
+        3,
+        1
+      ],
+      "calls_without_gen2": 48
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "2-ort",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 20,
+      "seconds_sum": 32.305331,
+      "seconds_mean": 1.61526655,
+      "seconds_min": 0.7151404,
+      "seconds_max": 2.8603891
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "2-ort",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 60,
+      "seconds_sum": 87.0265821,
+      "seconds_mean": 1.450443035,
+      "seconds_min": 0.5925434,
+      "seconds_max": 2.4476212
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "3-ort",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 20,
+      "seconds_sum": 28.7421772,
+      "seconds_mean": 1.43710886,
+      "seconds_min": 0.5970276,
+      "seconds_max": 2.394857
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "3-ort",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 60,
+      "seconds_sum": 87.3344382,
+      "seconds_mean": 1.4555739699999999,
+      "seconds_min": 0.5855005,
+      "seconds_max": 3.1122958
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "4-candidate",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 20,
+      "seconds_sum": 61.6562724,
+      "seconds_mean": 3.08281362,
+      "seconds_min": 1.8142773,
+      "seconds_max": 5.7608368,
+      "allocated_bytes_sum": 13109763000,
+      "allocated_bytes_mean": 655488150.0,
+      "allocated_bytes_min": 234834456,
+      "allocated_bytes_max": 1254234776,
+      "gc_delta_sum": [
+        57,
+        7,
+        2
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 18
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "4-candidate",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 60,
+      "seconds_sum": 183.274047,
+      "seconds_mean": 3.05456745,
+      "seconds_min": 1.8292669,
+      "seconds_max": 5.5880224,
+      "allocated_bytes_sum": 38666343288,
+      "allocated_bytes_mean": 644439054.8,
+      "allocated_bytes_min": 234821912,
+      "allocated_bytes_max": 1254696880,
+      "gc_delta_sum": [
+        176,
+        30,
+        10
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        5,
+        3,
+        1
+      ],
+      "calls_without_gen2": 50
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "5-production",
+      "scope": "public",
+      "phase": "warmup",
+      "calls": 20,
+      "seconds_sum": 63.9391108,
+      "seconds_mean": 3.1969555400000003,
+      "seconds_min": 1.964868,
+      "seconds_max": 5.6892652,
+      "allocated_bytes_sum": 13244273152,
+      "allocated_bytes_mean": 662213657.6,
+      "allocated_bytes_min": 268976552,
+      "allocated_bytes_max": 1261259360,
+      "gc_delta_sum": [
+        58,
+        8,
+        2
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        4,
+        2,
+        1
+      ],
+      "calls_without_gen2": 18
+    },
+    {
+      "source": "parakeet-arithmetic-comparison-20260921",
+      "worker": "5-production",
+      "scope": "public",
+      "phase": "measured",
+      "calls": 60,
+      "seconds_sum": 185.0565491,
+      "seconds_mean": 3.0842758183333334,
+      "seconds_min": 1.9588028,
+      "seconds_max": 5.0923436,
+      "allocated_bytes_sum": 38149969312,
+      "allocated_bytes_mean": 635832821.8666667,
+      "allocated_bytes_min": 234824120,
+      "allocated_bytes_max": 1258886280,
+      "gc_delta_sum": [
+        176,
+        27,
+        10
+      ],
+      "gc_delta_min": [
+        2,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        5,
+        2,
+        1
+      ],
+      "calls_without_gen2": 50
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "worker": "trace",
+      "scope": "graph",
+      "phase": "unprofiled",
+      "calls": 1240,
+      "seconds_sum": 63.542786299999996,
+      "seconds_mean": 0.0512441825,
+      "seconds_min": 0.0049941,
+      "seconds_max": 5.2571422,
+      "allocated_bytes_sum": 13013362424,
+      "allocated_bytes_mean": 10494647.116129031,
+      "allocated_bytes_min": 167432,
+      "allocated_bytes_max": 1188407888,
+      "gc_delta_sum": [
+        46,
+        12,
+        4
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        2,
+        2,
+        1
+      ],
+      "calls_without_gen2": 1236
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "worker": "trace",
+      "scope": "graph",
+      "phase": "wall",
+      "calls": 1240,
+      "seconds_sum": 58.9125126,
+      "seconds_mean": 0.04751009080645161,
+      "seconds_min": 0.0049568,
+      "seconds_max": 3.8083814,
+      "allocated_bytes_sum": 12934551328,
+      "allocated_bytes_mean": 10431089.780645162,
+      "allocated_bytes_min": 170128,
+      "allocated_bytes_max": 1016788976,
+      "gc_delta_sum": [
+        53,
+        13,
+        4
+      ],
+      "gc_delta_min": [
+        0,
+        0,
+        0
+      ],
+      "gc_delta_max": [
+        3,
+        2,
+        1
+      ],
+      "calls_without_gen2": 1236
+    },
+    {
+      "source": "parakeet-performance-profile-v2-20260921",
+      "worker": "public",
+      "scope": "public-control",
+      "phase": "single",
+      "calls": 20,
+      "seconds_sum": 62.228118,
+      "seconds_mean": 3.1114059000000003,
+      "seconds_min": 1.9297477,
+      "seconds_max": 5.6374049,
+      "allocated_bytes_sum": 13215285840,
+      "allocated_bytes_mean": 660764292.0,
+      "allocated_bytes_min": 234837824,
+      "allocated_bytes_max": 1261255112
+    }
+  ],
+  "failed_clip_controls": [
+    {
+      "role": "production",
+      "name": "672-122797-0000",
+      "ratio": 1.4356475806206148,
+      "worker_means": {
+        "0-production": 2.3512483,
+        "5-production": 3.3755639333333334
+      },
+      "observations": [
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "0-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 26,
+          "name": "672-122797-0000",
+          "phase": "measured",
+          "pass_index": 1,
+          "start_ticks": 3734275082157,
+          "end_ticks": 3734300136651,
+          "frequency": 10000000,
+          "seconds": 2.5054494,
+          "input_sha256": "5b07ce1aae5549a52630c37d65f97da5ad6c5341a23185db7da3e1054e14ff98",
+          "allocated_bytes": 234824680,
+          "gc_before": [
+            91,
+            22,
+            11
+          ],
+          "gc_after": [
+            94,
+            23,
+            11
+          ],
+          "gc_delta": [
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "0-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 46,
+          "name": "672-122797-0000",
+          "phase": "measured",
+          "pass_index": 2,
+          "start_ticks": 3734956939898,
+          "end_ticks": 3734979207951,
+          "frequency": 10000000,
+          "seconds": 2.2268053,
+          "input_sha256": "5b07ce1aae5549a52630c37d65f97da5ad6c5341a23185db7da3e1054e14ff98",
+          "allocated_bytes": 234821824,
+          "gc_before": [
+            151,
+            31,
+            15
+          ],
+          "gc_after": [
+            153,
+            32,
+            15
+          ],
+          "gc_delta": [
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "0-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 66,
+          "name": "672-122797-0000",
+          "phase": "measured",
+          "pass_index": 3,
+          "start_ticks": 3735613863627,
+          "end_ticks": 3735637078529,
+          "frequency": 10000000,
+          "seconds": 2.3214902,
+          "input_sha256": "5b07ce1aae5549a52630c37d65f97da5ad6c5341a23185db7da3e1054e14ff98",
+          "allocated_bytes": 234822496,
+          "gc_before": [
+            211,
+            41,
+            19
+          ],
+          "gc_after": [
+            213,
+            42,
+            19
+          ],
+          "gc_delta": [
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "5-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 26,
+          "name": "672-122797-0000",
+          "phase": "measured",
+          "pass_index": 1,
+          "start_ticks": 3746324798061,
+          "end_ticks": 3746360707250,
+          "frequency": 10000000,
+          "seconds": 3.5909189,
+          "input_sha256": "5b07ce1aae5549a52630c37d65f97da5ad6c5341a23185db7da3e1054e14ff98",
+          "allocated_bytes": 234825936,
+          "gc_before": [
+            90,
+            22,
+            9
+          ],
+          "gc_after": [
+            93,
+            23,
+            9
+          ],
+          "gc_delta": [
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "5-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 46,
+          "name": "672-122797-0000",
+          "phase": "measured",
+          "pass_index": 2,
+          "start_ticks": 3746942689638,
+          "end_ticks": 3746963343896,
+          "frequency": 10000000,
+          "seconds": 2.0654258,
+          "input_sha256": "5b07ce1aae5549a52630c37d65f97da5ad6c5341a23185db7da3e1054e14ff98",
+          "allocated_bytes": 234824120,
+          "gc_before": [
+            149,
+            31,
+            13
+          ],
+          "gc_after": [
+            152,
+            32,
+            13
+          ],
+          "gc_delta": [
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "5-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 66,
+          "name": "672-122797-0000",
+          "phase": "measured",
+          "pass_index": 3,
+          "start_ticks": 3747546669181,
+          "end_ticks": 3747591372652,
+          "frequency": 10000000,
+          "seconds": 4.4703471,
+          "input_sha256": "5b07ce1aae5549a52630c37d65f97da5ad6c5341a23185db7da3e1054e14ff98",
+          "allocated_bytes": 234828688,
+          "gc_before": [
+            206,
+            38,
+            16
+          ],
+          "gc_after": [
+            210,
+            39,
+            16
+          ],
+          "gc_delta": [
+            4,
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "role": "production",
+      "name": "1221-135766-0002",
+      "ratio": 1.2602507200812971,
+      "worker_means": {
+        "0-production": 3.472809266666667,
+        "5-production": 2.7556495
+      },
+      "observations": [
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "0-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 34,
+          "name": "1221-135766-0002",
+          "phase": "measured",
+          "pass_index": 1,
+          "start_ticks": 3734529775939,
+          "end_ticks": 3734557242566,
+          "frequency": 10000000,
+          "seconds": 2.7466627,
+          "input_sha256": "2bdfccbd89c0d00095bea2c936681da9d12f3ff801f1233fac5b8986d2b08da5",
+          "allocated_bytes": 272959408,
+          "gc_before": [
+            116,
+            26,
+            13
+          ],
+          "gc_after": [
+            118,
+            26,
+            13
+          ],
+          "gc_delta": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "0-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 54,
+          "name": "1221-135766-0002",
+          "phase": "measured",
+          "pass_index": 2,
+          "start_ticks": 3735195028803,
+          "end_ticks": 3735241408837,
+          "frequency": 10000000,
+          "seconds": 4.6380034,
+          "input_sha256": "2bdfccbd89c0d00095bea2c936681da9d12f3ff801f1233fac5b8986d2b08da5",
+          "allocated_bytes": 272957392,
+          "gc_before": [
+            175,
+            34,
+            17
+          ],
+          "gc_after": [
+            177,
+            35,
+            17
+          ],
+          "gc_delta": [
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "0-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 74,
+          "name": "1221-135766-0002",
+          "phase": "measured",
+          "pass_index": 3,
+          "start_ticks": 3735848088847,
+          "end_ticks": 3735878426464,
+          "frequency": 10000000,
+          "seconds": 3.0337617,
+          "input_sha256": "2bdfccbd89c0d00095bea2c936681da9d12f3ff801f1233fac5b8986d2b08da5",
+          "allocated_bytes": 272961576,
+          "gc_before": [
+            235,
+            46,
+            21
+          ],
+          "gc_after": [
+            237,
+            46,
+            21
+          ],
+          "gc_delta": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "5-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 34,
+          "name": "1221-135766-0002",
+          "phase": "measured",
+          "pass_index": 1,
+          "start_ticks": 3746580504648,
+          "end_ticks": 3746608011892,
+          "frequency": 10000000,
+          "seconds": 2.7507244,
+          "input_sha256": "2bdfccbd89c0d00095bea2c936681da9d12f3ff801f1233fac5b8986d2b08da5",
+          "allocated_bytes": 272962016,
+          "gc_before": [
+            115,
+            27,
+            11
+          ],
+          "gc_after": [
+            117,
+            27,
+            11
+          ],
+          "gc_delta": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "5-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 54,
+          "name": "1221-135766-0002",
+          "phase": "measured",
+          "pass_index": 2,
+          "start_ticks": 3747181153367,
+          "end_ticks": 3747208354721,
+          "frequency": 10000000,
+          "seconds": 2.7201354,
+          "input_sha256": "2bdfccbd89c0d00095bea2c936681da9d12f3ff801f1233fac5b8986d2b08da5",
+          "allocated_bytes": 272956624,
+          "gc_before": [
+            172,
+            33,
+            13
+          ],
+          "gc_after": [
+            174,
+            33,
+            13
+          ],
+          "gc_delta": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "5-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 74,
+          "name": "1221-135766-0002",
+          "phase": "measured",
+          "pass_index": 3,
+          "start_ticks": 3747814209300,
+          "end_ticks": 3747842170187,
+          "frequency": 10000000,
+          "seconds": 2.7960887,
+          "input_sha256": "2bdfccbd89c0d00095bea2c936681da9d12f3ff801f1233fac5b8986d2b08da5",
+          "allocated_bytes": 272963704,
+          "gc_before": [
+            232,
+            43,
+            18
+          ],
+          "gc_after": [
+            234,
+            43,
+            18
+          ],
+          "gc_delta": [
+            2,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "role": "production",
+      "name": "1320-122612-0000",
+      "ratio": 1.4241738800582862,
+      "worker_means": {
+        "0-production": 5.322806866666666,
+        "5-production": 3.7374698
+      },
+      "observations": [
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "0-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 39,
+          "name": "1320-122612-0000",
+          "phase": "measured",
+          "pass_index": 1,
+          "start_ticks": 3734669782903,
+          "end_ticks": 3734753305583,
+          "frequency": 10000000,
+          "seconds": 8.352268,
+          "input_sha256": "58b8c1e97a06277b6722d70ada5d6632e9692868c57517bc7239510664271f16",
+          "allocated_bytes": 765156352,
+          "gc_before": [
+            130,
+            28,
+            14
+          ],
+          "gc_after": [
+            133,
+            28,
+            14
+          ],
+          "gc_delta": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "0-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 59,
+          "name": "1320-122612-0000",
+          "phase": "measured",
+          "pass_index": 2,
+          "start_ticks": 3735367677855,
+          "end_ticks": 3735406179579,
+          "frequency": 10000000,
+          "seconds": 3.8501724,
+          "input_sha256": "58b8c1e97a06277b6722d70ada5d6632e9692868c57517bc7239510664271f16",
+          "allocated_bytes": 765158912,
+          "gc_before": [
+            190,
+            37,
+            18
+          ],
+          "gc_after": [
+            193,
+            37,
+            18
+          ],
+          "gc_delta": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "0-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 79,
+          "name": "1320-122612-0000",
+          "phase": "measured",
+          "pass_index": 3,
+          "start_ticks": 3735993427049,
+          "end_ticks": 3736031086851,
+          "frequency": 10000000,
+          "seconds": 3.7659802,
+          "input_sha256": "58b8c1e97a06277b6722d70ada5d6632e9692868c57517bc7239510664271f16",
+          "allocated_bytes": 765163432,
+          "gc_before": [
+            249,
+            47,
+            21
+          ],
+          "gc_after": [
+            252,
+            47,
+            21
+          ],
+          "gc_delta": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "5-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 39,
+          "name": "1320-122612-0000",
+          "phase": "measured",
+          "pass_index": 1,
+          "start_ticks": 3746719523213,
+          "end_ticks": 3746757294650,
+          "frequency": 10000000,
+          "seconds": 3.7771437,
+          "input_sha256": "58b8c1e97a06277b6722d70ada5d6632e9692868c57517bc7239510664271f16",
+          "allocated_bytes": 794912496,
+          "gc_before": [
+            128,
+            28,
+            11
+          ],
+          "gc_after": [
+            132,
+            29,
+            12
+          ],
+          "gc_delta": [
+            4,
+            1,
+            1
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "5-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 59,
+          "name": "1320-122612-0000",
+          "phase": "measured",
+          "pass_index": 2,
+          "start_ticks": 3747321135586,
+          "end_ticks": 3747359059368,
+          "frequency": 10000000,
+          "seconds": 3.7923782,
+          "input_sha256": "58b8c1e97a06277b6722d70ada5d6632e9692868c57517bc7239510664271f16",
+          "allocated_bytes": 935295168,
+          "gc_before": [
+            186,
+            36,
+            15
+          ],
+          "gc_after": [
+            189,
+            36,
+            15
+          ],
+          "gc_delta": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "5-production",
+          "role": "production",
+          "scope": "public",
+          "ordinal": 79,
+          "name": "1320-122612-0000",
+          "phase": "measured",
+          "pass_index": 3,
+          "start_ticks": 3747955343014,
+          "end_ticks": 3747991771889,
+          "frequency": 10000000,
+          "seconds": 3.6428875,
+          "input_sha256": "58b8c1e97a06277b6722d70ada5d6632e9692868c57517bc7239510664271f16",
+          "allocated_bytes": 948005816,
+          "gc_before": [
+            246,
+            46,
+            19
+          ],
+          "gc_after": [
+            249,
+            46,
+            19
+          ],
+          "gc_delta": [
+            3,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "role": "candidate",
+      "name": "1188-133604-0001",
+      "ratio": 1.4056206459853542,
+      "worker_means": {
+        "1-candidate": 3.5546428,
+        "4-candidate": 2.5288777666666666
+      },
+      "observations": [
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "1-candidate",
+          "role": "candidate",
+          "scope": "public",
+          "ordinal": 32,
+          "name": "1188-133604-0001",
+          "phase": "measured",
+          "pass_index": 1,
+          "start_ticks": 3737128953201,
+          "end_ticks": 3737153285508,
+          "frequency": 10000000,
+          "seconds": 2.4332307,
+          "input_sha256": "ed6831a8e9d280b8f4a0e461de626b774ca00c7b2602809a49938c22f038e42b",
+          "allocated_bytes": 492050144,
+          "gc_before": [
+            109,
+            25,
+            13
+          ],
+          "gc_after": [
+            111,
+            25,
+            13
+          ],
+          "gc_delta": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "1-candidate",
+          "role": "candidate",
+          "scope": "public",
+          "ordinal": 52,
+          "name": "1188-133604-0001",
+          "phase": "measured",
+          "pass_index": 2,
+          "start_ticks": 3737740202849,
+          "end_ticks": 3737764313718,
+          "frequency": 10000000,
+          "seconds": 2.4110869,
+          "input_sha256": "ed6831a8e9d280b8f4a0e461de626b774ca00c7b2602809a49938c22f038e42b",
+          "allocated_bytes": 492051576,
+          "gc_before": [
+            169,
+            36,
+            17
+          ],
+          "gc_after": [
+            171,
+            36,
+            17
+          ],
+          "gc_delta": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "1-candidate",
+          "role": "candidate",
+          "scope": "public",
+          "ordinal": 72,
+          "name": "1188-133604-0001",
+          "phase": "measured",
+          "pass_index": 3,
+          "start_ticks": 3738377684227,
+          "end_ticks": 3738435880335,
+          "frequency": 10000000,
+          "seconds": 5.8196108,
+          "input_sha256": "ed6831a8e9d280b8f4a0e461de626b774ca00c7b2602809a49938c22f038e42b",
+          "allocated_bytes": 593827328,
+          "gc_before": [
+            229,
+            47,
+            22
+          ],
+          "gc_after": [
+            232,
+            47,
+            22
+          ],
+          "gc_delta": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "4-candidate",
+          "role": "candidate",
+          "scope": "public",
+          "ordinal": 32,
+          "name": "1188-133604-0001",
+          "phase": "measured",
+          "pass_index": 1,
+          "start_ticks": 3743967361409,
+          "end_ticks": 3743991352571,
+          "frequency": 10000000,
+          "seconds": 2.3991162,
+          "input_sha256": "ed6831a8e9d280b8f4a0e461de626b774ca00c7b2602809a49938c22f038e42b",
+          "allocated_bytes": 492049544,
+          "gc_before": [
+            107,
+            24,
+            12
+          ],
+          "gc_after": [
+            110,
+            25,
+            12
+          ],
+          "gc_delta": [
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "4-candidate",
+          "role": "candidate",
+          "scope": "public",
+          "ordinal": 52,
+          "name": "1188-133604-0001",
+          "phase": "measured",
+          "pass_index": 2,
+          "start_ticks": 3744585420466,
+          "end_ticks": 3744613277325,
+          "frequency": 10000000,
+          "seconds": 2.7856859,
+          "input_sha256": "ed6831a8e9d280b8f4a0e461de626b774ca00c7b2602809a49938c22f038e42b",
+          "allocated_bytes": 492051480,
+          "gc_before": [
+            166,
+            36,
+            15
+          ],
+          "gc_after": [
+            169,
+            36,
+            15
+          ],
+          "gc_delta": [
+            3,
+            0,
+            0
+          ]
+        },
+        {
+          "source": "parakeet-arithmetic-comparison-20260921",
+          "worker": "4-candidate",
+          "role": "candidate",
+          "scope": "public",
+          "ordinal": 72,
+          "name": "1188-133604-0001",
+          "phase": "measured",
+          "pass_index": 3,
+          "start_ticks": 3745191178513,
+          "end_ticks": 3745215196825,
+          "frequency": 10000000,
+          "seconds": 2.4018312,
+          "input_sha256": "ed6831a8e9d280b8f4a0e461de626b774ca00c7b2602809a49938c22f038e42b",
+          "allocated_bytes": 593828624,
+          "gc_before": [
+            225,
+            45,
+            19
+          ],
+          "gc_after": [
+            228,
+            45,
+            19
+          ],
+          "gc_delta": [
+            3,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "original_performance_verdict": {
+    "attribution_valid": false,
+    "selected_for_amd": null
+  },
+  "limitations": [
+    "Post hoc descriptive analysis of retained counters, with no new model execution.",
+    "Allocation values are approximate process-wide managed bytes, not RSS, live heap size or native allocations.",
+    "Each GC generation count includes collections of older generations; do not add the three columns as distinct events.",
+    "Count intervals bracket the timed call but are sampled separately; they are not pause durations or allocation stack traces.",
+    "Graph counters include small instrumentation allocations and the graph trace retains outputs; do not subtract them from separate public runs.",
+    "Missing native allocation counters are unknown, not zero.",
+    "Original application, numerical, resource and performance verdicts remain unchanged; causality is unassigned."
+  ]
+}

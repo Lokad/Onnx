@@ -48,6 +48,11 @@ establish a speedup or select a performance candidate; accepted tables stay unch
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
+An [analysis of the retained allocation counters](tests/audio/retained-allocations/results-20260921.md)
+finds about 5.20 GB of cumulative managed allocations per optimized pyannote
+30-second request and 146.4 GB per ten-minute meeting. These are allocation
+totals, not resident memory. Reusing embedding contexts within a request is
+the next hypothesis to test; no new speedup or GC-pause attribution is claimed.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
