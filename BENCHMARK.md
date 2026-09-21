@@ -14,6 +14,12 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
+The [Parakeet packing-admission candidate](tests/parakeet/packing-admission/results-20260921.md)
+now preserves 28.8 million captured values bit-for-bit and all twenty public
+controls at the current 256 MiB encoder cap. Separate load-only checks establish
+bounded residency up to all 217 constant weights at 2,032 MiB. Higher-budget
+inference, speed and AMD qualification remain pending; the ORT timing tables
+below are unchanged.
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.

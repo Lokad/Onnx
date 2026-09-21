@@ -117,6 +117,15 @@ per-graph cap, stale-weight safeguards and checked accounting, then separately
 compare explicit Parakeet residency budgets and complete application latency.
 The commit's historical speed claims are not reproduced current-product results.
 
+The [narrow adaptation](../tests/parakeet/packing-admission/results-20260921.md)
+now changes only the shared admission method; 3,776 other Core/Data methods
+match the frozen production instructions. At the existing 256 MiB encoder cap,
+all 28,831,376 captured values match the managed baseline and all twenty public
+controls match native decisions. Actual load-only checks retain 28/56/217
+weights at 256/512/2,032 MiB, respectively, with exact aggregate accounting.
+The larger budgets still require inference and application-memory qualification;
+none of these checks establishes a speed gain or production promotion.
+
 
 | Source finding | Consequence for Lokad.Onnx |
 |---|---|
