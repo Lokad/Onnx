@@ -140,6 +140,15 @@ now reduces actual-input projection RMS error by4.75–4.82x with256-term sums.
 On the two native-convolution inputs it reproduces all151,552 originalORTstem
 values bitwise. Whole-stem errors remain, so this selects a complete-model
 arithmetic investigation without qualifying native duration logits or timing.
+The [complete-model successor](../tests/parakeet/reduction-model/results-20260921.md)
+now passes all784original native arrays and twenty public requests, removing
+the three Windows duration-logit failures for the isolated candidate. Two
+packed dispatches and one added helper change; all3775other Core/Data methods
+match. Shared-model, AMD and timing qualification still precede promotion.
+Full suites retain two failures: the packed kernel's documented bitwise
+counterpart and DinoV3's frozen output hash. All342tensor tests pass. Preserve
+the original raw kernels in a successor and independently validate complete
+DinoV3 outputs before accepting a new arithmetic dispatch or hash.
 
 
 | Source finding | Consequence for Lokad.Onnx |

@@ -101,8 +101,16 @@ a 1.890 ratio, with all 64 public calls passing. These descriptive measurements
 retain process variation and do not establish calibrated parity.
 Its [complete Parakeet regression](../tests/pyannote/optimized-parakeet/results-20260921.md)
 preserves all 784 arrays / 3,090,494 values bit-for-bit and all public contracts.
-The same three Windows duration-logit failures remain, with unchanged maximum
-scaled native error `2.321004867553711e-4`.
+That pyannote candidate retains the same three Windows duration-logit failures,
+with unchanged maximum scaled native error `2.321004867553711e-4`.
+A separate [Parakeet partial-sum candidate](../tests/parakeet/reduction-model/results-20260921.md)
+now passes all 784 original native arrays and twenty public corpus requests.
+Its maximum scaled error is `6.02124463442898e-5` at the unchanged `1e-4` bound.
+This result applies to the isolated arithmetic candidate; production promotion,
+shared-model, AMD and performance qualification remain pending.
+Its full backend suite retains two compatibility failures (packed-kernel bit
+identity and DinoV3's frozen hash), while all 342 tensor tests pass. The native
+Parakeet pass does not make this implementation ready for promotion.
 
 The Windows audio tables measure `8732831`. The [matched AMD Parakeet/pyannote comparison](../tests/audio/amd-two-family/results-20260920.md) measures `1d10d22` against ORT 1.29.0.
 Whisper's later memory implementation passes AMD conformance and endurance.
