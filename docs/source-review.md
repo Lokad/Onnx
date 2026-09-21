@@ -102,8 +102,11 @@ and complete API timing.
 The [first wide encoder probe](../tests/parakeet/wide-matmul/results-20260921.md)
 preserves all actual-operand and accumulation-test bits, but identical fallback
 controls differ by 4.8–9.2%; its timings do not establish a kernel improvement.
-The conditioned successor balances preceding roles and restores each role's
-working set immediately before measurement, with control limits fixed in advance.
+The [conditioned successor](../tests/parakeet/wide-matmul-conditioned/results-20260921.md)
+balances preceding roles and conditions each role immediately before measurement,
+but also fails its fixed identical-control limits. No prototype qualifies for a
+product trial. This does not establish a hardware limit or invalidate every
+possible reduction-block strategy; no unchanged local timing repeat is planned.
 
 Voice-branch `c679bf99` directly addresses the observed K=4096 exclusion. Its
 inclusive admission boundary is useful candidate material. Current master

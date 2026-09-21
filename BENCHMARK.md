@@ -80,6 +80,9 @@ The first [wide encoder kernel probe](tests/parakeet/wide-matmul/results-2026092
 preserves all tested output bits, but its identical fallback controls differ by
 4.8–9.2%. Timing attribution is rejected; no kernel gain or product change is
 claimed from that grid.
+The [conditioned successor](tests/parakeet/wide-matmul-conditioned/results-20260921.md)
+also fails its fixed control limits despite passing all numerical checks. No
+prototype is promoted and the ORT comparison tables remain unchanged.
 
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
