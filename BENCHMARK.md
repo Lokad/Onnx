@@ -31,9 +31,15 @@ reduces projection rounding error with shorter partial sums. Its
 [complete-model successor](tests/parakeet/reduction-model/results-20260921.md)
 now passes all 784 native fixture arrays at the unchanged `1e-4` bound, clearing
 the three Windows failures for the isolated candidate. All twenty public
-corpus requests pass. Shared-model, AMD and performance qualification remain
-pending. Two backend compatibility checks fail, so the candidate is not promoted;
-the production timing tables are unchanged.
+corpus requests pass. Its first implementation retained two backend failures.
+The [corrected tensor dispatch](tests/parakeet/reduction-dispatch/results-20260921.md)
+preserves every original raw kernel and passes all 166 shared-model native arrays,
+3,101 backend tests and 342 tensor tests. The additional DinoV3 hash was accepted
+only after checking every output against ORT. AMD and performance qualification
+remain pending; the candidate is not promoted and production timing tables are
+unchanged.
+Its affected pyannote check preserves all 2.9 million graph values bit-for-bit;
+all sixteen public diarization requests pass native checks.
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.

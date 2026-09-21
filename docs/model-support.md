@@ -106,11 +106,15 @@ with unchanged maximum scaled native error `2.321004867553711e-4`.
 A separate [Parakeet partial-sum candidate](../tests/parakeet/reduction-model/results-20260921.md)
 now passes all 784 original native arrays and twenty public corpus requests.
 Its maximum scaled error is `6.02124463442898e-5` at the unchanged `1e-4` bound.
-This result applies to the isolated arithmetic candidate; production promotion,
-shared-model, AMD and performance qualification remain pending.
-Its full backend suite retains two compatibility failures (packed-kernel bit
-identity and DinoV3's frozen hash), while all 342 tensor tests pass. The native
-Parakeet pass does not make this implementation ready for promotion.
+The [corrected tensor-dispatch successor](../tests/parakeet/reduction-dispatch/results-20260921.md)
+retains that complete native pass while preserving all original raw kernels.
+It resolves the preceding two suite failures: all 3,101 backend tests and 342
+tensor tests pass, and all 166 shared-model arrays meet their native bounds.
+The additional DinoV3 hash was independently qualified on every output before
+being accepted in the isolated test copy. These results apply to the candidate;
+AMD, performance qualification and production promotion remain pending.
+The affected pyannote replay preserves all 18 graph arrays / 2,917,107 values
+bit-for-bit and passes sixteen complete public requests against native results.
 
 The Windows audio tables measure `8732831`. The [matched AMD Parakeet/pyannote comparison](../tests/audio/amd-two-family/results-20260920.md) measures `1d10d22` against ORT 1.29.0.
 Whisper's later memory implementation passes AMD conformance and endurance.

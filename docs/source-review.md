@@ -145,10 +145,15 @@ now passes all784original native arrays and twenty public requests, removing
 the three Windows duration-logit failures for the isolated candidate. Two
 packed dispatches and one added helper change; all3775other Core/Data methods
 match. Shared-model, AMD and timing qualification still precede promotion.
-Full suites retain two failures: the packed kernel's documented bitwise
-counterpart and DinoV3's frozen output hash. All342tensor tests pass. Preserve
-the original raw kernels in a successor and independently validate complete
-DinoV3 outputs before accepting a new arithmetic dispatch or hash.
+That implementation retained two suite failures: the packed kernel's documented
+bitwise counterpart and DinoV3's frozen output hash. The
+[corrected dispatch](../tests/parakeet/reduction-dispatch/results-20260921.md)
+leaves all raw kernels unchanged and selects the same arithmetic through the
+tensor dispatcher, preserving existing AVX-512 precedence. All784Parakeet and
+166shared native arrays pass; all3101backend and342tensor tests pass. Every
+changed DinoV3 output was independently checked against ORT before accepting
+an additional frozen hash pair in the isolated suite copy. AMD and valid
+application timing still precede promotion.
 
 
 | Source finding | Consequence for Lokad.Onnx |
