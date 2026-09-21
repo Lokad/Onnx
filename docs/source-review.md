@@ -123,8 +123,12 @@ match the frozen production instructions. At the existing 256 MiB encoder cap,
 all 28,831,376 captured values match the managed baseline and all twenty public
 controls match native decisions. Actual load-only checks retain 28/56/217
 weights at 256/512/2,032 MiB, respectively, with exact aggregate accounting.
-The larger budgets still require inference and application-memory qualification;
-none of these checks establishes a speed gain or production promotion.
+Both larger budgets now pass [complete inference and application-memory checks](../tests/parakeet/packing-budgets/results-20260921.md).
+Each preserves all 28,831,376 corpus values and all 784 native-conformance arrays
+bit-for-bit, including the same three numerical failures. Public peak RSS is
+9,725,456,384 / 11,964,985,344 bytes for 512 / 2,032 MiB caches. A fresh complete
+application comparison remains required; these checks establish no speed gain
+or production promotion.
 
 
 | Source finding | Consequence for Lokad.Onnx |
