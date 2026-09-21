@@ -36,3 +36,9 @@ input. Only after actual terminal success do audit, independent verification and
 reporting run. Each worker uses one logical CPU, one numerical-library thread,
 900 seconds, a 4 GiB sampled RSS ceiling and a 1 GiB available-memory floor.
 No product implementation or runtime default is changed by this diagnostic.
+
+The first launch was stopped before its first resource sample: Windows hidden
+console creation introduced a `conhost.exe` child and violated the no-child guard.
+Original source/failure records remain under the original artifact. A process-only
+probe verifies detached hidden launch without that child. The corrected artifact
+is `artifacts/whisper-layer20-reference-v2-20260921`; no successful call is replayed.

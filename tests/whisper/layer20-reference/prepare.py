@@ -26,6 +26,16 @@ def main():
         return actual
     def closed(directory, name):
         path = directory/name; bind(path, receipts[directory]['files'][name]); return path
+    failed = ROOT/'artifacts/whisper-layer20-reference-20260921'
+    failure = read(failed/'processes.json')
+    assert failure['complete'] is True and failure['code'] == 1 and len(failure['runs']) == 1
+    assert failure['runs'][0]['samples'] == 0 and failure['runs'][0]['code'] != 0
+    assert all(absent(b) for b in [failure['supervisor'], failure['runs'][0]['worker']])
+    assert not list((failed/'outputs').rglob('result.json'))
+    for path in [failed/'manifest.json', failed/'processes.json', *sorted((failed/'original-source').iterdir()),
+                 ROOT/'artifacts/whisper-layer20-reference-tooling-20260921/run.log',
+                 ROOT/'artifacts/whisper-layer20-reference-tooling-20260921/process-child-probe.json']:
+        bind(path)
     for directory, filename in [(PRIOR, 'closed-v2.json'), (FULL, 'closed.json')]:
         bind(directory/filename)
     prior = read(closed(PRIOR, 'manifest.json')); full = read(closed(FULL, 'manifest.json'))

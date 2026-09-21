@@ -14,7 +14,7 @@ from common import np, pin, read, write, rel, raw, tensor_array, packages, THREA
 packages()
 import psutil
 
-BASE = ROOT/'artifacts/whisper-layer20-reference-20260921'
+BASE = ROOT/'artifacts/whisper-layer20-reference-v2-20260921'
 PRIOR = ROOT/'artifacts/whisper-layer20-cross-20260920'
 FULL = ROOT/'artifacts/whisper-full-reference-20260920'
 MODEL = ROOT/'models/whisper-large-v3-turbo/onnx/encoder_layer20_20260918.onnx'

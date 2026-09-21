@@ -54,8 +54,12 @@ def main():
         f"Maximum sampled worker RSS: {max(r['peak_rss'] for r in audit['resources']):,} bytes. "
         f"Minimum available memory: {min(r['minimum_available'] for r in audit['resources']):,} bytes.", '',
         f"Frozen source `{spec['source']}`; manifest SHA256 `{audit['manifest']['sha256']}`. "
-        'Artifact: `artifacts/whisper-layer20-reference-20260921`. All raw arrays, telemetry and identities remain retained. '
+        'Artifact: `artifacts/whisper-layer20-reference-v2-20260921`. All raw arrays, telemetry and identities remain retained. '
         'The promoted weight file is an immutable hard link to the existing reference asset.', '',
+        'The initial attempt stopped before its first resource sample because hidden Windows console creation '
+        'violated the no-child guard. No reference call completed. Original sources and failure records remain '
+        'preserved; a process-only probe reproduced the console child and verified detached hidden launch. '
+        'The corrected campaign uses a separate artifact with unchanged cases, counts and numerical limits.', '',
         'See the prior [selected full-reference comparison](../trace-reference/results-20260920.md) and '
         '[same-input projection diagnostic](../natural-projection-reference/results-20260920.md) for their separate scopes.', ''])
     with report.open('x', encoding='utf8', newline='\n') as stream:

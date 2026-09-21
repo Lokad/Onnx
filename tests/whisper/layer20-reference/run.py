@@ -38,7 +38,8 @@ def main():
                     parent.cpu_affinity([2])
                     try:
                         child = subprocess.Popen([sys.executable, '-X', 'utf8', '-B', str(Path(__file__).with_name('worker.py')), '--job', job['id']],
-                                cwd=ROOT, env=env, stdout=out, stderr=err, creationflags=subprocess.CREATE_NO_WINDOW)
+                                cwd=ROOT, env=env, stdout=out, stderr=err,
+                                creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NO_WINDOW)
                     finally:
                         parent.cpu_affinity([0])
                     process = psutil.Process(child.pid); birth = dict(pid=child.pid, birth=process.create_time()); run['worker'] = birth; save(path, state)
