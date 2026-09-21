@@ -204,3 +204,5 @@ decoder payload and explicit cached-name transition checks. Separate
 [Windows public contracts](../tests/whisper/memory-contracts-v2/local-results-20260921.md)
 pass recording, concurrent speech and recovery checks. AMD public contracts,
 production integration, numerical gaps and matched AMD latency remain open.
+
+The same private memory candidate also passes [AMD public contracts](../tests/whisper/memory-contracts-amd/results-20260921.md): thirteen requests and sixteen refusal/cancellation checks, including recording, overlapping speech and exact recovery. Production integration, numerical gaps and matched AMD Whisper latency remain pending.

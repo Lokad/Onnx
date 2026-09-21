@@ -1,0 +1,100 @@
+{
+  "application": {
+    "calls": 13,
+    "refusals": 16,
+    "recordings": [
+      {
+        "name": "connected",
+        "repeat": false,
+        "windows": 3,
+        "segments": 11,
+        "stop_reason": "Completed",
+        "native_decisions_equal": true,
+        "max_observed_confidence_difference": 2.2878859534669616e-06
+      },
+      {
+        "name": "shifted",
+        "repeat": false,
+        "windows": 3,
+        "segments": 10,
+        "stop_reason": "Completed",
+        "native_decisions_equal": true,
+        "max_observed_confidence_difference": 1.40300705971097e-06
+      },
+      {
+        "name": "token-limit",
+        "repeat": false,
+        "windows": 1,
+        "segments": 0,
+        "stop_reason": "TokenLimit",
+        "native_decisions_equal": true,
+        "max_observed_confidence_difference": 6.155263825441404e-06
+      },
+      {
+        "name": "window-limit",
+        "repeat": false,
+        "windows": 1,
+        "segments": 2,
+        "stop_reason": "WindowLimit",
+        "native_decisions_equal": true,
+        "max_observed_confidence_difference": 1.0450842062303956e-06
+      },
+      {
+        "name": "connected",
+        "repeat": true,
+        "windows": 3,
+        "segments": 11,
+        "stop_reason": "Completed",
+        "native_decisions_equal": true,
+        "max_observed_confidence_difference": 2.2878859534669616e-06
+      }
+    ],
+    "concurrent_speech_calls": 2,
+    "overlap_seconds": 28.74499736,
+    "short_recovery_exact": true,
+    "concurrent_first_exact": true
+  },
+  "sharing": {
+    "logical_shared_bytes": 635187200,
+    "shared_arrays": 88,
+    "shared_payload_bytes": 635187200,
+    "unique_arrays": 499,
+    "unique_payload_bytes": 1349819052
+  },
+  "original_initializer_checks": 1136,
+  "passed": true,
+  "private_prototype": true,
+  "benchmark": false,
+  "resources": {
+    "samples": 1071,
+    "thread_observations": 10906,
+    "peak_rss": 11353374720,
+    "min_available": 4614307840,
+    "min_disk": 95678464,
+    "max_gap": 0.5178707059822045,
+    "execution_seconds": 539.315642830974
+  },
+  "damaged_records_rejected": 16,
+  "result": {
+    "bytes": 63303,
+    "sha256": "0328cffdd53e86577187b99d712eddcbe06849372de6ae17edfc57b23fcd1e2f"
+  },
+  "weights": {
+    "bytes": 938894,
+    "sha256": "ff50bcf808639b3f833fac18208ad7a6f976f3fff7f9a902e133cad0bb3ba759"
+  },
+  "frozen": {
+    "bytes": 4380260,
+    "sha256": "c3f34c831d6f1802b47b417409d7dfa221d9d84c495f67d278b64101dacfc0fe"
+  },
+  "births": [
+    {
+      "pid": 385482,
+      "birth": 1789952796.69
+    },
+    {
+      "pid": 385483,
+      "birth": 1789952802.19
+    }
+  ]
+}

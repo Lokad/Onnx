@@ -49,6 +49,9 @@ reproduces two cached tensor-name changes on Windows and AMD, with every weight
 byte unchanged in both shared and unshared controls. The separate
 [corrected sharing campaign](tests/whisper/weight-sharing-v2/results-20260920.md)
 now passes all 100 requests and its full weight, allocation and resource checks.
+The same private candidate also passes recording, concurrent speech and recovery
+contracts on [Windows](tests/whisper/memory-contracts-v2/local-results-20260921.md)
+and [AMD](tests/whisper/memory-contracts-amd/results-20260921.md).
 Production integration and matched AMD Whisper timing remain pending.
 
 ### Audio: Windows Microsoft ONNX Runtime baselines
