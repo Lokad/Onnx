@@ -55,6 +55,17 @@ for that result. Further work is convolution-specific packed row sharing,
 checked scratch-size handling, broader audio qualification and matched AMD
 timing before production promotion.
 
+The [next copy adaptation](../tests/pyannote/spatial-copy/results-20260921.md)
+uses the contiguous-row ideas from `de60581`/`e802581` and panel-copy idea from
+`b8849e2`, with portable span copies, clamped padding and checked scratch sizes.
+It improves complete local dialogue latency by a further 21.8% against the
+exact first spatial core, with unchanged captured output bits. `cdeae16` remains
+an AMD candidate because its AVX-512 path cannot run on this workstation.
+The actual segmentation model has four bidirectional hidden-size128 LSTMs;
+an output-lane projection prototype can target them while preserving master's
+separate multiply/add order. The branch's `03af0bf` uses FMA and therefore
+needs adaptation rather than a literal arithmetic import.
+
 
 | Source finding | Consequence for Lokad.Onnx |
 |---|---|

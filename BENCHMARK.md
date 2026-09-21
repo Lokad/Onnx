@@ -25,6 +25,12 @@ reduces the complete 30-second dialogue mean from **38.643 to 30.914 seconds
 variation is retained in the report; AMD timing and production promotion
 remain pending. The native baseline tables below retain their original scope.
 
+The [contiguous-copy successor](tests/pyannote/spatial-copy/results-20260921.md)
+improves on that exact spatial candidate by **21.8%** in a new matched local
+comparison: **26.800 → 20.964 seconds**. All captured outputs remain bit-identical
+and broader regression passes. These successive experiments have separate
+timing conditions; their reductions are not combined into an ORT ratio.
+
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
 AMD EPYC 9V74, logical CPU 2, .NET 10.0.8, Microsoft ONNX Runtime 1.29.0, product `1d10d22`.
