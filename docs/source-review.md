@@ -372,3 +372,27 @@ campaign remains failed because it did not retain the differing snapshots. Its
 replacement saves them before assertion and permits only the two verified name
 transitions, preserving exact checks of all weight bytes and other metadata.
 This finding changes the diagnostic, not product arithmetic or numerical tolerances.
+
+## Whisper GELU fusion and rounding
+
+The [matrix-precision](../tests/whisper/matmul-precision/results-20260921.md) and
+[stem-state](../tests/whisper/stem-intervention/results-20260921.md) diagnostics
+operate on the original, unfused operator sequence. They are useful controlled
+interventions, but their float32 controls are not managed-engine measurements.
+
+In [GraphFusion.TryMatchGelu](../src/Lokad.Onnx/GraphFusion.cs), the matched chain
+requires division by the exact float32 constant `1.4142135f`, followed by Erf,
+addition of one and multiplication by the input and one half. Its replacement
+uses [GeluSpanFloat](../src/Lokad.Onnx/TensorOps.Elementwise.cs), which multiplies
+the input by `0.7071067811865476f` before Erf. BiasGelu uses the same reciprocal
+form. Those operations can round differently: for input `1.5f`, correctly rounded
+division gives `1.0606602430343628`, while multiplication gives
+`1.0606601238250732`, one adjacent float32 step lower. An exact rational check
+verifies both roundings. The original Whisper graph contains the matched divisor.
+
+The inspected ORT1.23.2 [BiasGelu source](https://github.com/microsoft/onnxruntime/blob/a83fc4d58cb48eb68890dd689f94f28288cf2278/onnxruntime/contrib_ops/cpu/bert/bias_gelu.cc)
+also multiplies by a float conversion of `M_SQRT1_2` before `MlasComputeErf`.
+This source observation is not a dispatch claim for the separate ORT1.29.0 audio
+baseline. Neither the scalar example nor the unfused diagnostics establishes
+that GELU fusion causes Whisper's full-model discrepancy. A managed comparison
+that changes only this fusion behavior is the next distinct numerical question.

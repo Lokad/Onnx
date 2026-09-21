@@ -6,6 +6,10 @@ once to float32. It executes the remaining 1,545 nodes with the unchanged float3
 or wide-MatMul interpreter from `../matmul-precision`. The original full-graph
 controls are reused without repeating inference.
 
+The [completed result](results-20260921.md) fails the predeclared mechanism
+screen in both modes, and every final output still exceeds `1e-4`. It does not
+nominate a stem-only production change.
+
 The fixed inputs are the same three previously selected natural recordings and
 first-case repeat, using managed features. Each fresh worker captures all 36
 existing suffix boundaries, including every padded frame. Both original float64

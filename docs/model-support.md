@@ -224,3 +224,10 @@ prospective halving screen fails. All 328 arrays and the repeated case are
 verified. This identifies a contribution from matrix rounding in that operator
 sequence; it does not qualify an unimplemented managed kernel or alter existing
 model acceptance.
+
+The [stem-state intervention](../tests/whisper/stem-intervention/results-20260921.md)
+then replaces the state after the first 14 encoder nodes with the rounded
+float64 reference and reuses the original controls. Both arithmetic modes fail
+their prospective improvement screens, and every final array still exceeds
+`1e-4`. All 288 suffix arrays are verified. This does not justify a stem-only
+product change; the complete-model numerical limitation remains.
