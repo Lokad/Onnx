@@ -13,6 +13,21 @@ from candidate_protocol import LIMITS, ROLES, TIMING_ROLES, REQUIRED_TESTS, gate
 DOTNET = '/home/vermorel/.dotnet/dotnet'
 
 
+def build_prerequisites(base, worker, flags):
+    projects = [('backend', base/'source/tests/Lokad.Onnx.Backend.Tests/Lokad.Onnx.Backend.Tests.csproj'),
+                ('tensors', base/'source/tests/Lokad.Onnx.Tensors.Tests/Lokad.Onnx.Tensors.Tests.csproj'),
+                ('cli', base/'source/src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj'),
+                ('il-bridge', base/'il-bridge/IlBridge.csproj')]
+    for name, project in projects:
+        worker(name+'-restore', [DOTNET, 'restore', project, *flags, '--source', base/'nuget-feed',
+                                '--packages', base/'work/packages', '--no-http-cache', '--disable-parallel', '-p:NuGetAudit=false'], build=True)
+        worker(name+'-build', [DOTNET, 'build', project, '-c', 'Release', *flags, '--no-restore', '--disable-build-servers'], build=True)
+    cli = base/'source/src/Lokad.Onnx.CLI/bin/Release/net10.0'
+    for name in ('Lokad.Onnx.CLI.dll', 'Lokad.Onnx.CLI.deps.json', 'Lokad.Onnx.CLI.runtimeconfig.json'):
+        assert (cli/name).is_file(), ('Missing Release CLI test prerequisite', name)
+    return projects
+
+
 def absent(identity):
     try:
         process = psutil.Process(identity['pid'])
@@ -183,13 +198,7 @@ def run(base):
         assert (folder/'stdout.txt').read_text().strip().endswith('10.0.204')
         flags = ['--tl:off', '--nologo', '-v', 'minimal', '-p:EnableSourceControlManagerQueries=false',
                  '-p:EnableSourceLink=false', '-p:UseSharedCompilation=false', '-nr:false']
-        projects = [('backend', base/'source/tests/Lokad.Onnx.Backend.Tests/Lokad.Onnx.Backend.Tests.csproj'),
-                    ('tensors', base/'source/tests/Lokad.Onnx.Tensors.Tests/Lokad.Onnx.Tensors.Tests.csproj'),
-                    ('il-bridge', base/'il-bridge/IlBridge.csproj')]
-        for name, project in projects:
-            worker(name+'-restore', [DOTNET, 'restore', project, *flags, '--source', base/'nuget-feed',
-                                    '--packages', base/'work/packages', '--no-http-cache', '--disable-parallel', '-p:NuGetAudit=false'], build=True)
-            worker(name+'-build', [DOTNET, 'build', project, '-c', 'Release', *flags, '--no-restore', '--disable-build-servers'], build=True)
+        projects = build_prerequisites(base, worker, flags)
         built = {p.relative_to(base).as_posix(): pin(p) for root in
                  [project.parent/'bin' for _, project in projects] for p in root.rglob('*') if p.is_file()}
         write(campaign/'built-files.json', built)

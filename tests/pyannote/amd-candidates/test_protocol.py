@@ -19,6 +19,25 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_full_suite_prerequisites_build_cli_and_refuse_missing_output(self):
+        sys.path.insert(0, str(transport.SITE))
+        from supervise import build_prerequisites
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp); calls = []
+            def worker(name, args, build=False):
+                calls.append((name, args)); self.assertTrue(build)
+                if name == 'cli-build':
+                    output = base/'source/src/Lokad.Onnx.CLI/bin/Release/net10.0'; output.mkdir(parents=True)
+                    for filename in ('Lokad.Onnx.CLI.dll', 'Lokad.Onnx.CLI.deps.json', 'Lokad.Onnx.CLI.runtimeconfig.json'):
+                        (output/filename).write_text('fixture')
+            projects = build_prerequisites(base, worker, ['--tl:off'])
+            self.assertEqual([n for n, _ in calls], [n+s for n in ('backend', 'tensors', 'cli', 'il-bridge') for s in ('-restore', '-build')])
+            self.assertEqual([n for n, _ in projects[:2]], ['backend', 'tensors'])
+            self.assertEqual(calls[5][1][2], base/'source/src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj')
+            (base/'source/src/Lokad.Onnx.CLI/bin/Release/net10.0/Lokad.Onnx.CLI.dll').unlink()
+            with self.assertRaisesRegex(AssertionError, 'Missing Release CLI'):
+                build_prerequisites(base, lambda *args, **kwargs: None, ['--tl:off'])
+
     def valid_reports(self):
         return {r: dict(pyannote=dict(passed=True, arrays=18, public_calls=16), parakeet=dict(
             audit_consistent=True, application_passed=True, numeric_gate_passed=True, arrays=784, values=3090494)) for r in ROLES}

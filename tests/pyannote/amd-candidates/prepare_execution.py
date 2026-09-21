@@ -30,6 +30,19 @@ def main():
     assert pin(failure_path)['sha256'] == '67651b666526709a2c90cc4a073e14b6b264ef2f9bf7f65e31b643b0c480309e'
     failure = read(failure_path); assert not failure['passed'] and not failure['inference_executed']
     for name, wanted in failure['files'].items(): assert pin(failure_path.parent/name) == wanted, name
+    cancelled_base = ROOT/'artifacts/pyannote-amd-execution-v2-20260921'
+    cancellation = read(cancelled_base/'cancelled-for-cli-prerequisite.json')
+    assert cancellation['cancelled'] and not cancellation['vm_deployed'] and cancellation['stages_started'] == 0
+    assert pin(cancelled_base/'controller/state.json') == cancellation['state']
+    state = read(cancelled_base/'controller/state.json'); assert state['stages'] == []
+    sys.path.insert(0, str(ROOT/'artifacts/asr-labeled-20260919/venv/Lib/site-packages')); import psutil
+    try: assert psutil.Process(cancellation['identity']['pid']).create_time() != cancellation['identity']['birth']
+    except psutil.NoSuchProcess: pass
+    cancelled_prepared = read(cancelled_base/'prepared.json')
+    assert pin(cancelled_base/'execution.tar.gz') == cancelled_prepared['archive']
+    assert pin(cancelled_base/'execution/execution.json') == cancelled_prepared['execution']
+    for name, wanted in read(cancelled_base/'execution/execution.json')['files'].items():
+        assert pin(cancelled_base/'execution'/name) == wanted, name
     BASE.mkdir(); target = BASE/'execution'; target.mkdir()
     local_tools = {}
     for path in sorted(TOOLS.glob('*.py')):
@@ -53,6 +66,7 @@ def main():
                      payload=prepared['payload'], payload_archive=prepared['archive'], remote=REMOTE, limits=LIMITS,
                      local_tools=local_tools, files={p.name: pin(p) for p in target.iterdir() if p.is_file()}, external=external,
                      native_predecessor=pin(old), failed_predecessor=pin(failure_path), selftest=pin(BASE/'selftest.log'),
+                     cancelled_predecessor=pin(cancelled_base/'cancelled-for-cli-prerequisite.json'),
                      scope='Tested offline execution tools; AMD inference has not run. Existing e5 owns the VM until terminal.')
     write(target/'execution.json', execution)
     with tarfile.open(BASE/'execution.tar.gz', 'w:gz') as archive:

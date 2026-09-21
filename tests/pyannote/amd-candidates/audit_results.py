@@ -50,7 +50,7 @@ def main():
         write(BASE/'failure-audit.json', failure); print(json.dumps(failure)); return 1
     assert state['complete'] is True and state['limits'] == LIMITS
     assert state['execution'] == bundle['execution'] and state['payload'] == prepared['payload']
-    expected = ['sdk-version']+[n+s for n in ('backend', 'tensors', 'il-bridge') for s in ('-restore', '-build')]
+    expected = ['sdk-version']+[n+s for n in ('backend', 'tensors', 'cli', 'il-bridge') for s in ('-restore', '-build')]
     expected += ['il-bridge', 'backend-tests', 'tensors-tests']
     expected += [r+'-'+family for r in ROLES for family in ('pyannote', 'parakeet')]
     expected += ['native-conformance']+[f'timing-{i:02}-{r}' for i, r in enumerate(TIMING_ROLES)]
@@ -75,6 +75,8 @@ def main():
             assert all(0 <= g < 10 for g in gaps), (run['name'], gaps)
         samples += len(resource)
     built = read(campaign/'built-files.json'); verified_files(root, built)
+    for name in ('Lokad.Onnx.CLI.dll', 'Lokad.Onnx.CLI.deps.json', 'Lokad.Onnx.CLI.runtimeconfig.json'):
+        assert 'source/src/Lokad.Onnx.CLI/bin/Release/net10.0/'+name in built
     bridge = read(campaign/'il-bridge.json'); assert bridge['passed'] is True
     for observation in bridge['observations']:
         name = observation['assembly']; assert observation['equal'] is True

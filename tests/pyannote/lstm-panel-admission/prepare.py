@@ -175,9 +175,10 @@ def main():
         restore_build('bridge', bridge/'Bridge.csproj', bridge)
         command('instruction-bridge', ['dotnet', bridge/'bin/Release/net10.0/Bridge.dll', ROWS/'runtime',
                 source/'tests/Lokad.Onnx.Backend.Tests/bin/Release/net10.0', BASE/'instructions.json'], source)
-        test('candidate-backend', backend, source)
+        restore_build('cli', Path('src/Lokad.Onnx.CLI/Lokad.Onnx.CLI.csproj'), source)
         tensors = Path('tests/Lokad.Onnx.Tensors.Tests/Lokad.Onnx.Tensors.Tests.csproj')
         restore_build('tensors', tensors, source)
+        test('candidate-backend', backend, source)
         test('candidate-tensors', tensors, source)
         state['code'] = 0
     except BaseException:
