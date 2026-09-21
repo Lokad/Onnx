@@ -62,6 +62,9 @@ correctness evidence, without a new matched latency or parity claim.
 Its [Parakeet regression](tests/pyannote/optimized-parakeet/results-20260921.md)
 preserves all 784 output arrays bit-for-bit; the three existing Windows native
 numerical failures remain unchanged.
+The [AMD qualification payload and runner](tests/pyannote/amd-candidates/prepared-20260921.md)
+are prepared; execution follows the existing e5 campaign. This preparation adds
+no AMD timing result or production promotion.
 
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
