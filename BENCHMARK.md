@@ -47,8 +47,14 @@ time versus its unprofiled control. These diagnostic samples guide a distinct
 wider-projection experiment; the matched application and Microsoft ORT figures
 above remain unchanged.
 The [isolated wider LSTM prototype](tests/pyannote/lstm-wide-results/build-20260922.md)
-now builds with its compiled changes confined to four dispatch methods and
-two new helpers. Numerical qualification and timing remain pending.
+builds with its compiled changes confined to four dispatch methods and two
+new helpers. [AMD correctness checks](tests/pyannote/lstm-wide-results/numerics-20260923.md)
+now pass in all four execution modes: 192 complete LSTM calls and about
+29 million values preserve selected bits and ORT error bounds.
+[Generated-code inspection](tests/pyannote/lstm-wide-results/codegen-20260923.md)
+confirms sixteen-lane projections without vector spills and preserves disabled
+and SIMD-only fallback paths. Its fixed complete-LSTM timing screen is running;
+the prototype is not integrated.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
