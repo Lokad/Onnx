@@ -15,6 +15,19 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
 
+Latest retained AMD comparisons for the selected implementation:
+
+| Application workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
+|---|---:|---:|---:|
+| Pyannote, complete 30-second dialogue | 15.362 | 9.095 | 1.689 |
+| Parakeet, all 20 clips / 213.265 seconds of audio | 75.135 | 39.464 | 1.904 |
+
+Each row comes from its own matched campaign on AMD EPYC 9V74, CPU2, with
+ORT 1.29.0. Complete application timers include frontend, inference and owned
+results. The new [Parakeet arithmetic trial](#audio-amd-parakeet-arithmetic-trial-versus-microsoft-ort)
+takes 78.066 s and is **not selected**: it is 3.90% slower than contemporary
+production. The full application parity target remains <=1.05.
+
 The current selected **AMD pyannote implementation** completes the full dialogue
 in **15.362 s versus Microsoft ORT 9.095 s (1.689×)**. Contemporary production
 takes **16.139 s**: a **4.82% latency reduction**. All 96 requests, twelve
@@ -69,8 +82,9 @@ Native speaker timelines match exactly; maximum meeting centroid error is 9.25e-
 
 The latest accepted **Windows pyannote candidate** takes **10.493 s versus
 Microsoft ORT 6.320 s (1.660×)**, down 8.6% from its contemporary 11.482 s
-predecessor. The retained **AMD Parakeet baseline** is **79.362 s versus ORT
-40.764 s (1.947×)** for twenty clips totaling 213.265 seconds.
+predecessor. The earlier **AMD Parakeet baseline** remains **79.362 s versus ORT
+40.764 s (1.947×)** for twenty clips totaling 213.265 seconds; the fresh
+comparison above measures the currently selected production separately.
 Each comparison uses complete application timers; compare engines within a
 row, preserving the hardware and implementation distinctions below.
 
@@ -112,8 +126,10 @@ single-panel Pyannote source](tests/parakeet/single-panel-models/results-2026092
 arrays and sixteen public results remain exact. All 166 shared-model arrays,
 3,313 backend tests, 343 tensor tests and the actual NuGet consumer pass. This
 is an isolated correctness candidate, with the original 256 MiB packing cap.
-AMD and fresh application timing remain pending; the Parakeet ORT baseline
-below is unchanged.
+Its [fresh AMD comparison](tests/parakeet/single-panel-amd-results/results-20260922.md)
+now passes all correctness and repeatability checks but fails performance
+selection: 78.066 s candidate, 75.135 s production and 39.464 s ORT. The complete
+corpus and seven clip speed gates fail. The arithmetic change is not integrated.
 
 The arithmetic fix now also passes [complete qualification when composed with
 the integrated Pyannote improvements](tests/parakeet/portable-models/results-20260922.md):
@@ -426,6 +442,45 @@ claimed from that grid.
 The [conditioned successor](tests/parakeet/wide-matmul-conditioned/results-20260921.md)
 also fails its fixed control limits despite passing all numerical checks. No
 prototype is promoted and the ORT comparison tables remain unchanged.
+
+### Audio: AMD Parakeet arithmetic trial versus Microsoft ORT
+
+AMD EPYC 9V74, CPU2, .NET 10.0.8 / Microsoft ORT 1.29.0. Contemporary production
+is selected Core `1279b4b6` / Data `4e602d9f`; the isolated arithmetic candidate
+is Core `abbf5e98` / Data `eb452663`. Both retain the 256 MiB encoder packing cap.
+
+| Workload | Production seconds | Candidate seconds | Microsoft ORT seconds | Production / ORT | Candidate / ORT |
+|---|---:|---:|---:|---:|---:|
+| Parakeet, all 20 clips / 213.265 s audio | 75.135 | 78.066 | 39.464 | 1.904 | 1.978 |
+
+**Not selected.** Candidate / production is 1.039019, failing the fixed 0.95
+corpus limit. Seven clips also exceed the 1.05 limit. All 63 process-repeatability
+controls pass; no observations are excluded and no unchanged retry is made.
+Root arithmetic remains unchanged. Correctness qualification does not establish
+a performance improvement.
+
+Six fresh processes run production, candidate, ORT, ORT, candidate, production.
+Each runs every clip once as warmup and three times measured: 480 requests,
+120 warmups and 360 measurements. Corpus means sum twenty clip means within
+each process and average the two processes equally; each clip has six measured
+observations. Gates use exact integer-clock fractions. Timers include frontend,
+neural graphs, each engine's greedy decoding and owned output. Model loading,
+file access and external validation are excluded. ORT uses one intra/inter-op
+thread, sequential execution, full optimization and no spinning.
+
+Fresh qualification passes all 60 public Parakeet requests, 1,568 Parakeet native
+arrays, 36 Pyannote graph arrays and 32 Pyannote public requests. Both ten-minute
+meetings and recovery pass. Normal Linux builds match all 3,114 Core / 697 Data
+methods and public declarations; 3,365 backend tests, 343 tensor tests, 400
+convolution caller cases per mode and all forty AMD prepared-precedence cases
+pass. All 5,859 resource observations pass, with peak owned RSS 10,394,759,168
+bytes. Separate intermediate-layer and double-reference discrepancies remain
+recorded; this finite fixture qualification does not erase them.
+
+The [complete report](tests/parakeet/single-panel-amd-results/results-20260922.md)
+and [raw observations](tests/parakeet/single-panel-amd-results/observations-20260922.json)
+retain every clip, clock, failed gate and evidence identity. Earlier comparisons
+below remain separate historical measurements.
 
 ### Audio: AMD single-panel pyannote versus Microsoft ORT
 
