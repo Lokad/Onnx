@@ -28,6 +28,16 @@ results. The new [Parakeet arithmetic trial](#audio-amd-parakeet-arithmetic-tria
 takes 78.066 s and is **not selected**: it is 3.90% slower than contemporary
 production. The full application parity target remains <=1.05.
 
+The new [Pyannote direct spatial convolution screen](tests/pyannote/blocked-spatial-screen-amd/results-20260922.md)
+is **not selected**. Across 108 complete convolution calls for three crops,
+observed production/candidate totals are 2.911/2.696 s. The 7.39% lower total
+misses the fixed 10% component gate; five eligible forms regress beyond their
+limits and one repeatability control fails. All 1,728 call observations,
+512 preparation observations and 260 resource samples are retained. Actual
+layer outputs match selected production exactly across 119.8 million values
+per qualification mode. These component results do not change the complete
+application measurements or Microsoft ORT baselines above.
+
 The current selected **AMD pyannote implementation** completes the full dialogue
 in **15.362 s versus Microsoft ORT 9.095 s (1.689×)**. Contemporary production
 takes **16.139 s**: a **4.82% latency reduction**. All 96 requests, twelve
