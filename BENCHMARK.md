@@ -40,8 +40,16 @@ ORT error bound in local AVX2/scalar checks. It adds at most 8 KiB of scratch pe
 call and passes all 150 focused tests at both AMD instruction settings. Complete
 [AMD selected references](tests/pyannote/lstm-platform-reference-amd-v3/results-20260922.md)
 now account for small Windows/AMD output differences and pass fresh ORT checks.
-The candidate's complete AMD output comparison and timing remain pending; it
-is not integrated and supplies no new application speed ratio.
+The candidate's [complete AMD output comparison](tests/pyannote/lstm-input-blocks-amd-v2/results-20260922.md)
+now passes all three instruction modes, and its
+[complete-LSTM timing screen](tests/pyannote/lstm-input-screen-amd/results-20260922.md)
+is **admitted for full product qualification**. The sum of all twelve captured
+case means falls from 0.340545 s to 0.293828 s: **13.72% lower latency**.
+All ten repeatability controls and five speed gates pass; every node improves.
+All 2,352 timing clocks, including 588 warmups, and 48 preparation clocks remain
+available. Every output preserves selected bits and the Microsoft ORT error
+bound. The candidate is not integrated; full application qualification and a
+fresh matched ORT campaign remain, so the application ratios above are unchanged.
 
 The latest [Pyannote twelve-position convolution screen](tests/pyannote/spatial-weight-screen/results-20260922.md)
 is **not selected**. The sum of all 108 prepared graph call means rises from
