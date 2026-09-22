@@ -1,0 +1,582 @@
+{
+  "passed": true,
+  "suites": [
+    {
+      "name": "focused",
+      "counters": {
+        "total": "221",
+        "executed": "219",
+        "passed": "219",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 219,
+        "NotExecuted": 2
+      },
+      "trx": {
+        "bytes": 338588,
+        "sha256": "126374dc9d34d25c1fd57681728906781d0a54a20a1ae0ea1b3c457045f53715"
+      }
+    },
+    {
+      "name": "hardware-disabled",
+      "counters": {
+        "total": "57",
+        "executed": "55",
+        "passed": "55",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 55,
+        "NotExecuted": 2
+      },
+      "trx": {
+        "bytes": 95227,
+        "sha256": "e586d15ebf6a21a64f562d0baa349b206d8f1c3f87e0f6e065aafa422fe0e7bb"
+      }
+    },
+    {
+      "name": "backend-full",
+      "counters": {
+        "total": "3390",
+        "executed": "3295",
+        "passed": "3295",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 3295,
+        "NotExecuted": 95
+      },
+      "trx": {
+        "bytes": 5279551,
+        "sha256": "a1c99cd9923e5443ecefe9f2211b8099422de2c17531cadd04f79bdbad2e118f"
+      }
+    },
+    {
+      "name": "tensors-full",
+      "counters": {
+        "total": "342",
+        "executed": "342",
+        "passed": "342",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "outcomes": {
+        "Passed": 342
+      },
+      "trx": {
+        "bytes": 513257,
+        "sha256": "591ceb11691ec6d8a7debb0cc3ab987b259877b60aa7923da42e374ff26c91e0"
+      }
+    }
+  ],
+  "changed": [
+    "src/Lokad.Onnx/TensorOps.ConvPool.cs",
+    "src/Lokad.Onnx/Zzz.ZConvPackedRows.cs",
+    "tests/Lokad.Onnx.Backend.Tests/ConvPackedRowsTests.cs"
+  ],
+  "core": {
+    "bytes": 736256,
+    "sha256": "e36963d848ff907acc521908c3a82569dd096c9e0e9ccad864a0d26028082d80"
+  },
+  "data": {
+    "bytes": 143872,
+    "sha256": "2b512f2527d3ede6e9a50b2206aabcb6bd4595c96c0ebcecdebe9e7a21939393"
+  },
+  "package": {
+    "bytes": 551965,
+    "sha256": "e848e59c289d8a07e88ac978d1b5d4ff2786ce56b54d5f0b3885253326ac726c"
+  },
+  "instruction_review": {
+    "bytes": 7351,
+    "sha256": "b467e59e039d6db983e7ff5fa4b95fa9130f7c03b3872947c9364093e416ed40"
+  },
+  "identities": [
+    {
+      "pid": 1083752,
+      "birth": 1790036901.911448
+    },
+    {
+      "pid": 1058152,
+      "birth": 1790036905.3433087
+    },
+    {
+      "pid": 1075748,
+      "birth": 1790036906.0199103
+    },
+    {
+      "pid": 1016052,
+      "birth": 1790036906.0355198
+    },
+    {
+      "pid": 944676,
+      "birth": 1790036907.43964
+    },
+    {
+      "pid": 1037516,
+      "birth": 1790036908.0108461
+    },
+    {
+      "pid": 1075096,
+      "birth": 1790036908.0230243
+    },
+    {
+      "pid": 1110960,
+      "birth": 1790036908.570037
+    },
+    {
+      "pid": 1110356,
+      "birth": 1790036908.600782
+    },
+    {
+      "pid": 1094688,
+      "birth": 1790036916.2373223
+    },
+    {
+      "pid": 1124812,
+      "birth": 1790036916.240805
+    },
+    {
+      "pid": 1128048,
+      "birth": 1790036919.4849317
+    },
+    {
+      "pid": 1119432,
+      "birth": 1790036919.4882677
+    },
+    {
+      "pid": 1068332,
+      "birth": 1790036922.223828
+    },
+    {
+      "pid": 1092304,
+      "birth": 1790036922.6933808
+    },
+    {
+      "pid": 1104004,
+      "birth": 1790036922.7080357
+    },
+    {
+      "pid": 1084336,
+      "birth": 1790036924.2982857
+    },
+    {
+      "pid": 1061864,
+      "birth": 1790036924.8451557
+    },
+    {
+      "pid": 820064,
+      "birth": 1790036924.8557997
+    },
+    {
+      "pid": 1121068,
+      "birth": 1790036925.553734
+    },
+    {
+      "pid": 996868,
+      "birth": 1790036925.5587237
+    },
+    {
+      "pid": 1031072,
+      "birth": 1790036955.3742487
+    },
+    {
+      "pid": 1034432,
+      "birth": 1790036956.4160705
+    },
+    {
+      "pid": 1086604,
+      "birth": 1790036957.1345015
+    },
+    {
+      "pid": 965636,
+      "birth": 1790036957.1389256
+    },
+    {
+      "pid": 1024212,
+      "birth": 1790036961.344046
+    },
+    {
+      "pid": 1122372,
+      "birth": 1790036962.1256256
+    },
+    {
+      "pid": 1119032,
+      "birth": 1790036962.6862717
+    },
+    {
+      "pid": 855436,
+      "birth": 1790036962.6913812
+    },
+    {
+      "pid": 1098100,
+      "birth": 1790036965.7091737
+    },
+    {
+      "pid": 917040,
+      "birth": 1790037047.0067022
+    },
+    {
+      "pid": 1129084,
+      "birth": 1790037077.281803
+    },
+    {
+      "pid": 982128,
+      "birth": 1790037077.75031
+    },
+    {
+      "pid": 1006352,
+      "birth": 1790037077.753842
+    },
+    {
+      "pid": 1088416,
+      "birth": 1790037078.0537372
+    },
+    {
+      "pid": 1071268,
+      "birth": 1790037078.062667
+    },
+    {
+      "pid": 861112,
+      "birth": 1790037080.175807
+    },
+    {
+      "pid": 1124612,
+      "birth": 1790037081.4517589
+    },
+    {
+      "pid": 1114060,
+      "birth": 1790037081.4741848
+    },
+    {
+      "pid": 1081088,
+      "birth": 1790037082.0431802
+    },
+    {
+      "pid": 1139552,
+      "birth": 1790037082.0486593
+    },
+    {
+      "pid": 1087108,
+      "birth": 1790037084.0749497
+    },
+    {
+      "pid": 1131080,
+      "birth": 1790037084.5531108
+    },
+    {
+      "pid": 1101836,
+      "birth": 1790037084.5565507
+    },
+    {
+      "pid": 1111720,
+      "birth": 1790037084.7912788
+    },
+    {
+      "pid": 1085636,
+      "birth": 1790037084.7958136
+    },
+    {
+      "pid": 1143372,
+      "birth": 1790037087.4366686
+    },
+    {
+      "pid": 1127564,
+      "birth": 1790037087.4399588
+    },
+    {
+      "pid": 1122376,
+      "birth": 1790037087.6818972
+    },
+    {
+      "pid": 1057404,
+      "birth": 1790037087.6857057
+    },
+    {
+      "pid": 1078568,
+      "birth": 1790037087.9269454
+    },
+    {
+      "pid": 1095572,
+      "birth": 1790037087.9303155
+    },
+    {
+      "pid": 1114120,
+      "birth": 1790037090.7090409
+    },
+    {
+      "pid": 879020,
+      "birth": 1790037090.7125025
+    },
+    {
+      "pid": 1071472,
+      "birth": 1790037091.08508
+    },
+    {
+      "pid": 1075708,
+      "birth": 1790037095.951408
+    },
+    {
+      "pid": 1120992,
+      "birth": 1790037096.2719057
+    },
+    {
+      "pid": 1124160,
+      "birth": 1790037096.5216107
+    },
+    {
+      "pid": 922116,
+      "birth": 1790037117.5702462
+    },
+    {
+      "pid": 1150580,
+      "birth": 1790037117.57916
+    },
+    {
+      "pid": 1114596,
+      "birth": 1790037123.802263
+    },
+    {
+      "pid": 1052068,
+      "birth": 1790037123.8055243
+    },
+    {
+      "pid": 1068612,
+      "birth": 1790037124.0950472
+    },
+    {
+      "pid": 1120044,
+      "birth": 1790037124.0987933
+    },
+    {
+      "pid": 893308,
+      "birth": 1790037124.8780863
+    },
+    {
+      "pid": 911876,
+      "birth": 1790037124.8817928
+    },
+    {
+      "pid": 1142492,
+      "birth": 1790037125.1202984
+    },
+    {
+      "pid": 1129808,
+      "birth": 1790037125.1256113
+    },
+    {
+      "pid": 1036636,
+      "birth": 1790037125.3780994
+    },
+    {
+      "pid": 1142744,
+      "birth": 1790037125.382012
+    },
+    {
+      "pid": 1146488,
+      "birth": 1790037125.5996528
+    },
+    {
+      "pid": 1131028,
+      "birth": 1790037125.603226
+    },
+    {
+      "pid": 1077468,
+      "birth": 1790037137.6745205
+    },
+    {
+      "pid": 1115124,
+      "birth": 1790037138.1680353
+    },
+    {
+      "pid": 975652,
+      "birth": 1790037138.171892
+    },
+    {
+      "pid": 1158732,
+      "birth": 1790037138.4146814
+    },
+    {
+      "pid": 1065468,
+      "birth": 1790037138.422367
+    },
+    {
+      "pid": 1077116,
+      "birth": 1790037142.874028
+    },
+    {
+      "pid": 1068952,
+      "birth": 1790037143.940153
+    },
+    {
+      "pid": 1132860,
+      "birth": 1790037144.9879174
+    },
+    {
+      "pid": 1117252,
+      "birth": 1790037145.5871012
+    },
+    {
+      "pid": 1152640,
+      "birth": 1790037145.6086454
+    },
+    {
+      "pid": 1029660,
+      "birth": 1790037147.9544017
+    }
+  ],
+  "resources": [
+    {
+      "name": "cli-restore",
+      "seconds": 2.08592210005736,
+      "samples": 8,
+      "peak_rss": 215478272
+    },
+    {
+      "name": "cli-build",
+      "seconds": 14.777880600013305,
+      "samples": 57,
+      "peak_rss": 518447104
+    },
+    {
+      "name": "backend-restore",
+      "seconds": 2.0676823999965563,
+      "samples": 8,
+      "peak_rss": 219660288
+    },
+    {
+      "name": "backend-build",
+      "seconds": 16.06731240003137,
+      "samples": 62,
+      "peak_rss": 628445184
+    },
+    {
+      "name": "tensors-restore",
+      "seconds": 1.0350870999973267,
+      "samples": 4,
+      "peak_rss": 96780288
+    },
+    {
+      "name": "tensors-build",
+      "seconds": 4.921719899983145,
+      "samples": 19,
+      "peak_rss": 326492160
+    },
+    {
+      "name": "bridge-restore",
+      "seconds": 0.7750583000015467,
+      "samples": 3,
+      "peak_rss": 98369536
+    },
+    {
+      "name": "bridge-build",
+      "seconds": 2.8440941000008024,
+      "samples": 11,
+      "peak_rss": 249589760
+    },
+    {
+      "name": "instructions",
+      "seconds": 0.7764394000405446,
+      "samples": 3,
+      "peak_rss": 141668352
+    },
+    {
+      "name": "focused",
+      "seconds": 2.8553534999955446,
+      "samples": 11,
+      "peak_rss": 294473728
+    },
+    {
+      "name": "hardware-disabled",
+      "seconds": 3.882810899987817,
+      "samples": 15,
+      "peak_rss": 296517632
+    },
+    {
+      "name": "backend-full",
+      "seconds": 53.49593909998657,
+      "samples": 206,
+      "peak_rss": 4066500608
+    },
+    {
+      "name": "tensors-full",
+      "seconds": 5.173967600043397,
+      "samples": 20,
+      "peak_rss": 274567168
+    },
+    {
+      "name": "package",
+      "seconds": 1.043956600013189,
+      "samples": 4,
+      "peak_rss": 121085952
+    },
+    {
+      "name": "consumer-restore",
+      "seconds": 1.04115909995744,
+      "samples": 4,
+      "peak_rss": 115499008
+    },
+    {
+      "name": "consumer-build",
+      "seconds": 2.854040600010194,
+      "samples": 11,
+      "peak_rss": 241139712
+    },
+    {
+      "name": "consumer",
+      "seconds": 0.25860080000711605,
+      "samples": 1,
+      "peak_rss": 6942720
+    }
+  ],
+  "resource_samples": 447,
+  "peak_rss": 4066500608,
+  "scope": "Normal composition build, full local tests and separate NuGet consumer; AMD qualification pending."
+}

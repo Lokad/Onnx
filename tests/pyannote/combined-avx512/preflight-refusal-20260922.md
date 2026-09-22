@@ -1,0 +1,1 @@
+Initial prepare.py refused before creating its destination or starting any worker. The closed AMD file manifest uses campaign-relative paths, whereas the reused local verify helper expects repository-relative paths. prepare_v2.py resolves those exact manifest names relative to the closed campaign directory. The original script is preserved.

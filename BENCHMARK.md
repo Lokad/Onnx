@@ -23,6 +23,12 @@ The [complete AMD comparison](#audio-amd-pyannote-candidates-versus-microsoft-or
 qualifies the next integration step; these isolated candidates are not yet
 promoted to production.
 
+The [combined normal build](tests/pyannote/combined-avx512/results-20260922.md)
+now passes 3,295 backend tests, 342 tensor tests and a separate NuGet consumer.
+It combines AVX-512 row sharing with the newer portable fallback, frontend and
+memory improvements. Its own AMD qualification and matched comparison are
+pending; the times above still belong to the older candidate.
+
 The latest accepted **Windows pyannote candidate** takes **10.493 s versus
 Microsoft ORT 6.320 s (1.660×)**, down 8.6% from its contemporary 11.482 s
 predecessor. The retained **AMD Parakeet baseline** is **79.362 s versus ORT
