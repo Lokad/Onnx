@@ -1,0 +1,880 @@
+{
+  "analysis": {
+    "passed": true,
+    "reports": {
+      "production": {
+        "passed": true,
+        "calls": 432,
+        "distinct_calls": 108,
+        "calls_with_output_channels_divisible_by_64": 312,
+        "no_performance_measurement": true
+      },
+      "candidate": {
+        "passed": true,
+        "calls": 432,
+        "distinct_calls": 108,
+        "calls_with_output_channels_divisible_by_64": 312,
+        "no_performance_measurement": true
+      }
+    },
+    "resources": [
+      {
+        "name": "production",
+        "samples": 38,
+        "peak_rss": 3313631232,
+        "seconds": 9.648910215997603
+      },
+      {
+        "name": "candidate",
+        "samples": 35,
+        "peak_rss": 3384987648,
+        "seconds": 8.889948261959944
+      }
+    ],
+    "local_resources": [
+      {
+        "name": "restore",
+        "samples": 3,
+        "peak_rss": 99041280,
+        "seconds": 0.7787536999676377
+      },
+      {
+        "name": "build",
+        "samples": 11,
+        "peak_rss": 245669888,
+        "seconds": 2.8559041999978945
+      },
+      {
+        "name": "local-production",
+        "samples": 44,
+        "peak_rss": 3036622848,
+        "seconds": 11.472969700000249
+      },
+      {
+        "name": "local-candidate",
+        "samples": 44,
+        "peak_rss": 3149697024,
+        "seconds": 11.485431700013578
+      }
+    ],
+    "code": {
+      "production": [
+        {
+          "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+          "tier": "Instrumented Tier0",
+          "code_bytes": [
+            3756
+          ],
+          "complete_uninterleaved": true,
+          "line": 1,
+          "reductions": [
+            {
+              "label": "G_M000_IG08",
+              "fma_instructions": 4,
+              "input_broadcasts": 2,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0x3F0], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x430], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x630], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x670], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]"
+              ],
+              "integer_multiplies": 4,
+              "arithmetic_shifts": 3,
+              "scalar_stack_references": [
+                "       mov      rax, qword ptr [rbp-0x378]",
+                "       mov      rax, qword ptr [rbp-0x380]",
+                "       mov      eax, dword ptr [rbp-0x384]",
+                "       add      eax, dword ptr [rbp-0x384]",
+                "       imul     eax, dword ptr [rbp-0x50]",
+                "       mov      ecx, dword ptr [rbp-0x64]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x388]",
+                "       imul     eax, dword ptr [rbp-0x54]",
+                "       mov      ecx, dword ptr [rbp-0x68]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x38C]",
+                "       add      rax, qword ptr [rbp-0x30]",
+                "       mov      ecx, dword ptr [rbp-0x384]",
+                "       mov      edx, dword ptr [rbp-0x384]",
+                "       add      edx, dword ptr [rbp-0x384]",
+                "       mov      qword ptr [rbp-0x5B8], rax",
+                "       mov      rax, qword ptr [rbp-0x5B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]"
+              ]
+            },
+            {
+              "label": "G_M000_IG09",
+              "fma_instructions": 8,
+              "input_broadcasts": 4,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x6B0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x770], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0x370], zmm1"
+              ],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": [
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]"
+              ]
+            },
+            {
+              "label": "G_M000_IG32",
+              "fma_instructions": 2,
+              "input_broadcasts": 1,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0x530], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x570], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x5B0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x570]",
+                "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x5B0]",
+                "       vmovups  zmmword ptr [rbp-0x4B0], zmm1"
+              ],
+              "integer_multiplies": 4,
+              "arithmetic_shifts": 3,
+              "scalar_stack_references": [
+                "       mov      eax, dword ptr [rbp-0x4C8]",
+                "       add      eax, dword ptr [rbp-0x4C8]",
+                "       imul     eax, dword ptr [rbp-0x50]",
+                "       mov      ecx, dword ptr [rbp-0x64]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x4CC]",
+                "       imul     eax, dword ptr [rbp-0x54]",
+                "       mov      ecx, dword ptr [rbp-0x68]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x4D0]",
+                "       mov      ecx, dword ptr [rbp-0x4C8]",
+                "       mov      edx, dword ptr [rbp-0x4C8]",
+                "       add      edx, dword ptr [rbp-0x4C8]",
+                "       mov      rcx, qword ptr [rbp-0x30]",
+                "       mov      rax, qword ptr [rbp-0x4B8]",
+                "       mov      rax, qword ptr [rbp-0x4C0]",
+                "       cmp      dword ptr [rbp-0x4C4], 0"
+              ]
+            }
+          ]
+        },
+        {
+          "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+          "tier": "Tier1-OSR",
+          "code_bytes": [
+            2176
+          ],
+          "complete_uninterleaved": true,
+          "line": 873,
+          "reductions": [
+            {
+              "label": "G_M000_IG08",
+              "fma_instructions": 12,
+              "input_broadcasts": 6,
+              "vector_stack_references": [],
+              "integer_multiplies": 6,
+              "arithmetic_shifts": 3,
+              "scalar_stack_references": [
+                "       mov      r8d, dword ptr [rbp+0x740]",
+                "       mov      esi, dword ptr [rbp+0x72C]",
+                "       mov      dword ptr [rbp+0x72C], esi",
+                "       mov      dword ptr [rbp+0x740], r8d"
+              ]
+            },
+            {
+              "label": "G_M000_IG42",
+              "fma_instructions": 2,
+              "input_broadcasts": 0,
+              "vector_stack_references": [],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": []
+            },
+            {
+              "label": "G_M000_IG44",
+              "fma_instructions": 2,
+              "input_broadcasts": 0,
+              "vector_stack_references": [],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": []
+            },
+            {
+              "label": "G_M000_IG47",
+              "fma_instructions": 2,
+              "input_broadcasts": 0,
+              "vector_stack_references": [],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": []
+            }
+          ]
+        },
+        {
+          "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+          "tier": "Instrumented Tier0",
+          "code_bytes": [
+            3756
+          ],
+          "complete_uninterleaved": true,
+          "line": 1458,
+          "reductions": [
+            {
+              "label": "G_M000_IG08",
+              "fma_instructions": 4,
+              "input_broadcasts": 2,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0x3F0], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x430], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x630], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x670], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]"
+              ],
+              "integer_multiplies": 4,
+              "arithmetic_shifts": 3,
+              "scalar_stack_references": [
+                "       mov      rax, qword ptr [rbp-0x378]",
+                "       mov      rax, qword ptr [rbp-0x380]",
+                "       mov      eax, dword ptr [rbp-0x384]",
+                "       add      eax, dword ptr [rbp-0x384]",
+                "       imul     eax, dword ptr [rbp-0x50]",
+                "       mov      ecx, dword ptr [rbp-0x64]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x388]",
+                "       imul     eax, dword ptr [rbp-0x54]",
+                "       mov      ecx, dword ptr [rbp-0x68]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x38C]",
+                "       add      rax, qword ptr [rbp-0x30]",
+                "       mov      ecx, dword ptr [rbp-0x384]",
+                "       mov      edx, dword ptr [rbp-0x384]",
+                "       add      edx, dword ptr [rbp-0x384]",
+                "       mov      qword ptr [rbp-0x5B8], rax",
+                "       mov      rax, qword ptr [rbp-0x5B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]"
+              ]
+            },
+            {
+              "label": "G_M000_IG09",
+              "fma_instructions": 8,
+              "input_broadcasts": 4,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x6B0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x770], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+                "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+                "       vmovups  zmmword ptr [rbp-0x370], zmm1"
+              ],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": [
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x5B8]"
+              ]
+            },
+            {
+              "label": "G_M000_IG32",
+              "fma_instructions": 2,
+              "input_broadcasts": 1,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0x530], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x570], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x5B0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x570]",
+                "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x5B0]",
+                "       vmovups  zmmword ptr [rbp-0x4B0], zmm1"
+              ],
+              "integer_multiplies": 4,
+              "arithmetic_shifts": 3,
+              "scalar_stack_references": [
+                "       mov      eax, dword ptr [rbp-0x4C8]",
+                "       add      eax, dword ptr [rbp-0x4C8]",
+                "       imul     eax, dword ptr [rbp-0x50]",
+                "       mov      ecx, dword ptr [rbp-0x64]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x4CC]",
+                "       imul     eax, dword ptr [rbp-0x54]",
+                "       mov      ecx, dword ptr [rbp-0x68]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x4D0]",
+                "       mov      ecx, dword ptr [rbp-0x4C8]",
+                "       mov      edx, dword ptr [rbp-0x4C8]",
+                "       add      edx, dword ptr [rbp-0x4C8]",
+                "       mov      rcx, qword ptr [rbp-0x30]",
+                "       mov      rax, qword ptr [rbp-0x4B8]",
+                "       mov      rax, qword ptr [rbp-0x4C0]",
+                "       cmp      dword ptr [rbp-0x4C4], 0"
+              ]
+            }
+          ]
+        },
+        {
+          "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+          "tier": "Tier1-OSR",
+          "code_bytes": [
+            2192
+          ],
+          "complete_uninterleaved": true,
+          "line": 2330,
+          "reductions": [
+            {
+              "label": "G_M000_IG06",
+              "fma_instructions": 12,
+              "input_broadcasts": 6,
+              "vector_stack_references": [],
+              "integer_multiplies": 6,
+              "arithmetic_shifts": 3,
+              "scalar_stack_references": [
+                "       mov      r8d, dword ptr [rbp+0x740]",
+                "       mov      esi, dword ptr [rbp+0x72C]",
+                "       mov      dword ptr [rbp+0x72C], esi",
+                "       mov      dword ptr [rbp+0x740], r8d"
+              ]
+            },
+            {
+              "label": "G_M000_IG36",
+              "fma_instructions": 2,
+              "input_broadcasts": 0,
+              "vector_stack_references": [],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": []
+            },
+            {
+              "label": "G_M000_IG38",
+              "fma_instructions": 2,
+              "input_broadcasts": 0,
+              "vector_stack_references": [],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": []
+            },
+            {
+              "label": "G_M000_IG40",
+              "fma_instructions": 2,
+              "input_broadcasts": 0,
+              "vector_stack_references": [],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": []
+            }
+          ]
+        }
+      ],
+      "candidate": [
+        {
+          "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+          "tier": "Instrumented Tier0",
+          "code_bytes": [
+            5516
+          ],
+          "complete_uninterleaved": true,
+          "line": 1,
+          "reductions": [
+            {
+              "label": "G_M000_IG09",
+              "fma_instructions": 4,
+              "input_broadcasts": 2,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x930], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x970], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x970]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x970]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]"
+              ],
+              "integer_multiplies": 4,
+              "arithmetic_shifts": 3,
+              "scalar_stack_references": [
+                "       mov      rax, qword ptr [rbp-0x678]",
+                "       mov      rax, qword ptr [rbp-0x680]",
+                "       mov      eax, dword ptr [rbp-0x684]",
+                "       add      eax, dword ptr [rbp-0x684]",
+                "       imul     eax, dword ptr [rbp-0x50]",
+                "       mov      ecx, dword ptr [rbp-0x64]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x688]",
+                "       imul     eax, dword ptr [rbp-0x54]",
+                "       mov      ecx, dword ptr [rbp-0x68]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x68C]",
+                "       add      rax, qword ptr [rbp-0x30]",
+                "       mov      ecx, dword ptr [rbp-0x684]",
+                "       mov      edx, dword ptr [rbp-0x684]",
+                "       add      edx, dword ptr [rbp-0x684]",
+                "       mov      qword ptr [rbp-0x8B8], rax",
+                "       mov      rax, qword ptr [rbp-0x8B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x8B8]"
+              ]
+            },
+            {
+              "label": "G_M000_IG10",
+              "fma_instructions": 8,
+              "input_broadcasts": 4,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x9B0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x9B0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x9B0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0x9F0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x9F0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x9F0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+                "       vmovups  zmmword ptr [rbp-0xA30], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xA30]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xA30]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0xA70], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xA70]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xA70]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x370], zmm1"
+              ],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": [
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x8B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x8B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x8B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x8B8]"
+              ]
+            },
+            {
+              "label": "G_M000_IG11",
+              "fma_instructions": 8,
+              "input_broadcasts": 4,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0xAB0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x3B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x3B0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x3F0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x3F0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0xAF0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x430]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x430], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+                "       vmovups  zmmword ptr [rbp-0xB30], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xB30]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x4B0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xB30]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x4F0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x4F0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0xB70], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x530]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x530], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x570]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x570], zmm1"
+              ],
+              "integer_multiplies": 1,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": [
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x8B8]",
+                "       imul     eax, dword ptr [rbp+0x18], 7",
+                "       mov      rcx, qword ptr [rbp-0x8B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x8B8]",
+                "       mov      eax, dword ptr [rbp+0x18]",
+                "       mov      rcx, qword ptr [rbp-0x8B8]",
+                "       mov      eax, dword ptr [rbp+0x18]"
+              ]
+            },
+            {
+              "label": "G_M000_IG12",
+              "fma_instructions": 4,
+              "input_broadcasts": 2,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0xBB0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x5B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x5B0], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x5F0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x5F0], zmm1",
+                "       vmovups  zmmword ptr [rbp-0xBF0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x630]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+                "       vmovups  zmmword ptr [rbp-0x630], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x670]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+                "       vmovups  zmmword ptr [rbp-0x670], zmm1"
+              ],
+              "integer_multiplies": 1,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": [
+                "       mov      rcx, qword ptr [rbp-0x8B8]",
+                "       imul     eax, dword ptr [rbp+0x18], 11",
+                "       mov      rcx, qword ptr [rbp-0x8B8]",
+                "       mov      rax, qword ptr [rbp-0x678]",
+                "       mov      qword ptr [rbp-0x678], rax",
+                "       mov      rax, qword ptr [rbp-0x680]",
+                "       mov      qword ptr [rbp-0x680], rax",
+                "       mov      eax, dword ptr [rbp-0x68C]",
+                "       mov      dword ptr [rbp-0x68C], eax"
+              ]
+            },
+            {
+              "label": "G_M000_IG40",
+              "fma_instructions": 2,
+              "input_broadcasts": 1,
+              "vector_stack_references": [
+                "       vmovups  zmmword ptr [rbp-0x830], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x870], zmm0",
+                "       vmovups  zmmword ptr [rbp-0x8B0], zmm0",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x830]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x770]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x870]",
+                "       vmovups  zmmword ptr [rbp-0x770], zmm1",
+                "       vmovups  zmm0, zmmword ptr [rbp-0x830]",
+                "       vmovups  zmm1, zmmword ptr [rbp-0x7B0]",
+                "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x8B0]",
+                "       vmovups  zmmword ptr [rbp-0x7B0], zmm1"
+              ],
+              "integer_multiplies": 4,
+              "arithmetic_shifts": 3,
+              "scalar_stack_references": [
+                "       mov      eax, dword ptr [rbp-0x7C8]",
+                "       add      eax, dword ptr [rbp-0x7C8]",
+                "       imul     eax, dword ptr [rbp-0x50]",
+                "       mov      ecx, dword ptr [rbp-0x64]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x7CC]",
+                "       imul     eax, dword ptr [rbp-0x54]",
+                "       mov      ecx, dword ptr [rbp-0x68]",
+                "       imul     ecx, dword ptr [rbp+0x18]",
+                "       add      eax, dword ptr [rbp-0x7D0]",
+                "       mov      ecx, dword ptr [rbp-0x7C8]",
+                "       mov      edx, dword ptr [rbp-0x7C8]",
+                "       add      edx, dword ptr [rbp-0x7C8]",
+                "       mov      rcx, qword ptr [rbp-0x30]",
+                "       mov      rax, qword ptr [rbp-0x7B8]",
+                "       mov      rax, qword ptr [rbp-0x7C0]",
+                "       cmp      dword ptr [rbp-0x7C4], 0"
+              ]
+            }
+          ]
+        },
+        {
+          "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+          "tier": "Tier1-OSR",
+          "code_bytes": [
+            2856
+          ],
+          "complete_uninterleaved": true,
+          "line": 1237,
+          "reductions": [
+            {
+              "label": "G_M000_IG08",
+              "fma_instructions": 14,
+              "input_broadcasts": 7,
+              "vector_stack_references": [],
+              "integer_multiplies": 6,
+              "arithmetic_shifts": 3,
+              "scalar_stack_references": [
+                "       mov      r8d, dword ptr [rbp+0xBC0]",
+                "       mov      esi, dword ptr [rbp+0xBAC]"
+              ]
+            },
+            {
+              "label": "G_M000_IG09",
+              "fma_instructions": 10,
+              "input_broadcasts": 5,
+              "vector_stack_references": [],
+              "integer_multiplies": 3,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": [
+                "       mov      dword ptr [rbp+0xBAC], esi",
+                "       mov      dword ptr [rbp+0xBC0], r8d",
+                "       mov      edx, dword ptr [rbp+0xBCC]",
+                "       mov      esi, dword ptr [rbp+0xBC8]",
+                "       mov      rdi, qword ptr [rbp+0xBD0]",
+                "       mov      r8d, dword ptr [rbp+0xC38]"
+              ]
+            },
+            {
+              "label": "G_M000_IG54",
+              "fma_instructions": 2,
+              "input_broadcasts": 0,
+              "vector_stack_references": [],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": []
+            },
+            {
+              "label": "G_M000_IG56",
+              "fma_instructions": 2,
+              "input_broadcasts": 0,
+              "vector_stack_references": [],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": []
+            },
+            {
+              "label": "G_M000_IG59",
+              "fma_instructions": 2,
+              "input_broadcasts": 0,
+              "vector_stack_references": [],
+              "integer_multiplies": 0,
+              "arithmetic_shifts": 0,
+              "scalar_stack_references": []
+            }
+          ]
+        }
+      ]
+    },
+    "no_performance_measurement": true,
+    "tiering_and_isa_unchanged": true
+  },
+  "optimized_full_tiles": {
+    "production": [
+      {
+        "tier": "Tier1-OSR",
+        "code_bytes": [
+          2176
+        ],
+        "labels": [
+          "G_M000_IG08"
+        ],
+        "fmas": 12,
+        "broadcasts": 6,
+        "weight_loads": [
+          "       vmovups  zmm12, zmmword ptr [rbx]",
+          "       vmovups  zmm13, zmmword ptr [r15]"
+        ],
+        "scalar_stack": 4,
+        "integer_multiplies": 6,
+        "arithmetic_shifts": 3
+      },
+      {
+        "tier": "Tier1-OSR",
+        "code_bytes": [
+          2192
+        ],
+        "labels": [
+          "G_M000_IG06"
+        ],
+        "fmas": 12,
+        "broadcasts": 6,
+        "weight_loads": [
+          "       vmovups  zmm12, zmmword ptr [rbx]",
+          "       vmovups  zmm13, zmmword ptr [r15]"
+        ],
+        "scalar_stack": 4,
+        "integer_multiplies": 6,
+        "arithmetic_shifts": 3
+      }
+    ],
+    "candidate": [
+      {
+        "tier": "Tier1-OSR",
+        "code_bytes": [
+          2856
+        ],
+        "labels": [
+          "G_M000_IG08",
+          "G_M000_IG09"
+        ],
+        "fmas": 24,
+        "broadcasts": 12,
+        "weight_loads": [
+          "       vmovups  zmm24, zmmword ptr [rbx]",
+          "       vmovups  zmm25, zmmword ptr [r15]"
+        ],
+        "scalar_stack": 8,
+        "integer_multiplies": 9,
+        "arithmetic_shifts": 3
+      }
+    ]
+  },
+  "closure": {
+    "bytes": 18252,
+    "sha256": "7c32ceccb3349efcde4c614ba00f10a1ea3d7c2ece57633d43609d6048cbd4bf"
+  },
+  "terminal": [
+    {
+      "pid": 719214,
+      "birth": 1790093878.55
+    },
+    {
+      "pid": 719215,
+      "birth": 1790093879.5
+    },
+    {
+      "pid": 719224,
+      "birth": 1790093899.6
+    }
+  ]
+}

@@ -1,0 +1,431 @@
+{
+  "amd": {
+    "passed": true,
+    "reports": {
+      "raw-256": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "raw-512": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "wide-256": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "wide-512": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "span-256": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "span-512": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "layers-256": {
+        "passed": true,
+        "cases": 108,
+        "values": 119823360,
+        "graph_calls": 216,
+        "native_maximum": 3.814697265625e-06,
+        "lanes": 8
+      },
+      "layers-512": {
+        "passed": true,
+        "cases": 108,
+        "values": 119823360,
+        "graph_calls": 216,
+        "native_maximum": 3.814697265625e-06,
+        "lanes": 16
+      }
+    },
+    "resources": [
+      {
+        "name": "raw-256",
+        "samples": 6,
+        "peak_rss": 80961536,
+        "seconds": 1.5681074049789459
+      },
+      {
+        "name": "raw-512",
+        "samples": 6,
+        "peak_rss": 81223680,
+        "seconds": 1.5620545349665917
+      },
+      {
+        "name": "wide-256",
+        "samples": 9,
+        "peak_rss": 81936384,
+        "seconds": 2.325378690031357
+      },
+      {
+        "name": "wide-512",
+        "samples": 9,
+        "peak_rss": 80883712,
+        "seconds": 2.322310788964387
+      },
+      {
+        "name": "span-256",
+        "samples": 9,
+        "peak_rss": 82051072,
+        "seconds": 2.328130939975381
+      },
+      {
+        "name": "span-512",
+        "samples": 9,
+        "peak_rss": 82182144,
+        "seconds": 2.323926814016886
+      },
+      {
+        "name": "layers-256",
+        "samples": 49,
+        "peak_rss": 2631086080,
+        "seconds": 12.463661632034928
+      },
+      {
+        "name": "layers-512",
+        "samples": 38,
+        "peak_rss": 2447503360,
+        "seconds": 9.668736585997976
+      }
+    ],
+    "samples": 135,
+    "peak_rss": 2631086080,
+    "core": {
+      "bytes": 755712,
+      "sha256": "3ca0a2a5ff1b129272da05b679d539d865a3c6c20ee8625c24955e2a5f497c6a"
+    },
+    "consumers": {
+      "raw": {
+        "bytes": 45568,
+        "sha256": "67ba5fa646dee9a0825fa77546b0cb7393db7d8b40427cf656ff4150cecd4acb"
+      },
+      "wide": {
+        "bytes": 45568,
+        "sha256": "f63b3ada0ea8ed43b87446c903a3d81051cbf3e21b2c640798e9f2e691cc29d5"
+      },
+      "span": {
+        "bytes": 45568,
+        "sha256": "0491d43da97ddae0d52254067cc7ca96e6e7ba9feaac69763628ecf669a6113d"
+      },
+      "layers": {
+        "bytes": 48640,
+        "sha256": "a3a246b4555154618275a6444858cbdb45eafff6a561dcc4ec14bad786ca703e"
+      }
+    },
+    "no_performance_measurement": true,
+    "codegen_pending": true
+  },
+  "local": {
+    "passed": true,
+    "core": {
+      "bytes": 755712,
+      "sha256": "3ca0a2a5ff1b129272da05b679d539d865a3c6c20ee8625c24955e2a5f497c6a"
+    },
+    "data": {
+      "bytes": 143872,
+      "sha256": "5ac1dc68e28b8677a9b21f73297934364a0cb7aac35531cfd327c6471345a156"
+    },
+    "product": {
+      "passed": true,
+      "changed": "Lokad.Onnx.ConvBlockedSpatial::Kernel512::Void Kernel512(Single*, Single*, Single*, Int32, Int32, Int32, Int32, Int32, Int32, Int32)",
+      "added": [],
+      "unchanged_core": 3160,
+      "unchanged_data": 697,
+      "public_surface_equal": true
+    },
+    "consumers": [
+      {
+        "passed": true,
+        "mode": "raw",
+        "methods": 145,
+        "unchanged": 144,
+        "changed": [
+          "Probe::Main::Int32 Main(System.String[])"
+        ]
+      },
+      {
+        "passed": true,
+        "mode": "wide",
+        "methods": 145,
+        "unchanged": 143,
+        "changed": [
+          "Probe::Supplemental::System.Collections.Generic.List`1[System.Object] Supplemental(Int32, Int32 ByRef)",
+          "Probe::Main::Int32 Main(System.String[])"
+        ]
+      },
+      {
+        "passed": true,
+        "mode": "span",
+        "methods": 145,
+        "unchanged": 144,
+        "changed": [
+          "Probe::Main::Int32 Main(System.String[])"
+        ]
+      },
+      {
+        "passed": true,
+        "mode": "layers",
+        "methods": 134,
+        "unchanged": 133,
+        "changed": [
+          "ModelProbe::Main::Int32 Main(System.String[])"
+        ]
+      }
+    ],
+    "reports": {
+      "raw": {
+        "passed": true,
+        "cases": 2648,
+        "values": 1833216,
+        "lanes": 8
+      },
+      "wide": {
+        "passed": true,
+        "cases": 2648,
+        "values": 4402176,
+        "lanes": 8
+      },
+      "span": {
+        "passed": true,
+        "cases": 2648,
+        "values": 6950656,
+        "lanes": 8
+      },
+      "layers": {
+        "passed": true,
+        "cases": 108,
+        "values": 119823360,
+        "lanes": 8
+      }
+    },
+    "no_performance_measurement": true,
+    "avx512_qualified": false,
+    "resources": [
+      {
+        "name": "cli-restore",
+        "samples": 10,
+        "peak_rss": 217374720,
+        "seconds": 2.649373199965339
+      },
+      {
+        "name": "cli-build",
+        "samples": 87,
+        "peak_rss": 526438400,
+        "seconds": 23.168212500051595
+      },
+      {
+        "name": "inventory",
+        "samples": 4,
+        "peak_rss": 150745088,
+        "seconds": 1.0859076000051573
+      },
+      {
+        "name": "raw-restore",
+        "samples": 4,
+        "peak_rss": 100798464,
+        "seconds": 1.0554667999967933
+      },
+      {
+        "name": "raw-build",
+        "samples": 14,
+        "peak_rss": 255004672,
+        "seconds": 3.691502500034403
+      },
+      {
+        "name": "raw-inventory",
+        "samples": 1,
+        "peak_rss": 5586944,
+        "seconds": 0.2722988000023179
+      },
+      {
+        "name": "wide-restore",
+        "samples": 3,
+        "peak_rss": 95690752,
+        "seconds": 0.8019703999743797
+      },
+      {
+        "name": "wide-build",
+        "samples": 11,
+        "peak_rss": 254447616,
+        "seconds": 2.9024145999574102
+      },
+      {
+        "name": "wide-inventory",
+        "samples": 1,
+        "peak_rss": 5623808,
+        "seconds": 0.2674163000192493
+      },
+      {
+        "name": "span-restore",
+        "samples": 3,
+        "peak_rss": 96145408,
+        "seconds": 0.7897167999763042
+      },
+      {
+        "name": "span-build",
+        "samples": 11,
+        "peak_rss": 256716800,
+        "seconds": 2.87709470000118
+      },
+      {
+        "name": "span-inventory",
+        "samples": 1,
+        "peak_rss": 17510400,
+        "seconds": 0.27871819998836145
+      },
+      {
+        "name": "layers-restore",
+        "samples": 3,
+        "peak_rss": 101666816,
+        "seconds": 0.8227301000151783
+      },
+      {
+        "name": "layers-build",
+        "samples": 11,
+        "peak_rss": 258281472,
+        "seconds": 2.891139400016982
+      },
+      {
+        "name": "layers-inventory",
+        "samples": 1,
+        "peak_rss": 2150400,
+        "seconds": 0.2676987000158988
+      },
+      {
+        "name": "raw-256",
+        "samples": 6,
+        "peak_rss": 63651840,
+        "seconds": 1.5721419000183232
+      },
+      {
+        "name": "wide-256",
+        "samples": 11,
+        "peak_rss": 69767168,
+        "seconds": 2.895325399993453
+      },
+      {
+        "name": "span-256",
+        "samples": 8,
+        "peak_rss": 66174976,
+        "seconds": 2.1219473999808542
+      },
+      {
+        "name": "layers-256",
+        "samples": 43,
+        "peak_rss": 2137640960,
+        "seconds": 11.386082200042438
+      }
+    ]
+  },
+  "amd_closure": {
+    "bytes": 19975,
+    "sha256": "f7df7b7652a2dab086d2e364e2a1b52b472c471a0f1956bb40e5af4fa982b5aa"
+  },
+  "local_closure": {
+    "bytes": 49748,
+    "sha256": "b6b1ce3bfe8fe85f390ed4bc4af03f0090c9a3f1226d7c2d2edfde684900adf5"
+  },
+  "terminal": [
+    {
+      "pid": 718596,
+      "birth": 1790093729.46
+    },
+    {
+      "pid": 718597,
+      "birth": 1790093730.43
+    },
+    {
+      "pid": 718606,
+      "birth": 1790093732.46
+    },
+    {
+      "pid": 718615,
+      "birth": 1790093734.47
+    },
+    {
+      "pid": 718624,
+      "birth": 1790093737.25
+    },
+    {
+      "pid": 718633,
+      "birth": 1790093740.03
+    },
+    {
+      "pid": 718642,
+      "birth": 1790093742.81
+    },
+    {
+      "pid": 718651,
+      "birth": 1790093745.59
+    },
+    {
+      "pid": 718660,
+      "birth": 1790093758.5
+    }
+  ]
+}
