@@ -49,15 +49,18 @@ but its [complete-call screen](../tests/pyannote/spatial-weight-screen/results-2
 is **3.13% slower**. All repeatability controls pass; the aggregate gate and
 four form gates fail. This candidate is also rejected.
 
-The next Pyannote investigation targets bounded batching of LSTM input
-projections. The current provider projects one time row at a time through
-`LstmProjectionPanels.Input`; the recurrent projection must still follow each
-state update. The [pinned ORT recurrence review](../tests/pyannote/lstm-output-lanes/source-review-20260921.md)
-shows that input projection can precede recurrence. Test a small fixed block of
-input rows sharing weight loads, while retaining increasing reduction order,
-separate multiply/add, independent input/recurrent sums and the existing gate
-loop. Unlike a full-sequence gate buffer, a bounded block has a fixed scratch
-limit. This is a prospective design, with no implementation or speed claim.
+The [LSTM input-row candidate](../tests/pyannote/lstm-input-blocks-v6/results-20260922.md)
+now implements bounded batching inspired by the
+[pinned ORT recurrence review](../tests/pyannote/lstm-output-lanes/source-review-20260921.md).
+Four independent input rows share weight loads while retaining increasing
+reduction order, separate multiply/add, independent input/recurrent sums and
+the existing gate loop. Extra scratch is bounded at 8 KiB per admitted call.
+Its [complete-call AMD screen](../tests/pyannote/lstm-input-screen-amd/results-20260922.md)
+reduces latency 13.72%, passing every repeatability and speed gate. Normal Linux
+suites/package consumption and complete Pyannote, Parakeet and shared/e5 checks
+also pass, with exact selected output bits. The complete application campaign
+is in progress; the candidate remains unintegrated and has no new application
+speed result yet.
 Pyannote remains first, Parakeet second, Whisper deferred.
 
 The preceding selected Pyannote source is the
