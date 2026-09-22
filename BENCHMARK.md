@@ -201,8 +201,12 @@ It also passes [complete public qualification](tests/pyannote/deferred-views-app
 all 16 dialogue calls, both ten-minute meetings and recovery retain exact
 predecessor outputs and ORT speaker timelines. Cumulative allocations are 7.4%
 lower on the full dialogue and 7.5–8.3% lower on the meetings than in the prior
-qualification. A fresh matched timing comparison remains separate; these
-allocation counters do not change the accepted table below.
+qualification. The [fresh matched comparison](tests/pyannote/deferred-views-comparison/results-20260922.md)
+passes all 96 requests and repeatability controls: full-request means are
+10.909 s predecessor, 10.690 s candidate and 6.351 s Microsoft ORT. The observed
+2.0% reduction is below the prospective 3% admission threshold; the candidate
+is not selected for performance. Full-request allocation falls 6.9% in this
+comparison. The accepted table below retains its separately measured candidate.
 
 ### Audio: optimized pyannote candidate versus Microsoft ORT on Windows
 
