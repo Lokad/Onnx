@@ -1,0 +1,163 @@
+{
+  "passed": true,
+  "core": {
+    "bytes": 757760,
+    "sha256": "64f42e978ccea3d38e38bd30eb372a384653628bc1b3a7b92f2d2224f16f3c8e"
+  },
+  "data": {
+    "bytes": 143872,
+    "sha256": "739c6e32e364678b631c82906b11480b6c157b0d2bae30f1380e4e52ca65219c"
+  },
+  "product": {
+    "passed": true,
+    "changed": "Lokad.Onnx.ConvBlockedSpatial::Kernel512::Void Kernel512(Single*, Single*, Single*, Int32, Int32, Int32, Int32, Int32, Int32, Int32)",
+    "added": "Lokad.Onnx.ConvBlockedSpatial::Kernel512Four::Void Kernel512Four(Single*, Single*, Single*, Int32, Int32, Int32, Int32, Int32, Int32, Int32)",
+    "unchanged_core": 3160,
+    "unchanged_data": 697,
+    "public_surface_equal": true
+  },
+  "consumers": [
+    {
+      "passed": true,
+      "mode": "raw",
+      "methods": 145,
+      "unchanged": 144,
+      "changed": [
+        "Probe::Main::Int32 Main(System.String[])"
+      ]
+    },
+    {
+      "passed": true,
+      "mode": "wide",
+      "methods": 145,
+      "unchanged": 143,
+      "changed": [
+        "Probe::Supplemental::System.Collections.Generic.List`1[System.Object] Supplemental(Int32, Int32 ByRef)",
+        "Probe::Main::Int32 Main(System.String[])"
+      ]
+    },
+    {
+      "passed": true,
+      "mode": "layers",
+      "methods": 134,
+      "unchanged": 133,
+      "changed": [
+        "ModelProbe::Main::Int32 Main(System.String[])"
+      ]
+    }
+  ],
+  "reports": {
+    "raw": {
+      "passed": true,
+      "cases": 2648,
+      "values": 1833216,
+      "lanes": 8
+    },
+    "wide": {
+      "passed": true,
+      "cases": 2648,
+      "values": 4402176,
+      "lanes": 8
+    },
+    "layers": {
+      "passed": true,
+      "cases": 108,
+      "values": 119823360,
+      "lanes": 8
+    }
+  },
+  "no_performance_measurement": true,
+  "avx512_qualified": false,
+  "resources": [
+    {
+      "name": "cli-restore",
+      "samples": 16,
+      "peak_rss": 218959872,
+      "seconds": 4.398920700012241
+    },
+    {
+      "name": "cli-build",
+      "samples": 141,
+      "peak_rss": 534507520,
+      "seconds": 38.72377059998689
+    },
+    {
+      "name": "inventory",
+      "samples": 3,
+      "peak_rss": 131416064,
+      "seconds": 0.7999596000299789
+    },
+    {
+      "name": "raw-restore",
+      "samples": 3,
+      "peak_rss": 98508800,
+      "seconds": 0.8005459000123665
+    },
+    {
+      "name": "raw-build",
+      "samples": 11,
+      "peak_rss": 258441216,
+      "seconds": 2.9483291000360623
+    },
+    {
+      "name": "raw-inventory",
+      "samples": 1,
+      "peak_rss": 8687616,
+      "seconds": 0.2704549999907613
+    },
+    {
+      "name": "wide-restore",
+      "samples": 3,
+      "peak_rss": 98607104,
+      "seconds": 0.8036315999925137
+    },
+    {
+      "name": "wide-build",
+      "samples": 11,
+      "peak_rss": 251154432,
+      "seconds": 2.9407288000220433
+    },
+    {
+      "name": "wide-inventory",
+      "samples": 1,
+      "peak_rss": 6246400,
+      "seconds": 0.2683901999844238
+    },
+    {
+      "name": "layers-restore",
+      "samples": 3,
+      "peak_rss": 98185216,
+      "seconds": 0.8136073999921791
+    },
+    {
+      "name": "layers-build",
+      "samples": 13,
+      "peak_rss": 260399104,
+      "seconds": 3.7770839000004344
+    },
+    {
+      "name": "layers-inventory",
+      "samples": 1,
+      "peak_rss": 11603968,
+      "seconds": 0.27637310000136495
+    },
+    {
+      "name": "raw-256",
+      "samples": 5,
+      "peak_rss": 63414272,
+      "seconds": 1.3686719000106677
+    },
+    {
+      "name": "wide-256",
+      "samples": 12,
+      "peak_rss": 71168000,
+      "seconds": 3.2106065999832936
+    },
+    {
+      "name": "layers-256",
+      "samples": 39,
+      "peak_rss": 2483318784,
+      "seconds": 10.419739999982994
+    }
+  ]
+}

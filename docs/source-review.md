@@ -15,6 +15,24 @@ after the common release ancestor `4495fc6`. Integration follows behaviors and
 their necessary fixes; it does not merge the branch or replay every experiment.
 
 The latest selected Pyannote source is the
+[prepared spatial convolution integration](../tests/pyannote/blocked-spatial-root-results/results-20260922.md).
+Its fresh matched AMD dialogue takes **13.165 seconds**, versus contemporary
+production **14.440 seconds** and Microsoft ORT **8.953 seconds**: **8.83% less
+latency and a 1.471 ratio to ORT**. All original application, long-meeting,
+native, normal-suite and actual-package gates pass. Prepared convolution
+weights share the existing retained-weight budget with matrix weights; bounded
+blocked-channel scratch and guarded kernels preserve the ordinary graph route.
+This result does not imply whole-graph blocked layout or native fusion parity.
+
+The next [source-guided hypothesis](../tests/pyannote/integration-review/ort-filter-blocks-20260922.md)
+is four output-channel blocks sharing six input broadcasts in the AVX512 kernel.
+An [isolated normal-product experiment](../tests/pyannote/filter-block-reuse/README.md)
+preserves reduction order and all other routes. Target register allocation and
+complete-call performance remain to be measured; the selected implementation
+stays unchanged by that experiment. Pyannote remains first, Parakeet second,
+Whisper deferred.
+
+The preceding selected Pyannote source is the
 [single-panel convolution integration](../tests/pyannote/single-panel-root-results/results-20260922.md).
 Its complete AMD dialogue takes 15.362 seconds versus contemporary production
 16.139 seconds and Microsoft ORT 9.095 seconds: a 4.82% reduction and 1.689 ratio
@@ -22,14 +40,14 @@ to ORT. The change writes eligible rows directly to final output and avoids
 packing when the patch already has the required layout. All complete-request
 gates, long meetings, normal suites and the package consumer pass. The older
 attribution below describes the preceding binaries. The
-[fresh selected-runtime profile](../tests/pyannote/selected-profile-amd-results/results-20260922.md)
+[single-panel runtime profile](../tests/pyannote/selected-profile-amd-results/results-20260922.md)
 now puts `ConvDirectOutput.Multiply` at 56.60–56.70% of complete-request sampled
 thread time and its tiled caller at 6.85–7.08%. All 48 public results and both
-export reconciliations pass. The next bounded experiment targets direct spatial
-convolution with blocked channels, including preparation and conversion costs.
+export reconciliations pass. It motivated the now-integrated direct spatial
+convolution work, including preparation and conversion costs.
 
 The [Parakeet arithmetic composition](../tests/parakeet/single-panel-models/results-20260922.md)
-now preserves this selected convolution and passes all local native/public/shared
+preserves that preceding convolution and passes all local native/public/shared
 models, normal suites and package checks. Its
 [AMD consumers](../tests/parakeet/single-panel-amd-consumer-results/results-20260922.md)
 retain the original cases and add forty prepared-dispatch precedence cases for

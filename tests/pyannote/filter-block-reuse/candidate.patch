@@ -1,0 +1,159 @@
+--- a/src/Lokad.Onnx/Zzz.ConvBlockedSpatial.Kernels.cs
++++ b/src/Lokad.Onnx/Zzz.ConvBlockedSpatial.Kernels.cs
+@@ -96,6 +96,11 @@
+     }
+     static void Kernel512(float* x, float* weights, float* output, int c, int m, int h, int w, int stride, int oh, int ow)
+     {
++        if (m % 64 == 0)
++        {
++            Kernel512Four(x, weights, output, c, m, h, w, stride, oh, ow);
++            return;
++        }
+         const int lanes = 16;
+         int ph = h + 2, pw = w + 2, spatial = oh * ow, fusedEnd = spatial / 8 * 8;
+         for (int oc = 0; oc < m; oc += 2 * lanes)
+--- /dev/null
++++ b/src/Lokad.Onnx/Zzz.ConvBlockedSpatial.Four.cs
+@@ -0,0 +1,142 @@
++using System.Runtime.Intrinsics;
++using System.Runtime.Intrinsics.X86;
++namespace Lokad.Onnx;
++
++internal static unsafe partial class ConvBlockedSpatial
++{
++    static void Kernel512Four(float* x, float* weights, float* output, int c, int m, int h, int w, int stride, int oh, int ow)
++    {
++        const int lanes = 16;
++        int ph = h + 2, pw = w + 2, spatial = oh * ow, fusedEnd = spatial / 8 * 8;
++        for (int oc = 0; oc < m; oc += 4 * lanes)
++        for (int y = 0; y < oh; y++)
++        {
++            int col = 0;
++            for (; col + 6 <= ow && y * ow + col + 6 <= fusedEnd; col += 6)
++            {
++                Vector512<float> a00 = Vector512<float>.Zero;
++                Vector512<float> a01 = Vector512<float>.Zero;
++                Vector512<float> a02 = Vector512<float>.Zero;
++                Vector512<float> a03 = Vector512<float>.Zero;
++                Vector512<float> a10 = Vector512<float>.Zero;
++                Vector512<float> a11 = Vector512<float>.Zero;
++                Vector512<float> a12 = Vector512<float>.Zero;
++                Vector512<float> a13 = Vector512<float>.Zero;
++                Vector512<float> a20 = Vector512<float>.Zero;
++                Vector512<float> a21 = Vector512<float>.Zero;
++                Vector512<float> a22 = Vector512<float>.Zero;
++                Vector512<float> a23 = Vector512<float>.Zero;
++                Vector512<float> a30 = Vector512<float>.Zero;
++                Vector512<float> a31 = Vector512<float>.Zero;
++                Vector512<float> a32 = Vector512<float>.Zero;
++                Vector512<float> a33 = Vector512<float>.Zero;
++                Vector512<float> a40 = Vector512<float>.Zero;
++                Vector512<float> a41 = Vector512<float>.Zero;
++                Vector512<float> a42 = Vector512<float>.Zero;
++                Vector512<float> a43 = Vector512<float>.Zero;
++                Vector512<float> a50 = Vector512<float>.Zero;
++                Vector512<float> a51 = Vector512<float>.Zero;
++                Vector512<float> a52 = Vector512<float>.Zero;
++                Vector512<float> a53 = Vector512<float>.Zero;
++                float* w0 = weights + oc * c * 9;
++                float* w1 = w0 + lanes * c * 9;
++                float* w2 = w1 + lanes * c * 9; float* w3 = w2 + lanes * c * 9;
++                for (int ic = 0; ic < c; ic++)
++                for (int ky = 0; ky < 3; ky++)
++                for (int kx = 0; kx < 3; kx++)
++                {
++                    float* input = x + ((ic / lanes * ph + y * stride + ky) * pw + col * stride + kx) * lanes + ic % lanes;
++                    var wv0 = *(Vector512<float>*)w0; var wv1 = *(Vector512<float>*)w1;
++                    var wv2 = *(Vector512<float>*)w2; var wv3 = *(Vector512<float>*)w3;
++                    var i0 = Vector512.Create(input[0 * stride * lanes]);
++                    a00 = Avx512F.FusedMultiplyAdd(i0, wv0, a00);
++                    a01 = Avx512F.FusedMultiplyAdd(i0, wv1, a01);
++                    a02 = Avx512F.FusedMultiplyAdd(i0, wv2, a02);
++                    a03 = Avx512F.FusedMultiplyAdd(i0, wv3, a03);
++                    var i1 = Vector512.Create(input[1 * stride * lanes]);
++                    a10 = Avx512F.FusedMultiplyAdd(i1, wv0, a10);
++                    a11 = Avx512F.FusedMultiplyAdd(i1, wv1, a11);
++                    a12 = Avx512F.FusedMultiplyAdd(i1, wv2, a12);
++                    a13 = Avx512F.FusedMultiplyAdd(i1, wv3, a13);
++                    var i2 = Vector512.Create(input[2 * stride * lanes]);
++                    a20 = Avx512F.FusedMultiplyAdd(i2, wv0, a20);
++                    a21 = Avx512F.FusedMultiplyAdd(i2, wv1, a21);
++                    a22 = Avx512F.FusedMultiplyAdd(i2, wv2, a22);
++                    a23 = Avx512F.FusedMultiplyAdd(i2, wv3, a23);
++                    var i3 = Vector512.Create(input[3 * stride * lanes]);
++                    a30 = Avx512F.FusedMultiplyAdd(i3, wv0, a30);
++                    a31 = Avx512F.FusedMultiplyAdd(i3, wv1, a31);
++                    a32 = Avx512F.FusedMultiplyAdd(i3, wv2, a32);
++                    a33 = Avx512F.FusedMultiplyAdd(i3, wv3, a33);
++                    var i4 = Vector512.Create(input[4 * stride * lanes]);
++                    a40 = Avx512F.FusedMultiplyAdd(i4, wv0, a40);
++                    a41 = Avx512F.FusedMultiplyAdd(i4, wv1, a41);
++                    a42 = Avx512F.FusedMultiplyAdd(i4, wv2, a42);
++                    a43 = Avx512F.FusedMultiplyAdd(i4, wv3, a43);
++                    var i5 = Vector512.Create(input[5 * stride * lanes]);
++                    a50 = Avx512F.FusedMultiplyAdd(i5, wv0, a50);
++                    a51 = Avx512F.FusedMultiplyAdd(i5, wv1, a51);
++                    a52 = Avx512F.FusedMultiplyAdd(i5, wv2, a52);
++                    a53 = Avx512F.FusedMultiplyAdd(i5, wv3, a53);
++                    w0 += lanes; w1 += lanes; w2 += lanes; w3 += lanes;
++                }
++                *(Vector512<float>*)(output + (oc / lanes * spatial + y * ow + col + 0) * lanes) = a00;
++                *(Vector512<float>*)(output + ((oc / lanes + 1) * spatial + y * ow + col + 0) * lanes) = a01;
++                *(Vector512<float>*)(output + ((oc / lanes + 2) * spatial + y * ow + col + 0) * lanes) = a02;
++                *(Vector512<float>*)(output + ((oc / lanes + 3) * spatial + y * ow + col + 0) * lanes) = a03;
++                *(Vector512<float>*)(output + (oc / lanes * spatial + y * ow + col + 1) * lanes) = a10;
++                *(Vector512<float>*)(output + ((oc / lanes + 1) * spatial + y * ow + col + 1) * lanes) = a11;
++                *(Vector512<float>*)(output + ((oc / lanes + 2) * spatial + y * ow + col + 1) * lanes) = a12;
++                *(Vector512<float>*)(output + ((oc / lanes + 3) * spatial + y * ow + col + 1) * lanes) = a13;
++                *(Vector512<float>*)(output + (oc / lanes * spatial + y * ow + col + 2) * lanes) = a20;
++                *(Vector512<float>*)(output + ((oc / lanes + 1) * spatial + y * ow + col + 2) * lanes) = a21;
++                *(Vector512<float>*)(output + ((oc / lanes + 2) * spatial + y * ow + col + 2) * lanes) = a22;
++                *(Vector512<float>*)(output + ((oc / lanes + 3) * spatial + y * ow + col + 2) * lanes) = a23;
++                *(Vector512<float>*)(output + (oc / lanes * spatial + y * ow + col + 3) * lanes) = a30;
++                *(Vector512<float>*)(output + ((oc / lanes + 1) * spatial + y * ow + col + 3) * lanes) = a31;
++                *(Vector512<float>*)(output + ((oc / lanes + 2) * spatial + y * ow + col + 3) * lanes) = a32;
++                *(Vector512<float>*)(output + ((oc / lanes + 3) * spatial + y * ow + col + 3) * lanes) = a33;
++                *(Vector512<float>*)(output + (oc / lanes * spatial + y * ow + col + 4) * lanes) = a40;
++                *(Vector512<float>*)(output + ((oc / lanes + 1) * spatial + y * ow + col + 4) * lanes) = a41;
++                *(Vector512<float>*)(output + ((oc / lanes + 2) * spatial + y * ow + col + 4) * lanes) = a42;
++                *(Vector512<float>*)(output + ((oc / lanes + 3) * spatial + y * ow + col + 4) * lanes) = a43;
++                *(Vector512<float>*)(output + (oc / lanes * spatial + y * ow + col + 5) * lanes) = a50;
++                *(Vector512<float>*)(output + ((oc / lanes + 1) * spatial + y * ow + col + 5) * lanes) = a51;
++                *(Vector512<float>*)(output + ((oc / lanes + 2) * spatial + y * ow + col + 5) * lanes) = a52;
++                *(Vector512<float>*)(output + ((oc / lanes + 3) * spatial + y * ow + col + 5) * lanes) = a53;
++            }
++            for (; col < ow; col++)
++            {
++                var a0 = Vector512<float>.Zero; var a1 = Vector512<float>.Zero;
++                var a2 = Vector512<float>.Zero; var a3 = Vector512<float>.Zero;
++                float* w0 = weights + oc * c * 9; float* w1 = w0 + lanes * c * 9;
++                float* w2 = w1 + lanes * c * 9; float* w3 = w2 + lanes * c * 9;
++                bool fused = y * ow + col < fusedEnd;
++                for (int ic = 0; ic < c; ic++)
++                for (int ky = 0; ky < 3; ky++)
++                for (int kx = 0; kx < 3; kx++)
++                {
++                    float value = x[((ic / lanes * ph + y * stride + ky) * pw + col * stride + kx) * lanes + ic % lanes];
++                    var input = Vector512.Create(value);
++                    var wv0 = *(Vector512<float>*)w0; var wv1 = *(Vector512<float>*)w1;
++                    var wv2 = *(Vector512<float>*)w2; var wv3 = *(Vector512<float>*)w3;
++                    if (fused)
++                    {
++                        a0 = Avx512F.FusedMultiplyAdd(input, wv0, a0); a1 = Avx512F.FusedMultiplyAdd(input, wv1, a1);
++                        a2 = Avx512F.FusedMultiplyAdd(input, wv2, a2); a3 = Avx512F.FusedMultiplyAdd(input, wv3, a3);
++                    }
++                    else
++                    {
++                        a0 = a0 + input * wv0; a1 = a1 + input * wv1;
++                        a2 = a2 + input * wv2; a3 = a3 + input * wv3;
++                    }
++                    w0 += lanes; w1 += lanes; w2 += lanes; w3 += lanes;
++                }
++                *(Vector512<float>*)(output + (oc / lanes * spatial + y * ow + col) * lanes) = a0;
++                *(Vector512<float>*)(output + ((oc / lanes + 1) * spatial + y * ow + col) * lanes) = a1;
++                *(Vector512<float>*)(output + ((oc / lanes + 2) * spatial + y * ow + col) * lanes) = a2;
++                *(Vector512<float>*)(output + ((oc / lanes + 3) * spatial + y * ow + col) * lanes) = a3;
++            }
++        }
++    }
++}
