@@ -14,6 +14,32 @@ The selective import review uses
 after the common release ancestor `4495fc6`. Integration follows behaviors and
 their necessary fixes; it does not merge the branch or replay every experiment.
 
+The latest selected Pyannote source is the
+[single-panel convolution integration](../tests/pyannote/single-panel-root-results/results-20260922.md).
+Its complete AMD dialogue takes 15.362 seconds versus contemporary production
+16.139 seconds and Microsoft ORT 9.095 seconds: a 4.82% reduction and 1.689 ratio
+to ORT. The change writes eligible rows directly to final output and avoids
+packing when the patch already has the required layout. All complete-request
+gates, long meetings, normal suites and the package consumer pass. The older
+attribution below describes the preceding binaries; obtain fresh attribution
+before selecting another Pyannote kernel change.
+
+The [Parakeet arithmetic composition](../tests/parakeet/single-panel-models/results-20260922.md)
+now preserves this selected convolution and passes all local native/public/shared
+models, normal suites and package checks. Its
+[AMD consumers](../tests/parakeet/single-panel-amd-consumer-results/results-20260922.md)
+retain the original cases and add forty prepared-dispatch precedence cases for
+the target host. A fresh production/candidate/ORT campaign is required before
+any speed claim or arithmetic integration. Whisper remains deferred.
+
+A new [optimized-graph inspection](../tests/pyannote/nchwc-review/results-20260922.md)
+finds all 36 embedding convolutions represented as blocked-channel NCHWc
+operators in local ORT 1.29. Sixteen residual sums and 33 ReLUs are folded into
+those convolutions, with only one output-layout conversion. The pinned source
+uses direct blocked spatial kernels for eligible shapes. This warrants checking
+the actual AMD graph and refreshing managed attribution before further GEMM
+tuning. The local inspection executes no inference and establishes no speedup.
+
 The [normal portable integration](../tests/pyannote/portable-integration-tests/results-20260922.md)
 provides one reviewed patch with twelve product files and eleven test files,
 including the sparse-mel frontend, checked LSTM storage and self-contained
