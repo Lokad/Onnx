@@ -1,0 +1,64 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Intrinsics.X86;
+using Lokad.Onnx;
+
+// Qualification-only graph cache. Product weights live in each ordinary graph.
+internal static class GraphCalls
+{
+    static readonly Dictionary<ModelProbe.Call, ComputationalGraph> Graphs = new();
+    static readonly Dictionary<ModelProbe.Call, int> Repeats = new();
+    internal static readonly List<object> Rows = new();
+    internal static int Count => Graphs.Count;
+    internal static long RetainedBytes => Graphs.Values.Sum(g => g.RetainedPackedWeightBytes);
+    static void Require(bool condition, string message) { if (!condition) throw new InvalidDataException(message); }
+
+    static ComputationalGraph Create(ModelProbe.Call call)
+    {
+        var graph = new ComputationalGraph(256L * 1024 * 1024);
+        graph.Metadata["Name"] = "retained-layer-" + call.Name + "-" + call.Index; graph.Opset[""] = 18;
+        graph.Inputs["x"] = call.X; graph.Initializers["w"] = call.W;
+        if (call.Bias.Length != 0) graph.Initializers["b"] = call.B;
+        if (call.R is not null) graph.Inputs["r"] = call.R;
+        graph.Outputs["y"] = Tensor<float>.Zeros(call.OutputShape);
+        bool convRelu = call.R is null && call.Relu;
+        graph.Nodes.Add(new Node { Name = call.Node, Op = convRelu ? OpType.ConvRelu : OpType.Conv,
+            OpTypeName = convRelu ? "ConvRelu" : "Conv", Domain = "", OpsetVersion = 18, IsFused = convRelu,
+            Inputs = call.Bias.Length == 0 ? new[] { "x", "w" } : new[] { "x", "w", "b" },
+            Outputs = new[] { call.R is null ? "y" : "conv" },
+            Attributes = new() { ["group"] = 1, ["pads"] = call.Pads, ["strides"] = call.Strides,
+                ["dilations"] = call.Dilations, ["kernel_shape"] = call.Kernel } });
+        if (call.R is not null)
+            graph.Nodes.Add(new Node { Name = "residual", Op = call.Relu ? OpType.AddRelu : OpType.Add,
+                OpTypeName = call.Relu ? "AddRelu" : "Add", Domain = "", OpsetVersion = 18, IsFused = call.Relu,
+                Inputs = new[] { "conv", "r" }, Outputs = new[] { "y" } });
+        graph.Prepare(); return graph;
+    }
+
+    internal static DenseTensor<float> Run(ModelProbe.Call call, int lanes)
+    {
+        Require(Avx2.IsSupported && Fma.IsSupported && lanes == (Avx512F.IsSupported ? 16 : 8), "Actual product instruction width");
+        if (!Graphs.TryGetValue(call, out var graph)) { graph = Create(call); Graphs.Add(call, graph); Repeats.Add(call, 0); }
+        var inputs = new Dictionary<string, ITensor> { ["x"] = call.X };
+        if (call.R is not null) inputs["r"] = call.R;
+        Require(graph.Execute(inputs, true, ExecutionProvider.CPU, ExecutionOptions.Default), graph.LastErrorMessage ?? "Graph execution");
+        Require(graph.Outputs["y"] is DenseTensor<float>, "Owned dense graph result");
+        long prepared = call.Eligible ? (long)((call.OutputShape[1] + 2 * lanes - 1) / (2 * lanes) * 2 * lanes) * call.InputShape[1] * 9 * 4 : 0;
+        Require(graph.RetainedPackedWeightBytes == prepared, "Normal graph preparation coverage");
+        long expectedScratch = ((long)call.InputShape[1] * (call.InputShape[2] + 2) * (call.InputShape[3] + 2)
+            + (long)call.OutputShape[1] * call.OutputShape[2] * call.OutputShape[3]) * 4;
+        if (call.Eligible) Require(graph.LastScratchBytes == expectedScratch, "Prepared convolution did not dispatch");
+        Rows.Add(new { name = call.Name, index = call.Index, form = call.Form, eligible = call.Eligible,
+            repeat = Repeats[call]++, scratch_bytes = graph.LastScratchBytes, prepared_bytes = prepared,
+            nodes = graph.Nodes.Select(n => n.Op.ToString()).ToArray() });
+        return (DenseTensor<float>)graph.Outputs["y"]!;
+    }
+
+    internal static void Complete()
+    {
+        Require(Graphs.Count == 108 && Rows.Count == 216 && Repeats.Values.All(n => n == 2), "Graph/repeat coverage");
+        Require(Graphs.Keys.Count(c => c.Eligible) == 96 && RetainedBytes == 3L * 21086208, "Graph weight residency coverage");
+    }
+}

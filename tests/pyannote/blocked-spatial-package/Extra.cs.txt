@@ -1,0 +1,37 @@
+Require(System.Runtime.Intrinsics.X86.Avx2.IsSupported && System.Runtime.Intrinsics.X86.Fma.IsSupported,
+    "This qualification requires actual prepared-convolution hardware");
+var blockedGraph = new ComputationalGraph(18432);
+blockedGraph.Metadata["Name"] = "packaged-prepared-convolution";
+blockedGraph.Opset[""] = 18;
+var blockedInput = new DenseTensor<float>(Enumerable.Repeat(.125f, 16 * 3 * 11).ToArray(), new[] { 1, 16, 3, 11 });
+var blockedWeight = new DenseTensor<float>(Enumerable.Repeat(1f, 32 * 16 * 9).ToArray(), new[] { 32, 16, 3, 3 });
+blockedGraph.Inputs["x"] = blockedInput;
+blockedGraph.Initializers["w"] = blockedWeight;
+blockedGraph.Initializers["b"] = new DenseTensor<float>(Enumerable.Repeat(1f, 32).ToArray(), new[] { 32 });
+blockedGraph.Outputs["y"] = Tensor<float>.Zeros(1, 32, 3, 11);
+blockedGraph.Nodes.Add(new Node { Name = "conv", Op = OpType.ConvRelu, OpTypeName = "ConvRelu", Domain = "",
+    OpsetVersion = 18, IsFused = true, Inputs = new[] { "x", "w", "b" }, Outputs = new[] { "y" },
+    Attributes = new() { ["pads"] = new[] { 1, 1, 1, 1 }, ["strides"] = new[] { 1, 1 },
+        ["dilations"] = new[] { 1, 1 }, ["kernel_shape"] = new[] { 3, 3 }, ["group"] = 1 } });
+blockedGraph.Prepare();
+Require(blockedGraph.RetainedPackedWeightBytes == 18432, "Packaged preparation did not retain the exact shared-budget weight clone");
+var blockedContext = blockedGraph.CreateExecution(ExecutionOptions.Memory);
+float[] expectedBlocked = Enumerable.Range(0, 32 * 3 * 11).Select(i =>
+    1f + 2f * ((i / 11 % 3 == 1) ? 3 : 2) * ((i % 11 == 0 || i % 11 == 10) ? 2 : 3)).ToArray();
+DenseTensor<float>? heldBlocked = null;
+for (int repeat = 0; repeat < 2; repeat++)
+{
+    Require(blockedContext.Execute(new Dictionary<string, ITensor> { ["x"] = blockedInput }, true,
+        ExecutionProvider.CPU, ExecutionOptions.Memory), "Packaged graph execution failed");
+    var actualBlocked = (DenseTensor<float>)blockedContext.Outputs["y"];
+    Require(actualBlocked.ToArray().SequenceEqual(expectedBlocked), "Packaged prepared graph values differ");
+    Require(blockedContext.LastScratchBytes == 8384, "Packaged prepared convolution did not dispatch");
+    if (heldBlocked is not null)
+    {
+        Require(!ReferenceEquals(heldBlocked, actualBlocked), "Packaged graph output is not owned");
+        Require(heldBlocked.ToArray().SequenceEqual(expectedBlocked), "Packaged graph changed a held output");
+    }
+    heldBlocked = actualBlocked;
+}
+Require(blockedInput.ToArray().All(v => v == .125f) && blockedWeight.ToArray().All(v => v == 1f),
+    "Packaged graph changed an operand");
