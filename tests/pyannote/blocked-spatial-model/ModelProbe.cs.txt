@@ -1,0 +1,174 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+
+internal static class ModelProbe
+{
+    const string Core = "1279b4b662241db2404fa4875eae20eaa924f15677a85655f99b8f81cd24b309";
+    static void Require(bool value, string message) { if (!value) throw new InvalidDataException(message); }
+    static string Hash(ReadOnlySpan<byte> bytes) => Convert.ToHexStringLower(SHA256.HashData(bytes));
+    static string Hash(float[] values) => Hash(MemoryMarshal.AsBytes(values.AsSpan()));
+    static int[] Shape(JsonElement value) => value.GetProperty("shape").EnumerateArray().Select(v => v.GetInt32()).ToArray();
+    static int[] Integers(JsonElement value, string key) => value.GetProperty(key).EnumerateArray().Select(v => v.GetInt32()).ToArray();
+
+    internal sealed class Call
+    {
+        internal required string Name;
+        internal required string Node;
+        internal required int Index;
+        internal required int Form;
+        internal required bool Eligible;
+        internal required bool Relu;
+        internal required int[] InputShape;
+        internal required int[] OutputShape;
+        internal required int[] Pads;
+        internal required int[] Kernel;
+        internal required int[] Strides;
+        internal required int[] Dilations;
+        internal required float[] Input;
+        internal required float[] Weight;
+        internal required float[] Bias;
+        internal required float[] Residual;
+        internal required float[] Reference;
+        internal required float[] Prepared;
+        internal required DenseTensor<float> X;
+        internal required DenseTensor<float> W;
+        internal required DenseTensor<float> B;
+        internal DenseTensor<float>? R;
+        internal DenseTensor<float> Production()
+        {
+            var result = Tensor<float>.Conv2D(X, W, 1, Pads, B, Kernel, Strides, Dilations, TensorExecutionOptions.Intrinsics);
+            if (R is not null) result = Tensor<float>.Add(result, R, TensorExecutionOptions.Intrinsics);
+            if (Relu) result = Tensor<float>.Relu(result, TensorExecutionOptions.Intrinsics);
+            // Preserve the public tensor's owned result: no extra output copy.
+            return result.ToDenseTensor();
+        }
+        internal DenseTensor<float> Candidate(int lanes)
+        {
+            if (!Eligible) return Production();
+            return new DenseTensor<float>(BlockedSpatial.Run(Input, Prepared, Bias, Residual,
+                InputShape[1], OutputShape[1], InputShape[2], InputShape[3], Strides[0], lanes, Relu), OutputShape);
+        }
+    }
+
+    internal sealed class Fixtures
+    {
+        internal readonly List<Call> Calls = new();
+        internal readonly Dictionary<string, (float[] Values, string Hash)> Arrays = new();
+        internal readonly Dictionary<string, (float[] Values, string Hash)> Prepared = new();
+        internal Fixtures(string directory, int lanes)
+        {
+            using var document = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(directory, "result.json")));
+            var root = document.RootElement; Require(root.GetProperty("passed").GetBoolean(), "Fixture capture failed");
+            float[] Read(JsonElement tensor)
+            {
+                if (tensor.ValueKind == JsonValueKind.Null) return Array.Empty<float>();
+                string name = tensor.GetProperty("path").GetString()!;
+                Require(Path.GetFileName(name) == name, "Unsafe tensor filename");
+                if (!Arrays.TryGetValue(name, out var entry))
+                {
+                    var bytes = File.ReadAllBytes(Path.Combine(directory, name));
+                    string hash = Hash(bytes); Require(hash == tensor.GetProperty("sha256").GetString(), "Tensor digest");
+                    Require(bytes.LongLength == tensor.GetProperty("bytes").GetInt64() && bytes.Length % 4 == 0, "Tensor extent");
+                    var values = MemoryMarshal.Cast<byte, float>(bytes).ToArray();
+                    Require(values.All(float.IsFinite), "Nonfinite captured operand");
+                    entry = (values, hash); Arrays.Add(name, entry);
+                }
+                Require(entry.Values.LongLength == Shape(tensor).Aggregate(1L, (a, b) => checked(a * b)), "Shape extent");
+                return entry.Values;
+            }
+            foreach (var row in root.GetProperty("calls").EnumerateArray())
+            {
+                var x = Read(row.GetProperty("input")); var w = Read(row.GetProperty("weights"));
+                var b = Read(row.GetProperty("bias")); var r = Read(row.GetProperty("residual"));
+                var expected = Read(row.GetProperty("output"));
+                int[] xs = Shape(row.GetProperty("input")), ws = Shape(row.GetProperty("weights")), ys = Shape(row.GetProperty("output"));
+                bool eligible = row.GetProperty("eligible").GetBoolean(); float[] prepared = Array.Empty<float>();
+                if (eligible)
+                {
+                    string name = row.GetProperty("weights").GetProperty("path").GetString()!;
+                    if (!Prepared.TryGetValue(name, out var entry))
+                    {
+                        var values = BlockedSpatial.Prepare(w, xs[1], ys[1], lanes);
+                        entry = (values, Hash(values)); Prepared.Add(name, entry);
+                    }
+                    prepared = entry.Values;
+                }
+                var attrs = row.GetProperty("attributes"); Require(attrs.GetProperty("group").GetInt32() == 1, "Group");
+                Calls.Add(new Call { Name = row.GetProperty("case").GetString()!, Node = row.GetProperty("node").GetString()!,
+                    Index = row.GetProperty("index").GetInt32(), Form = row.GetProperty("form").GetInt32(), Eligible = eligible,
+                    Relu = row.GetProperty("relu").GetBoolean(), InputShape = xs, OutputShape = ys,
+                    Pads = Integers(attrs, "pads"), Kernel = Integers(attrs, "kernel_shape"), Strides = Integers(attrs, "strides"),
+                    Dilations = Integers(attrs, "dilations"), Input = x, Weight = w, Bias = b, Residual = r, Reference = expected,
+                    Prepared = prepared, X = new DenseTensor<float>(x, xs), W = new DenseTensor<float>(w, ws),
+                    B = new DenseTensor<float>(b, new[] { b.Length }), R = r.Length == 0 ? null : new DenseTensor<float>(r, ys) });
+            }
+            Require(Calls.Count == 108 && Calls.Count(c => c.Eligible) == 96 && Prepared.Count == 32, "Actual coverage");
+            Require(Calls.Select(c => (c.Name, c.Index)).Distinct().Count() == 108 && Calls.Select(c => c.Form).Distinct().Count() == 15, "Unique coverage");
+        }
+        internal void Unchanged()
+        {
+            foreach (var value in Arrays.Values.Concat(Prepared.Values)) Require(Hash(value.Values) == value.Hash, "Read-only operand changed");
+        }
+    }
+
+    static int Main(string[] args)
+    {
+        Require(args.Length == 3 && args[0] is "256" or "512", "Expected width, fixture directory, result path");
+        Require(BitConverter.IsLittleEndian, "Raw fixture byte order");
+        int lanes = args[0] == "512" ? 16 : 8;
+        Require(Avx2.IsSupported && Fma.IsSupported && (lanes == 8 || Avx512F.IsSupported), "Required instructions");
+        Require(Hash(File.ReadAllBytes(typeof(Tensor<float>).Assembly.Location)) == Core, "Selected Core identity");
+        var flags = Environment.GetEnvironmentVariables().Cast<DictionaryEntry>().Where(e =>
+            e.Key.ToString()!.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase) ||
+            e.Key.ToString()!.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase) ||
+            e.Key.ToString()!.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase)).Select(e => e.Key.ToString()).ToArray();
+        Require(flags.Length == 0, "Unexpected runtime flags");
+        var fixtures = new Fixtures(args[1], lanes); var observations = new List<object>();
+        long values = 0, differences = 0, nativeFailures = 0; double maximum = 0; int failed = 0;
+        foreach (var call in fixtures.Calls)
+        {
+            var production = call.Production(); string heldProduction = Hash(MemoryMarshal.AsBytes(production.Buffer.Span));
+            var first = call.Candidate(lanes); string heldFirst = Hash(MemoryMarshal.AsBytes(first.Buffer.Span));
+            var second = call.Candidate(lanes);
+            Require(!production.Buffer.Span.Overlaps(first.Buffer.Span) && !first.Buffer.Span.Overlaps(second.Buffer.Span), "Result alias");
+            Require(heldProduction == Hash(MemoryMarshal.AsBytes(production.Buffer.Span)) && heldFirst == Hash(MemoryMarshal.AsBytes(first.Buffer.Span)), "Held result changed");
+            Require(heldFirst == Hash(MemoryMarshal.AsBytes(second.Buffer.Span)), "Candidate repeat changed");
+            Require(production.Dimensions.SequenceEqual(call.OutputShape) && first.Dimensions.SequenceEqual(call.OutputShape), "Output shape");
+            int different = 0, nativeFailed = 0; double max = 0; object? firstDifference = null; object? firstNative = null;
+            var a = first.Buffer.Span; var p = production.Buffer.Span;
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (BitConverter.SingleToInt32Bits(a[i]) != BitConverter.SingleToInt32Bits(p[i]))
+                {
+                    different++; firstDifference ??= new { index = i, actual = BitConverter.SingleToInt32Bits(a[i]), expected = BitConverter.SingleToInt32Bits(p[i]) };
+                }
+                double error = Math.Abs((double)p[i] - call.Reference[i]) / Math.Max(1.0, Math.Abs((double)call.Reference[i]));
+                if (!float.IsFinite(a[i]) || !float.IsFinite(p[i]) || !double.IsFinite(error)) error = double.MaxValue;
+                if (error > 1e-4) { nativeFailed++; firstNative ??= new { index = i, actual = BitConverter.SingleToInt32Bits(p[i]), expected = BitConverter.SingleToInt32Bits(call.Reference[i]), scaled = error }; }
+                max = Math.Max(max, error);
+            }
+            observations.Add(new { name = call.Name, index = call.Index, node = call.Node, form = call.Form, eligible = call.Eligible,
+                values = a.Length, differences = different, native_failed = nativeFailed, maximum = max, first_difference = firstDifference,
+                first_native = firstNative, production = heldProduction, candidate = heldFirst, repeats_and_ownership = true });
+            values += a.Length; differences += different; nativeFailures += nativeFailed; maximum = Math.Max(maximum, max);
+            if (different != 0 || nativeFailed != 0) failed++;
+        }
+        fixtures.Unchanged();
+        var result = new { passed = failed == 0, cases = fixtures.Calls.Count, eligible = 96, fallback = 12, values, differences,
+            native_failures = nativeFailures, maximum, failed, observations, read_only_operands = true, prepared_weights = fixtures.Prepared.Count,
+            prepared_bytes = fixtures.Prepared.Values.Sum(v => v.Values.LongLength * 4), lanes, avx512 = Avx512F.IsSupported,
+            runtime = Environment.Version.ToString(), core = Core, executable = Hash(File.ReadAllBytes(typeof(ModelProbe).Assembly.Location)),
+            pid = Environment.ProcessId, flags, no_performance_measurement = true };
+        File.WriteAllText(args[2], JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true }));
+        Console.WriteLine(JsonSerializer.Serialize(new { result.passed, result.cases, differences, nativeFailures, maximum, failed }));
+        return result.passed ? 0 : 1;
+    }
+}
