@@ -1,0 +1,993 @@
+{
+  "passed": true,
+  "reports": {
+    "production": {
+      "passed": true,
+      "calls": 432,
+      "distinct_calls": 108,
+      "four_block_eligible_calls": 312,
+      "no_performance_measurement": true
+    },
+    "candidate": {
+      "passed": true,
+      "calls": 432,
+      "distinct_calls": 108,
+      "four_block_eligible_calls": 312,
+      "no_performance_measurement": true
+    }
+  },
+  "resources": [
+    {
+      "name": "production",
+      "samples": 38,
+      "peak_rss": 3313913856,
+      "seconds": 9.648035518999677
+    },
+    {
+      "name": "candidate",
+      "samples": 35,
+      "peak_rss": 3313582080,
+      "seconds": 8.890922599995974
+    }
+  ],
+  "local_resources": [
+    {
+      "name": "restore",
+      "samples": 3,
+      "peak_rss": 97005568,
+      "seconds": 0.7865105000091717
+    },
+    {
+      "name": "build",
+      "samples": 10,
+      "peak_rss": 254013440,
+      "seconds": 2.769598400045652
+    },
+    {
+      "name": "local-production",
+      "samples": 41,
+      "peak_rss": 3750641664,
+      "seconds": 10.9253867000225
+    },
+    {
+      "name": "local-candidate",
+      "samples": 42,
+      "peak_rss": 3166437376,
+      "seconds": 11.134513099968899
+    }
+  ],
+  "code": {
+    "production": [
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Instrumented Tier0",
+        "code_bytes": [
+          3756
+        ],
+        "complete_uninterleaved": true,
+        "line": 1,
+        "reductions": [
+          {
+            "label": "G_M000_IG08",
+            "fma_instructions": 4,
+            "input_broadcasts": 2,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x3F0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x430], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x630], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x670], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]"
+            ]
+          },
+          {
+            "label": "G_M000_IG09",
+            "fma_instructions": 8,
+            "input_broadcasts": 4,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x6B0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x770], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x370], zmm1"
+            ]
+          },
+          {
+            "label": "G_M000_IG32",
+            "fma_instructions": 2,
+            "input_broadcasts": 1,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x530], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x570], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x5B0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x570]",
+              "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x5B0]",
+              "       vmovups  zmmword ptr [rbp-0x4B0], zmm1"
+            ]
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Tier1-OSR",
+        "code_bytes": [
+          2176
+        ],
+        "complete_uninterleaved": true,
+        "line": 873,
+        "reductions": [
+          {
+            "label": "G_M000_IG08",
+            "fma_instructions": 12,
+            "input_broadcasts": 6,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG42",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG44",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG47",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Instrumented Tier0",
+        "code_bytes": [
+          3756
+        ],
+        "complete_uninterleaved": true,
+        "line": 1458,
+        "reductions": [
+          {
+            "label": "G_M000_IG08",
+            "fma_instructions": 4,
+            "input_broadcasts": 2,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x3F0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x430], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x630], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x670], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]"
+            ]
+          },
+          {
+            "label": "G_M000_IG09",
+            "fma_instructions": 8,
+            "input_broadcasts": 4,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x6B0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x770], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x370], zmm1"
+            ]
+          },
+          {
+            "label": "G_M000_IG32",
+            "fma_instructions": 2,
+            "input_broadcasts": 1,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x530], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x570], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x5B0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x570]",
+              "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x5B0]",
+              "       vmovups  zmmword ptr [rbp-0x4B0], zmm1"
+            ]
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Tier1-OSR",
+        "code_bytes": [
+          2189
+        ],
+        "complete_uninterleaved": true,
+        "line": 2330,
+        "reductions": [
+          {
+            "label": "G_M000_IG09",
+            "fma_instructions": 12,
+            "input_broadcasts": 6,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG39",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG41",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG43",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          }
+        ]
+      }
+    ],
+    "candidate": [
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Instrumented Tier0",
+        "code_bytes": [
+          3864
+        ],
+        "complete_uninterleaved": true,
+        "line": 1,
+        "reductions": [
+          {
+            "label": "G_M000_IG10",
+            "fma_instructions": 4,
+            "input_broadcasts": 2,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x3F0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x430], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x630], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x670], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]"
+            ]
+          },
+          {
+            "label": "G_M000_IG11",
+            "fma_instructions": 8,
+            "input_broadcasts": 4,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x6B0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x770], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x370], zmm1"
+            ]
+          },
+          {
+            "label": "G_M000_IG34",
+            "fma_instructions": 2,
+            "input_broadcasts": 1,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x530], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x570], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x5B0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x570]",
+              "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x5B0]",
+              "       vmovups  zmmword ptr [rbp-0x4B0], zmm1"
+            ]
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Tier1-OSR",
+        "code_bytes": [
+          2140
+        ],
+        "complete_uninterleaved": true,
+        "line": 908,
+        "reductions": [
+          {
+            "label": "G_M000_IG08",
+            "fma_instructions": 12,
+            "input_broadcasts": 6,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG42",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG44",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG47",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512Four(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Instrumented Tier0",
+        "code_bytes": [
+          5608
+        ],
+        "complete_uninterleaved": true,
+        "line": 1493,
+        "reductions": [
+          {
+            "label": "G_M000_IG09",
+            "fma_instructions": 4,
+            "input_broadcasts": 1,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x770], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x7B0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0xAB0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]"
+            ]
+          },
+          {
+            "label": "G_M000_IG10",
+            "fma_instructions": 9,
+            "input_broadcasts": 3,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xAF0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xB70], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x370], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xBB0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x3B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x3B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]"
+            ]
+          },
+          {
+            "label": "G_M000_IG11",
+            "fma_instructions": 11,
+            "input_broadcasts": 2,
+            "vector_stack_references": [
+              "       vmovups  zmm1, zmmword ptr [rbp-0x3F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x3F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x430]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x430], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xBF0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x4B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x4F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x4F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x530]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x530], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x570]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x570], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xC70], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xC70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x5B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x5B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xC70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x5F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x5F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xC70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x630]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x630], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xC70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x670]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x670], zmm1"
+            ]
+          },
+          {
+            "label": "G_M000_IG34",
+            "fma_instructions": 4,
+            "input_broadcasts": 1,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x930], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x970], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x9B0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x9F0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0xA30], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x7F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x970]",
+              "       vmovups  zmmword ptr [rbp-0x7F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x830]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x9B0]",
+              "       vmovups  zmmword ptr [rbp-0x830], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x870]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x9F0]",
+              "       vmovups  zmmword ptr [rbp-0x870], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x8B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0xA30]",
+              "       vmovups  zmmword ptr [rbp-0x8B0], zmm1"
+            ]
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512Four(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Tier1-OSR",
+        "code_bytes": [
+          2540
+        ],
+        "complete_uninterleaved": true,
+        "line": 2712,
+        "reductions": [
+          {
+            "label": "G_M000_IG08",
+            "fma_instructions": 18,
+            "input_broadcasts": 5,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG09",
+            "fma_instructions": 6,
+            "input_broadcasts": 1,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG24",
+            "fma_instructions": 4,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Instrumented Tier0",
+        "code_bytes": [
+          3864
+        ],
+        "complete_uninterleaved": true,
+        "line": 3322,
+        "reductions": [
+          {
+            "label": "G_M000_IG10",
+            "fma_instructions": 4,
+            "input_broadcasts": 2,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x3F0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x430], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x630], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x630]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x670], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x670]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]"
+            ]
+          },
+          {
+            "label": "G_M000_IG11",
+            "fma_instructions": 8,
+            "input_broadcasts": 4,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x6B0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6B0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+              "       vmovups  zmmword ptr [rbp-0x770], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x3F0]",
+              "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x430]",
+              "       vmovups  zmmword ptr [rbp-0x370], zmm1"
+            ]
+          },
+          {
+            "label": "G_M000_IG34",
+            "fma_instructions": 2,
+            "input_broadcasts": 1,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x530], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x570], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x5B0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x570]",
+              "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x530]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x5B0]",
+              "       vmovups  zmmword ptr [rbp-0x4B0], zmm1"
+            ]
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512Four(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Instrumented Tier0",
+        "code_bytes": [
+          5608
+        ],
+        "complete_uninterleaved": true,
+        "line": 4229,
+        "reductions": [
+          {
+            "label": "G_M000_IG09",
+            "fma_instructions": 4,
+            "input_broadcasts": 1,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x6F0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x730], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x770], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x7B0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0xAB0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xB0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0xB0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0xF0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0xF0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x130]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x130], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x170]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]"
+            ]
+          },
+          {
+            "label": "G_M000_IG10",
+            "fma_instructions": 9,
+            "input_broadcasts": 3,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x170], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xAF0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x1B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x1F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x1F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x230]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x230], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xAF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x270]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x270], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xB70], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x2B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x2F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x2F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x330]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x330], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xB70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x370]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x370], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xBB0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x3B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x3B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]"
+            ]
+          },
+          {
+            "label": "G_M000_IG11",
+            "fma_instructions": 11,
+            "input_broadcasts": 2,
+            "vector_stack_references": [
+              "       vmovups  zmm1, zmmword ptr [rbp-0x3F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x3F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x430]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x430], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBB0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x470]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x470], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xBF0], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x4B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x4B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x4F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x4F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x530]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x530], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xBF0]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x570]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x570], zmm1",
+              "       vmovups  zmmword ptr [rbp-0xC70], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xC70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x5B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x6F0]",
+              "       vmovups  zmmword ptr [rbp-0x5B0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xC70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x5F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x730]",
+              "       vmovups  zmmword ptr [rbp-0x5F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xC70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x630]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x770]",
+              "       vmovups  zmmword ptr [rbp-0x630], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0xC70]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x670]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x7B0]",
+              "       vmovups  zmmword ptr [rbp-0x670], zmm1"
+            ]
+          },
+          {
+            "label": "G_M000_IG34",
+            "fma_instructions": 4,
+            "input_broadcasts": 1,
+            "vector_stack_references": [
+              "       vmovups  zmmword ptr [rbp-0x930], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x970], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x9B0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0x9F0], zmm0",
+              "       vmovups  zmmword ptr [rbp-0xA30], zmm0",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x7F0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x970]",
+              "       vmovups  zmmword ptr [rbp-0x7F0], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x830]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x9B0]",
+              "       vmovups  zmmword ptr [rbp-0x830], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x870]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0x9F0]",
+              "       vmovups  zmmword ptr [rbp-0x870], zmm1",
+              "       vmovups  zmm0, zmmword ptr [rbp-0x930]",
+              "       vmovups  zmm1, zmmword ptr [rbp-0x8B0]",
+              "       vfmadd231ps zmm1, zmm0, zmmword ptr [rbp-0xA30]",
+              "       vmovups  zmmword ptr [rbp-0x8B0], zmm1"
+            ]
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512Four(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Tier1-OSR",
+        "code_bytes": [
+          2609
+        ],
+        "complete_uninterleaved": true,
+        "line": 5448,
+        "reductions": [
+          {
+            "label": "G_M000_IG05",
+            "fma_instructions": 18,
+            "input_broadcasts": 5,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG06",
+            "fma_instructions": 6,
+            "input_broadcasts": 1,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG26",
+            "fma_instructions": 4,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          }
+        ]
+      },
+      {
+        "method": "Lokad.Onnx.ConvBlockedSpatial:Kernel512(ptr,ptr,ptr,int,int,int,int,int,int,int)",
+        "tier": "Tier1-OSR",
+        "code_bytes": [
+          2146
+        ],
+        "complete_uninterleaved": true,
+        "line": 6061,
+        "reductions": [
+          {
+            "label": "G_M000_IG05",
+            "fma_instructions": 12,
+            "input_broadcasts": 6,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG40",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG42",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          },
+          {
+            "label": "G_M000_IG44",
+            "fma_instructions": 2,
+            "input_broadcasts": 0,
+            "vector_stack_references": []
+          }
+        ]
+      }
+    ]
+  },
+  "no_performance_measurement": true,
+  "tiering_and_isa_unchanged": true
+}

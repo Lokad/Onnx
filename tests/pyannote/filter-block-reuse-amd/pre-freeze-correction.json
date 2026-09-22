@@ -1,0 +1,11 @@
+{
+  "phase": "before artifact creation or deployment",
+  "failure": "Whole-dictionary owner comparison rejected the correct PID/birth because collection also retains payload/execution metadata.",
+  "expected": {
+    "pid": 707355,
+    "birth": 1790085675.48
+  },
+  "correction": "Compare the exact process identity fields; the full collection receipt remains pinned and retains its metadata.",
+  "prior_source": "prepare-before-owner-normalization.py.txt",
+  "product_or_numerical_change": false
+}
