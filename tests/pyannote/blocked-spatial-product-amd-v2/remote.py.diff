@@ -1,0 +1,28 @@
+--- tests/pyannote/blocked-spatial-product-amd/remote.py
++++ tests/pyannote/blocked-spatial-product-amd-v2/remote.py
+@@ -65,14 +65,14 @@
+                     try:
+                         mode,width=name.split('-')
+                         job_env=dict(env)
+-                        if width=='256':job_env['DOTNET_EnableAVX512F']='0'
++                        if width=='256':job_env['DOTNET_EnableAVX512']='0'
+                         if mode=='raw':
+                             executable=BASE/'runtime/Lokad.Onnx.Backend.Tests.dll'
+                             arguments=[width,str(BASE/name/'result.json')]
+                         else:
+                             assert mode=='layers'
+                             executable=BASE/'runtime/LayerGraphs.dll'
+-                            arguments=[width,str(BASE/'fixtures'),str(BASE/name/'result.json')]
++                            arguments=[width,spec['fixture_directory'],str(BASE/name/'result.json')]
+                         child = subprocess.Popen(['/home/vermorel/.dotnet/dotnet',str(executable),*arguments],cwd=BASE,
+                             env=job_env,stdin=subprocess.DEVNULL,stdout=out,stderr=err,start_new_session=True)
+                     finally: own.cpu_affinity([0])
+@@ -105,7 +105,7 @@
+                 result = read(BASE/name/'result.json'); assert result['passed']
+                 assert result['core']==spec['core']['sha256'] and result['executable']==spec['consumers'][mode]['sha256']
+                 assert result['pid']==row['child']['pid'] and result['runtime']=='10.0.8'
+-                assert result['flags']==(['DOTNET_EnableAVX512F'] if width=='256' else [])
++                assert result['flags']==(['DOTNET_EnableAVX512'] if width=='256' else [])
+                 assert result['lanes']==(8 if width=='256' else 16) and result['avx512']==(width=='512')
+                 expected=read(BASE/('windows-raw.json' if mode=='raw' else 'windows-layers.json'))
+                 assert result['observations']==expected['observations']

@@ -1,0 +1,15 @@
+--- single-panel-amd-v2/transport.py
++++ blocked-spatial-app-amd/transport.py
+@@ -10,9 +10,9 @@
+ 
+ ROOT = Path(__file__).resolve().parents[3]
+ TOOLS = Path(__file__).resolve().parent
+-PREPARED = ROOT/'artifacts/pyannote-single-panel-amd-payload-v2-20260922'
+-BASE = ROOT/'artifacts/pyannote-single-panel-amd-execution-v2-20260922'
+-REMOTE = '/dev/shm/lokad-pyannote-single-panel-app-v2-20260922'
++PREPARED = ROOT/'artifacts/pyannote-blocked-spatial-app-amd-payload-20260922'
++BASE = ROOT/'artifacts/pyannote-blocked-spatial-app-amd-execution-20260922'
++REMOTE = '/dev/shm/lokad-pyannote-blocked-spatial-app-20260922'
+ E5_CONTROL = ROOT/'artifacts/e5-randomized-processes-finish-v2-20260921/state.json'
+ SITE = ROOT/'artifacts/asr-labeled-20260919/venv/Lib/site-packages'
+ SSH = ['ssh', '-i', 'C:/Users/JoannesVermorel/.ssh/id_onnx-bench.pem', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=20', 'vermorel@74.178.91.76']

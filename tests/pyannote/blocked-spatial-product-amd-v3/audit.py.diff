@@ -1,0 +1,11 @@
+--- v2/audit.py
++++ v3/audit.py
+@@ -20,7 +20,7 @@
+     spec = importlib.util.spec_from_file_location('product_local_resource_auditor', path)
+     module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+     value = read(BASE/'local-inputs.json'); module.verify(value['files'])
+-    return module.resources(BASE, 'local-controller.json', {name: (12 if name.endswith('-local') else 8, 8, 900, name.endswith('-local')) for name in ['raw-restore', 'raw-build', 'layers-restore', 'layers-build', 'bridge-restore', 'bridge-build', 'raw-inventory', 'layers-inventory', 'raw-local', 'layers-local']})
++    return module.resources(BASE, 'local-controller.json', {name: (12 if name.endswith('-local') else 8, 8, 900, name.endswith('-local')) for name in ['raw-local', 'layers-local']})
+ 
+ 
+ def layers_check(result, lanes):

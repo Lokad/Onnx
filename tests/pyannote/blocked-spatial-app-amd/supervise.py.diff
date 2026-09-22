@@ -1,0 +1,28 @@
+--- single-panel-amd-v2/supervise.py
++++ blocked-spatial-app-amd/supervise.py
+@@ -228,21 +228,18 @@
+                              base/'source/tests/Lokad.Onnx.Backend.Tests/bin/Release/net10.0', campaign/'il-bridge.json'])
+         bridge = read(campaign/'il-bridge.json'); assert bridge['passed'] is True
+         assert [(r['assembly'], r['methods'], r['equal']) for r in bridge['observations']] == [
+-            ('Lokad.Onnx.dll', 3113, True), ('Lokad.Onnx.Data.dll', 697, True)]
++            ('Lokad.Onnx.dll', 3161, True), ('Lokad.Onnx.Data.dll', 697, True)]
+         suites = {}
+         for name, project in projects[:2]:
+             worker(name+'-tests', [DOTNET, 'test', project, '-c', 'Release', *flags, '--no-build', '--no-restore',
+                                  '--logger', 'trx;LogFileName='+name+'.trx', '--results-directory', campaign/'test-results'], build=True)
+-            suites[name] = test_results(campaign/'test-results'/(name+'.trx'), 3313 if name == 'backend' else 343,
++            suites[name] = test_results(campaign/'test-results'/(name+'.trx'), 3344 if name == 'backend' else 343,
+                                         REQUIRED_TESTS if name == 'backend' else ())
+         write(campaign/'operator-gate.json', dict(passed=True, suites=suites, il=pin(campaign/'il-bridge.json')))
+         verify(base)
+         from fresh_qualification import qualification
+-        for mode in ('normal', 'disabled'):
+-            prefix = [] if mode == 'normal' else ['/usr/bin/env', 'DOTNET_EnableHWIntrinsic=0']
+-            worker('caller-' + mode, [*prefix, DOTNET, base/'caller/Caller.dll', base/'runtimes/production',
+-                   base/'caller/shapes.json', campaign/('caller-' + mode + '.json'), mode,
+-                   pin(base/'runtimes/portable/Lokad.Onnx.dll')['sha256']])
++        from fresh_qualification import retained_callers
++        retained_callers(base)
+         for role in ROLES:
+             manifest = base/'manifests'/(role+'-pyannote.json')
+             worker(role+'-pyannote', [DOTNET, base/'runtimes'/role/'GraphQualification.dll',

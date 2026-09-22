@@ -1,0 +1,48 @@
+--- tests/pyannote/blocked-spatial-model-amd/run.py
++++ tests/pyannote/blocked-spatial-product-amd/run.py
+@@ -1,4 +1,4 @@
+-"""Prepare, stage, observe and collect actual-shape numerical qualification."""
++"""Prepare, stage, observe and collect actual normal-product graph qualification."""
+ import ast
+ import importlib.util
+ import json
+@@ -8,15 +8,15 @@
+ import sys
+ import tarfile
+ from protocol import LIMITS, pin, read, save
+-from prepare import previous_closed, prepare
++from prepare import previous_closed, prepare, monitor
+ 
+ ROOT = Path(__file__).resolve().parents[3]
+ TOOLS = Path(__file__).resolve().parent
+-BASE = ROOT/'artifacts/pyannote-blocked-spatial-model-amd-20260922'
++BASE = ROOT/'artifacts/pyannote-blocked-spatial-product-amd-20260922'
+ AMD = ROOT/'artifacts/parakeet-single-panel-amd-execution-v2-20260922'
+ OLD = ROOT/'artifacts/pyannote-single-panel-amd-execution-v2-20260922'
+ PAYLOAD = ROOT/'artifacts/parakeet-single-panel-amd-payload-v2-20260922/payload'
+-REMOTE = '/dev/shm/lokad-pyannote-blocked-spatial-model-20260922'
++REMOTE = '/dev/shm/lokad-pyannote-blocked-spatial-product-20260922'
+ SITE = '/home/vermorel/Onnx/artifacts/asr-multilingual-amd-20260920/python'
+ SSH = ['ssh','-i','C:/Users/JoannesVermorel/.ssh/id_onnx-bench.pem','-o','BatchMode=yes','-o','ConnectTimeout=20','vermorel@74.178.91.76']
+ 
+@@ -25,6 +25,11 @@
+     value = read(BASE/'prepared.json'); assert value['passed']
+     for name,wanted in value['files'].items(): assert pin(ROOT/name) == wanted,name
+     assert pin(BASE/'payload.tar.gz') == value['archive'] and pin(BASE/'payload/payload.json') == value['payload']
++    local = read(BASE/'local-controller.json'); assert local['complete'] and local['code'] == 0
++    monitor.terminal(local['supervisor'])
++    for row in local['runs']:
++        assert row['complete'] and row['code'] == 0
++        for pid, birth in row['members'].items(): monitor.terminal(dict(pid=int(pid), birth=birth))
+     return value
+ 
+ 
+@@ -126,7 +131,7 @@
+ error=None
+ try:verify(base)
+ except BaseException as e:error=repr(e)
+-paths=[p for folder in ['qualify-256','qualify-512','logs'] for p in (base/folder).rglob('*') if p.is_file()]
++paths=[p for folder in ['raw-256','raw-512','layers-256','layers-512','logs'] for p in (base/folder).rglob('*') if p.is_file()]
+ paths += [p for p in base.iterdir() if p.is_file() and p.name!='transfer.tar.gz']
+ files={p.relative_to(base).as_posix():pin(p) for p in sorted(paths)}
+ save(base/'collection.json',dict(terminal=True,identities=ids,code=state['code'],input_error=error,files=files,payload=pin(base/'payload.json')))

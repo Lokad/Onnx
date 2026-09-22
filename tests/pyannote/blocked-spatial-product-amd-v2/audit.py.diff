@@ -1,0 +1,45 @@
+--- tests\pyannote\blocked-spatial-product-amd\audit.py
++++ tests\pyannote\blocked-spatial-product-amd-v2\audit.py
+@@ -4,6 +4,7 @@
+ import json
+ from run import BASE, ROOT, prepared
+ from protocol import LIMITS, check_sample, pin, read, save
++from prepare import review
+ 
+ 
+ def raw_check(result, lanes):
+@@ -19,7 +20,7 @@
+     spec = importlib.util.spec_from_file_location('product_local_resource_auditor', path)
+     module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+     value = read(BASE/'local-inputs.json'); module.verify(value['files'])
+-    return module.resources(BASE, 'local-controller.json', dict(restore=(8, 8, 900, False), build=(8, 8, 900, False), **{'layers-local': (12, 8, 900, True)}))
++    return module.resources(BASE, 'local-controller.json', {name: (12 if name.endswith('-local') else 8, 8, 900, name.endswith('-local')) for name in ['raw-restore', 'raw-build', 'layers-restore', 'layers-build', 'bridge-restore', 'bridge-build', 'raw-inventory', 'layers-inventory', 'raw-local', 'layers-local']})
+ 
+ 
+ def layers_check(result, lanes):
+@@ -49,6 +50,7 @@
+ 
+ def main():
+     spec = prepared(); assert not (BASE/'closed.json').exists(); local = local_resources()
++    assert review() == read(BASE/'instruction-review.json')
+     payload = read(BASE/'payload/payload.json'); collected = BASE/'collected'; receipt = read(collected/'collection.json')
+     transfer = read(BASE/'collection-transfer.json')
+     assert transfer['passed'] and transfer['archive'] == pin(BASE/'results.tar.gz') and transfer['receipt'] == pin(collected/'collection.json')
+@@ -73,7 +75,7 @@
+         result = read(collected/row['name']/'result.json')
+         assert result['passed'] and result['pid'] == row['child']['pid'] and result['runtime'] == '10.0.8'
+         assert result['core'] == payload['core']['sha256'] and result['executable'] == payload['consumers'][mode]['sha256']
+-        assert result['flags'] == (['DOTNET_EnableAVX512F'] if width == '256' else []) and result['avx512'] == (width == '512')
++        assert result['flags'] == (['DOTNET_EnableAVX512'] if width == '256' else []) and result['avx512'] == (width == '512')
+         reports[row['name']] = raw_check(result, lanes) if mode == 'raw' else layers_check(result, lanes)
+         original = read(BASE/'payload'/('windows-raw.json' if mode == 'raw' else 'windows-layers.json'))
+         assert result['observations'] == original['observations']
+@@ -81,7 +83,7 @@
+     assert state['ended']-state['started'] < 4*3600
+     analysis = dict(passed=True, reports=reports, resources=resources, local_resources=local['resources'],
+         samples=sum(r['samples'] for r in resources), peak_rss=max(r['peak_rss'] for r in resources),
+-        core=payload['core'], consumers=payload['consumers'], no_performance_measurement=True)
++        core=payload['core'], consumers=payload['consumers'], consumer_review=review(), no_performance_measurement=True)
+     save(BASE/'analysis.json', analysis)
+     files = {p.relative_to(BASE).as_posix(): pin(p) for p in BASE.rglob('*') if p.is_file() and not {'obj', 'packages'}.intersection(p.relative_to(BASE).parts)}
+     save(BASE/'closed.json', dict(passed=True, files=files, local_inputs=spec['files'], local_identities=local['identities'],

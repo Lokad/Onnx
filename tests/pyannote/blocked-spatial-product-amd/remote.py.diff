@@ -1,0 +1,66 @@
+--- tests/pyannote/vector-input-layout-amd/remote.py
++++ tests/pyannote/blocked-spatial-product-amd/remote.py
+@@ -1,4 +1,4 @@
+-"""Four numerical workers precede the fixed screen of the new vector input mechanism."""
++"""Four fresh workers qualify actual normal-product raw and captured-layer graphs."""
+ import os
+ from pathlib import Path
+ import subprocess
+@@ -46,7 +46,7 @@
+     for key in ['OMP_NUM_THREADS','MKL_NUM_THREADS','OPENBLAS_NUM_THREADS','BLIS_NUM_THREADS','NUMEXPR_NUM_THREADS']: env[key] = '1'
+     try:
+         campaign_started = time.monotonic()
+-        for name in ['raw-256','raw-512','model-256','model-512','production-a','candidate-a','candidate-b','production-b']:
++        for name in ['raw-256','raw-512','layers-256','layers-512']:
+             assert time.monotonic()-campaign_started < 4*3600
+             verify(BASE); waiting = time.monotonic(); observations = []
+             while True:
+@@ -64,11 +64,17 @@
+                     own.cpu_affinity([2])
+                     try:
+                         mode,width=name.split('-')
+-                        if mode=='raw':arguments=['raw',width,str(BASE/name/'result.json')]
+-                        elif mode=='model':arguments=['model',width,str(BASE/'fixtures'),str(BASE/name/'result.json')]
+-                        else:arguments=['bench',mode,str(BASE/'fixtures'),str(BASE/'windows-256.json'),str(BASE/name)]
+-                        child = subprocess.Popen(['/home/vermorel/.dotnet/dotnet',str(BASE/'runtime/VectorInputProbe.dll'),*arguments],cwd=BASE,
+-                            env=env,stdin=subprocess.DEVNULL,stdout=out,stderr=err,start_new_session=True)
++                        job_env=dict(env)
++                        if width=='256':job_env['DOTNET_EnableAVX512F']='0'
++                        if mode=='raw':
++                            executable=BASE/'runtime/Lokad.Onnx.Backend.Tests.dll'
++                            arguments=[width,str(BASE/name/'result.json')]
++                        else:
++                            assert mode=='layers'
++                            executable=BASE/'runtime/LayerGraphs.dll'
++                            arguments=[width,str(BASE/'fixtures'),str(BASE/name/'result.json')]
++                        child = subprocess.Popen(['/home/vermorel/.dotnet/dotnet',str(executable),*arguments],cwd=BASE,
++                            env=job_env,stdin=subprocess.DEVNULL,stdout=out,stderr=err,start_new_session=True)
+                     finally: own.cpu_affinity([0])
+                     process = psutil.Process(child.pid)
+                     row['child'] = dict(pid=child.pid,birth=process.create_time()); row['members'][str(child.pid)] = row['child']['birth']; save(path,state)
+@@ -97,12 +103,19 @@
+                     row['code'] = child.wait(); assert row['code'] == 0, (name,row['code'])
+                 assert all(not live(dict(pid=int(pid),birth=birth)) for pid,birth in row['members'].items())
+                 result = read(BASE/name/'result.json'); assert result['passed']
+-                assert result['core']==spec['core']['sha256'] and result['executable']==spec['consumer']['sha256']
+-                assert result['pid']==row['child']['pid'] and result['runtime']=='10.0.8' and not result['flags']
+-                if mode in ['raw','model']:
+-                    expected=read(BASE/('windows-raw.json' if mode=='raw' else 'windows-256.json'))
+-                    assert result['observations']==expected['observations'] and result['lanes']==(8 if width=='256' else 16) and result['avx512']
+-                    if mode=='raw':assert result['supplemental']==expected['supplemental']
++                assert result['core']==spec['core']['sha256'] and result['executable']==spec['consumers'][mode]['sha256']
++                assert result['pid']==row['child']['pid'] and result['runtime']=='10.0.8'
++                assert result['flags']==(['DOTNET_EnableAVX512F'] if width=='256' else [])
++                assert result['lanes']==(8 if width=='256' else 16) and result['avx512']==(width=='512')
++                expected=read(BASE/('windows-raw.json' if mode=='raw' else 'windows-layers.json'))
++                assert result['observations']==expected['observations']
++                if mode=='raw':
++                    assert result['graph_differences']==0 and result['graph_controls']==2668 and result['graph_candidates']==5336
++                    for actual,old in zip(result['supplemental'],expected['supplemental'],strict=True):
++                        assert {k:v for k,v in actual.items() if k!='nan_payload_differences'}=={k:v for k,v in old.items() if k!='nan_payload_differences'}
++                else:
++                    assert result['values']==119823360 and result['native_failures']==result['differences']==0
++                    assert len(result['graph_dispatch'])==216 and result['layer_graphs']==108
+             except BaseException:
+                 row['error'] = traceback.format_exc()
+                 for pid,birth in reversed(list(row['members'].items())):

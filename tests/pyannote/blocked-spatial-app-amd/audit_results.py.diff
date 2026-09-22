@@ -1,0 +1,20 @@
+--- single-panel-amd-v2/audit_results.py
++++ blocked-spatial-app-amd/audit_results.py
+@@ -52,7 +52,7 @@
+     assert state['execution'] == bundle['execution'] and state['payload'] == prepared['payload']
+     expected = ['sdk-version']+[n+s for n in ('backend', 'tensors', 'cli', 'il-bridge') for s in ('-restore', '-build')]
+     expected += ['il-bridge', 'backend-tests', 'tensors-tests']
+-    expected += ['caller-normal', 'caller-disabled'] + [r+'-'+f for r in ROLES for f in ['pyannote', 'parakeet']]
++    expected += [r+'-'+f for r in ROLES for f in ['pyannote', 'parakeet']]
+     expected += ['native-conformance', 'meetings-inputs', 'meetings-run']+[f'timing-{i:02}-{r}' for i, r in enumerate(TIMING_ROLES)]
+     assert [r['name'] for r in state['runs']] == expected
+     assert state['seconds'] < LIMITS['campaign_seconds']
+@@ -92,7 +92,7 @@
+     operator_gate = read(campaign/'operator-gate.json')
+     assert operator_gate['passed'] is True and operator_gate['il'] == pin(campaign/'il-bridge.json')
+     for suite in ('backend', 'tensors'):
+-        result = test_results(campaign/'test-results'/(suite+'.trx'), 3313 if suite == 'backend' else 343,
++        result = test_results(campaign/'test-results'/(suite+'.trx'), 3344 if suite == 'backend' else 343,
+                               REQUIRED_TESTS if suite == 'backend' else ())
+         assert result == operator_gate['suites'][suite]
+     # Use the exact bundled auditor and original native protocol.

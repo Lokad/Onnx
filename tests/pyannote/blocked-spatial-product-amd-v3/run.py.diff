@@ -1,0 +1,16 @@
+--- v2/run.py
++++ v3/run.py
+@@ -12,11 +12,11 @@
+ 
+ ROOT = Path(__file__).resolve().parents[3]
+ TOOLS = Path(__file__).resolve().parent
+-BASE = ROOT/'artifacts/pyannote-blocked-spatial-product-amd-v2-20260922'
++BASE = ROOT/'artifacts/pyannote-blocked-spatial-product-amd-v3-20260922'
+ AMD = ROOT/'artifacts/parakeet-single-panel-amd-execution-v2-20260922'
+ OLD = ROOT/'artifacts/pyannote-single-panel-amd-execution-v2-20260922'
+ PAYLOAD = ROOT/'artifacts/parakeet-single-panel-amd-payload-v2-20260922/payload'
+-REMOTE = '/dev/shm/lokad-pyannote-blocked-spatial-product-v2-20260922'
++REMOTE = '/dev/shm/lokad-pyannote-blocked-spatial-product-v3-20260922'
+ SITE = '/home/vermorel/Onnx/artifacts/asr-multilingual-amd-20260920/python'
+ SSH = ['ssh','-i','C:/Users/JoannesVermorel/.ssh/id_onnx-bench.pem','-o','BatchMode=yes','-o','ConnectTimeout=20','vermorel@74.178.91.76']
+ 

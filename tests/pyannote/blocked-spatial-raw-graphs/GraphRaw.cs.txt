@@ -1,0 +1,100 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using Lokad.Onnx;
+
+internal static class GraphRaw
+{
+    internal static readonly List<object> Rows = new();
+    internal static long Differences;
+    internal static long NaNPayloadDifferences;
+    internal static int CandidateCalls;
+    internal static int ControlCalls;
+    static void Require(bool value, string message) { if (!value) throw new InvalidDataException(message); }
+    static int[] Bits(float[] values) => MemoryMarshal.Cast<float, int>(values.AsSpan()).ToArray();
+
+    static ComputationalGraph Create(float[] x, float[] w, float[] bias, float[] residual,
+        int c, int m, int h, int width, int stride, bool relu, long budget)
+    {
+        var graph = new ComputationalGraph(budget); graph.Metadata["Name"] = "raw-graph"; graph.Opset[""] = 18;
+        int oh = (h + stride - 1) / stride, ow = (width + stride - 1) / stride;
+        graph.Inputs["x"] = new DenseTensor<float>(x, new[] { 1, c, h, width });
+        graph.Initializers["w"] = new DenseTensor<float>(w, new[] { m, c, 3, 3 });
+        if (bias.Length != 0) graph.Initializers["b"] = new DenseTensor<float>(bias, new[] { m });
+        if (residual.Length != 0) graph.Inputs["r"] = new DenseTensor<float>(residual, new[] { 1, m, oh, ow });
+        graph.Outputs["y"] = Tensor<float>.Zeros(1, m, oh, ow);
+        bool convRelu = relu && residual.Length == 0;
+        graph.Nodes.Add(new Node { Name = "conv", Op = convRelu ? OpType.ConvRelu : OpType.Conv,
+            OpTypeName = convRelu ? "ConvRelu" : "Conv", IsFused = convRelu, Domain = "", OpsetVersion = 18,
+            Inputs = bias.Length == 0 ? new[] { "x", "w" } : new[] { "x", "w", "b" },
+            Outputs = new[] { residual.Length == 0 ? "y" : "conv" },
+            Attributes = new() { ["pads"] = new[] { 1, 1, 1, 1 }, ["strides"] = new[] { stride, stride },
+                ["dilations"] = new[] { 1, 1 }, ["kernel_shape"] = new[] { 3, 3 }, ["group"] = 1 } });
+        if (residual.Length != 0)
+            graph.Nodes.Add(new Node { Name = "residual", Op = relu ? OpType.AddRelu : OpType.Add,
+                OpTypeName = relu ? "AddRelu" : "Add", IsFused = relu, Domain = "", OpsetVersion = 18,
+                Inputs = new[] { "conv", "r" }, Outputs = new[] { "y" } });
+        graph.Prepare(); return graph;
+    }
+
+    static DenseTensor<float> Run(ComputationalGraph graph)
+    {
+        var inputs = new Dictionary<string, ITensor> { ["x"] = graph.Inputs["x"] };
+        if (graph.Inputs.TryGetValue("r", out var residual)) inputs["r"] = residual;
+        Require(graph.Execute(inputs, true, ExecutionProvider.CPU, ExecutionOptions.Default), graph.LastErrorMessage ?? "Graph failed");
+        return (DenseTensor<float>)graph.Outputs["y"];
+    }
+
+    internal static void Check(string family, int index, float[] x, float[] w, float[] bias, float[] residual,
+        int c, int m, int h, int width, int stride, int lanes, bool relu)
+    {
+        Require(GraphConvPacking.Lanes == lanes, "Wrong actual product width");
+        int[][] snapshots = new[] { Bits(x), Bits(w), Bits(bias), Bits(residual) };
+        var control = Create(x, w, bias, residual, c, m, h, width, stride, relu, 0);
+        long prepared = (long)((m + 2 * lanes - 1) / (2 * lanes) * 2 * lanes) * c * 9 * 4;
+        var candidate = Create(x, w, bias, residual, c, m, h, width, stride, relu, prepared);
+        Require(control.RetainedPackedWeightBytes == 0 && control.PackedConvWeights.Count == 0, "Control packing");
+        Require(candidate.RetainedPackedWeightBytes == prepared && candidate.PackedConvWeights.Count == 1, "Candidate weight residency");
+        var clone = candidate.PackedConvWeights.Values.Single();
+        var expected = Run(control).ToArray(); ControlCalls++;
+        bool finiteConv = x.All(float.IsFinite) && w.All(float.IsFinite) && bias.All(float.IsFinite);
+        int oh = (h + stride - 1) / stride, ow = (width + stride - 1) / stride;
+        long layoutScratch = ((long)c * (h + 2) * (width + 2) + (long)m * oh * ow) * 4;
+        long expectedScratch = layoutScratch + (finiteConv ? 0 : control.LastScratchBytes);
+        DenseTensor<float>? held = null; int[]? heldBits = null;
+        var executions = new List<object>();
+        for (int repeat = 0; repeat < 2; repeat++)
+        {
+            var output = Run(candidate); CandidateCalls++;
+            var actual = output.ToArray(); Require(actual.Length == expected.Length, "Graph shape");
+            long differences = 0, payloads = 0;
+            for (int i = 0; i < actual.Length; i++)
+            {
+                if (BitConverter.SingleToInt32Bits(actual[i]) == BitConverter.SingleToInt32Bits(expected[i])) continue;
+                if (float.IsNaN(actual[i]) && float.IsNaN(expected[i])) payloads++;
+                else differences++;
+            }
+            Require(candidate.LastScratchBytes == expectedScratch, "Actual graph dispatch scratch");
+            Require(candidate.RetainedPackedWeightBytes == prepared && ReferenceEquals(clone, candidate.PackedConvWeights.Values.Single()), "Prepared clone changed");
+            if (held is not null)
+                Require(!ReferenceEquals(held, output) && Bits(held.ToArray()).SequenceEqual(heldBits!), "Held graph output changed");
+            else { held = output; heldBits = Bits(actual); }
+            Differences += differences; NaNPayloadDifferences += payloads;
+            executions.Add(new { repeat, differences, nan_payload_differences = payloads, scratch_bytes = candidate.LastScratchBytes });
+        }
+        int[][] after = new[] { Bits(x), Bits(w), Bits(bias), Bits(residual) };
+        for (int i = 0; i < after.Length; i++) Require(after[i].SequenceEqual(snapshots[i]), "Graph changed readonly operand");
+        Rows.Add(new { family, index, c, m, h, w = width, stride, bias = bias.Length != 0,
+            residual = residual.Length != 0, relu, finite_convolution = finiteConv, values = expected.Length,
+            retained_weights = prepared, control_scratch = control.LastScratchBytes, expected_scratch = expectedScratch,
+            executions, nodes = candidate.Nodes.Select(n => n.Op.ToString()).ToArray() });
+    }
+
+    internal static void Complete()
+    {
+        Require(Rows.Count == 2668 && ControlCalls == 2668 && CandidateCalls == 5336, "Raw graph coverage");
+    }
+}

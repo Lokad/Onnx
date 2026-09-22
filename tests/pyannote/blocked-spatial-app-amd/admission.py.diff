@@ -1,0 +1,13 @@
+--- single-panel-amd-v2/admission.py
++++ blocked-spatial-app-amd/admission.py
+@@ -1,8 +1,8 @@
+ """Prospective portable-versus-root-production integration thresholds."""
+ from candidate_protocol import ROLES
+ 
+-ROLE_LABELS = dict(production='selected production (Coree9c/Data85)',
+-    portable='single-panel candidate (Core1279/Data4e60)', ort='Microsoft ONNX Runtime 1.29.0')
++ROLE_LABELS = dict(production='selected production (Core1279/Data4e60)',
++    portable='prepared-convolution candidate (Core3c2f/Data6318)', ort='Microsoft ONNX Runtime 1.29.0')
+ 
+ 
+ def evaluate(table):
