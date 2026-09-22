@@ -39,6 +39,14 @@ transcripts, tokens and owned outputs. Earlier campaigns remain historical;
 this refresh does not establish a speedup against their different products.
 The full application parity target remains <=1.05 for both models.
 
+The [current Pyannote profile](tests/pyannote/current-profile-results/results-20260922.md)
+passes all48 public requests and846 resource observations. Two captures
+attribute about64.9% of full-request sampled thread time to blocked convolution
+and8.1–8.5% to the two LSTM projection helpers. Profiling adds about12.2% wall
+time versus its unprofiled control. These diagnostic samples guide a distinct
+wider-projection experiment; the matched application and Microsoft ORT figures
+above remain unchanged.
+
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
 from 1.433322 s to 1.410928 s, below the fixed 10% component threshold.
@@ -86,12 +94,13 @@ gates and all numerical/resource checks pass. All 17,184 call clocks and 512
 separate graph-preparation clocks are retained. This is a component measurement;
 the application and ORT figures above remain unchanged.
 
-A fresh [profile of selected Pyannote](tests/pyannote/prepared-profile-amd-results/results-v2-20260922.md)
+The [preceding Pyannote profile](tests/pyannote/prepared-profile-amd-results/results-v2-20260922.md),
+captured before the integrated LSTM input-row change,
 attributes 65.58%/65.56% of full-request sampled thread time to `Kernel512` in
 two captures. LSTM execution and ordered projection together account for about
 17.4%. All 48 public requests match the selected application outputs, and both
 trace formats pass every accounting and coverage check. These diagnostic shares
-guide the next optimization; they supply no new ORT speed ratio.
+describe that preceding product; they supply no new ORT speed ratio.
 
 The preceding [Pyannote four-block convolution screen](tests/pyannote/filter-block-screen/results-20260922.md)
 is **not selected**. All 108 prepared graph calls total 1.422513 s for selected
