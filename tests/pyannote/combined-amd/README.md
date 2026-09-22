@@ -52,11 +52,13 @@ Remote: /dev/shm/lokad-pyannote-combined-20260922.
 Local payload: artifacts/pyannote-combined-amd-payload-20260922.
 Local execution: artifacts/pyannote-combined-amd-execution-20260922.
 
-The launch has occurred. Local controller PID1114068/birth1790037640.4630504,
+This first attempt is now closed with a consumer identity refusal before timing.
+See [recovery evidence](../combined-amd-review/recovery-20260922.md) and the
+[active successor](../combined-amd-v2/README.md). The following identifies the
+closed original controller: local controller PID1114068/birth1790037640.4630504,
 session76277, owns collection. Remote supervisor PID649969/birth1790037651.24.
-Do not launch a duplicate campaign. Check controller/state.json and actual
-identities, then collect through the owner. Current live observations are not
-closed benchmark results. The first operator gate passed 3349 backend tests
+Session76277 exited1, collection is complete and the original identities are
+terminal. Do not restart this closed campaign. The first operator gate passed 3349 backend tests
 (41 skips), 342 tensor tests, all three mandatory AVX-512 tests and the Linux IL
 comparison. Model, meeting and timing stages remain subject to closure.
 
