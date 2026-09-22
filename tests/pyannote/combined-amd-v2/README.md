@@ -7,14 +7,14 @@ remain unchanged. Internal role production denotes the previous isolated
 AVX-512 rows candidate, portable denotes the current portable-only build, and
 rows denotes the actual combined build. Use these explicit labels in results.
 
-One controller is active: session10133, PID1154676/birth1790038657.2224827.
-Remote supervisor PID652149/birth1790038671.33 owns
-/dev/shm/lokad-pyannote-combined-v2-20260922. Check its existing state at
-artifacts/pyannote-combined-amd-execution-v2-20260922/controller/state.json.
-Do not relaunch prepare, transport or finish on an existing campaign.
+The campaign is closed and independently audited. Session10133 exited zero;
+local PID1154676/birth1790038657.2224827 and remote supervisor
+PID652149/birth1790038671.33 are terminal. All qualification, two long meetings,
+recovery and128timing calls pass. All16repeatability controls pass, but the
+combined candidate is only0.46percent faster than current portable, below the
+fixed3percent selection threshold. It is not selected for production.
 
-The successor reuses fourteen closed successful stages and runs remaining
-portable/combined tensor and public qualification, native conformance, two long
-meetings plus recovery and the original balanced 128-call timing protocol.
-All observations are retained; gates are frozen and no timing occurred in the
-failed predecessor. Successful execution is not yet a production promotion.
+See [complete results](../combined-amd-results/results-20260922.md). Closure:
+d955ef2187a45e44e5d60bf92e17574384503570176f6fb592dcc1d9666a0f7a.
+Do not relaunch this campaign or execute the gated combined root integration.
+The next prospective candidate is portable-only against actual root production.

@@ -15,13 +15,14 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
 
-The latest **AMD pyannote candidate** completes the 30-second dialogue in
-**15.780 s versus Microsoft ORT 8.945 s (1.764×)**. Production takes 42.568 s
-in that same comparison: the candidate uses 62.9% less time. Its AVX-512 row
-sharing also improves on the older portable candidate's 17.435 s by 9.5%.
-The [complete AMD comparison](#audio-amd-pyannote-candidates-versus-microsoft-ort)
-qualifies the next integration step; these isolated candidates are not yet
-promoted to production.
+The latest **AMD pyannote comparison** measures the current portable candidate
+at **15.255 s** and the combined AVX-512 candidate at **15.185 s**, versus
+**Microsoft ORT 8.951 s** (1.704× and 1.696× respectively). All fixed stability
+controls pass. The combined path improves on portable by only 0.46%, below its
+prospective 3% selection threshold, so it is **not promoted**. The
+[complete comparison](#audio-amd-current-pyannote-composition-versus-microsoft-ort)
+retains every sample. A distinct portable-versus-root-production qualification
+is the next integration step; neither candidate is current production.
 
 The [combined normal build](tests/pyannote/combined-avx512/results-20260922.md)
 now passes 3,295 backend tests, 342 tensor tests and a separate NuGet consumer.
@@ -29,9 +30,11 @@ It combines AVX-512 row sharing with the newer portable fallback, frontend and
 memory improvements. Its [shared-model and e5 checks](tests/pyannote/combined-shared/results-20260922.md)
 retain all 5,000,814 output values bit-for-bit. AMD operator qualification passes
 3,349 backend tests, 342 tensor tests and all three required AVX-512 tests.
-The [remaining AMD campaign](tests/pyannote/combined-amd-review/recovery-20260922.md)
-continues after a corrected checker identity guard; complete meeting and timing
-results are pending. The times above still belong to the older candidate.
+The [completed AMD campaign](tests/pyannote/combined-amd-results/results-20260922.md)
+also passes both ten-minute meetings, recovery and all 128 timing requests.
+Its [checker correction](tests/pyannote/combined-amd-review/recovery-20260922.md)
+preserves the original failure and changes only consumer identity literals.
+Correctness qualification does not override the failed speed-selection gate.
 
 The latest accepted **Windows pyannote candidate** takes **10.493 s versus
 Microsoft ORT 6.320 s (1.660×)**, down 8.6% from its contemporary 11.482 s
@@ -188,9 +191,9 @@ The [self-contained test successor](tests/pyannote/portable-integration-tests/re
 removes the old artifact DLL dependency and passes the same complete suites,
 plus 89 frontend cases in both normal and hardware-disabled modes. Product
 and package bytes stay fixed. A single reviewed source/test patch is available.
-These new binaries have no fresh timing result; the table below still names
-the exact measured candidate. AMD selection and production integration remain
-pending.
+These exact portable binaries now have fresh AMD measurements in the composition
+table below. Selection against current root production and production integration
+remain pending. The Windows table still names its separately measured candidate.
 
 The exact rebuilt candidate also passes
 [complete application qualification](tests/pyannote/portable-applications/results-20260922.md):
@@ -298,6 +301,36 @@ The [conditioned successor](tests/parakeet/wide-matmul-conditioned/results-20260
 also fails its fixed control limits despite passing all numerical checks. No
 prototype is promoted and the ORT comparison tables remain unchanged.
 
+### Audio: AMD current pyannote composition versus Microsoft ORT
+
+AMD EPYC 9V74, CPU2, .NET 10.0.8 and Microsoft ORT 1.29.0. These are complete
+application timers, including features, graphs, clustering and owned results.
+Previous rows is Core `29477d50` / Data `e7fe1668`; current portable is Core
+`e9c87932` / Data `85d166b5`; combined is Core `e36963d8` / Data `2b512f25`.
+
+| Workload | Previous rows seconds | Current portable seconds | Combined seconds | Microsoft ORT seconds | Combined / ORT |
+|---|---:|---:|---:|---:|---:|
+| pyannote, dialogue-30s | 15.731 | 15.255 | 15.185 | 8.951 | 1.696 |
+| pyannote, dialogue-0-10s | 0.732 | 0.718 | 0.715 | 0.428 | 1.670 |
+| pyannote, dialogue-10-20s | 0.742 | 0.730 | 0.734 | 0.430 | 1.708 |
+| pyannote, dialogue-20-30s | 0.819 | 0.794 | 0.761 | 0.430 | 1.770 |
+
+Eight fresh processes run previous rows, portable, combined, ORT, ORT, combined,
+portable, previous rows: 32 warmups and 96 measured requests, six measurements
+per displayed mean. All 16 process-repeatability controls pass. Combined full
+latency is 3.47% below previous rows but only 0.46% below current portable;
+the fixed admission rule requires at least 3% against both. Every crop passes
+its nonregression bound. **Combined is not selected** and root source is unchanged.
+The portable control is not retrospectively selected under this combined-only rule.
+
+All 54 pyannote and 2,352 Parakeet arrays pass native checks on AMD. Both combined
+ten-minute meetings and recovery retain exact native speaker timelines, with
+maximum centroid error 9.25e-7. All 3,669 resource samples pass; peak owned RSS
+is 5.64 GB. The [full report](tests/pyannote/combined-amd-results/results-20260922.md)
+contains process means, raw-clock statistics, gates and artifact identities.
+These descriptive observations do not establish parity. The following older
+campaign measures different portable and AVX-512 code and remains separate.
+
 ### Audio: AMD pyannote candidates versus Microsoft ORT
 
 Fresh complete-application measurements on AMD EPYC 9V74, CPU2, .NET 10.0.8,
@@ -326,9 +359,9 @@ sample remains in the [complete report](tests/pyannote/amd-results/results-20260
 These are descriptive results, without a calibrated parity claim.
 
 This older frozen payload does not include the later pooling, request contexts,
-portable three-row path, sparse mel frontend or LSTM storage guard. Combining
-those changes with the AVX-512 path requires a new target qualification and
-comparison, including an explicit choice where the two matrix paths overlap.
+portable three-row path, sparse mel frontend or LSTM storage guard. The
+composition comparison above now measures those changes with the AVX-512 path
+and current portable control, including the choice where the paths overlap.
 Production source remains unchanged by this campaign. The earlier matched
 production baselines below are retained separately.
 
