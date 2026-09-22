@@ -1,0 +1,2502 @@
+{
+  "closure": {
+    "bytes": 631882,
+    "sha256": "e0f1123a85c2a575e062fbf0e4dacc8c742c087661c2599d0197e5ca35cecc68"
+  },
+  "controller": {
+    "bytes": 3171,
+    "sha256": "b0589113a1b98259b6d13e95967084789a499d1197329147324848d70fc424c9"
+  },
+  "controller_identities": [
+    {
+      "pid": 542736,
+      "birth": 1789990885.413712
+    },
+    {
+      "pid": 802352,
+      "birth": 1790034488.7585745
+    },
+    {
+      "pid": 802152,
+      "birth": 1790034495.6356366
+    },
+    {
+      "pid": 750920,
+      "birth": 1790035938.4673688
+    },
+    {
+      "pid": 850824,
+      "birth": 1790035966.4762347
+    }
+  ],
+  "runtimes": {
+    "production": {
+      "Lokad.Onnx.dll": {
+        "bytes": 727040,
+        "sha256": "d1f86a7346dcd70ebcc9ef7d9cd9633f05ad3a5275ca39f035c72325a0531fa4"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 142848,
+        "sha256": "e7fe1668e3aa08fb07b1e5a687ef2b1e4af54567f6a458db09d411eb69f99aeb"
+      },
+      "AudioBenchmark.dll": {
+        "bytes": 40448,
+        "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+      }
+    },
+    "portable": {
+      "Lokad.Onnx.dll": {
+        "bytes": 733184,
+        "sha256": "469cb2d6a4558d917266434bd1f968c8b9f2762795b963800b2d945083852edd"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 142848,
+        "sha256": "e7fe1668e3aa08fb07b1e5a687ef2b1e4af54567f6a458db09d411eb69f99aeb"
+      },
+      "AudioBenchmark.dll": {
+        "bytes": 40448,
+        "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+      }
+    },
+    "rows": {
+      "Lokad.Onnx.dll": {
+        "bytes": 734208,
+        "sha256": "29477d505dd230aef0b5aa2792da8ec76c6903c5d2cff244327d803b432b4cbb"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 142848,
+        "sha256": "e7fe1668e3aa08fb07b1e5a687ef2b1e4af54567f6a458db09d411eb69f99aeb"
+      },
+      "AudioBenchmark.dll": {
+        "bytes": 40448,
+        "sha256": "7eca033a1b986a4cb90621392639d230c95097cb703dd25274fd72d66c5ba4f1"
+      }
+    }
+  },
+  "variation": [
+    {
+      "name": "dialogue-30s",
+      "role": "production",
+      "process_means": [
+        42.687427721,
+        42.447774798
+      ],
+      "process_max_min": 1.0056458300615394
+    },
+    {
+      "name": "dialogue-30s",
+      "role": "portable",
+      "process_means": [
+        17.311719991333334,
+        17.558673615
+      ],
+      "process_max_min": 1.0142651119467214
+    },
+    {
+      "name": "dialogue-30s",
+      "role": "rows",
+      "process_means": [
+        15.872302881666666,
+        15.687657096666667
+      ],
+      "process_max_min": 1.0117701313754004
+    },
+    {
+      "name": "dialogue-30s",
+      "role": "ort",
+      "process_means": [
+        8.944003756333334,
+        8.946091196666666
+      ],
+      "process_max_min": 1.0002333899213598
+    },
+    {
+      "name": "dialogue-0-10s",
+      "role": "production",
+      "process_means": [
+        2.0900488976666667,
+        2.027099052666667
+      ],
+      "process_max_min": 1.0310541534303361
+    },
+    {
+      "name": "dialogue-0-10s",
+      "role": "portable",
+      "process_means": [
+        0.8049918016666666,
+        0.8239479186666666
+      ],
+      "process_max_min": 1.0235482112497953
+    },
+    {
+      "name": "dialogue-0-10s",
+      "role": "rows",
+      "process_means": [
+        0.7383036443333333,
+        0.725715528
+      ],
+      "process_max_min": 1.0173457999004443
+    },
+    {
+      "name": "dialogue-0-10s",
+      "role": "ort",
+      "process_means": [
+        0.428187174,
+        0.42807728766666664
+      ],
+      "process_max_min": 1.000256697415395
+    },
+    {
+      "name": "dialogue-10-20s",
+      "role": "production",
+      "process_means": [
+        2.0530204706666666,
+        2.0394836536666667
+      ],
+      "process_max_min": 1.0066373746000183
+    },
+    {
+      "name": "dialogue-10-20s",
+      "role": "portable",
+      "process_means": [
+        0.8178201216666666,
+        0.8271367736666667
+      ],
+      "process_max_min": 1.011392055237053
+    },
+    {
+      "name": "dialogue-10-20s",
+      "role": "rows",
+      "process_means": [
+        0.748359617,
+        0.7521095936666666
+      ],
+      "process_max_min": 1.0050109286785134
+    },
+    {
+      "name": "dialogue-10-20s",
+      "role": "ort",
+      "process_means": [
+        0.429791908,
+        0.43049974166666666
+      ],
+      "process_max_min": 1.0016469218091157
+    },
+    {
+      "name": "dialogue-20-30s",
+      "role": "production",
+      "process_means": [
+        2.0498471846666666,
+        2.02723923
+      ],
+      "process_max_min": 1.0111520901589235
+    },
+    {
+      "name": "dialogue-20-30s",
+      "role": "portable",
+      "process_means": [
+        0.8970033556666667,
+        0.9000689543333333
+      ],
+      "process_max_min": 1.0034175999981496
+    },
+    {
+      "name": "dialogue-20-30s",
+      "role": "rows",
+      "process_means": [
+        0.8279786823333334,
+        0.7830758733333333
+      ],
+      "process_max_min": 1.0573415814854077
+    },
+    {
+      "name": "dialogue-20-30s",
+      "role": "ort",
+      "process_means": [
+        0.43011148633333335,
+        0.429910908
+      ],
+      "process_max_min": 1.0004665579067684
+    }
+  ],
+  "passed": true,
+  "arrays_pyannote": 54,
+  "arrays_parakeet": 2352,
+  "pyannote_public_qualification_calls": 52,
+  "parakeet_public_qualification_cases": 21,
+  "timing_calls": 128,
+  "measured": 96,
+  "warmup": 32,
+  "table": [
+    {
+      "name": "dialogue-30s",
+      "audio_seconds": 30.0,
+      "production": {
+        "seconds": 42.5676012595,
+        "rtf": 1.4189200419833334,
+        "minimum": 42.213106731,
+        "maximum": 42.87134553,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              42.87134553,
+              42.645098021,
+              42.545839612
+            ],
+            "mean": 42.687427721
+          },
+          {
+            "index": 7,
+            "seconds": [
+              42.765543163,
+              42.3646745,
+              42.213106731
+            ],
+            "mean": 42.447774798
+          }
+        ]
+      },
+      "portable": {
+        "seconds": 17.435196803166665,
+        "rtf": 0.5811732267722223,
+        "minimum": 16.999968481,
+        "maximum": 17.878217946,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              17.61459907,
+              17.320592423,
+              16.999968481
+            ],
+            "mean": 17.311719991333334
+          },
+          {
+            "index": 6,
+            "seconds": [
+              17.878217946,
+              17.532107033,
+              17.265695866
+            ],
+            "mean": 17.558673615
+          }
+        ]
+      },
+      "rows": {
+        "seconds": 15.779979989166666,
+        "rtf": 0.5259993329722222,
+        "minimum": 15.345333227,
+        "maximum": 16.211798493,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              16.211798493,
+              15.809439022,
+              15.59567113
+            ],
+            "mean": 15.872302881666666
+          },
+          {
+            "index": 5,
+            "seconds": [
+              16.046462396,
+              15.671175667,
+              15.345333227
+            ],
+            "mean": 15.687657096666667
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 8.9450474765,
+        "rtf": 0.2981682492166667,
+        "minimum": 8.941887556,
+        "maximum": 8.949723416,
+        "processes": [
+          {
+            "index": 3,
+            "seconds": [
+              8.943751525,
+              8.945734777,
+              8.942524967
+            ],
+            "mean": 8.944003756333334
+          },
+          {
+            "index": 4,
+            "seconds": [
+              8.946662618,
+              8.949723416,
+              8.941887556
+            ],
+            "mean": 8.946091196666666
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "production": 4.7587898634782615,
+        "portable": 1.9491452503714015,
+        "rows": 1.7641024299337789
+      },
+      "ratios_to_production": {
+        "portable": 0.4095884261102351,
+        "rows": 0.370703998399369
+      }
+    },
+    {
+      "name": "dialogue-0-10s",
+      "audio_seconds": 10.0,
+      "production": {
+        "seconds": 2.0585739751666665,
+        "rtf": 0.20585739751666668,
+        "minimum": 2.0076003,
+        "maximum": 2.198824902,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              2.198824902,
+              2.048199111,
+              2.02312268
+            ],
+            "mean": 2.0900488976666667
+          },
+          {
+            "index": 7,
+            "seconds": [
+              2.046792127,
+              2.026904731,
+              2.0076003
+            ],
+            "mean": 2.027099052666667
+          }
+        ]
+      },
+      "portable": {
+        "seconds": 0.8144698601666667,
+        "rtf": 0.08144698601666667,
+        "minimum": 0.79850732,
+        "maximum": 0.835858923,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              0.81061141,
+              0.79850732,
+              0.805856675
+            ],
+            "mean": 0.8049918016666666
+          },
+          {
+            "index": 6,
+            "seconds": [
+              0.835858923,
+              0.819424922,
+              0.816559911
+            ],
+            "mean": 0.8239479186666666
+          }
+        ]
+      },
+      "rows": {
+        "seconds": 0.7320095861666667,
+        "rtf": 0.07320095861666667,
+        "minimum": 0.717414833,
+        "maximum": 0.748180318,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              0.748180318,
+              0.733080726,
+              0.733649889
+            ],
+            "mean": 0.7383036443333333
+          },
+          {
+            "index": 5,
+            "seconds": [
+              0.73303139,
+              0.726700361,
+              0.717414833
+            ],
+            "mean": 0.725715528
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 0.42813223083333335,
+        "rtf": 0.04281322308333333,
+        "minimum": 0.427929149,
+        "maximum": 0.428338666,
+        "processes": [
+          {
+            "index": 3,
+            "seconds": [
+              0.428125786,
+              0.428338666,
+              0.42809707
+            ],
+            "mean": 0.428187174
+          },
+          {
+            "index": 4,
+            "seconds": [
+              0.428060497,
+              0.428242217,
+              0.427929149
+            ],
+            "mean": 0.42807728766666664
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "production": 4.808266761789407,
+        "portable": 1.9023792219084992,
+        "rows": 1.7097745356425387
+      },
+      "ratios_to_production": {
+        "portable": 0.39564760362849016,
+        "rows": 0.35559061515260904
+      }
+    },
+    {
+      "name": "dialogue-10-20s",
+      "audio_seconds": 10.0,
+      "production": {
+        "seconds": 2.046252062166667,
+        "rtf": 0.20462520621666666,
+        "minimum": 2.004839359,
+        "maximum": 2.101714435,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              2.060305203,
+              2.059532506,
+              2.039223703
+            ],
+            "mean": 2.0530204706666666
+          },
+          {
+            "index": 7,
+            "seconds": [
+              2.101714435,
+              2.011897167,
+              2.004839359
+            ],
+            "mean": 2.0394836536666667
+          }
+        ]
+      },
+      "portable": {
+        "seconds": 0.8224784476666667,
+        "rtf": 0.08224784476666666,
+        "minimum": 0.813737619,
+        "maximum": 0.833283117,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              0.824515066,
+              0.81520768,
+              0.813737619
+            ],
+            "mean": 0.8178201216666666
+          },
+          {
+            "index": 6,
+            "seconds": [
+              0.824209362,
+              0.823917842,
+              0.833283117
+            ],
+            "mean": 0.8271367736666667
+          }
+        ]
+      },
+      "rows": {
+        "seconds": 0.7502346053333333,
+        "rtf": 0.07502346053333334,
+        "minimum": 0.726590711,
+        "maximum": 0.792255059,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              0.750589678,
+              0.740508125,
+              0.753981048
+            ],
+            "mean": 0.748359617
+          },
+          {
+            "index": 5,
+            "seconds": [
+              0.726590711,
+              0.792255059,
+              0.737483011
+            ],
+            "mean": 0.7521095936666666
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 0.43014582483333336,
+        "rtf": 0.043014582483333334,
+        "minimum": 0.429662616,
+        "maximum": 0.431910172,
+        "processes": [
+          {
+            "index": 3,
+            "seconds": [
+              0.429827436,
+              0.429662616,
+              0.429885672
+            ],
+            "mean": 0.429791908
+          },
+          {
+            "index": 4,
+            "seconds": [
+              0.42973582,
+              0.429853233,
+              0.431910172
+            ],
+            "mean": 0.43049974166666666
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "production": 4.757112458221624,
+        "portable": 1.9120921329071336,
+        "rows": 1.7441401543860697
+      },
+      "ratios_to_production": {
+        "portable": 0.4019438576867154,
+        "rows": 0.36663841136900316
+      }
+    },
+    {
+      "name": "dialogue-20-30s",
+      "audio_seconds": 10.0,
+      "production": {
+        "seconds": 2.0385432073333334,
+        "rtf": 0.20385432073333334,
+        "minimum": 2.014502391,
+        "maximum": 2.064640981,
+        "processes": [
+          {
+            "index": 0,
+            "seconds": [
+              2.050572944,
+              2.034327629,
+              2.064640981
+            ],
+            "mean": 2.0498471846666666
+          },
+          {
+            "index": 7,
+            "seconds": [
+              2.03414776,
+              2.014502391,
+              2.033067539
+            ],
+            "mean": 2.02723923
+          }
+        ]
+      },
+      "portable": {
+        "seconds": 0.898536155,
+        "rtf": 0.0898536155,
+        "minimum": 0.827453346,
+        "maximum": 0.965798942,
+        "processes": [
+          {
+            "index": 1,
+            "seconds": [
+              0.961293293,
+              0.891054468,
+              0.838662306
+            ],
+            "mean": 0.8970033556666667
+          },
+          {
+            "index": 6,
+            "seconds": [
+              0.965798942,
+              0.906954575,
+              0.827453346
+            ],
+            "mean": 0.9000689543333333
+          }
+        ]
+      },
+      "rows": {
+        "seconds": 0.8055272778333333,
+        "rtf": 0.08055272778333333,
+        "minimum": 0.742030795,
+        "maximum": 0.885215151,
+        "processes": [
+          {
+            "index": 2,
+            "seconds": [
+              0.885215151,
+              0.836257494,
+              0.762463402
+            ],
+            "mean": 0.8279786823333334
+          },
+          {
+            "index": 5,
+            "seconds": [
+              0.860671261,
+              0.742030795,
+              0.746525564
+            ],
+            "mean": 0.7830758733333333
+          }
+        ]
+      },
+      "ort": {
+        "seconds": 0.4300111971666667,
+        "rtf": 0.04300111971666667,
+        "minimum": 0.429434917,
+        "maximum": 0.43105307,
+        "processes": [
+          {
+            "index": 3,
+            "seconds": [
+              0.429606043,
+              0.429675346,
+              0.43105307
+            ],
+            "mean": 0.43011148633333335
+          },
+          {
+            "index": 4,
+            "seconds": [
+              0.429434917,
+              0.42945281,
+              0.430844997
+            ],
+            "mean": 0.429910908
+          }
+        ]
+      },
+      "ratios_to_ort": {
+        "production": 4.740674709787198,
+        "portable": 2.0895645530173,
+        "rows": 1.873270470957345
+      },
+      "ratios_to_production": {
+        "portable": 0.44077366217584196,
+        "rows": 0.3951484937555298
+      }
+    }
+  ],
+  "reports": {
+    "production": {
+      "pyannote": {
+        "passed": true,
+        "arrays": 18,
+        "values": 2917107,
+        "public_calls": 16,
+        "comparisons": [
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 2.439009518234645e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 2.439009518234645e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 2.439009518234645e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.0308961868286133e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.0308961868286133e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.0308961868286133e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 3.3588886952100494e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 3.3588886952100494e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 3.3588886952100494e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.7789344787597656e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.7789344787597656e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.7789344787597656e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 1.3988597738554441e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 1.3988597738554441e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 1.3988597738554441e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 2.7298927307128906e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 2.7298927307128906e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 2.7298927307128906e-05,
+            "bit_identical": false
+          }
+        ],
+        "profiles": [
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "graph_seconds": 0.706265425,
+            "operators": {
+              "InstanceNormalization": 0.005188793,
+              "Abs": 0.003902713,
+              "Constant": 4.978499999999999e-05,
+              "Add": 0.00010329600000000001,
+              "Clip": 3.946e-06,
+              "Sub": 1.9319999999999998e-05,
+              "Gather": 1.5633e-05,
+              "MatMul": 0.000891086,
+              "Sin": 0.000237519,
+              "Div": 0.002151798,
+              "Mul": 3.0715999999999995e-05,
+              "Reshape": 6.0642e-05,
+              "Slice": 0.000174295,
+              "Concat": 0.0005304200000000001,
+              "Unsqueeze": 1.0796e-05,
+              "Cos": 0.000241475,
+              "Neg": 0.000293172,
+              "Shape": 1.7366000000000003e-05,
+              "Equal": 4.497e-06,
+              "Cast": 7.05e-06,
+              "If": 0.012548304,
+              "MaxPool": 0.012042931,
+              "LeakyRelu": 0.0007251359999999999,
+              "Conv": 0.013451076,
+              "Transpose": 0.0006376040000000001,
+              "ConstantOfShape": 2.0421e-05,
+              "LSTM": 0.652111509,
+              "LogSoftmax": 4.8133e-05
+            }
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "graph_seconds": 1.422249018,
+            "operators": {
+              "Transpose": 0.000323418,
+              "Constant": 2.4448e-05,
+              "Unsqueeze": 4.1561000000000004e-05,
+              "ConvRelu": 0.6829630230000001,
+              "Conv": 0.7248402670000001,
+              "AddRelu": 0.012531603,
+              "Shape": 2.9024e-05,
+              "Gather": 1.29e-05,
+              "Mul": 9.114e-06,
+              "Concat": 1.981e-05,
+              "Reshape": 8.572e-06
+            }
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "graph_seconds": 0.716302032,
+            "operators": {
+              "InstanceNormalization": 0.005863159000000001,
+              "Abs": 0.0037603050000000002,
+              "Constant": 5.1642e-05,
+              "Add": 0.002471059,
+              "Clip": 3.836e-06,
+              "Sub": 1.9549e-05,
+              "Gather": 1.6785e-05,
+              "MatMul": 0.0008884600000000001,
+              "Sin": 0.00023835,
+              "Div": 0.000205981,
+              "Mul": 3.4170000000000007e-05,
+              "Reshape": 6.7091e-05,
+              "Slice": 0.00021923200000000003,
+              "Concat": 0.0005058939999999999,
+              "Unsqueeze": 1.31e-05,
+              "Cos": 0.000247173,
+              "Neg": 0.000268826,
+              "Shape": 1.8728e-05,
+              "Equal": 5.188e-06,
+              "Cast": 8.063e-06,
+              "If": 0.013351481,
+              "MaxPool": 0.010358083999999998,
+              "LeakyRelu": 0.004369624,
+              "Conv": 0.017260321,
+              "Transpose": 0.000646877,
+              "ConstantOfShape": 1.934e-05,
+              "LSTM": 0.654633006,
+              "LogSoftmax": 4.5419e-05
+            }
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "graph_seconds": 1.301190774,
+            "operators": {
+              "Transpose": 0.000346803,
+              "Constant": 2.9655e-05,
+              "Unsqueeze": 5.4572000000000005e-05,
+              "ConvRelu": 0.6385990870000001,
+              "Conv": 0.6507808220000001,
+              "AddRelu": 0.009964016000000003,
+              "Shape": 3.3891e-05,
+              "Gather": 1.6945e-05,
+              "Mul": 7.502e-06,
+              "Concat": 1.8268e-05,
+              "Reshape": 1.1708e-05
+            }
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "graph_seconds": 0.817147635,
+            "operators": {
+              "InstanceNormalization": 0.005731982000000001,
+              "Abs": 0.0037117120000000003,
+              "Constant": 3.0463e-05,
+              "Add": 6.6579e-05,
+              "Clip": 4.576e-06,
+              "Sub": 2.7342e-05,
+              "Gather": 1.4611999999999998e-05,
+              "MatMul": 0.0007752800000000002,
+              "Sin": 0.000182244,
+              "Div": 0.00018422799999999999,
+              "Mul": 3.7445e-05,
+              "Reshape": 7.346100000000001e-05,
+              "Slice": 0.000228154,
+              "Concat": 0.00046356,
+              "Unsqueeze": 1.4310999999999999e-05,
+              "Cos": 0.000183978,
+              "Neg": 0.000273403,
+              "Shape": 1.4561e-05,
+              "Equal": 5.158e-06,
+              "Cast": 9.804e-06,
+              "If": 0.012811616,
+              "MaxPool": 0.009932942,
+              "LeakyRelu": 0.0010237549999999999,
+              "Conv": 0.013244098000000001,
+              "Transpose": 0.003171837,
+              "ConstantOfShape": 2.6069e-05,
+              "LSTM": 0.764436951,
+              "LogSoftmax": 4.0822e-05
+            }
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "graph_seconds": 1.272591557,
+            "operators": {
+              "Transpose": 0.00032431,
+              "Constant": 6.42e-06,
+              "Unsqueeze": 1.9769000000000003e-05,
+              "ConvRelu": 0.613616945,
+              "Conv": 0.650942801,
+              "AddRelu": 0.007081628000000002,
+              "Shape": 2.0821e-05,
+              "Gather": 9.495e-06,
+              "Mul": 2.8042e-05,
+              "Concat": 1.32e-05,
+              "Reshape": 8.462e-06
+            }
+          }
+        ],
+        "result": {
+          "bytes": 383790,
+          "sha256": "a2a97932b78746ddfa7343c0084ee7fffaaf7298f43a73d989dba2239b159213"
+        }
+      },
+      "parakeet": {
+        "audit_consistent": true,
+        "application_passed": true,
+        "numeric_gate_passed": true,
+        "manifest_sha256": "3bad7d262b8809b1265c84c8e66d02ee38e7d4cff2d92014448976a9e161103c",
+        "result_sha256": "ac28188017f562db5cf6427944b507a6bb9b2aff1d1f8556f05be25ec0d697a6",
+        "arrays": 784,
+        "values": 3090494,
+        "maximum": 3.830720152728115e-05,
+        "failures": []
+      }
+    },
+    "portable": {
+      "pyannote": {
+        "passed": true,
+        "arrays": 18,
+        "values": 2917107,
+        "public_calls": 16,
+        "comparisons": [
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 2.439009518234645e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 2.439009518234645e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 2.439009518234645e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.0308961868286133e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.0308961868286133e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.0308961868286133e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 3.3588886952100494e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 3.3588886952100494e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 3.3588886952100494e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.7789344787597656e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.7789344787597656e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.7789344787597656e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 1.3988597738554441e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 1.3988597738554441e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 1.3988597738554441e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 2.7298927307128906e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 2.7298927307128906e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 2.7298927307128906e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          }
+        ],
+        "profiles": [
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "graph_seconds": 0.352930652,
+            "operators": {
+              "InstanceNormalization": 0.005598284,
+              "Abs": 0.003860006,
+              "Constant": 4.4437e-05,
+              "Add": 0.00010676199999999999,
+              "Clip": 5.138e-06,
+              "Sub": 2.4817e-05,
+              "Gather": 1.6895e-05,
+              "MatMul": 0.000924437,
+              "Sin": 0.000231401,
+              "Div": 0.0022281389999999996,
+              "Mul": 3.7879e-05,
+              "Reshape": 5.6135e-05,
+              "Slice": 0.00016722299999999998,
+              "Concat": 0.00055028,
+              "Unsqueeze": 1.32e-05,
+              "Cos": 0.000182066,
+              "Neg": 0.000314285,
+              "Shape": 1.7767e-05,
+              "Equal": 4.848e-06,
+              "Cast": 7.351e-06,
+              "If": 0.016440363,
+              "MaxPool": 0.010650079000000002,
+              "LeakyRelu": 0.0015208079999999998,
+              "Conv": 0.0065398669999999996,
+              "Transpose": 0.0005886719999999999,
+              "ConstantOfShape": 2.0341e-05,
+              "LSTM": 0.301890744,
+              "LogSoftmax": 4.8012e-05
+            }
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "graph_seconds": 0.94823247,
+            "operators": {
+              "Transpose": 0.00036403,
+              "Constant": 2.4287000000000003e-05,
+              "Unsqueeze": 3.2159e-05,
+              "ConvRelu": 0.450809406,
+              "Conv": 0.489371764,
+              "AddRelu": 0.006706867999999999,
+              "Shape": 2.9184e-05,
+              "Gather": 1.7337e-05,
+              "Mul": 2.1242e-05,
+              "Concat": 2.0181e-05,
+              "Reshape": 1.0375e-05
+            }
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "graph_seconds": 0.35627675,
+            "operators": {
+              "InstanceNormalization": 0.004806375,
+              "Abs": 0.003884352,
+              "Constant": 4.058400000000001e-05,
+              "Add": 0.002516083,
+              "Clip": 4.246e-06,
+              "Sub": 2.67e-05,
+              "Gather": 1.4683000000000002e-05,
+              "MatMul": 0.0009015220000000001,
+              "Sin": 0.000184639,
+              "Div": 0.000181134,
+              "Mul": 3.3772e-05,
+              "Reshape": 6.3898e-05,
+              "Slice": 0.00018831399999999997,
+              "Concat": 0.00047196200000000003,
+              "Unsqueeze": 1.337e-05,
+              "Cos": 0.000186432,
+              "Neg": 0.000281686,
+              "Shape": 1.8899e-05,
+              "Equal": 5.198e-06,
+              "Cast": 8.043e-06,
+              "If": 0.017247343,
+              "MaxPool": 0.010588477,
+              "LeakyRelu": 0.001734113,
+              "Conv": 0.007057900000000001,
+              "Transpose": 0.000584664,
+              "ConstantOfShape": 1.97e-05,
+              "LSTM": 0.304429141,
+              "LogSoftmax": 4.6871e-05
+            }
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "graph_seconds": 0.895629486,
+            "operators": {
+              "Transpose": 0.000339183,
+              "Constant": 2.9143000000000002e-05,
+              "Unsqueeze": 3.8069000000000004e-05,
+              "ConvRelu": 0.430785207,
+              "Conv": 0.4568923489999999,
+              "AddRelu": 0.006639708,
+              "Shape": 2.4035999999999998e-05,
+              "Gather": 1.2868999999999998e-05,
+              "Mul": 8.744e-06,
+              "Concat": 2.002e-05,
+              "Reshape": 9.134e-06
+            }
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "graph_seconds": 0.390004015,
+            "operators": {
+              "InstanceNormalization": 0.006452510999999999,
+              "Abs": 0.003663422,
+              "Constant": 4.388800000000001e-05,
+              "Add": 0.000107282,
+              "Clip": 4.537e-06,
+              "Sub": 3.0386e-05,
+              "Gather": 1.5673e-05,
+              "MatMul": 0.0009115989999999999,
+              "Sin": 0.000184549,
+              "Div": 0.00019553700000000002,
+              "Mul": 4.643e-05,
+              "Reshape": 7.4643e-05,
+              "Slice": 0.00020374799999999996,
+              "Concat": 0.000544984,
+              "Unsqueeze": 1.5844e-05,
+              "Cos": 0.00018590099999999998,
+              "Neg": 0.000277509,
+              "Shape": 1.6164e-05,
+              "Equal": 5.969e-06,
+              "Cast": 8.653e-06,
+              "If": 0.016747965,
+              "MaxPool": 0.010370948,
+              "LeakyRelu": 0.0017417149999999998,
+              "Conv": 0.006604751,
+              "Transpose": 0.0030969939999999996,
+              "ConstantOfShape": 2.7632e-05,
+              "LSTM": 0.33767546600000004,
+              "LogSoftmax": 5.94e-05
+            }
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "graph_seconds": 0.86270581,
+            "operators": {
+              "Transpose": 0.000341537,
+              "Constant": 2.1853e-05,
+              "Unsqueeze": 7.493499999999999e-05,
+              "ConvRelu": 0.4094095129999999,
+              "Conv": 0.4419255659999999,
+              "AddRelu": 0.010124245999999996,
+              "Shape": 2.9614999999999997e-05,
+              "Gather": 5.6585999999999997e-05,
+              "Mul": 9.064e-06,
+              "Concat": 3.1938e-05,
+              "Reshape": 1.2799e-05
+            }
+          }
+        ],
+        "result": {
+          "bytes": 383796,
+          "sha256": "635f130aa175f549bd0a2bc07aef69357de32ec363a098eff16b1d8e476b0d85"
+        }
+      },
+      "parakeet": {
+        "audit_consistent": true,
+        "application_passed": true,
+        "numeric_gate_passed": true,
+        "manifest_sha256": "3bad7d262b8809b1265c84c8e66d02ee38e7d4cff2d92014448976a9e161103c",
+        "result_sha256": "268ff10b583174a1d6aaa6f9998096bdb6f87a2241431bbfd44b25985aa95a43",
+        "arrays": 784,
+        "values": 3090494,
+        "maximum": 3.830720152728115e-05,
+        "failures": []
+      }
+    },
+    "rows": {
+      "pyannote": {
+        "passed": true,
+        "arrays": 18,
+        "values": 2917107,
+        "public_calls": 16,
+        "comparisons": [
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 2.439009518234645e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 2.439009518234645e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 2.439009518234645e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.0308961868286133e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.0308961868286133e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.0308961868286133e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 3.3588886952100494e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 3.3588886952100494e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 3.3588886952100494e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.7789344787597656e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.7789344787597656e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 3.7789344787597656e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 1.3988597738554441e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 1.3988597738554441e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 1.3988597738554441e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 4123,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 2.7298927307128906e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 0,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 2.7298927307128906e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 1,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "native",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 2.7298927307128906e-05,
+            "bit_identical": false
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "pass_index": 2,
+            "reference": "production",
+            "values": 320000,
+            "failed_values": 0,
+            "maximum": 0.0,
+            "bit_identical": true
+          }
+        ],
+        "profiles": [
+          {
+            "name": "dialogue-0-10s",
+            "model": "segmentation",
+            "graph_seconds": 0.3524926,
+            "operators": {
+              "InstanceNormalization": 0.005837134999999999,
+              "Abs": 0.0038753,
+              "Constant": 4.5198e-05,
+              "Add": 0.00010420700000000001,
+              "Clip": 3.736e-06,
+              "Sub": 1.9759e-05,
+              "Gather": 1.4713e-05,
+              "MatMul": 0.0008573979999999999,
+              "Sin": 0.000173983,
+              "Div": 0.002154818,
+              "Mul": 3.0634e-05,
+              "Reshape": 5.5253999999999996e-05,
+              "Slice": 0.00015843999999999998,
+              "Concat": 0.00048726700000000005,
+              "Unsqueeze": 9.275e-06,
+              "Cos": 0.000178149,
+              "Neg": 0.000293474,
+              "Shape": 1.4191999999999999e-05,
+              "Equal": 4.086e-06,
+              "Cast": 3.8108e-05,
+              "If": 0.012623956,
+              "MaxPool": 0.010507166,
+              "LeakyRelu": 0.0012177109999999998,
+              "Conv": 0.00550949,
+              "Transpose": 0.0005526870000000001,
+              "ConstantOfShape": 1.9219e-05,
+              "LSTM": 0.305794436,
+              "LogSoftmax": 4.8303e-05
+            }
+          },
+          {
+            "name": "dialogue-0-10s",
+            "model": "embedding",
+            "graph_seconds": 0.687482627,
+            "operators": {
+              "Transpose": 0.000336999,
+              "Constant": 2.0680999999999997e-05,
+              "Unsqueeze": 2.6068000000000002e-05,
+              "ConvRelu": 0.331713452,
+              "Conv": 0.34809406000000004,
+              "AddRelu": 0.006540067,
+              "Shape": 2.1651e-05,
+              "Gather": 1.298e-05,
+              "Mul": 6.971e-06,
+              "Concat": 1.6985e-05,
+              "Reshape": 7.451e-06
+            }
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "segmentation",
+            "graph_seconds": 0.382770308,
+            "operators": {
+              "InstanceNormalization": 0.004448426,
+              "Abs": 0.003774306,
+              "Constant": 5.1369e-05,
+              "Add": 0.002549996,
+              "Clip": 4.427e-06,
+              "Sub": 2.1444e-05,
+              "Gather": 1.6674e-05,
+              "MatMul": 0.0008378750000000001,
+              "Sin": 0.000189166,
+              "Div": 0.00018538000000000002,
+              "Mul": 3.7236999999999996e-05,
+              "Reshape": 7.612399999999999e-05,
+              "Slice": 0.000216848,
+              "Concat": 0.000490302,
+              "Unsqueeze": 1.6325e-05,
+              "Cos": 0.00018478899999999998,
+              "Neg": 0.000274505,
+              "Shape": 1.7868e-05,
+              "Equal": 1.6946e-05,
+              "Cast": 7.18e-06,
+              "If": 0.010870886,
+              "MaxPool": 0.010122914,
+              "LeakyRelu": 0.0009233760000000001,
+              "Conv": 0.004022452,
+              "Transpose": 0.000619826,
+              "ConstantOfShape": 2.024e-05,
+              "LSTM": 0.34196262,
+              "LogSoftmax": 5.0256e-05
+            }
+          },
+          {
+            "name": "dialogue-10-20s",
+            "model": "embedding",
+            "graph_seconds": 0.574700399,
+            "operators": {
+              "Transpose": 0.000329879,
+              "Constant": 2.7313e-05,
+              "Unsqueeze": 4.087299999999999e-05,
+              "ConvRelu": 0.278667172,
+              "Conv": 0.28780214099999996,
+              "AddRelu": 0.007032169999999999,
+              "Shape": 3.5313e-05,
+              "Gather": 1.4981000000000001e-05,
+              "Mul": 7.522e-06,
+              "Concat": 2.1542e-05,
+              "Reshape": 8.213e-06
+            }
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "segmentation",
+            "graph_seconds": 0.385512398,
+            "operators": {
+              "InstanceNormalization": 0.003187918,
+              "Abs": 0.003886996,
+              "Constant": 4.8203e-05,
+              "Add": 0.000103968,
+              "Clip": 4.567e-06,
+              "Sub": 3.0527e-05,
+              "Gather": 1.5073e-05,
+              "MatMul": 0.0008409610000000001,
+              "Sin": 0.000177619,
+              "Div": 0.000204942,
+              "Mul": 4.0771e-05,
+              "Reshape": 7.2829e-05,
+              "Slice": 0.00019908000000000003,
+              "Concat": 0.000510281,
+              "Unsqueeze": 1.1887999999999999e-05,
+              "Cos": 0.000181235,
+              "Neg": 0.000273674,
+              "Shape": 1.6835e-05,
+              "Equal": 4.838e-06,
+              "Cast": 6.529e-06,
+              "If": 0.01114545,
+              "MaxPool": 0.010443387,
+              "LeakyRelu": 0.0017273619999999999,
+              "Conv": 0.004540274,
+              "Transpose": 0.0031250140000000006,
+              "ConstantOfShape": 2.6731e-05,
+              "LSTM": 0.343985749,
+              "LogSoftmax": 4.2635e-05
+            }
+          },
+          {
+            "name": "dialogue-20-30s",
+            "model": "embedding",
+            "graph_seconds": 0.566613283,
+            "operators": {
+              "Transpose": 0.00043014,
+              "Constant": 2.9623999999999996e-05,
+              "Unsqueeze": 3.5594e-05,
+              "ConvRelu": 0.27008600899999996,
+              "Conv": 0.288793268,
+              "AddRelu": 0.006470870000000001,
+              "Shape": 3.316e-05,
+              "Gather": 1.1498e-05,
+              "Mul": 8.161999999999999e-06,
+              "Concat": 1.969e-05,
+              "Reshape": 8.873e-06
+            }
+          }
+        ],
+        "result": {
+          "bytes": 383789,
+          "sha256": "f9e02ef6e7230f1ea08601ff32a7494efad4f9521745b550af7362ba733d2a51"
+        }
+      },
+      "parakeet": {
+        "audit_consistent": true,
+        "application_passed": true,
+        "numeric_gate_passed": true,
+        "manifest_sha256": "3bad7d262b8809b1265c84c8e66d02ee38e7d4cff2d92014448976a9e161103c",
+        "result_sha256": "8230745f202dd5ae7a11cc668e08c34a655edfe22d62ebca7e1be315e8f2adf7",
+        "arrays": 784,
+        "values": 3090494,
+        "maximum": 3.830720152728115e-05,
+        "failures": []
+      }
+    }
+  },
+  "resource_samples": 2769,
+  "maximum_centroid_error": 3.0547380447387695e-06,
+  "peak_rss": 5759598592,
+  "operator_tests": {
+    "backend": {
+      "passed": 3198,
+      "skipped": [
+        "Lokad.Onnx.Backend.Tests.TokenizerTests.Batch_PadsToLongestWithMasks",
+        "Lokad.Onnx.Backend.Tests.TokenizerTests.MultiSpace_CollapsesToSingleSpaceIds",
+        "Lokad.Onnx.Backend.Tests.DataAcquisitionTests.Me5sTokenizerPath_PrefersAssemblyCopy",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionGpt2Tests.Gpt2Continuation_WithNonemptyPast_StateAdvances",
+        "Lokad.Onnx.Backend.Tests.TokenizerTests.GetOrLoad_ReturnsSharedCachedInstance",
+        "Lokad.Onnx.Backend.Tests.TokenizerTests.ConcurrentFromFile_MatchesSerial",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionResNetTests.ResNetOutput_MatchesFrozenBitHash",
+        "Lokad.Onnx.Backend.Tests.CliInputTests.ExplicitMe5sProps_Tokenize",
+        "Lokad.Onnx.Backend.Tests.TokenizerLifetimeTests.DeletedAsset_EvictsInsteadOfServingStale",
+        "Lokad.Onnx.Backend.Tests.DataAcquisitionTests.EnsureMe5sTokenizer_UsesLocalAssets",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionGpt2Tests.Gpt2LongerPrefill_MatchesReference",
+        "Lokad.Onnx.Backend.Tests.PackedAvx512NarrowTests.UnsupportedHardwareDeclinesBeforeReadingPointers",
+        "Lokad.Onnx.Backend.Tests.PreprocessingBoundaryTests.LongText_TruncatesTo512Deterministically",
+        "Lokad.Onnx.Backend.Tests.TokenizerBatchTests.Batch_MatchesSerialSingles_Exactly",
+        "Lokad.Onnx.Backend.Tests.GraphFusionRopeTests.DinoV3FusesRopeBranches",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionDinoV3Tests.CanInferWithDinoV3RampInput",
+        "Lokad.Onnx.Backend.Tests.GraphFusionGeluTanhTests.Gpt2_FusesTwelveTanhGelu",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionResNetTests.CanInferWithResNet50",
+        "Lokad.Onnx.Backend.Tests.GraphFusionRopeTests.DinoV2HasNoRopePatterns",
+        "Lokad.Onnx.Backend.Tests.TokenizerLifetimeTests.TouchedAsset_ReloadsWithStableResults",
+        "Lokad.Onnx.Backend.Tests.TokenizerLifetimeTests.GetOrLoad_IdentityAndMissingPath",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionGpt2Tests.Gpt2SecondDecode_MatchesReference",
+        "Lokad.Onnx.Backend.Tests.ModelManifestTests.Manifest_IdentifiesPresentAssets",
+        "Lokad.Onnx.Backend.Tests.TokenizerBatchTests.Batch_Truncates_LikeSingle",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionGpt2Tests.Gpt2Continuation_ZeroedPast_Diverges",
+        "Lokad.Onnx.Backend.Tests.PackedPanelTraversalTests.UnsupportedHardwareDeclinesBeforeReadingPointers",
+        "Lokad.Onnx.Backend.Tests.CliInputTests.DefaultTextFile_TokenizesWithMe5s",
+        "Lokad.Onnx.Backend.Tests.TokenizerTests.HelloWorld_HasLiteralIds",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionResNetTests.CanInferWithResNet50RampInput",
+        "Lokad.Onnx.Backend.Tests.TokenizerLifetimeTests.EnsureMe5sTokenizer_SucceedsWhenSeeded",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionDinoV3Tests.CanInferWithDinoV3Small",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionDinoV2Tests.CanInferWithDinoV2Small",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionGpt2Tests.Gpt2RetainedPast_SurvivesNextRun",
+        "Lokad.Onnx.Backend.Tests.GraphLifetimeTests.Lifetime_PinsFusedE5Graph",
+        "Lokad.Onnx.Backend.Tests.TokenizerBatchTests.EmptyBatch_ReturnsZeroShapedNamedTensors",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionGpt2Tests.CanInferWithGpt2",
+        "Lokad.Onnx.Backend.Tests.TokenizerLifetimeTests.ConcurrentSharedBatch_MatchesSerial",
+        "Lokad.Onnx.Backend.Tests.GraphExecutionDinoV3Tests.DinoV3Outputs_MatchFrozenBitHash",
+        "Lokad.Onnx.Backend.Tests.TokenizerLifetimeTests.SecondSharedCall_AllocatesLittle",
+        "Lokad.Onnx.Backend.Tests.PackedAvx512RowTests.UnsupportedHardwareDeclinesWithoutTouchingMemory",
+        "Lokad.Onnx.Backend.Tests.GraphFusionRopeTests.E5HasNoRopePatterns"
+      ],
+      "required_executed": [
+        "ConvPackedRowsTests.PackedProductClearsOldOutputAndPreservesGuardsAndInputs",
+        "ConvPackedRowsTests.AllAlignedConvTilesUseOneAccountedPackingCarve",
+        "PackedAvx512RowTests.RowGroupsMatchIndependentFmaOracleAndPreserveGuards"
+      ],
+      "trx": {
+        "bytes": 4755500,
+        "sha256": "a2fafa21b2c1c46cfea99b58eb1fbe4aa3b0d4f7677789405efeceea61fd4ee3"
+      }
+    },
+    "tensors": {
+      "passed": 342,
+      "skipped": [],
+      "required_executed": [],
+      "trx": {
+        "bytes": 487153,
+        "sha256": "983fc59dbb0f767d0685e0eb205ebed37394bd19e090b3a8e77500fa9eeb05fc"
+      }
+    }
+  },
+  "accounting": {
+    "sdk-version": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.004806744353241401,
+      "foreign_cpu_seconds": 0.010000000000005116,
+      "wall_seconds": 0.5201025509741157,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "backend-restore": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0,
+      "foreign_cpu_seconds": 0.0,
+      "wall_seconds": 2.0313728480250575,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "backend-build": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0011251462593677372,
+      "foreign_cpu_seconds": 0.13000000000001252,
+      "wall_seconds": 28.885133581003174,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 2,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "tensors-restore": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0,
+      "foreign_cpu_seconds": 0.0,
+      "wall_seconds": 1.03879279299872,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "tensors-build": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.00133925705155258,
+      "foreign_cpu_seconds": 0.02999999999999603,
+      "wall_seconds": 5.600119851005729,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "cli-restore": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.002400446362437289,
+      "foreign_cpu_seconds": 0.009999999999999787,
+      "wall_seconds": 1.0414729689946398,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "cli-build": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0021071295417645713,
+      "foreign_cpu_seconds": 0.029999999999981597,
+      "wall_seconds": 3.559344525972847,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "il-bridge-restore": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0,
+      "foreign_cpu_seconds": 0.0,
+      "wall_seconds": 1.040413923037704,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "il-bridge-build": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0016352552160011852,
+      "foreign_cpu_seconds": 0.020000000000010232,
+      "wall_seconds": 3.057626694033388,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "il-bridge": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0,
+      "foreign_cpu_seconds": 0.0,
+      "wall_seconds": 1.042659726983402,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "backend-tests": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.001288629720975994,
+      "foreign_cpu_seconds": 0.10999999999999821,
+      "wall_seconds": 21.34049801301444,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "tensors-tests": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0010526551483773417,
+      "foreign_cpu_seconds": 0.030000000000002913,
+      "wall_seconds": 7.124840467993636,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 2,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "production-pyannote": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0008822557837441557,
+      "foreign_cpu_seconds": 0.759999999999996,
+      "wall_seconds": 215.35704667604296,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 8,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "production-parakeet": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0035495700802637563,
+      "foreign_cpu_seconds": 0.5400000000000031,
+      "wall_seconds": 38.03277494100621,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 2,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "portable-pyannote": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0009273169680667941,
+      "foreign_cpu_seconds": 0.3500000000000021,
+      "wall_seconds": 94.35824320395477,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 2,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "portable-parakeet": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.002528706825278009,
+      "foreign_cpu_seconds": 0.36999999999998767,
+      "wall_seconds": 36.57996216695756,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 2,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "rows-pyannote": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.000902961768515947,
+      "foreign_cpu_seconds": 0.3100000000000267,
+      "wall_seconds": 85.82866152503993,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 6,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "rows-parakeet": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0013148544286522904,
+      "foreign_cpu_seconds": 0.18999999999999062,
+      "wall_seconds": 36.12567213899456,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 1,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "native-conformance": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.00014869229511382074,
+      "foreign_cpu_seconds": 0.010000000000005116,
+      "wall_seconds": 16.81324508500984,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 2,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "timing-00-production": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0008361150270297997,
+      "foreign_cpu_seconds": 0.6599999999999977,
+      "wall_seconds": 197.34126844501588,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 3,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "timing-01-portable": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0010720351433467215,
+      "foreign_cpu_seconds": 0.35999999999998034,
+      "wall_seconds": 83.95247166900663,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 2,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "timing-02-rows": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0007536167018453663,
+      "foreign_cpu_seconds": 0.23000000000002613,
+      "wall_seconds": 76.29873363900697,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 1,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "timing-03-ort": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0008450920957969769,
+      "foreign_cpu_seconds": 0.15999999999997436,
+      "wall_seconds": 47.33211942098569,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 4,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "timing-04-ort": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0008450590914053695,
+      "foreign_cpu_seconds": 0.16000000000002057,
+      "wall_seconds": 47.33396801102208,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 0,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "timing-05-rows": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0011282882437507946,
+      "foreign_cpu_seconds": 0.34000000000000163,
+      "wall_seconds": 75.33535909000784,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 3,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "timing-06-portable": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0006248691371527918,
+      "foreign_cpu_seconds": 0.21000000000000363,
+      "wall_seconds": 84.01759165001567,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 2,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    },
+    "timing-07-production": {
+      "valid": true,
+      "foreign_cpu_fraction": 0.0008777560707328845,
+      "foreign_cpu_seconds": 0.6899999999999797,
+      "wall_seconds": 196.5238472870551,
+      "logical_cpus": 4,
+      "exited_foreign_processes": 5,
+      "vanished_during_snapshots": 0,
+      "limitation": "snapshot deltas miss some CPU of exited/short-lived processes; stability gates still required"
+    }
+  },
+  "limitation": "Descriptive matched AMD comparison; no calibrated parity claim or automatic production promotion"
+}

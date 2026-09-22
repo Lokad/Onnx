@@ -15,12 +15,18 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
 
-The latest accepted **Windows pyannote candidate** completes the 30-second
-dialogue in **10.493 s versus Microsoft ORT 6.320 s (1.660×)**. Its immediate
-predecessor takes 11.482 s in the same comparison, an 8.6% reduction. On the
-**AMD target**, the retained production baselines are **pyannote 46.561 s versus
-ORT 9.270 s (5.023×)** and **Parakeet 79.362 s versus ORT 40.764 s (1.947×)**
-for twenty clips totaling 213.265 seconds. New AMD candidate timing is pending.
+The latest **AMD pyannote candidate** completes the 30-second dialogue in
+**15.780 s versus Microsoft ORT 8.945 s (1.764×)**. Production takes 42.568 s
+in that same comparison: the candidate uses 62.9% less time. Its AVX-512 row
+sharing also improves on the older portable candidate's 17.435 s by 9.5%.
+The [complete AMD comparison](#audio-amd-pyannote-candidates-versus-microsoft-ort)
+qualifies the next integration step; these isolated candidates are not yet
+promoted to production.
+
+The latest accepted **Windows pyannote candidate** takes **10.493 s versus
+Microsoft ORT 6.320 s (1.660×)**, down 8.6% from its contemporary 11.482 s
+predecessor. The retained **AMD Parakeet baseline** is **79.362 s versus ORT
+40.764 s (1.947×)** for twenty clips totaling 213.265 seconds.
 Each comparison uses complete application timers; compare engines within a
 row, preserving the hardware and implementation distinctions below.
 
@@ -281,6 +287,40 @@ claimed from that grid.
 The [conditioned successor](tests/parakeet/wide-matmul-conditioned/results-20260921.md)
 also fails its fixed control limits despite passing all numerical checks. No
 prototype is promoted and the ORT comparison tables remain unchanged.
+
+### Audio: AMD pyannote candidates versus Microsoft ORT
+
+Fresh complete-application measurements on AMD EPYC 9V74, CPU2, .NET 10.0.8,
+Microsoft ORT 1.29.0. Production Core `d1f86a73`, portable convolution/LSTM
+Core `469cb2d6` and AVX-512 row-sharing Core `29477d50` use identical Data
+`e7fe1668`, models, inputs and public consumer.
+
+| Workload | Production seconds | Portable seconds | AVX-512 rows seconds | Microsoft ORT seconds | Rows / ORT |
+|---|---:|---:|---:|---:|---:|
+| pyannote, dialogue-30s | 42.568 | 17.435 | 15.780 | 8.945 | 1.764 |
+| pyannote, dialogue-0-10s | 2.059 | 0.814 | 0.732 | 0.428 | 1.710 |
+| pyannote, dialogue-10-20s | 2.046 | 0.822 | 0.750 | 0.430 | 1.744 |
+| pyannote, dialogue-20-30s | 2.039 | 0.899 | 0.806 | 0.430 | 1.873 |
+
+All 128 requests pass, including 96 measured calls and 32 warmups in eight
+fresh processes. The independent audit also passes 3,198 backend tests with
+41 skips, 342 tensor tests, all three required AVX-512 hardware tests, all
+54 pyannote graph arrays and all 2,352 Parakeet trajectory arrays across the
+three cores. Parakeet's native gate passes on AMD; this does not erase its
+separate Windows discrepancies. All 2,769 resource samples pass.
+
+The AVX-512 candidate is faster than the portable candidate on every fixture
+in both process repetitions. Full-request process mean max/min is 1.0118 for
+that candidate and 1.0002 for ORT; its largest crop variation is 1.0573. Every
+sample remains in the [complete report](tests/pyannote/amd-results/results-20260922.md).
+These are descriptive results, without a calibrated parity claim.
+
+This older frozen payload does not include the later pooling, request contexts,
+portable three-row path, sparse mel frontend or LSTM storage guard. Combining
+those changes with the AVX-512 path requires a new target qualification and
+comparison, including an explicit choice where the two matrix paths overlap.
+Production source remains unchanged by this campaign. The earlier matched
+production baselines below are retained separately.
 
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)
 
