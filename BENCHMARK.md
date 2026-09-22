@@ -28,6 +28,13 @@ The root build matches all 3,108 Core / 697 Data methods and public declarations
 of the measured Core `e9c87932` / Data `85d166b5` candidate. Its own binaries
 are Core `de17733b` / Data `988ba1ad`; no separate rebuild timing is claimed.
 
+The latest [direct-output Pyannote trial](#audio-amd-direct-output-pyannote-trial-versus-microsoft-ort)
+is **not selected**: candidate **15.717 s**, contemporary production **16.197 s**,
+and Microsoft ORT **9.068 s**. Its 2.962% full-request reduction misses the
+predeclared 3% gate (ratio 0.970383, limit 0.970000). All correctness,
+repeatability and resource checks pass. Root product source remains unchanged;
+the earlier accepted comparison above retains its own measurements.
+
 The preceding combined AVX-512 trial measured 15.185 s versus its contemporary
 portable control's 15.255 s and ORT's 8.951 s. Its 0.46% additional gain misses
 the fixed 3% selection gate; that path remains unselected. Its separate
@@ -150,8 +157,11 @@ tests, 343 tensor tests and an independent NuGet consumer. The candidate keeps
 the component's four kernel bodies unchanged. Its
 [complete Windows model checks](tests/pyannote/direct-models/results-20260922.md)
 preserve all 18 Pyannote graph arrays, 16 public requests and 166 shared-model
-arrays bit-for-bit, with the original native bounds. AMD application qualification
-remains pending; no additional speedup is claimed.
+arrays bit-for-bit, with the original native bounds. Its
+[completed AMD application trial](tests/pyannote/direct-amd-results/results-20260922.md)
+passes fresh native qualification, both ten-minute meetings, recovery and all
+96 timing requests. All twelve repeatability controls pass, but the full-request
+gain narrowly misses the original gate. The candidate remains unselected.
 
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
@@ -379,6 +389,37 @@ claimed from that grid.
 The [conditioned successor](tests/parakeet/wide-matmul-conditioned/results-20260921.md)
 also fails its fixed control limits despite passing all numerical checks. No
 prototype is promoted and the ORT comparison tables remain unchanged.
+
+### Audio: AMD direct-output pyannote trial versus Microsoft ORT
+
+AMD EPYC 9V74, CPU2, .NET 10.0.8 and Microsoft ORT 1.29.0. Production is
+selected Core `e9c87932` / Data `85d166b5`; the direct-output candidate is
+Core `19b9007d` / Data `cb6f86b0`. Timers include features, neural inference,
+clustering and owned results; loading, file access and external checks are excluded.
+
+| Workload | Production seconds | Candidate seconds | Microsoft ORT seconds | Candidate / ORT |
+|---|---:|---:|---:|---:|
+| pyannote, dialogue-30s | 16.197 | 15.717 | 9.068 | 1.733 |
+| pyannote, dialogue-0-10s | 0.759 | 0.730 | 0.434 | 1.683 |
+| pyannote, dialogue-10-20s | 0.762 | 0.742 | 0.436 | 1.701 |
+| pyannote, dialogue-20-30s | 0.859 | 0.813 | 0.437 | 1.859 |
+
+**Not selected.** Candidate / production is 0.970383 on the complete dialogue,
+above the fixed 0.970000 limit. All three crop gates and all twelve process
+repeatability controls pass. Six fresh processes retain 24 warmups and 72
+measurements, with six measured requests per mean. No sample is removed and
+the unchanged trial is not repeated. Parity remains unmet.
+
+Fresh native qualification passes for both managed roles, including 36 Pyannote
+arrays, 32 public requests and 1,568 Parakeet arrays. Pyannote outputs remain
+bit-for-bit equal to production. Normal Linux builds match all 3,113 Core /
+697 Data methods; 3,363 backend tests, 343 tensor tests and both 400-case caller
+modes pass. Both ten-minute meetings and recovery preserve native timelines.
+All 3,265 resource samples pass, with peak owned RSS 6.88 GB. The
+[complete report](tests/pyannote/direct-amd-results/results-20260922.md)
+includes every raw clock, process mean and gate. The conditional root integration
+is not executed. Compare engines within this trial; its times do not replace or
+combine with the earlier accepted campaign below.
 
 ### Audio: AMD selected pyannote versus production and Microsoft ORT
 
