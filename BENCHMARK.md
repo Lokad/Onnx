@@ -46,6 +46,9 @@ and8.1–8.5% to the two LSTM projection helpers. Profiling adds about12.2% wall
 time versus its unprofiled control. These diagnostic samples guide a distinct
 wider-projection experiment; the matched application and Microsoft ORT figures
 above remain unchanged.
+The [isolated wider LSTM prototype](tests/pyannote/lstm-wide-results/build-20260922.md)
+now builds with its compiled changes confined to four dispatch methods and
+two new helpers. Numerical qualification and timing remain pending.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
