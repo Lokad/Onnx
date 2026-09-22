@@ -34,6 +34,12 @@ The [Parakeet arithmetic trial](#audio-amd-parakeet-arithmetic-trial-versus-micr
 takes 78.066 s and is **not selected**: it is 3.90% slower than contemporary
 production. The full application parity target remains <=1.05.
 
+A [bounded LSTM input-row candidate](tests/pyannote/lstm-input-blocks-v6/results-20260922.md)
+now preserves all captured Pyannote recurrent outputs and the unchanged Microsoft
+ORT error bound in local AVX2/scalar checks. It adds at most8KiB of scratch per
+call. Actual AMD qualification and timing remain pending; the candidate is not
+integrated and supplies no new application speed ratio.
+
 The latest [Pyannote twelve-position convolution screen](tests/pyannote/spatial-weight-screen/results-20260922.md)
 is **not selected**. The sum of all 108 prepared graph call means rises from
 1.421477 s to 1.466015 s: **3.13% slower**. All 32 repeatability controls pass;
