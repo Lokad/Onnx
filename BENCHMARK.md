@@ -131,6 +131,12 @@ platform/mode and every repeated-process control passes. Its mean ratio is
 unchanged 1.05 per-shape limit. All 22 shapes and all samples are retained;
 the accepted application timings and root product remain unchanged.
 
+The subsequent [AMD generated-code inspection](tests/pyannote/tail-codegen/results-20260922.md)
+finds two/three address reloads per continuing narrow reduction iteration in
+the rejected masked/ordinary-store candidates, versus zero in the selected
+kernel. All outputs and 956 resource checks pass. This diagnostic motivates a
+smaller tail routine; it provides no new timing ratio or product selection.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
