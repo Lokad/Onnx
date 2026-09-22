@@ -147,12 +147,15 @@ public partial class CPUExecutionProvider
         float[] yArr = pool is null ? new float[yLen] : pool.Rent<float>(yLen);
         float[]? yhArr = outputCount > 1 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
         float[]? ycArr = outputCount > 2 ? (pool is null ? new float[hLen] : pool.Rent<float>(hLen)) : null;
-        var xw = new float[4 * hiddenSize];
+        Span<float> xw = new float[4 * hiddenSize];
         var hr = new float[4 * hiddenSize];
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
         int H = hiddenSize;
         using var projections = LstmProjectionPanels.Create(ws, rs, inputSize, H, numDirections, seq, opts.Tensor);
+        // At most four rows of four gates: <= 8 KiB under existing panel admission.
+        var inputBlock = projections is null ? null : new float[16 * H];
+        if (inputBlock is not null) opts.Tensor.ScratchReporter?.AddScratchBytes((long)inputBlock.Length * sizeof(float));
         for (int d = 0; d < numDirections; d++)
         {
             // The solo reverse direction and the second bidirectional
@@ -188,7 +191,13 @@ public partial class CPUExecutionProvider
                     int xOff = (t * batch + b) * inputSize;
                     if (projections is not null)
                     {
-                        projections.Input(d, xs.Slice(xOff, inputSize), xw);
+                        if (s % 4 == 0)
+                        {
+                            int rows = Math.Min(4, limit - s);
+                            int stride = checked(batch * inputSize);
+                            projections.InputBlock(d, xs, xOff, rev ? -stride : stride, rows, inputBlock.AsSpan(0, rows * 4 * H));
+                        }
+                        xw = inputBlock.AsSpan((s % 4) * 4 * H, 4 * H);
                         projections.Recurrent(d, hv, hr);
                     }
                     else

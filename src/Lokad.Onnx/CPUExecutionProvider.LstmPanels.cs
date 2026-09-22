@@ -59,6 +59,10 @@ public partial class CPUExecutionProvider
         internal void Input(int direction, ReadOnlySpan<float> x, Span<float> y) =>
             LstmProjectOrdered(x, storage.AsSpan(direction * inputSize * outputs, inputSize * outputs), y);
 
+        internal void InputBlock(int direction, ReadOnlySpan<float> input, int start, int stride, int rows, Span<float> output) =>
+            LstmProjectOrderedRows(input, start, stride, inputSize,
+                storage.AsSpan(direction * inputSize * outputs, inputSize * outputs), output, rows);
+
         internal void Recurrent(int direction, ReadOnlySpan<float> x, Span<float> y) =>
             LstmProjectOrdered(x, storage.AsSpan(inputElements + direction * hiddenSize * outputs, hiddenSize * outputs), y);
 

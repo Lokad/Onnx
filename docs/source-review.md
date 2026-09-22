@@ -14,7 +14,7 @@ The selective import review uses
 after the common release ancestor `4495fc6`. Integration follows behaviors and
 their necessary fixes; it does not merge the branch or replay every experiment.
 
-The latest selected Pyannote source is the
+The preceding selected Pyannote source is the
 [prepared spatial convolution integration](../tests/pyannote/blocked-spatial-root-results/results-20260922.md).
 Its fresh matched AMD dialogue takes **13.165 seconds**, versus contemporary
 production **14.440 seconds** and Microsoft ORT **8.953 seconds**: **8.83% less
@@ -58,9 +58,15 @@ the existing gate loop. Extra scratch is bounded at 8 KiB per admitted call.
 Its [complete-call AMD screen](../tests/pyannote/lstm-input-screen-amd/results-20260922.md)
 reduces latency 13.72%, passing every repeatability and speed gate. Normal Linux
 suites/package consumption and complete Pyannote, Parakeet and shared/e5 checks
-also pass, with exact selected output bits. The complete application campaign
-is in progress; the candidate remains unintegrated and has no new application
-speed result yet.
+also pass, with exact selected output bits. Its
+[complete application campaign](../tests/pyannote/lstm-input-app-amd/results-20260922.md)
+now passes every original gate: **12.666 seconds versus contemporary selected
+13.161 and Microsoft ORT 8.944 seconds**, a **3.76% reduction** and **1.416 ORT
+ratio**. Both long meetings and recovery pass. The
+[normal root integration](../tests/pyannote/lstm-input-root-amd/results-20260922.md)
+now passes all 3,163 Core / 697 Data methods, 3,432 backend tests (41 existing
+AMD skips), 343 tensor tests and independent NuGet consumption. Public APIs
+and dependencies are unchanged.
 Pyannote remains first, Parakeet second, Whisper deferred.
 
 The preceding selected Pyannote source is the

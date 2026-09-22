@@ -19,52 +19,45 @@ Latest admitted Pyannote comparison and retained Parakeet baseline on AMD:
 
 | Application workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---:|---:|---:|
-| Pyannote, complete 30-second dialogue | 13.165 | 8.953 | 1.471 |
+| Pyannote, complete 30-second dialogue | 12.666 | 8.944 | 1.416 |
 | Parakeet, preceding production baseline, 20 clips / 213.265 seconds of audio | 75.135 | 39.464 | 1.904 |
 
 Each row comes from its own matched campaign on AMD EPYC 9V74, CPU2, with
 ORT 1.29.0. Complete application timers include frontend, inference and owned
-results. Pyannote's newly integrated prepared convolution reduces full-dialogue
-latency **8.83%**, from contemporary production's 14.440 s. Its
-[matched comparison](#audio-amd-prepared-convolution-pyannote-versus-microsoft-ort)
-passes every original gate. Parakeet's row measures the preceding production
-Core `1279b4b6`; the new Core `3c2f16b0` passes complete Parakeet regression and
-fresh AMD native checks, but has no new matched Parakeet timing result.
-The [Parakeet arithmetic trial](#audio-amd-parakeet-arithmetic-trial-versus-microsoft-ort)
-takes 78.066 s and is **not selected**: it is 3.90% slower than contemporary
-production. The full application parity target remains <=1.05.
+results. The [LSTM input-row change](#audio-amd-lstm-input-row-pyannote-versus-microsoft-ort)
+reduces Pyannote dialogue latency **3.76%**, from contemporary selected 13.161 s.
+All twelve repeatability controls and four speed gates pass; all three crops
+improve. Both ten-minute meetings and recovery also pass. The change is
+[integrated and verified in the normal root build](tests/pyannote/lstm-input-root-amd/results-20260922.md),
+including the full test suites and independent NuGet consumption.
 
-A [bounded LSTM input-row candidate](tests/pyannote/lstm-input-blocks-v6/results-20260922.md)
-now preserves all captured Pyannote recurrent outputs and the unchanged Microsoft
-ORT error bound in local AVX2/scalar checks. It adds at most 8 KiB of scratch per
-call and passes all 150 focused tests at both AMD instruction settings. Complete
-[AMD selected references](tests/pyannote/lstm-platform-reference-amd-v3/results-20260922.md)
-now account for small Windows/AMD output differences and pass fresh ORT checks.
-The candidate's [complete AMD output comparison](tests/pyannote/lstm-input-blocks-amd-v2/results-20260922.md)
-now passes all three instruction modes, and its
-[complete-LSTM timing screen](tests/pyannote/lstm-input-screen-amd/results-20260922.md)
-is **admitted for full product qualification**. The sum of all twelve captured
-case means falls from 0.340545 s to 0.293828 s: **13.72% lower latency**.
-All ten repeatability controls and five speed gates pass; every node improves.
-All 2,352 timing clocks, including 588 warmups, and 48 preparation clocks remain
-available. Every output preserves selected bits and the Microsoft ORT error
-bound. The candidate is not integrated; full application qualification and a
-fresh matched ORT campaign remain, so the application ratios above are unchanged.
+Parakeet's row measures the preceding production Core `1279b4b6`. Current
+Core `208371f6` passes complete Parakeet regression and fresh AMD native checks,
+but has no new matched Parakeet timing result. The
+[Parakeet arithmetic trial](#audio-amd-parakeet-arithmetic-trial-versus-microsoft-ort)
+takes 78.066 s and is **not selected**: it is 3.90% slower than contemporary
+production. The full application parity target remains <=1.05 for both models.
+
+The LSTM change shares weights across four input time rows, preserving each
+output's reduction order and adding at most 8 KiB of scratch per call. Its
+[complete-call screen](tests/pyannote/lstm-input-screen-amd/results-20260922.md)
+improves 13.72%; the separate complete-application result above determines
+integration. [Actual AMD numerical checks](tests/pyannote/lstm-input-blocks-amd-v2/results-20260922.md)
+pass in both instruction settings and scalar fallback, preserving selected bits
+and all Microsoft ORT error bounds.
+
 Its [normal Linux product and NuGet qualification](tests/pyannote/lstm-input-product-amd-v2/results-20260922.md)
-now pass: 3,432 backend tests (41 existing AMD skips), all 343 tensor tests,
+passes 3,432 backend tests (41 existing AMD skips), all 343 tensor tests,
 exact equivalence of all 3,163 Core / 697 Data methods, and independent package
-consumption including prepared ConvRelu and output ownership checks.
-Its [complete AMD Pyannote qualification](tests/pyannote/lstm-input-models-amd/results-20260922.md)
-also passes: all 18 graph arrays (2,917,107 values) and 16 complete public
-diarization results match the selected product exactly, with every ORT error
-check passing. Complete application performance remains to be measured.
-Its [AMD Parakeet regression](tests/pyannote/lstm-input-parakeet-amd/results-20260922.md)
-also passes all 784 arrays (3,090,494 values) and twenty public clips, with
-exact selected outputs and maximum ORT scaled error 3.831e-5. This supplies
-no new Parakeet timing result.
-The [complete shared-model/e5 regression](tests/pyannote/lstm-input-shared-amd/results-20260922.md)
-passes all 166 arrays (5,000,814 values), preserving every selected output bit
-and native error check. Long meetings and matched application timing remain.
+consumption with prepared ConvRelu and ownership checks. Complete
+[Pyannote](tests/pyannote/lstm-input-models-amd/results-20260922.md),
+[Parakeet](tests/pyannote/lstm-input-parakeet-amd/results-20260922.md) and
+[shared-model/e5](tests/pyannote/lstm-input-shared-amd/results-20260922.md)
+regressions preserve all selected output bits across 18 / 784 / 166 graph
+arrays respectively. All native numerical checks pass. The
+[complete application report](tests/pyannote/lstm-input-app-amd/results-20260922.md)
+retains all 96 timing requests, 24 fresh native public requests, long-meeting
+checks and 2,236 resource observations. This supplies no new Parakeet speed claim.
 
 The latest [Pyannote twelve-position convolution screen](tests/pyannote/spatial-weight-screen/results-20260922.md)
 is **not selected**. The sum of all 108 prepared graph call means rises from
@@ -622,6 +615,52 @@ The [complete report](tests/parakeet/single-panel-amd-results/results-20260922.m
 and [raw observations](tests/parakeet/single-panel-amd-results/observations-20260922.json)
 retain every clip, clock, failed gate and evidence identity. Earlier comparisons
 below remain separate historical measurements.
+
+### Audio: AMD LSTM input-row pyannote versus Microsoft ORT
+
+The four-row LSTM input projection is **admitted and integrated**. AMD EPYC 9V74, CPU2,
+.NET 10.0.8 / SDK 10.0.204 and Microsoft ORT 1.29.0. Timers cover complete
+public requests, including frontend, neural inference, clustering and owned
+results. Model setup, file access and external validation are separate.
+ORT uses one intra/inter-op thread, sequential execution, all optimizations
+and no spinning. Neither engine uses a profiler or numerical overrides.
+
+| Workload | Preceding selected s | LSTM candidate s | Microsoft ORT s | Candidate / ORT |
+|---|---:|---:|---:|---:|
+| Complete 30-second dialogue | 13.160727 | 12.666234 | 8.944010 | 1.4162 |
+| Dialogue 0–10 seconds | 0.616997 | 0.590378 | 0.428263 | 1.3785 |
+| Dialogue 10–20 seconds | 0.615143 | 0.592732 | 0.429685 | 1.3795 |
+| Dialogue 20–30 seconds | 0.613225 | 0.590167 | 0.430048 | 1.3723 |
+
+Full-dialogue latency falls **3.76%** against the contemporary selected
+control, passing the fixed 3% gate. All crop speed gates and all twelve
+process-repeatability controls pass. The <=1.05 ORT parity target remains open.
+The dialogue uses 21 overlapping windows; individual crops are separate
+workloads and cannot be summed to reconstruct its elapsed time.
+
+Six fresh processes run selected, candidate, ORT, ORT, candidate, selected.
+One warmup and three measured passes per process produce 96 requests:
+24 warmups and 72 measurements. Each table mean retains all six measured
+observations. [All raw clocks](tests/pyannote/lstm-input-app-amd/clocks-20260922.csv)
+and [setup intervals](tests/pyannote/lstm-input-app-amd/setup-20260922.csv)
+are retained with the [full report](tests/pyannote/lstm-input-app-amd/results-20260922.md).
+
+Fresh native conformance passes four Pyannote fixtures and twenty Parakeet
+clips. Both 600-second meetings and recovery pass with zero native timeline
+mismatches and maximum centroid error 9.25e-7. All 64 managed timing results
+match fresh selected results exactly. All 2,236 resource observations pass;
+peak owned RSS is 2,807,197,696 bytes during native Parakeet qualification.
+Process accounting retains its documented short-lived-process limitation.
+
+Measured preceding Core `3c2f16b0` / Data `6318cf48` and candidate Core
+`208371f6` / Data `b9358370` use unchanged application consumers.
+Application closure: `73a4897a`. The
+[normal root build](tests/pyannote/lstm-input-root-amd/results-20260922.md)
+passes all 3,163 Core / 697 Data methods, 3,432 backend tests (41 existing skips),
+343 tensor tests and independent NuGet consumption. Root Core `b4f82542` /
+Data `cfa7e140` are code-equivalent to the measured candidate; root closure is
+`5cc03093`. No old timing samples enter this verdict, no rebuild timing is
+claimed, and no new Parakeet timing result is supplied.
 
 ### Audio: AMD prepared-convolution pyannote versus Microsoft ORT
 

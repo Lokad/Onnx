@@ -63,7 +63,7 @@ public class LstmOutputLaneTests
         var changed = Run(options); Check(changed, Run(ExecutionOptions.Scalar));
         for (int i = 0; i < held.Length; i++) Assert.Equal(held[i], Bits(((Tensor<float>)first.Outputs[i]).ToArray()));
         Assert.Equal(new[] { 9, 0 }, lens.ToArray());
-        long expected = System.Numerics.Vector.IsHardwareAccelerated ? 3L * (w.Length + r.Length) * sizeof(float) : 0;
+        long expected = System.Numerics.Vector.IsHardwareAccelerated ? 3L * (w.Length + r.Length + 16 * hidden) * sizeof(float) : 0;
         Assert.Equal(expected, scratch.TotalScratchBytes);
     }
 
