@@ -10,7 +10,7 @@ public partial class CPUExecutionProvider
 {
 
     /// <summary>1D or 2D convolution, lowered through the shared matrix dispatcher.</summary>
-    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options)
+    internal static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.Conv;
         if (X is null) return MissingInput(op, nameof(X));
@@ -77,9 +77,9 @@ public partial class CPUExecutionProvider
                 var bias = B is null ? null : (Tensor<float>)B;
                 if (padmode is null)
                 {
-                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor));
+                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor, pool));
                 }
-                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor));
+                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor, pool));
             }
             case TensorElementType.Double:
             {
@@ -185,4 +185,6 @@ public partial class CPUExecutionProvider
             default: return InputTypeNotSupported(op, nameof(X), X);
         }
     }
+
+
 }

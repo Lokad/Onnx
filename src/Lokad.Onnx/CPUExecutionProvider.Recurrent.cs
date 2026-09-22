@@ -152,6 +152,7 @@ public partial class CPUExecutionProvider
         var hv = new float[hiddenSize];
         var cv = new float[hiddenSize];
         int H = hiddenSize;
+        using var projections = LstmProjectionPanels.Create(ws, rs, inputSize, H, numDirections, seq, opts.Tensor);
         for (int d = 0; d < numDirections; d++)
         {
             // The solo reverse direction and the second bidirectional
@@ -185,19 +186,27 @@ public partial class CPUExecutionProvider
                     int t = rev ? limit - 1 - s : s;
                     int yOff = ((t * numDirections + d) * batch + b) * H;
                     int xOff = (t * batch + b) * inputSize;
-                    for (int gh = 0; gh < 4 * H; gh++)
+                    if (projections is not null)
                     {
-                        float acc = 0f;
-                        int wRow = wDir + gh * inputSize;
-                        for (int k = 0; k < inputSize; k++) acc += xs[xOff + k] * ws[wRow + k];
-                        xw[gh] = acc;
+                        projections.Input(d, xs.Slice(xOff, inputSize), xw);
+                        projections.Recurrent(d, hv, hr);
                     }
-                    for (int gh = 0; gh < 4 * H; gh++)
+                    else
                     {
-                        float acc = 0f;
-                        int rRow = rDir + gh * H;
-                        for (int k = 0; k < H; k++) acc += hv[k] * rs[rRow + k];
-                        hr[gh] = acc;
+                        for (int gh = 0; gh < 4 * H; gh++)
+                        {
+                            float acc = 0f;
+                            int wRow = wDir + gh * inputSize;
+                            for (int k = 0; k < inputSize; k++) acc += xs[xOff + k] * ws[wRow + k];
+                            xw[gh] = acc;
+                        }
+                        for (int gh = 0; gh < 4 * H; gh++)
+                        {
+                            float acc = 0f;
+                            int rRow = rDir + gh * H;
+                            for (int k = 0; k < H; k++) acc += hv[k] * rs[rRow + k];
+                            hr[gh] = acc;
+                        }
                     }
                     for (int h = 0; h < H; h++)
                     {

@@ -13,10 +13,10 @@ public partial class CPUExecutionProvider
     /// holds by construction (same computation, same per-element function);
     /// exotic layouts fall back to the allocating public Relu path.
     /// </summary>
-    public static OpResult ConvRelu(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options)
+    internal static OpResult ConvRelu(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, TensorBufferPool? pool)
     {
         var op = OpType.ConvRelu;
-        var inner = Conv(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options);
+        var inner = Conv(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, pool);
         if (inner.Status != OpStatus.Success || inner.Outputs is null || inner.Outputs.Length != 1 || inner.Outputs[0] is null)
             return inner;
         return FinishRelu(op, inner.Outputs[0], options);
@@ -104,4 +104,6 @@ public partial class CPUExecutionProvider
             return relu;
         return Success(op, relu.Outputs);
     }
+
+
 }

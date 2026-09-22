@@ -1,11 +1,11 @@
-namespace Lokad.Onnx;
+namespace Lokad.Onnx.Backend.Tests;
 
 using System;
 using System.Numerics;
 using System.Threading;
 
 /// <summary>Managed 80-bin filterbanks for the pyannote Community-1 WeSpeaker embedding model.</summary>
-public static class WeSpeakerAudio
+internal static class DenseWeSpeakerReference
 {
     public const int SampleRate = 16000;
     public const int MinimumSamples = 400;
@@ -15,7 +15,6 @@ public static class WeSpeakerAudio
     const float Epsilon = 1.1920928955078125e-7f;
     static readonly float[] Window = CreateWindow();
     static readonly float[] MelWeights = CreateMelWeights();
-    static readonly (int Start, int End)[] MelSupport = CreateMelSupport();
     static readonly Complex[] Roots = CreateRoots();
 
     /// <summary>Converts 400 through 480000 finite mono 16 kHz PCM samples in [-1,1]
@@ -67,8 +66,7 @@ public static class WeSpeakerAudio
             for (int mel = 0; mel < MelBins; mel++)
             {
                 double energy = 0;
-                var (first, last) = MelSupport[mel];
-                for (int k = first; k < last; k++) energy += (double)powers[k] * MelWeights[mel * (FourierSize / 2) + k];
+                for (int k = 0; k < FourierSize / 2; k++) energy += (double)powers[k] * MelWeights[mel * (FourierSize / 2) + k];
                 output[frame * MelBins + mel] = MathF.Log(Math.Max(Epsilon, (float)energy));
             }
         }
@@ -126,23 +124,6 @@ public static class WeSpeakerAudio
             }
         }
         return result;
-    }
-
-    // Keep the original coefficient values and ascending accumulation order.
-    // Valid normalized PCM keeps every power finite, so omitted zero terms
-    // cannot change a nonnegative energy or its signed-zero behavior.
-    static (int Start, int End)[] CreateMelSupport()
-    {
-        var support = new (int Start, int End)[MelBins];
-        const int bins = FourierSize / 2;
-        for (int band = 0; band < MelBins; band++)
-        {
-            int first = 0, last = bins;
-            while (first < last && MelWeights[band * bins + first] == 0f) first++;
-            while (last > first && MelWeights[band * bins + last - 1] == 0f) last--;
-            support[band] = (first, last);
-        }
-        return support;
     }
 
     static Complex[] CreateRoots()

@@ -15,14 +15,24 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
 
-The latest **AMD pyannote comparison** measures the current portable candidate
-at **15.255 s** and the combined AVX-512 candidate at **15.185 s**, versus
-**Microsoft ORT 8.951 s** (1.704× and 1.696× respectively). All fixed stability
-controls pass. The combined path improves on portable by only 0.46%, below its
-prospective 3% selection threshold, so it is **not promoted**. The
-[complete comparison](#audio-amd-current-pyannote-composition-versus-microsoft-ort)
-retains every sample. A distinct portable-versus-root-production qualification
-is the next integration step; neither candidate is current production.
+The selected **AMD pyannote implementation** completes the full dialogue in
+**15.466 s versus Microsoft ORT 8.952 s (1.728×)**. Pre-integration production
+takes **43.085 s** in the same comparison: a **64.1% latency reduction**, taking
+the ORT ratio from 4.813× to 1.728×. All 96 requests, fixed stability controls,
+speed thresholds and resource checks pass. The
+[complete comparison](#audio-amd-selected-pyannote-versus-production-and-microsoft-ort)
+retains every sample. The implementation is now
+[integrated into normal root source](tests/pyannote/portable-root-completion/results-20260922.md):
+3,290 backend tests, 343 tensor tests and an independent NuGet consumer pass.
+The root build matches all 3,108 Core / 697 Data methods and public declarations
+of the measured Core `e9c87932` / Data `85d166b5` candidate. Its own binaries
+are Core `de17733b` / Data `988ba1ad`; no separate rebuild timing is claimed.
+
+The preceding combined AVX-512 trial measured 15.185 s versus its contemporary
+portable control's 15.255 s and ORT's 8.951 s. Its 0.46% additional gain misses
+the fixed 3% selection gate; that path remains unselected. Its separate
+[composition table](#audio-amd-current-pyannote-composition-versus-microsoft-ort)
+and failed gate are preserved without mixing samples between campaigns.
 
 The [combined normal build](tests/pyannote/combined-avx512/results-20260922.md)
 now passes 3,295 backend tests, 342 tensor tests and a separate NuGet consumer.
@@ -38,8 +48,9 @@ Correctness qualification does not override the failed speed-selection gate.
 
 The distinct [portable integration trial](tests/pyannote/portable-amd-integration/README.md)
 now passes normal Linux builds, all 3,108 Core / 697 Data method checks,
-3,342 backend tests and 342 tensor tests. Its own long meetings and fresh
-production/portable/ORT comparison are running; no new selection is claimed.
+3,342 backend tests and 342 tensor tests. Its own two ten-minute meetings,
+recovery and fresh production/portable/ORT comparison are complete and admitted.
+Native speaker timelines match exactly; maximum meeting centroid error is 9.25e-7.
 
 The latest accepted **Windows pyannote candidate** takes **10.493 s versus
 Microsoft ORT 6.320 s (1.660×)**, down 8.6% from its contemporary 11.482 s
@@ -306,6 +317,40 @@ The [conditioned successor](tests/parakeet/wide-matmul-conditioned/results-20260
 also fails its fixed control limits despite passing all numerical checks. No
 prototype is promoted and the ORT comparison tables remain unchanged.
 
+### Audio: AMD selected pyannote versus production and Microsoft ORT
+
+AMD EPYC 9V74, CPU2, .NET 10.0.8 and Microsoft ORT 1.29.0. Pre-integration
+production is Core `d1f86a73` / Data `e7fe1668`; selected portable is Core
+`e9c87932` / Data `85d166b5`. Complete timers include features, neural inference,
+clustering and owned outputs; loading, file access and external checks are excluded.
+
+| Workload | Pre-integration production seconds | Selected portable seconds | Microsoft ORT seconds | Portable / ORT |
+|---|---:|---:|---:|---:|
+| pyannote, dialogue-30s | 43.085 | 15.466 | 8.952 | 1.728 |
+| pyannote, dialogue-0-10s | 2.066 | 0.725 | 0.429 | 1.690 |
+| pyannote, dialogue-10-20s | 2.078 | 0.739 | 0.430 | 1.719 |
+| pyannote, dialogue-20-30s | 2.064 | 0.798 | 0.430 | 1.854 |
+
+Six fresh processes run production, portable, ORT, ORT, portable, production.
+Each performs one warmup and three measured passes across all four fixtures:
+24 warmups and 72 measured calls, six measurements per mean. All twelve
+repeatability controls and four speed/nonregression gates pass. Full-dialogue
+latency falls 64.1%; crop latency falls 61.4–64.9%. Parity remains unmet.
+
+Normal Linux suites pass 3,342 backend tests with 41 skips and 342 tensor tests;
+the mandatory shared AVX-512 kernel test executes. The exact managed runtimes'
+closed pyannote/Parakeet model and public evidence is reused after identity
+verification. Fresh native conformance and both portable ten-minute meetings
+plus recovery pass. All 3,235 resource samples pass; peak owned RSS is 3.04 GB.
+All owners are terminal. The [complete report](tests/pyannote/portable-amd-results/results-20260922.md)
+contains raw-clock statistics, process means, gates and reuse boundaries.
+These descriptive results select an integration candidate; they do not establish
+calibrated parity or transfer absolute timings to another host or build.
+The [completed root integration](tests/pyannote/portable-root-completion/results-20260922.md)
+records the exact instruction/package proof and a source-policy correction for
+two immutable historical test inputs. Their bytes remain unchanged, and every
+other source stays covered by the optional-parameter scan.
+
 ### Audio: AMD current pyannote composition versus Microsoft ORT
 
 AMD EPYC 9V74, CPU2, .NET 10.0.8 and Microsoft ORT 1.29.0. These are complete
@@ -325,7 +370,7 @@ portable, previous rows: 32 warmups and 96 measured requests, six measurements
 per displayed mean. All 16 process-repeatability controls pass. Combined full
 latency is 3.47% below previous rows but only 0.46% below current portable;
 the fixed admission rule requires at least 3% against both. Every crop passes
-its nonregression bound. **Combined is not selected** and root source is unchanged.
+its nonregression bound. **Combined is not selected**; this trial changed no root source.
 The portable control is not retrospectively selected under this combined-only rule.
 
 All 54 pyannote and 2,352 Parakeet arrays pass native checks on AMD. Both combined
@@ -367,7 +412,7 @@ This older frozen payload does not include the later pooling, request contexts,
 portable three-row path, sparse mel frontend or LSTM storage guard. The
 composition comparison above now measures those changes with the AVX-512 path
 and current portable control, including the choice where the paths overlap.
-Production source remains unchanged by this campaign. The earlier matched
+That campaign changed no production source. The earlier matched
 production baselines below are retained separately.
 
 ### Audio: AMD Microsoft ONNX Runtime baselines (Parakeet and pyannote)

@@ -82,18 +82,21 @@ public sealed class WeSpeakerEmbedder
 
     // Share one backbone evaluation across the three local speakers. The native pipeline's
     // sparse weighted masks are allowed here; Extract retains its explicit two-frame policy.
-    internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation)
+    internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation, PipelineRequest? request)
     {
         if (samples.Length != Community1Timeline.WindowSamples || masks.Length != 3
             || masks.Any(m => m is null || m.Length != Community1Timeline.LocalFrames || m.Any(v => v != 0 && v != 1)))
             throw new ArgumentException("Pipeline embeddings require one full audio window and three binary masks.");
         lock (gate)
         {
+            if (request is not null) ObjectDisposedException.ThrowIf(request.Disposed, request);
             cancellation.ThrowIfCancellationRequested();
             var features = WeSpeakerAudio.LogMelFilterbank(samples, 16000, cancellation);
             int frames = (features.Dimensions[1] + 7) / 8;
-            var encoding = encoder.CreateExecution(ExecutionOptions.Memory);
-            var projecting = projection.CreateExecution(ExecutionOptions.Memory);
+            var encoding = request is null ? encoder.CreateExecution(ExecutionOptions.Memory)
+                : (request.Encoding ??= encoder.CreateExecution(ExecutionOptions.Memory));
+            var projecting = request is null ? projection.CreateExecution(ExecutionOptions.Memory)
+                : (request.Projecting ??= projection.CreateExecution(ExecutionOptions.Memory));
             try
             {
                 var hidden = Execute(encoding, "fbank_features", features, EncodedName, new[] { 1, 2560, frames });
@@ -136,4 +139,33 @@ public sealed class WeSpeakerEmbedder
             if (!float.IsFinite(value)) throw new InvalidDataException("Nonfinite WeSpeaker output: " + outputName);
         return tensor;
     }
+
+    internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation) =>
+        ExtractPipeline(samples, masks, cancellation, null);
+
+    // Contexts belong to one diarization embedding loop, never to the model instance.
+    internal PipelineRequest CreatePipelineRequest() => new PipelineRequest(this);
+
+    internal sealed class PipelineRequest : IDisposable
+    {
+        readonly WeSpeakerEmbedder owner;
+        internal GraphExecution? Encoding, Projecting;
+        internal bool Disposed;
+
+        internal PipelineRequest(WeSpeakerEmbedder owner) => this.owner = owner;
+
+        internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation) =>
+            owner.ExtractPipeline(samples, masks, cancellation, this);
+
+        public void Dispose()
+        {
+            lock (owner.gate)
+            {
+                if (Disposed) return;
+                try { Encoding?.Reset(); Projecting?.Reset(); }
+                finally { Encoding = null; Projecting = null; Disposed = true; }
+            }
+        }
+    }
+
 }

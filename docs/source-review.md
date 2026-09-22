@@ -28,7 +28,12 @@ Every correctness and repeatability check passes, but the composition adds only
 0.46% over portable, below its fixed 3% selection threshold. The
 combined patch remains unselected. A distinct
 [portable-versus-root-production trial](../tests/pyannote/portable-amd-integration/README.md)
-qualifies the next integration decision; root promotion is still pending.
+now admits the portable path: 15.466 s versus pre-integration production
+43.085 s and fresh ORT 8.952 s, with all fixed gates passing. The
+[normal root integration](../tests/pyannote/portable-root-completion/results-20260922.md)
+is complete. All 3,108 Core / 697 Data methods and public declarations match the
+measured candidate; 3,290 backend tests, 343 tensor tests and a package-only
+consumer pass. The root build's distinct binary identities remain explicit.
 
 The separate [sparse-mel adaptation](../tests/pyannote/sparse-mel/results-20260921.md)
 now passes complete dialogue and meeting qualification. Its

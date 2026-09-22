@@ -298,12 +298,12 @@ public partial struct Node
         OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0), opt),
 
         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
-            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt),
+            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, graph.ActivePool),
 
         OpType.Relu => ReluIntGate(graph) ?? CPU.Relu(InputTensor(graph, 0), opt),
 
         OpType.ConvRelu => CPU.ConvRelu(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
-            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt),
+            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, graph.ActivePool),
 
         OpType.AddRelu => Sub32Gate(graph, OpType.Add) ?? CPU.AddRelu(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
 

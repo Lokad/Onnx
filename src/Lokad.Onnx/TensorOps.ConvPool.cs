@@ -9,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
+using System.Runtime.Intrinsics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -24,6 +25,32 @@ where T : unmanaged
         var rented = ArrayPool<U>.Shared.Rent(length);
         options.ScratchReporter?.AddScratchBytes((long)length * Unsafe.SizeOf<U>());
         return rented;
+    }
+
+    // Spatial expansion adapted from voice 8af223e/e35653a; no reduction blocking.
+    const int ConvTileBudgetBytes = 256 * 1024;
+
+    // Validate expanded storage independently of the input/weight backing sizes.
+    // The spatial planner keeps the first candidate's 32-column minimum panel.
+    internal static (int columns, int reduction, int blockColumns, int scratchElements)
+        PlanConvSpatialScratch(int channels, int kh, int kw, int filters, int height, int width)
+    {
+        int columns = checked(height * width);
+        int reduction = checked(channels * kh * kw);
+        int blockColumns = columns;
+        if ((long)reduction * columns > ConvTileBudgetBytes / sizeof(float))
+        {
+            long perColumn = ((long)reduction + filters) * sizeof(float);
+            long fit = ConvTileBudgetBytes / perColumn;
+            const int panel = 32;
+            long aligned = Math.Max(panel, fit / panel * panel);
+            blockColumns = (int)Math.Min(columns, aligned);
+        }
+        long elements = (long)reduction * blockColumns;
+        if (blockColumns < columns) elements += (long)filters * blockColumns;
+        if (elements > Array.MaxLength)
+            throw new ArgumentException("Convolution scratch exceeds the supported array length.");
+        return (columns, reduction, blockColumns, (int)elements);
     }
 
     // Shared Conv2D preparation for PadType padding: validates ranks, fills
@@ -116,7 +143,7 @@ where T : unmanaged
     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
+        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, null);
 
     }
 
@@ -127,14 +154,19 @@ where T : unmanaged
     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
     {
         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
+        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, null);
 
     }
 
-    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options)
+    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options, TensorBufferPool? pool)
     {
         options.Validate();
-        var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outH, outW });
+        var dimensions = new int[] { N, M, outH, outW };
+        // Preserve the fresh array's zero-initialization for every kernel path.
+        var output = pool is null
+            ? new DenseTensor<float>((ReadOnlySpan<int>)dimensions)
+            : new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>(checked(N * M * outH * outW))), dimensions);
+        if (output.Length == 0) return output;
         var xd = input.ToDenseTensor();
         var wd = weight.ToDenseTensor();
         var bd = bias?.ToDenseTensor();
@@ -159,7 +191,14 @@ where T : unmanaged
                 kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, dop, options);
             return output;
         }
-        int patchSize = C * kH * kW * outH * outW;
+        var spatial = PlanConvSpatialScratch(C, kH, kW, M, outH, outW);
+        int tileN = spatial.columns, blockN = spatial.blockColumns;
+        if (blockN < tileN)
+        {
+            RunTiledConvFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, dop, options);
+            return output;
+        }
+        int patchSize = spatial.scratchElements;
         if (dop > 1)
         {
             Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
@@ -224,6 +263,99 @@ where T : unmanaged
             }
         }
     }
+    /// <summary>
+    /// Runs convolution in bounded column tiles when the full patch would
+    /// exceed L2-resident scratch: each tile converts one output-column
+    /// block, multiplies it through the shared dispatcher into a block
+    /// output buffer, and streams it through the bias epilogue.
+    /// Blocking covers independent outputs only, so each dot product keeps
+    /// the single-pass order; the shared dispatcher may still pick different
+    /// vectorized kernels per block shape, so agreement is within float
+    /// rounding (validated at the 1e-4 gate), not bit for bit.
+    /// </summary>
+    static void RunTiledConvFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, int N, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, int dop, TensorExecutionOptions options)
+    {
+        int blockPatch = checked(C * kH * kW * blockN);
+        int blockOut = checked(M * blockN);
+        int scratchLength = checked(blockPatch + blockOut);
+        if (dop > 1)
+        {
+            Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
+                () => RentScratch<float>(scratchLength, options),
+                (b, state, scratch) =>
+                {
+                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options);
+                    return scratch;
+                },
+                scratch => ArrayPool<float>.Shared.Return(scratch));
+        }
+        else
+        {
+            var scratch = RentScratch<float>(scratchLength, options);
+            try
+            {
+                for (int b = 0; b < N; b++)
+                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options);
+            }
+            finally { ArrayPool<float>.Shared.Return(scratch); }
+        }
+    }
+
+    /// <summary>
+    /// Runs one batch of tiled float convolution: for each output-column
+    /// block, converts the block patch, runs one shared-dispatcher product
+    /// per group into the block output buffer (cleared by the dispatcher),
+    /// then streams the block through the bias epilogue. The epilogue
+    /// keeps the single-pass bias-add order.
+    /// </summary>
+    static void RunTiledBatchFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, float[] scratch, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, TensorExecutionOptions options)
+    {
+        int tileKFull = C * kH * kW;
+        int tileM = M / group;
+        int tileKg = tileKFull / group;
+        var patchMem = new Memory<float>(scratch, 0, tileKFull * blockN);
+        var outMem = new Memory<float>(scratch, tileKFull * blockN, M * blockN);
+        int numBlocks = 1 + (tileN - 1) / blockN;
+        var bs = bMem.Span;
+        var os = oMem.Span;
+        var ds = outMem.Span;
+        for (int s = 0; s < numBlocks; s++)
+        {
+            int colStart = s * blockN;
+            int colCount = Math.Min(blockN, tileN - colStart);
+            unsafe
+            {
+                fixed (float* src = xMem.Span.Slice(b * inBatch, inBatch))
+                fixed (float* patch = patchMem.Span)
+                {
+                    MathOps.Im2colRange(src, C, H, W, kH, kW, dH, dW, sH, sW, pad.top, pad.left, pad.bottom, pad.right, outW, colStart, colCount, patch);
+                }
+            }
+            for (int g = 0; g < group; g++)
+            {
+                var wView = new DenseTensor<float>(wMem.Slice(g * tileM * tileKg, tileM * tileKg), new int[] { tileM, tileKg });
+                var pView = new DenseTensor<float>(patchMem.Slice(g * tileKg * colCount, tileKg * colCount), new int[] { tileKg, colCount });
+                var dView = new DenseTensor<float>(outMem.Slice(g * tileM * colCount, tileM * colCount), new int[] { tileM, colCount });
+                if (!TryConvPortableRows(wView.Buffer.Span, pView.Buffer.Span, dView.Buffer.Span,
+                    tileM, tileKg, colCount, options))
+                    Tensor<float>.MatMul2D(wView, pView, dView, options);
+                int outBase = b * outBatch + g * tileM * tileN;
+                int blkBase = g * tileM * colCount;
+                for (int i = 0; i < tileM; i++)
+                {
+                    float bi = hasBias ? bs[g * tileM + i] : 0f;
+                    int outRow = outBase + i * tileN + colStart;
+                    int blkRow = blkBase + i * colCount;
+                    for (int j = 0; j < colCount; j++)
+                    {
+                        float v = hasBias ? ds[blkRow + j] + bi : ds[blkRow + j];
+                        os[outRow + j] = v;
+                    }
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Runs 1x1 stride-1 no-pad batches with no patch matrix: the input slice
     /// already lays out as the GEMM right-hand side, so each group multiplies
@@ -767,4 +899,8 @@ where T : unmanaged
             if (weightLength != expectWeight) throw new ArgumentException("Conv weight backing length does not match shape.");
         }
     }
+
+
+
+
 }

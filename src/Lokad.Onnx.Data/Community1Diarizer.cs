@@ -85,12 +85,15 @@ public sealed class Community1Diarizer
             var count = Community1Timeline.Count(activity, chunks, cancellation);
             if (count.All(v => v == 0)) return Empty(Community1DiarizationStatus.NoSpeech, duration, chunks);
             var embeddings = new WeSpeakerEmbedding[chunks * 3];
-            for (int c = 0; c < chunks; c++)
+            using (var request = embedder.CreatePipelineRequest())
             {
-                cancellation.ThrowIfCancellationRequested(); var binary = new bool[Community1Timeline.LocalFrames * 3];
-                Array.Copy(activity, c * binary.Length, binary, 0, binary.Length);
-                var result = embedder.ExtractPipeline(Community1Timeline.Window(pcm, c), Community1Timeline.EmbeddingMasks(binary), cancellation);
-                Array.Copy(result, 0, embeddings, c * 3, 3);
+                for (int c = 0; c < chunks; c++)
+                {
+                    cancellation.ThrowIfCancellationRequested(); var binary = new bool[Community1Timeline.LocalFrames * 3];
+                    Array.Copy(activity, c * binary.Length, binary, 0, binary.Length);
+                    var result = request.ExtractPipeline(Community1Timeline.Window(pcm, c), Community1Timeline.EmbeddingMasks(binary), cancellation);
+                    Array.Copy(result, 0, embeddings, c * 3, 3);
+                }
             }
             var clustered = clusterer.Cluster(embeddings, new DenseTensor<bool>(activity, new[] { chunks, Community1Timeline.LocalFrames, 3 }), cancellation);
             if (clustered.Centroids.Count == 0) return Empty(Community1DiarizationStatus.NoUsableEmbeddings, duration, chunks);

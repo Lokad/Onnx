@@ -1715,7 +1715,7 @@ public partial class MathOps
             {
                 float* src = B + j * K + kb;
                 float* d = dst + j * (4 * Vector256<float>.Count);
-                for (int kk = 0; kk < 4 * Vector256<float>.Count; kk++) d[kk] = src[kk];
+                new ReadOnlySpan<float>(src, 32).CopyTo(new Span<float>(d, 32));
             }
         }
         int rem = K - blocked;
@@ -3297,6 +3297,85 @@ public partial class MathOps
                             int sx = col0 + dx * strideX;
                             *buf = (line != null && (uint)sx < (uint)srcW) ? line[sx] : 0;
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Image to column conversion restricted to a contiguous output-column
+    /// range. Column c holds output position (c / dstW, c % dstW), and the
+    /// buffer lays out as [srcC*kernelY*kernelX, colCount] row-major with
+    /// the same values the full Im2col patch holds at those columns. The
+    /// shared dispatcher may still select different vectorized kernels per
+    /// block shape, so tiled results agree with the single-pass path within
+    /// float rounding (validated at the 1e-4 gate), not bit for bit.
+    /// </summary>
+    /// <param name="src">Source data.</param>
+    /// <param name="srcC">Input channels.</param>
+    /// <param name="srcH">Input height.</param>
+    /// <param name="srcW">Input width.</param>
+    /// <param name="kernelY">Kernel height.</param>
+    /// <param name="kernelX">Kernel width.</param>
+    /// <param name="dilationY">Dilation of the kernel by height.</param>
+    /// <param name="dilationX">Dilation of the kernel by width.</param>
+    /// <param name="strideY">Stride of the convolution by height.</param>
+    /// <param name="strideX">Stride of the convolution by width.</param>
+    /// <param name="padY">Zero padding at the top (begin height).</param>
+    /// <param name="padX">Zero padding at the left (begin width).</param>
+    /// <param name="padH">Zero padding at the bottom (end height).</param>
+    /// <param name="padW">Zero padding at the right (end width).</param>
+    /// <param name="dstW">Full output width; columns index dy * dstW + dx.</param>
+    /// <param name="colStart">First output column to convert.</param>
+    /// <param name="colCount">Number of output columns to convert.</param>
+    /// <param name="buf">Buffer.</param>
+    // Spatial row sharing follows voice de60581/e802581. Span copies preserve
+    // all payload bits and let the runtime choose a supported copy instruction.
+    internal static unsafe void Im2colRange(float* src, int srcC, int srcH, int srcW,
+        int kernelY, int kernelX, int dilationY, int dilationX, int strideY, int strideX,
+        int padY, int padX, int padH, int padW, int dstW, int colStart, int colCount, float* buf)
+    {
+        if (colCount == 0) return;
+        int end = checked(colStart + colCount);
+        int dyFirst = colStart / dstW, dyLast = (end - 1) / dstW;
+        for (int sc = 0; sc < srcC; sc++)
+        for (int ky = 0; ky < kernelY; ky++)
+        for (int dy = dyFirst; dy <= dyLast; dy++)
+        {
+            long sy = (long)ky * dilationY - padY + (long)dy * strideY;
+            float* line = sy >= 0 && sy < srcH ? src + (sc * srcH + (int)sy) * srcW : null;
+            int first = dy == dyFirst ? colStart - dy * dstW : 0;
+            int last = dy == dyLast ? end - dy * dstW : dstW;
+            int count = last - first, offset = dy * dstW + first - colStart;
+            for (int kx = 0; kx < kernelX; kx++)
+            {
+                int patchRow = (sc * kernelY + ky) * kernelX + kx;
+                // The pointer always denotes this tile's allocated destination.
+                var output = new Span<float>(buf + patchRow * colCount + offset, count);
+                if (line == null)
+                {
+                    output.Clear();
+                    continue;
+                }
+                long col0 = (long)kx * dilationX - padX;
+                if (strideX == 1)
+                {
+                    // Clamp BOTH boundaries. A complete tile may lie in padding.
+                    int begin = (int)Math.Clamp(-col0 - first, 0L, count);
+                    int finish = (int)Math.Clamp((long)srcW - col0 - first, 0L, count);
+                    output[..begin].Clear();
+                    if (finish > begin)
+                        new ReadOnlySpan<float>(line + (int)(col0 + first + begin), finish - begin)
+                            .CopyTo(output[begin..finish]);
+                    output[finish..].Clear();
+                }
+                else
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        long sx = col0 + (long)(first + i) * strideX;
+                        output[i] = sx >= 0 && sx < srcW ? line[(int)sx] : 0f;
                     }
                 }
             }
