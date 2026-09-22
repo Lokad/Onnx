@@ -172,6 +172,14 @@ All 3,266 cases pass in each Windows/AMD normal/scalar-tail mode, backed by
 product and complete-model qualification; it supplies no new application or ORT
 timing and does not select the preceding failed application candidate.
 
+Its [normal product composition](tests/pyannote/single-panel-composition/results-20260922.md)
+now passes 3,313 backend tests, 343 tensor tests, both 400-case caller modes
+and an independent NuGet consumer. The consumer verifies that narrow tiles
+avoid the extra packed rental. [Complete Windows model checks](tests/pyannote/single-panel-models/results-20260922.md)
+preserve all 18 Pyannote arrays, 16 public requests and 166 shared-model arrays
+bit-for-bit at the original native bounds. Fresh AMD application qualification
+remains pending; no new complete-request speedup is claimed.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
