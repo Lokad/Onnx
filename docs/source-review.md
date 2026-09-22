@@ -14,14 +14,21 @@ The selective import review uses
 after the common release ancestor `4495fc6`. Integration follows behaviors and
 their necessary fixes; it does not merge the branch or replay every experiment.
 
-The [current integration inventory](../tests/pyannote/integration-review/results-20260921.md)
-reduces the isolated pyannote changes to eleven Core/request-context files and
-the separate sparse-mel frontend. It excludes fifty encoding-only differences
-and the experiment's absolute assembly references. Both proposed patches apply
-cleanly to the current product tree. The LSTM storage guard must be carried
-separately; combining the AMD and portable convolution routes requires explicit
-dispatch selection and qualification of the resulting build. This review
-prepares integration without changing the frozen AMD experiment.
+The [normal portable integration](../tests/pyannote/portable-integration-tests/results-20260922.md)
+provides one reviewed patch with twelve product files and eleven test files,
+including the sparse-mel frontend, checked LSTM storage and self-contained
+frontend reference. It excludes fifty encoding-only differences and experiment
+assembly references. Normal project builds, complete local suites and an
+independent package consumer pass; public APIs remain unchanged.
+
+The [actual AMD composition comparison](../tests/pyannote/combined-amd-results/results-20260922.md)
+now resolves the overlapping convolution routes. Current portable takes15.255s,
+AVX-512-first composition15.185s and Microsoft ORT8.951s on the complete dialogue.
+Every correctness and repeatability check passes, but the composition adds only
+0.46percent over portable, below its fixed3percent selection threshold. The
+combined patch remains unselected. A distinct
+[portable-versus-root-production trial](../tests/pyannote/portable-amd-integration/README.md)
+qualifies the next integration decision; root promotion is still pending.
 
 The separate [sparse-mel adaptation](../tests/pyannote/sparse-mel/results-20260921.md)
 now passes complete dialogue and meeting qualification. Its
@@ -29,8 +36,9 @@ now passes complete dialogue and meeting qualification. Its
 reduces full-dialogue latency 8.6%, from 11.482 to 10.493 seconds, with ORT at
 6.320 seconds (1.660 ratio) on Windows. Every original repeatability control
 passes. The change skips zero coefficients while preserving all feature bits;
-it joins the accepted local integration candidate, with AMD performance still
-to be established.
+it joins the accepted local integration candidate. The AMD composition table
+above measures the newer normal build; its timing is kept separate from this
+Windows comparison.
 
 The [remaining-gap review](../tests/e5/remaining-gap/results-20260920.md)
 recomputes the complete-model reduction still needed for the unchanged 1.05
@@ -84,8 +92,10 @@ The [next copy adaptation](../tests/pyannote/spatial-copy/results-20260921.md)
 uses the contiguous-row ideas from `de60581`/`e802581` and panel-copy idea from
 `b8849e2`, with portable span copies, clamped padding and checked scratch sizes.
 It improves complete local dialogue latency by a further 21.8% against the
-exact first spatial core, with unchanged captured output bits. `cdeae16` remains
-an AMD candidate because its AVX-512 path cannot run on this workstation.
+exact first spatial core, with unchanged captured output bits. The later
+`cdeae16` adaptation executes successfully on AMD; its first candidate beats
+the older portable build, while the newer composition comparison above fails
+its required additional gain over the current portable route.
 The actual segmentation model has four bidirectional hidden-size128 LSTMs;
 an output-lane projection prototype can target them while preserving master's
 separate multiply/add order. The branch's `03af0bf` uses FMA and therefore
@@ -103,9 +113,12 @@ The [two complete meetings and recovery](../tests/pyannote/optimized-meetings/re
 now preserve both native speaker timelines exactly. The [full Parakeet check](../tests/pyannote/optimized-parakeet/results-20260921.md)
 retains all 784 arrays bit-for-bit and its three existing Windows numerical
 failures. A [convolution-only row-sharing successor](../tests/pyannote/conv-row-sharing/prepared-20260921.md)
-is prepared using `cdeae16`'s mechanism and the current composer, with checked
-packing space and existing tail fallback. Local guards/fallback tests pass;
-actual AVX-512 execution and AMD application benefit remain unqualified.
+uses `cdeae16`'s mechanism and the current composer, with checked packing space
+and existing tail fallback. Actual AVX-512 execution, graph/public qualification
+and complete AMD timing now pass in the
+[primary campaign](../tests/pyannote/amd-results/results-20260922.md).
+Its15.780s versusORT8.945s result belongs to the older payload. The current
+composition has its own result and unsuccessful selection gate above.
 
 The [follow-up ORT 1.29 recurrent review](../tests/pyannote/lstm-output-lanes/source-review-20260921.md)
 confirms separate W/R packing and an input projection batched across time before
