@@ -58,6 +58,10 @@ Its [complete AMD Pyannote qualification](tests/pyannote/lstm-input-models-amd/r
 also passes: all 18 graph arrays (2,917,107 values) and 16 complete public
 diarization results match the selected product exactly, with every ORT error
 check passing. Complete application performance remains to be measured.
+Its [AMD Parakeet regression](tests/pyannote/lstm-input-parakeet-amd/results-20260922.md)
+also passes all 784 arrays (3,090,494 values) and twenty public clips, with
+exact selected outputs and maximum ORT scaled error 3.831e-5. This supplies
+no new Parakeet timing result.
 
 The latest [Pyannote twelve-position convolution screen](tests/pyannote/spatial-weight-screen/results-20260922.md)
 is **not selected**. The sum of all 108 prepared graph call means rises from
