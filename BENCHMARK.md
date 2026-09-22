@@ -15,25 +15,33 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
 
-The selected **AMD pyannote implementation** completes the full dialogue in
-**15.466 s versus Microsoft ORT 8.952 s (1.728×)**. Pre-integration production
-takes **43.085 s** in the same comparison: a **64.1% latency reduction**, taking
-the ORT ratio from 4.813× to 1.728×. All 96 requests, fixed stability controls,
-speed thresholds and resource checks pass. The
-[complete comparison](#audio-amd-selected-pyannote-versus-production-and-microsoft-ort)
-retains every sample. The implementation is now
-[integrated into normal root source](tests/pyannote/portable-root-completion/results-20260922.md):
-3,290 backend tests, 343 tensor tests and an independent NuGet consumer pass.
-The root build matches all 3,108 Core / 697 Data methods and public declarations
-of the measured Core `e9c87932` / Data `85d166b5` candidate. Its own binaries
-are Core `de17733b` / Data `988ba1ad`; no separate rebuild timing is claimed.
+The current selected **AMD pyannote implementation** completes the full dialogue
+in **15.362 s versus Microsoft ORT 9.095 s (1.689×)**. Contemporary production
+takes **16.139 s**: a **4.82% latency reduction**. All 96 requests, twelve
+repeatability controls, four speed gates and 3,172 resource samples pass.
+The [complete comparison](#audio-amd-single-panel-pyannote-versus-microsoft-ort)
+retains every sample, both ten-minute meetings and the recovery check.
 
-The latest [direct-output Pyannote trial](#audio-amd-direct-output-pyannote-trial-versus-microsoft-ort)
+The change is [integrated into normal root source](tests/pyannote/single-panel-root-results/results-20260922.md).
+It writes eligible convolution rows directly to final output and skips another
+packing rental/copy when a patch already has the required layout. The normal
+build passes 3,313 backend tests, 343 tensor tests and an independent NuGet
+consumer. All 3,113 Core / 697 Data methods and public declarations match measured
+Core `1279b4b6` / Data `4e602d9f`. Root binaries are Core `85da4854` / Data
+`1006dad5`; no separate rebuild timing is claimed. The <=1.05 parity target
+remains open.
+
+The [earlier portable selection](#audio-amd-selected-pyannote-versus-production-and-microsoft-ort)
+retains its own comparison: 15.466 s versus pre-integration production 43.085 s
+and ORT 8.952 s, a 64.1% reduction. Measurements from separate campaigns are
+not combined into a cumulative speedup.
+
+The preceding [direct-output Pyannote trial](#audio-amd-direct-output-pyannote-trial-versus-microsoft-ort)
 is **not selected**: candidate **15.717 s**, contemporary production **16.197 s**,
 and Microsoft ORT **9.068 s**. Its 2.962% full-request reduction misses the
 predeclared 3% gate (ratio 0.970383, limit 0.970000). All correctness,
-repeatability and resource checks pass. Root product source remains unchanged;
-the earlier accepted comparison above retains its own measurements.
+repeatability and resource checks pass. That candidate was not integrated;
+its failed gate remains recorded separately from the new single-panel result.
 
 The preceding combined AVX-512 trial measured 15.185 s versus its contemporary
 portable control's 15.255 s and ORT's 8.951 s. Its 0.46% additional gain misses
@@ -177,8 +185,11 @@ now passes 3,313 backend tests, 343 tensor tests, both 400-case caller modes
 and an independent NuGet consumer. The consumer verifies that narrow tiles
 avoid the extra packed rental. [Complete Windows model checks](tests/pyannote/single-panel-models/results-20260922.md)
 preserve all 18 Pyannote arrays, 16 public requests and 166 shared-model arrays
-bit-for-bit at the original native bounds. Fresh AMD application qualification
-remains pending; no new complete-request speedup is claimed.
+bit-for-bit at the original native bounds. Its
+[complete AMD application comparison](tests/pyannote/single-panel-amd-results/results-20260922.md)
+now passes all qualification and timing gates, reducing full-request latency
+4.82% against contemporary production. Normal root integration and the package
+consumer also pass; the new table below includes the fresh Microsoft ORT baseline.
 
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
@@ -406,6 +417,42 @@ claimed from that grid.
 The [conditioned successor](tests/parakeet/wide-matmul-conditioned/results-20260921.md)
 also fails its fixed control limits despite passing all numerical checks. No
 prototype is promoted and the ORT comparison tables remain unchanged.
+
+### Audio: AMD single-panel pyannote versus Microsoft ORT
+
+AMD EPYC 9V74, CPU2, .NET 10.0.8 and Microsoft ORT 1.29.0. Production is
+Core `e9c87932` / Data `85d166b5`; the selected candidate is Core `1279b4b6` /
+Data `4e602d9f`. Timers include features, neural inference, clustering and owned
+results; loading, file access and external validation are excluded. ORT uses
+one intra/inter-op thread, sequential execution, full optimization and no spinning.
+
+| Workload | Production seconds | Selected seconds | Microsoft ORT seconds | Selected / ORT |
+|---|---:|---:|---:|---:|
+| pyannote, dialogue-30s | 16.139 | 15.362 | 9.095 | 1.689 |
+| pyannote, dialogue-0-10s | 0.756 | 0.724 | 0.435 | 1.664 |
+| pyannote, dialogue-10-20s | 0.768 | 0.749 | 0.436 | 1.717 |
+| pyannote, dialogue-20-30s | 0.869 | 0.786 | 0.437 | 1.800 |
+
+**Selected and integrated.** Full candidate / production is
+0.951832, passing the fixed 0.970000 limit.
+All three crop gates and all twelve process-repeatability controls pass.
+Six fresh processes run production, candidate, ORT, ORT, candidate, production;
+each makes one warmup and three measured passes. All 96 requests are retained
+(24 warmups and 72 measured calls); each table mean has six measurements.
+These are descriptive observations, without a confidence interval or a parity claim.
+
+Linux source qualification passes 3,365 backend tests (41 skips), 343 tensor
+tests and both 400-case actual-caller modes. Both managed roles pass their
+complete Pyannote and Parakeet native checks; candidate Pyannote graph/public
+outputs match production exactly. Both 600-second meetings and the 30-second
+recovery preserve native speaker timelines. All 3,172 resource samples pass.
+The [complete report](tests/pyannote/single-panel-amd-results/results-20260922.md)
+contains every timing, control, numerical check and artifact identity.
+
+The [normal root integration](tests/pyannote/single-panel-root-results/results-20260922.md)
+passes the complete Windows suites and actual NuGet consumer, matching all
+compiled methods of the measured candidate. The earlier failed direct-output
+trial below remains unselected; no samples are reused between comparisons.
 
 ### Audio: AMD direct-output pyannote trial versus Microsoft ORT
 

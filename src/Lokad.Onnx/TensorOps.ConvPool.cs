@@ -336,10 +336,13 @@ where T : unmanaged
                 var wView = new DenseTensor<float>(wMem.Slice(g * tileM * tileKg, tileM * tileKg), new int[] { tileM, tileKg });
                 var pView = new DenseTensor<float>(patchMem.Slice(g * tileKg * colCount, tileKg * colCount), new int[] { tileKg, colCount });
                 var dView = new DenseTensor<float>(outMem.Slice(g * tileM * colCount, tileM * colCount), new int[] { tileM, colCount });
+                int outBase = b * outBatch + g * tileM * tileN;
+                if (TryConvDirectOutput(wView.Buffer.Span, pView.Buffer.Span, dView.Buffer.Span,
+                    os.Slice(outBase + colStart), hasBias ? bs.Slice(g * tileM, tileM) : default,
+                    hasBias, tileM, tileKg, colCount, tileN, options)) continue;
                 if (!TryConvPortableRows(wView.Buffer.Span, pView.Buffer.Span, dView.Buffer.Span,
                     tileM, tileKg, colCount, options))
                     Tensor<float>.MatMul2D(wView, pView, dView, options);
-                int outBase = b * outBatch + g * tileM * tileN;
                 int blkBase = g * tileM * colCount;
                 for (int i = 0; i < tileM; i++)
                 {
