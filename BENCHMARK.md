@@ -39,12 +39,14 @@ transcripts, tokens and owned outputs. Earlier campaigns remain historical;
 this refresh does not establish a speedup against their different products.
 The full application parity target remains <=1.05 for both models.
 
-A further [Pyannote fixed 3×3 loop prototype](tests/pyannote/kernel-loop-numerics-amd-v2/results-20260922.md)
-passes complete AMD numerical qualification with AVX512 enabled and disabled:
-7,944 raw cases, 24,012 graph requests and 108 captured layers per setting.
-It preserves the original numerical bounds and changes only one compiled
-kernel method. It remains isolated, with no performance result or change to
-the application timings above.
+The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
+is **not selected**: complete captured graph calls improve only **1.56%**,
+from 1.433322 s to 1.410928 s, below the fixed 10% component threshold.
+All 32 repeatability controls, numerical checks and per-form speed gates pass.
+[AMD correctness](tests/pyannote/kernel-loop-numerics-amd-v2/results-20260922.md)
+and [generated-code inspection](tests/pyannote/kernel-loop-codegen-amd/results-20260922.md)
+are retained alongside all 17,184 call clocks. This component trial supplies
+no new application or ORT timing and leaves the selected product unchanged.
 
 The LSTM change shares weights across four input time rows, preserving each
 output's reduction order and adding at most 8 KiB of scratch per call. Its
