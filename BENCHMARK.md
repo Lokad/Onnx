@@ -50,6 +50,10 @@ All 2,352 timing clocks, including 588 warmups, and 48 preparation clocks remain
 available. Every output preserves selected bits and the Microsoft ORT error
 bound. The candidate is not integrated; full application qualification and a
 fresh matched ORT campaign remain, so the application ratios above are unchanged.
+Its [normal Linux product and NuGet qualification](tests/pyannote/lstm-input-product-amd-v2/results-20260922.md)
+now pass: 3,432 backend tests (41 existing AMD skips), all 343 tensor tests,
+exact equivalence of all 3,163 Core / 697 Data methods, and independent package
+consumption including prepared ConvRelu and output ownership checks.
 
 The latest [Pyannote twelve-position convolution screen](tests/pyannote/spatial-weight-screen/results-20260922.md)
 is **not selected**. The sum of all 108 prepared graph call means rises from
