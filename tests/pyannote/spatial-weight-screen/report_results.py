@@ -1,7 +1,7 @@
 """Render the closed trial with this experiment title and recorded owner.
 
 The inherited report.py was frozen but never executed; it retains two predecessor
-display strings. This successor changes those strings only, before reporting.
+display strings. This successor corrects those strings and labels the latency direction before reporting.
 All scoring, numerical evidence and output fields remain unchanged.
 """
 from fractions import Fraction
@@ -35,7 +35,7 @@ def main():
     lines = ['# AMD twelve-position weight reuse: complete-call screen', '',
         ('The component is **admitted for full product/application qualification**.' if a['admitted'] else 'The component is **not admitted**.'),
         f'All 108 call means sum to {float(p):.9f} s for selected production and',
-        f'{float(c):.9f} s for the candidate: ratio {float(c/p):.9f}, {(1-float(c/p))*100:.4f}% lower.',
+        f'{float(c):.9f} s for the candidate: ratio {float(c/p):.9f}, {abs(1-float(c/p))*100:.4f}% {"lower" if c < p else "higher"}.',
         f'{len(failed_controls)} of 32 repeatability controls and {len(failed_gates)} of 12 speed gates fail.',
         'All numerical/resource checks pass. Selected root source is unchanged.', '',
         '| Form | Input C×H×W → output C×H×W | Stride | Calls per crop | Eligible | Production ms | Candidate ms | Ratio |',

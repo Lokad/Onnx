@@ -41,10 +41,23 @@ pass. It is also rejected; source-level improvements alone do not establish
 application value. The [refreshed complete-request profile](../tests/pyannote/prepared-profile-amd-results/results-v2-20260922.md)
 on selected Core `3c2f16b0` attributes 65.58%/65.56% of sampled thread time to
 `Kernel512`, versus about 17.4% for LSTM execution and ordered projection together.
-All 48 public requests and complete trace accounting pass. This supports a
-distinct next experiment: reuse each weight vector across twelve spatial outputs
-instead of six, preserving two output-channel blocks and reduction order.
-The profile identifies a target; it does not establish the cause or a speedup.
+All 48 public requests and complete trace accounting pass. The subsequent
+[twelve-position weight-reuse experiment](../tests/pyannote/spatial-weight-codegen/results-20260922.md)
+keeps 24 accumulators in registers and reuses two weight loads across twelve
+broadcasts. It preserves both instruction widths and all numerical checks,
+but its [complete-call screen](../tests/pyannote/spatial-weight-screen/results-20260922.md)
+is **3.13% slower**. All repeatability controls pass; the aggregate gate and
+four form gates fail. This candidate is also rejected.
+
+The next Pyannote investigation targets bounded batching of LSTM input
+projections. The current provider projects one time row at a time through
+`LstmProjectionPanels.Input`; the recurrent projection must still follow each
+state update. The [pinned ORT recurrence review](../tests/pyannote/lstm-output-lanes/source-review-20260921.md)
+shows that input projection can precede recurrence. Test a small fixed block of
+input rows sharing weight loads, while retaining increasing reduction order,
+separate multiply/add, independent input/recurrent sums and the existing gate
+loop. Unlike a full-sequence gate buffer, a bounded block has a fixed scratch
+limit. This is a prospective design, with no implementation or speed claim.
 Pyannote remains first, Parakeet second, Whisper deferred.
 
 The preceding selected Pyannote source is the
