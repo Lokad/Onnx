@@ -1,0 +1,213 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Lokad.Onnx;
+
+internal static class Probe
+{
+    const string Core = "1279b4b662241db2404fa4875eae20eaa924f15677a85655f99b8f81cd24b309";
+    const int Guard = unchecked((int)0x7fc54321);
+    static void Require(bool value, string name) { if (!value) throw new InvalidDataException(name); }
+    static string Hash(string path) => Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path)));
+    static int Bits(float value) => BitConverter.SingleToInt32Bits(value);
+    static float[] Guarded(int count) { var result = new float[count + 6]; Array.Fill(result, BitConverter.Int32BitsToSingle(Guard)); return result; }
+    static void Guards(float[] values) { Require(values.AsSpan(0, 3).ToArray().All(v => Bits(v) == Guard) && values.AsSpan(values.Length - 3).ToArray().All(v => Bits(v) == Guard), "Guard overwritten"); }
+
+    static float[] Scalar(float[] input, float[] weights, int c, int m, int h, int w, int stride)
+    {
+        int oh = (h + stride - 1) / stride, ow = (w + stride - 1) / stride, spatial = oh * ow;
+        var result = new float[m * spatial];
+        for (int oc = 0; oc < m; oc++) for (int y = 0; y < oh; y++) for (int x = 0; x < ow; x++)
+        {
+            float sum = 0;
+            for (int ic = 0; ic < c; ic++) for (int ky = 0; ky < 3; ky++) for (int kx = 0; kx < 3; kx++)
+            {
+                int iy = y * stride + ky - 1, ix = x * stride + kx - 1;
+                float a = iy < 0 || iy >= h || ix < 0 || ix >= w ? 0f : input[(ic * h + iy) * w + ix];
+                float b = weights[((oc * c + ic) * 3 + ky) * 3 + kx];
+                sum = y * ow + x < spatial / 8 * 8 ? MathF.FusedMultiplyAdd(a, b, sum) : sum + b * a;
+            }
+            result[(oc * oh + y) * ow + x] = sum;
+        }
+        return result;
+    }
+
+    internal static float[] Production(float[] input, float[] weights, float[] bias, float[] residual,
+        int c, int m, int h, int w, int stride, bool relu)
+    {
+        Tensor<float> x = new DenseTensor<float>(input, new[] { 1, c, h, w });
+        Tensor<float> weight = new DenseTensor<float>(weights, new[] { m, c, 3, 3 });
+        Tensor<float>? b = bias.Length == 0 ? null : new DenseTensor<float>(bias, new[] { m });
+        var output = Tensor<float>.Conv2D(x, weight, 1, new[] { 1, 1, 1, 1 }, b, new[] { 3, 3 },
+            new[] { stride, stride }, new[] { 1, 1 }, TensorExecutionOptions.Intrinsics);
+        if (residual.Length != 0) output = Tensor<float>.Add(output, new DenseTensor<float>(residual, output.Dimensions.ToArray()), TensorExecutionOptions.Intrinsics);
+        if (relu) output = Tensor<float>.Relu(output, TensorExecutionOptions.Intrinsics);
+        return output.ToDenseTensor().Buffer.ToArray();
+    }
+
+    static void Fill(float[] values, Random random, bool special)
+    {
+        int[] patterns = [0, unchecked((int)0x80000000), 0x3f000001, unchecked((int)0xbe800003),
+            0x7fc12345, unchecked((int)0xffc65432), 0x7f800000, unchecked((int)0xff800000), 1, unchecked((int)0x80000001)];
+        for (int i = 0; i < values.Length; i++) values[i] = special
+            ? BitConverter.Int32BitsToSingle(patterns[random.Next(patterns.Length)])
+            : (float)(random.NextDouble() - .5);
+    }
+
+    static int InvalidAndOwned(int lanes)
+    {
+        var x = new float[32 * 3 * 3]; var w = new float[32 * 32 * 9]; var b = new float[32];
+        var p = BlockedSpatial.Prepare(w, 32, 32, lanes);
+        var pi = new float[32 * 5 * 5]; var po = new float[x.Length]; var y = new float[x.Length];
+        int rejected = 0;
+        void Bad(Action action)
+        {
+            bool caught = false;
+            try { action(); } catch (ArgumentException) { caught = true; } catch (OverflowException) { caught = true; }
+            Require(caught, "Invalid geometry/alias accepted"); rejected++;
+        }
+        Bad(() => BlockedSpatial.Execute(x, p, b, [], x, pi, po, 32, 32, 3, 3, 1, lanes, false));
+        Bad(() => BlockedSpatial.Execute(x, p, b, [], y, pi, y, 32, 32, 3, 3, 1, lanes, false));
+        Bad(() => BlockedSpatial.Execute(x, p, b, [], p.AsSpan(0, y.Length), pi, po, 32, 32, 3, 3, 1, lanes, false));
+        Bad(() => BlockedSpatial.Execute(x, p, y.AsSpan(0, 32), [], y, pi, po, 32, 32, 3, 3, 1, lanes, false));
+        Bad(() => BlockedSpatial.Execute(x, p, b, y, y, pi, po, 32, 32, 3, 3, 1, lanes, false));
+        Bad(() => BlockedSpatial.Execute(x, p, b, [], y, pi.AsSpan(0, pi.Length - 1), po, 32, 32, 3, 3, 1, lanes, false));
+        Bad(() => BlockedSpatial.Geometry(15, 32, 3, 3, 1, lanes));
+        Bad(() => BlockedSpatial.Geometry(32, 16, 3, 3, 1, lanes));
+        Bad(() => BlockedSpatial.Geometry(32, 32, 3, 3, 0, lanes));
+        Bad(() => BlockedSpatial.Geometry(32, 32, int.MaxValue, 3, 1, lanes));
+        var first = BlockedSpatial.Run(x, p, b, [], 32, 32, 3, 3, 1, lanes, false);
+        var snapshot = MemoryMarshal.Cast<float, int>(first.AsSpan()).ToArray();
+        var second = BlockedSpatial.Run(x, p, b, [], 32, 32, 3, 3, 1, lanes, false);
+        Require(!ReferenceEquals(first, second) && MemoryMarshal.Cast<float, int>(first.AsSpan()).SequenceEqual(snapshot)
+            && MemoryMarshal.Cast<float, int>(second.AsSpan()).SequenceEqual(snapshot), "Owned result changed");
+        return rejected;
+    }
+
+    static List<object> Supplemental(int lanes, out int failed)
+    {
+        var rows = new List<object>(); failed = 0;
+        for (int test = 0; test < 20; test++)
+        {
+            const int c = 32, m = 32, h = 3, w = 7, count = m * h * w;
+            var x = Enumerable.Repeat(.125f, c * h * w).ToArray();
+            var weights = Enumerable.Repeat(-.0625f, m * c * 9).ToArray();
+            var bias = Enumerable.Repeat(.25f, m).ToArray();
+            var residual = Enumerable.Repeat(.5f, count).ToArray();
+            bool finite = test >= 16, relu = (test & 1) != 0;
+            if (!finite)
+            {
+                float value = BitConverter.Int32BitsToSingle((test & 2) == 0 ? 0x7fc12345 : unchecked((int)0xffc65432));
+                switch (test / 4) { case 0: x[5] = value; break; case 1: weights[3] = value; break; case 2: bias[2] = value; break; case 3: residual[17] = value; break; }
+            }
+            else
+            {
+                float[] extremes = [float.MaxValue, -float.MaxValue, float.Epsilon, -float.Epsilon, 1f, -1f, 0f, -0f];
+                for (int i = 0; i < x.Length; i++) x[i] = extremes[(i + test) % extremes.Length];
+                for (int i = 0; i < weights.Length; i++) weights[i] = extremes[(i * 3 + test) % extremes.Length];
+                if ((test & 2) != 0) Array.Fill(bias, float.MaxValue);
+            }
+            var packed = BlockedSpatial.Prepare(weights, c, m, lanes);
+            var pi = Guarded(c * (h + 2) * (w + 2)); var po = Guarded(count); var output = Guarded(count);
+            bool used = BlockedSpatial.Execute(x, packed, bias, residual, output.AsSpan(3, count), pi.AsSpan(3, pi.Length - 6), po.AsSpan(3, count), c, m, h, w, 1, lanes, relu);
+            Require(used == finite, "Supplemental dispatch");
+            var expected = Production(x, weights, bias, residual, c, m, h, w, 1, relu);
+            int differences = 0;
+            for (int i = 0; i < count; i++)
+            {
+                if (Bits(output[3 + i]) != Bits(expected[i])) differences++;
+                if (!used) Require(Bits(po[3 + i]) == Guard, "Supplemental fallback entered kernel");
+            }
+            Guards(pi); Guards(po); Guards(output);
+            rows.Add(new { test, finite, relu, kernel = used, differences });
+            if (differences != 0) failed++;
+        }
+        return rows;
+    }
+
+    static int Main(string[] args)
+    {
+        Require(args.Length == 2 && (args[0] == "256" || args[0] == "512"), "Arguments");
+        Require(!File.Exists(args[1]) && Hash(typeof(Tensor<float>).Assembly.Location) == Core, "Identity/output");
+        int lanes = int.Parse(args[0]) / 32;
+        Require(Environment.ProcessorCount == 1 && Avx2.IsSupported && Fma.IsSupported && (lanes == 8 || Avx512F.IsSupported), "Required instructions/affinity");
+        var flags = Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k => k.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase)
+            || k.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase) || k.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase)).ToArray();
+        Require(flags.Length == 0, "Unexpected runtime override");
+        int rejected = InvalidAndOwned(lanes); Require(rejected == 10, "Invalid/alias coverage");
+        var random = new Random(941706); var observations = new List<object>();
+        int geometries = 0, cases = 0, failedCases = 0, layoutCases = 0, finiteKernelCases = 0, nonfiniteFallbackCases = 0;
+        long values = 0, scalarDifferences = 0, productionDifferences = 0;
+        foreach (int c in new[] { 16, 32 }) foreach (int m in new[] { 32, 48 })
+        foreach (int h in new[] { 1, 3, 7 }) foreach (int w in Enumerable.Range(1, 13)) foreach (int stride in new[] { 1, 2 })
+        {
+            int geometry = geometries++;
+            foreach (bool special in geometry % 17 == 0 ? new[] { false, true } : new[] { false })
+            {
+                int oh = BlockedSpatial.Output(h, stride), ow = BlockedSpatial.Output(w, stride), count = m * oh * ow;
+                var input = new float[c * h * w]; var weight = new float[m * c * 9]; var bias = new float[m]; var residual = new float[count];
+                Fill(input, random, special); Fill(weight, random, special); Fill(bias, random, special); Fill(residual, random, special);
+                int[] ib = MemoryMarshal.Cast<float, int>(input.AsSpan()).ToArray(), wb = MemoryMarshal.Cast<float, int>(weight.AsSpan()).ToArray();
+                int[] bb = MemoryMarshal.Cast<float, int>(bias.AsSpan()).ToArray(), rb = MemoryMarshal.Cast<float, int>(residual.AsSpan()).ToArray();
+                var prepared = BlockedSpatial.Prepare(weight, c, m, lanes); var pb = MemoryMarshal.Cast<float, int>(prepared.AsSpan()).ToArray();
+                for (int oc = 0; oc < m; oc++) for (int k = 0; k < c * 9; k++)
+                    Require(Bits(prepared[(oc / lanes * c * 9 + k) * lanes + oc % lanes]) == Bits(weight[oc * c * 9 + k]), "Weight permutation");
+                var pi = Guarded(c * (h + 2) * (w + 2)); var po = Guarded(count); var output = Guarded(count);
+                BlockedSpatial.PackInput(input, pi.AsSpan(3, pi.Length - 6), c, h, w, lanes);
+                for (int ic = 0; ic < c; ic++) for (int y = -1; y <= h; y++) for (int x = -1; x <= w; x++)
+                {
+                    int actual = Bits(pi[3 + ((ic / lanes * (h + 2) + y + 1) * (w + 2) + x + 1) * lanes + ic % lanes]);
+                    int expected = y < 0 || y >= h || x < 0 || x >= w ? 0 : Bits(input[(ic * h + y) * w + x]);
+                    Require(actual == expected, "Padded input permutation");
+                }
+                layoutCases++;
+                var scalar = Scalar(input, weight, c, m, h, w, stride);
+                foreach (bool hasBias in new[] { false, true }) foreach (bool hasResidual in new[] { false, true }) foreach (bool relu in new[] { false, true })
+                {
+                    Array.Fill(po, BitConverter.Int32BitsToSingle(Guard)); Array.Fill(output, BitConverter.Int32BitsToSingle(Guard));
+                    var b = hasBias ? bias : Array.Empty<float>(); var r = hasResidual ? residual : Array.Empty<float>();
+                    bool kernel = BlockedSpatial.Execute(input, prepared, b, r, output.AsSpan(3, count), pi.AsSpan(3, pi.Length - 6), po.AsSpan(3, count), c, m, h, w, stride, lanes, relu);
+                    Require(kernel == !special, "Finite kernel/nonfinite fallback routing");
+                    if (kernel) finiteKernelCases++; else nonfiniteFallbackCases++;
+                    var expected = Production(input, weight, b, r, c, m, h, w, stride, relu);
+                    int pd = 0, sd = 0; object? first = null;
+                    for (int oc = 0; oc < m; oc++) for (int p = 0; p < oh * ow; p++)
+                    {
+                        int index = oc * oh * ow + p;
+                        int raw = Bits(po[3 + (oc / lanes * oh * ow + p) * lanes + oc % lanes]);
+                        if (kernel && raw != Bits(scalar[index])) sd++;
+                        if (!kernel) Require(raw == Guard, "Fallback entered the new kernel");
+                        if (Bits(output[3 + index]) != Bits(expected[index]))
+                        {
+                            pd++; first ??= new { index, actual = Bits(output[3 + index]), expected = Bits(expected[index]), raw, scalar = Bits(scalar[index]) };
+                        }
+                    }
+                    Guards(pi); Guards(po); Guards(output);
+                    Require(MemoryMarshal.Cast<float, int>(input.AsSpan()).SequenceEqual(ib) && MemoryMarshal.Cast<float, int>(weight.AsSpan()).SequenceEqual(wb)
+                        && MemoryMarshal.Cast<float, int>(prepared.AsSpan()).SequenceEqual(pb) && MemoryMarshal.Cast<float, int>(bias.AsSpan()).SequenceEqual(bb)
+                        && MemoryMarshal.Cast<float, int>(residual.AsSpan()).SequenceEqual(rb), "Read-only input changed");
+                    observations.Add(new { c, m, h, w, stride, special, hasBias, hasResidual, relu, kernel, values = count, scalar_differences = sd, production_differences = pd, first });
+                    cases++; values += count; scalarDifferences += sd; productionDifferences += pd;
+                    if (sd != 0 || pd != 0) failedCases++;
+                }
+            }
+        }
+        Require(geometries == 312 && layoutCases == 331 && cases == 2648, "Coverage");
+        Require(finiteKernelCases == 2496 && nonfiniteFallbackCases == 152, "Finite/fallback coverage");
+        var supplemental = Supplemental(lanes, out int supplementalFailed);
+        var result = new { passed = failedCases + supplementalFailed == 0, geometries, layout_cases = layoutCases, cases, values, scalar_differences = scalarDifferences,
+            production_differences = productionDifferences, failed_cases = failedCases + supplementalFailed, observations, supplemental,
+            rejected, owned_outputs = true, finite_kernel_cases = finiteKernelCases, nonfinite_fallback_cases = nonfiniteFallbackCases,
+            lanes, avx512 = Avx512F.IsSupported, runtime = Environment.Version.ToString(), core = Core,
+            executable = Hash(typeof(Probe).Assembly.Location), pid = Environment.ProcessId, flags };
+        File.WriteAllText(args[1], JsonSerializer.Serialize(result, new JsonSerializerOptions { WriteIndented = true }));
+        Console.WriteLine(JsonSerializer.Serialize(new { result.passed, geometries, cases, failed_cases = failedCases, scalarDifferences, productionDifferences }));
+        return result.passed ? 0 : 1;
+    }
+}
