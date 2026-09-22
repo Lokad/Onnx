@@ -124,6 +124,13 @@ equal-shape geometric mean is 6.73% faster, but the two-column tails regress
 the preceding NaN-payload corrections are retained. No product change or new
 application speedup follows from this component result.
 
+The [ordinary-tail-store successor](tests/pyannote/direct-output-store/results-20260922.md)
+also remains **not selected**. Expanded qualification passes 3,266 cases per
+platform/mode and every repeated-process control passes. Its mean ratio is
+0.941473, but the two-column ratios are 1.266766 and 1.168878, failing the
+unchanged 1.05 per-shape limit. All 22 shapes and all samples are retained;
+the accepted application timings and root product remain unchanged.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.

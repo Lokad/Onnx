@@ -75,6 +75,16 @@ one-to-seven floats. Keep masked input loads, arithmetic, admission and all
 shapes unchanged. The retained MLAS FMA source also uses masked tail stores;
 it does not establish their cost here or prove the cause of these regressions.
 
+The [ordinary-store successor](../tests/pyannote/direct-output-store/results-20260922.md)
+passes 3,266 cases in each of four platform/mode combinations, with every
+one-to-seven store width covered. All repeated-process controls pass, but
+two-column ratios worsen to 1.266766 and 1.168878; the fixed regression gate
+rejects it despite the 0.941473 mean ratio. Replacing the final masked stores
+does not resolve this regression. Inspect the actual AMD generated code for
+the selected kernel and both direct-output variants before selecting another
+tail implementation; source similarity alone does not establish loop costs,
+spills or instruction selection. Preserve the failed screens and all shapes.
+
 The separate [sparse-mel adaptation](../tests/pyannote/sparse-mel/results-20260921.md)
 now passes complete dialogue and meeting qualification. Its
 [fresh matched comparison](../tests/pyannote/sparse-mel-comparison/results-20260921.md)
