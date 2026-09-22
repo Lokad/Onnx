@@ -47,6 +47,17 @@ numerical check. All 1,728 call clocks, 512 preparation clocks and 276 resource
 samples are retained; these are separate from the preceding trial and the
 application/ORT figures above.
 
+The [vector input layout successor](tests/pyannote/vector-input-layout-amd/results-20260922.md)
+is **admitted for product qualification**. Its complete-component mean is
+1.641 s production versus 1.379 s candidate, a 16.01% reduction. All 32
+repeatability controls and 12 selection gates pass, including every eligible
+form. Both instruction modes preserve all raw and actual-layer numerical
+checks; all 17,184 call clocks, 512 preparation clocks and 772 resource samples
+are retained. This trial uses longer, fixed geometry-based repetitions, with
+each call retaining its original aggregate weight. Its times are not combined
+with earlier campaigns. Normal product integration and a fresh application/ORT
+comparison remain required; the application tables above are unchanged.
+
 The current selected **AMD pyannote implementation** completes the full dialogue
 in **15.362 s versus Microsoft ORT 9.095 s (1.689×)**. Contemporary production
 takes **16.139 s**: a **4.82% latency reduction**. All 96 requests, twelve

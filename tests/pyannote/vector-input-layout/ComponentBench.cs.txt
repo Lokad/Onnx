@@ -1,0 +1,100 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+
+internal static class ComponentBench
+{
+    static void Require(bool value, string message) { if (!value) throw new InvalidDataException(message); }
+    static string Hash(ReadOnlySpan<byte> bytes) => Convert.ToHexStringLower(SHA256.HashData(bytes));
+    static long Work(ModelProbe.Call call) => checked((long)call.OutputShape[1] * call.InputShape[1] *
+        call.Kernel[0] * call.Kernel[1] * call.OutputShape[2] * call.OutputShape[3]);
+    static int Iterations(ModelProbe.Call call)
+    {
+        long work = Work(call); Require(work > 0, "Operation count");
+        int count = checked((int)(((1L << 31) + work - 1) / work));
+        Require(count >= 1 && count <= 128, "Iteration bound"); return count;
+    }
+    static int Main(string[] args)
+    {
+        if (args.Length == 4 && args[0] == "qualify")
+            return (int)typeof(ModelProbe).GetMethod("Main", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, new object[] { args.Skip(1).ToArray() })!;
+        Require(args.Length == 4 && args[0] is "production" or "candidate", "Expected role, fixtures, reference, output directory");
+        Require(Avx512F.IsSupported && Avx2.IsSupported && Fma.IsSupported, "AMD AVX-512 required");
+        var flags = Environment.GetEnvironmentVariables().Cast<DictionaryEntry>().Where(e =>
+            e.Key.ToString()!.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase) ||
+            e.Key.ToString()!.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase) ||
+            e.Key.ToString()!.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase)).Select(e => e.Key.ToString()).ToArray();
+        Require(flags.Length == 0, "Runtime overrides");
+        string core = Hash(File.ReadAllBytes(typeof(Lokad.Onnx.Tensor<float>).Assembly.Location));
+        Require(core == "1279b4b662241db2404fa4875eae20eaa924f15677a85655f99b8f81cd24b309", "Selected runtime");
+        using var reference = JsonDocument.Parse(File.ReadAllBytes(args[2]));
+        Require(reference.RootElement.GetProperty("passed").GetBoolean(), "Reference qualification");
+        var hashes = reference.RootElement.GetProperty("observations").EnumerateArray().ToDictionary(
+            r => (r.GetProperty("name").GetString()!, r.GetProperty("index").GetInt32()),
+            r => r.GetProperty("production").GetString()!);
+        // Common fixture setup is deliberately identical for both roles. The
+        // candidate's 32 prepared weights are retained outside hot-call timing.
+        // Their complete preparation is measured separately below in each role.
+        var fixtures = new ModelProbe.Fixtures(args[1], 16);
+        Require(hashes.Count == fixtures.Calls.Count, "Reference coverage");
+        string output = args[3]; Require(Directory.Exists(output) && !File.Exists(Path.Combine(output, "journal.jsonl")), "Existing output");
+        using var journal = new StreamWriter(new FileStream(Path.Combine(output, "journal.jsonl"), FileMode.CreateNew));
+        void Log(object row) { journal.WriteLine(JsonSerializer.Serialize(row)); journal.Flush(); }
+        long frequency = Stopwatch.Frequency; var preparation = new List<object>(); var observations = new List<object>();
+        var constants = fixtures.Calls.Where(c => c.Eligible).DistinctBy(c => c.Node).ToArray(); Require(constants.Length == 32, "Weight coverage");
+        for (int pass = 0; pass < 4; pass++) foreach (var call in constants)
+        {
+            long start = Stopwatch.GetTimestamp();
+            var values = BlockedSpatial.Prepare(call.Weight, call.InputShape[1], call.OutputShape[1], 16);
+            long stop = Stopwatch.GetTimestamp(); Require(stop > start, "Weight clock");
+            string hash = Hash(MemoryMarshal.AsBytes(values.AsSpan()));
+            Require(hash == Hash(MemoryMarshal.AsBytes(call.Prepared.AsSpan())), "Prepared weight changed");
+            var row = new { kind = "preparation", role = args[0], pass, warmup = pass == 0, index = call.Index, node = call.Node,
+                ticks = stop - start, frequency, bytes = values.LongLength * 4, sha256 = hash };
+            preparation.Add(row); Log(row);
+        }
+        using var frozen = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(args[1], "iterations.json")));
+        var manifest = frozen.RootElement.GetProperty("calls").EnumerateArray().ToArray();
+        Require(manifest.Length == fixtures.Calls.Count, "Iteration census");
+        int perPass = 0;
+        for (int i = 0; i < fixtures.Calls.Count; i++)
+        {
+            var call = fixtures.Calls[i]; var item = manifest[i];
+            Require(item.GetProperty("case").GetString() == call.Name && item.GetProperty("index").GetInt32() == call.Index &&
+                item.GetProperty("work").GetInt64() == Work(call) && item.GetProperty("iterations").GetInt32() == Iterations(call), "Frozen geometry iterations");
+            perPass += Iterations(call);
+        }
+        Require(perPass == frozen.RootElement.GetProperty("per_pass").GetInt32(), "Iteration total");
+        // One complete warmup pass and three complete measured passes, always
+        // in the frozen crop/node order. Hashing and journal IO are outside the
+        // call timer; conversions, scans, clearing and epilogues are inside it.
+        for (int pass = 0; pass < 4; pass++) foreach (var call in fixtures.Calls)
+        for (int iteration = 0; iteration < Iterations(call); iteration++)
+        {
+            long start = Stopwatch.GetTimestamp();
+            var result = args[0] == "production" ? call.Production() : call.Candidate(16);
+            long stop = Stopwatch.GetTimestamp(); Require(stop > start, "Call clock");
+            string hash = Hash(MemoryMarshal.AsBytes(result.Buffer.Span));
+            var row = new { kind = "call", role = args[0], pass, warmup = pass == 0, name = call.Name, index = call.Index,
+                form = call.Form, eligible = call.Eligible, iteration, iterations = Iterations(call), work = Work(call), ticks = stop - start, frequency,
+                values = result.Length, sha256 = hash, exact = hash == hashes[(call.Name, call.Index)] };
+            observations.Add(row); Log(row); Require(row.exact, "Timed output changed");
+        }
+        fixtures.Unchanged();
+        var report = new { passed = true, role = args[0], cases = 108, calls = observations.Count, warmups = perPass, measured = 3 * perPass, protocol = "geometry-2pow31-v1",
+            observations, preparation, read_only_operands = true, lanes = 16, runtime = Environment.Version.ToString(), core,
+            executable = Hash(File.ReadAllBytes(typeof(ComponentBench).Assembly.Location)), pid = Environment.ProcessId, flags,
+            prepared_bytes = fixtures.Prepared.Values.Sum(v => v.Values.LongLength * 4),
+            setup = "Both roles load identical fixtures and retain 32 prepared weights; preparation is outside hot-call timers and measured separately." };
+        File.WriteAllText(Path.Combine(output, "result.json"), JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
+        Console.WriteLine(JsonSerializer.Serialize(new { report.passed, report.role, report.calls })); return 0;
+    }
+}

@@ -1,0 +1,14 @@
+using System;
+using System.Linq;
+using System.Reflection;
+
+internal static class VectorInputProbe
+{
+    static int Main(string[] args)
+    {
+        if (args.Length == 0) throw new ArgumentException("Expected raw, model or bench mode");
+        Type target = args[0] switch { "raw" => typeof(Probe), "model" => typeof(ModelProbe), "bench" => typeof(ComponentBench),
+            _ => throw new ArgumentException("Unexpected mode") };
+        return (int)target.GetMethod("Main", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, new object[] { args.Skip(1).ToArray() })!;
+    }
+}
