@@ -29,16 +29,22 @@ now preserves this selected convolution and passes all local native/public/share
 models, normal suites and package checks. Its
 [AMD consumers](../tests/parakeet/single-panel-amd-consumer-results/results-20260922.md)
 retain the original cases and add forty prepared-dispatch precedence cases for
-the target host. A fresh production/candidate/ORT campaign is required before
-any speed claim or arithmetic integration. Whisper remains deferred.
+the target host. The [fresh AMD comparison](../tests/parakeet/single-panel-amd-results/results-20260922.md)
+is now closed: 75.135 seconds production, 78.066 candidate and 39.464 Microsoft
+ORT. Correctness and repeatability pass, but the corpus and seven clip speed
+gates fail. The arithmetic candidate is not integrated. Whisper remains deferred.
 
 A new [optimized-graph inspection](../tests/pyannote/nchwc-review/results-20260922.md)
 finds all 36 embedding convolutions represented as blocked-channel NCHWc
 operators in local ORT 1.29. Sixteen residual sums and 33 ReLUs are folded into
 those convolutions, with only one output-layout conversion. The pinned source
-uses direct blocked spatial kernels for eligible shapes. This warrants checking
-the actual AMD graph and refreshing managed attribution before further GEMM
-tuning. The local inspection executes no inference and establishes no speedup.
+uses direct blocked spatial kernels for eligible shapes. A separate
+[AMD graph and execution diagnostic](../tests/pyannote/native-layout-amd/results-20260922.md)
+now confirms all 36 blocked convolutions actually execute, with the same fused
+sums and activations. All twelve native arrays and 606 resolved kernel events
+pass independent checks. This establishes the operator path, not an assembly
+microkernel or managed speedup. Refresh managed attribution before choosing the
+next Pyannote change.
 
 The [normal portable integration](../tests/pyannote/portable-integration-tests/results-20260922.md)
 provides one reviewed patch with twelve product files and eleven test files,
