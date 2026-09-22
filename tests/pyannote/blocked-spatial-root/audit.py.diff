@@ -1,0 +1,28 @@
+--- single-panel-root/audit.py
++++ blocked-spatial-root/audit.py
+@@ -13,19 +13,19 @@
+     assert not (BASE / 'closed.json').exists()
+     proof = read(BASE / 'verified.json'); assert proof['passed']; verify(proof['files'])
+     jobs = {n + '-' + p: (8, 8, 900, False) for n in ['cli', 'backend', 'tensors', 'bridge'] for p in ['restore', 'build']}
+-    jobs.update({n: (minimum, 8, 900, False) for n, minimum in [('instructions', 8), ('backend-tests', 10), ('tensors-tests', 10),
+-                 ('package', 8), ('consumer-restore', 8), ('consumer-build', 8), ('consumer', 10)]})
++    jobs.update({n: (minimum, 8, 900, False) for n, minimum in [('instructions', 8), ('backend-tests', 12), ('tensors-tests', 12),
++                 ('package', 8), ('consumer-restore', 8), ('consumer-build', 8), ('consumer', 12)]})
+     resources = common.resources(BASE, 'processes.json', jobs)
+-    assert proof['suites'] == [suite('backend', 3313, 93), suite('tensors', 343, 0)]
++    assert proof['suites'] == [suite('backend', 3344, 93), suite('tensors', 343, 0)]
+     inventory = read(BASE / 'instructions.json'); assert inventory['inventory_complete']
+-    assert [(r['assembly'], r['methods']) for r in inventory['observations']] == [('Lokad.Onnx.dll', 3113), ('Lokad.Onnx.Data.dll', 697)]
++    assert [(r['assembly'], r['methods']) for r in inventory['observations']] == [('Lokad.Onnx.dll', 3161), ('Lokad.Onnx.Data.dll', 697)]
+     for row in inventory['observations']:
+         assert row['public_surface_equal'] and not row['added'] and not row['removed'] and not row['differences']
+         assert row['before_sha256'] == pin(MODEL / 'runtime' / row['assembly'])['sha256']
+         assert row['after_sha256'] == pin(BASE / 'runtime' / row['assembly'])['sha256']
+     value = read(BASE / 'consumer.json')
+-    assert value['passed'] and value['packaged_tiled_convolution_values'] == 33216
+-    assert value['packaged_narrow_values'] == 10240 and value['narrow_scratch_bytes'] == 327680
++    assert value['passed'] and value['prepared_graph_values'] == 1056 and value['prepared_graph_calls'] == 2
++    assert value['retained_weights'] == 18432 and value['graph_scratch'] == 8384
+     assert value['core'] == proof['core']['sha256'] and value['processor_count'] == 1
+     assert value['model_imported'] and value['input_and_held_outputs_unchanged']
+     assert value['pid'] == read(BASE / 'processes.json')['runs'][-1]['worker']['pid']
