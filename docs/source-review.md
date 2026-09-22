@@ -50,6 +50,18 @@ regressed all five banks. A new convolution experiment must preserve arithmetic
 and qualify all 22 observed geometries, include clearing and packing costs,
 and establish its own improvement before any product change.
 
+That [three-row convolution experiment](../tests/pyannote/convolution-reduction/results-20260922.md)
+is now closed and rejected: 3,014 guarded cases pass identically on Windows and
+AMD, all repeated-process controls pass, but the equal-shape geometric mean
+is 0.79% slower. No reduction-blocked product kernel is selected. The next
+distinct target is the temporary convolution output and final bias/copy pass.
+The retained ORT convolution source passes the final destination row stride
+to its matrix routine. A Lokad prototype could write completed accumulators
+directly to final rows and apply bias only after the original reduction,
+preserving arithmetic and avoiding the separate temporary-output pass.
+This needs its own stride, tail, ownership, numerical and complete-request
+qualification; the sampled caller share does not establish its potential gain.
+
 The separate [sparse-mel adaptation](../tests/pyannote/sparse-mel/results-20260921.md)
 now passes complete dialogue and meeting qualification. Its
 [fresh matched comparison](../tests/pyannote/sparse-mel-comparison/results-20260921.md)

@@ -109,6 +109,13 @@ both captures pass the original coverage checks. These diagnostic samples
 guide the next convolution experiment; the accepted 15.466 s versus ORT
 8.952 s comparison remains unchanged.
 
+The resulting [three-row reduction-panel trial on AMD](tests/pyannote/convolution-reduction/results-20260922.md)
+is **not selected**. All 3,014 guarded cases pass on Windows and AMD, and every
+repeatability control passes, but the equal-shape geometric mean is 0.79%
+slower across all 22 geometries. Clearing, packing and multiplication are
+included. This component result supplies no application speedup; production
+and the accepted Microsoft ORT comparison stay unchanged.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
