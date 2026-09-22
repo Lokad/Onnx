@@ -24,13 +24,23 @@ weights share the existing retained-weight budget with matrix weights; bounded
 blocked-channel scratch and guarded kernels preserve the ordinary graph route.
 This result does not imply whole-graph blocked layout or native fusion parity.
 
-The next [source-guided hypothesis](../tests/pyannote/integration-review/ort-filter-blocks-20260922.md)
-is four output-channel blocks sharing six input broadcasts in the AVX512 kernel.
-An [isolated normal-product experiment](../tests/pyannote/filter-block-reuse/README.md)
-preserves reduction order and all other routes. Target register allocation and
-complete-call performance remain to be measured; the selected implementation
-stays unchanged by that experiment. Pyannote remains first, Parakeet second,
-Whisper deferred.
+The [ORT filter-block source review](../tests/pyannote/integration-review/ort-filter-blocks-20260922.md)
+led to an isolated four-block AVX512 experiment. Numerical qualification passed
+and its 24 vector accumulators fit registers, but the
+[complete-call screen](../tests/pyannote/filter-block-screen/results-20260922.md)
+improved only 2.52%, missing the fixed 10% gate; two forms also regressed beyond
+5%. The candidate is rejected.
+
+A separate [input-address hoisting experiment](../tests/pyannote/input-address-codegen/results-20260922.md)
+keeps the selected two-block policy. Actual optimized inner-loop integer
+multiplies, arithmetic shifts and stack references fall to zero, preserving
+the floating-point order. Both instruction widths pass the full raw/layer
+checks, but its [complete-call gain](../tests/pyannote/input-address-screen/results-20260922.md)
+is only 3.55%, below the same gate. All repeatability and eligible-form gates
+pass. It is also rejected; source-level improvements alone do not establish
+application value. The next diagnostic refreshes complete-request attribution
+on the selected prepared-convolution product before another optimization.
+Pyannote remains first, Parakeet second, Whisper deferred.
 
 The preceding selected Pyannote source is the
 [single-panel convolution integration](../tests/pyannote/single-panel-root-results/results-20260922.md).

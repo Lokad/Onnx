@@ -34,7 +34,15 @@ The [Parakeet arithmetic trial](#audio-amd-parakeet-arithmetic-trial-versus-micr
 takes 78.066 s and is **not selected**: it is 3.90% slower than contemporary
 production. The full application parity target remains <=1.05.
 
-The latest [Pyannote four-block convolution screen](tests/pyannote/filter-block-screen/results-20260922.md)
+The latest [Pyannote input-address hoisting screen](tests/pyannote/input-address-screen/results-20260922.md)
+is **not selected**. All 108 prepared graph calls total 1.425426 s for selected
+production and 1.374796 s for the candidate. The 3.55% reduction misses the fixed
+10% component gate. All 32 repeatability controls, all eleven per-form speed
+gates and all numerical/resource checks pass. All 17,184 call clocks and 512
+separate graph-preparation clocks are retained. This is a component measurement;
+the application and ORT figures above remain unchanged.
+
+The preceding [Pyannote four-block convolution screen](tests/pyannote/filter-block-screen/results-20260922.md)
 is **not selected**. All 108 prepared graph calls total 1.422513 s for selected
 production and 1.386649 s for the candidate. The 2.52% reduction misses the
 fixed 10% component gate; two forms regress by 8.36% and 6.53%, exceeding their
