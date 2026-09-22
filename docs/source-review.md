@@ -22,10 +22,10 @@ assembly references. Normal project builds, complete local suites and an
 independent package consumer pass; public APIs remain unchanged.
 
 The [actual AMD composition comparison](../tests/pyannote/combined-amd-results/results-20260922.md)
-now resolves the overlapping convolution routes. Current portable takes15.255s,
-AVX-512-first composition15.185s and Microsoft ORT8.951s on the complete dialogue.
+now resolves the overlapping convolution routes. Current portable takes 15.255 s,
+AVX-512-first composition 15.185 s and Microsoft ORT 8.951 s on the complete dialogue.
 Every correctness and repeatability check passes, but the composition adds only
-0.46percent over portable, below its fixed3percent selection threshold. The
+0.46% over portable, below its fixed 3% selection threshold. The
 combined patch remains unselected. A distinct
 [portable-versus-root-production trial](../tests/pyannote/portable-amd-integration/README.md)
 qualifies the next integration decision; root promotion is still pending.
@@ -117,7 +117,7 @@ uses `cdeae16`'s mechanism and the current composer, with checked packing space
 and existing tail fallback. Actual AVX-512 execution, graph/public qualification
 and complete AMD timing now pass in the
 [primary campaign](../tests/pyannote/amd-results/results-20260922.md).
-Its15.780s versusORT8.945s result belongs to the older payload. The current
+Its 15.780 s versus ORT 8.945 s result belongs to the older payload. The current
 composition has its own result and unsuccessful selection gate above.
 
 The [follow-up ORT 1.29 recurrent review](../tests/pyannote/lstm-output-lanes/source-review-20260921.md)

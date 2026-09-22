@@ -36,6 +36,11 @@ Its [checker correction](tests/pyannote/combined-amd-review/recovery-20260922.md
 preserves the original failure and changes only consumer identity literals.
 Correctness qualification does not override the failed speed-selection gate.
 
+The distinct [portable integration trial](tests/pyannote/portable-amd-integration/README.md)
+now passes normal Linux builds, all 3,108 Core / 697 Data method checks,
+3,342 backend tests and 342 tensor tests. Its own long meetings and fresh
+production/portable/ORT comparison are running; no new selection is claimed.
+
 The latest accepted **Windows pyannote candidate** takes **10.493 s versus
 Microsoft ORT 6.320 s (1.660×)**, down 8.6% from its contemporary 11.482 s
 predecessor. The retained **AMD Parakeet baseline** is **79.362 s versus ORT

@@ -75,14 +75,14 @@ Portable uses {100 * (1 - full['portable']['seconds'] / full['production']['seco
 root production on the complete dialogue. Its ratio to ORT is
 {full['ratios_to_ort']['portable']:.6f}; the target of <=1.05 remains separate.
 
-AMD EPYC9V74, CPU2, .NET10.0.8, SDK10.0.204 and Microsoft ORT1.29.0.
+AMD EPYC 9V74, CPU2, .NET 10.0.8, SDK 10.0.204 and Microsoft ORT 1.29.0.
 Timers include features, neural inference, clustering and owned result creation.
 Loading, file access and external validation are excluded. ORT uses one
 intra/inter-op thread, sequential execution, full optimization and no spinning.
 
 Six fresh processes run production, portable, ORT, ORT, portable, production.
-Each performs one warmup and three measured passes over four fixtures:96requests,
-24warmups and72measured calls. Each mean retains six measured requests across
+Each performs one warmup and three measured passes over four fixtures: 96 requests,
+24 warmups and 72 measured calls. Each mean retains six measured requests across
 two processes. Raw integer clocks, minimum/maximum and all process means are
 retained in [observations](observations-20260922.json).
 
@@ -102,31 +102,31 @@ a subsequent, separately qualified build; this report itself changes no product.
 
 ## Qualification and resources
 
-Normal Linux portable builds match all3,108Core and697Data methods of the
+Normal Linux portable builds match all 3,108 Core and 697 Data methods of the
 measured runtime. Complete suites pass {analysis['operator_tests']['backend']['passed']:,} backend tests
-with {len(analysis['operator_tests']['backend']['skipped'])} skips and342tensor tests. The required shared
+with {len(analysis['operator_tests']['backend']['skipped'])} skips and 342 tensor tests. The required shared
 AVX-512 row-kernel test executes; the unselected convolution path is absent.
 
 Exact-runtime closed AMD correctness evidence is reused for each managed role:
-18pyannote arrays/16public requests and784Parakeet arrays/3,090,494values, with
+18 pyannote arrays / 16 public requests and784 Parakeet arrays / 3,090,494 values, with
 all original native and ownership gates passing. All source/runtime/consumer
 identities and the original closed reports are verified before reuse; prior
 timing results are not selection inputs. Fresh native conformance adds four
 pyannote requests. Historical Windows Parakeet discrepancies remain separate.
 
-The portable runtime newly completes both600smeetings and30srecovery on AMD.
+The portable runtime newly completes both 600-second meetings and 30-second recovery on AMD.
 Ordinary and exclusive native speaker timelines match exactly. Maximum meeting
 centroid error is {analysis['meetings']['maximum_centroid_error']:.9g}; maximum timing-call
-centroid error is {analysis['maximum_centroid_error']:.9g}. All{analysis['resource_samples']:,}resource
-samples pass, with peak owned RSS{analysis['peak_rss']:,}bytes. Actual local and
+centroid error is {analysis['maximum_centroid_error']:.9g}. All {analysis['resource_samples']:,} resource
+samples pass, with peak owned RSS {analysis['peak_rss']:,} bytes. Actual local and
 remote owners are terminal before collection/reporting.
 
 ## Prospective gates
 
 Repeatability controls passed: **{performance['controls_passed']}**.
 Speed thresholds passed: **{performance['speed_threshold_passed']}**.
-Every role's process-mean max/min must be <=1.10full and<=1.20each crop.
-Portable full mean must be <=0.97of root production; each crop<=1.05.
+Every role's process-mean max/min must be <=1.10 full and <=1.20 each crop.
+Portable full mean must be <=0.97 of root production; each crop <=1.05.
 No sample exclusion or unchanged retry is permitted.
 
 | Workload | Role | Process max/min | Limit | Pass |
