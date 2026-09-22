@@ -1,5 +1,11 @@
 # Selected Pyannote attribution on AMD
 
+The [completed AMD results](results-20260922.md) preserve all 48 public
+requests exactly. Two reconciled captures put the packed three-row kernel at
+53.33–54.17% of full-request sampled thread time. All owned processes are
+terminal; preparation, collection, exports and independent audit have completed.
+Do not relaunch this closed experiment.
+
 This diagnostic keeps the exact selected Core `e9c87932` / Data `85d166b5`
 product bytes. It adapts only the existing diagnostic consumer's thread-ID
 lookup for Linux. Compiled inspection requires one changed existing method,
@@ -55,3 +61,9 @@ and Chromium locally. The original parser reconciles every exported event and
 every fixture's complete request coverage. Sampled managed thread weights and
 measured process CPU remain distinct. This diagnostic supplies no new ORT
 timing ratio or candidate speed selection.
+
+`report.py` initially assumed one exclusive bucket per method and stopped
+before writing outputs: TransposeInto also has a zero-weight managed bucket.
+The additive `report_v2.py` sums and retains every matching bucket. The failure
+receipt is in `artifacts/pyannote-amd-profile-report-20260922`; original capture
+and audit files are unchanged. The report successor completed successfully.

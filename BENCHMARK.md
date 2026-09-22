@@ -100,6 +100,15 @@ at the original tolerance. Normal source builds pass 3,290 backend tests,
 343 tensor tests and an independent NuGet consumer. It has no new AMD timing result; the production
 and Microsoft ORT baseline tables above remain the applicable measurements.
 
+The [selected Pyannote profile on AMD](tests/pyannote/amd-profile/results-20260922.md)
+now attributes 53.33–54.17% of complete-request sampled thread time to the
+packed three-row matrix kernel and 15.70–15.96% to its tiled-convolution caller.
+LSTM execution and ordered projection together account for 13.54–14.50%.
+All 48 public requests preserve the earlier selected AMD output exactly, and
+both captures pass the original coverage checks. These diagnostic samples
+guide the next convolution experiment; the accepted 15.466 s versus ORT
+8.952 s comparison remains unchanged.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.

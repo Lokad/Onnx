@@ -35,6 +35,21 @@ is complete. All 3,108 Core / 697 Data methods and public declarations match the
 measured candidate; 3,290 backend tests, 343 tensor tests and a package-only
 consumer pass. The root build's distinct binary identities remain explicit.
 
+The [complete-request profile of the selected binaries on AMD](../tests/pyannote/amd-profile/results-20260922.md)
+confirms the next target: the three-row packed matrix kernel contributes
+53.33–54.17% of sampled thread time, with another 15.70–15.96% attributed to
+the tiled-convolution caller. Inlining prevents assigning the caller share to
+one operation. All 48 public outputs retain their selected AMD bits.
+The current three-row convolution kernel traverses an entire reduction for
+each row group. ORT's retained MLAS `sgemm.cpp` at the audio revision above
+uses reduction panels and packs each panel before traversing rows. That source
+structure motivates a bounded cache-reuse experiment; it does not establish
+installed-wheel dispatch or a cache bottleneck. The
+[older e5 reduction-blocking trial](../tests/e5/projection-reduction-timing/results-20260920.md)
+regressed all five banks. A new convolution experiment must preserve arithmetic
+and qualify all 22 observed geometries, include clearing and packing costs,
+and establish its own improvement before any product change.
+
 The separate [sparse-mel adaptation](../tests/pyannote/sparse-mel/results-20260921.md)
 now passes complete dialogue and meeting qualification. Its
 [fresh matched comparison](../tests/pyannote/sparse-mel-comparison/results-20260921.md)

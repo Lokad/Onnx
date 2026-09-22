@@ -1,0 +1,679 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 62214,
+    "sha256": "cc9b31a0cb9abe795c24789731ff462515b394133058f4ea6a62b30fd3f3b2cc"
+  },
+  "analysis": {
+    "bytes": 545194,
+    "sha256": "7459581d2b76af72fb9150a669047b140848d3da047252812257a543f43b0a6b"
+  },
+  "leaves": [
+    {
+      "label": "Packed three-row matrix kernel",
+      "captures": [
+        {
+          "seconds": 27.861845518244042,
+          "share": 54.168634953991514,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(int32,int32,int32,float32*,float32*,float32*)",
+              "bucket": "CPU_TIME",
+              "seconds": 27.861845518244042
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(int32,int32,int32,float32*,float32*,float32*)",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        },
+        {
+          "seconds": 27.588492581733746,
+          "share": 53.334852501923336,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(int32,int32,int32,float32*,float32*,float32*)",
+              "bucket": "CPU_TIME",
+              "seconds": 27.588492581733746
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(int32,int32,int32,float32*,float32*,float32*)",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Tiled convolution caller",
+      "captures": [
+        {
+          "seconds": 8.077206433093592,
+          "share": 15.70359890323064,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+              "bucket": "CPU_TIME",
+              "seconds": 8.077204964158142
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+              "bucket": "managed",
+              "seconds": 1.4689354489121362e-06
+            }
+          ]
+        },
+        {
+          "seconds": 8.256406845300816,
+          "share": 15.961518737763383,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+              "bucket": "CPU_TIME",
+              "seconds": 8.256405344635443
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+              "bucket": "managed",
+              "seconds": 1.500665374095431e-06
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "LSTM provider",
+      "captures": [
+        {
+          "seconds": 3.5637325949599328,
+          "share": 6.928562211847041,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+              "bucket": "CPU_TIME",
+              "seconds": 3.5637321734132295
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+              "bucket": "managed",
+              "seconds": 4.215467031372096e-07
+            }
+          ]
+        },
+        {
+          "seconds": 4.277479392533475,
+          "share": 8.269343886945075,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+              "bucket": "CPU_TIME",
+              "seconds": 4.2774789085539755
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+              "bucket": "managed",
+              "seconds": 4.839794993927172e-07
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Ordered LSTM projection",
+      "captures": [
+        {
+          "seconds": 3.400474247304641,
+          "share": 6.611157471678606,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+              "bucket": "CPU_TIME",
+              "seconds": 3.400474247304641
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        },
+        {
+          "seconds": 3.220954017363699,
+          "share": 6.226839212857586,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+              "bucket": "CPU_TIME",
+              "seconds": 3.220954017363699
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Memory copy",
+      "captures": [
+        {
+          "seconds": 2.5452021687171844,
+          "share": 4.948348704003502,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "System.Private.CoreLib!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+              "bucket": "CPU_TIME",
+              "seconds": 2.5452021687171844
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "System.Private.CoreLib!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        },
+        {
+          "seconds": 2.590018653551288,
+          "share": 5.007097160351884,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "System.Private.CoreLib!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+              "bucket": "CPU_TIME",
+              "seconds": 2.590018653551288
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "System.Private.CoreLib!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Packed two-row remainder kernel",
+      "captures": [
+        {
+          "seconds": 1.5035066595626772,
+          "share": 2.9230979455189616,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+              "bucket": "CPU_TIME",
+              "seconds": 1.5035066595626772
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        },
+        {
+          "seconds": 1.3399151312821502,
+          "share": 2.59036174884542,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+              "bucket": "CPU_TIME",
+              "seconds": 1.3399151312821502
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Transpose",
+      "captures": [
+        {
+          "seconds": 0.9394248087388922,
+          "share": 1.8264174028952647,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+              "bucket": "CPU_TIME",
+              "seconds": 0.9394248087388922
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        },
+        {
+          "seconds": 0.9594890457177588,
+          "share": 1.8549113032891884,
+          "buckets": [
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+              "bucket": "CPU_TIME",
+              "seconds": 0.9594890457177588
+            },
+            {
+              "marker": "dialogue-30s",
+              "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+              "bucket": "managed",
+              "seconds": 0.0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "name": "dialogue-30s",
+      "roles": {
+        "control": {
+          "wall_mean": 15.550556057,
+          "process_cpu_mean": 15.547635333333332,
+          "allocated_mean": 1083539757.3333333
+        },
+        "sampled-a": {
+          "wall_mean": 17.143518982333333,
+          "process_cpu_mean": 16.346906666666666,
+          "allocated_mean": 1083471328.0
+        },
+        "sampled-b": {
+          "wall_mean": 17.24073081366667,
+          "process_cpu_mean": 16.44215,
+          "allocated_mean": 1083487490.6666667
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.102437682581535,
+        "sampled-b": 1.108689023753967
+      }
+    },
+    {
+      "name": "dialogue-0-10s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.7309453756666667,
+          "process_cpu_mean": 0.7307716666666666,
+          "allocated_mean": 108159133.33333333
+        },
+        "sampled-a": {
+          "wall_mean": 0.8028922176666667,
+          "process_cpu_mean": 0.7641886666666666,
+          "allocated_mean": 108147560.0
+        },
+        "sampled-b": {
+          "wall_mean": 0.8105769306666666,
+          "process_cpu_mean": 0.7714026666666666,
+          "allocated_mean": 108148370.66666667
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.0984298476946792,
+        "sampled-b": 1.108943236595992
+      }
+    },
+    {
+      "name": "dialogue-10-20s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.7323707646666667,
+          "process_cpu_mean": 0.7322126666666667,
+          "allocated_mean": 108177624.0
+        },
+        "sampled-a": {
+          "wall_mean": 0.8134966533333333,
+          "process_cpu_mean": 0.775413,
+          "allocated_mean": 108176850.66666667
+        },
+        "sampled-b": {
+          "wall_mean": 0.8193571166666667,
+          "process_cpu_mean": 0.7807123333333333,
+          "allocated_mean": 108176021.33333333
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1107716099284635,
+        "sampled-b": 1.118773654270035
+      }
+    },
+    {
+      "name": "dialogue-20-30s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.7970559763333332,
+          "process_cpu_mean": 0.7969693333333333,
+          "allocated_mean": 108164549.33333333
+        },
+        "sampled-a": {
+          "wall_mean": 0.8625948616666667,
+          "process_cpu_mean": 0.8276076666666666,
+          "allocated_mean": 108166682.66666667
+        },
+        "sampled-b": {
+          "wall_mean": 0.8517362776666667,
+          "process_cpu_mean": 0.8166973333333334,
+          "allocated_mean": 108164818.66666667
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.0822262015207884,
+        "sampled-b": 1.068602837136831
+      }
+    }
+  ],
+  "coverage": [
+    {
+      "name": "sampled-a",
+      "coverage": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 51.430556947,
+          "sampled_thread_seconds": 51.43538422540772,
+          "process_cpu_seconds": 49.04072,
+          "sampled_to_wall": 1.0000938601231306,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 2.408676653,
+          "sampled_thread_seconds": 2.4063758543928104,
+          "process_cpu_seconds": 2.292566,
+          "sampled_to_wall": 0.999044787267596,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 2.44048996,
+          "sampled_thread_seconds": 2.4394118315102875,
+          "process_cpu_seconds": 2.326239,
+          "sampled_to_wall": 0.9995582327699015,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 2.587784585,
+          "sampled_thread_seconds": 2.584707455686948,
+          "process_cpu_seconds": 2.482823,
+          "sampled_to_wall": 0.9988109020623709,
+          "marker_intervals": 3
+        }
+      ],
+      "exports": {
+        "passed": true,
+        "profiles": 2,
+        "events": 112268
+      }
+    },
+    {
+      "name": "sampled-b",
+      "coverage": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 51.722192441000004,
+          "sampled_thread_seconds": 51.72695017903886,
+          "process_cpu_seconds": 49.32645,
+          "sampled_to_wall": 1.0000919863952844,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 2.4317307919999998,
+          "sampled_thread_seconds": 2.4286046699176786,
+          "process_cpu_seconds": 2.314208,
+          "sampled_to_wall": 0.998714445656318,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 2.45807135,
+          "sampled_thread_seconds": 2.4590482353823226,
+          "process_cpu_seconds": 2.342137,
+          "sampled_to_wall": 1.0003974194574632,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 2.555208833,
+          "sampled_thread_seconds": 2.5526653338807272,
+          "process_cpu_seconds": 2.450092,
+          "sampled_to_wall": 0.9990045826836444,
+          "marker_intervals": 3
+        }
+      ],
+      "exports": {
+        "passed": true,
+        "profiles": 2,
+        "events": 112078
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "control",
+      "samples": 295,
+      "peak_rss": 546557952,
+      "seconds": 75.03588512603892
+    },
+    {
+      "name": "sampled-a",
+      "samples": 315,
+      "peak_rss": 612737024,
+      "seconds": 80.80011526402086
+    },
+    {
+      "name": "sampled-b",
+      "samples": 317,
+      "peak_rss": 633290752,
+      "seconds": 81.40288783301366
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 3,
+      "peak_rss": 98103296,
+      "seconds": 0.7795630000182427
+    },
+    {
+      "name": "consumer-build",
+      "samples": 25,
+      "peak_rss": 300740608,
+      "seconds": 6.477977499947883
+    },
+    {
+      "name": "bridge-restore",
+      "samples": 3,
+      "peak_rss": 99201024,
+      "seconds": 0.7814253999968059
+    },
+    {
+      "name": "bridge-build",
+      "samples": 10,
+      "peak_rss": 249200640,
+      "seconds": 2.5943816999788396
+    },
+    {
+      "name": "consumer-instructions",
+      "samples": 1,
+      "peak_rss": 7905280,
+      "seconds": 0.26007010001922026
+    },
+    {
+      "name": "sampled-a-speedscope",
+      "samples": 4,
+      "peak_rss": 82563072,
+      "seconds": 1.039617900038138
+    },
+    {
+      "name": "sampled-a-chromium",
+      "samples": 4,
+      "peak_rss": 83931136,
+      "seconds": 1.040047099988442
+    },
+    {
+      "name": "sampled-b-speedscope",
+      "samples": 4,
+      "peak_rss": 84316160,
+      "seconds": 1.0407054999959655
+    },
+    {
+      "name": "sampled-b-chromium",
+      "samples": 4,
+      "peak_rss": 83963904,
+      "seconds": 1.0390271000214852
+    }
+  ],
+  "remote_identities": [
+    {
+      "pid": 665095,
+      "birth": 1790046518.91,
+      "payload": {
+        "bytes": 66564,
+        "sha256": "e48f7052a459de40a6af316dc087a7870ed80fd61719847b3e4ebc004feac650"
+      }
+    },
+    {
+      "pid": 665096,
+      "birth": 1790046519.23,
+      "affinity": [
+        2
+      ]
+    },
+    {
+      "pid": 665275,
+      "birth": 1790046594.4,
+      "affinity": [
+        2
+      ]
+    },
+    {
+      "pid": 665288,
+      "birth": 1790046615.85,
+      "affinity": [
+        0
+      ]
+    },
+    {
+      "pid": 665388,
+      "birth": 1790046675.33,
+      "affinity": [
+        2
+      ]
+    },
+    {
+      "pid": 665482,
+      "birth": 1790046697.07,
+      "affinity": [
+        0
+      ]
+    }
+  ],
+  "local_identities": [
+    {
+      "pid": 398984,
+      "birth": 1790046468.84702
+    },
+    {
+      "pid": 448652,
+      "birth": 1790046469.439397
+    },
+    {
+      "pid": 390108,
+      "birth": 1790046470.2262952
+    },
+    {
+      "pid": 286436,
+      "birth": 1790046470.8128688
+    },
+    {
+      "pid": 58352,
+      "birth": 1790046470.8168492
+    },
+    {
+      "pid": 98332,
+      "birth": 1790046476.714034
+    },
+    {
+      "pid": 440416,
+      "birth": 1790046477.501896
+    },
+    {
+      "pid": 336152,
+      "birth": 1790046478.0699167
+    },
+    {
+      "pid": 526608,
+      "birth": 1790046478.0739293
+    },
+    {
+      "pid": 558180,
+      "birth": 1790046480.1057336
+    },
+    {
+      "pid": 441192,
+      "birth": 1790046798.3118978
+    },
+    {
+      "pid": 474960,
+      "birth": 1790046798.4819567
+    },
+    {
+      "pid": 561364,
+      "birth": 1790046799.5334177
+    },
+    {
+      "pid": 547140,
+      "birth": 1790046800.5826125
+    },
+    {
+      "pid": 402896,
+      "birth": 1790046801.6324668
+    }
+  ],
+  "birth_metadata_deltas_seconds": {
+    "control": 0.8039999008178711,
+    "sampled-a": 0.804999828338623,
+    "sampled-b": 0.8040001392364502
+  },
+  "preflight_tmpfs_at_least_3gib": true
+}
