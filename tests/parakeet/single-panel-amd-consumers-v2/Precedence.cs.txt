@@ -1,0 +1,37 @@
+    static void CheckPrecedence(Assembly original, Kernel prepared, Admission partial, List<object> records)
+    {
+        var tensor = original.GetType("Lokad.Onnx.Tensor`1")!.MakeGenericType(typeof(float));
+        var baseline = tensor.GetMethod("RunPreparedPackedRows", BindingFlags.Static | BindingFlags.NonPublic)!.CreateDelegate<Kernel>();
+        var random = new Random(972319); // Independent stream: original fixtures remain unchanged.
+        int distinct = 0;
+        foreach (int m in new[] { 8, 9, 12, 13, 14, 16, 17, 20, 24, 25 })
+        foreach (int n in new[] { 1024, 1025 })
+        foreach (int k in new[] { 32, 64 })
+        {
+            const float guard = -98765.5f;
+            float[] a = Enumerable.Range(0, m*n).Select(_ => (float)(random.NextDouble() - .5)).ToArray();
+            float[] b = Enumerable.Range(0, n*k).Select(_ => (float)(random.NextDouble() - .5)).ToArray();
+            float[] initial = Enumerable.Range(0, m*k).Select(_ => (float)(random.NextDouble() - .5)).ToArray();
+            float[] wanted = Enumerable.Repeat(guard, m*k + 32).ToArray(); initial.CopyTo(wanted, 16);
+            float[] actual = (float[])wanted.Clone(), alternate = (float[])wanted.Clone(), packed = new float[b.Length];
+            string ah = Hash(a), bh = Hash(b), ih = Hash(initial);
+            fixed (float* ap = a, bp = b, pp = packed, wp = wanted, cp = actual, sp = alternate)
+            {
+                MathOps.PackPanelsB(n, k, bp, pp); string ph = Hash(packed);
+                baseline(m, n, k, ap, pp, wp + 16);
+                prepared(m, n, k, ap, pp, cp + 16);
+                Require(partial(m, n, k, ap, pp, sp + 16), "Partial-sum positive control admission");
+                Require(Hash(wanted) == Hash(actual), $"AVX-512 prepared precedence {m}/{n}/{k}");
+                foreach (var result in new[] { wanted, actual, alternate })
+                    Require(result.AsSpan(0,16).IndexOfAnyExcept(guard) < 0
+                        && result.AsSpan(m*k+16,16).IndexOfAnyExcept(guard) < 0, "Prepared precedence canary");
+                Require(Hash(a) == ah && Hash(b) == bh && Hash(packed) == ph && Hash(initial) == ih, "Prepared precedence input mutation");
+                bool differs = Hash(actual) != Hash(alternate);
+                if (differs) distinct++;
+                records.Add(new { m, n, k, baseline = Hash(wanted), candidate = Hash(actual),
+                    partial = Hash(alternate), differs, input_a = ah, input_b = bh, packed = ph, initial = ih,
+                    guards_preserved = true, operands_preserved = true });
+            }
+        }
+        Require(records.Count == 40 && distinct > 0, "Missing AVX-512 precedence positive controls");
+    }
