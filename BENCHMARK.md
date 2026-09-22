@@ -62,6 +62,9 @@ Its [AMD Parakeet regression](tests/pyannote/lstm-input-parakeet-amd/results-202
 also passes all 784 arrays (3,090,494 values) and twenty public clips, with
 exact selected outputs and maximum ORT scaled error 3.831e-5. This supplies
 no new Parakeet timing result.
+The [complete shared-model/e5 regression](tests/pyannote/lstm-input-shared-amd/results-20260922.md)
+passes all 166 arrays (5,000,814 values), preserving every selected output bit
+and native error check. Long meetings and matched application timing remain.
 
 The latest [Pyannote twelve-position convolution screen](tests/pyannote/spatial-weight-screen/results-20260922.md)
 is **not selected**. The sum of all 108 prepared graph call means rises from
