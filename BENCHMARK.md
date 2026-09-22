@@ -140,8 +140,18 @@ at the original tolerance. Normal source builds pass 3,290 backend tests,
 343 tensor tests and an independent NuGet consumer. It has no new AMD timing result; the production
 and Microsoft ORT baseline tables above remain the applicable measurements.
 
-The [selected Pyannote profile on AMD](tests/pyannote/amd-profile/results-20260922.md)
-now attributes 53.33–54.17% of complete-request sampled thread time to the
+The [current selected Pyannote profile on AMD](tests/pyannote/selected-profile-amd-results/results-20260922.md)
+attributes **56.60–56.70%** of complete-request sampled thread time to
+`ConvDirectOutput.Multiply` and **6.85–7.08%** to its tiled-convolution caller.
+All 48 public outputs exactly preserve the selected AMD result; both exports
+reconcile every event and request marker. All 956 resource observations pass.
+The [separate native diagnostic](tests/pyannote/native-layout-amd/results-20260922.md)
+confirms ORT executes all 36 embedding convolutions in blocked channel layout,
+including 16 fused residual additions and 33 ReLUs. These diagnostics guide the
+next convolution experiment; they do not change the matched latency tables.
+
+The [earlier Pyannote profile on AMD](tests/pyannote/amd-profile/results-20260922.md)
+attributes 53.33–54.17% of complete-request sampled thread time to the
 packed three-row matrix kernel and 15.70–15.96% to its tiled-convolution caller.
 LSTM execution and ordered projection together account for 13.54–14.50%.
 All 48 public requests preserve the earlier selected AMD output exactly, and

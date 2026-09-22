@@ -1,0 +1,3791 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 58325,
+    "sha256": "49dadc65ac0ec6ea63914377857549714f40fed87ca330be823ecc78fe3bd056"
+  },
+  "analysis": {
+    "bytes": 567435,
+    "sha256": "d63a4cb791c129d8fefb6a6c8bdd31791d702fcae714499a8c25a9abd05a3539"
+  },
+  "core": "1279b4b662241db2404fa4875eae20eaa924f15677a85655f99b8f81cd24b309",
+  "data": "4e602d9f6a35a51277d6deb9d75779d84cecf0a3a433d1b4eb70b0006462cca4",
+  "leaves": [
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ConvDirectOutput.Multiply(int32,int32,int32,float32*,float32*,float32*,int32,float32*,bool)",
+      "captures": [
+        {
+          "seconds": 27.823574103756062,
+          "share": 56.59980143997276
+        },
+        {
+          "seconds": 28.015430670342308,
+          "share": 56.69704250285455
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Lstm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,class System.String[],float32[],float32[],value class System.Nullable`1<float32>,int32,bool,int32,int32,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 3.5081266417491985,
+          "share": 7.13636826846334
+        },
+        {
+          "seconds": 4.079352710682362,
+          "share": 8.255708675095903
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmProjectOrdered(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+      "captures": [
+        {
+          "seconds": 3.642934539172525,
+          "share": 7.41059976001246
+        },
+        {
+          "seconds": 3.368246579917127,
+          "share": 6.816586964119744
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledBatchFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,float32[],int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 3.482069509881342,
+          "share": 7.083361832830156
+        },
+        {
+          "seconds": 3.3861004875274907,
+          "share": 6.852719328834681
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.SpanHelpers.Memmove(unsigned int8&,unsigned int8&,unsigned int)",
+      "captures": [
+        {
+          "seconds": 2.5186282531823387,
+          "share": 5.123491989189902
+        },
+        {
+          "seconds": 2.554165708898194,
+          "share": 5.1690671280680025
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TryConvDirectOutput(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>,value class System.Span`1<float32>,value class System.ReadOnlySpan`1<float32>,bool,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 1.7713624034557007,
+          "share": 3.603374603850447
+        },
+        {
+          "seconds": 1.7776123761659988,
+          "share": 3.5974947389181957
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(int32,int32,int32,float32*,float32*,float32*)",
+      "captures": [
+        {
+          "seconds": 1.4434689396886398,
+          "share": 2.9363609098701615
+        },
+        {
+          "seconds": 1.4212333751614241,
+          "share": 2.8762623721971194
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposeInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+      "captures": [
+        {
+          "seconds": 0.9697761351631268,
+          "share": 1.9727565008999817
+        },
+        {
+          "seconds": 0.9721629427239316,
+          "share": 1.967443025663308
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MaxPool(class Lokad.Onnx.ITensor,class System.String,value class System.Nullable`1<int32>,int32[],int32[],int32[],value class System.Nullable`1<int32>,int32[],class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.4413635416699759,
+          "share": 0.8978389594452365
+        },
+        {
+          "seconds": 0.4897760093180628,
+          "share": 0.991198441456813
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Buffer.ZeroMemoryInternal(unsigned int8&,unsigned int)",
+      "captures": [
+        {
+          "seconds": 0.41897377920569545,
+          "share": 0.8522928299278446
+        },
+        {
+          "seconds": 0.3844796696245881,
+          "share": 0.7781019120032825
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.Fourier(value class System.Span`1<value class System.Numerics.Complex>)",
+      "captures": [
+        {
+          "seconds": 0.3558119502161648,
+          "share": 0.7238065698211552
+        },
+        {
+          "seconds": 0.36549488409016545,
+          "share": 0.7396809002038023
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyRuns(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[],class System.Func`3<!0,!0,!0>)",
+      "captures": [
+        {
+          "seconds": 0.34219656950641775,
+          "share": 0.6961096304621932
+        },
+        {
+          "seconds": 0.3408497049126682,
+          "share": 0.6898045021659077
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerAudio.LogMelFilterbank(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+      "captures": [
+        {
+          "seconds": 0.3122797189396123,
+          "share": 0.6352516042619597
+        },
+        {
+          "seconds": 0.30959015346387553,
+          "share": 0.6265420758992082
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(int32,int32,int32,float32*,float32*,float32*)",
+      "captures": [
+        {
+          "seconds": 0.24059923864923588,
+          "share": 0.4894363708764869
+        },
+        {
+          "seconds": 0.2218570085824842,
+          "share": 0.44898957268121775
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPoolSpanFloat(value class System.Span`1<float32>,value class System.Span`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32)",
+      "captures": [
+        {
+          "seconds": 0.2389872046213153,
+          "share": 0.48615710827871494
+        },
+        {
+          "seconds": 0.16218056848567197,
+          "share": 0.3282176416550125
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Abs(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.18210474506929178,
+          "share": 0.37044458680121034
+        },
+        {
+          "seconds": 0.17009287494004274,
+          "share": 0.344230401930512
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerPooling.PoolCore(class Lokad.Onnx.Tensor`1<float32>,float32[],bool,bool,value class System.Threading.CancellationToken)",
+      "captures": [
+        {
+          "seconds": 0.14396138859275381,
+          "share": 0.2928518808901929
+        },
+        {
+          "seconds": 0.1463496310282744,
+          "share": 0.2961793216147539
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.InstanceNorm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,value class System.Nullable`1<float32>,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.16267549070151335,
+          "share": 0.33092083851343995
+        },
+        {
+          "seconds": 0.12685888360706143,
+          "share": 0.25673435473360007
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.ConvRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.12961735051155482,
+          "share": 0.2636726782393849
+        },
+        {
+          "seconds": 0.12824349178634478,
+          "share": 0.25953649580058474
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LeakyRelu(class Lokad.Onnx.ITensor,value class System.Nullable`1<float32>,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.10780040194914862,
+          "share": 0.21929178913960554
+        },
+        {
+          "seconds": 0.12359894769779112,
+          "share": 0.2501369646388569
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.AddRelu(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.11628759145376891,
+          "share": 0.23655676160337255
+        },
+        {
+          "seconds": 0.10971821995416119,
+          "share": 0.22204543821858774
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Buffer.MemmoveInternal(unsigned int8&,unsigned int8&,unsigned int)",
+      "captures": [
+        {
+          "seconds": 0.08557695108477764,
+          "share": 0.17408397717613155
+        },
+        {
+          "seconds": 0.0996866181478281,
+          "share": 0.20174369234582193
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ConvDirectOutput.MultiplyTwoColumns(int32,int32,float32*,float32*,float32*,int32,float32*,bool)",
+      "captures": [
+        {
+          "seconds": 0.07136046362828073,
+          "share": 0.1451642429891795
+        },
+        {
+          "seconds": 0.0766001603991608,
+          "share": 0.1550218021268645
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Create(value class System.ReadOnlySpan`1<float32>,value class System.ReadOnlySpan`1<float32>,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.06485750489727433,
+          "share": 0.1319356702840786
+        },
+        {
+          "seconds": 0.07898296724252984,
+          "share": 0.15984407676773252
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.SpanHelpers.ClearWithoutReferences(unsigned int8&,unsigned int)",
+      "captures": [
+        {
+          "seconds": 0.04172548455854939,
+          "share": 0.08487961080031524
+        },
+        {
+          "seconds": 0.03920380778312757,
+          "share": 0.07933984604087349
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Apply(class System.Func`2<!0,!0>,class Lokad.Onnx.Tensor`1<!0>)",
+      "captures": [
+        {
+          "seconds": 0.06688138984860927,
+          "share": 0.13605273612025534
+        },
+        {
+          "seconds": 0.012545437710281531,
+          "share": 0.025389194385283222
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LeakyReluTyped(class Lokad.Onnx.Tensor`1<!!0>,!!0,class Lokad.Onnx.ICopyAccountant)",
+      "captures": [
+        {
+          "seconds": 0.04052111720450574,
+          "share": 0.08242963967707073
+        },
+        {
+          "seconds": 0.03185632663077558,
+          "share": 0.06447016739535391
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Transpose(value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>,int32,int32,int32)",
+      "captures": [
+        {
+          "seconds": 0.04080304212989041,
+          "share": 0.08300314237439664
+        },
+        {
+          "seconds": 0.02559028387369551,
+          "share": 0.051789081150302375
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.MathOps.mm_unsafe_vectorized_intrinsics(int32,int32,int32,float32*,float32*,float32*)",
+      "captures": [
+        {
+          "seconds": 0.03401768984193132,
+          "share": 0.0692001136633259
+        },
+        {
+          "seconds": 0.03206202175429734,
+          "share": 0.06488644888315874
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.FloatReduction.Sum(value class System.ReadOnlySpan`1<float32>,int32,float32,bool)",
+      "captures": [
+        {
+          "seconds": 0.0381429633065261,
+          "share": 0.07759190610921922
+        },
+        {
+          "seconds": 0.02603672078559123,
+          "share": 0.052692570833057464
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.CompilerServices.RuntimeHelpers.<GetHashCode>g__GetHashCodeWorker|15_0(class System.Object)",
+      "captures": [
+        {
+          "seconds": 0.026479211148302734,
+          "share": 0.05386504579505935
+        },
+        {
+          "seconds": 0.03448362509238496,
+          "share": 0.06978723905840863
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Apply(class System.Func`2<!0,!0>)",
+      "captures": [
+        {
+          "seconds": 0.013730137879837458,
+          "share": 0.027930382877638295
+        },
+        {
+          "seconds": 0.044690755805939064,
+          "share": 0.09044421666151246
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Threading.Thread.<PollGC>g__PollGCWorker|67_0()",
+      "captures": [
+        {
+          "seconds": 0.024429059751353635,
+          "share": 0.049694547729049306
+        },
+        {
+          "seconds": 0.017908131877611595,
+          "share": 0.036242102652611595
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.MathOps.PackPanelsB(int32,int32,float32*,float32*)",
+      "captures": [
+        {
+          "seconds": 0.027602980680958348,
+          "share": 0.0561510616812791
+        },
+        {
+          "seconds": 0.008893433576156896,
+          "share": 0.017998344819216743
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.Execute(class Lokad.Onnx.GraphExecution,class System.String,class Lokad.Onnx.Tensor`1<float32>,class System.String,int32[])",
+      "captures": [
+        {
+          "seconds": 0.018718485125822554,
+          "share": 0.03807787372779031
+        },
+        {
+          "seconds": 0.007569777209294443,
+          "share": 0.015319556755086741
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCoreInner(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+      "captures": [
+        {
+          "seconds": 0.01324911943257743,
+          "share": 0.02695187636002285
+        },
+        {
+          "seconds": 0.012752237397512883,
+          "share": 0.025807711266015852
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single]..ctor(value class System.ReadOnlySpan`1<int32>,bool)",
+      "captures": [
+        {
+          "seconds": 0.01871546816470618,
+          "share": 0.038071736507622196
+        },
+        {
+          "seconds": 0.005855644889463293,
+          "share": 0.011850531626164961
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul2DCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+      "captures": [
+        {
+          "seconds": 0.003513817090881389,
+          "share": 0.007147944002399792
+        },
+        {
+          "seconds": 0.019438405942115423,
+          "share": 0.039339039290749285
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Concat(class Lokad.Onnx.Tensor`1<!0>[],int32)",
+      "captures": [
+        {
+          "seconds": 0.01347192141919041,
+          "share": 0.027405108865512638
+        },
+        {
+          "seconds": 0.009099028029184723,
+          "share": 0.018414422572181992
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.ComputeStructureFingerprint(class System.Collections.Generic.HashSet`1<class Lokad.Onnx.ComputationalGraph>,class System.Collections.Generic.List`1<value class FingerprintString>)",
+      "captures": [
+        {
+          "seconds": 0.013301353199542974,
+          "share": 0.027058132329428036
+        },
+        {
+          "seconds": 0.005959557403009967,
+          "share": 0.012060827597212487
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.TryReleaseValue(class System.String,class System.Collections.Generic.HashSet`1<class System.Array>&)",
+      "captures": [
+        {
+          "seconds": 0.011543532341671381,
+          "share": 0.02348230446663942
+        },
+        {
+          "seconds": 0.0022507543570500273,
+          "share": 0.004555029581617039
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.GetInputTensor(class System.String)",
+      "captures": [
+        {
+          "seconds": 0.006138149723730749,
+          "share": 0.012486463970316598
+        },
+        {
+          "seconds": 0.007053825544754545,
+          "share": 0.014275384570191334
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Math.Refine(float64[],int32,int32,float64[],int32[],value class System.Threading.CancellationToken)",
+      "captures": [
+        {
+          "seconds": 0.006554059028625488,
+          "share": 0.013332522926879677
+        },
+        {
+          "seconds": 0.005725247859954834,
+          "share": 0.011586636845774755
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Parameters.Transform(float32[],int32,value class System.Threading.CancellationToken)",
+      "captures": [
+        {
+          "seconds": 0.0021383852049839335,
+          "share": 0.004349986725390799
+        },
+        {
+          "seconds": 0.009968389147063135,
+          "share": 0.020173817415355372
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LogSoftmaxTyped(class Lokad.Onnx.Tensor`1<!!0>,int32,int32,class Lokad.Onnx.ICopyAccountant,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.003446185069413332,
+          "share": 0.007010364302113938
+        },
+        {
+          "seconds": 0.007815877914428712,
+          "share": 0.015817610213667024
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ArrayUtilities.GetStrides(value class System.ReadOnlySpan`1<int32>,bool)",
+      "captures": [
+        {
+          "seconds": 0.003500836724166106,
+          "share": 0.007121538833316793
+        },
+        {
+          "seconds": 0.00638918095500776,
+          "share": 0.012930290753944624
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteCPU(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0072556414254667054,
+          "share": 0.014759709247620276
+        },
+        {
+          "seconds": 0.00235091439297949,
+          "share": 0.004757731366965349
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph+<EnumerateAttributeTensors>d__232.MoveNext()",
+      "captures": [
+        {
+          "seconds": 0.005240393839791068,
+          "share": 0.010660213878108147
+        },
+        {
+          "seconds": 0.0023688616293602535,
+          "share": 0.004794052608493366
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorSlice`1[System.Single].get_Item(value class System.ReadOnlySpan`1<int32>)",
+      "captures": [
+        {
+          "seconds": 0.0023509608532258424,
+          "share": 0.004782416413848448
+        },
+        {
+          "seconds": 0.005259575722160349,
+          "share": 0.010644219315250086
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].get_Item(value class System.ReadOnlySpan`1<int32>)",
+      "captures": [
+        {
+          "seconds": 0.0023635300319824635,
+          "share": 0.004807985128321843
+        },
+        {
+          "seconds": 0.004058450197471643,
+          "share": 0.008213406606144337
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.WeSpeakerEmbedder.ExtractPipeline(float32[],float32[][],value class System.Threading.CancellationToken,class PipelineRequest)",
+      "captures": [
+        {
+          "seconds": 0.001204549921510079,
+          "share": 0.0024503425091171732
+        },
+        {
+          "seconds": 0.004681846188494093,
+          "share": 0.009475022371220745
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorAlias.TryGetTouchedRange(class Lokad.Onnx.Tensor`1<!!0>,class System.Array&,int64&,int64&)",
+      "captures": [
+        {
+          "seconds": 0.0023503179415001797,
+          "share": 0.004781108577699136
+        },
+        {
+          "seconds": 0.0035252369473237196,
+          "share": 0.007134300785410844
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorBufferPool.Return(class System.Array)",
+      "captures": [
+        {
+          "seconds": 0.004619448146160721,
+          "share": 0.00939706188931533
+        },
+        {
+          "seconds": 0.0011740627664031536,
+          "share": 0.0023760436650451557
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Buffer.BulkMoveWithWriteBarrier(unsigned int8&,unsigned int8&,unsigned int)",
+      "captures": [
+        {
+          "seconds": 0.0022643819637374065,
+          "share": 0.004606294254428343
+        },
+        {
+          "seconds": 0.003503905249351647,
+          "share": 0.0070911301413178725
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorBufferPool.Rent(int32)",
+      "captures": [
+        {
+          "seconds": 0.0011753888115708833,
+          "share": 0.0023910218400265376
+        },
+        {
+          "seconds": 0.004444122791290283,
+          "share": 0.008993922733175357
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.RuntimeTypeHandle.GetRuntimeTypeFromHandle(int)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.005257266137152328,
+          "share": 0.01063954522542778
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CheckDescriptorDims(class Lokad.Onnx.OnnxValueInfo,class Lokad.Onnx.ITensor,class System.Collections.Generic.Dictionary`2<class System.String,int32>,class System.String&)",
+      "captures": [
+        {
+          "seconds": 0.0011692860126495362,
+          "share": 0.002378607288039498
+        },
+        {
+          "seconds": 0.003892152734930278,
+          "share": 0.00787685728042557
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Object.MemberwiseClone()",
+      "captures": [
+        {
+          "seconds": 0.001170060791009746,
+          "share": 0.002380183372448508
+        },
+        {
+          "seconds": 0.003841124288147398,
+          "share": 0.007773586977350543
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2[System.__Canon,System.Int32].FindValue(!0)",
+      "captures": [
+        {
+          "seconds": 0.0022556589808154968,
+          "share": 0.004588549621783261
+        },
+        {
+          "seconds": 0.002349468598074168,
+          "share": 0.004754805397482243
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2[System.Int32,System.Int32].FindValue(!0)",
+      "captures": [
+        {
+          "seconds": 0.004409328914014622,
+          "share": 0.008969629138445871
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.OpResult.Success(value class Lokad.Onnx.OpType,class Lokad.Onnx.ITensor[])",
+      "captures": [
+        {
+          "seconds": 0.004333826057083115,
+          "share": 0.008816038277166222
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.DenseTensor`1[System.Single].OfShape(int32[])",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.004204862065719681,
+          "share": 0.008509711882142435
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2[System.ValueTuple`2[System.__Canon,System.Int32],System.__Canon].Remove(!0)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.004075426960538607,
+          "share": 0.008247763824082363
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ArrayTensorExtensions.Copy(!!0[])",
+      "captures": [
+        {
+          "seconds": 0.0026556510645750677,
+          "share": 0.005402229145266782
+        },
+        {
+          "seconds": 0.0011628689765930177,
+          "share": 0.002353389907403473
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorSlice`1[System.Single].GetOffsetCore(value class System.Span`1<int32>,int32)",
+      "captures": [
+        {
+          "seconds": 0.0037653879188474094,
+          "share": 0.007659699208897296
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.Intrinsics.VectorMath.SinSingle(!!0)",
+      "captures": [
+        {
+          "seconds": 0.001179210968231132,
+          "share": 0.002398797020427007
+        },
+        {
+          "seconds": 0.0024722150564193725,
+          "share": 0.005003217112003564
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorSlice`1[System.Single].ParentOffset(int32)",
+      "captures": [
+        {
+          "seconds": 0.0023590819835662843,
+          "share": 0.004798936734459419
+        },
+        {
+          "seconds": 0.0011803728965073788,
+          "share": 0.0023888139743410445
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CollectAliasRoot(class Lokad.Onnx.ITensor,class System.Collections.Generic.HashSet`1<class System.Array>)",
+      "captures": [
+        {
+          "seconds": 0.0023570231100875387,
+          "share": 0.004794748493593868
+        },
+        {
+          "seconds": 0.0011822160482406617,
+          "share": 0.002392544106259801
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2[System.__Canon,System.__Canon].TryInsert(!0,!1,value class System.Collections.Generic.InsertionBehavior)",
+      "captures": [
+        {
+          "seconds": 0.001175615296990145,
+          "share": 0.002391482565514624
+        },
+        {
+          "seconds": 0.0023545554957891002,
+          "share": 0.004765100154658921
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RemoveLiveRefs(class Lokad.Onnx.ITensor)",
+      "captures": [
+        {
+          "seconds": 0.0023507723155125858,
+          "share": 0.00478203288306644
+        },
+        {
+          "seconds": 0.0011720666284163598,
+          "share": 0.0023720039227470434
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Timeline.Powerset(float32[])",
+      "captures": [
+        {
+          "seconds": 0.0011659257518440427,
+          "share": 0.002371771714231898
+        },
+        {
+          "seconds": 0.0023600092833253256,
+          "share": 0.0047761374157805295
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorDimensionsIterator.Next()",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.003523434983424522,
+          "share": 0.007130654008569053
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunFloatMatMulKernel(int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.003450802073104853,
+          "share": 0.007019756391398127
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Node.Attr(class System.String,!!0)",
+      "captures": [
+        {
+          "seconds": 0.003165028067694948,
+          "share": 0.006438423745110862
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Linq!System.Linq.Enumerable+CastICollectionIterator`1[System.__Canon].ToArray()",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.003035018647660763,
+          "share": 0.006142207246006828
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMulInto(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.002991867049957364,
+          "share": 0.0060548779453137745
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ITensor.TensorNameDesc()",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0029557859897613526,
+          "share": 0.005981857850511273
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.GraphExecution.Execute(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0027623022357183796,
+          "share": 0.005619183124203554
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Diarizer.Diarize(value class System.ReadOnlySpan`1<float32>,int32,value class System.Threading.CancellationToken)",
+      "captures": [
+        {
+          "seconds": 1.4635599166467725e-05,
+          "share": 2.977230760103093e-05
+        },
+        {
+          "seconds": 0.002557182068096608,
+          "share": 0.005175171572710982
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.OperatorSchemas.TryResolve(value class Lokad.Onnx.Node,class Lokad.Onnx.OperatorSchema&,class System.String&)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.002566847796420916,
+          "share": 0.005194732871484964
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.HashSet`1[System.__Canon].AddIfNotPresent(!0,int32&)",
+      "captures": [
+        {
+          "seconds": 0.0025529105306086423,
+          "share": 0.00519323033725414
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.Intrinsics.VectorMath.<SinSingle>g__CoreImpl|31_0(!!2)",
+      "captures": [
+        {
+          "seconds": 0.0012818059433061535,
+          "share": 0.0026074997268561314
+        },
+        {
+          "seconds": 0.0011950149536132813,
+          "share": 0.0024184462631975353
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Threading.Thread.PollGC()",
+      "captures": [
+        {
+          "seconds": 0.0011823145250930906,
+          "share": 0.0024051103970438815
+        },
+        {
+          "seconds": 0.0012724414401398007,
+          "share": 0.002575140366854059
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].TransposedShape(value class System.ReadOnlySpan`1<int32>,int32[])",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0024447859763495217,
+          "share": 0.004947706713579426
+        }
+      ]
+    },
+    {
+      "method": "System.Linq!System.Linq.Enumerable+ArraySelectIterator`2[System.Int32,System.Int32].ToArray()",
+      "captures": [
+        {
+          "seconds": 0.0023750760555267332,
+          "share": 0.004831472500490133
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Timeline.Intervals(class Lokad.Onnx.Community1Frames,value class System.Threading.CancellationToken)",
+      "captures": [
+        {
+          "seconds": 0.0011835780143737793,
+          "share": 0.002407680636300055
+        },
+        {
+          "seconds": 0.0011871829861447622,
+          "share": 0.0024025960912808964
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.CompilerServices.CastHelpers.StelemRef(class System.Object[],int,class System.Object)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0023705706247201305,
+          "share": 0.004797511237550198
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.String.GetNonRandomizedHashCode()",
+      "captures": [
+        {
+          "seconds": 0.002356206385749829,
+          "share": 0.0047930870810387015
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.SpanHelpers.SequenceEqual(unsigned int8&,unsigned int8&,unsigned int)",
+      "captures": [
+        {
+          "seconds": 0.001182930846336376,
+          "share": 0.002406364141795117
+        },
+        {
+          "seconds": 0.00117374288647261,
+          "share": 0.0023753962987336664
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Add(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.0011811377351696136,
+          "share": 0.002402716525007278
+        },
+        {
+          "seconds": 0.0011731407062070503,
+          "share": 0.002374177618909945
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Node.TransposePrepared(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0023459620579528743,
+          "share": 0.004772247669213628
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Timeline.EmbeddingMasks(bool[])",
+      "captures": [
+        {
+          "seconds": 0.001180381699166901,
+          "share": 0.0024011785670341058
+        },
+        {
+          "seconds": 0.001167794942855835,
+          "share": 0.002363358974874074
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Squeeze(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0023516678654741554,
+          "share": 0.0047592562288372746
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ReleasedBufferCache.Take(int32)",
+      "captures": [
+        {
+          "seconds": 0.0011722710132598877,
+          "share": 0.002384679492897654
+        },
+        {
+          "seconds": 0.0011696759462356567,
+          "share": 0.002367165710163232
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.CompilerServices.CastHelpers.IsInstanceOfClass(void*,class System.Object)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0023476492011918707,
+          "share": 0.004751123340133957
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.ObjectEqualityComparer`1[System.__Canon].GetHashCode(!0)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.002347085952758789,
+          "share": 0.004749983449738343
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Node.Execute(class Lokad.Onnx.ComputationalGraph,value class Lokad.Onnx.ExecutionProvider,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.002344925434270408,
+          "share": 0.004745611037619988
+        }
+      ]
+    },
+    {
+      "method": "System.Linq!System.Linq.Enumerable.Any(class System.Collections.Generic.IEnumerable`1<!!0>,class System.Func`2<!!0,bool>)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0022467650175094604,
+          "share": 0.0045469560397125314
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Mul(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0016418899758609768,
+          "share": 0.003322822584517606
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Clusterer.Cluster(class System.Collections.Generic.IReadOnlyList`1<class Lokad.Onnx.WeSpeakerEmbedding>,class Lokad.Onnx.Tensor`1<bool>,value class System.Threading.CancellationToken)",
+      "captures": [
+        {
+          "seconds": 0.0015192944378286484,
+          "share": 0.0030906081005009347
+        },
+        {
+          "seconds": 1.601401891093701e-10,
+          "share": 3.240883645583516e-10
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorBufferPool.TrackRent(class System.Array,int64)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0014161089506835652,
+          "share": 0.0028658916691426985
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Unsqueeze(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.001410109802338411,
+          "share": 0.002853750718225024
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.DenseTensor`1[System.Single]..ctor(value class System.ReadOnlySpan`1<int32>)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0013893479723052452,
+          "share": 0.0028117333609450736
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.HashSet`1[System.__Canon].Remove(!0)",
+      "captures": [
+        {
+          "seconds": 0.001298795101174619,
+          "share": 0.002642059735516474
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Enum+EnumInfo`1[System.UInt32].Create(class System.RuntimeType,bool)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0012848412883067794,
+          "share": 0.002600234920167365
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Slice(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0012758912189333386,
+          "share": 0.0025954677634633222
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Reshape(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<int64>,bool)",
+      "captures": [
+        {
+          "seconds": 0.0012733429670333863,
+          "share": 0.0025902840098945504
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].ToDenseTensor()",
+      "captures": [
+        {
+          "seconds": 0.001268936038017273,
+          "share": 0.0025813192627221738
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LstmActivation(class System.String,float32,float32)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0012684356741028751,
+          "share": 0.0025670335813498656
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.Intrinsics.VectorMath.CosSingle(!!0)",
+      "captures": [
+        {
+          "seconds": 0.0011900080414885678,
+          "share": 0.0024207608486621875
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Linq!System.Linq.Enumerable+OrderedIterator`1[System.__Canon].ToArray()",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0011928720200812678,
+          "share": 0.0024141094391459963
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.CompilerServices.CastHelpers.IsInstanceOfInterface(void*,class System.Object)",
+      "captures": [
+        {
+          "seconds": 0.0011851996117111412,
+          "share": 0.002410979352955507
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.Intrinsics.VectorMath.<CosSingle>g__CoreImpl|1_0(!!2)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0011910090446472167,
+          "share": 0.002410339188436341
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Span`1[Lokad.Onnx.SliceDef].op_Implicit(!0[])",
+      "captures": [
+        {
+          "seconds": 0.0011828669953308122,
+          "share": 0.002406234253585099
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Shape(class Lokad.Onnx.ITensor,value class System.Nullable`1<int32>,value class System.Nullable`1<int32>,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0011797496088038315,
+          "share": 0.0023998927441233457
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Numerics.Vector.Cos(value class System.Numerics.Vector`1<float32>)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.001184999918449364,
+          "share": 0.0023981780445491135
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.DenseTensor`1[System.Single].Clone()",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0011845719814300537,
+          "share": 0.0023973119945619515
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ExecutionOptions.get_Default()",
+      "captures": [
+        {
+          "seconds": 0.0011773879528045655,
+          "share": 0.0023950885712255895
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Cos(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.001183420996003406,
+          "share": 0.0023949826543343215
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Globalization.TextInfo.ChangeCaseCommon(class System.String)",
+      "captures": [
+        {
+          "seconds": 0.00117533801081845,
+          "share": 0.002390918499151278
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.CompilerServices.CastHelpers.StelemRef_Helper(class System.Object&,void*,class System.Object)",
+      "captures": [
+        {
+          "seconds": 0.001174904942512512,
+          "share": 0.0023900375346844337
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.HasLiveAliasIndexed(class System.Array,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.001174863236084093,
+          "share": 0.0023899526938383764
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2[System.__Canon,System.Int64].Resize(int32,bool)",
+      "captures": [
+        {
+          "seconds": 0.0011739129710113048,
+          "share": 0.0023880196275028087
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.Reset(bool)",
+      "captures": [
+        {
+          "seconds": 0.0011737960577011108,
+          "share": 0.0023877817978796984
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Linq!System.Linq.Enumerable.<ToArray>g__EnumerableToArray|324_0(class System.Collections.Generic.IEnumerable`1<!!0>)",
+      "captures": [
+        {
+          "seconds": 0.0011731205417854654,
+          "share": 0.0023864076370133593
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.DeferRelease(class System.String,class System.Collections.Generic.List`1<value class DeferredRelease>&,bool)",
+      "captures": [
+        {
+          "seconds": 0.0011730117395782145,
+          "share": 0.0023861863073127367
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorSlice`1[System.Single].GetValue(int32)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0011790319198044018,
+          "share": 0.00238610013374303
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Buffers.SharedArrayPool`1[System.Single].Rent(int32)",
+      "captures": [
+        {
+          "seconds": 0.0011724610328674317,
+          "share": 0.0023850660382069154
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.CreateExecution(class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0011777289542151267,
+          "share": 0.002383463219241727
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Runtime.CompilerServices.StaticsHelpers.GetGCStaticBase(value class System.Runtime.CompilerServices.MethodTable*)",
+      "captures": [
+        {
+          "seconds": 0.0011715215991753211,
+          "share": 0.002383155005489077
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].PlanConvExplicit(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,int32,int32[],int32[],int32[],int32[],int32)",
+      "captures": [
+        {
+          "seconds": 0.001171422950217675,
+          "share": 0.002382954329925463
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Linq!System.Linq.Enumerable+EnumerableSorter`2[System.__Canon,System.__Canon].CompareAnyKeys(int32,int32)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0011772780418395996,
+          "share": 0.002382550672209302
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2[System.ValueTuple`2[System.__Canon,System.Int32],System.__Canon].TryInsert(!0,!1,value class System.Collections.Generic.InsertionBehavior)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0011742231125572288,
+          "share": 0.002376368170237303
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.DenseTensor`1[System.Int32]..ctor(class System.Array,bool)",
+      "captures": [
+        {
+          "seconds": 0.0011677829709406068,
+          "share": 0.0023755497418750777
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Node.Ints(class System.String)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0011736512378774933,
+          "share": 0.002375210822224174
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.ObjectEqualityComparer`1[System.__Canon].Equals(!0,!0)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.001171147776779435,
+          "share": 0.0023701443700267747
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Math.Hierarchy(float32[],int32,int32,float64,value class System.Threading.CancellationToken)",
+      "captures": [
+        {
+          "seconds": 0.0011639183769184456,
+          "share": 0.0023676882337350827
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.0011630381825525546,
+          "share": 0.0023658977079689743
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Timeline.Reconstruct(bool[],int32,int32[],int32[],bool,value class System.Threading.CancellationToken)",
+      "captures": [
+        {
+          "seconds": 0.0010723688205798681,
+          "share": 0.0021814545496167807
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2DFloatCore(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 5.7523428949934866e-08,
+          "share": 1.1701640646782229e-07
+        },
+        {
+          "seconds": 5.879420632481924e-08,
+          "share": 1.1898648477493301e-07
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Gemm(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,float32,float32,class Lokad.Onnx.ExecutionOptions,int32,int32)",
+      "captures": [
+        {
+          "seconds": 6.213221240614076e-09,
+          "share": 1.263917738281885e-08
+        },
+        {
+          "seconds": 7.34004697733326e-09,
+          "share": 1.4854633517640945e-08
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPoolFloatCore(class Lokad.Onnx.Tensor`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 5.946044439042453e-10,
+          "share": 1.2033480343428635e-09
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Node.ExecuteIf(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 4.7195499064400795e-11,
+          "share": 9.600692800803391e-11
+        },
+        {
+          "seconds": 5.186770977161359e-10,
+          "share": 1.0496878595409322e-09
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunTiledConvFloat(value class System.Memory`1<float32>,value class System.Memory`1<float32>,value class System.Memory`1<float32>,bool,value class System.Memory`1<float32>,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,int32,value class PadInfo,int32,int32,int32,int32,int32,int32,int32,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 1.610751496627927e-10,
+          "share": 3.276653622511146e-10
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Conv2D(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,int32,int32[],class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 4.162575351074338e-11,
+          "share": 8.467673400662329e-11
+        },
+        {
+          "seconds": 1.8844730220735072e-11,
+          "share": 3.813757078562124e-11
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.String.Equals(class System.String,class System.String)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.BuildStaticAliasRoots()",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RunBatchedFloatMatMul(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Div(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Cos(class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.MatMul(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Sin(class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Sub(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Abs(class Lokad.Onnx.Tensor`1<float32>)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.DenseTensor`1[System.Single]..ctor(value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>,bool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Slice(class Lokad.Onnx.SliceIndex[])",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2+KeyCollection[System.__Canon,System.__Canon].CopyTo(!0[],int32)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Sin(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Array.Copy(class System.Array,class System.Array,int32)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.ArraySortHelper`1[System.Int32].Sort(value class System.Span`1<!0>,class System.Comparison`1<!0>)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.GraphCaptures.NodeInputs(value class Lokad.Onnx.Node,class System.Collections.Generic.HashSet`1<class Lokad.Onnx.ComputationalGraph>)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2[System.__Canon,System.Int32].Resize()",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Collections!System.Collections.Generic.Stack`1[System.__Canon].PushWithResize(!0)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Constant(class System.Object,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Transpose(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,int32[])",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].VectorizedApply(class System.Func`2<value class System.Numerics.Vector`1<!0>,value class System.Numerics.Vector`1<!0>>,class System.Func`2<!0,!0>,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.TryCollectSingleRoot(class Lokad.Onnx.ITensor,class System.Array&)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.<Constant>g__CloneConstantTensor|81_0(class Lokad.Onnx.ITensor)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "?!?",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MaxPool2D(class Lokad.Onnx.Tensor`1<float32>,int32[],int32[],int32[],int32[],bool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.GraphCaptures.FreeVariables(class Lokad.Onnx.ComputationalGraph,class System.Collections.Generic.HashSet`1<class Lokad.Onnx.ComputationalGraph>)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Linq!System.Linq.Enumerable.ToArray(class System.Collections.Generic.IEnumerable`1<!!0>)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Linq!System.Collections.Generic.SegmentedArrayBuilder`1[Lokad.Onnx.SliceDef].ToArray()",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].RequireContiguous(class Lokad.Onnx.Tensor`1<!!0>,class System.String,class Lokad.Onnx.ICopyAccountant)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Lokad.Onnx.ITensor.get_Dims()",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Conv(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,class System.String,int32[],value class System.Nullable`1<int32>,int32[],int32[],int32[],class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.LogSoftmax(class Lokad.Onnx.ITensor,value class System.Nullable`1<int32>,class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool,int32)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApplyInto(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.DenseTensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions,int32[])",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Slice(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<int32>,class Lokad.Onnx.Tensor`1<int32>,class Lokad.Onnx.Tensor`1<int32>,class Lokad.Onnx.Tensor`1<int32>)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.ResolveInputs(class System.Collections.Generic.Dictionary`2<class System.String,class Lokad.Onnx.ITensor>,bool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorBufferPool.RentCleared(int32)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "SampledAudio!SampledRequests.Full(class Lokad.Onnx.Community1Diarizer,float32[])",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].Negate(class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Input(int32,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Reshape(class Lokad.Onnx.ITensor,class Lokad.Onnx.ITensor,value class System.Nullable`1<bool>,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].BroadcastApply(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.Tensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RetryPendingReleases(class System.Collections.Generic.List`1<value class DeferredRelease>&,class System.Collections.Generic.HashSet`1<class System.Array>&)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.GraphExecution..ctor(class Lokad.Onnx.ComputationalGraph,class Lokad.Onnx.ExecutionOptions,bool,int64,class System.String,bool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx.Data!Lokad.Onnx.Community1Math.Match(float64[],int32,int32)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorSlice`1[System.Single].GetOffset(value class System.ReadOnlySpan`1<int32>)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider+LstmProjectionPanels.Recurrent(int32,value class System.ReadOnlySpan`1<float32>,value class System.Span`1<float32>)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2[System.ValueTuple`2[System.__Canon,System.Int32],System.__Canon].Resize(int32,bool)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Numerics.Vector.Sin(value class System.Numerics.Vector`1<float32>)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.INumericTensor.Unsqueeze(int32[])",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Transpose(class Lokad.Onnx.ITensor,int32[],class Lokad.Onnx.ExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.RunCore(class System.Object,bool,value class Lokad.Onnx.ExecutionProvider)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.Dictionary`2[System.__Canon,System.Int32].TryInsert(!0,!1,value class System.Collections.Generic.InsertionBehavior)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph.AddLiveRefs(class Lokad.Onnx.ITensor)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.GraphCaptures.NodeInputs(value class Lokad.Onnx.Node)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Enum.ToString()",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].MatMul(class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.TensorBufferPool)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Concat(class Lokad.Onnx.ITensor[],value class System.Nullable`1<int32>,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.TensorSlice`1[System.Single]..ctor(class Lokad.Onnx.Tensor`1<!0>,class Lokad.Onnx.SliceIndex[])",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Collections.Generic.ArraySortHelper`1[System.Int32].IntroSort(value class System.Span`1<!0>,int32,class System.Comparison`1<!0>)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.CPUExecutionProvider.Neg(class Lokad.Onnx.ITensor,class Lokad.Onnx.ExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Int64].Lokad.Onnx.ITensor.get_Dims()",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.Tensor`1[System.Single].VectorizedApply(class System.Func`2<value class System.Numerics.Vector`1<!0>,value class System.Numerics.Vector`1<!0>>,class System.Func`2<!0,!0>,class Lokad.Onnx.Tensor`1<!0>,value class Lokad.Onnx.TensorExecutionOptions)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "Lokad.Onnx!Lokad.Onnx.ComputationalGraph..ctor(int64)",
+      "captures": [
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0,
+          "share": 0.0
+        }
+      ]
+    },
+    {
+      "method": "System.Private.CoreLib!System.Enum.<GetEnumInfo>g__InitializeEnumInfo|5_0(class System.RuntimeType,bool)",
+      "captures": [
+        {
+          "seconds": 0,
+          "share": 0.0
+        },
+        {
+          "seconds": 0.0,
+          "share": 0.0
+        }
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "name": "dialogue-30s",
+      "roles": {
+        "control": {
+          "wall_mean": 14.769922610666667,
+          "process_cpu_mean": 14.767419333333335,
+          "allocated_mean": 1083490565.3333333
+        },
+        "sampled-a": {
+          "wall_mean": 16.38692078833333,
+          "process_cpu_mean": 15.627232999999999,
+          "allocated_mean": 1083477314.6666667
+        },
+        "sampled-b": {
+          "wall_mean": 16.470823178333333,
+          "process_cpu_mean": 15.707516666666665,
+          "allocated_mean": 1083476530.6666667
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1094791232351404,
+        "sampled-b": 1.1151597481247664
+      }
+    },
+    {
+      "name": "dialogue-0-10s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.6880418633333333,
+          "process_cpu_mean": 0.6879363333333334,
+          "allocated_mean": 108149952.0
+        },
+        "sampled-a": {
+          "wall_mean": 0.7630774756666666,
+          "process_cpu_mean": 0.7264696666666667,
+          "allocated_mean": 108147992.0
+        },
+        "sampled-b": {
+          "wall_mean": 0.7695429783333333,
+          "process_cpu_mean": 0.7323856666666666,
+          "allocated_mean": 108150613.33333333
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1090567541483753,
+        "sampled-b": 1.1184537153090575
+      }
+    },
+    {
+      "name": "dialogue-10-20s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.6897811983333333,
+          "process_cpu_mean": 0.689672,
+          "allocated_mean": 108167450.66666667
+        },
+        "sampled-a": {
+          "wall_mean": 0.7681293893333333,
+          "process_cpu_mean": 0.7302503333333333,
+          "allocated_mean": 108169589.33333333
+        },
+        "sampled-b": {
+          "wall_mean": 0.7703622943333333,
+          "process_cpu_mean": 0.7329119999999999,
+          "allocated_mean": 108170096.0
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.1135841208622486,
+        "sampled-b": 1.1168212415686336
+      }
+    },
+    {
+      "name": "dialogue-20-30s",
+      "roles": {
+        "control": {
+          "wall_mean": 0.718305162,
+          "process_cpu_mean": 0.7181926666666666,
+          "allocated_mean": 108172712.0
+        },
+        "sampled-a": {
+          "wall_mean": 0.821117593,
+          "process_cpu_mean": 0.7889733333333333,
+          "allocated_mean": 108167877.33333333
+        },
+        "sampled-b": {
+          "wall_mean": 0.8305973156666666,
+          "process_cpu_mean": 0.7983303333333334,
+          "allocated_mean": 108163376.0
+        }
+      },
+      "diagnostic_to_control": {
+        "sampled-a": 1.14313196735735,
+        "sampled-b": 1.1563293146244529
+      }
+    }
+  ],
+  "requests": {
+    "control": [
+      {
+        "name": "dialogue-30s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 435999776212867,
+        "end_ticks": 436018536940017,
+        "frequency": 1000000000,
+        "seconds": 18.76072715,
+        "cpu_user_ticks": 186571090,
+        "cpu_system_ticks": 1010950,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 1088146552
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436018586041935,
+        "end_ticks": 436019330788324,
+        "frequency": 1000000000,
+        "seconds": 0.744746389,
+        "cpu_user_ticks": 7375380,
+        "cpu_system_ticks": 70050,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108211800
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436019333088666,
+        "end_ticks": 436020033305018,
+        "frequency": 1000000000,
+        "seconds": 0.700216352,
+        "cpu_user_ticks": 6981390,
+        "cpu_system_ticks": 19950,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108177968
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436020035811582,
+        "end_ticks": 436020741074352,
+        "frequency": 1000000000,
+        "seconds": 0.70526277,
+        "cpu_user_ticks": 7021450,
+        "cpu_system_ticks": 29930,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108181840
+      },
+      {
+        "name": "dialogue-30s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436020953382962,
+        "end_ticks": 436036118179305,
+        "frequency": 1000000000,
+        "seconds": 15.164796343,
+        "cpu_user_ticks": 150707570,
+        "cpu_system_ticks": 919840,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 1083522144
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436036123390129,
+        "end_ticks": 436036821413062,
+        "frequency": 1000000000,
+        "seconds": 0.698022933,
+        "cpu_user_ticks": 6929470,
+        "cpu_system_ticks": 50000,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108145560
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436036824588091,
+        "end_ticks": 436037520403740,
+        "frequency": 1000000000,
+        "seconds": 0.695815649,
+        "cpu_user_ticks": 6845570,
+        "cpu_system_ticks": 109960,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108177496
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436037523913785,
+        "end_ticks": 436038207906155,
+        "frequency": 1000000000,
+        "seconds": 0.68399237,
+        "cpu_user_ticks": 6829440,
+        "cpu_system_ticks": 10000,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108159016
+      },
+      {
+        "name": "dialogue-30s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436038212203851,
+        "end_ticks": 436052827519632,
+        "frequency": 1000000000,
+        "seconds": 14.615315781,
+        "cpu_user_ticks": 145481340,
+        "cpu_system_ticks": 639810,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 1083487272
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436052832914917,
+        "end_ticks": 436053515137031,
+        "frequency": 1000000000,
+        "seconds": 0.682222114,
+        "cpu_user_ticks": 6760490,
+        "cpu_system_ticks": 59930,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108167024
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436053519361028,
+        "end_ticks": 436054205761940,
+        "frequency": 1000000000,
+        "seconds": 0.686400912,
+        "cpu_user_ticks": 6853560,
+        "cpu_system_ticks": 10030,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108164976
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436054210843571,
+        "end_ticks": 436054958862796,
+        "frequency": 1000000000,
+        "seconds": 0.748019225,
+        "cpu_user_ticks": 7309700,
+        "cpu_system_ticks": 169980,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108171080
+      },
+      {
+        "name": "dialogue-30s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436054962300646,
+        "end_ticks": 436069491956354,
+        "frequency": 1000000000,
+        "seconds": 14.529655708,
+        "cpu_user_ticks": 144544130,
+        "cpu_system_ticks": 729890,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 1083462280
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436069495570209,
+        "end_ticks": 436070179450752,
+        "frequency": 1000000000,
+        "seconds": 0.683880543,
+        "cpu_user_ticks": 6708220,
+        "cpu_system_ticks": 129980,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108137272
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436070181958658,
+        "end_ticks": 436070869085692,
+        "frequency": 1000000000,
+        "seconds": 0.687127034,
+        "cpu_user_ticks": 6861090,
+        "cpu_system_ticks": 9950,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108159880
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436070871676954,
+        "end_ticks": 436071594580845,
+        "frequency": 1000000000,
+        "seconds": 0.722903891,
+        "cpu_user_ticks": 7196680,
+        "cpu_system_ticks": 29980,
+        "cpu_frequency": 10000000,
+        "thread_id": 699308,
+        "allocated_bytes": 108188040
+      }
+    ],
+    "sampled-a": [
+      {
+        "name": "dialogue-30s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436072109676098,
+        "end_ticks": 436090116331608,
+        "frequency": 1000000000,
+        "seconds": 18.00665551,
+        "cpu_user_ticks": 178984430,
+        "cpu_system_ticks": 1039140,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 1088136872
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436090165186855,
+        "end_ticks": 436090900318346,
+        "frequency": 1000000000,
+        "seconds": 0.735131491,
+        "cpu_user_ticks": 7250040,
+        "cpu_system_ticks": 99990,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108167464
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436090902577106,
+        "end_ticks": 436091598015472,
+        "frequency": 1000000000,
+        "seconds": 0.695438366,
+        "cpu_user_ticks": 6933420,
+        "cpu_system_ticks": 19940,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108164640
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436091600443548,
+        "end_ticks": 436092301867641,
+        "frequency": 1000000000,
+        "seconds": 0.701424093,
+        "cpu_user_ticks": 6982930,
+        "cpu_system_ticks": 30030,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108175144
+      },
+      {
+        "name": "dialogue-30s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436092798933467,
+        "end_ticks": 436109592895496,
+        "frequency": 1000000000,
+        "seconds": 16.793962029,
+        "cpu_user_ticks": 156952500,
+        "cpu_system_ticks": 3498260,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 1083518680
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436109598738471,
+        "end_ticks": 436110363483768,
+        "frequency": 1000000000,
+        "seconds": 0.764745297,
+        "cpu_user_ticks": 7191620,
+        "cpu_system_ticks": 80940,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108140640
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436110366909942,
+        "end_ticks": 436111131670572,
+        "frequency": 1000000000,
+        "seconds": 0.76476063,
+        "cpu_user_ticks": 7140950,
+        "cpu_system_ticks": 121200,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108169640
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436111135575340,
+        "end_ticks": 436111906527501,
+        "frequency": 1000000000,
+        "seconds": 0.770952161,
+        "cpu_user_ticks": 7211160,
+        "cpu_system_ticks": 113820,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108167944
+      },
+      {
+        "name": "dialogue-30s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436111911166948,
+        "end_ticks": 436128149210610,
+        "frequency": 1000000000,
+        "seconds": 16.238043662,
+        "cpu_user_ticks": 152436930,
+        "cpu_system_ticks": 2326640,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 1083461936
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436128154977399,
+        "end_ticks": 436128912995270,
+        "frequency": 1000000000,
+        "seconds": 0.758017871,
+        "cpu_user_ticks": 7130890,
+        "cpu_system_ticks": 91140,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108158544
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436128917437108,
+        "end_ticks": 436129682019673,
+        "frequency": 1000000000,
+        "seconds": 0.764582565,
+        "cpu_user_ticks": 7083100,
+        "cpu_system_ticks": 189900,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108159224
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436129687602955,
+        "end_ticks": 436130584979938,
+        "frequency": 1000000000,
+        "seconds": 0.897376983,
+        "cpu_user_ticks": 8520470,
+        "cpu_system_ticks": 201440,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108163440
+      },
+      {
+        "name": "dialogue-30s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436130588446934,
+        "end_ticks": 436146717203608,
+        "frequency": 1000000000,
+        "seconds": 16.128756674,
+        "cpu_user_ticks": 150616500,
+        "cpu_system_ticks": 2986160,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 1083451328
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436146721315679,
+        "end_ticks": 436147487784938,
+        "frequency": 1000000000,
+        "seconds": 0.766469259,
+        "cpu_user_ticks": 7168960,
+        "cpu_system_ticks": 130540,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108144792
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436147490559849,
+        "end_ticks": 436148265604822,
+        "frequency": 1000000000,
+        "seconds": 0.775044973,
+        "cpu_user_ticks": 7190380,
+        "cpu_system_ticks": 181980,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108179904
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436148268630202,
+        "end_ticks": 436149063653837,
+        "frequency": 1000000000,
+        "seconds": 0.795023635,
+        "cpu_user_ticks": 7512010,
+        "cpu_system_ticks": 110300,
+        "cpu_frequency": 10000000,
+        "thread_id": 699326,
+        "allocated_bytes": 108172248
+      }
+    ],
+    "sampled-b": [
+      {
+        "name": "dialogue-30s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436149652658836,
+        "end_ticks": 436168392897035,
+        "frequency": 1000000000,
+        "seconds": 18.740238199,
+        "cpu_user_ticks": 186507280,
+        "cpu_system_ticks": 860960,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 1088144856
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436168441668673,
+        "end_ticks": 436169174345910,
+        "frequency": 1000000000,
+        "seconds": 0.732677237,
+        "cpu_user_ticks": 7254480,
+        "cpu_system_ticks": 69950,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108160464
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436169176601697,
+        "end_ticks": 436169869268099,
+        "frequency": 1000000000,
+        "seconds": 0.692666402,
+        "cpu_user_ticks": 6886060,
+        "cpu_system_ticks": 39970,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108171632
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 0,
+        "phase": "warmup",
+        "start_ticks": 436169871719442,
+        "end_ticks": 436170571550586,
+        "frequency": 1000000000,
+        "seconds": 0.699831144,
+        "cpu_user_ticks": 6967220,
+        "cpu_system_ticks": 30010,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108175136
+      },
+      {
+        "name": "dialogue-30s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436170885030934,
+        "end_ticks": 436187662343986,
+        "frequency": 1000000000,
+        "seconds": 16.777313052,
+        "cpu_user_ticks": 157367170,
+        "cpu_system_ticks": 2943530,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 1083516936
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436187667983085,
+        "end_ticks": 436188442739500,
+        "frequency": 1000000000,
+        "seconds": 0.774756415,
+        "cpu_user_ticks": 7296060,
+        "cpu_system_ticks": 81060,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108164352
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436188446168851,
+        "end_ticks": 436189210659140,
+        "frequency": 1000000000,
+        "seconds": 0.764490289,
+        "cpu_user_ticks": 7141340,
+        "cpu_system_ticks": 130270,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108162008
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 1,
+        "phase": "measured",
+        "start_ticks": 436189214632442,
+        "end_ticks": 436189980655099,
+        "frequency": 1000000000,
+        "seconds": 0.766022657,
+        "cpu_user_ticks": 7137590,
+        "cpu_system_ticks": 150400,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108162184
+      },
+      {
+        "name": "dialogue-30s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436189985461643,
+        "end_ticks": 436206434071506,
+        "frequency": 1000000000,
+        "seconds": 16.448609863,
+        "cpu_user_ticks": 153985640,
+        "cpu_system_ticks": 2860860,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 1083463744
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436206440034996,
+        "end_ticks": 436207209636557,
+        "frequency": 1000000000,
+        "seconds": 0.769601561,
+        "cpu_user_ticks": 7154520,
+        "cpu_system_ticks": 170840,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108136856
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436207214592935,
+        "end_ticks": 436207991054010,
+        "frequency": 1000000000,
+        "seconds": 0.776461075,
+        "cpu_user_ticks": 7240370,
+        "cpu_system_ticks": 150950,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108183376
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 2,
+        "phase": "measured",
+        "start_ticks": 436207996326605,
+        "end_ticks": 436208922840181,
+        "frequency": 1000000000,
+        "seconds": 0.926513576,
+        "cpu_user_ticks": 8772100,
+        "cpu_system_ticks": 250740,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108165032
+      },
+      {
+        "name": "dialogue-30s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436208929999647,
+        "end_ticks": 436225116546267,
+        "frequency": 1000000000,
+        "seconds": 16.18654662,
+        "cpu_user_ticks": 151736680,
+        "cpu_system_ticks": 2331620,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 1083448912
+      },
+      {
+        "name": "dialogue-0-10s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436225121100087,
+        "end_ticks": 436225885371046,
+        "frequency": 1000000000,
+        "seconds": 0.764270959,
+        "cpu_user_ticks": 7148900,
+        "cpu_system_ticks": 120190,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108150632
+      },
+      {
+        "name": "dialogue-10-20s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436225887901950,
+        "end_ticks": 436226658037469,
+        "frequency": 1000000000,
+        "seconds": 0.770135519,
+        "cpu_user_ticks": 7123040,
+        "cpu_system_ticks": 201390,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108164904
+      },
+      {
+        "name": "dialogue-20-30s",
+        "pass": 3,
+        "phase": "measured",
+        "start_ticks": 436226661113757,
+        "end_ticks": 436227460369471,
+        "frequency": 1000000000,
+        "seconds": 0.799255714,
+        "cpu_user_ticks": 7497930,
+        "cpu_system_ticks": 141150,
+        "cpu_frequency": 10000000,
+        "thread_id": 699524,
+        "allocated_bytes": 108162912
+      }
+    ]
+  },
+  "coverage": [
+    {
+      "name": "sampled-a",
+      "coverage": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 49.160762365,
+          "sampled_thread_seconds": 49.15843058789617,
+          "process_cpu_seconds": 46.881699,
+          "sampled_to_wall": 0.9999525683290565,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 2.289232427,
+          "sampled_thread_seconds": 2.2878928831640164,
+          "process_cpu_seconds": 2.179409,
+          "sampled_to_wall": 0.9994148502265718,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 2.304388168,
+          "sampled_thread_seconds": 2.3023003831444604,
+          "process_cpu_seconds": 2.190751,
+          "sampled_to_wall": 0.999093996018322,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 2.463352779,
+          "sampled_thread_seconds": 2.4666347178012056,
+          "process_cpu_seconds": 2.36692,
+          "sampled_to_wall": 1.0013323056401762,
+          "marker_intervals": 3
+        }
+      ],
+      "exports": {
+        "passed": true,
+        "profiles": 3,
+        "events": 111032
+      }
+    },
+    {
+      "name": "sampled-b",
+      "coverage": [
+        {
+          "name": "dialogue-30s",
+          "calls": 3,
+          "wall_seconds": 49.412469535,
+          "sampled_thread_seconds": 49.41250801385593,
+          "process_cpu_seconds": 47.12255,
+          "sampled_to_wall": 1.0000007787276428,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-0-10s",
+          "calls": 3,
+          "wall_seconds": 2.3086289349999998,
+          "sampled_thread_seconds": 2.311609498331651,
+          "process_cpu_seconds": 2.197157,
+          "sampled_to_wall": 1.0012910534414883,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-10-20s",
+          "calls": 3,
+          "wall_seconds": 2.3110868829999998,
+          "sampled_thread_seconds": 2.3093318423119347,
+          "process_cpu_seconds": 2.198736,
+          "sampled_to_wall": 0.9992405994335501,
+          "marker_intervals": 3
+        },
+        {
+          "name": "dialogue-20-30s",
+          "calls": 3,
+          "wall_seconds": 2.491791947,
+          "sampled_thread_seconds": 2.494716449257965,
+          "process_cpu_seconds": 2.394991,
+          "sampled_to_wall": 1.001173654269766,
+          "marker_intervals": 3
+        }
+      ],
+      "exports": {
+        "passed": true,
+        "profiles": 2,
+        "events": 112926
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "control",
+      "samples": 284,
+      "peak_rss": 592232448,
+      "seconds": 72.19887037499575
+    },
+    {
+      "name": "sampled-a",
+      "samples": 302,
+      "peak_rss": 681086976,
+      "seconds": 77.40410765900742
+    },
+    {
+      "name": "sampled-b",
+      "samples": 305,
+      "peak_rss": 638054400,
+      "seconds": 78.23862577596446
+    },
+    {
+      "name": "consumer-restore",
+      "samples": 3,
+      "peak_rss": 93106176,
+      "seconds": 0.7785375999519601
+    },
+    {
+      "name": "consumer-build",
+      "samples": 29,
+      "peak_rss": 300158976,
+      "seconds": 7.7079851000453345
+    },
+    {
+      "name": "bridge-restore",
+      "samples": 3,
+      "peak_rss": 97366016,
+      "seconds": 0.7854045999702066
+    },
+    {
+      "name": "bridge-build",
+      "samples": 13,
+      "peak_rss": 250671104,
+      "seconds": 3.5301187000004575
+    },
+    {
+      "name": "consumer-instructions",
+      "samples": 1,
+      "peak_rss": 7249920,
+      "seconds": 0.2590417999890633
+    },
+    {
+      "name": "sampled-a-speedscope",
+      "samples": 4,
+      "peak_rss": 74313728,
+      "seconds": 1.0503739000414498
+    },
+    {
+      "name": "sampled-a-chromium",
+      "samples": 4,
+      "peak_rss": 76070912,
+      "seconds": 1.0396078000194393
+    },
+    {
+      "name": "sampled-b-speedscope",
+      "samples": 4,
+      "peak_rss": 79859712,
+      "seconds": 1.039208400005009
+    },
+    {
+      "name": "sampled-b-chromium",
+      "samples": 4,
+      "peak_rss": 79855616,
+      "seconds": 1.0391391000011936
+    }
+  ],
+  "consumer": {
+    "existing_methods": 160,
+    "unchanged_methods": 159,
+    "added_imports": 0,
+    "changed_hash_literals": 2
+  },
+  "remote_identities": [
+    {
+      "pid": 699307,
+      "birth": 1790070287.2,
+      "payload": {
+        "bytes": 66564,
+        "sha256": "ed5054b5e4d9fbd456d8cd9ac5a58afae490165982fb0901e4f0acf060bd07b4"
+      }
+    },
+    {
+      "pid": 699308,
+      "birth": 1790070287.51,
+      "affinity": [
+        2
+      ]
+    },
+    {
+      "pid": 699326,
+      "birth": 1790070359.85,
+      "affinity": [
+        2
+      ]
+    },
+    {
+      "pid": 699419,
+      "birth": 1790070380.53,
+      "affinity": [
+        0
+      ]
+    },
+    {
+      "pid": 699524,
+      "birth": 1790070437.38,
+      "affinity": [
+        2
+      ]
+    },
+    {
+      "pid": 699533,
+      "birth": 1790070458.6,
+      "affinity": [
+        0
+      ]
+    }
+  ],
+  "local_identities": [
+    {
+      "pid": 94932,
+      "birth": 1790070170.3583007
+    },
+    {
+      "pid": 353664,
+      "birth": 1790070173.9842849
+    },
+    {
+      "pid": 864020,
+      "birth": 1790070174.7704837
+    },
+    {
+      "pid": 181748,
+      "birth": 1790070175.367372
+    },
+    {
+      "pid": 372780,
+      "birth": 1790070175.3891847
+    },
+    {
+      "pid": 369448,
+      "birth": 1790070182.4851058
+    },
+    {
+      "pid": 398088,
+      "birth": 1790070183.2771285
+    },
+    {
+      "pid": 432364,
+      "birth": 1790070183.9440267
+    },
+    {
+      "pid": 202880,
+      "birth": 1790070183.9481325
+    },
+    {
+      "pid": 376200,
+      "birth": 1790070216.8500412
+    },
+    {
+      "pid": 255336,
+      "birth": 1790070551.965842
+    },
+    {
+      "pid": 534584,
+      "birth": 1790070552.0828016
+    },
+    {
+      "pid": 482340,
+      "birth": 1790070553.1404593
+    },
+    {
+      "pid": 544096,
+      "birth": 1790070554.187307
+    },
+    {
+      "pid": 517880,
+      "birth": 1790070555.2385805
+    }
+  ]
+}

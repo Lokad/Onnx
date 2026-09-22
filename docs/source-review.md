@@ -21,8 +21,12 @@ Its complete AMD dialogue takes 15.362 seconds versus contemporary production
 to ORT. The change writes eligible rows directly to final output and avoids
 packing when the patch already has the required layout. All complete-request
 gates, long meetings, normal suites and the package consumer pass. The older
-attribution below describes the preceding binaries; obtain fresh attribution
-before selecting another Pyannote kernel change.
+attribution below describes the preceding binaries. The
+[fresh selected-runtime profile](../tests/pyannote/selected-profile-amd-results/results-20260922.md)
+now puts `ConvDirectOutput.Multiply` at 56.60–56.70% of complete-request sampled
+thread time and its tiled caller at 6.85–7.08%. All 48 public results and both
+export reconciliations pass. The next bounded experiment targets direct spatial
+convolution with blocked channels, including preparation and conversion costs.
 
 The [Parakeet arithmetic composition](../tests/parakeet/single-panel-models/results-20260922.md)
 now preserves this selected convolution and passes all local native/public/shared
@@ -43,8 +47,8 @@ uses direct blocked spatial kernels for eligible shapes. A separate
 now confirms all 36 blocked convolutions actually execute, with the same fused
 sums and activations. All twelve native arrays and 606 resolved kernel events
 pass independent checks. This establishes the operator path, not an assembly
-microkernel or managed speedup. Refresh managed attribution before choosing the
-next Pyannote change.
+microkernel or managed speedup. Together with current managed attribution, this
+supports a measured component prototype before any graph or product integration.
 
 The [normal portable integration](../tests/pyannote/portable-integration-tests/results-20260922.md)
 provides one reviewed patch with twelve product files and eleven test files,
