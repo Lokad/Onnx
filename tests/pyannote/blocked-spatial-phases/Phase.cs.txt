@@ -1,0 +1,12 @@
+internal static class Phase
+{
+    internal static long Sequence;
+    internal static Record Current;
+    internal struct Record
+    {
+        internal long RunStart, Allocated, ExecuteStart, Validated, Packed, Multiplied, Epilogued, Executed, Returned;
+        internal int Thread, Executions;
+        internal long Sequence;
+        internal bool Nonfinite;
+    }
+}

@@ -1,0 +1,79 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text.Json;
+
+internal static class PhaseProbe
+{
+    static void Require(bool value, string message) { if (!value) throw new InvalidDataException(message); }
+    static string Hash(ReadOnlySpan<byte> bytes) => Convert.ToHexStringLower(SHA256.HashData(bytes));
+    static int Main(string[] args)
+    {
+        if (args.Length == 4 && args[0] == "qualify")
+            return (int)typeof(ModelProbe).GetMethod("Main", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, new object[] { args.Skip(1).ToArray() })!;
+        Require(args.Length == 4 && args[0] == "profile", "Expected profile, fixtures, reference, output directory");
+        Require(Avx512F.IsSupported && Avx2.IsSupported && Fma.IsSupported, "AMD AVX-512 required");
+        var flags = Environment.GetEnvironmentVariables().Cast<DictionaryEntry>().Where(e =>
+            e.Key.ToString()!.StartsWith("LOKAD_", StringComparison.OrdinalIgnoreCase) ||
+            e.Key.ToString()!.StartsWith("DOTNET_", StringComparison.OrdinalIgnoreCase) ||
+            e.Key.ToString()!.StartsWith("COMPlus_", StringComparison.OrdinalIgnoreCase)).Select(e => e.Key.ToString()).ToArray();
+        Require(flags.Length == 0, "Runtime overrides");
+        string core = Hash(File.ReadAllBytes(typeof(Lokad.Onnx.Tensor<float>).Assembly.Location));
+        Require(core == "1279b4b662241db2404fa4875eae20eaa924f15677a85655f99b8f81cd24b309", "Selected Core");
+        using var reference = JsonDocument.Parse(File.ReadAllBytes(args[2])); Require(reference.RootElement.GetProperty("passed").GetBoolean(), "Reference");
+        var hashes = reference.RootElement.GetProperty("observations").EnumerateArray().ToDictionary(
+            r => (r.GetProperty("name").GetString()!, r.GetProperty("index").GetInt32()), r => r.GetProperty("production").GetString()!);
+        var fixtures = new ModelProbe.Fixtures(args[1], 16); Require(hashes.Count == fixtures.Calls.Count, "Coverage");
+        string output = args[3]; Require(Directory.Exists(output), "Output directory");
+        using var journal = new StreamWriter(new FileStream(Path.Combine(output, "journal.jsonl"), FileMode.CreateNew));
+        long frequency = Stopwatch.Frequency; var rows = new List<object>();
+        for (int pass = 0; pass < 4; pass++) foreach (var call in fixtures.Calls)
+        {
+            long before = Phase.Sequence, start = Stopwatch.GetTimestamp();
+            var result = call.Candidate(16);
+            long stop = Stopwatch.GetTimestamp(), after = Phase.Sequence;
+            Require(stop > start, "Outer clock");
+            var record = Phase.Current; long[] inner = Array.Empty<long>();
+            var phases = new Dictionary<string, long> { ["allocation"] = 0, ["boundaries"] = 0, ["validation"] = 0,
+                ["input_layout"] = 0, ["arithmetic"] = 0, ["output_epilogue"] = 0, ["pool_return"] = 0, ["wrapper"] = 0, ["fallback"] = 0 };
+            if (call.Eligible)
+            {
+                Require(after == before + 1 && record.Sequence == after && record.Executions == 1 && !record.Nonfinite
+                    && record.Thread == Environment.CurrentManagedThreadId, "Phase identity");
+                inner = [record.RunStart, record.Allocated, record.ExecuteStart, record.Validated, record.Packed,
+                    record.Multiplied, record.Epilogued, record.Executed, record.Returned];
+                long previous = start;
+                foreach (long timestamp in inner) { Require(timestamp >= previous && timestamp <= stop, "Nonmonotonic clock"); previous = timestamp; }
+                phases["allocation"] = record.Allocated - record.RunStart;
+                phases["boundaries"] = record.ExecuteStart - record.Allocated + record.Executed - record.Epilogued;
+                phases["validation"] = record.Validated - record.ExecuteStart;
+                phases["input_layout"] = record.Packed - record.Validated;
+                phases["arithmetic"] = record.Multiplied - record.Packed;
+                phases["output_epilogue"] = record.Epilogued - record.Multiplied;
+                phases["pool_return"] = record.Returned - record.Executed;
+                phases["wrapper"] = record.RunStart - start + stop - record.Returned;
+            }
+            else { Require(after == before, "Fallback entered candidate"); phases["fallback"] = stop - start; }
+            Require(phases.Values.All(v => v >= 0) && phases.Values.Sum() == stop - start, "Unaccounted interval");
+            string hash = Hash(MemoryMarshal.AsBytes(result.Buffer.Span));
+            var row = new { pass, warmup = pass == 0, name = call.Name, index = call.Index, form = call.Form, eligible = call.Eligible,
+                values = result.Length, sha256 = hash, exact = hash == hashes[(call.Name, call.Index)], frequency,
+                start, stop, inner, before, after, phases, thread = Environment.CurrentManagedThreadId };
+            rows.Add(row); journal.WriteLine(JsonSerializer.Serialize(row)); journal.Flush(); Require(row.exact, "Observed output changed");
+        }
+        fixtures.Unchanged();
+        var report = new { passed = true, cases = 108, calls = rows.Count, warmups = 108, measured = 324, rows, frequency,
+            read_only_operands = true, lanes = 16, runtime = Environment.Version.ToString(), core,
+            executable = Hash(File.ReadAllBytes(typeof(PhaseProbe).Assembly.Location)), pid = Environment.ProcessId, flags,
+            prepared_bytes = fixtures.Prepared.Values.Sum(v => v.Values.LongLength * 4), instrumented_diagnostic_only = true };
+        File.WriteAllText(Path.Combine(output, "result.json"), JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
+        Console.WriteLine(JsonSerializer.Serialize(new { report.passed, report.calls, frequency })); return 0;
+    }
+}
