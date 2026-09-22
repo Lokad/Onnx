@@ -67,6 +67,13 @@ ratio**. Both long meetings and recovery pass. The
 now passes all 3,163 Core / 697 Data methods, 3,432 backend tests (41 existing
 AMD skips), 343 tensor tests and independent NuGet consumption. Public APIs
 and dependencies are unchanged.
+The next [kernel-loop review](../tests/pyannote/integration-review/ort-kernel-loops-20260922.md)
+examines ORT's common assembly macro: spatial kernel loops remain, while input
+channels within a block are expanded. An
+[isolated Lokad prototype](../tests/pyannote/kernel-loop-unroll/README.md)
+expands only the fixed 3x3 full tile in Lokad's original reduction order.
+Source preparation is complete; it has no build, numerical or speed result.
+
 Pyannote remains first, Parakeet second, Whisper deferred.
 
 The preceding selected Pyannote source is the
