@@ -1,0 +1,47 @@
+    unsafe delegate void Raw(int m, int n, int k, float* a, float* b, float* c);
+    unsafe delegate void Direct(int m, int n, int k, float* a, float* b, float* c, int stride, float* bias, bool hasBias);
+
+    static unsafe void Diagnose(string path, Assembly original, float[] input, float[] weights, float[] biases,
+        int rows, int reduction, int block, int groups, int batch, int index, float observedOld, float observedNew)
+    {
+        int columns = block * 2 + 1, outBatch = rows * groups * columns;
+        int flat = index - 3 - batch * outBatch;
+        int globalRow = flat / columns, group = globalRow / rows, row = globalRow % rows;
+        int column = flat % columns, start = column / block * block, count = Math.Min(block, columns - start), col = column - start;
+        int grouped = rows / 6 * 6;
+        var a = weights.AsSpan(3 + group * rows * reduction, rows * reduction).ToArray();
+        var b = new float[reduction * count]; var packed = new float[b.Length];
+        for (int j = 0; j < reduction; j++) for (int k = 0; k < count; k++)
+            b[j * count + k] = input[3 + batch * groups * reduction * columns + (group * reduction + j) * columns + start + k];
+        var old = new float[rows * count]; var current = new float[rows * count];
+        var direct = new float[rows * columns]; var biased = new float[rows * columns];
+        var bias = biases.AsSpan(3 + group * rows, rows).ToArray();
+        var math = original.GetType("Lokad.Onnx.MathOps")!;
+        var raw3 = math.GetMethod("mm_unsafe_vectorized_intrinsics_3x4packed")!.CreateDelegate<Raw>();
+        var raw2 = math.GetMethod("mm_unsafe_vectorized_intrinsics_2x4packed_bump")!.CreateDelegate<Raw>();
+        var directMethod = typeof(MathOps).Assembly.GetType("Lokad.Onnx.ConvDirectOutput")!
+            .GetMethod("Multiply", BindingFlags.Static | BindingFlags.Public)!.CreateDelegate<Direct>();
+        fixed (float* ap = a, bp = b, pp = packed, op = old, cp = current, dp = direct, fp = biased, bi = bias)
+        {
+            MathOps.PackPanelsB(reduction, count, bp, pp);
+            raw3(grouped, reduction, count, ap, pp, op);
+            raw2(rows - grouped, reduction, count, ap + grouped * reduction, pp, op + grouped * count);
+            MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(grouped, reduction, count, ap, pp, cp);
+            MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(rows - grouped, reduction, count, ap + grouped * reduction, pp, cp + grouped * count);
+            directMethod(grouped, reduction, count, ap, pp, dp, columns, bi, false);
+            directMethod(grouped, reduction, count, ap, pp, fp, columns, bi, true);
+        }
+        static string Bits(float value) => BitConverter.SingleToInt32Bits(value).ToString("x8");
+        var result = new { diagnostic_only = true, rows, reduction, block, groups, batch, index, group, row, column, start, count, col,
+            grouped, observed_old = Bits(observedOld), observed_new = Bits(observedNew),
+            old_raw = Bits(old[row * count + col]), current_raw = Bits(current[row * count + col]),
+            direct_unbiased = row < grouped ? Bits(direct[row * columns + col]) : null,
+            direct_biased = row < grouped ? Bits(biased[row * columns + col]) : null, bias = Bits(bias[row]),
+            all_rows = Enumerable.Range(0, rows).Select(r => new { row = r, bias = Bits(bias[r]),
+                old_raw = Enumerable.Range(0, count).Select(k => Bits(old[r * count + k])).ToArray(),
+                current_raw = Enumerable.Range(0, count).Select(k => Bits(current[r * count + k])).ToArray(),
+                direct_unbiased = r < grouped ? Enumerable.Range(0, count).Select(k => Bits(direct[r * columns + k])).ToArray() : null }) };
+        using var stream = new FileStream(path, FileMode.CreateNew);
+        JsonSerializer.Serialize(stream, result, new JsonSerializerOptions { WriteIndented = true });
+    }
+

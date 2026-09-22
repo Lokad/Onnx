@@ -144,6 +144,15 @@ pass. Both previously failing tails now improve. All 3,266 cases pass in each
 Windows/AMD normal/scalar mode. This admits full-model qualification; it does
 not change the accepted 15.466 s versus ORT 8.952 s application result.
 
+Its [isolated normal product composition](tests/pyannote/direct-composition/results-20260922.md)
+now passes all 400 actual caller cases in both hardware modes, 3,311 backend
+tests, 343 tensor tests and an independent NuGet consumer. The candidate keeps
+the component's four kernel bodies unchanged. Its
+[complete Windows model checks](tests/pyannote/direct-models/results-20260922.md)
+preserve all 18 Pyannote graph arrays, 16 public requests and 166 shared-model
+arrays bit-for-bit, with the original native bounds. AMD application qualification
+remains pending; no additional speedup is claimed.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
