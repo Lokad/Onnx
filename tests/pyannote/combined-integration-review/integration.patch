@@ -1,0 +1,2040 @@
+--- a/src/Lokad.Onnx/CPUExecutionProvider.ConvPool.cs
++++ b/src/Lokad.Onnx/CPUExecutionProvider.ConvPool.cs
+@@ -10,7 +10,7 @@
+ {
+ 
+     /// <summary>1D or 2D convolution, lowered through the shared matrix dispatcher.</summary>
+-    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options)
++    internal static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, TensorBufferPool? pool)
+     {
+         var op = OpType.Conv;
+         if (X is null) return MissingInput(op, nameof(X));
+@@ -77,9 +77,9 @@
+                 var bias = B is null ? null : (Tensor<float>)B;
+                 if (padmode is null)
+                 {
+-                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor));
++                    return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, pads ?? new int[] { 0, 0, 0, 0 }, bias, kernel_shape, strides, dilations, opts.Tensor, pool));
+                 }
+-                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor));
++                return Success(op, Tensor<float>.Conv2D((Tensor<float>)X, (Tensor<float>)W, group ?? 1, padmode.Value, null, bias, kernel_shape, strides, dilations, opts.Tensor, pool));
+             }
+             case TensorElementType.Double:
+             {
+@@ -185,4 +185,6 @@
+             default: return InputTypeNotSupported(op, nameof(X), X);
+         }
+     }
++
++
+ }
+--- a/src/Lokad.Onnx/CPUExecutionProvider.Fusion.cs
++++ b/src/Lokad.Onnx/CPUExecutionProvider.Fusion.cs
+@@ -13,10 +13,10 @@
+     /// holds by construction (same computation, same per-element function);
+     /// exotic layouts fall back to the allocating public Relu path.
+     /// </summary>
+-    public static OpResult ConvRelu(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options)
++    internal static OpResult ConvRelu(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options, TensorBufferPool? pool)
+     {
+         var op = OpType.ConvRelu;
+-        var inner = Conv(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options);
++        var inner = Conv(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, pool);
+         if (inner.Status != OpStatus.Success || inner.Outputs is null || inner.Outputs.Length != 1 || inner.Outputs[0] is null)
+             return inner;
+         return FinishRelu(op, inner.Outputs[0], options);
+@@ -104,4 +104,6 @@
+             return relu;
+         return Success(op, relu.Outputs);
+     }
++
++
+ }
+--- /dev/null
++++ b/src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs
+@@ -0,0 +1,109 @@
++using System;
++using System.Buffers;
++using System.Numerics;
++using System.Runtime.InteropServices;
++
++namespace Lokad.Onnx;
++
++public partial class CPUExecutionProvider
++{
++    // Adapt the output-lane panel idea of voice 03af0bf. Preserve master's
++    // separate multiply and add, increasing reduction order and gate epilogue.
++    // Packing is per invocation, so mutable weights cannot leave stale panels.
++    sealed class LstmProjectionPanels : IDisposable
++    {
++        readonly float[] storage;
++        readonly int inputSize, hiddenSize, outputs, inputElements;
++
++        LstmProjectionPanels(float[] storage, int inputSize, int hiddenSize, int directions)
++        {
++            this.storage = storage;
++            this.inputSize = inputSize;
++            this.hiddenSize = hiddenSize;
++            outputs = checked(4 * hiddenSize);
++            inputElements = checked(directions * outputs * inputSize);
++        }
++
++        internal static LstmProjectionPanels? Create(ReadOnlySpan<float> w, ReadOnlySpan<float> r,
++            int inputSize, int hiddenSize, int directions, int sequence, TensorExecutionOptions options)
++        {
++            if (!options.UseSimd || !Vector.IsHardwareAccelerated || sequence < 8 || hiddenSize < 16 || hiddenSize > 128)
++                return null;
++            int count = StorageLength(w.Length, r.Length);
++            if (count == 0) return null;
++            float[] storage = ArrayPool<float>.Shared.Rent(count);
++            try
++            {
++                options.ScratchReporter?.AddScratchBytes((long)count * sizeof(float));
++                int outputs = checked(4 * hiddenSize);
++                Transpose(w, storage.AsSpan(0, w.Length), inputSize, outputs, directions);
++                Transpose(r, storage.AsSpan(w.Length, r.Length), hiddenSize, outputs, directions);
++                return new LstmProjectionPanels(storage, inputSize, hiddenSize, directions);
++            }
++            catch
++            {
++                ArrayPool<float>.Shared.Return(storage);
++                throw;
++            }
++        }
++
++        static void Transpose(ReadOnlySpan<float> source, Span<float> target, int inputs, int outputs, int directions)
++        {
++            int length = checked(inputs * outputs);
++            for (int d = 0; d < directions; d++)
++            for (int k = 0; k < inputs; k++)
++            for (int o = 0; o < outputs; o++)
++                target[d * length + k * outputs + o] = source[d * length + o * inputs + k];
++        }
++
++        internal void Input(int direction, ReadOnlySpan<float> x, Span<float> y) =>
++            LstmProjectOrdered(x, storage.AsSpan(direction * inputSize * outputs, inputSize * outputs), y);
++
++        internal void Recurrent(int direction, ReadOnlySpan<float> x, Span<float> y) =>
++            LstmProjectOrdered(x, storage.AsSpan(inputElements + direction * hiddenSize * outputs, hiddenSize * outputs), y);
++
++        public void Dispose() => ArrayPool<float>.Shared.Return(storage);
++
++        internal static int StorageLength(int inputWeights, int recurrentWeights)
++        {
++            if (inputWeights < 0 || recurrentWeights < 0) return 0;
++            long count = (long)inputWeights + recurrentWeights;
++            return count <= Array.MaxLength ? (int)count : 0;
++        }
++    }
++
++    internal static void LstmProjectOrdered(ReadOnlySpan<float> input, ReadOnlySpan<float> panel, Span<float> output)
++    {
++        if (panel.Length != checked(input.Length * output.Length))
++            throw new ArgumentException("The projection panel does not match its input and output dimensions.");
++        int width = Vector<float>.Count, block = 4 * width, o = 0;
++        ref float weights = ref MemoryMarshal.GetReference(panel);
++        ref float destination = ref MemoryMarshal.GetReference(output);
++        if (Vector.IsHardwareAccelerated)
++        {
++            for (; o <= output.Length - block; o += block)
++            {
++                var a = Vector<float>.Zero; var b = a; var c = a; var d = a;
++                for (int k = 0; k < input.Length; k++)
++                {
++                    var x = new Vector<float>(input[k]);
++                    nuint row = (nuint)(k * output.Length + o);
++                    a = Vector.Add(a, Vector.Multiply(x, Vector.LoadUnsafe(ref weights, row)));
++                    b = Vector.Add(b, Vector.Multiply(x, Vector.LoadUnsafe(ref weights, row + (nuint)width)));
++                    c = Vector.Add(c, Vector.Multiply(x, Vector.LoadUnsafe(ref weights, row + (nuint)(2 * width))));
++                    d = Vector.Add(d, Vector.Multiply(x, Vector.LoadUnsafe(ref weights, row + (nuint)(3 * width))));
++                }
++                a.StoreUnsafe(ref destination, (nuint)o);
++                b.StoreUnsafe(ref destination, (nuint)(o + width));
++                c.StoreUnsafe(ref destination, (nuint)(o + 2 * width));
++                d.StoreUnsafe(ref destination, (nuint)(o + 3 * width));
++            }
++        }
++        for (; o < output.Length; o++)
++        {
++            float value = 0f;
++            for (int k = 0; k < input.Length; k++) value += input[k] * panel[k * output.Length + o];
++            output[o] = value;
++        }
++    }
++}
+--- a/src/Lokad.Onnx/CPUExecutionProvider.Recurrent.cs
++++ b/src/Lokad.Onnx/CPUExecutionProvider.Recurrent.cs
+@@ -152,6 +152,7 @@
+         var hv = new float[hiddenSize];
+         var cv = new float[hiddenSize];
+         int H = hiddenSize;
++        using var projections = LstmProjectionPanels.Create(ws, rs, inputSize, H, numDirections, seq, opts.Tensor);
+         for (int d = 0; d < numDirections; d++)
+         {
+             // The solo reverse direction and the second bidirectional
+@@ -185,19 +186,27 @@
+                     int t = rev ? limit - 1 - s : s;
+                     int yOff = ((t * numDirections + d) * batch + b) * H;
+                     int xOff = (t * batch + b) * inputSize;
+-                    for (int gh = 0; gh < 4 * H; gh++)
+-                    {
+-                        float acc = 0f;
+-                        int wRow = wDir + gh * inputSize;
+-                        for (int k = 0; k < inputSize; k++) acc += xs[xOff + k] * ws[wRow + k];
+-                        xw[gh] = acc;
+-                    }
+-                    for (int gh = 0; gh < 4 * H; gh++)
+-                    {
+-                        float acc = 0f;
+-                        int rRow = rDir + gh * H;
+-                        for (int k = 0; k < H; k++) acc += hv[k] * rs[rRow + k];
+-                        hr[gh] = acc;
++                    if (projections is not null)
++                    {
++                        projections.Input(d, xs.Slice(xOff, inputSize), xw);
++                        projections.Recurrent(d, hv, hr);
++                    }
++                    else
++                    {
++                        for (int gh = 0; gh < 4 * H; gh++)
++                        {
++                            float acc = 0f;
++                            int wRow = wDir + gh * inputSize;
++                            for (int k = 0; k < inputSize; k++) acc += xs[xOff + k] * ws[wRow + k];
++                            xw[gh] = acc;
++                        }
++                        for (int gh = 0; gh < 4 * H; gh++)
++                        {
++                            float acc = 0f;
++                            int rRow = rDir + gh * H;
++                            for (int k = 0; k < H; k++) acc += hv[k] * rs[rRow + k];
++                            hr[gh] = acc;
++                        }
+                     }
+                     for (int h = 0; h < H; h++)
+                     {
+--- a/src/Lokad.Onnx/MathOps.cs
++++ b/src/Lokad.Onnx/MathOps.cs
+@@ -1715,7 +1715,7 @@
+             {
+                 float* src = B + j * K + kb;
+                 float* d = dst + j * (4 * Vector256<float>.Count);
+-                for (int kk = 0; kk < 4 * Vector256<float>.Count; kk++) d[kk] = src[kk];
++                new ReadOnlySpan<float>(src, 32).CopyTo(new Span<float>(d, 32));
+             }
+         }
+         int rem = K - blocked;
+@@ -3297,6 +3297,85 @@
+                             int sx = col0 + dx * strideX;
+                             *buf = (line != null && (uint)sx < (uint)srcW) ? line[sx] : 0;
+                         }
++                    }
++                }
++            }
++        }
++    }
++
++    /// <summary>
++    /// Image to column conversion restricted to a contiguous output-column
++    /// range. Column c holds output position (c / dstW, c % dstW), and the
++    /// buffer lays out as [srcC*kernelY*kernelX, colCount] row-major with
++    /// the same values the full Im2col patch holds at those columns. The
++    /// shared dispatcher may still select different vectorized kernels per
++    /// block shape, so tiled results agree with the single-pass path within
++    /// float rounding (validated at the 1e-4 gate), not bit for bit.
++    /// </summary>
++    /// <param name="src">Source data.</param>
++    /// <param name="srcC">Input channels.</param>
++    /// <param name="srcH">Input height.</param>
++    /// <param name="srcW">Input width.</param>
++    /// <param name="kernelY">Kernel height.</param>
++    /// <param name="kernelX">Kernel width.</param>
++    /// <param name="dilationY">Dilation of the kernel by height.</param>
++    /// <param name="dilationX">Dilation of the kernel by width.</param>
++    /// <param name="strideY">Stride of the convolution by height.</param>
++    /// <param name="strideX">Stride of the convolution by width.</param>
++    /// <param name="padY">Zero padding at the top (begin height).</param>
++    /// <param name="padX">Zero padding at the left (begin width).</param>
++    /// <param name="padH">Zero padding at the bottom (end height).</param>
++    /// <param name="padW">Zero padding at the right (end width).</param>
++    /// <param name="dstW">Full output width; columns index dy * dstW + dx.</param>
++    /// <param name="colStart">First output column to convert.</param>
++    /// <param name="colCount">Number of output columns to convert.</param>
++    /// <param name="buf">Buffer.</param>
++    // Spatial row sharing follows voice de60581/e802581. Span copies preserve
++    // all payload bits and let the runtime choose a supported copy instruction.
++    internal static unsafe void Im2colRange(float* src, int srcC, int srcH, int srcW,
++        int kernelY, int kernelX, int dilationY, int dilationX, int strideY, int strideX,
++        int padY, int padX, int padH, int padW, int dstW, int colStart, int colCount, float* buf)
++    {
++        if (colCount == 0) return;
++        int end = checked(colStart + colCount);
++        int dyFirst = colStart / dstW, dyLast = (end - 1) / dstW;
++        for (int sc = 0; sc < srcC; sc++)
++        for (int ky = 0; ky < kernelY; ky++)
++        for (int dy = dyFirst; dy <= dyLast; dy++)
++        {
++            long sy = (long)ky * dilationY - padY + (long)dy * strideY;
++            float* line = sy >= 0 && sy < srcH ? src + (sc * srcH + (int)sy) * srcW : null;
++            int first = dy == dyFirst ? colStart - dy * dstW : 0;
++            int last = dy == dyLast ? end - dy * dstW : dstW;
++            int count = last - first, offset = dy * dstW + first - colStart;
++            for (int kx = 0; kx < kernelX; kx++)
++            {
++                int patchRow = (sc * kernelY + ky) * kernelX + kx;
++                // The pointer always denotes this tile's allocated destination.
++                var output = new Span<float>(buf + patchRow * colCount + offset, count);
++                if (line == null)
++                {
++                    output.Clear();
++                    continue;
++                }
++                long col0 = (long)kx * dilationX - padX;
++                if (strideX == 1)
++                {
++                    // Clamp BOTH boundaries. A complete tile may lie in padding.
++                    int begin = (int)Math.Clamp(-col0 - first, 0L, count);
++                    int finish = (int)Math.Clamp((long)srcW - col0 - first, 0L, count);
++                    output[..begin].Clear();
++                    if (finish > begin)
++                        new ReadOnlySpan<float>(line + (int)(col0 + first + begin), finish - begin)
++                            .CopyTo(output[begin..finish]);
++                    output[finish..].Clear();
++                }
++                else
++                {
++                    for (int i = 0; i < count; i++)
++                    {
++                        long sx = col0 + (long)(first + i) * strideX;
++                        output[i] = sx >= 0 && sx < srcW ? line[(int)sx] : 0f;
+                     }
+                 }
+             }
+--- a/src/Lokad.Onnx/Node.cs
++++ b/src/Lokad.Onnx/Node.cs
+@@ -298,12 +298,12 @@
+         OpType.Sqrt => CPU.Sqrt(InputTensor(graph, 0), opt),
+ 
+         OpType.Conv => CPU.Conv(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+-            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt),
++            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, graph.ActivePool),
+ 
+         OpType.Relu => ReluIntGate(graph) ?? CPU.Relu(InputTensor(graph, 0), opt),
+ 
+         OpType.ConvRelu => CPU.ConvRelu(InputTensor(graph, 0), InputTensor(graph, 1), InputTensor(graph, 2),
+-            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt),
++            Attr<string>("auto_pad", null), Ints("dilations"), GetInt("group", null), Ints("kernel_shape"), Ints("pads"), Ints("strides"), opt, graph.ActivePool),
+ 
+         OpType.AddRelu => Sub32Gate(graph, OpType.Add) ?? CPU.AddRelu(InputTensor(graph, 0), InputTensor(graph, 1), opt, graph.ActivePool),
+ 
+--- a/src/Lokad.Onnx/TensorOps.ConvPool.cs
++++ b/src/Lokad.Onnx/TensorOps.ConvPool.cs
+@@ -9,6 +9,7 @@
+ using System.Numerics;
+ using System.Runtime.InteropServices;
+ using System.Runtime.Intrinsics.X86;
++using System.Runtime.Intrinsics;
+ using System.Runtime.CompilerServices;
+ using System.Threading.Tasks;
+ 
+@@ -24,6 +25,32 @@
+         var rented = ArrayPool<U>.Shared.Rent(length);
+         options.ScratchReporter?.AddScratchBytes((long)length * Unsafe.SizeOf<U>());
+         return rented;
++    }
++
++    // Spatial expansion adapted from voice 8af223e/e35653a; no reduction blocking.
++    const int ConvTileBudgetBytes = 256 * 1024;
++
++    // Validate expanded storage independently of the input/weight backing sizes.
++    // The spatial planner keeps the first candidate's 32-column minimum panel.
++    internal static (int columns, int reduction, int blockColumns, int scratchElements)
++        PlanConvSpatialScratch(int channels, int kh, int kw, int filters, int height, int width)
++    {
++        int columns = checked(height * width);
++        int reduction = checked(channels * kh * kw);
++        int blockColumns = columns;
++        if ((long)reduction * columns > ConvTileBudgetBytes / sizeof(float))
++        {
++            long perColumn = ((long)reduction + filters) * sizeof(float);
++            long fit = ConvTileBudgetBytes / perColumn;
++            const int panel = 32;
++            long aligned = Math.Max(panel, fit / panel * panel);
++            blockColumns = (int)Math.Min(columns, aligned);
++        }
++        long elements = (long)reduction * blockColumns;
++        if (blockColumns < columns) elements += (long)filters * blockColumns;
++        if (elements > Array.MaxLength)
++            throw new ArgumentException("Convolution scratch exceeds the supported array length.");
++        return (columns, reduction, blockColumns, (int)elements);
+     }
+ 
+     // Shared Conv2D preparation for PadType padding: validates ranks, fills
+@@ -116,7 +143,7 @@
+     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
+     {
+         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
++        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, null);
+ 
+     }
+ 
+@@ -127,14 +154,19 @@
+     public static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options)
+     {
+         var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
+-        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options);
+-
+-    }
+-
+-    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options)
++        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, null);
++
++    }
++
++    static Tensor<float> Conv2DFloatCore(Tensor<float> input, Tensor<float> weight, int group, int N, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, Tensor<float>? bias, TensorExecutionOptions options, TensorBufferPool? pool)
+     {
+         options.Validate();
+-        var output = new DenseTensor<float>((ReadOnlySpan<int>)new int[] { N, M, outH, outW });
++        var dimensions = new int[] { N, M, outH, outW };
++        // Preserve the fresh array's zero-initialization for every kernel path.
++        var output = pool is null
++            ? new DenseTensor<float>((ReadOnlySpan<int>)dimensions)
++            : new DenseTensor<float>(new Memory<float>(pool.RentCleared<float>(checked(N * M * outH * outW))), dimensions);
++        if (output.Length == 0) return output;
+         var xd = input.ToDenseTensor();
+         var wd = weight.ToDenseTensor();
+         var bd = bias?.ToDenseTensor();
+@@ -159,7 +191,14 @@
+                 kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, dop, options);
+             return output;
+         }
+-        int patchSize = C * kH * kW * outH * outW;
++        var spatial = PlanConvSpatialScratch(C, kH, kW, M, outH, outW);
++        int tileN = spatial.columns, blockN = spatial.blockColumns;
++        if (blockN < tileN)
++        {
++            RunTiledConvFloat(xMem, wMem, bMem, hasBias, oMem, N, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, dop, options);
++            return output;
++        }
++        int patchSize = spatial.scratchElements;
+         if (dop > 1)
+         {
+             Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
+@@ -224,6 +263,108 @@
+             }
+         }
+     }
++    /// <summary>
++    /// Runs convolution in bounded column tiles when the full patch would
++    /// exceed L2-resident scratch: each tile converts one output-column
++    /// block, multiplies it through the shared dispatcher into a block
++    /// output buffer, and streams it through the bias epilogue.
++    /// Blocking covers independent outputs only, so each dot product keeps
++    /// the single-pass order; the shared dispatcher may still pick different
++    /// vectorized kernels per block shape, so agreement is within float
++    /// rounding (validated at the 1e-4 gate), not bit for bit.
++    /// </summary>
++    static void RunTiledConvFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, int N, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, int dop, TensorExecutionOptions options)
++    {
++        int blockPatch = checked(C * kH * kW * blockN);
++        int blockOut = checked(M * blockN);
++        int scratchLength = checked(blockPatch + blockOut);
++        int blockPack = ConvPackedScratchLength(M / group, C * kH * kW / group, blockN, scratchLength, options);
++        int packOffset = scratchLength;
++        scratchLength = checked(scratchLength + blockPack);
++        if (dop > 1)
++        {
++            Parallel.For(0, N, new ParallelOptions { MaxDegreeOfParallelism = dop },
++                () => RentScratch<float>(scratchLength, options),
++                (b, state, scratch) =>
++                {
++                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, new Memory<float>(scratch, packOffset, blockPack), b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options);
++                    return scratch;
++                },
++                scratch => ArrayPool<float>.Shared.Return(scratch));
++        }
++        else
++        {
++            var scratch = RentScratch<float>(scratchLength, options);
++            try
++            {
++                for (int b = 0; b < N; b++)
++                    RunTiledBatchFloat(xMem, wMem, bMem, hasBias, oMem, scratch, new Memory<float>(scratch, packOffset, blockPack), b, group, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, inBatch, outBatch, tileN, blockN, options);
++            }
++            finally { ArrayPool<float>.Shared.Return(scratch); }
++        }
++    }
++
++    /// <summary>
++    /// Runs one batch of tiled float convolution: for each output-column
++    /// block, converts the block patch, runs one shared-dispatcher product
++    /// per group into the block output buffer (cleared by the dispatcher),
++    /// then streams the block through the bias epilogue. The epilogue
++    /// keeps the single-pass bias-add order.
++    /// </summary>
++    static void RunTiledBatchFloat(Memory<float> xMem, Memory<float> wMem, Memory<float> bMem, bool hasBias, Memory<float> oMem, float[] scratch, Memory<float> packMem, int b, int group, int C, int H, int W, int M, int kH, int kW, int dH, int dW, int sH, int sW, PadInfo pad, int outH, int outW, int inBatch, int outBatch, int tileN, int blockN, TensorExecutionOptions options)
++    {
++        int tileKFull = C * kH * kW;
++        int tileM = M / group;
++        int tileKg = tileKFull / group;
++        var patchMem = new Memory<float>(scratch, 0, tileKFull * blockN);
++        var outMem = new Memory<float>(scratch, tileKFull * blockN, M * blockN);
++        int numBlocks = 1 + (tileN - 1) / blockN;
++        var bs = bMem.Span;
++        var os = oMem.Span;
++        var ds = outMem.Span;
++        for (int s = 0; s < numBlocks; s++)
++        {
++            int colStart = s * blockN;
++            int colCount = Math.Min(blockN, tileN - colStart);
++            unsafe
++            {
++                fixed (float* src = xMem.Span.Slice(b * inBatch, inBatch))
++                fixed (float* patch = patchMem.Span)
++                {
++                    MathOps.Im2colRange(src, C, H, W, kH, kW, dH, dW, sH, sW, pad.top, pad.left, pad.bottom, pad.right, outW, colStart, colCount, patch);
++                }
++            }
++            for (int g = 0; g < group; g++)
++            {
++                if (!TryConvPackedTile(wMem.Span.Slice(g * tileM * tileKg, tileM * tileKg),
++                    patchMem.Span.Slice(g * tileKg * colCount, tileKg * colCount),
++                    outMem.Span.Slice(g * tileM * colCount, tileM * colCount), packMem.Span,
++                    tileM, tileKg, colCount, options))
++                {
++                    var wView = new DenseTensor<float>(wMem.Slice(g * tileM * tileKg, tileM * tileKg), new int[] { tileM, tileKg });
++                    var pView = new DenseTensor<float>(patchMem.Slice(g * tileKg * colCount, tileKg * colCount), new int[] { tileKg, colCount });
++                    var dView = new DenseTensor<float>(outMem.Slice(g * tileM * colCount, tileM * colCount), new int[] { tileM, colCount });
++                    if (!TryConvPortableRows(wView.Buffer.Span, pView.Buffer.Span, dView.Buffer.Span,
++                        tileM, tileKg, colCount, options))
++                        Tensor<float>.MatMul2D(wView, pView, dView, options);
++                }
++                int outBase = b * outBatch + g * tileM * tileN;
++                int blkBase = g * tileM * colCount;
++                for (int i = 0; i < tileM; i++)
++                {
++                    float bi = hasBias ? bs[g * tileM + i] : 0f;
++                    int outRow = outBase + i * tileN + colStart;
++                    int blkRow = blkBase + i * colCount;
++                    for (int j = 0; j < colCount; j++)
++                    {
++                        float v = hasBias ? ds[blkRow + j] + bi : ds[blkRow + j];
++                        os[outRow + j] = v;
++                    }
++                }
++            }
++        }
++    }
++
+     /// <summary>
+     /// Runs 1x1 stride-1 no-pad batches with no patch matrix: the input slice
+     /// already lays out as the GEMM right-hand side, so each group multiplies
+@@ -767,4 +908,8 @@
+             if (weightLength != expectWeight) throw new ArgumentException("Conv weight backing length does not match shape.");
+         }
+     }
++
++
++
++
+ }
+--- /dev/null
++++ b/src/Lokad.Onnx/Zzz.ConvolutionPool.cs
+@@ -0,0 +1,31 @@
++namespace Lokad.Onnx;
++
++using static Lokad.Onnx.MathOps;
++
++// Compile new overloads after existing partial-class methods to keep the
++// isolated candidate's unrelated compiler-generated method identities stable.
++public partial class CPUExecutionProvider
++{
++    public static OpResult Conv(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options) =>
++        Conv(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, null);
++
++    public static OpResult ConvRelu(ITensor? X, ITensor? W, ITensor? B, string? auto_pad, int[]? dilations, int? group, int[]? kernel_shape, int[]? pads, int[]? strides, ExecutionOptions? options) =>
++        ConvRelu(X, W, B, auto_pad, dilations, group, kernel_shape, pads, strides, options, null);
++}
++
++public abstract partial class Tensor<T> where T : unmanaged
++{
++    internal static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, PadType padtype, int? padvalue, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, TensorBufferPool? pool)
++    {
++        var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvPadType(input, weight, group, padtype, padvalue, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
++        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, pool);
++
++    }
++
++    internal static Tensor<float> Conv2D(Tensor<float> input, Tensor<float> weight, int group, int[] pads, Tensor<float>? bias, int[]? kernelshape, int[]? strides, int[]? dilations, TensorExecutionOptions options, TensorBufferPool? pool)
++    {
++        var (N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW) = PlanConvExplicit(input, weight, group, pads, kernelshape, strides, dilations, bias is null ? -1 : (int)bias.Length);
++        return Conv2DFloatCore(input, weight, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, bias, options, pool);
++
++    }
++}
+--- /dev/null
++++ b/src/Lokad.Onnx/Zzz.ConvPortableRows.cs
+@@ -0,0 +1,46 @@
++using System;
++using System.Buffers;
++using System.Runtime.Intrinsics.X86;
++
++namespace Lokad.Onnx;
++
++public abstract partial class Tensor<T> where T : unmanaged
++{
++    // Keep existing generic dispatch, short reductions and experimental AVX-512
++    // precedence. These are the same packing size limits as the generic route.
++    internal static bool CanUseConvPortableRows(int rows, int reduction, int columns, TensorExecutionOptions options) =>
++        options.UseSimd && options.UseIntrinsics && Fma.IsSupported
++        && !AblationSwitches.EnablePackedAvx512Dynamic
++        && rows >= 32 && (rows & 1) == 0 && rows % 3 != 0
++        && reduction >= 64 && columns > 0
++        && (long)reduction * columns <= 67108864
++        && (rows >= 64 || (long)reduction * columns <= 65536);
++
++    internal static unsafe bool TryConvPortableRows(ReadOnlySpan<float> weights,
++        ReadOnlySpan<float> patch, Span<float> destination, int rows, int reduction,
++        int columns, TensorExecutionOptions options)
++    {
++        if (!CanUseConvPortableRows(rows, reduction, columns, options)) return false;
++        if ((long)rows * reduction > weights.Length || (long)reduction * columns > patch.Length
++            || (long)rows * columns > destination.Length)
++            throw new ArgumentException("Convolution tile buffers do not match their dimensions.");
++        var packed = RentScratch<float>(reduction * columns, options);
++        try
++        {
++            fixed (float* a = weights)
++            fixed (float* b = patch)
++            fixed (float* c = destination)
++            fixed (float* p = packed)
++            {
++                destination.Slice(0, rows * columns).Clear();
++                MathOps.PackPanelsB(reduction, columns, b, p);
++                int grouped = rows / 6 * 6;
++                MathOps.mm_unsafe_vectorized_intrinsics_3x4packed(grouped, reduction, columns, a, p, c);
++                MathOps.mm_unsafe_vectorized_intrinsics_2x4packed_bump(rows - grouped, reduction, columns,
++                    a + grouped * reduction, p, c + grouped * columns);
++            }
++        }
++        finally { ArrayPool<float>.Shared.Return(packed); }
++        return true;
++    }
++}
+--- /dev/null
++++ b/src/Lokad.Onnx/Zzz.ZConvPackedRows.cs
+@@ -0,0 +1,44 @@
++using System;
++using System.Runtime.Intrinsics.X86;
++
++namespace Lokad.Onnx;
++
++public abstract partial class Tensor<T> where T : unmanaged
++{
++    // Adapt voice cdeae16 to the current composer. This selection is confined
++    // to convolution; generic packed matrix experiment switches are unchanged.
++    static bool CanUseConvPackedRows(int rows, int reduction, int columns, TensorExecutionOptions options) =>
++        options.UseSimd && options.UseIntrinsics && Avx512F.IsSupported && Fma.IsSupported
++        && rows >= 8 && reduction > 0 && columns > 0 && columns % 32 == 0;
++
++    internal static int ConvPackedScratchLength(int rows, int reduction, int columns,
++        int existingLength, TensorExecutionOptions options)
++    {
++        if (!CanUseConvPackedRows(rows, reduction, columns, options)) return 0;
++        long length = (long)reduction * columns;
++        // Packing is optional; a valid existing rental must still work when
++        // the extra panel cannot fit the supported combined array length.
++        return existingLength >= 0 && length <= (long)Array.MaxLength - existingLength ? (int)length : 0;
++    }
++
++    internal static unsafe bool TryConvPackedTile(ReadOnlySpan<float> weights,
++        ReadOnlySpan<float> patch, Span<float> destination, Span<float> packed,
++        int rows, int reduction, int columns, TensorExecutionOptions options)
++    {
++        if (!CanUseConvPackedRows(rows, reduction, columns, options)) return false;
++        long packedLength = (long)reduction * columns;
++        if (packedLength > packed.Length) return false;
++        if ((long)rows * reduction > weights.Length || packedLength > patch.Length
++            || (long)rows * columns > destination.Length)
++            throw new ArgumentException("Convolution tile buffers do not match the product dimensions.");
++        fixed (float* w = weights)
++        fixed (float* p = patch)
++        fixed (float* output = destination)
++        fixed (float* panel = packed)
++        {
++            MathOps.PackPanelsB(reduction, columns, p, panel);
++            destination.Slice(0, checked(rows * columns)).Clear();
++            return MathOps.TryPackedAvx512Rows(rows, reduction, columns, w, panel, output);
++        }
++    }
++}
+--- a/src/Lokad.Onnx.Data/Community1Diarizer.cs
++++ b/src/Lokad.Onnx.Data/Community1Diarizer.cs
+@@ -85,12 +85,15 @@
+             var count = Community1Timeline.Count(activity, chunks, cancellation);
+             if (count.All(v => v == 0)) return Empty(Community1DiarizationStatus.NoSpeech, duration, chunks);
+             var embeddings = new WeSpeakerEmbedding[chunks * 3];
+-            for (int c = 0; c < chunks; c++)
++            using (var request = embedder.CreatePipelineRequest())
+             {
+-                cancellation.ThrowIfCancellationRequested(); var binary = new bool[Community1Timeline.LocalFrames * 3];
+-                Array.Copy(activity, c * binary.Length, binary, 0, binary.Length);
+-                var result = embedder.ExtractPipeline(Community1Timeline.Window(pcm, c), Community1Timeline.EmbeddingMasks(binary), cancellation);
+-                Array.Copy(result, 0, embeddings, c * 3, 3);
++                for (int c = 0; c < chunks; c++)
++                {
++                    cancellation.ThrowIfCancellationRequested(); var binary = new bool[Community1Timeline.LocalFrames * 3];
++                    Array.Copy(activity, c * binary.Length, binary, 0, binary.Length);
++                    var result = request.ExtractPipeline(Community1Timeline.Window(pcm, c), Community1Timeline.EmbeddingMasks(binary), cancellation);
++                    Array.Copy(result, 0, embeddings, c * 3, 3);
++                }
+             }
+             var clustered = clusterer.Cluster(embeddings, new DenseTensor<bool>(activity, new[] { chunks, Community1Timeline.LocalFrames, 3 }), cancellation);
+             if (clustered.Centroids.Count == 0) return Empty(Community1DiarizationStatus.NoUsableEmbeddings, duration, chunks);
+--- a/src/Lokad.Onnx.Data/WeSpeakerAudio.cs
++++ b/src/Lokad.Onnx.Data/WeSpeakerAudio.cs
+@@ -15,6 +15,7 @@
+     const float Epsilon = 1.1920928955078125e-7f;
+     static readonly float[] Window = CreateWindow();
+     static readonly float[] MelWeights = CreateMelWeights();
++    static readonly (int Start, int End)[] MelSupport = CreateMelSupport();
+     static readonly Complex[] Roots = CreateRoots();
+ 
+     /// <summary>Converts 400 through 480000 finite mono 16 kHz PCM samples in [-1,1]
+@@ -66,7 +67,8 @@
+             for (int mel = 0; mel < MelBins; mel++)
+             {
+                 double energy = 0;
+-                for (int k = 0; k < FourierSize / 2; k++) energy += (double)powers[k] * MelWeights[mel * (FourierSize / 2) + k];
++                var (first, last) = MelSupport[mel];
++                for (int k = first; k < last; k++) energy += (double)powers[k] * MelWeights[mel * (FourierSize / 2) + k];
+                 output[frame * MelBins + mel] = MathF.Log(Math.Max(Epsilon, (float)energy));
+             }
+         }
+@@ -126,6 +128,23 @@
+         return result;
+     }
+ 
++    // Keep the original coefficient values and ascending accumulation order.
++    // Valid normalized PCM keeps every power finite, so omitted zero terms
++    // cannot change a nonnegative energy or its signed-zero behavior.
++    static (int Start, int End)[] CreateMelSupport()
++    {
++        var support = new (int Start, int End)[MelBins];
++        const int bins = FourierSize / 2;
++        for (int band = 0; band < MelBins; band++)
++        {
++            int first = 0, last = bins;
++            while (first < last && MelWeights[band * bins + first] == 0f) first++;
++            while (last > first && MelWeights[band * bins + last - 1] == 0f) last--;
++            support[band] = (first, last);
++        }
++        return support;
++    }
++
+     static Complex[] CreateRoots()
+     {
+         var roots = new Complex[FourierSize / 2];
+--- a/src/Lokad.Onnx.Data/WeSpeakerEmbedder.cs
++++ b/src/Lokad.Onnx.Data/WeSpeakerEmbedder.cs
+@@ -82,18 +82,21 @@
+ 
+     // Share one backbone evaluation across the three local speakers. The native pipeline's
+     // sparse weighted masks are allowed here; Extract retains its explicit two-frame policy.
+-    internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation)
++    internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation, PipelineRequest? request)
+     {
+         if (samples.Length != Community1Timeline.WindowSamples || masks.Length != 3
+             || masks.Any(m => m is null || m.Length != Community1Timeline.LocalFrames || m.Any(v => v != 0 && v != 1)))
+             throw new ArgumentException("Pipeline embeddings require one full audio window and three binary masks.");
+         lock (gate)
+         {
++            if (request is not null) ObjectDisposedException.ThrowIf(request.Disposed, request);
+             cancellation.ThrowIfCancellationRequested();
+             var features = WeSpeakerAudio.LogMelFilterbank(samples, 16000, cancellation);
+             int frames = (features.Dimensions[1] + 7) / 8;
+-            var encoding = encoder.CreateExecution(ExecutionOptions.Memory);
+-            var projecting = projection.CreateExecution(ExecutionOptions.Memory);
++            var encoding = request is null ? encoder.CreateExecution(ExecutionOptions.Memory)
++                : (request.Encoding ??= encoder.CreateExecution(ExecutionOptions.Memory));
++            var projecting = request is null ? projection.CreateExecution(ExecutionOptions.Memory)
++                : (request.Projecting ??= projection.CreateExecution(ExecutionOptions.Memory));
+             try
+             {
+                 var hidden = Execute(encoding, "fbank_features", features, EncodedName, new[] { 1, 2560, frames });
+@@ -136,4 +139,33 @@
+             if (!float.IsFinite(value)) throw new InvalidDataException("Nonfinite WeSpeaker output: " + outputName);
+         return tensor;
+     }
++
++    internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation) =>
++        ExtractPipeline(samples, masks, cancellation, null);
++
++    // Contexts belong to one diarization embedding loop, never to the model instance.
++    internal PipelineRequest CreatePipelineRequest() => new PipelineRequest(this);
++
++    internal sealed class PipelineRequest : IDisposable
++    {
++        readonly WeSpeakerEmbedder owner;
++        internal GraphExecution? Encoding, Projecting;
++        internal bool Disposed;
++
++        internal PipelineRequest(WeSpeakerEmbedder owner) => this.owner = owner;
++
++        internal WeSpeakerEmbedding[] ExtractPipeline(float[] samples, float[][] masks, CancellationToken cancellation) =>
++            owner.ExtractPipeline(samples, masks, cancellation, this);
++
++        public void Dispose()
++        {
++            lock (owner.gate)
++            {
++                if (Disposed) return;
++                try { Encoding?.Reset(); Projecting?.Reset(); }
++                finally { Encoding = null; Projecting = null; Disposed = true; }
++            }
++        }
++    }
++
+ }
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/ConvolutionPoolTests.cs
+@@ -0,0 +1,182 @@
++using System.Runtime.InteropServices;
++using CPU = Lokad.Onnx.CPUExecutionProvider;
++
++namespace Lokad.Onnx.Backend.Tests;
++
++[Collection("SequentialLogSink")]
++public class ConvolutionPoolTests
++{
++    public static IEnumerable<object[]> Cases()
++    {
++        for (int shape = 0; shape < 6; shape++)
++            foreach (bool scalar in new[] { false, true })
++                foreach (bool fused in new[] { false, true })
++                    yield return new object[] { shape, scalar, fused };
++    }
++
++    static DenseTensor<float> Values(int[] shape, int seed)
++    {
++        var t = DenseTensor<float>.OfShape(shape);
++        var random = new Random(seed);
++        for (int i = 0; i < t.Length; i++) t.Buffer.Span[i] = (float)(random.NextDouble() * 2 - 1);
++        return t;
++    }
++
++    static int[] Bits(Tensor<float> tensor) => tensor.ToArray().Select(BitConverter.SingleToInt32Bits).ToArray();
++
++    static float[] ArrayOf(DenseTensor<float> tensor)
++    {
++        Assert.True(MemoryMarshal.TryGetArray((ReadOnlyMemory<float>)tensor.Buffer, out var segment));
++        Assert.Equal(0, segment.Offset);
++        Assert.Equal(tensor.Length, segment.Count);
++        return segment.Array!;
++    }
++
++    [Theory]
++    [MemberData(nameof(Cases))]
++    public void DirtyDestinationPreservesAllBits(int shape, bool scalar, bool fused)
++    {
++        (int[] x, int[] w, int group, int[]? pads, int[] strides, int[] dilations, string auto) c = shape switch
++        {
++            0 => (new[] { 1, 4, 3, 7 }, new[] { 5, 4, 1, 1 }, 1, new[] { 0, 0, 0, 0 }, new[] { 1, 1 }, new[] { 1, 1 }, "NOTSET"),
++            1 => (new[] { 1, 32, 8, 99 }, new[] { 32, 32, 3, 3 }, 1, new[] { 1, 1, 1, 1 }, new[] { 1, 1 }, new[] { 1, 1 }, "NOTSET"),
++            2 => (new[] { 2, 4, 7, 9 }, new[] { 6, 2, 3, 2 }, 2, new[] { 2, 1, 1, 2 }, new[] { 2, 1 }, new[] { 2, 1 }, "NOTSET"),
++            3 => (new[] { 1, 3, 7, 8 }, new[] { 4, 3, 3, 3 }, 1, (int[]?)null, new[] { 2, 2 }, new[] { 1, 1 }, "SAME_UPPER"),
++            4 => (new[] { 1, 3, 7, 8 }, new[] { 4, 3, 3, 3 }, 1, (int[]?)null, new[] { 2, 2 }, new[] { 1, 1 }, "SAME_LOWER"),
++            _ => (new[] { 1, 2, 8, 9 }, new[] { 3, 2, 2, 3 }, 1, (int[]?)null, new[] { 1, 2 }, new[] { 2, 1 }, "VALID")
++        };
++        var x = Values(c.x, 19); var w = Values(c.w, 27); var b = Values(new[] { c.w[0] }, 39);
++        int[] originalX = Bits(x), originalW = Bits(w), originalB = Bits(b);
++        var options = scalar ? ExecutionOptions.Scalar : ExecutionOptions.Default;
++        OpResult Run(TensorBufferPool? pool) => fused
++            ? CPU.ConvRelu(x, w, b, c.auto, c.dilations, c.group, null, c.pads, c.strides, options, pool)
++            : CPU.Conv(x, w, b, c.auto, c.dilations, c.group, null, c.pads, c.strides, options, pool);
++        var expected = Run(null);
++        Assert.Equal(OpStatus.Success, expected.Status);
++        var reference = (Tensor<float>)expected.Outputs[0];
++        var pool = new TensorBufferPool();
++        var poisoned = pool.Rent<float>((int)reference.Length);
++        for (int repeat = 0; repeat < 3; repeat++)
++        {
++            Array.Fill(poisoned, float.NaN);
++            pool.Return(poisoned);
++            var actual = Run(pool);
++            Assert.Equal(OpStatus.Success, actual.Status);
++            var tensor = Assert.IsType<DenseTensor<float>>(actual.Outputs[0]);
++            Assert.Same(poisoned, ArrayOf(tensor));
++            Assert.True(pool.IsOwned(poisoned));
++            Assert.Equal(reference.Dimensions.ToArray(), tensor.Dimensions.ToArray());
++            Assert.Equal(Bits(reference), Bits(tensor));
++        }
++        Assert.Equal(3, pool.Reused);
++        Assert.Equal(originalX, Bits(x)); Assert.Equal(originalW, Bits(w)); Assert.Equal(originalB, Bits(b));
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public void OutstandingOutputsAreNeverReused(bool fused)
++    {
++        var x = Values(new[] { 1, 2, 3, 5 }, 17); var w = Values(new[] { 2, 2, 1, 1 }, 31);
++        var pool = new TensorBufferPool();
++        OpResult Run() => fused
++            ? CPU.ConvRelu(x, w, null, null, null, 1, null, null, null, ExecutionOptions.Default, pool)
++            : CPU.Conv(x, w, null, null, null, 1, null, null, null, ExecutionOptions.Default, pool);
++        var first = Assert.IsType<DenseTensor<float>>(Run().Outputs[0]);
++        var held = Bits(first);
++        x.Buffer.Span.Fill(3);
++        var second = Assert.IsType<DenseTensor<float>>(Run().Outputs[0]);
++        Assert.NotSame(ArrayOf(first), ArrayOf(second));
++        Assert.Equal(held, Bits(first));
++        Assert.Equal(0, pool.Reused);
++    }
++
++    static ComputationalGraph Graph(bool fused, bool keepView)
++    {
++        var g = new ComputationalGraph();
++        g.Metadata["Name"] = "convolution-pool-alias";
++        g.Inputs["x"] = DenseTensor<float>.OfShape(1, 1, 2, 4);
++        g.Initializers["w"] = new DenseTensor<float>(new[] { 2f }, new[] { 1, 1, 1, 1 });
++        g.Initializers["shape"] = DenseTensor<long>.OfValues(new long[] { 1, 1, 2, 4 });
++        g.Outputs["y"] = DenseTensor<float>.OfShape(1, 1, 2, 4);
++        if (keepView) g.Outputs["v"] = DenseTensor<float>.OfShape(1, 1, 2, 4);
++        g.Nodes.Add(new Node { Name = "first", Op = fused ? OpType.ConvRelu : OpType.Conv, IsFused = fused, Inputs = new[] { "x", "w" }, Outputs = new[] { "a" } });
++        g.Nodes.Add(new Node { Name = "alias", Op = OpType.Reshape, Inputs = new[] { "a", "shape" }, Outputs = new[] { "v" } });
++        g.Nodes.Add(new Node { Name = "second", Op = fused ? OpType.ConvRelu : OpType.Conv, IsFused = fused, Inputs = new[] { "x", "w" }, Outputs = new[] { "b" } });
++        g.Nodes.Add(new Node { Name = "sum", Op = OpType.Add, Inputs = new[] { "v", "b" }, Outputs = new[] { "y" } });
++        foreach (string name in keepView ? new[] { "a", "b" } : new[] { "a", "v", "b" }) g.IntermediateOutputs[name] = null;
++        g.InputDescs.Add(new OnnxValueInfo { Name = "x", ElementType = TensorElementType.Float, Dims = new[] { 1, 1, 2, 4 } });
++        foreach (string name in keepView ? new[] { "y", "v" } : new[] { "y" })
++            g.OutputDescs.Add(new OnnxValueInfo { Name = name, ElementType = TensorElementType.Float, Dims = new[] { 1, 1, 2, 4 } });
++        g.RefreshLifetimeAnalysis();
++        return g;
++    }
++
++    [Theory]
++    [InlineData(false, false)]
++    [InlineData(false, true)]
++    [InlineData(true, false)]
++    [InlineData(true, true)]
++    public void GraphViewsHeldOutputsAndFailureRecover(bool fused, bool keepView)
++    {
++        var graph = Graph(fused, keepView);
++        var execution = graph.CreateExecution(ExecutionOptions.Memory);
++        var held = new List<(Tensor<float> Tensor, int[] Bits)>();
++        var shape = (DenseTensor<long>)graph.Initializers["shape"];
++        for (int repeat = 0; repeat < 4; repeat++)
++        {
++            var input = Values(new[] { 1, 1, 2, 4 }, 83 + repeat);
++            var bits = Bits(input);
++            var feeds = new Dictionary<string, ITensor> { ["x"] = input };
++            execution.Reset();
++            Assert.True(execution.Execute(feeds, true, ExecutionProvider.CPU, ExecutionOptions.Memory), execution.LastErrorMessage);
++            var output = (Tensor<float>)execution.Outputs["y"];
++            float[] expected = input.ToArray().Select(v => (fused ? Math.Max(0f, v * 2) : v * 2) * 2).ToArray();
++            Assert.Equal(expected.Select(BitConverter.SingleToInt32Bits), Bits(output));
++            held.Add((output, Bits(output)));
++            if (keepView)
++            {
++                var view = (Tensor<float>)execution.Outputs["v"];
++                Assert.Equal(expected.Select(v => v / 2).Select(BitConverter.SingleToInt32Bits), Bits(view));
++                held.Add((view, Bits(view)));
++            }
++            // A failed run consumes its cached input destination without releasing
++            // it. The first recovery may miss; the next successful run reuses again.
++            if (repeat is 1 or 3) Assert.Equal(32, execution.LastPoolReusedBytes);
++            if (repeat == 2) Assert.Equal(0, execution.LastPoolReusedBytes);
++            if (repeat == 1)
++            {
++                execution.Reset(); shape.Buffer.Span[0] = 3;
++                try
++                {
++                    Assert.False(execution.Execute(feeds, true, ExecutionProvider.CPU, ExecutionOptions.Memory));
++                    Assert.Equal(32, execution.LastPoolReusedBytes);
++                    Assert.Equal(0, execution.LastPoolReturned);
++                }
++                finally { shape.Buffer.Span[0] = 1; }
++            }
++            Assert.Equal(bits, Bits(input));
++            foreach (var prior in held) Assert.Equal(prior.Bits, Bits(prior.Tensor));
++        }
++        execution.Reset();
++        foreach (var prior in held) Assert.Equal(prior.Bits, Bits(prior.Tensor));
++    }
++
++    [Fact]
++    public void OneDimensionalAndDoubleFallbacksDoNotRent()
++    {
++        var pool = new TensorBufferPool();
++        var x = Values(new[] { 1, 2, 5 }, 41); var w = Values(new[] { 3, 2, 1 }, 42);
++        var old = CPU.Conv(x, w, null, null, null, 1, null, null, null, ExecutionOptions.Default);
++        var actual = CPU.Conv(x, w, null, null, null, 1, null, null, null, ExecutionOptions.Default, pool);
++        Assert.Equal(OpStatus.Success, actual.Status);
++        Assert.Equal(Bits((Tensor<float>)old.Outputs[0]), Bits((Tensor<float>)actual.Outputs[0]));
++        var xd = new DenseTensor<double>(new[] { 1.0, -2.0, 3.0, -4.0 }, new[] { 1, 1, 2, 2 });
++        var wd = new DenseTensor<double>(new[] { 2.0 }, new[] { 1, 1, 1, 1 });
++        var doubleResult = CPU.Conv(xd, wd, null, null, null, 1, null, null, null, ExecutionOptions.Default, pool);
++        Assert.Equal(OpStatus.Success, doubleResult.Status);
++        Assert.Equal(new[] { 2.0, -4.0, 6.0, -8.0 }, ((Tensor<double>)doubleResult.Outputs[0]).ToArray());
++        Assert.Equal(0, pool.AllocatedNew);
++        Assert.Equal(0, pool.Reused);
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/ConvPackedRowsTests.cs
+@@ -0,0 +1,130 @@
++using System;
++using System.Linq;
++using System.Runtime.Intrinsics.X86;
++
++namespace Lokad.Onnx.Backend.Tests;
++
++public class ConvPackedRowsTests
++{
++    static bool Hardware => Avx512F.IsSupported && Fma.IsSupported;
++
++    [Fact]
++    public void UnsupportedOptionsShapesAndShortPackLeaveBuffersUntouched()
++    {
++        float[] output = Enumerable.Repeat(12345f, 32).ToArray();
++        float[] packed = Enumerable.Repeat(6789f, 32).ToArray();
++        foreach (var options in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd })
++            Assert.False(Tensor<float>.TryConvPackedTile(default, default, output, packed, 8, 1, 32, options));
++        foreach (int columns in new[] { 0, 1, 31, 33 })
++            Assert.False(Tensor<float>.TryConvPackedTile(default, default, output, packed, 8, 1, columns, TensorExecutionOptions.Auto));
++        Assert.False(Tensor<float>.TryConvPackedTile(default, default, output, packed, 7, 1, 32, TensorExecutionOptions.Auto));
++        Assert.False(Tensor<float>.TryConvPackedTile(default, default, output, packed, 8, 0, 32, TensorExecutionOptions.Auto));
++        Assert.False(Tensor<float>.TryConvPackedTile(default, default, output, packed, 8, 2, 32, TensorExecutionOptions.Auto));
++        if (!Hardware)
++            Assert.False(Tensor<float>.TryConvPackedTile(default, default, output, packed, 8, 1, 32, TensorExecutionOptions.Auto));
++        Assert.All(output, v => Assert.Equal(12345f, v));
++        Assert.All(packed, v => Assert.Equal(6789f, v));
++    }
++
++    [Fact]
++    public void OptionalPackingDeclinesUnrepresentableCombinedStorage()
++    {
++        var options = TensorExecutionOptions.Auto;
++        Assert.Equal(0, Tensor<float>.ConvPackedScratchLength(32, 288, 192, Array.MaxLength - 55295, options));
++        Assert.Equal(0, Tensor<float>.ConvPackedScratchLength(32, int.MaxValue, 192, 1000, options));
++        Assert.Equal(Hardware ? 55296 : 0, Tensor<float>.ConvPackedScratchLength(32, 288, 192, 61440, options));
++        Assert.Equal(0, Tensor<float>.ConvPackedScratchLength(32, 288, 192, 61440, TensorExecutionOptions.Scalar));
++    }
++
++    [SkippableFact]
++    public void PackedProductClearsOldOutputAndPreservesGuardsAndInputs()
++    {
++        Skip.IfNot(Hardware, "AVX-512F and FMA execution required.");
++        const int rows = 37, reduction = 9, columns = 64, guard = 3;
++        var weights = Enumerable.Range(0, rows * reduction).Select(i => (i % 17 - 8) / 16f).ToArray();
++        var patch = Enumerable.Range(0, reduction * columns).Select(i => (i % 13 - 6) / 8f).ToArray();
++        var oldWeights = weights.ToArray(); var oldPatch = patch.ToArray();
++        var output = Enumerable.Repeat(12345f, rows * columns + 2 * guard).ToArray();
++        var packed = Enumerable.Repeat(6789f, reduction * columns + 2 * guard).ToArray();
++        Assert.True(Tensor<float>.TryConvPackedTile(weights, patch, output.AsSpan(guard, rows * columns),
++            packed.AsSpan(guard, reduction * columns), rows, reduction, columns, TensorExecutionOptions.Auto));
++        for (int row = 0; row < rows; row++)
++        for (int col = 0; col < columns; col++)
++        {
++            float expected = 0;
++            for (int k = 0; k < reduction; k++) expected = MathF.FusedMultiplyAdd(weights[row * reduction + k], patch[k * columns + col], expected);
++            Assert.Equal(BitConverter.SingleToInt32Bits(expected), BitConverter.SingleToInt32Bits(output[guard + row * columns + col]));
++        }
++        Assert.Equal(oldWeights, weights); Assert.Equal(oldPatch, patch);
++        Assert.All(output.Take(guard).Concat(output.TakeLast(guard)), v => Assert.Equal(12345f, v));
++        Assert.All(packed.Take(guard).Concat(packed.TakeLast(guard)), v => Assert.Equal(6789f, v));
++        Assert.Throws<ArgumentException>(() => Tensor<float>.TryConvPackedTile(weights.AsSpan(1), patch,
++            output.AsSpan(guard, rows * columns), packed.AsSpan(guard, reduction * columns), rows, reduction, columns, TensorExecutionOptions.Auto));
++    }
++
++    [SkippableFact]
++    public void AllAlignedConvTilesUseOneAccountedPackingCarve()
++    {
++        Skip.IfNot(Hardware, "AVX-512F and FMA execution required.");
++        var x = DenseTensor<float>.OfShape(1, 32, 16, 16);
++        var w = DenseTensor<float>.OfShape(32, 32, 3, 3);
++        x.Buffer.Span.Fill(.125f); w.Buffer.Span.Fill(.0625f);
++        var accountant = new ScratchAccountant();
++        var result = Tensor<float>.Conv2D(x, w, 1, new[] { 1, 1, 1, 1 }, null, null, null, null,
++            TensorExecutionOptions.Auto with { ScratchReporter = accountant });
++        // Width256 ->192+64, both aligned. No generic-GEMM packing rental.
++        Assert.Equal((288 + 32 + 288) * 192 * 4L, accountant.TotalScratchBytes);
++        Assert.Equal(32 * 16 * 16, result.Length);
++        Assert.Equal(288 * .125f * .0625f, result.ToArray()[8 * 16 + 8]);
++    }
++
++    [Theory]
++    [InlineData(1, 16, 33, 1, 1)]
++    [InlineData(2, 32, 65, 2, 1)]
++    [InlineData(2, 40, 33, 1, 2)]
++    public void PublicGroupedTailConvolutionMatchesIndependentCoordinatesAndReusesSafely(
++        int group, int filters, int width, int stride, int dilation)
++    {
++        const int channels = 16, height = 41, kernel = 3, batches = 2;
++        int pad = dilation, outH = (height - 1) / stride + 1, outW = (width - 1) / stride + 1;
++        var x = DenseTensor<float>.OfShape(batches, channels, height, width);
++        var w = DenseTensor<float>.OfShape(filters, channels / group, kernel, kernel);
++        var bias = DenseTensor<float>.OfShape(filters);
++        for (int i = 0; i < x.Buffer.Length; i++) x.Buffer.Span[i] = (i % 23 - 11) / 32f;
++        for (int i = 0; i < w.Buffer.Length; i++) w.Buffer.Span[i] = (i % 17 - 8) / 64f;
++        for (int i = 0; i < filters; i++) bias.Buffer.Span[i] = (i % 5 - 2) / 8f;
++        var inputs = x.Buffer.ToArray(); var weights = w.Buffer.ToArray();
++        Tensor<float>? held = null; float[]? saved = null;
++        foreach (var options in new[] { TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 2 }, TensorExecutionOptions.Scalar })
++        {
++            // Each call sees current weights; no packed-weight cache is used.
++            w.Buffer.Span[0] += .03125f; weights[0] += .03125f;
++            var result = Tensor<float>.Conv2D(x, w, group, new[] { pad, pad, pad, pad }, bias, null,
++                new[] { stride, stride }, new[] { dilation, dilation }, options);
++            var actual = result.ToArray();
++            Assert.Equal(new[] { batches, filters, outH, outW }, result.Dimensions.ToArray());
++            for (int b = 0; b < batches; b++)
++            for (int m = 0; m < filters; m++)
++            for (int y = 0; y < outH; y++)
++            for (int z = 0; z < outW; z++)
++            {
++                double expected = bias.Buffer.Span[m];
++                for (int c = 0; c < channels / group; c++)
++                for (int ky = 0; ky < kernel; ky++)
++                for (int kx = 0; kx < kernel; kx++)
++                {
++                    int iy = y * stride + ky * dilation - pad, ix = z * stride + kx * dilation - pad;
++                    if ((uint)iy >= height || (uint)ix >= width) continue;
++                    int channel = m / (filters / group) * (channels / group) + c;
++                    expected += (double)inputs[((b * channels + channel) * height + iy) * width + ix]
++                        * weights[((m * (channels / group) + c) * kernel + ky) * kernel + kx];
++                }
++                double value = actual[((b * filters + m) * outH + y) * outW + z];
++                Assert.True(Math.Abs(value - expected) <= 1e-4 * Math.Max(1, Math.Abs(expected)));
++            }
++            Assert.Equal(inputs, x.Buffer.ToArray());
++            if (held is not null) Assert.Equal(saved, held.ToArray());
++            held = result; saved = actual;
++        }
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/ConvPortableRowsTests.cs
+@@ -0,0 +1,80 @@
++using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Runtime.CompilerServices;
++using System.Runtime.Intrinsics.X86;
++
++namespace Lokad.Onnx.Backend.Tests;
++
++public class ConvPortableRowsTests
++{
++    public static IEnumerable<object[]> Shapes()
++    {
++        foreach (int rows in new[] { 32, 64, 128, 256 })
++        foreach (int reduction in new[] { 64, 288 })
++        foreach (int columns in new[] { 2, 8, 31, 32, 160, 192 })
++            yield return new object[] { rows, reduction, columns };
++    }
++    [MethodImpl(MethodImplOptions.NoInlining)]
++    static float Multiply(float a, float b) => a * b;
++
++    [Theory]
++    [MemberData(nameof(Shapes))]
++    public void ProductPreservesOrderedReferenceGuardsInputsAndMutableWeights(int rows, int reduction, int columns)
++    {
++        var weights = Enumerable.Range(0, rows * reduction + 6).Select(i => (i % 31 - 15) / 997f).ToArray();
++        var patch = Enumerable.Range(0, reduction * columns + 6).Select(i => (i % 37 - 18) / 991f).ToArray();
++        var output = Enumerable.Repeat(12345f, rows * columns + 6).ToArray();
++        for (int pass = 0; pass < 2; pass++)
++        {
++            weights[3] += .125f;
++            var originalWeights = weights.ToArray(); var originalPatch = patch.ToArray();
++            var accountant = new ScratchAccountant();
++            var options = TensorExecutionOptions.Auto with { ScratchReporter = accountant };
++            bool handled = Tensor<float>.TryConvPortableRows(weights.AsSpan(3, rows * reduction),
++                patch.AsSpan(3, reduction * columns), output.AsSpan(3, rows * columns), rows, reduction, columns, options);
++            Assert.Equal(Fma.IsSupported, handled);
++            Assert.Equal(originalWeights, weights); Assert.Equal(originalPatch, patch);
++            Assert.All(output.Take(3).Concat(output.TakeLast(3)), v => Assert.Equal(12345f, v));
++            if (!handled) { Assert.All(output, v => Assert.Equal(12345f, v)); Assert.Equal(0, accountant.TotalScratchBytes); continue; }
++            Assert.Equal((long)reduction * columns * 4, accountant.TotalScratchBytes);
++            for (int row = 0; row < rows; row++) for (int col = 0; col < columns; col++)
++            {
++                float expected = 0;
++                for (int j = 0; j < reduction; j++)
++                    expected = col < columns - columns % 8
++                        ? MathF.FusedMultiplyAdd(patch[3 + j * columns + col], weights[3 + row * reduction + j], expected)
++                        : expected + Multiply(weights[3 + row * reduction + j], patch[3 + j * columns + col]);
++                Assert.Equal(BitConverter.SingleToInt32Bits(expected), BitConverter.SingleToInt32Bits(output[3 + row * columns + col]));
++            }
++        }
++    }
++
++    [Fact]
++    public void UnsupportedOptionsShapesAndOversizedPackingDeclineWithoutMutation()
++    {
++        float[] output = Enumerable.Repeat(12345f, 16).ToArray();
++        foreach (var option in new[] { TensorExecutionOptions.Scalar, TensorExecutionOptions.Simd })
++            Assert.False(Tensor<float>.TryConvPortableRows(default, default, output, 32, 288, 192, option));
++        foreach (var shape in new[] { (0, 64, 32), (30, 64, 32), (33, 64, 32), (96, 64, 32), (32, 9, 192),
++            (32, 63, 32), (32, 64, 0), (32, 1024, 65), (64, int.MaxValue, 2), (64, 65536, 1025) })
++            Assert.False(Tensor<float>.TryConvPortableRows(default, default, output, shape.Item1, shape.Item2, shape.Item3, TensorExecutionOptions.Auto));
++        Assert.All(output, v => Assert.Equal(12345f, v));
++    }
++
++    [Fact]
++    public void AcceptedShapeValidatesAllSpansBeforeClearingOrRenting()
++    {
++        var weights = new float[32 * 64]; var patch = new float[64 * 32];
++        var output = Enumerable.Repeat(12345f, 32 * 32).ToArray();
++        var accountant = new ScratchAccountant(); var options = TensorExecutionOptions.Auto with { ScratchReporter = accountant };
++        if (Fma.IsSupported)
++        {
++            Assert.Throws<ArgumentException>(() => Tensor<float>.TryConvPortableRows(weights.AsSpan(1), patch, output, 32, 64, 32, options));
++            Assert.Throws<ArgumentException>(() => Tensor<float>.TryConvPortableRows(weights, patch.AsSpan(1), output, 32, 64, 32, options));
++            Assert.Throws<ArgumentException>(() => Tensor<float>.TryConvPortableRows(weights, patch, output.AsSpan(1), 32, 64, 32, options));
++        }
++        else Assert.False(Tensor<float>.TryConvPortableRows(weights, patch, output, 32, 64, 32, options));
++        Assert.All(output, v => Assert.Equal(12345f, v)); Assert.Equal(0, accountant.TotalScratchBytes);
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/ConvTiledTests.cs
+@@ -0,0 +1,165 @@
++// Adapted from voice 8af223e/e35653a; scratch totals isolated with scalar GEMM.
++namespace Lokad.Onnx.Backend.Tests;
++
++/// <summary>
++/// Covers bounded column tiling for large float convolutions: tiled shapes
++/// agree with an independent naive oracle, stay deterministic, keep scratch
++/// bounded, and run the batch-parallel branch. All shapes below exceed the
++/// 256 KiB single-pass patch budget, so they exercise the tiled runner.
++/// </summary>
++public class ConvTiledTests
++{
++    static float Pattern(int i) => ((i * 37 + 11) % 97 - 48) * 0.03f;
++
++    static DenseTensor<float> FilledTensor(int[] dims)
++    {
++        var t = DenseTensor<float>.OfShape(dims);
++        var span = t.Buffer.Span;
++        for (int i = 0; i < span.Length; i++) span[i] = Pattern(i);
++        return t;
++    }
++
++    static double[] NaiveConv(float[] x, int n, int c, int h, int w, float[] wt, int m, int kh, int kw, float[]? bias, int pad, int sH, int sW, int group)
++    {
++        int outH = (h + 2 * pad - kh) / sH + 1;
++        int outW = (w + 2 * pad - kw) / sW + 1;
++        int cg = c / group;
++        int mg = m / group;
++        var y = new double[n * m * outH * outW];
++        for (int nn = 0; nn < n; nn++)
++            for (int mm = 0; mm < m; mm++)
++            {
++                int g = mm / mg;
++                for (int oy = 0; oy < outH; oy++)
++                    for (int ox = 0; ox < outW; ox++)
++                    {
++                        double acc = bias is null ? 0.0 : bias[mm];
++                        for (int cc = 0; cc < cg; cc++)
++                            for (int ky = 0; ky < kh; ky++)
++                            {
++                                int iy = oy * sH - pad + ky;
++                                if ((uint)iy >= (uint)h) continue;
++                                for (int kx = 0; kx < kw; kx++)
++                                {
++                                    int ix = ox * sW - pad + kx;
++                                    if ((uint)ix >= (uint)w) continue;
++                                    double xv = x[((nn * c + g * cg + cc) * h + iy) * w + ix];
++                                    double wv = wt[((mm * cg + cc) * kh + ky) * kw + kx];
++                                    acc += xv * wv;
++                                }
++                            }
++                        y[((nn * m + mm) * outH + oy) * outW + ox] = acc;
++                    }
++            }
++        return y;
++    }
++
++    static void AssertNear(double[] expected, float[] actual, bool relu)
++    {
++        Assert.Equal(expected.Length, actual.Length);
++        for (int i = 0; i < expected.Length; i++)
++        {
++            double e = relu && expected[i] < 0.0 ? 0.0 : expected[i];
++            double tol = 1e-4 * System.Math.Max(1.0, System.Math.Abs(e));
++            Assert.True(System.Math.Abs(actual[i] - e) <= tol, "index " + i + ": actual " + actual[i] + " expected " + e);
++        }
++    }
++
++    [Fact]
++    public void Tiled3x3_WithBias_MatchesNaive()
++    {
++        var x = FilledTensor(new[] { 1, 8, 70, 70 });
++        var w = FilledTensor(new[] { 8, 8, 3, 3 });
++        var b = FilledTensor(new[] { 8 });
++        var pads = new int[] { 1, 1, 1, 1 };
++        var y = Tensor<float>.Conv2D(x, w, 1, pads, b, null, new int[] { 1, 1 }, null, TensorExecutionOptions.Auto);
++        Assert.Equal(new int[] { 1, 8, 70, 70 }, y.Dimensions.ToArray());
++        var expected = NaiveConv(x.Buffer.ToArray(), 1, 8, 70, 70, w.Buffer.ToArray(), 8, 3, 3, b.Buffer.ToArray(), 1, 1, 1, 1);
++        AssertNear(expected, y.ToArray(), false);
++    }
++
++    [Fact]
++    public void TiledStride2_GroupedNoBias_MatchesNaive()
++    {
++        var x = FilledTensor(new[] { 1, 8, 65, 65 });
++        var w = FilledTensor(new[] { 8, 4, 3, 3 });
++        var pads = new int[] { 1, 1, 1, 1 };
++        var y = Tensor<float>.Conv2D(x, w, 2, pads, null, null, new int[] { 2, 2 }, null, TensorExecutionOptions.Auto);
++        Assert.Equal(new int[] { 1, 8, 33, 33 }, y.Dimensions.ToArray());
++        var expected = NaiveConv(x.Buffer.ToArray(), 1, 8, 65, 65, w.Buffer.ToArray(), 8, 3, 3, null, 1, 2, 2, 2);
++        AssertNear(expected, y.ToArray(), false);
++    }
++    [Fact]
++    public void TiledResult_IsDeterministic()
++    {
++        var x = FilledTensor(new[] { 1, 8, 70, 70 });
++        var w = FilledTensor(new[] { 8, 8, 3, 3 });
++        var b = FilledTensor(new[] { 8 });
++        var pads = new int[] { 1, 1, 1, 1 };
++        var first = Tensor<float>.Conv2D(x, w, 1, pads, b, null, new int[] { 1, 1 }, null, TensorExecutionOptions.Auto);
++        var second = Tensor<float>.Conv2D(x, w, 1, pads, b, null, new int[] { 1, 1 }, null, TensorExecutionOptions.Auto);
++        Assert.Equal(first.ToArray(), second.ToArray());
++    }
++
++    [Fact]
++    public void TiledScratch_StaysBounded()
++    {
++        // The 8x8 3x3 at 70x70 shape needs a 1.4 MiB full patch; tiling must
++        // hold one column block plus its output tile near the 256 KiB budget.
++        var x = FilledTensor(new[] { 1, 8, 70, 70 });
++        var w = FilledTensor(new[] { 8, 8, 3, 3 });
++        var b = FilledTensor(new[] { 8 });
++        var acc = new ScratchAccountant();
++        var opts = TensorExecutionOptions.Scalar with { ScratchReporter = acc };
++        var y = Tensor<float>.Conv2D(x, w, 1, new int[] { 1, 1, 1, 1 }, b, null, new int[] { 1, 1 }, null, opts);
++        Assert.Equal(1 * 8 * 70 * 70, y.ToArray().Length);
++        Assert.True(acc.TotalScratchBytes <= 512 * 1024, "scratch " + acc.TotalScratchBytes);
++    }
++
++    [Fact]
++    public void TiledBatched_ParallelBranch_MatchesNaive()
++    {
++        var x = FilledTensor(new[] { 2, 8, 70, 70 });
++        var w = FilledTensor(new[] { 8, 8, 3, 3 });
++        var b = FilledTensor(new[] { 8 });
++        var pads = new int[] { 1, 1, 1, 1 };
++        var y = Tensor<float>.Conv2D(x, w, 1, pads, b, null, new int[] { 1, 1 }, null, TensorExecutionOptions.Auto with { MaxDegreeOfParallelism = 2 });
++        Assert.Equal(new int[] { 2, 8, 70, 70 }, y.Dimensions.ToArray());
++        var expected = NaiveConv(x.Buffer.ToArray(), 2, 8, 70, 70, w.Buffer.ToArray(), 8, 3, 3, b.Buffer.ToArray(), 1, 1, 1, 1);
++        AssertNear(expected, y.ToArray(), false);
++    }
++    [Fact]
++    public void TiledWidth_AlignsToKernelPanels()
++    {
++        // C=32, K=288 fits 204 columns in budget; the runner must choose 192
++        // (6 kernel panels) so full tiles avoid remainders entirely.
++        var x = FilledTensor(new[] { 1, 32, 16, 16 });
++        var w = FilledTensor(new[] { 32, 32, 3, 3 });
++        var b = FilledTensor(new[] { 32 });
++        var acc = new ScratchAccountant();
++        var opts = TensorExecutionOptions.Scalar with { ScratchReporter = acc };
++        var y = Tensor<float>.Conv2D(x, w, 1, new int[] { 1, 1, 1, 1 }, b, null, new int[] { 1, 1 }, null, opts);
++        Assert.Equal(new int[] { 1, 32, 16, 16 }, y.Dimensions.ToArray());
++        Assert.Equal((288 + 32) * 192 * 4L, acc.TotalScratchBytes);
++        var expected = NaiveConv(x.Buffer.ToArray(), 1, 32, 16, 16, w.Buffer.ToArray(), 32, 3, 3, b.Buffer.ToArray(), 1, 1, 1, 1);
++        AssertNear(expected, y.ToArray(), false);
++    }
++
++    [Fact]
++    public void TiledWidth_NarrowFitTakesOnePanel()
++    {
++        // C=256, K=2304 fits 25 columns; the runner takes one 32-column
++        // panel (reported exactly) rather than clamping to a wider minimum.
++        var x = FilledTensor(new[] { 1, 256, 10, 10 });
++        var w = FilledTensor(new[] { 4, 256, 3, 3 });
++        var b = FilledTensor(new[] { 4 });
++        var acc = new ScratchAccountant();
++        var opts = TensorExecutionOptions.Scalar with { ScratchReporter = acc };
++        var pads = new int[] { 1, 1, 1, 1 };
++        var y = Tensor<float>.Conv2D(x, w, 1, pads, b, null, new int[] { 1, 1 }, null, opts);
++        Assert.Equal(new int[] { 1, 4, 10, 10 }, y.Dimensions.ToArray());
++        Assert.Equal((2304 + 4) * 32 * 4L, acc.TotalScratchBytes);
++        var expected = NaiveConv(x.Buffer.ToArray(), 1, 256, 10, 10, w.Buffer.ToArray(), 4, 3, 3, b.Buffer.ToArray(), 1, 1, 1, 1);
++        AssertNear(expected, y.ToArray(), false);
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/DenseWeSpeakerReference.cs
+@@ -0,0 +1,135 @@
++namespace Lokad.Onnx.Backend.Tests;
++
++using System;
++using System.Numerics;
++using System.Threading;
++
++/// <summary>Managed 80-bin filterbanks for the pyannote Community-1 WeSpeaker embedding model.</summary>
++internal static class DenseWeSpeakerReference
++{
++    public const int SampleRate = 16000;
++    public const int MinimumSamples = 400;
++    public const int MaximumSamples = 480000;
++    public const int MelBins = 80;
++    const int WindowSize = 400, HopSize = 160, FourierSize = 512;
++    const float Epsilon = 1.1920928955078125e-7f;
++    static readonly float[] Window = CreateWindow();
++    static readonly float[] MelWeights = CreateMelWeights();
++    static readonly Complex[] Roots = CreateRoots();
++
++    /// <summary>Converts 400 through 480000 finite mono 16 kHz PCM samples in [-1,1]
++    /// to owned float32 [1,1+(samples-400)/160,80] features.</summary>
++    /// <remarks>Uses complete 25 ms frames at 10 ms intervals, frame DC removal,
++    /// .97 preemphasis, a nonperiodic Hamming window, a 512-point transform,
++    /// Kaldi mel bands, natural log and global feature centering. No padding,
++    /// resampling, channel mixing, silence removal or truncation is performed.
++    /// Inputs are unchanged and concurrent calls own separate scratch.</remarks>
++    public static DenseTensor<float> LogMelFilterbank(ReadOnlySpan<float> samples, int sampleRate, CancellationToken cancellation)
++    {
++        cancellation.ThrowIfCancellationRequested();
++        if (sampleRate != SampleRate) throw new ArgumentOutOfRangeException(nameof(sampleRate), "WeSpeaker requires mono 16000 Hz PCM.");
++        if (samples.Length < MinimumSamples || samples.Length > MaximumSamples)
++            throw new ArgumentOutOfRangeException(nameof(samples), "WeSpeaker accepts 400 samples through 30 seconds per request.");
++        foreach (float sample in samples)
++            if (!float.IsFinite(sample) || sample < -1 || sample > 1)
++                throw new ArgumentException("Audio must contain finite normalized samples in [-1,1].", nameof(samples));
++        int frames = 1 + (samples.Length - WindowSize) / HopSize;
++        var result = new DenseTensor<float>(new[] { 1, frames, MelBins });
++        var output = result.Buffer.Span;
++        // Preserve frame precision until the FFT; rounding this preprocessing
++        // to float can dominate the error of low-energy spectral components.
++        var centered = new double[WindowSize];
++        var spectrum = new Complex[FourierSize];
++        var powers = new float[FourierSize / 2 + 1];
++        for (int frame = 0; frame < frames; frame++)
++        {
++            cancellation.ThrowIfCancellationRequested();
++            int start = frame * HopSize;
++            double total = 0;
++            for (int j = 0; j < WindowSize; j++) { centered[j] = samples[start + j] * 32768f; total += centered[j]; }
++            double mean = total / WindowSize;
++            for (int j = 0; j < WindowSize; j++) centered[j] -= mean;
++            Array.Clear(spectrum, 0, spectrum.Length);
++            for (int j = 0; j < WindowSize; j++)
++            {
++                double previous = .97f * centered[j == 0 ? 0 : j - 1];
++                double value = (centered[j] - previous) * Window[j];
++                spectrum[j] = new Complex(value, 0);
++            }
++            Fourier(spectrum);
++            for (int k = 0; k < powers.Length; k++)
++            {
++                float real = (float)spectrum[k].Real, imaginary = (float)spectrum[k].Imaginary;
++                float magnitude = (float)Math.Sqrt((double)real * real + (double)imaginary * imaginary);
++                powers[k] = magnitude * magnitude;
++            }
++            for (int mel = 0; mel < MelBins; mel++)
++            {
++                double energy = 0;
++                for (int k = 0; k < FourierSize / 2; k++) energy += (double)powers[k] * MelWeights[mel * (FourierSize / 2) + k];
++                output[frame * MelBins + mel] = MathF.Log(Math.Max(Epsilon, (float)energy));
++            }
++        }
++        for (int mel = 0; mel < MelBins; mel++)
++        {
++            cancellation.ThrowIfCancellationRequested();
++            double total = 0;
++            for (int frame = 0; frame < frames; frame++) total += output[frame * MelBins + mel];
++            float mean = (float)(total / frames);
++            for (int frame = 0; frame < frames; frame++) output[frame * MelBins + mel] -= mean;
++        }
++        return result;
++    }
++
++    static void Fourier(Span<Complex> data)
++    {
++        for (int i = 1, j = 0; i < FourierSize; i++)
++        {
++            int bit = FourierSize >> 1;
++            for (; (j & bit) != 0; bit >>= 1) j ^= bit;
++            j ^= bit;
++            if (i < j) { var value = data[i]; data[i] = data[j]; data[j] = value; }
++        }
++        for (int size = 2; size <= FourierSize; size <<= 1)
++        {
++            int half = size / 2, step = FourierSize / size;
++            for (int start = 0; start < FourierSize; start += size)
++                for (int j = 0; j < half; j++)
++                {
++                    Complex even = data[start + j], odd = data[start + j + half] * Roots[j * step];
++                    data[start + j] = even + odd; data[start + j + half] = even - odd;
++                }
++        }
++    }
++
++    static float[] CreateWindow()
++    {
++        var result = new float[WindowSize]; float step = (float)(2 * Math.PI / (WindowSize - 1));
++        for (int i = 0; i < result.Length; i++) result[i] = MathF.Cos(i * step) * -.46f + .54f;
++        return result;
++    }
++
++    static float[] CreateMelWeights()
++    {
++        double low = 1127 * Math.Log(1 + 20.0 / 700), high = 1127 * Math.Log(1 + 8000.0 / 700);
++        float delta = (float)((high - low) / (MelBins + 1));
++        var result = new float[MelBins * (FourierSize / 2)];
++        for (int band = 0; band < MelBins; band++)
++        {
++            float left = band * delta + (float)low, middle = (band + 1) * delta + (float)low, right = (band + 2) * delta + (float)low;
++            for (int k = 0; k < FourierSize / 2; k++)
++            {
++                float mel = 1127f * MathF.Log(1 + (SampleRate / (float)FourierSize * k) / 700f);
++                result[band * (FourierSize / 2) + k] = Math.Max(0, Math.Min((mel - left) / (middle - left), (right - mel) / (right - middle)));
++            }
++        }
++        return result;
++    }
++
++    static Complex[] CreateRoots()
++    {
++        var roots = new Complex[FourierSize / 2];
++        for (int i = 0; i < roots.Length; i++) { double angle = -2 * Math.PI * i / FourierSize; roots[i] = new Complex(Math.Cos(angle), Math.Sin(angle)); }
++        return roots;
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/LstmOutputLaneTests.cs
+@@ -0,0 +1,77 @@
++using System;
++using System.Linq;
++
++namespace Lokad.Onnx.Backend.Tests;
++
++public class LstmOutputLaneTests
++{
++    static float[] Values(int length, int salt) => Enumerable.Range(0, length)
++        .Select(i => (((i * 37 + salt) % 101) - 50) * .013f).ToArray();
++
++    static int[] Bits(float[] values) => values.Select(BitConverter.SingleToInt32Bits).ToArray();
++
++    [Theory]
++    [InlineData(0, 0)] [InlineData(0, 35)] [InlineData(1, 33)]
++    [InlineData(13, 68)] [InlineData(60, 512)] [InlineData(128, 512)] [InlineData(256, 512)]
++    public void PanelHasScalarReductionOrderAndIndependentDoubleAgreement(int reduction, int outputs)
++    {
++        var x = Values(reduction, 3); var w = Values(reduction * outputs, 7);
++        var y = Enumerable.Repeat(float.NaN, outputs + 4).ToArray();
++        CPUExecutionProvider.LstmProjectOrdered(x, w, y.AsSpan(2, outputs));
++        for (int o = 0; o < outputs; o++)
++        {
++            float scalar = 0; double reference = 0;
++            for (int k = 0; k < reduction; k++)
++            {
++                scalar += x[k] * w[k * outputs + o];
++                reference += (double)x[k] * w[k * outputs + o];
++            }
++            Assert.Equal(BitConverter.SingleToInt32Bits(scalar), BitConverter.SingleToInt32Bits(y[2 + o]));
++            Assert.True(Math.Abs(y[2 + o] - reference) <= 1e-4 * Math.Max(1, Math.Abs(reference)));
++        }
++        Assert.True(float.IsNaN(y[0]) && float.IsNaN(y[1]) && float.IsNaN(y[^1]) && float.IsNaN(y[^2]));
++    }
++
++    [Theory]
++    [InlineData("forward", 16, 13, false)]
++    [InlineData("reverse", 17, 60, true)]
++    [InlineData("bidirectional", 128, 256, false)]
++    public void CompleteTrajectoriesMutableWeightsAndHeldOutputsKeepScalarBits(string direction, int hidden, int inputs, bool coupled)
++    {
++        const int sequence = 11, batch = 2;
++        int directions = direction == "bidirectional" ? 2 : 1;
++        var x = new DenseTensor<float>(Values(sequence * batch * inputs, 3), new[] { sequence, batch, inputs });
++        var w = new DenseTensor<float>(Values(directions * 4 * hidden * inputs, 7), new[] { directions, 4 * hidden, inputs });
++        var r = new DenseTensor<float>(Values(directions * 4 * hidden * hidden, 11), new[] { directions, 4 * hidden, hidden });
++        var b = new DenseTensor<float>(Values(directions * 8 * hidden, 13), new[] { directions, 8 * hidden });
++        var h = new DenseTensor<float>(Values(directions * batch * hidden, 17), new[] { directions, batch, hidden });
++        var c = new DenseTensor<float>(Values(directions * batch * hidden, 19), new[] { directions, batch, hidden });
++        var p = new DenseTensor<float>(Values(directions * 3 * hidden, 23), new[] { directions, 3 * hidden });
++        var lens = DenseTensor<int>.OfValues(new[] { 9, 0 });
++        var inputsBefore = new[] { x, w, r, b, h, c, p }.Select(t => Bits(t.ToArray())).ToArray();
++        var scratch = new ScratchAccountant();
++        var options = ExecutionOptions.Default with { Tensor = TensorExecutionOptions.Auto with { ScratchReporter = scratch } };
++        OpResult Run(ExecutionOptions execution) => CPUExecutionProvider.Lstm(x, w, r, b, lens, h, c, p,
++            direction, null, null, null, .7f, hidden, coupled, 0, 3, execution, null);
++        var first = Run(options); Assert.Equal(OpStatus.Success, first.Status);
++        var held = first.Outputs.Cast<Tensor<float>>().Select(t => Bits(t.ToArray())).ToArray();
++        Check(first, Run(ExecutionOptions.Scalar));
++        Check(first, Run(options));
++        foreach (var pair in new[] { x, w, r, b, h, c, p }.Select((tensor, i) => (tensor, i)))
++            Assert.Equal(inputsBefore[pair.i], Bits(pair.tensor.ToArray()));
++        w.Buffer.Span[9] += .125f; r.Buffer.Span[13] -= .15f;
++        var changed = Run(options); Check(changed, Run(ExecutionOptions.Scalar));
++        for (int i = 0; i < held.Length; i++) Assert.Equal(held[i], Bits(((Tensor<float>)first.Outputs[i]).ToArray()));
++        Assert.Equal(new[] { 9, 0 }, lens.ToArray());
++        long expected = System.Numerics.Vector.IsHardwareAccelerated ? 3L * (w.Length + r.Length) * sizeof(float) : 0;
++        Assert.Equal(expected, scratch.TotalScratchBytes);
++    }
++
++    static void Check(OpResult actual, OpResult expected)
++    {
++        Assert.Equal(OpStatus.Success, actual.Status); Assert.Equal(OpStatus.Success, expected.Status);
++        Assert.Equal(expected.Outputs.Length, actual.Outputs.Length);
++        for (int i = 0; i < actual.Outputs.Length; i++)
++            Assert.Equal(Bits(((Tensor<float>)expected.Outputs[i]).ToArray()), Bits(((Tensor<float>)actual.Outputs[i]).ToArray()));
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/LstmPanelAdmissionTests.cs
+@@ -0,0 +1,36 @@
++using System;
++using System.Reflection;
++
++namespace Lokad.Onnx.Backend.Tests;
++
++public class LstmPanelAdmissionTests
++{
++    static readonly Func<int, int, int> StorageLength = typeof(CPUExecutionProvider)
++        .GetNestedType("LstmProjectionPanels", BindingFlags.NonPublic)!
++        .GetMethod("StorageLength", BindingFlags.Static | BindingFlags.NonPublic)!
++        .CreateDelegate<Func<int, int, int>>();
++
++    [Theory]
++    [InlineData(0, 0, 0)]
++    [InlineData(0, 1024, 1024)]
++    [InlineData(61440, 131072, 192512)]
++    [InlineData(262144, 131072, 393216)]
++    [InlineData(int.MaxValue, 1, 0)]
++    [InlineData(int.MaxValue, int.MaxValue, 0)]
++    [InlineData(-1, 32, 0)]
++    [InlineData(32, -1, 0)]
++    public void ActualPyannoteSizesAndOverflowRefusal(int input, int recurrent, int expected)
++    {
++        Assert.Equal(expected, StorageLength(input, recurrent));
++    }
++
++    [Fact]
++    public void OptionalCombinedArrayHonorsItsOwnRepresentationLimit()
++    {
++        const int recurrent = 131072;
++        int inputAtLimit = Array.MaxLength - recurrent;
++        Assert.Equal(Array.MaxLength, StorageLength(inputAtLimit, recurrent));
++        Assert.Equal(0, StorageLength(inputAtLimit + 1, recurrent));
++        Assert.Equal(0, StorageLength(Array.MaxLength, recurrent));
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/LstmPanelOverflowRefusalTests.cs
+@@ -0,0 +1,28 @@
++using System;
++using System.Reflection;
++using System.Runtime.InteropServices;
++
++namespace Lokad.Onnx.Backend.Tests;
++
++public class LstmPanelOverflowRefusalTests
++{
++    delegate IDisposable? CreatePanels(ReadOnlySpan<float> w, ReadOnlySpan<float> r,
++        int inputSize, int hiddenSize, int directions, int sequence, TensorExecutionOptions options);
++
++    [Fact]
++    public void UnrepresentableOptionalPanelDeclinesBeforeAllocationOrWeightReads()
++    {
++        var type = typeof(CPUExecutionProvider).GetNestedType("LstmProjectionPanels", BindingFlags.NonPublic)!;
++        var method = type.GetMethod("Create", BindingFlags.Static | BindingFlags.NonPublic)!;
++        var create = method.CreateDelegate<CreatePanels>();
++        float sentinel = 12345f;
++        // These spans only exercise admission. Neither the original checked
++        // addition nor its replacement may reach an allocation or a weight read.
++        // The original source throws OverflowException on the combined length.
++        var w = MemoryMarshal.CreateReadOnlySpan(ref sentinel, int.MaxValue - 64);
++        var r = MemoryMarshal.CreateReadOnlySpan(ref sentinel, 128);
++        using var panels = create(w, r, 1, 16, 1, 8, TensorExecutionOptions.Auto);
++        Assert.Null(panels);
++        Assert.Equal(12345f, sentinel);
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/PipelineRequestTests.cs
+@@ -0,0 +1,116 @@
++namespace Lokad.Onnx.Backend.Tests;
++
++using System.Reflection;
++using System.Runtime.ExceptionServices;
++using Google.Protobuf;
++using global::Onnx;
++
++public class PipelineRequestTests
++{
++    const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
++    static object Invoke(object target, string method, params object?[] args)
++    {
++        try { return target.GetType().GetMethod(method, Private)!.Invoke(target, args)!; }
++        catch (TargetInvocationException e) when (e.InnerException is not null)
++        { ExceptionDispatchInfo.Capture(e.InnerException).Throw(); throw; }
++    }
++    static IDisposable Request(WeSpeakerEmbedder api) => (IDisposable)Invoke(api, "CreatePipelineRequest");
++    static float[][] Masks() => Enumerable.Range(0, 3).Select(_ => Enumerable.Repeat(1f, 589).ToArray()).ToArray();
++    static float[] Pcm(float gain) => Enumerable.Range(0, 160000).Select(i => gain * (float)Math.Sin(2 * Math.PI * (i < 80000 ? 437 : 997) * i / 16000)).ToArray();
++    static WeSpeakerEmbedding[] Extract(object request, float[] samples, float[][] masks) =>
++        Extract(request, samples, masks, CancellationToken.None);
++    static WeSpeakerEmbedding[] Extract(object request, float[] samples, float[][] masks, CancellationToken token) =>
++        (WeSpeakerEmbedding[])Invoke(request, "ExtractPipeline", samples, masks, token);
++    static float[][] Snapshot(WeSpeakerEmbedding[] values) => values.Select(v => v.Values.ToArray()).ToArray();
++    static void Equal(float[][] expected, WeSpeakerEmbedding[] actual)
++    {
++        Assert.Equal(expected.Length, actual.Length);
++        for (int i = 0; i < expected.Length; i++) Assert.Equal(expected[i], actual[i].Values);
++    }
++
++    [Fact]
++    public void ChangingWindowsAndInterleavedRequestsPreserveOwnedResults()
++    {
++        using var models = new Models(); var api = models.Create(); var a = new float[160000]; var b = Pcm(.3f); var masks = Masks();
++        var beforeA = a.ToArray(); var beforeB = b.ToArray();
++        var standaloneBefore = api.Extract(a, 16000, Array.Empty<float>(), CancellationToken.None).Values.ToArray();
++        using var first = Request(api); using var second = Request(api);
++        var held = Extract(first, a, masks); var snapshot = Snapshot(held);
++        var changed = Extract(first, b, masks);
++        Assert.NotEqual(snapshot[0][0], changed[0].Values[0]);
++        Equal(snapshot, held);
++        Equal(Snapshot(changed), Extract(second, b, masks));
++        Equal(snapshot, Extract(second, a, masks));
++        Equal(snapshot, Extract(first, a, masks));
++        first.Dispose(); second.Dispose(); Equal(snapshot, held);
++        Assert.Equal(beforeA, a); Assert.Equal(beforeB, b);
++        foreach (var mask in masks) Assert.All(mask, value => Assert.Equal(1f, value));
++        Assert.Throws<NotSupportedException>(() => ((IList<float>)held[0].Values)[0] = 0);
++        var standalone = api.Extract(a, 16000, Array.Empty<float>(), CancellationToken.None);
++        Assert.Equal(standaloneBefore, standalone.Values);
++    }
++
++    [Fact]
++    public void CancellationInvalidInputAndGraphFailureRecoverWithExistingContexts()
++    {
++        using var models = new Models(); var api = models.Create(); var pcm = Pcm(.2f); var masks = Masks();
++        using var request = Request(api); var held = Extract(request, pcm, masks); var expected = Snapshot(held);
++        Assert.Throws<OperationCanceledException>(() => Extract(request, pcm, masks, new CancellationToken(true)));
++        var bad = Pcm(.2f); bad[17] = float.NaN;
++        Assert.Throws<ArgumentException>(() => Extract(request, bad, masks));
++        masks[0][12] = .5f;
++        Assert.Throws<ArgumentException>(() => Extract(request, pcm, masks)); masks[0][12] = 1;
++        // Fault injection changes a graph parameter only while no inference is active.
++        // The Slice then returns a wrong output shape after encoder execution has succeeded.
++        var graph = (ComputationalGraph)typeof(WeSpeakerEmbedder).GetField("projection", Private)!.GetValue(api)!;
++        var end = graph.Initializers["ends"];
++        try
++        {
++            graph.Initializers["ends"] = new DenseTensor<long>(new long[] { 0 }, new[] { 1 });
++            Assert.Throws<InvalidDataException>(() => Extract(request, pcm, masks));
++        }
++        finally { graph.Initializers["ends"] = end; }
++        Equal(expected, Extract(request, pcm, masks)); Equal(expected, held);
++        request.Dispose();
++        Assert.Null(request.GetType().GetField("Encoding", Private)!.GetValue(request));
++        Assert.Null(request.GetType().GetField("Projecting", Private)!.GetValue(request));
++        Assert.Throws<ObjectDisposedException>(() => Extract(request, pcm, masks));
++        using var recovered = Request(api); Equal(expected, Extract(recovered, pcm, masks)); Equal(expected, held);
++    }
++
++    sealed class Models : IDisposable
++    {
++        readonly string directory = Path.Combine(Path.GetTempPath(), "pipeline-request-" + Guid.NewGuid().ToString("N"));
++        internal Models()
++        {
++            Directory.CreateDirectory(directory);
++            var encoder = New(); encoder.Graph.Input.Add(Value("fbank_features", 1, 998, 80));
++            encoder.Graph.Output.Add(Value("/resnet/pool/Reshape_output_0", 1, 2560, 125));
++            // Squared centered features preserve variation; their signed mean intentionally vanishes.
++            var square = new NodeProto { OpType = "Mul" }; square.Input.Add(new[] { "fbank_features", "fbank_features" }); square.Output.Add("squared"); encoder.Graph.Node.Add(square);
++            var mean = new NodeProto { OpType = "ReduceMean" }; mean.Input.Add("squared"); mean.Output.Add("mean");
++            var axes = new AttributeProto { Name = "axes", Type = AttributeProto.Types.AttributeType.Ints }; axes.Ints.Add(new long[] { 1, 2 }); mean.Attribute.Add(axes);
++            mean.Attribute.Add(new AttributeProto { Name = "keepdims", Type = AttributeProto.Types.AttributeType.Int, I = 1 }); encoder.Graph.Node.Add(mean);
++            var basis = new TensorProto { Name = "basis", DataType = 1 }; basis.Dims.Add(new long[] { 1, 2560, 125 });
++            basis.FloatData.Add(Enumerable.Range(0, 2560 * 125).Select(i => (float)(i % 7))); encoder.Graph.Initializer.Add(basis);
++            var add = new NodeProto { OpType = "Add" }; add.Input.Add(new[] { "mean", "basis" }); add.Output.Add("/resnet/pool/Reshape_output_0"); encoder.Graph.Node.Add(add);
++            File.WriteAllBytes(Path.Combine(directory, "encoder.onnx"), encoder.ToByteArray());
++            var projection = New(); projection.Graph.Input.Add(Value("pooled", 1, 5120)); projection.Graph.Output.Add(Value("embedding", 1, 256));
++            foreach (var (name, value) in new[] { ("starts", 0L), ("ends", 256L), ("axes", 1L) })
++            {
++                var tensor = new TensorProto { Name = name, DataType = 7 }; tensor.Dims.Add(1); tensor.Int64Data.Add(value); projection.Graph.Initializer.Add(tensor);
++            }
++            var slice = new NodeProto { OpType = "Slice" }; slice.Input.Add(new[] { "pooled", "starts", "ends", "axes" }); slice.Output.Add("embedding"); projection.Graph.Node.Add(slice);
++            File.WriteAllBytes(Path.Combine(directory, "projection.onnx"), projection.ToByteArray());
++        }
++        internal WeSpeakerEmbedder Create() => new(Path.Combine(directory, "encoder.onnx"), Path.Combine(directory, "projection.onnx"));
++        static ModelProto New() => new() { IrVersion = 9, Graph = new GraphProto { Name = "input-dependent-fixture" },
++            OpsetImport = { new OperatorSetIdProto { Domain = "", Version = 17 } } };
++        static ValueInfoProto Value(string name, params int[] dimensions)
++        {
++            var shape = new TensorShapeProto(); foreach (int size in dimensions) shape.Dim.Add(new TensorShapeProto.Types.Dimension { DimValue = size });
++            return new ValueInfoProto { Name = name, Type = new TypeProto { TensorType = new TypeProto.Types.Tensor { ElemType = 1, Shape = shape } } };
++        }
++        public void Dispose() => Directory.Delete(directory, true);
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/SparseMelTests.cs
+@@ -0,0 +1,92 @@
++namespace Lokad.Onnx.Backend.Tests;
++
++using System.Reflection;
++
++public class SparseMelTests
++{
++    delegate DenseTensor<float> Frontend(ReadOnlySpan<float> input, int rate, CancellationToken cancellation);
++    static readonly Frontend Dense = DenseWeSpeakerReference.LogMelFilterbank;
++
++    public static IEnumerable<object[]> Cases()
++    {
++        foreach (int length in new[] { 400, 559, 560, 561, 16000, 160000, 480000 })
++        foreach (int signal in Enumerable.Range(0, 8))
++            yield return new object[] { length, signal };
++    }
++
++    static float[] Signal(int length, int kind)
++    {
++        var result = new float[length]; uint random = 0x82731645;
++        for (int i = 0; i < length; i++)
++        {
++            random ^= random << 13; random ^= random >> 17; random ^= random << 5;
++            result[i] = kind switch
++            {
++                0 => 0f, 1 => -1f, 2 => 1f, 3 => i % 2 == 0 ? -1f : 1f,
++                4 => (random % 65537 - 32768f) / 32768f,
++                5 => i % 2 == 0 ? -float.Epsilon : float.Epsilon,
++                6 => (i % 37 - 18) * 1e-15f,
++                _ => i % 2 == 0 ? -0f : 0f
++            };
++        }
++        return result;
++    }
++
++    [Theory]
++    [MemberData(nameof(Cases))]
++    public void CompleteFeaturesPreserveDenseBitsForBoundariesAndSignals(int length, int signal)
++    {
++        var input = Signal(length, signal);
++        var inputBits = input.Select(BitConverter.SingleToInt32Bits).ToArray();
++        var expected = Dense(input, 16000, CancellationToken.None);
++        var actual = WeSpeakerAudio.LogMelFilterbank(input, 16000, CancellationToken.None);
++        Assert.Equal(expected.Dimensions.ToArray(), actual.Dimensions.ToArray());
++        Assert.Equal(expected.ToArray().Select(BitConverter.SingleToInt32Bits), actual.ToArray().Select(BitConverter.SingleToInt32Bits));
++        Assert.Equal(inputBits, input.Select(BitConverter.SingleToInt32Bits));
++        Assert.All(actual.ToArray(), value => Assert.True(float.IsFinite(value)));
++    }
++
++    [Fact]
++    public void ActualCoefficientSupportOmitsOnlyZerosAndPreservesAllNonzeroOrder()
++    {
++        var flags = BindingFlags.Static | BindingFlags.NonPublic;
++        var weights = (float[])typeof(WeSpeakerAudio).GetField("MelWeights", flags)!.GetValue(null)!;
++        var support = ((int Start, int End)[])typeof(WeSpeakerAudio).GetField("MelSupport", flags)!.GetValue(null)!;
++        Assert.Equal(80 * 256, weights.Length); Assert.Equal(80, support.Length);
++        int retained = 0;
++        for (int band = 0; band < 80; band++)
++        {
++            var (first, last) = support[band];
++            Assert.InRange(first, 0, 256); Assert.InRange(last, first, 256);
++            for (int bin = 0; bin < 256; bin++)
++            {
++                float weight = weights[band * 256 + bin];
++                Assert.True(float.IsFinite(weight)); Assert.InRange(weight, 0f, 1f);
++                if (bin < first || bin >= last) Assert.Equal(0f, weight);
++                else retained++;
++            }
++            if (first < last)
++            {
++                Assert.True(weights[band * 256 + first] > 0);
++                Assert.True(weights[band * 256 + last - 1] > 0);
++            }
++        }
++        Assert.InRange(retained, 1, 20479);
++    }
++
++    [Fact]
++    public async Task ConcurrentFeaturesOwnOutputsAndPreserveHeldResults()
++    {
++        var input = Signal(16000, 4);
++        var first = WeSpeakerAudio.LogMelFilterbank(input, 16000, CancellationToken.None);
++        var held = first.ToArray();
++        var expected = Dense(input, 16000, CancellationToken.None).ToArray();
++        var results = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => Task.Run(
++            () => WeSpeakerAudio.LogMelFilterbank(input, 16000, CancellationToken.None))));
++        foreach (var output in results)
++            Assert.Equal(expected.Select(BitConverter.SingleToInt32Bits), output.ToArray().Select(BitConverter.SingleToInt32Bits));
++        results[0].Buffer.Span[0] = 12345;
++        Assert.Equal(held.Select(BitConverter.SingleToInt32Bits), first.ToArray().Select(BitConverter.SingleToInt32Bits));
++        Assert.Equal(expected.Select(BitConverter.SingleToInt32Bits), results[1].ToArray().Select(BitConverter.SingleToInt32Bits));
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/SpatialCopyTests.cs
+@@ -0,0 +1,84 @@
++using System;
++using System.Linq;
++
++namespace Lokad.Onnx.Backend.Tests;
++
++public class SpatialCopyTests
++{
++    [Theory]
++    [InlineData(1, 1, 1, 1, 2)]
++    [InlineData(1, 1, 65, 65, 3)]
++    [InlineData(2, 3, 4, 7, 5)]
++    [InlineData(3, 2, 35, 40, 1)]
++    public unsafe void RangeCopiesMatchIndependentCoordinatesAndPreservePayloadBits(
++        int stride, int dilation, int padY, int padX, int width)
++    {
++        const int channels = 2, height = 4, kh = 3, kw = 2;
++        int outH = (height + 2 * padY - ((kh - 1) * dilation + 1)) / stride + 1;
++        int outW = (width + 2 * padX - ((kw - 1) * dilation + 1)) / stride + 1;
++        int total = outH * outW;
++        int[] payload = { 0, int.MinValue, 0x7fc12345, 0x7f800000, unchecked((int)0xff800000), 1, 0x3f800000 };
++        var input = Enumerable.Range(0, channels * height * width).Select(i => BitConverter.Int32BitsToSingle(payload[i % payload.Length])).ToArray();
++        var before = input.Select(BitConverter.SingleToInt32Bits).ToArray();
++        foreach (int chunk in new[] { 1, 7, 32, 53, total })
++        for (int start = 0; start < total; start += chunk)
++        {
++            int count = Math.Min(chunk, total - start), size = channels * kh * kw * count;
++            var output = Enumerable.Repeat(12345f, size + 6).ToArray();
++            fixed (float* x = input)
++            fixed (float* y = output)
++                MathOps.Im2colRange(x, channels, height, width, kh, kw, dilation, dilation,
++                    stride, stride, padY, padX, padY, padX, outW, start, count, y + 3);
++            for (int c = 0; c < channels; c++)
++            for (int ky = 0; ky < kh; ky++)
++            for (int kx = 0; kx < kw; kx++)
++            for (int i = 0; i < count; i++)
++            {
++                int position = start + i;
++                int sy = position / outW * stride + ky * dilation - padY;
++                int sx = position % outW * stride + kx * dilation - padX;
++                int expected = (uint)sy < height && (uint)sx < width ? before[(c * height + sy) * width + sx] : 0;
++                Assert.Equal(expected, BitConverter.SingleToInt32Bits(output[3 + ((c * kh + ky) * kw + kx) * count + i]));
++            }
++            Assert.All(output.Take(3).Concat(output.TakeLast(3)), value => Assert.Equal(12345f, value));
++        }
++        Assert.Equal(before, input.Select(BitConverter.SingleToInt32Bits));
++    }
++
++    [Theory]
++    [InlineData(1)] [InlineData(7)] [InlineData(31)] [InlineData(32)]
++    [InlineData(33)] [InlineData(63)] [InlineData(64)] [InlineData(65)] [InlineData(192)]
++    public unsafe void PackedPanelsKeepEveryBitAndGuard(int width)
++    {
++        const int reduction = 13;
++        var source = Enumerable.Range(0, reduction * width).Select(i => BitConverter.Int32BitsToSingle(unchecked((int)(0x7f801234u + (uint)i * 0x1234567u)))).ToArray();
++        var before = source.Select(BitConverter.SingleToInt32Bits).ToArray();
++        var target = Enumerable.Repeat(12345f, source.Length + 6).ToArray();
++        fixed (float* x = source)
++        fixed (float* y = target) MathOps.PackPanelsB(reduction, width, x, y + 3);
++        int full = width / 32 * 32;
++        for (int r = 0; r < reduction; r++)
++        for (int c = 0; c < width; c++)
++        {
++            int offset = c < full ? c / 32 * reduction * 32 + r * 32 + c % 32 : full * reduction + r * (width - full) + c - full;
++            Assert.Equal(before[r * width + c], BitConverter.SingleToInt32Bits(target[3 + offset]));
++        }
++        Assert.Equal(before, source.Select(BitConverter.SingleToInt32Bits));
++        Assert.All(target.Take(3).Concat(target.TakeLast(3)), value => Assert.Equal(12345f, value));
++    }
++
++    [Fact]
++    public void ExpandedScratchIsCheckedBeforeRental()
++    {
++        var plan = Tensor<float>.PlanConvSpatialScratch(32, 3, 3, 32, 80, 998);
++        Assert.Equal((79840, 288, 192, 61440), plan);
++        Assert.Throws<OverflowException>(() => Tensor<float>.PlanConvSpatialScratch(int.MaxValue, 2, 2, 1, 1, 1));
++        Assert.Throws<OverflowException>(() => Tensor<float>.PlanConvSpatialScratch(1, 1, 1, 1, 65536, 65536));
++        Assert.Throws<ArgumentException>(() => Tensor<float>.PlanConvSpatialScratch(int.MaxValue / 16, 1, 1, 1, 1, 64));
++        // Each individual term fits Int32; their combined rental does not.
++        Assert.Throws<ArgumentException>(() => Tensor<float>.PlanConvSpatialScratch(40000000, 1, 1, 40000000, 1, 64));
++        var last = Tensor<float>.PlanConvSpatialScratch(1, 1, 1, 1, 1, int.MaxValue);
++        Assert.True(last.blockColumns > 0 && last.blockColumns < last.columns);
++        Assert.True(last.scratchElements <= 65536);
++    }
++}
+--- /dev/null
++++ b/tests/Lokad.Onnx.Backend.Tests/SpatialPanelTests.cs
+@@ -0,0 +1,80 @@
++using System;
++using System.Linq;
++using System.Runtime.Intrinsics.X86;
++
++namespace Lokad.Onnx.Backend.Tests;
++
++public class SpatialPanelTests
++{
++    [Theory]
++    [InlineData(0, 0)] [InlineData(0, 1)] [InlineData(0, 2)]
++    [InlineData(1, 0)] [InlineData(1, 1)] [InlineData(1, 2)]
++    public void TailsPaddingDilationAndMutableWeightsMatchIndependentDouble(int geometry, int mode)
++    {
++        int channels = geometry == 0 ? 8 : 33, filters = geometry == 0 ? 8 : 5;
++        int height = geometry == 0 ? 91 : 20, width = geometry == 0 ? 95 : 27;
++        int groups = geometry == 0 ? 2 : 1, kh = 3, kw = geometry == 0 ? 2 : 3;
++        int[] pads = geometry == 0 ? new[] { 3, 1, 2, 4 } : new[] { 1, 1, 1, 1 };
++        int[] strides = geometry == 0 ? new[] { 2, 1 } : new[] { 1, 1 };
++        int[] dilations = geometry == 0 ? new[] { 2, 3 } : new[] { 1, 1 };
++        int outH = (height + pads[0] + pads[2] - ((kh - 1) * dilations[0] + 1)) / strides[0] + 1;
++        int outW = (width + pads[1] + pads[3] - ((kw - 1) * dilations[1] + 1)) / strides[1] + 1;
++        Assert.True((long)channels * kh * kw * outH * outW * 4 > 256 * 1024);
++        float[] input = Enumerable.Range(0, channels * height * width).Select(i => ((i * 17 + 3) % 101 - 50) * .015f).ToArray();
++        float[] weights = Enumerable.Range(0, filters * channels / groups * kh * kw).Select(i => ((i * 11 + 7) % 79 - 39) * .02f).ToArray();
++        float[] bias = Enumerable.Range(0, filters).Select(i => (i - 3) * .05f).ToArray();
++        // Offset views protect the values adjacent to the actual source spans.
++        var xb = Enumerable.Repeat(12345f, input.Length + 4).ToArray(); input.CopyTo(xb, 2);
++        var wb = Enumerable.Repeat(23456f, weights.Length + 4).ToArray(); weights.CopyTo(wb, 2);
++        var x = new DenseTensor<float>(xb.AsMemory(2, input.Length), new[] { 1, channels, height, width });
++        var w = new DenseTensor<float>(wb.AsMemory(2, weights.Length), new[] { filters, channels / groups, kh, kw });
++        var b = new DenseTensor<float>(bias, new[] { filters });
++        var options = mode == 0 ? TensorExecutionOptions.Scalar : mode == 1 ? TensorExecutionOptions.Simd : TensorExecutionOptions.Auto;
++        var first = Tensor<float>.Conv2D(x, w, groups, pads, b, null, strides, dilations, options);
++        float[] held = first.ToArray();
++        Check(held, weights);
++        Assert.Equal(held, Tensor<float>.Conv2D(x, w, groups, pads, b, null, strides, dilations, options).ToArray());
++        weights[13] += .125f; wb[15] = weights[13];
++        Check(Tensor<float>.Conv2D(x, w, groups, pads, b, null, strides, dilations, options).ToArray(), weights);
++        Assert.Equal(held, first.ToArray());
++        Assert.Equal(input, x.ToArray()); Assert.Equal(weights, w.ToArray());
++        Assert.All(xb.Take(2).Concat(xb.TakeLast(2)), v => Assert.Equal(12345f, v));
++        Assert.All(wb.Take(2).Concat(wb.TakeLast(2)), v => Assert.Equal(23456f, v));
++
++        void Check(float[] actual, float[] kernel)
++        {
++            Assert.Equal(filters * outH * outW, actual.Length);
++            int cg = channels / groups, mg = filters / groups;
++            for (int m = 0; m < filters; m++)
++            for (int oy = 0; oy < outH; oy++)
++            for (int ox = 0; ox < outW; ox++)
++            {
++                double expected = 0;
++                for (int c = 0; c < cg; c++)
++                for (int ky = 0; ky < kh; ky++)
++                for (int kx = 0; kx < kw; kx++)
++                {
++                    int sy = oy * strides[0] - pads[0] + ky * dilations[0];
++                    int sx = ox * strides[1] - pads[1] + kx * dilations[1];
++                    if ((uint)sy >= (uint)height || (uint)sx >= (uint)width) continue;
++                    expected += (double)input[((m / mg * cg + c) * height + sy) * width + sx]
++                        * kernel[((m * cg + c) * kh + ky) * kw + kx];
++                }
++                expected += bias[m];
++                double value = actual[(m * outH + oy) * outW + ox];
++                Assert.True(double.IsFinite(value) && Math.Abs(value - expected) <= 1e-4 * Math.Max(1, Math.Abs(expected)),
++                    $"mode={mode}, m={m}, y={oy}, x={ox}: {value} versus {expected}");
++            }
++        }
++    }
++
++    [Fact]
++    public void EmptyBatchWithLargeSpatialGeometryRemainsEmpty()
++    {
++        var input = DenseTensor<float>.OfShape(new[] { 0, 8, 91, 95 });
++        var weights = DenseTensor<float>.OfShape(new[] { 8, 8, 3, 3 });
++        var output = Tensor<float>.Conv2D(input, weights, 1, new[] { 1, 1, 1, 1 }, null, null, null, null, TensorExecutionOptions.Auto);
++        Assert.Equal(new[] { 0, 8, 91, 95 }, output.Dimensions.ToArray());
++        Assert.Empty(output.ToArray());
++    }
++}

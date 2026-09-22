@@ -1,0 +1,32 @@
+{
+  "source_commit": "0282bf1ecb02cd8a9bced1eb398cf56956bf27c1",
+  "files": [
+    "src/Lokad.Onnx/CPUExecutionProvider.ConvPool.cs",
+    "src/Lokad.Onnx/CPUExecutionProvider.Fusion.cs",
+    "src/Lokad.Onnx/CPUExecutionProvider.LstmPanels.cs",
+    "src/Lokad.Onnx/CPUExecutionProvider.Recurrent.cs",
+    "src/Lokad.Onnx/MathOps.cs",
+    "src/Lokad.Onnx/Node.cs",
+    "src/Lokad.Onnx/TensorOps.ConvPool.cs",
+    "src/Lokad.Onnx/Zzz.ConvolutionPool.cs",
+    "src/Lokad.Onnx/Zzz.ConvPortableRows.cs",
+    "src/Lokad.Onnx/Zzz.ZConvPackedRows.cs",
+    "src/Lokad.Onnx.Data/Community1Diarizer.cs",
+    "src/Lokad.Onnx.Data/WeSpeakerAudio.cs",
+    "src/Lokad.Onnx.Data/WeSpeakerEmbedder.cs",
+    "tests/Lokad.Onnx.Backend.Tests/ConvolutionPoolTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/ConvPackedRowsTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/ConvPortableRowsTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/ConvTiledTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/DenseWeSpeakerReference.cs",
+    "tests/Lokad.Onnx.Backend.Tests/LstmOutputLaneTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/LstmPanelAdmissionTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/LstmPanelOverflowRefusalTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/PipelineRequestTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/SparseMelTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/SpatialCopyTests.cs",
+    "tests/Lokad.Onnx.Backend.Tests/SpatialPanelTests.cs"
+  ],
+  "applied": false,
+  "apply_check_passed": true
+}
