@@ -178,6 +178,7 @@ where T : unmanaged
         var oMem = output.Buffer;
         var bMem = bd is null ? default : bd.Buffer;
         bool hasBias = bd is not null;
+        if (TryConvBlockedSpatial(xd, weight, wd, bd, output, group, N, C, H, W, M, kH, kW, dH, dW, sH, sW, pad, outH, outW, options)) return output;
         if (kH == 1 && kW == 1 && sH == 1 && sW == 1 && dH == 1 && dW == 1
             && pad.top == 0 && pad.left == 0 && pad.bottom == 0 && pad.right == 0
             && outH == H && outW == W)

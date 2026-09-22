@@ -1,0 +1,58 @@
+using System;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
+
+namespace Lokad.Onnx;
+
+internal static unsafe partial class ConvBlockedSpatial
+{
+    // PackInput has checked extents/aliases and cleared the complete padded span.
+    // Transposition moves bits; no floating-point arithmetic changes NaN payloads.
+    static void PackInputTiles(ReadOnlySpan<float> input, Span<float> packed, int c, int h, int w, int lanes)
+    {
+        if (lanes is not (8 or 16) || c < lanes || c % lanes != 0 || h < 1 || w < 1)
+            throw new ArgumentException("Input layout geometry");
+        int plane = checked(h * w), paddedWidth = checked(w + 2), paddedHeight = checked(h + 2);
+        fixed (float* source = input, destination = packed)
+        {
+            for (int block = 0; block < c; block += lanes)
+                for (int y = 0; y < h; y++)
+                    for (int half = 0; half < lanes; half += 8)
+                    {
+                        float* src = source + (block + half) * plane + y * w;
+                        float* dst = destination + ((block / lanes * paddedHeight + y + 1) * paddedWidth + 1) * lanes + half;
+                        int x = 0;
+                        for (; x + 8 <= w; x += 8)
+                        {
+                        var r0 = *(Vector256<float>*)(src + 0 * plane + x);
+                        var r1 = *(Vector256<float>*)(src + 1 * plane + x);
+                        var r2 = *(Vector256<float>*)(src + 2 * plane + x);
+                        var r3 = *(Vector256<float>*)(src + 3 * plane + x);
+                        var r4 = *(Vector256<float>*)(src + 4 * plane + x);
+                        var r5 = *(Vector256<float>*)(src + 5 * plane + x);
+                        var r6 = *(Vector256<float>*)(src + 6 * plane + x);
+                        var r7 = *(Vector256<float>*)(src + 7 * plane + x);
+                        var t0 = Avx.UnpackLow(r0, r1); var t1 = Avx.UnpackHigh(r0, r1);
+                        var t2 = Avx.UnpackLow(r2, r3); var t3 = Avx.UnpackHigh(r2, r3);
+                        var t4 = Avx.UnpackLow(r4, r5); var t5 = Avx.UnpackHigh(r4, r5);
+                        var t6 = Avx.UnpackLow(r6, r7); var t7 = Avx.UnpackHigh(r6, r7);
+                        var e0 = Avx.Shuffle(t0, t2, 0x44); var e1 = Avx.Shuffle(t0, t2, 0xEE);
+                        var e2 = Avx.Shuffle(t1, t3, 0x44); var e3 = Avx.Shuffle(t1, t3, 0xEE);
+                        var e4 = Avx.Shuffle(t4, t6, 0x44); var e5 = Avx.Shuffle(t4, t6, 0xEE);
+                        var e6 = Avx.Shuffle(t5, t7, 0x44); var e7 = Avx.Shuffle(t5, t7, 0xEE);
+                        *(Vector256<float>*)(dst + (x + 0) * lanes) = Avx.Permute2x128(e0, e4, 0x20);
+                        *(Vector256<float>*)(dst + (x + 1) * lanes) = Avx.Permute2x128(e1, e5, 0x20);
+                        *(Vector256<float>*)(dst + (x + 2) * lanes) = Avx.Permute2x128(e2, e6, 0x20);
+                        *(Vector256<float>*)(dst + (x + 3) * lanes) = Avx.Permute2x128(e3, e7, 0x20);
+                        *(Vector256<float>*)(dst + (x + 4) * lanes) = Avx.Permute2x128(e0, e4, 0x31);
+                        *(Vector256<float>*)(dst + (x + 5) * lanes) = Avx.Permute2x128(e1, e5, 0x31);
+                        *(Vector256<float>*)(dst + (x + 6) * lanes) = Avx.Permute2x128(e2, e6, 0x31);
+                        *(Vector256<float>*)(dst + (x + 7) * lanes) = Avx.Permute2x128(e3, e7, 0x31);
+                        }
+                        for (; x < w; x++)
+                            for (int lane = 0; lane < 8; lane++)
+                                dst[x * lanes + lane] = src[lane * plane + x];
+                    }
+        }
+    }
+}

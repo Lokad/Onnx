@@ -37,6 +37,7 @@ public sealed class GraphExecution : ComputationalGraph
         Initializers = prepared.Initializers;
         FoldedTransposes = prepared.FoldedTransposes;
         PackedWeights = prepared.PackedWeights;
+        PackedConvWeights = prepared.PackedConvWeights;
         RetainedPackedWeightBytes = prepared.RetainedPackedWeightBytes;
         FoldLock = prepared.FoldLock;
         PrepareLock = prepared.PrepareLock;

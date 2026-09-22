@@ -52,6 +52,9 @@ public readonly record struct TensorExecutionOptions(bool UseSimd, bool UseIntri
     /// <summary>Optional prepared packed-MatMul map; null disables packed routing.</summary>
     internal IReadOnlyDictionary<float[], PackedMatMulWeight>? PackedMatMulWeights { get; init; }
 
+    /// <summary>Optional immutable prepared convolution weights shared by graph contexts.</summary>
+    internal IReadOnlyDictionary<float[], PackedConvWeight>? PackedConvWeights { get; init; }
+
     /// <summary>Test selection for the bounded, experimental float convolution path.</summary>
     internal bool UseSegmentedConvolution { get; init; }
 

@@ -15,16 +15,22 @@ and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-ru
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
 
-Latest retained AMD comparisons for the selected implementation:
+Latest admitted Pyannote comparison and retained Parakeet baseline on AMD:
 
 | Application workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---:|---:|---:|
-| Pyannote, complete 30-second dialogue | 15.362 | 9.095 | 1.689 |
-| Parakeet, all 20 clips / 213.265 seconds of audio | 75.135 | 39.464 | 1.904 |
+| Pyannote, complete 30-second dialogue | 13.165 | 8.953 | 1.471 |
+| Parakeet, preceding production baseline, 20 clips / 213.265 seconds of audio | 75.135 | 39.464 | 1.904 |
 
 Each row comes from its own matched campaign on AMD EPYC 9V74, CPU2, with
 ORT 1.29.0. Complete application timers include frontend, inference and owned
-results. The new [Parakeet arithmetic trial](#audio-amd-parakeet-arithmetic-trial-versus-microsoft-ort)
+results. Pyannote's newly integrated prepared convolution reduces full-dialogue
+latency **8.83%**, from contemporary production's 14.440 s. Its
+[matched comparison](#audio-amd-prepared-convolution-pyannote-versus-microsoft-ort)
+passes every original gate. Parakeet's row measures the preceding production
+Core `1279b4b6`; the new Core `3c2f16b0` passes complete Parakeet regression and
+fresh AMD native checks, but has no new matched Parakeet timing result.
+The [Parakeet arithmetic trial](#audio-amd-parakeet-arithmetic-trial-versus-microsoft-ort)
 takes 78.066 s and is **not selected**: it is 3.90% slower than contemporary
 production. The full application parity target remains <=1.05.
 
@@ -55,14 +61,14 @@ form. Both instruction modes preserve all raw and actual-layer numerical
 checks; all 17,184 call clocks, 512 preparation clocks and 772 resource samples
 are retained. This trial uses longer, fixed geometry-based repetitions, with
 each call retaining its original aggregate weight. Its times are not combined
-with earlier campaigns. Normal product integration and a fresh application/ORT
-comparison remain required; the application tables above are unchanged.
+with earlier campaigns. Its normal product and fresh application/ORT comparison
+are now admitted and integrated, as recorded in the table above.
 
 Its [isolated normal product](tests/pyannote/blocked-spatial-composition-results/results-20260922.md)
 now passes 31 focused checks in both normal and hardware-disabled modes and all
 108 captured convolution calls through ordinary graphs. All 119.8 million output
-values match selected production exactly. Fresh application timing qualification
-remains open; this adds no new speed claim.
+values match the preceding selected production exactly. These correctness checks
+are separate from the new complete-application measurement above.
 The final normal build also passes 3,344 backend tests (93 existing skips), all
 343 tensor tests and an independent NuGet consumer exercising prepared graph
 execution. Product method bodies match the layer-qualified candidate.
@@ -76,18 +82,27 @@ now pass. Each AMD instruction width preserves all 8,004 raw graph requests and
 108 captured layer cases, with zero changed output bits. All 784 Parakeet arrays
 and twenty public transcription results match selected production; its three
 known Windows native mismatches remain unchanged. The two preparation failures
-and their corrections are retained. A fresh complete Pyannote/ORT campaign,
-including both ten-minute meetings and recovery, remains required for admission.
-The selected application times above are unchanged.
+and their corrections are retained. The subsequent complete Pyannote/ORT campaign
+passes both ten-minute meetings, recovery and all fixed timing gates.
 
-The current selected **AMD pyannote implementation** completes the full dialogue
+The change is [integrated into normal root source](tests/pyannote/blocked-spatial-root-results/results-20260922.md).
+Eligible constant 3x3 convolution weights share the existing preparation budget
+with MatMul; blocked-channel scratch supports guarded spatial kernels. Existing
+fallbacks, fusion, ownership, public APIs and package dependencies are preserved.
+The root build passes 3,344 backend tests (93 existing skips), 343 tensor tests
+and an independent NuGet consumer, including prepared ConvRelu graph execution.
+All 3,161 Core / 697 Data methods and public declarations match measured Core
+`3c2f16b0` / Data `6318cf48`. Root binaries are Core `c370d5f4` / Data `5185a2f0`;
+this equivalence does not create a separate rebuild timing claim.
+
+The preceding **single-panel AMD pyannote implementation** completes the full dialogue
 in **15.362 s versus Microsoft ORT 9.095 s (1.689×)**. Contemporary production
 takes **16.139 s**: a **4.82% latency reduction**. All 96 requests, twelve
 repeatability controls, four speed gates and 3,172 resource samples pass.
 The [complete comparison](#audio-amd-single-panel-pyannote-versus-microsoft-ort)
 retains every sample, both ten-minute meetings and the recovery check.
 
-The change is [integrated into normal root source](tests/pyannote/single-panel-root-results/results-20260922.md).
+That earlier change was [integrated into normal root source](tests/pyannote/single-panel-root-results/results-20260922.md).
 It writes eligible convolution rows directly to final output and skips another
 packing rental/copy when a patch already has the required layout. The normal
 build passes 3,313 backend tests, 343 tensor tests and an independent NuGet
@@ -192,7 +207,7 @@ at the original tolerance. Normal source builds pass 3,290 backend tests,
 343 tensor tests and an independent NuGet consumer. It has no new AMD timing result; the production
 and Microsoft ORT baseline tables above remain the applicable measurements.
 
-The [current selected Pyannote profile on AMD](tests/pyannote/selected-profile-amd-results/results-20260922.md)
+The [preceding single-panel Pyannote profile on AMD](tests/pyannote/selected-profile-amd-results/results-20260922.md)
 attributes **56.60–56.70%** of complete-request sampled thread time to
 `ConvDirectOutput.Multiply` and **6.85–7.08%** to its tiled-convolution caller.
 All 48 public outputs exactly preserve the selected AMD result; both exports
@@ -543,6 +558,49 @@ The [complete report](tests/parakeet/single-panel-amd-results/results-20260922.m
 and [raw observations](tests/parakeet/single-panel-amd-results/observations-20260922.json)
 retain every clip, clock, failed gate and evidence identity. Earlier comparisons
 below remain separate historical measurements.
+
+### Audio: AMD prepared-convolution pyannote versus Microsoft ORT
+
+The prepared-convolution change is **admitted and integrated**. AMD EPYC 9V74,
+CPU2, .NET 10.0.8 / SDK 10.0.204 and Microsoft ORT 1.29.0. Complete application
+timers include features, neural inference, clustering and owned results; model
+loading, file access and external validation are excluded and recorded separately.
+ORT uses one intra/inter-op thread, sequential execution, all optimizations and
+no spinning. Neither engine uses a profiler during timing.
+
+| Workload | Preceding production s | Selected candidate s | Microsoft ORT s | Candidate / ORT |
+|---|---:|---:|---:|---:|
+| Complete 30-second dialogue | 14.439770 | 13.165243 | 8.952561 | 1.4706 |
+| Dialogue 0–10 seconds | 0.690320 | 0.609362 | 0.427998 | 1.4238 |
+| Dialogue 10–20 seconds | 0.691166 | 0.613849 | 0.429619 | 1.4288 |
+| Dialogue 20–30 seconds | 0.723908 | 0.619090 | 0.429763 | 1.4405 |
+
+The full-dialogue reduction is **8.83%** against this campaign's production.
+All twelve repeatability controls and four speed gates pass, including the
+original 3% full-dialogue improvement requirement and crop nonregression limits.
+The overall parity target of <=1.05 remains open. Earlier campaign timings are
+not combined with these samples or used to calculate this improvement.
+
+Six fresh processes run production, candidate, ORT, ORT, candidate, production.
+Each performs one warmup and three measured passes over all four requests:
+96 calls, with 24 warmups and 72 measured calls. Each table mean has six measured
+observations across two processes. Every raw clock, process mean, setup time,
+gate and qualification report is retained in the
+[complete report and observations](tests/pyannote/blocked-spatial-app-results/results-20260922.md).
+
+Both managed roles pass fresh Pyannote and Parakeet native checks; candidate
+Pyannote graphs and public results exactly match production. Both 600-second
+meetings and recovery pass, with exact native speaker timelines and maximum
+meeting centroid error 9.25e-7. Linux qualification passes 3,396 backend tests
+(41 skips), 343 tensor tests and the required AVX-512 test. All 2,802 resource
+observations pass; peak owned RSS is 5,587,505,152 bytes.
+
+Measured candidate Core `3c2f16b0` / Data `6318cf48` is equivalent to the
+[audited normal root build](tests/pyannote/blocked-spatial-root-results/results-20260922.md)
+across all 3,161 Core and 697 Data methods and public declarations. Root suites,
+actual NuGet package consumption and prepared graph ownership checks also pass.
+The application closure is `5c238cd3`; root integration closure is `301fe7a2`.
+All campaign and integration processes are terminal.
 
 ### Audio: AMD single-panel pyannote versus Microsoft ORT
 

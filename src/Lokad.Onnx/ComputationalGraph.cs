@@ -47,6 +47,7 @@ public partial class ComputationalGraph
     internal Dictionary<string, FoldedTranspose> FoldedTransposes = new Dictionary<string, FoldedTranspose>(StringComparer.Ordinal);
     /// <summary>Panel-packed MatMul weight clones by source initializer name.</summary>
     internal Dictionary<float[], PackedMatMulWeight> PackedWeights = new Dictionary<float[], PackedMatMulWeight>();
+    internal Dictionary<float[], PackedConvWeight> PackedConvWeights = new Dictionary<float[], PackedConvWeight>();
 
     internal object FoldLock = new object();
 
@@ -227,6 +228,7 @@ public partial class ComputationalGraph
                         Initializers.Remove(packed.PackedName);
                 }
                 PackedWeights.Clear();
+                PackedConvWeights.Clear();
                 RetainedPackedWeightBytes = 0;
             }
         }
@@ -397,8 +399,8 @@ public partial class ComputationalGraph
     /// <summary>High-water mark of pool bytes checked out during the last execution.</summary>
     /// <remarks>Pool outputs and live intermediates raise it; returns lower it. ArrayPool scratch is not counted.</remarks>
     public long LastPoolPeakOutstandingBytes { get; private set; }
-    /// <summary>Retained panel-packed MatMul weight bytes held by the prepared plan.</summary>
-    /// <remarks>Set by preparation (PackMatMulWeights), not per execution; dropped when
+    /// <summary>Retained prepared matrix and convolution weight bytes held by the prepared plan.</summary>
+    /// <remarks>Set by shared matrix/convolution weight preparation, not per execution; dropped when
     /// preparation is invalidated. Distinct from per-run pool/scratch/live gauges below.</remarks>
     public long RetainedPackedWeightBytes { get; internal set; }
     #endregion
@@ -833,7 +835,7 @@ public partial class ComputationalGraph
         using var profilerScope = Profiler.BeginExecution();
         using var poolScope = new ExecutionPoolScope(this, Options.Tensor.DisableBufferPool);
         var nodeOptions = ActiveScratch is null ? Options : Options with { Tensor = Options.Tensor with { ScratchReporter = ActiveScratch, CopyReporter = ActiveCopy } };
-        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights } };
+        nodeOptions = nodeOptions with { Tensor = nodeOptions.Tensor with { PackedMatMulWeights = PackedWeights, PackedConvWeights = PackedConvWeights } };
         livePayloadBytes = LivePayloadBytes();
         NoteLivePeak();
         foreach (var node in Nodes)
@@ -1243,6 +1245,7 @@ public partial class ComputationalGraph
         ReleasedBuffers?.Clear();
         FoldConstantTransposes();
         GraphPacking.PackMatMulWeights(this);
+        GraphConvPacking.PackWeights(this);
         // Preparation assigns stable sequential identities by file-order
         // position: unlike name hashes they are distinct for duplicate or
         // anonymous names and identical across processes.

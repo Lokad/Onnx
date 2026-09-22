@@ -104,7 +104,7 @@ internal static class GraphPacking
             current[kv.Key] = (init, window.Array);
         }
         int live = 0;
-        long retained = 0;
+        long retained = GraphConvPacking.PruneAndBytes(graph);
         var stale = new List<float[]>();
         foreach (var kv in graph.PackedWeights)
         {
