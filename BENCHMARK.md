@@ -61,11 +61,15 @@ comparison remain required; the application tables above are unchanged.
 Its [isolated normal product](tests/pyannote/blocked-spatial-composition-results/results-20260922.md)
 now passes 31 focused checks in both normal and hardware-disabled modes and all
 108 captured convolution calls through ordinary graphs. All 119.8 million output
-values match selected production exactly. Full-model, target-hardware and fresh
-application timing qualification remain open; this adds no new speed claim.
+values match selected production exactly. Target-hardware and fresh application
+timing qualification remain open; this adds no new speed claim.
 The final normal build also passes 3,344 backend tests (93 existing skips), all
 343 tensor tests and an independent NuGet consumer exercising prepared graph
 execution. Product method bodies match the layer-qualified candidate.
+Its [complete local model checks](tests/pyannote/blocked-spatial-model-results/results-20260922.md)
+also preserve all 18 Pyannote graph arrays, 16 public diarization requests and
+166 shared-model arrays, including five e5 inputs. Every original native check
+passes. Long recordings, Parakeet regression and AMD admission remain pending.
 
 The current selected **AMD pyannote implementation** completes the full dialogue
 in **15.362 s versus Microsoft ORT 9.095 s (1.689×)**. Contemporary production
