@@ -38,6 +38,15 @@ layer outputs match selected production exactly across 119.8 million values
 per qualification mode. These component results do not change the complete
 application measurements or Microsoft ORT baselines above.
 
+The [vector output transpose/epilogue successor](tests/pyannote/vector-output-epilogue-amd/results-20260922.md)
+also remains **unselected**. Its observed complete-component totals are
+2.706 s production and 1.971 s candidate (27.15% lower), but the two
+256-channel forms regress by 5.42% and 6.62%, and one production repeatability
+control fails. Both AMD instruction widths pass every raw and actual-model
+numerical check. All 1,728 call clocks, 512 preparation clocks and 276 resource
+samples are retained; these are separate from the preceding trial and the
+application/ORT figures above.
+
 The current selected **AMD pyannote implementation** completes the full dialogue
 in **15.362 s versus Microsoft ORT 9.095 s (1.689×)**. Contemporary production
 takes **16.139 s**: a **4.82% latency reduction**. All 96 requests, twelve
