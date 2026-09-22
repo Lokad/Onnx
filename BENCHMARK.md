@@ -71,6 +71,11 @@ control varies 11.27%, exceeding the fixed 10% repeatability limit. All 2,352
 timing clocks remain. This is not a qualified speedup; the prototype is not
 integrated and the application/ORT ratios above remain unchanged.
 
+The next [convolution channel-block prototype](tests/pyannote/convolution-channel-blocks/build-20260923.md)
+passes its normal AMD build and compiled-scope checks. It preserves the
+existing accumulation order while reusing smaller weight ranges. Numerical
+and performance qualification remain pending; this adds no timing result.
+
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
 from 1.433322 s to 1.410928 s, below the fixed 10% component threshold.
