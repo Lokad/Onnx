@@ -53,8 +53,15 @@ now pass in all four execution modes: 192 complete LSTM calls and about
 29 million values preserve selected bits and ORT error bounds.
 [Generated-code inspection](tests/pyannote/lstm-wide-results/codegen-20260923.md)
 confirms sixteen-lane projections without vector spills and preserves disabled
-and SIMD-only fallback paths. Its fixed complete-LSTM timing screen is running;
-the prototype is not integrated.
+and SIMD-only fallback paths. Its [complete-LSTM screen](tests/pyannote/lstm-wide-results/screen-20260923.md)
+is **not selected**: 5.41% lower latency misses the fixed 10% threshold.
+All ten repeatability controls and per-node speed gates pass; all 2,352
+timing clocks remain. The prototype is not integrated, and it supplies no
+new application/ORT ratio.
+
+A distinct [default LSTM gate prototype](tests/pyannote/lstm-gates-results/build-20260923.md)
+now builds with only the intended private implementation changes. Its numerical
+and performance qualification remain pending; the current product is unchanged.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
