@@ -38,8 +38,13 @@ the floating-point order. Both instruction widths pass the full raw/layer
 checks, but its [complete-call gain](../tests/pyannote/input-address-screen/results-20260922.md)
 is only 3.55%, below the same gate. All repeatability and eligible-form gates
 pass. It is also rejected; source-level improvements alone do not establish
-application value. The next diagnostic refreshes complete-request attribution
-on the selected prepared-convolution product before another optimization.
+application value. The [refreshed complete-request profile](../tests/pyannote/prepared-profile-amd-results/results-v2-20260922.md)
+on selected Core `3c2f16b0` attributes 65.58%/65.56% of sampled thread time to
+`Kernel512`, versus about 17.4% for LSTM execution and ordered projection together.
+All 48 public requests and complete trace accounting pass. This supports a
+distinct next experiment: reuse each weight vector across twelve spatial outputs
+instead of six, preserving two output-channel blocks and reduction order.
+The profile identifies a target; it does not establish the cause or a speedup.
 Pyannote remains first, Parakeet second, Whisper deferred.
 
 The preceding selected Pyannote source is the

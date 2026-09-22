@@ -42,6 +42,13 @@ gates and all numerical/resource checks pass. All 17,184 call clocks and 512
 separate graph-preparation clocks are retained. This is a component measurement;
 the application and ORT figures above remain unchanged.
 
+A fresh [profile of selected Pyannote](tests/pyannote/prepared-profile-amd-results/results-v2-20260922.md)
+attributes 65.58%/65.56% of full-request sampled thread time to `Kernel512` in
+two captures. LSTM execution and ordered projection together account for about
+17.4%. All 48 public requests match the selected application outputs, and both
+trace formats pass every accounting and coverage check. These diagnostic shares
+guide the next optimization; they supply no new ORT speed ratio.
+
 The preceding [Pyannote four-block convolution screen](tests/pyannote/filter-block-screen/results-20260922.md)
 is **not selected**. All 108 prepared graph calls total 1.422513 s for selected
 production and 1.386649 s for the candidate. The 2.52% reduction misses the
