@@ -54,6 +54,10 @@ Its [normal Linux product and NuGet qualification](tests/pyannote/lstm-input-pro
 now pass: 3,432 backend tests (41 existing AMD skips), all 343 tensor tests,
 exact equivalence of all 3,163 Core / 697 Data methods, and independent package
 consumption including prepared ConvRelu and output ownership checks.
+Its [complete AMD Pyannote qualification](tests/pyannote/lstm-input-models-amd/results-20260922.md)
+also passes: all 18 graph arrays (2,917,107 values) and 16 complete public
+diarization results match the selected product exactly, with every ORT error
+check passing. Complete application performance remains to be measured.
 
 The latest [Pyannote twelve-position convolution screen](tests/pyannote/spatial-weight-screen/results-20260922.md)
 is **not selected**. The sum of all 108 prepared graph call means rises from
