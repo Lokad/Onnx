@@ -106,6 +106,15 @@ fails the fixed repeatability controls for both managed roles. Observed corpus
 means are 63.311 s production, 62.148 s candidate and 29.060 s ORT. These do not
 establish a speedup or select a performance candidate; accepted tables stay unchanged.
 
+The numerical fix now passes [complete qualification on the newly selected
+single-panel Pyannote source](tests/parakeet/single-panel-models/results-20260922.md):
+784 Parakeet native arrays and twenty public clips pass; Pyannote's 18 graph
+arrays and sixteen public results remain exact. All 166 shared-model arrays,
+3,313 backend tests, 343 tensor tests and the actual NuGet consumer pass. This
+is an isolated correctness candidate, with the original 256 MiB packing cap.
+AMD and fresh application timing remain pending; the Parakeet ORT baseline
+below is unchanged.
+
 The arithmetic fix now also passes [complete qualification when composed with
 the integrated Pyannote improvements](tests/parakeet/portable-models/results-20260922.md):
 784 Parakeet native arrays, twenty public clips, 18 unchanged Pyannote graph
