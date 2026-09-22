@@ -74,6 +74,12 @@ channels within a block are expanded. An
 expands only the fixed 3x3 full tile in Lokad's original reduction order.
 Source preparation is complete; it has no build, numerical or speed result.
 
+The [fresh current Parakeet baseline](../tests/parakeet/current-baseline-amd/results-20260922.md)
+now measures the same selected M22 product: **74.545 seconds versus Microsoft
+ORT 39.229 seconds**, ratio **1.900259**, for all twenty clips. All 320 requests
+and 42 repeatability controls pass. It supplies a current matched baseline,
+with no cross-campaign speedup claim.
+
 Pyannote remains first, Parakeet second, Whisper deferred.
 
 The preceding selected Pyannote source is the

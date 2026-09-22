@@ -9,18 +9,19 @@ revisions or protocols. [Model support](docs/model-support.md) describes the
 available APIs and their remaining qualification limits.
 
 Microsoft ONNX Runtime audio baselines are listed below for
-[Parakeet and pyannote on the AMD VM](#audio-amd-microsoft-onnx-runtime-baselines-parakeet-and-pyannote)
+[Parakeet](#audio-amd-current-parakeet-versus-microsoft-ort) and
+[pyannote](#audio-amd-lstm-input-row-pyannote-versus-microsoft-ort) on the AMD VM,
 and [Parakeet, pyannote and Whisper on Windows](#audio-windows-microsoft-onnx-runtime-baselines).
 
 The current optimization priority is **pyannote, then Parakeet**. Whisper work
 is deferred; its existing results and unresolved limitations remain below.
 
-Latest admitted Pyannote comparison and retained Parakeet baseline on AMD:
+Latest matched comparisons for the current product on AMD:
 
 | Application workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---:|---:|---:|
 | Pyannote, complete 30-second dialogue | 12.666 | 8.944 | 1.416 |
-| Parakeet, preceding production baseline, 20 clips / 213.265 seconds of audio | 75.135 | 39.464 | 1.904 |
+| Parakeet, 20 clips / 213.265 seconds of audio | 74.545 | 39.229 | 1.900 |
 
 Each row comes from its own matched campaign on AMD EPYC 9V74, CPU2, with
 ORT 1.29.0. Complete application timers include frontend, inference and owned
@@ -31,12 +32,12 @@ improve. Both ten-minute meetings and recovery also pass. The change is
 [integrated and verified in the normal root build](tests/pyannote/lstm-input-root-amd/results-20260922.md),
 including the full test suites and independent NuGet consumption.
 
-Parakeet's row measures the preceding production Core `1279b4b6`. Current
-Core `208371f6` passes complete Parakeet regression and fresh AMD native checks,
-but has no new matched Parakeet timing result. The
-[Parakeet arithmetic trial](#audio-amd-parakeet-arithmetic-trial-versus-microsoft-ort)
-takes 78.066 s and is **not selected**: it is 3.90% slower than contemporary
-production. The full application parity target remains <=1.05 for both models.
+The [fresh Parakeet baseline](#audio-amd-current-parakeet-versus-microsoft-ort)
+uses the same current Core `208371f6` / Data `b9358370` as the Pyannote result.
+All 320 requests and 42 repeatability controls pass, with exact retained
+transcripts, tokens and owned outputs. Earlier campaigns remain historical;
+this refresh does not establish a speedup against their different products.
+The full application parity target remains <=1.05 for both models.
 
 The LSTM change shares weights across four input time rows, preserving each
 output's reduction order and adding at most 8 KiB of scratch per call. Its
@@ -576,6 +577,50 @@ claimed from that grid.
 The [conditioned successor](tests/parakeet/wide-matmul-conditioned/results-20260921.md)
 also fails its fixed control limits despite passing all numerical checks. No
 prototype is promoted and the ORT comparison tables remain unchanged.
+
+### Audio: AMD current Parakeet versus Microsoft ORT
+
+This fresh comparison measures the integrated M22 product, Core `208371f6` /
+Data `b9358370`, on AMD EPYC 9V74, CPU2, .NET 10.0.8 / SDK 10.0.204 and ORT 1.29.0.
+
+| Workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
+|---|---:|---:|---:|
+| All 20 clips / 213.265 seconds of audio | 74.545330 | 39.229044 | 1.900259 |
+
+**Valid baseline.** All 42 repeatability controls pass: corpus process-mean
+max/min is 1.001329 for Lokad and 1.001708 for ORT, within the 1.10 limit;
+every clip remains within 1.20. The <=1.05 application parity target is unmet.
+This is a current-product baseline refresh, with no candidate-change admission
+and no speedup calculation against older campaign samples.
+
+Four fresh processes run Lokad, ORT, ORT, Lokad. Each performs one warmup and
+three measured passes over all twenty clips: **320 requests, 80 warmups and
+240 measurements**. Each clip has six measured calls per role. Corpus time
+sums twenty clip means within each process and averages both processes equally,
+using exact integer-clock fractions. Every sample is retained.
+
+The timer includes frontend, neural inference, greedy decoding and owned
+results; model loading/setup, file access and external validation are separate.
+ORT uses CPUExecutionProvider, one intra/inter-op thread, sequential execution,
+all graph optimizations and disabled spinning. No profiler or numerical
+runtime overrides are enabled. All worker threads use CPU2 before startup.
+
+Every native/public transcript, token, duration, readonly-input and held-output
+check passes. All 160 managed requests exactly match the closed M22 public
+reference. Existing complete Parakeet tensor, Pyannote, shared/e5, native,
+long-meeting and normal root/package qualifications are retained and checked.
+All **1,845 resource observations** pass, with peak owned RSS **10,172,039,168
+bytes**. Foreign-CPU accounting passes with its documented short-lived-process
+limitation. Every worker and supervisor is terminal with code zero.
+
+The [full report](tests/parakeet/current-baseline-amd/results-20260922.md)
+contains every clip. [Raw clocks](tests/parakeet/current-baseline-amd/clocks-20260922.csv),
+[setup intervals](tests/parakeet/current-baseline-amd/setup-20260922.csv) and
+[complete process means and decisions](tests/parakeet/current-baseline-amd/observations-20260922.json)
+are retained. Closure: `6c65419f`. Source `fe4eb657` and the normal root build
+`b4f82542` / `cfa7e140` are code-equivalent to the measured product across all
+3,163 Core / 697 Data methods and public declarations; no separate rebuild
+performance claim is made.
 
 ### Audio: AMD Parakeet arithmetic trial versus Microsoft ORT
 
