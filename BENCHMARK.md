@@ -163,6 +163,15 @@ passes fresh native qualification, both ten-minute meetings, recovery and all
 96 timing requests. All twelve repeatability controls pass, but the full-request
 gain narrowly misses the original gate. The candidate remains unselected.
 
+The distinct [single-panel input successor](tests/pyannote/single-panel-direct/results-amd-20260922.md)
+passes its AMD component screen: equal-shape geometric mean is 9.89% faster
+than production, every tested shape improves, and all 44 repeatability controls
+pass. It skips packing copies where the patch already has the required layout.
+All 3,266 cases pass in each Windows/AMD normal/scalar-tail mode, backed by
+1,400 independent layout checks per hardware mode. This result permits normal
+product and complete-model qualification; it supplies no new application or ORT
+timing and does not select the preceding failed application candidate.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
