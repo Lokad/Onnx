@@ -1,0 +1,140 @@
+{
+  "closure": "c76796f53517a8169522e9fe61ed3778fcbd92be2d02e7969d201915d9dc6514",
+  "analysis": {
+    "passed": true,
+    "reports": {
+      "raw-256": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "raw-512": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "wide-256": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "wide-512": {
+        "passed": true,
+        "raw_cases": 2648,
+        "supplemental": 20,
+        "rejected": 10,
+        "graph_cases": 2668,
+        "control_requests": 2668,
+        "candidate_requests": 5336,
+        "finite_graphs": 2504,
+        "fallback_graphs": 164,
+        "differences": 0,
+        "nan_payload_differences": 0,
+        "raw_nan_payload_differences": 0
+      },
+      "layers-256": {
+        "passed": true,
+        "cases": 108,
+        "values": 119823360,
+        "graph_calls": 216,
+        "native_maximum": 3.814697265625e-06,
+        "lanes": 8
+      },
+      "layers-512": {
+        "passed": true,
+        "cases": 108,
+        "values": 119823360,
+        "graph_calls": 216,
+        "native_maximum": 3.814697265625e-06,
+        "lanes": 16
+      }
+    },
+    "resources": [
+      {
+        "name": "raw-256",
+        "samples": 6,
+        "peak_rss": 80986112,
+        "seconds": 1.5621451070182957
+      },
+      {
+        "name": "raw-512",
+        "samples": 6,
+        "peak_rss": 81104896,
+        "seconds": 1.5608795449952595
+      },
+      {
+        "name": "wide-256",
+        "samples": 9,
+        "peak_rss": 85168128,
+        "seconds": 2.3206032349844463
+      },
+      {
+        "name": "wide-512",
+        "samples": 9,
+        "peak_rss": 84840448,
+        "seconds": 2.3202283770078793
+      },
+      {
+        "name": "layers-256",
+        "samples": 48,
+        "peak_rss": 2625933312,
+        "seconds": 12.196006148005836
+      },
+      {
+        "name": "layers-512",
+        "samples": 37,
+        "peak_rss": 2829479936,
+        "seconds": 9.405142211006023
+      }
+    ],
+    "samples": 115,
+    "peak_rss": 2829479936,
+    "core": {
+      "bytes": 755200,
+      "sha256": "6c0bd346a8e5f6eac20e20c767c288d0ef14fa274ee0cab2b6d2c01555aa5880"
+    },
+    "consumers": {
+      "raw": {
+        "bytes": 45568,
+        "sha256": "65e416db82d3d7b36fb7d9e34bbe9290cf45f0251af08bb9efe8f62d06522d13"
+      },
+      "wide": {
+        "bytes": 45568,
+        "sha256": "0418dd004da03b6c1edfaf6e0b726ba794b697060cfec613841621d9831f7a8f"
+      },
+      "layers": {
+        "bytes": 48640,
+        "sha256": "b86923306681c64764fa0407b8a256c91c559d7ac82204c11537b7bcb02be460"
+      }
+    },
+    "no_performance_measurement": true,
+    "codegen_pending": true
+  }
+}

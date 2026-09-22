@@ -1,0 +1,166 @@
+{
+  "closure": "7165336c930453d4c396b1554dc1c6331a3099ddce5c67f6cf11335481dffab1",
+  "analysis": {
+    "passed": true,
+    "core": {
+      "bytes": 755200,
+      "sha256": "6c0bd346a8e5f6eac20e20c767c288d0ef14fa274ee0cab2b6d2c01555aa5880"
+    },
+    "data": {
+      "bytes": 143872,
+      "sha256": "0088b5d1068ef31d12f99f2329b8cbc71388f871cb08ad17c0af5a819537dfec"
+    },
+    "product": {
+      "passed": true,
+      "changed": "Lokad.Onnx.ConvBlockedSpatial::Kernel512::Void Kernel512(Single*, Single*, Single*, Int32, Int32, Int32, Int32, Int32, Int32, Int32)",
+      "added": [],
+      "unchanged_core": 3160,
+      "unchanged_data": 697,
+      "public_surface_equal": true
+    },
+    "consumers": [
+      {
+        "passed": true,
+        "mode": "raw",
+        "methods": 145,
+        "unchanged": 144,
+        "changed": [
+          "Probe::Main::Int32 Main(System.String[])"
+        ]
+      },
+      {
+        "passed": true,
+        "mode": "wide",
+        "methods": 145,
+        "unchanged": 143,
+        "changed": [
+          "Probe::Supplemental::System.Collections.Generic.List`1[System.Object] Supplemental(Int32, Int32 ByRef)",
+          "Probe::Main::Int32 Main(System.String[])"
+        ]
+      },
+      {
+        "passed": true,
+        "mode": "layers",
+        "methods": 134,
+        "unchanged": 133,
+        "changed": [
+          "ModelProbe::Main::Int32 Main(System.String[])"
+        ]
+      }
+    ],
+    "reports": {
+      "raw": {
+        "passed": true,
+        "cases": 2648,
+        "values": 1833216,
+        "lanes": 8
+      },
+      "wide": {
+        "passed": true,
+        "cases": 2648,
+        "values": 4402176,
+        "lanes": 8
+      },
+      "layers": {
+        "passed": true,
+        "cases": 108,
+        "values": 119823360,
+        "lanes": 8
+      }
+    },
+    "no_performance_measurement": true,
+    "avx512_qualified": false,
+    "resources": [
+      {
+        "name": "cli-restore",
+        "samples": 7,
+        "peak_rss": 219197440,
+        "seconds": 1.8332888000295497
+      },
+      {
+        "name": "cli-build",
+        "samples": 62,
+        "peak_rss": 529326080,
+        "seconds": 16.75181149999844
+      },
+      {
+        "name": "inventory",
+        "samples": 3,
+        "peak_rss": 141713408,
+        "seconds": 0.7881431999849156
+      },
+      {
+        "name": "raw-restore",
+        "samples": 3,
+        "peak_rss": 98459648,
+        "seconds": 0.788126099971123
+      },
+      {
+        "name": "raw-build",
+        "samples": 11,
+        "peak_rss": 248291328,
+        "seconds": 2.90093900001375
+      },
+      {
+        "name": "raw-inventory",
+        "samples": 1,
+        "peak_rss": 14422016,
+        "seconds": 0.2723610000102781
+      },
+      {
+        "name": "wide-restore",
+        "samples": 3,
+        "peak_rss": 101105664,
+        "seconds": 0.7956620000186376
+      },
+      {
+        "name": "wide-build",
+        "samples": 11,
+        "peak_rss": 256270336,
+        "seconds": 2.9427021999727003
+      },
+      {
+        "name": "wide-inventory",
+        "samples": 1,
+        "peak_rss": 12058624,
+        "seconds": 0.26648970000678673
+      },
+      {
+        "name": "layers-restore",
+        "samples": 3,
+        "peak_rss": 97804288,
+        "seconds": 0.790980399993714
+      },
+      {
+        "name": "layers-build",
+        "samples": 12,
+        "peak_rss": 257003520,
+        "seconds": 3.1821213999646716
+      },
+      {
+        "name": "layers-inventory",
+        "samples": 1,
+        "peak_rss": 13856768,
+        "seconds": 0.2683080999995582
+      },
+      {
+        "name": "raw-256",
+        "samples": 5,
+        "peak_rss": 63258624,
+        "seconds": 1.3105093000340275
+      },
+      {
+        "name": "wide-256",
+        "samples": 11,
+        "peak_rss": 82903040,
+        "seconds": 2.901883299986366
+      },
+      {
+        "name": "layers-256",
+        "samples": 36,
+        "peak_rss": 2151731200,
+        "seconds": 9.481255099992268
+      }
+    ]
+  }
+}
