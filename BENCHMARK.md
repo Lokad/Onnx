@@ -62,12 +62,12 @@ new application/ORT ratio.
 A distinct [default LSTM gate prototype](tests/pyannote/lstm-gates-results/build-20260923.md)
 builds with only the intended private implementation changes.
 [AMD numerical qualification](tests/pyannote/lstm-gates-results/numerics-20260923.md)
-passes the complete focused census and192captured calls in four execution modes.
+passes the complete focused census and 192 captured calls in four execution modes.
 [Generated-code inspection](tests/pyannote/lstm-gates-results/codegen-20260923.md)
 confirms direct activation calls and unchanged scalar arithmetic in all four
 modes. Its [complete-LSTM screen](tests/pyannote/lstm-gates-results/screen-20260923.md)
-is **not admitted**: although mean latency is12.71% lower, the current-product
-control varies11.27%, exceeding the fixed10% repeatability limit. All2,352
+is **not admitted**: although mean latency is 12.71% lower, the current-product
+control varies 11.27%, exceeding the fixed 10% repeatability limit. All 2,352
 timing clocks remain. This is not a qualified speedup; the prototype is not
 integrated and the application/ORT ratios above remain unchanged.
 
