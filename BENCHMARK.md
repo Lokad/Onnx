@@ -116,6 +116,14 @@ slower across all 22 geometries. Clearing, packing and multiplication are
 included. This component result supplies no application speedup; production
 and the accepted Microsoft ORT comparison stay unchanged.
 
+The subsequent [direct-output convolution screen](tests/pyannote/direct-output/results-20260922.md)
+is also **not selected**. All 2,882 cases pass in normal and forced-scalar
+validation on Windows and AMD, and all repeatability controls pass. Its
+equal-shape geometric mean is 6.73% faster, but the two-column tails regress
+12.69% and 5.35%, exceeding the fixed 5% per-shape limit. All observations and
+the preceding NaN-payload corrections are retained. No product change or new
+application speedup follows from this component result.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.

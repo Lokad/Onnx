@@ -62,6 +62,19 @@ preserving arithmetic and avoiding the separate temporary-output pass.
 This needs its own stride, tail, ownership, numerical and complete-request
 qualification; the sampled caller share does not establish its potential gain.
 
+The [direct-output screen](../tests/pyannote/direct-output/results-20260922.md)
+now passes complete stride/guard/numerical qualification on both platforms,
+including exact NaN payloads against each mode's baseline. Explicit bias NaN
+selection was needed because scalar/SIMD operand allocation differed. All
+44 repeated-process controls pass, and the equal-shape geometric mean improves
+6.73%, but two-column tails regress 12.69% and 5.35%; the fixed worst-shape
+gate rejects the candidate. These add roughly 11.45 and 10.27 microseconds
+at reductions 1,152 and 2,304 respectively. The next hypothesis is to replace
+the three masked final stores with ordinary stores covering exactly the valid
+one-to-seven floats. Keep masked input loads, arithmetic, admission and all
+shapes unchanged. The retained MLAS FMA source also uses masked tail stores;
+it does not establish their cost here or prove the cause of these regressions.
+
 The separate [sparse-mel adaptation](../tests/pyannote/sparse-mel/results-20260921.md)
 now passes complete dialogue and meeting qualification. Its
 [fresh matched comparison](../tests/pyannote/sparse-mel-comparison/results-20260921.md)
