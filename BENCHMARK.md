@@ -26,8 +26,12 @@ promoted to production.
 The [combined normal build](tests/pyannote/combined-avx512/results-20260922.md)
 now passes 3,295 backend tests, 342 tensor tests and a separate NuGet consumer.
 It combines AVX-512 row sharing with the newer portable fallback, frontend and
-memory improvements. Its own AMD qualification and matched comparison are
-pending; the times above still belong to the older candidate.
+memory improvements. Its [shared-model and e5 checks](tests/pyannote/combined-shared/results-20260922.md)
+retain all 5,000,814 output values bit-for-bit. AMD operator qualification passes
+3,349 backend tests, 342 tensor tests and all three required AVX-512 tests.
+The [remaining AMD campaign](tests/pyannote/combined-amd-review/recovery-20260922.md)
+continues after a corrected checker identity guard; complete meeting and timing
+results are pending. The times above still belong to the older candidate.
 
 The latest accepted **Windows pyannote candidate** takes **10.493 s versus
 Microsoft ORT 6.320 s (1.660×)**, down 8.6% from its contemporary 11.482 s
