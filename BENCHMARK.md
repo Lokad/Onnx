@@ -137,6 +137,13 @@ the rejected masked/ordinary-store candidates, versus zero in the selected
 kernel. All outputs and 956 resource checks pass. This diagnostic motivates a
 smaller tail routine; it provides no new timing ratio or product selection.
 
+The resulting [separate two-column routine](tests/pyannote/two-column/results-20260922.md)
+**passes the fixed component screen**: its equal-shape geometric mean is
+7.78% faster, the worst shape regresses 0.57%, and all 44 repeatability controls
+pass. Both previously failing tails now improve. All 3,266 cases pass in each
+Windows/AMD normal/scalar mode. This admits full-model qualification; it does
+not change the accepted 15.466 s versus ORT 8.952 s application result.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
