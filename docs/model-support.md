@@ -49,6 +49,15 @@ Native agreement of a transcript or speaker timeline does not establish full
 tensor agreement or accuracy against human annotations. The numerical gate is
 `abs(actual-reference) / max(1, abs(reference)) <= 1e-4`, with exact checks for
 integer decisions and shape. Recorded failures remain failures under this rule.
+
+The isolated [Parakeet arithmetic/Pyannote composition](../tests/parakeet/portable-models/results-20260922.md)
+now passes all 784 recorded Parakeet native arrays on Windows and twenty public
+clips at this same bound. Its Pyannote regression and all 166 shared-model
+arrays also pass. This candidate has not been promoted: production's three
+Windows duration-logit failures and the separate intermediate-layer findings
+remain recorded. Complete fixture qualification does not imply every
+intermediate activation agrees or that a speed improvement has been selected.
+
 The [complete WeSpeaker filterbank reference](../tests/pyannote/filterbank-reference/results-20260920.md)
 checks all 711,680 values of the original 21-case frontend corpus against two
 independent double calculations with fixed saved coefficients. Managed outputs

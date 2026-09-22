@@ -90,6 +90,16 @@ passes all 480 requests and resource checks, including two fresh ORT runs, but
 fails the fixed repeatability controls for both managed roles. Observed corpus
 means are 63.311 s production, 62.148 s candidate and 29.060 s ORT. These do not
 establish a speedup or select a performance candidate; accepted tables stay unchanged.
+
+The arithmetic fix now also passes [complete qualification when composed with
+the integrated Pyannote improvements](tests/parakeet/portable-models/results-20260922.md):
+784 Parakeet native arrays, twenty public clips, 18 unchanged Pyannote graph
+arrays, sixteen diarization requests and 166 shared-model arrays all pass.
+This isolated composition clears the three Windows Parakeet fixture failures
+at the original tolerance. Normal source builds pass 3,290 backend tests,
+343 tensor tests and an independent NuGet consumer. It has no new AMD timing result; the production
+and Microsoft ORT baseline tables above remain the applicable measurements.
+
 The [pyannote attribution](tests/pyannote/performance-profile/results-20260921.md)
 identifies embedding convolution as the first target and segmentation LSTM as
 the next. Its local profiling does not change the matched AMD timings below.
