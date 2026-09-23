@@ -129,6 +129,13 @@ repeatability controls and per-form speed gates pass. All 17,184 call clocks
 and 512 preparation clocks are retained. This candidate is not integrated
 and supplies no new application or Microsoft ORT timing.
 
+An isolated [Winograd convolution prototype](tests/pyannote/winograd-results/numerics-20260923.md)
+passes all 87 eligible captured Pyannote convolutions in AVX2 and AVX512,
+retaining the original ORT error limit. Its
+[generated-code review](tests/pyannote/winograd-results/codegen-20260923.md)
+also passes. It changes floating-point rounding and is not integrated.
+A separate performance screen is next; neither application ratio above changes.
+
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
 from 1.433322 s to 1.410928 s, below the fixed 10% component threshold.
