@@ -140,6 +140,17 @@ All 18 repeatability controls pass; seven of nine speed gates fail.
 All 4,176 call clocks and 464 preparation clocks remain. Neither application
 ratio above changes; no unchanged timing retry follows.
 
+A distinct [eight-tile SIMD input transform](tests/pyannote/winograd-input-results/numerics-20260923.md)
+preserves every prior Winograd numerical result in both instruction widths.
+[Generated-code inspection](tests/pyannote/winograd-input-results/codegen-20260923.md)
+confirms vector arithmetic and coordinate work outside the channel loop.
+Its [complete-call screen](tests/pyannote/winograd-input-results/screen-20260923.md)
+reduces aggregate latency **18.63%**, from 1.287666 s to 1.047713 s, but is
+**not admitted**: forms 1 and 2 regress 8.36% and 15.35%, exceeding the 5% limit.
+All 18 repeatability controls and strict process separation pass; seven of nine
+speed gates pass. All 4,176 call clocks and 464 preparation clocks remain.
+This prototype is not integrated and supplies no new application or ORT ratio.
+
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
 from 1.433322 s to 1.410928 s, below the fixed 10% component threshold.
