@@ -1,0 +1,103 @@
+{
+  "passed": true,
+  "measured": {
+    "Lokad.Onnx.dll": {
+      "bytes": 756736,
+      "sha256": "208371f620fcfce5ff709db54525fa158b4c9442685430afbeb730619e1ded81"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "b935837024c3ffd67e322ba1fe44405b24b7da221779cf00856f090df08693f5"
+    }
+  },
+  "built": {
+    "Lokad.Onnx.dll": {
+      "bytes": 766976,
+      "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+    },
+    "Lokad.Onnx.Data.dll": {
+      "bytes": 143872,
+      "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+    }
+  },
+  "inventory": {
+    "passed": true,
+    "assemblies": [
+      {
+        "assembly": "Lokad.Onnx.dll",
+        "original_methods": 3163,
+        "unchanged_methods": 3156,
+        "added": [
+          "Lokad.Onnx.PackedConvWeight::get_WinogradValues::Single[] get_WinogradValues()",
+          "Lokad.Onnx.PackedConvWeight::set_WinogradValues::Void set_WinogradValues(Single[])",
+          "Lokad.Onnx.GraphConvPacking::WinogradShape::Boolean WinogradShape(Int32, Int32, Int64, Int32 ByRef)",
+          "Lokad.Onnx.GraphConvPacking::WinogradConsumers::System.Collections.Generic.HashSet`1[System.String] WinogradConsumers(Lokad.Onnx.ComputationalGraph)",
+          "Lokad.Onnx.GraphConvPacking::ResolveRecord::Lokad.Onnx.PackedConvWeight ResolveRecord(System.Collections.Generic.IReadOnlyDictionary`2[System.Single[],Lokad.Onnx.PackedConvWeight], Lokad.Onnx.Tensor`1[System.Single], Int32)",
+          "Lokad.Onnx.ConvBlockedSpatial::PrepareWinograd::Single[] PrepareWinograd(System.ReadOnlySpan`1[System.Single], Int32, Int32, Int32)",
+          "Lokad.Onnx.ConvBlockedSpatial::PlanWinograd::Boolean PlanWinograd(Int32, Int32, Int32, Int32, Int32 ByRef, Int32 ByRef, Int32 ByRef)",
+          "Lokad.Onnx.ConvBlockedSpatial::ExecuteWinograd::Boolean ExecuteWinograd(System.ReadOnlySpan`1[System.Single], System.ReadOnlySpan`1[System.Single], System.ReadOnlySpan`1[System.Single], System.ReadOnlySpan`1[System.Single], System.Span`1[System.Single], System.Span`1[System.Single], System.Span`1[System.Single], System.Span`1[System.Single], Int32, Int32, Int32, Int32, Int32, Boolean)",
+          "Lokad.Onnx.ConvBlockedSpatial::EpilogueRange::Boolean EpilogueRange(System.ReadOnlySpan`1[System.Single])",
+          "Lokad.Onnx.ConvBlockedSpatial::TransformWinogradInput::Void TransformWinogradInput(System.ReadOnlySpan`1[System.Single], System.Span`1[System.Single], Int32, Int32, Int32, Int32, Int32, Int32)",
+          "Lokad.Onnx.ConvBlockedSpatial::TransformWinogradInputContiguous::Void TransformWinogradInputContiguous(System.ReadOnlySpan`1[System.Single], System.Span`1[System.Single], Int32, Int32, Int32, Int32, Int32)",
+          "Lokad.Onnx.ConvBlockedSpatial::MultiplyWinograd256::Void MultiplyWinograd256(Single*, Single*, Single*, Int32, Int32)",
+          "Lokad.Onnx.ConvBlockedSpatial::OutputWinograd256::Void OutputWinograd256(Single*, Single*, Int32, Int32, Int32, Int32, Int32, Int32)",
+          "Lokad.Onnx.ConvBlockedSpatial::MultiplyWinograd512::Void MultiplyWinograd512(Single*, Single*, Single*, Int32, Int32)",
+          "Lokad.Onnx.ConvBlockedSpatial::OutputWinograd512::Void OutputWinograd512(Single*, Single*, Int32, Int32, Int32, Int32, Int32, Int32)",
+          "Lokad.Onnx.ConvWinogradDispatch::Execute::Boolean Execute(Lokad.Onnx.DenseTensor`1[System.Single], Single[], Lokad.Onnx.DenseTensor`1[System.Single], Lokad.Onnx.DenseTensor`1[System.Single], Int32, Int32, Int32, Int32, Int32, Lokad.Onnx.TensorExecutionOptions)"
+        ],
+        "changed": [
+          "Lokad.Onnx.PackedConvWeight::GetHashCode::Int32 GetHashCode()",
+          "Lokad.Onnx.PackedConvWeight::Equals::Boolean Equals(Lokad.Onnx.PackedConvWeight)",
+          "Lokad.Onnx.PackedConvWeight::.ctor::Void .ctor(Lokad.Onnx.PackedConvWeight)",
+          "Lokad.Onnx.GraphConvPacking::PruneAndBytes::Int64 PruneAndBytes(Lokad.Onnx.ComputationalGraph)",
+          "Lokad.Onnx.GraphConvPacking::PackWeights::Void PackWeights(Lokad.Onnx.ComputationalGraph)",
+          "Lokad.Onnx.GraphConvPacking::Resolve::Single[] Resolve(System.Collections.Generic.IReadOnlyDictionary`2[System.Single[],Lokad.Onnx.PackedConvWeight], Lokad.Onnx.Tensor`1[System.Single], Int32)",
+          "Lokad.Onnx.Tensor`1[T]::TryConvBlockedSpatial::Boolean TryConvBlockedSpatial(Lokad.Onnx.DenseTensor`1[System.Single], Lokad.Onnx.Tensor`1[System.Single], Lokad.Onnx.DenseTensor`1[System.Single], Lokad.Onnx.DenseTensor`1[System.Single], Lokad.Onnx.DenseTensor`1[System.Single], Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, Int32, PadInfo, Int32, Int32, Lokad.Onnx.TensorExecutionOptions)"
+        ],
+        "public_surface_equal": true
+      },
+      {
+        "assembly": "Lokad.Onnx.Data.dll",
+        "original_methods": 697,
+        "unchanged_methods": 697,
+        "added": [],
+        "changed": [],
+        "public_surface_equal": true
+      }
+    ],
+    "source_scope": "Only optional prepared weights, dispatch and admitted Winograd methods."
+  },
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 9293824,
+      "seconds": 0.2599886690150015
+    },
+    {
+      "name": "cli-restore",
+      "samples": 6,
+      "peak_rss": 172687360,
+      "seconds": 1.5547844980028458
+    },
+    {
+      "name": "cli-build",
+      "samples": 64,
+      "peak_rss": 509739008,
+      "seconds": 16.88204354501795
+    },
+    {
+      "name": "inventory",
+      "samples": 4,
+      "peak_rss": 129216512,
+      "seconds": 1.114249081001617
+    }
+  ],
+  "source_prepared": {
+    "bytes": 151380,
+    "sha256": "3c7e4d2432558ef6044f6a484b64994c990762e192b4e77e93b74584e7dab8cd"
+  },
+  "root_product_changed": false,
+  "numerically_qualified": false,
+  "no_performance_measurement": true
+}

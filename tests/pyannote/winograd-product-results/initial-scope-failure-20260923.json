@@ -1,0 +1,32 @@
+{
+  "passed": false,
+  "build_completed": true,
+  "public_surface_equal": true,
+  "data_methods_exact": 697,
+  "scope_check_passed": false,
+  "reason": "New Tensor helper shifted compiler-generated method names; strict inventory rejected 163 removed/179 added/85 changed entries and a constructor lambda rename.",
+  "resources": [
+    {
+      "name": "sdk-version",
+      "samples": 1,
+      "peak_rss": 10145792
+    },
+    {
+      "name": "cli-restore",
+      "samples": 6,
+      "peak_rss": 171008000
+    },
+    {
+      "name": "cli-build",
+      "samples": 63,
+      "peak_rss": 503328768
+    },
+    {
+      "name": "inventory",
+      "samples": 4,
+      "peak_rss": 168812544
+    }
+  ],
+  "root_product_changed": false,
+  "no_tests_or_timing": true
+}
