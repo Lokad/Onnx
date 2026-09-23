@@ -1,0 +1,294 @@
+{
+  "passed": true,
+  "closure": {
+    "bytes": 15934,
+    "sha256": "a6d0a3f70916452362a1da5c9f605146dab41426f7303a39fd6e114628d18ed8"
+  },
+  "listings": {
+    "bytes": 870904,
+    "sha256": "5e9daa17c0c8139088c2392c22ed3c222583e2236912d21a9874069a009bcd59"
+  },
+  "reviewer": {
+    "bytes": 4685,
+    "sha256": "82172698131abb4cc58b725670ac6683e9658d56222da1d2ba848111cd4860dc"
+  },
+  "candidate": [
+    {
+      "tier": "Tier1-OSR",
+      "code_bytes": [
+        3177
+      ],
+      "blocks": [
+        "G_M000_IG21",
+        "G_M000_IG22",
+        "G_M000_IG23",
+        "G_M000_IG24"
+      ],
+      "ordered_fma_group": [
+        [
+          "zmm0",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm6",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm1",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm7",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm2",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm8",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm3",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm9",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm4",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm10",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm5",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm11",
+          "zmm13",
+          "zmm14"
+        ]
+      ],
+      "groups": 9,
+      "fmas": 108,
+      "input_broadcasts": 54,
+      "weight_loads": 18,
+      "paired_weight_advances": 9,
+      "integer_multiplies": 1,
+      "arithmetic_shifts": 1,
+      "scalar_stack_references": 6,
+      "vector_loop_stack_references": 0,
+      "separate_tail_mul_add_instructions": 6,
+      "raw_sha256": "a43d21c4a7d0b4663af9bf421678506366146ff6e122b30960854030e7a5871c",
+      "body_sha256": "a43d21c4a7d0b4663af9bf421678506366146ff6e122b30960854030e7a5871c",
+      "managed_stdout_repairs": []
+    },
+    {
+      "tier": "Tier1-OSR",
+      "code_bytes": [
+        3066
+      ],
+      "blocks": [
+        "G_M000_IG39",
+        "G_M000_IG40",
+        "G_M000_IG41",
+        "G_M000_IG42"
+      ],
+      "ordered_fma_group": [
+        [
+          "zmm0",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm1",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm2",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm3",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm4",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm5",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm6",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm7",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm8",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm9",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm10",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm11",
+          "zmm13",
+          "zmm14"
+        ]
+      ],
+      "groups": 9,
+      "fmas": 108,
+      "input_broadcasts": 54,
+      "weight_loads": 18,
+      "paired_weight_advances": 9,
+      "integer_multiplies": 1,
+      "arithmetic_shifts": 1,
+      "scalar_stack_references": 4,
+      "vector_loop_stack_references": 0,
+      "separate_tail_mul_add_instructions": 2,
+      "raw_sha256": "e54d3f529abbc210235b64f7f9686e03df6a782f658955a8f621b6785a32f043",
+      "body_sha256": "e54d3f529abbc210235b64f7f9686e03df6a782f658955a8f621b6785a32f043",
+      "managed_stdout_repairs": []
+    },
+    {
+      "tier": "Tier1-OSR",
+      "code_bytes": [
+        3222
+      ],
+      "blocks": [
+        "G_M000_IG21",
+        "G_M000_IG22",
+        "G_M000_IG23",
+        "G_M000_IG24"
+      ],
+      "ordered_fma_group": [
+        [
+          "zmm0",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm6",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm1",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm7",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm2",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm8",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm3",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm9",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm4",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm10",
+          "zmm13",
+          "zmm14"
+        ],
+        [
+          "zmm5",
+          "zmm12",
+          "zmm14"
+        ],
+        [
+          "zmm11",
+          "zmm13",
+          "zmm14"
+        ]
+      ],
+      "groups": 9,
+      "fmas": 108,
+      "input_broadcasts": 54,
+      "weight_loads": 18,
+      "paired_weight_advances": 9,
+      "integer_multiplies": 1,
+      "arithmetic_shifts": 1,
+      "scalar_stack_references": 6,
+      "vector_loop_stack_references": 0,
+      "separate_tail_mul_add_instructions": 6,
+      "raw_sha256": "53aa5c98ec2a33a1a5d8e69c7dcc117a39625033efc33f1519d44ae8c218a570",
+      "body_sha256": "1014fd415504fb507ff353464fbae0d7fd2b34315e88d2802198dc8a4cbb018f",
+      "managed_stdout_repairs": [
+        {
+          "offset": 22233,
+          "removed": "Diagnostic complete: 432 exact ordinary graph outputs.\n"
+        }
+      ]
+    }
+  ],
+  "current_optimized_sizes": [
+    [
+      2176
+    ],
+    [
+      2192
+    ]
+  ],
+  "all_tiers_retained": true,
+  "no_performance_measurement": true,
+  "manual_review": "All three optimized bodies derive row0 from channel>>4, blockStride and channel&15, then row1/row2 by successive rowStride additions. Nine full-tile steps preserve twelve ordered FMA accumulators and paired weight increments. The channel backedge remains outside the branch-free four-block region. Optimized loops have no vector stack references; entry loads import OSR state. Stores retain second-output-block guards. The 3066-byte body retains a runtime kx tail loop with two separate mul/add instructions; the other bodies unroll three tail positions and retain six. These are alternate JIT entry/tiering forms, all kept. Kernel256 compiled identity comes from the normal build, not a new AVX2 capture. Smaller code than M23 and reduced integer work do not establish a speedup."
+}

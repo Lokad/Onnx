@@ -93,7 +93,12 @@ passes in both instruction modes, including captured native comparisons and
 25,600 finite-extreme graph executions.
 [Generated-code inspection](tests/pyannote/convolution-pointer-results/codegen-20260923.md)
 passes all emitted optimized reductions without vector spills in their loops.
-The prospective performance screen is running; the prototype is not integrated.
+Its [complete-call screen](tests/pyannote/convolution-pointer-results/results-20260923.md)
+passes: **3.68% lower component latency**, from 1.459576 s to 1.405921 s.
+All 32 repeatability controls and 12 speed gates pass, and both candidate
+processes are faster than both current processes. All 17,184 call clocks and
+512 preparation clocks are retained. This admits full product/application
+qualification; the prototype is not integrated and supplies no new ORT ratio.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
