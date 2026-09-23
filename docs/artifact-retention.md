@@ -6,13 +6,13 @@ files**. The repository then contained **37.15 GB**, including 23.74 GB in
 to those same models again gives **47.94 GB**. Both measurements are below the
 requested 50 GB limit; units here are decimal GB.
 
-The latest inventory is **40.69 GB**, including **27.25 GB** in artifacts,
+The latest inventory is **40.97 GB**, including **27.52 GB** in artifacts,
 after retaining M54's build, numerical, component and complete Parakeet
-correctness evidence, staging its application comparison and adding the local
-shared-model qualification tools. It has about
-**9.31 GB** of headroom. Receipt:
-`artifacts/repository-retention-20260923/m54-regression-tools-size.json`.
-Counting the model junction again gives 51.48 GB, which counts the same 10.79 GB
+correctness evidence, closing its application and cross-model correctness
+comparisons, and staging the graph performance comparison. It has about
+**9.03 GB** of headroom. Receipt:
+`artifacts/repository-retention-20260923/m54-cross-models-closed-size.json`.
+Counting the model junction again gives 51.75 GB, which counts the same 10.79 GB
 of canonical models twice. The inventory excludes that directory alias and
 counts each actual file path, including hidden Git files and retained worktrees.
 No new model copies were needed. Recheck after subsequent collections.
@@ -81,3 +81,12 @@ Receipts: artifacts/parakeet-wide-entry-cache-retention-20260923,
 artifacts/parakeet-redundant-wide-entry-export-retention-20260923 and
 artifacts/parakeet-wide-entry-runtime-links-20260923. The application timing
 run starts after this maintenance; no cleanup overlaps its measurements.
+
+During subsequent Pyannote correctness qualification, a memory preflight waited
+between completed workers. The supervisor was suspended only after verifying
+its exact PID/birth, completed-worker state and absence of children. Linking
+1,822 identical files in closed campaigns, excluding the active namespace,
+freed another **219.03 MB of tmpfs**. All 14,298 hashes and active inputs were
+verified, then the same supervisor resumed. No inference was stopped or repeated;
+the original memory bound stayed intact. Receipt:
+`artifacts/parakeet-wide-entry-pyannote-preflight-maintenance-20260923`.
