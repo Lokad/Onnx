@@ -70,7 +70,7 @@ current-release ratio.
 Native agreement on these fixtures does not establish general transcription or
 diarization accuracy. [Model support and qualification](docs/model-support.md)
 describes the public APIs, specific exports, accuracy coverage and remaining
-numerical limitations. The audio APIs live in `Lokad.Onnx.Data `; the core NuGet
+numerical limitations. The audio APIs live in `Lokad.Onnx.Data`; the core NuGet
 package contains `Lokad.Onnx` only.
 
 ## Running comparisons
@@ -90,5 +90,5 @@ dotnet tests/Lokad.Onnx.Bench/bin/Release/net10.0/Lokad.Onnx.Bench.dll e5 dinov3
 
 The local harness has its own sampling protocol and packaged ORT dependency;
 its output is a new measurement. `bench.ps1` additionally includes CLI startup.
-Current optimization priority is **Pyannote, then Parakeet**, with a matched
+Current optimization priority is **Parakeet, then Pyannote**, with a matched
 application latency target of Lokad / ORT <= 1.05. Whisper optimization is deferred.

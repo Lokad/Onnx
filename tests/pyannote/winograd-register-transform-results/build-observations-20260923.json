@@ -1,0 +1,70 @@
+{
+  "closure": {
+    "bytes": 200445,
+    "sha256": "0da29afbb3f75e92aeb66cc5ffc2667984f24f034d6aa4275b7e3bd31d21bbec"
+  },
+  "analysis": {
+    "passed": true,
+    "measured": {
+      "Lokad.Onnx.dll": {
+        "bytes": 766976,
+        "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+      }
+    },
+    "built": {
+      "Lokad.Onnx.dll": {
+        "bytes": 767488,
+        "sha256": "eaea0aeaaee7e11d343858619d4db9e127b2551d1024918d606e078b086e084c"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "7797cba1ae68ea08d80012742cf939b524eec582189750fd6d763b5e503fb016"
+      }
+    },
+    "inventory": {
+      "passed": true,
+      "core_methods": 3179,
+      "unchanged_core_methods": 3178,
+      "data_methods": 697,
+      "changed": "Lokad.Onnx.ConvBlockedSpatial::TransformWinogradInputContiguous::Void TransformWinogradInputContiguous(System.ReadOnlySpan`1[System.Single], System.Span`1[System.Single], Int32, Int32, Int32, Int32, Int32)",
+      "public_surface_equal": true
+    },
+    "resources": [
+      {
+        "name": "sdk-version",
+        "samples": 1,
+        "peak_rss": 9310208,
+        "seconds": 0.2604317449731752
+      },
+      {
+        "name": "cli-restore",
+        "samples": 6,
+        "peak_rss": 171286528,
+        "seconds": 1.5541688359808177
+      },
+      {
+        "name": "cli-build",
+        "samples": 63,
+        "peak_rss": 502759424,
+        "seconds": 16.60374036198482
+      },
+      {
+        "name": "inventory",
+        "samples": 4,
+        "peak_rss": 134668288,
+        "seconds": 1.117295093019493
+      }
+    ],
+    "source_prepared": {
+      "bytes": 146951,
+      "sha256": "d99934ab4ce2715cf48b7de61f5760a8d5c52a37adb617c673f133822fe3242a"
+    },
+    "root_product_changed": false,
+    "numerically_qualified": false,
+    "no_performance_measurement": true
+  }
+}
