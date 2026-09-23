@@ -10,14 +10,14 @@ After retaining the next Parakeet candidate's build, numerical, component,
 application, cross-model and follow-up diagnostic evidence, the inventory
 measured **38.62 GB**. After collecting and publishing the complete warmed
 comparison and the closed padding build/screen, the latest inventory is
-**40.14 GB**, including **26.70 GB** in artifacts, after closing the isolated
+**40.22 GB**, including **26.77 GB** in artifacts, after closing the isolated
 Parakeet runtime diagnostic and wide-projection build, numerical and component
-lanes. Counting the model junction again produces **50.93 GB**, but that includes the same 10.79 GB of canonical
+lanes and the complete M53 runtime diagnostic. Counting the model junction again produces **51.00 GB**, but that includes the same 10.79 GB of canonical
 models twice; it is not another stored copy. The actual repository remains
 below 50 GB. Its receipt is
-`artifacts/repository-retention-20260923/m52-closed-size.json`. The padding
+`artifacts/repository-retention-20260923/m53-closed-size.json`. The padding
 diagnostic reused existing binaries and copied no models. Recheck after
-subsequent collections; the actual repository has about 9.86 GB of headroom.
+subsequent collections; the actual repository has about 9.78 GB of headroom.
 
 Current release evidence, current Parakeet experiments, explicit dependencies
 of the active benchmark tools, source files, reports, clocks, audio assets,
@@ -68,3 +68,8 @@ every immutable VM payload path was protected. No model or raw trace was removed
 Receipts are in artifacts/parakeet-isolated-short-kernels-cache-retention-20260923,
 artifacts/parakeet-redundant-padding-export-retention-20260923 and
 artifacts/parakeet-redundant-matrix-inventory-retention-20260923.
+
+M52 VM maintenance retired another 17.94 MB of generated build packages.
+Seven archives matched the protected offline feed; all immutable payloads and
+current runtime files remained intact. Receipt:
+`artifacts/parakeet-wide-projection-cache-retention-20260923`.

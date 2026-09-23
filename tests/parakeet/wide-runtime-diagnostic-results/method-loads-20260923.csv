@@ -1,0 +1,272 @@
+process,ms,call,thread,method,namespace,tier,signature,bytes,address,previous_call,next_call,case,iteration
+current,44.669635,-1,857858,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>)",66,134636995354048,-1,0,,
+current,45.011332,-1,857858,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>,bool)",713,134636995354144,-1,0,,
+current,45.365908,-1,857858,.ctor,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1019,134636995354896,-1,0,,
+current,45.47327,-1,857858,GetTypeInfo,Lokad.Onnx.TensorBase,QuickJitted,class Lokad.Onnx.TensorTypeInfo  (class System.Type),81,134636995355952,-1,0,,
+current,46.502888,-1,857858,.cctor,Lokad.Onnx.TensorBase,QuickJitted,void  (),1923,134636995356064,-1,0,,
+current,46.557851,-1,857858,.ctor,Lokad.Onnx.TensorTypeInfo,QuickJitted,"instance void  (value class Lokad.Onnx.TensorElementType,int32)",63,134636995358032,-1,0,,
+current,46.581527,-1,857858,set_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance void  (value class Lokad.Onnx.TensorElementType),33,134636995358128,-1,0,,
+current,46.596009,-1,857858,set_TypeSize,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance void  (int32),33,134636995358192,-1,0,,
+current,46.860709,-1,857858,get_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance value class Lokad.Onnx.TensorElementType  (),27,134636995358464,-1,0,,
+current,46.891536,-1,857858,get_TypeSize,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance int32  (),27,134636995358512,-1,0,,
+current,46.931967,-1,857858,.ctor,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,"instance void  (class System.Type,int32)",97,134636995358560,-1,0,,
+current,46.971036,-1,857858,set_TensorType,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (class System.Type),42,134636995358688,-1,0,,
+current,46.992088,-1,857858,set_TypeSize,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (int32),33,134636995358752,-1,0,,
+current,47.007551,-1,857858,set_IsString,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (bool),33,134636995358816,-1,0,,
+current,47.890757,-1,857858,.ctor,Lokad.Onnx.TensorBase,QuickJitted,instance void  (class System.Type),52,134636995362096,-1,0,,
+current,48.153886,-1,857858,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJitted,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",905,134636995362176,-1,0,,
+current,48.667192,-1,857858,get_Length,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int64  (),28,134636995363968,-1,0,,
+current,51.015705,-1,857858,get_Intrinsics,Lokad.Onnx.TensorExecutionOptions,QuickJitted,value class Lokad.Onnx.TensorExecutionOptions  (),89,134636995366480,-1,0,,
+current,51.165231,-1,857858,.ctor,Lokad.Onnx.TensorExecutionOptions,QuickJitted,"instance void  (bool,bool,int32)",114,134636995366592,-1,0,,
+current,51.403221,-1,857858,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,instance value class System.Memory`1<!0>  (),48,134636995367136,-1,0,,
+current,52.143571,0,857858,MatMul2D,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",210,134636995368464,-1,1,0,0
+current,53.263966,0,857858,MatMul2DCore,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",3662,134636995368704,-1,1,0,0
+current,53.316505,0,857858,.ctor,Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single],QuickJitted,instance void  (),31,134636995372464,-1,1,0,0
+current,53.384208,0,857858,Validate,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance void  (),290,134636995372528,-1,1,0,0
+current,53.403036,0,857858,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance int32  (),27,134636995372848,-1,1,0,0
+current,53.414524,0,857858,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance bool  (),28,134636995372896,-1,1,0,0
+current,53.428855,0,857858,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance bool  (),28,134636995372944,-1,1,0,0
+current,53.470538,0,857858,StartOpStage,Lokad.Onnx.Profiler,QuickJitted,void  (value class Lokad.Onnx.OpStage),51,134636995372992,-1,1,0,0
+current,53.532282,0,857858,get_Current,Lokad.Onnx.Profiler,QuickJitted,class Lokad.Onnx.ProfilerContext  (),119,134636995373072,-1,1,0,0
+current,53.572833,0,857858,.cctor,Lokad.Onnx.Profiler,QuickJitted,void  (),135,134636995373216,-1,1,0,0
+current,53.880478,0,857858,.ctor,Lokad.Onnx.ProfilerContext,QuickJitted,"instance void  (bool,class Lokad.Onnx.ProfilerContext,bool,bool)",296,134636995373376,-1,1,0,0
+current,54.226402,0,857858,StartOpStage,Lokad.Onnx.ProfilerContext,QuickJitted,instance void  (value class Lokad.Onnx.OpStage),244,134636995373856,-1,1,0,0
+current,54.255826,0,857858,get_Rank,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32  (),31,134636995374144,-1,1,0,0
+current,54.289347,0,857858,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance value class System.ReadOnlySpan`1<int32>  (),56,134636995374208,-1,1,0,0
+current,54.667259,0,857858,HasStandardStrides,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,generic bool  (class Lokad.Onnx.DenseTensor`1<!!0>),162,134636995374288,-1,1,0,0
+current,54.695872,0,857858,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance bool  (),28,134636995374480,-1,1,0,0
+current,54.719027,0,857858,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJitted,int32[]  (value class System.ReadOnlySpan`1<int32>),41,134636995374528,-1,1,0,0
+current,54.953141,0,857858,SharesBackingMemory,Lokad.Onnx.TensorAlias,QuickJitted,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class Lokad.Onnx.Tensor`1<!!0>)",212,134636995374848,-1,1,0,0
+current,55.576955,0,857858,TryGetTouchedRange,Lokad.Onnx.TensorAlias,QuickJitted,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class System.Array&,int64&,int64&)",1306,134636995375088,-1,1,0,0
+current,56.828708,0,857858,get_Storage,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance value class System.Memory`1<!0>  (),356,134636995376432,-1,1,0,0
+current,56.965696,0,857858,GetStorageIndex,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32  (int32[]),366,134636995376912,-1,1,0,0
+current,57.294153,0,857858,GetIndex,Lokad.Onnx.ArrayUtilities,Optimized,"int32  (int32[],value class System.ReadOnlySpan`1<int32>)",121,134636995377312,-1,1,0,0
+current,57.673316,0,857858,ResolvePackedKernel,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"class Lokad.Onnx.DenseTensor`1<float32>  (value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.Tensor`1<float32>,int32)",367,134636995377808,-1,1,0,0
+current,57.70199,0,857858,get_PackedMatMulWeights,Lokad.Onnx.TensorExecutionOptions,QuickJitted,"instance class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>  ()",28,134636995378208,-1,1,0,0
+current,58.058429,0,857858,ResolvePacked,Lokad.Onnx.GraphPacking,QuickJitted,"class Lokad.Onnx.DenseTensor`1<float32>  (class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",1760,134636995378256,-1,1,0,0
+current,58.100683,0,857858,get_CopyReporter,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance class Lokad.Onnx.ICopyAccountant  (),28,134636995380064,-1,1,0,0
+current,58.220854,0,857858,DensifyFloatOperands,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"value class System.ValueTuple`2<class Lokad.Onnx.DenseTensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.ICopyAccountant)",323,134636995380112,-1,1,0,0
+current,58.640169,0,857858,RunFloatMatMulKernel,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",1885,134636995380464,-1,1,0,0
+current,59.522684,0,857858,mm_unsafe_vectorized_intrinsics_2x4,Lokad.Onnx.MathOps,QuickJitted,"void  (int32,int32,int32,float32*,float32*,float32*)",1851,134636995382448,-1,1,0,0
+current,60.27347,0,857858,mm_unsafe_vectorized_intrinsics_2x4,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",870,134636995384352,-1,1,0,0
+current,79.306662,0,857858,mm_unsafe_vectorized_intrinsics,Lokad.Onnx.MathOps,QuickJitted,"void  (int32,int32,int32,float32*,float32*,float32*)",966,134636995385280,-1,1,0,0
+current,80.246394,0,857858,mm_unsafe_vectorized_intrinsics,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",564,134636995386528,-1,1,0,0
+current,3692.076747,194,857864,GetStorageIndex,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int32  (int32[]),571,134636995400032,193,195,1,74
+current,3707.925396,195,857864,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance value class System.ReadOnlySpan`1<int32>  (),56,134636995400688,194,196,1,75
+current,3729.375336,196,857864,GetStorageIndex,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int32  (int32[]),452,134636995400992,195,197,1,76
+current,3732.180118,196,857864,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,instance value class System.Memory`1<!0>  (),48,134636995401472,195,197,1,76
+current,3750.400704,197,857864,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance value class System.ReadOnlySpan`1<int32>  (),31,134636995401792,196,198,1,77
+current,3750.436167,197,857864,get_Rank,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int32  (),31,134636995401856,196,198,1,77
+current,3765.178954,198,857864,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance bool  (),28,134636995401920,197,199,1,78
+current,3801.853168,200,857864,TryGetTouchedRange,Lokad.Onnx.TensorAlias,QuickJittedInstrumented,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class System.Array&,int64&,int64&)",1306,134636995402080,199,201,1,80
+current,3802.047031,200,857864,get_Storage,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance value class System.Memory`1<!0>  (),567,134636995403424,199,201,1,80
+current,3805.449036,200,857864,get_Length,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int64  (),28,134636995405072,199,201,1,80
+current,3805.507264,200,857864,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance bool  (),28,134636995405152,199,201,1,80
+current,3805.559674,200,857864,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],OptimizedTier1,instance value class System.Memory`1<!0>  (),37,134636995405200,199,201,1,80
+current,3841.697447,202,857864,get_Rank,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int32  (),8,134636995405872,201,203,1,82
+current,3841.726571,202,857864,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance bool  (),28,134636995405904,201,203,1,82
+current,3874.5426,204,857864,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance bool  (),5,134636995407344,203,205,1,84
+current,3942.305912,207,857864,SharesBackingMemory,Lokad.Onnx.TensorAlias,QuickJittedInstrumented,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class Lokad.Onnx.Tensor`1<!!0>)",368,134636995411536,206,208,1,87
+current,3942.372763,207,857864,StartOpStage,Lokad.Onnx.Profiler,QuickJittedInstrumented,void  (value class Lokad.Onnx.OpStage),51,134636995411936,206,208,1,87
+current,3942.42361,207,857864,get_Current,Lokad.Onnx.Profiler,QuickJittedInstrumented,class Lokad.Onnx.ProfilerContext  (),117,134636995412016,206,208,1,87
+current,3946.291039,207,857864,StartOpStage,Lokad.Onnx.ProfilerContext,QuickJittedInstrumented,instance void  (value class Lokad.Onnx.OpStage),321,134636995413968,206,208,1,87
+current,3946.313543,207,857864,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance int32  (),27,134636995414336,206,208,1,87
+current,4537.42216,240,857858,mm_unsafe_vectorized_intrinsics_2x4tiled,Lokad.Onnx.MathOps,QuickJitted,"void  (int32,int32,int32,float32*,float32*,float32*)",2330,134636995414384,239,241,2,0
+current,4538.524106,240,857858,mm_unsafe_vectorized_intrinsics_2x4tiled,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",957,134636995416768,239,241,2,0
+current,5011.26629,360,857858,RentScratch,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"generic !!0[]  (int32,value class Lokad.Onnx.TensorExecutionOptions)",150,134636995417776,359,361,3,0
+current,5012.092009,360,857858,get_ScratchReporter,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance class Lokad.Onnx.IScratchAccountant  (),27,134636995419792,359,361,3,0
+current,5012.367626,360,857858,PackPanelsB,Lokad.Onnx.MathOps,QuickJitted,"void  (int32,int32,float32*,float32*)",794,134636995419840,359,361,3,0
+current,5013.246104,360,857858,PackPanelsB,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,float32*,float32*)",334,134636995420672,359,361,3,0
+current,5015.890003,360,857858,.cctor,Lokad.Onnx.AblationSwitches,QuickJitted,void  (),512,134636995421056,359,361,3,0
+current,5015.981511,360,857858,EnvDefaultOn,Lokad.Onnx.AblationSwitches,QuickJitted,bool  (class System.String),73,134636995421600,359,361,3,0
+current,5016.011647,360,857858,EnvIsSet,Lokad.Onnx.AblationSwitches,QuickJitted,bool  (class System.String),66,134636995421696,359,361,3,0
+current,5017.30323,360,857858,mm_unsafe_vectorized_intrinsics_2x4packed_bump,Lokad.Onnx.MathOps,QuickJitted,"void  (int32,int32,int32,float32*,float32*,float32*)",4105,134636995421792,359,361,3,0
+current,5018.527932,360,857858,mm_unsafe_vectorized_intrinsics_2x4packed_bump,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",1577,134636995425952,359,361,3,0
+current,7955.707902,615,857864,TryGetTouchedRange,Lokad.Onnx.TensorAlias,OptimizedTier1,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class System.Array&,int64&,int64&)",1503,134636995432256,614,616,5,15
+current,7958.396618,616,857864,get_Storage,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance value class System.Memory`1<!0>  (),251,134636995433808,615,617,5,16
+current,7959.174545,616,857864,get_Length,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int64  (),5,134636995434704,615,617,5,16
+current,7959.202387,616,857864,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance bool  (),5,134636995434736,615,617,5,16
+current,7959.525916,616,857864,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance bool  (),5,134636995435008,615,617,5,16
+current,7964.010338,617,857864,mm_unsafe_vectorized_intrinsics,Lokad.Onnx.MathOps,QuickJittedInstrumented,"void  (int32,int32,int32,float32*,float32*,float32*)",966,134636995436048,616,618,5,17
+current,7976.209037,620,857864,MatMul2D,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",210,134636995441136,619,621,5,20
+current,7976.957879,620,857864,MatMul2DCore,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",3948,134636995441376,619,621,5,20
+current,7977.000654,620,857864,.ctor,Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single],QuickJittedInstrumented,instance void  (),31,134636995445424,619,621,5,20
+current,7977.091572,620,857864,Validate,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance void  (),340,134636995445520,619,621,5,20
+current,7977.231643,620,857864,HasStandardStrides,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,generic bool  (class Lokad.Onnx.DenseTensor`1<!!0>),192,134636995445888,619,621,5,20
+current,7977.26218,620,857864,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJittedInstrumented,int32[]  (value class System.ReadOnlySpan`1<int32>),41,134636995446112,619,621,5,20
+current,7977.451045,620,857864,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJittedInstrumented,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",905,134636995446176,619,621,5,20
+current,7981.739541,621,857864,SharesBackingMemory,Lokad.Onnx.TensorAlias,OptimizedTier1,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class Lokad.Onnx.Tensor`1<!!0>)",180,134636995448544,620,622,5,21
+current,7985.40181,622,857864,ResolvePackedKernel,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"class Lokad.Onnx.DenseTensor`1<float32>  (value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.Tensor`1<float32>,int32)",494,134636995450016,621,623,5,22
+current,7985.429692,622,857864,get_PackedMatMulWeights,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,"instance class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>  ()",28,134636995450544,621,623,5,22
+current,7985.695033,622,857864,ResolvePacked,Lokad.Onnx.GraphPacking,QuickJittedInstrumented,"class Lokad.Onnx.DenseTensor`1<float32>  (class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",1756,134636995450592,621,623,5,22
+current,7985.720632,622,857864,get_CopyReporter,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance class Lokad.Onnx.ICopyAccountant  (),28,134636995452384,621,623,5,22
+current,7985.877449,622,857864,DensifyFloatOperands,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"value class System.ValueTuple`2<class Lokad.Onnx.DenseTensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.ICopyAccountant)",495,134636995452432,621,623,5,22
+current,7986.455062,622,857864,StartOpStage,Lokad.Onnx.Profiler,OptimizedTier1,void  (value class Lokad.Onnx.OpStage),392,134636995453024,621,623,5,22
+current,7989.352705,623,857864,get_Current,Lokad.Onnx.Profiler,OptimizedTier1,class Lokad.Onnx.ProfilerContext  (),196,134636995453456,622,624,5,23
+current,7989.799791,623,857864,StartOpStage,Lokad.Onnx.ProfilerContext,OptimizedTier1,instance void  (value class Lokad.Onnx.OpStage),206,134636995453888,622,624,5,23
+current,7989.844208,623,857864,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance int32  (),4,134636995454144,622,624,5,23
+current,7990.306778,623,857864,RunFloatMatMulKernel,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",2713,134636995454176,622,624,5,23
+current,7990.63915,623,857864,mm_unsafe_vectorized_intrinsics_2x4,Lokad.Onnx.MathOps,QuickJittedInstrumented,"void  (int32,int32,int32,float32*,float32*,float32*)",1851,134636995456992,622,624,5,23
+current,8089.333902,644,857864,RentScratch,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"generic !!0[]  (int32,value class Lokad.Onnx.TensorExecutionOptions)",251,134636995492400,643,645,5,44
+current,8089.601066,644,857864,get_ScratchReporter,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance class Lokad.Onnx.IScratchAccountant  (),27,134636995493952,643,645,5,44
+current,8089.790793,644,857864,PackPanelsB,Lokad.Onnx.MathOps,QuickJittedInstrumented,"void  (int32,int32,float32*,float32*)",794,134636995494000,643,645,5,44
+current,8090.327364,644,857864,mm_unsafe_vectorized_intrinsics_2x4packed_bump,Lokad.Onnx.MathOps,QuickJittedInstrumented,"void  (int32,int32,int32,float32*,float32*,float32*)",4105,134636995494832,643,645,5,44
+current,8092.071121,645,857858,PackPanelsB,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,float32*,float32*)",334,134636995498976,644,646,5,45
+current,8093.430928,645,857858,mm_unsafe_vectorized_intrinsics_2x4packed_bump,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",1577,134636995499360,644,646,5,45
+current,8110.300681,650,857864,MatMul2D,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",179,134636995501376,649,651,5,50
+current,8135.194349,655,857864,MatMul2DCore,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",8462,134636995501600,654,656,5,55
+current,8138.200015,656,857864,.ctor,Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single],OptimizedTier1,instance void  (),1,134636995510576,655,657,5,56
+current,8138.387128,656,857864,Validate,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance void  (),206,134636995510608,655,657,5,56
+current,8139.381642,656,857864,HasStandardStrides,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,generic bool  (class Lokad.Onnx.DenseTensor`1<!!0>),509,134636995510848,655,657,5,56
+current,8139.448162,656,857864,GetStrides,Lokad.Onnx.ArrayUtilities,OptimizedTier1,int32[]  (value class System.ReadOnlySpan`1<int32>),8,134636995511408,655,657,5,56
+current,8139.983903,656,857864,GetStrides,Lokad.Onnx.ArrayUtilities,OptimizedTier1,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",470,134636995511456,655,657,5,56
+current,8147.720894,657,857864,ResolvePackedKernel,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"class Lokad.Onnx.DenseTensor`1<float32>  (value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.Tensor`1<float32>,int32)",189,134636995513536,656,658,5,57
+current,8147.77104,657,857864,get_PackedMatMulWeights,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,"instance class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>  ()",5,134636995513760,656,658,5,57
+current,8148.506852,657,857864,ResolvePacked,Lokad.Onnx.GraphPacking,OptimizedTier1,"class Lokad.Onnx.DenseTensor`1<float32>  (class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",508,134636995513792,656,658,5,57
+current,8151.173996,658,857864,get_CopyReporter,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance class Lokad.Onnx.ICopyAccountant  (),5,134636995514352,657,659,5,58
+current,8151.484586,658,857864,DensifyFloatOperands,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"value class System.ValueTuple`2<class Lokad.Onnx.DenseTensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.ICopyAccountant)",189,134636995514384,657,659,5,58
+current,8158.485233,659,857864,RunFloatMatMulKernel,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",3554,134636995514688,658,660,5,59
+current,8212.334933,677,857864,mm_unsafe_vectorized_intrinsics_2x4packed_bump,Lokad.Onnx.MathOps,OptimizedTier1,"void  (int32,int32,int32,float32*,float32*,float32*)",1327,134636995523936,676,678,5,77
+current,8373.646944,720,857858,mm_unsafe_vectorized_intrinsics,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",564,134636995525600,719,721,6,0
+current,9350.022511,777,857864,mm_unsafe_vectorized_intrinsics,Lokad.Onnx.MathOps,OptimizedTier1,"void  (int32,int32,int32,float32*,float32*,float32*)",316,134636995531360,776,778,6,57
+current,13050.334537,1080,857858,mm_unsafe_vectorized_intrinsics_3x4packed,Lokad.Onnx.MathOps,QuickJitted,"void  (int32,int32,int32,float32*,float32*,float32*)",4796,134636995548256,1079,1081,9,0
+current,13051.69178,1080,857858,mm_unsafe_vectorized_intrinsics_3x4packed,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",1846,134636995553088,1079,1081,9,0
+current,14066.618129,1133,857864,RentScratch,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"generic !!0[]  (int32,value class Lokad.Onnx.TensorExecutionOptions)",974,134636995557920,1132,1134,9,53
+current,14066.687874,1133,857864,get_ScratchReporter,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance class Lokad.Onnx.IScratchAccountant  (),4,134636995558928,1132,1134,9,53
+current,14067.190705,1133,857864,PackPanelsB,Lokad.Onnx.MathOps,OptimizedTier1,"void  (int32,int32,float32*,float32*)",295,134636995558976,1132,1134,9,53
+current,14620.58751,1162,857864,mm_unsafe_vectorized_intrinsics_3x4packed,Lokad.Onnx.MathOps,QuickJittedInstrumented,"void  (int32,int32,int32,float32*,float32*,float32*)",4796,134636995561040,1161,1163,9,82
+current,14641.453203,1163,857858,mm_unsafe_vectorized_intrinsics_3x4packed,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",1846,134636995565888,1162,1164,9,83
+current,15193.762884,1192,857864,mm_unsafe_vectorized_intrinsics_3x4packed,Lokad.Onnx.MathOps,OptimizedTier1,"void  (int32,int32,int32,float32*,float32*,float32*)",1629,134636995567808,1191,1193,9,112
+current,17689.152484,1326,857864,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>)",66,134636995591376,1325,1327,11,6
+current,17689.396874,1326,857864,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>,bool)",713,134636995591472,1325,1327,11,6
+current,17692.365394,1327,857864,.ctor,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1019,134636995592224,1326,1328,11,7
+current,17692.42256,1327,857864,GetTypeInfo,Lokad.Onnx.TensorBase,QuickJittedInstrumented,class Lokad.Onnx.TensorTypeInfo  (class System.Type),65,134636995593280,1326,1328,11,7
+current,17696.292304,1327,857864,get_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJittedInstrumented,instance value class Lokad.Onnx.TensorElementType  (),27,134636995594400,1326,1328,11,7
+current,17696.317953,1327,857864,.ctor,Lokad.Onnx.TensorBase,QuickJittedInstrumented,instance void  (class System.Type),52,134636995594448,1326,1328,11,7
+current,18231.850406,1440,857858,mm_unsafe_vectorized_intrinsics_2x4,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",870,134636995594720,1439,1441,12,0
+current,20211.098339,1550,857864,mm_unsafe_vectorized_intrinsics_2x4,Lokad.Onnx.MathOps,OptimizedTier1,"void  (int32,int32,int32,float32*,float32*,float32*)",679,134636995595648,1549,1551,12,110
+current,22571.742766,1709,857864,mm_unsafe_vectorized_intrinsics_2x4tiled,Lokad.Onnx.MathOps,QuickJittedInstrumented,"void  (int32,int32,int32,float32*,float32*,float32*)",2330,134636995598416,1708,1710,14,29
+current,22574.176237,1710,857858,mm_unsafe_vectorized_intrinsics_2x4tiled,Lokad.Onnx.MathOps,OptimizedTier1OSR,"void  (int32,int32,int32,float32*,float32*,float32*)",957,134636995600800,1709,1711,14,30
+current,22686.238647,1739,857864,mm_unsafe_vectorized_intrinsics_2x4tiled,Lokad.Onnx.MathOps,OptimizedTier1,"void  (int32,int32,int32,float32*,float32*,float32*)",752,134636995601824,1738,1740,14,59
+candidate,46.945821,-1,857963,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>)",66,137008740244928,-1,0,,
+candidate,47.28263,-1,857963,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>,bool)",713,137008740245024,-1,0,,
+candidate,47.636065,-1,857963,.ctor,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1019,137008740245776,-1,0,,
+candidate,47.740232,-1,857963,GetTypeInfo,Lokad.Onnx.TensorBase,QuickJitted,class Lokad.Onnx.TensorTypeInfo  (class System.Type),81,137008740246832,-1,0,,
+candidate,48.785033,-1,857963,.cctor,Lokad.Onnx.TensorBase,QuickJitted,void  (),1923,137008740246944,-1,0,,
+candidate,48.841448,-1,857963,.ctor,Lokad.Onnx.TensorTypeInfo,QuickJitted,"instance void  (value class Lokad.Onnx.TensorElementType,int32)",63,137008740248912,-1,0,,
+candidate,48.864663,-1,857963,set_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance void  (value class Lokad.Onnx.TensorElementType),33,137008740249008,-1,0,,
+candidate,48.879616,-1,857963,set_TypeSize,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance void  (int32),33,137008740249072,-1,0,,
+candidate,49.148122,-1,857963,get_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance value class Lokad.Onnx.TensorElementType  (),27,137008740249344,-1,0,,
+candidate,49.174923,-1,857963,get_TypeSize,Lokad.Onnx.TensorTypeInfo,QuickJitted,instance int32  (),27,137008740249392,-1,0,,
+candidate,49.215384,-1,857963,.ctor,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,"instance void  (class System.Type,int32)",97,137008740249440,-1,0,,
+candidate,49.253822,-1,857963,set_TensorType,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (class System.Type),42,137008740249568,-1,0,,
+candidate,49.274673,-1,857963,set_TypeSize,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (int32),33,137008740249632,-1,0,,
+candidate,49.31886,-1,857963,set_IsString,Lokad.Onnx.TensorElementTypeInfo,QuickJitted,instance void  (bool),33,137008740249696,-1,0,,
+candidate,50.180303,-1,857963,.ctor,Lokad.Onnx.TensorBase,QuickJitted,instance void  (class System.Type),52,137008740252976,-1,0,,
+candidate,50.448379,-1,857963,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJitted,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",905,137008740253056,-1,0,,
+candidate,50.954424,-1,857963,get_Length,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int64  (),28,137008740254848,-1,0,,
+candidate,53.309376,-1,857963,get_Intrinsics,Lokad.Onnx.TensorExecutionOptions,QuickJitted,value class Lokad.Onnx.TensorExecutionOptions  (),89,137008740257360,-1,0,,
+candidate,53.43086,-1,857963,.ctor,Lokad.Onnx.TensorExecutionOptions,QuickJitted,"instance void  (bool,bool,int32)",114,137008740257472,-1,0,,
+candidate,53.658234,-1,857963,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],QuickJitted,instance value class System.Memory`1<!0>  (),48,137008740258016,-1,0,,
+candidate,54.262378,0,857963,MatMul2D,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",210,137008740259344,-1,1,0,0
+candidate,55.379408,0,857963,MatMul2DCore,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",3662,137008740259584,-1,1,0,0
+candidate,55.423745,0,857963,.ctor,Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single],QuickJitted,instance void  (),31,137008740263344,-1,1,0,0
+candidate,55.492979,0,857963,Validate,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance void  (),290,137008740263408,-1,1,0,0
+candidate,55.512449,0,857963,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance int32  (),27,137008740263728,-1,1,0,0
+candidate,55.524327,0,857963,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance bool  (),28,137008740263776,-1,1,0,0
+candidate,55.538468,0,857963,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance bool  (),28,137008740263824,-1,1,0,0
+candidate,55.580582,0,857963,StartOpStage,Lokad.Onnx.Profiler,QuickJitted,void  (value class Lokad.Onnx.OpStage),51,137008740263872,-1,1,0,0
+candidate,55.642546,0,857963,get_Current,Lokad.Onnx.Profiler,QuickJitted,class Lokad.Onnx.ProfilerContext  (),119,137008740263952,-1,1,0,0
+candidate,55.682756,0,857963,.cctor,Lokad.Onnx.Profiler,QuickJitted,void  (),135,137008740264096,-1,1,0,0
+candidate,55.993627,0,857963,.ctor,Lokad.Onnx.ProfilerContext,QuickJitted,"instance void  (bool,class Lokad.Onnx.ProfilerContext,bool,bool)",296,137008740264256,-1,1,0,0
+candidate,56.343686,0,857963,StartOpStage,Lokad.Onnx.ProfilerContext,QuickJitted,instance void  (value class Lokad.Onnx.OpStage),244,137008740264736,-1,1,0,0
+candidate,56.374653,0,857963,get_Rank,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32  (),31,137008740265024,-1,1,0,0
+candidate,56.411028,0,857963,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance value class System.ReadOnlySpan`1<int32>  (),56,137008740265088,-1,1,0,0
+candidate,56.773967,0,857963,HasStandardStrides,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,generic bool  (class Lokad.Onnx.DenseTensor`1<!!0>),162,137008740265168,-1,1,0,0
+candidate,56.803792,0,857963,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance bool  (),28,137008740265360,-1,1,0,0
+candidate,56.828489,0,857963,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJitted,int32[]  (value class System.ReadOnlySpan`1<int32>),41,137008740265408,-1,1,0,0
+candidate,57.071036,0,857963,SharesBackingMemory,Lokad.Onnx.TensorAlias,QuickJitted,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class Lokad.Onnx.Tensor`1<!!0>)",212,137008740265728,-1,1,0,0
+candidate,57.709782,0,857963,TryGetTouchedRange,Lokad.Onnx.TensorAlias,QuickJitted,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class System.Array&,int64&,int64&)",1306,137008740265968,-1,1,0,0
+candidate,58.992162,0,857963,get_Storage,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance value class System.Memory`1<!0>  (),356,137008740267312,-1,1,0,0
+candidate,59.127547,0,857963,GetStorageIndex,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,instance int32  (int32[]),366,137008740267792,-1,1,0,0
+candidate,59.467001,0,857963,GetIndex,Lokad.Onnx.ArrayUtilities,Optimized,"int32  (int32[],value class System.ReadOnlySpan`1<int32>)",121,137008740268192,-1,1,0,0
+candidate,59.851943,0,857963,ResolvePackedKernel,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"class Lokad.Onnx.DenseTensor`1<float32>  (value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.Tensor`1<float32>,int32)",367,137008740268688,-1,1,0,0
+candidate,59.879955,0,857963,get_PackedMatMulWeights,Lokad.Onnx.TensorExecutionOptions,QuickJitted,"instance class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>  ()",28,137008740269088,-1,1,0,0
+candidate,60.240641,0,857963,ResolvePacked,Lokad.Onnx.GraphPacking,QuickJitted,"class Lokad.Onnx.DenseTensor`1<float32>  (class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",1760,137008740269136,-1,1,0,0
+candidate,60.273621,0,857963,get_CopyReporter,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance class Lokad.Onnx.ICopyAccountant  (),28,137008740270944,-1,1,0,0
+candidate,60.396857,0,857963,DensifyFloatOperands,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"value class System.ValueTuple`2<class Lokad.Onnx.DenseTensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.ICopyAccountant)",323,137008740270992,-1,1,0,0
+candidate,60.485551,0,857963,RunIsolatedShortWideKernel,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",333,137008740271344,-1,1,0,0
+candidate,60.719345,0,857963,RunIsolatedShortWidePackedRows,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",605,137008740271712,-1,1,0,0
+candidate,60.819316,0,857963,RentScratch,Lokad.Onnx.Tensor`1[System.Single],QuickJitted,"generic !!0[]  (int32,value class Lokad.Onnx.TensorExecutionOptions)",150,137008740272368,-1,1,0,0
+candidate,61.560778,0,857963,get_ScratchReporter,Lokad.Onnx.TensorExecutionOptions,QuickJitted,instance class Lokad.Onnx.IScratchAccountant  (),27,137008740274384,-1,1,0,0
+candidate,62.765129,0,857963,ShortWidePackPanelsB,Lokad.Onnx.MathOps,Optimized,"void  (int32,int32,float32*,float32*)",292,137008740274432,-1,1,0,0
+candidate,65.215646,0,857963,.cctor,Lokad.Onnx.AblationSwitches,QuickJitted,void  (),512,137008740274752,-1,1,0,0
+candidate,65.335217,0,857963,EnvDefaultOn,Lokad.Onnx.AblationSwitches,QuickJitted,bool  (class System.String),73,137008740275296,-1,1,0,0
+candidate,65.369058,0,857963,EnvIsSet,Lokad.Onnx.AblationSwitches,QuickJitted,bool  (class System.String),66,137008740275392,-1,1,0,0
+candidate,67.420832,0,857963,ShortWideMultiply3Rows,Lokad.Onnx.MathOps,Optimized,"void  (int32,int32,int32,float32*,float32*,float32*)",1592,137008740275488,-1,1,0,0
+candidate,1681.362363,360,857963,ShortWideMultiply2Rows,Lokad.Onnx.MathOps,Optimized,"void  (int32,int32,int32,float32*,float32*,float32*)",1341,137008740290688,359,361,3,0
+candidate,2677.933146,448,857969,GetStorageIndex,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int32  (int32[]),571,137008740292640,447,449,3,88
+candidate,2690.510441,449,857969,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance value class System.ReadOnlySpan`1<int32>  (),56,137008740293296,448,450,3,89
+candidate,2702.479636,450,857969,GetStorageIndex,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int32  (int32[]),452,137008740293472,449,451,3,90
+candidate,2705.361255,450,857969,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,instance value class System.Memory`1<!0>  (),48,137008740293952,449,451,3,90
+candidate,2714.538066,451,857969,get_Rank,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int32  (),31,137008740294272,450,452,3,91
+candidate,2726.668524,452,857969,get_Dimensions,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance value class System.ReadOnlySpan`1<int32>  (),31,137008740294448,451,453,3,92
+candidate,2749.497346,454,857969,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance bool  (),28,137008740294512,453,455,3,94
+candidate,2750.025675,454,857969,TryGetTouchedRange,Lokad.Onnx.TensorAlias,QuickJittedInstrumented,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class System.Array&,int64&,int64&)",1306,137008740294608,453,455,3,94
+candidate,2750.18125,454,857969,get_Storage,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance value class System.Memory`1<!0>  (),567,137008740295952,453,455,3,94
+candidate,2753.584748,454,857969,get_Length,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance int64  (),28,137008740297600,453,455,3,94
+candidate,2753.712492,454,857969,get_Buffer,Lokad.Onnx.DenseTensor`1[System.Single],OptimizedTier1,instance value class System.Memory`1<!0>  (),37,137008740297680,453,455,3,94
+candidate,2778.361156,456,857969,get_Rank,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int32  (),8,137008740298352,455,457,3,96
+candidate,2778.391892,456,857969,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,instance bool  (),28,137008740298384,455,457,3,96
+candidate,2779.432416,456,857969,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance bool  (),28,137008740299824,455,457,3,96
+candidate,2841.63147,461,857969,SharesBackingMemory,Lokad.Onnx.TensorAlias,QuickJittedInstrumented,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class Lokad.Onnx.Tensor`1<!!0>)",368,137008740305136,460,462,3,101
+candidate,2841.660073,461,857969,StartOpStage,Lokad.Onnx.Profiler,QuickJittedInstrumented,void  (value class Lokad.Onnx.OpStage),51,137008740305536,460,462,3,101
+candidate,2841.700154,461,857969,get_Current,Lokad.Onnx.Profiler,QuickJittedInstrumented,class Lokad.Onnx.ProfilerContext  (),117,137008740305616,460,462,3,101
+candidate,2845.790641,461,857969,StartOpStage,Lokad.Onnx.ProfilerContext,QuickJittedInstrumented,instance void  (value class Lokad.Onnx.OpStage),320,137008740306480,460,462,3,101
+candidate,2845.815669,461,857969,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance int32  (),27,137008740306832,460,462,3,101
+candidate,4817.118592,720,857963,ShortWideMultiplyRemainder,Lokad.Onnx.MathOps,Optimized,"void  (int32,int32,int32,float32*,float32*,float32*)",302,137008740310240,719,721,6,0
+candidate,4850.66824,722,857969,get_UseIntrinsics,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance bool  (),5,137008740310576,721,723,6,2
+candidate,4852.83681,722,857969,TryGetTouchedRange,Lokad.Onnx.TensorAlias,OptimizedTier1,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class System.Array&,int64&,int64&)",1502,137008740310624,721,723,6,2
+candidate,4855.621502,723,857969,get_Storage,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance value class System.Memory`1<!0>  (),251,137008740312176,722,724,6,3
+candidate,4859.435211,723,857969,get_Length,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance int64  (),5,137008740313072,722,724,6,3
+candidate,4859.827535,723,857969,get_IsReversedStride,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,instance bool  (),5,137008740313344,722,724,6,3
+candidate,4860.707195,723,857969,get_UseSimd,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance bool  (),5,137008740314112,722,724,6,3
+candidate,4874.405005,723,857969,MatMul2D,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",210,137008740319888,722,724,6,3
+candidate,4875.190142,723,857969,MatMul2DCore,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",3948,137008740320128,722,724,6,3
+candidate,4875.230533,723,857969,.ctor,Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single],QuickJittedInstrumented,instance void  (),31,137008740324176,722,724,6,3
+candidate,4875.343044,723,857969,Validate,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance void  (),340,137008740324272,722,724,6,3
+candidate,4878.439237,723,857969,HasStandardStrides,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,generic bool  (class Lokad.Onnx.DenseTensor`1<!!0>),192,137008740324640,722,724,6,3
+candidate,4878.465747,723,857969,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJittedInstrumented,int32[]  (value class System.ReadOnlySpan`1<int32>),41,137008740324864,722,724,6,3
+candidate,4878.657738,723,857969,GetStrides,Lokad.Onnx.ArrayUtilities,QuickJittedInstrumented,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",905,137008740324928,722,724,6,3
+candidate,4880.003063,723,857969,SharesBackingMemory,Lokad.Onnx.TensorAlias,OptimizedTier1,"generic bool  (class Lokad.Onnx.Tensor`1<!!0>,class Lokad.Onnx.Tensor`1<!!0>)",180,137008740327296,722,724,6,3
+candidate,4884.038697,723,857969,ResolvePackedKernel,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"class Lokad.Onnx.DenseTensor`1<float32>  (value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.Tensor`1<float32>,int32)",494,137008740328768,722,724,6,3
+candidate,4884.06687,723,857969,get_PackedMatMulWeights,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,"instance class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>  ()",28,137008740329296,722,724,6,3
+candidate,4884.364179,723,857969,ResolvePacked,Lokad.Onnx.GraphPacking,QuickJittedInstrumented,"class Lokad.Onnx.DenseTensor`1<float32>  (class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",1756,137008740329344,722,724,6,3
+candidate,4887.404728,724,857969,get_CopyReporter,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance class Lokad.Onnx.ICopyAccountant  (),28,137008740331344,723,725,6,4
+candidate,4887.655468,724,857969,DensifyFloatOperands,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"value class System.ValueTuple`2<class Lokad.Onnx.DenseTensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.ICopyAccountant)",495,137008740331392,723,725,6,4
+candidate,4888.335697,724,857969,StartOpStage,Lokad.Onnx.Profiler,OptimizedTier1,void  (value class Lokad.Onnx.OpStage),391,137008740331984,723,725,6,4
+candidate,4891.551821,724,857969,get_Current,Lokad.Onnx.Profiler,OptimizedTier1,class Lokad.Onnx.ProfilerContext  (),196,137008740332416,723,725,6,4
+candidate,4892.003324,724,857969,StartOpStage,Lokad.Onnx.ProfilerContext,OptimizedTier1,instance void  (value class Lokad.Onnx.OpStage),205,137008740332848,723,725,6,4
+candidate,4892.045138,724,857969,get_MaxDegreeOfParallelism,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance int32  (),4,137008740333104,723,725,6,4
+candidate,4892.154924,724,857969,RunIsolatedShortWideKernel,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",450,137008740333136,723,725,6,4
+candidate,4892.389629,724,857969,RunIsolatedShortWidePackedRows,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",772,137008740333616,723,725,6,4
+candidate,4892.507247,724,857969,RentScratch,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"generic !!0[]  (int32,value class Lokad.Onnx.TensorExecutionOptions)",251,137008740334448,723,725,6,4
+candidate,4893.24994,724,857969,get_ScratchReporter,Lokad.Onnx.TensorExecutionOptions,QuickJittedInstrumented,instance class Lokad.Onnx.IScratchAccountant  (),27,137008740336304,723,725,6,4
+candidate,5412.59394,753,857969,MatMul2D,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions)",179,137008740351520,752,754,6,33
+candidate,5430.156957,753,857969,MatMul2DCore,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"class Lokad.Onnx.Tensor`1<float32>  (class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.Tensor`1<float32>,class Lokad.Onnx.DenseTensor`1<float32>,value class Lokad.Onnx.TensorExecutionOptions,bool)",6831,137008740351744,752,754,6,33
+candidate,5433.39176,753,857969,.ctor,Lokad.Onnx.Tensor`1+<>c__DisplayClass419_0[System.Single],OptimizedTier1,instance void  (),1,137008740359008,752,754,6,33
+candidate,5433.561997,753,857969,Validate,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance void  (),206,137008740359040,752,754,6,33
+candidate,5434.543331,753,857969,HasStandardStrides,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,generic bool  (class Lokad.Onnx.DenseTensor`1<!!0>),509,137008740359296,752,754,6,33
+candidate,5437.390678,754,857969,GetStrides,Lokad.Onnx.ArrayUtilities,OptimizedTier1,int32[]  (value class System.ReadOnlySpan`1<int32>),8,137008740359856,753,755,6,34
+candidate,5437.981031,754,857969,GetStrides,Lokad.Onnx.ArrayUtilities,OptimizedTier1,"int32[]  (value class System.ReadOnlySpan`1<int32>,bool)",470,137008740359904,753,755,6,34
+candidate,5446.409941,754,857969,ResolvePackedKernel,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"class Lokad.Onnx.DenseTensor`1<float32>  (value class Lokad.Onnx.TensorExecutionOptions,class Lokad.Onnx.Tensor`1<float32>,int32)",187,137008740361984,753,755,6,34
+candidate,5452.954491,754,857969,RunIsolatedShortWidePackedRows,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"void  (int32,int32,int32,float32*,float32*,float32*,value class Lokad.Onnx.TensorExecutionOptions)",2971,137008740362208,753,755,6,34
+candidate,5456.441084,754,857969,RentScratch,Lokad.Onnx.Tensor`1[System.Single],OptimizedTier1,"generic !!0[]  (int32,value class Lokad.Onnx.TensorExecutionOptions)",974,137008740365248,753,755,6,34
+candidate,5460.324589,754,857969,get_ScratchReporter,Lokad.Onnx.TensorExecutionOptions,OptimizedTier1,instance class Lokad.Onnx.IScratchAccountant  (),4,137008740367168,753,755,6,34
+candidate,10103.434705,1109,857969,ResolvePacked,Lokad.Onnx.GraphPacking,OptimizedTier1,"class Lokad.Onnx.DenseTensor`1<float32>  (class System.Collections.Generic.IReadOnlyDictionary`2<float32[],class Lokad.Onnx.PackedMatMulWeight>,class Lokad.Onnx.Tensor`1<float32>)",508,137008740404160,1108,1110,9,29
+candidate,15441.018994,1564,857969,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>)",66,137008740434816,1563,1565,13,4
+candidate,15441.22803,1564,857969,.ctor,Lokad.Onnx.DenseTensor`1[System.Single],QuickJittedInstrumented,"instance void  (value class System.Memory`1<!0>,value class System.ReadOnlySpan`1<int32>,bool)",713,137008740434912,1563,1565,13,4
+candidate,15444.516935,1565,857969,.ctor,Lokad.Onnx.Tensor`1[System.Single],QuickJittedInstrumented,"instance void  (value class System.ReadOnlySpan`1<int32>,bool)",1019,137008740435664,1564,1566,13,5
+candidate,15444.584797,1565,857969,GetTypeInfo,Lokad.Onnx.TensorBase,QuickJittedInstrumented,class Lokad.Onnx.TensorTypeInfo  (class System.Type),65,137008740436720,1564,1566,13,5
+candidate,15446.949935,1565,857969,get_ElementType,Lokad.Onnx.TensorTypeInfo,QuickJittedInstrumented,instance value class Lokad.Onnx.TensorElementType  (),27,137008740437824,1564,1566,13,5
+candidate,15446.982233,1565,857969,.ctor,Lokad.Onnx.TensorBase,QuickJittedInstrumented,instance void  (class System.Type),52,137008740437872,1564,1566,13,5
