@@ -190,7 +190,9 @@ failed exactness for two ResNet-50 feature vectors, although both pass the
 original ORT tolerance. The generic arithmetic also affects eligible ResNet
 convolutions. That failure is retained; a separate qualification explicitly
 accounts for this scope while keeping native limits and unaffected-model bits
-unchanged. Complete application timing has not started.
+unchanged. The [combined shared/e5 qualification](tests/pyannote/winograd-product-results/shared-20260923.md)
+now passes all 166 arrays per product, reusing the three completed jobs and
+running only missing candidate e5. Complete application timing has not started.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,

@@ -1,0 +1,3790 @@
+{
+  "closure": "b0b4294006984c173c7deca349add5fd313a91ebc271ca780bf4653c94b42c0a",
+  "passed": true,
+  "identities": {
+    "selected": {
+      "Lokad.Onnx.dll": {
+        "bytes": 756736,
+        "sha256": "208371f620fcfce5ff709db54525fa158b4c9442685430afbeb730619e1ded81"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "b935837024c3ffd67e322ba1fe44405b24b7da221779cf00856f090df08693f5"
+      }
+    },
+    "candidate": {
+      "Lokad.Onnx.dll": {
+        "bytes": 766976,
+        "sha256": "521bae1702849ca23dda586515e7cbabaac2d1eabdff04dc90a7ba76059e93fb"
+      },
+      "Lokad.Onnx.Data.dll": {
+        "bytes": 143872,
+        "sha256": "f3b9aa81ee9766797e95216714dec559c5d8b020f8df510cf5f7ee0dda82693a"
+      }
+    }
+  },
+  "consumer": {
+    "bytes": 33280,
+    "sha256": "a50d3e965cf480844559b1f5856e3de318b5c8a269742a9e6504afb9cee6c8c0"
+  },
+  "results": {
+    "selected-shared": {
+      "passed": true,
+      "arrays": 106,
+      "values": 1286766,
+      "rows": [
+        {
+          "model": "dinov3",
+          "scenario": "constant",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 77184,
+          "maximum": 7.510185241699219e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "dinov3",
+          "scenario": "constant",
+          "step": 0,
+          "name": "pooler_output",
+          "values": 384,
+          "maximum": 7.510185241699219e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "dinov3",
+          "scenario": "ramp",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 77184,
+          "maximum": 1.9803643226623535e-05,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "dinov3",
+          "scenario": "ramp",
+          "step": 0,
+          "name": "pooler_output",
+          "values": 384,
+          "maximum": 3.7178397178649902e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "resnet50",
+          "scenario": "constant",
+          "step": 0,
+          "name": "output",
+          "values": 2048,
+          "maximum": 3.2782554626464844e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": true
+        },
+        {
+          "model": "resnet50",
+          "scenario": "ramp",
+          "step": 0,
+          "name": "output",
+          "values": 2048,
+          "maximum": 4.291534423828125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": true
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "logits",
+          "values": 201028,
+          "maximum": 7.547453851144423e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.0.key",
+          "values": 3072,
+          "maximum": 2.0966189084834232e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.0.value",
+          "values": 3072,
+          "maximum": 6.784782377681187e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.1.key",
+          "values": 3072,
+          "maximum": 2.9206275939941406e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.1.value",
+          "values": 3072,
+          "maximum": 1.7209652228495077e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.2.key",
+          "values": 3072,
+          "maximum": 3.7550926208496094e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.2.value",
+          "values": 3072,
+          "maximum": 2.294778823852539e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.3.key",
+          "values": 3072,
+          "maximum": 6.9141387939453125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.3.value",
+          "values": 3072,
+          "maximum": 2.6971101760864258e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.4.key",
+          "values": 3072,
+          "maximum": 6.198883056640625e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.4.value",
+          "values": 3072,
+          "maximum": 3.873019633931297e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.5.key",
+          "values": 3072,
+          "maximum": 6.079673767089844e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.5.value",
+          "values": 3072,
+          "maximum": 4.172325134277344e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.6.key",
+          "values": 3072,
+          "maximum": 6.467103958129883e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.6.value",
+          "values": 3072,
+          "maximum": 4.675239324569702e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.7.key",
+          "values": 3072,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.7.value",
+          "values": 3072,
+          "maximum": 5.487352609634399e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.8.key",
+          "values": 3072,
+          "maximum": 5.442071280722859e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.8.value",
+          "values": 3072,
+          "maximum": 4.9173831939697266e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.9.key",
+          "values": 3072,
+          "maximum": 4.5299530029296875e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.9.value",
+          "values": 3072,
+          "maximum": 4.827976226806641e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.10.key",
+          "values": 3072,
+          "maximum": 5.662441253662109e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.10.value",
+          "values": 3072,
+          "maximum": 5.4836273193359375e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.11.key",
+          "values": 3072,
+          "maximum": 5.3942203521728516e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.11.value",
+          "values": 3072,
+          "maximum": 5.564217874988099e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "logits",
+          "values": 50257,
+          "maximum": 2.1092458985713503e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.0.key",
+          "values": 3840,
+          "maximum": 2.0966189084834232e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.0.value",
+          "values": 3840,
+          "maximum": 7.152557373046875e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.1.key",
+          "values": 3840,
+          "maximum": 3.039836883544922e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.1.value",
+          "values": 3840,
+          "maximum": 2.2649765014648438e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.2.key",
+          "values": 3840,
+          "maximum": 3.7550926208496094e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.2.value",
+          "values": 3840,
+          "maximum": 2.294778823852539e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.3.key",
+          "values": 3840,
+          "maximum": 6.9141387939453125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.3.value",
+          "values": 3840,
+          "maximum": 2.6971101760864258e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.4.key",
+          "values": 3840,
+          "maximum": 6.198883056640625e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.4.value",
+          "values": 3840,
+          "maximum": 3.873019633931297e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.5.key",
+          "values": 3840,
+          "maximum": 6.079673767089844e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.5.value",
+          "values": 3840,
+          "maximum": 4.172325134277344e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.6.key",
+          "values": 3840,
+          "maximum": 6.467103958129883e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.6.value",
+          "values": 3840,
+          "maximum": 4.675239324569702e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.7.key",
+          "values": 3840,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.7.value",
+          "values": 3840,
+          "maximum": 5.487352609634399e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.8.key",
+          "values": 3840,
+          "maximum": 5.543231964111328e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.8.value",
+          "values": 3840,
+          "maximum": 4.9173831939697266e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.9.key",
+          "values": 3840,
+          "maximum": 4.5299530029296875e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.9.value",
+          "values": 3840,
+          "maximum": 4.827976226806641e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.10.key",
+          "values": 3840,
+          "maximum": 5.662441253662109e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.10.value",
+          "values": 3840,
+          "maximum": 5.4836273193359375e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.11.key",
+          "values": 3840,
+          "maximum": 5.3942203521728516e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.11.value",
+          "values": 3840,
+          "maximum": 5.564217874988099e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "logits",
+          "values": 50257,
+          "maximum": 2.153630594444319e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.0.key",
+          "values": 4608,
+          "maximum": 2.3624325968449714e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.0.value",
+          "values": 4608,
+          "maximum": 7.642616315525244e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.1.key",
+          "values": 4608,
+          "maximum": 3.039836883544922e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.1.value",
+          "values": 4608,
+          "maximum": 2.2649765014648438e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.2.key",
+          "values": 4608,
+          "maximum": 3.7550926208496094e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.2.value",
+          "values": 4608,
+          "maximum": 2.294778823852539e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.3.key",
+          "values": 4608,
+          "maximum": 6.9141387939453125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.3.value",
+          "values": 4608,
+          "maximum": 2.6971101760864258e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.4.key",
+          "values": 4608,
+          "maximum": 8.398289175180692e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.4.value",
+          "values": 4608,
+          "maximum": 3.873019633931297e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.5.key",
+          "values": 4608,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.5.value",
+          "values": 4608,
+          "maximum": 5.066394805908203e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.6.key",
+          "values": 4608,
+          "maximum": 6.467103958129883e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.6.value",
+          "values": 4608,
+          "maximum": 4.675239324569702e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.7.key",
+          "values": 4608,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.7.value",
+          "values": 4608,
+          "maximum": 5.487352609634399e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.8.key",
+          "values": 4608,
+          "maximum": 5.543231964111328e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.8.value",
+          "values": 4608,
+          "maximum": 4.9173831939697266e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.9.key",
+          "values": 4608,
+          "maximum": 4.6131450330042395e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.9.value",
+          "values": 4608,
+          "maximum": 6.426125764846802e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.10.key",
+          "values": 4608,
+          "maximum": 5.662441253662109e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.10.value",
+          "values": 4608,
+          "maximum": 5.4836273193359375e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.11.key",
+          "values": 4608,
+          "maximum": 5.3942203521728516e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.11.value",
+          "values": 4608,
+          "maximum": 6.318092346191406e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "logits",
+          "values": 402056,
+          "maximum": 7.547453851144423e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.0.key",
+          "values": 6144,
+          "maximum": 2.3624325968449714e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.0.value",
+          "values": 6144,
+          "maximum": 1.4177291759212877e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.1.key",
+          "values": 6144,
+          "maximum": 3.2782554626464844e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.1.value",
+          "values": 6144,
+          "maximum": 2.384185791015625e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.2.key",
+          "values": 6144,
+          "maximum": 3.490521383409975e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.2.value",
+          "values": 6144,
+          "maximum": 2.3245811462402344e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.3.key",
+          "values": 6144,
+          "maximum": 6.735324859619141e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.3.value",
+          "values": 6144,
+          "maximum": 3.3425859295277833e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.4.key",
+          "values": 6144,
+          "maximum": 8.940696716308594e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.4.value",
+          "values": 6144,
+          "maximum": 5.245208740234375e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.5.key",
+          "values": 6144,
+          "maximum": 6.973743438720703e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.5.value",
+          "values": 6144,
+          "maximum": 5.185604095458984e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.6.key",
+          "values": 6144,
+          "maximum": 6.854534149169922e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.6.value",
+          "values": 6144,
+          "maximum": 7.912516593933105e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.7.key",
+          "values": 6144,
+          "maximum": 6.735324859619141e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.7.value",
+          "values": 6144,
+          "maximum": 7.987022399902344e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.8.key",
+          "values": 6144,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.8.value",
+          "values": 6144,
+          "maximum": 6.020069122314453e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.9.key",
+          "values": 6144,
+          "maximum": 6.186896236263544e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.9.value",
+          "values": 6144,
+          "maximum": 6.496906280517578e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.10.key",
+          "values": 6144,
+          "maximum": 5.066394805908203e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.10.value",
+          "values": 6144,
+          "maximum": 6.16908073425293e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.11.key",
+          "values": 6144,
+          "maximum": 5.125999450683594e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.11.value",
+          "values": 6144,
+          "maximum": 6.794929504394531e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        }
+      ],
+      "no_performance_measurement": true
+    },
+    "selected-e5": {
+      "passed": true,
+      "arrays": 60,
+      "values": 3714048,
+      "rows": [
+        {
+          "model": "e5-8tok",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": null,
+          "arithmetic_changed_model": false
+        }
+      ],
+      "no_performance_measurement": true
+    },
+    "candidate-shared": {
+      "passed": true,
+      "arrays": 106,
+      "values": 1286766,
+      "rows": [
+        {
+          "model": "dinov3",
+          "scenario": "constant",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 77184,
+          "maximum": 7.510185241699219e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "dinov3",
+          "scenario": "constant",
+          "step": 0,
+          "name": "pooler_output",
+          "values": 384,
+          "maximum": 7.510185241699219e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "dinov3",
+          "scenario": "ramp",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 77184,
+          "maximum": 1.9803643226623535e-05,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "dinov3",
+          "scenario": "ramp",
+          "step": 0,
+          "name": "pooler_output",
+          "values": 384,
+          "maximum": 3.7178397178649902e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "resnet50",
+          "scenario": "constant",
+          "step": 0,
+          "name": "output",
+          "values": 2048,
+          "maximum": 4.0531158447265625e-06,
+          "exact_selected": false,
+          "arithmetic_changed_model": true
+        },
+        {
+          "model": "resnet50",
+          "scenario": "ramp",
+          "step": 0,
+          "name": "output",
+          "values": 2048,
+          "maximum": 3.6954879760742188e-06,
+          "exact_selected": false,
+          "arithmetic_changed_model": true
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "logits",
+          "values": 201028,
+          "maximum": 7.547453851144423e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.0.key",
+          "values": 3072,
+          "maximum": 2.0966189084834232e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.0.value",
+          "values": 3072,
+          "maximum": 6.784782377681187e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.1.key",
+          "values": 3072,
+          "maximum": 2.9206275939941406e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.1.value",
+          "values": 3072,
+          "maximum": 1.7209652228495077e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.2.key",
+          "values": 3072,
+          "maximum": 3.7550926208496094e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.2.value",
+          "values": 3072,
+          "maximum": 2.294778823852539e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.3.key",
+          "values": 3072,
+          "maximum": 6.9141387939453125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.3.value",
+          "values": 3072,
+          "maximum": 2.6971101760864258e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.4.key",
+          "values": 3072,
+          "maximum": 6.198883056640625e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.4.value",
+          "values": 3072,
+          "maximum": 3.873019633931297e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.5.key",
+          "values": 3072,
+          "maximum": 6.079673767089844e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.5.value",
+          "values": 3072,
+          "maximum": 4.172325134277344e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.6.key",
+          "values": 3072,
+          "maximum": 6.467103958129883e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.6.value",
+          "values": 3072,
+          "maximum": 4.675239324569702e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.7.key",
+          "values": 3072,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.7.value",
+          "values": 3072,
+          "maximum": 5.487352609634399e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.8.key",
+          "values": 3072,
+          "maximum": 5.442071280722859e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.8.value",
+          "values": 3072,
+          "maximum": 4.9173831939697266e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.9.key",
+          "values": 3072,
+          "maximum": 4.5299530029296875e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.9.value",
+          "values": 3072,
+          "maximum": 4.827976226806641e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.10.key",
+          "values": 3072,
+          "maximum": 5.662441253662109e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.10.value",
+          "values": 3072,
+          "maximum": 5.4836273193359375e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.11.key",
+          "values": 3072,
+          "maximum": 5.3942203521728516e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 0,
+          "name": "present.11.value",
+          "values": 3072,
+          "maximum": 5.564217874988099e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "logits",
+          "values": 50257,
+          "maximum": 2.1092458985713503e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.0.key",
+          "values": 3840,
+          "maximum": 2.0966189084834232e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.0.value",
+          "values": 3840,
+          "maximum": 7.152557373046875e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.1.key",
+          "values": 3840,
+          "maximum": 3.039836883544922e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.1.value",
+          "values": 3840,
+          "maximum": 2.2649765014648438e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.2.key",
+          "values": 3840,
+          "maximum": 3.7550926208496094e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.2.value",
+          "values": 3840,
+          "maximum": 2.294778823852539e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.3.key",
+          "values": 3840,
+          "maximum": 6.9141387939453125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.3.value",
+          "values": 3840,
+          "maximum": 2.6971101760864258e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.4.key",
+          "values": 3840,
+          "maximum": 6.198883056640625e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.4.value",
+          "values": 3840,
+          "maximum": 3.873019633931297e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.5.key",
+          "values": 3840,
+          "maximum": 6.079673767089844e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.5.value",
+          "values": 3840,
+          "maximum": 4.172325134277344e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.6.key",
+          "values": 3840,
+          "maximum": 6.467103958129883e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.6.value",
+          "values": 3840,
+          "maximum": 4.675239324569702e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.7.key",
+          "values": 3840,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.7.value",
+          "values": 3840,
+          "maximum": 5.487352609634399e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.8.key",
+          "values": 3840,
+          "maximum": 5.543231964111328e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.8.value",
+          "values": 3840,
+          "maximum": 4.9173831939697266e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.9.key",
+          "values": 3840,
+          "maximum": 4.5299530029296875e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.9.value",
+          "values": 3840,
+          "maximum": 4.827976226806641e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.10.key",
+          "values": 3840,
+          "maximum": 5.662441253662109e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.10.value",
+          "values": 3840,
+          "maximum": 5.4836273193359375e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.11.key",
+          "values": 3840,
+          "maximum": 5.3942203521728516e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 1,
+          "name": "present.11.value",
+          "values": 3840,
+          "maximum": 5.564217874988099e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "logits",
+          "values": 50257,
+          "maximum": 2.153630594444319e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.0.key",
+          "values": 4608,
+          "maximum": 2.3624325968449714e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.0.value",
+          "values": 4608,
+          "maximum": 7.642616315525244e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.1.key",
+          "values": 4608,
+          "maximum": 3.039836883544922e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.1.value",
+          "values": 4608,
+          "maximum": 2.2649765014648438e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.2.key",
+          "values": 4608,
+          "maximum": 3.7550926208496094e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.2.value",
+          "values": 4608,
+          "maximum": 2.294778823852539e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.3.key",
+          "values": 4608,
+          "maximum": 6.9141387939453125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.3.value",
+          "values": 4608,
+          "maximum": 2.6971101760864258e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.4.key",
+          "values": 4608,
+          "maximum": 8.398289175180692e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.4.value",
+          "values": 4608,
+          "maximum": 3.873019633931297e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.5.key",
+          "values": 4608,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.5.value",
+          "values": 4608,
+          "maximum": 5.066394805908203e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.6.key",
+          "values": 4608,
+          "maximum": 6.467103958129883e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.6.value",
+          "values": 4608,
+          "maximum": 4.675239324569702e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.7.key",
+          "values": 4608,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.7.value",
+          "values": 4608,
+          "maximum": 5.487352609634399e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.8.key",
+          "values": 4608,
+          "maximum": 5.543231964111328e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.8.value",
+          "values": 4608,
+          "maximum": 4.9173831939697266e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.9.key",
+          "values": 4608,
+          "maximum": 4.6131450330042395e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.9.value",
+          "values": 4608,
+          "maximum": 6.426125764846802e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.10.key",
+          "values": 4608,
+          "maximum": 5.662441253662109e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.10.value",
+          "values": 4608,
+          "maximum": 5.4836273193359375e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.11.key",
+          "values": 4608,
+          "maximum": 5.3942203521728516e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill4-decode2",
+          "step": 2,
+          "name": "present.11.value",
+          "values": 4608,
+          "maximum": 6.318092346191406e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "logits",
+          "values": 402056,
+          "maximum": 7.547453851144423e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.0.key",
+          "values": 6144,
+          "maximum": 2.3624325968449714e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.0.value",
+          "values": 6144,
+          "maximum": 1.4177291759212877e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.1.key",
+          "values": 6144,
+          "maximum": 3.2782554626464844e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.1.value",
+          "values": 6144,
+          "maximum": 2.384185791015625e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.2.key",
+          "values": 6144,
+          "maximum": 3.490521383409975e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.2.value",
+          "values": 6144,
+          "maximum": 2.3245811462402344e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.3.key",
+          "values": 6144,
+          "maximum": 6.735324859619141e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.3.value",
+          "values": 6144,
+          "maximum": 3.3425859295277833e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.4.key",
+          "values": 6144,
+          "maximum": 8.940696716308594e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.4.value",
+          "values": 6144,
+          "maximum": 5.245208740234375e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.5.key",
+          "values": 6144,
+          "maximum": 6.973743438720703e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.5.value",
+          "values": 6144,
+          "maximum": 5.185604095458984e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.6.key",
+          "values": 6144,
+          "maximum": 6.854534149169922e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.6.value",
+          "values": 6144,
+          "maximum": 7.912516593933105e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.7.key",
+          "values": 6144,
+          "maximum": 6.735324859619141e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.7.value",
+          "values": 6144,
+          "maximum": 7.987022399902344e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.8.key",
+          "values": 6144,
+          "maximum": 6.4373016357421875e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.8.value",
+          "values": 6144,
+          "maximum": 6.020069122314453e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.9.key",
+          "values": 6144,
+          "maximum": 6.186896236263544e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.9.value",
+          "values": 6144,
+          "maximum": 6.496906280517578e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.10.key",
+          "values": 6144,
+          "maximum": 5.066394805908203e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.10.value",
+          "values": 6144,
+          "maximum": 6.16908073425293e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.11.key",
+          "values": 6144,
+          "maximum": 5.125999450683594e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "gpt2",
+          "scenario": "prefill8",
+          "step": 0,
+          "name": "present.11.value",
+          "values": 6144,
+          "maximum": 6.794929504394531e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        }
+      ],
+      "no_performance_measurement": true
+    },
+    "candidate-e5": {
+      "passed": true,
+      "arrays": 60,
+      "values": 3714048,
+      "rows": [
+        {
+          "model": "e5-8tok",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-8tok",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 3072,
+          "maximum": 8.940696716308594e-07,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30tok",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 11520,
+          "maximum": 1.1920928955078125e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-30pad128",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.471489667892456e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-128tok",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 49152,
+          "maximum": 1.2442469596862793e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "default-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-facade",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-facade",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-facade",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-context",
+          "step": 0,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-context",
+          "step": 1,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        },
+        {
+          "model": "e5-512tok",
+          "scenario": "memory-context",
+          "step": 2,
+          "name": "last_hidden_state",
+          "values": 196608,
+          "maximum": 1.6391277313232422e-06,
+          "exact_selected": true,
+          "arithmetic_changed_model": false
+        }
+      ],
+      "no_performance_measurement": true
+    }
+  },
+  "resources": [
+    {
+      "name": "candidate-e5",
+      "samples": 68,
+      "peak_rss": 2501066752,
+      "seconds": 17.620379325002432
+    }
+  ],
+  "retained_resources": [
+    {
+      "name": "selected-shared",
+      "samples": 12,
+      "peak_rss": 2109083648,
+      "seconds": 3.1109192159492522
+    },
+    {
+      "name": "selected-e5",
+      "samples": 69,
+      "peak_rss": 2469814272,
+      "seconds": 17.77711984596681
+    },
+    {
+      "name": "candidate-shared",
+      "samples": 12,
+      "peak_rss": 2187210752,
+      "seconds": 3.0925489829969592
+    }
+  ],
+  "retained_failure": {
+    "bytes": 146305,
+    "sha256": "053b003ef278896884f8214a5f11316b63ddf7a922c80688302f5987f9bec902"
+  },
+  "arithmetic_scope": {
+    "models": [
+      {
+        "model": "dinov3",
+        "asset": {
+          "file": "models/dinov3-vits16/onnx/model.onnx",
+          "sha256": "bb75e9e30ff382ecdbd150266445ab41272be4acc85fd3563218dd89781e36da",
+          "bytes": 137969
+        },
+        "convolutions": 1,
+        "eligible": []
+      },
+      {
+        "model": "resnet50",
+        "asset": {
+          "file": "models/resnet50-onnx/model.onnx",
+          "sha256": "4f0558b775c85b568012f7174cadda33fb4b4e5a253ce17e5d839f123e0bc7e6",
+          "bytes": 93961728
+        },
+        "convolutions": 53,
+        "eligible": [
+          {
+            "node": "/model/encoder/stages.0/layers.0/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_507",
+            "shape": [
+              64,
+              64,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.0/layers.1/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_519",
+            "shape": [
+              64,
+              64,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.0/layers.2/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_528",
+            "shape": [
+              64,
+              64,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.1/layers.1/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_549",
+            "shape": [
+              128,
+              128,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.1/layers.2/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_558",
+            "shape": [
+              128,
+              128,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.1/layers.3/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_567",
+            "shape": [
+              128,
+              128,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.2/layers.1/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_588",
+            "shape": [
+              256,
+              256,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.2/layers.2/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_597",
+            "shape": [
+              256,
+              256,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.2/layers.3/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_606",
+            "shape": [
+              256,
+              256,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.2/layers.4/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_615",
+            "shape": [
+              256,
+              256,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.2/layers.5/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_624",
+            "shape": [
+              256,
+              256,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.3/layers.1/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_645",
+            "shape": [
+              512,
+              512,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "node": "/model/encoder/stages.3/layers.2/layer/layer.1/convolution/Conv",
+            "weight": "onnx::Conv_654",
+            "shape": [
+              512,
+              512,
+              3,
+              3
+            ],
+            "group": 1,
+            "strides": [
+              1,
+              1
+            ],
+            "dilations": [
+              1,
+              1
+            ],
+            "pads": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "model": "gpt2",
+        "asset": {
+          "file": "models/gpt2-onnx/onnx/model.onnx",
+          "sha256": "42c1e92a21c41ebd3c536d4c6f09732450a43db35977593236f696d3346c7c0d",
+          "bytes": 498126358
+        },
+        "convolutions": 0,
+        "eligible": []
+      }
+    ],
+    "models_with_eligible_convolutions": [
+      "resnet50"
+    ],
+    "policy": "Every native array retains the original 1e-4 bound. Cross-product exactness remains mandatory for models without eligible changed-arithmetic convolutions. All differences are reported; no model-specific dispatch."
+  },
+  "reused_jobs": [
+    "selected-shared",
+    "selected-e5",
+    "candidate-shared"
+  ],
+  "executed_jobs": [
+    "candidate-e5"
+  ],
+  "reference_provenance_verified": true,
+  "no_performance_measurement": true
+}
