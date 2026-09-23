@@ -1,6 +1,6 @@
 # CPU benchmarks
 
-## Current results — 2026-09-22 UTC
+## Current results — 2026-09-23 UTC
 
 The tables here summarize retained measurements for e5, Parakeet, Whisper and
 pyannote. Each names its workload, hardware and timing boundary. Earlier tables
@@ -20,12 +20,16 @@ Latest matched comparisons for the current product on AMD:
 
 | Application workload | Lokad.Onnx seconds | Microsoft ORT seconds | Lokad / ORT |
 |---|---:|---:|---:|
-| Pyannote, complete 30-second dialogue | 12.666 | 8.944 | 1.416 |
+| Pyannote, complete 30-second dialogue | 12.960 | 9.022 | 1.436 |
 | Parakeet, 20 clips / 213.265 seconds of audio | 74.545 | 39.229 | 1.900 |
 
 Each row comes from its own matched campaign on AMD EPYC 9V74, CPU2, with
 ORT 1.29.0. Complete application timers include frontend, inference and owned
-results. The [LSTM input-row change](#audio-amd-lstm-input-row-pyannote-versus-microsoft-ort)
+results. The Pyannote row is the current-product control from the latest
+[matched application comparison](tests/pyannote/convolution-pointer-results/application-20260923.md).
+All twelve repeatability controls pass. Its candidate is not selected, and
+the current product remains Core `208371f6` / Data `b9358370`.
+The [LSTM input-row change](#audio-amd-lstm-input-row-pyannote-versus-microsoft-ort)
 reduces Pyannote dialogue latency **3.76%**, from contemporary selected 13.161 s.
 All twelve repeatability controls and four speed gates pass; all three crops
 improve. Both ten-minute meetings and recovery also pass. The change is
@@ -98,7 +102,7 @@ passes: **3.68% lower component latency**, from 1.459576 s to 1.405921 s.
 All 32 repeatability controls and 12 speed gates pass, and both candidate
 processes are faster than both current processes. All 17,184 call clocks and
 512 preparation clocks are retained. This admits full product/application
-qualification; the prototype is not integrated and supplies no new ORT ratio.
+qualification; the subsequent application result below determines selection.
 Its [full product and NuGet checks](tests/pyannote/convolution-pointer-results/product-20260923.md)
 also pass: 3,432 backend and 343 tensor tests, the same 41 existing AMD skips,
 all compiled methods/public declarations, and an independent package consumer.
@@ -109,8 +113,14 @@ including the original Microsoft ORT error limits.
 also passes all 784 arrays and 20 public clips per role, preserving exact current
 outputs and every native tolerance. These correctness runs supply no new timing ratio.
 [Shared/e5 regression](tests/pyannote/convolution-pointer-results/shared-20260923.md)
-passes all 166 arrays and 5.0 million values per role. Fresh native public checks,
-long meetings and matched application timing remain the final admission gates.
+passes all 166 arrays and 5.0 million values per role.
+The [complete application comparison](tests/pyannote/convolution-pointer-results/application-20260923.md)
+is **not admitted**: dialogue latency improves only **1.35%**, from 12.959627 s
+to 12.784886 s, below the fixed 3% threshold. Microsoft ORT takes 9.022086 s;
+the candidate / ORT ratio is 1.417066. All twelve repeatability controls,
+three crop speed gates, fresh native checks, both ten-minute meetings and
+recovery pass. All 96 timing requests and six setup intervals are retained.
+The candidate remains unmerged; no unchanged timing retry follows.
 
 The [Pyannote fixed 3×3 loop screen](tests/pyannote/kernel-loop-screen-amd/results-20260922.md)
 is **not selected**: complete captured graph calls improve only **1.56%**,
