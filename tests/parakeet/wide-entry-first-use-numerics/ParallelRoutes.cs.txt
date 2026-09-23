@@ -1,0 +1,39 @@
+    static void ParallelRoutes()
+    {
+        foreach (int m in new[] { 64, 106 })
+        {
+            const int n = 1024, k = 1024;
+            var rng = new Random(2143 + m);
+            var a = Enumerable.Range(0, m * n).Select(_ => rng.NextSingle() * 2 - 1).ToArray();
+            var b = Enumerable.Range(0, n * k).Select(_ => rng.NextSingle() * 2 - 1).ToArray();
+            string ah = Hash(a), bh = Hash(b); float originalB13 = b[13];
+            var x = new DenseTensor<float>(a, new[] { m, n });
+            var y = new DenseTensor<float>(b, new[] { n, k });
+            var opts = TensorExecutionOptions.Parallel(2);
+            var expected = Reference(a, b, m, n, k);
+            var held = Tensor<float>.MatMul2D(x, y, opts); Equal(expected, held.ToArray());
+            Coordinates(a, b, expected, m, n, k);
+            const float guard = -12345.5f;
+            var backing = Enumerable.Repeat(guard, m * k + 6).ToArray();
+            var dst = new DenseTensor<float>(backing.AsMemory(3, m * k), new[] { m, k });
+            var scratch = new ScratchAccountant(); var outputs = new List<string>();
+            for (int rep = 0; rep < 2; rep++)
+            {
+                b[13] += .25f; string mutated = Hash(b);
+                dst.Buffer.Span.Fill(float.NaN);
+                Require(ReferenceEquals(dst, Tensor<float>.MatMul2D(x, y, dst, opts with { ScratchReporter = scratch })), "parallel destination identity");
+                var reference = Reference(a, b, m, n, k); Equal(reference, dst.Buffer.Span);
+                if (rep == 1) Coordinates(a, b, reference, m, n, k);
+                Equal(expected, held.ToArray());
+                Require(Hash(a) == ah && Hash(b) == mutated, "parallel input mutation");
+                Require(backing.Take(3).Concat(backing.TakeLast(3)).All(v => v == guard), "parallel guards");
+                outputs.Add(Hash(dst.Buffer.Span));
+            }
+            b[13] = originalB13; Require(Hash(b) == bh, "parallel restore original weight");
+            long expectedScratch = Role == "candidate" && m == 106 ? 4L * n * k * 4 : 0;
+            Require(scratch.TotalScratchBytes == expectedScratch, "parallel scratch lifetime/accounting");
+            Rows.Add(new { name = "parallel-" + m, m, reduction = n, columns = k, parallel = 2,
+                values = m * k, output = Hash(expected), mutatedOutputs = outputs, fullReference = true,
+                independentCoordinates = 24, inputs = true, guards = true, held = true, scratch = scratch.TotalScratchBytes });
+        }
+    }
