@@ -1,0 +1,74 @@
+{
+  "passed": true,
+  "static_only": true,
+  "root_product_changed": false,
+  "candidate_prepared": false,
+  "selected_root_inputs": 420,
+  "m43_source": {
+    "bytes": 147327,
+    "sha256": "829e26d7acd55ccf969f4292949abc19385a014f562517344a3265d42a0f51c0"
+  },
+  "m43_application": {
+    "bytes": 118134,
+    "sha256": "adb3a270880bb4f30ac87fec92c2f6e18495d56c8ed8cffcfb58a950f7a25128"
+  },
+  "rejected_release": {
+    "bytes": 146643,
+    "sha256": "921e1303a193f0f57b2ccd47fd98f6c378d26c617a10d271e6ab4f94b901b175"
+  },
+  "kernels": [
+    {
+      "name": "PackPanelsB",
+      "selected_line": 1705,
+      "lines": 25,
+      "normalized_method_sha256": "ebc52ee0bdca5175c4b262ce2fd1507fc3ddd1f9cbe5a783f0052d9952073580",
+      "float_body_exact": true,
+      "global_annotation_only": true
+    },
+    {
+      "name": "mm_unsafe_vectorized_intrinsics_2x4packed_bump",
+      "selected_line": 1922,
+      "lines": 143,
+      "normalized_method_sha256": "0e95fdd9d9e612250d319d33a4cfd733c463658886f6166b94e90a341a4aeaec",
+      "float_body_exact": true,
+      "global_annotation_only": true
+    },
+    {
+      "name": "mm_unsafe_vectorized_intrinsics_3x4packed",
+      "selected_line": 2080,
+      "lines": 165,
+      "normalized_method_sha256": "faaa4f307c274ca4816c36036855c60386d48cea28d8167d910ac894ab1fd854",
+      "float_body_exact": true,
+      "global_annotation_only": true
+    },
+    {
+      "name": "mm_unsafe_vectorized_intrinsics",
+      "selected_line": 366,
+      "lines": 31,
+      "normalized_method_sha256": "b60fe82c1996b4c8a5a3f98f22e4341a430bc47b4bcf1bad5b24c4c2c2daf385",
+      "float_body_exact": true,
+      "global_annotation_only": true
+    }
+  ],
+  "original_general_body_exact_after_rename": true,
+  "original_general_line": 161,
+  "original_general_lines": 119,
+  "original_general_call_sites": 4,
+  "m43_noinline_helpers": 2,
+  "proposed_scope": "Keep original general dispatcher and all existing MathOps bodies/flags intact. Redirect four resolved calls to a new guarded dispatcher; only its short-wide branch invokes four internal optimized copies. New short helper retains existing scratch, row groups and odd-row order.",
+  "limitations": "The M45 e5 regression does not identify whether shared annotations, the moved NoInlining general dispatcher, or runtime history caused it. Isolation is a distinct source hypothesis, not transferred admission.",
+  "source_files": {
+    "src/Lokad.Onnx/MathOps.cs": {
+      "bytes": 215579,
+      "sha256": "f09ec95f8ba1aba3e235988ebddab54032dc69fac5013cc288ffae5f4ebfe30b"
+    },
+    "src/Lokad.Onnx/TensorOps.MatMul.cs": {
+      "bytes": 46624,
+      "sha256": "703dabfe07bd85e93fed3090b4255c196459f6cd26f5b01c000be4105ff368ae"
+    }
+  },
+  "generator": {
+    "bytes": 5157,
+    "sha256": "f204f22c5f93397fdacaa34a3da99e6a710300af152fbd990651ca4abf43e134"
+  }
+}
